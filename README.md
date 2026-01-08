@@ -302,6 +302,8 @@ You're never locked in. The system adapts.
 | `/gsd:plan-phase [N]`             | Generate task plans for phase                                 |
 | `/gsd:execute-plan`               | Run plan via subagent                                         |
 | `/gsd:progress`                   | Where am I? What's next?                                      |
+| `/gsd:verify-work [N]`*           | User acceptance test of phase or plan                         |
+| `/gsd:plan-fix [plan]`            | Plan fixes for UAT issues from verify-work                    |
 | `/gsd:complete-milestone`         | Ship it, prep next version                                    |
 | `/gsd:discuss-milestone`          | Gather context for next milestone                             |
 | `/gsd:new-milestone [name]`       | Create new milestone with phases                              |
@@ -315,6 +317,8 @@ You're never locked in. The system adapts.
 | `/gsd:resume-work`                | Restore from last session                                     |
 | `/gsd:consider-issues`            | Review deferred issues, close resolved, identify urgent       |
 | `/gsd:help`                       | Show all commands and usage guide                             |
+
+*Contributed by reddit user OracleGreyBeard
 
 ---
 

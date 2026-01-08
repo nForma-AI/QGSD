@@ -92,21 +92,35 @@ CONTEXT: [✓ if CONTEXT.md exists | - if not]
 <step name="route">
 **Determine next action based on verified counts.**
 
-**Step 1: Count plans and summaries in current phase**
+**Step 1: Count plans, summaries, and issues in current phase**
 
 List files in the current phase directory:
 
 ```bash
 ls -1 .planning/phases/[current-phase-dir]/*-PLAN.md 2>/dev/null | wc -l
 ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
+ls -1 .planning/phases/[current-phase-dir]/*-ISSUES.md 2>/dev/null | wc -l
+ls -1 .planning/phases/[current-phase-dir]/*-FIX.md 2>/dev/null | wc -l
+ls -1 .planning/phases/[current-phase-dir]/*-FIX-SUMMARY.md 2>/dev/null | wc -l
 ```
 
-State: "This phase has {X} plans and {Y} summaries."
+State: "This phase has {X} plans, {Y} summaries, {Z} issues files, {W} fix plans."
+
+**Step 1.5: Check for unaddressed UAT issues**
+
+For each *-ISSUES.md file, check if matching *-FIX.md exists.
+For each *-FIX.md file, check if matching *-FIX-SUMMARY.md exists.
+
+Track:
+- `issues_without_fix`: ISSUES.md files without FIX.md
+- `fixes_without_summary`: FIX.md files without FIX-SUMMARY.md
 
 **Step 2: Route based on counts**
 
 | Condition | Meaning | Action |
 |-----------|---------|--------|
+| fixes_without_summary > 0 | Unexecuted fix plans exist | Go to **Route A** (with FIX.md) |
+| issues_without_fix > 0 | UAT issues need fix plans | Go to **Route E** |
 | summaries < plans | Unexecuted plans exist | Go to **Route A** |
 | summaries = plans AND plans > 0 | Phase complete | Go to Step 3 |
 | plans = 0 | Phase not yet planned | Go to **Route B** |
@@ -180,6 +194,32 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 
 ---
 
+**Route E: UAT issues need fix plans**
+
+ISSUES.md exists without matching FIX.md. User needs to plan fixes.
+
+```
+---
+
+## ⚠ UAT Issues Found
+
+**{plan}-ISSUES.md** has {N} issues without a fix plan.
+
+`/gsd:plan-fix {plan}`
+
+<sub>`/clear` first → fresh context window</sub>
+
+---
+
+**Also available:**
+- `/gsd:execute-plan [path]` — continue with other work first
+- `/gsd:verify-work {phase}` — run more UAT testing
+
+---
+```
+
+---
+
 **Step 3: Check milestone status (only when phase complete)**
 
 Read ROADMAP.md and identify:
@@ -219,6 +259,7 @@ Read ROADMAP.md to get the next phase's name and goal.
 ---
 
 **Also available:**
+- `/gsd:verify-work {Z}` — user acceptance test before continuing
 - `/gsd:discuss-phase {Z+1}` — gather context first
 - `/gsd:research-phase {Z+1}` — investigate unknowns
 
@@ -243,6 +284,11 @@ All {N} phases finished!
 `/gsd:complete-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
+
+---
+
+**Also available:**
+- `/gsd:verify-work` — user acceptance test before completing milestone
 
 ---
 ```
