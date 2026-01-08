@@ -1502,6 +1502,7 @@ Summary: .planning/phases/{phase-dir}/{phase}-{plan}-SUMMARY.md
 ---
 
 **Also available:**
+- `/gsd:verify-work {phase}-{plan}` — manual acceptance testing before continuing
 - Review what was built before continuing
 
 ---
@@ -1562,6 +1563,7 @@ All {Y} plans finished.
 ---
 
 **Also available:**
+- `/gsd:verify-work {Z}` — manual acceptance testing before continuing
 - `/gsd:discuss-phase {Z+1}` — gather context first
 - `/gsd:research-phase {Z+1}` — investigate unknowns
 - Review phase accomplishments before continuing
@@ -1601,6 +1603,7 @@ Milestone is 100% done.
 ---
 
 **Also available:**
+- `/gsd:verify-work` — manual acceptance testing before completing milestone
 - `/gsd:add-phase <description>` — add another phase before completing
 - Review accomplishments before archiving
 
