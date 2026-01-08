@@ -324,13 +324,18 @@ You're never locked in. The system adapts.
 
 ## Troubleshooting
 
-**Plugin not found after install?**
-- Restart Claude Code to reload plugins
-- Check `/plugins` to see installed plugins
+**Commands not found after install?**
+- Restart Claude Code to reload slash commands
+- Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
 
-**Commands showing as unavailable?**
-- Verify plugin directory structure: should have `.claude-plugin/plugin.json`
-- Try `/gsd:help` - if it works, plugin is loaded correctly
+**Commands not working as expected?**
+- Run `/gsd:help` to verify installation
+- Re-run `npx get-shit-done-cc` to reinstall
+
+**Updating to the latest version?**
+```bash
+npx get-shit-done-cc@latest
+```
 
 ---
 
