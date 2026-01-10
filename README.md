@@ -330,6 +330,7 @@ You're never locked in. The system adapts.
 | `/gsd:list-phase-assumptions [N]` | See what Claude thinks before you correct it |
 | `/gsd:pause-work` | Create handoff file when stopping mid-phase |
 | `/gsd:resume-work` | Restore from last session |
+| `/gsd:resume-task [id]` | Resume interrupted subagent execution |
 | `/gsd:consider-issues` | Review deferred issues, close resolved, identify urgent |
 | `/gsd:help` | Show all commands and usage guide |
 
