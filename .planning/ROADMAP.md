@@ -17,7 +17,8 @@ None - this is internal GSD development following existing command/workflow/temp
 - [ ] **Phase 1: Templates & Structure** - Create codebase map templates and folder structure
 - [ ] **Phase 2: Map Codebase Command** - Build /gsd:map-codebase with parallel Explore agents
 - [ ] **Phase 3: Integration** - Wire brownfield support into existing GSD workflows
-- [ ] **Phase 10: Parallel Phase Execution** - Separate single-plan vs multi-plan execution with intelligent parallelization
+- [x] **Phase 10: Parallel Phase Execution** - Separate single-plan vs multi-plan execution with intelligent parallelization
+- [ ] **Phase 11: Parallel-Aware Planning** - Update plan-phase.md to create parallelizable plans when config enables it
 
 ## Phase Details
 
@@ -167,6 +168,28 @@ Parallelization features (adapted from PR #43):
 - Merge conflict detection as failsafe
 - Configurable via `.planning/config.json` parallelization section
 
+### Phase 11: Parallel-Aware Planning
+
+**Goal:** Update plan-phase.md to create plans optimized for parallel execution when parallelization is enabled
+**Depends on:** Phase 10
+**Research:** Unlikely (extending existing plan-phase workflow)
+**Plans:** 4 plans
+
+Plans:
+- [ ] 11-01: Update phase-prompt template - Add parallelization frontmatter fields (parallelizable, depends_on, files_exclusive)
+- [ ] 11-02: Add parallel-aware step to plan-phase workflow - Read config, restructure for vertical slices, document independence
+- [ ] 11-03: Update execute-phase to use plan frontmatter - Use explicit markers instead of inference, backward compat
+- [ ] 11-04: Documentation and examples - Update references, add parallel vs sequential planning examples
+
+**Details:**
+Current plan-phase.md has sequential execution bias - later plans reference earlier SUMMARY.md, file overlap is acceptable, no independence markers. When parallelization enabled in config.json, planning should:
+- Group by vertical slice (feature A, feature B) not workflow stage (setup → implement → test)
+- Avoid unnecessary inter-plan dependencies (only reference SUMMARY if genuinely needed)
+- Mark explicit file ownership per plan
+- Add frontmatter: `parallelizable: true/false`, `depends_on: []`, `files_exclusive: []`
+
+This enables execute-phase to produce more Wave 1 plans (true independence) instead of sequential chains.
+
 ## Progress
 
 **Execution Order:**
@@ -184,3 +207,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 8. Improve Roadmap System | 1/1 | Complete | 2026-01-05 |
 | 9. Integrate Verify-Work | 1/1 | Complete | 2026-01-08 |
 | 10. Parallel Phase Execution | 4/4 | Complete | 2026-01-12 |
+| 11. Parallel-Aware Planning | 0/4 | Not Started | - |

@@ -54,6 +54,28 @@ Read `.planning/STATE.md` and parse:
 If STATE.md missing but .planning/ exists, offer to reconstruct or continue without.
 </step>
 
+<step name="read_parallelization_config" priority="second">
+Read parallelization settings from config.json:
+
+```bash
+cat .planning/config.json 2>/dev/null | jq '.parallelization'
+```
+
+**Extract settings:**
+- `enabled`: Whether parallel execution is available (default: true)
+- `plan_level`: Whether plan-level parallelization is enabled (default: true)
+
+**Store for later steps:**
+- If `parallelization.enabled && parallelization.plan_level`: Planning will optimize for independence
+  - Group tasks by vertical slice (feature A, feature B) not workflow stage (setup → implement → test)
+  - Avoid unnecessary inter-plan dependencies
+  - Mark explicit file ownership per plan via files_exclusive
+  - Set parallelizable: true when genuinely independent
+- If disabled: Planning proceeds with sequential assumptions (current behavior)
+
+**If config.json missing:** Assume parallelization enabled (new projects get it by default).
+</step>
+
 <step name="load_codebase_context">
 Check for codebase map:
 
