@@ -301,6 +301,64 @@ After completion, create `.planning/phases/01-foundation/01-01-SUMMARY.md`
 </output>
 ```
 
+**Parallel-aware plan example (independent):**
+
+```markdown
+---
+phase: 05-features
+plan: 01
+type: execute
+parallelizable: true
+depends_on: []
+files_exclusive: [src/features/user/model.ts, src/features/user/api.ts, src/features/user/UserList.tsx]
+---
+
+<objective>
+Implement complete User feature as vertical slice.
+
+Purpose: Self-contained user management that can run parallel to other features.
+Output: User model, API endpoints, and UI components.
+</objective>
+
+<context>
+@.planning/PROJECT.md
+@.planning/ROADMAP.md
+# No SUMMARY references - this plan is independent
+</context>
+...
+```
+
+**Sequential plan example (has dependencies):**
+
+```markdown
+---
+phase: 06-integration
+plan: 02
+type: execute
+parallelizable: false
+depends_on: ["06-01"]
+files_exclusive: [src/integration/stripe.ts]
+---
+
+<objective>
+Integrate Stripe payments using auth from Plan 01.
+
+Purpose: Add payment processing that requires authenticated users.
+Output: Stripe integration with user-linked payments.
+</objective>
+
+<context>
+@.planning/PROJECT.md
+@.planning/ROADMAP.md
+@.planning/phases/06-integration/06-01-SUMMARY.md  # Needed: auth decisions
+</context>
+...
+```
+
+**Key differences:**
+- Parallel: `parallelizable: true`, empty `depends_on`, no SUMMARY refs
+- Sequential: `parallelizable: false`, explicit `depends_on`, includes needed SUMMARY
+
 </good_examples>
 
 <bad_examples>
