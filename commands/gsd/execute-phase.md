@@ -12,13 +12,14 @@ allowed-tools:
   - Task
   - TaskOutput
   - AskUserQuestion
+  - SlashCommand
 ---
 
 <objective>
 Execute all unexecuted plans in a phase with parallel agent spawning.
 
 Analyzes plan dependencies to identify independent plans that can run concurrently.
-Spawns background agents for parallel execution, orchestrates commits after completion.
+Spawns background agents for parallel execution, each agent commits its own tasks atomically.
 
 Use this command when:
 - Phase has 2+ unexecuted plans
@@ -31,6 +32,7 @@ Use this command when:
 @~/.claude/get-shit-done/workflows/execute-phase.md
 @~/.claude/get-shit-done/templates/summary.md
 @~/.claude/get-shit-done/references/checkpoints.md
+@~/.claude/get-shit-done/references/tdd.md
 </execution_context>
 
 <context>
@@ -49,10 +51,68 @@ Phase number: $ARGUMENTS (required)
 6. Present results and next steps
 </process>
 
+<execution_strategies>
+**Strategy A: Fully Autonomous** (no checkpoints)
+
+- Spawn subagent to execute entire plan
+- Subagent creates SUMMARY.md and commits
+- Main context: orchestration only (~5% usage)
+
+**Strategy B: Segmented** (has verify-only checkpoints)
+
+- Execute in segments between checkpoints
+- Subagent for autonomous segments
+- Main context for checkpoints
+- Aggregate results → SUMMARY → commit
+
+**Strategy C: Decision-Dependent** (has decision checkpoints)
+
+- Execute in main context
+- Decision outcomes affect subsequent tasks
+- Quality maintained through small scope (2-3 tasks per plan)
+</execution_strategies>
+
+<deviation_rules>
+During execution, handle discoveries automatically:
+
+1. **Auto-fix bugs** - Fix immediately, document in Summary
+2. **Auto-add critical** - Security/correctness gaps, add and document
+3. **Auto-fix blockers** - Can't proceed without fix, do it and document
+4. **Ask about architectural** - Major structural changes, stop and ask user
+5. **Log enhancements** - Nice-to-haves, log to ISSUES.md, continue
+
+Only rule 4 requires user intervention.
+</deviation_rules>
+
+<commit_rules>
+**Per-Task Commits:**
+
+After each task completes:
+1. Stage only files modified by that task
+2. Commit with format: `{type}({phase}-{plan}): {task-name}`
+3. Types: feat, fix, test, refactor, perf, chore
+4. Record commit hash for SUMMARY.md
+
+**Plan Metadata Commit:**
+
+After all tasks complete:
+1. Stage planning artifacts only: PLAN.md, SUMMARY.md, STATE.md, ROADMAP.md
+2. Commit with format: `docs({phase}-{plan}): complete [plan-name] plan`
+3. NO code files (already committed per-task)
+
+**NEVER use:**
+- `git add .`
+- `git add -A`
+- `git add src/` or any broad directory
+
+**Always stage files individually.**
+</commit_rules>
+
 <success_criteria>
 - [ ] All independent plans executed in parallel
 - [ ] Dependent plans executed after dependencies complete
+- [ ] Each task committed individually (feat/fix/test/refactor)
 - [ ] All SUMMARY.md files created
-- [ ] Commits created by orchestrator
+- [ ] Metadata committed by orchestrator
 - [ ] Phase progress updated
 </success_criteria>
