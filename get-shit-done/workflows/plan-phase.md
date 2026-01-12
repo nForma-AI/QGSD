@@ -427,12 +427,32 @@ Use template from `~/.claude/get-shit-done/templates/phase-prompt.md`.
 **Multiple plans:** Write separate files ({phase}-01-PLAN.md, {phase}-02-PLAN.md, etc.)
 
 Each plan follows template structure with:
-- Frontmatter (phase, plan, type, domain)
+- Frontmatter (phase, plan, type, parallelizable, depends_on, files_exclusive, domain)
 - Objective (plan-specific goal, purpose, output)
 - Execution context (execute-plan.md, summary template, checkpoints.md if needed)
 - Context (@references to PROJECT, ROADMAP, STATE, codebase docs, RESEARCH/DISCOVERY/CONTEXT if exist, prior summaries, source files, prior decisions, deferred issues, concerns)
 - Tasks (XML format with types)
 - Verification, Success criteria, Output specification
+
+**Parallelization frontmatter (from parallelization_aware step):**
+
+```yaml
+---
+phase: XX-name
+plan: NN
+type: execute
+parallelizable: [true if independent, false if has dependencies]
+depends_on: [plan IDs from analysis, or empty array]
+files_exclusive: [files only this plan modifies]
+domain: [optional]
+---
+```
+
+**Rules for parallelizable field:**
+- `true`: No file overlap with sibling plans, no depends_on entries, no SUMMARY references needed
+- `false`: Has dependencies, shares files, or requires sequential execution
+
+**If parallelization disabled in config:** Still include fields but set `parallelizable: false` for all plans.
 
 **Context section population from frontmatter analysis:**
 
@@ -464,7 +484,17 @@ Inject automatically-assembled context package from read_project_history step:
 
 This ensures every PLAN.md gets optimal context automatically assembled via dependency graph, making execution as informed as possible.
 
-For multi-plan phases: each plan has focused scope, references previous plan summaries (via frontmatter selection), last plan's success criteria includes "Phase X complete".
+**Context section population (parallel-aware):**
+
+When parallelization enabled:
+- Only include SUMMARY references if this plan genuinely needs decisions/outputs from prior plan
+- Avoid reflexive "Plan 02 references Plan 01 SUMMARY" patterns
+- Each plan should be as self-contained as possible
+
+When parallelization disabled:
+- Include SUMMARY references as before (sequential context chain)
+
+For multi-plan phases: each plan has focused scope, references previous plan summaries only when genuinely needed (via frontmatter selection), last plan's success criteria includes "Phase X complete".
 </step>
 
 <step name="git_commit">
