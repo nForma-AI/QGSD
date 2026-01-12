@@ -130,36 +130,84 @@ Then add new entry with resumed status:
 - Never remove entries with status "spawned" (may need resume)
 - Prune during init_agent_tracking step
 
-## Example File
+## Example Entries
+
+### Sequential Execution (Default)
 
 ```json
 {
-  "version": "1.0",
-  "max_entries": 50,
-  "entries": [
-    {
-      "agent_id": "agent_01HXY123ABC",
-      "task_description": "Execute full plan 02-01 (autonomous)",
-      "phase": "02",
-      "plan": "01",
-      "segment": null,
-      "timestamp": "2026-01-15T14:22:10Z",
-      "status": "completed",
-      "completion_timestamp": "2026-01-15T14:45:33Z"
-    },
-    {
-      "agent_id": "agent_01HXY456DEF",
-      "task_description": "Execute tasks 1-3 from plan 02-02",
-      "phase": "02",
-      "plan": "02",
-      "segment": 1,
-      "timestamp": "2026-01-15T15:00:00Z",
-      "status": "spawned",
-      "completion_timestamp": null
-    }
-  ]
+  "agent_id": "agent_01HXY123ABC",
+  "task_description": "Execute full plan 02-01 (autonomous)",
+  "phase": "02",
+  "plan": "01",
+  "segment": null,
+  "timestamp": "2026-01-15T14:22:10Z",
+  "status": "completed",
+  "completion_timestamp": "2026-01-15T14:45:33Z",
+  "execution_mode": "sequential",
+  "parallel_group": null,
+  "granularity": "plan",
+  "depends_on": null,
+  "files_modified": ["src/api/auth.ts", "src/types/user.ts"],
+  "checkpoints_skipped": null,
+  "task_results": null
 }
 ```
+
+### Parallel Execution (Plan-Level)
+
+Independent plans in a phase running in parallel:
+
+```json
+{
+  "agent_id": "agent_01HXYZ123",
+  "task_description": "Execute plan 05-01 (parallel)",
+  "phase": "05",
+  "plan": "01",
+  "segment": null,
+  "timestamp": "2026-01-12T10:00:00Z",
+  "status": "completed",
+  "completion_timestamp": "2026-01-12T10:15:00Z",
+  "execution_mode": "parallel",
+  "parallel_group": "phase-05-batch-1736676000",
+  "granularity": "plan",
+  "depends_on": null,
+  "files_modified": ["src/auth/login.ts", "src/auth/types.ts"],
+  "checkpoints_skipped": 1,
+  "task_results": null
+}
+```
+
+### Queued with Dependency
+
+Agent waiting for another to complete:
+
+```json
+{
+  "agent_id": "agent_01HXYZ456",
+  "task_description": "Execute plan 05-03 (depends on 05-01)",
+  "phase": "05",
+  "plan": "03",
+  "segment": null,
+  "timestamp": "2026-01-12T10:15:00Z",
+  "status": "spawned",
+  "completion_timestamp": null,
+  "execution_mode": "parallel",
+  "parallel_group": "phase-05-batch-1736676000",
+  "granularity": "plan",
+  "depends_on": ["agent_01HXYZ123"],
+  "files_modified": null,
+  "checkpoints_skipped": null,
+  "task_results": null
+}
+```
+
+### Parallel Group Format
+
+- **Plan-level parallel:** `phase-{phase}-batch-{timestamp}`
+- **Task-level parallel:** `plan-{phase}-{plan}-tasks-batch-{timestamp}`
+
+Example: `phase-05-batch-1736676000` groups all agents executing Phase 5 plans in parallel.
 
 ## Related Files
 
