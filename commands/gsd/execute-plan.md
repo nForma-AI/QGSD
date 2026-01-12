@@ -28,7 +28,7 @@ Uses intelligent segmentation:
   </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/execute-phase.md
+@~/.claude/get-shit-done/workflows/execute-plan.md
 @~/.claude/get-shit-done/templates/summary.md
 @~/.claude/get-shit-done/references/checkpoints.md
 @~/.claude/get-shit-done/references/tdd.md
@@ -49,7 +49,7 @@ Plan path: $ARGUMENTS
 2. Verify plan at $ARGUMENTS exists
 3. Check if SUMMARY.md already exists (plan already executed?)
 4. Load workflow config for mode (interactive/yolo)
-5. Follow execute-phase.md workflow:
+5. Follow execute-plan.md workflow:
    - Parse plan and determine execution strategy (A/B/C)
    - Execute tasks (via subagent or main context as appropriate)
    - Handle checkpoints and deviations

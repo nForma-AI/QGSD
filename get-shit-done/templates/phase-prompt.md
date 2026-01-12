@@ -23,7 +23,7 @@ Output: [What artifacts will be created]
 </objective>
 
 <execution_context>
-~/.claude/get-shit-done/workflows/execute-phase.md
+~/.claude/get-shit-done/workflows/execute-plan.md
 ./summary.md
 [If plan contains checkpoint tasks (type="checkpoint:*"), add:]
 ~/.claude/get-shit-done/references/checkpoints.md
@@ -201,7 +201,7 @@ Output: Working Next.js app with JWT auth, protected routes, and user model.
 </objective>
 
 <execution_context>
-~/.claude/get-shit-done/workflows/execute-phase.md
+~/.claude/get-shit-done/workflows/execute-plan.md
 ./summary.md
 </execution_context>
 
