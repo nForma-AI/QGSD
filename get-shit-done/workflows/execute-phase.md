@@ -406,11 +406,10 @@ For each plan in Wave 1:
 You are executing plan: {plan_path} as part of a PARALLEL phase execution.
 
 <critical_rules>
-1. Execute ALL tasks in the plan following deviation rules
-2. DO NOT run git commit - orchestrator handles commits
-3. DO NOT run git add - orchestrator stages files
-4. Track all files you create or modify
-5. Create SUMMARY.md in the phase directory when complete
+1. Execute ALL tasks in the plan following deviation rules from execute-plan.md
+2. Commit each task atomically (standard task_commit protocol)
+3. Create SUMMARY.md in the phase directory when complete
+4. Report files modified and commit hashes when done
 </critical_rules>
 
 <plan_context>
@@ -435,6 +434,9 @@ When complete, output this exact format:
 PARALLEL_AGENT_COMPLETE
 plan_id: {phase}-{plan}
 tasks_completed: [count]/[total]
+task_commits:
+  - task_1: abc123f
+  - task_2: def456g
 files_modified:
   - path/to/file1.ts
   - path/to/file2.md
@@ -446,9 +448,7 @@ END_REPORT
 </report_format>
 
 <forbidden_actions>
-- git commit
-- git add
-- git push
+- git push (orchestrator may push after all complete)
 - Modifying files outside plan scope
 - Running long-blocking network operations
 </forbidden_actions>
@@ -704,114 +704,23 @@ Failed:   0
 </step>
 
 <step name="orchestrator_commit">
-**Batch commit after all agents complete.**
+**Commit metadata after all agents complete.**
 
-**1. Collect files from all agents:**
+Agents commit their own task code (per-task atomic commits). The orchestrator only commits metadata.
+
+**1. Verify all agents committed successfully:**
 ```bash
-# Read agent-history.json
-# For each agent in this parallel_group:
-#   Collect files_modified arrays
-#   Merge into master list
-
-ALL_FILES=()
-for entry in $(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\") | .files_modified[]" .planning/agent-history.json); do
-  ALL_FILES+=("$entry")
-done
-```
-
-**2. Check for merge conflicts (failsafe):**
-
-```bash
-# Build file-to-agent mapping
-declare -A FILE_AGENTS
-for entry in $(jq -c ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\" and .status==\"completed\")" .planning/agent-history.json); do
-  agent_id=$(echo "$entry" | jq -r '.agent_id')
-  for file in $(echo "$entry" | jq -r '.files_modified[]'); do
-    FILE_AGENTS["$file"]="${FILE_AGENTS[$file]} $agent_id"
-  done
-done
-
-# Detect conflicts (file modified by multiple agents)
-CONFLICTS=()
-for file in "${!FILE_AGENTS[@]}"; do
-  agents=(${FILE_AGENTS[$file]})
-  if [ ${#agents[@]} -gt 1 ]; then
-    CONFLICTS+=("$file: ${agents[*]}")
-  fi
-done
-
-# Handle conflicts
-if [ ${#CONFLICTS[@]} -gt 0 ]; then
-  echo ""
-  echo "═══════════════════════════════════════════════════"
-  echo "⚠ MERGE CONFLICT DETECTED"
-  echo "═══════════════════════════════════════════════════"
-  echo ""
-  echo "Multiple agents modified the same files:"
-  for conflict in "${CONFLICTS[@]}"; do
-    echo "  - $conflict"
-  done
-  echo ""
-  echo "Options:"
-  echo "1. Review and merge manually"
-  echo "2. Re-run sequential with /gsd:execute-plan"
-  echo "3. Accept last-write-wins (risky)"
-  echo ""
-
-  # Present to user
-  AskUserQuestion(
-    header="Merge Conflict",
-    question="How to resolve file conflicts?",
-    options=[
-      "Manual review",
-      "Abort and retry sequential",
-      "Accept last-write-wins"
-    ]
-  )
-
-  # Handle based on response
-  if response == "Abort":
-    git checkout -- .  # Discard changes
-    exit 1
-  elif response == "Manual review":
-    echo "Review files and run: git add <resolved-files> && /gsd:execute-phase --resume"
-    exit 0
-fi
-```
-
-**Conflict prevention (dependency analysis should catch this):**
-The analyze_plan_dependencies step should detect file conflicts and add dependencies.
-This step is a failsafe for edge cases where:
-- Agents create new files with same name
-- File patterns weren't caught during analysis
-- Context files are modified unexpectedly
-
-**3. Stage and commit per-plan:**
-```bash
-# For each completed agent (in execution order):
-for agent in $(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\" and .status==\"completed\") | .agent_id" .planning/agent-history.json | sort); do
+# Check git log for expected commits from each agent
+for agent in $(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\" and .status==\"completed\") | .agent_id" .planning/agent-history.json); do
   PLAN=$(jq -r ".entries[] | select(.agent_id==\"$agent\") | .plan" .planning/agent-history.json)
-  FILES=$(jq -r ".entries[] | select(.agent_id==\"$agent\") | .files_modified[]" .planning/agent-history.json)
-
-  # Stage files for this plan
-  for f in $FILES; do
-    git add "$f"
-  done
-
-  # Commit with plan context
-  git commit -m "feat({phase}-{plan}): [plan name from PLAN.md]
-
-- [task 1]
-- [task 2]
-- [task 3]
-
-Executed by parallel agent: $agent"
+  # Verify commits exist for this plan
+  git log --oneline --grep="(${PHASE}-${PLAN}):" | head -5
 done
 ```
 
-**4. Stage and commit metadata:**
+**2. Stage and commit metadata:**
 ```bash
-# Stage all SUMMARY.md files created
+# Stage all SUMMARY.md files created by agents
 git add .planning/phases/${PHASE_DIR}/*-SUMMARY.md
 
 # Stage STATE.md and ROADMAP.md
@@ -828,7 +737,7 @@ Agents:
 $(for a in "${COMPLETED[@]}"; do echo "- $a"; done)"
 ```
 
-**5. Generate timing stats:**
+**3. Generate timing stats:**
 ```bash
 START_TIME=$(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\") | .timestamp" .planning/agent-history.json | sort | head -1)
 END_TIME=$(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\") | .completion_timestamp" .planning/agent-history.json | sort -r | head -1)
@@ -839,6 +748,13 @@ echo "- Wall clock time: $(time_diff $START_TIME $END_TIME)"
 echo "- Sequential estimate: $(sum of individual plan durations)"
 echo "- Time saved: ~X%"
 ```
+
+**Note on merge conflicts:**
+Since agents commit independently, git will catch conflicts at commit time if they occur.
+The dependency analysis step should prevent this, but if an agent fails to commit due to conflict:
+- That agent's status will be "failed"
+- Other agents continue normally
+- User can resolve and retry the failed plan with /gsd:execute-plan
 </step>
 
 <step name="create_phase_summary">
