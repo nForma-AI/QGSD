@@ -264,6 +264,10 @@ Use AskUserQuestion:
 
 **Parallelization allows `/gsd:execute-phase` to spawn multiple agents for independent plans.** Useful for "walk away, come back to completed work" execution. Can be changed later in config.json.
 
+</step>
+
+<step name="config">
+
 Create `.planning/config.json` with chosen mode, depth, and parallelization using `templates/config.json` structure.
 
 </step>
