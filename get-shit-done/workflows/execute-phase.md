@@ -247,15 +247,20 @@ done
 - If Plan B reads file created by Plan A → B depends on A
 - If Plan B references Plan A's SUMMARY in @context → B depends on A
 
-**5. Categorize plans:**
+**5. Categorize plans (frontmatter-aware):**
 
 | Category | Criteria | Action |
 |----------|----------|--------|
-| independent | No dependencies, no file conflicts | Can run in parallel |
-| dependent | Requires another plan | Wait for dependency |
+| independent | `parallelizable: true` in frontmatter OR (no frontmatter AND no inferred dependencies) | Can run in parallel (Wave 1) |
+| dependent | `parallelizable: false` OR has depends_on OR inferred dependencies | Wait for dependency |
 | has_checkpoints | Contains checkpoint tasks | Foreground or skip checkpoints |
 
-**6. Build execution waves (topological sort):**
+**Categorization priority:**
+1. If `parallelizable` frontmatter exists: Use it directly
+2. If no frontmatter: Use inferred category from file/SUMMARY analysis
+3. `has_checkpoints` applies regardless of frontmatter
+
+**6. Build execution waves (topological sort, frontmatter-aware):**
 
 ```bash
 # Calculate wave for each plan
@@ -265,11 +270,32 @@ calculate_wave() {
   local plan="$1"
   [ -n "${PLAN_WAVE[$plan]}" ] && echo "${PLAN_WAVE[$plan]}" && return
 
-  local deps="${PLAN_REQUIRES[$plan]}"
   local max_dep_wave=0
 
-  if [ -n "$deps" ]; then
-    IFS=',' read -ra dep_array <<< "$deps"
+  # Check for explicit parallelizable: false (force Wave 2+ even without deps)
+  if [ "${PLAN_HAS_FRONTMATTER[$plan]}" = "true" ]; then
+    if [ "${PLAN_PARALLELIZABLE[$plan]}" = "false" ] && [ -z "${PLAN_DEPENDS_ON[$plan]}" ]; then
+      # parallelizable: false without deps = Wave 2 (wait for all Wave 1)
+      max_dep_wave=1
+    fi
+  fi
+
+  # Check frontmatter depends_on first
+  if [ -n "${PLAN_DEPENDS_ON[$plan]}" ]; then
+    IFS=',' read -ra deps <<< "${PLAN_DEPENDS_ON[$plan]}"
+    for dep in "${deps[@]}"; do
+      [ -z "$dep" ] && continue
+      # Only consider deps in current phase (unexecuted)
+      if [[ " ${!PLAN_FILES[*]} " =~ " $dep " ]]; then
+        dep_wave=$(calculate_wave "$dep")
+        [ "$dep_wave" -gt "$max_dep_wave" ] && max_dep_wave="$dep_wave"
+      fi
+    done
+  fi
+
+  # Fall back to inferred requires if no frontmatter depends_on
+  if [ "${PLAN_HAS_FRONTMATTER[$plan]}" != "true" ] && [ -n "${PLAN_REQUIRES[$plan]}" ]; then
+    IFS=',' read -ra dep_array <<< "${PLAN_REQUIRES[$plan]}"
     for dep in "${dep_array[@]}"; do
       [ -z "$dep" ] && continue
       # Only consider deps in current phase (unexecuted)
@@ -301,10 +327,12 @@ echo "Execution waves:"
 for wave in $(echo "${!WAVES[@]}" | tr ' ' '\n' | sort -n); do
   plans="${WAVES[$wave]}"
   checkpoint_note=""
+  frontmatter_note=""
   for p in $plans; do
     [ "${PLAN_CHECKPOINTS[$p]}" = "true" ] && checkpoint_note=" (has checkpoints)"
+    [ "${PLAN_HAS_FRONTMATTER[$p]}" = "true" ] && frontmatter_note=" [frontmatter]"
   done
-  echo "  Wave $wave:$plans$checkpoint_note"
+  echo "  Wave $wave:$plans$checkpoint_note$frontmatter_note"
 done
 ```
 
