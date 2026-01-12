@@ -104,27 +104,52 @@ echo "Unexecuted: ${#UNEXECUTED[@]} plans"
 <step name="analyze_plan_dependencies">
 **Analyze plan dependencies to determine parallelization.**
 
-**1. For each plan, extract dependency info:**
-
-Read each plan file and extract:
-- Frontmatter `requires:` field (explicit dependencies)
-- `<files>` elements (files this plan modifies)
-- References to other plan SUMMARYs in context
+**1. Find all unexecuted plans:**
 
 ```bash
+UNEXECUTED=()
+for plan in .planning/phases/${PHASE}-*/*-PLAN.md; do
+  summary="${plan//-PLAN.md/-SUMMARY.md}"
+  [ ! -f "$summary" ] && UNEXECUTED+=("$plan")
+done
+echo "Found ${#UNEXECUTED[@]} unexecuted plans"
+```
+
+**2. For each plan, extract dependency info:**
+
+```bash
+# Initialize associative arrays for tracking
+declare -A PLAN_REQUIRES    # plan -> required plans
+declare -A PLAN_FILES       # plan -> files modified
+declare -A PLAN_CHECKPOINTS # plan -> has checkpoints
+
 for plan in "${UNEXECUTED[@]}"; do
-  # Extract frontmatter requires
-  REQUIRES=$(grep -A10 "^---" "$plan" | grep "requires:" | cut -d: -f2-)
+  plan_id=$(basename "$plan" -PLAN.md)
 
-  # Extract files from <files> elements
-  FILES=$(grep -oP '(?<=<files>).*(?=</files>)' "$plan")
+  # Extract frontmatter requires (handles YAML array syntax)
+  REQUIRES=$(awk '/^---$/,/^---$/' "$plan" | grep -E "^\s*-\s*phase:" | grep -oP '\d+' | tr '\n' ',')
+  PLAN_REQUIRES["$plan_id"]="${REQUIRES%,}"
 
-  # Check for SUMMARY references in context
-  SUMMARY_REFS=$(grep -oP '\d+-\d+-SUMMARY\.md' "$plan" || echo "")
+  # Extract files from <files> elements (all occurrences)
+  FILES=$(grep -oP '(?<=<files>)[^<]+(?=</files>)' "$plan" | tr '\n' ',' | tr -d ' ')
+  PLAN_FILES["$plan_id"]="${FILES%,}"
+
+  # Check for SUMMARY references in @context
+  SUMMARY_REFS=$(grep -oP '@[^@]*\d+-\d+-SUMMARY\.md' "$plan" | grep -oP '\d+-\d+' | tr '\n' ',')
+  if [ -n "$SUMMARY_REFS" ]; then
+    PLAN_REQUIRES["$plan_id"]="${PLAN_REQUIRES[$plan_id]},${SUMMARY_REFS%,}"
+  fi
+
+  # Check for checkpoint tasks
+  if grep -q 'type="checkpoint' "$plan"; then
+    PLAN_CHECKPOINTS["$plan_id"]="true"
+  else
+    PLAN_CHECKPOINTS["$plan_id"]="false"
+  fi
 done
 ```
 
-**2. Build dependency graph:**
+**3. Build dependency graph:**
 
 For each plan, determine:
 - `requires`: Prior phases/plans this depends on
@@ -132,23 +157,58 @@ For each plan, determine:
 - `has_checkpoints`: Contains checkpoint tasks
 
 ```
-Plan dependencies:
-- 10-01: requires=[], files=[workflow/execute-plan.md], checkpoints=false
-- 10-02: requires=[10-01], files=[workflow/execute-phase.md], checkpoints=false
-- 10-03: requires=[10-02], files=[commands/execute-phase.md], checkpoints=false
-- 10-04: requires=[], files=[templates/agent-history.md], checkpoints=false
+Example dependency graph:
+┌─────────┬───────────────────────┬─────────────────────────────┬──────────────┐
+│ Plan    │ Requires              │ Files Modified              │ Checkpoints  │
+├─────────┼───────────────────────┼─────────────────────────────┼──────────────┤
+│ 10-01   │ []                    │ [workflows/execute-plan.md] │ false        │
+│ 10-02   │ [10-01]               │ [workflows/execute-phase.md]│ false        │
+│ 10-03   │ [10-02]               │ [commands/execute-phase.md] │ false        │
+│ 10-04   │ []                    │ [templates/agent-history.md]│ false        │
+└─────────┴───────────────────────┴─────────────────────────────┴──────────────┘
 ```
 
-**3. Detect conflicts:**
+**4. Detect file conflicts:**
 
+```bash
+# Build file-to-plan mapping
+declare -A FILE_TO_PLANS
+
+for plan_id in "${!PLAN_FILES[@]}"; do
+  IFS=',' read -ra files <<< "${PLAN_FILES[$plan_id]}"
+  for file in "${files[@]}"; do
+    [ -n "$file" ] && FILE_TO_PLANS["$file"]="${FILE_TO_PLANS[$file]},$plan_id"
+  done
+done
+
+# Detect conflicts (same file modified by multiple plans)
+declare -A CONFLICTS
+for file in "${!FILE_TO_PLANS[@]}"; do
+  plans="${FILE_TO_PLANS[$file]}"
+  plan_count=$(echo "$plans" | tr ',' '\n' | grep -c .)
+  if [ "$plan_count" -gt 1 ]; then
+    CONFLICTS["$file"]="${plans#,}"
+  fi
+done
+
+# Add conflict dependencies (later plan depends on earlier)
+for file in "${!CONFLICTS[@]}"; do
+  IFS=',' read -ra conflict_plans <<< "${CONFLICTS[$file]}"
+  for ((i=1; i<${#conflict_plans[@]}; i++)); do
+    # Each plan depends on previous one in conflict set
+    prev="${conflict_plans[$((i-1))]}"
+    curr="${conflict_plans[$i]}"
+    PLAN_REQUIRES["$curr"]="${PLAN_REQUIRES[$curr]},${prev}"
+  done
+done
 ```
-File conflict rules:
-- If Plan A and Plan B both modify same file → sequential (B depends on A)
+
+**File conflict rules:**
+- If Plan A and Plan B both modify same file → B depends on A (ordered by plan number)
 - If Plan B reads file created by Plan A → B depends on A
-- If Plan B references Plan A's SUMMARY → B depends on A
-```
+- If Plan B references Plan A's SUMMARY in @context → B depends on A
 
-**4. Categorize plans:**
+**5. Categorize plans:**
 
 | Category | Criteria | Action |
 |----------|----------|--------|
@@ -156,18 +216,93 @@ File conflict rules:
 | dependent | Requires another plan | Wait for dependency |
 | has_checkpoints | Contains checkpoint tasks | Foreground or skip checkpoints |
 
-**5. Build execution waves:**
+**6. Build execution waves (topological sort):**
 
-Group plans into waves based on dependencies:
-```
-Wave 1: Plans with no dependencies (can run in parallel)
-Wave 2: Plans that depend only on Wave 1 (run after Wave 1 completes)
-Wave 3: Plans that depend on Wave 2 (run after Wave 2 completes)
-...
+```bash
+# Calculate wave for each plan
+declare -A PLAN_WAVE
+
+calculate_wave() {
+  local plan="$1"
+  [ -n "${PLAN_WAVE[$plan]}" ] && echo "${PLAN_WAVE[$plan]}" && return
+
+  local deps="${PLAN_REQUIRES[$plan]}"
+  local max_dep_wave=0
+
+  if [ -n "$deps" ]; then
+    IFS=',' read -ra dep_array <<< "$deps"
+    for dep in "${dep_array[@]}"; do
+      [ -z "$dep" ] && continue
+      # Only consider deps in current phase (unexecuted)
+      if [[ " ${!PLAN_FILES[*]} " =~ " $dep " ]]; then
+        dep_wave=$(calculate_wave "$dep")
+        [ "$dep_wave" -gt "$max_dep_wave" ] && max_dep_wave="$dep_wave"
+      fi
+    done
+  fi
+
+  PLAN_WAVE[$plan]=$((max_dep_wave + 1))
+  echo "${PLAN_WAVE[$plan]}"
+}
+
+# Calculate waves for all plans
+for plan_id in "${!PLAN_FILES[@]}"; do
+  calculate_wave "$plan_id" > /dev/null
+done
+
+# Group by wave
+declare -A WAVES
+for plan_id in "${!PLAN_WAVE[@]}"; do
+  wave="${PLAN_WAVE[$plan_id]}"
+  WAVES[$wave]="${WAVES[$wave]} $plan_id"
+done
+
+# Output wave structure
+echo "Execution waves:"
+for wave in $(echo "${!WAVES[@]}" | tr ' ' '\n' | sort -n); do
+  plans="${WAVES[$wave]}"
+  checkpoint_note=""
+  for p in $plans; do
+    [ "${PLAN_CHECKPOINTS[$p]}" = "true" ] && checkpoint_note=" (has checkpoints)"
+  done
+  echo "  Wave $wave:$plans$checkpoint_note"
+done
 ```
 
-**6. Safety rule:**
-If dependency detection is uncertain, default to sequential execution.
+**Example output:**
+```
+Execution waves:
+  Wave 1: 10-01 10-04
+  Wave 2: 10-02
+  Wave 3: 10-03
+```
+
+**7. Handle checkpoints in parallel context:**
+
+Plans with checkpoints require special handling:
+- `checkpoint_handling: "foreground"` → Run in main context (not parallel)
+- `checkpoint_handling: "skip"` → Skip checkpoints during parallel (not recommended)
+
+```bash
+# Separate checkpoint plans
+PARALLEL_PLANS=()
+FOREGROUND_PLANS=()
+
+for plan_id in "${!PLAN_CHECKPOINTS[@]}"; do
+  if [ "${PLAN_CHECKPOINTS[$plan_id]}" = "true" ]; then
+    FOREGROUND_PLANS+=("$plan_id")
+  else
+    PARALLEL_PLANS+=("$plan_id")
+  fi
+done
+
+if [ ${#FOREGROUND_PLANS[@]} -gt 0 ]; then
+  echo "Plans requiring foreground execution: ${FOREGROUND_PLANS[*]}"
+fi
+```
+
+**8. Safety rule:**
+If dependency detection is uncertain (e.g., complex file patterns, unclear requires), default to sequential execution within that wave.
 </step>
 
 <step name="parallelization_config">
