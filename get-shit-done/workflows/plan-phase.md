@@ -361,7 +361,7 @@ Use template from `~/.claude/get-shit-done/templates/phase-prompt.md`.
 Each plan follows template structure with:
 - Frontmatter (phase, plan, type, domain)
 - Objective (plan-specific goal, purpose, output)
-- Execution context (execute-phase.md, summary template, checkpoints.md if needed)
+- Execution context (execute-plan.md, summary template, checkpoints.md if needed)
 - Context (@references to PROJECT, ROADMAP, STATE, codebase docs, RESEARCH/DISCOVERY/CONTEXT if exist, prior summaries, source files, prior decisions, deferred issues, concerns)
 - Tasks (XML format with types)
 - Verification, Success criteria, Output specification

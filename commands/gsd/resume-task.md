@@ -16,7 +16,7 @@ Resume an interrupted subagent execution using the Task tool's resume parameter.
 
 When a session ends mid-execution, subagents may be left in an incomplete state. This command allows users to continue that work without starting over.
 
-Uses the agent ID tracking infrastructure from execute-phase to identify and resume agents.
+Uses the agent ID tracking infrastructure from execute-plan to identify and resume agents.
 </objective>
 
 <execution_context>

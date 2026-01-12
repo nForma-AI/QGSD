@@ -63,7 +63,7 @@ spawned ────────────────────────
 ### When to Create File
 
 Create `.planning/agent-history.json` from this template when:
-- First subagent spawn in execute-phase workflow
+- First subagent spawn in execute-plan workflow
 - File doesn't exist yet
 
 ### When to Add Entry
@@ -152,7 +152,7 @@ Then add new entry with resumed status:
 
 ## Template Notes
 
-**When to create:** First subagent spawn during execute-phase workflow.
+**When to create:** First subagent spawn during execute-plan workflow.
 
 **Location:** `.planning/agent-history.json`
 
