@@ -17,6 +17,7 @@ None - this is internal GSD development following existing command/workflow/temp
 - [ ] **Phase 1: Templates & Structure** - Create codebase map templates and folder structure
 - [ ] **Phase 2: Map Codebase Command** - Build /gsd:map-codebase with parallel Explore agents
 - [ ] **Phase 3: Integration** - Wire brownfield support into existing GSD workflows
+- [ ] **Phase 10: Parallel Phase Execution** - Separate single-plan vs multi-plan execution with intelligent parallelization
 
 ## Phase Details
 
@@ -140,6 +141,31 @@ Components:
 
 **Details:**
 Community contribution from OracleGreyBeard. Original command works but doesn't follow GSD patterns (no workflow delegation, inline templates, verbose steps). Refactor to match conventions, then add /gsd:plan-fix to complete the verify → fix loop.
+
+### Phase 10: Parallel Phase Execution
+
+**Goal:** Implement proper parallel phase execution with clean separation between single-plan and multi-plan execution
+**Depends on:** Phase 9
+**Research:** Unlikely (adapting PR #43 patterns, existing GSD conventions)
+**Plans:** 4 plans
+
+Plans:
+- [ ] 10-01: Rename execute-phase → execute-plan - Rename workflow file, update all 6+ references across commands/workflows/templates
+- [ ] 10-02: Create parallel execution workflow - New `workflows/execute-phase.md` with dependency analysis, parallel spawning, orchestrator commits
+- [ ] 10-03: Create execute-phase command - New `commands/gsd/execute-phase.md` + parallelization config schema in templates/config.json
+- [ ] 10-04: Update agent-history schema - Extend to v1.2 with parallel_group, granularity, task_results fields
+
+**Details:**
+Structural refactoring to separate concerns:
+- `/gsd:execute-plan` executes a single PLAN.md (current behavior, ~1,700 lines)
+- `/gsd:execute-phase` executes all plans in a phase with intelligent parallelization (~1,300 lines)
+
+Parallelization features (adapted from PR #43):
+- Dependency analysis via `requires`/`provides` frontmatter + `<files>` overlap detection
+- Parallel agent spawning for independent plans (respects max_concurrent_agents)
+- Orchestrator holds commits until all agents complete
+- Merge conflict detection as failsafe
+- Configurable via `.planning/config.json` parallelization section
 
 ## Progress
 

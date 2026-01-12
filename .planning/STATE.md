@@ -84,6 +84,7 @@ None yet.
 - Phase 7 added: Backfill existing summaries with frontmatter
 - Phase 8 added: Improve roadmap system
 - Phase 9 added: Integrate verify-work (community contribution from OracleGreyBeard)
+- Phase 10 added: Parallel phase execution (rename workflow, create /gsd:execute-phase with parallelization)
 
 ## Project Alignment
 
