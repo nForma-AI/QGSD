@@ -119,28 +119,58 @@ echo "Found ${#UNEXECUTED[@]} unexecuted plans"
 
 ```bash
 # Initialize associative arrays for tracking
-declare -A PLAN_REQUIRES    # plan -> required plans
-declare -A PLAN_FILES       # plan -> files modified
-declare -A PLAN_CHECKPOINTS # plan -> has checkpoints
+declare -A PLAN_REQUIRES      # plan -> required plans
+declare -A PLAN_FILES         # plan -> files modified
+declare -A PLAN_CHECKPOINTS   # plan -> has checkpoints
+declare -A PLAN_PARALLELIZABLE # plan -> explicit parallelizable flag (Phase 11+)
+declare -A PLAN_DEPENDS_ON    # plan -> explicit depends_on list (Phase 11+)
+declare -A PLAN_FILES_EXCLUSIVE # plan -> explicit file ownership (Phase 11+)
+declare -A PLAN_HAS_FRONTMATTER # plan -> whether has new frontmatter
 
 for plan in "${UNEXECUTED[@]}"; do
   plan_id=$(basename "$plan" -PLAN.md)
 
-  # Extract frontmatter requires (handles YAML array syntax)
-  REQUIRES=$(awk '/^---$/,/^---$/' "$plan" | grep -E "^\s*-\s*phase:" | grep -oP '\d+' | tr '\n' ',')
-  PLAN_REQUIRES["$plan_id"]="${REQUIRES%,}"
+  # NEW: Check for parallelization frontmatter (Phase 11+)
+  PARALLELIZABLE=$(awk '/^---$/,/^---$/' "$plan" | grep "^parallelizable:" | awk '{print $2}')
+  DEPENDS_ON=$(awk '/^---$/,/^---$/' "$plan" | grep "^depends_on:" | sed 's/depends_on: \[//' | sed 's/\]//' | tr -d ' "')
+  FILES_EXCLUSIVE=$(awk '/^---$/,/^---$/' "$plan" | grep "^files_exclusive:" | sed 's/files_exclusive: \[//' | sed 's/\]//' | tr -d ' "')
 
-  # Extract files from <files> elements (all occurrences)
-  FILES=$(grep -oP '(?<=<files>)[^<]+(?=</files>)' "$plan" | tr '\n' ',' | tr -d ' ')
-  PLAN_FILES["$plan_id"]="${FILES%,}"
+  # If frontmatter fields exist, use them directly
+  if [ -n "$PARALLELIZABLE" ]; then
+    PLAN_HAS_FRONTMATTER["$plan_id"]="true"
+    PLAN_PARALLELIZABLE["$plan_id"]="$PARALLELIZABLE"
+    PLAN_DEPENDS_ON["$plan_id"]="$DEPENDS_ON"
+    PLAN_FILES_EXCLUSIVE["$plan_id"]="$FILES_EXCLUSIVE"
 
-  # Check for SUMMARY references in @context
-  SUMMARY_REFS=$(grep -oP '@[^@]*\d+-\d+-SUMMARY\.md' "$plan" | grep -oP '\d+-\d+' | tr '\n' ',')
-  if [ -n "$SUMMARY_REFS" ]; then
-    PLAN_REQUIRES["$plan_id"]="${PLAN_REQUIRES[$plan_id]},${SUMMARY_REFS%,}"
+    # Use files_exclusive as PLAN_FILES when present
+    if [ -n "$FILES_EXCLUSIVE" ]; then
+      PLAN_FILES["$plan_id"]="$FILES_EXCLUSIVE"
+    fi
+
+    # Use depends_on as PLAN_REQUIRES when present
+    if [ -n "$DEPENDS_ON" ]; then
+      PLAN_REQUIRES["$plan_id"]="$DEPENDS_ON"
+    fi
+  else
+    PLAN_HAS_FRONTMATTER["$plan_id"]="false"
+
+    # Fall back to inference (existing logic)
+    # Extract frontmatter requires (handles YAML array syntax)
+    REQUIRES=$(awk '/^---$/,/^---$/' "$plan" | grep -E "^\s*-\s*phase:" | grep -oP '\d+' | tr '\n' ',')
+    PLAN_REQUIRES["$plan_id"]="${REQUIRES%,}"
+
+    # Extract files from <files> elements (all occurrences)
+    FILES=$(grep -oP '(?<=<files>)[^<]+(?=</files>)' "$plan" | tr '\n' ',' | tr -d ' ')
+    PLAN_FILES["$plan_id"]="${FILES%,}"
+
+    # Check for SUMMARY references in @context
+    SUMMARY_REFS=$(grep -oP '@[^@]*\d+-\d+-SUMMARY\.md' "$plan" | grep -oP '\d+-\d+' | tr '\n' ',')
+    if [ -n "$SUMMARY_REFS" ]; then
+      PLAN_REQUIRES["$plan_id"]="${PLAN_REQUIRES[$plan_id]},${SUMMARY_REFS%,}"
+    fi
   fi
 
-  # Check for checkpoint tasks
+  # Check for checkpoint tasks (always check, regardless of frontmatter)
   if grep -q 'type="checkpoint' "$plan"; then
     PLAN_CHECKPOINTS["$plan_id"]="true"
   else
@@ -148,6 +178,15 @@ for plan in "${UNEXECUTED[@]}"; do
   fi
 done
 ```
+
+**Dependency detection priority:**
+
+1. **If `depends_on` frontmatter exists:** Use it directly
+2. **If `parallelizable: false` in frontmatter:** Mark as dependent (even without explicit depends_on)
+3. **If no frontmatter:** Fall back to inference:
+   - Parse `requires` from old frontmatter format
+   - Detect file conflicts via `<files>` elements
+   - Check for SUMMARY references in @context
 
 **3. Build dependency graph:**
 
