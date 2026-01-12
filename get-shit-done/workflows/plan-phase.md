@@ -523,16 +523,21 @@ Confirm: "Committed: docs(${PHASE}): create phase plan"
 
 <step name="offer_next">
 ```
-Phase plan created: .planning/phases/XX-name/{phase}-01-PLAN.md
-[X] tasks defined.
+Phase {X} planned: {N} plan(s) created in .planning/phases/XX-name/
 
 ---
 
 ## Next Up
 
+[If 1 plan created:]
 **{phase}-01: [Plan Name]** - [objective summary]
 
 `/gsd:execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
+
+[If 2+ plans created:]
+**Phase {X}: [Phase Name]** - {N} plans ready
+
+`/gsd:execute-phase {X}`
 
 <sub>`/clear` first - fresh context window</sub>
 
@@ -540,7 +545,8 @@ Phase plan created: .planning/phases/XX-name/{phase}-01-PLAN.md
 
 **Also available:**
 - Review/adjust tasks before executing
-[If multiple plans: - View all plans: `ls .planning/phases/XX-name/*-PLAN.md`]
+[If 2+ plans: - `/gsd:execute-plan {phase}-01-PLAN.md` - run plans one at a time interactively]
+[If 2+ plans: - View all plans: `ls .planning/phases/XX-name/*-PLAN.md`]
 
 ---
 ```
