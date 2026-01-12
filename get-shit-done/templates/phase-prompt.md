@@ -11,9 +11,25 @@ Template for `.planning/phases/XX-name/{phase}-{plan}-PLAN.md` - executable phas
 ```markdown
 ---
 phase: XX-name
+plan: NN
 type: execute
+parallelizable: true|false  # Can run alongside other parallelizable plans
+depends_on: []              # Explicit plan dependencies (e.g., ["11-01", "11-02"])
+files_exclusive: []         # Files only this plan modifies (from <files> elements)
 domain: [optional - if domain skill loaded]
 ---
+
+<frontmatter_guidance>
+**Parallelization fields:**
+- `parallelizable`: Set to true if plan has no dependencies and doesn't share files with sibling plans. Default false for safety.
+- `depends_on`: Array of plan IDs this plan requires (e.g., `["11-01", "11-02"]`). Empty array means independent.
+- `files_exclusive`: Files from `<files>` elements that no sibling plan touches. Used for conflict detection by execute-phase.
+
+**When to set parallelizable: true:**
+- Plan has no depends_on entries
+- All files in plan are in files_exclusive (no overlap with sibling plans)
+- Plan doesn't consume outputs from sibling plans in same phase
+</frontmatter_guidance>
 
 <objective>
 [What this phase accomplishes - from roadmap phase goal]
@@ -186,10 +202,43 @@ See `~/.claude/get-shit-done/references/tdd.md` for TDD plan structure.
 
 <good_examples>
 
+**Sequential plan (has dependencies):**
+
 ```markdown
 ---
 phase: 01-foundation
+plan: 02
 type: execute
+parallelizable: false
+depends_on: ["01-01"]
+files_exclusive: [src/app/api/auth/login/route.ts]
+domain: next-js
+---
+```
+
+**Parallel plan (independent):**
+
+```markdown
+---
+phase: 03-features
+plan: 02
+type: execute
+parallelizable: true
+depends_on: []
+files_exclusive: [src/components/Dashboard.tsx, src/hooks/useDashboard.ts]
+---
+```
+
+**Full example:**
+
+```markdown
+---
+phase: 01-foundation
+plan: 01
+type: execute
+parallelizable: true
+depends_on: []
+files_exclusive: [prisma/schema.prisma, src/lib/db.ts]
 domain: next-js
 ---
 
