@@ -358,7 +358,7 @@ echo "All agents start from commit: $PRE_SPAWN_COMMIT"
 
 **2. Generate parallel group ID:**
 ```bash
-PARALLEL_GROUP="pg-$(date +%Y%m%d%H%M%S)-$(uuidgen | cut -d- -f1)"
+PARALLEL_GROUP="pg-$(date +%Y%m%d%H%M%S)-$(openssl rand -hex 4)"
 ```
 
 **3. Initialize tracking:**
@@ -367,117 +367,340 @@ PARALLEL_GROUP="pg-$(date +%Y%m%d%H%M%S)-$(uuidgen | cut -d- -f1)"
 if [ ! -f .planning/agent-history.json ]; then
   echo '{"version":"1.2","max_entries":50,"entries":[]}' > .planning/agent-history.json
 fi
+
+# Initialize tracking arrays
+declare -a RUNNING_AGENTS=()
+declare -a QUEUED_PLANS=()
+declare -A AGENT_TO_PLAN=()
 ```
 
-**4. For each wave, spawn independent plans:**
+**4. Spawn Wave 1 plans (no dependencies):**
 
-For Wave 1 (no dependencies):
 ```
-For each independent plan in Wave 1:
-  1. Check max_concurrent_agents limit
-  2. Spawn via Task tool with run_in_background: true
-  3. Record in agent-history.json
-  4. Track spawned agent IDs
+For each plan in Wave 1:
+  # Check concurrent agent limit
+  if len(RUNNING_AGENTS) >= max_concurrent_agents:
+    QUEUED_PLANS.append(plan)
+    continue
+
+  # Use Task tool to spawn background agent
+  Task(
+    description="Execute {plan_id} (parallel)",
+    prompt="[Agent prompt below]",
+    subagent_type="general-purpose",
+    run_in_background=true
+  )
+
+  # After Task returns, capture agent_id
+  RUNNING_AGENTS.append(agent_id)
+  AGENT_TO_PLAN[agent_id] = plan_id
+
+  # Record to agent-history.json
+  add_entry_to_history(...)
 ```
 
 **Agent spawn prompt (for plans WITHOUT checkpoints):**
-```
-"You are running as a PARALLEL agent executing plan: {plan_path}
 
-**CRITICAL INSTRUCTIONS:**
-1. Execute ALL tasks in the plan
-2. DO NOT commit any changes - the orchestrator will handle commits
-3. Track all files you create or modify
-4. Follow all deviation rules from the plan
-5. Create SUMMARY.md when complete (do not commit it)
+```xml
+<parallel_agent_instructions>
+You are executing plan: {plan_path} as part of a PARALLEL phase execution.
 
-**When done, report:**
-- Plan name
-- Tasks completed (count and names)
-- Files created/modified (full paths)
-- Deviations encountered
-- SUMMARY.md path
-- Any issues or blockers
+<critical_rules>
+1. Execute ALL tasks in the plan following deviation rules
+2. DO NOT run git commit - orchestrator handles commits
+3. DO NOT run git add - orchestrator stages files
+4. Track all files you create or modify
+5. Create SUMMARY.md in the phase directory when complete
+</critical_rules>
 
-**Do NOT:**
-- Run git commit
-- Run git add (except to check status)
-- Push to remote
-- Modify files outside plan scope"
+<plan_context>
+@{plan_path}
+Read the plan for full context, tasks, and deviation rules.
+</plan_context>
+
+<execution_protocol>
+1. Read plan file and context files
+2. Execute each task in order
+3. For each task:
+   - Implement the action
+   - Run verification
+   - Track files modified
+   - Track any deviations
+4. After all tasks: create SUMMARY.md
+</execution_protocol>
+
+<report_format>
+When complete, output this exact format:
+
+PARALLEL_AGENT_COMPLETE
+plan_id: {phase}-{plan}
+tasks_completed: [count]/[total]
+files_modified:
+  - path/to/file1.ts
+  - path/to/file2.md
+deviations:
+  - [Rule X] description
+summary_path: .planning/phases/{phase-dir}/{phase}-{plan}-SUMMARY.md
+issues: [none or list]
+END_REPORT
+</report_format>
+
+<forbidden_actions>
+- git commit
+- git add
+- git push
+- Modifying files outside plan scope
+- Running long-blocking network operations
+</forbidden_actions>
+</parallel_agent_instructions>
 ```
 
 **5. Record spawn in agent-history.json:**
-```json
+
+```bash
+# Read current entries
+ENTRIES=$(jq '.entries' .planning/agent-history.json)
+
+# Create new entry
+NEW_ENTRY=$(cat <<EOF
 {
-  "agent_id": "[from Task response]",
-  "task_description": "Parallel: Execute {phase}-{plan}-PLAN.md",
-  "phase": "{phase}",
-  "plan": "{plan}",
-  "parallel_group": "{PARALLEL_GROUP}",
+  "agent_id": "$AGENT_ID",
+  "task_description": "Parallel: Execute ${PHASE}-${PLAN}-PLAN.md",
+  "phase": "$PHASE",
+  "plan": "$PLAN",
+  "parallel_group": "$PARALLEL_GROUP",
   "granularity": "plan",
-  "wave": 1,
-  "timestamp": "[ISO]",
+  "wave": $WAVE_NUM,
+  "depends_on": $(echo "${PLAN_REQUIRES[$PLAN]}" | jq -R 'split(",") | map(select(. != ""))'),
+  "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "status": "spawned",
   "files_modified": [],
-  "completion_timestamp": null
+  "completion_timestamp": null,
+  "deviations": []
 }
+EOF
+)
+
+# Append and write back
+echo "$ENTRIES" | jq ". += [$NEW_ENTRY]" > /tmp/entries.json
+jq --argjson entries "$(cat /tmp/entries.json)" '.entries = $entries' .planning/agent-history.json > /tmp/history.json
+mv /tmp/history.json .planning/agent-history.json
 ```
 
-**6. Queue dependent plans:**
-Plans in Wave 2+ are queued, not spawned yet.
-They spawn after their dependencies complete.
+**6. Queue remaining plans:**
+
+```bash
+# Queue Wave 2+ plans
+for wave in $(seq 2 $MAX_WAVE); do
+  for plan in ${WAVES[$wave]}; do
+    QUEUED_PLANS+=("$plan:$wave")
+  done
+done
+
+echo "Spawned: ${#RUNNING_AGENTS[@]} agents"
+echo "Queued: ${#QUEUED_PLANS[@]} plans"
+```
 </step>
 
 <step name="monitor_parallel_completion">
 **Poll for agent completion and spawn dependents.**
 
-**1. Polling loop:**
-```
-running_agents = [list of spawned agent IDs]
+**1. Polling loop implementation:**
 
-while running_agents.length > 0:
-  for agent_id in running_agents:
-    result = TaskOutput(task_id=agent_id, block=false, timeout=5000)
+```
+declare -A COMPLETED_AGENTS=()
+declare -A FAILED_AGENTS=()
+
+while [ ${#RUNNING_AGENTS[@]} -gt 0 ] || [ ${#QUEUED_PLANS[@]} -gt 0 ]; do
+
+  # Check each running agent
+  for agent_id in "${RUNNING_AGENTS[@]}"; do
+
+    # Use TaskOutput to check status (non-blocking)
+    TaskOutput(
+      task_id=agent_id,
+      block=false,
+      timeout=5000
+    )
 
     if result.status == "completed":
-      # Capture results
-      files_modified = parse_files_from_result(result)
+      # Parse agent's completion report
+      files_modified = parse_report_files(result.output)
+      deviations = parse_report_deviations(result.output)
+      plan_id = AGENT_TO_PLAN[agent_id]
 
       # Update agent-history.json
-      update_entry(agent_id, status="completed", files_modified=files_modified)
+      update_history_entry(
+        agent_id,
+        status="completed",
+        files_modified=files_modified,
+        deviations=deviations,
+        completion_timestamp=now()
+      )
 
-      # Remove from running list
-      running_agents.remove(agent_id)
+      # Track completion
+      COMPLETED_AGENTS[agent_id] = plan_id
+      RUNNING_AGENTS.remove(agent_id)
 
-      # Check if dependents can now start
-      spawn_ready_dependents()
+      echo "✓ Agent $agent_id completed plan $plan_id"
+      echo "  Files: ${#files_modified[@]}"
+      echo "  Deviations: ${#deviations[@]}"
+
+      # Check if dependents can now spawn
+      check_and_spawn_dependents()
 
     elif result.status == "failed":
-      log_failure(agent_id, result.error)
-      running_agents.remove(agent_id)
-      # Continue with other agents - don't kill batch
+      plan_id = AGENT_TO_PLAN[agent_id]
 
-  sleep(10)  # Poll every 10 seconds
+      # Log failure
+      update_history_entry(
+        agent_id,
+        status="failed",
+        error=result.error,
+        completion_timestamp=now()
+      )
+
+      FAILED_AGENTS[agent_id] = plan_id
+      RUNNING_AGENTS.remove(agent_id)
+
+      echo "✗ Agent $agent_id FAILED on plan $plan_id"
+      echo "  Error: ${result.error}"
+
+      # Continue monitoring - don't abort batch
+
+    # else: still running, check next agent
+  done
+
+  # Brief pause between polls
+  sleep 10
+
+done
 ```
 
-**2. Spawn ready dependents:**
-```
-For each queued plan in Wave 2+:
-  if all dependencies completed:
-    if under max_concurrent_agents limit:
-      spawn_agent(plan)
-      move from queue to running_agents
+**2. Parse agent completion report:**
+
+```bash
+parse_report_files() {
+  local output="$1"
+  # Extract files from PARALLEL_AGENT_COMPLETE block
+  echo "$output" | \
+    sed -n '/^files_modified:/,/^[a-z_]*:/p' | \
+    grep '^\s*-' | \
+    sed 's/^\s*-\s*//'
+}
+
+parse_report_deviations() {
+  local output="$1"
+  echo "$output" | \
+    sed -n '/^deviations:/,/^[a-z_]*:/p' | \
+    grep '^\s*-' | \
+    sed 's/^\s*-\s*//'
+}
 ```
 
-**3. Handle failures:**
-- Log failed agent to agent-history.json with status="failed"
-- Continue monitoring other agents
-- Report failures in final summary
-- Do NOT automatically retry (user decision)
+**3. Spawn ready dependents:**
 
-**4. Completion:**
-When all agents complete (running_agents empty and queue empty):
-- Proceed to orchestrator_commit step
+```bash
+check_and_spawn_dependents() {
+  # Get completed plan IDs
+  local completed_plans=$(printf '%s\n' "${COMPLETED_AGENTS[@]}")
+
+  for i in "${!QUEUED_PLANS[@]}"; do
+    local queued="${QUEUED_PLANS[$i]}"
+    local plan_id="${queued%%:*}"
+    local wave="${queued##*:}"
+
+    # Get this plan's dependencies
+    local deps="${PLAN_REQUIRES[$plan_id]}"
+
+    # Check if all dependencies are in completed list
+    local all_deps_met=true
+    IFS=',' read -ra dep_array <<< "$deps"
+    for dep in "${dep_array[@]}"; do
+      [ -z "$dep" ] && continue
+      if ! echo "$completed_plans" | grep -q "^$dep$"; then
+        all_deps_met=false
+        break
+      fi
+    done
+
+    if [ "$all_deps_met" = true ]; then
+      # Check concurrent limit
+      if [ ${#RUNNING_AGENTS[@]} -lt $MAX_CONCURRENT ]; then
+        # Remove from queue
+        unset 'QUEUED_PLANS[$i]'
+
+        # Spawn agent
+        spawn_plan_agent "$plan_id" "$wave"
+
+        echo "→ Spawned dependent: $plan_id (wave $wave)"
+      fi
+    fi
+  done
+
+  # Rebuild array to remove gaps
+  QUEUED_PLANS=("${QUEUED_PLANS[@]}")
+}
+```
+
+**4. Handle failures:**
+
+| Failure Type | Action |
+|--------------|--------|
+| Agent crash | Log status="failed", continue batch |
+| Plan error | Same as crash - logged, batch continues |
+| All dependents | Plans depending on failed agent also fail |
+
+```bash
+# When agent fails, mark its dependents as blocked
+mark_dependents_blocked() {
+  local failed_plan="$1"
+
+  for i in "${!QUEUED_PLANS[@]}"; do
+    local queued="${QUEUED_PLANS[$i]}"
+    local plan_id="${queued%%:*}"
+    local deps="${PLAN_REQUIRES[$plan_id]}"
+
+    if echo "$deps" | grep -q "$failed_plan"; then
+      echo "⚠ Plan $plan_id blocked (depends on failed $failed_plan)"
+      # Mark in history as blocked
+      update_history_entry("queued-$plan_id", status="blocked", blocked_by="$failed_plan")
+    fi
+  done
+}
+```
+
+**5. Completion conditions:**
+
+```
+while true:
+  if RUNNING_AGENTS is empty AND QUEUED_PLANS is empty:
+    break  # All done
+
+  if RUNNING_AGENTS is empty AND QUEUED_PLANS is not empty:
+    # All queued plans are blocked by failed dependencies
+    echo "All remaining plans blocked by failures"
+    break
+
+  poll_and_check()
+```
+
+**6. Progress display:**
+
+```
+During execution, show:
+
+═══════════════════════════════════════════════════
+Parallel Execution Status
+═══════════════════════════════════════════════════
+Running:  [agent-1: 10-01] [agent-2: 10-04]
+Queued:   10-02, 10-03
+Complete: 0
+Failed:   0
+═══════════════════════════════════════════════════
+
+[Update periodically as agents complete]
+```
 </step>
 
 <step name="orchestrator_commit">
@@ -496,17 +719,72 @@ for entry in $(jq -r ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\") 
 done
 ```
 
-**2. Check for merge conflicts:**
-```bash
-# Files modified by multiple agents = potential conflict
-CONFLICTS=$(echo "${ALL_FILES[@]}" | tr ' ' '\n' | sort | uniq -d)
+**2. Check for merge conflicts (failsafe):**
 
-if [ -n "$CONFLICTS" ]; then
-  echo "WARNING: Multiple agents modified same files:"
-  echo "$CONFLICTS"
-  echo "Manual conflict resolution may be needed."
+```bash
+# Build file-to-agent mapping
+declare -A FILE_AGENTS
+for entry in $(jq -c ".entries[] | select(.parallel_group==\"$PARALLEL_GROUP\" and .status==\"completed\")" .planning/agent-history.json); do
+  agent_id=$(echo "$entry" | jq -r '.agent_id')
+  for file in $(echo "$entry" | jq -r '.files_modified[]'); do
+    FILE_AGENTS["$file"]="${FILE_AGENTS[$file]} $agent_id"
+  done
+done
+
+# Detect conflicts (file modified by multiple agents)
+CONFLICTS=()
+for file in "${!FILE_AGENTS[@]}"; do
+  agents=(${FILE_AGENTS[$file]})
+  if [ ${#agents[@]} -gt 1 ]; then
+    CONFLICTS+=("$file: ${agents[*]}")
+  fi
+done
+
+# Handle conflicts
+if [ ${#CONFLICTS[@]} -gt 0 ]; then
+  echo ""
+  echo "═══════════════════════════════════════════════════"
+  echo "⚠ MERGE CONFLICT DETECTED"
+  echo "═══════════════════════════════════════════════════"
+  echo ""
+  echo "Multiple agents modified the same files:"
+  for conflict in "${CONFLICTS[@]}"; do
+    echo "  - $conflict"
+  done
+  echo ""
+  echo "Options:"
+  echo "1. Review and merge manually"
+  echo "2. Re-run sequential with /gsd:execute-plan"
+  echo "3. Accept last-write-wins (risky)"
+  echo ""
+
+  # Present to user
+  AskUserQuestion(
+    header="Merge Conflict",
+    question="How to resolve file conflicts?",
+    options=[
+      "Manual review",
+      "Abort and retry sequential",
+      "Accept last-write-wins"
+    ]
+  )
+
+  # Handle based on response
+  if response == "Abort":
+    git checkout -- .  # Discard changes
+    exit 1
+  elif response == "Manual review":
+    echo "Review files and run: git add <resolved-files> && /gsd:execute-phase --resume"
+    exit 0
 fi
 ```
+
+**Conflict prevention (dependency analysis should catch this):**
+The analyze_plan_dependencies step should detect file conflicts and add dependencies.
+This step is a failsafe for edge cases where:
+- Agents create new files with same name
+- File patterns weren't caught during analysis
+- Context files are modified unexpectedly
 
 **3. Stage and commit per-plan:**
 ```bash
