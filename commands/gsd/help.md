@@ -248,6 +248,20 @@ Review deferred issues with codebase context.
 
 Usage: `/gsd:consider-issues`
 
+### Debugging
+
+**`/gsd:debug [issue description]`**
+Systematic debugging with persistent state across context resets.
+
+- Gathers symptoms through adaptive questioning
+- Creates `.planning/debug/[slug].md` to track investigation
+- Investigates using scientific method (evidence → hypothesis → test)
+- Survives `/clear` — run `/gsd:debug` with no args to resume
+- Archives resolved issues to `.planning/debug/resolved/`
+
+Usage: `/gsd:debug "login button doesn't work"`
+Usage: `/gsd:debug` (resume active session)
+
 ### Todo Management
 
 **`/gsd:add-todo [description]`**
@@ -291,6 +305,8 @@ Show this command reference.
 ├── todos/                # Captured ideas and tasks
 │   ├── pending/          # Todos waiting to be worked on
 │   └── done/             # Completed todos
+├── debug/                # Active debug sessions
+│   └── resolved/         # Archived resolved issues
 ├── codebase/             # Codebase map (brownfield projects)
 │   ├── STACK.md          # Languages, frameworks, dependencies
 │   ├── ARCHITECTURE.md   # Patterns, layers, data flow
@@ -365,6 +381,15 @@ Change anytime by editing `.planning/config.json`
 /gsd:add-todo Fix modal z-index  # Capture with explicit description
 /gsd:check-todos                 # Review and work on todos
 /gsd:check-todos api             # Filter by area
+```
+
+**Debugging an issue:**
+
+```
+/gsd:debug "form submission fails silently"  # Start debug session
+# ... investigation happens, context fills up ...
+/clear
+/gsd:debug                                    # Resume from where you left off
 ```
 
 ## Getting Help

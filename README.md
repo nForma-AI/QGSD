@@ -344,6 +344,7 @@ You're never locked in. The system adapts.
 | `/gsd:consider-issues` | Review deferred issues, close resolved, identify urgent |
 | `/gsd:add-todo [desc]` | Capture idea or task from conversation for later |
 | `/gsd:check-todos [area]` | List pending todos, select one to work on |
+| `/gsd:debug [desc]` | Systematic debugging with persistent state across `/clear` |
 | `/gsd:help` | Show all commands and usage guide |
 
 <sup>¹ Contributed by reddit user OracleGreyBeard</sup>
