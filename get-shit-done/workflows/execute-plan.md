@@ -1152,6 +1152,49 @@ I'll verify after: [verification]
 See ~/.claude/get-shit-done/references/checkpoints.md for complete checkpoint guidance.
 </step>
 
+<step name="checkpoint_return_for_orchestrator">
+**When spawned by an orchestrator (execute-phase or execute-plan command):**
+
+If you were spawned via Task tool and hit a checkpoint, you cannot directly interact with the user. Instead, RETURN to the orchestrator with checkpoint details so it can present to the user and resume you.
+
+**Return format for checkpoints:**
+
+```
+## CHECKPOINT REACHED
+
+**Type:** [human-verify | decision | human-action]
+**Plan:** {phase}-{plan}
+**Progress:** {completed}/{total} tasks complete
+
+[Checkpoint content - same as checkpoint_protocol display above]
+
+**Awaiting:** [Resume signal from the task]
+```
+
+The orchestrator will:
+1. Parse your return
+2. Present the checkpoint to the user
+3. Collect user's response
+4. Resume you with: `Task(resume=your_agent_id, prompt="User response: {their_input}")`
+
+**When resumed after checkpoint:**
+
+You will receive a prompt like: `"User response: approved"` or `"User response: option-a"`
+
+- Parse the user's response
+- If approved/done: continue to next task
+- If issues described: address them, then continue or re-present checkpoint
+- If option selected: proceed with that choice
+
+**How to know if you were spawned:**
+
+If you're reading this workflow because an orchestrator spawned you (vs running directly from /gsd:execute-plan), the orchestrator's prompt will include checkpoint return instructions. Follow those instructions when you hit a checkpoint.
+
+**If running in main context (not spawned):**
+
+Use the standard checkpoint_protocol - display checkpoint and wait for direct user response.
+</step>
+
 <step name="verification_failure_gate">
 If any task verification fails:
 
