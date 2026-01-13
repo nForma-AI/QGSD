@@ -1,6 +1,6 @@
 # Subagent Task Prompt Template
 
-Template for spawning plan execution agents from execute-phase orchestrator.
+Template for spawning plan execution agents. Used by execute-phase (parallel) and execute-plan (single) orchestrators.
 
 ---
 
