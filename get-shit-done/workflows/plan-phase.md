@@ -277,6 +277,10 @@ Standard tasks (remain in standard plans):
 → Yes: Create a dedicated TDD plan for this feature (one feature per TDD plan)
 → No: Standard task in standard plan
 
+**Why TDD gets its own plan:** TDD requires 2-3 execution cycles (RED → GREEN → REFACTOR), each with file reads, test runs, and potential debugging. Embedded in a multi-task plan, TDD work consumes 50-60% of context alone, degrading quality for remaining tasks.
+
+**Test framework:** If project has no test setup and TDD plans are needed, the first TDD plan's RED phase handles framework setup as part of writing the first test.
+
 See `~/.claude/get-shit-done/references/tdd.md` for TDD plan structure.
 
 **Checkpoints:** Visual/functional verification → checkpoint:human-verify. Implementation choices → checkpoint:decision. Manual action (email, 2FA) → checkpoint:human-action (rare).
