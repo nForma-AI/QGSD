@@ -42,26 +42,46 @@ Ask about experience. Investigate the cause yourself.
 ls .planning/debug/*.md 2>/dev/null | grep -v resolved
 ```
 
-**If active sessions exist:**
+**If active sessions exist AND no $ARGUMENTS provided:**
 
-Read each file's frontmatter to check status.
+Read each file's frontmatter (status, trigger) and Current Focus (hypothesis, next_action).
 
-If status is NOT "resolved":
+Display inline:
 
-Use AskUserQuestion:
-- header: "Resume?"
-- question: "Active debug session found. Continue or start new?"
-- options:
-  - "Resume [slug]" - Continue where we left off
-  - "Start new" - This is a different issue
-  - "Show status" - Show me current state first
+```
+## Active Debug Sessions
 
-If "Resume": Load file, go to `resume_from_file`
-If "Start new": Continue to `create_debug_file`
-If "Show status": Display Current Focus and Symptoms, ask again
+| # | Slug | Status | Hypothesis | Next Action |
+|---|------|--------|------------|-------------|
+| 1 | auth-logout | investigating | Token refresh not called | Check console output |
+| 2 | api-timeout | gathering | - | Gather symptoms |
+| 3 | cart-bug | fixing | Null reference in context | Apply fix |
 
-**If no active sessions:**
-Continue to `create_debug_file`
+Reply with a number to resume, or describe a new issue to start fresh.
+```
+
+Wait for user response.
+
+- If user replies with number (1, 2, 3) → Load that file, go to `resume_from_file`
+- If user replies with text → Treat as new issue trigger, go to `create_debug_file`
+
+**If active sessions exist AND $ARGUMENTS provided:**
+
+User wants to start a new debug session. Continue to `create_debug_file`.
+
+**If no active sessions AND no $ARGUMENTS:**
+
+```
+No active debug sessions.
+
+Describe the issue to start debugging.
+```
+
+Wait for user to describe the issue, then use their response as the trigger.
+
+**If no active sessions AND $ARGUMENTS provided:**
+
+Continue to `create_debug_file` with $ARGUMENTS as trigger.
 </step>
 
 <step name="create_debug_file">
