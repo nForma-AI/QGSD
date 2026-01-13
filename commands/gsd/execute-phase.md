@@ -4,6 +4,8 @@ description: Execute all plans in a phase with wave-based parallelization
 argument-hint: "<phase-number>"
 allowed-tools:
   - Read
+  - Write
+  - Edit
   - Glob
   - Grep
   - Bash
@@ -22,7 +24,11 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/execute-phase.md
+@~/.claude/get-shit-done/workflows/execute-plan.md
 @~/.claude/get-shit-done/templates/subagent-task-prompt.md
+@~/.claude/get-shit-done/templates/summary.md
+@~/.claude/get-shit-done/references/checkpoints.md
+@~/.claude/get-shit-done/references/tdd.md
 </execution_context>
 
 <context>
@@ -103,6 +109,42 @@ grep -c 'type="checkpoint' {plan_path}
 - Fully autonomous
 - Safe for parallel wave execution
 </checkpoint_detection>
+
+<deviation_rules>
+During execution, handle discoveries automatically:
+
+1. **Auto-fix bugs** - Fix immediately, document in Summary
+2. **Auto-add critical** - Security/correctness gaps, add and document
+3. **Auto-fix blockers** - Can't proceed without fix, do it and document
+4. **Ask about architectural** - Major structural changes, stop and ask user
+5. **Log enhancements** - Nice-to-haves, log to ISSUES.md, continue
+
+Only rule 4 requires user intervention.
+</deviation_rules>
+
+<commit_rules>
+**Per-Task Commits:**
+
+After each task completes:
+1. Stage only files modified by that task
+2. Commit with format: `{type}({phase}-{plan}): {task-name}`
+3. Types: feat, fix, test, refactor, perf, chore
+4. Record commit hash for SUMMARY.md
+
+**Plan Metadata Commit:**
+
+After all tasks complete:
+1. Stage planning artifacts only: PLAN.md, SUMMARY.md, STATE.md, ROADMAP.md
+2. Commit with format: `docs({phase}-{plan}): complete [plan-name] plan`
+3. NO code files (already committed per-task)
+
+**NEVER use:**
+- `git add .`
+- `git add -A`
+- `git add src/` or any broad directory
+
+**Always stage files individually.**
+</commit_rules>
 
 <success_criteria>
 - [ ] All incomplete plans in phase executed
