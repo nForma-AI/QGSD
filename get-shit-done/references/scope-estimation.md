@@ -78,102 +78,77 @@ See `~/.claude/get-shit-done/references/tdd.md` for TDD plan structure.
 </split_signals>
 
 <splitting_strategies>
-**By subsystem:** Auth → 01: DB models, 02: API routes, 03: Protected routes, 04: UI components
+**Vertical slices (default):** Group by feature, not by layer.
 
-**By dependency:** Payments → 01: Stripe setup, 02: Subscription logic, 03: Frontend integration
+```
+PREFER: Plan 01 = User (model + API + UI)
+        Plan 02 = Product (model + API + UI)
+        Plan 03 = Order (model + API + UI)
 
-**By complexity:** Dashboard → 01: Layout shell, 02: Data fetching, 03: Visualization
+AVOID:  Plan 01 = All models
+        Plan 02 = All APIs (depends on 01)
+        Plan 03 = All UIs (depends on 02)
+```
 
-**By verification:** Deploy → 01: Vercel setup (checkpoint), 02: Env config (auto), 03: CI/CD (checkpoint)
+Vertical slices maximize parallelism: [01, 02, 03] run simultaneously.
+Horizontal layers force sequential execution: 01 → 02 → 03.
+
+**By dependency:** Only when genuine dependencies exist.
+```
+Plan 01: Auth foundation (middleware, JWT utils)
+Plan 02: Protected features (uses auth from 01)
+```
+
+**By complexity:** When one slice is much heavier.
+```
+Plan 01: Dashboard layout shell
+Plan 02: Data fetching and state
+Plan 03: Visualization components
+```
 </splitting_strategies>
 
-<parallel_aware_splitting>
-**When parallelization is enabled, optimize for plan independence.**
+<dependency_awareness>
+**Plans declare dependencies explicitly via frontmatter.**
 
-<philosophy_shift>
-| Aspect | Sequential Planning | Parallel-Aware Planning |
-|--------|---------------------|------------------------|
-| Grouping | By workflow stage | By vertical slice |
-| Dependencies | Implicit (later plans reference earlier) | Explicit (only when genuinely needed) |
-| File ownership | Overlap acceptable | Exclusive where possible |
-| SUMMARY refs | Chain pattern (02 refs 01, 03 refs 02) | Minimal (only for real data deps) |
-| Wave result | Most plans in Wave 2+ | More plans in Wave 1 |
-</philosophy_shift>
+```yaml
+# Independent plan (Wave 1 candidate)
+depends_on: []
+files_modified: [src/features/user/model.ts, src/features/user/api.ts]
+autonomous: true
 
-<vertical_slice_example>
-**Sequential (creates chain):**
+# Dependent plan (later wave)
+depends_on: ["03-01"]
+files_modified: [src/integration/stripe.ts]
+autonomous: true
 ```
-Plan 01: Create User model, Product model, Order model
-Plan 02: Create /api/users, /api/products, /api/orders
-Plan 03: Create UserList UI, ProductList UI, OrderList UI
-```
-Result: 02 depends on 01 (needs models), 03 depends on 02 (needs APIs)
-Waves: [01] → [02] → [03] (fully sequential)
 
-**Parallel-aware (creates independence):**
-```
-Plan 01: User feature (model + API + UI)
-Plan 02: Product feature (model + API + UI)
-Plan 03: Order feature (model + API + UI)
-```
-Result: Each plan self-contained, no file overlap
-Waves: [01, 02, 03] (all parallel)
-</vertical_slice_example>
+**Wave assignment rules:**
+- `depends_on: []` + no file conflicts → Wave 1 (parallel)
+- `depends_on: ["XX"]` → runs after plan XX completes
+- Shared `files_modified` with sibling → sequential (by plan number)
 
-<when_to_restructure>
-**Restructure for vertical slices when:**
-- Phase has 3+ features that are independent
-- No shared infrastructure requirements
-- Each feature touches different files
-- Features can be tested independently
-
-**Keep sequential when:**
-- Genuine data dependencies (Order needs User type)
-- Shared foundation required (auth setup before protected features)
-- Single feature being built incrementally
-- Phase is already a vertical slice
-</when_to_restructure>
+**SUMMARY references:**
+- Only reference prior SUMMARY if genuinely needed (imported types, decisions affecting this plan)
+- Independent plans need NO prior SUMMARY references
+- Reflexive chaining (02 refs 01, 03 refs 02) is an anti-pattern
+</dependency_awareness>
 
 <file_ownership>
-**Explicit file ownership prevents conflicts:**
+**Exclusive file ownership prevents conflicts:**
 
 ```yaml
 # Plan 01 frontmatter
-files_exclusive: [src/models/user.ts, src/api/users.ts, src/components/UserList.tsx]
+files_modified: [src/models/user.ts, src/api/users.ts, src/components/UserList.tsx]
 
 # Plan 02 frontmatter
-files_exclusive: [src/models/product.ts, src/api/products.ts, src/components/ProductList.tsx]
+files_modified: [src/models/product.ts, src/api/products.ts, src/components/ProductList.tsx]
 ```
+
+No overlap → can run parallel.
 
 **If file appears in multiple plans:** Later plan depends on earlier (by plan number).
 **If file cannot be split:** Plans must be sequential for that file.
 </file_ownership>
-
-<summary_references>
-**Minimize SUMMARY references when parallel-aware:**
-
-**Before (sequential habit):**
-```markdown
-<context>
-@.planning/phases/05-features/05-01-SUMMARY.md  # Always reference prior
-@.planning/phases/05-features/05-02-SUMMARY.md  # Chain continues
-</context>
-```
-
-**After (parallel-aware):**
-```markdown
-<context>
-# Only reference if this plan ACTUALLY needs decisions from prior plan
-# Most parallel plans don't need any SUMMARY references
-</context>
-```
-
-**Include SUMMARY only when:**
-- Prior plan made a decision that affects this plan's approach
-- Prior plan created types/interfaces this plan imports
-- Prior plan's output is input to this plan
-</summary_references>
-</parallel_aware_splitting>
 
 <anti_patterns>
 **Bad - Comprehensive plan:**
@@ -189,8 +164,26 @@ Plan 1: "Auth Database Models" (2 tasks)
 Plan 2: "Auth API Core" (3 tasks)
 Plan 3: "Auth API Protection" (2 tasks)
 Plan 4: "Auth UI Components" (2 tasks)
-Each: 30-40% context, peak quality, atomic commits (2-3 task commits + 1 metadata commit)
+Each: 30-40% context, peak quality, atomic commits
 ```
+
+**Bad - Horizontal layers (sequential):**
+```
+Plan 01: Create User model, Product model, Order model
+Plan 02: Create /api/users, /api/products, /api/orders
+Plan 03: Create UserList UI, ProductList UI, OrderList UI
+```
+Result: 02 depends on 01, 03 depends on 02
+Waves: [01] → [02] → [03] (fully sequential)
+
+**Good - Vertical slices (parallel):**
+```
+Plan 01: User feature (model + API + UI)
+Plan 02: Product feature (model + API + UI)
+Plan 03: Order feature (model + API + UI)
+```
+Result: Each plan self-contained, no file overlap
+Waves: [01, 02, 03] (all parallel)
 </anti_patterns>
 
 <estimating_context>
@@ -246,15 +239,18 @@ Each plan: fresh context, peak quality. More plans = more thoroughness, same qua
 <summary>
 **2-3 tasks, 50% context target:**
 - All tasks: Peak quality
-- Git: Atomic per-task commits (each task = 1 commit, plan = 1 metadata commit)
-- Autonomous plans: Subagent execution (fresh context)
+- Git: Atomic per-task commits
+- Parallel by default: Fresh context per subagent
 
 **The principle:** Aggressive atomicity. More plans, smaller scope, consistent quality.
 
-**The rule:** If in doubt, split. Quality over consolidation. Always.
+**The rules:**
+- If in doubt, split. Quality over consolidation.
+- Depth increases plan COUNT, never plan SIZE.
+- Vertical slices over horizontal layers.
+- Explicit dependencies via `depends_on` frontmatter.
+- Autonomous plans get parallel execution.
 
-**Depth rule:** Depth increases plan COUNT, never plan SIZE.
-
-**Commit rule:** Each plan produces 3-4 commits total (2-3 task commits + 1 docs commit). More granular history = better observability for Claude.
+**Commit rule:** Each plan produces 3-4 commits total (2-3 task commits + 1 docs commit).
 </summary>
 </scope_estimation>

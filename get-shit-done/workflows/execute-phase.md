@@ -3,7 +3,7 @@ Execute all plans in a phase using wave-based parallel execution. Orchestrator s
 </purpose>
 
 <core_principle>
-The orchestrator's job is coordination, not execution. Each subagent loads the full execute-plan context itself. Orchestrator discovers plans, analyzes dependencies, groups into waves, spawns agents, collects results.
+The orchestrator's job is coordination, not execution. Each subagent loads the full execute-plan context itself. Orchestrator discovers plans, analyzes dependencies, groups into waves, spawns agents, handles checkpoints, collects results.
 </core_principle>
 
 <process>
@@ -29,7 +29,7 @@ Report: "Found {N} plans in {phase_dir}"
 </step>
 
 <step name="discover_plans">
-List all plans and their completion status:
+List all plans and extract metadata:
 
 ```bash
 # Get all plans
@@ -39,33 +39,38 @@ ls -1 "$PHASE_DIR"/*-PLAN.md 2>/dev/null | sort
 ls -1 "$PHASE_DIR"/*-SUMMARY.md 2>/dev/null | sort
 ```
 
+For each plan, read frontmatter to extract:
+- `depends_on: []` - Plan IDs this plan requires
+- `files_modified: []` - Files this plan touches
+- `autonomous: true/false` - Whether plan has checkpoints
+
 Build plan inventory:
 - Plan path
-- Plan number (extracted from filename)
+- Plan ID (e.g., "03-01")
+- Dependencies
+- Files modified
+- Autonomous flag
 - Completion status (SUMMARY exists = complete)
 
 Skip completed plans. If all complete, report "Phase already executed" and exit.
 </step>
 
 <step name="analyze_dependencies">
-For each incomplete plan, check if it depends on outputs from other plans.
+Build dependency graph from frontmatter:
 
-**Read each plan's `<context>` section:**
-- Look for @-references to files that other plans create
-- Look for explicit `requires:` in frontmatter
+**Direct dependencies:**
+- `depends_on: ["03-01"]` → this plan depends on 03-01
 
-**Dependency patterns:**
-- Plan references `@.planning/phases/.../XX-YY-SUMMARY.md` → depends on plan XX-YY
-- Plan references files created by earlier plan → depends on that plan
-- No cross-references → independent, can run in parallel
+**File conflict dependencies:**
+- If two plans modify same file, later plan (by number) depends on earlier
 
-**Build dependency graph:**
+**Build graph:**
 ```
-plan-01: []              # no dependencies
-plan-02: []              # no dependencies
-plan-03: [plan-01]       # depends on plan-01 outputs
-plan-04: [plan-02]       # depends on plan-02 outputs
-plan-05: [plan-03, plan-04]  # depends on both
+plan-01: {deps: [], files: [src/user.ts], autonomous: true}
+plan-02: {deps: [], files: [src/product.ts], autonomous: true}
+plan-03: {deps: ["plan-01"], files: [src/dashboard.tsx], autonomous: false}
+plan-04: {deps: ["plan-02"], files: [src/cart.ts], autonomous: true}
+plan-05: {deps: ["plan-03", "plan-04"], files: [src/checkout.ts], autonomous: true}
 ```
 </step>
 
@@ -73,34 +78,39 @@ plan-05: [plan-03, plan-04]  # depends on both
 Group plans into execution waves based on dependencies:
 
 **Wave assignment algorithm:**
-1. Wave 1: All plans with no dependencies
-2. Wave 2: Plans whose dependencies are all in Wave 1
+1. Wave 1: All plans with no dependencies AND autonomous=true
+2. Non-autonomous plans with no dependencies: execute after Wave 1, before Wave 2
 3. Wave N: Plans whose dependencies are all in earlier waves
+
+**Separate checkpoint plans:**
+Plans with `autonomous: false` execute in main context (not parallel subagent) to handle user interaction.
 
 **Example:**
 ```
-Wave 1: [plan-01, plan-02]     # parallel - no dependencies
-Wave 2: [plan-03, plan-04]     # parallel - depend only on Wave 1
-Wave 3: [plan-05]              # sequential - depends on Wave 2
+Wave 1 (parallel): [plan-01, plan-02]
+Checkpoint: [plan-03] - has human-verify, runs in main context
+Wave 2 (parallel): [plan-04]
+Wave 3: [plan-05]
 ```
 
 Report wave structure to user:
 ```
 Execution Plan:
-  Wave 1 (parallel): plan-01, plan-02
-  Wave 2 (parallel): plan-03, plan-04
-  Wave 3: plan-05
+  Wave 1 (parallel): 03-01, 03-02
+  Checkpoint: 03-03 (requires user verification)
+  Wave 2 (parallel): 03-04
+  Wave 3: 03-05
 
-Total: 5 plans in 3 waves
+Total: 5 plans in 3 waves + 1 checkpoint
 ```
 </step>
 
 <step name="execute_waves">
-Execute each wave in sequence. Plans within a wave run in parallel.
+Execute each wave in sequence. Autonomous plans within a wave run in parallel.
 
 **For each wave:**
 
-1. **Spawn all agents in wave simultaneously:**
+1. **Spawn all autonomous agents in wave simultaneously:**
 
    Use Task tool with multiple parallel calls. Each agent gets prompt from subagent-task-prompt template:
 
@@ -151,8 +161,78 @@ Execute each wave in sequence. Plans within a wave run in parallel.
    - If continue: proceed to next wave (dependent plans may also fail)
    - If stop: exit with partial completion report
 
-5. **Proceed to next wave**
+5. **Execute checkpoint plans between waves:**
 
+   See `<checkpoint_handling>` for details.
+
+6. **Proceed to next wave**
+
+</step>
+
+<step name="checkpoint_handling">
+Plans with `autonomous: false` require user interaction.
+
+**Detection:** Check `autonomous` field in frontmatter.
+
+**Execution flow for checkpoint plans:**
+
+1. **Spawn agent for checkpoint plan:**
+   ```
+   Task(prompt="{subagent-task-prompt}", subagent_type="general-purpose")
+   ```
+
+2. **Agent runs until checkpoint:**
+   - Executes auto tasks normally
+   - Reaches checkpoint task (e.g., `type="checkpoint:human-verify"`)
+   - Agent returns with checkpoint details in its response
+
+3. **Agent return includes:**
+   - Checkpoint type (human-verify, decision, human-action)
+   - Checkpoint details (what-built, options, instructions)
+   - Agent ID for resumption
+   - Progress so far (tasks completed)
+
+4. **Orchestrator presents checkpoint to user:**
+   ```
+   ## Checkpoint: Visual Verification Required
+
+   **Plan:** 03-03 Dashboard Layout
+   **Progress:** 2/3 tasks complete
+
+   **What was built:**
+   Responsive dashboard with sidebar navigation
+
+   **Please verify:**
+   1. Run: npm run dev
+   2. Visit: http://localhost:3000/dashboard
+   3. Desktop (>1024px): Verify sidebar left, content right
+   4. Mobile (375px): Verify single column layout
+
+   Type "approved" to continue, or describe issues to fix.
+   ```
+
+5. **User responds:**
+   - "approved" → resume agent
+   - Description of issues → resume agent with feedback
+
+6. **Resume agent:**
+   ```
+   Task(resume="{agent_id}", prompt="User response: {user_input}")
+   ```
+
+7. **Agent continues from checkpoint:**
+   - If approved: proceed to next task
+   - If issues: fix and re-present checkpoint, or ask for clarification
+
+8. **Repeat until plan completes or user stops**
+
+**Checkpoint in parallel context:**
+If a plan in a parallel wave has a checkpoint:
+- Spawn as normal
+- Agent pauses at checkpoint and returns
+- Other parallel agents may complete while waiting
+- Handle checkpoint, resume agent
+- Wait for all agents to finish before next wave
 </step>
 
 <step name="aggregate_results">
@@ -169,13 +249,14 @@ After all waves complete, aggregate results:
 | Wave | Plans | Status |
 |------|-------|--------|
 | 1 | plan-01, plan-02 | ✓ Complete |
-| 2 | plan-03, plan-04 | ✓ Complete |
+| CP | plan-03 | ✓ Verified |
+| 2 | plan-04 | ✓ Complete |
 | 3 | plan-05 | ✓ Complete |
 
 ### Plan Details
 
-1. **plan-01**: [one-liner from SUMMARY.md]
-2. **plan-02**: [one-liner from SUMMARY.md]
+1. **03-01**: [one-liner from SUMMARY.md]
+2. **03-02**: [one-liner from SUMMARY.md]
 ...
 
 ### Issues Encountered
@@ -204,18 +285,18 @@ Present next steps based on milestone status:
 
 **If more phases remain:**
 ```
-## ▶ Next Up
+## Next Up
 
 **Phase {X+1}: {Name}** — {Goal}
 
 `/gsd:plan-phase {X+1}`
 
-<sub>`/clear` first → fresh context window</sub>
+<sub>`/clear` first for fresh context</sub>
 ```
 
 **If milestone complete:**
 ```
-🎉 MILESTONE COMPLETE!
+MILESTONE COMPLETE!
 
 All {N} phases executed.
 
@@ -229,7 +310,7 @@ All {N} phases executed.
 **Why this works:**
 
 Orchestrator context usage: ~10-15%
-- Read plan files (small)
+- Read plan frontmatter (small)
 - Analyze dependencies (logic, no heavy reads)
 - Fill template strings
 - Spawn Task calls
@@ -262,17 +343,26 @@ Each subagent: Fresh 200k context
 - Something systemic (git issues, permissions, etc.)
 - Stop execution
 - Report for manual investigation
+
+**Checkpoint fails to resolve:**
+- User can't approve or provides repeated issues
+- Ask: "Skip this plan?" or "Abort phase execution?"
+- Record partial progress in STATE.md
 </failure_handling>
 
-<checkpoint_handling>
-Plans with checkpoints require user interaction. These cannot run fully autonomous.
+<resumption>
+**Resuming interrupted execution:**
 
-**Detection:** Scan plan for `type="checkpoint` before spawning.
+If phase execution was interrupted (context limit, user exit, error):
 
-**If checkpoints found:**
-- Don't include in parallel wave
-- Execute after wave completes, in main context
-- Or spawn as single agent and wait (user interaction flows through)
+1. Run `/gsd:execute-phase {phase}` again
+2. discover_plans finds completed SUMMARYs
+3. Skips completed plans
+4. Resumes from first incomplete plan
+5. Continues wave-based execution
 
-**Checkpoint-heavy plans:** Execute sequentially in main context rather than subagent.
-</checkpoint_handling>
+**STATE.md tracks:**
+- Last completed plan
+- Current wave
+- Any pending checkpoints
+</resumption>
