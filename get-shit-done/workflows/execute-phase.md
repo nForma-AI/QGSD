@@ -6,7 +6,35 @@ Execute all plans in a phase using wave-based parallel execution. Orchestrator s
 The orchestrator's job is coordination, not execution. Each subagent loads the full execute-plan context itself. Orchestrator discovers plans, analyzes dependencies, groups into waves, spawns agents, handles checkpoints, collects results.
 </core_principle>
 
+<required_reading>
+Read STATE.md before any operation to load project context.
+</required_reading>
+
 <process>
+
+<step name="load_project_state" priority="first">
+Before any operation, read project state:
+
+```bash
+cat .planning/STATE.md 2>/dev/null
+```
+
+**If file exists:** Parse and internalize:
+- Current position (phase, plan, status)
+- Accumulated decisions (constraints on this execution)
+- Deferred issues (context for deviations)
+- Blockers/concerns (things to watch for)
+
+**If file missing but .planning/ exists:**
+```
+STATE.md missing but planning artifacts exist.
+Options:
+1. Reconstruct from existing artifacts
+2. Continue without project state (may lose accumulated context)
+```
+
+**If .planning/ doesn't exist:** Error - project not initialized.
+</step>
 
 <step name="validate_phase">
 Confirm phase exists and has plans:
