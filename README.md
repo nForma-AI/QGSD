@@ -228,7 +228,7 @@ Same as greenfield, but the system knows your codebase. Questions focus on what 
 
 ### 3. Continue as normal
 
-From here, it's the same: `/gsd:create-roadmap` → `/gsd:plan-phase` → `/gsd:execute-plan`
+From here, it's the same: `/gsd:create-roadmap` → `/gsd:plan-phase` → `/gsd:execute-phase`
 
 The codebase docs load automatically during planning. Claude knows your patterns, conventions, and where to put things.
 
@@ -340,7 +340,6 @@ You're never locked in. The system adapts.
 | `/gsd:list-phase-assumptions [N]` | See what Claude thinks before you correct it |
 | `/gsd:pause-work` | Create handoff file when stopping mid-phase |
 | `/gsd:resume-work` | Restore from last session |
-| `/gsd:resume-task [id]` | Resume interrupted subagent execution |
 | `/gsd:consider-issues` | Review deferred issues, close resolved, identify urgent |
 | `/gsd:add-todo [desc]` | Capture idea or task from conversation for later |
 | `/gsd:check-todos [area]` | List pending todos, select one to work on |
