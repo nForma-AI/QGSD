@@ -172,17 +172,17 @@ Produces:
 
 ```
 /gsd:plan-phase 1      # System creates atomic task plans
-/gsd:execute-plan      # Subagent implements autonomously
+/gsd:execute-phase 1   # Parallel agents execute all plans
 ```
 
-Each phase breaks into 2-3 atomic tasks. Each task runs in a fresh subagent context — 200k tokens purely for implementation, zero degradation.
+Each phase breaks into 2-3 task plans. Each plan runs in a fresh subagent context — 200k tokens purely for implementation, zero degradation. Plans without dependencies run in parallel.
 
-**For multi-plan phases:**
+**For single-plan or interactive execution:**
 ```
-/gsd:execute-phase 1   # Run all plans in parallel, "walk away" execution
+/gsd:execute-plan      # Run one plan at a time with checkpoints
 ```
 
-Use `/gsd:execute-plan` for interactive single-plan execution with checkpoints. Use `/gsd:execute-phase` when you have multiple plans and want parallel "walk away" automation.
+Use `/gsd:execute-phase` for parallel "walk away" automation (recommended). Use `/gsd:execute-plan` when you need interactive single-plan execution with manual checkpoints.
 
 ### 4. Ship and iterate
 
