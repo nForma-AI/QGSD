@@ -228,8 +228,8 @@ Use AskUserQuestion:
 - header: "Mode"
 - question: "How do you want to work?"
 - options:
+  - "YOLO" — Auto-approve, just execute (Recommended)
   - "Interactive" — Confirm at each step
-  - "YOLO" — Auto-approve, just execute
 
 </step>
 
