@@ -171,6 +171,11 @@ function install(isGlobal) {
     console.log(`  ${green}✓${reset} Installed CHANGELOG.md`);
   }
 
+  // Write VERSION file for whats-new command
+  const versionDest = path.join(claudeDir, 'get-shit-done', 'VERSION');
+  fs.writeFileSync(versionDest, pkg.version);
+  console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
+
   console.log(`
   ${green}Done!${reset} Launch Claude Code and run ${cyan}/gsd:help${reset}.
 `);
