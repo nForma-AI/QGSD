@@ -1,6 +1,10 @@
 # Debug Subagent Prompt Template
 
-Template for spawning debug agents from diagnose-issues workflow. Each agent investigates one UAT issue with symptoms pre-filled.
+Template for spawning debug investigation agents. Used by:
+- `/gsd:debug` — Interactive debugging (find and offer to fix)
+- `diagnose-issues` — UAT parallel diagnosis (find root cause only)
+
+The `goal` flag determines behavior after root cause is found.
 
 ---
 
@@ -8,13 +12,12 @@ Template for spawning debug agents from diagnose-issues workflow. Each agent inv
 
 ```markdown
 <objective>
-Investigate UAT issue and find root cause. Do NOT fix - only diagnose.
+Investigate issue and find root cause.
 
 **Issue:** {issue_id}
 **Summary:** {issue_summary}
-**Severity:** {severity}
 
-Symptoms are pre-filled from UAT testing. Skip symptom gathering, start investigating immediately.
+Symptoms are pre-filled. Skip symptom gathering, start investigating immediately.
 </objective>
 
 <execution_context>
@@ -25,16 +28,15 @@ Symptoms are pre-filled from UAT testing. Skip symptom gathering, start investig
 @~/.claude/get-shit-done/references/debugging/investigation-techniques.md
 </execution_context>
 
-<context>
-**Symptoms (from UAT):**
-- expected: {expected}
-- actual: {reported}
-- severity: {severity}
-- reproduction: Test {test_num} in UAT
+<symptoms>
+**Pre-filled from orchestrator:**
 
-@.planning/STATE.md
-@.planning/phases/{phase_dir}/{phase}-UAT.md
-</context>
+- expected: {expected}
+- actual: {actual}
+- errors: {errors}
+- reproduction: {reproduction}
+- timeline: {timeline}
+</symptoms>
 
 <mode>
 **symptoms_prefilled: true**
@@ -42,88 +44,228 @@ Symptoms are pre-filled from UAT testing. Skip symptom gathering, start investig
 Skip the symptom_gathering step entirely. Symptoms section is already filled.
 Start directly at investigation_loop.
 
-**goal: find_root_cause_only**
+**goal: {goal}**
 
-Do NOT apply fixes. Your job is to:
-1. Investigate the issue
-2. Form and test hypotheses
-3. Find the root cause with evidence
-4. Return the diagnosis
-
-The fix will be planned and applied separately by /gsd:plan-fix.
+- `find_root_cause_only` — Diagnose but do NOT fix. Return root cause to orchestrator. Used by UAT diagnosis flow where plan-fix handles the fix.
+- `find_and_fix` — Find root cause, then fix and verify. Used by interactive /gsd:debug where user wants immediate resolution.
 </mode>
 
 <debug_file>
-**Path constant:** DEBUG_DIR=.planning/debug
+**Path:** .planning/debug/{slug}.md
 
-Create: `${DEBUG_DIR}/{slug}.md`
+Create debug file immediately with symptoms pre-filled:
 
-Generate slug from issue summary (same as regular /gsd:debug).
-Example: `.planning/debug/comment-not-refreshing.md`
-
-Pre-fill Symptoms section:
 ```markdown
+---
+status: investigating
+trigger: "{issue_summary}"
+created: [ISO timestamp]
+updated: [ISO timestamp]
+---
+
+## Current Focus
+
+hypothesis: gathering initial evidence
+test: examining error context and relevant code
+expecting: clues about failure point
+next_action: search for error text in codebase
+
 ## Symptoms
 
 expected: {expected}
-actual: {reported}
-errors: [investigate to find]
-reproduction: Test {test_num} - {test_name}
-started: discovered during UAT
+actual: {actual}
+errors: {errors}
+reproduction: {reproduction}
+started: {timeline}
+
+## Eliminated
+
+[none yet]
+
+## Evidence
+
+[none yet]
+
+## Resolution
+
+root_cause:
+fix:
+verification:
+files_changed: []
 ```
 
-The debug file is identical to a regular debug session. The only difference is symptoms are pre-filled. UAT.md tracks the link via `debug_session` field.
-
-Then proceed with investigation.
+**Update continuously.** The debug file is your memory. Before every action, update Current Focus. After every finding, append to Evidence.
 </debug_file>
 
-<return_format>
-When root cause is confirmed, return:
+<checkpoint_behavior>
+**When you need user input during investigation:**
 
+If you cannot proceed without user action or verification:
+
+1. Update debug file with current state
+2. Return structured checkpoint instead of completing
+
+**Checkpoint format:**
+
+```markdown
+## CHECKPOINT REACHED
+
+**Type:** [human-verify | human-action | decision]
+**Debug Session:** .planning/debug/{slug}.md
+**Progress:** {evidence_count} evidence entries, {eliminated_count} hypotheses eliminated
+
+### Investigation State
+
+**Current Hypothesis:** {from Current Focus}
+**Evidence So Far:**
+- {key finding 1}
+- {key finding 2}
+
+### Checkpoint Details
+
+[Type-specific content]
+
+### Awaiting
+
+[What you need from user]
 ```
-## DEBUG COMPLETE: {issue_id}
+
+**Checkpoint types:**
+
+**human-verify** — Need user to confirm something you can't observe:
+- What to check, how to check it, what to report back
+
+**human-action** — Need user to do something (auth, physical action):
+- What action, why you can't do it, steps to complete
+
+**decision** — Need user to choose investigation direction:
+- What's being decided, options with implications
+
+**After checkpoint:** Orchestrator gets user response, spawns fresh continuation agent. You will NOT be resumed.
+</checkpoint_behavior>
+
+<return_formats>
+**Return ONE of these when done:**
+
+---
+
+**Root cause found (goal: find_root_cause_only):**
+
+```markdown
+## ROOT CAUSE FOUND
+
+**Debug Session:** .planning/debug/{slug}.md
 
 **Root Cause:** [specific cause with evidence]
 
-**Evidence:**
+**Evidence Summary:**
 - [key finding 1]
 - [key finding 2]
 - [key finding 3]
 
 **Files Involved:**
-- [file1.ts]: [what's wrong]
-- [file2.ts]: [related issue]
-
-**Debug Session:** ${DEBUG_DIR}/{slug}.md
+- [file1]: [what's wrong]
+- [file2]: [related issue]
 
 **Suggested Fix Direction:** [brief hint for plan-fix, not implementation]
 ```
 
-If unable to determine root cause after thorough investigation:
+---
 
+**Root cause found (goal: find_and_fix):**
+
+After finding root cause, proceed to fix_and_verify step per workflow.
+
+When complete:
+
+```markdown
+## DEBUG COMPLETE
+
+**Debug Session:** .planning/debug/resolved/{slug}.md
+
+**Root Cause:** [what was wrong]
+**Fix Applied:** [what was changed]
+**Verification:** [how verified]
+
+**Files Changed:**
+- [file1]: [change]
+- [file2]: [change]
+
+**Commit:** [hash]
 ```
-## DEBUG INCONCLUSIVE: {issue_id}
 
-**Investigation Summary:**
-- [what was checked]
-- [what was eliminated]
+---
 
-**Hypotheses Remaining:**
-- [possible cause 1]
-- [possible cause 2]
+**Investigation inconclusive:**
 
-**Recommendation:** Manual review needed
+```markdown
+## INVESTIGATION INCONCLUSIVE
 
-**Debug Session:** ${DEBUG_DIR}/{slug}.md
+**Debug Session:** .planning/debug/{slug}.md
+
+**What Was Checked:**
+- [area 1]: [finding]
+- [area 2]: [finding]
+
+**Hypotheses Eliminated:**
+- [hypothesis 1]: [why eliminated]
+- [hypothesis 2]: [why eliminated]
+
+**Remaining Possibilities:**
+- [possibility 1]
+- [possibility 2]
+
+**Recommendation:** [next steps or manual review needed]
 ```
-</return_format>
+</return_formats>
+
+<investigation_protocol>
+**Phase 1: Gather initial evidence**
+
+1. If errors in symptoms → search codebase for error text
+2. Identify relevant code area from symptoms
+3. Read relevant files COMPLETELY (don't skim)
+4. Run app/tests to observe behavior firsthand
+
+After EACH finding → append to Evidence with timestamp, what was checked, what was found, implication.
+
+**Phase 2: Form hypothesis**
+
+Based on evidence, form SPECIFIC, FALSIFIABLE hypothesis.
+
+Update Current Focus:
+- hypothesis: [specific theory]
+- test: [how you'll test it]
+- expecting: [what proves/disproves it]
+- next_action: [immediate next step]
+
+**Phase 3: Test hypothesis**
+
+Execute ONE test at a time. Append result to Evidence.
+
+**Phase 4: Evaluate**
+
+If CONFIRMED:
+- Update Resolution.root_cause with evidence
+- If goal is find_root_cause_only → return ROOT CAUSE FOUND
+- If goal is find_and_fix → proceed to fix_and_verify
+
+If ELIMINATED:
+- Append to Eliminated section with evidence
+- Form new hypothesis based on evidence
+- Return to Phase 2
+
+**If stuck:** Consider checkpoint to ask user for more context or verification.
+</investigation_protocol>
 
 <success_criteria>
 - [ ] Debug file created with symptoms pre-filled
-- [ ] Investigation completed (evidence gathered, hypotheses tested)
-- [ ] Root cause identified with supporting evidence
-- [ ] Debug session file updated throughout
-- [ ] Clear return format for orchestrator
+- [ ] Current Focus updated before every action
+- [ ] Evidence appended after every finding
+- [ ] Hypotheses tested one at a time
+- [ ] Root cause confirmed with evidence
+- [ ] Appropriate return format based on goal
+- [ ] Debug file reflects final state
 </success_criteria>
 ```
 
@@ -133,28 +275,80 @@ If unable to determine root cause after thorough investigation:
 
 | Placeholder | Source | Example |
 |-------------|--------|---------|
-| `{issue_id}` | UAT issue ID | `UAT-001` |
-| `{issue_summary}` | Brief description | `Comment doesn't appear until refresh` |
-| `{expected}` | From UAT test | `Submit comment, appears in list` |
-| `{reported}` | User's description | `works but doesn't show until refresh` |
-| `{severity}` | blocker/major/minor/cosmetic | `major` |
-| `{test_num}` | Test number in UAT | `2` |
-| `{test_name}` | Test name | `Create Top-Level Comment` |
-| `{phase}` | Phase number | `04` |
-| `{phase_dir}` | Phase directory name | `04-comments` |
-| `{slug}` | Generated from summary | `comment-not-refreshing` |
+| `{issue_id}` | Orchestrator-assigned | `auth-screen-dark` or `UAT-001` |
+| `{issue_summary}` | User description or UAT | `Auth screen is too dark` |
+| `{expected}` | From symptoms | `See logo and form clearly` |
+| `{actual}` | From symptoms | `Screen is dark, logo not visible` |
+| `{errors}` | From symptoms | `None in console` |
+| `{reproduction}` | From symptoms | `Open /auth page` |
+| `{timeline}` | From symptoms | `After recent deploy` |
+| `{goal}` | Orchestrator sets | `find_and_fix` or `find_root_cause_only` |
+| `{slug}` | Generated from summary | `auth-screen-dark` |
 
 ---
 
-## Usage
+## Usage by Orchestrator
 
-Orchestrator (diagnose-issues.md) fills placeholders and spawns:
+**From /gsd:debug (interactive):**
 
 ```python
-# Spawn all debug agents in parallel
-Task(prompt=filled_template_001, subagent_type="general-purpose", description="Debug UAT-001")
-Task(prompt=filled_template_002, subagent_type="general-purpose", description="Debug UAT-002")
-Task(prompt=filled_template_003, subagent_type="general-purpose", description="Debug UAT-003")
+Task(
+  prompt=filled_template,  # goal: find_and_fix
+  subagent_type="general-purpose",
+  description="Debug {slug}"
+)
 ```
 
-All agents run simultaneously. Each returns with root cause or inconclusive result.
+**From diagnose-issues (UAT parallel):**
+
+```python
+# Spawn all in parallel
+Task(prompt=template_001, subagent_type="general-purpose", description="Debug UAT-001")  # goal: find_root_cause_only
+Task(prompt=template_002, subagent_type="general-purpose", description="Debug UAT-002")
+Task(prompt=template_003, subagent_type="general-purpose", description="Debug UAT-003")
+```
+
+---
+
+## Continuation Agent
+
+When orchestrator spawns fresh agent after checkpoint:
+
+```markdown
+<objective>
+Continue debugging {slug}.
+
+**DO NOT REDO** previous investigation. Evidence is in the debug file.
+</objective>
+
+<prior_state>
+Debug file: @.planning/debug/{slug}.md
+
+Read this file first - it contains all evidence gathered so far.
+</prior_state>
+
+<checkpoint_response>
+**Checkpoint was:** {checkpoint_type}
+**User response:** {user_response}
+
+{interpretation based on checkpoint type}
+</checkpoint_response>
+
+<mode>
+**goal: {goal}**
+</mode>
+
+<execution_context>
+@~/.claude/get-shit-done/workflows/debug.md
+@~/.claude/get-shit-done/templates/DEBUG.md
+@~/.claude/get-shit-done/references/debugging/debugging-mindset.md
+</execution_context>
+
+<instructions>
+1. Read debug file to understand current state
+2. Incorporate user's checkpoint response into investigation
+3. Continue from Current Focus
+4. Update debug file continuously
+5. Return with ROOT CAUSE FOUND, DEBUG COMPLETE, CHECKPOINT REACHED, or INVESTIGATION INCONCLUSIVE
+</instructions>
+```

@@ -90,10 +90,12 @@ Template placeholders:
 - `{issue_id}`: UAT-001, UAT-002, etc.
 - `{issue_summary}`: Brief description
 - `{expected}`: From UAT test
-- `{reported}`: Verbatim user description
-- `{severity}`: blocker/major/minor/cosmetic
-- `{phase}`: Phase being tested
-- `{phase_dir}`: Path to phase directory
+- `{actual}`: Verbatim user description (what actually happened)
+- `{errors}`: Any error messages from UAT (or "None reported")
+- `{reproduction}`: "Test {test_num} in UAT"
+- `{timeline}`: "Discovered during UAT"
+- `{goal}`: `find_root_cause_only` (UAT flow - plan-fix handles fixes)
+- `{slug}`: Generated from issue_summary
 </step>
 
 <step name="collect_results">
@@ -101,25 +103,34 @@ Template placeholders:
 
 Each agent returns with:
 ```
-## DEBUG COMPLETE: UAT-{NNN}
+## ROOT CAUSE FOUND
+
+**Debug Session:** ${DEBUG_DIR}/{slug}.md
 
 **Root Cause:** {specific cause with evidence}
-**Files Involved:** {list of files}
-**Debug Session:** ${DEBUG_DIR}/{slug}.md
 
 **Evidence Summary:**
 - {key finding 1}
 - {key finding 2}
+- {key finding 3}
+
+**Files Involved:**
+- {file1}: {what's wrong}
+- {file2}: {related issue}
+
+**Suggested Fix Direction:** {brief hint for plan-fix}
 ```
 
 Parse each return to extract:
 - root_cause: The diagnosed cause
 - files: Files involved
-- debug_path: Path to debug session file (standard debug location)
+- debug_path: Path to debug session file
+- suggested_fix: Hint for plan-fix
 
-If agent fails or can't determine root cause:
+If agent returns `## INVESTIGATION INCONCLUSIVE`:
 - root_cause: "Investigation inconclusive - manual review needed"
 - Note which issue needs manual attention
+- Include remaining possibilities from agent return
 </step>
 
 <step name="update_uat">
