@@ -44,7 +44,7 @@ cat .planning/PROJECT.md
 - **Current Position**: Phase X of Y, Plan A of B, Status
 - **Progress**: Visual progress bar
 - **Recent Decisions**: Key decisions affecting current work
-- **Deferred Issues**: Open items awaiting attention
+- **Pending Todos**: Ideas captured during sessions
 - **Blockers/Concerns**: Issues carried forward
 - **Session Continuity**: Where we left off, any resume files
 
@@ -123,8 +123,8 @@ Present complete project status to user:
 
     Resume with: /gsd:resume-task
 
-[If deferred issues exist:]
-📋 [N] deferred issues awaiting attention
+[If pending todos exist:]
+📋 [N] pending todos — /gsd:check-todos to review
 
 [If blockers exist:]
 ⚠️  Carried concerns:
@@ -190,7 +190,7 @@ What would you like to do?
 
 [Secondary options:]
 2. Review current phase status
-3. Check deferred issues ([N] open)
+3. Check pending todos ([N] pending)
 4. Review brief alignment
 5. Something else
 ```
@@ -244,7 +244,7 @@ Based on user selection, route to appropriate workflow:
   ---
   ```
 - **Transition** → ./transition.md
-- **Review issues** → Read ISSUES.md, present summary
+- **Check todos** → Read .planning/todos/pending/, present summary
 - **Review alignment** → Read PROJECT.md, compare to current state
 - **Something else** → Ask what they need
 </step>
@@ -274,8 +274,8 @@ If STATE.md is missing but other artifacts exist:
 
 1. Read PROJECT.md → Extract "What This Is" and Core Value
 2. Read ROADMAP.md → Determine phases, find current position
-3. Scan \*-SUMMARY.md files → Extract decisions, issues, concerns
-4. Read ISSUES.md → Count deferred issues
+3. Scan \*-SUMMARY.md files → Extract decisions, concerns
+4. Count pending todos in .planning/todos/pending/
 5. Check for .continue-here files → Session continuity
 
 Reconstruct and write STATE.md, then proceed normally.

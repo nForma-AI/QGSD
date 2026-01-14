@@ -81,7 +81,6 @@ During execution, handle discoveries automatically:
 2. **Auto-add critical** - Security/correctness gaps, add and document
 3. **Auto-fix blockers** - Can't proceed without fix, do it and document
 4. **Ask about architectural** - Major structural changes, stop and ask user
-5. **Log enhancements** - Nice-to-haves, log to ISSUES.md, continue
 
 Only rule 4 requires user intervention.
 </deviation_rules>

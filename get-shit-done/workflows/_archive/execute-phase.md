@@ -34,7 +34,6 @@ cat .planning/STATE.md 2>/dev/null
 
 - Current position (phase, plan, status)
 - Accumulated decisions (constraints on this execution)
-- Deferred issues (context for deviations)
 - Blockers/concerns (things to watch for)
 
 **If file missing but .planning/ exists:**

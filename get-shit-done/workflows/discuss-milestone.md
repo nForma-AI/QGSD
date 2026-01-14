@@ -56,7 +56,7 @@ The primary question is: **What do you want to build/add/fix?**
 Everything else (scope, priority, constraints) is secondary and derived from features.
 
 Check for inputs:
-- Deferred issues from STATE.md (potential features)
+- Pending todos from STATE.md (potential features)
 - Known gaps or pain points from usage
 - User's ideas for what's next
 
@@ -65,7 +65,7 @@ Check for inputs:
 Use AskUserQuestion:
 - header: "Next"
 - question: "What do you want to add, improve, or fix in this milestone?"
-- options: [Deferred issues from STATE.md if any] + ["New features", "Improvements to existing", "Bug fixes", "Let me describe"]
+- options: [Pending todos from STATE.md if any] + ["New features", "Improvements to existing", "Bug fixes", "Let me describe"]
 
 **2. Explore features:**
 
@@ -84,7 +84,7 @@ If they described a general direction:
 If they're not sure:
 - header: "Starting Points"
 - question: "What's been frustrating or missing?"
-- options: [Deferred issues from STATE.md + pain point categories + "Let me think about it"]
+- options: [Pending todos from STATE.md + pain point categories + "Let me think about it"]
 
 **3. Prioritize:**
 

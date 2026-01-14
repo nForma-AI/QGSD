@@ -55,7 +55,7 @@ PLAN.md IS the prompt that Claude executes. Plans are grouped into execution wav
 Read `.planning/STATE.md` and parse:
 - Current position (which phase we're planning)
 - Accumulated decisions (constraints on this phase)
-- Deferred issues (candidates for inclusion)
+- Pending todos (candidates for inclusion)
 - Blockers/concerns (things this phase may address)
 - Brief alignment status
 
@@ -186,19 +186,19 @@ Only now open and read complete SUMMARY.md files for the selected relevant phase
 - "Issues Encountered" that might affect current phase
 - "Deviations from Plan" for patterns
 
-**From STATE.md:** Decisions → constrain approach. Deferred issues → candidates. Blockers → may need to address.
+**From STATE.md:** Decisions → constrain approach. Pending todos → candidates. Blockers → may need to address.
 
-**From ISSUES.md:**
+**From pending todos:**
 
 ```bash
-cat .planning/ISSUES.md 2>/dev/null
+ls .planning/todos/pending/*.md 2>/dev/null
 ```
 
-Assess each open issue - relevant to this phase? Waiting long enough? Natural to address now? Blocking something?
+Assess each pending todo - relevant to this phase? Natural to address now?
 
 **Answer before proceeding:**
 - Q1: What decisions from previous phases constrain this phase?
-- Q2: Are there deferred issues that should become tasks?
+- Q2: Are there pending todos that should become tasks?
 - Q3: Are there concerns from "Next Phase Readiness" that apply?
 - Q4: Given all context, does the roadmap's description still make sense?
 
@@ -208,7 +208,7 @@ Assess each open issue - relevant to this phase? Waiting long enough? Natural to
 - Established patterns (from frontmatter)
 - Key files to reference (from frontmatter)
 - Applicable decisions (from frontmatter + full summary)
-- Issues being addressed (from ISSUES.md)
+- Todos being addressed (from pending todos)
 - Concerns being verified (from "Next Phase Readiness")
 </step>
 

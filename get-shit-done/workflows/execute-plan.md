@@ -19,7 +19,6 @@ cat .planning/STATE.md 2>/dev/null
 
 - Current position (phase, plan, status)
 - Accumulated decisions (constraints on this execution)
-- Deferred issues (context for deviations)
 - Blockers/concerns (things to watch for)
 - Brief alignment status
 
@@ -804,37 +803,9 @@ Proceed with proposed change? (yes / different approach / defer)
 3. WAIT for user response
 4. If approved: implement, track as `[Rule 4 - Architectural] [description]`
 5. If different approach: discuss and implement
-6. If deferred: log to ISSUES.md, continue without change
+6. If deferred: note in Summary and continue without change
 
 **User decision required.** These changes affect system design.
-
----
-
-**RULE 5: Log non-critical enhancements**
-
-**Trigger:** Improvement that would enhance code but isn't essential now
-
-**Action:** Add to .planning/ISSUES.md automatically, continue task
-
-**Examples:**
-
-- Performance optimization (works correctly, just slower than ideal)
-- Code refactoring (works, but could be cleaner/DRY-er)
-- Better naming (works, but variables could be clearer)
-- Organizational improvements (works, but file structure could be better)
-- Nice-to-have UX improvements (works, but could be smoother)
-- Additional test coverage beyond basics (basics exist, could be more thorough)
-- Documentation improvements (code works, docs could be better)
-- Accessibility enhancements beyond minimum
-
-**Process:**
-
-1. Create .planning/ISSUES.md if doesn't exist (use `~/.claude/get-shit-done/templates/issues.md`)
-2. Add entry with ISS-XXX number (auto-increment)
-3. Brief notification: `📋 Logged enhancement: [brief] (ISS-XXX)`
-4. Continue task without implementing
-
-**No user permission needed.** Logging for future consideration.
 
 ---
 
@@ -842,22 +813,18 @@ Proceed with proposed change? (yes / different approach / defer)
 
 1. **If Rule 4 applies** → STOP and ask (architectural decision)
 2. **If Rules 1-3 apply** → Fix automatically, track for Summary
-3. **If Rule 5 applies** → Log to ISSUES.md, continue
-4. **If genuinely unsure which rule** → Apply Rule 4 (ask user)
+3. **If genuinely unsure which rule** → Apply Rule 4 (ask user)
 
 **Edge case guidance:**
 
 - "This validation is missing" → Rule 2 (critical for security)
-- "This validation could be better" → Rule 5 (enhancement)
 - "This crashes on null" → Rule 1 (bug)
-- "This could be faster" → Rule 5 (enhancement) UNLESS actually timing out → Rule 2 (critical)
 - "Need to add table" → Rule 4 (architectural)
 - "Need to add column" → Rule 1 or 2 (depends: fixing bug or adding critical field)
 
 **When in doubt:** Ask yourself "Does this affect correctness, security, or ability to complete task?"
 
 - YES → Rules 1-3 (fix automatically)
-- NO → Rule 5 (log it)
 - MAYBE → Rule 4 (ask user)
 
 </deviation_rules>
@@ -901,16 +868,9 @@ None - plan executed exactly as written.
 - **Verification:** Expired token test passes - properly rejects with 401
 - **Commit:** def456g
 
-### Deferred Enhancements
-
-Logged to .planning/ISSUES.md for future consideration:
-
-- ISS-001: Refactor UserService into smaller modules (discovered in Task 3)
-- ISS-002: Add connection pooling for Redis (discovered in Task 6)
-
 ---
 
-**Total deviations:** 4 auto-fixed (1 bug, 1 missing critical, 1 blocking, 1 architectural with approval), 3 deferred
+**Total deviations:** 4 auto-fixed (1 bug, 1 missing critical, 1 blocking, 1 architectural with approval)
 **Impact on plan:** All auto-fixes necessary for correctness/security/performance. No scope creep.
 ```
 
@@ -1307,10 +1267,7 @@ Before writing summary content, populate frontmatter fields from execution conte
 5. **Decisions:**
    - key-decisions: Extract from "Decisions Made" section
 
-6. **Issues:**
-   - issues-created: Check if ISSUES.md was updated during execution
-
-7. **Metrics:**
+6. **Metrics:**
    - duration: From $DURATION variable
    - completed: From $PLAN_END_TIME (date only, format YYYY-MM-DD)
 
@@ -1404,12 +1361,6 @@ Extract decisions, issues, and concerns from SUMMARY.md into STATE.md accumulate
 - If content exists (not "None"):
   - Add each decision to STATE.md Decisions table
   - Format: `| [phase number] | [decision summary] | [rationale] |`
-
-**Deferred Issues:**
-
-- Read SUMMARY.md to check if new issues were logged to ISSUES.md
-- If new ISS-XXX entries created:
-  - Update STATE.md "Deferred Issues" section
 
 **Blockers/Concerns:**
 
@@ -1583,45 +1534,6 @@ git commit --amend --no-edit  # Include in metadata commit
 
 **If .planning/codebase/ doesn't exist:**
 Skip this step.
-</step>
-
-<step name="check_phase_issues">
-**Check if issues were created during this phase:**
-
-```bash
-# Check if ISSUES.md exists and has issues from current phase
-if [ -f .planning/ISSUES.md ]; then
-  grep -E "Phase ${PHASE}.*Task" .planning/ISSUES.md | grep -v "^#" || echo "NO_ISSUES_THIS_PHASE"
-fi
-```
-
-**If issues were created during this phase:**
-
-```
-📋 Issues logged during this phase:
-- ISS-XXX: [brief description]
-- ISS-YYY: [brief description]
-
-Review these now?
-```
-
-Use AskUserQuestion:
-- header: "Phase Issues"
-- question: "[N] issues were logged during this phase. Review now?"
-- options:
-  - "Review issues" - Analyze with /gsd:consider-issues
-  - "Continue" - Address later, proceed to next work
-
-**If "Review issues" selected:**
-- Invoke: `SlashCommand("/gsd:consider-issues")`
-- After consider-issues completes, return to offer_next
-
-**If "Continue" selected or no issues found:**
-- Proceed to offer_next step
-
-**In YOLO mode:**
-- Note issues were logged but don't prompt: `📋 [N] issues logged this phase (review later with /gsd:consider-issues)`
-- Continue to offer_next automatically
 </step>
 
 <step name="offer_next">

@@ -29,7 +29,7 @@ Extract:
 
 - Previous milestone version (e.g., v1.0)
 - Last phase number used
-- Deferred issues from STATE.md
+- Pending todos from STATE.md
 - Project context from PROJECT.md (What This Is, Core Value)
 
 **Check for milestone context from discuss-milestone:**

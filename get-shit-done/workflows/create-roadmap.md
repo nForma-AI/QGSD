@@ -130,7 +130,7 @@ Use decimal phases (2.1, 2.2) for urgent insertions:
 - Urgent work that can't wait for next milestone
 - Critical bugs blocking progress
 - Security patches needing immediate attention
-- NOT for scope creep or "nice to haves" (those go in ISSUES.md)
+- NOT for scope creep or "nice to haves" (capture with /gsd:add-todo instead)
 
 **Phase execution order:**
 Numeric sort: 1 → 1.1 → 1.2 → 2 → 2.1 → 3
@@ -368,7 +368,7 @@ Recent decisions affecting current work:
 
 (None yet)
 
-### Deferred Issues
+### Pending Todos
 
 None yet.
 

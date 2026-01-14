@@ -243,15 +243,3 @@ skipped: 0
   root_cause: useEffect in CommentList.tsx missing commentCount dependency
 ```
 </good_example>
-
-<difference_from_issues_md>
-
-| UAT.md | ISSUES.md (global) |
-|--------|-------------------|
-| Created by /gsd:verify-work | Created by deviation rule 5 during execution |
-| Tracks test session state | Tracks deferred enhancements |
-| Phase-scoped, one per phase | Global, one per project |
-| Feeds into /gsd:plan-fix | Feeds into /gsd:consider-issues |
-| Contains pass/fail/skip results | Contains only deferred items |
-
-</difference_from_issues_md>

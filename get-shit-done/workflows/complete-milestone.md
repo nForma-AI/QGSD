@@ -437,7 +437,6 @@ Extract completed milestone details and create archive file.
    - {{PHASES_SECTION}} — Full phase details extracted
    - {{DECISIONS_FROM_PROJECT}} — Key decisions from PROJECT.md
    - {{ISSUES_RESOLVED_DURING_MILESTONE}} — From summaries
-   - {{ISSUES_DEFERRED_TO_LATER}} — From ISSUES.md
 
 6. Write filled template to `.planning/milestones/v[X.Y]-ROADMAP.md`
 
