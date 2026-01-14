@@ -54,9 +54,10 @@ The fix will be planned and applied separately by /gsd:plan-fix.
 </mode>
 
 <debug_file>
-Create: `.planning/debug/uat-{issue_id_lower}-{slug}.md`
+Create: `.planning/debug/{slug}.md`
 
-Example: `.planning/debug/uat-001-comment-refresh.md`
+Generate slug from issue summary (same as regular /gsd:debug).
+Example: `comment-not-refreshing.md`
 
 Pre-fill Symptoms section:
 ```markdown
@@ -68,6 +69,8 @@ errors: [investigate to find]
 reproduction: Test {test_num} - {test_name}
 started: discovered during UAT
 ```
+
+The debug file is identical to a regular debug session. The only difference is symptoms are pre-filled. UAT.md tracks the link via `debug_session` field.
 
 Then proceed with investigation.
 </debug_file>
@@ -89,7 +92,7 @@ When root cause is confirmed, return:
 - [file1.ts]: [what's wrong]
 - [file2.ts]: [related issue]
 
-**Debug Session:** .planning/debug/uat-{issue_id_lower}-{slug}.md
+**Debug Session:** .planning/debug/{slug}.md
 
 **Suggested Fix Direction:** [brief hint for plan-fix, not implementation]
 ```
@@ -109,12 +112,12 @@ If unable to determine root cause after thorough investigation:
 
 **Recommendation:** Manual review needed
 
-**Debug Session:** .planning/debug/uat-{issue_id_lower}-{slug}.md
+**Debug Session:** .planning/debug/{slug}.md
 ```
 </return_format>
 
 <success_criteria>
-- [ ] DEBUG-UAT-{NNN}.md created with symptoms pre-filled
+- [ ] Debug file created with symptoms pre-filled
 - [ ] Investigation completed (evidence gathered, hypotheses tested)
 - [ ] Root cause identified with supporting evidence
 - [ ] Debug session file updated throughout
@@ -129,7 +132,6 @@ If unable to determine root cause after thorough investigation:
 | Placeholder | Source | Example |
 |-------------|--------|---------|
 | `{issue_id}` | UAT issue ID | `UAT-001` |
-| `{issue_id_lower}` | Lowercase for filenames | `001` |
 | `{issue_summary}` | Brief description | `Comment doesn't appear until refresh` |
 | `{expected}` | From UAT test | `Submit comment, appears in list` |
 | `{reported}` | User's description | `works but doesn't show until refresh` |
@@ -138,7 +140,7 @@ If unable to determine root cause after thorough investigation:
 | `{test_name}` | Test name | `Create Top-Level Comment` |
 | `{phase}` | Phase number | `04` |
 | `{phase_dir}` | Phase directory name | `04-comments` |
-| `{slug}` | Generated from summary | `comment-refresh` |
+| `{slug}` | Generated from summary | `comment-not-refreshing` |
 
 ---
 

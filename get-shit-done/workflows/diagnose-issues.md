@@ -99,7 +99,7 @@ Each agent returns with:
 
 **Root Cause:** {specific cause with evidence}
 **Files Involved:** {list of files}
-**Debug Session:** .planning/debug/uat-{nnn}-{slug}.md
+**Debug Session:** .planning/debug/{slug}.md
 
 **Evidence Summary:**
 - {key finding 1}
@@ -109,7 +109,7 @@ Each agent returns with:
 Parse each return to extract:
 - root_cause: The diagnosed cause
 - files: Files involved
-- debug_path: Path to debug session file
+- debug_path: Path to debug session file (standard debug location)
 
 If agent fails or can't determine root cause:
 - root_cause: "Investigation inconclusive - manual review needed"
@@ -128,7 +128,7 @@ result: issue
 reported: "works but doesn't show until I refresh the page"
 severity: major
 root_cause: "useEffect in CommentList.tsx missing commentCount dependency - doesn't re-render when new comment added"
-debug_session: .planning/debug/uat-001-comment-refresh.md
+debug_session: .planning/debug/comment-not-refreshing.md
 ```
 
 Update the "Issues for /gsd:plan-fix" section with root causes:

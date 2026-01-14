@@ -191,9 +191,7 @@ Priority: {blocker count} blocker, {major count} major, {minor count} minor, {co
 @.planning/phases/XX-name/{phase}-UAT.md
 
 **Debug sessions (if diagnosed):**
-@.planning/debug/uat-001-*.md
-@.planning/debug/uat-002-*.md
-[etc - reference each debug session for full investigation context]
+[Reference each debug_session path from UAT.md for full investigation context]
 
 **Original plans for reference:**
 @.planning/phases/XX-name/{phase}-01-PLAN.md
@@ -238,13 +236,6 @@ After completion, create `.planning/phases/XX-name/{phase}-FIX-SUMMARY.md`
 | Major    | {n}   |
 | Minor    | {n}   |
 | Cosmetic | {n}   |
-
----
-
-Next steps:
-- Execute: `/gsd:execute-plan .planning/phases/XX-name/{phase}-FIX.md`
-- Review plan first: `cat .planning/phases/XX-name/{phase}-FIX.md`
-- Re-test after fixes: `/gsd:verify-work {phase}`
 ```
 
 Use AskUserQuestion:
@@ -254,6 +245,18 @@ Use AskUserQuestion:
   - "Execute fix plan" — Run the fixes now
   - "Review plan first" — Look at the plan before executing
   - "Done for now" — Come back later
+
+**If "Execute fix plan":**
+Invoke `/gsd:execute-plan .planning/phases/XX-name/{phase}-FIX.md`
+
+**If "Review plan first":**
+Display the plan contents, then ask again whether to execute.
+
+**If "Done for now":**
+```
+Fix plan saved. Run when ready:
+`/gsd:execute-plan .planning/phases/XX-name/{phase}-FIX.md`
+```
 </step>
 
 </process>

@@ -122,7 +122,7 @@ result: issue
 reported: "works but doesn't show until I refresh the page"
 severity: major
 root_cause: useEffect in CommentList.tsx missing commentCount dependency
-debug_session: .planning/debug/uat-001-comment-refresh.md
+debug_session: .planning/debug/comment-not-refreshing.md
 ```
 
 ```markdown
@@ -211,7 +211,7 @@ result: issue
 reported: "works but doesn't show until I refresh the page"
 severity: major
 root_cause: useEffect in CommentList.tsx missing commentCount dependency
-debug_session: .planning/debug/uat-001-comment-refresh.md
+debug_session: .planning/debug/comment-not-refreshing.md
 
 ### 3. Reply to a Comment
 expected: Click Reply, inline composer appears, submit shows nested reply
