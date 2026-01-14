@@ -45,30 +45,25 @@ Phase: $ARGUMENTS
    - Check which have *-SUMMARY.md (already complete)
    - Build list of incomplete plans
 
-3. **Analyze dependencies**
-   - Read each plan's `<context>` section
-   - Detect cross-references to other plans' outputs
-   - Build dependency graph
-
-4. **Group into waves**
-   - Wave 1: Plans with no dependencies
-   - Wave N: Plans depending only on earlier waves
+3. **Group by wave**
+   - Read `wave` from each plan's frontmatter
+   - Group plans by wave number
    - Report wave structure to user
 
-5. **Execute waves**
-   For each wave:
+4. **Execute waves**
+   For each wave in order:
    - Fill subagent-task-prompt template for each plan
    - Spawn all agents in wave simultaneously (parallel Task calls)
    - Wait for completion (Task blocks)
    - Verify SUMMARYs created
    - Proceed to next wave
 
-6. **Aggregate results**
+5. **Aggregate results**
    - Collect summaries from all plans
    - Report phase completion status
    - Update ROADMAP.md
 
-7. **Offer next steps**
+6. **Offer next steps**
    - More phases → `/gsd:plan-phase {next}`
    - Milestone complete → `/gsd:complete-milestone`
 </process>
@@ -89,22 +84,13 @@ All three run in parallel. Task tool blocks until all complete.
 **No polling.** No background agents. No TaskOutput loops.
 </wave_execution>
 
-<checkpoint_detection>
-Before adding a plan to a parallel wave, scan for checkpoints:
-
-```bash
-grep -c 'type="checkpoint' {plan_path}
-```
-
-**If checkpoints > 0:**
-- Plan requires user interaction
-- Execute in main context OR as solo subagent (not parallel)
-- User interaction flows through normally
-
-**If checkpoints = 0:**
-- Fully autonomous
-- Safe for parallel wave execution
-</checkpoint_detection>
+<checkpoint_handling>
+Plans with `autonomous: false` in frontmatter have checkpoints:
+- Run in their assigned wave (can be parallel with other plans)
+- Pause at checkpoint, return to orchestrator
+- Orchestrator presents checkpoint to user
+- User responds, orchestrator resumes agent
+</checkpoint_handling>
 
 <deviation_rules>
 During execution, handle discoveries automatically:

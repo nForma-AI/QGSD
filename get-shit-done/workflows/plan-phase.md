@@ -367,6 +367,37 @@ For each plan, determine:
 - `autonomous: true|false` - has checkpoints requiring user interaction?
 </step>
 
+<step name="assign_waves">
+**Compute wave numbers before writing plans.**
+
+Wave assignment algorithm (run in memory before writing any files):
+
+```
+waves = {}  # plan_id -> wave_number
+
+for each plan in plan_order:
+  if plan.depends_on is empty:
+    plan.wave = 1
+  else:
+    # Wave = max wave of dependencies + 1
+    plan.wave = max(waves[dep] for dep in plan.depends_on) + 1
+
+  waves[plan.id] = plan.wave
+```
+
+**Example:**
+
+```
+Plan 01: depends_on: []           → wave: 1
+Plan 02: depends_on: []           → wave: 1
+Plan 03: depends_on: ["01"]       → wave: 2
+Plan 04: depends_on: ["02"]       → wave: 2
+Plan 05: depends_on: ["03", "04"] → wave: 3
+```
+
+Store wave number with each plan in memory. Write to frontmatter in next step.
+</step>
+
 <step name="group_into_plans">
 **Group tasks into plans based on dependency waves and autonomy.**
 
@@ -521,14 +552,15 @@ Each plan follows template structure with:
 phase: XX-name
 plan: NN
 type: execute
-depends_on: []              # Plan IDs this plan requires. Empty = Wave 1 candidate.
-files_modified: []          # Files this plan touches. Used for conflict detection.
+wave: N                     # Execution wave (1, 2, 3...). Computed at plan time.
+depends_on: []              # Plan IDs this plan requires.
+files_modified: []          # Files this plan touches.
 autonomous: true            # false if plan has checkpoints requiring user interaction
 domain: [optional]
 ---
 ```
 
-**Wave assignment is automatic:** `/gsd:execute-phase` reads `depends_on` to build waves. Plans with empty `depends_on` and no file conflicts run in Wave 1 (parallel).
+**Wave is pre-computed:** Wave numbers are assigned during planning (see `assign_waves` step). `/gsd:execute-phase` reads `wave` directly from frontmatter and groups plans by wave number. No runtime dependency analysis needed.
 
 **Context section - parallel-aware:**
 

@@ -68,68 +68,50 @@ ls -1 "$PHASE_DIR"/*-SUMMARY.md 2>/dev/null | sort
 ```
 
 For each plan, read frontmatter to extract:
-- `depends_on: []` - Plan IDs this plan requires
-- `files_modified: []` - Files this plan touches
+- `wave: N` - Execution wave (pre-computed)
 - `autonomous: true/false` - Whether plan has checkpoints
 
 Build plan inventory:
 - Plan path
 - Plan ID (e.g., "03-01")
-- Dependencies
-- Files modified
+- Wave number
 - Autonomous flag
 - Completion status (SUMMARY exists = complete)
 
 Skip completed plans. If all complete, report "Phase already executed" and exit.
 </step>
 
-<step name="analyze_dependencies">
-Build dependency graph from frontmatter:
+<step name="group_by_wave">
+Read `wave` from each plan's frontmatter and group by wave number:
 
-**Direct dependencies:**
-- `depends_on: ["03-01"]` → this plan depends on 03-01
-
-**File conflict dependencies:**
-- If two plans modify same file, later plan (by number) depends on earlier
-
-**Build graph:**
+```bash
+# For each plan, extract wave from frontmatter
+for plan in $PHASE_DIR/*-PLAN.md; do
+  wave=$(grep "^wave:" "$plan" | cut -d: -f2 | tr -d ' ')
+  autonomous=$(grep "^autonomous:" "$plan" | cut -d: -f2 | tr -d ' ')
+  echo "$plan:$wave:$autonomous"
+done
 ```
-plan-01: {deps: [], files: [src/user.ts], autonomous: true}
-plan-02: {deps: [], files: [src/product.ts], autonomous: true}
-plan-03: {deps: ["plan-01"], files: [src/dashboard.tsx], autonomous: false}
-plan-04: {deps: ["plan-02"], files: [src/cart.ts], autonomous: true}
-plan-05: {deps: ["plan-03", "plan-04"], files: [src/checkout.ts], autonomous: true}
+
+**Group plans:**
 ```
-</step>
-
-<step name="group_into_waves">
-Group plans into execution waves based on dependencies:
-
-**Wave assignment algorithm:**
-1. Wave 1: All plans with no dependencies AND autonomous=true
-2. Non-autonomous plans with no dependencies: execute after Wave 1, before Wave 2
-3. Wave N: Plans whose dependencies are all in earlier waves
-
-**Separate checkpoint plans:**
-Plans with `autonomous: false` execute in main context (not parallel subagent) to handle user interaction.
-
-**Example:**
+waves = {
+  1: [plan-01, plan-02],
+  2: [plan-03, plan-04],
+  3: [plan-05]
+}
 ```
-Wave 1 (parallel): [plan-01, plan-02]
-Checkpoint: [plan-03] - has human-verify, runs in main context
-Wave 2 (parallel): [plan-04]
-Wave 3: [plan-05]
-```
+
+**No dependency analysis needed.** Wave numbers are pre-computed during `/gsd:plan-phase`.
 
 Report wave structure to user:
 ```
 Execution Plan:
   Wave 1 (parallel): 03-01, 03-02
-  Checkpoint: 03-03 (requires user verification)
-  Wave 2 (parallel): 03-04
+  Wave 2 (parallel): 03-03 [checkpoint], 03-04
   Wave 3: 03-05
 
-Total: 5 plans in 3 waves + 1 checkpoint
+Total: 5 plans in 3 waves
 ```
 </step>
 

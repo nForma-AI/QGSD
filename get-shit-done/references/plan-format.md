@@ -18,6 +18,7 @@ Every PLAN.md starts with YAML frontmatter:
 phase: XX-name
 plan: NN
 type: execute
+wave: N                     # Execution wave (1, 2, 3...). Pre-computed at plan time.
 depends_on: []              # Plan IDs this plan requires (e.g., ["01-01"])
 files_modified: []          # Files this plan modifies
 autonomous: true            # false if plan has checkpoints
@@ -30,17 +31,15 @@ domain: [optional]          # Domain skill if loaded
 | `phase` | Yes | Phase identifier (e.g., `01-foundation`) |
 | `plan` | Yes | Plan number within phase (e.g., `01`, `02`) |
 | `type` | Yes | `execute` for standard plans, `tdd` for TDD plans |
-| `depends_on` | Yes | Array of plan IDs this plan requires. **Empty = Wave 1 candidate** |
-| `files_modified` | Yes | Files this plan touches. Used for conflict detection |
+| `wave` | Yes | Execution wave number (1, 2, 3...). Pre-computed during planning. |
+| `depends_on` | Yes | Array of plan IDs this plan requires. |
+| `files_modified` | Yes | Files this plan touches. |
 | `autonomous` | Yes | `true` if no checkpoints, `false` if has checkpoints |
 | `domain` | No | Domain skill if loaded (e.g., `next-js`) |
 
-**Wave assignment:** `/gsd:execute-phase` reads `depends_on` and `files_modified` to build execution waves:
-- `depends_on: []` + no file conflicts → Wave 1 (parallel)
-- `depends_on: ["XX-YY"]` → runs after plan XX-YY completes
-- Shared `files_modified` → sequential by plan number
+**Wave is pre-computed:** `/gsd:plan-phase` assigns wave numbers based on `depends_on`. `/gsd:execute-phase` reads `wave` directly from frontmatter and groups plans by wave number. No runtime dependency analysis needed.
 
-**Checkpoint detection:** Plans with `autonomous: false` require user interaction. Execute after parallel wave or in main context.
+**Checkpoint handling:** Plans with `autonomous: false` require user interaction. They run in their assigned wave but pause at checkpoints.
 </frontmatter>
 
 <prompt_structure>
@@ -51,6 +50,7 @@ Every PLAN.md follows this XML structure:
 phase: XX-name
 plan: NN
 type: execute
+wave: N
 depends_on: []
 files_modified: [path/to/file.ts]
 autonomous: true
