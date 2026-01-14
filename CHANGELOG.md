@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.4.25] - 2026-01-14
+
+### Added
+- New `/gsd:whats-new` command shows changes since your installed version
+- VERSION file written during installation for version tracking
+- CHANGELOG.md now included in package installation
+
 ## [1.4.24] - 2026-01-14
 
 ### Added
@@ -20,5 +27,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 - **BREAKING:** ISSUES.md system (replaced by phase-scoped UAT issues and TODOs)
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.4.24...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.4.25...HEAD
+[1.4.25]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.25
 [1.4.24]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.24
