@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.4.27] - 2025-01-14
+
+### Fixed
+- Restored "what to do next" commands after plan/phase execution completes — orchestrator pattern conversion had inadvertently removed the copy/paste-ready next-step routing
+
 ## [1.4.26] - 2026-01-14
 
 ### Added
@@ -546,7 +551,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.4.26...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.4.27...HEAD
+[1.4.27]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.27
 [1.4.26]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.26
 [1.4.25]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.25
 [1.4.24]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.4.24
