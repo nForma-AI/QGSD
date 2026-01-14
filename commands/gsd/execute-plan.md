@@ -201,13 +201,88 @@ When subagent returns with checkpoint:
 **Plan:** {phase}-{plan}
 **Progress:** {completed}/{total} tasks complete
 
-[Checkpoint content]
+### Completed Tasks
+| Task | Name | Commit | Files |
+|------|------|--------|-------|
+| 1 | [task name] | [hash] | [files] |
 
-**Awaiting:** [Resume signal]
+### Current Task
+**Task {N}:** [name]
+**Status:** [blocked | awaiting verification | awaiting decision]
+**Blocked by:** [specific blocker]
+
+### Checkpoint Details
+[Type-specific content for user]
+
+### Awaiting
+[What user needs to provide]
 ```
 
-**2. Present to user:**
-Display the checkpoint content exactly as returned by subagent.
+**2. Present checkpoint to user:**
+
+Display rich formatted checkpoint based on type:
+
+**For human-verify:**
+```
+════════════════════════════════════════
+CHECKPOINT: Verification Required
+════════════════════════════════════════
+
+Task {X} of {Y}: {task name}
+
+I built: {what-built from checkpoint details}
+
+How to verify:
+{numbered verification steps}
+
+Type "approved" to continue, or describe issues.
+════════════════════════════════════════
+```
+
+**For human-action (auth gate):**
+```
+════════════════════════════════════════
+CHECKPOINT: Authentication Required
+════════════════════════════════════════
+
+Task {X} of {Y}: {task name}
+
+I tried: {automation attempted}
+Error: {error encountered}
+
+What you need to do:
+{numbered instructions}
+
+I'll verify after: {verification}
+
+Type "done" when complete.
+════════════════════════════════════════
+```
+
+**For decision:**
+```
+════════════════════════════════════════
+CHECKPOINT: Decision Required
+════════════════════════════════════════
+
+Task {X} of {Y}: {task name}
+
+Decision: {what's being decided}
+
+Context: {why this matters}
+
+Options:
+1. {option-a}: {name}
+   Pros: {benefits}
+   Cons: {tradeoffs}
+
+2. {option-b}: {name}
+   Pros: {benefits}
+   Cons: {tradeoffs}
+
+Select: {option-a | option-b | ...}
+════════════════════════════════════════
+```
 
 **3. Collect response:**
 Wait for user input:
@@ -215,14 +290,33 @@ Wait for user input:
 - decision: option selection
 - human-action: "done" when complete
 
-**4. Resume subagent:**
+**4. Spawn fresh continuation agent:**
+
+Fill continuation-prompt template with:
+- completed_tasks_table: From checkpoint return
+- resume_task_number: Current task number
+- resume_task_name: Current task name
+- resume_status: Derived from checkpoint type and user response
+- user_response: What user provided
+- resume_instructions: Type-specific guidance (see template)
+
 ```
-Task(resume="{agent_id}", prompt="User response: {user_input}")
+Task(prompt=filled_continuation_template, subagent_type="general-purpose")
 ```
+
+**Why fresh agent, not resume:**
+Task tool resume fails after multiple tool calls (presenting to user, waiting for response). Fresh agent with state handoff via continuation-prompt.md is the correct pattern.
 
 **5. Repeat:**
 Continue handling returns until "## PLAN COMPLETE" or user stops.
 </checkpoint_handling>
+
+<checkpoint_templates>
+Templates for checkpoint handling:
+
+- `@~/.claude/get-shit-done/templates/checkpoint-return.md` - Subagent return format
+- `@~/.claude/get-shit-done/templates/continuation-prompt.md` - Fresh agent spawn template
+</checkpoint_templates>
 
 <success_criteria>
 - [ ] Plan executed (SUMMARY.md created)

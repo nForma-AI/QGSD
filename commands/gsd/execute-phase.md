@@ -160,9 +160,23 @@ All three run in parallel. Task tool blocks until all complete.
 <checkpoint_handling>
 Plans with `autonomous: false` in frontmatter have checkpoints:
 - Run in their assigned wave (can be parallel with other plans)
-- Pause at checkpoint, return to orchestrator
-- Orchestrator presents checkpoint to user
-- User responds, orchestrator resumes agent
+- Pause at checkpoint, return structured state to orchestrator
+- Orchestrator presents checkpoint to user (see execute-plan.md for presentation formats)
+- User responds, orchestrator spawns fresh continuation agent
+
+**Checkpoint flow:**
+1. Subagent returns `## CHECKPOINT REACHED` with Completed Tasks table
+2. Orchestrator parses return and presents rich formatted checkpoint
+3. User responds (approved/done/option selection)
+4. Orchestrator fills continuation-prompt.md template with state
+5. Spawns fresh agent: `Task(prompt=filled_continuation_template, subagent_type="general-purpose")`
+
+**Why fresh agent, not resume:**
+Task tool resume fails after multiple tool calls. Fresh agent with state handoff is the correct pattern.
+
+**Templates:**
+- `@~/.claude/get-shit-done/templates/checkpoint-return.md` - Subagent return format
+- `@~/.claude/get-shit-done/templates/continuation-prompt.md` - Fresh agent spawn template
 </checkpoint_handling>
 
 <deviation_rules>
