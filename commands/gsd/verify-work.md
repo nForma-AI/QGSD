@@ -1,7 +1,7 @@
 ---
 name: gsd:verify-work
-description: Guide manual user acceptance testing of recently built features
-argument-hint: "[optional: phase or plan number, e.g., '4' or '04-02']"
+description: Validate built features through conversational UAT
+argument-hint: "[phase number, e.g., '4']"
 allowed-tools:
   - Read
   - Bash
@@ -9,63 +9,57 @@ allowed-tools:
   - Grep
   - Edit
   - Write
-  - AskUserQuestion
 ---
 
 <objective>
-Guide the user through manual acceptance testing of recently built features.
+Validate built features through conversational testing with persistent state.
 
-Purpose: Validate that what Claude thinks was built actually works from the user's perspective. The USER performs all testing — Claude generates the test checklist, guides the process, and captures issues.
+Purpose: Confirm what Claude built actually works from user's perspective. One test at a time, plain text responses, no interrogation.
 
-Output: Validation of features, any issues logged to phase-scoped ISSUES.md
+Output: {phase}-UAT.md tracking all test results, issues logged for /gsd:plan-fix
 </objective>
 
 <execution_context>
 @~/.claude/get-shit-done/workflows/verify-work.md
-@~/.claude/get-shit-done/templates/uat-issues.md
+@~/.claude/get-shit-done/templates/UAT.md
 </execution_context>
 
 <context>
-Scope: $ARGUMENTS (optional)
-- If provided: Test specific phase or plan (e.g., "4" or "04-02")
-- If not provided: Test most recently completed plan
+Phase: $ARGUMENTS (optional)
+- If provided: Test specific phase (e.g., "4")
+- If not provided: Check for active sessions or prompt for phase
 
-**Load project state:**
 @.planning/STATE.md
-
-**Load roadmap:**
 @.planning/ROADMAP.md
 </context>
 
 <process>
-1. Validate arguments (if provided, parse as phase or plan number)
-2. Find relevant SUMMARY.md (specified or most recent)
-3. Follow verify-work.md workflow:
-   - Extract testable deliverables
-   - Generate test checklist
-   - Guide through each test via AskUserQuestion
-   - Collect and categorize issues
-   - Log issues to `.planning/phases/XX-name/{phase}-{plan}-ISSUES.md`
-   - Present summary with verdict
-4. Offer next steps based on results:
-   - If all passed: Continue to next phase
-   - If issues found: `/gsd:plan-fix {phase} {plan}` to create fix plan
+1. Check for active UAT sessions (resume or start new)
+2. Find SUMMARY.md files for the phase
+3. Extract testable deliverables (user-observable outcomes)
+4. Create {phase}-UAT.md with test list
+5. Present tests one at a time:
+   - Show expected behavior
+   - Wait for plain text response
+   - "yes/y/next" = pass, anything else = issue (severity inferred)
+6. Update UAT.md after each response
+7. On completion: commit, present summary, offer next steps
 </process>
 
 <anti_patterns>
-- Don't run automated tests (that's for CI/test suites)
-- Don't make assumptions about test results — USER reports outcomes
-- Don't skip the guidance — walk through each test
-- Don't dismiss minor issues — log everything user reports
-- Don't fix issues during testing — capture for later
+- Don't use AskUserQuestion for test responses — plain text conversation
+- Don't ask severity — infer from description
+- Don't present full checklist upfront — one test at a time
+- Don't run automated tests — this is manual user validation
+- Don't fix issues during testing — log for /gsd:plan-fix
 </anti_patterns>
 
 <success_criteria>
-- [ ] Test scope identified from SUMMARY.md
-- [ ] Checklist generated based on deliverables
-- [ ] User guided through each test
-- [ ] All test results captured (pass/fail/partial/skip)
-- [ ] Any issues logged to phase-scoped ISSUES.md (not global)
-- [ ] Summary presented with verdict
-- [ ] User knows next steps based on results
+- [ ] UAT.md created with tests from SUMMARY.md
+- [ ] Tests presented one at a time with expected behavior
+- [ ] Plain text responses (no structured forms)
+- [ ] Severity inferred, never asked
+- [ ] File updated after each response (survives /clear)
+- [ ] Committed on completion
+- [ ] Clear next steps based on results
 </success_criteria>

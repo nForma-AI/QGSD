@@ -1,202 +1,352 @@
 <purpose>
-Guide manual user acceptance testing of recently built features. Extract deliverables from SUMMARY.md, generate test checklist, guide user through each test, log issues to phase-scoped file.
+Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds into /gsd:plan-fix.
 
-The USER performs all testing — Claude generates the checklist, guides the process, and captures issues.
+User tests, Claude records. One test at a time. Plain text responses.
 </purpose>
+
+<philosophy>
+**Show expected, ask if reality matches.**
+
+Claude presents what SHOULD happen. User confirms or describes what's different.
+- "yes" / "y" / "next" / empty → pass
+- Anything else → logged as issue, severity inferred
+
+No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. Does it?"
+</philosophy>
+
+<template>
+@~/.claude/get-shit-done/templates/UAT.md
+</template>
 
 <process>
 
-<step name="identify">
-**Determine what to test:**
-
-If $ARGUMENTS provided:
-- Parse as phase number (e.g., "4") or plan number (e.g., "04-02")
-- Find corresponding SUMMARY.md file(s)
-
-If no arguments:
-- Find most recently modified SUMMARY.md
+<step name="check_active_session">
+**First: Check for active UAT sessions**
 
 ```bash
-find .planning/phases -name "*SUMMARY.md" -type f -exec ls -lt {} + | head -5
+find .planning/phases -name "*-UAT.md" -type f 2>/dev/null | head -5
 ```
 
-Read the SUMMARY.md to understand what was built.
+**If active sessions exist AND no $ARGUMENTS provided:**
+
+Read each file's frontmatter (status, phase) and Current Test section.
+
+Display inline:
+
+```
+## Active UAT Sessions
+
+| # | Phase | Status | Current Test | Progress |
+|---|-------|--------|--------------|----------|
+| 1 | 04-comments | testing | 3. Reply to Comment | 2/6 |
+| 2 | 05-auth | testing | 1. Login Form | 0/4 |
+
+Reply with a number to resume, or provide a phase number to start new.
+```
+
+Wait for user response.
+
+- If user replies with number (1, 2) → Load that file, go to `resume_from_file`
+- If user replies with phase number → Treat as new session, go to `create_uat_file`
+
+**If active sessions exist AND $ARGUMENTS provided:**
+
+Check if session exists for that phase. If yes, offer to resume or restart.
+If no, continue to `create_uat_file`.
+
+**If no active sessions AND no $ARGUMENTS:**
+
+```
+No active UAT sessions.
+
+Provide a phase number to start testing (e.g., /gsd:verify-work 4)
+```
+
+**If no active sessions AND $ARGUMENTS provided:**
+
+Continue to `create_uat_file`.
 </step>
 
-<step name="extract">
+<step name="find_summaries">
+**Find what to test:**
+
+Parse $ARGUMENTS as phase number (e.g., "4") or plan number (e.g., "04-02").
+
+```bash
+# Find phase directory
+PHASE_DIR=$(ls -d .planning/phases/${PHASE_ARG}* 2>/dev/null | head -1)
+
+# Find SUMMARY files
+ls "$PHASE_DIR"/*-SUMMARY.md 2>/dev/null
+```
+
+Read each SUMMARY.md to extract testable deliverables.
+</step>
+
+<step name="extract_tests">
 **Extract testable deliverables from SUMMARY.md:**
 
 Parse for:
 1. **Accomplishments** - Features/functionality added
-2. **Files Created/Modified** - What changed
-3. **User-facing changes** - UI, workflows, interactions
+2. **User-facing changes** - UI, workflows, interactions
 
 Focus on USER-OBSERVABLE outcomes, not implementation details.
 
+For each deliverable, create a test:
+- name: Brief test name
+- expected: What the user should see/experience (specific, observable)
+
 Examples:
-- "Check-in menu item added to navigation" → User can see/click Check-in in nav
-- "HomePage refreshes after check-in" → After check-in, home shows updated state
+- Accomplishment: "Added comment threading with infinite nesting"
+  → Test: "Reply to a Comment"
+  → Expected: "Clicking Reply opens inline composer below comment. Submitting shows reply nested under parent with visual indentation."
+
+Skip internal/non-observable items (refactors, type changes, etc.).
 </step>
 
-<step name="generate">
-**Generate manual test checklist:**
+<step name="create_uat_file">
+**Create UAT file with all tests:**
 
-Create structured test plan:
-
-```
-# User Acceptance Test: [Plan/Phase Name]
-
-**Scope:** [What was built - from SUMMARY.md]
-**Testing:** Manual user validation
-
-## Pre-flight
-- [ ] Application builds and runs without errors
-- [ ] Application launches to expected state
-
-## Feature Tests
-
-### [Feature 1 from deliverables]
-**What to test:** [User-observable behavior]
-**Steps:**
-1. [Specific action to take]
-2. [What to look for]
-3. [Expected result]
-
-### [Feature 2 from deliverables]
-...
-
-## Edge Cases
-- [ ] [Relevant edge case based on feature]
-- [ ] [Another edge case]
-
-## Visual/UX Check
-- [ ] UI matches expected design
-- [ ] No visual glitches or layout issues
-- [ ] Responsive to interactions
+```bash
+mkdir -p "$PHASE_DIR"
 ```
 
-Present this checklist to user.
-</step>
+Build test list from extracted deliverables.
 
-<step name="guide">
-**Guide user through each test:**
-
-For each test item, use AskUserQuestion:
-- header: "[Feature name]"
-- question: "[Test description] - Did this work as expected?"
-- options:
-  - "Pass" — Works correctly
-  - "Fail" — Doesn't work as expected
-  - "Partial" — Works but with issues
-  - "Skip" — Can't test right now
-
-**If Pass:** Move to next test
-
-**If Fail or Partial:**
-Follow up with AskUserQuestion:
-- header: "Issue details"
-- question: "What went wrong?"
-- options:
-  - "Crashes/errors" — Application error or exception
-  - "Wrong behavior" — Does something unexpected
-  - "Missing feature" — Expected functionality not present
-  - "UI/visual issue" — Looks wrong but functions
-  - "Let me describe" — Free-form description needed
-</step>
-
-<step name="collect">
-**Collect and categorize issues:**
-
-For each failed/partial test, gather:
-- Feature affected
-- What went wrong (from user input)
-- Severity:
-  - **Blocker** — Can't use the feature at all
-  - **Major** — Feature works but significant problem
-  - **Minor** — Small issue, feature still usable
-  - **Cosmetic** — Visual only, no functional impact
-</step>
-
-<step name="log">
-**Log issues to phase-scoped file:**
-
-If any issues found:
-
-1. Create `.planning/phases/XX-name/{phase}-{plan}-ISSUES.md` if doesn't exist
-2. Use template from `@~/.claude/get-shit-done/templates/uat-issues.md`
-3. Add each issue:
+Create file:
 
 ```markdown
-### UAT-[NNN]: [Brief description]
+---
+status: testing
+phase: XX-name
+source: [list of SUMMARY.md files]
+started: [ISO timestamp]
+updated: [ISO timestamp]
+---
 
-**Discovered:** [date] during user acceptance testing
-**Phase/Plan:** [phase]-[plan] that was tested
-**Severity:** [Blocker/Major/Minor/Cosmetic]
-**Description:** [User's description of the problem]
-**Expected:** [What should have happened]
-**Actual:** [What actually happened]
+## Current Test
+<!-- OVERWRITE each test - shows where we are -->
+
+number: 1
+name: [first test name]
+expected: |
+  [what user should observe]
+awaiting: user response
+
+## Tests
+
+### 1. [Test Name]
+expected: [observable behavior]
+result: [pending]
+
+### 2. [Test Name]
+expected: [observable behavior]
+result: [pending]
+
+...
+
+## Summary
+
+total: [N]
+passed: 0
+issues: 0
+pending: [N]
+skipped: 0
+
+## Issues for /gsd:plan-fix
+
+[none yet]
 ```
 
-**Note:** Issues go to phase-scoped file, NOT global `.planning/ISSUES.md`. This keeps UAT findings tied to the specific work being tested and enables `/gsd:plan-fix` to address them.
+Write to `.planning/phases/XX-name/{phase}-UAT.md`
+
+Proceed to `present_test`.
 </step>
 
-<step name="summarize">
-**Present test summary:**
+<step name="present_test">
+**Present current test to user:**
+
+Read Current Test section from UAT file.
+
+Display:
 
 ```
-# Test Results: [Plan/Phase Name]
+## Test {number}: {name}
 
-**Tests run:** [N]
-**Passed:** [N]
-**Failed:** [N]
-**Partial:** [N]
-**Skipped:** [N]
+**Expected:** {expected}
 
-## Issues Found
-[List any issues with severity]
-
-## Verdict
-[Based on results:]
-- ALL PASS: "All tests passed. Feature validated."
-- MINOR ISSUES: "Feature works with minor issues logged."
-- MAJOR ISSUES: "Significant issues found - review before proceeding."
-- BLOCKERS: "Blocking issues found - must fix before continuing."
-
-## Next Steps
-[Based on verdict:]
-- If clean: Suggest proceeding to next phase
-- If issues: Suggest /gsd:plan-fix to address
+Does this match what you see?
 ```
+
+Wait for user response (plain text, no AskUserQuestion).
 </step>
 
-<step name="offer">
-**Offer next actions based on results:**
+<step name="process_response">
+**Process user response and update file:**
 
-Use AskUserQuestion:
-- header: "Next"
-- question: "What would you like to do?"
-- options (based on results):
+**If response indicates pass:**
+- Empty response, "yes", "y", "ok", "pass", "next", "approved", "✓"
 
-If all passed:
-- "Continue to next phase" — Proceed with confidence
-- "Test more" — Run additional manual tests
-- "Done" — Finish testing session
+Update Tests section:
+```
+### {N}. {name}
+expected: {expected}
+result: pass
+```
 
-If issues found:
-- "Plan fixes" — Create plan to address issues (/gsd:plan-fix)
-- "Log and continue" — Issues logged, proceed anyway
-- "Review issues" — Look at logged issues in detail
-- "Done" — Finish testing session
+**If response indicates skip:**
+- "skip", "can't test", "n/a"
+
+Update Tests section:
+```
+### {N}. {name}
+expected: {expected}
+result: skipped
+reason: [user's reason if provided]
+```
+
+**If response is anything else:**
+- Treat as issue description
+
+Infer severity from description:
+- Contains: crash, error, exception, fails, broken, unusable → blocker
+- Contains: doesn't work, wrong, missing, can't → major
+- Contains: slow, weird, off, minor, small → minor
+- Contains: color, font, spacing, alignment, visual → cosmetic
+- Default if unclear: major
+
+Update Tests section:
+```
+### {N}. {name}
+expected: {expected}
+result: issue
+reported: "{verbatim user response}"
+severity: {inferred}
+```
+
+Append to Issues section:
+```
+- UAT-{NNN}: {brief summary from response} ({severity}) - Test {N}
+```
+
+**After any response:**
+
+Update Summary counts.
+Update frontmatter.updated timestamp.
+
+If more tests remain → Update Current Test, go to `present_test`
+If no more tests → Go to `complete_session`
+</step>
+
+<step name="resume_from_file">
+**Resume testing from UAT file:**
+
+Read the full UAT file.
+
+Find first test with `result: [pending]`.
+
+Announce:
+```
+Resuming: Phase {phase} UAT
+Progress: {passed + issues + skipped}/{total}
+Issues found so far: {issues count}
+
+Continuing from Test {N}...
+```
+
+Update Current Test section with the pending test.
+Proceed to `present_test`.
+</step>
+
+<step name="complete_session">
+**Complete testing and commit:**
+
+Update frontmatter:
+- status: complete
+- updated: [now]
+
+Clear Current Test section:
+```
+## Current Test
+
+[testing complete]
+```
+
+Commit the UAT file:
+```bash
+git add ".planning/phases/XX-name/{phase}-UAT.md"
+git commit -m "test({phase}): complete UAT - {passed} passed, {issues} issues"
+```
+
+Present summary:
+```
+## UAT Complete: Phase {phase}
+
+| Result | Count |
+|--------|-------|
+| Passed | {N}   |
+| Issues | {N}   |
+| Skipped| {N}   |
+
+[If issues > 0:]
+### Issues Found
+
+[List from Issues section]
+
+---
+
+Next steps:
+- `/gsd:plan-fix {phase}` — Create fix plan for issues
+- `/gsd:verify-work {phase}` — Re-test after fixes
+- Continue to next phase
+
+[If issues == 0:]
+All tests passed. Ready to continue.
+
+- `/gsd:plan-phase {next}` — Plan next phase
+- `/gsd:execute-phase {next}` — Execute next phase
+```
 </step>
 
 </process>
 
+<update_rules>
+**Section update rules:**
+
+| Section | Rule | When |
+|---------|------|------|
+| Frontmatter.status | OVERWRITE | Start, complete |
+| Frontmatter.updated | OVERWRITE | Every update |
+| Current Test | OVERWRITE | Each test transition |
+| Tests.{N}.result | OVERWRITE | When user responds |
+| Summary | OVERWRITE | After each response |
+| Issues | APPEND | When issue found |
+
+**Update file AFTER processing each response.** If context resets, file shows exactly where to resume.
+</update_rules>
+
+<severity_inference>
+**Infer severity from user's natural language:**
+
+| User says | Infer |
+|-----------|-------|
+| "crashes", "error", "exception", "fails completely" | blocker |
+| "doesn't work", "nothing happens", "wrong behavior" | major |
+| "works but...", "slow", "weird", "minor issue" | minor |
+| "color", "spacing", "alignment", "looks off" | cosmetic |
+
+Default to **major** if unclear. User can correct if needed.
+
+**Never ask "how severe is this?"** - just infer and move on.
+</severity_inference>
+
 <success_criteria>
-- [ ] Test scope identified from SUMMARY.md
-- [ ] Checklist generated based on deliverables
-- [ ] User guided through each test via AskUserQuestion
-- [ ] All test results captured (pass/fail/partial/skip)
-- [ ] Any issues logged to phase-scoped ISSUES.md
-- [ ] Summary presented with verdict
-- [ ] User knows next steps based on results
+- [ ] UAT file created with all tests from SUMMARY.md
+- [ ] Tests presented one at a time with expected behavior
+- [ ] User responses processed as pass/issue/skip
+- [ ] Severity inferred from description (never asked)
+- [ ] File updated after each response
+- [ ] Can resume perfectly from any /clear
+- [ ] Committed on completion
+- [ ] Clear next steps based on results
 </success_criteria>
