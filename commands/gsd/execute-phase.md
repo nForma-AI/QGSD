@@ -64,9 +64,82 @@ Phase: $ARGUMENTS
    - Update ROADMAP.md
 
 6. **Offer next steps**
-   - More phases → `/gsd:plan-phase {next}`
-   - Milestone complete → `/gsd:complete-milestone`
+   - Route to next action (see `<offer_next>`)
 </process>
+
+<offer_next>
+**MANDATORY: Present copy/paste-ready next command.**
+
+After phase completes, determine what's next:
+
+**Step 1: Check milestone status**
+
+Read ROADMAP.md. Find current phase number and highest phase in milestone.
+
+| Condition | Action |
+|-----------|--------|
+| current < highest | More phases → Route A |
+| current = highest | Milestone complete → Route B |
+
+---
+
+**Route A: More phases remain in milestone**
+
+```
+## ✓ Phase {Z}: {Name} Complete
+
+All {Y} plans finished.
+
+---
+
+## ▶ Next Up
+
+**Phase {Z+1}: {Name}** — {Goal from ROADMAP.md}
+
+`/gsd:plan-phase {Z+1}`
+
+<sub>`/clear` first → fresh context window</sub>
+
+---
+
+**Also available:**
+- `/gsd:verify-work {Z}` — manual acceptance testing before continuing
+- `/gsd:discuss-phase {Z+1}` — gather context first
+- `/gsd:research-phase {Z+1}` — investigate unknowns
+
+---
+```
+
+---
+
+**Route B: Milestone complete**
+
+```
+🎉 MILESTONE COMPLETE!
+
+## ✓ Phase {Z}: {Name} Complete
+
+All {N} phases finished.
+
+---
+
+## ▶ Next Up
+
+**Complete Milestone** — archive and prepare for next
+
+`/gsd:complete-milestone`
+
+<sub>`/clear` first → fresh context window</sub>
+
+---
+
+**Also available:**
+- `/gsd:verify-work` — manual acceptance testing before completing milestone
+- `/gsd:add-phase <description>` — add another phase before completing
+
+---
+```
+</offer_next>
 
 <wave_execution>
 **Parallel spawning:**
