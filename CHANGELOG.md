@@ -6,6 +6,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.12] - 2025-01-15
+
+### Changed
+- **Milestone cycle reworked for proper requirements flow:**
+  - `complete-milestone` now archives AND deletes ROADMAP.md and REQUIREMENTS.md (fresh for next milestone)
+  - `new-milestone` is now a "brownfield new-project" — updates PROJECT.md with new goals, routes to define-requirements
+  - `discuss-milestone` is now required before `new-milestone` (creates context file)
+  - `research-project` is milestone-aware — focuses on new features, ignores already-validated requirements
+  - `create-roadmap` continues phase numbering from previous milestone
+  - Flow: complete → discuss → new-milestone → research → requirements → roadmap
+
+### Fixed
+- `MILESTONE-AUDIT.md` now versioned as `v{version}-MILESTONE-AUDIT.md` and archived on completion
+- `progress` now correctly routes to `/gsd:discuss-milestone` when between milestones (Route F)
+
 ## [1.5.11] - 2025-01-15
 
 ### Changed
@@ -687,7 +702,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.11...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.12...HEAD
+[1.5.12]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.12
 [1.5.11]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.11
 [1.5.10]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.10
 [1.5.9]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.9
