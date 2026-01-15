@@ -1,0 +1,257 @@
+<purpose>
+Transform research findings into scoped, checkable requirements.
+
+Research tells you what products in this domain typically have.
+Requirements tell you what YOU are building for v1.
+
+This is the bridge between "what's possible" and "what we're committing to."
+</purpose>
+
+<required_reading>
+**Read these files NOW:**
+
+1. ~/.claude/get-shit-done/templates/requirements.md
+2. .planning/PROJECT.md
+3. .planning/research/FEATURES.md
+4. .planning/research/SUMMARY.md
+</required_reading>
+
+<process>
+
+<step name="load_context">
+Read PROJECT.md and extract:
+- Core value (the ONE thing that must work)
+- Stated constraints (budget, timeline, tech limitations)
+- Any explicit scope boundaries from project definition
+
+Read research/FEATURES.md and extract:
+- Table stakes (users expect these)
+- Differentiators (competitive advantage)
+- Anti-features (commonly requested, often problematic)
+- Feature dependencies
+- MVP vs full product recommendations
+
+Read research/SUMMARY.md for:
+- Overall confidence level
+- Key architectural constraints
+- Suggested phase structure (informational only)
+</step>
+
+<step name="present_features">
+Present researched features grouped by category:
+
+```
+Based on research, here are the features for [domain]:
+
+## Authentication
+**Table stakes:**
+- Sign up with email/password
+- Email verification
+- Password reset
+- Session management
+
+**Differentiators:**
+- Magic link login
+- OAuth (Google, GitHub)
+- 2FA
+
+**Research notes:** [any relevant notes from FEATURES.md]
+
+---
+
+## [Next Category]
+...
+```
+
+For each category, include:
+- Table stakes from FEATURES.md
+- Differentiators from FEATURES.md
+- Any anti-features flagged (with warnings)
+- Complexity notes where relevant
+</step>
+
+<step name="scope_categories">
+For each category, use AskUserQuestion:
+
+- header: "[Category name]"
+- question: "Which [category] features are in v1?"
+- multiSelect: true
+- options:
+  - "[Feature 1]" — [brief description or complexity note]
+  - "[Feature 2]" — [brief description]
+  - "[Feature 3]" — [brief description]
+  - "None for v1" — Defer entire category
+
+Repeat for each category from research.
+
+**Track responses:**
+- Selected features → v1 requirements
+- Unselected table stakes → flag as v2 (users expect these)
+- Unselected differentiators → out of scope (unless user specifies v2)
+</step>
+
+<step name="identify_gaps">
+After scoping all researched categories, ask for additions:
+
+Use AskUserQuestion:
+- header: "Additions"
+- question: "Any requirements research missed? (Features specific to your vision)"
+- options:
+  - "No, research covered it" — Proceed to generate
+  - "Yes, let me add some" — Capture additional requirements
+
+**If "Yes":**
+
+Ask inline (freeform): "What additional requirements do you need?"
+
+Parse response into requirement format and add to v1 list.
+</step>
+
+<step name="validate_core_value">
+Cross-check requirements against Core Value from PROJECT.md:
+
+```
+Core value: "[from PROJECT.md]"
+
+Requirements that directly support core value:
+- [requirement 1]
+- [requirement 2]
+
+⚠️ Warning: Core value may not be fully covered by selected requirements.
+Missing coverage: [gap description]
+```
+
+**If gap detected:**
+
+Use AskUserQuestion:
+- header: "Core value"
+- question: "Core value '[X]' may need additional requirements. Add coverage?"
+- options:
+  - "Yes, suggest requirements" — Claude suggests, user confirms
+  - "No, it's covered" — Proceed
+  - "Adjust core value" — User provides updated core value
+</step>
+
+<step name="generate_requirements">
+Create `.planning/REQUIREMENTS.md` using template.
+
+**Structure:**
+- Header with project name and date
+- v1 Requirements grouped by category (checkboxes)
+- v2 Requirements (deferred, no checkboxes yet)
+- Out of Scope (explicit exclusions with reasoning)
+- Traceability section (empty, filled by create-roadmap)
+
+**Requirement format:**
+```markdown
+### [Category]
+
+- [ ] **[REQ-ID]**: [Requirement description]
+- [ ] **[REQ-ID]**: [Requirement description]
+```
+
+**REQ-ID format:** `[CATEGORY]-[NUMBER]`
+- AUTH-01, AUTH-02
+- CONTENT-01, CONTENT-02
+- SOCIAL-01, SOCIAL-02
+
+IDs enable traceability from roadmap phases.
+</step>
+
+<step name="summarize">
+Present summary before committing:
+
+```
+## Requirements Summary
+
+**v1 Scope:**
+- Authentication: [N] requirements
+- [Category]: [N] requirements
+- [Category]: [N] requirements
+Total: [X] requirements
+
+**v2 (Deferred):**
+- [Category]: [N] requirements
+Total: [Y] requirements
+
+**Out of Scope:**
+- [Feature]: [reason]
+- [Feature]: [reason]
+
+**Core Value Alignment:** ✓ Covered / ⚠️ Gaps noted
+
+---
+
+Does this capture what you're building? (yes / adjust)
+```
+
+If "adjust": Return to scope_categories or identify_gaps as appropriate.
+</step>
+
+<step name="git_commit">
+Commit requirements:
+
+```bash
+git add .planning/REQUIREMENTS.md
+git commit -m "$(cat <<'EOF'
+docs: define v1 requirements
+
+[X] requirements across [N] categories.
+[Y] requirements deferred to v2.
+
+Core value: [from PROJECT.md]
+EOF
+)"
+```
+</step>
+
+<step name="offer_next">
+```
+Requirements defined:
+
+- Requirements: .planning/REQUIREMENTS.md
+- v1 scope: [X] requirements across [N] categories
+- v2 deferred: [Y] requirements
+- Out of scope: [Z] exclusions
+
+---
+
+## ▶ Next Up
+
+**Create roadmap** — phases mapped to requirements
+
+`/gsd:create-roadmap`
+
+<sub>`/clear` first → fresh context window</sub>
+
+---
+```
+</step>
+
+</process>
+
+<quality_criteria>
+**Good requirements:**
+- Specific and testable ("User can reset password via email link")
+- User-centric ("User can X" not "System does Y")
+- Atomic (one capability per requirement)
+- Independent where possible (minimal dependencies)
+
+**Bad requirements:**
+- Vague ("Handle authentication")
+- Technical implementation ("Use bcrypt for passwords")
+- Compound ("User can login and manage profile and change settings")
+- Dependent on unstated assumptions
+</quality_criteria>
+
+<success_criteria>
+- [ ] PROJECT.md core value extracted
+- [ ] Research FEATURES.md loaded and parsed
+- [ ] All categories presented to user
+- [ ] User scoped each category (v1/v2/out of scope)
+- [ ] User had opportunity to add requirements
+- [ ] Core value alignment validated
+- [ ] REQUIREMENTS.md created with REQ-IDs
+- [ ] v1, v2, and out of scope clearly separated
+- [ ] Requirements committed to git
+</success_criteria>

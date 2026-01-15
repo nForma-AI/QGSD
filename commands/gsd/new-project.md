@@ -303,19 +303,23 @@ Project initialized:
 
 ## ▶ Next Up
 
-Choose your path:
-
-**Option A: Research first** (recommended for new domains)
-Research the ecosystem before creating roadmap. Discovers standard stacks, expected features, architecture patterns, and common pitfalls.
+**Research the domain** (recommended)
 
 `/gsd:research-project`
 
-**Option B: Create roadmap directly** (for familiar domains)
-Skip research if you know this domain well or have a clear spec.
-
-`/gsd:create-roadmap`
+Discovers standard stacks, expected features, architecture patterns, and common pitfalls. Then define requirements and create roadmap.
 
 <sub>`/clear` first → fresh context window</sub>
+
+**Full flow:** research-project → define-requirements → create-roadmap
+
+---
+
+**Skip research** (familiar domains only)
+
+If you know this domain well, skip directly to defining requirements:
+
+`/gsd:define-requirements`
 
 ---
 ```

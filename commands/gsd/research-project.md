@@ -22,7 +22,7 @@ Answers the questions that inform quality roadmaps:
 - How are these systems typically structured?
 - What do projects in this domain commonly get wrong?
 
-Run after `/gsd:new-project`, before `/gsd:create-roadmap`.
+Run after `/gsd:new-project`, before `/gsd:define-requirements`.
 
 Output: `.planning/research/` folder with ecosystem knowledge.
 </objective>
@@ -95,11 +95,13 @@ Research complete:
 
 ## ▶ Next Up
 
-**Create roadmap** — informed by research
+**Define requirements** — scope your v1 from research findings
 
-`/gsd:create-roadmap`
+`/gsd:define-requirements`
 
 <sub>`/clear` first → fresh context window</sub>
+
+**Flow:** research-project → **define-requirements** → create-roadmap
 
 ---
 ```
@@ -130,5 +132,5 @@ Research complete:
 - [ ] All research documents created in .planning/research/
 - [ ] SUMMARY.md includes roadmap implications
 - [ ] Research committed to git
-- [ ] User knows next step (create-roadmap)
+- [ ] User knows next step (define-requirements)
 </success_criteria>

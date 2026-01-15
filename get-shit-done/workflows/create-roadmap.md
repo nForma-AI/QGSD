@@ -1,6 +1,10 @@
 <purpose>
 Define the phases of implementation. Each phase is a coherent chunk of work
-that delivers value. The roadmap provides structure, not detailed tasks.
+that delivers value. Phases map to requirements — every v1 requirement must
+belong to exactly one phase.
+
+The roadmap provides structure, not detailed tasks. But it ensures no
+requirements are orphaned and validates coverage before planning begins.
 </purpose>
 
 <required_reading>
@@ -8,11 +12,42 @@ that delivers value. The roadmap provides structure, not detailed tasks.
 
 1. ~/.claude/get-shit-done/templates/roadmap.md
 2. ~/.claude/get-shit-done/templates/state.md
-3. Read `.planning/PROJECT.md` if it exists
-4. Read `.planning/research/SUMMARY.md` if it exists
+3. ~/.claude/get-shit-done/templates/requirements.md
+4. .planning/PROJECT.md
+5. .planning/REQUIREMENTS.md
+6. .planning/research/SUMMARY.md (if exists)
 </required_reading>
 
 <process>
+
+<step name="load_requirements">
+Load and parse REQUIREMENTS.md:
+
+```bash
+cat .planning/REQUIREMENTS.md
+```
+
+Extract:
+- All v1 requirement IDs (AUTH-01, CONT-02, etc.)
+- Requirement categories (Authentication, Content, Social, etc.)
+- Total count of v1 requirements
+
+```
+Requirements loaded:
+
+Categories: [N]
+- Authentication: [X] requirements
+- Content: [Y] requirements
+- Social: [Z] requirements
+...
+
+Total v1 requirements: [N]
+
+All requirements must map to exactly one phase.
+```
+
+**Track requirement IDs** — will verify coverage after phase identification.
+</step>
 
 <step name="check_brief">
 ```bash
@@ -115,16 +150,29 @@ Select (comma-separate for multiple):
 </step>
 
 <step name="identify_phases">
-Derive phases from the actual work needed.
+Derive phases from requirements. Each phase covers a coherent set of requirements.
 
-**If research exists (.planning/research/SUMMARY.md):**
-- Start with suggested phases from research
-- Validate against PROJECT.md requirements
-- Adjust based on domain expertise (if any)
-- Research already identified dependencies and pitfalls — use them
+**Primary input: REQUIREMENTS.md**
+- Group requirements by natural delivery boundaries
+- Each phase should complete one or more requirement categories
+- Dependencies between requirements inform phase ordering
 
-**If no research:**
-- Derive phases from PROJECT.md and domain expertise only
+**Secondary inputs:**
+- Research SUMMARY.md (if exists): suggested phases, architecture patterns
+- Domain expertise: established patterns for this type of project
+
+**Phase identification process:**
+
+1. Group requirements by category (Authentication, Content, Social, etc.)
+2. Identify dependencies between categories (Social needs Content, Content needs Auth)
+3. Create phases that complete entire categories where possible
+4. Split large categories across phases if needed (e.g., basic auth vs. advanced auth)
+5. Assign every v1 requirement to exactly one phase
+
+**For each phase, record:**
+- Phase name and goal
+- Which requirement IDs it covers (e.g., AUTH-01, AUTH-02, AUTH-03)
+- Dependencies on other phases
 
 **Check depth setting:**
 ```bash
@@ -199,6 +247,44 @@ Common phase patterns:
 - Setup → MVP → Iteration → Launch
 - Infrastructure → Backend → Frontend → Integration
   </step>
+
+<step name="validate_coverage">
+**Verify all v1 requirements are mapped to exactly one phase.**
+
+Compare assigned requirements against full list from load_requirements step:
+
+```
+Requirement Coverage:
+
+✓ AUTH-01 → Phase 1
+✓ AUTH-02 → Phase 1
+✓ AUTH-03 → Phase 1
+✓ AUTH-04 → Phase 1
+✓ PROF-01 → Phase 2
+✓ PROF-02 → Phase 2
+...
+
+Coverage: [X]/[Y] requirements mapped
+```
+
+**If any requirements unmapped:**
+
+```
+⚠️ Orphaned requirements (not in any phase):
+
+- NOTF-01: User receives in-app notifications
+- NOTF-02: User receives email for new followers
+
+These v1 requirements have no phase. Options:
+1. Add phase to cover them
+2. Move to v2 (update REQUIREMENTS.md)
+3. Assign to existing phase
+```
+
+Use AskUserQuestion to resolve orphaned requirements.
+
+**Do not proceed until coverage = 100%.**
+</step>
 
 <step name="detect_research_needs">
 **For each phase, determine if research is likely needed.**
@@ -343,6 +429,14 @@ Write to `.planning/ROADMAP.md` with:
 - Domain Expertise section (paths from detect_domain step, or "None" if skipped)
 - Phase list with names and one-line descriptions
 - Dependencies (what must complete before what)
+- **Requirement mappings** (which REQ-IDs each phase covers):
+  ```markdown
+  ### Phase 1: Authentication
+  **Goal**: Secure user authentication
+  **Depends on**: Nothing (first phase)
+  **Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
+  **Research**: Unlikely (established patterns)
+  ```
 - **Research flags** (from detect_research_needs step):
   - `Research: Likely ([reason])` with `Research topics:` for flagged phases
   - `Research: Unlikely ([reason])` for unflagged phases
@@ -356,6 +450,32 @@ mkdir -p .planning/phases/02-{phase-name}
 # etc.
 ```
 
+</step>
+
+<step name="update_requirements_traceability">
+Update REQUIREMENTS.md traceability section with phase mappings:
+
+Read current REQUIREMENTS.md and update the Traceability table:
+
+```markdown
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| PROF-01 | Phase 2 | Pending |
+...
+
+**Coverage:**
+- v1 requirements: [X] total
+- Mapped to phases: [X]
+- Unmapped: 0 ✓
+```
+
+Write updated REQUIREMENTS.md.
 </step>
 
 <step name="initialize_project_state">
@@ -436,27 +556,27 @@ Resume file: None
 </step>
 
 <step name="git_commit_initialization">
-Commit project initialization (brief + roadmap + state together):
+Commit roadmap with requirement mappings:
 
 ```bash
-git add .planning/PROJECT.md .planning/ROADMAP.md .planning/STATE.md
+git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 git add .planning/phases/
-# config.json if exists
-git add .planning/config.json 2>/dev/null
 git commit -m "$(cat <<'EOF'
-docs: initialize [project-name] ([N] phases)
+docs: create roadmap ([N] phases, [X] requirements)
 
 [One-liner from PROJECT.md]
 
 Phases:
-1. [phase-name]: [goal]
-2. [phase-name]: [goal]
-3. [phase-name]: [goal]
+1. [phase-name]: [requirements covered]
+2. [phase-name]: [requirements covered]
+3. [phase-name]: [requirements covered]
+
+All v1 requirements mapped to phases.
 EOF
 )"
 ```
 
-Confirm: "Committed: docs: initialize [project] ([N] phases)"
+Confirm: "Committed: docs: create roadmap ([N] phases, [X] requirements)"
 </step>
 
 <step name="offer_next">
@@ -512,9 +632,12 @@ Phases are buckets of work, not project management artifacts.
 
 <success_criteria>
 Roadmap is complete when:
-- [ ] `.planning/ROADMAP.md` exists
+- [ ] REQUIREMENTS.md loaded and parsed
+- [ ] All v1 requirements mapped to exactly one phase (100% coverage)
+- [ ] `.planning/ROADMAP.md` exists with requirement mappings
 - [ ] `.planning/STATE.md` exists (project memory initialized)
-- [ ] Phases defined with clear names (count derived from work, not imposed)
+- [ ] REQUIREMENTS.md traceability section updated
+- [ ] Phases defined with clear names (count derived from requirements, not imposed)
 - [ ] **Research flags assigned** (Likely/Unlikely for each phase)
 - [ ] **Research topics listed** for Likely phases
 - [ ] Phase directories created
