@@ -8,12 +8,13 @@ allowed-tools:
   - Grep
   - Bash
   - Task
+  - Write
 ---
 
 <objective>
 Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
 
-Spawns gsd-milestone-auditor to orchestrate parallel verification, then presents actionable results.
+**This command IS the orchestrator.** Spawns verification agents in parallel, collects results, aggregates into MILESTONE-AUDIT.md.
 </objective>
 
 <execution_context>
@@ -37,34 +38,88 @@ Glob: .planning/phases/*/*-VERIFICATION.md
 </context>
 
 <process>
-1. **Determine milestone scope**
-   - Parse version from arguments or detect current milestone from ROADMAP.md
-   - Identify phases in this milestone
-   - Extract milestone definition of done
 
-2. **Spawn milestone auditor**
-   ```
-   Task(
-     prompt="Audit milestone {version} completion.
+## 1. Determine Milestone Scope
 
-   Milestone scope: Phases {X}-{Y}
-   Definition of done: {from ROADMAP.md}
+```bash
+# Get phases in milestone
+ls -d .planning/phases/*/ | sort -V
+```
 
-   Check:
-   1. Requirements coverage (all milestone REQs satisfied)
-   2. Phase goal achievement (re-verify each phase)
-   3. Cross-phase integration (wiring between phases)
-   4. E2E flows (user can complete promised workflows)
+- Parse version from arguments or detect current from ROADMAP.md
+- Identify all phase directories in scope
+- Extract milestone definition of done from ROADMAP.md
+- Extract requirements mapped to this milestone from REQUIREMENTS.md
 
-   Create MILESTONE-AUDIT.md with structured gaps.",
-     subagent_type="gsd-milestone-auditor"
-   )
-   ```
+## 2. Spawn Phase Verifiers (Wave 1 - Parallel)
 
-3. **Present results**
-   Route by status from MILESTONE-AUDIT.md:
-   - `passed` → Ready for `/gsd:complete-milestone`
-   - `gaps_found` → Present gaps, offer `/gsd:plan-milestone-gaps`
+**Spawn gsd-verifier for each phase in a single message:**
+
+```
+Task(prompt="Verify phase 1: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
+Task(prompt="Verify phase 2: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
+Task(prompt="Verify phase 3: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
+```
+
+All run in parallel. Wait for all to complete.
+
+## 3. Spawn Integration Checker (Wave 2)
+
+After phase verifications complete:
+
+```
+Task(
+  prompt="Check cross-phase integration and E2E flows.
+
+Phases: {phase_dirs}
+Phase exports: {from SUMMARYs}
+API routes: {routes created}
+
+Verify cross-phase wiring and E2E user flows.",
+  subagent_type="gsd-integration-checker"
+)
+```
+
+## 4. Collect Results
+
+Read outputs from all agents:
+- Each phase's VERIFICATION.md (status, gaps)
+- Integration checker's report (wiring gaps, broken flows)
+
+## 5. Check Requirements Coverage
+
+For each requirement in REQUIREMENTS.md mapped to this milestone:
+- Find owning phase
+- Check phase verification status
+- Determine: satisfied | partial | unsatisfied
+
+## 6. Aggregate into MILESTONE-AUDIT.md
+
+Create `.planning/MILESTONE-AUDIT.md` with:
+
+```yaml
+---
+milestone: {version}
+audited: {timestamp}
+status: passed | gaps_found
+scores:
+  requirements: N/M
+  phases: N/M
+  integration: N/M
+  flows: N/M
+gaps:  # Only if gaps_found
+  requirements: [...]
+  integration: [...]
+  flows: [...]
+---
+```
+
+Plus full markdown report with tables for requirements, phases, integration, flows.
+
+## 7. Present Results
+
+Route by status (see `<offer_next>`).
+
 </process>
 
 <offer_next>
