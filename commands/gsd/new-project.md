@@ -215,50 +215,49 @@ Do not compress. Capture everything gathered.
 
 </step>
 
-<step name="mode">
+<step name="workflow_preferences">
 
-Ask workflow mode preference:
+Ask all workflow preferences in a single AskUserQuestion call (3 questions):
 
-Use AskUserQuestion:
+Use AskUserQuestion with questions array:
 
-- header: "Mode"
-- question: "How do you want to work?"
-- options:
-  - "YOLO" — Auto-approve, just execute (Recommended)
-  - "Interactive" — Confirm at each step
+```
+questions: [
+  {
+    header: "Mode",
+    question: "How do you want to work?",
+    multiSelect: false,
+    options: [
+      { label: "YOLO (Recommended)", description: "Auto-approve, just execute" },
+      { label: "Interactive", description: "Confirm at each step" }
+    ]
+  },
+  {
+    header: "Depth",
+    question: "How thorough should planning be?",
+    multiSelect: false,
+    options: [
+      { label: "Quick", description: "Ship fast (3-5 phases, 1-3 plans each)" },
+      { label: "Standard", description: "Balanced scope and speed (5-8 phases, 3-5 plans each)" },
+      { label: "Comprehensive", description: "Thorough coverage (8-12 phases, 5-10 plans each)" }
+    ]
+  },
+  {
+    header: "Execution",
+    question: "Run plans in parallel?",
+    multiSelect: false,
+    options: [
+      { label: "Parallel (Recommended)", description: "Independent plans run simultaneously" },
+      { label: "Sequential", description: "One plan at a time" }
+    ]
+  }
+]
+```
 
-</step>
-
-<step name="depth">
-
-Ask planning depth preference:
-
-Use AskUserQuestion:
-
-- header: "Depth"
-- question: "How thorough should planning be?"
-- options:
-  - "Quick" — Ship fast, minimal phases/plans (3-5 phases, 1-3 plans each)
-  - "Standard" — Balanced scope and speed (5-8 phases, 3-5 plans each)
-  - "Comprehensive" — Thorough coverage, more phases/plans (8-12 phases, 5-10 plans each)
-
-**Depth controls compression tolerance, not artificial inflation.** All depths use 2-3 tasks per plan. Comprehensive means "don't compress complex work"—it doesn't mean "pad simple work to hit a number."
-
-</step>
-
-<step name="parallelization">
-
-Ask parallel execution preference:
-
-Use AskUserQuestion:
-
-- header: "Parallelization"
-- question: "Enable parallel phase execution?"
-- options:
-  - "Enabled" — Run independent plans in parallel (Recommended)
-  - "Disabled" — Execute plans sequentially
-
-**Parallelization** spawns multiple agents for independent plans within a phase. Wave-based execution handles dependencies automatically. Can be changed later in config.json.
+**Notes:**
+- Depth controls compression tolerance, not artificial inflation
+- Parallelization spawns multiple agents for independent plans
+- All settings can be changed later in config.json
 
 </step>
 
