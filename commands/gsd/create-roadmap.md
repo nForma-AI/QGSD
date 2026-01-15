@@ -18,6 +18,7 @@ Run after `/gsd:define-requirements`.
 </objective>
 
 <execution_context>
+@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/create-roadmap.md
 @~/.claude/get-shit-done/templates/roadmap.md
 @~/.claude/get-shit-done/templates/state.md

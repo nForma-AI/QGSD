@@ -28,6 +28,7 @@ Output: `.planning/research/` folder with ecosystem knowledge.
 </objective>
 
 <execution_context>
+@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/research-project.md
 @~/.claude/get-shit-done/templates/research-project/SUMMARY.md
 @~/.claude/get-shit-done/templates/research-project/STACK.md

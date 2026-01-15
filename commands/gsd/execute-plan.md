@@ -21,6 +21,7 @@ Context budget: ~15% orchestrator, 100% fresh for subagent.
 </objective>
 
 <execution_context>
+@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/templates/subagent-task-prompt.md
 </execution_context>
 

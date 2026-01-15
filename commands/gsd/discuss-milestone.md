@@ -11,6 +11,7 @@ Output: Context gathered, then routes to /gsd:new-milestone
 </objective>
 
 <execution_context>
+@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/discuss-milestone.md
 </execution_context>
 

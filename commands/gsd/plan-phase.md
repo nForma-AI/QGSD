@@ -21,6 +21,7 @@ Output: One or more PLAN.md files in the phase directory (.planning/phases/XX-na
 </objective>
 
 <execution_context>
+@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/plan-phase.md
 @~/.claude/get-shit-done/templates/phase-prompt.md
 @~/.claude/get-shit-done/references/plan-format.md
