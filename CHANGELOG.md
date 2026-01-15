@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.10] - 2025-01-15
+
+### Changed
+- Milestone audit now reads existing phase VERIFICATION.md files instead of re-verifying each phase, aggregates tech debt and deferred gaps, adds `tech_debt` status for non-blocking accumulated debt
+
+### Fixed
+- VERIFICATION.md now included in phase completion commit alongside ROADMAP.md, STATE.md, and REQUIREMENTS.md
+
 ## [1.5.9] - 2025-01-15
 
 ### Added
@@ -674,7 +682,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.9...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.10...HEAD
+[1.5.10]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.10
 [1.5.9]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.9
 [1.5.8]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.8
 [1.5.7]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.7
