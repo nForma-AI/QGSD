@@ -64,7 +64,16 @@ Phase: $ARGUMENTS
    - Report phase completion status
    - Update ROADMAP.md
 
-6. **Offer next steps**
+6. **Update requirements**
+   Phase is complete, so mark its requirements as Complete:
+   - Read ROADMAP.md, find this phase's `Requirements:` line (e.g., "AUTH-01, AUTH-02")
+   - Read REQUIREMENTS.md traceability table
+   - For each REQ-ID in this phase: change Status from "Pending" to "Complete"
+   - Write updated REQUIREMENTS.md
+   - Stage for commit: `git add .planning/REQUIREMENTS.md`
+   - Skip if: REQUIREMENTS.md doesn't exist, or phase has no Requirements line
+
+7. **Offer next steps**
    - Route to next action (see `<offer_next>`)
 </process>
 
@@ -207,5 +216,6 @@ After all tasks complete:
 - [ ] Each plan has SUMMARY.md
 - [ ] STATE.md reflects phase completion
 - [ ] ROADMAP.md updated
+- [ ] REQUIREMENTS.md updated (phase requirements marked Complete)
 - [ ] User informed of next steps
 </success_criteria>

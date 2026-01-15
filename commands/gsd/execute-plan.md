@@ -108,7 +108,20 @@ ls -1 .planning/phases/[phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 | Condition | Action |
 |-----------|--------|
 | summaries < plans | More plans remain → Route A |
-| summaries = plans | Phase complete → Check milestone (Step 3) |
+| summaries = plans | Phase complete → Update requirements, then Step 3 |
+
+**Step 2.5: Update requirements (only when phase complete)**
+
+When summaries = plans, update REQUIREMENTS.md before presenting completion:
+
+1. Get phase number from completed plan path
+2. Read ROADMAP.md, find the phase's `Requirements:` line (e.g., "AUTH-01, AUTH-02")
+3. Read REQUIREMENTS.md traceability table
+4. For each REQ-ID in this phase: change Status from "Pending" to "Complete"
+5. Write updated REQUIREMENTS.md
+6. Stage for commit: `git add .planning/REQUIREMENTS.md`
+
+**Skip if:** REQUIREMENTS.md doesn't exist, or phase has no Requirements line in ROADMAP.md.
 
 ---
 
@@ -322,5 +335,6 @@ Templates for checkpoint handling:
 <success_criteria>
 - [ ] Plan executed (SUMMARY.md created)
 - [ ] All checkpoints handled
+- [ ] If phase complete: REQUIREMENTS.md updated (phase requirements marked Complete)
 - [ ] User informed of completion and next steps
 </success_criteria>
