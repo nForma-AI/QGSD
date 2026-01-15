@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.5] - 2025-01-15
+
+### Changed
+- README now documents the `research-project` → `define-requirements` flow (optional but recommended before `create-roadmap`)
+- Commands section reorganized into 7 grouped tables (Setup, Execution, Verification, Milestones, Phase Management, Session, Utilities) for easier scanning
+- Context Engineering table now includes `research/` and `REQUIREMENTS.md`
+
 ## [1.5.4] - 2025-01-15
 
 ### Changed
@@ -616,7 +623,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.4...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.5...HEAD
+[1.5.5]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.5
 [1.5.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.4
 [1.5.3]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.3
 [1.5.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.2
