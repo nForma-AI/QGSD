@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.4] - 2025-01-15
+
+### Changed
+- Research phase now loads REQUIREMENTS.md to focus research on concrete requirements (e.g., "email verification") rather than just high-level roadmap descriptions
+
 ## [1.5.3] - 2025-01-15
 
 ### Changed
@@ -611,7 +616,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.3...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.4...HEAD
+[1.5.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.4
 [1.5.3]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.3
 [1.5.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.2
 [1.5.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.1
