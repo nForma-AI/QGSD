@@ -355,28 +355,25 @@ After all waves complete, aggregate results:
 
 This step catches the common failure: tasks done but goal not met (stubs, placeholders, unwired code).
 
-**1. Spawn verification subagent:**
-
-Use the subagent-verify-prompt template:
+**1. Spawn gsd-verifier subagent:**
 
 ```
 Task(
-  prompt: filled_subagent_verify_prompt,
-  subagent_type: "general-purpose",
-  description: "Verify phase {X} goal achievement"
+  prompt="Verify phase {phase_number} goal achievement
+
+Phase: {phase_number} - {phase_name}
+Phase goal: {phase_goal_from_roadmap}
+Phase directory: @.planning/phases/{phase_dir}/
+
+Project context:
+@.planning/ROADMAP.md
+@.planning/REQUIREMENTS.md (if exists)",
+  subagent_type="gsd-verifier",
+  description="Verify phase {phase_number}"
 )
 ```
 
-Template variables:
-- `{phase_number}`: Current phase
-- `{phase_name}`: From ROADMAP.md
-- `{phase_goal_from_roadmap}`: Phase description
-- `{phase_dir}`: Filesystem directory
-- `{must_haves_yaml}`: From PLAN.md frontmatter (or "derive from goal")
-
-**2. Verification subagent runs:**
-
-The subagent loads `workflows/verify-phase.md` and:
+The `gsd-verifier` subagent has all verification logic baked in:
 - Establishes must-haves (from frontmatter or derived)
 - Verifies observable truths against codebase
 - Checks artifacts exist and are substantive (not stubs)
@@ -384,6 +381,8 @@ The subagent loads `workflows/verify-phase.md` and:
 - Scans for anti-patterns
 - Creates VERIFICATION.md report
 - Returns status to orchestrator
+
+**2. Verification subagent returns** with status and report path.
 
 **3. Handle verification result:**
 

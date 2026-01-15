@@ -25,8 +25,6 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 <execution_context>
 @~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/execute-phase.md
-@~/.claude/get-shit-done/templates/subagent-verify-prompt.md
-@~/.claude/get-shit-done/workflows/verify-phase.md
 </execution_context>
 
 <context>
@@ -65,8 +63,9 @@ Phase: $ARGUMENTS
    - Report phase completion status
 
 6. **Verify phase goal**
-   - Spawn verification subagent (uses subagent-verify-prompt.md)
-   - Verify must_haves from plan frontmatter against actual codebase
+   - Spawn `gsd-verifier` subagent with phase directory and goal
+   - Verifier checks must_haves against actual codebase (not SUMMARY claims)
+   - Creates VERIFICATION.md with detailed report
    - If gaps found: create fix plans, execute, re-verify (max 3 cycles)
    - If human verification needed: present items to user
    - Block until verification passes or user approves
