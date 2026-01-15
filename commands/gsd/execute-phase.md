@@ -137,27 +137,28 @@ All {Y} plans finished. Phase goal verified.
 **Route B: Phase verified, milestone complete**
 
 ```
-🎉 MILESTONE COMPLETE!
+🎉 ALL PHASES COMPLETE!
 
 ## ✓ Phase {Z}: {Name} Complete
 
-All {N} phases finished. All goals verified.
+All {N} phases finished. Phase goals verified.
 
 ---
 
 ## ▶ Next Up
 
-**Complete Milestone** — archive and prepare for next
+**Audit milestone** — verify requirements, cross-phase integration, E2E flows
 
-`/gsd:complete-milestone`
+`/gsd:audit-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:verify-work` — manual acceptance testing before completing milestone
-- `/gsd:add-phase <description>` — add another phase before completing
+- `/gsd:verify-work` — manual acceptance testing
+- `/gsd:complete-milestone` — skip audit, archive directly
+- `/gsd:add-phase <description>` — add another phase first
 
 ---
 ```
