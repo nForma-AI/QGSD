@@ -38,6 +38,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### Phase 1: [Name]
 **Goal**: [What this phase delivers]
 **Depends on**: Nothing (first phase)
+**Requirements**: [REQ-01, REQ-02, REQ-03]
 **Research**: Unlikely (established patterns)
 **Plans**: [Number of plans, e.g., "3 plans" or "TBD"]
 
@@ -49,6 +50,7 @@ Plans:
 ### Phase 2: [Name]
 **Goal**: [What this phase delivers]
 **Depends on**: Phase 1
+**Requirements**: [REQ-04, REQ-05]
 **Research**: Likely (new integration)
 **Research topics**: [What needs investigating]
 **Plans**: [Number of plans]
@@ -68,6 +70,7 @@ Plans:
 ### Phase 3: [Name]
 **Goal**: [What this phase delivers]
 **Depends on**: Phase 2
+**Requirements**: [REQ-06, REQ-07, REQ-08]
 **Research**: Likely (external API)
 **Research topics**: [What needs investigating]
 **Plans**: [Number of plans]
@@ -79,6 +82,7 @@ Plans:
 ### Phase 4: [Name]
 **Goal**: [What this phase delivers]
 **Depends on**: Phase 3
+**Requirements**: [REQ-09, REQ-10]
 **Research**: Unlikely (internal patterns)
 **Plans**: [Number of plans]
 
