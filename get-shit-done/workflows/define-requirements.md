@@ -159,31 +159,52 @@ IDs enable traceability from roadmap phases.
 </step>
 
 <step name="summarize">
-Present summary before committing:
+Present the FULL requirements list before committing — not counts, the actual requirements:
 
 ```
-## Requirements Summary
+## v1 Requirements
 
-**v1 Scope:**
-- Authentication: [N] requirements
-- [Category]: [N] requirements
-- [Category]: [N] requirements
-Total: [X] requirements
+### [Category 1]
+- [ ] **[REQ-ID]**: [Full requirement description]
+- [ ] **[REQ-ID]**: [Full requirement description]
+- [ ] **[REQ-ID]**: [Full requirement description]
 
-**v2 (Deferred):**
-- [Category]: [N] requirements
-Total: [Y] requirements
+### [Category 2]
+- [ ] **[REQ-ID]**: [Full requirement description]
+- [ ] **[REQ-ID]**: [Full requirement description]
 
-**Out of Scope:**
+[... list ALL v1 requirements ...]
+
+---
+
+## v2 (Deferred)
+
+### [Category]
+- [REQ-ID]: [Requirement description]
+- [REQ-ID]: [Requirement description]
+
+[... list ALL v2 requirements ...]
+
+---
+
+## Out of Scope
+
 - [Feature]: [reason]
 - [Feature]: [reason]
 
-**Core Value Alignment:** ✓ Covered / ⚠️ Gaps noted
+[... list ALL exclusions ...]
+
+---
+
+**Core Value:** [from PROJECT.md]
+**Alignment:** ✓ Covered / ⚠️ Gaps noted
 
 ---
 
 Does this capture what you're building? (yes / adjust)
 ```
+
+**Critical:** Show every single requirement. The user must see exactly what they're committing to. Counts are useless — list the actual items.
 
 If "adjust": Return to scope_categories or identify_gaps as appropriate.
 </step>
