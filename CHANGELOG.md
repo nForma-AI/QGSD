@@ -6,6 +6,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.7] - 2025-01-15
+
+### Added
+- `gsd-executor` subagent: Dedicated agent for plan execution with full workflow logic built-in
+- `gsd-verifier` subagent: Goal-backward verification that checks if phase goals are actually achieved (not just tasks completed)
+- Phase verification: Automatic verification runs when a phase completes to catch stubs and incomplete implementations
+- Goal-backward planning reference: Documentation for deriving must-haves from goals
+
+### Changed
+- execute-plan and execute-phase now spawn `gsd-executor` subagent instead of using inline workflow
+- Roadmap and planning workflows enhanced with goal-backward analysis
+
+### Removed
+- Obsolete templates (`checkpoint-resume.md`, `subagent-task-prompt.md`) — logic now lives in subagents
+
+### Fixed
+- Updated remaining `general-purpose` subagent references to use `gsd-executor`
+
 ## [1.5.6] - 2025-01-15
 
 ### Changed
@@ -632,7 +650,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.6...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.7...HEAD
+[1.5.7]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.7
 [1.5.6]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.6
 [1.5.5]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.5
 [1.5.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.4
