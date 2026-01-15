@@ -174,18 +174,23 @@ If you prefer not to use that flag, add this to your project's `.claude/settings
 
 The system asks questions. Keeps asking until it has everything — your goals, constraints, tech preferences, edge cases. You go back and forth until the idea is fully captured. Creates **PROJECT.md**.
 
-### 2. Research & scope (optional but recommended)
+### 1.5. Research the domain (optional)
 
 ```
-/gsd:research-project      # Discover standard stacks, expected features, pitfalls
-/gsd:define-requirements   # Scope v1 vs v2 vs out-of-scope
+/gsd:research-project
 ```
 
-**Research** spawns parallel agents to investigate the domain — what's the standard stack, what features users expect, common architectural patterns, and pitfalls to avoid. Creates `.planning/research/` with ecosystem knowledge.
+Spawns parallel agents to investigate the domain — what's the standard stack, what features users expect, common architectural patterns, and pitfalls to avoid. Creates `.planning/research/` with ecosystem knowledge.
 
-**Requirements** transforms research into scoped, checkable requirements. You decide what's v1, what's v2, and what's out of scope. Creates **REQUIREMENTS.md** with traceability.
+> Recommended for best results. Skip only if you need speed over thoroughness.
 
-> Skip these for well-defined specs or domains you know well. Use them for greenfield projects in established domains (SaaS, e-commerce, community platforms) where "what should exist" isn't fully known.
+### 2. Define requirements
+
+```
+/gsd:define-requirements
+```
+
+Scope what's v1, what's v2, and what's out of scope. Creates **REQUIREMENTS.md** with checkable requirements and traceability. Works with or without prior research.
 
 ### 3. Create roadmap
 
@@ -258,7 +263,7 @@ Same as greenfield, but the system knows your codebase. Questions focus on what 
 ### 3. Continue as normal
 
 From here, it's the same flow:
-- `/gsd:research-project` (optional) → `/gsd:define-requirements` (optional) → `/gsd:create-roadmap` → `/gsd:plan-phase` → `/gsd:execute-phase`
+- `/gsd:research-project` (optional) → `/gsd:define-requirements` → `/gsd:create-roadmap` → `/gsd:plan-phase` → `/gsd:execute-phase`
 
 The codebase docs load automatically during planning. Claude knows your patterns, conventions, and where to put things.
 
