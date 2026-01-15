@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.13] - 2026-01-15
+
+### Fixed
+- `/gsd:new-milestone` now presents research and requirements paths as equal options, matching `/gsd:new-project` format
+
 ## [1.5.12] - 2025-01-15
 
 ### Changed
@@ -702,7 +707,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.12...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.13...HEAD
+[1.5.13]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.13
 [1.5.12]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.12
 [1.5.11]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.11
 [1.5.10]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.10
