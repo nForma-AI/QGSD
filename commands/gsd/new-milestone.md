@@ -30,6 +30,9 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
 @.planning/STATE.md
 @.planning/MILESTONES.md
 @.planning/config.json
+
+**Load milestone context (if exists, from /gsd:discuss-milestone):**
+@.planning/MILESTONE-CONTEXT.md
 </context>
 
 <process>
