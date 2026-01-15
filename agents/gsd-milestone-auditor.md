@@ -89,22 +89,28 @@ For each requirement, track:
 
 Re-verify each phase to catch regressions. Later phases may have broken earlier ones.
 
-**Spawn all in parallel:**
+**Spawn all phases in a single message with multiple Task calls:**
 
 ```
-Task(
-  prompt="Re-verify phase {N} goal achievement.
+Task(prompt="Re-verify phase 1...", subagent_type="gsd-verifier")
+Task(prompt="Re-verify phase 2...", subagent_type="gsd-verifier")
+Task(prompt="Re-verify phase 3...", subagent_type="gsd-verifier")
+Task(prompt="Re-verify phase 4...", subagent_type="gsd-verifier")
+Task(prompt="Re-verify phase 5...", subagent_type="gsd-verifier")
+```
+
+All run in parallel. Task tool blocks until all complete.
+
+**Each Task prompt:**
+```
+Re-verify phase {N} goal achievement.
 
 Phase directory: {phase_dir}
 Phase goal: {goal from ROADMAP}
 Requirements: {REQ-IDs for this phase}
 
-Check must_haves against actual codebase. Create/update VERIFICATION.md.",
-  subagent_type="gsd-verifier"
-)
+Check must_haves against actual codebase. Create/update VERIFICATION.md.
 ```
-
-Spawn one Task per phase, all in single message for parallel execution.
 
 **Collect results:**
 - Read each phase's VERIFICATION.md
