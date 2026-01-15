@@ -1119,9 +1119,6 @@ If you were spawned via Task tool and hit a checkpoint, you cannot directly inte
 
 **Return format for checkpoints:**
 
-Use the structured format from:
-@~/.claude/get-shit-done/templates/checkpoint-return.md
-
 **Required in your return:**
 
 1. **Completed Tasks table** - Tasks done so far with commit hashes and files created

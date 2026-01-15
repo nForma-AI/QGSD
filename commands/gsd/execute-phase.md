@@ -52,8 +52,7 @@ Phase: $ARGUMENTS
 
 4. **Execute waves**
    For each wave in order:
-   - Fill subagent-task-prompt template for each plan
-   - Spawn all agents in wave simultaneously (parallel Task calls)
+   - Spawn `gsd-executor` for each plan in wave (parallel Task calls)
    - Wait for completion (Task blocks)
    - Verify SUMMARYs created
    - Proceed to next wave
