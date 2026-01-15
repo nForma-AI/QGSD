@@ -19,8 +19,8 @@ Output: Context gathered, then routes to /gsd:new-milestone
 **Load project state first:**
 @.planning/STATE.md
 
-**Load roadmap:**
-@.planning/ROADMAP.md
+**Load project:**
+@.planning/PROJECT.md
 
 **Load milestones (if exists):**
 @.planning/MILESTONES.md

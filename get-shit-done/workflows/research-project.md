@@ -49,11 +49,32 @@ Read PROJECT.md and extract:
 
 3. **Core value**: What's the one thing that must work?
 
-4. **Requirements**: What did user explicitly request?
+4. **Milestone context**: Is this a subsequent milestone?
+   - Check for "Current Milestone" section → this is v1.1+, not greenfield
+   - Check for "Validated" requirements → these are DONE, don't research them
+   - Focus on "Current Milestone target features" and "Active" requirements
 
-5. **Constraints**: Any limitations on choices?
+5. **Requirements to research**:
+   - **If greenfield (no Validated):** Research all Active requirements
+   - **If subsequent milestone:** Research ONLY Current Milestone target features
 
-Present analysis:
+6. **Constraints**: Any limitations on choices?
+
+**For subsequent milestones, present:**
+```
+Milestone research context:
+
+- Project: [name]
+- Current milestone: v[X.Y] [Name]
+- Already built (Validated): [count] requirements
+- Researching (this milestone): [list target features]
+
+This research focuses on the NEW features for v[X.Y], not the existing system.
+
+Does this look right? (yes / adjust)
+```
+
+**For greenfield, present:**
 ```
 Domain analysis:
 
@@ -67,7 +88,9 @@ Does this look right? (yes / adjust)
 </step>
 
 <step name="determine_research_questions">
-Based on domain, generate 4 research questions:
+Generate research questions based on context:
+
+**For greenfield (v1.0):**
 
 | Dimension | Question Template |
 |-----------|-------------------|
@@ -76,11 +99,20 @@ Based on domain, generate 4 research questions:
 | Architecture | "How are [domain] systems typically structured? What are the major components?" |
 | Pitfalls | "What do [domain] projects commonly get wrong? What are the critical mistakes?" |
 
+**For subsequent milestones (v1.1+):**
+
+| Dimension | Question Template |
+|-----------|-------------------|
+| Stack | "What libraries/tools are needed to add [target features] to an existing [domain] app?" |
+| Features | "How do [target features] typically work in [domain]? What's expected behavior?" |
+| Architecture | "How do [target features] integrate with existing [domain] architecture?" |
+| Pitfalls | "What are common mistakes when adding [target features] to [domain]?" |
+
 **Customize questions based on project specifics:**
 
-- If stack is stated: "How do you build [domain] with [stack]? What supporting libraries?"
+- If stack is stated: "How do you build [feature] with [stack]? What supporting libraries?"
 - If specific features mentioned: "How do experts implement [feature] in [domain]?"
-- If constraints exist: "What's the best approach for [domain] given [constraint]?"
+- If constraints exist: "What's the best approach for [feature] given [constraint]?"
 
 Present questions for approval:
 ```

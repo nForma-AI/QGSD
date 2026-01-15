@@ -154,6 +154,17 @@ For quick depth:
 
 **Phase Numbering System:**
 
+**Calculate starting phase number:**
+
+```bash
+# Find highest existing phase number from phases/ directory
+ls -d .planning/phases/[0-9]*-* 2>/dev/null | sort -V | tail -1 | grep -oE '[0-9]+' | head -1
+```
+
+- If phases/ is empty or doesn't exist: start at Phase 1
+- If phases exist from previous milestone: continue from last + 1
+- Example: v1.0 had phases 1-4, v1.1 starts at Phase 5
+
 Use integer phases (1, 2, 3) for planned milestone work.
 
 Use decimal phases (2.1, 2.2) for urgent insertions:
@@ -517,9 +528,14 @@ Write updated REQUIREMENTS.md.
 
 <step name="initialize_project_state">
 
-Create STATE.md — the project's living memory.
+Create or update STATE.md — the project's living memory.
 
-Use template from `~/.claude/get-shit-done/templates/state.md`.
+```bash
+[ -f .planning/STATE.md ] && echo "STATE_EXISTS" || echo "NEW_STATE"
+```
+
+**If STATE_EXISTS:** Update Current Position and keep Accumulated Context.
+**If NEW_STATE:** Create fresh using template from `~/.claude/get-shit-done/templates/state.md`.
 
 Write to `.planning/STATE.md`:
 
