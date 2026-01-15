@@ -37,21 +37,21 @@ Before starting fresh, check if a previous VERIFICATION.md exists:
 cat "$PHASE_DIR"/*-VERIFICATION.md 2>/dev/null
 ```
 
-**If previous verification exists with `gaps:` section:**
+**If previous verification exists with `gaps:` section → RE-VERIFICATION MODE:**
 
-1. **Load previous must-haves** — skip derivation in Step 2, reuse existing truths/artifacts/key_links
-2. **Note which items previously passed vs failed** — from the gaps section
-3. **Focus deep verification on failed items** — these need full 3-level checks
-4. **Quick regression check on passed items** — existence + basic sanity, not full re-verify
-5. **Track for report** — note this is a re-verification after gap closure
+1. Parse previous VERIFICATION.md frontmatter
+2. Extract `must_haves` (truths, artifacts, key_links)
+3. Extract `gaps` (items that failed)
+4. Set `is_re_verification = true`
+5. **Skip to Step 3** (verify truths) with this optimization:
+   - **Failed items:** Full 3-level verification (exists, substantive, wired)
+   - **Passed items:** Quick regression check (existence + basic sanity only)
 
-This saves tokens by not re-deriving must-haves and not deeply re-verifying items that already passed.
+**If no previous verification OR no `gaps:` section → INITIAL MODE:**
 
-**If no previous verification exists:**
+Set `is_re_verification = false`, proceed with Step 1.
 
-Proceed with full derivation and verification (Step 1 onwards).
-
-## Step 1: Load Context
+## Step 1: Load Context (Initial Mode Only)
 
 Gather all verification context from the phase directory and project state.
 
@@ -69,9 +69,9 @@ grep -E "^| ${PHASE_NUM}" .planning/REQUIREMENTS.md 2>/dev/null
 
 Extract phase goal from ROADMAP.md. This is the outcome to verify, not the tasks.
 
-## Step 2: Establish Must-Haves
+## Step 2: Establish Must-Haves (Initial Mode Only)
 
-Determine what must be verified.
+Determine what must be verified. In re-verification mode, must-haves come from Step 0.
 
 **Option A: Must-haves in PLAN frontmatter**
 
