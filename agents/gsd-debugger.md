@@ -177,20 +177,43 @@ Don't fall in love with your first hypothesis. Generate alternatives.
 
 **Strong inference:** Design experiments that differentiate between competing hypotheses.
 
-```
-Problem: Form submission fails intermittently
+```javascript
+// Problem: Form submission fails intermittently
+// Competing hypotheses: network timeout, validation, race condition, rate limiting
 
-Competing hypotheses:
-1. Network timeout
-2. Validation failure
-3. Race condition with auto-save
-4. Server-side rate limiting
+try {
+  console.log('[1] Starting validation');
+  const validation = await validate(formData);
+  console.log('[1] Validation passed:', validation);
 
-Design experiment that differentiates:
-- Add logging at each stage (validation → submission → response → UI update)
-- Observe which stage fails
-- One experiment, differentiates four hypotheses
+  console.log('[2] Starting submission');
+  const response = await api.submit(formData);
+  console.log('[2] Response received:', response.status);
+
+  console.log('[3] Updating UI');
+  updateUI(response);
+  console.log('[3] Complete');
+} catch (error) {
+  console.log('[ERROR] Failed at stage:', error);
+}
+
+// Observe results:
+// - Fails at [2] with timeout → Network
+// - Fails at [1] with validation error → Validation
+// - Succeeds but [3] has wrong data → Race condition
+// - Fails at [2] with 429 status → Rate limiting
+// One experiment, differentiates four hypotheses.
 ```
+
+## Hypothesis Testing Pitfalls
+
+| Pitfall | Problem | Solution |
+|---------|---------|----------|
+| Testing multiple hypotheses at once | You change three things and it works - which one fixed it? | Test one hypothesis at a time |
+| Confirmation bias | Only looking for evidence that confirms your hypothesis | Actively seek disconfirming evidence |
+| Acting on weak evidence | "It seems like maybe this could be..." | Wait for strong, unambiguous evidence |
+| Not documenting results | Forget what you tested, repeat experiments | Write down each hypothesis and result |
+| Abandoning rigor under pressure | "Let me just try this..." | Double down on method when pressure increases |
 
 </hypothesis_testing>
 
@@ -242,6 +265,22 @@ Often you'll spot the bug mid-explanation: "Wait, I never verified that B return
 4. Repeat until bare minimum
 5. Bug is now obvious in stripped-down code
 
+**Example:**
+```jsx
+// Start: 500-line React component with 15 props, 8 hooks, 3 contexts
+// End after stripping:
+function MinimalRepro() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    setCount(count + 1); // Bug: infinite loop, missing dependency array
+  });
+
+  return <div>{count}</div>;
+}
+// The bug was hidden in complexity. Minimal reproduction made it obvious.
+```
+
 ## Working Backwards
 
 **When:** You know correct output, don't know why you're not getting it.
@@ -255,6 +294,16 @@ Often you'll spot the bug mid-explanation: "Wait, I never verified that B return
    - NO: Bug is here
 4. Repeat backwards through call stack
 5. Find divergence point (where expected vs actual first differ)
+
+**Example:** UI shows "User not found" when user exists
+```
+Trace backwards:
+1. UI displays: user.error → Is this the right value to display? YES
+2. Component receives: user.error = "User not found" → Correct? NO, should be null
+3. API returns: { error: "User not found" } → Why?
+4. Database query: SELECT * FROM users WHERE id = 'undefined' → AH!
+5. FOUND: User ID is 'undefined' (string) instead of a number
+```
 
 ## Differential Debugging
 
@@ -274,6 +323,18 @@ Often you'll spot the bug mid-explanation: "Wait, I never verified that B return
 - Third-party service behavior
 
 **Process:** List differences, test each in isolation, find the difference that causes failure.
+
+**Example:** Works locally, fails in CI
+```
+Differences:
+- Node version: Same ✓
+- Environment variables: Same ✓
+- Timezone: Different! ✗
+
+Test: Set local timezone to UTC (like CI)
+Result: Now fails locally too
+FOUND: Date comparison logic assumes local timezone
+```
 
 ## Observability First
 
@@ -313,6 +374,15 @@ console.log('[updateUser] Called from:', new Error().stack);
 4. After each uncomment, test
 5. When bug returns, you found the culprit
 
+**Example:** Some middleware breaks requests, but you have 8 middleware functions
+```javascript
+app.use(helmet()); // Uncomment, test → works
+app.use(cors()); // Uncomment, test → works
+app.use(compression()); // Uncomment, test → works
+app.use(bodyParser.json({ limit: '50mb' })); // Uncomment, test → BREAKS
+// FOUND: Body size limit too high causes memory issues
+```
+
 ## Git Bisect
 
 **When:** Feature worked in past, broke at unknown commit.
@@ -341,6 +411,17 @@ git bisect bad              # or good, based on testing
 | Used to work, now doesn't | Differential debugging, Git bisect |
 | Many possible causes | Comment out everything, Binary search |
 | Always | Observability first (before making changes) |
+
+## Combining Techniques
+
+Techniques compose. Often you'll use multiple together:
+
+1. **Differential debugging** to identify what changed
+2. **Binary search** to narrow down where in code
+3. **Observability first** to add logging at that point
+4. **Rubber duck** to articulate what you're seeing
+5. **Minimal reproduction** to isolate just that behavior
+6. **Working backwards** to find the root cause
 
 </investigation_techniques>
 
@@ -408,6 +489,63 @@ done
 
 If it fails even once, it's not fixed.
 
+**Stress testing (parallel):**
+```javascript
+// Run many instances in parallel
+const promises = Array(50).fill().map(() =>
+  processData(testInput)
+);
+const results = await Promise.all(promises);
+// All results should be correct
+```
+
+**Race condition testing:**
+```javascript
+// Add random delays to expose timing bugs
+async function testWithRandomTiming() {
+  await randomDelay(0, 100);
+  triggerAction1();
+  await randomDelay(0, 100);
+  triggerAction2();
+  await randomDelay(0, 100);
+  verifyResult();
+}
+// Run this 1000 times
+```
+
+## Test-First Debugging
+
+**Strategy:** Write a failing test that reproduces the bug, then fix until the test passes.
+
+**Benefits:**
+- Proves you can reproduce the bug
+- Provides automatic verification
+- Prevents regression in the future
+- Forces you to understand the bug precisely
+
+**Process:**
+```javascript
+// 1. Write test that reproduces bug
+test('should handle undefined user data gracefully', () => {
+  const result = processUserData(undefined);
+  expect(result).toBe(null); // Currently throws error
+});
+
+// 2. Verify test fails (confirms it reproduces bug)
+// ✗ TypeError: Cannot read property 'name' of undefined
+
+// 3. Fix the code
+function processUserData(user) {
+  if (!user) return null; // Add defensive check
+  return user.name;
+}
+
+// 4. Verify test passes
+// ✓ should handle undefined user data gracefully
+
+// 5. Test is now regression protection forever
+```
+
 ## Verification Checklist
 
 ```markdown
@@ -449,6 +587,18 @@ Your verification might be wrong if:
 **Red flag phrases:** "It seems to work", "I think it's fixed", "Looks good to me"
 
 **Trust-building phrases:** "Verified 50 times - zero failures", "All tests pass including new regression test", "Root cause was X, fix addresses X directly"
+
+## Verification Mindset
+
+**Assume your fix is wrong until proven otherwise.** This isn't pessimism - it's professionalism.
+
+Questions to ask yourself:
+- "How could this fix fail?"
+- "What haven't I tested?"
+- "What am I assuming?"
+- "Would this survive production?"
+
+The cost of insufficient verification: bug returns, user frustration, emergency debugging, rollbacks.
 
 </verification_patterns>
 
@@ -527,6 +677,50 @@ Your verification might be wrong if:
 
 **Research trap:** Hours reading docs tangential to your bug (you think it's caching, but it's a typo)
 **Reasoning trap:** Hours reading code when answer is well-documented
+
+## Research vs Reasoning Decision Tree
+
+```
+Is this an error message I don't recognize?
+├─ YES → Web search the error message
+└─ NO ↓
+
+Is this library/framework behavior I don't understand?
+├─ YES → Check docs (Context7 or official docs)
+└─ NO ↓
+
+Is this code I/my team wrote?
+├─ YES → Reason through it (logging, tracing, hypothesis testing)
+└─ NO ↓
+
+Is this a platform/environment difference?
+├─ YES → Research platform-specific behavior
+└─ NO ↓
+
+Can I observe the behavior directly?
+├─ YES → Add observability and reason through it
+└─ NO → Research the domain/concept first, then reason
+```
+
+## Red Flags
+
+**Researching too much if:**
+- Read 20 blog posts but haven't looked at your code
+- Understand theory but haven't traced actual execution
+- Learning about edge cases that don't apply to your situation
+- Reading for 30+ minutes without testing anything
+
+**Reasoning too much if:**
+- Staring at code for an hour without progress
+- Keep finding things you don't understand and guessing
+- Debugging library internals (that's research territory)
+- Error message is clearly from a library you don't know
+
+**Doing it right if:**
+- Alternate between research and reasoning
+- Each research session answers a specific question
+- Each reasoning session tests a specific hypothesis
+- Making steady progress toward understanding
 
 </research_vs_reasoning>
 
