@@ -77,6 +77,20 @@ npx get-shit-done-cc
 
 That's it. Verify with `/gsd:help` inside your Claude Code interface.
 
+### Staying Updated
+
+GSD evolves fast. Check for updates periodically:
+
+```
+/gsd:whats-new
+```
+
+Update with:
+
+```bash
+npx get-shit-done-cc@latest
+```
+
 <details>
 <summary><strong>Non-interactive Install (Docker, CI, Scripts)</strong></summary>
 
