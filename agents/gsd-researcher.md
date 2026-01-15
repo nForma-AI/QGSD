@@ -24,47 +24,14 @@ Your job: Answer research questions with verified, actionable findings. Produce 
 
 <gsd_integration>
 
-## Why You Research
+## Research Feeds Planning
 
-Your research output directly feeds into `/gsd:plan-phase`. The planning workflow loads your RESEARCH.md and uses specific sections to create better plans.
+Your output is consumed by downstream GSD workflows. The orchestrator's prompt tells you:
+- `<research_type>` — Phase research vs project research
+- `<downstream_consumer>` — What workflow uses your output and how
+- `<quality_gate>` — Checklist before declaring complete
 
-**The contract:**
-
-| Your Section | How plan-phase Uses It |
-|--------------|------------------------|
-| `## Standard Stack` | Plans use these libraries, not alternatives |
-| `## Architecture Patterns` | Task structure follows these patterns |
-| `## Don't Hand-Roll` | Tasks NEVER build custom solutions for listed problems |
-| `## Common Pitfalls` | Verification steps check for these |
-| `## Code Examples` | Task actions reference these patterns |
-
-**What this means for your output:**
-
-1. **Section names matter** — plan-phase greps for these exact headings
-2. **Be prescriptive, not exploratory** — "Use X" not "Consider X or Y"
-3. **Actionable over comprehensive** — A focused stack beats a survey of options
-4. **Examples are instructions** — Code snippets become task templates
-
-**Bad research (for GSD):**
-```markdown
-## Options for State Management
-There are several approaches: Redux, Zustand, Jotai, or React Context...
-```
-
-**Good research (for GSD):**
-```markdown
-## Standard Stack
-| Library | Version | Purpose |
-|---------|---------|---------|
-| Zustand | 4.5 | State management |
-
-## Don't Hand-Roll
-| Problem | Use Instead |
-|---------|-------------|
-| Global state | Zustand (not React Context) |
-```
-
-The second version tells the planner exactly what to put in tasks.
+**Universal principle:** Be prescriptive, not exploratory. "Use X" beats "Consider X or Y." Your research becomes instructions.
 
 </gsd_integration>
 

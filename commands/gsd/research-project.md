@@ -64,24 +64,168 @@ Present for approval.
 mkdir -p .planning/research
 ```
 
-Spawn all 4 in parallel:
+**Determine milestone context:**
+- If no "Validated" requirements in REQUIREMENTS.md → Greenfield (v1.0)
+- If "Validated" requirements exist → Subsequent milestone (v1.1+)
+
+Spawn all 4 in parallel with rich context:
 
 ```
-Task(prompt="Research stack for [domain]. Question: [question]. Context: [PROJECT.md summary].
-Write to: .planning/research/STACK.md. Use template from ~/.claude/get-shit-done/templates/research-project/STACK.md",
-subagent_type="gsd-researcher", description="Stack research")
+Task(prompt="
+<research_type>
+Project Research — Stack dimension for [domain].
+</research_type>
 
-Task(prompt="Research features for [domain]. Question: [question]. Context: [PROJECT.md summary].
-Write to: .planning/research/FEATURES.md. Use template from ~/.claude/get-shit-done/templates/research-project/FEATURES.md",
-subagent_type="gsd-researcher", description="Features research")
+<milestone_context>
+{greenfield OR subsequent}
 
-Task(prompt="Research architecture for [domain]. Question: [question]. Context: [PROJECT.md summary].
-Write to: .planning/research/ARCHITECTURE.md. Use template from ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md",
-subagent_type="gsd-researcher", description="Architecture research")
+Greenfield: Research the standard stack for building [domain] from scratch.
+Subsequent: Research what's needed to add [target features] to an existing [domain] app. Don't re-research the existing system.
+</milestone_context>
 
-Task(prompt="Research pitfalls for [domain]. Question: [question]. Context: [PROJECT.md summary].
-Write to: .planning/research/PITFALLS.md. Use template from ~/.claude/get-shit-done/templates/research-project/PITFALLS.md",
-subagent_type="gsd-researcher", description="Pitfalls research")
+<question>
+[stack question from step 4]
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your STACK.md feeds into /gsd:create-roadmap. Be prescriptive:
+- Specific libraries with versions
+- Clear rationale for each choice
+- What NOT to use and why
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Versions are current (not Claude's training data)
+- [ ] Rationale explains WHY, not just WHAT
+- [ ] Confidence levels assigned
+</quality_gate>
+
+<output>
+Write to: .planning/research/STACK.md
+Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
+</output>
+", subagent_type="gsd-researcher", description="Stack research")
+
+Task(prompt="
+<research_type>
+Project Research — Features dimension for [domain].
+</research_type>
+
+<milestone_context>
+{greenfield OR subsequent}
+
+Greenfield: What features do [domain] products have? What's table stakes vs differentiating?
+Subsequent: How do [target features] typically work? What's expected behavior?
+</milestone_context>
+
+<question>
+[features question from step 4]
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your FEATURES.md feeds into /gsd:define-requirements. Categorize clearly:
+- Table stakes (must have or users leave)
+- Differentiators (competitive advantage)
+- Anti-features (things to deliberately NOT build)
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Categories are clear
+- [ ] Complexity noted for each
+- [ ] Dependencies between features identified
+</quality_gate>
+
+<output>
+Write to: .planning/research/FEATURES.md
+Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
+</output>
+", subagent_type="gsd-researcher", description="Features research")
+
+Task(prompt="
+<research_type>
+Project Research — Architecture dimension for [domain].
+</research_type>
+
+<milestone_context>
+{greenfield OR subsequent}
+
+Greenfield: How are [domain] systems typically structured? What are major components?
+Subsequent: How do [target features] integrate with existing [domain] architecture?
+</milestone_context>
+
+<question>
+[architecture question from step 4]
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your ARCHITECTURE.md informs phase structure in roadmap. Include:
+- Component boundaries (what talks to what)
+- Data flow (how information moves)
+- Suggested build order (dependencies between components)
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Components clearly defined
+- [ ] Boundaries explicit
+- [ ] Build order implications noted
+</quality_gate>
+
+<output>
+Write to: .planning/research/ARCHITECTURE.md
+Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
+</output>
+", subagent_type="gsd-researcher", description="Architecture research")
+
+Task(prompt="
+<research_type>
+Project Research — Pitfalls dimension for [domain].
+</research_type>
+
+<milestone_context>
+{greenfield OR subsequent}
+
+Greenfield: What do [domain] projects commonly get wrong? Critical mistakes?
+Subsequent: What are common mistakes when adding [target features] to [domain]?
+</milestone_context>
+
+<question>
+[pitfalls question from step 4]
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
+- Warning signs (how to detect early)
+- Prevention strategy (how to avoid)
+- Which phase should address it
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Pitfalls are specific, not generic
+- [ ] Prevention is actionable
+- [ ] Phase mapping included
+</quality_gate>
+
+<output>
+Write to: .planning/research/PITFALLS.md
+Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
+</output>
+", subagent_type="gsd-researcher", description="Pitfalls research")
 ```
 
 **Announce:** "Spawning 4 research agents... may take 2-3 minutes."
@@ -91,8 +235,34 @@ subagent_type="gsd-researcher", description="Pitfalls research")
 After all agents complete, read their outputs and write `.planning/research/SUMMARY.md`:
 - Read template: `~/.claude/get-shit-done/templates/research-project/SUMMARY.md`
 - Synthesize executive summary from all 4 files
-- Include "Implications for Roadmap" with suggested phase structure
 - Add confidence assessment
+
+**Critical: Include "Implications for Roadmap" section:**
+
+```markdown
+## Implications for Roadmap
+
+Based on research, suggested phase structure:
+
+1. **[Phase name]** — [rationale from research]
+   - Addresses: [features from FEATURES.md]
+   - Avoids: [pitfall from PITFALLS.md]
+   - Uses: [stack element from STACK.md]
+
+2. **[Phase name]** — [rationale from research]
+   - Implements: [architecture component from ARCHITECTURE.md]
+   ...
+
+**Phase ordering rationale:**
+- [Why this order based on dependencies discovered in ARCHITECTURE.md]
+- [Why this grouping based on PITFALLS.md prevention strategies]
+
+**Research flags for phases:**
+- Phase [X]: Likely needs deeper research (reason)
+- Phase [Y]: Standard patterns, unlikely to need research
+```
+
+This section directly feeds into `/gsd:create-roadmap`.
 
 ## 7. Commit Research
 
