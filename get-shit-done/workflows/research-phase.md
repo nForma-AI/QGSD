@@ -113,7 +113,24 @@ If CONTEXT.md exists, use it to understand:
 - Constraints mentioned
 - Any preferences stated
 
-**3. Prior phase decisions:**
+**3. Phase requirements:**
+```bash
+cat .planning/REQUIREMENTS.md 2>/dev/null
+```
+
+Extract requirements for this phase:
+1. Find phase in ROADMAP.md, get its `Requirements:` list (e.g., "AUTH-01, AUTH-02")
+2. Look up each REQ-ID in REQUIREMENTS.md for full description
+3. Present concrete requirements:
+   ```
+   Phase ${PHASE} Requirements:
+   - AUTH-01: User can sign up with email and password
+   - AUTH-02: User receives email verification after signup
+   ```
+
+Requirements inform research focus — "email verification" tells us to research email delivery, verification flows, etc.
+
+**4. Prior phase decisions:**
 ```bash
 cat .planning/STATE.md 2>/dev/null | grep -A20 "## Accumulated Decisions"
 ```
@@ -125,6 +142,10 @@ Present what was found:
 Research context for Phase ${PHASE}: ${PHASE_NAME}
 
 Roadmap description: ${PHASE_DESCRIPTION}
+
+Requirements:
+- [REQ-ID]: [requirement description]
+- [REQ-ID]: [requirement description]
 
 [If CONTEXT.md exists:]
 Phase context available - will incorporate user preferences.
