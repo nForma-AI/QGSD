@@ -785,13 +785,7 @@ Wave 2: {plan-03}
 
 ## Next Up
 
-[If 1 plan created:]
-**{phase}-01: [Plan Name]** - [objective summary]
-
-`/gsd:execute-plan .planning/phases/XX-name/{phase}-01-PLAN.md`
-
-[If 2+ plans created:]
-**Phase {X}: [Phase Name]** - {N} plans in {M} waves
+**Phase {X}: [Phase Name]** - {N} plan(s) in {M} wave(s)
 
 `/gsd:execute-phase {X}`
 
@@ -801,8 +795,8 @@ Wave 2: {plan-03}
 
 **Also available:**
 - Review/adjust plans before executing
-[If 2+ plans: - `/gsd:execute-plan {phase}-01-PLAN.md` - run plans one at a time]
-[If 2+ plans: - View all plans: `ls .planning/phases/XX-name/*-PLAN.md`]
+- `/gsd:execute-plan {phase}-01-PLAN.md` - run plans one at a time
+- View all plans: `ls .planning/phases/XX-name/*-PLAN.md`
 
 ---
 ```
