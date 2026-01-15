@@ -96,19 +96,13 @@ Research complete:
 
 ## ▶ Next Up
 
-Choose your path:
-
-**Option A: Define requirements first** (recommended)
-Scope your v1 from research findings. Transforms "what exists" into "what we're building" with checkable requirements.
+**Define requirements** — scope your v1 from research findings
 
 `/gsd:define-requirements`
 
-**Option B: Create roadmap directly**
-Skip requirements if scope is already clear from research.
-
-`/gsd:create-roadmap`
-
 <sub>`/clear` first → fresh context window</sub>
+
+**Flow:** research-project → **define-requirements** → create-roadmap
 
 ---
 ```
