@@ -102,18 +102,29 @@ If `--gaps` present in arguments, switch to gap_closure_mode (see `<step name="g
 </step>
 
 <step name="gap_closure_mode">
-**Triggered by `--gaps` flag.** Plans address verification gaps.
+**Triggered by `--gaps` flag.** Plans address verification gaps OR UAT gaps.
 
-**1. Load VERIFICATION.md:**
+**1. Find gap sources:**
 
 ```bash
 PHASE_DIR=$(ls -d .planning/phases/${PHASE_ARG}* 2>/dev/null | head -1)
-cat "$PHASE_DIR"/*-VERIFICATION.md
+
+# Check for VERIFICATION.md (code verification gaps)
+ls "$PHASE_DIR"/*-VERIFICATION.md 2>/dev/null
+
+# Check for UAT.md with diagnosed status (user testing gaps)
+grep -l "status: diagnosed" "$PHASE_DIR"/*-UAT.md 2>/dev/null
 ```
 
-**2. Parse gaps from YAML frontmatter:**
+**Priority:** If both exist, load both and combine gaps. UAT gaps (user-discovered) may overlap with verification gaps (code-discovered).
 
-Extract `gaps:` array. Each gap has:
+**2. Parse gaps:**
+
+**From VERIFICATION.md** (if exists): Parse `gaps:` from YAML frontmatter.
+
+**From UAT.md** (if exists with status: diagnosed): Parse gaps from `## Gaps` section (YAML format).
+
+Each gap has:
 - `truth`: The observable behavior that failed
 - `reason`: Why it failed
 - `artifacts`: Files with issues

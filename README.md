@@ -377,7 +377,6 @@ You're never locked in. The system adapts.
 | Command | What it does |
 |---------|--------------|
 | `/gsd:verify-work [N]` | User acceptance test of phase or plan ¹ |
-| `/gsd:plan-fix [plan]` | Plan fixes for UAT issues |
 
 ### Milestones
 

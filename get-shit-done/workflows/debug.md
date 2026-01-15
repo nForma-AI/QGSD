@@ -213,7 +213,7 @@ Reply with A or B (or describe alternative)
 - Diagnose but don't fix
 - Stop after confirming root cause
 - Skip `fix_and_verify` step
-- Return root cause to caller (for plan-fix to handle)
+- Return root cause to caller (for plan-phase --gaps to handle)
 
 **Default mode (no flags):**
 - Interactive debugging with user
@@ -544,7 +544,7 @@ If unable to determine root cause after thorough investigation:
 **Debug Session:** {path to debug file}
 ```
 
-**Do NOT proceed to fix_and_verify.** The fix will be planned by /gsd:plan-fix using this diagnosis.
+**Do NOT proceed to fix_and_verify.** The fix will be planned by /gsd:plan-phase --gaps using this diagnosis.
 </step>
 
 <step name="fix_and_verify">

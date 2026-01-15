@@ -46,7 +46,7 @@ Start directly at investigation_loop.
 
 **goal: {goal}**
 
-- `find_root_cause_only` — Diagnose but do NOT fix. Return root cause to orchestrator. Used by UAT diagnosis flow where plan-fix handles the fix.
+- `find_root_cause_only` — Diagnose but do NOT fix. Return root cause to orchestrator. Used by UAT diagnosis flow where plan-phase --gaps handles the fix.
 - `find_and_fix` — Find root cause, then fix and verify. Used by interactive /gsd:debug where user wants immediate resolution.
 </mode>
 
@@ -167,7 +167,7 @@ If you cannot proceed without user action or verification:
 - [file1]: [what's wrong]
 - [file2]: [related issue]
 
-**Suggested Fix Direction:** [brief hint for plan-fix, not implementation]
+**Suggested Fix Direction:** [brief hint for gap closure plan, not implementation]
 ```
 
 ---

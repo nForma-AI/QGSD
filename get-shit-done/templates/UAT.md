@@ -39,8 +39,6 @@ expected: [observable behavior]
 result: issue
 reported: "[verbatim user response]"
 severity: major
-root_cause: [filled by diagnose-issues, empty until diagnosed]
-debug_session: [path to DEBUG file, empty until diagnosed]
 
 ### 4. [Test Name]
 expected: [observable behavior]
@@ -57,13 +55,18 @@ issues: [N]
 pending: [N]
 skipped: [N]
 
-## Issues for /gsd:plan-fix
+## Gaps
 
-- UAT-001: [brief summary] (blocker) - Test 3
-  root_cause: [empty until diagnosed]
-
-- UAT-002: [brief summary] (major) - Test 7
-  root_cause: [empty until diagnosed]
+<!-- YAML format for plan-phase --gaps consumption -->
+- truth: "[expected behavior from test]"
+  status: failed
+  reason: "User reported: [verbatim response]"
+  severity: blocker | major | minor | cosmetic
+  test: [N]
+  root_cause: ""     # Filled by diagnosis
+  artifacts: []      # Filled by diagnosis
+  missing: []        # Filled by diagnosis
+  debug_session: ""  # Filled by diagnosis
 ```
 
 ---
@@ -87,49 +90,46 @@ skipped: [N]
 - `result` values: [pending], pass, issue, skipped
 - If issue: add `reported` (verbatim) and `severity` (inferred)
 - If skipped: add `reason` if provided
-- After diagnosis: add `root_cause` and `debug_session` fields to issues
 
 **Summary:**
 - OVERWRITE counts after each response
 - Tracks: total, passed, issues, pending, skipped
 
-**Issues for /gsd:plan-fix:**
-- APPEND only when issue found
-- Format: `- UAT-{NNN}: {summary} ({severity}) - Test {N}`
-- After diagnosis: add `root_cause:` line under each issue
-- This section feeds directly into /gsd:plan-fix
+**Gaps:**
+- APPEND only when issue found (YAML format)
+- After diagnosis: fill `root_cause`, `artifacts`, `missing`, `debug_session`
+- This section feeds directly into /gsd:plan-phase --gaps
 
 </section_rules>
 
 <diagnosis_lifecycle>
 
-**After testing complete (status: complete), if issues exist:**
+**After testing complete (status: complete), if gaps exist:**
 
 1. User runs diagnosis (from verify-work offer or manually)
 2. diagnose-issues workflow spawns parallel debug agents
-3. Each agent investigates one issue, returns root cause
-4. UAT.md updated with root causes:
-   - Each issue test gets `root_cause:` and `debug_session:` fields
-   - Issues section gets `root_cause:` under each issue
+3. Each agent investigates one gap, returns root cause
+4. UAT.md Gaps section updated with diagnosis:
+   - Each gap gets `root_cause`, `artifacts`, `missing`, `debug_session` filled
 5. status → "diagnosed"
-6. Ready for /gsd:plan-fix with root causes
+6. Ready for /gsd:plan-phase --gaps with root causes
 
 **After diagnosis:**
-```markdown
-### 2. Create Top-Level Comment
-expected: Submit comment via rich text editor, appears in list with author info
-result: issue
-reported: "works but doesn't show until I refresh the page"
-severity: major
-root_cause: useEffect in CommentList.tsx missing commentCount dependency
-debug_session: .planning/debug/comment-not-refreshing.md
-```
+```yaml
+## Gaps
 
-```markdown
-## Issues for /gsd:plan-fix
-
-- UAT-001: Comment doesn't appear until refresh (major) - Test 2
-  root_cause: useEffect in CommentList.tsx missing commentCount dependency
+- truth: "Comment appears immediately after submission"
+  status: failed
+  reason: "User reported: works but doesn't show until I refresh the page"
+  severity: major
+  test: 2
+  root_cause: "useEffect in CommentList.tsx missing commentCount dependency"
+  artifacts:
+    - path: "src/components/CommentList.tsx"
+      issue: "useEffect missing dependency"
+  missing:
+    - "Add commentCount to useEffect dependency array"
+  debug_session: ".planning/debug/comment-not-refreshing.md"
 ```
 
 </diagnosis_lifecycle>
@@ -147,7 +147,7 @@ debug_session: .planning/debug/comment-not-refreshing.md
 - User responds with pass confirmation or issue description
 - Update test result (pass/issue/skipped)
 - Update Summary counts
-- If issue: append to Issues section, infer severity
+- If issue: append to Gaps section (YAML format), infer severity
 - Move Current Test to next pending test
 
 **On completion:**
@@ -182,7 +182,7 @@ Default: **major** (safe default, user can clarify if wrong)
 <good_example>
 ```markdown
 ---
-status: testing
+status: diagnosed
 phase: 04-comments
 source: 04-01-SUMMARY.md, 04-02-SUMMARY.md
 started: 2025-01-15T10:30:00Z
@@ -191,13 +191,7 @@ updated: 2025-01-15T10:45:00Z
 
 ## Current Test
 
-number: 4
-name: Visual Nesting
-expected: |
-  Create 3+ level deep thread.
-  Each level shows increased indentation with left border.
-  Nesting caps at reasonable depth.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -210,8 +204,6 @@ expected: Submit comment via rich text editor, appears in list with author info
 result: issue
 reported: "works but doesn't show until I refresh the page"
 severity: major
-root_cause: useEffect in CommentList.tsx missing commentCount dependency
-debug_session: .planning/debug/comment-not-refreshing.md
 
 ### 3. Reply to a Comment
 expected: Click Reply, inline composer appears, submit shows nested reply
@@ -219,27 +211,37 @@ result: pass
 
 ### 4. Visual Nesting
 expected: 3+ level thread shows indentation, left borders, caps at reasonable depth
-result: [pending]
+result: pass
 
 ### 5. Delete Own Comment
 expected: Click delete on own comment, removed or shows [deleted] if has replies
-result: [pending]
+result: pass
 
 ### 6. Comment Count
 expected: Post shows accurate count, increments when adding comment
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 6
-passed: 2
+passed: 5
 issues: 1
-pending: 3
+pending: 0
 skipped: 0
 
-## Issues for /gsd:plan-fix
+## Gaps
 
-- UAT-001: Comment doesn't appear until refresh (major) - Test 2
-  root_cause: useEffect in CommentList.tsx missing commentCount dependency
+- truth: "Comment appears immediately after submission in list"
+  status: failed
+  reason: "User reported: works but doesn't show until I refresh the page"
+  severity: major
+  test: 2
+  root_cause: "useEffect in CommentList.tsx missing commentCount dependency"
+  artifacts:
+    - path: "src/components/CommentList.tsx"
+      issue: "useEffect missing dependency"
+  missing:
+    - "Add commentCount to useEffect dependency array"
+  debug_session: ".planning/debug/comment-not-refreshing.md"
 ```
 </good_example>

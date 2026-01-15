@@ -1,5 +1,5 @@
 <purpose>
-Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds into /gsd:plan-fix.
+Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into /gsd:plan-phase --gaps.
 
 User tests, Claude records. One test at a time. Plain text responses.
 </purpose>
@@ -153,7 +153,7 @@ issues: 0
 pending: [N]
 skipped: 0
 
-## Issues for /gsd:plan-fix
+## Gaps
 
 [none yet]
 ```
@@ -224,9 +224,15 @@ reported: "{verbatim user response}"
 severity: {inferred}
 ```
 
-Append to Issues section:
-```
-- UAT-{NNN}: {brief summary from response} ({severity}) - Test {N}
+Append to Gaps section (structured YAML for plan-phase --gaps):
+```yaml
+- truth: "{expected behavior from test}"
+  status: failed
+  reason: "User reported: {verbatim user response}"
+  severity: {inferred}
+  test: {N}
+  artifacts: []  # Filled by diagnosis
+  missing: []    # Filled by diagnosis
 ```
 
 **After any response:**
@@ -321,12 +327,12 @@ Spawning parallel debug agents to investigate each issue.
 - Spawn parallel debug agents for each issue
 - Collect root causes
 - Update UAT.md with root causes
-- Proceed to `offer_plan_fix`
+- Proceed to `offer_gap_closure`
 
 Diagnosis runs automatically - no user prompt. Parallel agents investigate simultaneously, so overhead is minimal and fixes are more accurate.
 </step>
 
-<step name="offer_plan_fix">
+<step name="offer_gap_closure">
 **Offer next steps after diagnosis:**
 
 ```
@@ -334,14 +340,14 @@ Diagnosis runs automatically - no user prompt. Parallel agents investigate simul
 
 ## Diagnosis Complete
 
-| Issue | Root Cause |
-|-------|------------|
-| UAT-001 | {root_cause} |
-| UAT-002 | {root_cause} |
+| Gap | Root Cause |
+|-----|------------|
+| {truth 1} | {root_cause} |
+| {truth 2} | {root_cause} |
 ...
 
 Next steps:
-- `/gsd:plan-fix {phase}` — Create fix plan with root causes
+- `/gsd:plan-phase {phase} --gaps` — Create fix plans from diagnosed gaps
 - `/gsd:verify-work {phase}` — Re-test after fixes
 ```
 </step>
@@ -349,18 +355,23 @@ Next steps:
 </process>
 
 <update_rules>
-**Section update rules:**
+**Batched writes for efficiency:**
 
-| Section | Rule | When |
-|---------|------|------|
+Keep results in memory. Write to file only when:
+1. **Issue found** — Preserve the problem immediately
+2. **Session complete** — Final write before commit
+3. **Checkpoint** — Every 5 passed tests (safety net)
+
+| Section | Rule | When Written |
+|---------|------|--------------|
 | Frontmatter.status | OVERWRITE | Start, complete |
-| Frontmatter.updated | OVERWRITE | Every update |
-| Current Test | OVERWRITE | Each test transition |
-| Tests.{N}.result | OVERWRITE | When user responds |
-| Summary | OVERWRITE | After each response |
-| Issues | APPEND | When issue found |
+| Frontmatter.updated | OVERWRITE | On any file write |
+| Current Test | OVERWRITE | On any file write |
+| Tests.{N}.result | OVERWRITE | On any file write |
+| Summary | OVERWRITE | On any file write |
+| Gaps | APPEND | When issue found |
 
-**Update file AFTER processing each response.** If context resets, file shows exactly where to resume.
+On context reset: File shows last checkpoint. Resume from there.
 </update_rules>
 
 <severity_inference>
@@ -383,8 +394,7 @@ Default to **major** if unclear. User can correct if needed.
 - [ ] Tests presented one at a time with expected behavior
 - [ ] User responses processed as pass/issue/skip
 - [ ] Severity inferred from description (never asked)
-- [ ] File updated after each response
-- [ ] Can resume perfectly from any /clear
+- [ ] Batched writes: on issue, every 5 passes, or completion
 - [ ] Committed on completion
-- [ ] Clear next steps based on results
+- [ ] Clear next steps based on results (plan-phase --gaps if issues)
 </success_criteria>

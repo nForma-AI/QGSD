@@ -96,7 +96,7 @@ Task(
 - Display root cause and evidence summary
 - Offer options:
   - "Fix now" → spawn fix subagent
-  - "Plan fix" → suggest /gsd:plan-fix
+  - "Plan fix" → suggest /gsd:plan-phase --gaps
   - "Manual fix" → done
 
 **If `## CHECKPOINT REACHED`:**
