@@ -14,7 +14,7 @@ allowed-tools:
 <objective>
 Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
 
-**This command IS the orchestrator.** Spawns verification agents in parallel, collects results, aggregates into MILESTONE-AUDIT.md.
+**This command IS the orchestrator.** Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
 </objective>
 
 <execution_context>
@@ -51,21 +51,28 @@ ls -d .planning/phases/*/ | sort -V
 - Extract milestone definition of done from ROADMAP.md
 - Extract requirements mapped to this milestone from REQUIREMENTS.md
 
-## 2. Spawn Phase Verifiers (Wave 1 - Parallel)
+## 2. Read All Phase Verifications
 
-**Spawn gsd-verifier for each phase in a single message:**
+For each phase directory, read the VERIFICATION.md:
 
+```bash
+cat .planning/phases/01-*/*-VERIFICATION.md
+cat .planning/phases/02-*/*-VERIFICATION.md
+# etc.
 ```
-Task(prompt="Verify phase 1: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
-Task(prompt="Verify phase 2: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
-Task(prompt="Verify phase 3: {goal}\n\nPhase dir: {dir}\nRequirements: {reqs}", subagent_type="gsd-verifier")
-```
 
-All run in parallel. Wait for all to complete.
+From each VERIFICATION.md, extract:
+- **Status:** passed | gaps_found
+- **Critical gaps:** (if any — these are blockers)
+- **Non-critical gaps:** tech debt, deferred items, warnings
+- **Anti-patterns found:** TODOs, stubs, placeholders
+- **Requirements coverage:** which requirements satisfied/blocked
 
-## 3. Spawn Integration Checker (Wave 2)
+If a phase is missing VERIFICATION.md, flag it as "unverified phase" — this is a blocker.
 
-After phase verifications complete:
+## 3. Spawn Integration Checker
+
+With phase context collected:
 
 ```
 Task(
@@ -82,8 +89,8 @@ Verify cross-phase wiring and E2E user flows.",
 
 ## 4. Collect Results
 
-Read outputs from all agents:
-- Each phase's VERIFICATION.md (status, gaps)
+Combine:
+- Phase-level gaps and tech debt (from step 2)
 - Integration checker's report (wiring gaps, broken flows)
 
 ## 5. Check Requirements Coverage
@@ -101,20 +108,33 @@ Create `.planning/MILESTONE-AUDIT.md` with:
 ---
 milestone: {version}
 audited: {timestamp}
-status: passed | gaps_found
+status: passed | gaps_found | tech_debt
 scores:
   requirements: N/M
   phases: N/M
   integration: N/M
   flows: N/M
-gaps:  # Only if gaps_found
+gaps:  # Critical blockers
   requirements: [...]
   integration: [...]
   flows: [...]
+tech_debt:  # Non-critical, deferred
+  - phase: 01-auth
+    items:
+      - "TODO: add rate limiting"
+      - "Warning: no password strength validation"
+  - phase: 03-dashboard
+    items:
+      - "Deferred: mobile responsive layout"
 ---
 ```
 
-Plus full markdown report with tables for requirements, phases, integration, flows.
+Plus full markdown report with tables for requirements, phases, integration, tech debt.
+
+**Status values:**
+- `passed` — all requirements met, no critical gaps, minimal tech debt
+- `gaps_found` — critical blockers exist
+- `tech_debt` — no blockers but accumulated deferred items need review
 
 ## 7. Present Results
 
@@ -186,11 +206,49 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 - `cat .planning/MILESTONE-AUDIT.md` — see full report
 - `/gsd:complete-milestone {version}` — proceed anyway (accept tech debt)
 ```
+
+---
+
+**If tech_debt (no blockers but accumulated debt):**
+
+```markdown
+## ⚡ Milestone {version} — Tech Debt Review
+
+**Score:** {N}/{M} requirements satisfied
+**Report:** .planning/MILESTONE-AUDIT.md
+
+All requirements met. No critical blockers. Accumulated tech debt needs review.
+
+### Tech Debt by Phase
+
+{For each phase with debt:}
+**Phase {X}: {name}**
+- {item 1}
+- {item 2}
+
+### Total: {N} items across {M} phases
+
+---
+
+## ▶ Options
+
+**A. Complete milestone** — accept debt, track in backlog
+
+`/gsd:complete-milestone {version}`
+
+**B. Plan cleanup phase** — address debt before completing
+
+`/gsd:plan-milestone-gaps`
+
+<sub>`/clear` first → fresh context window</sub>
+```
 </offer_next>
 
 <success_criteria>
 - [ ] Milestone scope identified
-- [ ] gsd-milestone-auditor spawned with full context
+- [ ] All phase VERIFICATION.md files read
+- [ ] Tech debt and deferred gaps aggregated
+- [ ] Integration checker spawned for cross-phase wiring
 - [ ] MILESTONE-AUDIT.md created
 - [ ] Results presented with actionable next steps
 </success_criteria>
