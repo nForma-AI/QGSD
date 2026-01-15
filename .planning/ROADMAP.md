@@ -20,6 +20,8 @@ None - this is internal GSD development following existing command/workflow/temp
 - [x] **Phase 10: Parallel Phase Execution** - Separate single-plan vs multi-plan execution with intelligent parallelization
 - [x] **Phase 11: Parallel-Aware Planning** - Update plan-phase.md to create parallelizable plans when config enables it
 - [ ] **Phase 12: Changelog & Update Awareness** - Add changelog generation and /gsd:whats-new for version discovery
+- [x] **Phase 13: Dedicated Debug Agent** - Create gsd-debugger agent, refactor /gsd:debug to thin orchestrator
+- [ ] **Phase 14: Dedicated Researcher Agent** - Create gsd-researcher agent for structured research with baked-in methodology
 - [x] **Phase 99: Test Parallel (THROWAWAY)** - Create 3 silly independent files to test parallel execution
 
 ## Phase Details
@@ -211,6 +213,48 @@ Plans:
 **Details:**
 Users adopting GSD need visibility into what changed between versions. The publish workflow generates curated changelog entries (Claude-drafted, Lex-approved). `/gsd:whats-new` fetches from GitHub raw, compares to installed version, and prompts to update if behind.
 
+### Phase 13: Dedicated Debug Agent
+
+**Goal:** Create `gsd-debugger` agent with all debugging expertise baked in, refactor `/gsd:debug` to thin orchestrator
+**Depends on:** Phase 12
+**Research:** Unlikely (consolidating existing debugging content into agent pattern)
+**Plans:** 3 plans
+
+Plans:
+- [x] 13-01: Create gsd-debugger agent - Consolidate debugging expertise (990 lines)
+- [x] 13-02: Refactor /gsd:debug - Thin orchestrator (149 lines), deprecate workflow
+- [x] 13-03: Deprecate reference files - Replace with agent pointers
+
+**Details:**
+Created gsd-debugger agent with scientific method, hypothesis testing, 7+ investigation techniques, verification patterns, and debug file protocol. Command reduced from ~2,400 loaded lines to 149-line thin orchestrator.
+
+### Phase 14: Dedicated Researcher Agent
+
+**Goal:** Create `gsd-researcher` agent with research methodology baked in, refactor research commands to spawn specialized agents
+**Depends on:** Phase 13
+**Research:** Unlikely (applying same agent pattern to research workflows)
+**Plans:** TBD
+
+Components:
+- Create `agents/gsd-researcher.md` with research expertise
+- Refactor `commands/gsd/research-phase.md` to spawn gsd-researcher
+- Refactor `commands/gsd/research-project.md` to use researcher agents
+- Define research modes: ecosystem, feasibility, implementation, comparison
+
+**Details:**
+Currently `/gsd:research-phase` does ad-hoc web searches without structure. The gsd-researcher agent brings:
+- **Research methodology**: Scoping questions, evaluating sources, synthesizing findings
+- **Tool strategy**: When to WebSearch vs WebFetch vs Grep vs Context7
+- **Output formats**: Structured findings (feasibility, comparison matrices, API investigations)
+- **Evidence quality**: Distinguishing authoritative sources from noise
+- **Research modes**:
+  - `ecosystem` — Survey landscape (tools, approaches, prior art)
+  - `feasibility` — Can we do X? What are blockers?
+  - `implementation` — How specifically to implement X?
+  - `comparison` — Compare options A vs B vs C
+
+Pattern: Same as gsd-executor/gsd-verifier/gsd-debugger. Agent has expertise, command provides research context and mode.
+
 ### Phase 99: Test Parallel (THROWAWAY)
 
 **Goal:** Create 3 independent silly files to test parallel execution - DELETE AFTER TESTING
@@ -246,3 +290,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 10. Parallel Phase Execution | 4/4 | Complete | 2026-01-12 |
 | 11. Parallel-Aware Planning | 4/4 | Complete | 2026-01-12 |
 | 99. Test Parallel (THROWAWAY) | 3/3 | Complete | 2026-01-12 |
+| 13. Dedicated Debug Agent | 3/3 | Complete | 2026-01-15 |
