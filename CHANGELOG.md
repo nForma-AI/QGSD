@@ -6,6 +6,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-01-15
+
+### Added
+- Requirements traceability: roadmap phases now include `Requirements:` field listing which REQ-IDs they cover
+- plan-phase loads REQUIREMENTS.md and shows phase-specific requirements before planning
+- Requirements automatically marked Complete when phase finishes
+
+### Changed
+- Workflow preferences (mode, depth, parallelization) now asked in single prompt instead of 3 separate questions
+- define-requirements shows full requirements list inline before commit (not just counts)
+- Research-project and workflow aligned to both point to define-requirements as next step
+
+### Fixed
+- Requirements status now updated by orchestrator (commands) instead of subagent workflow, which couldn't determine phase completion
+
 ## [1.5.1] - 2026-01-14
 
 ### Changed
