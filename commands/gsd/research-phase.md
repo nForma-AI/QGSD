@@ -5,79 +5,126 @@ argument-hint: "[phase]"
 allowed-tools:
   - Read
   - Bash
-  - Glob
-  - Grep
-  - Write
-  - WebFetch
-  - WebSearch
-  - mcp__context7__*
+  - Task
 ---
 
 <objective>
-Comprehensive research on HOW to implement a phase before planning.
+Research how to implement a phase. Spawns gsd-researcher agent with phase context.
 
-This is for niche/complex domains where Claude's training data is sparse or outdated. Research discovers:
-- What libraries exist for this problem
-- What architecture patterns experts use
-- What the standard stack looks like
-- What problems people commonly hit
-- What NOT to hand-roll (use existing solutions)
+**Orchestrator role:** Parse phase, validate against roadmap, check existing research, gather context, spawn researcher agent, present results.
 
-Output: RESEARCH.md with ecosystem knowledge that informs quality planning.
+**Why subagent:** Research burns context fast (WebSearch, Context7 queries, source verification). Fresh 200k context for investigation. Main context stays lean for user interaction.
 </objective>
-
-<execution_context>
-@~/.claude/get-shit-done/references/principles.md
-@~/.claude/get-shit-done/workflows/research-phase.md
-@~/.claude/get-shit-done/templates/research.md
-@~/.claude/get-shit-done/references/research-pitfalls.md
-</execution_context>
 
 <context>
 Phase number: $ARGUMENTS (required)
 
-**Load project state:**
-@.planning/STATE.md
-
-**Load roadmap:**
-@.planning/ROADMAP.md
-
-**Load requirements:**
-@.planning/REQUIREMENTS.md
-
-Extract phase requirements before research:
-1. Find the phase in ROADMAP.md, get its `Requirements:` list
-2. Look up each REQ-ID in REQUIREMENTS.md for full description
-3. Use concrete requirements to focus research domains
-
-**Load phase context if exists:**
-Check for `.planning/phases/XX-name/{phase}-CONTEXT.md` - bonus context from discuss-phase.
+Check for existing research:
+```bash
+ls .planning/phases/${PHASE}-*/*RESEARCH.md 2>/dev/null
+```
 </context>
 
 <process>
-1. Validate phase number argument (error if missing or invalid)
-2. Check if phase exists in roadmap - extract phase description
-3. Check if RESEARCH.md already exists (offer to update or use existing)
-4. Load CONTEXT.md if it exists (bonus context for research direction)
-5. Follow research-phase.md workflow:
-   - Analyze phase to identify knowledge gaps
-   - Determine research domains (architecture, ecosystem, patterns, pitfalls)
-   - Execute comprehensive research via Context7, official docs, WebSearch
-   - Cross-verify all findings
-   - Create RESEARCH.md with actionable ecosystem knowledge
-6. Offer next steps (plan the phase)
-</process>
 
+## 1. Parse and Validate Phase
+
+```bash
+grep -A5 "Phase ${PHASE}:" .planning/ROADMAP.md 2>/dev/null
+```
+
+**If not found:** Error and exit. **If found:** Extract phase number, name, description.
+
+## 2. Check Existing Research
+
+```bash
+ls .planning/phases/${PHASE}-*/RESEARCH.md 2>/dev/null
+```
+
+**If exists:** Offer: 1) Update research, 2) View existing, 3) Skip. Wait for response.
+
+**If doesn't exist:** Continue.
+
+## 3. Gather Phase Context
+
+```bash
+grep -A20 "Phase ${PHASE}:" .planning/ROADMAP.md
+cat .planning/REQUIREMENTS.md 2>/dev/null
+cat .planning/phases/${PHASE}-*/${PHASE}-CONTEXT.md 2>/dev/null
+grep -A30 "### Decisions Made" .planning/STATE.md 2>/dev/null
+```
+
+Present summary with phase description, requirements, prior decisions.
+
+## 4. Spawn gsd-researcher Agent
+
+Research modes: ecosystem (default), feasibility, implementation, comparison.
+
+```markdown
+<objective>
+Research implementation approach for Phase {phase_number}: {phase_name}
+Mode: ecosystem
+</objective>
+
+<context>
+**Phase description:** {phase_description}
+**Requirements:** {requirements_list}
+**Prior decisions:** {decisions_if_any}
+**Phase context:** {context_md_content}
+</context>
+
+<output>
+Write to: .planning/phases/{phase}-{slug}/{phase}-RESEARCH.md
+</output>
+```
+
+```
+Task(
+  prompt=filled_prompt,
+  subagent_type="gsd-researcher",
+  description="Research Phase {phase}"
+)
+```
+
+## 5. Handle Agent Return
+
+**`## RESEARCH COMPLETE`:** Display summary, offer: Plan phase, Dig deeper, Review full, Done.
+
+**`## CHECKPOINT REACHED`:** Present to user, get response, spawn continuation.
+
+**`## RESEARCH INCONCLUSIVE`:** Show what was attempted, offer: Add context, Try different mode, Manual.
+
+## 6. Spawn Continuation Agent
+
+```markdown
+<objective>
+Continue research for Phase {phase_number}: {phase_name}
+</objective>
+
+<prior_state>
+Research file: @.planning/phases/{phase}-{slug}/{phase}-RESEARCH.md
+</prior_state>
+
+<checkpoint_response>
+**Type:** {checkpoint_type}
+**Response:** {user_response}
+</checkpoint_response>
+```
+
+```
+Task(
+  prompt=continuation_prompt,
+  subagent_type="gsd-researcher",
+  description="Continue research Phase {phase}"
+)
+```
+
+</process>
 
 <success_criteria>
 - [ ] Phase validated against roadmap
-- [ ] Domain/ecosystem identified from phase description
-- [ ] Comprehensive research executed (Context7 + official docs + WebSearch)
-- [ ] All WebSearch findings cross-verified with authoritative sources
-- [ ] RESEARCH.md created with ecosystem knowledge
-- [ ] Standard stack/libraries identified
-- [ ] Architecture patterns documented
-- [ ] Common pitfalls catalogued
-- [ ] What NOT to hand-roll is clear
-- [ ] User knows next steps (plan phase)
+- [ ] Existing research checked
+- [ ] gsd-researcher spawned with context
+- [ ] Checkpoints handled correctly
+- [ ] User knows next steps
 </success_criteria>
