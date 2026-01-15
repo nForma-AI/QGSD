@@ -6,6 +6,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.15] - 2025-01-15
+
+### Fixed
+- **Agents now install correctly** — The `agents/` folder (gsd-executor, gsd-verifier, gsd-integration-checker, gsd-milestone-auditor) was missing from npm package, now included
+
+### Changed
+- Consolidated `/gsd:plan-fix` into `/gsd:plan-phase --gaps` for simpler workflow
+- UAT file writes now batched instead of per-response for better performance
+
 ## [1.5.14] - 2025-01-15
 
 ### Fixed
@@ -712,7 +721,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.14...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.15...HEAD
+[1.5.15]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.15
 [1.5.14]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.14
 [1.5.13]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.13
 [1.5.12]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.12
