@@ -303,7 +303,15 @@ Project initialized:
 
 ## ▶ Next Up
 
-**[Project Name]** — create roadmap
+Choose your path:
+
+**Option A: Research first** (recommended for new domains)
+Research the ecosystem before creating roadmap. Discovers standard stacks, expected features, architecture patterns, and common pitfalls.
+
+`/gsd:research-project`
+
+**Option B: Create roadmap directly** (for familiar domains)
+Skip research if you know this domain well or have a clear spec.
 
 `/gsd:create-roadmap`
 

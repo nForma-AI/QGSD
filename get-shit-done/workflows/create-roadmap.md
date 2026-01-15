@@ -9,7 +9,8 @@ that delivers value. The roadmap provides structure, not detailed tasks.
 1. ~/.claude/get-shit-done/templates/roadmap.md
 2. ~/.claude/get-shit-done/templates/state.md
 3. Read `.planning/PROJECT.md` if it exists
-   </required_reading>
+4. Read `.planning/research/SUMMARY.md` if it exists
+</required_reading>
 
 <process>
 
@@ -27,6 +28,39 @@ If proceeding without brief, gather quick context:
 - What's the rough scope?
 </step>
 
+<step name="load_research">
+Check for project research:
+
+```bash
+[ -d .planning/research ] && echo "RESEARCH_EXISTS" || echo "NO_RESEARCH"
+```
+
+**If RESEARCH_EXISTS:**
+
+Read `.planning/research/SUMMARY.md` and extract:
+- Suggested phase structure from "Implications for Roadmap" section
+- Research flags for each suggested phase
+- Key findings that inform phase ordering
+
+```
+Research found. Using findings to inform roadmap:
+
+Suggested phases from research:
+1. [Phase from research] — [rationale]
+2. [Phase from research] — [rationale]
+3. [Phase from research] — [rationale]
+
+Research confidence: [HIGH/MEDIUM/LOW]
+
+Proceeding with research-informed phase identification...
+```
+
+**If NO_RESEARCH:**
+
+Continue without research context. Phase identification will rely on PROJECT.md and domain expertise only.
+
+**Note:** Research is optional. Roadmap can be created without it, but research-informed roadmaps tend to have better phase structure and fewer surprises.
+</step>
 
 <step name="detect_domain">
 Scan for available domain expertise:
@@ -82,6 +116,15 @@ Select (comma-separate for multiple):
 
 <step name="identify_phases">
 Derive phases from the actual work needed.
+
+**If research exists (.planning/research/SUMMARY.md):**
+- Start with suggested phases from research
+- Validate against PROJECT.md requirements
+- Adjust based on domain expertise (if any)
+- Research already identified dependencies and pitfalls — use them
+
+**If no research:**
+- Derive phases from PROJECT.md and domain expertise only
 
 **Check depth setting:**
 ```bash

@@ -24,6 +24,7 @@ Roadmaps define what work happens in what order. Run after /gsd:new-project.
 <context>
 @.planning/PROJECT.md
 @.planning/config.json
+@.planning/research/SUMMARY.md (if exists)
 </context>
 
 <process>
