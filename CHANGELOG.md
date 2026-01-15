@@ -6,6 +6,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.16] - 2026-01-15
+
+### Added
+- New `gsd-researcher` agent (915 lines) with comprehensive research methodology, 4 research modes (ecosystem, feasibility, implementation, comparison), source hierarchy, and verification protocols
+- New `gsd-debugger` agent (990 lines) with scientific debugging methodology, hypothesis testing, and 7+ investigation techniques
+- New `gsd-codebase-mapper` agent for brownfield codebase analysis
+- Research subagent prompt template for context-only spawning
+
+### Changed
+- `/gsd:research-phase` refactored to thin orchestrator — now injects rich context (key insight framing, downstream consumer info, quality gates) to gsd-researcher agent
+- `/gsd:research-project` refactored to spawn 4 parallel gsd-researcher agents with milestone-aware context (greenfield vs v1.1+) and roadmap implications guidance
+- `/gsd:debug` refactored to thin orchestrator (149 lines) — spawns gsd-debugger agent with full debugging expertise
+- `/gsd:new-milestone` now explicitly references MILESTONE-CONTEXT.md
+
+### Deprecated
+- `workflows/research-phase.md` — consolidated into gsd-researcher agent
+- `workflows/research-project.md` — consolidated into gsd-researcher agent
+- `workflows/debug.md` — consolidated into gsd-debugger agent
+- `references/research-pitfalls.md` — consolidated into gsd-researcher agent
+- `references/debugging.md` — consolidated into gsd-debugger agent
+- `references/debug-investigation.md` — consolidated into gsd-debugger agent
+
 ## [1.5.15] - 2025-01-15
 
 ### Fixed
@@ -721,7 +743,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.15...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.16...HEAD
+[1.5.16]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.16
 [1.5.15]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.15
 [1.5.14]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.14
 [1.5.13]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.13
