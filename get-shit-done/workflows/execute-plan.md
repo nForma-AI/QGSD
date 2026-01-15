@@ -1491,7 +1491,50 @@ ROADMAP_FILE=".planning/ROADMAP.md"
 
 - Mark phase complete: status → "Complete"
 - Add completion date
-  </step>
+</step>
+
+<step name="update_requirements_status">
+**Only run when phase is complete (all plans have SUMMARYs).**
+
+When a phase completes, mark its requirements as Complete in REQUIREMENTS.md.
+
+**1. Get phase number from completed plan:**
+```bash
+# Extract phase number from plan path (e.g., 03-auth/03-02-PLAN.md → 03)
+PHASE_NUM=$(echo "$PLAN_PATH" | grep -oE '[0-9]+' | head -1)
+```
+
+**2. Find requirements for this phase in ROADMAP.md:**
+```bash
+# Look for Requirements: line in phase section
+grep -A5 "Phase ${PHASE_NUM}:" .planning/ROADMAP.md | grep "Requirements:"
+```
+
+Extract the REQ-IDs (e.g., "AUTH-01, AUTH-02, AUTH-03").
+
+**3. Update REQUIREMENTS.md traceability table:**
+
+For each REQ-ID covered by this phase:
+- Find the row in the Traceability table
+- Change Status from "Pending" to "Complete"
+
+Example before:
+```markdown
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+```
+
+Example after:
+```markdown
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+```
+
+**4. Skip if:**
+- REQUIREMENTS.md doesn't exist (older projects without requirements tracking)
+- Phase has no Requirements: line in ROADMAP.md
+- More plans remain in phase (not yet complete)
+</step>
 
 <step name="git_commit_metadata">
 Commit execution metadata (SUMMARY + STATE + ROADMAP):
@@ -1506,17 +1549,19 @@ git add .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md
 git add .planning/STATE.md
 ```
 
-**2. Stage roadmap file:**
+**2. Stage roadmap and requirements (if updated):**
 
 ```bash
 git add .planning/ROADMAP.md
+# Only if phase completed and requirements were updated:
+[ -f .planning/REQUIREMENTS.md ] && git add .planning/REQUIREMENTS.md
 ```
 
 **3. Verify staging:**
 
 ```bash
 git status
-# Should show only execution artifacts (SUMMARY, STATE, ROADMAP), no code files
+# Should show only execution artifacts (SUMMARY, STATE, ROADMAP, REQUIREMENTS), no code files
 ```
 
 **4. Commit metadata:**
