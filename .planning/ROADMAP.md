@@ -233,7 +233,16 @@ Created gsd-debugger agent with scientific method, hypothesis testing, 7+ invest
 **Goal:** Create `gsd-researcher` agent with research methodology baked in, refactor research commands to spawn specialized agents
 **Depends on:** Phase 13
 **Research:** Unlikely (applying same agent pattern to research workflows)
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 14-01: Create gsd-researcher agent - Consolidate research expertise (~800-1000 lines)
+- [ ] 14-02: Refactor /gsd:research-phase - Thin orchestrator, deprecate workflow
+- [ ] 14-03: Refactor /gsd:research-project - Parallel agent spawning, deprecate workflow
+
+**Wave structure:**
+- Wave 1: 14-01 (foundation)
+- Wave 2: 14-02, 14-03 (parallel - both depend only on 14-01)
 
 Components:
 - Create `agents/gsd-researcher.md` with research expertise
