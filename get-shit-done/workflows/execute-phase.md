@@ -3,7 +3,9 @@ Execute all plans in a phase using wave-based parallel execution. Orchestrator s
 </purpose>
 
 <core_principle>
-The orchestrator's job is coordination, not execution. Each subagent loads the full execute-plan context itself. Orchestrator discovers plans, analyzes dependencies, groups into waves, spawns agents, handles checkpoints, collects results.
+The orchestrator's job is coordination, not execution. Orchestrator discovers plans, groups into waves, spawns `gsd-executor` agents, handles checkpoints, collects results.
+
+**Subagent:** `gsd-executor` — dedicated plan execution agent with all execution logic baked in.
 </core_principle>
 
 <required_reading>
@@ -150,43 +152,34 @@ Execute each wave in sequence. Autonomous plans within a wave run in parallel.
    - Bad: "Executing terrain generation plan"
    - Good: "Procedural terrain generator using Perlin noise — creates height maps, biome zones, and collision meshes. Required before vehicle physics can interact with ground."
 
-2. **Spawn all autonomous agents in wave simultaneously:**
+2. **Spawn all agents in wave simultaneously using gsd-executor:**
 
-   Use Task tool with multiple parallel calls. Each agent gets prompt from subagent-task-prompt template:
+   Use Task tool with multiple parallel calls. Each agent is `gsd-executor` with minimal prompt:
 
    ```
-   <objective>
-   Execute plan {plan_number} of phase {phase_number}-{phase_name}.
+   Task(
+     prompt="Execute plan at {plan_path}
 
-   Commit each task atomically. Create SUMMARY.md. Update STATE.md.
-   </objective>
-
-   <execution_context>
-   @~/.claude/get-shit-done/workflows/execute-plan.md
-   @~/.claude/get-shit-done/templates/summary.md
-   @~/.claude/get-shit-done/references/checkpoints.md
-   @~/.claude/get-shit-done/references/tdd.md
-   </execution_context>
-
-   <context>
-   Plan: @{plan_path}
-   Project state: @.planning/STATE.md
-   Config: @.planning/config.json (if exists)
-   </context>
-
-   <success_criteria>
-   - [ ] All tasks executed
-   - [ ] Each task committed individually
-   - [ ] SUMMARY.md created in plan directory
-   - [ ] STATE.md updated with position and decisions
-   </success_criteria>
+Plan: @{plan_path}
+Project state: @.planning/STATE.md
+Config: @.planning/config.json (if exists)",
+     subagent_type="gsd-executor",
+     description="Execute {phase}-{plan}"
+   )
    ```
 
-2. **Wait for all agents in wave to complete:**
+   The `gsd-executor` subagent has all execution logic baked in:
+   - Deviation rules
+   - Checkpoint protocols
+   - Commit formatting
+   - Summary creation
+   - State updates
+
+   No template filling needed. Just pass the plan path.
 
    Task tool blocks until each agent finishes. All parallel agents return together.
 
-3. **Report completion and what was built:**
+4. **Report completion and what was built:**
 
    For each completed agent:
    - Verify SUMMARY.md exists at expected path
@@ -215,7 +208,7 @@ Execute each wave in sequence. Autonomous plans within a wave run in parallel.
    - Bad: "Wave 2 complete. Proceeding to Wave 3."
    - Good: "Terrain system complete — 3 biome types, height-based texturing, physics collision meshes. Vehicle physics (Wave 3) can now reference ground surfaces."
 
-4. **Handle failures:**
+5. **Handle failures:**
 
    If any agent in wave fails:
    - Report which plan failed and why
@@ -223,11 +216,11 @@ Execute each wave in sequence. Autonomous plans within a wave run in parallel.
    - If continue: proceed to next wave (dependent plans may also fail)
    - If stop: exit with partial completion report
 
-5. **Execute checkpoint plans between waves:**
+6. **Execute checkpoint plans between waves:**
 
    See `<checkpoint_handling>` for details.
 
-6. **Proceed to next wave**
+7. **Proceed to next wave**
 
 </step>
 
@@ -238,15 +231,22 @@ Plans with `autonomous: false` require user interaction.
 
 **Execution flow for checkpoint plans:**
 
-1. **Spawn agent for checkpoint plan:**
+1. **Spawn gsd-executor for checkpoint plan:**
    ```
-   Task(prompt="{subagent-task-prompt}", subagent_type="general-purpose")
+   Task(
+     prompt="Execute plan at {plan_path}
+
+Plan: @{plan_path}
+Project state: @.planning/STATE.md",
+     subagent_type="gsd-executor",
+     description="Execute {phase}-{plan}"
+   )
    ```
 
 2. **Agent runs until checkpoint:**
    - Executes auto tasks normally
-   - Reaches checkpoint task (e.g., `type="checkpoint:human-verify"`) or auth gate
-   - Agent returns with structured checkpoint (see checkpoint-return.md template)
+   - Reaches checkpoint task or auth gate
+   - Agent returns with structured checkpoint (format baked into gsd-executor)
 
 3. **Agent return includes (structured format):**
    - Completed Tasks table with commit hashes and files
@@ -275,20 +275,29 @@ Plans with `autonomous: false` require user interaction.
 
 6. **Spawn continuation agent (NOT resume):**
 
-   Use the continuation-prompt.md template:
+   Spawn fresh `gsd-executor` with continuation context:
    ```
    Task(
-     prompt=filled_continuation_template,
-     subagent_type="general-purpose"
+     prompt="Continue executing plan at {plan_path}
+
+<completed_tasks>
+{completed_tasks_table from checkpoint return}
+</completed_tasks>
+
+<resume_point>
+Resume from: Task {N} - {task_name}
+User response: {user_response}
+{resume_instructions based on checkpoint type}
+</resume_point>
+
+Plan: @{plan_path}
+Project state: @.planning/STATE.md",
+     subagent_type="gsd-executor",
+     description="Continue {phase}-{plan}"
    )
    ```
 
-   Fill template with:
-   - `{completed_tasks_table}`: From agent's checkpoint return
-   - `{resume_task_number}`: Current task from checkpoint
-   - `{resume_task_name}`: Current task name from checkpoint
-   - `{user_response}`: What user provided
-   - `{resume_instructions}`: Based on checkpoint type (see continuation-prompt.md)
+   The `gsd-executor` has continuation handling baked in — it will verify previous commits and resume correctly.
 
 7. **Continuation agent executes:**
    - Verifies previous commits exist
@@ -341,6 +350,154 @@ After all waves complete, aggregate results:
 ```
 </step>
 
+<step name="verify_phase_goal">
+**Verify the phase GOAL was achieved, not just that tasks completed.**
+
+This step catches the common failure: tasks done but goal not met (stubs, placeholders, unwired code).
+
+**1. Spawn verification subagent:**
+
+Use the subagent-verify-prompt template:
+
+```
+Task(
+  prompt: filled_subagent_verify_prompt,
+  subagent_type: "general-purpose",
+  description: "Verify phase {X} goal achievement"
+)
+```
+
+Template variables:
+- `{phase_number}`: Current phase
+- `{phase_name}`: From ROADMAP.md
+- `{phase_goal_from_roadmap}`: Phase description
+- `{phase_dir}`: Filesystem directory
+- `{must_haves_yaml}`: From PLAN.md frontmatter (or "derive from goal")
+
+**2. Verification subagent runs:**
+
+The subagent loads `workflows/verify-phase.md` and:
+- Establishes must-haves (from frontmatter or derived)
+- Verifies observable truths against codebase
+- Checks artifacts exist and are substantive (not stubs)
+- Traces key links (wiring between components)
+- Scans for anti-patterns
+- Creates VERIFICATION.md report
+- Returns status to orchestrator
+
+**3. Handle verification result:**
+
+**If status = "passed":**
+```
+## ✓ Phase Verification Passed
+
+All {N} must-haves verified:
+- {truth 1} ✓
+- {truth 2} ✓
+- {truth 3} ✓
+
+Phase goal achieved. Proceeding to update roadmap.
+```
+
+Continue to update_roadmap step.
+
+**If status = "gaps_found":**
+```
+## ⚠️ Phase Verification Found Gaps
+
+{M} of {N} must-haves incomplete:
+
+| Must-Have | Status | Issue |
+|-----------|--------|-------|
+| {truth 1} | ✓ VERIFIED | - |
+| {truth 2} | ✗ FAILED | API route returns placeholder |
+| {truth 3} | ✗ FAILED | Component not wired to API |
+
+### Recommended Fix Plans
+
+1. **{phase}-{next}-PLAN.md**: {description}
+2. **{phase}-{next+1}-PLAN.md**: {description}
+
+Creating fix plans and executing...
+```
+
+Then:
+1. Generate fix PLAN.md files from recommendations
+2. Execute fix plans (loop back to execute_waves)
+3. Re-verify (loop back to verify_phase_goal)
+4. Repeat until all must-haves pass
+
+**If status = "human_needed":**
+```
+## 👤 Human Verification Required
+
+Automated checks passed. These items need manual testing:
+
+### 1. {Test Name}
+**Test:** {what to do}
+**Expected:** {what should happen}
+
+### 2. {Test Name}
+**Test:** {what to do}
+**Expected:** {what should happen}
+
+After testing, type "verified" or describe issues found.
+```
+
+Wait for user response:
+- "verified" / "pass" / "ok" → Continue to update_roadmap
+- Description of issues → Generate fix plans, execute, re-verify
+
+**4. Fix plan generation:**
+
+When gaps are found, generate fix plans:
+
+```bash
+# Create fix plan from verification recommendations
+NEXT_PLAN_NUM=$(ls "$PHASE_DIR"/*-PLAN.md | wc -l)
+NEXT_PLAN_NUM=$((NEXT_PLAN_NUM + 1))
+```
+
+Fix plans:
+- Use standard PLAN.md template
+- Include must_haves (same as original, for re-verification)
+- Tasks target specific gaps (not entire feature)
+- Wave 99 (runs after all original plans)
+
+**5. Re-verification loop:**
+
+After fix plans execute:
+1. Spawn verification subagent again
+2. Check same must-haves
+3. If still gaps → more fix plans
+4. If passed → continue
+
+Limit: 3 fix cycles. If still failing after 3 rounds, present to user:
+```
+## ⚠️ Verification Still Failing After 3 Fix Attempts
+
+Remaining gaps:
+- {gap 1}
+- {gap 2}
+
+Options:
+1. Continue anyway (manual fixes later)
+2. Stop and investigate
+```
+
+**Why this matters:**
+
+Without verification:
+- Phase 3 "complete" but chat doesn't work
+- Phase 4 builds on broken foundation
+- Phase 8: "nothing works, start over"
+
+With verification:
+- Phase 3 verified before moving on
+- Gaps caught and fixed immediately
+- Each phase delivers real value
+</step>
+
 <step name="update_roadmap">
 Update ROADMAP.md to reflect phase completion:
 
@@ -388,20 +545,21 @@ All {N} phases executed.
 
 Orchestrator context usage: ~10-15%
 - Read plan frontmatter (small)
-- Analyze dependencies (logic, no heavy reads)
-- Fill template strings
-- Spawn Task calls
+- Group by wave (logic, no heavy reads)
+- Spawn Task calls with minimal prompts
 - Collect results
 
-Each subagent: Fresh 200k context
-- Loads full execute-plan workflow
-- Loads templates, references
+Each `gsd-executor` subagent: Fresh 200k context
+- Execution logic baked into subagent prompt (cached)
+- Only plan-specific context varies
 - Executes plan with full capacity
 - Creates SUMMARY, commits
 
+**Prompt caching benefit:** The `gsd-executor` subagent prompt is stable across all invocations. Only the plan path varies. 90% cost reduction on cached portion.
+
 **No polling.** Task tool blocks until completion. No TaskOutput loops.
 
-**No context bleed.** Orchestrator never reads workflow internals. Just paths and results.
+**No context bleed.** Orchestrator never reads execution internals. Just paths and results.
 </context_efficiency>
 
 <failure_handling>

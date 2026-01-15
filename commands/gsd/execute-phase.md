@@ -26,6 +26,8 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 @~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/workflows/execute-phase.md
 @~/.claude/get-shit-done/templates/subagent-task-prompt.md
+@~/.claude/get-shit-done/templates/subagent-verify-prompt.md
+@~/.claude/get-shit-done/workflows/verify-phase.md
 </execution_context>
 
 <context>
@@ -62,9 +64,18 @@ Phase: $ARGUMENTS
 5. **Aggregate results**
    - Collect summaries from all plans
    - Report phase completion status
+
+6. **Verify phase goal**
+   - Spawn verification subagent (uses subagent-verify-prompt.md)
+   - Verify must_haves from plan frontmatter against actual codebase
+   - If gaps found: create fix plans, execute, re-verify (max 3 cycles)
+   - If human verification needed: present items to user
+   - Block until verification passes or user approves
+
+7. **Update roadmap and state**
    - Update ROADMAP.md, STATE.md
 
-6. **Update requirements**
+8. **Update requirements**
    Mark phase requirements as Complete:
    - Read ROADMAP.md, find this phase's `Requirements:` line (e.g., "AUTH-01, AUTH-02")
    - Read REQUIREMENTS.md traceability table
@@ -72,14 +83,14 @@ Phase: $ARGUMENTS
    - Write updated REQUIREMENTS.md
    - Skip if: REQUIREMENTS.md doesn't exist, or phase has no Requirements line
 
-7. **Commit phase completion**
+9. **Commit phase completion**
    Bundle all phase metadata updates in one commit:
    - Stage: `git add .planning/ROADMAP.md .planning/STATE.md`
    - Stage REQUIREMENTS.md if updated: `git add .planning/REQUIREMENTS.md`
    - Commit: `docs({phase}): complete {phase-name} phase`
 
-8. **Offer next steps**
-   - Route to next action (see `<offer_next>`)
+10. **Offer next steps**
+    - Route to next action (see `<offer_next>`)
 </process>
 
 <offer_next>
@@ -226,6 +237,8 @@ After all plans in phase complete (step 7):
 <success_criteria>
 - [ ] All incomplete plans in phase executed
 - [ ] Each plan has SUMMARY.md
+- [ ] Phase goal verified (must_haves checked against codebase)
+- [ ] VERIFICATION.md created in phase directory
 - [ ] STATE.md reflects phase completion
 - [ ] ROADMAP.md updated
 - [ ] REQUIREMENTS.md updated (phase requirements marked Complete)
