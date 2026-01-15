@@ -248,6 +248,97 @@ Common phase patterns:
 - Infrastructure → Backend → Frontend → Integration
   </step>
 
+<step name="derive_phase_success_criteria">
+**For each phase, derive what must be TRUE when it completes.**
+
+This catches scope gaps before planning begins. Requirements tell us what to build; success criteria tell us what users can do.
+
+**Process for each phase:**
+
+1. **State the phase goal** (from identify_phases)
+
+2. **Ask: "What must be TRUE for users when this phase completes?"**
+   - Think from user's perspective, not implementation
+   - 2-5 observable behaviors per phase
+   - Each should be testable/verifiable
+
+3. **Cross-check against mapped requirements:**
+   - Does each success criterion have at least one requirement supporting it?
+   - Does each requirement contribute to at least one success criterion?
+
+4. **Flag gaps:**
+   - Success criterion with no supporting requirement → Add requirement or mark as out of scope
+   - Requirement that supports no criterion → Question if it belongs in this phase
+
+**Example:**
+
+```
+Phase 2: Authentication
+Goal: Users can securely access their accounts
+
+Success Criteria (what must be TRUE):
+1. User can create account with email/password
+2. User can log in and stay logged in across browser sessions
+3. User can log out from any page
+4. User can reset forgotten password
+
+Requirements mapped: AUTH-01, AUTH-02, AUTH-03
+
+Cross-check:
+✓ Criterion 1 ← AUTH-01 (create account)
+✓ Criterion 2 ← AUTH-02 (log in) — but "stay logged in" needs session persistence
+✓ Criterion 3 ← AUTH-03 (log out)
+✗ Criterion 4 ← No requirement covers password reset
+
+Gap found: Password reset not in requirements.
+→ Add AUTH-04: User can reset password via email
+   OR mark "Password reset" as v2 scope
+```
+
+**Present to user:**
+
+```
+Phase success criteria derived:
+
+Phase 1: Foundation
+Goal: Project scaffolding and configuration
+Success criteria:
+  1. Project builds without errors
+  2. Development server runs locally
+  3. CI pipeline passes
+Requirements: SETUP-01, SETUP-02 ✓ (all criteria covered)
+
+Phase 2: Authentication
+Goal: Users can securely access their accounts
+Success criteria:
+  1. User can create account with email/password
+  2. User can log in and stay logged in across sessions
+  3. User can log out from any page
+  4. User can reset forgotten password ⚠️
+Requirements: AUTH-01, AUTH-02, AUTH-03
+Gap: Criterion 4 (password reset) has no requirement
+
+Phase 3: User Profile
+...
+
+---
+
+⚠️ 1 gap found in Phase 2
+
+Options:
+1. Add AUTH-04 for password reset
+2. Mark password reset as v2 scope
+3. Adjust success criteria
+```
+
+**Resolve all gaps before proceeding.**
+
+Success criteria flow downstream:
+- Written to ROADMAP.md (high-level, user-observable)
+- Inform `must_haves` derivation in plan-phase (concrete artifacts/wiring)
+- Verified by verify-phase after execution
+</step>
+
 <step name="validate_coverage">
 **Verify all v1 requirements are mapped to exactly one phase.**
 
@@ -634,7 +725,9 @@ Phases are buckets of work, not project management artifacts.
 Roadmap is complete when:
 - [ ] REQUIREMENTS.md loaded and parsed
 - [ ] All v1 requirements mapped to exactly one phase (100% coverage)
-- [ ] `.planning/ROADMAP.md` exists with requirement mappings
+- [ ] **Success criteria derived** for each phase (2-5 observable behaviors)
+- [ ] **Success criteria cross-checked** against requirements (no gaps)
+- [ ] `.planning/ROADMAP.md` exists with requirement mappings and success criteria
 - [ ] `.planning/STATE.md` exists (project memory initialized)
 - [ ] REQUIREMENTS.md traceability section updated
 - [ ] Phases defined with clear names (count derived from requirements, not imposed)
