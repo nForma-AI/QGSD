@@ -3,11 +3,11 @@ name: gsd:plan-phase
 description: Create detailed execution plan for a phase (PLAN.md)
 argument-hint: "[phase] [--gaps]"
 context: fork
-agent: general-purpose
+agent: gsd-planner
 allowed-tools:
   - Read
-  - Bash
   - Write
+  - Bash
   - Glob
   - Grep
   - WebFetch
@@ -15,89 +15,175 @@ allowed-tools:
 ---
 
 <objective>
-Create executable phase prompt with discovery, context injection, and task breakdown.
+Create executable phase prompts (PLAN.md files) for a roadmap phase.
 
-Purpose: Break down roadmap phases into concrete, executable PLAN.md files that Claude can execute.
-Output: One or more PLAN.md files in the phase directory (.planning/phases/XX-name/{phase}-{plan}-PLAN.md)
+**Orchestrator role:** Parse arguments, validate phase, gather context paths, spawn gsd-planner agent, present results.
 
-**Gap closure mode (`--gaps` flag):**
-When invoked with `--gaps`, plans address gaps identified by the verifier. Load VERIFICATION.md, create plans to close specific gaps.
+**Why subagent:** Planning burns context fast (reading codebase, building dependency graphs, breaking down tasks). Fresh 200k context for planning. Main context stays lean for user interaction.
 </objective>
-
-<execution_context>
-@~/.claude/get-shit-done/references/principles.md
-@~/.claude/get-shit-done/workflows/plan-phase.md
-@~/.claude/get-shit-done/templates/phase-prompt.md
-@~/.claude/get-shit-done/references/plan-format.md
-@~/.claude/get-shit-done/references/scope-estimation.md
-@~/.claude/get-shit-done/references/checkpoints.md
-@~/.claude/get-shit-done/references/tdd.md
-@~/.claude/get-shit-done/references/goal-backward.md
-</execution_context>
 
 <context>
 Phase number: $ARGUMENTS (optional - auto-detects next unplanned phase if not provided)
 Gap closure mode: `--gaps` flag triggers gap closure workflow
 
-**Load project state first:**
-@.planning/STATE.md
-
-**Load roadmap:**
-@.planning/ROADMAP.md
-
-**Load requirements:**
-@.planning/REQUIREMENTS.md
-
-After loading, extract the requirements for the current phase:
-1. Find the phase in ROADMAP.md, get its `Requirements:` list (e.g., "PROF-01, PROF-02, PROF-03")
-2. Look up each REQ-ID in REQUIREMENTS.md to get the full description
-3. Present the requirements this phase must satisfy:
-   ```
-   Phase [N] Requirements:
-   - PROF-01: User can create profile with display name
-   - PROF-02: User can upload avatar image
-   - PROF-03: User can write bio (max 500 chars)
-   ```
-
-**Load phase context if exists (created by /gsd:discuss-phase):**
-Check for and read `.planning/phases/XX-name/{phase}-CONTEXT.md` - contains research findings, clarifications, and decisions from phase discussion.
-
-**Load codebase context if exists:**
-Check for `.planning/codebase/` and load relevant documents based on phase type.
-
-**If --gaps flag present, also load:**
-@.planning/phases/XX-name/{phase}-VERIFICATION.md — contains structured gaps in YAML frontmatter
+Check for existing plans:
+```bash
+ls .planning/phases/${PHASE}-*/*-PLAN.md 2>/dev/null
+```
 </context>
 
 <process>
-1. Check .planning/ directory exists (error if not - user should run /gsd:new-project)
-2. Parse arguments: extract phase number and check for `--gaps` flag
-3. If phase number provided, validate it exists in roadmap
-4. If no phase number, detect next unplanned phase from roadmap
 
-**Standard mode (no --gaps flag):**
-5. Follow plan-phase.md workflow:
-   - Load project state and accumulated decisions
-   - Perform mandatory discovery (Level 0-3 as appropriate)
-   - Read project history (prior decisions, issues, concerns)
-   - Break phase into tasks
-   - Estimate scope and split into multiple plans if needed
-   - Create PLAN.md file(s) with executable structure
+## 1. Validate Environment
 
-**Gap closure mode (--gaps flag):**
-5. Follow plan-phase.md workflow with gap_closure_mode:
-   - Load VERIFICATION.md and parse `gaps:` YAML from frontmatter
-   - Read existing SUMMARYs to understand what's already built
-   - Create tasks from gaps (each gap.missing item → task candidates)
-   - Number plans sequentially after existing (if 01-03 exist, create 04, 05...)
-   - Create PLAN.md file(s) focused on closing specific gaps
+```bash
+ls .planning/ 2>/dev/null
+```
+
+**If not found:** Error - user should run `/gsd:new-project` first.
+
+## 2. Parse Arguments
+
+Extract from $ARGUMENTS:
+- Phase number (integer or decimal like `2.1`)
+- `--gaps` flag for gap closure mode
+
+**If no phase number:** Detect next unplanned phase from roadmap.
+
+## 3. Validate Phase
+
+```bash
+grep -A5 "Phase ${PHASE}:" .planning/ROADMAP.md 2>/dev/null
+```
+
+**If not found:** Error with available phases. **If found:** Extract phase number, name, description.
+
+## 4. Check Existing Plans
+
+```bash
+ls .planning/phases/${PHASE}-*/*-PLAN.md 2>/dev/null
+```
+
+**If exists:** Offer: 1) Continue planning, 2) View existing, 3) Replan. Wait for response.
+
+## 5. Gather Context Paths
+
+Identify context files for the agent:
+
+```bash
+# Required
+STATE=.planning/STATE.md
+ROADMAP=.planning/ROADMAP.md
+REQUIREMENTS=.planning/REQUIREMENTS.md
+
+# Optional
+PHASE_DIR=$(ls -d .planning/phases/${PHASE}-* 2>/dev/null | head -1)
+CONTEXT="${PHASE_DIR}/${PHASE}-CONTEXT.md"
+RESEARCH="${PHASE_DIR}/${PHASE}-RESEARCH.md"
+VERIFICATION="${PHASE_DIR}/${PHASE}-VERIFICATION.md"
+UAT="${PHASE_DIR}/${PHASE}-UAT.md"
+```
+
+## 6. Spawn gsd-planner Agent
+
+Fill prompt and spawn:
+
+```markdown
+<planning_context>
+
+**Phase:** {phase_number}
+**Mode:** {standard | gap_closure}
+
+**Project State:**
+@.planning/STATE.md
+
+**Roadmap:**
+@.planning/ROADMAP.md
+
+**Requirements (if exists):**
+@.planning/REQUIREMENTS.md
+
+**Phase Context (if exists):**
+@.planning/phases/{phase_dir}/{phase}-CONTEXT.md
+
+**Research (if exists):**
+@.planning/phases/{phase_dir}/{phase}-RESEARCH.md
+
+**Gap Closure (if --gaps mode):**
+@.planning/phases/{phase_dir}/{phase}-VERIFICATION.md
+@.planning/phases/{phase_dir}/{phase}-UAT.md
+
+</planning_context>
+
+<downstream_consumer>
+Output consumed by /gsd:execute-phase or /gsd:execute-plan
+Plans must be executable prompts with:
+- Frontmatter (wave, depends_on, files_modified, autonomous)
+- Tasks in XML format
+- Verification criteria
+- must_haves for goal-backward verification
+</downstream_consumer>
+
+<quality_gate>
+Before returning PLANNING COMPLETE:
+- [ ] PLAN.md files created in phase directory
+- [ ] Each plan has valid frontmatter
+- [ ] Tasks are specific and actionable
+- [ ] Dependencies correctly identified
+- [ ] Waves assigned for parallel execution
+- [ ] must_haves derived from phase goal
+</quality_gate>
+```
+
+```
+Task(
+  prompt=filled_prompt,
+  subagent_type="gsd-planner",
+  description="Plan Phase {phase}"
+)
+```
+
+## 7. Handle Agent Return
+
+**`## PLANNING COMPLETE`:** Display summary, offer: Execute phase, Review plans, Adjust, Done.
+
+**`## CHECKPOINT REACHED`:** Present to user, get response, spawn continuation.
+
+**`## PLANNING INCONCLUSIVE`:** Show what was attempted, offer: Add context, Retry, Manual.
+
+## 8. Spawn Continuation Agent
+
+```markdown
+<objective>
+Continue planning for Phase {phase_number}: {phase_name}
+</objective>
+
+<prior_state>
+Phase directory: @.planning/phases/{phase_dir}/
+Existing plans: @.planning/phases/{phase_dir}/*-PLAN.md
+</prior_state>
+
+<checkpoint_response>
+**Type:** {checkpoint_type}
+**Response:** {user_response}
+</checkpoint_response>
+```
+
+```
+Task(
+  prompt=continuation_prompt,
+  subagent_type="gsd-planner",
+  description="Continue planning Phase {phase}"
+)
+```
+
 </process>
 
 <success_criteria>
-
-- One or more PLAN.md files created in .planning/phases/XX-name/
-- Each plan has: objective, execution_context, context, tasks, verification, success_criteria, output
-- must_haves derived from phase goal and documented in frontmatter (truths, artifacts, key_links)
-- Tasks are specific enough for Claude to execute
-- User knows next steps (execute plan or review/adjust)
-  </success_criteria>
+- [ ] .planning/ directory validated
+- [ ] Phase validated against roadmap
+- [ ] Existing plans checked
+- [ ] gsd-planner spawned with context
+- [ ] Checkpoints handled correctly
+- [ ] User knows next steps (execute or review)
+</success_criteria>
