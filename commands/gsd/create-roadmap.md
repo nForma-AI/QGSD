@@ -119,7 +119,6 @@ Roadmap created:
 
 **Also available:**
 - `/gsd:discuss-phase 1` — gather context first
-- `/gsd:research-phase 1` — investigate unknowns
 - Review roadmap
 
 ---

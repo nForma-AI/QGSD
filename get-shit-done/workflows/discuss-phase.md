@@ -321,7 +321,7 @@ Created: .planning/phases/${PHASE}-${SLUG}/${PHASE}-CONTEXT.md
 ---
 
 **Also available:**
-- `/gsd:research-phase ${PHASE}` — investigate unknowns first
+- `/gsd:plan-phase ${PHASE} --skip-research` — plan without research
 - Review/edit CONTEXT.md before continuing
 
 ---

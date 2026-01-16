@@ -201,7 +201,6 @@ Check if `{phase}-CONTEXT.md` exists in phase directory.
 
 **Also available:**
 - `/gsd:discuss-phase {phase}` — gather context first
-- `/gsd:research-phase {phase}` — investigate unknowns
 - `/gsd:list-phase-assumptions {phase}` — see Claude's assumptions
 
 ---
@@ -276,7 +275,6 @@ Read ROADMAP.md to get the next phase's name and goal.
 **Also available:**
 - `/gsd:verify-work {Z}` — user acceptance test before continuing
 - `/gsd:discuss-phase {Z+1}` — gather context first
-- `/gsd:research-phase {Z+1}` — investigate unknowns
 
 ---
 ```

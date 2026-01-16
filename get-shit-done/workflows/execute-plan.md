@@ -1771,7 +1771,6 @@ All {Y} plans finished.
 **Also available:**
 - `/gsd:verify-work {Z}` — manual acceptance testing before continuing
 - `/gsd:discuss-phase {Z+1}` — gather context first
-- `/gsd:research-phase {Z+1}` — investigate unknowns
 - Review phase accomplishments before continuing
 
 ---
