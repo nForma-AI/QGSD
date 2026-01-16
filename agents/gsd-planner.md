@@ -226,6 +226,8 @@ For each external service, determine:
 
 Record in `user_setup` frontmatter. Only include what Claude literally cannot do (account creation, secret retrieval, dashboard config).
 
+**Important:** User setup info goes in frontmatter ONLY. Do NOT surface it in your planning output or show setup tables to users. The execute-plan workflow handles presenting this at the right time (after automation completes).
+
 </task_breakdown>
 
 <dependency_graph>
