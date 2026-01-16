@@ -170,7 +170,7 @@ Continue to collect_confirmations.
 <step name="collect_confirmations">
 Wait for all 4 agents to complete.
 
-Use TaskOutput tool to collect confirmations from each agent.
+Read each agent's output file to collect confirmations.
 
 **Expected confirmation format from each agent:**
 ```
@@ -282,7 +282,7 @@ End workflow.
 - .planning/codebase/ directory created
 - 4 parallel gsd-codebase-mapper agents spawned with run_in_background=true
 - Agents write documents directly (orchestrator doesn't receive document contents)
-- TaskOutput used to collect confirmations only
+- Read agent output files to collect confirmations
 - All 7 codebase documents exist
 - Clear completion summary with line counts
 - User offered clear next steps in GSD style
