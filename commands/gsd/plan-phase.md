@@ -81,10 +81,11 @@ grep -A5 "Phase ${PHASE}:" .planning/ROADMAP.md 2>/dev/null
 ```bash
 PHASE_DIR=$(ls -d .planning/phases/${PHASE}-* 2>/dev/null | head -1)
 if [ -z "$PHASE_DIR" ]; then
-  # Create phase directory from roadmap name
+  # Create phase directory from roadmap name with zero-padded phase number
   PHASE_NAME=$(grep "Phase ${PHASE}:" .planning/ROADMAP.md | sed 's/.*Phase [0-9]*: //' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
-  mkdir -p ".planning/phases/${PHASE}-${PHASE_NAME}"
-  PHASE_DIR=".planning/phases/${PHASE}-${PHASE_NAME}"
+  PADDED_PHASE=$(printf "%02d" ${PHASE})
+  mkdir -p ".planning/phases/${PADDED_PHASE}-${PHASE_NAME}"
+  PHASE_DIR=".planning/phases/${PADDED_PHASE}-${PHASE_NAME}"
 fi
 ```
 

@@ -505,12 +505,16 @@ If gaps found, include in draft for user decision.
 
 **Write files first, then return.** This ensures artifacts persist even if context is lost.
 
-1. **Create phase directories:**
+1. **Create phase directories (zero-padded):**
    ```bash
-   mkdir -p .planning/phases/01-{name}
-   mkdir -p .planning/phases/02-{name}
-   # etc.
+   # Always zero-pad phase numbers: 01, 02, ... 09, 10, 11
+   for i in 1 2 3; do
+     PADDED=$(printf "%02d" $i)
+     mkdir -p ".planning/phases/${PADDED}-{phase-name}"
+   done
    ```
+
+   Examples: `01-foundation`, `02-core-features`, `10-polish`
 
 2. **Write ROADMAP.md** using output format
 
@@ -546,9 +550,9 @@ When files are written and returning to orchestrator:
 **Files written:**
 - .planning/ROADMAP.md
 - .planning/STATE.md
-- .planning/phases/01-{name}/
-- .planning/phases/02-{name}/
-...
+- .planning/phases/01-{phase-name}/
+- .planning/phases/02-{phase-name}/
+- ... (all phases zero-padded)
 
 **Updated:**
 - .planning/REQUIREMENTS.md (traceability section)

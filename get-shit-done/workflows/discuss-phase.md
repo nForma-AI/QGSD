@@ -229,7 +229,9 @@ Track deferred ideas internally.
 <step name="write_context">
 Create CONTEXT.md capturing decisions made.
 
-**File location:** `.planning/phases/${PHASE}-${SLUG}/${PHASE}-CONTEXT.md`
+**File location:** `.planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md`
+
+Zero-pad the phase number: `PADDED_PHASE=$(printf "%02d" ${PHASE})`
 
 Create phase directory if it doesn't exist. Use roadmap phase name for slug (lowercase, hyphens).
 
@@ -294,7 +296,7 @@ Write file.
 Present summary and next steps:
 
 ```
-Created: .planning/phases/${PHASE}-${SLUG}/${PHASE}-CONTEXT.md
+Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 
 ## Decisions Captured
 

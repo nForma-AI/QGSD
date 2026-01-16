@@ -515,12 +515,14 @@ Run through verification protocol checklist:
 
 Use the output format template. Populate all sections with verified findings.
 
-Write to: `.planning/phases/{phase_dir}/{phase}-RESEARCH.md`
+Write to: `${PHASE_DIR}/${PHASE}-RESEARCH.md`
+
+Where `PHASE_DIR` is the full path (e.g., `.planning/phases/01-foundation`)
 
 ## Step 6: Commit Research
 
 ```bash
-git add .planning/phases/${PHASE_DIR}/${PHASE}-RESEARCH.md
+git add "${PHASE_DIR}/${PHASE}-RESEARCH.md"
 git commit -m "docs(${PHASE}): research phase domain
 
 Phase ${PHASE}: ${PHASE_NAME}
@@ -553,7 +555,7 @@ When research finishes successfully:
 
 ### File Created
 
-`.planning/phases/{phase_dir}/{phase}-RESEARCH.md`
+`${PHASE_DIR}/${PHASE}-RESEARCH.md`
 
 ### Confidence Assessment
 

@@ -1291,7 +1291,7 @@ Execute: `/gsd:execute-phase {phase}`
 
 ### Files Updated
 
-- .planning/phases/{phase_dir}/{plan}-PLAN.md
+- .planning/phases/{phase_dir}/{phase}-{plan}-PLAN.md
 
 {If any issues NOT addressed:}
 
