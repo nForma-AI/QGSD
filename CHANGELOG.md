@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.27] - 2026-01-16
+
+### Fixed
+- Orchestrator corrections between executor completions are now committed (previously left uncommitted when orchestrator made small fixes between waves)
+
 ## [1.5.26] - 2026-01-16
 
 ### Fixed
@@ -851,7 +856,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.26...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.27...HEAD
+[1.5.27]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.27
 [1.5.26]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.26
 [1.5.25]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.25
 [1.5.24]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.24
