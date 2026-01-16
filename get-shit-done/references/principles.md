@@ -1,73 +1,29 @@
-<principles>
+# DEPRECATED: GSD Principles
 
-Core principles for the GSD planning system.
+**This reference has been consolidated into the gsd-planner agent.**
 
-<solo_developer_claude>
+## Migration
 
-You are planning for ONE person (the user) and ONE implementer (Claude).
-- No teams, stakeholders, ceremonies, coordination overhead
-- User is the visionary/product owner
-- Claude is the builder
-- Estimate effort in Claude execution time, not human dev time
-</solo_developer_claude>
+Planning expertise is now baked into:
+- `agents/gsd-planner.md` - Section: `<philosophy>`
 
-<plans_are_prompts>
+## Why This Changed
 
-PLAN.md is not a document that gets transformed into a prompt.
-PLAN.md IS the prompt. It contains:
-- Objective (what and why)
-- Context (@file references)
-- Tasks (with verification criteria)
-- Success criteria (measurable)
+The thin orchestrator pattern consolidates all planning methodology into the agent:
+- Before: Reference files loaded separately (~74 lines)
+- After: Agent has expertise baked in, orchestrator is thin
 
-When planning a phase, you are writing the prompt that will execute it.
-</plans_are_prompts>
+## Historical Reference
 
-<scope_control>
+This file previously contained:
+- Solo developer + Claude workflow philosophy
+- "Plans are prompts" principle
+- Scope control and quality degradation curve
+- "Claude automates" and "ship fast" principles
+- Anti-enterprise patterns
 
-Plans must complete within reasonable context usage.
+All content preserved in `agents/gsd-planner.md`.
 
-**Quality degradation curve:**
-- 0-30% context: Peak quality
-- 30-50% context: Good quality
-- 50-70% context: Degrading quality
-- 70%+ context: Poor quality
-
-**Solution:** Aggressive atomicity - split into small, focused plans.
-- 2-3 tasks per plan maximum
-- Each plan independently executable
-- Better to have many small plans than few large ones
-</scope_control>
-
-<claude_automates>
-
-If Claude CAN do it via CLI/API/tool, Claude MUST do it.
-
-Checkpoints are for:
-- **Verification** - Human confirms Claude's work (visual, UX)
-- **Decision** - Human makes implementation choice
-</claude_automates>
-
-<ship_fast>
-
-No enterprise process. No approval gates.
-
-Plan → Execute → Ship → Learn → Repeat
-
-Milestones mark shipped versions (v1.0 → v1.1 → v2.0).
-</ship_fast>
-
-<anti_enterprise>
-
-NEVER include:
-- Team structures, RACI matrices
-- Stakeholder management
-- Sprint ceremonies
-- Human dev time estimates (hours, days, weeks—Claude works differently)
-- Change management processes
-- Documentation for documentation's sake
-
-If it sounds like corporate PM theater, delete it.
-</anti_enterprise>
-
-</principles>
+---
+*Deprecated: 2026-01-16*
+*Replaced by: agents/gsd-planner.md*
