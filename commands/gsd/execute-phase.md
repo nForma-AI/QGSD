@@ -62,19 +62,32 @@ Phase: $ARGUMENTS
    - Collect summaries from all plans
    - Report phase completion status
 
-6. **Verify phase goal**
+6. **Commit any orchestrator corrections**
+   Check for uncommitted changes before verification:
+   ```bash
+   git status --porcelain
+   ```
+
+   **If changes exist:** Orchestrator made corrections between executor completions. Commit them:
+   ```bash
+   git add -u && git commit -m "fix({phase}): orchestrator corrections"
+   ```
+
+   **If clean:** Continue to verification.
+
+7. **Verify phase goal**
    - Spawn `gsd-verifier` subagent with phase directory and goal
    - Verifier checks must_haves against actual codebase (not SUMMARY claims)
    - Creates VERIFICATION.md with detailed report
    - Route by status:
-     - `passed` → continue to step 7
+     - `passed` → continue to step 8
      - `human_needed` → present items, get approval or feedback
      - `gaps_found` → present gaps, offer `/gsd:plan-phase {X} --gaps`
 
-7. **Update roadmap and state**
+8. **Update roadmap and state**
    - Update ROADMAP.md, STATE.md
 
-8. **Update requirements**
+9. **Update requirements**
    Mark phase requirements as Complete:
    - Read ROADMAP.md, find this phase's `Requirements:` line (e.g., "AUTH-01, AUTH-02")
    - Read REQUIREMENTS.md traceability table
@@ -82,13 +95,13 @@ Phase: $ARGUMENTS
    - Write updated REQUIREMENTS.md
    - Skip if: REQUIREMENTS.md doesn't exist, or phase has no Requirements line
 
-9. **Commit phase completion**
-   Bundle all phase metadata updates in one commit:
-   - Stage: `git add .planning/ROADMAP.md .planning/STATE.md`
-   - Stage REQUIREMENTS.md if updated: `git add .planning/REQUIREMENTS.md`
-   - Commit: `docs({phase}): complete {phase-name} phase`
+10. **Commit phase completion**
+    Bundle all phase metadata updates in one commit:
+    - Stage: `git add .planning/ROADMAP.md .planning/STATE.md`
+    - Stage REQUIREMENTS.md if updated: `git add .planning/REQUIREMENTS.md`
+    - Commit: `docs({phase}): complete {phase-name} phase`
 
-10. **Offer next steps**
+11. **Offer next steps**
     - Route to next action (see `<offer_next>`)
 </process>
 
