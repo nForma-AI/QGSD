@@ -112,8 +112,6 @@ Discovery is MANDATORY unless you can prove current context exists.
 - Level 2+: New library not in package.json, external API, "choose/select/evaluate" in description
 - Level 3: "architecture/design/system", multiple external services, data modeling, auth design
 
-If roadmap flagged "Research: Likely", Level 0 (skip) is not available.
-
 For niche domains (3D, games, audio, shaders, ML), suggest `/gsd:research-phase` before plan-phase.
 
 </discovery_levels>
@@ -1029,8 +1027,6 @@ Read any existing PLAN.md or DISCOVERY.md in the phase directory.
 
 <step name="mandatory_discovery">
 Apply discovery level protocol (see discovery_levels section).
-
-If roadmap flagged "Research: Likely", Level 0 (skip) is not available.
 </step>
 
 <step name="read_project_history">

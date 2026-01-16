@@ -335,71 +335,6 @@ Use AskUserQuestion to resolve orphaned requirements.
 **Do not proceed until coverage = 100%.**
 </step>
 
-<step name="detect_research_needs">
-**For each phase, determine if research is likely needed.**
-
-Scan the brief and phase descriptions for research triggers:
-
-<research_triggers>
-**Likely (flag the phase):**
-
-| Trigger Pattern                                       | Why Research Needed                     |
-| ----------------------------------------------------- | --------------------------------------- |
-| "integrate [service]", "connect to [API]"             | External API - need current docs        |
-| "authentication", "auth", "login", "JWT"              | Architectural decision + library choice |
-| "payment", "billing", "Stripe", "subscription"        | External API + compliance patterns      |
-| "email", "SMS", "notifications", "SendGrid", "Twilio" | External service integration            |
-| "database", "Postgres", "MongoDB", "Supabase"         | If new to project - setup patterns      |
-| "real-time", "websocket", "sync", "live updates"      | Architectural decision                  |
-| "deploy", "Vercel", "Railway", "hosting"              | If first deployment - config patterns   |
-| "choose between", "select", "evaluate", "which"       | Explicit decision needed                |
-| "AI", "OpenAI", "Claude", "LLM", "embeddings"         | Fast-moving APIs - need current docs    |
-| Any technology not already in codebase                | New integration                         |
-| Explicit questions in brief                           | Unknowns flagged by user                |
-
-**Unlikely (no flag needed):**
-
-| Pattern                                     | Why No Research         |
-| ------------------------------------------- | ----------------------- |
-| "add button", "create form", "update UI"    | Internal patterns       |
-| "CRUD operations", "list/detail views"      | Standard patterns       |
-| "refactor", "reorganize", "clean up"        | Internal work           |
-| "following existing patterns"               | Conventions established |
-| Technology already in package.json/codebase | Patterns exist          |
-
-</research_triggers>
-
-**For each phase, assign:**
-
-- `Research: Likely ([reason])` + `Research topics: [what to investigate]`
-- `Research: Unlikely ([reason])`
-
-**Important:** These are hints, not mandates. The mandatory_discovery step during phase planning will validate.
-
-Present research assessment:
-
-```
-Research needs detected:
-
-Phase 1: Foundation
-  Research: Unlikely (project setup, established patterns)
-
-Phase 2: Authentication
-  Research: Likely (new system, technology choice)
-  Topics: JWT library for [stack], session strategy, auth provider options
-
-Phase 3: Stripe Integration
-  Research: Likely (external API)
-  Topics: Current Stripe API, webhook patterns, checkout flow
-
-Phase 4: Dashboard
-  Research: Unlikely (internal UI using patterns from earlier phases)
-
-Does this look right? (yes / adjust)
-```
-
-</step>
-
 <step name="confirm_phases">
 <config-check>
 ```bash
@@ -483,11 +418,7 @@ Write to `.planning/ROADMAP.md` with:
   **Goal**: Secure user authentication
   **Depends on**: Nothing (first phase)
   **Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04
-  **Research**: Unlikely (established patterns)
   ```
-- **Research flags** (from detect_research_needs step):
-  - `Research: Likely ([reason])` with `Research topics:` for flagged phases
-  - `Research: Unlikely ([reason])` for unflagged phases
 - Status tracking (all start as "not started")
 
 Create phase directories:

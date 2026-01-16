@@ -34,7 +34,6 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. [Observable behavior from user perspective]
   2. [Observable behavior from user perspective]
   3. [Observable behavior from user perspective]
-**Research**: Unlikely (established patterns)
 **Plans**: [Number of plans, e.g., "3 plans" or "TBD"]
 
 Plans:
@@ -49,8 +48,6 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. [Observable behavior from user perspective]
   2. [Observable behavior from user perspective]
-**Research**: Likely (new integration)
-**Research topics**: [What needs investigating]
 **Plans**: [Number of plans]
 
 Plans:
@@ -75,8 +72,6 @@ Plans:
   1. [Observable behavior from user perspective]
   2. [Observable behavior from user perspective]
   3. [Observable behavior from user perspective]
-**Research**: Likely (external API)
-**Research topics**: [What needs investigating]
 **Plans**: [Number of plans]
 
 Plans:
@@ -90,7 +85,6 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. [Observable behavior from user perspective]
   2. [Observable behavior from user perspective]
-**Research**: Unlikely (internal patterns)
 **Plans**: [Number of plans]
 
 Plans:
@@ -125,12 +119,6 @@ Phases execute in numeric order: 2 → 2.1 → 2.2 → 3 → 3.1 → 4
 - Flow downstream to `must_haves` in plan-phase
 - Verified by verify-phase after execution
 - Format: "User can [action]" or "[Thing] works/exists"
-
-**Research flags:**
-- `Research: Likely` - External APIs, new libraries, architectural decisions
-- `Research: Unlikely` - Internal patterns, CRUD operations, established conventions
-- Include `Research topics:` when Likely
-- Flags are hints, not mandates - validate at planning time
 
 **After milestones ship:**
 - Collapse completed milestones in `<details>` tags
