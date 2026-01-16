@@ -127,22 +127,13 @@ Result: Creates `.planning/phases/01-foundation/01-01-PLAN.md`
 
 ### Execution
 
-**`/gsd:execute-plan <path>`**
-Execute a single PLAN.md file.
-
-- Runs plan tasks sequentially
-- Creates SUMMARY.md after completion
-- Updates STATE.md with accumulated context
-- Use for interactive execution with checkpoints
-
-Usage: `/gsd:execute-plan .planning/phases/01-foundation/01-01-PLAN.md`
-
 **`/gsd:execute-phase <phase-number>`**
-Execute all plans in a phase with wave-based parallelization.
+Execute all plans in a phase.
 
 - Groups plans by wave (from frontmatter), executes waves sequentially
 - Plans within each wave run in parallel via Task tool
 - Verifies phase goal after all plans complete
+- Updates REQUIREMENTS.md, ROADMAP.md, STATE.md
 
 Usage: `/gsd:execute-phase 5`
 
@@ -368,7 +359,7 @@ Change anytime by editing `.planning/config.json`
 ```
 /gsd:insert-phase 5 "Critical security fix"
 /gsd:plan-phase 5.1
-/gsd:execute-plan .planning/phases/05.1-critical-security-fix/05.1-01-PLAN.md
+/gsd:execute-phase 5.1
 ```
 
 **Completing a milestone:**

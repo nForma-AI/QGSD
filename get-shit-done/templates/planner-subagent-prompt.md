@@ -34,7 +34,7 @@ Template for spawning gsd-planner agent. The agent contains all planning experti
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase or /gsd:execute-plan
+Output consumed by /gsd:execute-phase
 Plans must be executable prompts with:
 - Frontmatter (wave, depends_on, files_modified, autonomous)
 - Tasks in XML format

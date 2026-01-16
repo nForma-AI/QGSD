@@ -31,7 +31,7 @@ Your job: Explore thoroughly, then write document(s) directly. Return confirmati
 | refactor, cleanup | CONCERNS.md, ARCHITECTURE.md |
 | setup, config | STACK.md, STRUCTURE.md |
 
-**`/gsd:execute-plan`** references codebase docs to:
+**`/gsd:execute-phase`** references codebase docs to:
 - Follow existing conventions when writing code
 - Know where to place new files (STRUCTURE.md)
 - Match testing patterns (TESTING.md)

@@ -44,7 +44,7 @@ Standard format for presenting next steps after completing a command or workflow
 
 **02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
 
-`/gsd:execute-plan .planning/phases/02-auth/02-03-PLAN.md`
+`/gsd:execute-phase 2`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -69,7 +69,7 @@ Add note that this is the last plan and what comes after:
 **02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
 <sub>Final plan in Phase 2</sub>
 
-`/gsd:execute-plan .planning/phases/02-auth/02-03-PLAN.md`
+`/gsd:execute-phase 2`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -220,7 +220,7 @@ Extract: `**02-03: Refresh Token Rotation** — Add /api/auth/refresh with slidi
 ## To Continue
 
 Run `/clear`, then paste:
-/gsd:execute-plan .planning/phases/02-auth/02-03-PLAN.md
+/gsd:execute-phase 2
 ```
 
 User has no idea what 02-03 is about.

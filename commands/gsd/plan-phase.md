@@ -251,7 +251,7 @@ Fill prompt and spawn:
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase or /gsd:execute-plan
+Output consumed by /gsd:execute-phase
 Plans must be executable prompts with:
 
 - Frontmatter (wave, depends_on, files_modified, autonomous)

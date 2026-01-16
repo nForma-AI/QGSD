@@ -180,9 +180,7 @@ What would you like to do?
 [Primary action based on state - e.g.:]
 1. Resume interrupted agent (/gsd:resume-task) [if interrupted agent found]
    OR
-1. Resume from checkpoint (/gsd:execute-plan .planning/phases/XX-name/.continue-here-02-01.md)
-   OR
-1. Execute next plan (/gsd:execute-plan .planning/phases/XX-name/02-02-PLAN.md)
+1. Execute phase (/gsd:execute-phase {phase})
    OR
 1. Discuss Phase 3 context (/gsd:discuss-phase 3) [if CONTEXT.md missing]
    OR
@@ -217,7 +215,7 @@ Based on user selection, route to appropriate workflow:
 
   **{phase}-{plan}: [Plan Name]** — [objective from PLAN.md]
 
-  `/gsd:execute-plan [path]`
+  `/gsd:execute-phase {phase}`
 
   <sub>`/clear` first → fresh context window</sub>
 
