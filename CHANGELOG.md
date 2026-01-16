@@ -6,6 +6,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.21] - 2026-01-16
+
+### Added
+- GSD brand system for consistent UI (checkpoint boxes, stage banners, status symbols)
+- Research synthesizer agent that consolidates parallel research into SUMMARY.md
+
+### Changed
+- **Unified `/gsd:new-project` flow** — Single command now handles questions → research → requirements → roadmap (~10 min)
+- Simplified README to reflect streamlined workflow: new-project → plan-phase → execute-phase
+- Added optional `/gsd:discuss-phase` documentation for UI/UX/behavior decisions before planning
+
+### Fixed
+- verify-work now shows clear checkpoint box with action prompt ("Type 'pass' or describe what's wrong")
+- Planner uses correct `{phase}-{plan}-PLAN.md` naming convention
+- Planner no longer surfaces internal `user_setup` in output
+- Research synthesizer commits all research files together (not individually)
+- Project researcher agent can no longer commit (orchestrator handles commits)
+- Roadmap requires explicit user approval before committing
+
 ## [1.5.20] - 2026-01-16
 
 ### Fixed
@@ -795,7 +814,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.20...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.21...HEAD
+[1.5.21]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.21
 [1.5.20]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.20
 [1.5.19]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.19
 [1.5.18]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.18
