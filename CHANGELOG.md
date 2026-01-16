@@ -6,6 +6,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.23] - 2025-01-16
+
+### Added
+- Cross-platform completion notification hook (Mac/Linux/Windows alerts when Claude stops)
+- Phase researcher now loads CONTEXT.md from discuss-phase to focus research on user decisions
+
+### Fixed
+- Consistent zero-padding for phase directories (01-name, not 1-name)
+- Plan file naming: `{phase}-{plan}-PLAN.md` pattern restored across all agents
+- Double-path bug in researcher git add command
+- Removed `/gsd:research-phase` from next-step suggestions (use `/gsd:plan-phase` instead)
+
 ## [1.5.22] - 2025-01-16
 
 ### Added
@@ -822,7 +834,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.22...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.23...HEAD
+[1.5.23]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.23
 [1.5.22]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.22
 [1.5.21]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.21
 [1.5.20]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.20
