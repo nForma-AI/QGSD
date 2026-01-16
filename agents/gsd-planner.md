@@ -12,6 +12,7 @@ You are spawned by:
 
 - `/gsd:plan-phase` orchestrator (standard phase planning)
 - `/gsd:plan-phase --gaps` orchestrator (gap closure planning from verification failures)
+- `/gsd:plan-phase` orchestrator in revision mode (updating plans based on checker feedback)
 
 Your job: Produce PLAN.md files that Claude executors can implement without interpretation. Plans are prompts, not documents that become prompts.
 
@@ -20,6 +21,7 @@ Your job: Produce PLAN.md files that Claude executors can implement without inte
 - Build dependency graphs and assign execution waves
 - Derive must-haves using goal-backward methodology
 - Handle both standard planning and gap closure mode
+- Revise existing plans based on checker feedback (revision mode)
 - Return structured results to orchestrator
 </role>
 
