@@ -54,6 +54,7 @@ function parseConfigDirArg() {
 }
 const explicitConfigDir = parseConfigDirArg();
 const hasHelp = args.includes('--help') || args.includes('-h');
+const forceStatusline = args.includes('--force-statusline');
 
 console.log(banner);
 
@@ -66,6 +67,7 @@ if (hasHelp) {
     ${cyan}-l, --local${reset}               Install locally (to ./.claude in current directory)
     ${cyan}-c, --config-dir <path>${reset}   Specify custom Claude config directory
     ${cyan}-h, --help${reset}                Show this help message
+    ${cyan}--force-statusline${reset}        Replace existing statusline config
 
   ${yellow}Examples:${reset}
     ${dim}# Install to default ~/.claude directory${reset}
@@ -96,6 +98,27 @@ function expandTilde(filePath) {
     return path.join(os.homedir(), filePath.slice(2));
   }
   return filePath;
+}
+
+/**
+ * Read and parse settings.json, returning empty object if doesn't exist
+ */
+function readSettings(settingsPath) {
+  if (fs.existsSync(settingsPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+}
+
+/**
+ * Write settings.json with proper formatting
+ */
+function writeSettings(settingsPath, settings) {
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
 }
 
 /**
@@ -184,9 +207,106 @@ function install(isGlobal) {
   fs.writeFileSync(versionDest, pkg.version);
   console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
 
+  // Copy hooks
+  const hooksSrc = path.join(src, 'hooks');
+  if (fs.existsSync(hooksSrc)) {
+    const hooksDest = path.join(claudeDir, 'hooks');
+    fs.mkdirSync(hooksDest, { recursive: true });
+    const hookEntries = fs.readdirSync(hooksSrc);
+    for (const entry of hookEntries) {
+      const srcFile = path.join(hooksSrc, entry);
+      const destFile = path.join(hooksDest, entry);
+      fs.copyFileSync(srcFile, destFile);
+      // Make shell scripts executable
+      if (entry.endsWith('.sh')) {
+        fs.chmodSync(destFile, 0o755);
+      }
+    }
+    console.log(`  ${green}✓${reset} Installed hooks`);
+  }
+
+  // Configure statusline in settings.json
+  const settingsPath = path.join(claudeDir, 'settings.json');
+  const settings = readSettings(settingsPath);
+  const statuslineCommand = isGlobal
+    ? '$HOME/.claude/hooks/statusline.sh'
+    : '.claude/hooks/statusline.sh';
+
+  return { settingsPath, settings, statuslineCommand };
+}
+
+/**
+ * Apply statusline config and print completion message
+ */
+function finishInstall(settingsPath, settings, statuslineCommand, shouldInstall) {
+  if (shouldInstall) {
+    settings.statusLine = {
+      type: 'command',
+      command: statuslineCommand
+    };
+    writeSettings(settingsPath, settings);
+    console.log(`  ${green}✓${reset} Configured statusline`);
+  }
+
   console.log(`
   ${green}Done!${reset} Launch Claude Code and run ${cyan}/gsd:help${reset}.
 `);
+}
+
+/**
+ * Handle statusline configuration with optional prompt
+ */
+function handleStatusline(settingsPath, settings, statuslineCommand, isInteractive, callback) {
+  const hasExisting = settings.statusLine != null;
+
+  // No existing statusline - just install it
+  if (!hasExisting) {
+    callback(true);
+    return;
+  }
+
+  // Has existing and --force-statusline flag
+  if (forceStatusline) {
+    callback(true);
+    return;
+  }
+
+  // Has existing, non-interactive mode - skip
+  if (!isInteractive) {
+    console.log(`  ${yellow}⚠${reset} Skipping statusline (already configured)`);
+    console.log(`    Use ${cyan}--force-statusline${reset} to replace\n`);
+    callback(false);
+    return;
+  }
+
+  // Has existing, interactive mode - prompt user
+  const existingCmd = settings.statusLine.command || settings.statusLine.url || '(custom)';
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  console.log(`
+  ${yellow}⚠${reset} Existing statusline detected
+
+  Your current statusline:
+    ${dim}command: ${existingCmd}${reset}
+
+  GSD includes a statusline showing:
+    • Model name
+    • Current task (from todo list)
+    • Context window usage (color-coded)
+
+  ${cyan}1${reset}) Keep existing
+  ${cyan}2${reset}) Replace with GSD statusline
+`);
+
+  rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
+    rl.close();
+    const choice = answer.trim() || '1';
+    callback(choice === '2');
+  });
 }
 
 /**
@@ -212,7 +332,11 @@ function promptLocation() {
     rl.close();
     const choice = answer.trim() || '1';
     const isGlobal = choice !== '2';
-    install(isGlobal);
+    const { settingsPath, settings, statuslineCommand } = install(isGlobal);
+    // Interactive mode - prompt for statusline if needed
+    handleStatusline(settingsPath, settings, statuslineCommand, true, (shouldInstall) => {
+      finishInstall(settingsPath, settings, statuslineCommand, shouldInstall);
+    });
   });
 }
 
@@ -224,9 +348,17 @@ if (hasGlobal && hasLocal) {
   console.error(`  ${yellow}Cannot use --config-dir with --local${reset}`);
   process.exit(1);
 } else if (hasGlobal) {
-  install(true);
+  const { settingsPath, settings, statuslineCommand } = install(true);
+  // Non-interactive - skip prompt, respect --force-statusline
+  handleStatusline(settingsPath, settings, statuslineCommand, false, (shouldInstall) => {
+    finishInstall(settingsPath, settings, statuslineCommand, shouldInstall);
+  });
 } else if (hasLocal) {
-  install(false);
+  const { settingsPath, settings, statuslineCommand } = install(false);
+  // Non-interactive - skip prompt, respect --force-statusline
+  handleStatusline(settingsPath, settings, statuslineCommand, false, (shouldInstall) => {
+    finishInstall(settingsPath, settings, statuslineCommand, shouldInstall);
+  });
 } else {
   promptLocation();
 }

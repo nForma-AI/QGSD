@@ -9,7 +9,8 @@
     "bin",
     "commands",
     "get-shit-done",
-    "agents"
+    "agents",
+    "hooks"
   ],
   "keywords": [
     "claude",
