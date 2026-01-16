@@ -23,7 +23,7 @@ None - this is internal GSD development following existing command/workflow/temp
 - [x] **Phase 13: Dedicated Debug Agent** - Create gsd-debugger agent, refactor /gsd:debug to thin orchestrator
 - [x] **Phase 14: Dedicated Researcher Agent** - Create gsd-researcher agent for structured research with baked-in methodology
 - [x] **Phase 15: Dedicated Planner Agent** - Create gsd-planner agent, refactor /gsd:plan-phase to thin orchestrator
-- [ ] **Phase 16: Plan Verification Loop** - Add planner → checker → revise loop before execution
+- [x] **Phase 16: Plan Verification Loop** - Add planner → checker → revise loop before execution
 - [x] **Phase 99: Test Parallel (THROWAWAY)** - Create 3 silly independent files to test parallel execution
 
 ## Phase Details
@@ -293,9 +293,9 @@ Created gsd-planner agent with complete planning methodology: discovery levels, 
 **Plans:** 3 plans
 
 Plans:
-- [ ] 16-01: Create gsd-plan-checker agent - Goal-backward plan verification (~400-600 lines)
-- [ ] 16-02: Update plan-phase.md orchestrator - Planner → checker → revise loop
-- [ ] 16-03: Update gsd-planner.md - Add revision mode for handling checker feedback
+- [x] 16-01: Create gsd-plan-checker agent - Goal-backward plan verification (744 lines)
+- [x] 16-02: Update plan-phase.md orchestrator - Planner → checker → revise loop (310 lines)
+- [x] 16-03: Update gsd-planner.md - Add revision mode for handling checker feedback (1,284 lines total)
 
 **Wave structure:**
 - Wave 1: 16-01 (foundation)
@@ -348,4 +348,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 13. Dedicated Debug Agent | 3/3 | Complete | 2026-01-15 |
 | 14. Dedicated Researcher Agent | 3/3 | Complete | 2026-01-15 |
 | 15. Dedicated Planner Agent | 3/3 | Complete | 2026-01-16 |
-| 16. Plan Verification Loop | 0/3 | Planned | - |
+| 16. Plan Verification Loop | 3/3 | Complete | 2026-01-16 |
