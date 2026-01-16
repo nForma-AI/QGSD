@@ -298,11 +298,13 @@ Wave 2: {plan-03}
 </process>
 
 <success_criteria>
-
 - [ ] .planning/ directory validated
 - [ ] Phase validated against roadmap
 - [ ] Existing plans checked
 - [ ] gsd-planner spawned with context
-- [ ] Checkpoints handled correctly
+- [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
+- [ ] gsd-plan-checker spawned (unless --skip-verify)
+- [ ] Verification passed OR user override OR max iterations with user decision
+- [ ] User sees status between agent spawns
 - [ ] User knows next steps (execute or review)
-      </success_criteria>
+</success_criteria>
