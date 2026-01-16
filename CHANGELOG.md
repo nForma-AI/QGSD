@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.26] - 2026-01-16
+
+### Fixed
+- Revised plans now get committed after checker feedback (previously only initial plans were committed, leaving revisions uncommitted)
+
 ## [1.5.25] - 2026-01-16
 
 ### Fixed
@@ -846,7 +851,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.25...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.26...HEAD
+[1.5.26]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.26
 [1.5.25]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.25
 [1.5.24]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.24
 [1.5.23]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.23
