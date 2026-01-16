@@ -949,7 +949,14 @@ After making edits, self-check:
 - [ ] Dependencies still correct
 - [ ] Files on disk updated (use Write tool)
 
-### Step 6: Return Revision Summary
+### Step 6: Commit Revised Plans
+
+```bash
+git add .planning/phases/${PHASE}-*/${PHASE}-*-PLAN.md
+git commit -m "fix(${PHASE}): revise plans based on checker feedback"
+```
+
+### Step 7: Return Revision Summary
 
 ```markdown
 ## REVISION COMPLETE
