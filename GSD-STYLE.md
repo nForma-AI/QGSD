@@ -313,10 +313,14 @@ Use subagents for autonomous work. Reserve main context for user interaction.
 
 ## UX Patterns
 
+**Visual patterns:** `get-shit-done/references/ui-brand.md`
+
+Orchestrators @-reference ui-brand.md for stage banners, checkpoint boxes, status symbols, and completion displays.
+
 ### "Next Up" Format
 
 ```markdown
----
+───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
@@ -326,13 +330,13 @@ Use subagents for autonomous work. Reserve main context for user interaction.
 
 <sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
 
 **Also available:**
 - Alternative option
 - Another option
 
----
+───────────────────────────────────────────────────────────────
 ```
 
 ### Decision Gates

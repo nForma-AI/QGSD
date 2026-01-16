@@ -24,6 +24,7 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 
 <execution_context>
 @~/.claude/get-shit-done/references/principles.md
+@~/.claude/get-shit-done/references/ui-brand.md
 @~/.claude/get-shit-done/workflows/execute-phase.md
 </execution_context>
 
@@ -108,11 +109,16 @@ After verification completes, route based on status:
 **Route A: Phase verified, more phases remain**
 
 ```
-## ✓ Phase {Z}: {Name} Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► PHASE {Z} COMPLETE ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-All {Y} plans finished. Phase goal verified.
+**Phase {Z}: {Name}**
 
----
+{Y} plans executed
+Goal verified ✓
+
+───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
@@ -122,14 +128,13 @@ All {Y} plans finished. Phase goal verified.
 
 <sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
 
 **Also available:**
 - `/gsd:verify-work {Z}` — manual acceptance testing before continuing
 - `/gsd:discuss-phase {Z+1}` — gather context first
-- `/gsd:research-phase {Z+1}` — investigate unknowns
 
----
+───────────────────────────────────────────────────────────────
 ```
 
 ---
@@ -137,13 +142,16 @@ All {Y} plans finished. Phase goal verified.
 **Route B: Phase verified, milestone complete**
 
 ```
-🎉 ALL PHASES COMPLETE!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► MILESTONE COMPLETE 🎉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## ✓ Phase {Z}: {Name} Complete
+**v1.0**
 
-All {N} phases finished. Phase goals verified.
+{N} phases completed
+All phase goals verified ✓
 
----
+───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
@@ -153,14 +161,13 @@ All {N} phases finished. Phase goals verified.
 
 <sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
 
 **Also available:**
 - `/gsd:verify-work` — manual acceptance testing
 - `/gsd:complete-milestone` — skip audit, archive directly
-- `/gsd:add-phase <description>` — add another phase first
 
----
+───────────────────────────────────────────────────────────────
 ```
 
 ---
@@ -168,16 +175,20 @@ All {N} phases finished. Phase goals verified.
 **Route C: Gaps found — need additional planning**
 
 ```
-## ⚠ Phase {Z}: {Name} — Gaps Found
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► PHASE {Z} GAPS FOUND ⚠
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Score:** {N}/{M} must-haves verified
-**Report:** .planning/phases/{phase_dir}/{phase}-VERIFICATION.md
+**Phase {Z}: {Name}**
+
+Score: {N}/{M} must-haves verified
+Report: `.planning/phases/{phase_dir}/{phase}-VERIFICATION.md`
 
 ### What's Missing
 
 {Extract gap summaries from VERIFICATION.md}
 
----
+───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
@@ -187,13 +198,13 @@ All {N} phases finished. Phase goals verified.
 
 <sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
 
 **Also available:**
 - `cat .planning/phases/{phase_dir}/{phase}-VERIFICATION.md` — see full report
 - `/gsd:verify-work {Z}` — manual testing before planning
 
----
+───────────────────────────────────────────────────────────────
 ```
 
 After user runs `/gsd:plan-phase {Z} --gaps`:

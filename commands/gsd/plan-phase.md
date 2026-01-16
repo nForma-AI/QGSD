@@ -14,6 +14,10 @@ allowed-tools:
   - mcp__context7__*
 ---
 
+<execution_context>
+@~/.claude/get-shit-done/references/ui-brand.md
+</execution_context>
+
 <objective>
 Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification.
 
@@ -103,8 +107,17 @@ ls "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
 - Skip to step 6
 
 **If RESEARCH.md missing OR `--research` flag set:**
-- Display: `Phase {X}: {Name} — researching domain...`
-- Proceed to spawn researcher
+
+Display stage banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► RESEARCHING PHASE {X}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Spawning researcher...
+```
+
+Proceed to spawn researcher
 
 ### Spawn gsd-phase-researcher
 
@@ -198,7 +211,14 @@ UAT="${PHASE_DIR}/${PHASE}-UAT.md"
 
 ## 8. Spawn gsd-planner Agent
 
-Display: `Phase {X}: {Name} — launching planner...`
+Display stage banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► PLANNING PHASE {X}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Spawning planner...
+```
 
 Fill prompt and spawn:
 
@@ -278,7 +298,14 @@ Parse planner output:
 
 ## 10. Spawn gsd-plan-checker Agent
 
-Display: `Launching plan checker...`
+Display:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► VERIFYING PLANS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Spawning plan checker...
+```
 
 Fill checker prompt and spawn:
 
@@ -379,30 +406,38 @@ Wait for user response.
 
 ## 13. Present Final Status
 
-```markdown
-Phase {X} planned: {N} plan(s) in {M} wave(s)
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► PHASE {X} PLANNED ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Research
-{Completed | Used existing | Skipped (--skip-research) | N/A (--gaps)}
+**Phase {X}: {Name}** — {N} plan(s) in {M} wave(s)
 
-## Wave Structure
-Wave 1 (parallel): {plan-01}, {plan-02}
-Wave 2: {plan-03}
+| Wave | Plans | What it builds |
+|------|-------|----------------|
+| 1    | 01, 02 | [objectives] |
+| 2    | 03     | [objective]  |
 
-## Verification
-{Passed | Passed with user override | Skipped (--skip-verify)}
+Research: {Completed | Used existing | Skipped}
+Verification: {Passed | Passed with override | Skipped}
 
----
+───────────────────────────────────────────────────────────────
 
-## Next Up
+## ▶ Next Up
 
-**Phase {X}: [Phase Name]** - {N} plan(s)
+**Execute Phase {X}** — run all {N} plans
 
 `/gsd:execute-phase {X}`
 
-<sub>`/clear` first - fresh context window</sub>
+<sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
+
+**Also available:**
+- `cat .planning/phases/{phase-dir}/*-PLAN.md` — review plans
+- `/gsd:plan-phase {X} --research` — re-research first
+
+───────────────────────────────────────────────────────────────
 ```
 
 </process>

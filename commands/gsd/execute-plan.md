@@ -12,6 +12,10 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<execution_context>
+@~/.claude/get-shit-done/references/ui-brand.md
+</execution_context>
+
 <objective>
 Execute a single PLAN.md file by spawning the `gsd-executor` subagent.
 

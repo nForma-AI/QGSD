@@ -31,6 +31,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
 <execution_context>
 
 @~/.claude/get-shit-done/references/questioning.md
+@~/.claude/get-shit-done/references/ui-brand.md
 @~/.claude/get-shit-done/templates/project.md
 @~/.claude/get-shit-done/templates/requirements.md
 
@@ -92,6 +93,14 @@ Exit command.
 **If no existing code detected OR codebase already mapped:** Continue to Phase 3.
 
 ## Phase 3: Deep Questioning
+
+**Display stage banner:**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► QUESTIONING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 **Open the conversation:**
 
@@ -291,7 +300,14 @@ Use AskUserQuestion:
 
 **If "Research first":**
 
-Display: `Researching [domain] ecosystem...`
+Display stage banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► RESEARCHING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Researching [domain] ecosystem...
+```
 
 Create research directory:
 ```bash
@@ -303,6 +319,15 @@ mkdir -p .planning/research
 Check if this is greenfield or subsequent milestone:
 - If no "Validated" requirements in PROJECT.md → Greenfield (building from scratch)
 - If "Validated" requirements exist → Subsequent milestone (adding to existing app)
+
+Display spawning indicator:
+```
+◆ Spawning 4 researchers in parallel...
+  → Stack research
+  → Features research
+  → Architecture research
+  → Pitfalls research
+```
 
 Spawn 4 parallel gsd-project-researcher agents with rich context:
 
@@ -343,6 +368,7 @@ Your STACK.md feeds into roadmap creation. Be prescriptive:
 <output>
 Write to: .planning/research/STACK.md
 Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
+DO NOT commit. The synthesizer agent commits all research files together.
 </output>
 ", subagent_type="gsd-project-researcher", description="Stack research")
 
@@ -382,6 +408,7 @@ Your FEATURES.md feeds into requirements definition. Categorize clearly:
 <output>
 Write to: .planning/research/FEATURES.md
 Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
+DO NOT commit. The synthesizer agent commits all research files together.
 </output>
 ", subagent_type="gsd-project-researcher", description="Features research")
 
@@ -421,6 +448,7 @@ Your ARCHITECTURE.md informs phase structure in roadmap. Include:
 <output>
 Write to: .planning/research/ARCHITECTURE.md
 Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
+DO NOT commit. The synthesizer agent commits all research files together.
 </output>
 ", subagent_type="gsd-project-researcher", description="Architecture research")
 
@@ -460,6 +488,7 @@ Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
 <output>
 Write to: .planning/research/PITFALLS.md
 Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
+DO NOT commit. The synthesizer agent commits all research files together.
 </output>
 ", subagent_type="gsd-project-researcher", description="Pitfalls research")
 ```
@@ -488,11 +517,31 @@ Commit after writing.
 ", subagent_type="gsd-research-synthesizer", description="Synthesize research")
 ```
 
-Display key findings summary to user from synthesizer output.
+Display research complete banner and key findings:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► RESEARCH COMPLETE ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Key Findings
+
+**Stack:** [from SUMMARY.md]
+**Table Stakes:** [from SUMMARY.md]
+**Watch Out For:** [from SUMMARY.md]
+
+Files: `.planning/research/`
+```
 
 **If "Skip research":** Continue to Phase 7.
 
 ## Phase 7: Define Requirements
+
+Display stage banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► DEFINING REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 **Load context:**
 
@@ -630,7 +679,14 @@ EOF
 
 ## Phase 8: Create Roadmap
 
-Display: `Creating roadmap...`
+Display stage banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► CREATING ROADMAP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Spawning roadmapper...
+```
 
 Spawn gsd-roadmapper agent with context:
 
@@ -768,16 +824,23 @@ EOF
 Present completion with next steps:
 
 ```
-Project initialized:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► PROJECT INITIALIZED ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Project: .planning/PROJECT.md
-- Config: .planning/config.json (mode: [chosen mode])
-- Research: .planning/research/ (if created)
-- Requirements: .planning/REQUIREMENTS.md ([X] v1 requirements)
-- Roadmap: .planning/ROADMAP.md ([N] phases)
-- State: .planning/STATE.md
+**[Project Name]**
 
----
+| Artifact       | Location                    |
+|----------------|-----------------------------|
+| Project        | `.planning/PROJECT.md`      |
+| Config         | `.planning/config.json`     |
+| Research       | `.planning/research/`       |
+| Requirements   | `.planning/REQUIREMENTS.md` |
+| Roadmap        | `.planning/ROADMAP.md`      |
+
+**[N] phases** | **[X] requirements** | Ready to build ✓
+
+───────────────────────────────────────────────────────────────
 
 ## ▶ Next Up
 
@@ -787,7 +850,7 @@ Project initialized:
 
 <sub>`/clear` first → fresh context window</sub>
 
----
+───────────────────────────────────────────────────────────────
 ```
 
 </process>
