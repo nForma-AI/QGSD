@@ -5,31 +5,40 @@ allowed-tools:
   - Read
   - Bash
   - Write
+  - Task
   - AskUserQuestion
 ---
 
 <objective>
 
-Initialize a new project through comprehensive context gathering.
+Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
 
-This is the most leveraged moment in any project. Deep questioning here means better plans, better execution, better outcomes. The quality of PROJECT.md determines the quality of everything downstream.
+This is the most leveraged moment in any project. Deep questioning here means better plans, better execution, better outcomes. One command takes you from idea to ready-for-planning.
 
-Creates `.planning/` with PROJECT.md and config.json.
+**Creates:**
+- `.planning/PROJECT.md` — project context
+- `.planning/config.json` — workflow preferences
+- `.planning/research/` — domain research (optional)
+- `.planning/REQUIREMENTS.md` — scoped requirements
+- `.planning/ROADMAP.md` — phase structure
+- `.planning/STATE.md` — project memory
+- `.planning/phases/` — phase directories
+
+**After this command:** Run `/gsd:plan-phase 1` to start execution.
 
 </objective>
 
 <execution_context>
 
-@~/.claude/get-shit-done/references/principles.md
 @~/.claude/get-shit-done/references/questioning.md
 @~/.claude/get-shit-done/templates/project.md
-@~/.claude/get-shit-done/templates/config.json
+@~/.claude/get-shit-done/templates/requirements.md
 
 </execution_context>
 
 <process>
 
-<step name="setup">
+## Phase 1: Setup
 
 **MANDATORY FIRST STEP — Execute these checks before ANY user interaction:**
 
@@ -40,7 +49,6 @@ Creates `.planning/` with PROJECT.md and config.json.
 
 2. **Initialize git repo in THIS directory** (required even if inside a parent repo):
    ```bash
-   # Check if THIS directory is already a git repo root (handles .git file for worktrees too)
    if [ -d .git ] || [ -f .git ]; then
        echo "Git repo exists in current directory"
    else
@@ -51,7 +59,6 @@ Creates `.planning/` with PROJECT.md and config.json.
 
 3. **Detect existing code (brownfield detection):**
    ```bash
-   # Check for existing code files
    CODE_FILES=$(find . -name "*.ts" -o -name "*.js" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.swift" -o -name "*.java" 2>/dev/null | grep -v node_modules | grep -v .git | head -20)
    HAS_PACKAGE=$([ -f package.json ] || [ -f requirements.txt ] || [ -f Cargo.toml ] || [ -f go.mod ] || [ -f Package.swift ] && echo "yes")
    HAS_CODEBASE_MAP=$([ -d .planning/codebase ] && echo "yes")
@@ -59,9 +66,7 @@ Creates `.planning/` with PROJECT.md and config.json.
 
    **You MUST run all bash commands above using the Bash tool before proceeding.**
 
-</step>
-
-<step name="brownfield_offer">
+## Phase 2: Brownfield Offer
 
 **If existing code detected and .planning/codebase/ doesn't exist:**
 
@@ -82,13 +87,11 @@ Run `/gsd:map-codebase` first, then return to `/gsd:new-project`
 ```
 Exit command.
 
-**If "Skip mapping":** Continue to question step.
+**If "Skip mapping":** Continue to Phase 3.
 
-**If no existing code detected OR codebase already mapped:** Continue to question step.
+**If no existing code detected OR codebase already mapped:** Continue to Phase 3.
 
-</step>
-
-<step name="question">
+## Phase 3: Deep Questioning
 
 **Open the conversation:**
 
@@ -134,9 +137,7 @@ If "Keep exploring" — ask what they want to add, or identify gaps and probe na
 
 Loop until "Create PROJECT.md" selected.
 
-</step>
-
-<step name="project">
+## Phase 4: Write PROJECT.md
 
 Synthesize all context into `.planning/PROJECT.md` using the template from `templates/project.md`.
 
@@ -213,13 +214,22 @@ Initialize with any decisions made during questioning:
 
 Do not compress. Capture everything gathered.
 
-</step>
+**Commit PROJECT.md:**
 
-<step name="workflow_preferences">
+```bash
+mkdir -p .planning
+git add .planning/PROJECT.md
+git commit -m "$(cat <<'EOF'
+docs: initialize project
+
+[One-liner from PROJECT.md What This Is section]
+EOF
+)"
+```
+
+## Phase 5: Workflow Preferences
 
 Ask all workflow preferences in a single AskUserQuestion call (3 questions):
-
-Use AskUserQuestion with questions array:
 
 ```
 questions: [
@@ -254,68 +264,466 @@ questions: [
 ]
 ```
 
-**Notes:**
-- Depth controls compression tolerance, not artificial inflation
-- Parallelization spawns multiple agents for independent plans
-- All settings can be changed later in config.json
+Create `.planning/config.json` with chosen mode, depth, and parallelization.
 
-</step>
-
-<step name="config">
-
-Create `.planning/config.json` with chosen mode, depth, and parallelization using `templates/config.json` structure.
-
-</step>
-
-<step name="commit">
+**Commit config.json:**
 
 ```bash
-git add .planning/PROJECT.md .planning/config.json
+git add .planning/config.json
 git commit -m "$(cat <<'EOF'
-docs: initialize [project-name]
+chore: add project config
 
-[One-liner from PROJECT.md]
-
-Creates PROJECT.md with requirements and constraints.
+Mode: [chosen mode]
+Depth: [chosen depth]
+Parallelization: [enabled/disabled]
 EOF
 )"
 ```
 
-</step>
+## Phase 6: Research Decision
 
-<step name="done">
+Use AskUserQuestion:
+- header: "Research"
+- question: "Research the domain ecosystem before defining requirements?"
+- options:
+  - "Research first (Recommended)" — Discover standard stacks, expected features, architecture patterns
+  - "Skip research" — I know this domain well, go straight to requirements
 
-Present completion with next steps (see ~/.claude/get-shit-done/references/continuation-format.md):
+**If "Research first":**
+
+Display: `Researching [domain] ecosystem...`
+
+Create research directory:
+```bash
+mkdir -p .planning/research
+```
+
+**Determine milestone context:**
+
+Check if this is greenfield or subsequent milestone:
+- If no "Validated" requirements in PROJECT.md → Greenfield (building from scratch)
+- If "Validated" requirements exist → Subsequent milestone (adding to existing app)
+
+Spawn 4 parallel gsd-project-researcher agents with rich context:
+
+```
+Task(prompt="
+<research_type>
+Project Research — Stack dimension for [domain].
+</research_type>
+
+<milestone_context>
+[greenfield OR subsequent]
+
+Greenfield: Research the standard stack for building [domain] from scratch.
+Subsequent: Research what's needed to add [target features] to an existing [domain] app. Don't re-research the existing system.
+</milestone_context>
+
+<question>
+What's the standard 2025 stack for [domain]?
+</question>
+
+<project_context>
+[PROJECT.md summary - core value, constraints, what they're building]
+</project_context>
+
+<downstream_consumer>
+Your STACK.md feeds into roadmap creation. Be prescriptive:
+- Specific libraries with versions
+- Clear rationale for each choice
+- What NOT to use and why
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Versions are current (verify with Context7/official docs, not training data)
+- [ ] Rationale explains WHY, not just WHAT
+- [ ] Confidence levels assigned to each recommendation
+</quality_gate>
+
+<output>
+Write to: .planning/research/STACK.md
+Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
+</output>
+", subagent_type="gsd-project-researcher", description="Stack research")
+
+Task(prompt="
+<research_type>
+Project Research — Features dimension for [domain].
+</research_type>
+
+<milestone_context>
+[greenfield OR subsequent]
+
+Greenfield: What features do [domain] products have? What's table stakes vs differentiating?
+Subsequent: How do [target features] typically work? What's expected behavior?
+</milestone_context>
+
+<question>
+What features do [domain] products have? What's table stakes vs differentiating?
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your FEATURES.md feeds into requirements definition. Categorize clearly:
+- Table stakes (must have or users leave)
+- Differentiators (competitive advantage)
+- Anti-features (things to deliberately NOT build)
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Categories are clear (table stakes vs differentiators vs anti-features)
+- [ ] Complexity noted for each feature
+- [ ] Dependencies between features identified
+</quality_gate>
+
+<output>
+Write to: .planning/research/FEATURES.md
+Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
+</output>
+", subagent_type="gsd-project-researcher", description="Features research")
+
+Task(prompt="
+<research_type>
+Project Research — Architecture dimension for [domain].
+</research_type>
+
+<milestone_context>
+[greenfield OR subsequent]
+
+Greenfield: How are [domain] systems typically structured? What are major components?
+Subsequent: How do [target features] integrate with existing [domain] architecture?
+</milestone_context>
+
+<question>
+How are [domain] systems typically structured? What are major components?
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your ARCHITECTURE.md informs phase structure in roadmap. Include:
+- Component boundaries (what talks to what)
+- Data flow (how information moves)
+- Suggested build order (dependencies between components)
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Components clearly defined with boundaries
+- [ ] Data flow direction explicit
+- [ ] Build order implications noted
+</quality_gate>
+
+<output>
+Write to: .planning/research/ARCHITECTURE.md
+Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
+</output>
+", subagent_type="gsd-project-researcher", description="Architecture research")
+
+Task(prompt="
+<research_type>
+Project Research — Pitfalls dimension for [domain].
+</research_type>
+
+<milestone_context>
+[greenfield OR subsequent]
+
+Greenfield: What do [domain] projects commonly get wrong? Critical mistakes?
+Subsequent: What are common mistakes when adding [target features] to [domain]?
+</milestone_context>
+
+<question>
+What do [domain] projects commonly get wrong? Critical mistakes?
+</question>
+
+<project_context>
+[PROJECT.md summary]
+</project_context>
+
+<downstream_consumer>
+Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
+- Warning signs (how to detect early)
+- Prevention strategy (how to avoid)
+- Which phase should address it
+</downstream_consumer>
+
+<quality_gate>
+- [ ] Pitfalls are specific to this domain (not generic advice)
+- [ ] Prevention strategies are actionable
+- [ ] Phase mapping included where relevant
+</quality_gate>
+
+<output>
+Write to: .planning/research/PITFALLS.md
+Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
+</output>
+", subagent_type="gsd-project-researcher", description="Pitfalls research")
+```
+
+After all agents complete, synthesize `.planning/research/SUMMARY.md`:
+- Executive summary from all 4 files
+- Key findings (one-liner each)
+- Implications for roadmap (suggested phase structure)
+- Confidence assessment
+
+**Commit research:**
+
+```bash
+git add .planning/research/
+git commit -m "$(cat <<'EOF'
+docs: research [domain] ecosystem
+
+Key findings:
+- Stack: [one-liner]
+- Architecture: [one-liner]
+- Critical pitfall: [one-liner]
+EOF
+)"
+```
+
+Display key findings summary to user.
+
+**If "Skip research":** Continue to Phase 7.
+
+## Phase 7: Define Requirements
+
+**Load context:**
+
+Read PROJECT.md and extract:
+- Core value (the ONE thing that must work)
+- Stated constraints (budget, timeline, tech limitations)
+- Any explicit scope boundaries
+
+**If research exists:** Read research/FEATURES.md and extract feature categories.
+
+**Present features by category:**
+
+```
+Here are the features for [domain]:
+
+## Authentication
+**Table stakes:**
+- Sign up with email/password
+- Email verification
+- Password reset
+- Session management
+
+**Differentiators:**
+- Magic link login
+- OAuth (Google, GitHub)
+- 2FA
+
+**Research notes:** [any relevant notes]
+
+---
+
+## [Next Category]
+...
+```
+
+**If no research:** Gather requirements through conversation instead.
+
+Ask: "What are the main things users need to be able to do?"
+
+For each capability mentioned:
+- Ask clarifying questions to make it specific
+- Probe for related capabilities
+- Group into categories
+
+**Scope each category:**
+
+For each category, use AskUserQuestion:
+
+- header: "[Category name]"
+- question: "Which [category] features are in v1?"
+- multiSelect: true
+- options:
+  - "[Feature 1]" — [brief description]
+  - "[Feature 2]" — [brief description]
+  - "[Feature 3]" — [brief description]
+  - "None for v1" — Defer entire category
+
+Track responses:
+- Selected features → v1 requirements
+- Unselected table stakes → v2 (users expect these)
+- Unselected differentiators → out of scope
+
+**Identify gaps:**
+
+Use AskUserQuestion:
+- header: "Additions"
+- question: "Any requirements research missed? (Features specific to your vision)"
+- options:
+  - "No, research covered it" — Proceed
+  - "Yes, let me add some" — Capture additions
+
+**Validate core value:**
+
+Cross-check requirements against Core Value from PROJECT.md. If gaps detected, surface them.
+
+**Generate REQUIREMENTS.md:**
+
+Create `.planning/REQUIREMENTS.md` with:
+- v1 Requirements grouped by category (checkboxes, REQ-IDs)
+- v2 Requirements (deferred)
+- Out of Scope (explicit exclusions with reasoning)
+- Traceability section (empty, filled by roadmap)
+
+**REQ-ID format:** `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02)
+
+**Requirement quality criteria:**
+
+Good requirements are:
+- **Specific and testable:** "User can reset password via email link" (not "Handle password reset")
+- **User-centric:** "User can X" (not "System does Y")
+- **Atomic:** One capability per requirement (not "User can login and manage profile")
+- **Independent:** Minimal dependencies on other requirements
+
+Reject vague requirements. Push for specificity:
+- "Handle authentication" → "User can log in with email/password and stay logged in across sessions"
+- "Support sharing" → "User can share post via link that opens in recipient's browser"
+
+**Present full requirements list:**
+
+Show every requirement (not counts) for user confirmation:
+
+```
+## v1 Requirements
+
+### Authentication
+- [ ] **AUTH-01**: User can create account with email/password
+- [ ] **AUTH-02**: User can log in and stay logged in across sessions
+- [ ] **AUTH-03**: User can log out from any page
+
+### Content
+- [ ] **CONT-01**: User can create posts with text
+- [ ] **CONT-02**: User can edit their own posts
+
+[... full list ...]
+
+---
+
+Does this capture what you're building? (yes / adjust)
+```
+
+If "adjust": Return to scoping.
+
+**Commit requirements:**
+
+```bash
+git add .planning/REQUIREMENTS.md
+git commit -m "$(cat <<'EOF'
+docs: define v1 requirements
+
+[X] requirements across [N] categories
+[Y] requirements deferred to v2
+EOF
+)"
+```
+
+## Phase 8: Create Roadmap
+
+Display: `Creating roadmap...`
+
+Spawn gsd-roadmapper agent with context:
+
+```
+Task(prompt="
+<planning_context>
+
+**Project:**
+@.planning/PROJECT.md
+
+**Requirements:**
+@.planning/REQUIREMENTS.md
+
+**Research (if exists):**
+@.planning/research/SUMMARY.md
+
+**Config:**
+@.planning/config.json
+
+</planning_context>
+
+<instructions>
+Create roadmap:
+1. Derive phases from requirements (don't impose structure)
+2. Map every v1 requirement to exactly one phase
+3. Derive 2-5 success criteria per phase (observable user behaviors)
+4. Validate 100% coverage
+5. Write files immediately (ROADMAP.md, STATE.md, phase directories, update REQUIREMENTS.md traceability)
+6. Return ROADMAP CREATED with summary
+
+Write files first, then return. This ensures artifacts persist even if context is lost.
+</instructions>
+", subagent_type="gsd-roadmapper", description="Create roadmap")
+```
+
+**Handle roadmapper return:**
+
+**If `## ROADMAP CREATED`:**
+- Present summary to user
+- Files already exist on disk
+- Ask if user wants to review or adjust
+
+**If user wants adjustments:**
+- Feed notes back to roadmapper
+- Re-spawn with revision context
+- Roadmapper updates files in place
+- Loop until user is satisfied
+
+**If `## ROADMAP BLOCKED`:**
+- Present blocker information
+- Work with user to resolve
+- Re-spawn when resolved
+
+**Commit roadmap:**
+
+```bash
+git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md .planning/phases/
+git commit -m "$(cat <<'EOF'
+docs: create roadmap ([N] phases)
+
+Phases:
+1. [phase-name]: [requirements covered]
+2. [phase-name]: [requirements covered]
+...
+
+All v1 requirements mapped to phases.
+EOF
+)"
+```
+
+## Phase 10: Done
+
+Present completion with next steps:
 
 ```
 Project initialized:
 
 - Project: .planning/PROJECT.md
 - Config: .planning/config.json (mode: [chosen mode])
-[If .planning/codebase/ exists:] - Codebase: .planning/codebase/ (7 documents)
+- Research: .planning/research/ (if created)
+- Requirements: .planning/REQUIREMENTS.md ([X] v1 requirements)
+- Roadmap: .planning/ROADMAP.md ([N] phases)
+- State: .planning/STATE.md
 
 ---
 
 ## ▶ Next Up
 
-Choose your path:
+**Phase 1: [Phase Name]** — [Goal from ROADMAP.md]
 
-**Option A: Research first** (recommended)
-Research ecosystem → define requirements → create roadmap. Discovers standard stacks, expected features, architecture patterns.
-
-`/gsd:research-project`
-
-**Option B: Define requirements directly** (familiar domains)
-Skip research, define requirements from what you know, then create roadmap.
-
-`/gsd:define-requirements`
+`/gsd:plan-phase 1`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 ```
-
-</step>
 
 </process>
 
@@ -323,16 +731,40 @@ Skip research, define requirements from what you know, then create roadmap.
 
 - `.planning/PROJECT.md`
 - `.planning/config.json`
+- `.planning/research/` (if research selected)
+  - `STACK.md`
+  - `FEATURES.md`
+  - `ARCHITECTURE.md`
+  - `PITFALLS.md`
+  - `SUMMARY.md`
+- `.planning/REQUIREMENTS.md`
+- `.planning/ROADMAP.md`
+- `.planning/STATE.md`
+- `.planning/phases/XX-name/` directories
 
 </output>
 
 <success_criteria>
 
-- [ ] Deep questioning completed (not rushed, threads followed)
-- [ ] PROJECT.md captures full context with evolutionary structure
-- [ ] Requirements initialized as hypotheses (greenfield) or with inferred Validated (brownfield)
-- [ ] Key Decisions table initialized
-- [ ] config.json has workflow mode, depth, and parallelization
-- [ ] All committed to git
+- [ ] .planning/ directory created
+- [ ] Git repo initialized
+- [ ] Brownfield detection completed
+- [ ] Deep questioning completed (threads followed, not rushed)
+- [ ] PROJECT.md captures full context → **committed**
+- [ ] config.json has workflow mode, depth, parallelization → **committed**
+- [ ] Research completed (if selected) — 4 parallel agents spawned → **committed**
+- [ ] Requirements gathered (from research or conversation)
+- [ ] User scoped each category (v1/v2/out of scope)
+- [ ] REQUIREMENTS.md created with REQ-IDs → **committed**
+- [ ] gsd-roadmapper spawned with context
+- [ ] Roadmap files written immediately (not draft)
+- [ ] User feedback incorporated (if any)
+- [ ] ROADMAP.md created with phases, requirement mappings, success criteria
+- [ ] STATE.md initialized
+- [ ] REQUIREMENTS.md traceability updated
+- [ ] Phase directories created → **committed**
+- [ ] User knows next step is `/gsd:plan-phase 1`
+
+**Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
 
 </success_criteria>

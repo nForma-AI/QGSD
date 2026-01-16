@@ -9,6 +9,20 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<!--
+DEPRECATED: This command is now integrated into /gsd:new-project
+
+The unified /gsd:new-project flow includes requirements definition as Phase 7.
+This standalone command is kept for users who want to:
+- Redefine requirements mid-project
+- Add new requirements after initial project setup
+- Adjust v1/v2 scope boundaries
+
+For new projects, use /gsd:new-project instead.
+
+Deprecated: 2026-01-16
+-->
+
 <objective>
 Define concrete, checkable requirements for v1.
 
@@ -16,9 +30,9 @@ Two modes:
 1. **With research** — Transform FEATURES.md into scoped requirements
 2. **Without research** — Gather requirements through questioning
 
-Run before `/gsd:create-roadmap`.
-
 Output: `.planning/REQUIREMENTS.md`
+
+**Note:** For new projects, `/gsd:new-project` includes requirements definition. Use this command to redefine requirements later.
 </objective>
 
 <execution_context>

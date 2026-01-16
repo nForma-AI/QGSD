@@ -9,12 +9,28 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+<!--
+DEPRECATED: This command is now integrated into /gsd:new-project
+
+The unified /gsd:new-project flow includes optional research as Phase 6.
+This standalone command is kept for users who want to:
+- Re-research a domain mid-project
+- Research without running full new-project flow
+- Add research after skipping it initially
+
+For new projects, use /gsd:new-project instead.
+
+Deprecated: 2026-01-16
+-->
+
 <objective>
 Research domain ecosystem. Spawns 4 parallel gsd-project-researcher agents for comprehensive coverage.
 
 **Orchestrator role:** Analyze project, generate research questions, spawn 4 parallel agents, synthesize SUMMARY.md.
 
 **Why subagents:** Research burns context fast. Fresh 200k context per domain. Main context stays lean.
+
+**Note:** For new projects, `/gsd:new-project` includes research as an optional step. Use this command to re-research or add research later.
 </objective>
 
 <context>

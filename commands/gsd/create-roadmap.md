@@ -7,14 +7,31 @@ allowed-tools:
   - Bash
   - AskUserQuestion
   - Glob
+  - Task
 ---
+
+<!--
+DEPRECATED: This command is now integrated into /gsd:new-project
+
+The unified /gsd:new-project flow includes roadmap creation as Phase 8,
+using the gsd-roadmapper agent for heavy lifting.
+
+This standalone command is kept for users who want to:
+- Recreate roadmap after significant scope changes
+- Create roadmap for a project initialized before this integration
+- Replace an existing roadmap
+
+For new projects, use /gsd:new-project instead.
+
+Deprecated: 2026-01-16
+-->
 
 <objective>
 Create project roadmap with phase breakdown.
 
 Roadmaps define what work happens in what order. Phases map to requirements.
 
-Run after `/gsd:define-requirements`.
+**Note:** For new projects, `/gsd:new-project` includes roadmap creation. Use this command to recreate roadmap later.
 </objective>
 
 <execution_context>

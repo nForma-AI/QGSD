@@ -21,10 +21,9 @@ Output ONLY the reference content below. Do NOT add:
 
 ## Quick Start
 
-1. `/gsd:new-project` - Initialize project with brief
-2. `/gsd:create-roadmap` - Create roadmap and phases
-3. `/gsd:plan-phase <number>` - Create detailed plan for first phase
-4. `/gsd:execute-plan <path>` - Execute the plan
+1. `/gsd:new-project` - Initialize project (includes research, requirements, roadmap)
+2. `/gsd:plan-phase 1` - Create detailed plan for first phase
+3. `/gsd:execute-phase 1` - Execute the phase
 
 ## Staying Updated
 
@@ -43,29 +42,29 @@ npx get-shit-done-cc@latest
 ## Core Workflow
 
 ```
-Initialization → Planning → Execution → Milestone Completion
+/gsd:new-project → /gsd:plan-phase → /gsd:execute-phase → repeat
 ```
 
 ### Project Initialization
 
 **`/gsd:new-project`**
-Initialize new project with brief and configuration.
+Initialize new project through unified flow.
 
-- Creates `.planning/PROJECT.md` (vision and requirements)
-- Creates `.planning/config.json` (workflow mode)
-- Asks for workflow mode (interactive/yolo) upfront
-- Commits initialization files to git
+One command takes you from idea to ready-for-planning:
+- Deep questioning to understand what you're building
+- Optional domain research (spawns 4 parallel researcher agents)
+- Requirements definition with v1/v2/out-of-scope scoping
+- Roadmap creation with phase breakdown and success criteria
+
+Creates all `.planning/` artifacts:
+- `PROJECT.md` — vision and requirements
+- `config.json` — workflow mode (interactive/yolo)
+- `research/` — domain research (if selected)
+- `REQUIREMENTS.md` — scoped requirements with REQ-IDs
+- `ROADMAP.md` — phases mapped to requirements
+- `STATE.md` — project memory
 
 Usage: `/gsd:new-project`
-
-**`/gsd:create-roadmap`**
-Create roadmap and state tracking for initialized project.
-
-- Creates `.planning/ROADMAP.md` (phase breakdown)
-- Creates `.planning/STATE.md` (project memory)
-- Creates `.planning/phases/` directories
-
-Usage: `/gsd:create-roadmap`
 
 **`/gsd:map-codebase`**
 Map an existing codebase for brownfield projects.
@@ -76,6 +75,14 @@ Map an existing codebase for brownfield projects.
 - Use before `/gsd:new-project` on existing codebases
 
 Usage: `/gsd:map-codebase`
+
+### Standalone Commands (deprecated, kept for mid-project use)
+
+These commands are now integrated into `/gsd:new-project` but remain available for mid-project adjustments:
+
+**`/gsd:research-project`** — Re-research a domain (integrated into new-project Phase 6)
+**`/gsd:define-requirements`** — Redefine requirements (integrated into new-project Phase 7)
+**`/gsd:create-roadmap`** — Recreate roadmap (integrated into new-project Phase 8)
 
 ### Phase Planning
 
@@ -348,10 +355,11 @@ Change anytime by editing `.planning/config.json`
 **Starting a new project:**
 
 ```
-/gsd:new-project
-/gsd:create-roadmap
-/gsd:plan-phase 1
-/gsd:execute-plan .planning/phases/01-foundation/01-01-PLAN.md
+/gsd:new-project        # Unified flow: questioning → research → requirements → roadmap
+/clear
+/gsd:plan-phase 1       # Create plans for first phase
+/clear
+/gsd:execute-phase 1    # Execute all plans in phase
 ```
 
 **Resuming work after a break:**
@@ -372,7 +380,7 @@ Change anytime by editing `.planning/config.json`
 
 ```
 /gsd:complete-milestone 1.0.0
-/gsd:new-project  # Start next milestone
+/gsd:new-milestone  # Start next milestone
 ```
 
 **Capturing ideas during work:**
