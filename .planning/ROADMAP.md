@@ -19,9 +19,11 @@ None - this is internal GSD development following existing command/workflow/temp
 - [ ] **Phase 3: Integration** - Wire brownfield support into existing GSD workflows
 - [x] **Phase 10: Parallel Phase Execution** - Separate single-plan vs multi-plan execution with intelligent parallelization
 - [x] **Phase 11: Parallel-Aware Planning** - Update plan-phase.md to create parallelizable plans when config enables it
-- [ ] **Phase 12: Changelog & Update Awareness** - Add changelog generation and /gsd:whats-new for version discovery
+- [x] **Phase 12: Changelog & Update Awareness** - Add changelog generation and /gsd:whats-new for version discovery
 - [x] **Phase 13: Dedicated Debug Agent** - Create gsd-debugger agent, refactor /gsd:debug to thin orchestrator
 - [x] **Phase 14: Dedicated Researcher Agent** - Create gsd-researcher agent for structured research with baked-in methodology
+- [x] **Phase 15: Dedicated Planner Agent** - Create gsd-planner agent, refactor /gsd:plan-phase to thin orchestrator
+- [ ] **Phase 16: Plan Verification Loop** - Add planner → checker → revise loop before execution
 - [x] **Phase 99: Test Parallel (THROWAWAY)** - Create 3 silly independent files to test parallel execution
 
 ## Phase Details
@@ -203,7 +205,7 @@ This enables execute-phase to produce more Wave 1 plans (true independence) inst
 
 Plans:
 - [x] 12-01: CHANGELOG.md foundation - Create changelog file, update installer to copy it
-- [ ] 12-02: Publish command update - Add changelog generation to gsd-publish-version.md
+- [x] 12-02: Publish command update - Add changelog generation to gsd-publish-version.md
 - [x] 12-03: whats-new command - Create /gsd:whats-new with remote fetch and version comparison
 
 **Wave structure:**
@@ -264,6 +266,49 @@ Currently `/gsd:research-phase` does ad-hoc web searches without structure. The 
 
 Pattern: Same as gsd-executor/gsd-verifier/gsd-debugger. Agent has expertise, command provides research context and mode.
 
+### Phase 15: Dedicated Planner Agent
+
+**Goal:** Create `gsd-planner` agent with planning expertise baked in, refactor `/gsd:plan-phase` to thin orchestrator
+**Depends on:** Phase 14
+**Research:** Unlikely (applying same agent pattern to planning workflow)
+**Plans:** 3 plans
+
+Plans:
+- [x] 15-01: Create gsd-planner agent - Consolidate planning expertise (1,147 lines)
+- [x] 15-02: Refactor /gsd:plan-phase - Thin orchestrator (189 lines), deprecate workflow
+- [x] 15-03: Deprecate reference files - Replace with agent pointers
+
+**Wave structure:**
+- Wave 1: 15-01 (foundation)
+- Wave 2: 15-02, 15-03 (parallel - both depend only on 15-01)
+
+**Details:**
+Created gsd-planner agent with complete planning methodology: discovery levels, task breakdown, dependency graphs, scope estimation, goal-backward analysis, checkpoints, TDD integration, and gap closure mode. Command reduced from ~3,580 loaded lines to 189-line thin orchestrator.
+
+### Phase 16: Plan Verification Loop
+
+**Goal:** Add plan verification between planning and execution — planner → checker → revise loop
+**Depends on:** Phase 15
+**Research:** Unlikely (extending existing agent patterns)
+**Plans:** 3 plans
+
+Plans:
+- [ ] 16-01: Create gsd-plan-checker agent - Goal-backward plan verification (~400-600 lines)
+- [ ] 16-02: Update plan-phase.md orchestrator - Planner → checker → revise loop
+- [ ] 16-03: Update gsd-planner.md - Add revision mode for handling checker feedback
+
+**Wave structure:**
+- Wave 1: 16-01 (foundation)
+- Wave 2: 16-02, 16-03 (parallel - both depend only on 16-01)
+
+**Details:**
+Plans are created and executed without validation. Add `gsd-plan-checker` agent that verifies plans will achieve phase goal before execution begins. Orchestrator spawns planner → checker → planner loop with user visibility. Files on disk as handoff mechanism.
+
+Components:
+- Create `agents/gsd-plan-checker.md` (goal-backward plan verification)
+- Update `commands/gsd/plan-phase.md` (orchestrate planner → checker loop)
+- Update `agents/gsd-planner.md` (add revision mode)
+
 ### Phase 99: Test Parallel (THROWAWAY)
 
 **Goal:** Create 3 independent silly files to test parallel execution - DELETE AFTER TESTING
@@ -298,6 +343,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 9. Integrate Verify-Work | 1/1 | Complete | 2026-01-08 |
 | 10. Parallel Phase Execution | 4/4 | Complete | 2026-01-12 |
 | 11. Parallel-Aware Planning | 4/4 | Complete | 2026-01-12 |
+| 12. Changelog & Update Awareness | 3/3 | Complete | 2026-01-16 |
 | 99. Test Parallel (THROWAWAY) | 3/3 | Complete | 2026-01-12 |
 | 13. Dedicated Debug Agent | 3/3 | Complete | 2026-01-15 |
 | 14. Dedicated Researcher Agent | 3/3 | Complete | 2026-01-15 |
+| 15. Dedicated Planner Agent | 3/3 | Complete | 2026-01-16 |
+| 16. Plan Verification Loop | 0/3 | Planned | - |
