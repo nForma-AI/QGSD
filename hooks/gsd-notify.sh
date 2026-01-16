@@ -13,19 +13,9 @@ if [[ -n "$cwd" ]]; then
   project=$(basename "$cwd")
 fi
 
-# Try to get context from GSD state file
+# Check todo list for current/completed task
 message=""
-state_file="$cwd/.planning/STATE.md"
-if [[ -f "$state_file" ]]; then
-  phase=$(grep -m1 "^Phase:" "$state_file" 2>/dev/null | sed 's/^Phase: *//')
-  status=$(grep -m1 "^Status:" "$state_file" 2>/dev/null | sed 's/^Status: *//')
-  if [[ -n "$phase" && -n "$status" ]]; then
-    message="Phase $phase: $status"
-  fi
-fi
-
-# Fallback: check todo list for current/completed task
-if [[ -z "$message" && -n "$session_id" ]]; then
+if [[ -n "$session_id" ]]; then
   todo_file=$(ls -t "$HOME/.claude/todos/${session_id}"*.json 2>/dev/null | head -1)
   if [[ -f "$todo_file" ]]; then
     # Get most recently completed task, or in-progress task
