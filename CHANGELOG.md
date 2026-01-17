@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.6.3] - 2025-01-17
+
+### Added
+- `--gaps-only` flag for `/gsd:execute-phase` — executes only gap closure plans after verify-work finds issues, eliminating redundant state discovery
+
 ## [1.6.2] - 2025-01-17
 
 ### Changed
@@ -913,7 +918,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.3
 [1.6.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.2
 [1.6.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.1
 [1.6.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.0
