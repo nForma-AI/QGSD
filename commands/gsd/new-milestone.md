@@ -23,7 +23,6 @@ This is the brownfield equivalent of new-project. The project exists, PROJECT.md
 - `.planning/REQUIREMENTS.md` — scoped requirements
 - `.planning/ROADMAP.md` — phase structure
 - `.planning/STATE.md` — updated project memory
-- `.planning/phases/` — phase directories
 
 **After this command:** Run `/gsd:plan-phase [N]` to start execution.
 
@@ -591,7 +590,7 @@ Create roadmap:
 2. Map every v1 requirement to exactly one phase
 3. Derive 2-5 success criteria per phase (observable user behaviors)
 4. Validate 100% coverage
-5. Write files immediately (ROADMAP.md, STATE.md, phase directories, update REQUIREMENTS.md traceability)
+5. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
 6. Return ROADMAP CREATED with summary
 
 Write files first, then return.
@@ -630,7 +629,7 @@ Use AskUserQuestion:
 **Commit roadmap:**
 
 ```bash
-git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md .planning/phases/
+git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 git commit -m "$(cat <<'EOF'
 docs: create v[X.Y] roadmap ([N] phases)
 
@@ -696,7 +695,6 @@ Present completion with next steps:
 - `.planning/REQUIREMENTS.md`
 - `.planning/ROADMAP.md`
 - `.planning/STATE.md`
-- `.planning/phases/XX-name/` directories
 
 </output>
 
@@ -713,7 +711,7 @@ Present completion with next steps:
 - [ ] gsd-roadmapper spawned with context
 - [ ] Roadmap files written immediately
 - [ ] User feedback incorporated (if any)
-- [ ] ROADMAP.md, STATE.md, phase directories → **committed**
+- [ ] ROADMAP.md, STATE.md → **committed**
 - [ ] User knows next step is `/gsd:plan-phase [N]`
 
 </success_criteria>

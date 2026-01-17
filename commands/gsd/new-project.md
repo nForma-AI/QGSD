@@ -22,7 +22,6 @@ This is the most leveraged moment in any project. Deep questioning here means be
 - `.planning/REQUIREMENTS.md` — scoped requirements
 - `.planning/ROADMAP.md` — phase structure
 - `.planning/STATE.md` — project memory
-- `.planning/phases/` — phase directories
 
 **After this command:** Run `/gsd:plan-phase 1` to start execution.
 
@@ -710,7 +709,7 @@ Create roadmap:
 2. Map every v1 requirement to exactly one phase
 3. Derive 2-5 success criteria per phase (observable user behaviors)
 4. Validate 100% coverage
-5. Write files immediately (ROADMAP.md, STATE.md, phase directories, update REQUIREMENTS.md traceability)
+5. Write files immediately (ROADMAP.md, STATE.md, update REQUIREMENTS.md traceability)
 6. Return ROADMAP CREATED with summary
 
 Write files first, then return. This ensures artifacts persist even if context is lost.
@@ -801,7 +800,7 @@ Use AskUserQuestion:
 **Commit roadmap (after approval):**
 
 ```bash
-git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md .planning/phases/
+git add .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 git commit -m "$(cat <<'EOF'
 docs: create roadmap ([N] phases)
 
@@ -869,7 +868,6 @@ Present completion with next steps:
 - `.planning/REQUIREMENTS.md`
 - `.planning/ROADMAP.md`
 - `.planning/STATE.md`
-- `.planning/phases/XX-name/` directories
 
 </output>
 
@@ -891,7 +889,6 @@ Present completion with next steps:
 - [ ] ROADMAP.md created with phases, requirement mappings, success criteria
 - [ ] STATE.md initialized
 - [ ] REQUIREMENTS.md traceability updated
-- [ ] Phase directories created → **committed**
 - [ ] User knows next step is `/gsd:discuss-phase 1`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
