@@ -123,8 +123,13 @@ function writeSettings(settingsPath, settings) {
 
 /**
  * Recursively copy directory, replacing paths in .md files
+ * Deletes existing destDir first to remove orphaned files from previous versions
  */
 function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
+  // Clean install: remove existing destination to prevent orphaned files
+  if (fs.existsSync(destDir)) {
+    fs.rmSync(destDir, { recursive: true });
+  }
   fs.mkdirSync(destDir, { recursive: true });
 
   const entries = fs.readdirSync(srcDir, { withFileTypes: true });
@@ -187,10 +192,30 @@ function install(isGlobal) {
   console.log(`  ${green}✓${reset} Installed get-shit-done`);
 
   // Copy agents to ~/.claude/agents (subagents must be at root level)
+  // Only delete gsd-*.md files to preserve user's custom agents
   const agentsSrc = path.join(src, 'agents');
   if (fs.existsSync(agentsSrc)) {
     const agentsDest = path.join(claudeDir, 'agents');
-    copyWithPathReplacement(agentsSrc, agentsDest, pathPrefix);
+    fs.mkdirSync(agentsDest, { recursive: true });
+
+    // Remove old GSD agents (gsd-*.md) before copying new ones
+    if (fs.existsSync(agentsDest)) {
+      for (const file of fs.readdirSync(agentsDest)) {
+        if (file.startsWith('gsd-') && file.endsWith('.md')) {
+          fs.unlinkSync(path.join(agentsDest, file));
+        }
+      }
+    }
+
+    // Copy new agents (don't use copyWithPathReplacement which would wipe the folder)
+    const agentEntries = fs.readdirSync(agentsSrc, { withFileTypes: true });
+    for (const entry of agentEntries) {
+      if (entry.isFile() && entry.name.endsWith('.md')) {
+        let content = fs.readFileSync(path.join(agentsSrc, entry.name), 'utf8');
+        content = content.replace(/~\/\.claude\//g, pathPrefix);
+        fs.writeFileSync(path.join(agentsDest, entry.name), content);
+      }
+    }
     console.log(`  ${green}✓${reset} Installed agents`);
   }
 

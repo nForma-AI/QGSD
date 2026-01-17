@@ -77,6 +77,57 @@ You're ahead of the latest release (development version?).
 STOP here if ahead.
 </step>
 
+<step name="show_changes_and_confirm">
+**If update available**, fetch and show what's new BEFORE updating:
+
+1. Fetch changelog (same as fetch_changelog step)
+2. Extract entries between installed and latest versions
+3. Display preview and ask for confirmation:
+
+```
+## GSD Update Available
+
+**Installed:** 1.5.10
+**Latest:** 1.5.15
+
+### What's New
+────────────────────────────────────────────────────────────
+
+## [1.5.15] - 2026-01-20
+
+### Added
+- Feature X
+
+## [1.5.14] - 2026-01-18
+
+### Fixed
+- Bug fix Y
+
+────────────────────────────────────────────────────────────
+
+⚠️  **Note:** The installer performs a clean install of GSD folders:
+- `~/.claude/commands/gsd/` will be wiped and replaced
+- `~/.claude/get-shit-done/` will be wiped and replaced
+- `~/.claude/agents/gsd-*` files will be replaced
+
+Your custom files in other locations are preserved:
+- Custom commands in `~/.claude/commands/your-stuff/` ✓
+- Custom agents not prefixed with `gsd-` ✓
+- Custom hooks ✓
+- Your CLAUDE.md files ✓
+
+If you've modified any GSD files directly, back them up first.
+```
+
+Use AskUserQuestion:
+- Question: "Proceed with update?"
+- Options:
+  - "Yes, update now"
+  - "No, cancel"
+
+**If user cancels:** STOP here.
+</step>
+
 <step name="run_update">
 Run the update:
 
@@ -93,63 +144,18 @@ rm -f ~/.claude/cache/gsd-update-check.json
 ```
 </step>
 
-<step name="fetch_changelog">
-Fetch changelog from GitHub:
-
-Use WebFetch tool with:
-- URL: `https://raw.githubusercontent.com/glittercowboy/get-shit-done/main/CHANGELOG.md`
-- Prompt: "Extract all version entries with their dates and changes. Return the raw markdown for each version section."
-
-**If fetch fails:**
-Fall back to local:
-```bash
-cat ~/.claude/get-shit-done/CHANGELOG.md 2>/dev/null
-```
-</step>
-
-<step name="extract_changes">
-From the changelog, extract entries between:
-- **From:** installed version (exclusive)
-- **To:** latest version (inclusive)
-
-Parse each `## [X.Y.Z]` section and collect all versions in the range.
-</step>
-
 <step name="display_result">
-Format beautiful output:
+Format completion message (changelog was already shown in confirmation step):
 
 ```
 ╔═══════════════════════════════════════════════════════════╗
 ║  GSD Updated: v1.5.10 → v1.5.15                           ║
 ╚═══════════════════════════════════════════════════════════╝
 
-✨ What's New
-────────────────────────────────────────────────────────────
-
-## [1.5.15] - 2026-01-20
-
-### Added
-- Feature X
-- Feature Y
-
-## [1.5.14] - 2026-01-18
-
-### Fixed
-- Bug in feature A
-
-────────────────────────────────────────────────────────────
-
 ⚠️  Restart Claude Code to pick up the new commands.
 
 [View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
 ```
-
-**Key elements:**
-- Box header with version transition
-- All changelog entries in the range
-- **BREAKING:** changes surfaced prominently
-- Restart reminder (critical for picking up new commands)
-- Link to full changelog
 </step>
 
 </process>
@@ -158,8 +164,9 @@ Format beautiful output:
 - [ ] Installed version read correctly
 - [ ] Latest version checked via npm
 - [ ] Update skipped if already current
+- [ ] Changelog fetched and displayed BEFORE update
+- [ ] Clean install warning shown
+- [ ] User confirmation obtained
 - [ ] Update executed successfully
-- [ ] Changelog fetched (remote or local fallback)
-- [ ] Changes between versions displayed
 - [ ] Restart reminder shown
 </success_criteria>
