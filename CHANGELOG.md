@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.5.28] - 2026-01-16
+
+### Changed
+- Consolidated milestone workflow into single command
+- Merged domain expertise skills into agent configurations
+- **BREAKING:** Removed `/gsd:execute-plan` command (use `/gsd:execute-phase` instead)
+
+### Fixed
+- Phase directory matching now handles both zero-padded (05-*) and unpadded (5-*) folder names
+- Map-codebase agent output collection
+
 ## [1.5.27] - 2026-01-16
 
 ### Fixed
@@ -856,7 +867,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.27...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.5.28...HEAD
+[1.5.28]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.28
 [1.5.27]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.27
 [1.5.26]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.26
 [1.5.25]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.25
