@@ -35,10 +35,10 @@ Phase number: $ARGUMENTS (required)
 <process>
 1. Validate phase number (error if missing or not in roadmap)
 2. Check if CONTEXT.md exists (offer update/view/skip if yes)
-3. **Analyze phase** — Identify domain boundary and gray areas by category
-4. **Present gray areas** — Multi-select AskUserQuestion: which to discuss?
-5. **Deep-dive each area** — Loop per area until user says "move on"
-6. **Write CONTEXT.md** — Structured by decisions made
+3. **Analyze phase** — Identify domain and generate phase-specific gray areas
+4. **Present gray areas** — Multi-select: which to discuss? (NO skip option)
+5. **Deep-dive each area** — 4 questions per area, then offer more/next
+6. **Write CONTEXT.md** — Sections match areas discussed
 7. Offer next steps (research or plan)
 
 **CRITICAL: Scope guardrail**
@@ -47,18 +47,27 @@ Phase number: $ARGUMENTS (required)
 - If user suggests new capabilities: "That's its own phase. I'll note it for later."
 - Capture deferred ideas — don't lose them, don't act on them
 
-**Gray area categories (use what's relevant):**
-- **UI** — Layout, visual presentation, information density
-- **UX** — Interactions, flows, feedback
-- **Behavior** — Runtime behavior, state changes
-- **Empty/Edge States** — What shows in unusual situations
-- **Content** — What information is shown/hidden
+**Domain-aware gray areas:**
+Gray areas depend on what's being built. Analyze the phase goal:
+- Something users SEE → layout, density, interactions, states
+- Something users CALL → responses, errors, auth, versioning
+- Something users RUN → output format, flags, modes, error handling
+- Something users READ → structure, tone, depth, flow
+- Something being ORGANIZED → criteria, grouping, naming, exceptions
 
-**Do NOT ask about (downstream agents handle these):**
-- Technical implementation (researcher investigates)
-- Architecture choices (planner decides)
-- Performance concerns (researcher/planner handle)
-- Scope expansion (roadmap defines scope)
+Generate 3-4 **phase-specific** gray areas, not generic categories.
+
+**Probing depth:**
+- Ask 4 questions per area before checking
+- "More questions about [area], or move to next?"
+- If more → ask 4 more, check again
+- After all areas → "Ready to create context?"
+
+**Do NOT ask about (Claude handles these):**
+- Technical implementation
+- Architecture choices
+- Performance concerns
+- Scope expansion
 </process>
 
 <success_criteria>

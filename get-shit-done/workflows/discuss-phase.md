@@ -66,23 +66,44 @@ For now, let's focus on [phase domain]."
 Capture the idea in a "Deferred Ideas" section. Don't lose it, don't act on it.
 </scope_guardrail>
 
-<gray_area_categories>
-Use these categories when analyzing a phase. Not all apply to every phase.
+<gray_area_identification>
+Gray areas are **implementation decisions the user cares about** — things that could go multiple ways and would change the result.
 
-| Category | What it clarifies | Example questions |
-|----------|-------------------|-------------------|
-| **UI** | Visual presentation, layout, information density | "Card-based or list view?" "What info shows on each item?" |
-| **UX** | Interactions, flows, feedback | "How does loading work?" "What happens when you tap X?" |
-| **Behavior** | Runtime behavior, state changes | "Auto-refresh or manual?" "How does pagination work?" |
-| **Empty/Edge States** | What shows in unusual situations | "What appears with no data?" "How do errors display?" |
-| **Content** | What information is shown/hidden | "Show timestamps?" "How much preview text?" |
+**How to identify gray areas:**
 
-**Categories to AVOID:**
-- **Scope** — The roadmap defines scope, not discussion
-- **Technical** — You figure out implementation
-- **Architecture** — You decide patterns
-- **Performance** — You handle optimization
-</gray_area_categories>
+1. **Read the phase goal** from ROADMAP.md
+2. **Understand the domain** — What kind of thing is being built?
+   - Something users SEE → visual presentation, interactions, states matter
+   - Something users CALL → interface contracts, responses, errors matter
+   - Something users RUN → invocation, output, behavior modes matter
+   - Something users READ → structure, tone, depth, flow matter
+   - Something being ORGANIZED → criteria, grouping, handling exceptions matter
+3. **Generate phase-specific gray areas** — Not generic categories, but concrete decisions for THIS phase
+
+**Don't use generic category labels** (UI, UX, Behavior). Generate specific gray areas:
+
+```
+Phase: "User authentication"
+→ Session handling, Error responses, Multi-device policy, Recovery flow
+
+Phase: "Organize photo library"
+→ Grouping criteria, Duplicate handling, Naming convention, Folder structure
+
+Phase: "CLI for database backups"
+→ Output format, Flag design, Progress reporting, Error recovery
+
+Phase: "API documentation"
+→ Structure/navigation, Code examples depth, Versioning approach, Interactive elements
+```
+
+**The key question:** What decisions would change the outcome that the user should weigh in on?
+
+**Claude handles these (don't ask):**
+- Technical implementation details
+- Architecture patterns
+- Performance optimization
+- Scope (roadmap defines this)
+</gray_area_identification>
 
 <process>
 
@@ -169,47 +190,79 @@ We'll clarify HOW to implement this.
 
 **Then use AskUserQuestion (multiSelect: true):**
 - header: "Discuss"
-- question: "Which areas do you want to discuss?"
-- options: Generate 2-4 based on your analysis, each formatted as:
-  - "[Category] — [Specific gray area question]"
-  - Last option always: "None — you decide, proceed to planning"
+- question: "Which areas do you want to discuss for [phase name]?"
+- options: Generate 3-4 phase-specific gray areas, each formatted as:
+  - "[Specific area]" (label) — concrete, not generic
+  - [1-2 questions this covers] (description)
 
-**Example options:**
+**Do NOT include a "skip" or "you decide" option.** User ran this command to discuss — give them real choices.
+
+**Examples by domain:**
+
+For "Post Feed" (visual feature):
 ```
-☐ UI — Card layout or timeline? How much of each post shows?
-☐ Behavior — Infinite scroll or pagination? Pull to refresh?
-☐ Empty state — What appears when there are no posts?
-☐ None — You decide, proceed to planning
+☐ Layout style — Cards vs list vs timeline? Information density?
+☐ Loading behavior — Infinite scroll or pagination? Pull to refresh?
+☐ Content ordering — Chronological, algorithmic, or user choice?
+☐ Post metadata — What info per post? Timestamps, reactions, author?
 ```
 
-If user selects "None": Skip to write_context with minimal context.
-Otherwise: Continue to discuss_areas with selected areas.
+For "Database backup CLI" (command-line tool):
+```
+☐ Output format — JSON, table, or plain text? Verbosity levels?
+☐ Flag design — Short flags, long flags, or both? Required vs optional?
+☐ Progress reporting — Silent, progress bar, or verbose logging?
+☐ Error recovery — Fail fast, retry, or prompt for action?
+```
+
+For "Organize photo library" (organization task):
+```
+☐ Grouping criteria — By date, location, faces, or events?
+☐ Duplicate handling — Keep best, keep all, or prompt each time?
+☐ Naming convention — Original names, dates, or descriptive?
+☐ Folder structure — Flat, nested by year, or by category?
+```
+
+Continue to discuss_areas with selected areas.
 </step>
 
 <step name="discuss_areas">
 For each selected area, conduct a focused discussion loop.
 
+**Philosophy: 4 questions, then check.**
+
+Ask 4 questions per area before offering to continue or move on. Each answer often reveals the next question.
+
 **For each area:**
 
 1. **Announce the area:**
    ```
-   Let's talk about [Category].
+   Let's talk about [Area].
    ```
 
-2. **Ask focused questions using AskUserQuestion:**
-   - header: "[Category]"
-   - question: Specific question about that gray area
-   - options: 2-3 concrete choices + "Let me describe" + "You decide"
+2. **Ask 4 questions using AskUserQuestion:**
+   - header: "[Area]"
+   - question: Specific decision for this area
+   - options: 2-3 concrete choices (AskUserQuestion adds "Other" automatically)
+   - Include "You decide" as an option when reasonable — captures Claude discretion
 
-3. **Follow up based on response:**
-   - If they chose an option: Capture it, ask if there's more about this area
-   - If "Let me describe": Receive their input, reflect it back, confirm understanding
-   - If "You decide": Note that Claude has discretion here
+3. **After 4 questions, check:**
+   - header: "[Area]"
+   - question: "More questions about [area], or move to next?"
+   - options: "More questions" / "Next area"
 
-4. **Loop control — Always offer:**
-   - "Ask more about [Category]" — Continue probing this area
-   - "Move to next area" — Done with this category
-   - "That's enough, create context" — Done with all discussion
+   If "More questions" → ask 4 more, then check again
+   If "Next area" → proceed to next selected area
+
+4. **After all areas complete:**
+   - header: "Done"
+   - question: "That covers [list areas]. Ready to create context?"
+   - options: "Create context" / "Revisit an area"
+
+**Question design:**
+- Options should be concrete, not abstract ("Cards" not "Option A")
+- Each answer should inform the next question
+- If user picks "Other", receive their input, reflect it back, confirm
 
 **Scope creep handling:**
 If user mentions something outside the phase domain:
@@ -217,14 +270,10 @@ If user mentions something outside the phase domain:
 "[Feature] sounds like a new capability — that belongs in its own phase.
 I'll note it as a deferred idea.
 
-Back to [current domain]: [return to current question]"
+Back to [current area]: [return to current question]"
 ```
 
 Track deferred ideas internally.
-
-**Continue until:**
-- User says "Move to next area" and all selected areas are done, OR
-- User says "That's enough, create context"
 </step>
 
 <step name="write_context">
