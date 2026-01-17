@@ -6,6 +6,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.6.2] - 2025-01-17
+
+### Changed
+- README restructured with clearer 6-step workflow: init → discuss → plan → execute → verify → complete
+- Discuss-phase and verify-work now emphasized as critical steps in core workflow documentation
+- "Subagent Execution" section replaced with "Multi-Agent Orchestration" explaining thin orchestrator pattern and 30-40% context efficiency
+- Brownfield instructions consolidated into callout at top of "How It Works" instead of separate section
+- Phase directories now created at discuss/plan-phase instead of during roadmap creation
+
 ## [1.6.1] - 2025-01-17
 
 ### Changed
@@ -904,7 +913,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.6.2...HEAD
+[1.6.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.2
 [1.6.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.1
 [1.6.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.0
 [1.5.30]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.5.30
