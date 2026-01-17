@@ -90,6 +90,8 @@ Milestone name: $ARGUMENTS (optional - will prompt if not provided)
    Last activity: [today] — Milestone v[X.Y] started
    ```
 
+   Keep Accumulated Context section (decisions, blockers) from previous milestone.
+
 6. **Cleanup:**
    - Delete MILESTONE-CONTEXT.md if exists (consumed)
 
