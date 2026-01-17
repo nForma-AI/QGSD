@@ -152,6 +152,64 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
 }
 
 /**
+ * Clean up orphaned files from previous GSD versions
+ */
+function cleanupOrphanedFiles(claudeDir) {
+  const orphanedFiles = [
+    'hooks/gsd-notify.sh',  // Removed in v1.6.x
+  ];
+
+  for (const relPath of orphanedFiles) {
+    const fullPath = path.join(claudeDir, relPath);
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+      console.log(`  ${green}✓${reset} Removed orphaned ${relPath}`);
+    }
+  }
+}
+
+/**
+ * Clean up orphaned hook registrations from settings.json
+ */
+function cleanupOrphanedHooks(settings) {
+  const orphanedHookPatterns = [
+    'gsd-notify.sh',  // Removed in v1.6.x
+  ];
+
+  let cleaned = false;
+
+  // Check all hook event types (Stop, SessionStart, etc.)
+  if (settings.hooks) {
+    for (const eventType of Object.keys(settings.hooks)) {
+      const hookEntries = settings.hooks[eventType];
+      if (Array.isArray(hookEntries)) {
+        // Filter out entries that contain orphaned hooks
+        const filtered = hookEntries.filter(entry => {
+          if (entry.hooks && Array.isArray(entry.hooks)) {
+            // Check if any hook in this entry matches orphaned patterns
+            const hasOrphaned = entry.hooks.some(h =>
+              h.command && orphanedHookPatterns.some(pattern => h.command.includes(pattern))
+            );
+            if (hasOrphaned) {
+              cleaned = true;
+              return false;  // Remove this entry
+            }
+          }
+          return true;  // Keep this entry
+        });
+        settings.hooks[eventType] = filtered;
+      }
+    }
+  }
+
+  if (cleaned) {
+    console.log(`  ${green}✓${reset} Removed orphaned hook registrations`);
+  }
+
+  return settings;
+}
+
+/**
  * Install to the specified directory
  */
 function install(isGlobal) {
@@ -174,6 +232,9 @@ function install(isGlobal) {
     : './.claude/';
 
   console.log(`  Installing to ${cyan}${locationLabel}${reset}\n`);
+
+  // Clean up orphaned files from previous versions
+  cleanupOrphanedFiles(claudeDir);
 
   // Create commands directory
   const commandsDir = path.join(claudeDir, 'commands');
@@ -248,7 +309,7 @@ function install(isGlobal) {
 
   // Configure statusline and hooks in settings.json
   const settingsPath = path.join(claudeDir, 'settings.json');
-  const settings = readSettings(settingsPath);
+  const settings = cleanupOrphanedHooks(readSettings(settingsPath));
   const statuslineCommand = isGlobal
     ? 'node "$HOME/.claude/hooks/statusline.js"'
     : 'node .claude/hooks/statusline.js';
