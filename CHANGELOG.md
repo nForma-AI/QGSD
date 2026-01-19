@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-01-19
+
+### Fixed
+- Quick task PLAN and SUMMARY files now use numbered prefix (`001-PLAN.md`, `001-SUMMARY.md`) matching regular phase naming convention
+
 ## [1.7.0] - 2026-01-19
 
 ### Added
@@ -946,7 +951,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.7.1...HEAD
+[1.7.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.7.1
 [1.7.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.7.0
 [1.6.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.4
 [1.6.3]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.6.3
