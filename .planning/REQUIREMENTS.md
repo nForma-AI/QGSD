@@ -7,24 +7,24 @@
 
 ### Command
 
-- [ ] **CMD-01**: `/gsd:quick "description"` parses description from arguments
-- [ ] **CMD-02**: Command errors if .planning/ROADMAP.md doesn't exist
-- [ ] **CMD-03**: Command calculates next decimal phase from current phase in STATE.md
-- [ ] **CMD-04**: Command creates phase directory `.planning/phases/{decimal}-{slug}/`
-- [ ] **CMD-05**: Command inserts decimal phase entry in ROADMAP.md
+- [x] **CMD-01**: `/gsd:quick "description"` parses description from arguments
+- [x] **CMD-02**: Command errors if .planning/ROADMAP.md doesn't exist
+- [x] **CMD-03**: Command calculates next decimal phase from current phase in STATE.md
+- [x] **CMD-04**: Command creates phase directory `.planning/phases/{decimal}-{slug}/`
+- [x] **CMD-05**: Command inserts decimal phase entry in ROADMAP.md
 
 ### Execution
 
-- [ ] **EXEC-01**: Command spawns gsd-planner (no researcher, no checker)
-- [ ] **EXEC-02**: Command spawns gsd-executor for each plan created
-- [ ] **EXEC-03**: Multiple plans execute in parallel waves (same as execute-phase)
-- [ ] **EXEC-04**: Executor commits only files it edits/creates
+- [x] **EXEC-01**: Command spawns gsd-planner (no researcher, no checker)
+- [x] **EXEC-02**: Command spawns gsd-executor for each plan created
+- [x] **EXEC-03**: Multiple plans execute in parallel waves (same as execute-phase)
+- [x] **EXEC-04**: Executor commits only files it edits/creates
 
 ### State
 
-- [ ] **STATE-01**: STATE.md "Last activity" updated after completion
-- [ ] **STATE-02**: STATE.md "Quick Tasks Completed" table created/updated
-- [ ] **STATE-03**: ROADMAP.md decimal phase marked complete with date
+- [x] **STATE-01**: STATE.md "Last activity" updated after completion
+- [x] **STATE-02**: STATE.md "Quick Tasks Completed" table created/updated
+- [x] **STATE-03**: ROADMAP.md decimal phase marked complete with date
 
 ### Resume
 
@@ -59,18 +59,18 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CMD-01 | Phase 1 | Pending |
-| CMD-02 | Phase 1 | Pending |
-| CMD-03 | Phase 1 | Pending |
-| CMD-04 | Phase 1 | Pending |
-| CMD-05 | Phase 1 | Pending |
-| EXEC-01 | Phase 1 | Pending |
-| EXEC-02 | Phase 1 | Pending |
-| EXEC-03 | Phase 1 | Pending |
-| EXEC-04 | Phase 1 | Pending |
-| STATE-01 | Phase 1 | Pending |
-| STATE-02 | Phase 1 | Pending |
-| STATE-03 | Phase 1 | Pending |
+| CMD-01 | Phase 1 | Complete |
+| CMD-02 | Phase 1 | Complete |
+| CMD-03 | Phase 1 | Complete |
+| CMD-04 | Phase 1 | Complete |
+| CMD-05 | Phase 1 | Complete |
+| EXEC-01 | Phase 1 | Complete |
+| EXEC-02 | Phase 1 | Complete |
+| EXEC-03 | Phase 1 | Complete |
+| EXEC-04 | Phase 1 | Complete |
+| STATE-01 | Phase 1 | Complete |
+| STATE-02 | Phase 1 | Complete |
+| STATE-03 | Phase 1 | Complete |
 | RESUME-01 | Phase 2 | Pending |
 | RESUME-02 | Phase 2 | Pending |
 | DOCS-01 | Phase 3 | Pending |

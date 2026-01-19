@@ -10,9 +10,8 @@ Quick mode adds a fast-path command (`/gsd:quick`) that executes small tasks wit
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Core Command** - Complete `/gsd:quick` command end-to-end
-- [ ] **Phase 2: Resume Integration** - Update `/gsd:resume-work` for decimal phases
-- [ ] **Phase 3: Documentation** - Update help.md, README.md, and GSD-STYLE.md
+- [x] **Phase 1: Core Command** - Complete `/gsd:quick` command end-to-end
+- [ ] **Phase 2: Documentation** - Update help.md, README.md, and GSD-STYLE.md
 
 ## Phase Details
 
@@ -23,24 +22,12 @@ Quick mode adds a fast-path command (`/gsd:quick`) that executes small tasks wit
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Quick command file with pre-flight validation and directory setup
-- [ ] 01-02-PLAN.md — Quick orchestration (planner spawn, executor spawn, state update)
+- [x] 01-01-PLAN.md — Quick command file with pre-flight validation and directory setup
+- [x] 01-02-PLAN.md — Quick orchestration (planner spawn, executor spawn, state update)
 
-### Phase 2: Resume Integration
-**Goal**: User can resume failed quick tasks using existing `/gsd:resume-work`
-**Depends on**: Phase 1
-**Requirements**: RESUME-01, RESUME-02
-**Success Criteria** (what must be TRUE):
-  1. `/gsd:resume-work` correctly parses decimal phase numbers (3.1, 3.2)
-  2. `/gsd:resume-work` finds and resumes decimal phase directories
-**Plans**: TBD
-
-Plans:
-- [ ] 02-01: TBD
-
-### Phase 3: Documentation
+### Phase 2: Documentation
 **Goal**: Quick mode is documented in all relevant locations
-**Depends on**: Phase 2
+**Depends on**: Phase 1
 **Requirements**: DOCS-01, DOCS-02, DOCS-03
 **Success Criteria** (what must be TRUE):
   1. help.md lists `/gsd:quick` with usage and description
@@ -49,15 +36,14 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: TBD
+- [ ] 02-01: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3
+Phases execute in numeric order: 1 -> 2
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core Command | 0/2 | Ready to execute | - |
-| 2. Resume Integration | 0/? | Not started | - |
-| 3. Documentation | 0/? | Not started | - |
+| 1. Core Command | 2/2 | Complete | 2026-01-19 |
+| 2. Documentation | 0/? | Not started | - |
