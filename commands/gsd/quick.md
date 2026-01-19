@@ -114,9 +114,47 @@ Store `$QUICK_DIR` for use in orchestration.
 
 ---
 
-**Step 5: Orchestration (spawn planner and executor)**
+**Step 5: Spawn planner (quick mode)**
 
-<!-- DEFERRED TO PLAN 02: Planner spawning, executor spawning, wave execution, STATE.md updates, commits -->
+Spawn gsd-planner with quick mode context:
+
+```
+Task(
+  prompt="
+<planning_context>
+
+**Mode:** quick
+**Directory:** ${QUICK_DIR}
+**Description:** ${DESCRIPTION}
+
+**Project State:**
+@.planning/STATE.md
+
+</planning_context>
+
+<constraints>
+- Create a SINGLE plan with 1-3 focused tasks
+- Quick tasks should be atomic and self-contained
+- No research phase, no checker phase
+- Target ~30% context usage (simple, focused)
+</constraints>
+
+<output>
+Write PLAN.md to: ${QUICK_DIR}/PLAN.md
+Return: ## PLANNING COMPLETE with plan path
+</output>
+",
+  subagent_type="gsd-planner",
+  description="Quick plan: ${DESCRIPTION}"
+)
+```
+
+After planner returns:
+1. Verify PLAN.md exists at `${QUICK_DIR}/PLAN.md`
+2. Extract plan count (typically 1 for quick tasks)
+3. Report: "Plan created: ${QUICK_DIR}/PLAN.md"
+
+If PLAN.md not found, error: "Planner failed to create PLAN.md"
 
 ---
 
