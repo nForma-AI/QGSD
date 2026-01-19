@@ -157,11 +157,11 @@ For finding what exists, community patterns, real-world usage.
 - "How do people solve Y?"
 - "Common mistakes with Z"
 
-**Query templates (use current year):**
+**Query templates:**
 ```
 Stack discovery:
-- "[technology] best practices 2025"
-- "[technology] recommended libraries 2025"
+- "[technology] best practices [current year]"
+- "[technology] recommended libraries [current year]"
 
 Pattern discovery:
 - "how to build [type of thing] with [technology]"
@@ -173,7 +173,7 @@ Problem discovery:
 ```
 
 **Best practices:**
-- Include current year for freshness
+- Always include the current year (check today's date) for freshness
 - Use multiple query variations
 - Cross-verify findings with authoritative sources
 - Mark WebSearch-only findings as LOW confidence
