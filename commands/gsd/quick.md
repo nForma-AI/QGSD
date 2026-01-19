@@ -158,15 +158,50 @@ If PLAN.md not found, error: "Planner failed to create PLAN.md"
 
 ---
 
-**Step 6: Update STATE.md**
+**Step 6: Spawn executor**
 
-<!-- DEFERRED TO PLAN 02: Add row to "Quick Tasks Completed" table -->
+Spawn gsd-executor with plan reference:
+
+```
+Task(
+  prompt="
+Execute quick task ${next_num}.
+
+Plan: @${QUICK_DIR}/PLAN.md
+Project state: @.planning/STATE.md
+
+<constraints>
+- Execute all tasks in the plan
+- Commit each task atomically
+- Create SUMMARY.md in the quick task directory
+- Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
+</constraints>
+",
+  subagent_type="gsd-executor",
+  description="Execute: ${DESCRIPTION}"
+)
+```
+
+After executor returns:
+1. Verify SUMMARY.md exists at `${QUICK_DIR}/SUMMARY.md`
+2. Extract commit hash from executor output
+3. Report completion status
+
+If SUMMARY.md not found, error: "Executor failed to create SUMMARY.md"
+
+Note: For quick tasks producing multiple plans (rare), spawn executors in parallel waves per execute-phase patterns.
 
 ---
 
-**Step 7: Commit artifacts**
+**Step 7: Update STATE.md**
 
-<!-- DEFERRED TO PLAN 02: Stage and commit quick task artifacts -->
+<!-- DEFERRED: Add row to "Quick Tasks Completed" table -->
+
+---
+
+**Step 8: Commit artifacts**
+
+<!-- DEFERRED: Stage and commit quick task artifacts -->
 
 </process>
 
