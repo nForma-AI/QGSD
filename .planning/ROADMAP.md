@@ -2,7 +2,7 @@
 
 ## Overview
 
-Quick mode adds a fast-path command (`/gsd:quick`) that executes small tasks with full GSD guarantees (atomic commits, STATE.md tracking, ROADMAP.md integration) but skips optional verification agents. The roadmap delivers the command, integrates it with resume-work, and documents the feature.
+Quick mode adds a fast-path command (`/gsd:quick`) that executes small tasks with full GSD guarantees (atomic commits, STATE.md tracking) but skips optional verification agents. Quick tasks live in `.planning/quick/` separate from planned phases.
 
 ## Phases
 
@@ -17,19 +17,14 @@ Quick mode adds a fast-path command (`/gsd:quick`) that executes small tasks wit
 ## Phase Details
 
 ### Phase 1: Core Command
-**Goal**: User can run `/gsd:quick "description"` and have it execute with full state tracking
+**Goal**: User can run `/gsd:quick` (with interactive prompt) and have it execute with full state tracking
 **Depends on**: Nothing (first phase)
-**Requirements**: CMD-01, CMD-02, CMD-03, CMD-04, CMD-05, EXEC-01, EXEC-02, EXEC-03, EXEC-04, STATE-01, STATE-02, STATE-03
-**Success Criteria** (what must be TRUE):
-  1. User can run `/gsd:quick "fix button spacing"` and it parses the description
-  2. Command fails with clear error if no ROADMAP.md exists
-  3. Decimal phase directory created (e.g., `.planning/phases/1.1-fix-button-spacing/`)
-  4. ROADMAP.md contains new decimal phase entry after command completes
-  5. STATE.md "Last activity" and "Quick Tasks Completed" table updated after execution
-**Plans**: TBD
+**Requirements**: CMD-01, CMD-02, CMD-03, CMD-04, EXEC-01, EXEC-02, EXEC-03, EXEC-04, STATE-01, STATE-02
+**Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Quick command file with pre-flight validation and directory setup
+- [ ] 01-02-PLAN.md — Quick orchestration (planner spawn, executor spawn, state update)
 
 ### Phase 2: Resume Integration
 **Goal**: User can resume failed quick tasks using existing `/gsd:resume-work`
@@ -63,6 +58,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core Command | 0/? | Not started | - |
+| 1. Core Command | 0/2 | Ready to execute | - |
 | 2. Resume Integration | 0/? | Not started | - |
 | 3. Documentation | 0/? | Not started | - |
