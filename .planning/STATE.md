@@ -41,6 +41,7 @@ Progress: [##########] 100%
 | ID | Name | Commit | Date |
 |----|------|--------|------|
 | 001 | commands-html-page | a1454db | 2026-01-19 |
+| 002 | 90s-html-command-reference | fc3287c | 2026-01-19 |
 
 ## Accumulated Context
 
@@ -67,5 +68,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 02-01-PLAN.md (Quick Mode Documentation)
+Stopped at: Completed quick task 002 (90s HTML command reference)
 Resume file: None
