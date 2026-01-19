@@ -35,6 +35,12 @@ Progress: [#####-----] 50%
 
 *Updated after each plan completion*
 
+## Quick Tasks Completed
+
+| ID | Name | Commit | Date |
+|----|------|--------|------|
+| 001 | commands-html-page | a1454db | 2026-01-19 |
+
 ## Accumulated Context
 
 ### Decisions
@@ -58,5 +64,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 01-02-PLAN.md (Phase 1 complete)
+Stopped at: Completed quick task 001-commands-html-page
 Resume file: None
