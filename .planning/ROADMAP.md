@@ -33,10 +33,10 @@ Plans:
   1. help.md lists `/gsd:quick` with usage and description
   2. README.md includes quick mode section explaining when to use it
   3. GSD-STYLE.md documents quick mode patterns
-**Plans**: TBD
+**Plans:** 1 plan
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Document /gsd:quick in help.md, README.md, and GSD-STYLE.md
 
 ## Progress
 
@@ -46,4 +46,4 @@ Phases execute in numeric order: 1 -> 2
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Core Command | 2/2 | Complete | 2026-01-19 |
-| 2. Documentation | 0/? | Not started | - |
+| 2. Documentation | 0/1 | Not started | - |

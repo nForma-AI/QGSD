@@ -129,6 +129,21 @@ Execute all plans in a phase.
 
 Usage: `/gsd:execute-phase 5`
 
+### Quick Mode
+
+**`/gsd:quick`**
+Execute small, ad-hoc tasks with GSD guarantees but skip optional agents.
+
+Quick mode uses the same system with a shorter path:
+- Spawns planner + executor (skips researcher, checker, verifier)
+- Quick tasks live in `.planning/quick/` separate from planned phases
+- Updates STATE.md tracking (not ROADMAP.md)
+
+Use when you know exactly what to do and the task is small enough to not need research or verification.
+
+Usage: `/gsd:quick`
+Result: Creates `.planning/quick/NNN-slug/PLAN.md`, `.planning/quick/NNN-slug/SUMMARY.md`
+
 ### Roadmap Management
 
 **`/gsd:add-phase <description>`**
