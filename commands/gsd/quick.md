@@ -195,7 +195,37 @@ Note: For quick tasks producing multiple plans (rare), spawn executors in parall
 
 **Step 7: Update STATE.md**
 
-<!-- DEFERRED: Add row to "Quick Tasks Completed" table -->
+Update STATE.md with quick task completion record.
+
+**7a. Check if "Quick Tasks Completed" section exists:**
+
+Read STATE.md and check for `### Quick Tasks Completed` section.
+
+**7b. If section doesn't exist, create it:**
+
+Insert after `### Blockers/Concerns` section:
+
+```markdown
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+```
+
+**7c. Append new row to table:**
+
+```markdown
+| ${next_num} | ${DESCRIPTION} | $(date +%Y-%m-%d) | ${commit_hash} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
+```
+
+**7d. Update "Last activity" line:**
+
+Find and update the line:
+```
+Last activity: $(date +%Y-%m-%d) - Completed quick task ${next_num}: ${DESCRIPTION}
+```
+
+Use Edit tool to make these changes atomically
 
 ---
 
