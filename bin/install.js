@@ -415,12 +415,12 @@ function install(isGlobal) {
 
   // Register intel hooks for codebase intelligence
   const intelIndexCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/intel-index.js"'
-    : 'node .claude/hooks/intel-index.js';
+    ? 'node "$HOME/.claude/hooks/gsd-intel-index.js"'
+    : 'node .claude/hooks/gsd-intel-index.js';
 
   const intelSessionCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/intel-session.js"'
-    : 'node .claude/hooks/intel-session.js';
+    ? 'node "$HOME/.claude/hooks/gsd-intel-session.js"'
+    : 'node .claude/hooks/gsd-intel-session.js';
 
   // PostToolUse hook for indexing
   if (!settings.hooks.PostToolUse) {
@@ -428,7 +428,7 @@ function install(isGlobal) {
   }
 
   const hasIntelIndexHook = settings.hooks.PostToolUse.some(entry =>
-    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('intel-index'))
+    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-intel-index'))
   );
 
   if (!hasIntelIndexHook) {
@@ -443,7 +443,7 @@ function install(isGlobal) {
 
   // SessionStart hook for context injection
   const hasIntelSessionHook = settings.hooks.SessionStart.some(entry =>
-    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('intel-session'))
+    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-intel-session'))
   );
 
   if (!hasIntelSessionHook) {
@@ -458,15 +458,15 @@ function install(isGlobal) {
 
   // Stop hook for pruning deleted files
   const intelPruneCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/intel-prune.js"'
-    : 'node .claude/hooks/intel-prune.js';
+    ? 'node "$HOME/.claude/hooks/gsd-intel-prune.js"'
+    : 'node .claude/hooks/gsd-intel-prune.js';
 
   if (!settings.hooks.Stop) {
     settings.hooks.Stop = [];
   }
 
   const hasIntelPruneHook = settings.hooks.Stop.some(entry =>
-    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('intel-prune'))
+    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-intel-prune'))
   );
 
   if (!hasIntelPruneHook) {
