@@ -351,6 +351,11 @@ function updateIndex(filePath, exports, imports) {
 
   // Write atomically
   fs.writeFileSync(indexPath, JSON.stringify(index, null, 2));
+
+  // Detect and save conventions (regenerated on every index update)
+  const conventions = detectConventions(index);
+  const conventionsPath = path.join(process.cwd(), '.planning', 'intel', 'conventions.json');
+  fs.writeFileSync(conventionsPath, JSON.stringify(conventions, null, 2));
 }
 
 // Read JSON from stdin (standard hook pattern)
