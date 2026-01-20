@@ -34,6 +34,7 @@
     "node": ">=16.7.0"
   },
   "dependencies": {
-    "sql.js": "^1.12.0"
+    "sql.js": "^1.12.0",
+    "@anthropic-ai/sdk": "^0.52.0"
   }
 }
