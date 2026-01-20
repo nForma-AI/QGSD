@@ -34,6 +34,27 @@ Orchestration is inline - no separate workflow file. Quick mode is deliberately 
 </context>
 
 <process>
+**Step 0: Resolve Model Profile**
+
+Read model profile for agent spawning:
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-planner | opus | opus | sonnet |
+| gsd-executor | opus | sonnet | sonnet |
+
+Store resolved models for use in Task calls below.
+
+---
+
 **Step 1: Pre-flight validation**
 
 Check that an active GSD project exists:
@@ -145,6 +166,7 @@ Return: ## PLANNING COMPLETE with plan path
 </output>
 ",
   subagent_type="gsd-planner",
+  model="{planner_model}",
   description="Quick plan: ${DESCRIPTION}"
 )
 ```
@@ -178,6 +200,7 @@ Project state: @.planning/STATE.md
 </constraints>
 ",
   subagent_type="gsd-executor",
+  model="{executor_model}",
   description="Execute: ${DESCRIPTION}"
 )
 ```

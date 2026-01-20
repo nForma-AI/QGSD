@@ -13,7 +13,27 @@ Read config.json for planning behavior settings.
 
 <process>
 
-<step name="load_project_state" priority="first">
+<step name="resolve_model_profile" priority="first">
+Read model profile for agent spawning:
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-executor | opus | sonnet | sonnet |
+| gsd-verifier | sonnet | sonnet | haiku |
+| general-purpose | — | — | — |
+
+Store resolved models for use in Task calls below.
+</step>
+
+<step name="load_project_state">
 Before any operation, read project state:
 
 ```bash
@@ -274,7 +294,7 @@ Plans with `autonomous: false` require user interaction.
 
 1. **Spawn agent for checkpoint plan:**
    ```
-   Task(prompt="{subagent-task-prompt}", subagent_type="general-purpose")
+   Task(prompt="{subagent-task-prompt}", subagent_type="gsd-executor", model="{executor_model}")
    ```
 
 2. **Agent runs until checkpoint:**
@@ -313,7 +333,8 @@ Plans with `autonomous: false` require user interaction.
    ```
    Task(
      prompt=filled_continuation_template,
-     subagent_type="general-purpose"
+     subagent_type="gsd-executor",
+     model="{executor_model}"
    )
    ```
 
@@ -389,7 +410,8 @@ Phase goal: {goal from ROADMAP.md}
 
 Check must_haves against actual codebase. Create VERIFICATION.md.
 Verify what actually exists in the code.",
-  subagent_type="gsd-verifier"
+  subagent_type="gsd-verifier",
+  model="{verifier_model}"
 )
 ```
 

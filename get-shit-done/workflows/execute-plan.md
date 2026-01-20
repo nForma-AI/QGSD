@@ -11,7 +11,25 @@ Read config.json for planning behavior settings.
 
 <process>
 
-<step name="load_project_state" priority="first">
+<step name="resolve_model_profile" priority="first">
+Read model profile for agent spawning:
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-executor | opus | sonnet | sonnet |
+
+Store resolved model for use in Task calls below.
+</step>
+
+<step name="load_project_state">
 Before any operation, read project state:
 
 ```bash
@@ -219,7 +237,7 @@ No segmentation benefit - execute entirely in main
 ```
 1. Run init_agent_tracking step first (see step below)
 
-2. Use Task tool with subagent_type="gsd-executor":
+2. Use Task tool with subagent_type="gsd-executor" and model="{executor_model}":
 
    Prompt: "Execute plan at .planning/phases/{phase}-{plan}-PLAN.md
 
@@ -371,7 +389,7 @@ For Pattern A (fully autonomous) and Pattern C (decision-dependent), skip this s
 
    B. If routing = Subagent:
       ```
-      Spawn Task tool with subagent_type="gsd-executor":
+      Spawn Task tool with subagent_type="gsd-executor" and model="{executor_model}":
 
       Prompt: "Execute tasks [task numbers/names] from plan at [plan path].
 

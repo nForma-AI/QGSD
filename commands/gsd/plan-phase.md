@@ -42,13 +42,31 @@ Normalize phase input in step 2 before any directory lookups.
 
 <process>
 
-## 1. Validate Environment
+## 1. Validate Environment and Resolve Model Profile
 
 ```bash
 ls .planning/ 2>/dev/null
 ```
 
 **If not found:** Error - user should run `/gsd:new-project` first.
+
+**Resolve model profile for agent spawning:**
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-phase-researcher | opus | sonnet | haiku |
+| gsd-planner | opus | opus | sonnet |
+| gsd-plan-checker | sonnet | sonnet | haiku |
+
+Store resolved models for use in Task calls below.
 
 ## 2. Parse and Normalize Arguments
 
@@ -190,6 +208,7 @@ Write research findings to: {phase_dir}/{phase}-RESEARCH.md
 Task(
   prompt=research_prompt,
   subagent_type="gsd-phase-researcher",
+  model="{researcher_model}",
   description="Research Phase {phase}"
 )
 ```
@@ -298,6 +317,7 @@ Before returning PLANNING COMPLETE:
 Task(
   prompt=filled_prompt,
   subagent_type="gsd-planner",
+  model="{planner_model}",
   description="Plan Phase {phase}"
 )
 ```
@@ -369,6 +389,7 @@ Return one of:
 Task(
   prompt=checker_prompt,
   subagent_type="gsd-plan-checker",
+  model="{checker_model}",
   description="Verify Phase {phase} plans"
 )
 ```
@@ -426,6 +447,7 @@ Return what changed.
 Task(
   prompt=revision_prompt,
   subagent_type="gsd-planner",
+  model="{planner_model}",
   description="Revise Phase {phase} plans"
 )
 ```

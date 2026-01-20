@@ -39,6 +39,24 @@ Glob: .planning/phases/*/*-VERIFICATION.md
 
 <process>
 
+## 0. Resolve Model Profile
+
+Read model profile for agent spawning:
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-integration-checker | sonnet | sonnet | haiku |
+
+Store resolved model for use in Task call below.
+
 ## 1. Determine Milestone Scope
 
 ```bash
@@ -83,7 +101,8 @@ Phase exports: {from SUMMARYs}
 API routes: {routes created}
 
 Verify cross-phase wiring and E2E user flows.",
-  subagent_type="gsd-integration-checker"
+  subagent_type="gsd-integration-checker",
+  model="{integration_checker_model}"
 )
 ```
 

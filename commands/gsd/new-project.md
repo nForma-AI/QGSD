@@ -373,6 +373,26 @@ EOF
 
 **Note:** Run `/gsd:settings` anytime to update these preferences.
 
+## Phase 5.5: Resolve Model Profile
+
+Read model profile for agent spawning:
+
+```bash
+MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+```
+
+Default to "balanced" if not set.
+
+**Model lookup table:**
+
+| Agent | quality | balanced | budget |
+|-------|---------|----------|--------|
+| gsd-project-researcher | opus | sonnet | haiku |
+| gsd-research-synthesizer | sonnet | sonnet | haiku |
+| gsd-roadmapper | opus | sonnet | sonnet |
+
+Store resolved models for use in Task calls below.
+
 ## Phase 6: Research Decision
 
 Use AskUserQuestion:
@@ -453,7 +473,7 @@ Your STACK.md feeds into roadmap creation. Be prescriptive:
 Write to: .planning/research/STACK.md
 Use template: ~/.claude/get-shit-done/templates/research-project/STACK.md
 </output>
-", subagent_type="gsd-project-researcher", description="Stack research")
+", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Stack research")
 
 Task(prompt="
 <research_type>
@@ -492,7 +512,7 @@ Your FEATURES.md feeds into requirements definition. Categorize clearly:
 Write to: .planning/research/FEATURES.md
 Use template: ~/.claude/get-shit-done/templates/research-project/FEATURES.md
 </output>
-", subagent_type="gsd-project-researcher", description="Features research")
+", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Features research")
 
 Task(prompt="
 <research_type>
@@ -531,7 +551,7 @@ Your ARCHITECTURE.md informs phase structure in roadmap. Include:
 Write to: .planning/research/ARCHITECTURE.md
 Use template: ~/.claude/get-shit-done/templates/research-project/ARCHITECTURE.md
 </output>
-", subagent_type="gsd-project-researcher", description="Architecture research")
+", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Architecture research")
 
 Task(prompt="
 <research_type>
@@ -570,7 +590,7 @@ Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
 Write to: .planning/research/PITFALLS.md
 Use template: ~/.claude/get-shit-done/templates/research-project/PITFALLS.md
 </output>
-", subagent_type="gsd-project-researcher", description="Pitfalls research")
+", subagent_type="gsd-project-researcher", model="{researcher_model}", description="Pitfalls research")
 ```
 
 After all 4 agents complete, spawn synthesizer to create SUMMARY.md:
@@ -594,7 +614,7 @@ Write to: .planning/research/SUMMARY.md
 Use template: ~/.claude/get-shit-done/templates/research-project/SUMMARY.md
 Commit after writing.
 </output>
-", subagent_type="gsd-research-synthesizer", description="Synthesize research")
+", subagent_type="gsd-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
 ```
 
 Display research complete banner and key findings:
@@ -799,7 +819,7 @@ Create roadmap:
 
 Write files first, then return. This ensures artifacts persist even if context is lost.
 </instructions>
-", subagent_type="gsd-roadmapper", description="Create roadmap")
+", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Create roadmap")
 ```
 
 **Handle roadmapper return:**
@@ -875,7 +895,7 @@ Use AskUserQuestion:
   Update the roadmap based on feedback. Edit files in place.
   Return ROADMAP REVISED with changes made.
   </revision>
-  ", subagent_type="gsd-roadmapper", description="Revise roadmap")
+  ", subagent_type="gsd-roadmapper", model="{roadmapper_model}", description="Revise roadmap")
   ```
 - Present revised roadmap
 - Loop until user approves

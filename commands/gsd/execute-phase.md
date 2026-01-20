@@ -38,6 +38,24 @@ Phase: $ARGUMENTS
 </context>
 
 <process>
+0. **Resolve Model Profile**
+
+   Read model profile for agent spawning:
+   ```bash
+   MODEL_PROFILE=$(cat .planning/config.json 2>/dev/null | grep -o '"model_profile"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -o '"[^"]*"$' | tr -d '"' || echo "balanced")
+   ```
+
+   Default to "balanced" if not set.
+
+   **Model lookup table:**
+
+   | Agent | quality | balanced | budget |
+   |-------|---------|----------|--------|
+   | gsd-executor | opus | sonnet | sonnet |
+   | gsd-verifier | sonnet | sonnet | haiku |
+
+   Store resolved models for use in Task calls below.
+
 1. **Validate phase exists**
    - Find phase directory matching argument
    - Count PLAN.md files
@@ -248,9 +266,9 @@ STATE_CONTENT=$(cat .planning/STATE.md)
 Spawn all plans in a wave with a single message containing multiple Task calls, with inlined content:
 
 ```
-Task(prompt="Execute plan at {plan_01_path}\n\nPlan:\n{plan_01_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
-Task(prompt="Execute plan at {plan_02_path}\n\nPlan:\n{plan_02_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
-Task(prompt="Execute plan at {plan_03_path}\n\nPlan:\n{plan_03_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
+Task(prompt="Execute plan at {plan_01_path}\n\nPlan:\n{plan_01_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor", model="{executor_model}")
+Task(prompt="Execute plan at {plan_02_path}\n\nPlan:\n{plan_02_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor", model="{executor_model}")
+Task(prompt="Execute plan at {plan_03_path}\n\nPlan:\n{plan_03_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor", model="{executor_model}")
 ```
 
 All three run in parallel. Task tool blocks until all complete.

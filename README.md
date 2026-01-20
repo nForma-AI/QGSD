@@ -485,7 +485,8 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:settings` | Toggle workflow agents (research, plan checker, verifier) |
+| `/gsd:settings` | Configure model profile and workflow agents |
+| `/gsd:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
 | `/gsd:add-todo [desc]` | Capture idea for later |
 | `/gsd:check-todos` | List pending todos |
 | `/gsd:debug [desc]` | Systematic debugging with persistent state |
@@ -505,6 +506,23 @@ GSD stores project settings in `.planning/config.json`. Configure during `/gsd:n
 |---------|---------|---------|------------------|
 | `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
 | `depth` | `quick`, `standard`, `comprehensive` | `standard` | Planning thoroughness (phases × plans) |
+
+### Model Profiles
+
+Control which Claude model each agent uses. Balance quality vs token spend.
+
+| Profile | Planning | Execution | Verification |
+|---------|----------|-----------|--------------|
+| `quality` | Opus | Opus | Sonnet |
+| `balanced` (default) | Opus | Sonnet | Sonnet |
+| `budget` | Sonnet | Sonnet | Haiku |
+
+Switch profiles:
+```
+/gsd:set-profile budget
+```
+
+Or configure via `/gsd:settings`.
 
 ### Workflow Agents
 
