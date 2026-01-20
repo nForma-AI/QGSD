@@ -1,20 +1,21 @@
 ---
 name: gsd:analyze-codebase
-description: Scan existing codebase and populate .planning/intel/ with file index and conventions
+description: Scan existing codebase and populate .planning/intel/ with file index, conventions, and semantic entity files
 argument-hint: ""
 allowed-tools:
   - Read
   - Bash
   - Glob
   - Write
+  - Task
 ---
 
 <objective>
-Scan codebase to populate .planning/intel/ with file index and conventions.
+Scan codebase to populate .planning/intel/ with file index, conventions, and semantic entity files.
 
-Works standalone (without /gsd:new-project) for brownfield codebases. Creates summary.md for context injection at session start.
+Works standalone (without /gsd:new-project) for brownfield codebases. Creates summary.md for context injection at session start. Generates entity files that capture file PURPOSE (what it does, why it exists), not just syntax.
 
-Output: .planning/intel/index.json, conventions.json, summary.md
+Output: .planning/intel/index.json, conventions.json, summary.md, entities/*.md
 </objective>
 
 <context>
@@ -26,6 +27,13 @@ This command performs bulk codebase scanning to bootstrap the Codebase Intellige
 - Standalone intel without full project setup
 
 After initial scan, the PostToolUse hook (hooks/intel-index.js) maintains incremental updates.
+
+**Execution model (Step 9 - Entity Generation):**
+- Claude (executing this command) generates entity content directly
+- No embedded JavaScript - Claude reads files and writes semantic documentation
+- Task tool to spawn subagents for batch processing large codebases
+- Each subagent processes 10 files, generating Purpose-focused entity markdown
+- Users can skip Step 9 if they only want the index (faster, less context)
 </context>
 
 <process>
@@ -232,6 +240,104 @@ Files created:
 - .planning/intel/index.json
 - .planning/intel/conventions.json
 - .planning/intel/summary.md
+```
+
+## Step 9: Generate semantic entities (optional)
+
+Generate entity files that capture semantic understanding of key files. These provide PURPOSE, not just syntax.
+
+**Skip this step if:** User only wants the index, or codebase has < 10 files.
+
+### 9.1 Create entities directory
+
+```bash
+mkdir -p .planning/intel/entities
+```
+
+### 9.2 Select files for entity generation
+
+Select up to 50 files based on these criteria (in priority order):
+
+1. **High-export files:** 3+ exports (likely core modules)
+2. **Hub files:** Referenced by 5+ other files (via imports analysis)
+3. **Key directories:** Entry points (index.js, main.js, app.js), config files
+4. **Structural files:** Files matching convention patterns (services, controllers, models)
+
+From the index.json, identify candidates and limit to 50 files maximum per run.
+
+### 9.3 Generate entities via Task tool batching
+
+Process selected files in **batches of 10** using the Task tool to spawn subagents.
+
+For each batch, spawn a Task with this instruction:
+
+```
+Generate semantic entity files for these source files:
+[list of 10 absolute file paths]
+
+For each file:
+1. Read the file content
+2. Write an entity markdown file to .planning/intel/entities/
+
+Entity filename convention (slug):
+- Take the relative path from project root
+- Replace / with --
+- Replace . with -
+- Example: src/utils/auth.js -> src--utils--auth-js.md
+
+Entity template:
+---
+source: [absolute path]
+indexed: [ISO timestamp]
+---
+
+# [filename]
+
+## Purpose
+
+[1-2 sentences: What does this file DO? Why does it exist? What problem does it solve?]
+
+## Exports
+
+| Name | Type | Purpose |
+|------|------|---------|
+| [export] | [function/class/const/type] | [what it does] |
+
+## Dependencies
+
+| Import | Purpose |
+|--------|---------|
+| [import source] | [why this file needs it] |
+
+## Used By
+
+[If this file is imported by others in the codebase, list the key consumers and why they use it. Otherwise: "Entry point" or "Utility - used across codebase"]
+
+---
+
+Focus on PURPOSE and semantic understanding, not just listing syntax.
+```
+
+### 9.4 Verify entity generation
+
+After all batches complete:
+
+```bash
+ls .planning/intel/entities/*.md | wc -l
+```
+
+Confirm entity count matches expected file count.
+
+### 9.5 Report entity statistics
+
+```
+Entity Generation Complete
+
+Entity files created: [N]
+Location: .planning/intel/entities/
+
+Batches processed: [N]
+Files per batch: 10
 
 Next: Intel hooks will continue incremental learning as you code.
 ```
@@ -242,6 +348,7 @@ Next: Intel hooks will continue incremental learning as you code.
 - .planning/intel/index.json - File index with exports and imports
 - .planning/intel/conventions.json - Detected naming and structural patterns
 - .planning/intel/summary.md - Concise summary for context injection
+- .planning/intel/entities/*.md - Semantic entity files (optional, Step 9)
 </output>
 
 <success_criteria>
@@ -251,4 +358,6 @@ Next: Intel hooks will continue incremental learning as you code.
 - [ ] conventions.json has detected patterns (naming, directories, suffixes)
 - [ ] summary.md is concise (< 500 tokens)
 - [ ] Statistics reported to user
+- [ ] Entity files generated for key files (if Step 9 executed)
+- [ ] Entity files contain Purpose section with semantic understanding
 </success_criteria>
