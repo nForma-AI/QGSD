@@ -19,6 +19,7 @@ This is the most leveraged moment in any project. Deep questioning here means be
 - `.planning/PROJECT.md` — project context
 - `.planning/config.json` — workflow preferences
 - `.planning/research/` — domain research (optional)
+- `.planning/intel/` — codebase intelligence (auto-populated by hooks)
 - `.planning/REQUIREMENTS.md` — scoped requirements
 - `.planning/ROADMAP.md` — phase structure
 - `.planning/STATE.md` — project memory
@@ -57,7 +58,14 @@ This is the most leveraged moment in any project. Deep questioning here means be
    fi
    ```
 
-3. **Detect existing code (brownfield detection):**
+3. **Create intel directory for codebase intelligence:**
+   ```bash
+   mkdir -p .planning/intel
+   ```
+
+   This prepares the directory for the PostToolUse hook to populate with index.json, conventions.json, and summary.md as Claude writes code.
+
+4. **Detect existing code (brownfield detection):**
    ```bash
    CODE_FILES=$(find . -name "*.ts" -o -name "*.js" -o -name "*.py" -o -name "*.go" -o -name "*.rs" -o -name "*.swift" -o -name "*.java" 2>/dev/null | grep -v node_modules | grep -v .git | head -20)
    HAS_PACKAGE=$([ -f package.json ] || [ -f requirements.txt ] || [ -f Cargo.toml ] || [ -f go.mod ] || [ -f Package.swift ] && echo "yes")
@@ -939,6 +947,7 @@ Present completion with next steps:
   - `ARCHITECTURE.md`
   - `PITFALLS.md`
   - `SUMMARY.md`
+- `.planning/intel/` (created empty, populated by hooks during coding)
 - `.planning/REQUIREMENTS.md`
 - `.planning/ROADMAP.md`
 - `.planning/STATE.md`
