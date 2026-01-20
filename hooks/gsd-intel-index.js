@@ -508,6 +508,65 @@ function extractPurpose(content) {
 }
 
 /**
+ * Sync entity file to graph database
+ * Called when an entity .md file is written
+ *
+ * @param {string} entityPath - Path to entity file
+ */
+async function syncEntityToGraph(entityPath) {
+  const intelDir = path.join(process.cwd(), '.planning', 'intel');
+
+  // Opt-in check (same as updateIndex)
+  if (!fs.existsSync(intelDir)) {
+    return;
+  }
+
+  try {
+    const { db, dbPath } = await loadGraphDatabase();
+
+    // Read entity file
+    const content = fs.readFileSync(entityPath, 'utf8');
+    const entityId = path.basename(entityPath, '.md').toLowerCase();
+    const frontmatter = parseEntityFrontmatter(content);
+    const links = extractWikiLinks(content);
+
+    // Build node JSON
+    const nodeBody = JSON.stringify({
+      id: entityId,
+      path: frontmatter.path || entityPath,
+      type: frontmatter.type || 'unknown',
+      updated: frontmatter.updated || new Date().toISOString().split('T')[0],
+      status: frontmatter.status || 'active'
+    });
+
+    // Upsert node (ON CONFLICT handled by schema)
+    db.run(
+      `INSERT INTO nodes (body) VALUES (?)
+       ON CONFLICT(id) DO UPDATE SET body = excluded.body`,
+      [nodeBody]
+    );
+
+    // Delete old edges for this source, insert new ones
+    db.run('DELETE FROM edges WHERE source = ?', [entityId]);
+
+    if (links.length > 0) {
+      const stmt = db.prepare('INSERT INTO edges (source, target) VALUES (?, ?)');
+      for (const target of links) {
+        stmt.run([entityId, target.toLowerCase()]);
+      }
+      stmt.free();
+    }
+
+    // Persist to disk (critical - sql.js is in-memory)
+    persistDatabase(db, dbPath);
+    db.close();
+  } catch (e) {
+    // Silent failure - never block Claude
+    // Graph sync is best-effort enhancement
+  }
+}
+
+/**
  * Regenerate summary.md from all entity files
  * Creates a semantic overview of the codebase
  */
@@ -722,10 +781,16 @@ process.stdin.on('end', () => {
       process.exit(0);
     }
 
-    // Handle entity file writes - regenerate summary
+    // Handle entity file writes - sync to graph, regenerate summary
     if (isEntityFile(filePath)) {
-      regenerateEntitySummary();
-      process.exit(0);
+      syncEntityToGraph(filePath).then(() => {
+        regenerateEntitySummary();
+        process.exit(0);
+      }).catch(() => {
+        // Silent failure
+        process.exit(0);
+      });
+      return; // Don't exit synchronously, wait for async
     }
 
     // Handle code file writes - existing behavior
