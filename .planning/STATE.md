@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-19)
 ## Current Position
 
 Phase: 4 of 4 (Semantic Intelligence & Scale)
-Plan: 3 of 3 complete
+Plan: 4 of 4 complete
 Status: Phase complete
-Last activity: 2026-01-20 — Completed 04-02-PLAN.md (Query Interface) and 04-03-PLAN.md (Entity Generation Instructions)
+Last activity: 2026-01-20 — Completed 04-04-PLAN.md (CLI Query Interface - gap closure)
 
 Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
-- Average duration: 2.5 min
-- Total execution time: 25 min
+- Total plans completed: 11
+- Average duration: 2.6 min
+- Total execution time: 29 min
 
 **By Phase:**
 
@@ -30,7 +30,7 @@ Progress: [██████████] 100%
 | 1. Foundation & Learning | 2/2 | 7 min | 3.5 min |
 | 2. Context Injection | 2/2 | 4 min | 2.0 min |
 | 3. Brownfield & Integration | 3/3 | 6 min | 2.0 min |
-| 4. Semantic Intelligence | 3/3 | 8 min | 2.7 min |
+| 4. Semantic Intelligence | 4/4 | 12 min | 3.0 min |
 
 *Updated after each plan completion*
 
@@ -64,6 +64,9 @@ Progress: [██████████] 100%
 | LEFT JOIN allows forward references | 04-02 | Edges can exist before target nodes indexed |
 | UNION in recursive CTE | 04-02 | Prevents infinite loops in cyclic graphs |
 | maxDepth default of 5 | 04-02 | Prevents runaway queries on deep dependencies |
+| Query mode read-only | 04-04 | Query actions don't persist to disk, safe operations |
+| Default limit 10 for dependents | 04-04 | Prevents huge output for files with many dependents |
+| Query routing before Write/Edit | 04-04 | Clean separation between query and indexing modes |
 
 ### Pending Todos
 
@@ -76,7 +79,7 @@ Progress: [██████████] 100%
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed 04-02-PLAN.md and 04-03-PLAN.md
+Stopped at: Completed 04-04-PLAN.md (CLI Query Interface gap closure)
 Resume file: None
 
 ## Phase Progress
@@ -90,3 +93,4 @@ Resume file: None
 - 04-01: SQLite graph layer ✓
 - 04-02: Query interface ✓
 - 04-03: Entity generation instructions ✓
+- 04-04: CLI query interface (gap closure) ✓
