@@ -69,6 +69,88 @@ function persistDatabase(db, dbPath) {
   fs.writeFileSync(dbPath, buffer);
 }
 
+/**
+ * Get dependency hotspots from graph
+ * Returns top N files by number of dependents
+ */
+function getHotspots(db, limit = 5) {
+  const results = db.exec(`
+    SELECT
+      e.target as id,
+      COUNT(*) as count,
+      json_extract(n.body, '$.path') as path,
+      json_extract(n.body, '$.type') as type
+    FROM edges e
+    LEFT JOIN nodes n ON e.target = n.id
+    GROUP BY e.target
+    ORDER BY count DESC
+    LIMIT ?
+  `, [limit]);
+
+  if (!results[0]?.values) return [];
+
+  return results[0].values.map(([id, count, path, type]) => ({
+    id,
+    count,
+    path: path || id,
+    type: type || 'unknown'
+  }));
+}
+
+/**
+ * Get nodes grouped by type
+ */
+function getNodesByType(db) {
+  const results = db.exec(`
+    SELECT
+      json_extract(body, '$.type') as type,
+      COUNT(*) as count
+    FROM nodes
+    GROUP BY type
+    ORDER BY count DESC
+  `);
+
+  if (!results[0]?.values) return [];
+
+  return results[0].values.map(([type, count]) => ({
+    type: type || 'other',
+    count
+  }));
+}
+
+/**
+ * Get all dependents of a file (transitive)
+ * Uses recursive CTE for graph traversal
+ */
+function getDependents(db, entityId, maxDepth = 5) {
+  const results = db.exec(`
+    WITH RECURSIVE dependents(id, depth) AS (
+      SELECT ?, 0
+      UNION
+      SELECT e.source, d.depth + 1
+      FROM edges e
+      JOIN dependents d ON e.target = d.id
+      WHERE d.depth < ?
+    )
+    SELECT DISTINCT
+      d.id,
+      d.depth,
+      json_extract(n.body, '$.path') as path
+    FROM dependents d
+    LEFT JOIN nodes n ON d.id = n.id
+    WHERE d.id != ?
+    ORDER BY d.depth, d.id
+  `, [entityId.toLowerCase(), maxDepth, entityId.toLowerCase()]);
+
+  if (!results[0]?.values) return [];
+
+  return results[0].values.map(([id, depth, path]) => ({
+    id,
+    depth,
+    path: path || id
+  }));
+}
+
 // JS/TS file extensions to index
 const INDEXABLE_EXTENSIONS = ['.js', '.ts', '.jsx', '.tsx', '.mjs', '.cjs'];
 
