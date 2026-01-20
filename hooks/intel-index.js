@@ -381,9 +381,19 @@ function generateSummary(index, conventions) {
 /**
  * Update the index.json file with new file entry
  * Uses read-modify-write pattern with synchronous operations
+ *
+ * IMPORTANT: Only runs if .planning/intel/ already exists (opt-in behavior).
+ * Directory is created by /gsd:new-project or /gsd:analyze-codebase.
  */
 function updateIndex(filePath, exports, imports) {
-  const indexPath = path.join(process.cwd(), '.planning', 'intel', 'index.json');
+  const intelDir = path.join(process.cwd(), '.planning', 'intel');
+  const indexPath = path.join(intelDir, 'index.json');
+
+  // Opt-in check: only index if intel directory already exists
+  // This prevents polluting non-GSD projects
+  if (!fs.existsSync(intelDir)) {
+    return;
+  }
 
   // Read existing index or create new
   let index = { version: 1, updated: null, files: {} };
@@ -405,10 +415,7 @@ function updateIndex(filePath, exports, imports) {
   };
   index.updated = Date.now();
 
-  // Ensure directory exists
-  fs.mkdirSync(path.dirname(indexPath), { recursive: true });
-
-  // Write atomically
+  // Write atomically (directory already exists per opt-in check above)
   fs.writeFileSync(indexPath, JSON.stringify(index, null, 2));
 
   // Detect and save conventions (regenerated on every index update)
