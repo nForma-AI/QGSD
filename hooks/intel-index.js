@@ -8,6 +8,73 @@ const path = require('path');
 // JS/TS file extensions to index
 const INDEXABLE_EXTENSIONS = ['.js', '.ts', '.jsx', '.tsx', '.mjs', '.cjs'];
 
+// Convention detection thresholds
+const MIN_SAMPLES = 5;
+const MIN_MATCH_RATE = 0.70;
+
+// Well-known directory purposes
+const DIRECTORY_PURPOSES = {
+  'components': 'UI components',
+  'hooks': 'React/custom hooks',
+  'utils': 'Utility functions',
+  'lib': 'Utility functions',
+  'services': 'Service layer',
+  'api': 'API endpoints',
+  'routes': 'API endpoints',
+  'types': 'TypeScript types',
+  'models': 'Data models',
+  'tests': 'Test files',
+  '__tests__': 'Test files',
+  'test': 'Test files',
+  'spec': 'Test files',
+  'controllers': 'Controllers',
+  'middleware': 'Middleware',
+  'config': 'Configuration',
+  'constants': 'Constants',
+  'assets': 'Static assets',
+  'styles': 'Stylesheets',
+  'pages': 'Page components',
+  'views': 'View templates'
+};
+
+// Suffix patterns and their purposes
+const SUFFIX_PURPOSES = {
+  'test': 'Test files',
+  'spec': 'Test files',
+  'service': 'Service layer',
+  'controller': 'Controllers',
+  'model': 'Data models',
+  'util': 'Utility functions',
+  'utils': 'Utility functions',
+  'helper': 'Helper functions',
+  'helpers': 'Helper functions',
+  'config': 'Configuration',
+  'types': 'TypeScript types',
+  'type': 'TypeScript types',
+  'interface': 'TypeScript interfaces',
+  'interfaces': 'TypeScript interfaces',
+  'constants': 'Constants',
+  'constant': 'Constants',
+  'hook': 'React/custom hooks',
+  'hooks': 'React/custom hooks',
+  'context': 'React context',
+  'store': 'State store',
+  'slice': 'Redux slice',
+  'reducer': 'Redux reducer',
+  'action': 'Redux action',
+  'actions': 'Redux actions',
+  'api': 'API layer',
+  'route': 'Route definitions',
+  'routes': 'Route definitions',
+  'middleware': 'Middleware',
+  'schema': 'Schema definitions',
+  'styles': 'Stylesheets',
+  'mock': 'Mock data',
+  'mocks': 'Mock data',
+  'fixture': 'Test fixtures',
+  'fixtures': 'Test fixtures'
+};
+
 /**
  * Extract import sources from file content
  * Returns array of import source paths (e.g., 'react', './utils', '@org/pkg')
@@ -99,6 +166,157 @@ function extractExports(content) {
   }
 
   return Array.from(exports);
+}
+
+/**
+ * Detect naming convention case type for a given name
+ * Returns: 'camelCase' | 'PascalCase' | 'snake_case' | 'SCREAMING_SNAKE' | 'kebab-case' | null
+ */
+function detectCase(name) {
+  if (!name || typeof name !== 'string') return null;
+
+  // Skip 'default' as it's a keyword, not a naming convention indicator
+  if (name === 'default') return null;
+
+  // Case detection patterns (order matters for specificity)
+  const patterns = [
+    { name: 'SCREAMING_SNAKE', regex: /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/ },
+    { name: 'snake_case', regex: /^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$/ },
+    { name: 'kebab-case', regex: /^[a-z][a-z0-9]*(?:-[a-z0-9]+)+$/ },
+    { name: 'PascalCase', regex: /^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]+)*$/ },
+    { name: 'camelCase', regex: /^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]+)+$/ }
+  ];
+
+  for (const { name: caseName, regex } of patterns) {
+    if (regex.test(name)) {
+      return caseName;
+    }
+  }
+
+  // Single lowercase word could be camelCase (e.g., 'main', 'app')
+  if (/^[a-z][a-z0-9]*$/.test(name)) {
+    return 'camelCase';
+  }
+
+  // Single PascalCase word (e.g., 'App', 'Main')
+  if (/^[A-Z][a-z0-9]+$/.test(name)) {
+    return 'PascalCase';
+  }
+
+  // Single SCREAMING word (e.g., 'DEBUG', 'API')
+  if (/^[A-Z][A-Z0-9]*$/.test(name)) {
+    return 'SCREAMING_SNAKE';
+  }
+
+  return null;
+}
+
+/**
+ * Detect conventions from the index
+ * Analyzes exports, directories, and file suffixes
+ * Returns conventions object with detected patterns
+ */
+function detectConventions(index) {
+  const conventions = {
+    version: 1,
+    updated: Date.now(),
+    naming: {},
+    directories: {},
+    suffixes: {}
+  };
+
+  if (!index || !index.files) {
+    return conventions;
+  }
+
+  // Collect all exports across all files for naming analysis
+  const caseCounts = {};
+  let totalExports = 0;
+
+  // Collect directory info
+  const directoryCounts = {};
+
+  // Collect suffix patterns
+  const suffixCounts = {};
+
+  for (const [filePath, fileData] of Object.entries(index.files)) {
+    // Analyze exports for naming conventions
+    if (fileData.exports && Array.isArray(fileData.exports)) {
+      for (const exportName of fileData.exports) {
+        const caseType = detectCase(exportName);
+        if (caseType) {
+          caseCounts[caseType] = (caseCounts[caseType] || 0) + 1;
+          totalExports++;
+        }
+      }
+    }
+
+    // Analyze directory structure
+    const dirParts = filePath.split(path.sep);
+    for (const dirName of dirParts) {
+      const purpose = DIRECTORY_PURPOSES[dirName];
+      if (purpose) {
+        const dirKey = dirName;
+        if (!directoryCounts[dirKey]) {
+          directoryCounts[dirKey] = { purpose, files: 0 };
+        }
+        directoryCounts[dirKey].files++;
+      }
+    }
+
+    // Analyze file suffix patterns
+    const suffixMatch = filePath.match(/\.([a-z]+)\.(js|ts|jsx|tsx|mjs|cjs)$/i);
+    if (suffixMatch) {
+      const suffix = suffixMatch[1].toLowerCase();
+      const fullSuffix = `.${suffix}.${suffixMatch[2].toLowerCase()}`;
+      if (!suffixCounts[fullSuffix]) {
+        const purpose = SUFFIX_PURPOSES[suffix] || 'Unknown';
+        suffixCounts[fullSuffix] = { purpose, count: 0 };
+      }
+      suffixCounts[fullSuffix].count++;
+    }
+  }
+
+  // Determine dominant naming convention for exports
+  if (totalExports >= MIN_SAMPLES) {
+    let dominant = null;
+    let maxCount = 0;
+
+    for (const [caseType, count] of Object.entries(caseCounts)) {
+      if (count > maxCount) {
+        maxCount = count;
+        dominant = caseType;
+      }
+    }
+
+    if (dominant && (maxCount / totalExports) >= MIN_MATCH_RATE) {
+      conventions.naming.exports = {
+        dominant,
+        count: maxCount,
+        percentage: Math.round((maxCount / totalExports) * 100)
+      };
+    }
+  }
+
+  // Include directories with known purposes
+  for (const [dirName, data] of Object.entries(directoryCounts)) {
+    conventions.directories[dirName] = {
+      purpose: data.purpose,
+      files: data.files
+    };
+  }
+
+  // Include suffix patterns with 5+ occurrences
+  for (const [suffix, data] of Object.entries(suffixCounts)) {
+    if (data.count >= MIN_SAMPLES) {
+      conventions.suffixes[suffix] = {
+        purpose: data.purpose,
+        count: data.count
+      };
+    }
+  }
+
+  return conventions;
 }
 
 /**
