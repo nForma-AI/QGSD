@@ -29,11 +29,13 @@ This command performs bulk codebase scanning to bootstrap the Codebase Intellige
 After initial scan, the PostToolUse hook (hooks/intel-index.js) maintains incremental updates.
 
 **Execution model (Step 9 - Entity Generation):**
-- Claude (executing this command) generates entity content directly
-- No embedded JavaScript - Claude reads files and writes semantic documentation
-- Task tool to spawn subagents for batch processing large codebases
-- Each subagent processes 10 files, generating Purpose-focused entity markdown
-- Users can skip Step 9 if they only want the index (faster, less context)
+- Orchestrator selects files for entity generation (up to 50 based on priority)
+- Spawns `gsd-entity-generator` subagent with file list (paths only, not contents)
+- Subagent reads files in fresh 200k context, generates entities, writes to disk
+- PostToolUse hook automatically syncs entities to graph.db
+- Subagent returns statistics only (not entity contents)
+- This preserves orchestrator context for large codebases (500+ files)
+- Users can skip Step 9 if they only want the index (faster)
 </context>
 
 <process>
@@ -265,81 +267,126 @@ Select up to 50 files based on these criteria (in priority order):
 
 From the index.json, identify candidates and limit to 50 files maximum per run.
 
-### 9.3 Generate entities via Task tool batching
+### 9.3 Spawn entity generator subagent
 
-Process selected files in **batches of 10** using the Task tool to spawn subagents.
+Spawn `gsd-entity-generator` with the selected file list.
 
-For each batch, spawn a Task with this instruction:
+**Pass to subagent:**
+- Total file count
+- Output directory: `.planning/intel/entities/`
+- Slug convention: `src/lib/db.ts` -> `src-lib-db` (replace / with -, remove extension, lowercase)
+- Entity template (include full template from agent definition)
+- List of absolute file paths (one per line)
 
-```
-Generate semantic entity files for these source files:
-[list of 10 absolute file paths]
+**Task tool invocation:**
 
-For each file:
-1. Read the file content
-2. Write an entity markdown file to .planning/intel/entities/
+```python
+# Build file list (one absolute path per line)
+file_list = "\n".join(selected_files)
+today = date.today().isoformat()
 
-Entity filename convention (slug):
-- Take the relative path from project root
-- Replace / with --
-- Replace . with -
-- Example: src/utils/auth.js -> src--utils--auth-js.md
+Task(
+  prompt=f"""Generate semantic entity documentation for key codebase files.
 
-Entity template:
+You are a GSD entity generator. Read source files and create semantic documentation that captures PURPOSE (what/why), not just syntax.
+
+**Parameters:**
+- Files to process: {len(selected_files)}
+- Output directory: .planning/intel/entities/
+- Date: {today}
+
+**Slug convention:**
+- Remove leading /
+- Remove file extension
+- Replace / and . with -
+- Lowercase everything
+- Example: src/lib/db.ts -> src-lib-db
+
+**Entity template:**
+```markdown
 ---
-source: [absolute path]
-indexed: [ISO timestamp]
+path: {{absolute_path}}
+type: [module|component|util|config|api|hook|service|model|test]
+updated: {today}
+status: active
 ---
 
-# [filename]
+# {{filename}}
 
 ## Purpose
 
-[1-2 sentences: What does this file DO? Why does it exist? What problem does it solve?]
+[1-3 sentences: What does this file do? Why does it exist? What problem does it solve?]
 
 ## Exports
 
-| Name | Type | Purpose |
-|------|------|---------|
-| [export] | [function/class/const/type] | [what it does] |
+- `functionName(params): ReturnType` - Brief description
+- `ClassName` - What this class represents
+
+If no exports: "None"
 
 ## Dependencies
 
-| Import | Purpose |
-|--------|---------|
-| [import source] | [why this file needs it] |
+- [[internal-file-slug]] - Why needed (for internal deps)
+- external-package - What it provides (for npm packages)
+
+If no dependencies: "None"
 
 ## Used By
 
-[If this file is imported by others in the codebase, list the key consumers and why they use it. Otherwise: "Entry point" or "Utility - used across codebase"]
-
----
-
-Focus on PURPOSE and semantic understanding, not just listing syntax.
+TBD
 ```
+
+**Process:**
+For each file path below:
+1. Read file content using Read tool
+2. Analyze purpose, exports, dependencies
+3. Check if entity already exists (skip if so)
+4. Write entity to .planning/intel/entities/{{slug}}.md
+5. PostToolUse hook syncs to graph.db automatically
+
+**Files:**
+{file_list}
+
+**Return format:**
+When complete, return ONLY statistics:
+
+## ENTITY GENERATION COMPLETE
+
+**Files processed:** {{N}}
+**Entities created:** {{M}}
+**Already existed:** {{K}}
+**Errors:** {{E}}
+
+Entities written to: .planning/intel/entities/
+
+Do NOT include entity contents in your response.
+""",
+  subagent_type="gsd-entity-generator"
+)
+```
+
+**Wait for completion:** Task() blocks until subagent finishes.
+
+**Parse result:** Extract entities_created count from response for final report.
 
 ### 9.4 Verify entity generation
 
-After all batches complete:
+Confirm entities were written:
 
 ```bash
-ls .planning/intel/entities/*.md | wc -l
+ls .planning/intel/entities/*.md 2>/dev/null | wc -l
 ```
-
-Confirm entity count matches expected file count.
 
 ### 9.5 Report entity statistics
 
 ```
 Entity Generation Complete
 
-Entity files created: [N]
+Entity files created: [N] (from subagent response)
 Location: .planning/intel/entities/
+Graph database: Updated automatically via PostToolUse hook
 
-Batches processed: [N]
-Files per batch: 10
-
-Next: Intel hooks will continue incremental learning as you code.
+Next: Intel hooks will continue incremental updates as you code.
 ```
 
 </process>
