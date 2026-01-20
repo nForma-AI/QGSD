@@ -230,12 +230,22 @@ After user runs /gsd:plan-phase {Z} --gaps:
 <wave_execution>
 **Parallel spawning:**
 
-Spawn all plans in a wave with a single message containing multiple Task calls:
+Before spawning, read file contents. The `@` syntax does not work across Task() boundaries.
+
+```bash
+# Read each plan and STATE.md
+PLAN_01_CONTENT=$(cat "{plan_01_path}")
+PLAN_02_CONTENT=$(cat "{plan_02_path}")
+PLAN_03_CONTENT=$(cat "{plan_03_path}")
+STATE_CONTENT=$(cat .planning/STATE.md)
+```
+
+Spawn all plans in a wave with a single message containing multiple Task calls, with inlined content:
 
 ```
-Task(prompt="Execute plan at {plan_01_path}\n\nPlan: @{plan_01_path}\nProject state: @.planning/STATE.md", subagent_type="gsd-executor")
-Task(prompt="Execute plan at {plan_02_path}\n\nPlan: @{plan_02_path}\nProject state: @.planning/STATE.md", subagent_type="gsd-executor")
-Task(prompt="Execute plan at {plan_03_path}\n\nPlan: @{plan_03_path}\nProject state: @.planning/STATE.md", subagent_type="gsd-executor")
+Task(prompt="Execute plan at {plan_01_path}\n\nPlan:\n{plan_01_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
+Task(prompt="Execute plan at {plan_02_path}\n\nPlan:\n{plan_02_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
+Task(prompt="Execute plan at {plan_03_path}\n\nPlan:\n{plan_03_content}\n\nProject state:\n{state_content}", subagent_type="gsd-executor")
 ```
 
 All three run in parallel. Task tool blocks until all complete.

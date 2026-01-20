@@ -170,9 +170,18 @@ Execute each wave in sequence. Autonomous plans within a wave run in parallel.
    - Bad: "Executing terrain generation plan"
    - Good: "Procedural terrain generator using Perlin noise — creates height maps, biome zones, and collision meshes. Required before vehicle physics can interact with ground."
 
-2. **Spawn all autonomous agents in wave simultaneously:**
+2. **Read files and spawn all autonomous agents in wave simultaneously:**
 
-   Use Task tool with multiple parallel calls. Each agent gets prompt from subagent-task-prompt template:
+   Before spawning, read file contents. The `@` syntax does not work across Task() boundaries - content must be inlined.
+
+   ```bash
+   # Read each plan in the wave
+   PLAN_CONTENT=$(cat "{plan_path}")
+   STATE_CONTENT=$(cat .planning/STATE.md)
+   CONFIG_CONTENT=$(cat .planning/config.json 2>/dev/null)
+   ```
+
+   Use Task tool with multiple parallel calls. Each agent gets prompt with inlined content:
 
    ```
    <objective>
@@ -189,9 +198,14 @@ Execute each wave in sequence. Autonomous plans within a wave run in parallel.
    </execution_context>
 
    <context>
-   Plan: @{plan_path}
-   Project state: @.planning/STATE.md
-   Config: @.planning/config.json (if exists)
+   Plan:
+   {plan_content}
+
+   Project state:
+   {state_content}
+
+   Config (if exists):
+   {config_content}
    </context>
 
    <success_criteria>
