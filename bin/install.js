@@ -413,6 +413,49 @@ function install(isGlobal) {
     console.log(`  ${green}✓${reset} Configured update check hook`);
   }
 
+  // Register intel hooks for codebase intelligence
+  const intelIndexCommand = isGlobal
+    ? 'node "$HOME/.claude/hooks/intel-index.js"'
+    : 'node .claude/hooks/intel-index.js';
+
+  const intelSessionCommand = isGlobal
+    ? 'node "$HOME/.claude/hooks/intel-session.js"'
+    : 'node .claude/hooks/intel-session.js';
+
+  // PostToolUse hook for indexing
+  if (!settings.hooks.PostToolUse) {
+    settings.hooks.PostToolUse = [];
+  }
+
+  const hasIntelIndexHook = settings.hooks.PostToolUse.some(entry =>
+    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('intel-index'))
+  );
+
+  if (!hasIntelIndexHook) {
+    settings.hooks.PostToolUse.push({
+      hooks: [{
+        type: 'command',
+        command: intelIndexCommand
+      }]
+    });
+    console.log(`  ${green}✓${reset} Configured intel indexing hook`);
+  }
+
+  // SessionStart hook for context injection
+  const hasIntelSessionHook = settings.hooks.SessionStart.some(entry =>
+    entry.hooks && entry.hooks.some(h => h.command && h.command.includes('intel-session'))
+  );
+
+  if (!hasIntelSessionHook) {
+    settings.hooks.SessionStart.push({
+      hooks: [{
+        type: 'command',
+        command: intelSessionCommand
+      }]
+    });
+    console.log(`  ${green}✓${reset} Configured intel session hook`);
+  }
+
   return { settingsPath, settings, statuslineCommand };
 }
 
