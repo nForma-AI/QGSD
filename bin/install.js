@@ -162,6 +162,7 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
 function cleanupOrphanedFiles(claudeDir) {
   const orphanedFiles = [
     'hooks/gsd-notify.sh',  // Removed in v1.6.x
+    'hooks/statusline.js',  // Renamed to gsd-statusline.js in v1.9.0
   ];
 
   for (const relPath of orphanedFiles) {
@@ -179,6 +180,7 @@ function cleanupOrphanedFiles(claudeDir) {
 function cleanupOrphanedHooks(settings) {
   const orphanedHookPatterns = [
     'gsd-notify.sh',  // Removed in v1.6.x
+    'hooks/statusline.js',  // Renamed to gsd-statusline.js in v1.9.0
   ];
 
   let cleaned = false;
@@ -353,19 +355,22 @@ function install(isGlobal) {
     failures.push('VERSION');
   }
 
-  // Copy hooks
-  const hooksSrc = path.join(src, 'hooks');
+  // Copy hooks from dist/ (bundled with dependencies)
+  const hooksSrc = path.join(src, 'hooks', 'dist');
   if (fs.existsSync(hooksSrc)) {
     const hooksDest = path.join(claudeDir, 'hooks');
     fs.mkdirSync(hooksDest, { recursive: true });
     const hookEntries = fs.readdirSync(hooksSrc);
     for (const entry of hookEntries) {
       const srcFile = path.join(hooksSrc, entry);
-      const destFile = path.join(hooksDest, entry);
-      fs.copyFileSync(srcFile, destFile);
+      // Only copy files, not directories
+      if (fs.statSync(srcFile).isFile()) {
+        const destFile = path.join(hooksDest, entry);
+        fs.copyFileSync(srcFile, destFile);
+      }
     }
     if (verifyInstalled(hooksDest, 'hooks')) {
-      console.log(`  ${green}✓${reset} Installed hooks`);
+      console.log(`  ${green}✓${reset} Installed hooks (bundled)`);
     } else {
       failures.push('hooks');
     }
@@ -382,8 +387,8 @@ function install(isGlobal) {
   const settingsPath = path.join(claudeDir, 'settings.json');
   const settings = cleanupOrphanedHooks(readSettings(settingsPath));
   const statuslineCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/statusline.js"'
-    : 'node .claude/hooks/statusline.js';
+    ? 'node "$HOME/.claude/hooks/gsd-statusline.js"'
+    : 'node .claude/hooks/gsd-statusline.js';
   const updateCheckCommand = isGlobal
     ? 'node "$HOME/.claude/hooks/gsd-check-update.js"'
     : 'node .claude/hooks/gsd-check-update.js';

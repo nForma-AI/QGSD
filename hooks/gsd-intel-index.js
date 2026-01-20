@@ -25,7 +25,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const initSqlJs = require('sql.js');
+const { execSync } = require('child_process');
+// Use ASM.js version for bundling (no WASM file dependency)
+const initSqlJs = require('sql.js/dist/sql-asm.js');
 
 // Graph database schema (simple-graph pattern)
 const GRAPH_SCHEMA = `
@@ -610,6 +612,121 @@ function extractPurpose(content) {
 }
 
 /**
+ * Generate entity slug from file path
+ * e.g., 'src/lib/db.ts' -> 'src-lib-db'
+ */
+function generateSlug(filePath) {
+  return filePath
+    .replace(/^\/+/, '')           // Remove leading slashes
+    .replace(/\.[^.]+$/, '')       // Remove extension
+    .replace(/[\/\\]/g, '-')       // Replace path separators with hyphens
+    .replace(/[^a-zA-Z0-9-]/g, '-') // Replace non-alphanumeric with hyphens
+    .replace(/-+/g, '-')           // Collapse multiple hyphens
+    .replace(/^-|-$/g, '')         // Remove leading/trailing hyphens
+    .toLowerCase();
+}
+
+/**
+ * Check if signature (exports/imports) changed
+ * Returns true if entity should be regenerated
+ */
+function signatureChanged(prevEntry, exports, imports) {
+  if (!prevEntry) return true; // New file
+
+  const prevExports = JSON.stringify(prevEntry.exports || []);
+  const prevImports = JSON.stringify(prevEntry.imports || []);
+  const newExports = JSON.stringify(exports);
+  const newImports = JSON.stringify(imports);
+
+  return prevExports !== newExports || prevImports !== newImports;
+}
+
+/**
+ * Generate semantic entity file using Claude
+ * Spawns `claude -p` to analyze file and generate entity markdown
+ *
+ * @param {string} filePath - Path to the code file
+ * @param {string} content - File content
+ * @param {Array} exports - Extracted exports
+ * @param {Array} imports - Extracted imports
+ */
+async function generateEntity(filePath, content, exports, imports) {
+  const intelDir = path.join(process.cwd(), '.planning', 'intel');
+  const entitiesDir = path.join(intelDir, 'entities');
+
+  // Ensure entities directory exists
+  if (!fs.existsSync(entitiesDir)) {
+    fs.mkdirSync(entitiesDir, { recursive: true });
+  }
+
+  const slug = generateSlug(filePath);
+  const entityPath = path.join(entitiesDir, `${slug}.md`);
+  const today = new Date().toISOString().split('T')[0];
+
+  // Build prompt for Claude
+  const prompt = `Analyze this code file and generate ONLY the entity markdown (no explanation, no code fences).
+
+Path: ${filePath}
+Exports: ${exports.join(', ') || 'none'}
+Imports: ${imports.join(', ') || 'none'}
+
+Content:
+${content.slice(0, 3000)}${content.length > 3000 ? '\n... (truncated)' : ''}
+
+Output this EXACT format (fill in the brackets):
+
+---
+path: ${filePath}
+type: [module|component|util|config|api|hook|service|model|test]
+updated: ${today}
+status: active
+---
+
+# ${path.basename(filePath)}
+
+## Purpose
+
+[1-2 sentences: What does this file do? Why does it exist?]
+
+## Exports
+
+[List each export with brief description, or "None" if no exports]
+
+## Dependencies
+
+[List internal deps as [[slug]] wiki-links, external as plain text, or "None"]
+
+## Used By
+
+TBD
+
+## Notes
+
+[Optional: any important patterns or gotchas, or remove this section]`;
+
+  try {
+    // Spawn claude -p with timeout
+    const cmd = `claude -p "${prompt.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+    const result = execSync(cmd, {
+      encoding: 'utf8',
+      timeout: 30000, // 30 second timeout
+      maxBuffer: 1024 * 1024 // 1MB buffer
+    });
+
+    // Write entity file
+    fs.writeFileSync(entityPath, result.trim());
+
+    // Sync to graph
+    await syncEntityToGraph(entityPath);
+
+    return entityPath;
+  } catch (e) {
+    // Silent failure - don't block on entity generation errors
+    return null;
+  }
+}
+
+/**
  * Generate semantic summary from graph database
  * Target: < 500 tokens for context injection
  */
@@ -1057,8 +1174,40 @@ process.stdin.on('end', () => {
     const exports = extractExports(content);
     const imports = extractImports(content);
 
-    // Update index
+    // Check if signature changed (triggers entity regeneration)
+    const intelDir = path.join(process.cwd(), '.planning', 'intel');
+    const indexPath = path.join(intelDir, 'index.json');
+    let prevEntry = null;
+
+    if (fs.existsSync(indexPath)) {
+      try {
+        const indexContent = fs.readFileSync(indexPath, 'utf8');
+        const index = JSON.parse(indexContent);
+        const normalizedPath = path.resolve(filePath);
+        prevEntry = index.files?.[normalizedPath];
+      } catch (e) {
+        // Ignore read errors
+      }
+    }
+
+    // Update index first (always)
     updateIndex(filePath, exports, imports);
+
+    // Generate entity if signature changed
+    if (fs.existsSync(intelDir) && signatureChanged(prevEntry, exports, imports)) {
+      generateEntity(filePath, content, exports, imports)
+        .then(async (entityPath) => {
+          if (entityPath) {
+            // Regenerate summary after new entity
+            await regenerateEntitySummary();
+          }
+          process.exit(0);
+        })
+        .catch(() => {
+          process.exit(0);
+        });
+      return; // Wait for async
+    }
 
     process.exit(0);
   } catch (error) {

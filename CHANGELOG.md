@@ -28,6 +28,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - Orchestrators now inline file contents in Task prompts (fixes context issues with @ references)
 - Tech debt from milestone audit addressed
+- All hooks now use `gsd-` prefix for consistency (statusline.js → gsd-statusline.js)
 
 ## [1.8.0] - 2026-01-19
 
