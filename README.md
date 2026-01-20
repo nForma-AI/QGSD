@@ -324,6 +324,39 @@ Use for: bug fixes, small features, config changes, one-off tasks.
 
 ## Why It Works
 
+### Codebase Intelligence
+
+GSD learns your codebase patterns automatically. As Claude writes code, a PostToolUse hook indexes exports and imports, detects naming conventions, and builds a lightweight intelligence layer.
+
+**How it works:**
+
+1. **Automatic learning** — Every time Claude writes or edits a JS/TS file, the hook extracts exports/imports and updates `.planning/intel/index.json`
+2. **Convention detection** — Analyzes exports for naming patterns (camelCase, PascalCase, etc.), identifies directory purposes, detects file suffixes
+3. **Context injection** — At session start, injects a summary into Claude's context so it knows your codebase structure and conventions
+
+**For existing codebases:**
+
+```
+/gsd:analyze-codebase
+```
+
+Performs a bulk scan of your codebase to bootstrap the intelligence layer. Works standalone — no `/gsd:new-project` required. After initial analysis, hooks continue incremental learning.
+
+**Files created:**
+
+| File | Purpose |
+|------|---------|
+| `.planning/intel/index.json` | File exports and imports index |
+| `.planning/intel/conventions.json` | Detected patterns (naming, directories, suffixes) |
+| `.planning/intel/summary.md` | Concise context for session injection |
+
+**Benefits:**
+
+- Claude follows your naming conventions automatically
+- New files go in the right directories
+- Consistency maintained across sessions
+- No manual documentation of patterns needed
+
 ### Context Engineering
 
 Claude Code is incredibly powerful *if* you give it the context it needs. Most people don't.
@@ -431,6 +464,7 @@ You're never locked in. The system adapts.
 | Command | What it does |
 |---------|--------------|
 | `/gsd:map-codebase` | Analyze existing codebase before new-project |
+| `/gsd:analyze-codebase` | Bootstrap codebase intelligence for existing projects |
 
 ### Phase Management
 
@@ -451,12 +485,47 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
+| `/gsd:settings` | Toggle workflow agents (research, plan checker, verifier) |
 | `/gsd:add-todo [desc]` | Capture idea for later |
 | `/gsd:check-todos` | List pending todos |
 | `/gsd:debug [desc]` | Systematic debugging with persistent state |
 | `/gsd:quick` | Execute ad-hoc task with GSD guarantees |
 
 <sup>¹ Contributed by reddit user OracleGreyBeard</sup>
+
+---
+
+## Configuration
+
+GSD stores project settings in `.planning/config.json`. Configure during `/gsd:new-project` or update later with `/gsd:settings`.
+
+### Core Settings
+
+| Setting | Options | Default | What it controls |
+|---------|---------|---------|------------------|
+| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
+| `depth` | `quick`, `standard`, `comprehensive` | `standard` | Planning thoroughness (phases × plans) |
+
+### Workflow Agents
+
+These spawn additional agents during planning/execution. They improve quality but add tokens and time.
+
+| Setting | Default | What it does |
+|---------|---------|--------------|
+| `workflow.research` | `true` | Researches domain before planning each phase |
+| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
+| `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
+
+Use `/gsd:settings` to toggle these, or override per-invocation:
+- `/gsd:plan-phase --skip-research`
+- `/gsd:plan-phase --skip-verify`
+
+### Execution
+
+| Setting | Default | What it controls |
+|---------|---------|------------------|
+| `parallelization.enabled` | `true` | Run independent plans simultaneously |
+| `planning.commit_docs` | `true` | Track `.planning/` in git |
 
 ---
 
