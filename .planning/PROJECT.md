@@ -1,12 +1,22 @@
-# GSD Quick Mode
+# GSD Codebase Intelligence
 
 ## What This Is
 
-A fast-path command (`/gsd:quick`) for GSD that executes small tasks with the same guarantees (atomic commits, STATE.md tracking) but skips optional verification agents. Reduces agent spawns from 5-8 to 2 (planner + executor) for tasks where the user already knows what to do.
+A living codebase knowledge system for GSD that learns project structure and conventions as code is written, injecting accumulated understanding into every Claude session. Enables Claude to "just know" the codebase without manual documentation or stale snapshots.
 
 ## Core Value
 
-Same guarantees, 50-70% fewer tokens for simple tasks.
+Claude understands your codebase structure and conventions before it starts working — automatically.
+
+## Current Milestone: v1.9.0 Codebase Intelligence System
+
+**Goal:** Make GSD feel intelligent and automagical in how it navigates and understands both greenfield and brownfield projects.
+
+**Target features:**
+- Automatic codebase indexing via hooks (greenfield learns as you build)
+- Deep analysis command for brownfield projects
+- Session-start context injection with codebase awareness
+- Convention detection and pattern learning
 
 ## Requirements
 
@@ -25,32 +35,25 @@ Same guarantees, 50-70% fewer tokens for simple tasks.
 
 ### Active
 
-- [ ] `/gsd:resume-work` handles decimal phases (3.1, 3.2)
+*Defined in REQUIREMENTS.md*
 
 ### Out of Scope
 
-- `--plan-only` flag — MVP is always execute
-- `--after N` flag — always inserts after current phase
-- `--standalone` flag — requires active project, no exceptions
-- Node.js helper scripts — Claude handles decimal parsing inline
-- Git status warnings — commits only its own files anyway
-- Planner modifications — planner unchanged, orchestrator skips agents
-- gsd-verifier — verification skipped by design
-- Requirements mapping — quick tasks are ad-hoc
-- `/gsd:squash-quick` — future enhancement if fragmentation becomes a problem
-- Decimal phases in ROADMAP.md — Quick tasks use `.planning/quick/` instead
-- Handles multiple plans with wave-based execution — Quick tasks are single-plan by design
+- `/gsd:resume-work` decimal phase handling — deferred from v1.8.0
+- Semantic embeddings / vector search — future milestone
+- Cross-project convention sharing — future milestone
+- Framework auto-detection — future milestone
 
 ## Context
 
-Shipped v1.8.0 with `/gsd:quick` command. Quick tasks live in `.planning/quick/NNN-slug/` directories with sequential numbering. Each quick task spawns planner + executor and commits atomically.
-
-Design change: Quick tasks don't integrate with ROADMAP.md or use decimal phases. They're tracked separately in STATE.md's Quick Tasks Completed table.
+GSD's document ecosystem (PROJECT.md, ROADMAP.md, STATE.md, PLAN.md) tracks planning intent and execution outcomes. The Codebase Intelligence System adds a parallel code layer that tracks what actually exists in the codebase — files, exports, naming patterns, directory structure.
 
 ## Constraints
 
-- **Artifacts**: Same artifacts as full mode (PLAN.md, SUMMARY.md)
-- **Directory**: Quick tasks in `.planning/quick/`, not `.planning/phases/`
+- **Zero API calls** for core functionality (local computation only)
+- **Hook-based** integration using Claude Code's native infrastructure
+- **Advisory only** — never block Claude's workflow
+- **Lightweight** — minimal storage, fast operations
 
 ## Key Decisions
 
@@ -58,10 +61,8 @@ Design change: Quick tasks don't integrate with ROADMAP.md or use decimal phases
 |----------|-----------|---------|
 | No planner changes | Quick mode is orchestrator-level, not agent-level | ✓ Good |
 | No decimal phases | Quick tasks don't need ROADMAP integration | ✓ Good — simpler |
-| No flags for MVP | Simplest possible interface | ✓ Good |
 | Quick Tasks table in STATE.md | Better tracking than just Last activity | ✓ Good |
 | Error if no ROADMAP | Maintains state integrity, no standalone mode | ✓ Good |
-| Orchestration inline in command | No separate workflow needed for simple flow | ✓ Good |
 
 ---
-*Last updated: 2026-01-19 after v1.8.0 milestone*
+*Last updated: 2026-01-19 — starting v1.9.0 milestone*
