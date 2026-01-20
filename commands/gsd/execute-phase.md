@@ -79,6 +79,11 @@ Phase: $ARGUMENTS
    **If clean:** Continue to verification.
 
 7. **Verify phase goal**
+   Check config: `WORKFLOW_VERIFIER=$(cat .planning/config.json 2>/dev/null | grep -o '"verifier"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")`
+
+   **If `workflow.verifier` is `false`:** Skip to step 8 (treat as passed).
+
+   **Otherwise:**
    - Spawn `gsd-verifier` subagent with phase directory and goal
    - Verifier checks must_haves against actual codebase (not SUMMARY claims)
    - Creates VERIFICATION.md with detailed report

@@ -107,6 +107,14 @@ fi
 
 **If `--skip-research` flag:** Skip to step 6.
 
+**Check config for research setting:**
+
+```bash
+WORKFLOW_RESEARCH=$(cat .planning/config.json 2>/dev/null | grep -o '"research"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")
+```
+
+**If `workflow.research` is `false` AND `--research` flag NOT set:** Skip to step 6.
+
 **Otherwise:**
 
 Check for existing research:
@@ -301,6 +309,8 @@ Parse planner output:
 **`## PLANNING COMPLETE`:**
 - Display: `Planner created {N} plan(s). Files on disk.`
 - If `--skip-verify`: Skip to step 13
+- Check config: `WORKFLOW_PLAN_CHECK=$(cat .planning/config.json 2>/dev/null | grep -o '"plan_check"[[:space:]]*:[[:space:]]*[^,}]*' | grep -o 'true\|false' || echo "true")`
+- If `workflow.plan_check` is `false`: Skip to step 13
 - Otherwise: Proceed to step 10
 
 **`## CHECKPOINT REACHED`:**
