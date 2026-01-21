@@ -76,17 +76,6 @@ Map an existing codebase for brownfield projects.
 
 Usage: `/gsd:map-codebase`
 
-**`/gsd:analyze-codebase`**
-Bootstrap codebase intelligence for existing projects.
-
-- Scans all JS/TS files and extracts exports/imports
-- Detects naming conventions, directory patterns, file suffixes
-- Creates `.planning/intel/` with index, conventions, and summary
-- Works standalone (no `/gsd:new-project` required)
-- After initial scan, PostToolUse hook continues incremental learning
-
-Usage: `/gsd:analyze-codebase`
-
 ### Phase Planning
 
 **`/gsd:discuss-phase <number>`**
@@ -339,19 +328,6 @@ Quick switch model profile for GSD agents.
 
 Usage: `/gsd:set-profile budget`
 
-### Codebase Intelligence
-
-**`/gsd:query-intel <type> [path]`**
-Query the codebase intelligence graph database.
-
-- `dependents <file>` — What files depend on this? (blast radius)
-- `hotspots` — Which files have the most dependents?
-
-Requires `/gsd:analyze-codebase` to build the graph first.
-
-Usage: `/gsd:query-intel dependents src/lib/db.ts`
-Usage: `/gsd:query-intel hotspots`
-
 ### Utility Commands
 
 **`/gsd:help`**
@@ -389,10 +365,6 @@ Usage: `/gsd:update`
 │   └── done/             # Completed todos
 ├── debug/                # Active debug sessions
 │   └── resolved/         # Archived resolved issues
-├── intel/                # Codebase intelligence (auto-populated)
-│   ├── index.json        # File exports and imports
-│   ├── conventions.json  # Detected patterns
-│   └── summary.md        # Context for session injection
 ├── codebase/             # Codebase map (brownfield projects)
 │   ├── STACK.md          # Languages, frameworks, dependencies
 │   ├── ARCHITECTURE.md   # Patterns, layers, data flow

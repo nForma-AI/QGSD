@@ -6,24 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed
+- **Codebase Intelligence System** — Removed due to overengineering concerns
+  - Deleted `/gsd:analyze-codebase` command
+  - Deleted `/gsd:query-intel` command
+  - Removed SQLite graph database and sql.js dependency (21MB)
+  - Removed intel hooks (gsd-intel-index.js, gsd-intel-session.js, gsd-intel-prune.js)
+  - Removed entity file generation and templates
+
 ## [1.9.0] - 2025-01-20
 
 ### Added
-- **Codebase Intelligence System** — Automatic semantic understanding of your codebase
-  - `/gsd:analyze-codebase` now generates semantic entities (modules, services, utils) from AST analysis
-  - `/gsd:query-intel` command for CLI access to dependency graph (`dependents`, `hotspots`)
-  - SQLite graph database (`.planning/intel/graph.db`) stores entity relationships
-  - SessionStart hook injects relevant codebase context into conversations
-  - PostToolUse hook maintains index incrementally as files change
-  - Stop hook prunes deleted files from index
 - **Model Profiles** — `/gsd:set-profile` for quality/balanced/budget agent configurations
 - **Workflow Settings** — `/gsd:settings` command for toggling workflow behaviors interactively
-
-### Changed
-- Subagent prompts now include codebase intelligence context when available
-- New project initialization creates intel directory structure
-- Install process registers intel hooks automatically
-- Documentation updated: help.md, README.md with new commands and codebase intelligence features
 
 ### Fixed
 - Orchestrators now inline file contents in Task prompts (fixes context issues with @ references)

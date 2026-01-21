@@ -249,9 +249,6 @@ RESEARCH_CONTENT=$(cat "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null)
 # Gap closure files (only if --gaps mode)
 VERIFICATION_CONTENT=$(cat "${PHASE_DIR}"/*-VERIFICATION.md 2>/dev/null)
 UAT_CONTENT=$(cat "${PHASE_DIR}"/*-UAT.md 2>/dev/null)
-
-# Codebase intelligence (if exists)
-INTEL_CONTENT=$(cat .planning/intel/summary.md 2>/dev/null)
 ```
 
 ## 8. Spawn gsd-planner Agent
@@ -291,11 +288,6 @@ Fill prompt with inlined content and spawn:
 **Gap Closure (if --gaps mode):**
 {verification_content}
 {uat_content}
-
-**Codebase Intel (if exists):**
-<codebase-intel>
-{intel_content}
-</codebase-intel>
 
 </planning_context>
 

@@ -36,8 +36,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "esbuild": "^0.24.0",
-    "sql.js": "^1.12.0"
+    "esbuild": "^0.24.0"
   },
   "scripts": {
     "build:hooks": "node scripts/build-hooks.js",
