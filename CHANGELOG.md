@@ -6,6 +6,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.9.4] - 2026-01-21
+
+### Changed
+- Checkpoint automation now enforces automation-first principle: Claude starts servers, handles CLI installs, and fixes setup failures before presenting checkpoints to users
+- Added server lifecycle protocol (port conflict handling, background process management)
+- Added CLI auto-installation handling with safe-to-install matrix
+- Added pre-checkpoint failure recovery (fix broken environment before asking user to verify)
+- DRY refactor: checkpoints.md is now single source of truth for automation patterns
+
 ## [1.9.2] - 2025-01-21
 
 ### Removed
@@ -981,7 +990,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.4...HEAD
+[1.9.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.4
+[1.9.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.2
 [1.9.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.0
 [1.8.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.8.0
 [1.7.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.7.1
