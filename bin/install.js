@@ -106,6 +106,16 @@ function expandTilde(filePath) {
 }
 
 /**
+ * Build a hook command path using forward slashes for cross-platform compatibility.
+ * On Windows, $HOME is not expanded by cmd.exe/PowerShell, so we use the actual path.
+ */
+function buildHookCommand(claudeDir, hookName) {
+  // Use forward slashes for Node.js compatibility on all platforms
+  const hooksPath = claudeDir.replace(/\\/g, '/') + '/hooks/' + hookName;
+  return `node "${hooksPath}"`;
+}
+
+/**
  * Read and parse settings.json, returning empty object if doesn't exist
  */
 function readSettings(settingsPath) {
@@ -390,10 +400,10 @@ function install(isGlobal) {
   const settingsPath = path.join(claudeDir, 'settings.json');
   const settings = cleanupOrphanedHooks(readSettings(settingsPath));
   const statuslineCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/gsd-statusline.js"'
+    ? buildHookCommand(claudeDir, 'gsd-statusline.js')
     : 'node .claude/hooks/gsd-statusline.js';
   const updateCheckCommand = isGlobal
-    ? 'node "$HOME/.claude/hooks/gsd-check-update.js"'
+    ? buildHookCommand(claudeDir, 'gsd-check-update.js')
     : 'node .claude/hooks/gsd-check-update.js';
 
   // Configure SessionStart hook for update checking
