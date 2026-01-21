@@ -305,29 +305,39 @@ All recommended for important projects. Skip for quick experiments.
 questions: [
   {
     header: "Research",
-    question: "Spawn Plan Researcher? (researches domain before planning — adds tokens/time)",
+    question: "Research before planning each phase? (adds tokens/time)",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Research phase goals before planning" },
-      { label: "No", description: "Skip research, plan directly" }
+      { label: "Yes (Recommended)", description: "Investigate domain, find patterns, surface gotchas" },
+      { label: "No", description: "Plan directly from requirements" }
     ]
   },
   {
     header: "Plan Check",
-    question: "Spawn Plan Checker? (verifies plans before execution — adds tokens/time)",
+    question: "Verify plans will achieve their goals? (adds tokens/time)",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Verify plans meet phase goals" },
-      { label: "No", description: "Skip plan verification" }
+      { label: "Yes (Recommended)", description: "Catch gaps before execution starts" },
+      { label: "No", description: "Execute plans without verification" }
     ]
   },
   {
     header: "Verifier",
-    question: "Spawn Execution Verifier? (verifies phase completion — adds tokens/time)",
+    question: "Verify work satisfies requirements after each phase? (adds tokens/time)",
     multiSelect: false,
     options: [
-      { label: "Yes (Recommended)", description: "Verify must-haves after execution" },
-      { label: "No", description: "Skip post-execution verification" }
+      { label: "Yes (Recommended)", description: "Confirm deliverables match phase goals" },
+      { label: "No", description: "Trust execution, skip verification" }
+    ]
+  },
+  {
+    header: "Model Profile",
+    question: "Which AI models for planning agents?",
+    multiSelect: false,
+    options: [
+      { label: "Balanced (Recommended)", description: "Sonnet for most agents — good quality/cost ratio" },
+      { label: "Quality", description: "Opus for research/roadmap — higher cost, deeper analysis" },
+      { label: "Budget", description: "Haiku where possible — fastest, lowest cost" }
     ]
   }
 ]
@@ -341,6 +351,7 @@ Create `.planning/config.json` with all settings:
   "depth": "quick|standard|comprehensive",
   "parallelization": true|false,
   "commit_docs": true|false,
+  "model_profile": "quality|balanced|budget",
   "workflow": {
     "research": true|false,
     "plan_check": true|false,
