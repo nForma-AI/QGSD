@@ -28,6 +28,14 @@ This command performs bulk codebase scanning to bootstrap the Codebase Intellige
 
 After initial scan, the PostToolUse hook (hooks/intel-index.js) maintains incremental updates.
 
+**Execution model (Steps 2-3 - Indexing):**
+- Orchestrator finds file paths via Glob (Step 2)
+- Spawns `gsd-indexer` subagent with file paths only (Step 3)
+- Subagent reads files in fresh 200k context, applies regex patterns
+- Subagent writes index.json directly to disk
+- Subagent returns statistics only (not file contents or index data)
+- This prevents context exhaustion on large codebases (500+ files)
+
 **Execution model (Step 9 - Entity Generation):**
 - Orchestrator selects files for entity generation (up to 50 based on priority)
 - Spawns `gsd-entity-generator` subagent with file list (paths only, not contents)
@@ -60,44 +68,96 @@ Exclude directories (skip any path containing):
 - .next
 - __pycache__
 
-Filter results to remove excluded paths before processing.
+Filter results to remove excluded paths. Store as `file_paths` array.
 
-## Step 3: Process each file
+**Output:** List of absolute file paths for indexing. Do NOT read file contents.
 
-Initialize the index structure:
-```javascript
-{
-  version: 1,
-  updated: Date.now(),
-  files: {}
-}
+## Step 3: Spawn indexer subagent
+
+Spawn `gsd-indexer` subagent with the file paths from Step 2.
+
+**Why subagent delegation:**
+- Orchestrator would exhaust context reading 500+ files inline
+- Subagent gets fresh 200k context for file reading
+- Orchestrator only handles file paths (small)
+- Subagent writes index.json directly (large)
+
+**Task tool invocation:**
+
+```python
+file_list = "\n".join(file_paths)  # From Step 2 Glob results
+
+Task(
+  prompt=f"""Index codebase files by extracting exports and imports.
+
+You are a GSD indexer. Read source files and extract exports/imports using regex patterns.
+
+**Parameters:**
+- Files to process: {len(file_paths)}
+- Output path: .planning/intel/index.json
+
+**Export patterns:**
+- Named: export\\s*\\{{([^}}]+)\\}}
+- Declaration: export\\s+(?:const|let|var|function\\*?|async\\s+function|class)\\s+(\\w+)
+- Default: export\\s+default\\s+(?:function\\s*\\*?\\s*|class\\s+)?(\w+)?
+- CommonJS object: module\\.exports\\s*=\\s*\\{{([^}}]+)\\}}
+- CommonJS single: module\\.exports\\s*=\\s*(\\w+)\\s*[;\\n]
+- TypeScript: export\\s+(?:type|interface)\\s+(\\w+)
+
+**Import patterns:**
+- ES6: import\\s+(?:\\{{[^}}]*\\}}|\\*\\s+as\\s+\\w+|\\w+)\\s+from\\s+['\"]([^'\"]+)['\"]
+- Side-effect: import\\s+['\"]([^'\"]+)['\"]
+- CommonJS: require\\s*\\(\\s*['\"]([^'\"]+)['\"]\\s*\\)
+
+**Index schema:**
+```json
+{{
+  "version": 1,
+  "updated": {{timestamp}},
+  "files": {{
+    "/absolute/path/file.js": {{
+      "exports": ["name1", "name2"],
+      "imports": ["source1", "source2"],
+      "indexed": {{timestamp}}
+    }}
+  }}
+}}
 ```
 
-For each file found:
-
+**Process:**
+For each file path below:
 1. Read file content using Read tool
+2. Apply export regex patterns, collect export names
+3. Apply import regex patterns, collect import sources
+4. Store in index structure with absolute path as key
 
-2. Extract exports using these patterns:
-   - Named exports: `export\s*\{([^}]+)\}`
-   - Declaration exports: `export\s+(?:const|let|var|function\*?|async\s+function|class)\s+(\w+)`
-   - Default exports: `export\s+default\s+(?:function\s*\*?\s*|class\s+)?(\w+)?`
-   - CommonJS object: `module\.exports\s*=\s*\{([^}]+)\}`
-   - CommonJS single: `module\.exports\s*=\s*(\w+)\s*[;\n]`
-   - TypeScript: `export\s+(?:type|interface)\s+(\w+)`
+**Files:**
+{file_list}
 
-3. Extract imports using these patterns:
-   - ES6: `import\s+(?:\{[^}]*\}|\*\s+as\s+\w+|\w+)\s+from\s+['"]([^'"]+)['"]`
-   - Side-effect: `import\s+['"]([^'"]+)['"]` (not preceded by 'from')
-   - CommonJS: `require\s*\(\s*['"]([^'"]+)['"]\s*\)`
+**Return format:**
+When complete, return ONLY statistics:
 
-4. Store in index:
-   ```javascript
-   index.files[absolutePath] = {
-     exports: [],  // Array of export names
-     imports: [],  // Array of import sources
-     indexed: Date.now()
-   }
-   ```
+## INDEXING COMPLETE
+
+**Files processed:** {{N}}
+**Exports found:** {{M}}
+**Imports found:** {{K}}
+**Errors:** {{E}}
+
+Index written to: .planning/intel/index.json
+
+Do NOT return index contents.
+""",
+  subagent_type="gsd-indexer"
+)
+```
+
+**Wait for completion:** Task() blocks until subagent finishes.
+
+**Verify index created:**
+```bash
+ls -la .planning/intel/index.json
+```
 
 ## Step 4: Detect conventions
 
@@ -152,10 +212,16 @@ views -> View templates
 .fixture.*, .fixtures.* -> Test fixtures
 ```
 
-## Step 5: Write index.json
+## Step 5: Read index.json
 
-Write to `.planning/intel/index.json`:
-```javascript
+The `gsd-indexer` subagent wrote index.json in Step 3. Read it back for convention detection and statistics.
+
+```bash
+cat .planning/intel/index.json
+```
+
+Expected schema:
+```json
 {
   "version": 1,
   "updated": 1737360330000,
