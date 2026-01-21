@@ -6,6 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.9.2] - 2025-01-21
+
 ### Removed
 - **Codebase Intelligence System** — Removed due to overengineering concerns
   - Deleted `/gsd:analyze-codebase` command
@@ -13,6 +15,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Removed SQLite graph database and sql.js dependency (21MB)
   - Removed intel hooks (gsd-intel-index.js, gsd-intel-session.js, gsd-intel-prune.js)
   - Removed entity file generation and templates
+
+### Fixed
+- new-project now properly includes model_profile in config
 
 ## [1.9.0] - 2025-01-20
 
