@@ -6,10 +6,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.9.7] - 2026-01-22
+
 ### Fixed
-- OpenCode installer now uses correct config path (`~/.config/opencode/`) instead of `~/.opencode/`
-- OpenCode commands use correct directory structure (`command/gsd-help.md` not `commands/gsd/help.md`)
-- OpenCode permissions written to `~/.config/opencode/opencode.json` instead of `~/.opencode.json`
+- OpenCode installer now uses correct XDG-compliant config path (`~/.config/opencode/`) instead of `~/.opencode/`
+- OpenCode commands use flat structure (`command/gsd-help.md`) matching OpenCode's expected format
+- OpenCode permissions written to `~/.config/opencode/opencode.json`
 
 ## [1.9.6] - 2026-01-22
 
