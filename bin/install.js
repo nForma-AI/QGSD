@@ -15,6 +15,13 @@ const reset = '\x1b[0m';
 // Get version from package.json
 const pkg = require('../package.json');
 
+// Parse args
+const args = process.argv.slice(2);
+const hasGlobal = args.includes('--global') || args.includes('-g');
+const hasLocal = args.includes('--local') || args.includes('-l');
+const hasOpencode = args.includes('--opencode');
+const claudeDirName = hasOpencode ? '.opencode' : '.claude'
+
 const banner = `
 ${cyan}   ██████╗ ███████╗██████╗
   ██╔════╝ ██╔════╝██╔══██╗
@@ -25,13 +32,8 @@ ${cyan}   ██████╗ ███████╗██████╗
 
   Get Shit Done ${dim}v${pkg.version}${reset}
   A meta-prompting, context engineering and spec-driven
-  development system for Claude Code by TÂCHES.
+  development system for Claude Code (and opencode) by TÂCHES.
 `;
-
-// Parse args
-const args = process.argv.slice(2);
-const hasGlobal = args.includes('--global') || args.includes('-g');
-const hasLocal = args.includes('--local') || args.includes('-l');
 
 // Parse --config-dir argument
 function parseConfigDirArg() {
@@ -73,6 +75,7 @@ if (hasHelp) {
     ${cyan}-c, --config-dir <path>${reset}   Specify custom Claude config directory
     ${cyan}-h, --help${reset}                Show this help message
     ${cyan}--force-statusline${reset}        Replace existing statusline config
+    ${cyan}--opencode${reset}                Install for opencode development
 
   ${yellow}Examples:${reset}
     ${dim}# Install to default ~/.claude directory${reset}
@@ -116,7 +119,7 @@ function buildHookCommand(claudeDir, hookName) {
 }
 
 /**
- * Read and parse settings.json, returning empty object if doesn't exist
+ * Read and parse settings.json, returning empty object if it doesn't exist
  */
 function readSettings(settingsPath) {
   if (fs.existsSync(settingsPath)) {
@@ -134,6 +137,157 @@ function readSettings(settingsPath) {
  */
 function writeSettings(settingsPath, settings) {
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
+}
+
+/**
+ * Convert Claude Code frontmatter to opencode format
+ * - Converts 'allowed-tools:' array to 'permission:' object
+ * @param {string} content - Markdown file content with YAML frontmatter
+ * @returns {string} - Content with converted frontmatter
+ */
+// Color name to hex mapping for opencode compatibility
+const colorNameToHex = {
+  cyan: '#00FFFF',
+  red: '#FF0000',
+  green: '#00FF00',
+  blue: '#0000FF',
+  yellow: '#FFFF00',
+  magenta: '#FF00FF',
+  orange: '#FFA500',
+  purple: '#800080',
+  pink: '#FFC0CB',
+  white: '#FFFFFF',
+  black: '#000000',
+  gray: '#808080',
+  grey: '#808080',
+};
+
+// Tool name mapping from Claude Code to OpenCode
+// OpenCode uses lowercase tool names; special mappings for renamed tools
+const claudeToOpencodeTools = {
+  AskUserQuestion: 'question',
+  SlashCommand: 'skill',
+  TodoWrite: 'todowrite',
+  WebFetch: 'webfetch',
+  WebSearch: 'websearch',  // Plugin/MCP - keep for compatibility
+};
+
+/**
+ * Convert a Claude Code tool name to OpenCode format
+ * - Applies special mappings (AskUserQuestion -> question, etc.)
+ * - Converts to lowercase (except MCP tools which keep their format)
+ */
+function convertToolName(claudeTool) {
+  // Check for special mapping first
+  if (claudeToOpencodeTools[claudeTool]) {
+    return claudeToOpencodeTools[claudeTool];
+  }
+  // MCP tools (mcp__*) keep their format
+  if (claudeTool.startsWith('mcp__')) {
+    return claudeTool;
+  }
+  // Default: convert to lowercase
+  return claudeTool.toLowerCase();
+}
+
+function convertClaudeToOpencodeFrontmatter(content) {
+  // Replace tool name references in content (applies to all files)
+  let convertedContent = content;
+  convertedContent = convertedContent.replace(/\bAskUserQuestion\b/g, 'question');
+  convertedContent = convertedContent.replace(/\bSlashCommand\b/g, 'skill');
+  convertedContent = convertedContent.replace(/\bTodoWrite\b/g, 'todowrite');
+  // Replace /gsd:command with /gsd/command for opencode
+  convertedContent = convertedContent.replace(/\/gsd:/g, '/gsd/');
+  // Replace ~/.claude with ~/.opencode
+  convertedContent = convertedContent.replace(/~\/\.claude\b/g, '~/.opencode');
+
+  // Check if content has frontmatter
+  if (!convertedContent.startsWith('---')) {
+    return convertedContent;
+  }
+
+  // Find the end of frontmatter
+  const endIndex = convertedContent.indexOf('---', 3);
+  if (endIndex === -1) {
+    return convertedContent;
+  }
+
+  const frontmatter = convertedContent.substring(3, endIndex).trim();
+  const body = convertedContent.substring(endIndex + 3);
+
+  // Parse frontmatter line by line (simple YAML parsing)
+  const lines = frontmatter.split('\n');
+  const newLines = [];
+  let inAllowedTools = false;
+  const allowedTools = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Detect start of allowed-tools array
+    if (trimmed.startsWith('allowed-tools:')) {
+      inAllowedTools = true;
+      continue;
+    }
+
+    // Detect inline tools: field (comma-separated string)
+    if (trimmed.startsWith('tools:')) {
+      const toolsValue = trimmed.substring(6).trim();
+      if (toolsValue) {
+        // Parse comma-separated tools
+        const tools = toolsValue.split(',').map(t => t.trim()).filter(t => t);
+        allowedTools.push(...tools);
+      }
+      continue;
+    }
+
+    // Remove name: field - opencode uses filename for command name
+    if (trimmed.startsWith('name:')) {
+      continue;
+    }
+
+    // Convert color names to hex for opencode
+    if (trimmed.startsWith('color:')) {
+      const colorValue = trimmed.substring(6).trim().toLowerCase();
+      const hexColor = colorNameToHex[colorValue];
+      if (hexColor) {
+        newLines.push(`color: "${hexColor}"`);
+      } else if (colorValue.startsWith('#')) {
+        // Already hex, keep as is
+        newLines.push(line);
+      }
+      // Skip unknown color names
+      continue;
+    }
+
+    // Collect allowed-tools items
+    if (inAllowedTools) {
+      if (trimmed.startsWith('- ')) {
+        allowedTools.push(trimmed.substring(2).trim());
+        continue;
+      } else if (trimmed && !trimmed.startsWith('-')) {
+        // End of array, new field started
+        inAllowedTools = false;
+      }
+    }
+
+    // Keep other fields (including name: which opencode ignores)
+    if (!inAllowedTools) {
+      newLines.push(line);
+    }
+  }
+
+  // Add tools object if we had allowed-tools or tools
+  if (allowedTools.length > 0) {
+    newLines.push('tools:');
+    for (const tool of allowedTools) {
+      newLines.push(`  ${convertToolName(tool)}: true`);
+    }
+  }
+
+  // Rebuild frontmatter (body already has tool names converted)
+  const newFrontmatter = newLines.join('\n').trim();
+  return `---\n${newFrontmatter}\n---${body}`;
 }
 
 /**
@@ -156,9 +310,14 @@ function copyWithPathReplacement(srcDir, destDir, pathPrefix) {
     if (entry.isDirectory()) {
       copyWithPathReplacement(srcPath, destPath, pathPrefix);
     } else if (entry.name.endsWith('.md')) {
-      // Replace ~/.claude/ with the appropriate prefix in markdown files
+      // Replace ~/.claude/ with the appropriate prefix in Markdown files
       let content = fs.readFileSync(srcPath, 'utf8');
-      content = content.replace(/~\/\.claude\//g, pathPrefix);
+      const claudeDirRegex = new RegExp(`~/${claudeDirName.replace('.', '\\.')}/`, 'g');
+      content = content.replace(claudeDirRegex, pathPrefix);
+      // Convert frontmatter for opencode compatibility
+      if (hasOpencode) {
+        content = convertClaudeToOpencodeFrontmatter(content);
+      }
       fs.writeFileSync(destPath, content);
     } else {
       fs.copyFileSync(srcPath, destPath);
@@ -268,10 +427,10 @@ function install(isGlobal) {
   const src = path.join(__dirname, '..');
   // Priority: explicit --config-dir arg > CLAUDE_CONFIG_DIR env var > default ~/.claude
   const configDir = expandTilde(explicitConfigDir) || expandTilde(process.env.CLAUDE_CONFIG_DIR);
-  const defaultGlobalDir = configDir || path.join(os.homedir(), '.claude');
+  const defaultGlobalDir = configDir || path.join(os.homedir(), claudeDirName);
   const claudeDir = isGlobal
     ? defaultGlobalDir
-    : path.join(process.cwd(), '.claude');
+    : path.join(process.cwd(), claudeDirName);
 
   const locationLabel = isGlobal
     ? claudeDir.replace(os.homedir(), '~')
@@ -280,8 +439,8 @@ function install(isGlobal) {
   // Path prefix for file references
   // Use actual path when CLAUDE_CONFIG_DIR is set, otherwise use ~ shorthand
   const pathPrefix = isGlobal
-    ? (configDir ? `${claudeDir}/` : '~/.claude/')
-    : './.claude/';
+    ? (configDir ? `${claudeDir}/` : `~/${claudeDirName}/`)
+    : `./${claudeDirName}/`;
 
   console.log(`  Installing to ${cyan}${locationLabel}${reset}\n`);
 
@@ -336,7 +495,12 @@ function install(isGlobal) {
     for (const entry of agentEntries) {
       if (entry.isFile() && entry.name.endsWith('.md')) {
         let content = fs.readFileSync(path.join(agentsSrc, entry.name), 'utf8');
-        content = content.replace(/~\/\.claude\//g, pathPrefix);
+        const claudeDirRegex = new RegExp(`~/${claudeDirName.replace('.', '\\.')}/`, 'g');
+        content = content.replace(claudeDirRegex, pathPrefix);
+        // Convert frontmatter for opencode compatibility
+        if (hasOpencode) {
+          content = convertClaudeToOpencodeFrontmatter(content);
+        }
         fs.writeFileSync(path.join(agentsDest, entry.name), content);
       }
     }
@@ -401,10 +565,10 @@ function install(isGlobal) {
   const settings = cleanupOrphanedHooks(readSettings(settingsPath));
   const statuslineCommand = isGlobal
     ? buildHookCommand(claudeDir, 'gsd-statusline.js')
-    : 'node .claude/hooks/gsd-statusline.js';
+    : 'node ' + claudeDirName + '/hooks/gsd-statusline.js';
   const updateCheckCommand = isGlobal
     ? buildHookCommand(claudeDir, 'gsd-check-update.js')
-    : 'node .claude/hooks/gsd-check-update.js';
+    : 'node ' + claudeDirName + '/hooks/gsd-check-update.js';
 
   // Configure SessionStart hook for update checking
   if (!settings.hooks) {
@@ -449,8 +613,9 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   // Always write settings (hooks were already configured in install())
   writeSettings(settingsPath, settings);
 
+  let program = hasOpencode ? 'opencode' : `Claude Code`;
   console.log(`
-  ${green}Done!${reset} Launch Claude Code and run ${cyan}/gsd:help${reset}.
+  ${green}Done!${reset} Launch ${program} and run ${cyan}/gsd:help${reset}.
 `);
 }
 
@@ -543,13 +708,13 @@ function promptLocation() {
   });
 
   const configDir = expandTilde(explicitConfigDir) || expandTilde(process.env.CLAUDE_CONFIG_DIR);
-  const globalPath = configDir || path.join(os.homedir(), '.claude');
+  const globalPath = configDir || path.join(os.homedir(), claudeDirName);
   const globalLabel = globalPath.replace(os.homedir(), '~');
 
   console.log(`  ${yellow}Where would you like to install?${reset}
 
   ${cyan}1${reset}) Global ${dim}(${globalLabel})${reset} - available in all projects
-  ${cyan}2${reset}) Local  ${dim}(./.claude)${reset} - this project only
+  ${cyan}2${reset}) Local  ${dim}(./${claudeDirName})${reset} - this project only
 `);
 
   rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
@@ -572,14 +737,15 @@ if (hasGlobal && hasLocal) {
 } else if (explicitConfigDir && hasLocal) {
   console.error(`  ${yellow}Cannot use --config-dir with --local${reset}`);
   process.exit(1);
-} else if (hasGlobal) {
-  const { settingsPath, settings, statuslineCommand } = install(true);
-  // Non-interactive - respect flags
-  handleStatusline(settings, false, (shouldInstallStatusline) => {
-    finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline);
-  });
-} else if (hasLocal) {
-  const { settingsPath, settings, statuslineCommand } = install(false);
+} else if (hasOpencode) {
+  console.log(`  Installing for opencode development...\n`);
+  if (forceStatusline) {
+    console.log(`  ${yellow}Note: opencode doesn't support statusline configuration (uses themes instead)${reset}\n`);
+  }
+  const { settingsPath, settings, statuslineCommand } = install(hasGlobal);
+  finishInstall(settingsPath, settings, statuslineCommand, false);
+} else if (hasGlobal || hasLocal) {
+  const { settingsPath, settings, statuslineCommand } = install(hasGlobal);
   // Non-interactive - respect flags
   handleStatusline(settings, false, (shouldInstallStatusline) => {
     finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline);
