@@ -543,6 +543,15 @@ This ensures absolute paths are used instead of `~` which may not expand correct
 
 ---
 
+## Community Ports
+
+| Project | Platform | Description |
+|---------|----------|-------------|
+| [gsd-opencode](https://github.com/rokicool/gsd-opencode) | OpenCode | GSD adapted for OpenCode CLI |
+| [gsd-gemini](https://github.com/uberfuzzy/gsd-gemini) | Gemini CLI | GSD adapted for Google's Gemini CLI |
+
+---
+
 ## Star History
 
 <a href="https://star-history.com/#glittercowboy/get-shit-done&Date">
