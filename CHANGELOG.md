@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- OpenCode installer now uses correct config path (`~/.config/opencode/`) instead of `~/.opencode/`
+- OpenCode commands use correct directory structure (`command/gsd-help.md` not `commands/gsd/help.md`)
+- OpenCode permissions written to `~/.config/opencode/opencode.json` instead of `~/.opencode.json`
+
 ## [1.9.6] - 2026-01-22
 
 ### Added

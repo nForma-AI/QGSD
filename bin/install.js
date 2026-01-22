@@ -33,9 +33,58 @@ if (hasBoth) {
   selectedRuntimes = ['claude'];
 }
 
-// Helper to get directory name for a runtime
+// Helper to get directory name for a runtime (used for local/project installs)
 function getDirName(runtime) {
   return runtime === 'opencode' ? '.opencode' : '.claude';
+}
+
+/**
+ * Get the global config directory for OpenCode
+ * OpenCode follows XDG Base Directory spec and uses ~/.config/opencode/
+ * Priority: OPENCODE_CONFIG_DIR > dirname(OPENCODE_CONFIG) > XDG_CONFIG_HOME/opencode > ~/.config/opencode
+ */
+function getOpencodeGlobalDir() {
+  // 1. Explicit OPENCODE_CONFIG_DIR env var
+  if (process.env.OPENCODE_CONFIG_DIR) {
+    return expandTilde(process.env.OPENCODE_CONFIG_DIR);
+  }
+  
+  // 2. OPENCODE_CONFIG env var (use its directory)
+  if (process.env.OPENCODE_CONFIG) {
+    return path.dirname(expandTilde(process.env.OPENCODE_CONFIG));
+  }
+  
+  // 3. XDG_CONFIG_HOME/opencode
+  if (process.env.XDG_CONFIG_HOME) {
+    return path.join(expandTilde(process.env.XDG_CONFIG_HOME), 'opencode');
+  }
+  
+  // 4. Default: ~/.config/opencode (XDG default)
+  return path.join(os.homedir(), '.config', 'opencode');
+}
+
+/**
+ * Get the global config directory for a runtime
+ * @param {string} runtime - 'claude' or 'opencode'
+ * @param {string|null} explicitDir - Explicit directory from --config-dir flag
+ */
+function getGlobalDir(runtime, explicitDir = null) {
+  if (runtime === 'opencode') {
+    // For OpenCode, --config-dir overrides env vars
+    if (explicitDir) {
+      return expandTilde(explicitDir);
+    }
+    return getOpencodeGlobalDir();
+  }
+  
+  // Claude Code: --config-dir > CLAUDE_CONFIG_DIR > ~/.claude
+  if (explicitDir) {
+    return expandTilde(explicitDir);
+  }
+  if (process.env.CLAUDE_CONFIG_DIR) {
+    return expandTilde(process.env.CLAUDE_CONFIG_DIR);
+  }
+  return path.join(os.homedir(), '.claude');
 }
 
 const banner = `
@@ -220,10 +269,10 @@ function convertClaudeToOpencodeFrontmatter(content) {
   convertedContent = convertedContent.replace(/\bAskUserQuestion\b/g, 'question');
   convertedContent = convertedContent.replace(/\bSlashCommand\b/g, 'skill');
   convertedContent = convertedContent.replace(/\bTodoWrite\b/g, 'todowrite');
-  // Replace /gsd:command with /gsd/command for opencode
-  convertedContent = convertedContent.replace(/\/gsd:/g, '/gsd/');
-  // Replace ~/.claude with ~/.opencode
-  convertedContent = convertedContent.replace(/~\/\.claude\b/g, '~/.opencode');
+  // Replace /gsd:command with /gsd-command for opencode (flat command structure)
+  convertedContent = convertedContent.replace(/\/gsd:/g, '/gsd-');
+  // Replace ~/.claude with ~/.config/opencode (OpenCode's correct config location)
+  convertedContent = convertedContent.replace(/~\/\.claude\b/g, '~/.config/opencode');
 
   // Check if content has frontmatter
   if (!convertedContent.startsWith('---')) {
@@ -312,6 +361,63 @@ function convertClaudeToOpencodeFrontmatter(content) {
   // Rebuild frontmatter (body already has tool names converted)
   const newFrontmatter = newLines.join('\n').trim();
   return `---\n${newFrontmatter}\n---${body}`;
+}
+
+/**
+ * Copy commands to a flat structure for OpenCode
+ * OpenCode expects: command/gsd-help.md (invoked as /gsd-help)
+ * Source structure: commands/gsd/help.md
+ * 
+ * @param {string} srcDir - Source directory (e.g., commands/gsd/)
+ * @param {string} destDir - Destination directory (e.g., command/)
+ * @param {string} prefix - Prefix for filenames (e.g., 'gsd')
+ * @param {string} pathPrefix - Path prefix for file references
+ * @param {string} runtime - Target runtime ('claude' or 'opencode')
+ */
+function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
+  if (!fs.existsSync(srcDir)) {
+    return;
+  }
+  
+  // Remove old gsd-*.md files before copying new ones
+  if (fs.existsSync(destDir)) {
+    for (const file of fs.readdirSync(destDir)) {
+      if (file.startsWith(`${prefix}-`) && file.endsWith('.md')) {
+        fs.unlinkSync(path.join(destDir, file));
+      }
+    }
+  } else {
+    fs.mkdirSync(destDir, { recursive: true });
+  }
+  
+  const entries = fs.readdirSync(srcDir, { withFileTypes: true });
+  
+  for (const entry of entries) {
+    const srcPath = path.join(srcDir, entry.name);
+    
+    if (entry.isDirectory()) {
+      // Recurse into subdirectories, adding to prefix
+      // e.g., commands/gsd/debug/start.md -> command/gsd-debug-start.md
+      copyFlattenedCommands(srcPath, destDir, `${prefix}-${entry.name}`, pathPrefix, runtime);
+    } else if (entry.name.endsWith('.md')) {
+      // Flatten: help.md -> gsd-help.md
+      const baseName = entry.name.replace('.md', '');
+      const destName = `${prefix}-${baseName}.md`;
+      const destPath = path.join(destDir, destName);
+      
+      // Read, transform, and write
+      let content = fs.readFileSync(srcPath, 'utf8');
+      // Replace path references
+      const claudeDirRegex = /~\/\.claude\//g;
+      const opencodeDirRegex = /~\/\.opencode\//g;
+      content = content.replace(claudeDirRegex, pathPrefix);
+      content = content.replace(opencodeDirRegex, pathPrefix);
+      // Convert frontmatter for opencode compatibility
+      content = convertClaudeToOpencodeFrontmatter(content);
+      
+      fs.writeFileSync(destPath, content);
+    }
+  }
 }
 
 /**
@@ -421,10 +527,15 @@ function cleanupOrphanedHooks(settings) {
 
 /**
  * Configure OpenCode permissions to allow reading GSD reference docs
- * This prevents permission prompts when GSD accesses ~/.opencode/get-shit-done/
+ * This prevents permission prompts when GSD accesses the get-shit-done directory
  */
 function configureOpencodePermissions() {
-  const configPath = path.join(os.homedir(), '.opencode.json');
+  // OpenCode config file is at ~/.config/opencode/opencode.json
+  const opencodeConfigDir = getOpencodeGlobalDir();
+  const configPath = path.join(opencodeConfigDir, 'opencode.json');
+
+  // Ensure config directory exists
+  fs.mkdirSync(opencodeConfigDir, { recursive: true });
 
   // Read existing config or create empty object
   let config = {};
@@ -433,7 +544,7 @@ function configureOpencodePermissions() {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch (e) {
       // Invalid JSON - start fresh but warn user
-      console.log(`  ${yellow}⚠${reset} ~/.opencode.json had invalid JSON, recreating`);
+      console.log(`  ${yellow}⚠${reset} opencode.json had invalid JSON, recreating`);
     }
   }
 
@@ -442,7 +553,13 @@ function configureOpencodePermissions() {
     config.permission = {};
   }
 
-  const gsdPath = '~/.opencode/get-shit-done/*';
+  // Build the GSD path using the actual config directory
+  // Use ~ shorthand if it's in the default location, otherwise use full path
+  const defaultConfigDir = path.join(os.homedir(), '.config', 'opencode');
+  const gsdPath = opencodeConfigDir === defaultConfigDir
+    ? '~/.config/opencode/get-shit-done/*'
+    : `${opencodeConfigDir}/get-shit-done/*`;
+  
   let modified = false;
 
   // Configure read permission
@@ -511,24 +628,23 @@ function verifyFileInstalled(filePath, description) {
  */
 function install(isGlobal, runtime = 'claude') {
   const isOpencode = runtime === 'opencode';
-  const dirName = getDirName(runtime);
+  const dirName = getDirName(runtime);  // .opencode or .claude (for local installs)
   const src = path.join(__dirname, '..');
 
-  // Priority: explicit --config-dir arg > CLAUDE_CONFIG_DIR env var > default dir
-  const configDir = expandTilde(explicitConfigDir) || expandTilde(process.env.CLAUDE_CONFIG_DIR);
-  const defaultGlobalDir = configDir || path.join(os.homedir(), dirName);
+  // Get the target directory based on runtime and install type
   const targetDir = isGlobal
-    ? defaultGlobalDir
+    ? getGlobalDir(runtime, explicitConfigDir)
     : path.join(process.cwd(), dirName);
 
   const locationLabel = isGlobal
     ? targetDir.replace(os.homedir(), '~')
     : targetDir.replace(process.cwd(), '.');
 
-  // Path prefix for file references
-  // Use actual path when CLAUDE_CONFIG_DIR is set, otherwise use ~ shorthand
+  // Path prefix for file references in markdown content
+  // For global installs: use full path (necessary when config dir is customized)
+  // For local installs: use relative ./.opencode/ or ./.claude/
   const pathPrefix = isGlobal
-    ? (configDir ? `${targetDir}/` : `~/${dirName}/`)
+    ? `${targetDir}/`
     : `./${dirName}/`;
 
   const runtimeLabel = isOpencode ? 'OpenCode' : 'Claude Code';
@@ -540,18 +656,35 @@ function install(isGlobal, runtime = 'claude') {
   // Clean up orphaned files from previous versions
   cleanupOrphanedFiles(targetDir);
 
-  // Create commands directory
-  const commandsDir = path.join(targetDir, 'commands');
-  fs.mkdirSync(commandsDir, { recursive: true });
-
-  // Copy commands/gsd with path replacement
-  const gsdSrc = path.join(src, 'commands', 'gsd');
-  const gsdDest = path.join(commandsDir, 'gsd');
-  copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
-  if (verifyInstalled(gsdDest, 'commands/gsd')) {
-    console.log(`  ${green}✓${reset} Installed commands/gsd`);
+  // OpenCode uses 'command/' (singular) with flat structure: command/gsd-help.md
+  // Claude Code uses 'commands/' (plural) with nested structure: commands/gsd/help.md
+  if (isOpencode) {
+    // OpenCode: flat structure in command/ directory
+    const commandDir = path.join(targetDir, 'command');
+    fs.mkdirSync(commandDir, { recursive: true });
+    
+    // Copy commands/gsd/*.md as command/gsd-*.md (flatten structure)
+    const gsdSrc = path.join(src, 'commands', 'gsd');
+    copyFlattenedCommands(gsdSrc, commandDir, 'gsd', pathPrefix, runtime);
+    if (verifyInstalled(commandDir, 'command/gsd-*')) {
+      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('gsd-')).length;
+      console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
+    } else {
+      failures.push('command/gsd-*');
+    }
   } else {
-    failures.push('commands/gsd');
+    // Claude Code: nested structure in commands/ directory
+    const commandsDir = path.join(targetDir, 'commands');
+    fs.mkdirSync(commandsDir, { recursive: true });
+    
+    const gsdSrc = path.join(src, 'commands', 'gsd');
+    const gsdDest = path.join(commandsDir, 'gsd');
+    copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
+    if (verifyInstalled(gsdDest, 'commands/gsd')) {
+      console.log(`  ${green}✓${reset} Installed commands/gsd`);
+    } else {
+      failures.push('commands/gsd');
+    }
   }
 
   // Copy get-shit-done skill with path replacement
@@ -718,7 +851,7 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   }
 
   const program = isOpencode ? 'OpenCode' : 'Claude Code';
-  const command = isOpencode ? '/gsd/help' : '/gsd:help';
+  const command = isOpencode ? '/gsd-help' : '/gsd:help';
   console.log(`
   ${green}Done!${reset} Launch ${program} and run ${cyan}${command}${reset}.
 `);
@@ -803,7 +936,7 @@ function promptRuntime(callback) {
   console.log(`  ${yellow}Which runtime(s) would you like to install for?${reset}
 
   ${cyan}1${reset}) Claude Code ${dim}(~/.claude)${reset}
-  ${cyan}2${reset}) OpenCode    ${dim}(~/.opencode)${reset} - open source, free models
+  ${cyan}2${reset}) OpenCode    ${dim}(~/.config/opencode)${reset} - open source, free models
   ${cyan}3${reset}) Both
 `);
 
@@ -852,10 +985,9 @@ function promptLocation(runtimes) {
   });
 
   // Show paths for selected runtimes
-  const configDir = expandTilde(explicitConfigDir) || expandTilde(process.env.CLAUDE_CONFIG_DIR);
   const pathExamples = runtimes.map(r => {
-    const dir = getDirName(r);
-    const globalPath = configDir || path.join(os.homedir(), dir);
+    // Use the proper global directory function for each runtime
+    const globalPath = getGlobalDir(r, explicitConfigDir);
     return globalPath.replace(os.homedir(), '~');
   }).join(', ');
 
