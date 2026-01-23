@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.9.9] - 2026-01-23
+
+### Added
+- `/gsd:join-discord` command to quickly access the GSD Discord community invite link
+
 ## [1.9.8] - 2025-01-22
 
 ### Added
@@ -1029,7 +1034,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.8...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.9...HEAD
+[1.9.9]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.9
 [1.9.8]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.8
 [1.9.7]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.7
 [1.9.6]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.6
