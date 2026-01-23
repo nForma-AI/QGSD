@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.9.12] - 2025-01-23
+
+### Removed
+- `/gsd:whats-new` command — use `/gsd:update` instead (shows changelog with cancel option)
+
+### Fixed
+- Restored auto-release GitHub Actions workflow
+
 ## [1.9.11] - 2026-01-23
 
 ### Changed
@@ -1047,7 +1055,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.11...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.9.12...HEAD
+[1.9.12]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.12
 [1.9.11]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.11
 [1.9.10]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.10
 [1.9.9]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.9
