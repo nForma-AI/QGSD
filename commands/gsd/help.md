@@ -352,6 +352,14 @@ Update GSD to latest version with changelog preview.
 
 Usage: `/gsd:update`
 
+**`/gsd:join-discord`**
+Join the GSD Discord community.
+
+- Get help, share what you're building, stay updated
+- Connect with other GSD users
+
+Usage: `/gsd:join-discord`
+
 ## Files & Structure
 
 ```
