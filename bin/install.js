@@ -425,41 +425,17 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
     } else if (entry.name.endsWith('.md')) {
       // Flatten: help.md -> gsd-help.md
       const baseName = entry.name.replace('.md', '');
-      
-      if (runtime === 'gemini') {
-          // Flatten and convert to TOML for Gemini (if we used this function for Gemini, which we don't currently but for consistency)
-          // Actually Gemini uses nested structure via copyWithPathReplacement, so this block is only for OpenCode currently.
-          // Keeping as is for OpenCode.
-          const destName = `${prefix}-${baseName}.md`;
-          const destPath = path.join(destDir, destName);
-          
-          // Read, transform, and write
-          let content = fs.readFileSync(srcPath, 'utf8');
-          // Replace path references
-          const claudeDirRegex = /~\/\.claude\//g;
-          const opencodeDirRegex = /~\/\.opencode\//g;
-          content = content.replace(claudeDirRegex, pathPrefix);
-          content = content.replace(opencodeDirRegex, pathPrefix);
-          // Convert frontmatter for opencode compatibility
-          content = convertClaudeToOpencodeFrontmatter(content);
-          
-          fs.writeFileSync(destPath, content);
-      } else {
-          const destName = `${prefix}-${baseName}.md`;
-          const destPath = path.join(destDir, destName);
-          
-          // Read, transform, and write
-          let content = fs.readFileSync(srcPath, 'utf8');
-          // Replace path references
-          const claudeDirRegex = /~\/\.claude\//g;
-          const opencodeDirRegex = /~\/\.opencode\//g;
-          content = content.replace(claudeDirRegex, pathPrefix);
-          content = content.replace(opencodeDirRegex, pathPrefix);
-          // Convert frontmatter for opencode compatibility
-          content = convertClaudeToOpencodeFrontmatter(content);
-          
-          fs.writeFileSync(destPath, content);
-      }
+      const destName = `${prefix}-${baseName}.md`;
+      const destPath = path.join(destDir, destName);
+
+      let content = fs.readFileSync(srcPath, 'utf8');
+      const claudeDirRegex = /~\/\.claude\//g;
+      const opencodeDirRegex = /~\/\.opencode\//g;
+      content = content.replace(claudeDirRegex, pathPrefix);
+      content = content.replace(opencodeDirRegex, pathPrefix);
+      content = convertClaudeToOpencodeFrontmatter(content);
+
+      fs.writeFileSync(destPath, content);
     }
   }
 }
