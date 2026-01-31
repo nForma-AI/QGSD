@@ -6,7 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [1.11.0] - 2026-01-31
+## [1.11.1] - 2026-01-31
 
 ### Added
 - Git branching strategy configuration with three options:
@@ -1082,8 +1082,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.11.0...HEAD
-[1.11.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.11.0
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.11.1...HEAD
+[1.11.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.11.0
 [1.10.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.10.1
 [1.10.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.10.0
 [1.9.12]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.9.12
