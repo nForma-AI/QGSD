@@ -6,7 +6,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [1.15.1] - 2026-02-08
+## [1.16.0] - 2026-02-08
+
+### Added
+- 10 new gsd-tools CLI commands that replace manual AI orchestration of mechanical operations:
+  - `phase add <desc>` — append phase to roadmap + create directory
+  - `phase insert <after> <desc>` — insert decimal phase
+  - `phase remove <N> [--force]` — remove phase with full renumbering
+  - `phase complete <N>` — mark done, update state + roadmap, detect milestone end
+  - `roadmap analyze` — unified roadmap parser with disk status
+  - `milestone complete <ver> [--name]` — archive roadmap/requirements/audit
+  - `validate consistency` — check phase numbering and disk/roadmap sync
+  - `progress [json|table|bar]` — render progress in various formats
+  - `todo complete <file>` — move todo from pending to completed
+  - `scaffold [context|uat|verification|phase-dir]` — template generation
+
+### Changed
+- Workflows now delegate deterministic operations to gsd-tools CLI, reducing token usage and errors:
+  - `remove-phase.md`: 13 manual steps → 1 CLI call + confirm + commit
+  - `add-phase.md`: 6 manual steps → 1 CLI call + state update
+  - `insert-phase.md`: 7 manual steps → 1 CLI call + state update
+  - `complete-milestone.md`: archival delegated to `milestone complete`
+  - `progress.md`: roadmap parsing delegated to `roadmap analyze`
 
 ### Fixed
 - Execute-phase now correctly spawns `gsd-executor` subagents instead of generic task agents
@@ -1158,8 +1179,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.15.1...HEAD
-[1.15.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.15.1
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.16.0...HEAD
+[1.16.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.16.0
 [1.15.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.15.0
 [1.14.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.14.0
 [1.13.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.13.0
