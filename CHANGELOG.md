@@ -6,6 +6,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-02-08
+
+### Changed
+- Optimized workflow context loading to eliminate redundant file reads, reducing token usage by ~5,000-10,000 tokens per workflow execution
+
 ## [1.14.0] - 2026-02-08
 
 ### Added
@@ -1145,7 +1150,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.12.1...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.15.0
+[1.14.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.14.0
+[1.13.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.13.0
 [1.12.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.12.1
 [1.12.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.12.0
 [1.11.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.11.2
