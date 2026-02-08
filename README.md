@@ -421,7 +421,7 @@ You're never locked in. The system adapts.
 
 | Command | What it does |
 |---------|--------------|
-| `/gsd:new-project` | Full initialization: questions → research → requirements → roadmap |
+| `/gsd:new-project [--auto]` | Full initialization: questions → research → requirements → roadmap |
 | `/gsd:discuss-phase [N]` | Capture implementation decisions before planning |
 | `/gsd:plan-phase [N]` | Research + plan + verify for a phase |
 | `/gsd:execute-phase <N>` | Execute all plans in parallel waves, verify when complete |
