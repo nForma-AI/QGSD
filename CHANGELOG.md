@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.15.1] - 2026-02-08
+
+### Fixed
+- Execute-phase now correctly spawns `gsd-executor` subagents instead of generic task agents
+- `commit_docs=false` setting now respected in all `.planning/` commit paths (execute-plan, debugger, reference docs all route through gsd-tools CLI)
+- Execute-phase orchestrator no longer bloats context by embedding file content — passes paths instead, letting subagents read in their fresh context
+- Windows: Normalized backslash paths in gsd-tools invocations (contributed by @rmindel)
+
 ## [1.15.0] - 2026-02-08
 
 ### Changed
@@ -1150,7 +1158,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.15.0...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.15.1...HEAD
+[1.15.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.15.1
 [1.15.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.15.0
 [1.14.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.14.0
 [1.13.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.13.0
