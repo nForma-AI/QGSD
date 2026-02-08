@@ -885,26 +885,40 @@ Apply discovery level protocol (see discovery_levels section).
 </step>
 
 <step name="read_project_history">
-**Intelligent context assembly from frontmatter dependency graph:**
+**Two-step context assembly: digest for selection, full read for understanding.**
 
-1. Scan all summary frontmatter:
+**Step 1 — Generate digest index:**
 ```bash
-for f in .planning/phases/*/*-SUMMARY.md; do
-  sed -n '1,/^---$/p; /^---$/q' "$f" | head -30
-done
+node ~/.claude/get-shit-done/bin/gsd-tools.js history-digest
 ```
 
-2. Build dependency graph for current phase:
-- `affects` field: Which prior phases affect current?
-- `subsystem`: Which prior phases share same subsystem?
-- `requires` chains: Transitive dependencies
-- Roadmap: Any phases marked as dependencies?
+**Step 2 — Select relevant phases (typically 2-4):**
 
-3. Select relevant summaries (typically 2-4 prior phases)
+Score each phase by relevance to current work:
+- `affects` overlap: Does it touch same subsystems?
+- `provides` dependency: Does current phase need what it created?
+- `patterns`: Are its patterns applicable?
+- Roadmap: Marked as explicit dependency?
 
-4. Extract from frontmatter: tech available, patterns established, key files, decisions.
+Select top 2-4 phases. Skip phases with no relevance signal.
 
-5. Read FULL summaries only for selected relevant phases.
+**Step 3 — Read full SUMMARYs for selected phases:**
+```bash
+cat .planning/phases/{selected-phase}/*-SUMMARY.md
+```
+
+From full SUMMARYs extract:
+- How things were implemented (file patterns, code structure)
+- Why decisions were made (context, tradeoffs)
+- What problems were solved (avoid repeating)
+- Actual artifacts created (realistic expectations)
+
+**Step 4 — Keep digest-level context for unselected phases:**
+
+For phases not selected, retain from digest:
+- `tech_stack`: Available libraries
+- `decisions`: Constraints on approach
+- `patterns`: Conventions to follow
 
 **From STATE.md:** Decisions → constrain approach. Pending todos → candidates.
 </step>
