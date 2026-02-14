@@ -226,94 +226,52 @@ After all waves:
 ```
 </step>
 
-<step name="verify_phase_goal">
-Verify phase achieved its GOAL, not just completed tasks.
-
-```
-Task(
-  prompt="Verify phase {phase_number} goal achievement.
-Phase directory: {phase_dir}
-Phase goal: {goal from ROADMAP.md}
-Check must_haves against actual codebase. Create VERIFICATION.md.",
-  subagent_type="gsd-verifier",
-  model="{verifier_model}"
-)
-```
-
-Read status:
-```bash
-grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
-```
-
-| Status | Action |
-|--------|--------|
-| `passed` | → update_roadmap |
-| `human_needed` | Present items for human testing, get approval or feedback |
-| `gaps_found` | Present gap summary, offer `/gsd:plan-phase {phase} --gaps` |
-
-**If human_needed:**
-```
-## ✓ Phase {X}: {Name} — Human Verification Required
-
-All automated checks passed. {N} items need human testing:
-
-{From VERIFICATION.md human_verification section}
-
-"approved" → continue | Report issues → gap closure
-```
-
-**If gaps_found:**
-```
-## ⚠ Phase {X}: {Name} — Gaps Found
-
-**Score:** {N}/{M} must-haves verified
-**Report:** {phase_dir}/{phase}-VERIFICATION.md
-
-### What's Missing
-{Gap summaries from VERIFICATION.md}
-
----
-## ▶ Next Up
-
-`/gsd:plan-phase {X} --gaps`
-
-<sub>`/clear` first → fresh context window</sub>
-
-Also: `cat {phase_dir}/{phase}-VERIFICATION.md` — full report
-Also: `/gsd:verify-work {X}` — manual testing first
-```
-
-Gap closure cycle: `/gsd:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/gsd:execute-phase {X} --gaps-only` → verifier re-runs.
-</step>
-
-<step name="update_roadmap">
-Mark phase complete in ROADMAP.md (date, status).
-
-```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/phases/{phase_dir}/*-VERIFICATION.md .planning/REQUIREMENTS.md
-```
-</step>
-
 <step name="offer_next">
 
-**If more phases:**
+**Route based on execution mode:**
+
+**If `--gaps-only` (gap closure execution):**
+
 ```
-## Next Up
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► GAP FIXES EXECUTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**Phase {X+1}: {Name}** — {Goal}
+Phase {X}: {Name} — gap closure plans executed.
 
-`/gsd:plan-phase {X+1}`
+───────────────────────────────────────────────────────────────
 
-<sub>`/clear` first for fresh context</sub>
+## ▶ Next Up
+
+**Re-verify fixes** — confirm gaps are closed
+
+`/clear` then `/gsd:verify-work {X}`
+
+───────────────────────────────────────────────────────────────
 ```
 
-**If milestone complete:**
+**If normal execution (no flags):**
+
 ```
-MILESTONE COMPLETE!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ GSD ► EXECUTION COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-All {N} phases executed.
+Phase {X}: {Name} — all plans executed.
 
-`/gsd:complete-milestone`
+───────────────────────────────────────────────────────────────
+
+## ▶ Next Up
+
+**Verify what was built** — manual acceptance testing
+
+`/clear` then `/gsd:verify-work {X}`
+
+───────────────────────────────────────────────────────────────
+
+**Also available:**
+- `/gsd:plan-phase {X+1}` — skip verification, plan next phase
+- `/gsd:complete-milestone` — if all phases done
 ```
 </step>
 
