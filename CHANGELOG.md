@@ -6,9 +6,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Fixed
-- `gsd-verifier` agent now declares the Write tool, avoiding Bash heredoc fallbacks that could corrupt editor permission files when generating VERIFICATION.md reports.
-
 ## [1.18.0] - 2026-02-08
 
 ### Added
@@ -295,7 +292,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - Installation on WSL2/non-TTY terminals now works correctly - detects non-interactive stdin and falls back to global install automatically
 - Installation now verifies files were actually copied before showing success checkmarks
-- Orphaned `gsd-notify.sh` hook from previous versions is ahora automatically removed during install (both file and settings.json registration)
+- Orphaned `gsd-notify.sh` hook from previous versions is now automatically removed during install (both file and settings.json registration)
 
 ## [1.6.3] - 2025-01-17
 
@@ -330,21 +327,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **BREAKING:** `/gsd:research-project` — integrated into project/milestone flows
 
 ### Added
-- `/gsd:verify-work` ahora includes next-step routing after verification completes
+- `/gsd:verify-work` now includes next-step routing after verification completes
 
 ## [1.5.30] - 2026-01-17
 
 ### Fixed
 - Output templates in `plan-phase`, `execute-phase`, and `audit-milestone` now render markdown correctly instead of showing literal backticks
-- Next-step suggestions ahora consistently recommend `/gsd:discuss-phase` before `/gsd:plan-phase` across all routing paths
+- Next-step suggestions now consistently recommend `/gsd:discuss-phase` before `/gsd:plan-phase` across all routing paths
 
 ## [1.5.29] - 2025-01-16
 
 ### Changed
-- Discuss-phase ahora uses domain-aware questioning with deeper probing for gray areas
+- Discuss-phase now uses domain-aware questioning with deeper probing for gray areas
 
 ### Fixed
-- Windows hooks ahora work via Node.js conversion (statusline, update-check)
+- Windows hooks now work via Node.js conversion (statusline, update-check)
 - Phase input normalization at command entry points
 - Removed blocking notification popups (gsd-notify) on all platforms
 
@@ -356,36 +353,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **BREAKING:** Removed `/gsd:execute-plan` command (use `/gsd:execute-phase` instead)
 
 ### Fixed
-- Phase directory matching ahora handles both zero-padded (05-*) and unpadded (5-*) folder names
+- Phase directory matching now handles both zero-padded (05-*) and unpadded (5-*) folder names
 - Map-codebase agent output collection
 
 ## [1.5.27] - 2026-01-16
 
 ### Fixed
-- Orchestrator corrections between executor completions are ahora committed (previously left uncommitted when orchestrator made small fixes between waves)
+- Orchestrator corrections between executor completions are now committed (previously left uncommitted when orchestrator made small fixes between waves)
 
 ## [1.5.26] - 2026-01-16
 
 ### Fixed
-- Revised plans ahora get committed after checker feedback (previously sólo initial plans were committed, leaving revisions uncommitted)
+- Revised plans now get committed after checker feedback (previously only initial plans were committed, leaving revisions uncommitted)
 
 ## [1.5.25] - 2026-01-16
 
 ### Fixed
 - Stop notification hook no longer shows stale project state (now uses session-scoped todos only)
-- Researcher agent ahora reliably loads CONTEXT.md from discuss-phase
+- Researcher agent now reliably loads CONTEXT.md from discuss-phase
 
 ## [1.5.24] - 2026-01-16
 
 ### Fixed
-- Stop notification hook ahora correctly parses STATE.md fields (was always showing "Ready for input")
-- Planner agent ahora reliably loads CONTEXT.md and RESEARCH.md files
+- Stop notification hook now correctly parses STATE.md fields (was always showing "Ready for input")
+- Planner agent now reliably loads CONTEXT.md and RESEARCH.md files
 
 ## [1.5.23] - 2025-01-16
 
 ### Added
 - Cross-platform completion notification hook (Mac/Linux/Windows alerts when Claude stops)
-- Phase researcher ahora loads CONTEXT.md from discuss-phase to focus research on user decisions
+- Phase researcher now loads CONTEXT.md from discuss-phase to focus research on user decisions
 
 ### Fixed
 - Consistent zero-padding for phase directories (01-name, not 1-name)
@@ -399,7 +396,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Statusline update indicator — shows `⬆ /gsd:update` when a new version is available
 
 ### Fixed
-- Planner ahora updates ROADMAP.md placeholders after planning completes
+- Planner now updates ROADMAP.md placeholders after planning completes
 
 ## [1.5.21] - 2026-01-16
 
@@ -408,12 +405,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Research synthesizer agent that consolidates parallel research into SUMMARY.md
 
 ### Changed
-- **Unified `/gsd:new-project` flow** — Single command ahora handles questions → research → requirements → roadmap (~10 min)
+- **Unified `/gsd:new-project` flow** — Single command now handles questions → research → requirements → roadmap (~10 min)
 - Simplified README to reflect streamlined workflow: new-project → plan-phase → execute-phase
 - Added optional `/gsd:discuss-phase` documentation for UI/UX/behavior decisions before planning
 
 ### Fixed
-- verify-work ahora shows clear checkpoint box with action prompt ("Type 'pass' or describe what's wrong")
+- verify-work now shows clear checkpoint box with action prompt ("Type 'pass' or describe what's wrong")
 - Planner uses correct `{phase}-{plan}-PLAN.md` naming convention
 - Planner no longer surfaces internal `user_setup` in output
 - Research synthesizer commits all research files together (not individually)
@@ -423,7 +420,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.5.20] - 2026-01-16
 
 ### Fixed
-- Research no longer skipped based on premature "Research: Unlikely" predictions made during roadmap creation. The `--skip-research` flag provides explicit control cuando needed.
+- Research no longer skipped based on premature "Research: Unlikely" predictions made during roadmap creation. The `--skip-research` flag provides explicit control when needed.
 
 ### Removed
 - `Research: Likely/Unlikely` fields from roadmap phase template
@@ -436,13 +433,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `/gsd:discuss-phase` redesigned with intelligent gray area analysis — analyzes phase to identify discussable areas (UI, UX, Behavior, etc.), presents multi-select for user control, deep-dives each area with focused questioning
 - Explicit scope guardrail prevents scope creep during discussion — captures deferred ideas without acting on them
 - CONTEXT.md template restructured for decisions (domain boundary, decisions by category, Claude's discretion, deferred ideas)
-- Downstream awareness: discuss-phase ahora explicitly documents that CONTEXT.md feeds researcher and planner agents
-- `/gsd:plan-phase` ahora integrates research — spawns `gsd-phase-researcher` before planning unless research exists or `--skip-research` flag used
+- Downstream awareness: discuss-phase now explicitly documents that CONTEXT.md feeds researcher and planner agents
+- `/gsd:plan-phase` now integrates research — spawns `gsd-phase-researcher` before planning unless research exists or `--skip-research` flag used
 
 ## [1.5.18] - 2026-01-16
 
 ### Added
-- **Plan verification loop** — Plans are ahora verified before execution with a planner → checker → revise cycle
+- **Plan verification loop** — Plans are now verified before execution with a planner → checker → revise cycle
   - New `gsd-plan-checker` agent (744 lines) validates plans will achieve phase goals
   - Six verification dimensions: requirement coverage, task completeness, dependency correctness, key links, scope sanity, must_haves derivation
   - Max 3 revision iterations before user escalation
@@ -481,10 +478,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Research subagent prompt template for context-only spawning
 
 ### Changed
-- `/gsd:research-phase` refactored to thin orchestrator — ahora injects rich context (key insight framing, downstream consumer info, quality gates) to gsd-researcher agent
+- `/gsd:research-phase` refactored to thin orchestrator — now injects rich context (key insight framing, downstream consumer info, quality gates) to gsd-researcher agent
 - `/gsd:research-project` refactored to spawn 4 parallel gsd-researcher agents with milestone-aware context (greenfield vs v1.1+) and roadmap implications guidance
 - `/gsd:debug` refactored to thin orchestrator (149 lines) — spawns gsd-debugger agent with full debugging expertise
-- `/gsd:new-milestone` ahora explicitly references MILESTONE-CONTEXT.md
+- `/gsd:new-milestone` now explicitly references MILESTONE-CONTEXT.md
 
 ### Deprecated
 - `workflows/research-phase.md` — consolidated into gsd-researcher agent
@@ -497,36 +494,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.5.15] - 2025-01-15
 
 ### Fixed
-- **Agents ahora install correctly** — The `agents/` folder (gsd-executor, gsd-verifier, gsd-integration-checker, gsd-milestone-auditor) was missing from npm package, now included
+- **Agents now install correctly** — The `agents/` folder (gsd-executor, gsd-verifier, gsd-integration-checker, gsd-milestone-auditor) was missing from npm package, now included
 
 ### Changed
 - Consolidated `/gsd:plan-fix` into `/gsd:plan-phase --gaps` for simpler workflow
-- UAT file writes ahora batched instead of per-response for better performance
+- UAT file writes now batched instead of per-response for better performance
 
 ## [1.5.14] - 2025-01-15
 
 ### Fixed
-- Plan-phase ahora always routes to `/gsd:execute-phase` after planning, even for single-plan phases
+- Plan-phase now always routes to `/gsd:execute-phase` after planning, even for single-plan phases
 
 ## [1.5.13] - 2026-01-15
 
 ### Fixed
-- `/gsd:new-milestone` ahora presents research and requirements paths as equal options, matching `/gsd:new-project` format
+- `/gsd:new-milestone` now presents research and requirements paths as equal options, matching `/gsd:new-project` format
 
 ## [1.5.12] - 2025-01-15
 
 ### Changed
 - **Milestone cycle reworked for proper requirements flow:**
-  - `complete-milestone` ahora archives AND deletes ROADMAP.md and REQUIREMENTS.md (fresh for next milestone)
-  - `new-milestone` is ahora a "brownfield new-project" — updates PROJECT.md with new goals, routes to define-requirements
-  - `discuss-milestone` is ahora required before `new-milestone` (creates context file)
+  - `complete-milestone` now archives AND deletes ROADMAP.md and REQUIREMENTS.md (fresh for next milestone)
+  - `new-milestone` is now a "brownfield new-project" — updates PROJECT.md with new goals, routes to define-requirements
+  - `discuss-milestone` is now required before `new-milestone` (creates context file)
   - `research-project` is milestone-aware — focuses on new features, ignores already-validated requirements
   - `create-roadmap` continues phase numbering from previous milestone
   - Flow: complete → discuss → new-milestone → research → requirements → roadmap
 
 ### Fixed
-- `MILESTONE-AUDIT.md` ahora versioned as `v{version}-MILESTONE-AUDIT.md` and archived on completion
-- `progress` ahora correctly routes to `/gsd:discuss-milestone` when between milestones (Route F)
+- `MILESTONE-AUDIT.md` now versioned as `v{version}-MILESTONE-AUDIT.md` and archived on completion
+- `progress` now correctly routes to `/gsd:discuss-milestone` when between milestones (Route F)
 
 ## [1.5.11] - 2025-01-15
 
@@ -536,10 +533,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.5.10] - 2025-01-15
 
 ### Changed
-- Milestone audit ahora reads existing phase VERIFICATION.md files instead of re-verifying each phase, aggregates tech debt and deferred gaps, adds `tech_debt` status for non-blocking accumulated debt
+- Milestone audit now reads existing phase VERIFICATION.md files instead of re-verifying each phase, aggregates tech debt and deferred gaps, adds `tech_debt` status for non-blocking accumulated debt
 
 ### Fixed
-- VERIFICATION.md ahora included in phase completion commit alongside ROADMAP.md, STATE.md, and REQUIREMENTS.md
+- VERIFICATION.md now included in phase completion commit alongside ROADMAP.md, STATE.md, and REQUIREMENTS.md
 
 ## [1.5.9] - 2025-01-15
 
@@ -549,7 +546,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Checkpoint display format improved with box headers and unmissable "→ YOUR ACTION:" prompts
 - Subagent colors updated (executor: yellow, integration-checker: blue)
-- Execute-phase ahora recommends `/gsd:audit-milestone` when milestone completes
+- Execute-phase now recommends `/gsd:audit-milestone` when milestone completes
 
 ### Fixed
 - Research-phase no longer gatekeeps by domain type
@@ -574,11 +571,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Goal-backward planning reference: Documentation for deriving must-haves from goals
 
 ### Changed
-- execute-plan and execute-phase ahora spawn `gsd-executor` subagent instead of using inline workflow
+- execute-plan and execute-phase now spawn `gsd-executor` subagent instead of using inline workflow
 - Roadmap and planning workflows enhanced with goal-backward analysis
 
 ### Removed
-- Obsolete templates (`checkpoint-resume.md`, `subagent-task-prompt.md`) — logic ahora lives in subagents
+- Obsolete templates (`checkpoint-resume.md`, `subagent-task-prompt.md`) — logic now lives in subagents
 
 ### Fixed
 - Updated remaining `general-purpose` subagent references to use `gsd-executor`
@@ -590,25 +587,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - README: Research recommended for quality; skip only for speed
 
 ### Fixed
-- execute-phase: Phase metadata (timing, wave info) ahora bundled into single commit instead of separate commits
+- execute-phase: Phase metadata (timing, wave info) now bundled into single commit instead of separate commits
 
 ## [1.5.5] - 2025-01-15
 
 ### Changed
-- README ahora documents the `research-project` → `define-requirements` flow (optional but recommended before `create-roadmap`)
+- README now documents the `research-project` → `define-requirements` flow (optional but recommended before `create-roadmap`)
 - Commands section reorganized into 7 grouped tables (Setup, Execution, Verification, Milestones, Phase Management, Session, Utilities) for easier scanning
-- Context Engineering table ahora includes `research/` and `REQUIREMENTS.md`
+- Context Engineering table now includes `research/` and `REQUIREMENTS.md`
 
 ## [1.5.4] - 2025-01-15
 
 ### Changed
-- Research phase ahora loads REQUIREMENTS.md to focus research on concrete requirements (e.g., "email verification") rather than just high-level roadmap descriptions
+- Research phase now loads REQUIREMENTS.md to focus research on concrete requirements (e.g., "email verification") rather than just high-level roadmap descriptions
 
 ## [1.5.3] - 2025-01-15
 
 ### Changed
-- **execute-phase narration**: Orchestrator ahora describes what each wave builds before spawning agents, and summarizes what was built after completion. No more staring at opaque status updates.
-- **new-project flow**: Ahora offers two paths — research first (recommended) or define requirements directly (fast path for familiar domains)
+- **execute-phase narration**: Orchestrator now describes what each wave builds before spawning agents, and summarizes what was built after completion. No more staring at opaque status updates.
+- **new-project flow**: Now offers two paths — research first (recommended) or define requirements directly (fast path for familiar domains)
 - **define-requirements**: Works without prior research. Gathers requirements through conversation when FEATURES.md doesn't exist.
 
 ### Removed
@@ -619,17 +616,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.5.2] - 2026-01-15
 
 ### Added
-- Requirements traceability: roadmap phases ahora include `Requirements:` field listing which REQ-IDs they cover
+- Requirements traceability: roadmap phases now include `Requirements:` field listing which REQ-IDs they cover
 - plan-phase loads REQUIREMENTS.md and shows phase-specific requirements before planning
-- Requirements automatically marked Complete cuando phase finishes
+- Requirements automatically marked Complete when phase finishes
 
 ### Changed
-- Workflow preferences (mode, depth, parallelization) ahora asked in single prompt instead of 3 separate questions
+- Workflow preferences (mode, depth, parallelization) now asked in single prompt instead of 3 separate questions
 - define-requirements shows full requirements list inline before commit (not just counts)
 - Research-project and workflow aligned to both point to define-requirements as next step
 
 ### Fixed
-- Requirements status ahora updated by orchestrator (commands) instead of subagent workflow, which couldn't determine phase completion
+- Requirements status now updated by orchestrator (commands) instead of subagent workflow, which couldn't determine phase completion
 
 ## [1.5.1] - 2026-01-14
 
@@ -642,11 +639,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - New `/gsd:research-project` command for pre-roadmap ecosystem research — spawns parallel agents to investigate stack, features, architecture, and pitfalls before you commit to a roadmap
 - New `/gsd:define-requirements` command for scoping v1 requirements from research findings — transforms "what exists in this domain" into "what we're building"
-- Requirements traceability: phases ahora map to specific requirement IDs with 100% coverage validation
+- Requirements traceability: phases now map to specific requirement IDs with 100% coverage validation
 
 ### Changed
-- **BREAKING:** New project flow is ahora: `new-project → research-project → define-requirements → create-roadmap`
-- Roadmap creation ahora requires REQUIREMENTS.md and validates all v1 requirements are mapped to phases
+- **BREAKING:** New project flow is now: `new-project → research-project → define-requirements → create-roadmap`
+- Roadmap creation now requires REQUIREMENTS.md and validates all v1 requirements are mapped to phases
 - Simplified questioning in new-project to four essentials (vision, core priority, boundaries, constraints)
 
 ## [1.4.29] - 2026-01-14
@@ -659,7 +656,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 - Restored comprehensive checkpoint documentation with full examples for verification, decisions, and auth gates
 - Fixed execute-plan command to use fresh continuation agents instead of broken resume pattern
-- Rich checkpoint presentation formats ahora documented for all three checkpoint types
+- Rich checkpoint presentation formats now documented for all three checkpoint types
+
+### Changed
+- Slimmed execute-phase command to properly delegate checkpoint handling to workflow
 
 ## [1.4.27] - 2025-01-14
 
@@ -676,7 +676,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - New `/gsd:whats-new` command shows changes since your installed version
 - VERSION file written during installation for version tracking
-- CHANGELOG.md ahora included in package installation
+- CHANGELOG.md now included in package installation
 
 ## [1.4.24] - 2026-01-14
 
@@ -708,7 +708,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 - Standardized debug file naming convention
-- Debug workflow ahora invokes execute-plan correctly
+- Debug workflow now invokes execute-plan correctly
 
 ## [1.4.19] - 2026-01-14
 
@@ -739,7 +739,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.4.14] - 2026-01-13
 
 ### Changed
-- YOLO mode is ahora recommended default in new-project
+- YOLO mode is now recommended default in new-project
 
 ## [1.4.13] - 2026-01-13
 
@@ -750,12 +750,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.4.12] - 2026-01-13
 
 ### Changed
-- execute-phase is ahora recommended as primary execution command
+- execute-phase is now recommended as primary execution command
 
 ## [1.4.11] - 2026-01-13
 
 ### Fixed
-- Checkpoints ahora use fresh continuation agents instead of resume
+- Checkpoints now use fresh continuation agents instead of resume
 
 ## [1.4.10] - 2026-01-13
 
@@ -825,7 +825,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - Renamed `execute-phase.md` workflow to `execute-plan.md` for clarity
-- Plan frontmatter ahora includes `wave`, `depends_on`, `files_modified`, `autonomous`
+- Plan frontmatter now includes `wave`, `depends_on`, `files_modified`, `autonomous`
 
 ## [1.4.0] - 2026-01-12
 
@@ -836,7 +836,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Agent history schema v1.2 with parallel execution support
 
 ### Changed
-- Plans ahora puede specify wave numbers and dependencies
+- Plans can now specify wave numbers and dependencies
 - execute-phase orchestrates multiple subagents in waves
 
 ## [1.3.34] - 2026-01-11
@@ -898,7 +898,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Claude Code marketplace plugin support
 
 ### Fixed
-- Phase artifacts ahora committed when created
+- Phase artifacts now committed when created
 
 ## [1.3.25] - 2026-01-06
 
@@ -1042,7 +1042,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 - Permission errors for non-DSP users (removed shell context)
-- First question is ahora freeform, not AskUserQuestion
+- First question is now freeform, not AskUserQuestion
 
 ## [1.2.13] - 2025-12-17
 
@@ -1117,7 +1117,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [1.1.2] - 2025-12-15
 
 ### Fixed
-- YOLO mode ahora skips confirmation gates in plan-phase
+- YOLO mode now skips confirmation gates in plan-phase
 
 ## [1.1.1] - 2025-12-15
 

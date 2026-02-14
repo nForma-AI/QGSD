@@ -21,9 +21,7 @@
     "context-engineering",
     "spec-driven-development",
     "gemini",
-    "gemini-cli",
-    "mistral-vibe",
-    "vibe-cli"
+    "gemini-cli"
   ],
   "author": "TÂCHES",
   "license": "MIT",

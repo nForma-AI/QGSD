@@ -15,7 +15,6 @@ const reset = '\x1b[0m';
 
 // Get version from package.json
 const pkg = require('../package.json');
-const { install: installVibe } = require('./install-vibe');
 
 // Parse args
 const args = process.argv.slice(2);
@@ -24,7 +23,6 @@ const hasLocal = args.includes('--local') || args.includes('-l');
 const hasOpencode = args.includes('--opencode');
 const hasClaude = args.includes('--claude');
 const hasGemini = args.includes('--gemini');
-const hasVibe = args.includes('--vibe');
 const hasBoth = args.includes('--both'); // Legacy flag, keeps working
 const hasAll = args.includes('--all');
 const hasUninstall = args.includes('--uninstall') || args.includes('-u');
@@ -32,21 +30,19 @@ const hasUninstall = args.includes('--uninstall') || args.includes('-u');
 // Runtime selection - can be set by flags or interactive prompt
 let selectedRuntimes = [];
 if (hasAll) {
-  selectedRuntimes = ['claude', 'opencode', 'gemini', 'vibe'];
+  selectedRuntimes = ['claude', 'opencode', 'gemini'];
 } else if (hasBoth) {
   selectedRuntimes = ['claude', 'opencode'];
 } else {
   if (hasOpencode) selectedRuntimes.push('opencode');
   if (hasClaude) selectedRuntimes.push('claude');
   if (hasGemini) selectedRuntimes.push('gemini');
-  if (hasVibe) selectedRuntimes.push('vibe');
 }
 
 // Helper to get directory name for a runtime (used for local/project installs)
 function getDirName(runtime) {
   if (runtime === 'opencode') return '.opencode';
   if (runtime === 'gemini') return '.gemini';
-  if (runtime === 'vibe') return '.vibe';
   return '.claude';
 }
 
@@ -60,17 +56,17 @@ function getOpencodeGlobalDir() {
   if (process.env.OPENCODE_CONFIG_DIR) {
     return expandTilde(process.env.OPENCODE_CONFIG_DIR);
   }
-
+  
   // 2. OPENCODE_CONFIG env var (use its directory)
   if (process.env.OPENCODE_CONFIG) {
     return path.dirname(expandTilde(process.env.OPENCODE_CONFIG));
   }
-
+  
   // 3. XDG_CONFIG_HOME/opencode
   if (process.env.XDG_CONFIG_HOME) {
     return path.join(expandTilde(process.env.XDG_CONFIG_HOME), 'opencode');
   }
-
+  
   // 4. Default: ~/.config/opencode (XDG default)
   return path.join(os.homedir(), '.config', 'opencode');
 }
@@ -88,7 +84,7 @@ function getGlobalDir(runtime, explicitDir = null) {
     }
     return getOpencodeGlobalDir();
   }
-
+  
   if (runtime === 'gemini') {
     // Gemini: --config-dir > GEMINI_CONFIG_DIR > ~/.gemini
     if (explicitDir) {
@@ -99,14 +95,7 @@ function getGlobalDir(runtime, explicitDir = null) {
     }
     return path.join(os.homedir(), '.gemini');
   }
-
-  if (runtime === 'vibe') {
-    if (process.env.VIBE_HOME) {
-      return expandTilde(process.env.VIBE_HOME);
-    }
-    return path.join(os.homedir(), '.vibe');
-  }
-
+  
   // Claude Code: --config-dir > CLAUDE_CONFIG_DIR > ~/.claude
   if (explicitDir) {
     return expandTilde(explicitDir);
@@ -571,7 +560,7 @@ function convertClaudeToGeminiToml(content) {
 
   const frontmatter = content.substring(3, endIndex).trim();
   const body = content.substring(endIndex + 3).trim();
-
+  
   // Extract description from frontmatter
   let description = '';
   const lines = frontmatter.split('\n');
@@ -588,9 +577,9 @@ function convertClaudeToGeminiToml(content) {
   if (description) {
     toml += `description = ${JSON.stringify(description)}\n`;
   }
-
+  
   toml += `prompt = ${JSON.stringify(body)}\n`;
-
+  
   return toml;
 }
 
@@ -609,7 +598,7 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
   if (!fs.existsSync(srcDir)) {
     return;
   }
-
+  
   // Remove old gsd-*.md files before copying new ones
   if (fs.existsSync(destDir)) {
     for (const file of fs.readdirSync(destDir)) {
@@ -620,12 +609,12 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
   } else {
     fs.mkdirSync(destDir, { recursive: true });
   }
-
+  
   const entries = fs.readdirSync(srcDir, { withFileTypes: true });
-
+  
   for (const entry of entries) {
     const srcPath = path.join(srcDir, entry.name);
-
+    
     if (entry.isDirectory()) {
       // Recurse into subdirectories, adding to prefix
       // e.g., commands/gsd/debug/start.md -> command/gsd-debug-start.md
@@ -764,8 +753,8 @@ function cleanupOrphanedHooks(settings) {
 
   // Fix #330: Update statusLine if it points to old statusline.js path
   if (settings.statusLine && settings.statusLine.command &&
-    settings.statusLine.command.includes('statusline.js') &&
-    !settings.statusLine.command.includes('gsd-statusline.js')) {
+      settings.statusLine.command.includes('statusline.js') &&
+      !settings.statusLine.command.includes('gsd-statusline.js')) {
     // Replace old path with new path
     settings.statusLine.command = settings.statusLine.command.replace(
       /statusline\.js/,
@@ -886,7 +875,7 @@ function uninstall(isGlobal, runtime = 'claude') {
 
     // Remove GSD statusline if it references our hook
     if (settings.statusLine && settings.statusLine.command &&
-      settings.statusLine.command.includes('gsd-statusline')) {
+        settings.statusLine.command.includes('gsd-statusline')) {
       delete settings.statusLine;
       settingsModified = true;
       console.log(`  ${green}✓${reset} Removed GSD statusline from settings`);
@@ -1076,7 +1065,7 @@ function configureOpencodePermissions() {
   const gsdPath = opencodeConfigDir === defaultConfigDir
     ? '~/.config/opencode/get-shit-done/*'
     : `${opencodeConfigDir.replace(/\\/g, '/')}/get-shit-done/*`;
-
+  
   let modified = false;
 
   // Configure read permission
@@ -1320,7 +1309,7 @@ function install(isGlobal, runtime = 'claude') {
     // OpenCode: flat structure in command/ directory
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
-
+    
     // Copy commands/gsd/*.md as command/gsd-*.md (flatten structure)
     const gsdSrc = path.join(src, 'commands', 'gsd');
     copyFlattenedCommands(gsdSrc, commandDir, 'gsd', pathPrefix, runtime);
@@ -1334,7 +1323,7 @@ function install(isGlobal, runtime = 'claude') {
     // Claude Code & Gemini: nested structure in commands/ directory
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
-
+    
     const gsdSrc = path.join(src, 'commands', 'gsd');
     const gsdDest = path.join(commandsDir, 'gsd');
     copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
@@ -1417,46 +1406,20 @@ function install(isGlobal, runtime = 'claude') {
   }
 
   // Copy hooks from dist/ (bundled with dependencies)
-  // Dev installs from a git clone may not have hooks/dist yet.
-  // In that case, build it on the fly so hooks still install.
-  const hooksDist = path.join(src, 'hooks', 'dist');
-  const hooksDir = path.join(src, 'hooks');
-
-  if (!fs.existsSync(hooksDist) && fs.existsSync(hooksDir)) {
-    try {
-      const buildScript = path.join(src, 'scripts', 'build-hooks.js');
-      if (fs.existsSync(buildScript)) {
-        require(buildScript);
-      }
-    } catch (e) {
-      // fall through, we'll attempt a direct copy below
-    }
-
-    // Fallback: copy known hooks into dist if they exist
-    if (!fs.existsSync(hooksDist)) {
-      fs.mkdirSync(hooksDist, { recursive: true });
-      for (const hookName of ['gsd-check-update.js', 'gsd-statusline.js']) {
-        const inRepoHook = path.join(hooksDir, hookName);
-        if (fs.existsSync(inRepoHook)) {
-          fs.copyFileSync(inRepoHook, path.join(hooksDist, hookName));
-        }
-      }
-    }
-  }
-
-  if (fs.existsSync(hooksDist)) {
+  const hooksSrc = path.join(src, 'hooks', 'dist');
+  if (fs.existsSync(hooksSrc)) {
     const hooksDest = path.join(targetDir, 'hooks');
     fs.mkdirSync(hooksDest, { recursive: true });
-    const hookEntries = fs.readdirSync(hooksDist);
+    const hookEntries = fs.readdirSync(hooksSrc);
     for (const entry of hookEntries) {
-      const srcFile = path.join(hooksDist, entry);
+      const srcFile = path.join(hooksSrc, entry);
       if (fs.statSync(srcFile).isFile()) {
         const destFile = path.join(hooksDest, entry);
         fs.copyFileSync(srcFile, destFile);
       }
     }
     if (verifyInstalled(hooksDest, 'hooks')) {
-      console.log(`  ${green}✓${reset} Installed hooks`);
+      console.log(`  ${green}✓${reset} Installed hooks (bundled)`);
     } else {
       failures.push('hooks');
     }
@@ -1575,17 +1538,6 @@ function handleStatusline(settings, isInteractive, callback) {
     return;
   }
 
-  // Auto-migrate renamed GSD statusline (hooks/statusline.js -> hooks/gsd-statusline.js)
-  // Only migrate if it looks like GSD's statusline (node command with hooks/statusline.js path)
-  const existingCmd = settings.statusLine.command || '';
-  const isOldGsdStatusline = existingCmd.includes('node') &&
-    (existingCmd.includes('hooks/statusline.js') || existingCmd.includes('hooks\\statusline.js'));
-  if (isOldGsdStatusline) {
-    console.log(`  ${green}✓${reset} Migrating statusline.js → gsd-statusline.js`);
-    callback(true);
-    return;
-  }
-
   if (!isInteractive) {
     console.log(`  ${yellow}⚠${reset} Skipping statusline (already configured)`);
     console.log(`    Use ${cyan}--force-statusline${reset} to replace\n`);
@@ -1593,7 +1545,7 @@ function handleStatusline(settings, isInteractive, callback) {
     return;
   }
 
-  const displayCmd = settings.statusLine.command || settings.statusLine.url || '(custom)';
+  const existingCmd = settings.statusLine.command || settings.statusLine.url || '(custom)';
 
   const rl = readline.createInterface({
     input: process.stdin,
@@ -1603,7 +1555,7 @@ function handleStatusline(settings, isInteractive, callback) {
   console.log(`
   ${yellow}⚠${reset} Existing statusline detected\n
   Your current statusline:
-    ${dim}command: ${displayCmd}${reset}
+    ${dim}command: ${existingCmd}${reset}
 
   GSD includes a statusline showing:
     • Model name
@@ -1644,7 +1596,6 @@ function promptRuntime(callback) {
   ${cyan}2${reset}) OpenCode    ${dim}(~/.config/opencode)${reset} - open source, free models
   ${cyan}3${reset}) Gemini      ${dim}(~/.gemini)${reset}
   ${cyan}4${reset}) All
-  ${cyan}5${reset}) Mistral Vibe
 `);
 
   rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
@@ -1652,13 +1603,11 @@ function promptRuntime(callback) {
     rl.close();
     const choice = answer.trim() || '1';
     if (choice === '4') {
-      callback(['claude', 'opencode', 'gemini', 'vibe']);
+      callback(['claude', 'opencode', 'gemini']);
     } else if (choice === '3') {
       callback(['gemini']);
     } else if (choice === '2') {
       callback(['opencode']);
-    } else if (choice === '5') {
-      callback(['vibe']);
     } else {
       callback(['claude']);
     }
@@ -1717,15 +1666,6 @@ function installAllRuntimes(runtimes, isGlobal, isInteractive) {
   const results = [];
 
   for (const runtime of runtimes) {
-    if (runtime === 'vibe') {
-      try {
-        const result = installVibe();
-        results.push(result);
-      } catch (e) {
-        console.error('Vibe installation failed', e);
-      }
-      continue;
-    }
     const result = install(isGlobal, runtime);
     results.push(result);
   }
@@ -1736,30 +1676,28 @@ function installAllRuntimes(runtimes, isGlobal, isInteractive) {
 
   // Logic: if both are present, ask once if interactive? Or ask for each?
   // Simpler: Ask once and apply to both if applicable.
-
+  
   if (claudeResult || geminiResult) {
     // Use whichever settings exist to check for existing statusline
     const primaryResult = claudeResult || geminiResult;
-
+    
     handleStatusline(primaryResult.settings, isInteractive, (shouldInstallStatusline) => {
       if (claudeResult) {
         finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude');
       }
       if (geminiResult) {
-        finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini');
+         finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini');
       }
-
+      
       const opencodeResult = results.find(r => r.runtime === 'opencode');
       if (opencodeResult) {
         finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode');
       }
     });
   } else {
-    // Only OpenCode or Vibe
-    const opencodeResult = results.find(r => r.runtime === 'opencode');
-    if (opencodeResult) {
-      finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode');
-    }
+    // Only OpenCode
+    const opencodeResult = results[0];
+    finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode');
   }
 }
 

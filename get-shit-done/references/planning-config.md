@@ -6,8 +6,7 @@ Configuration options for `.planning/` directory behavior.
 ```json
 "planning": {
   "commit_docs": true,
-  "search_gitignored": false,
-  "git_tag": true
+  "search_gitignored": false
 },
 "git": {
   "branching_strategy": "none",
@@ -20,7 +19,6 @@ Configuration options for `.planning/` directory behavior.
 |--------|---------|-------------|
 | `commit_docs` | `true` | Whether to commit planning artifacts to git |
 | `search_gitignored` | `false` | Add `--no-ignore` to broad rg searches |
-| `git_tag` | `true` | Create git tags on milestone completion |
 | `git.branching_strategy` | `"none"` | Git branching approach: `"none"`, `"phase"`, or `"milestone"` |
 | `git.phase_branch_template` | `"gsd/phase-{phase}-{slug}"` | Branch template for phase strategy |
 | `git.milestone_branch_template` | `"gsd/{milestone}-{slug}"` | Branch template for milestone strategy |

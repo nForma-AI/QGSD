@@ -8,8 +8,7 @@
   },
   "planning": {
     "commit_docs": true,
-    "search_gitignored": false,
-    "git_tag": true
+    "search_gitignored": false
   },
   "parallelization": {
     "enabled": true,
