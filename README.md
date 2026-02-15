@@ -260,6 +260,38 @@ The system:
 
 Walk away, come back to completed work with clean git history.
 
+**How Wave Execution Works:**
+
+Plans are grouped into "waves" based on dependencies. Within each wave, plans run in parallel. Waves run sequentially.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  PHASE EXECUTION                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  WAVE 1 (parallel)          WAVE 2 (parallel)          WAVE 3       │
+│  ┌─────────┐ ┌─────────┐    ┌─────────┐ ┌─────────┐    ┌─────────┐ │
+│  │ Plan 01 │ │ Plan 02 │ →  │ Plan 03 │ │ Plan 04 │ →  │ Plan 05 │ │
+│  │         │ │         │    │         │ │         │    │         │ │
+│  │ User    │ │ Product │    │ Orders  │ │ Cart    │    │ Checkout│ │
+│  │ Model   │ │ Model   │    │ API     │ │ API     │    │ UI      │ │
+│  └─────────┘ └─────────┘    └─────────┘ └─────────┘    └─────────┘ │
+│       │           │              ↑           ↑              ↑       │
+│       └───────────┴──────────────┴───────────┘              │       │
+│              Dependencies: Plan 03 needs Plan 01            │       │
+│                          Plan 04 needs Plan 02              │       │
+│                          Plan 05 needs Plans 03 + 04        │       │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Why waves matter:**
+- Independent plans → Same wave → Run in parallel
+- Dependent plans → Later wave → Wait for dependencies
+- File conflicts → Sequential plans or same plan
+
+This is why "vertical slices" (Plan 01: User feature end-to-end) parallelize better than "horizontal layers" (Plan 01: All models, Plan 02: All APIs).
+
 **Creates:** `{phase_num}-{N}-SUMMARY.md`, `{phase_num}-VERIFICATION.md`
 
 ---
