@@ -267,7 +267,7 @@ All automated checks passed. {N} items need human testing:
 ## ⚠ Phase {X}: {Name} — Gaps Found
 
 **Score:** {N}/{M} must-haves verified
-**Report:** {phase_dir}/{phase}-VERIFICATION.md
+**Report:** {phase_dir}/{phase_num}-VERIFICATION.md
 
 ### What's Missing
 {Gap summaries from VERIFICATION.md}
@@ -279,7 +279,7 @@ All automated checks passed. {N} items need human testing:
 
 <sub>`/clear` first → fresh context window</sub>
 
-Also: `cat {phase_dir}/{phase}-VERIFICATION.md` — full report
+Also: `cat {phase_dir}/{phase_num}-VERIFICATION.md` — full report
 Also: `/gsd:verify-work {X}` — manual testing first
 ```
 

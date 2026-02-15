@@ -223,7 +223,7 @@ For each area you select, it asks until you're satisfied. The output — `CONTEX
 
 The deeper you go here, the more the system builds what you actually want. Skip it and you get reasonable defaults. Use it and you get *your* vision.
 
-**Creates:** `{phase}-CONTEXT.md`
+**Creates:** `{phase_num}-CONTEXT.md`
 
 ---
 
@@ -241,7 +241,7 @@ The system:
 
 Each plan is small enough to execute in a fresh context window. No degradation, no "I'll be more concise now."
 
-**Creates:** `{phase}-RESEARCH.md`, `{phase}-{N}-PLAN.md`
+**Creates:** `{phase_num}-RESEARCH.md`, `{phase_num}-{N}-PLAN.md`
 
 ---
 
@@ -260,7 +260,7 @@ The system:
 
 Walk away, come back to completed work with clean git history.
 
-**Creates:** `{phase}-{N}-SUMMARY.md`, `{phase}-VERIFICATION.md`
+**Creates:** `{phase_num}-{N}-SUMMARY.md`, `{phase_num}-VERIFICATION.md`
 
 ---
 
@@ -283,7 +283,7 @@ The system:
 
 If everything passes, you move on. If something's broken, you don't manually debug — you just run `/gsd:execute-phase` again with the fix plans it created.
 
-**Creates:** `{phase}-UAT.md`, fix plans if issues found
+**Creates:** `{phase_num}-UAT.md`, fix plans if issues found
 
 ---
 
