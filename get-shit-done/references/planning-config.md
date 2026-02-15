@@ -101,6 +101,8 @@ To use uncommitted mode:
    git commit -m "chore: stop tracking planning docs"
    ```
 
+4. **Branch merges:** When using `branching_strategy: phase` or `milestone`, the `complete-milestone` workflow automatically strips `.planning/` files from staging before merge commits when `commit_docs: false`.
+
 </setup_uncommitted_mode>
 
 <branching_strategy_behavior>
