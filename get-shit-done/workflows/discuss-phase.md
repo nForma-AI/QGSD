@@ -147,7 +147,23 @@ If "Update": Load existing, continue to analyze_phase
 If "View": Display CONTEXT.md, then offer update/skip
 If "Skip": Exit workflow
 
-**If doesn't exist:** Continue to analyze_phase.
+**If doesn't exist:**
+
+Check `has_plans` and `plan_count` from init. **If `has_plans` is true:**
+
+Use AskUserQuestion:
+- header: "Plans exist"
+- question: "Phase [X] already has {plan_count} plan(s) created without user context. Your decisions here won't affect existing plans unless you replan."
+- options:
+  - "Continue and replan after" — Capture context, then run /gsd:plan-phase {X} to replan
+  - "View existing plans" — Show plans before deciding
+  - "Cancel" — Skip discuss-phase
+
+If "Continue and replan after": Continue to analyze_phase.
+If "View existing plans": Display plan files, then offer "Continue" / "Cancel".
+If "Cancel": Exit workflow.
+
+**If `has_plans` is false:** Continue to analyze_phase.
 </step>
 
 <step name="analyze_phase">

@@ -61,6 +61,18 @@ Use `context_content` from init JSON (already loaded via `--include context`).
 
 If `context_content` is not null, display: `Using phase context from: ${PHASE_DIR}/*-CONTEXT.md`
 
+**If `context_content` is null (no CONTEXT.md exists):**
+
+Use AskUserQuestion:
+- header: "No context"
+- question: "No CONTEXT.md found for Phase {X}. Plans will use research and requirements only — your design preferences won't be included. Continue or capture context first?"
+- options:
+  - "Continue without context" — Plan using research + requirements only
+  - "Run discuss-phase first" — Capture design decisions before planning
+
+If "Continue without context": Proceed to step 5.
+If "Run discuss-phase first": Display `/gsd:discuss-phase {X}` and exit workflow.
+
 ## 5. Handle Research
 
 **Skip if:** `--gaps` flag, `--skip-research` flag, or `research_enabled` is false (from init) without `--research` override.
