@@ -336,7 +336,10 @@ Gap closure cycle: `/gsd:plan-phase {X} --gaps` reads VERIFICATION.md → create
 </step>
 
 <step name="update_roadmap">
-Mark phase complete in ROADMAP.md (date, status).
+```bash
+node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap update-plan-progress "${PHASE_NUMBER}"
+```
+Counts PLAN vs SUMMARY files on disk. Updates progress table row with correct count and status.
 
 ```bash
 node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/phases/{phase_dir}/*-VERIFICATION.md .planning/REQUIREMENTS.md
