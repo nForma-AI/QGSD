@@ -6,6 +6,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.20.0] - 2026-02-15
+
+### Added
+- `/gsd:health` command — validates `.planning/` directory integrity with `--repair` flag for auto-fixing config.json and STATE.md
+- `--full` flag for `/gsd:quick` — enables plan-checking (max 2 iterations) and post-execution verification on quick tasks
+- `--auto` flag wired from `/gsd:new-project` through the full phase chain (discuss → plan → execute)
+- Auto-advance chains phase execution across full milestones when `workflow.auto_advance` is enabled
+
+### Fixed
+- Plans created without user context — `/gsd:plan-phase` warns when no CONTEXT.md exists, `/gsd:discuss-phase` warns when plans already exist (#253)
+- OpenCode installer converts `general-purpose` subagent type to OpenCode's `general`
+- `/gsd:complete-milestone` respects `commit_docs` setting when merging branches
+- Phase directories tracked in git via `.gitkeep` files
+
 ## [1.19.2] - 2026-02-15
 
 ### Added
@@ -1257,7 +1271,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.19.2...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.20.0...HEAD
+[1.20.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.0
 [1.19.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.2
 [1.19.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.1
 [1.19.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.0
