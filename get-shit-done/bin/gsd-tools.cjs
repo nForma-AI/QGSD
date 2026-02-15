@@ -2653,8 +2653,9 @@ function cmdPhaseAdd(cwd, description, raw) {
   const dirName = `${paddedNum}-${slug}`;
   const dirPath = path.join(cwd, '.planning', 'phases', dirName);
 
-  // Create directory
+  // Create directory with .gitkeep so git tracks empty folders
   fs.mkdirSync(dirPath, { recursive: true });
+  fs.writeFileSync(path.join(dirPath, '.gitkeep'), '');
 
   // Build phase entry
   const phaseEntry = `\n### Phase ${newPhaseNum}: ${description}\n\n**Goal:** [To be planned]\n**Depends on:** Phase ${maxPhase}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /gsd:plan-phase ${newPhaseNum} to break down)\n`;
@@ -2725,8 +2726,9 @@ function cmdPhaseInsert(cwd, afterPhase, description, raw) {
   const dirName = `${decimalPhase}-${slug}`;
   const dirPath = path.join(cwd, '.planning', 'phases', dirName);
 
-  // Create directory
+  // Create directory with .gitkeep so git tracks empty folders
   fs.mkdirSync(dirPath, { recursive: true });
+  fs.writeFileSync(path.join(dirPath, '.gitkeep'), '');
 
   // Build phase entry
   const phaseEntry = `\n### Phase ${decimalPhase}: ${description} (INSERTED)\n\n**Goal:** [Urgent work - to be planned]\n**Depends on:** Phase ${afterPhase}\n**Plans:** 0 plans\n\nPlans:\n- [ ] TBD (run /gsd:plan-phase ${decimalPhase} to break down)\n`;
