@@ -3011,6 +3011,35 @@ function cmdPhaseComplete(cwd, phaseNum, raw) {
     );
 
     fs.writeFileSync(roadmapPath, roadmapContent, 'utf-8');
+
+    // Update REQUIREMENTS.md traceability for this phase's requirements
+    const reqPath = path.join(cwd, '.planning', 'REQUIREMENTS.md');
+    if (fs.existsSync(reqPath)) {
+      // Extract Requirements line from roadmap for this phase
+      const reqMatch = roadmapContent.match(
+        new RegExp(`Phase\\s+${phaseNum.replace('.', '\\.')}[\\s\\S]*?\\*\\*Requirements:\\*\\*\\s*([^\\n]+)`, 'i')
+      );
+
+      if (reqMatch) {
+        const reqIds = reqMatch[1].split(/[,\s]+/).map(r => r.trim()).filter(Boolean);
+        let reqContent = fs.readFileSync(reqPath, 'utf-8');
+
+        for (const reqId of reqIds) {
+          // Update checkbox: - [ ] **REQ-ID** → - [x] **REQ-ID**
+          reqContent = reqContent.replace(
+            new RegExp(`(-\\s*\\[)[ ](\\]\\s*\\*\\*${reqId}\\*\\*)`, 'gi'),
+            '$1x$2'
+          );
+          // Update traceability table: | REQ-ID | Phase N | Pending | → | REQ-ID | Phase N | Complete |
+          reqContent = reqContent.replace(
+            new RegExp(`(\\|\\s*${reqId}\\s*\\|[^|]+\\|)\\s*Pending\\s*(\\|)`, 'gi'),
+            '$1 Complete $2'
+          );
+        }
+
+        fs.writeFileSync(reqPath, reqContent, 'utf-8');
+      }
+    }
   }
 
   // Find next phase
