@@ -6,6 +6,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.19.1] - 2026-02-15
+
+### Added
+- Auto-advance pipeline: `--auto` flag on `discuss-phase` and `plan-phase` chains discuss → plan → execute without stopping. Also available as `workflow.auto_advance` config setting
+
+### Fixed
+- Phase transition routing now routes to `discuss-phase` (not `plan-phase`) when no CONTEXT.md exists — consistent across all workflows (#530)
+- ROADMAP progress table plan counts are now computed from disk instead of LLM-edited — deterministic "X/Y Complete" values (#537)
+- Verifier uses ROADMAP Success Criteria directly instead of deriving verification truths from the Goal field (#538)
+- REQUIREMENTS.md traceability updates when a phase completes
+- STATE.md updates after discuss-phase completes (#556)
+- AskUserQuestion headers enforced to 12-char max to prevent UI truncation (#559)
+- Agent model resolution returns `inherit` instead of hardcoded `opus` (#558)
+
 ## [1.19.0] - 2026-02-15
 
 ### Added
@@ -1222,7 +1236,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.19.0...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.19.1...HEAD
+[1.19.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.1
 [1.19.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.0
 [1.18.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.18.0
 [1.17.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.17.0
