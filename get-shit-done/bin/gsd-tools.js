@@ -3563,6 +3563,40 @@ function findPhaseInternal(cwd, phase) {
   }
 }
 
+function getRoadmapPhaseInternal(cwd, phaseNum) {
+  if (!phaseNum) return null;
+  const roadmapPath = path.join(cwd, '.planning', 'ROADMAP.md');
+  if (!fs.existsSync(roadmapPath)) return null;
+
+  try {
+    const content = fs.readFileSync(roadmapPath, 'utf-8');
+    const escapedPhase = phaseNum.toString().replace(/\./g, '\\.');
+    const phasePattern = new RegExp(`#{2,3}\\s*Phase\\s+${escapedPhase}:\\s*([^\\n]+)`, 'i');
+    const headerMatch = content.match(phasePattern);
+    if (!headerMatch) return null;
+
+    const phaseName = headerMatch[1].trim();
+    const headerIndex = headerMatch.index;
+    const restOfContent = content.slice(headerIndex);
+    const nextHeaderMatch = restOfContent.match(/\n#{2,3}\s+Phase\s+\d/i);
+    const sectionEnd = nextHeaderMatch ? headerIndex + nextHeaderMatch.index : content.length;
+    const section = content.slice(headerIndex, sectionEnd).trim();
+
+    const goalMatch = section.match(/\*\*Goal:\*\*\s*([^\n]+)/i);
+    const goal = goalMatch ? goalMatch[1].trim() : null;
+
+    return {
+      found: true,
+      phase_number: phaseNum.toString(),
+      phase_name: phaseName,
+      goal,
+      section,
+    };
+  } catch {
+    return null;
+  }
+}
+
 function pathExistsInternal(cwd, targetPath) {
   const fullPath = path.isAbsolute(targetPath) ? targetPath : path.join(cwd, targetPath);
   try {
@@ -3948,7 +3982,28 @@ function cmdInitVerifyWork(cwd, phase, raw) {
 
 function cmdInitPhaseOp(cwd, phase, raw) {
   const config = loadConfig(cwd);
-  const phaseInfo = findPhaseInternal(cwd, phase);
+  let phaseInfo = findPhaseInternal(cwd, phase);
+
+  // Fallback to ROADMAP.md if no directory exists (e.g., Plans: TBD)
+  if (!phaseInfo) {
+    const roadmapPhase = getRoadmapPhaseInternal(cwd, phase);
+    if (roadmapPhase?.found) {
+      const phaseName = roadmapPhase.phase_name;
+      phaseInfo = {
+        found: true,
+        directory: null,
+        phase_number: roadmapPhase.phase_number,
+        phase_name: phaseName,
+        phase_slug: phaseName ? phaseName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : null,
+        plans: [],
+        summaries: [],
+        incomplete_plans: [],
+        has_research: false,
+        has_context: false,
+        has_verification: false,
+      };
+    }
+  }
 
   const result = {
     // Config
