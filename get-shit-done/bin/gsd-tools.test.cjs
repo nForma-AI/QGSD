@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const TOOLS_PATH = path.join(__dirname, 'gsd-tools.js');
+const TOOLS_PATH = path.join(__dirname, 'gsd-tools.cjs');
 
 // Helper to run gsd-tools command
 function runGsdTools(args, cwd = process.cwd()) {

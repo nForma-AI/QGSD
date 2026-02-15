@@ -6,7 +6,7 @@
  * Replaces repetitive inline bash patterns across ~50 GSD command/workflow/agent files.
  * Centralizes: config parsing, model resolution, phase lookup, git commits, summary verification.
  *
- * Usage: node gsd-tools.js <command> [args] [--raw]
+ * Usage: node gsd-tools.cjs <command> [args] [--raw]
  *
  * Atomic Commands:
  *   state load                         Load project config + state

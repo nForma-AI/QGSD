@@ -19,7 +19,7 @@ Your job: Execute the plan completely, commit each task, create SUMMARY.md, upda
 Load execution context:
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init execute-phase "${PHASE}")
+INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.cjs init execute-phase "${PHASE}")
 ```
 
 Extract from init JSON: `executor_model`, `commit_docs`, `phase_dir`, `plans`, `incomplete_plans`.
@@ -329,24 +329,24 @@ After SUMMARY.md, update STATE.md using gsd-tools:
 
 ```bash
 # Advance plan counter (handles edge cases automatically)
-node ~/.claude/get-shit-done/bin/gsd-tools.js state advance-plan
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs state advance-plan
 
 # Recalculate progress bar from disk state
-node ~/.claude/get-shit-done/bin/gsd-tools.js state update-progress
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs state update-progress
 
 # Record execution metrics
-node ~/.claude/get-shit-done/bin/gsd-tools.js state record-metric \
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs state record-metric \
   --phase "${PHASE}" --plan "${PLAN}" --duration "${DURATION}" \
   --tasks "${TASK_COUNT}" --files "${FILE_COUNT}"
 
 # Add decisions (extract from SUMMARY.md key-decisions)
 for decision in "${DECISIONS[@]}"; do
-  node ~/.claude/get-shit-done/bin/gsd-tools.js state add-decision \
+  node ~/.claude/get-shit-done/bin/gsd-tools.cjs state add-decision \
     --phase "${PHASE}" --summary "${decision}"
 done
 
 # Update session info
-node ~/.claude/get-shit-done/bin/gsd-tools.js state record-session \
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs state record-session \
   --stopped-at "Completed ${PHASE}-${PLAN}-PLAN.md"
 ```
 
@@ -361,13 +361,13 @@ node ~/.claude/get-shit-done/bin/gsd-tools.js state record-session \
 
 **For blockers found during execution:**
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js state add-blocker "Blocker description"
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs state add-blocker "Blocker description"
 ```
 </state_updates>
 
 <final_commit>
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md
+node ~/.claude/get-shit-done/bin/gsd-tools.cjs commit "docs({phase}-{plan}): complete [plan-name] plan" --files .planning/phases/XX-name/{phase}-{plan}-SUMMARY.md .planning/STATE.md
 ```
 
 Separate from per-task commits — captures execution results only.

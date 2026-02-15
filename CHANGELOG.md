@@ -132,12 +132,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - **Architecture: Thin orchestrator pattern** — Commands now delegate to workflows, reducing command file size by ~75% and improving maintainability
-- **Centralized utilities** — New `gsd-tools.js` (11 functions) replaces repetitive bash patterns across 50+ files
+- **Centralized utilities** — New `gsd-tools.cjs` (11 functions) replaces repetitive bash patterns across 50+ files
 - **Token reduction** — ~22k characters removed from affected command/workflow/agent files
 - **Condensed agent prompts** — Same behavior with fewer words (executor, planner, verifier, researcher agents)
 
 ### Added
-- `gsd-tools.js` CLI utility with functions: state load/update, resolve-model, find-phase, commit, verify-summary, generate-slug, current-timestamp, list-todos, verify-path-exists, config-ensure-section
+- `gsd-tools.cjs` CLI utility with functions: state load/update, resolve-model, find-phase, commit, verify-summary, generate-slug, current-timestamp, list-todos, verify-path-exists, config-ensure-section
 
 ## [1.11.2] - 2026-02-05
 
