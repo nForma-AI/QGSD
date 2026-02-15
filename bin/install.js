@@ -957,7 +957,11 @@ function uninstall(isGlobal, runtime = 'claude') {
 
   // 6. For OpenCode, clean up permissions from opencode.json
   if (isOpencode) {
-    const opencodeConfigDir = getOpencodeGlobalDir();
+    // For local uninstalls, clean up ./.opencode/opencode.json
+    // For global uninstalls, clean up ~/.config/opencode/opencode.json
+    const opencodeConfigDir = isGlobal
+      ? getOpencodeGlobalDir()
+      : path.join(process.cwd(), '.opencode');
     const configPath = path.join(opencodeConfigDir, 'opencode.json');
     if (fs.existsSync(configPath)) {
       try {
@@ -1071,10 +1075,14 @@ function parseJsonc(content) {
 /**
  * Configure OpenCode permissions to allow reading GSD reference docs
  * This prevents permission prompts when GSD accesses the get-shit-done directory
+ * @param {boolean} isGlobal - Whether this is a global or local install
  */
-function configureOpencodePermissions() {
-  // OpenCode config file is at ~/.config/opencode/opencode.json
-  const opencodeConfigDir = getOpencodeGlobalDir();
+function configureOpencodePermissions(isGlobal = true) {
+  // For local installs, use ./.opencode/opencode.json
+  // For global installs, use ~/.config/opencode/opencode.json
+  const opencodeConfigDir = isGlobal
+    ? getOpencodeGlobalDir()
+    : path.join(process.cwd(), '.opencode');
   const configPath = path.join(opencodeConfigDir, 'opencode.json');
 
   // Ensure config directory exists
@@ -1548,7 +1556,7 @@ function install(isGlobal, runtime = 'claude') {
 /**
  * Apply statusline config, then print completion message
  */
-function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline, runtime = 'claude') {
+function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallStatusline, runtime = 'claude', isGlobal = true) {
   const isOpencode = runtime === 'opencode';
 
   if (shouldInstallStatusline && !isOpencode) {
@@ -1564,7 +1572,7 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
 
   // Configure OpenCode permissions
   if (isOpencode) {
-    configureOpencodePermissions();
+    configureOpencodePermissions(isGlobal);
   }
 
   let program = 'Claude Code';
@@ -1740,21 +1748,21 @@ function installAllRuntimes(runtimes, isGlobal, isInteractive) {
     
     handleStatusline(primaryResult.settings, isInteractive, (shouldInstallStatusline) => {
       if (claudeResult) {
-        finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude');
+        finishInstall(claudeResult.settingsPath, claudeResult.settings, claudeResult.statuslineCommand, shouldInstallStatusline, 'claude', isGlobal);
       }
       if (geminiResult) {
-         finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini');
+         finishInstall(geminiResult.settingsPath, geminiResult.settings, geminiResult.statuslineCommand, shouldInstallStatusline, 'gemini', isGlobal);
       }
-      
+
       const opencodeResult = results.find(r => r.runtime === 'opencode');
       if (opencodeResult) {
-        finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode');
+        finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
       }
     });
   } else {
     // Only OpenCode
     const opencodeResult = results[0];
-    finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode');
+    finishInstall(opencodeResult.settingsPath, opencodeResult.settings, opencodeResult.statuslineCommand, false, 'opencode', isGlobal);
   }
 }
 
