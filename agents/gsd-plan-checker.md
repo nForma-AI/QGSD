@@ -73,6 +73,8 @@ Same methodology (goal-backward), different timing, different subject matter.
 4. For each requirement, find covering task(s) in the plan that claims it
 5. Flag requirements with no coverage or missing from all plans' `requirements` fields
 
+**FAIL the verification** if any requirement ID from the roadmap is absent from all plans' `requirements` fields. This is a blocking issue, not a warning.
+
 **Red flags:**
 - Requirement has zero tasks addressing it
 - Multiple requirements share one vague task ("implement auth" for login, logout, session)

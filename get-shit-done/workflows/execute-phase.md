@@ -291,12 +291,19 @@ node ~/.claude/get-shit-done/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE
 <step name="verify_phase_goal">
 Verify phase achieved its GOAL, not just completed tasks.
 
+```bash
+PHASE_REQ_IDS=$(node ~/.claude/get-shit-done/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
+```
+
 ```
 Task(
   prompt="Verify phase {phase_number} goal achievement.
 Phase directory: {phase_dir}
 Phase goal: {goal from ROADMAP.md}
-Check must_haves against actual codebase. Create VERIFICATION.md.",
+Phase requirement IDs: {phase_req_ids}
+Check must_haves against actual codebase.
+Cross-reference requirement IDs from PLAN frontmatter against REQUIREMENTS.md — every ID MUST be accounted for.
+Create VERIFICATION.md.",
   subagent_type="gsd-verifier",
   model="{verifier_model}"
 )
