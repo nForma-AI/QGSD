@@ -6,6 +6,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.20.1] - 2026-02-16
+
+### Fixed
+- Auto-mode (`--auto`) now survives context compaction by persisting `workflow.auto_advance` to config.json on disk
+- Checkpoints no longer block auto-mode: human-verify auto-approves, decision auto-selects first option (human-action still stops for auth gates)
+- Plan-phase now passes `--auto` flag when spawning execute-phase
+- Auto-advance clears on milestone complete to prevent runaway chains
+
 ## [1.20.0] - 2026-02-15
 
 ### Added
@@ -1271,7 +1279,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v1.20.1...HEAD
+[1.20.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.1
 [1.20.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.0
 [1.19.2]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.2
 [1.19.1]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.19.1
