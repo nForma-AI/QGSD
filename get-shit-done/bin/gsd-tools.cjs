@@ -3196,7 +3196,7 @@ function cmdPhaseComplete(cwd, phaseNum, raw) {
       );
 
       if (reqMatch) {
-        const reqIds = reqMatch[1].split(/[,\s]+/).map(r => r.trim()).filter(Boolean);
+        const reqIds = reqMatch[1].replace(/[\[\]]/g, '').split(/[,\s]+/).map(r => r.trim()).filter(Boolean);
         let reqContent = fs.readFileSync(reqPath, 'utf-8');
 
         for (const reqId of reqIds) {

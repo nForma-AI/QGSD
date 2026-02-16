@@ -38,6 +38,8 @@ patterns-established:
   - "Pattern 1: description"
   - "Pattern 2: description"
 
+requirements-completed: []  # Requirement IDs addressed by this plan (from PLAN frontmatter)
+
 # Metrics
 duration: Xmin
 completed: YYYY-MM-DD

@@ -68,9 +68,10 @@ Same methodology (goal-backward), different timing, different subject matter.
 
 **Process:**
 1. Extract phase goal from ROADMAP.md
-2. Decompose goal into requirements (what must be true)
-3. For each requirement, find covering task(s)
-4. Flag requirements with no coverage
+2. Extract requirement IDs from ROADMAP.md `**Requirements:**` line for this phase (strip brackets if present)
+3. Verify each requirement ID appears in at least one plan's `requirements` frontmatter field
+4. For each requirement, find covering task(s) in the plan that claims it
+5. Flag requirements with no coverage or missing from all plans' `requirements` fields
 
 **Red flags:**
 - Requirement has zero tasks addressing it
