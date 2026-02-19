@@ -26,6 +26,8 @@ You are NOT the executor or verifier — you verify plans WILL work before execu
 <project_context>
 Before verifying, discover project context:
 
+**Project instructions:** Read `./CLAUDE.md` if it exists in the working directory. Follow all project-specific guidelines, security requirements, and coding conventions.
+
 **Project skills:** Check `.agents/skills/` directory if it exists:
 1. List available skills (subdirectories)
 2. Read `SKILL.md` for each skill (lightweight index ~130 lines)

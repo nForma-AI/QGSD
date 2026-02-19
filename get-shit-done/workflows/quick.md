@@ -99,6 +99,7 @@ Task(
 **Project State:**
 @.planning/STATE.md
 
+**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, plans should account for project skill rules
 
 </planning_context>
@@ -251,6 +252,7 @@ Execute quick task ${next_num}.
 
 Plan: @${QUICK_DIR}/${next_num}-PLAN.md
 Project state: @.planning/STATE.md
+Project instructions: ./CLAUDE.md (if exists — follow project-specific guidelines)
 Project skills: .agents/skills/ (if exists — list skills, read SKILL.md for each, follow relevant rules during implementation)
 
 <constraints>

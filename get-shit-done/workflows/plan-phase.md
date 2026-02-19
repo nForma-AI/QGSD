@@ -124,6 +124,7 @@ IMPORTANT: If CONTEXT.md exists below, it contains user decisions from /gsd:disc
 **Requirements:** {requirements}
 **Prior decisions:** {decisions}
 
+**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, research should account for project skill patterns
 </additional_context>
 
@@ -203,6 +204,7 @@ IMPORTANT: If context exists below, it contains USER DECISIONS from /gsd:discuss
 **Research:** {research_content}
 **Gap Closure (if --gaps):** {verification_content} {uat_content}
 
+**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, plans should account for project skill rules
 </planning_context>
 
@@ -273,6 +275,7 @@ IMPORTANT: Plans MUST honor user decisions. Flag as issue if plans contradict.
 
 {context_content}
 
+**Project instructions:** Read ./CLAUDE.md if exists — verify plans honor project guidelines
 **Project skills:** Check .agents/skills/ directory (if exists) — verify plans account for project skill rules
 </verification_context>
 
