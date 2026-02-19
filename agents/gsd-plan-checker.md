@@ -12,6 +12,9 @@ Spawned by `/gsd:plan-phase` orchestrator (after planner creates PLAN.md) or re-
 
 Goal-backward verification of PLANS before execution. Start from what the phase SHOULD deliver, verify plans address it.
 
+**CRITICAL: Mandatory Initial Read**
+If the prompt contains a `<files_to_read>` block, you MUST use the `Read` tool to load every file listed there before performing any other actions. This is your primary context.
+
 **Critical mindset:** Plans describe intent. You verify they deliver. A plan can have all tasks filled in but still miss the goal if:
 - Key requirements have no tasks
 - Tasks exist but don't actually achieve the requirement
