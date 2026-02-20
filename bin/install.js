@@ -139,6 +139,78 @@ const banner = '\n' +
   '  A meta-prompting, context engineering and spec-driven\n' +
   '  development system for Claude Code, OpenCode, and Gemini by TÂCHES.\n';
 
+// QGSD: MCP auto-detection — keyword map for quorum model server matching
+const QGSD_KEYWORD_MAP = {
+  codex:    { keywords: ['codex'],    defaultPrefix: 'mcp__codex-cli__'  },
+  gemini:   { keywords: ['gemini'],   defaultPrefix: 'mcp__gemini-cli__' },
+  opencode: { keywords: ['opencode'], defaultPrefix: 'mcp__opencode__'   },
+};
+
+// Reads ~/.claude.json to find MCP server names, keyword-matches to identify quorum candidates,
+// and returns a required_models object with derived tool prefixes.
+// Falls back to hardcoded defaults if ~/.claude.json is missing, malformed, or has no matching servers.
+function buildRequiredModelsFromMcp() {
+  const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+  let mcpServers = {};
+
+  try {
+    if (fs.existsSync(claudeJsonPath)) {
+      const d = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
+      mcpServers = d.mcpServers || {};
+    }
+  } catch (e) {
+    console.warn(`  ${yellow}⚠${reset} Could not read ~/.claude.json: ${e.message}`);
+  }
+
+  const requiredModels = {};
+  let anyDetected = false;
+
+  for (const [modelKey, { keywords, defaultPrefix }] of Object.entries(QGSD_KEYWORD_MAP)) {
+    const matched = Object.keys(mcpServers).find(serverName =>
+      keywords.some(kw => serverName.toLowerCase().includes(kw))
+    );
+    if (matched) {
+      requiredModels[modelKey] = { tool_prefix: `mcp__${matched}__`, required: true };
+      anyDetected = true;
+      console.log(`  ${green}✓${reset} Detected ${modelKey} MCP server: ${matched} → prefix: mcp__${matched}__`);
+    } else {
+      requiredModels[modelKey] = { tool_prefix: defaultPrefix, required: true };
+      console.warn(`  ${yellow}⚠${reset} No ${modelKey} MCP server found in ~/.claude.json; using default prefix: ${defaultPrefix}`);
+    }
+  }
+
+  if (!anyDetected) {
+    console.warn(`  ${yellow}⚠${reset} No quorum MCP servers detected — using hardcoded defaults. Edit ~/.claude/qgsd.json to configure.`);
+  }
+
+  return requiredModels;
+}
+
+// Generates quorum_instructions text from detected required_models.
+// Uses detected tool_prefix values so behavioral instructions (UserPromptSubmit injection)
+// name the same tools as the structural enforcement (Stop hook), preventing mismatch
+// when server names differ from defaults (e.g. renamed MCP servers).
+function buildQuorumInstructions(requiredModels) {
+  function toolName(key, prefix) {
+    if (key === 'codex')    return prefix + 'review';
+    if (key === 'gemini')   return prefix + 'gemini';
+    if (key === 'opencode') return prefix + 'opencode';
+    return prefix + key;
+  }
+  const required = Object.entries(requiredModels).filter(([, def]) => def.required);
+  const steps = required.map(([key, def], i) =>
+    `  ${i + 1}. Call ${toolName(key, def.tool_prefix)} with the full plan content`
+  ).join('\n');
+  return (
+    'QUORUM REQUIRED (structural enforcement — Stop hook will verify)\n\n' +
+    'Before presenting any planning output to the user, you MUST:\n' +
+    steps + '\n' +
+    `  ${required.length + 1}. Present all model responses, resolve concerns, then deliver final output\n\n` +
+    'Fail-open: if a model is UNAVAILABLE (quota/error), note it and proceed with available models.\n' +
+    'The Stop hook reads the transcript — skipping quorum will block your response.'
+  );
+}
+
 // Parse --config-dir argument
 function parseConfigDirArg() {
   const configDirIndex = args.findIndex(arg => arg === '--config-dir' || arg === '-c');
@@ -1602,14 +1674,27 @@ function install(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Configured QGSD quorum gate hook (Stop)`);
     }
 
-    // Write QGSD default config if not present (preserves any existing user customizations)
+    // Write QGSD config if not present — detects MCP server names and generates
+    // quorum_instructions from detected prefixes (never overwrites existing user config)
     const qgsdConfigPath = path.join(targetDir, 'qgsd.json');
     if (!fs.existsSync(qgsdConfigPath)) {
-      const qgsdConfigTemplatePath = path.join(__dirname, '..', 'templates', 'qgsd.json');
-      if (fs.existsSync(qgsdConfigTemplatePath)) {
-        fs.copyFileSync(qgsdConfigTemplatePath, qgsdConfigPath);
-        console.log(`  ${green}✓${reset} Wrote QGSD default config (~/.claude/qgsd.json)`);
-      }
+      // Build config with auto-detected MCP prefixes
+      const detectedModels = buildRequiredModelsFromMcp();
+      const qgsdConfig = {
+        quorum_commands: [
+          'plan-phase', 'new-project', 'new-milestone',
+          'discuss-phase', 'verify-work', 'research-phase',
+        ],
+        fail_mode: 'open',
+        required_models: detectedModels,
+        // Generated from detected prefixes — behavioral instructions match structural enforcement
+        quorum_instructions: buildQuorumInstructions(detectedModels),
+      };
+
+      fs.writeFileSync(qgsdConfigPath, JSON.stringify(qgsdConfig, null, 2) + '\n', 'utf8');
+      console.log(`  ${green}✓${reset} Wrote QGSD config with detected MCP prefixes (~/.claude/qgsd.json)`);
+    } else {
+      console.log(`  ${dim}↳ ~/.claude/qgsd.json already exists — skipping (user config preserved)${reset}`);
     }
   }
 
