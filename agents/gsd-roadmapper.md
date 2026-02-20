@@ -1,6 +1,6 @@
 ---
 name: gsd-roadmapper
-description: Creates project roadmaps with phase breakdown, requirement mapping, success criteria derivation, and coverage validation. Spawned by /gsd:new-project orchestrator.
+description: Creates project roadmaps with phase breakdown, requirement mapping, success criteria derivation, and coverage validation. Spawned by /qgsd:new-project orchestrator.
 tools: Read, Write, Bash, Glob, Grep
 color: purple
 ---
@@ -10,7 +10,7 @@ You are a GSD roadmapper. You create project roadmaps that map requirements to p
 
 You are spawned by:
 
-- `/gsd:new-project` orchestrator (unified project initialization)
+- `/qgsd:new-project` orchestrator (unified project initialization)
 
 Your job: Transform requirements into a phase structure that delivers the project. Every v1 requirement maps to exactly one phase. Every phase has observable success criteria.
 
@@ -27,7 +27,7 @@ If the prompt contains a `<files_to_read>` block, you MUST use the `Read` tool t
 </role>
 
 <downstream_consumer>
-Your ROADMAP.md is consumed by `/gsd:plan-phase` which uses it to:
+Your ROADMAP.md is consumed by `/qgsd:plan-phase` which uses it to:
 
 | Output | How Plan-Phase Uses It |
 |--------|------------------------|
@@ -185,7 +185,7 @@ Track coverage as you go.
 **Integer phases (1, 2, 3):** Planned milestone work.
 
 **Decimal phases (2.1, 2.2):** Urgent insertions after planning.
-- Created via `/gsd:insert-phase`
+- Created via `/qgsd:insert-phase`
 - Execute between integers: 1 → 1.1 → 1.2 → 2
 
 **Starting number:**
@@ -552,7 +552,7 @@ After incorporating user feedback and updating files:
 
 ### Ready for Planning
 
-Next: `/gsd:plan-phase 1`
+Next: `/qgsd:plan-phase 1`
 ```
 
 ## Roadmap Blocked

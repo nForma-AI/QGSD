@@ -196,7 +196,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 **Complete milestone** — archive and tag
 
-/gsd:complete-milestone {version}
+/qgsd:complete-milestone {version}
 
 <sub>/clear first → fresh context window</sub>
 
@@ -233,7 +233,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 **Plan gap closure** — create phases to complete milestone
 
-/gsd:plan-milestone-gaps
+/qgsd:plan-milestone-gaps
 
 <sub>/clear first → fresh context window</sub>
 
@@ -241,7 +241,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 **Also available:**
 - cat .planning/v{version}-MILESTONE-AUDIT.md — see full report
-- /gsd:complete-milestone {version} — proceed anyway (accept tech debt)
+- /qgsd:complete-milestone {version} — proceed anyway (accept tech debt)
 
 ───────────────────────────────────────────────────────────────
 
@@ -271,11 +271,11 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 
 **A. Complete milestone** — accept debt, track in backlog
 
-/gsd:complete-milestone {version}
+/qgsd:complete-milestone {version}
 
 **B. Plan cleanup phase** — address debt before completing
 
-/gsd:plan-milestone-gaps
+/qgsd:plan-milestone-gaps
 
 <sub>/clear first → fresh context window</sub>
 
