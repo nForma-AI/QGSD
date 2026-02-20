@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-20 after Phase 2)
 ## Current Position
 
 Phase: 3 of 3 (Installer & Distribution) — IN PROGRESS
-Plan: 1/3 complete
-Status: Phase 3 executing — 03-01 complete (packaging + changelog), 03-02 next (installer enhancements)
-Last activity: 2026-02-20 — 03-01 complete (npm rename to qgsd v0.1.0, CHANGELOG entry added)
+Plan: 2/3 complete
+Status: Phase 3 in progress — 03-01 (package identity) done, 03-02 (installer enhancements) done, 03-03 (verify checkpoint) remaining
+Last activity: 2026-02-20 — 03-02 complete: INST-05 MCP validation warning + INST-06 reinstall summary + --redetect-mcps flag added to bin/install.js
 
 Progress: [████████████████████] 67% (2/3 phases complete, Phase 3 planned)
 
@@ -48,6 +48,7 @@ Progress: [████████████████████] 67% (2/
 | Phase 02-config-mcp-detection P03 | 8 min | 1 task | 1 file |
 | Phase 02-config-mcp-detection P04 | 8 min | 3 tasks | 2 files |
 | Phase 03-installer-distribution P01 | 1 min | 2 tasks | 2 files |
+| Phase 03-installer-distribution P02 | 1 min | 4 tasks | 1 file |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 03-installer-distribution planning]: hooks/dist/ is STALE (Phase 2 not built to dist yet; config-loader.js missing from dist) — Plan 03-03 must run build:hooks before verify
 - [Phase 03-installer-distribution planning]: SYNC-04 pre-verified — QGSD hooks import only Node stdlib and ./config-loader; zero GSD source imports confirmed
 - [Phase 03-installer-distribution planning]: CHANGELOG.md update (not create) — file already exists at repo root in Keep-a-Changelog format
+- [Phase 03-installer-distribution P02]: warnMissingMcpServers() reads QGSD_KEYWORD_MAP directly — warning set stays in sync with detection set automatically without separate maintenance
+- [Phase 03-installer-distribution P02]: INST-06 catch block falls back to original 'already exists — skipping' message for malformed qgsd.json (safe degradation)
 
 ### Roadmap Evolution
 
@@ -97,5 +100,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Phase 3 plan 03-01 complete. Resume at /gsd:execute-phase 3 (03-02 next)
-Resume file: .planning/phases/03-installer-distribution/03-02-PLAN.md
+Stopped at: Phase 3 plan 03-02 complete. Resume at /gsd:execute-phase 3 (03-03 next)
+Resume file: .planning/phases/03-installer-distribution/03-03-PLAN.md

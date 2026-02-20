@@ -50,8 +50,8 @@ All features are v1. No deferral.
 - [x] **INST-02**: QGSD's package.json pins GSD version — version lockstep ensures hook compatibility
 - [ ] **INST-03**: Installer writes hooks to `~/.claude/settings.json` directly (not plugin.json hooks — stdout is silently discarded per GitHub #10225)
 - [ ] **INST-04**: Installer adds UserPromptSubmit and Stop hook entries to `~/.claude/settings.json` hooks section
-- [ ] **INST-05**: Installer performs validation before registering hooks: checks MCPs are configured in Claude Code settings, warns if Codex/Gemini/OpenCode not found
-- [ ] **INST-06**: Installer is idempotent — running `npx qgsd@latest` again updates hooks and config without duplicating entries
+- [x] **INST-05**: Installer performs validation before registering hooks: checks MCPs are configured in Claude Code settings, warns if Codex/Gemini/OpenCode not found
+- [x] **INST-06**: Installer is idempotent — running `npx qgsd@latest` again updates hooks and config without duplicating entries
 - [ ] **INST-07**: Installer respects existing per-project `.claude/qgsd.json` overrides during updates
 
 ### GSD Sync Strategy
@@ -129,8 +129,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INST-02 | Phase 3 | Complete |
 | INST-03 | Phase 3 | Pending |
 | INST-04 | Phase 3 | Pending |
-| INST-05 | Phase 3 | Pending |
-| INST-06 | Phase 3 | Pending |
+| INST-05 | Phase 3 | Complete |
+| INST-06 | Phase 3 | Complete |
 | INST-07 | Phase 3 | Pending |
 | SYNC-01 | Phase 3 | Complete |
 | SYNC-02 | Phase 3 | Complete |
