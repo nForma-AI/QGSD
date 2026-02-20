@@ -120,7 +120,7 @@ Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phas
 ```
 Phase [X] not found in roadmap.
 
-Use /gsd:progress to see available phases.
+Use /qgsd:progress to see available phases.
 ```
 Exit workflow.
 
@@ -155,7 +155,7 @@ Use AskUserQuestion:
 - header: "Plans exist"
 - question: "Phase [X] already has {plan_count} plan(s) created without user context. Your decisions here won't affect existing plans unless you replan."
 - options:
-  - "Continue and replan after" — Capture context, then run /gsd:plan-phase {X} to replan
+  - "Continue and replan after" — Capture context, then run /qgsd:plan-phase {X} to replan
   - "View existing plans" — Show plans before deciding
   - "Cancel" — Skip discuss-phase
 
@@ -387,14 +387,14 @@ Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 
 **Phase ${PHASE}: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase ${PHASE}`
+`/qgsd:plan-phase ${PHASE}`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:plan-phase ${PHASE} --skip-research` — plan without research
+- `/qgsd:plan-phase ${PHASE} --skip-research` — plan without research
 - Review/edit CONTEXT.md before continuing
 
 ---
@@ -455,7 +455,7 @@ Context captured. Spawning plan-phase...
 Spawn plan-phase as Task:
 ```
 Task(
-  prompt="Run /gsd:plan-phase ${PHASE} --auto",
+  prompt="Run /qgsd:plan-phase ${PHASE} --auto",
   subagent_type="general-purpose",
   description="Plan Phase ${PHASE}"
 )
@@ -468,7 +468,7 @@ Task(
   Auto-advance stopped: Planning needs input.
 
   Review the output above and continue manually:
-  /gsd:plan-phase ${PHASE}
+  /qgsd:plan-phase ${PHASE}
   ```
 
 **If neither `--auto` nor config enabled:**

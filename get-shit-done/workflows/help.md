@@ -9,9 +9,9 @@ Display the complete GSD command reference. Output ONLY the reference content. D
 
 ## Quick Start
 
-1. `/gsd:new-project` - Initialize project (includes research, requirements, roadmap)
-2. `/gsd:plan-phase 1` - Create detailed plan for first phase
-3. `/gsd:execute-phase 1` - Execute the phase
+1. `/qgsd:new-project` - Initialize project (includes research, requirements, roadmap)
+2. `/qgsd:plan-phase 1` - Create detailed plan for first phase
+3. `/qgsd:execute-phase 1` - Execute the phase
 
 ## Staying Updated
 
@@ -24,12 +24,12 @@ npx get-shit-done-cc@latest
 ## Core Workflow
 
 ```
-/gsd:new-project → /gsd:plan-phase → /gsd:execute-phase → repeat
+/qgsd:new-project → /qgsd:plan-phase → /qgsd:execute-phase → repeat
 ```
 
 ### Project Initialization
 
-**`/gsd:new-project`**
+**`/qgsd:new-project`**
 Initialize new project through unified flow.
 
 One command takes you from idea to ready-for-planning:
@@ -46,30 +46,30 @@ Creates all `.planning/` artifacts:
 - `ROADMAP.md` — phases mapped to requirements
 - `STATE.md` — project memory
 
-Usage: `/gsd:new-project`
+Usage: `/qgsd:new-project`
 
-**`/gsd:map-codebase`**
+**`/qgsd:map-codebase`**
 Map an existing codebase for brownfield projects.
 
 - Analyzes codebase with parallel Explore agents
 - Creates `.planning/codebase/` with 7 focused documents
 - Covers stack, architecture, structure, conventions, testing, integrations, concerns
-- Use before `/gsd:new-project` on existing codebases
+- Use before `/qgsd:new-project` on existing codebases
 
-Usage: `/gsd:map-codebase`
+Usage: `/qgsd:map-codebase`
 
 ### Phase Planning
 
-**`/gsd:discuss-phase <number>`**
+**`/qgsd:discuss-phase <number>`**
 Help articulate your vision for a phase before planning.
 
 - Captures how you imagine this phase working
 - Creates CONTEXT.md with your vision, essentials, and boundaries
 - Use when you have ideas about how something should look/feel
 
-Usage: `/gsd:discuss-phase 2`
+Usage: `/qgsd:discuss-phase 2`
 
-**`/gsd:research-phase <number>`**
+**`/qgsd:research-phase <number>`**
 Comprehensive ecosystem research for niche/complex domains.
 
 - Discovers standard stack, architecture patterns, pitfalls
@@ -77,18 +77,18 @@ Comprehensive ecosystem research for niche/complex domains.
 - Use for 3D, games, audio, shaders, ML, and other specialized domains
 - Goes beyond "which library" to ecosystem knowledge
 
-Usage: `/gsd:research-phase 3`
+Usage: `/qgsd:research-phase 3`
 
-**`/gsd:list-phase-assumptions <number>`**
+**`/qgsd:list-phase-assumptions <number>`**
 See what Claude is planning to do before it starts.
 
 - Shows Claude's intended approach for a phase
 - Lets you course-correct if Claude misunderstood your vision
 - No files created - conversational output only
 
-Usage: `/gsd:list-phase-assumptions 3`
+Usage: `/qgsd:list-phase-assumptions 3`
 
-**`/gsd:plan-phase <number>`**
+**`/qgsd:plan-phase <number>`**
 Create detailed execution plan for a specific phase.
 
 - Generates `.planning/phases/XX-phase-name/XX-YY-PLAN.md`
@@ -96,12 +96,12 @@ Create detailed execution plan for a specific phase.
 - Includes verification criteria and success measures
 - Multiple plans per phase supported (XX-01, XX-02, etc.)
 
-Usage: `/gsd:plan-phase 1`
+Usage: `/qgsd:plan-phase 1`
 Result: Creates `.planning/phases/01-foundation/01-01-PLAN.md`
 
 ### Execution
 
-**`/gsd:execute-phase <phase-number>`**
+**`/qgsd:execute-phase <phase-number>`**
 Execute all plans in a phase.
 
 - Groups plans by wave (from frontmatter), executes waves sequentially
@@ -109,11 +109,11 @@ Execute all plans in a phase.
 - Verifies phase goal after all plans complete
 - Updates REQUIREMENTS.md, ROADMAP.md, STATE.md
 
-Usage: `/gsd:execute-phase 5`
+Usage: `/qgsd:execute-phase 5`
 
 ### Quick Mode
 
-**`/gsd:quick`**
+**`/qgsd:quick`**
 Execute small, ad-hoc tasks with GSD guarantees but skip optional agents.
 
 Quick mode uses the same system with a shorter path:
@@ -123,31 +123,31 @@ Quick mode uses the same system with a shorter path:
 
 Use when you know exactly what to do and the task is small enough to not need research or verification.
 
-Usage: `/gsd:quick`
+Usage: `/qgsd:quick`
 Result: Creates `.planning/quick/NNN-slug/PLAN.md`, `.planning/quick/NNN-slug/SUMMARY.md`
 
 ### Roadmap Management
 
-**`/gsd:add-phase <description>`**
+**`/qgsd:add-phase <description>`**
 Add new phase to end of current milestone.
 
 - Appends to ROADMAP.md
 - Uses next sequential number
 - Updates phase directory structure
 
-Usage: `/gsd:add-phase "Add admin dashboard"`
+Usage: `/qgsd:add-phase "Add admin dashboard"`
 
-**`/gsd:insert-phase <after> <description>`**
+**`/qgsd:insert-phase <after> <description>`**
 Insert urgent work as decimal phase between existing phases.
 
 - Creates intermediate phase (e.g., 7.1 between 7 and 8)
 - Useful for discovered work that must happen mid-milestone
 - Maintains phase ordering
 
-Usage: `/gsd:insert-phase 7 "Fix critical auth bug"`
+Usage: `/qgsd:insert-phase 7 "Fix critical auth bug"`
 Result: Creates Phase 7.1
 
-**`/gsd:remove-phase <number>`**
+**`/qgsd:remove-phase <number>`**
 Remove a future phase and renumber subsequent phases.
 
 - Deletes phase directory and all references
@@ -155,12 +155,12 @@ Remove a future phase and renumber subsequent phases.
 - Only works on future (unstarted) phases
 - Git commit preserves historical record
 
-Usage: `/gsd:remove-phase 17`
+Usage: `/qgsd:remove-phase 17`
 Result: Phase 17 deleted, phases 18-20 become 17-19
 
 ### Milestone Management
 
-**`/gsd:new-milestone <name>`**
+**`/qgsd:new-milestone <name>`**
 Start a new milestone through unified flow.
 
 - Deep questioning to understand what you're building next
@@ -168,11 +168,11 @@ Start a new milestone through unified flow.
 - Requirements definition with scoping
 - Roadmap creation with phase breakdown
 
-Mirrors `/gsd:new-project` flow for brownfield projects (existing PROJECT.md).
+Mirrors `/qgsd:new-project` flow for brownfield projects (existing PROJECT.md).
 
-Usage: `/gsd:new-milestone "v2.0 Features"`
+Usage: `/qgsd:new-milestone "v2.0 Features"`
 
-**`/gsd:complete-milestone <version>`**
+**`/qgsd:complete-milestone <version>`**
 Archive completed milestone and prepare for next version.
 
 - Creates MILESTONES.md entry with stats
@@ -180,11 +180,11 @@ Archive completed milestone and prepare for next version.
 - Creates git tag for the release
 - Prepares workspace for next version
 
-Usage: `/gsd:complete-milestone 1.0.0`
+Usage: `/qgsd:complete-milestone 1.0.0`
 
 ### Progress Tracking
 
-**`/gsd:progress`**
+**`/qgsd:progress`**
 Check project status and intelligently route to next action.
 
 - Shows visual progress bar and completion percentage
@@ -194,45 +194,45 @@ Check project status and intelligently route to next action.
 - Offers to execute next plan or create it if missing
 - Detects 100% milestone completion
 
-Usage: `/gsd:progress`
+Usage: `/qgsd:progress`
 
 ### Session Management
 
-**`/gsd:resume-work`**
+**`/qgsd:resume-work`**
 Resume work from previous session with full context restoration.
 
 - Reads STATE.md for project context
 - Shows current position and recent progress
 - Offers next actions based on project state
 
-Usage: `/gsd:resume-work`
+Usage: `/qgsd:resume-work`
 
-**`/gsd:pause-work`**
+**`/qgsd:pause-work`**
 Create context handoff when pausing work mid-phase.
 
 - Creates .continue-here file with current state
 - Updates STATE.md session continuity section
 - Captures in-progress work context
 
-Usage: `/gsd:pause-work`
+Usage: `/qgsd:pause-work`
 
 ### Debugging
 
-**`/gsd:debug [issue description]`**
+**`/qgsd:debug [issue description]`**
 Systematic debugging with persistent state across context resets.
 
 - Gathers symptoms through adaptive questioning
 - Creates `.planning/debug/[slug].md` to track investigation
 - Investigates using scientific method (evidence → hypothesis → test)
-- Survives `/clear` — run `/gsd:debug` with no args to resume
+- Survives `/clear` — run `/qgsd:debug` with no args to resume
 - Archives resolved issues to `.planning/debug/resolved/`
 
-Usage: `/gsd:debug "login button doesn't work"`
-Usage: `/gsd:debug` (resume active session)
+Usage: `/qgsd:debug "login button doesn't work"`
+Usage: `/qgsd:debug` (resume active session)
 
 ### Todo Management
 
-**`/gsd:add-todo [description]`**
+**`/qgsd:add-todo [description]`**
 Capture idea or task as todo from current conversation.
 
 - Extracts context from conversation (or uses provided description)
@@ -241,24 +241,24 @@ Capture idea or task as todo from current conversation.
 - Checks for duplicates before creating
 - Updates STATE.md todo count
 
-Usage: `/gsd:add-todo` (infers from conversation)
-Usage: `/gsd:add-todo Add auth token refresh`
+Usage: `/qgsd:add-todo` (infers from conversation)
+Usage: `/qgsd:add-todo Add auth token refresh`
 
-**`/gsd:check-todos [area]`**
+**`/qgsd:check-todos [area]`**
 List pending todos and select one to work on.
 
 - Lists all pending todos with title, area, age
-- Optional area filter (e.g., `/gsd:check-todos api`)
+- Optional area filter (e.g., `/qgsd:check-todos api`)
 - Loads full context for selected todo
 - Routes to appropriate action (work now, add to phase, brainstorm)
 - Moves todo to done/ when work begins
 
-Usage: `/gsd:check-todos`
-Usage: `/gsd:check-todos api`
+Usage: `/qgsd:check-todos`
+Usage: `/qgsd:check-todos api`
 
 ### User Acceptance Testing
 
-**`/gsd:verify-work [phase]`**
+**`/qgsd:verify-work [phase]`**
 Validate built features through conversational UAT.
 
 - Extracts testable deliverables from SUMMARY.md files
@@ -266,11 +266,11 @@ Validate built features through conversational UAT.
 - Automatically diagnoses failures and creates fix plans
 - Ready for re-execution if issues found
 
-Usage: `/gsd:verify-work 3`
+Usage: `/qgsd:verify-work 3`
 
 ### Milestone Auditing
 
-**`/gsd:audit-milestone [version]`**
+**`/qgsd:audit-milestone [version]`**
 Audit milestone completion against original intent.
 
 - Reads all phase VERIFICATION.md files
@@ -278,41 +278,41 @@ Audit milestone completion against original intent.
 - Spawns integration checker for cross-phase wiring
 - Creates MILESTONE-AUDIT.md with gaps and tech debt
 
-Usage: `/gsd:audit-milestone`
+Usage: `/qgsd:audit-milestone`
 
-**`/gsd:plan-milestone-gaps`**
+**`/qgsd:plan-milestone-gaps`**
 Create phases to close gaps identified by audit.
 
 - Reads MILESTONE-AUDIT.md and groups gaps into phases
 - Prioritizes by requirement priority (must/should/nice)
 - Adds gap closure phases to ROADMAP.md
-- Ready for `/gsd:plan-phase` on new phases
+- Ready for `/qgsd:plan-phase` on new phases
 
-Usage: `/gsd:plan-milestone-gaps`
+Usage: `/qgsd:plan-milestone-gaps`
 
 ### Configuration
 
-**`/gsd:settings`**
+**`/qgsd:settings`**
 Configure workflow toggles and model profile interactively.
 
 - Toggle researcher, plan checker, verifier agents
 - Select model profile (quality/balanced/budget)
 - Updates `.planning/config.json`
 
-Usage: `/gsd:settings`
+Usage: `/qgsd:settings`
 
-**`/gsd:set-profile <profile>`**
+**`/qgsd:set-profile <profile>`**
 Quick switch model profile for GSD agents.
 
 - `quality` — Opus everywhere except verification
 - `balanced` — Opus for planning, Sonnet for execution (default)
 - `budget` — Sonnet for writing, Haiku for research/verification
 
-Usage: `/gsd:set-profile budget`
+Usage: `/qgsd:set-profile budget`
 
 ### Utility Commands
 
-**`/gsd:cleanup`**
+**`/qgsd:cleanup`**
 Archive accumulated phase directories from completed milestones.
 
 - Identifies phases from completed milestones still in `.planning/phases/`
@@ -320,12 +320,12 @@ Archive accumulated phase directories from completed milestones.
 - Moves phase dirs to `.planning/milestones/v{X.Y}-phases/`
 - Use after multiple milestones to reduce `.planning/phases/` clutter
 
-Usage: `/gsd:cleanup`
+Usage: `/qgsd:cleanup`
 
-**`/gsd:help`**
+**`/qgsd:help`**
 Show this command reference.
 
-**`/gsd:update`**
+**`/qgsd:update`**
 Update GSD to latest version with changelog preview.
 
 - Shows installed vs latest version comparison
@@ -334,15 +334,15 @@ Update GSD to latest version with changelog preview.
 - Confirms before running install
 - Better than raw `npx get-shit-done-cc`
 
-Usage: `/gsd:update`
+Usage: `/qgsd:update`
 
-**`/gsd:join-discord`**
+**`/qgsd:join-discord`**
 Join the GSD Discord community.
 
 - Get help, share what you're building, stay updated
 - Connect with other GSD users
 
-Usage: `/gsd:join-discord`
+Usage: `/qgsd:join-discord`
 
 ## Files & Structure
 
@@ -360,7 +360,7 @@ Usage: `/gsd:join-discord`
 ├── milestones/
 │   ├── v1.0-ROADMAP.md       # Archived roadmap snapshot
 │   ├── v1.0-REQUIREMENTS.md  # Archived requirements
-│   └── v1.0-phases/          # Archived phase dirs (via /gsd:cleanup or --archive-phases)
+│   └── v1.0-phases/          # Archived phase dirs (via /qgsd:cleanup or --archive-phases)
 │       ├── 01-foundation/
 │       └── 02-core-features/
 ├── codebase/             # Codebase map (brownfield projects)
@@ -382,7 +382,7 @@ Usage: `/gsd:join-discord`
 
 ## Workflow Modes
 
-Set during `/gsd:new-project`:
+Set during `/qgsd:new-project`:
 
 **Interactive Mode**
 
@@ -430,51 +430,51 @@ Example config:
 **Starting a new project:**
 
 ```
-/gsd:new-project        # Unified flow: questioning → research → requirements → roadmap
+/qgsd:new-project        # Unified flow: questioning → research → requirements → roadmap
 /clear
-/gsd:plan-phase 1       # Create plans for first phase
+/qgsd:plan-phase 1       # Create plans for first phase
 /clear
-/gsd:execute-phase 1    # Execute all plans in phase
+/qgsd:execute-phase 1    # Execute all plans in phase
 ```
 
 **Resuming work after a break:**
 
 ```
-/gsd:progress  # See where you left off and continue
+/qgsd:progress  # See where you left off and continue
 ```
 
 **Adding urgent mid-milestone work:**
 
 ```
-/gsd:insert-phase 5 "Critical security fix"
-/gsd:plan-phase 5.1
-/gsd:execute-phase 5.1
+/qgsd:insert-phase 5 "Critical security fix"
+/qgsd:plan-phase 5.1
+/qgsd:execute-phase 5.1
 ```
 
 **Completing a milestone:**
 
 ```
-/gsd:complete-milestone 1.0.0
+/qgsd:complete-milestone 1.0.0
 /clear
-/gsd:new-milestone  # Start next milestone (questioning → research → requirements → roadmap)
+/qgsd:new-milestone  # Start next milestone (questioning → research → requirements → roadmap)
 ```
 
 **Capturing ideas during work:**
 
 ```
-/gsd:add-todo                    # Capture from conversation context
-/gsd:add-todo Fix modal z-index  # Capture with explicit description
-/gsd:check-todos                 # Review and work on todos
-/gsd:check-todos api             # Filter by area
+/qgsd:add-todo                    # Capture from conversation context
+/qgsd:add-todo Fix modal z-index  # Capture with explicit description
+/qgsd:check-todos                 # Review and work on todos
+/qgsd:check-todos api             # Filter by area
 ```
 
 **Debugging an issue:**
 
 ```
-/gsd:debug "form submission fails silently"  # Start debug session
+/qgsd:debug "form submission fails silently"  # Start debug session
 # ... investigation happens, context fills up ...
 /clear
-/gsd:debug                                    # Resume from where you left off
+/qgsd:debug                                    # Resume from where you left off
 ```
 
 ## Getting Help
@@ -482,5 +482,5 @@ Example config:
 - Read `.planning/PROJECT.md` for project vision
 - Read `.planning/STATE.md` for current context
 - Check `.planning/ROADMAP.md` for phase status
-- Run `/gsd:progress` to check where you're up to
+- Run `/qgsd:progress` to check where you're up to
 </reference>

@@ -22,7 +22,7 @@ Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_
 
 **File paths (for <files_to_read> blocks):** `state_path`, `roadmap_path`, `requirements_path`, `context_path`, `research_path`, `verification_path`, `uat_path`. These are null if files don't exist.
 
-**If `planning_exists` is false:** Error — run `/gsd:new-project` first.
+**If `planning_exists` is false:** Error — run `/qgsd:new-project` first.
 
 ## 2. Parse and Normalize Arguments
 
@@ -61,7 +61,7 @@ Use AskUserQuestion:
   - "Run discuss-phase first" — Capture design decisions before planning
 
 If "Continue without context": Proceed to step 5.
-If "Run discuss-phase first": Display `/gsd:discuss-phase {X}` and exit workflow.
+If "Run discuss-phase first": Display `/qgsd:discuss-phase {X}` and exit workflow.
 
 ## 5. Handle Research
 
@@ -96,7 +96,7 @@ Answer: "What do I need to know to PLAN this phase well?"
 </objective>
 
 <files_to_read>
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
 - {requirements_path} (Project requirements)
 - {state_path} (Project decisions and history)
 </files_to_read>
@@ -172,7 +172,7 @@ Planner prompt:
 - {state_path} (Project State)
 - {roadmap_path} (Roadmap)
 - {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
 - {research_path} (Technical Research)
 - {verification_path} (Verification Gaps - if --gaps)
 - {uat_path} (UAT Gaps - if --gaps)
@@ -185,7 +185,7 @@ Planner prompt:
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase. Plans need:
+Output consumed by /qgsd:execute-phase. Plans need:
 - Frontmatter (wave, depends_on, files_modified, autonomous)
 - Tasks in XML format
 - Verification criteria
@@ -239,7 +239,7 @@ Checker prompt:
 - {PHASE_DIR}/*-PLAN.md (Plans to verify)
 - {roadmap_path} (Roadmap)
 - {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
 </files_to_read>
 
 **Phase requirement IDs (MUST ALL be covered):** {phase_req_ids}
@@ -285,7 +285,7 @@ Revision prompt:
 
 <files_to_read>
 - {PHASE_DIR}/*-PLAN.md (Existing plans)
-- {context_path} (USER DECISIONS from /gsd:discuss-phase)
+- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
 </files_to_read>
 
 **Checker issues:** {structured_issues_from_checker}
@@ -343,7 +343,7 @@ Plans ready. Spawning execute-phase...
 Spawn execute-phase as Task:
 ```
 Task(
-  prompt="Run /gsd:execute-phase ${PHASE} --auto",
+  prompt="Run /qgsd:execute-phase ${PHASE} --auto",
   subagent_type="general-purpose",
   description="Execute Phase ${PHASE}"
 )
@@ -358,14 +358,14 @@ Task(
 
   Auto-advance pipeline finished.
 
-  Next: /gsd:discuss-phase ${NEXT_PHASE} --auto
+  Next: /qgsd:discuss-phase ${NEXT_PHASE} --auto
   ```
 - **GAPS FOUND / VERIFICATION FAILED** → Display result, stop chain:
   ```
   Auto-advance stopped: Execution needs review.
 
   Review the output above and continue manually:
-  /gsd:execute-phase ${PHASE}
+  /qgsd:execute-phase ${PHASE}
   ```
 
 **If neither `--auto` nor config enabled:**
@@ -396,7 +396,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Execute Phase {X}** — run all {N} plans
 
-/gsd:execute-phase {X}
+/qgsd:execute-phase {X}
 
 <sub>/clear first → fresh context window</sub>
 
@@ -404,7 +404,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Also available:**
 - cat .planning/phases/{phase-dir}/*-PLAN.md — review plans
-- /gsd:plan-phase {X} --research — re-research first
+- /qgsd:plan-phase {X} --research — re-research first
 
 ───────────────────────────────────────────────────────────────
 </offer_next>
