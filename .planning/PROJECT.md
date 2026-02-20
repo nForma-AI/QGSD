@@ -24,10 +24,18 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - ✓ Fail-open unavailability detection: Stop hook reads ~/.claude.json mcpServers at runtime to distinguish "model not called" (block) from "model not installed" (pass) — Phase 2 (CONF-04)
 - ✓ MCP auto-detection at install time: installer reads ~/.claude.json, keyword-matches server names, writes detected prefixes into qgsd.json — Phase 2 (MCP-01 through MCP-05)
 - ✓ Prefix-based tool matching: startsWith() so mcp__codex-cli__review and mcp__codex-cli__codex both satisfy codex quorum — Phase 2 (MCP-06, already implemented in Phase 1, regression-tested in Phase 2)
+- ✓ npm package published as qgsd v0.1.0 with peerDependency on get-shit-done-cc >= 1.20.0 and dual bin entry — Phase 3 (INST-01, INST-02, SYNC-01, SYNC-03)
+- ✓ Installer performs per-model MCP validation warning on every install run; fail-open always — Phase 3 (INST-05)
+- ✓ Installer idempotent: second run prints config summary instead of "already exists — skipping"; no duplicate hook entries — Phase 3 (INST-06)
+- ✓ --redetect-mcps flag: deletes qgsd.json and regenerates from fresh MCP detection — Phase 3 (INST-06/REL-04)
+- ✓ hooks/dist/ rebuilt with Phase 2 config-loader integration; SYNC-04 audit passed: zero GSD source imports — Phase 3 (SYNC-04)
+- ✓ Human checkpoint approved 2026-02-20; multi-model consensus (Codex + Gemini + OpenCode: PASS) — Phase 3 complete
+- ✓ Stop hook GUARD 5: decision turn detection (hasArtifactCommit + hasDecisionMarker) — quorum only fires on turns delivering project decisions — Phase 4 (SCOPE-01 through SCOPE-07)
+- ✓ UserPromptSubmit hook injects <!-- GSD_DECISION --> marker instruction into DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK — Phase 4 (SCOPE-06, SCOPE-07)
 
 ### Active
 
-(Phase 3 features — full npm installer, version sync strategy)
+(All phases complete — no active requirements)
 
 ### Out of Scope
 
@@ -72,4 +80,4 @@ The GSD codebase already has hooks infrastructure (see `hooks/` directory). QGSD
 | ~/.claude.json as MCP detection source | Verified live: ~/.claude/settings.json has no mcpServers; ~/.claude.json top-level mcpServers is the correct detection target | Phase 2 — MCP-01 verified |
 
 ---
-*Last updated: 2026-02-20 after Phase 2 (config-mcp-detection) — all 11 Phase 2 requirements satisfied, 23 tests passing, human checkpoint approved*
+*Last updated: 2026-02-20 after Phase 3 (installer-distribution) — all 11 Phase 3 requirements satisfied, human checkpoint approved, multi-model review PASS (Codex+Gemini+OpenCode). Phase 4 (narrow quorum scope) also complete. ALL PHASES COMPLETE.*

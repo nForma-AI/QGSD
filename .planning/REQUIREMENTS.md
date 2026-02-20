@@ -48,11 +48,11 @@ All features are v1. No deferral.
 
 - [x] **INST-01**: QGSD is the unified installer — `npx qgsd@latest` installs GSD + quorum hooks in one command
 - [x] **INST-02**: QGSD's package.json pins GSD version — version lockstep ensures hook compatibility
-- [ ] **INST-03**: Installer writes hooks to `~/.claude/settings.json` directly (not plugin.json hooks — stdout is silently discarded per GitHub #10225)
-- [ ] **INST-04**: Installer adds UserPromptSubmit and Stop hook entries to `~/.claude/settings.json` hooks section
+- [x] **INST-03**: Installer writes hooks to `~/.claude/settings.json` directly (not plugin.json hooks — stdout is silently discarded per GitHub #10225)
+- [x] **INST-04**: Installer adds UserPromptSubmit and Stop hook entries to `~/.claude/settings.json` hooks section
 - [x] **INST-05**: Installer performs validation before registering hooks: checks MCPs are configured in Claude Code settings, warns if Codex/Gemini/OpenCode not found
 - [x] **INST-06**: Installer is idempotent — running `npx qgsd@latest` again updates hooks and config without duplicating entries
-- [ ] **INST-07**: Installer respects existing per-project `.claude/qgsd.json` overrides during updates
+- [x] **INST-07**: Installer respects existing per-project `.claude/qgsd.json` overrides during updates
 
 ### GSD Sync Strategy
 
@@ -127,11 +127,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MCP-06 | Phase 2 | Complete |
 | INST-01 | Phase 3 | Complete |
 | INST-02 | Phase 3 | Complete |
-| INST-03 | Phase 3 | Pending |
-| INST-04 | Phase 3 | Pending |
+| INST-03 | Phase 3 | Complete |
+| INST-04 | Phase 3 | Complete |
 | INST-05 | Phase 3 | Complete |
 | INST-06 | Phase 3 | Complete |
-| INST-07 | Phase 3 | Pending |
+| INST-07 | Phase 3 | Complete |
 | SYNC-01 | Phase 3 | Complete |
 | SYNC-02 | Phase 3 | Complete |
 | SYNC-03 | Phase 3 | Complete |
@@ -146,3 +146,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 *Requirements defined: 2026-02-20*
 *Last updated: 2026-02-20 — STOP-05 revised: fast-path omitted by design; JSONL-only verification is authoritative (gap closure Plan 01-06)*
 *Updated: 2026-02-20 — MCP-01: corrected file path from ~/.claude/settings.json to ~/.claude.json (verified live). CONF-03/MCP-03: corrected field name from quorum_models to required_models (approved divergence during Phase 2 planning).*
+*Updated: 2026-02-20 — Phase 3 complete: INST-03, INST-04, INST-07 marked [x]; all 11 Phase 3 requirements satisfied (human checkpoint approved, multi-model consensus: Codex+Gemini+OpenCode PASS).*
