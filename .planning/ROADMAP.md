@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Hook Enforcement** - Stop hook hard gate + UserPromptSubmit injection + meta quorum behavior for this repo (completed 2026-02-20)
 - [x] **Phase 2: Config & MCP Detection** - User-editable config system with MCP auto-detection and fail-open behavior (completed 2026-02-20)
-- [ ] **Phase 3: Installer & Distribution** - npm installer that writes hooks to ~/.claude/settings.json and GSD version sync strategy
+- [x] **Phase 3: Installer & Distribution** - npm installer that writes hooks to ~/.claude/settings.json and GSD version sync strategy (completed 2026-02-20)
 
 ## Phase Details
 
@@ -71,9 +71,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Package identity: update package.json (name=qgsd, bin, peerDeps) + CHANGELOG.md v0.1.0 entry
-- [ ] 03-02-PLAN.md — Installer enhancements: INST-05 MCP validation warning + INST-06 reinstall summary + --redetect-mcps flag
-- [ ] 03-03-PLAN.md — Build dist + human verify checkpoint + mark Phase 3 complete
+- [x] 03-01-PLAN.md — Package identity: update package.json (name=qgsd, bin, peerDeps) + CHANGELOG.md v0.1.0 entry
+- [x] 03-02-PLAN.md — Installer enhancements: INST-05 MCP validation warning + INST-06 reinstall summary + --redetect-mcps flag
+- [x] 03-03-PLAN.md — Build dist + human verify checkpoint + mark Phase 3 complete
 
 ## Progress
 
@@ -84,7 +84,7 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Hook Enforcement | 5/5 | Complete   | 2026-02-20 |
 | 2. Config & MCP Detection | 4/4 | Complete | 2026-02-20 |
-| 3. Installer & Distribution | 2/3 | In Progress|  |
+| 3. Installer & Distribution | 3/3 | Complete   | 2026-02-20 |
 
 ### Phase 4: Narrow quorum scope to project decisions only
 
@@ -94,5 +94,5 @@ Phases execute in numeric order: 1 → 2 → 3
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 04-01-PLAN.md — Stop hook GUARD 5: decision turn detection (hasArtifactCommit + hasDecisionMarker) — TDD with TC14-TC19
-- [ ] 04-02-PLAN.md — UserPromptSubmit hook: inject decision marker instruction into quorum context
+- [x] 04-01-PLAN.md — Stop hook GUARD 5: decision turn detection (hasArtifactCommit + hasDecisionMarker) — TDD with TC14-TC19
+- [x] 04-02-PLAN.md — UserPromptSubmit hook: inject decision marker instruction into quorum context

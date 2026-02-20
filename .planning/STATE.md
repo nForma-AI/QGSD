@@ -81,6 +81,9 @@ Recent decisions affecting current work:
 - [Phase 03-installer-distribution planning]: INST-05 validation runs on every install (not just first-time) — per-model yellow warning, fail-open always (quorum: Claude + Codex + Gemini + OpenCode)
 - [Phase 03-installer-distribution planning]: hooks/dist/ is STALE (Phase 2 not built to dist yet; config-loader.js missing from dist) — Plan 03-03 must run build:hooks before verify
 - [Phase 03-installer-distribution planning]: SYNC-04 pre-verified — QGSD hooks import only Node stdlib and ./config-loader; zero GSD source imports confirmed
+- [Phase 03-installer-distribution P03]: hooks/dist/ was STALE at plan start (config-loader.js missing — Phase 2 not propagated); build:hooks must run before any npm pack or install verification
+- [Phase 03-installer-distribution P03]: Human checkpoint approved 2026-02-20; multi-model consensus (Codex + Gemini + OpenCode) all returned PASS — all 11 Phase 3 requirements satisfied
+- [Phase 03-installer-distribution P03]: INST-03/INST-04/INST-07 marked complete — settings.json direct write (Phase 1), idempotency guards (Phase 1+2), per-project config honored via two-layer merge (Phase 2)
 - [Phase 03-installer-distribution planning]: CHANGELOG.md update (not create) — file already exists at repo root in Keep-a-Changelog format
 - [Phase 03-installer-distribution P02]: warnMissingMcpServers() reads QGSD_KEYWORD_MAP directly — warning set stays in sync with detection set automatically without separate maintenance
 - [Phase 03-installer-distribution P02]: INST-06 catch block falls back to original 'already exists — skipping' message for malformed qgsd.json (safe degradation)
@@ -108,5 +111,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-20
-Stopped at: Phase 4 plan 04-02 complete. ALL PHASES COMPLETE.
+Stopped at: Phase 3 plan 03-03 complete (Task 6 finalization). Phase 3 all 11 requirements marked. ALL PHASES COMPLETE.
 Resume file: N/A — project complete
