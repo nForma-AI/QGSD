@@ -13,8 +13,9 @@ const DIST_DIR = path.join(HOOKS_DIR, 'dist');
 const HOOKS_TO_COPY = [
   'gsd-check-update.js',
   'gsd-statusline.js',
-  'qgsd-prompt.js',   // QGSD: UserPromptSubmit quorum injection hook
-  'qgsd-stop.js',     // QGSD: Stop quorum verification gate
+  'qgsd-prompt.js',      // QGSD: UserPromptSubmit quorum injection hook
+  'qgsd-stop.js',        // QGSD: Stop quorum verification gate
+  'config-loader.js',    // QGSD: shared config loader (required by qgsd-prompt.js and qgsd-stop.js)
 ];
 
 function build() {
