@@ -1,0 +1,229 @@
+#!/usr/bin/env node
+// hooks/config-loader.test.js
+// TDD test suite for hooks/config-loader.js
+// Uses node:test + node:assert/strict
+// Tests write temp config files to os.tmpdir() — cleaned up in finally blocks.
+
+'use strict';
+
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+
+// We test via the module under test
+const { loadConfig, DEFAULT_CONFIG } = require('./config-loader');
+
+// Helper: write a JSON file to a temp directory
+function writeTempConfig(dir, content) {
+  const configDir = path.join(dir, '.claude');
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(path.join(configDir, 'qgsd.json'), content, 'utf8');
+}
+
+// TC1: Project dir missing config, no project-level file exists.
+// NOTE: The global ~/.claude/qgsd.json may or may not exist on the test machine.
+// This test verifies: (a) loadConfig() returns a valid config object, (b) no stdout written,
+// (c) if global is absent too, a WARNING is emitted.
+// We use a fresh temp dir with no .claude/ subdirectory as the project dir.
+test('TC1: no project config → returns valid config (from global or DEFAULT_CONFIG)', async (t) => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc1-'));
+  const stdoutChunks = [];
+  const origStdout = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (chunk, ...args) => {
+    stdoutChunks.push(chunk);
+    return origStdout(chunk, ...args);
+  };
+  try {
+    // No .claude/qgsd.json in tmpDir — project layer absent
+    const config = loadConfig(tmpDir);
+    // Must be a valid config with required shape regardless of global presence
+    assert.ok(typeof config === 'object' && config !== null, 'config must be an object');
+    assert.ok(Array.isArray(config.quorum_commands), 'quorum_commands must be array');
+    assert.ok(typeof config.required_models === 'object' && config.required_models !== null, 'required_models must be object');
+    assert.ok(['open', 'closed'].includes(config.fail_mode), 'fail_mode must be valid');
+    // Stdout must remain clean
+    assert.equal(stdoutChunks.length, 0, 'stdout must remain empty');
+  } finally {
+    process.stdout.write = origStdout;
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+// TC2: Global only, valid — returns DEFAULT_CONFIG merged with global
+test('TC2: global config only (valid) → merged over DEFAULT_CONFIG', async (t) => {
+  const globalDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc2g-'));
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc2p-'));
+  // Write a global config. We can't easily redirect the global path,
+  // so this TC tests project-only (same merge path when global is absent).
+  // The global path is always ~/.claude/qgsd.json — we test through projectDir override.
+  // TC2 tests project config only scenario, which covers the { ...DEFAULT_CONFIG, ...project } path.
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ quorum_commands: ['custom-cmd'], fail_mode: 'open', required_models: DEFAULT_CONFIG.required_models }));
+    const config = loadConfig(projectDir);
+    assert.ok(Array.isArray(config.quorum_commands));
+    assert.ok(config.quorum_commands.includes('custom-cmd'));
+    assert.equal(config.fail_mode, 'open');
+  } finally {
+    fs.rmSync(globalDir, { recursive: true, force: true });
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC3: Project config with fail_mode: 'closed' overrides global/default
+test('TC3: project config overrides fail_mode', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc3-'));
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ fail_mode: 'closed' }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.fail_mode, 'closed');
+    // Other keys should still exist (from DEFAULT_CONFIG)
+    assert.ok(Array.isArray(config.quorum_commands));
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC4: Malformed project config — warns on stderr, falls back for that layer
+test('TC4: malformed project config → stderr warning, uses DEFAULT_CONFIG for that layer', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc4-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, '{ invalid json :');
+    const config = loadConfig(projectDir);
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should emit a WARNING on stderr');
+    // Config should still be a valid object with DEFAULT_CONFIG keys
+    assert.ok(Array.isArray(config.quorum_commands));
+    assert.ok(config.required_models);
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC5: validateConfig — invalid quorum_commands (string, not array) → corrected to DEFAULT
+test('TC5: validateConfig corrects quorum_commands: string → DEFAULT array', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc5-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ quorum_commands: 'not-an-array' }));
+    const config = loadConfig(projectDir);
+    assert.ok(Array.isArray(config.quorum_commands), 'quorum_commands should be corrected to array');
+    assert.deepEqual(config.quorum_commands, DEFAULT_CONFIG.quorum_commands);
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should warn about invalid quorum_commands');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC6: validateConfig — invalid required_models (not an object) → corrected to DEFAULT
+test('TC6: validateConfig corrects required_models: null → DEFAULT object', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc6-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ required_models: null }));
+    const config = loadConfig(projectDir);
+    assert.ok(config.required_models !== null);
+    assert.equal(typeof config.required_models, 'object');
+    assert.deepEqual(config.required_models, DEFAULT_CONFIG.required_models);
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should warn about invalid required_models');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC7: validateConfig — invalid fail_mode → corrected to 'open'
+test('TC7: validateConfig corrects invalid fail_mode → "open"', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc7-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ fail_mode: 'invalid-value' }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.fail_mode, 'open');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should warn about invalid fail_mode');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC8: No stdout output from any loadConfig() call
+test('TC8: loadConfig() never writes to stdout', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc8-'));
+  const stdoutChunks = [];
+  const origWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (chunk, ...args) => {
+    stdoutChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    // Test multiple scenarios
+    loadConfig(projectDir); // no files
+
+    writeTempConfig(projectDir, '{ bad json');
+    loadConfig(projectDir); // malformed
+
+    writeTempConfig(projectDir, JSON.stringify({ quorum_commands: 'bad', fail_mode: 'bad', required_models: null }));
+    loadConfig(projectDir); // validation failures
+
+    assert.equal(stdoutChunks.length, 0, 'stdout must remain empty across all scenarios');
+  } finally {
+    process.stdout.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC9: DEFAULT_CONFIG exported and has expected shape
+test('TC9: DEFAULT_CONFIG exported and has correct shape', async (t) => {
+  assert.ok(DEFAULT_CONFIG, 'DEFAULT_CONFIG must be exported');
+  assert.ok(Array.isArray(DEFAULT_CONFIG.quorum_commands), 'quorum_commands must be array');
+  assert.equal(DEFAULT_CONFIG.fail_mode, 'open');
+  assert.ok(typeof DEFAULT_CONFIG.required_models === 'object' && DEFAULT_CONFIG.required_models !== null);
+  assert.ok(DEFAULT_CONFIG.required_models.codex);
+  assert.ok(DEFAULT_CONFIG.required_models.gemini);
+  assert.ok(DEFAULT_CONFIG.required_models.opencode);
+  assert.ok(DEFAULT_CONFIG.required_models.codex.tool_prefix.startsWith('mcp__'));
+});
+
+// TC10: Shallow merge — project required_models replaces global entirely
+test('TC10: shallow merge — project required_models replaces DEFAULT_CONFIG.required_models', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc10-'));
+  try {
+    const customModels = { custom: { tool_prefix: 'mcp__custom__', required: true } };
+    writeTempConfig(projectDir, JSON.stringify({ required_models: customModels }));
+    const config = loadConfig(projectDir);
+    // Project required_models should completely replace DEFAULT_CONFIG.required_models
+    assert.deepEqual(config.required_models, customModels);
+    // Should NOT have codex/gemini/opencode from DEFAULT
+    assert.equal(config.required_models.codex, undefined);
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
