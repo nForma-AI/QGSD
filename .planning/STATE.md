@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-20 after Phase 2)
 Phase: 4 of 4 (Narrow Quorum Scope) — COMPLETE
 Plan: 2/2 complete
 Status: ALL PHASES COMPLETE — Phase 4 fully done: 04-01 (GUARD 5) + 04-02 (decision marker injection) shipped
-Last activity: 2026-02-20 — 04-02 complete: DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK step 5 added with <!-- GSD_DECISION --> token; all tests 19/19 pass
+Last activity: 2026-02-20 - Completed quick task 1: Rebrand project to QGSD: Quorum Gets Shit Done
 
 Progress: [████████████████████████████████] 100% (4/4 phases complete)
 
@@ -101,6 +101,12 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - `2026-02-20-add-gsd-quorum-command-for-consensus-answers.md` — Add gsd:quorum command for consensus answers (area: planning)
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Rebrand project to QGSD: Quorum Gets Shit Done | 2026-02-20 | f55eebf | [1-rebrand-project-to-qgsd-quorum-gets-shit](./quick/1-rebrand-project-to-qgsd-quorum-gets-shit/) |
 
 ### Blockers/Concerns
 
