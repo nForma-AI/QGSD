@@ -227,3 +227,155 @@ test('TC10: shallow merge — project required_models replaces DEFAULT_CONFIG.re
     fs.rmSync(projectDir, { recursive: true, force: true });
   }
 });
+
+// TC-CB1: DEFAULT_CONFIG.circuit_breaker exists with oscillation_depth=3, commit_window=6
+test('TC-CB1: DEFAULT_CONFIG.circuit_breaker has correct defaults', async (t) => {
+  assert.ok(DEFAULT_CONFIG.circuit_breaker, 'DEFAULT_CONFIG.circuit_breaker must exist');
+  assert.equal(DEFAULT_CONFIG.circuit_breaker.oscillation_depth, 3, 'oscillation_depth must be 3');
+  assert.equal(DEFAULT_CONFIG.circuit_breaker.commit_window, 6, 'commit_window must be 6');
+});
+
+// TC-CB2: Valid circuit_breaker in project config (oscillation_depth=5, commit_window=8) → values used as-is
+test('TC-CB2: valid project circuit_breaker overrides defaults', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb2-'));
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: { oscillation_depth: 5, commit_window: 8 } }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.oscillation_depth, 5, 'oscillation_depth should be 5');
+    assert.equal(config.circuit_breaker.commit_window, 8, 'commit_window should be 8');
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB3: circuit_breaker.oscillation_depth is string 'not-a-number' → falls back to 3, stderr WARNING
+test('TC-CB3: invalid oscillation_depth string falls back to 3 with stderr warning', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb3-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: { oscillation_depth: 'not-a-number', commit_window: 6 } }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.oscillation_depth, 3, 'oscillation_depth should fall back to 3');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should emit WARNING on stderr');
+    assert.ok(stderrOutput.includes('oscillation_depth'), 'warning should mention oscillation_depth');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB4: circuit_breaker.commit_window is -1 (negative integer) → falls back to 6, stderr WARNING
+test('TC-CB4: negative commit_window falls back to 6 with stderr warning', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb4-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: { oscillation_depth: 3, commit_window: -1 } }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.commit_window, 6, 'commit_window should fall back to 6');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should emit WARNING on stderr');
+    assert.ok(stderrOutput.includes('commit_window'), 'warning should mention commit_window');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB5: circuit_breaker is null → entire block falls back to defaults, stderr WARNING
+test('TC-CB5: null circuit_breaker falls back to full defaults with stderr warning', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb5-'));
+  const stderrChunks = [];
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: null }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.oscillation_depth, 3, 'oscillation_depth should be default 3');
+    assert.equal(config.circuit_breaker.commit_window, 6, 'commit_window should be default 6');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING:'), 'should emit WARNING on stderr');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB6: circuit_breaker has only oscillation_depth=5 (missing commit_window) →
+// oscillation_depth=5 used, commit_window=6 (validateConfig fills in missing sub-key)
+test('TC-CB6: partial circuit_breaker with only oscillation_depth uses default commit_window', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb6-'));
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: { oscillation_depth: 5 } }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.oscillation_depth, 5, 'oscillation_depth should be 5 as specified');
+    assert.equal(config.circuit_breaker.commit_window, 6, 'commit_window should default to 6 when missing');
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB7: loadConfig() with invalid circuit_breaker writes nothing to stdout
+test('TC-CB7: loadConfig() with invalid circuit_breaker writes nothing to stdout', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb7-'));
+  const stdoutChunks = [];
+  const origWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = (chunk, ...args) => {
+    stdoutChunks.push(chunk);
+    return origWrite(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: null }));
+    loadConfig(projectDir);
+    assert.equal(stdoutChunks.length, 0, 'stdout must remain empty with invalid circuit_breaker');
+  } finally {
+    process.stdout.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TC-CB8: Both sub-keys invalid simultaneously (oscillation_depth='bad', commit_window=-1) →
+// each falls back independently (3 and 6), two WARNINGs on stderr, stdout stays empty
+test('TC-CB8: both circuit_breaker sub-keys invalid → each falls back independently, two warnings, no stdout', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tc-cb8-'));
+  const stderrChunks = [];
+  const stdoutChunks = [];
+  const origStderr = process.stderr.write.bind(process.stderr);
+  const origStdout = process.stdout.write.bind(process.stdout);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origStderr(chunk, ...args);
+  };
+  process.stdout.write = (chunk, ...args) => {
+    stdoutChunks.push(chunk);
+    return origStdout(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ circuit_breaker: { oscillation_depth: 'bad', commit_window: -1 } }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.circuit_breaker.oscillation_depth, 3, 'oscillation_depth should fall back to 3');
+    assert.equal(config.circuit_breaker.commit_window, 6, 'commit_window should fall back to 6');
+    const stderrOutput = stderrChunks.join('');
+    // Two separate warnings should be emitted
+    const warningMatches = (stderrOutput.match(/\[qgsd\] WARNING:/g) || []);
+    assert.ok(warningMatches.length >= 2, 'should emit at least 2 warnings (one per invalid sub-key)');
+    assert.equal(stdoutChunks.length, 0, 'stdout must remain empty');
+  } finally {
+    process.stderr.write = origStderr;
+    process.stdout.write = origStdout;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
