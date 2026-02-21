@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 8: Installer Integration** - Installer registers PreToolUse hook and writes default circuit_breaker config block idempotently (completed 2026-02-21)
 - [x] **Phase 9: Verify Phases 5-6** - Create VERIFICATION.md for Phases 5 and 6; close DETECT-01..05 and STATE-01..04 requirements (gap closure) (completed 2026-02-21)
 - [x] **Phase 10: Fix Bugs + Verify Phases 7-8** - Fix INST-08 uninstall dead hook, RECV-01 path mismatch, INST-10 sub-key backfill + CONF-09 docs; create VERIFICATION.md for Phases 7 and 8; close all remaining v0.2 requirements (completed 2026-02-21)
-- [ ] **Phase 11: Changelog & Build** - Write CHANGELOG [0.2.0] entry, clear [Unreleased], rebuild hooks/dist/, validate full test suite
+- [x] **Phase 11: Changelog & Build** - Write CHANGELOG [0.2.0] entry, clear [Unreleased], rebuild hooks/dist/, validate full test suite (completed 2026-02-21)
 - [ ] **Phase 12: Version & Publish** - Bump version to 0.2.0, archive v0.2 milestone, create git tag v0.2.0, publish qgsd@0.2.0 to npm
 
 ## Phase Details

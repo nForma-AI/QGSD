@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-21 after v0.3 milestone start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 11 Plan 01 complete — CHANGELOG [0.2.0] entry written; Phase 11 Plan 02 (dist rebuild + test suite) next
+**Current focus:** Phase 11 complete — CHANGELOG [0.2.0] written, hooks/dist/ rebuilt, npm test 141/141; Phase 12 (Version & Publish) next
 
 ## Current Position
 
 Phase: 11 — changelog-build
-Plan: 01 complete (1/2 plans done — Phase 11 in progress)
-Status: Phase 11 Plan 01 complete — CHANGELOG.md [0.2.0] entry written, [Unreleased] cleared; CL-01 and CL-02 satisfied
-Last activity: 2026-02-21 — Phase 11 Plan 01 complete; CHANGELOG [0.2.0] entry written covering all v0.2 changes
+Plan: 02 complete (2/2 plans done — Phase 11 COMPLETE)
+Status: Phase 11 complete — CL-01, CL-02, BLD-01, BLD-02 all satisfied; hooks/dist/ rebuilt, npm test 141/141 passing
+Last activity: 2026-02-21 — Phase 11 Plan 02 complete; hooks/dist/ rebuilt from source, npm test 0 failures
 
 Progress: [████████████████████████░░░░░░░░░] 10/13 phases complete (77%)
 
@@ -63,6 +63,7 @@ Progress: [███████████████████████
 | Phase 10-fix-bugs-verify-phases-7-8 P03 | 4 min | 1 task (verify) | 1 file |
 | Phase 10-fix-bugs-verify-phases-7-8 P04 | 2 min | 2 tasks | 3 files |
 | Phase 11-changelog-build P01 | 3 min | 1 task | 1 file |
+| Phase 11-changelog-build P02 | 3 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -175,5 +176,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 11-01-PLAN.md — CHANGELOG [0.2.0] entry written, [Unreleased] cleared; CL-01 and CL-02 satisfied. Phase 11 Plan 02 (dist rebuild + test suite) next.
+Stopped at: Completed 11-02-PLAN.md — hooks/dist/ rebuilt from source, npm test 141/141 passing, BLD-01 and BLD-02 satisfied. Phase 11 complete. Phase 12 (Version & Publish) next.
 Resume file: N/A
