@@ -76,15 +76,23 @@ function getCommitFileSets(gitRoot, hashes) {
   return sets;
 }
 
-// Detects oscillation: returns { detected: bool, fileSet: string[] }
+// Detects true oscillation: returns { detected: bool, fileSet: string[] }
+// A file set is oscillating only when it appears `depth` or more times AND
+// every consecutive pair of appearances has at least one different commit between
+// them (true A→B→A→B pattern). Consecutive identical commits (A, A, A with no
+// gap) are NOT oscillation — they are iterative refinement and must not trigger.
 function detectOscillation(fileSets, depth) {
-  const count = new Map();
-  for (const files of fileSets) {
-    const key = files.slice().sort().join('\0'); // Null-byte separator
-    count.set(key, (count.get(key) || 0) + 1);
+  const positions = new Map();
+  for (let i = 0; i < fileSets.length; i++) {
+    const key = fileSets[i].slice().sort().join('\0');
+    if (!positions.has(key)) positions.set(key, []);
+    positions.get(key).push(i);
   }
-  for (const [key, occurrences] of count) {
-    if (occurrences >= depth) {
+  for (const [key, idxs] of positions) {
+    if (idxs.length < depth) continue;
+    // All consecutive pairs must have a gap (at least one different commit between them)
+    const allAlternating = idxs.every((pos, k) => k === 0 || pos - idxs[k - 1] > 1);
+    if (allAlternating) {
       return { detected: true, fileSet: key.split('\0').filter(f => f.length > 0) };
     }
   }
@@ -139,7 +147,9 @@ function buildBlockReason(state) {
     '',
     'Allowed read-only operations: git log, git diff, grep, cat, ls, head, tail, find',
     '',
-    'After committing the fix manually, run \'npx qgsd --reset-breaker\' to clear the circuit breaker.'
+    'After committing the fix manually, run \'npx qgsd --reset-breaker\' to clear the circuit breaker.',
+    'To temporarily disable the circuit breaker for deliberate iterative work, run \'npx qgsd --disable-breaker\'.',
+    'Re-enable with \'npx qgsd --enable-breaker\' when done.'
   );
 
   return lines.join('\n');
@@ -164,6 +174,12 @@ function main() {
       // Check existing state
       const statePath = path.join(gitRoot, '.claude', 'circuit-breaker-state.json');
       const state = readState(statePath);
+
+      // DISABLE-01: If circuit breaker is disabled, skip all detection and enforcement
+      if (state && state.disabled) {
+        process.exit(0);
+      }
+
       if (state && state.active) {
         // ENFC-01/02/03: Enforce blocking on write commands; allow read-only
         if (!isReadOnly(command)) {
