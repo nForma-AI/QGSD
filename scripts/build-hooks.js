@@ -16,6 +16,7 @@ const HOOKS_TO_COPY = [
   'qgsd-prompt.js',      // QGSD: UserPromptSubmit quorum injection hook
   'qgsd-stop.js',        // QGSD: Stop quorum verification gate
   'config-loader.js',    // QGSD: shared config loader (required by qgsd-prompt.js and qgsd-stop.js)
+  'qgsd-circuit-breaker.js', // QGSD: PreToolUse oscillation detection and state persistence
 ];
 
 function build() {
