@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-21 after v0.2 milestone complete)
 Phase: Milestone v0.2 complete
 Plan: N/A — milestone archived
 Status: v0.2 SHIPPED — 17 phases complete, 40/40 plans, git tag v0.2.0 pushed. Milestone archived to .planning/milestones/. REQUIREMENTS.md deleted (fresh for next milestone). npm publish (RLS-04) deferred.
-Last activity: 2026-02-21 — Completed quick task 33: make workflow.auto_advance default to true (YOLO mode on by default)
+Last activity: 2026-02-21 — Completed quick task 34: add debate category metadata to quorum scoreboard (5-category taxonomy + Haiku auto-classification)
 
 Progress: [████████████████████] 40/40 plans (100%)
 
@@ -199,6 +199,7 @@ Recent decisions affecting current work:
 | 30 | fix execute-phase orchestrator CI failure gate: auto-spawn quick task when executor SUMMARY.md has diagnosed root causes | 2026-02-21 | f13a22d | Complete | [30-fix-execute-phase-orchestrator-ci-failur](.planning/quick/30-fix-execute-phase-orchestrator-ci-failur/) |
 | 31 | Tighten execute-phase auto-spawn resume: replace vague resume line with post-fix verification block (cap: 1 retry) | 2026-02-21 | 845e627 | Complete | [31-tighten-execute-phase-auto-spawn-resume-](./quick/31-tighten-execute-phase-auto-spawn-resume-/) |
 | 33 | Make workflow.auto_advance default to true — YOLO on by default without explicit config entry | 2026-02-21 | 3a64716 | Complete | [33-make-workflow-auto-advance-default-to-tr](./quick/33-make-workflow-auto-advance-default-to-tr/) |
+| 34 | Add debate category metadata to quorum scoreboard: 5-category taxonomy, --category/--subcategory/--task-description flags, Haiku auto-classification | 2026-02-21 | e7296ab | Complete | [34-add-debate-category-metadata-to-quorum-s](./quick/34-add-debate-category-metadata-to-quorum-s/) |
 
 ### Blockers/Concerns
 
@@ -209,5 +210,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: quick-33 complete — set workflow.auto_advance default to true in loadConfig, all 4 shell fallbacks, transition.md, and config template (source + installed)
+Stopped at: quick-34 complete — added 5-category taxonomy to quorum-scoreboard.json, --category/--subcategory/--task-description flags to update-scoreboard.cjs, --task-description to all 3 quorum.md scoreboard call sites
 Resume file: None
