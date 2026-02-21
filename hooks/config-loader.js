@@ -25,6 +25,10 @@ const DEFAULT_CONFIG = {
     gemini:   { tool_prefix: 'mcp__gemini-cli__', required: true },
     opencode: { tool_prefix: 'mcp__opencode__',   required: true },
   },
+  circuit_breaker: {
+    oscillation_depth: 3,
+    commit_window: 6,
+  },
 };
 
 // Reads and parses a JSON config file.
@@ -58,6 +62,30 @@ function validateConfig(config) {
   if (!['open', 'closed'].includes(config.fail_mode)) {
     process.stderr.write('[qgsd] WARNING: qgsd.json: fail_mode "' + config.fail_mode + '" invalid; defaulting to "open"\n');
     config.fail_mode = 'open';
+  }
+
+  // Validate circuit_breaker sub-object
+  if (typeof config.circuit_breaker !== 'object' || config.circuit_breaker === null) {
+    process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker must be an object; using defaults\n');
+    config.circuit_breaker = { ...DEFAULT_CONFIG.circuit_breaker };
+  } else {
+    // Validate oscillation_depth independently
+    if (!Number.isInteger(config.circuit_breaker.oscillation_depth) || config.circuit_breaker.oscillation_depth < 1) {
+      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.oscillation_depth must be a positive integer; defaulting to 3\n');
+      config.circuit_breaker.oscillation_depth = 3;
+    }
+    // Validate commit_window independently
+    if (!Number.isInteger(config.circuit_breaker.commit_window) || config.circuit_breaker.commit_window < 1) {
+      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.commit_window must be a positive integer; defaulting to 6\n');
+      config.circuit_breaker.commit_window = 6;
+    }
+    // Fill in missing sub-keys with defaults (handles partial circuit_breaker objects)
+    if (config.circuit_breaker.oscillation_depth === undefined) {
+      config.circuit_breaker.oscillation_depth = DEFAULT_CONFIG.circuit_breaker.oscillation_depth;
+    }
+    if (config.circuit_breaker.commit_window === undefined) {
+      config.circuit_breaker.commit_window = DEFAULT_CONFIG.circuit_breaker.commit_window;
+    }
   }
 
   return config;
