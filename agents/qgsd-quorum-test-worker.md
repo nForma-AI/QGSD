@@ -23,7 +23,7 @@ Return ONLY this structure — no prose, no explanation, no markdown headers:
 verdict: PASS | BLOCK | REVIEW-NEEDED
 concerns:
   - <most-impactful concern first, or "none" if no concerns>
-  - <second concern if applicable, or omit>
+  - <second concern if applicable, or "none" if only one concern>
 
 Rules:
 - PASS: no concerns — tests are genuine and the pass is trustworthy
