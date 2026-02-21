@@ -29,6 +29,8 @@ const hasAll = args.includes('--all');
 const hasUninstall = args.includes('--uninstall') || args.includes('-u');
 const hasRedetectMcps = args.includes('--redetect-mcps');
 const hasResetBreaker = args.includes('--reset-breaker');
+const hasDisableBreaker = args.includes('--disable-breaker');
+const hasEnableBreaker = args.includes('--enable-breaker');
 
 // Runtime selection - can be set by flags or interactive prompt
 let selectedRuntimes = [];
@@ -2069,6 +2071,49 @@ if (hasResetBreaker) {
   } else {
     console.log(`  ${dim}No active circuit breaker state found at ${stateFile.replace(os.homedir(), '~')}${reset}`);
   }
+  process.exit(0);
+}
+
+// DISABLE-01: --disable-breaker pauses circuit breaker enforcement without resetting detection
+if (hasDisableBreaker) {
+  const { spawnSync } = require('child_process');
+  const gitResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    timeout: 5000,
+  });
+  const projectRoot = (gitResult.status === 0 && !gitResult.error)
+    ? gitResult.stdout.trim()
+    : process.cwd();
+  const stateFile = path.join(projectRoot, '.claude', 'circuit-breaker-state.json');
+  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+  const existing = fs.existsSync(stateFile)
+    ? JSON.parse(fs.readFileSync(stateFile, 'utf8'))
+    : {};
+  fs.writeFileSync(stateFile, JSON.stringify({ ...existing, disabled: true, active: false }, null, 2), 'utf8');
+  console.log(`  ${yellow}⊘${reset} Circuit breaker ${yellow}disabled${reset}. Detection and enforcement paused.`);
+  console.log(`    Run ${cyan}npx qgsd --enable-breaker${reset} to resume.`);
+  process.exit(0);
+}
+
+// DISABLE-02: --enable-breaker resumes circuit breaker enforcement
+if (hasEnableBreaker) {
+  const { spawnSync } = require('child_process');
+  const gitResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    timeout: 5000,
+  });
+  const projectRoot = (gitResult.status === 0 && !gitResult.error)
+    ? gitResult.stdout.trim()
+    : process.cwd();
+  const stateFile = path.join(projectRoot, '.claude', 'circuit-breaker-state.json');
+  if (fs.existsSync(stateFile)) {
+    const existing = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+    fs.writeFileSync(stateFile, JSON.stringify({ ...existing, disabled: false, active: false }, null, 2), 'utf8');
+  }
+  // If no state file, nothing to do — circuit breaker is already effectively enabled
+  console.log(`  ${green}✓${reset} Circuit breaker ${green}enabled${reset}. Oscillation detection resumed.`);
   process.exit(0);
 }
 
