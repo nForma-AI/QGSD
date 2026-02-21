@@ -2300,3 +2300,93 @@ describe('scaffold command', () => {
     assert.strictEqual(output.reason, 'already_exists');
   });
 });
+
+describe('activity commands', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('TC1: activity-set with full schema writes file with all fields + updated timestamp', () => {
+    const json = JSON.stringify({
+      activity: 'execute_phase',
+      sub_activity: 'executing_plan',
+      phase: 14,
+      plan: '14-02-PLAN.md',
+      wave: 1,
+      debug_round: 2,
+      checkpoint: 'checkpoint:verify',
+      quorum_round: 1,
+    });
+
+    const result = runGsdTools(`activity-set '${json}'`, tmpDir);
+    assert.ok(result.success, `Command failed: ${result.error}`);
+
+    const output = JSON.parse(result.output);
+    assert.strictEqual(output.written, true, 'should return written: true');
+    assert.strictEqual(output.path, '.planning/current-activity.json', 'should return correct path');
+
+    const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
+    assert.ok(fs.existsSync(filePath), 'current-activity.json should exist');
+
+    const written = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    assert.strictEqual(written.activity, 'execute_phase', 'should have activity field');
+    assert.strictEqual(written.sub_activity, 'executing_plan', 'should have sub_activity field');
+    assert.strictEqual(written.phase, 14, 'should have phase field');
+    assert.ok(written.updated, 'should have updated timestamp');
+    assert.ok(new Date(written.updated).getTime() > 0, 'updated should be a valid ISO timestamp');
+  });
+
+  test('TC2: activity-set with minimal fields (activity only) writes file with activity + updated', () => {
+    const json = JSON.stringify({ activity: 'plan_phase' });
+
+    const result = runGsdTools(`activity-set '${json}'`, tmpDir);
+    assert.ok(result.success, `Command failed: ${result.error}`);
+
+    const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
+    assert.ok(fs.existsSync(filePath), 'current-activity.json should exist');
+
+    const written = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    assert.strictEqual(written.activity, 'plan_phase', 'should have activity field');
+    assert.ok(written.updated, 'should have updated timestamp');
+    // Only activity and updated should be present
+    const keys = Object.keys(written);
+    assert.strictEqual(keys.length, 2, 'should only have activity and updated keys');
+  });
+
+  test('TC3: activity-set then activity-clear removes file; activity-get returns {}', () => {
+    const json = JSON.stringify({ activity: 'execute_phase', sub_activity: 'debugging' });
+    runGsdTools(`activity-set '${json}'`, tmpDir);
+
+    const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
+    assert.ok(fs.existsSync(filePath), 'file should exist after activity-set');
+
+    const clearResult = runGsdTools('activity-clear', tmpDir);
+    assert.ok(clearResult.success, `activity-clear failed: ${clearResult.error}`);
+    const clearOutput = JSON.parse(clearResult.output);
+    assert.strictEqual(clearOutput.cleared, true, 'should return cleared: true');
+
+    assert.ok(!fs.existsSync(filePath), 'file should be removed after activity-clear');
+
+    const getResult = runGsdTools('activity-get', tmpDir);
+    assert.ok(getResult.success, `activity-get failed: ${getResult.error}`);
+    const getOutput = JSON.parse(getResult.output);
+    assert.deepStrictEqual(getOutput, {}, 'activity-get should return empty object when file missing');
+  });
+
+  test('TC4: activity-clear on non-existent file returns { cleared: true } without error', () => {
+    const filePath = path.join(tmpDir, '.planning', 'current-activity.json');
+    assert.ok(!fs.existsSync(filePath), 'file should not exist before test');
+
+    const result = runGsdTools('activity-clear', tmpDir);
+    assert.ok(result.success, `activity-clear failed on missing file: ${result.error}`);
+
+    const output = JSON.parse(result.output);
+    assert.strictEqual(output.cleared, true, 'should return cleared: true even when file absent');
+  });
+});
