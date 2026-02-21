@@ -109,7 +109,7 @@ diff /Users/jonathanborduas/code/QGSD/commands/qgsd/debug.md /Users/jonathanbord
 If diff reports any differences, fix them before proceeding.
   </action>
   <verify>
-diff /Users/jonatharduas/code/QGSD/commands/qgsd/debug.md /Users/jonathanborduas/.claude/commands/qgsd/debug.md
+diff /Users/jonathanborduas/code/QGSD/commands/qgsd/debug.md /Users/jonathanborduas/.claude/commands/qgsd/debug.md
 Expected: no output (files identical).
 Also: grep -n "Execute the consensus next step autonomously" /Users/jonathanborduas/.claude/commands/qgsd/debug.md
 Expected: one matching line.
