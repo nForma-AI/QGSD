@@ -140,7 +140,10 @@ Plans:
   2. After running `npx qgsd@latest` on a fresh install, `~/.claude/qgsd.json` contains a `circuit_breaker` block with `oscillation_depth: 3` and `commit_window: 6`
   3. Running `npx qgsd@latest` a second time when a `circuit_breaker` block already exists (with or without user modifications) does not overwrite it — a missing block is added, an existing block is left intact
   4. Running `npx qgsd --reset-breaker` deletes `.claude/circuit-breaker-state.json` and logs a confirmation message — the circuit breaker is cleared and Claude can resume Bash execution
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 08-01-PLAN.md — Four installer changes: PreToolUse hook registration, circuit_breaker config block, idempotent reinstall patch, --reset-breaker CLI flag
 
 ## Progress
 
@@ -158,4 +161,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 5. Fix GUARD 5 Delivery Gaps | 1/1 | Complete | 2026-02-21 |
 | 6. Circuit Breaker Detection & State | 1/1 | Complete | 2026-02-21 |
 | 7. Enforcement & Config Integration | 2/2 | Complete | 2026-02-21 |
-| 8. Installer Integration | 0/TBD | Not started | - |
+| 8. Installer Integration | 0/1 | Not started | - |
