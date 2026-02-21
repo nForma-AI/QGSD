@@ -389,10 +389,36 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 | `gaps_found` | Present gap summary, offer `/qgsd:plan-phase {phase} --gaps` |
 
 **If human_needed:**
-```
-## ✓ Phase {X}: {Name} — Human Verification Required
 
-All automated checks passed. {N} items need human testing:
+Before escalating to the user, run a quorum resolution loop to attempt automated resolution:
+
+1. Read the full `human_verification` section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`.
+
+2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)?
+
+3. Query each quorum model **sequentially** (separate tool calls, never parallel — R3.2):
+
+   ```
+   Phase ${PHASE_NUMBER} verification produced human_needed status.
+   The following items require human judgment per the verifier:
+
+   [Paste full human_verification section from VERIFICATION.md]
+
+   Using available tools (grep, file inspection, quorum-test), try to resolve each item.
+   Vote RESOLVED (with tool evidence) or UNRESOLVABLE (with reason for each unresolvable item).
+   ```
+
+   Fail-open: if a model is UNAVAILABLE (quota/error), skip it and proceed with available models.
+
+4. Evaluate votes:
+   - **All available models vote RESOLVED** → Consensus reached. Treat as `passed`. Log: `Quorum resolved human_needed items — treating as passed`. Proceed to → update_roadmap.
+   - **Any model votes UNRESOLVABLE** → Cannot auto-resolve. Escalate to user with the standard block below.
+
+**If escalating to user (quorum could not resolve):**
+```
+## Phase {X}: {Name} — Human Verification Required
+
+All automated checks passed. Quorum attempted resolution but could not fully verify {N} items:
 
 {From VERIFICATION.md human_verification section}
 
