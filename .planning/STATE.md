@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-21 after v0.3 milestone start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 11 complete — CHANGELOG [0.2.0] written, hooks/dist/ rebuilt, npm test 141/141; Phase 12 (Version & Publish) next
+**Current focus:** Phase 12 Plan 01 complete — package.json bumped to 0.2.0, MILESTONES.md written; Plan 02 (tag + publish) next
 
 ## Current Position
 
-Phase: 11 — changelog-build
-Plan: 02 complete (2/2 plans done — Phase 11 COMPLETE)
-Status: Phase 11 complete — CL-01, CL-02, BLD-01, BLD-02 all satisfied; hooks/dist/ rebuilt, npm test 141/141 passing
-Last activity: 2026-02-21 — Completed quick task 17: quorum gate added to map-codebase workflow + USER-GUIDE.md brownfield diagram updated
+Phase: 12 — version-publish
+Plan: 01 complete (1/2 plans done)
+Status: Phase 12 Plan 01 complete — RLS-01, RLS-02 satisfied; release commit 440ee7ea ready for tagging in Plan 02
+Last activity: 2026-02-21 — Completed 12-01: bumped package.json to 0.2.0, created MILESTONES.md with v0.2 archive
 
-Progress: [████████████████████████░░░░░░░░░] 10/13 phases complete (77%)
+Progress: [█████████████████████████░░░░░░░░] 10.5/13 phases complete (81%)
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [███████████████████████
 | Phase 10-fix-bugs-verify-phases-7-8 P04 | 2 min | 2 tasks | 3 files |
 | Phase 11-changelog-build P01 | 3 min | 1 task | 1 file |
 | Phase 11-changelog-build P02 | 3 min | 2 tasks | 6 files |
+| Phase 12-version-publish P01 | 2 min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -182,5 +183,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed quick-19 — Fixed Stop hook @file-expansion false positive: added extractCommandTag() helper; rewrote hasQuorumCommand and extractCommand with XML-tag-first + 300-char text fallback strategy; added TC20/TC20b/TC20c regression tests; npm test 144/144.
+Stopped at: Completed 12-01 — package.json bumped to 0.2.0, MILESTONES.md created with v0.2 Anti-Oscillation Pattern archive (all 20 requirements + 7 key decisions). Release commit SHA: 440ee7ea — Plan 12-02 must tag this commit with v0.2.0.
 Resume file: N/A
