@@ -76,6 +76,13 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
 
 **For each wave:**
 
+Run this Bash command at the start of each plan execution (before spawning the executor agent), substituting `${PHASE_NUMBER}` (from init JSON), the current plan filename (e.g. `14-02-PLAN.md`), and the current wave number (e.g. `2`):
+```bash
+# Track current activity
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"execute_phase\",\"sub_activity\":\"executing_plan\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"wave\":${WAVE_N}}"
+```
+
 1. **Describe what's being built (BEFORE spawning):**
 
    Read each plan's `<objective>`. Extract what's being built and why.
@@ -177,6 +184,13 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
 <step name="checkpoint_handling">
 Plans with `autonomous: false` require user interaction.
 
+When an executor agent returns a `checkpoint:verify` result, run this Bash command before spawning `/qgsd:quorum-test`, substituting `${PHASE_NUMBER}` and the current plan filename:
+```bash
+# Track checkpoint:verify activity
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"execute_phase\",\"sub_activity\":\"checkpoint_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"checkpoint\":\"checkpoint:verify\"}"
+```
+
 **Auto-mode checkpoint handling:**
 
 Read auto-advance config:
@@ -188,6 +202,13 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 - **human-verify** → Auto-spawn continuation agent with `{user_response}` = `"approved"`. Log `⚡ Auto-approved checkpoint`.
 - **decision** → Auto-spawn continuation agent with `{user_response}` = first option from checkpoint details. Log `⚡ Auto-selected: [option]`.
 - **human-action** → Present to user (existing behavior below). Auth gates cannot be automated.
+
+If quorum-test returns BLOCK or REVIEW-NEEDED and you enter a `/qgsd:debug` loop, run this Bash command before each debug round, substituting `${PHASE_NUMBER}`, the current plan filename, and the debug round counter (1, 2, or 3):
+```bash
+# Track debug loop activity
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"execute_phase\",\"sub_activity\":\"debug_loop\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"debug_round\":${DEBUG_ROUND}}"
+```
 
 **Standard flow (not auto-mode, or human-action type):**
 
@@ -204,6 +225,14 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
    [Checkpoint Details from agent return]
    [Awaiting section from agent return]
    ```
+
+   After presenting `checkpoint:human-verify` to the user, run this Bash command, substituting `${PHASE_NUMBER}` and the current plan filename:
+   ```bash
+   # Track human-verify pause
+   node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+     "{\"activity\":\"execute_phase\",\"sub_activity\":\"awaiting_human_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\"}"
+   ```
+
 5. User responds: "approved"/"done" | issue description | decision selection
 6. **Spawn continuation agent (NOT resume)** using continuation-prompt.md template:
    - `{completed_tasks_table}`: From checkpoint return
@@ -298,6 +327,13 @@ Verify phase achieved its GOAL, not just completed tasks.
 PHASE_REQ_IDS=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
 ```
 
+Before spawning the verifier Task, run this Bash command to track the verification activity:
+```bash
+# Track phase verification activity
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"execute_phase\",\"sub_activity\":\"verifying_phase\",\"phase\":\"${PHASE_NUMBER}\"}"
+```
+
 ```
 Task(
   prompt="Verify phase {phase_number} goal achievement.
@@ -373,6 +409,12 @@ The CLI handles:
 - Updating REQUIREMENTS.md traceability
 
 Extract from result: `next_phase`, `next_phase_name`, `is_last_phase`.
+
+After the `phase complete` call succeeds, run this Bash command to clear the activity state:
+```bash
+# Clear activity on successful completion
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+```
 
 ```bash
 node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
