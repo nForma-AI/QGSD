@@ -1,12 +1,24 @@
 #!/usr/bin/env node
 // hooks/qgsd-prompt.js
-// UserPromptSubmit hook — detects GSD planning commands and injects quorum instructions
-// into Claude's context window before Claude processes the prompt.
+// UserPromptSubmit hook — two responsibilities:
+//
+// 1. CIRCUIT BREAKER RECOVERY: If the circuit breaker is active, inject the
+//    oscillation-resolution-mode workflow into Claude's context so resolution
+//    starts automatically on the next user message.
+//
+// 2. QUORUM INJECTION: If the prompt is a GSD planning command, inject quorum
+//    instructions so Claude runs multi-model review before presenting output.
 //
 // Output mechanism: hookSpecificOutput.additionalContext (NOT systemMessage)
 // systemMessage only shows a UI warning; additionalContext goes into Claude's context.
 
-const { loadConfig, DEFAULT_CONFIG } = require('./config-loader');
+'use strict';
+
+const fs   = require('fs');
+const path = require('path');
+const os   = require('os');
+const { spawnSync } = require('child_process');
+const { loadConfig } = require('./config-loader');
 
 const DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK = `QUORUM REQUIRED (structural enforcement — Stop hook will verify)
 
@@ -20,6 +32,34 @@ Before presenting any planning output to the user, you MUST:
 Fail-open: if a model is UNAVAILABLE (quota/error), note it and proceed with available models.
 The Stop hook reads the transcript — skipping quorum will block your response.`;
 
+// Locate the oscillation-resolution-mode workflow.
+// Tries global install path first (~/.claude/qgsd/), then local (.claude/qgsd/).
+function findResolutionWorkflow(cwd) {
+  const candidates = [
+    path.join(os.homedir(), '.claude', 'qgsd', 'workflows', 'oscillation-resolution-mode.md'),
+    path.join(cwd, '.claude', 'qgsd', 'workflows', 'oscillation-resolution-mode.md'),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return fs.readFileSync(p, 'utf8');
+  }
+  return null;
+}
+
+// Check if the circuit breaker is active (and not disabled) for a given git root.
+function isBreakerActive(cwd) {
+  const gitResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+    cwd, encoding: 'utf8', timeout: 5000,
+  });
+  if (gitResult.status !== 0 || gitResult.error) return false;
+  const gitRoot = gitResult.stdout.trim();
+  const statePath = path.join(gitRoot, '.claude', 'circuit-breaker-state.json');
+  if (!fs.existsSync(statePath)) return false;
+  try {
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    return state.active === true && state.disabled !== true;
+  } catch { return false; }
+}
+
 let raw = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => raw += chunk);
@@ -27,25 +67,38 @@ process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
     const prompt = (input.prompt || '').trim();
+    const cwd    = input.cwd || process.cwd();
 
-    const config = loadConfig();
+    // ── Priority 1: Circuit breaker active → inject resolution workflow ──────
+    if (isBreakerActive(cwd)) {
+      const workflow = findResolutionWorkflow(cwd);
+      const context = workflow
+        ? `CIRCUIT BREAKER ACTIVE — OSCILLATION RESOLUTION MODE\n\nYou MUST follow this procedure immediately before doing anything else:\n\n${workflow}`
+        : `CIRCUIT BREAKER ACTIVE — OSCILLATION RESOLUTION MODE\n\nThe PreToolUse circuit breaker has blocked execution due to detected oscillation.\nYou MUST follow the oscillation resolution procedure in R5 of CLAUDE.md:\n1. Extract the oscillating file set from the deny message.\n2. Run: git log --oneline --name-only -6\n3. Run quorum diagnosis with structural coupling framing.\n4. Present unified solution to user for approval.\n5. Do NOT execute until user approves AND runs: npx qgsd --reset-breaker`;
+      process.stdout.write(JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: 'UserPromptSubmit',
+          additionalContext: context,
+        }
+      }));
+      process.exit(0);
+    }
+
+    // ── Priority 2: Planning command → inject quorum instructions ────────────
+    const config = loadConfig(cwd);
     const commands = config.quorum_commands;
     const instructions = config.quorum_instructions || DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK;
 
     // Anchored allowlist pattern — requires /gsd: or /qgsd: prefix and word boundary after command.
-    // This prevents /gsd:execute-phase from matching when allowlist contains 'execute',
-    // and prevents substring matches within longer strings.
     const cmdPattern = new RegExp('^\\s*\\/q?gsd:(' + commands.join('|') + ')(\\s|$)');
-
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
     }
 
-    // Inject quorum instructions via additionalContext (NOT systemMessage)
     process.stdout.write(JSON.stringify({
       hookSpecificOutput: {
         hookEventName: 'UserPromptSubmit',
-        additionalContext: instructions
+        additionalContext: instructions,
       }
     }));
     process.exit(0);
