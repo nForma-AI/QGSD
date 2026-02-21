@@ -18,18 +18,78 @@ This command extends QGSD quorum from *planning* (consensus on direction) to *ve
 
 <process>
 
-**Step 1: Parse target**
+**Step 1: Parse and validate target**
 
-If `$ARGUMENTS` is non-empty, use it as the test file path.
-If `$ARGUMENTS` is empty, discover test files:
+**1a. Parse `$ARGUMENTS`:**
+- If non-empty and points to a **directory**: discover test files within that directory recursively
+  ```bash
+  find "$ARGUMENTS" \( -name "*.test.js" -o -name "*.test.cjs" \) \
+    -not -path "*/node_modules/*" -not -path "*/.git/*"
+  ```
+- If non-empty and points to a **file**: use it directly as `$TEST_FILES`
+- If empty: discover all test files from repo root:
+  ```bash
+  find . \( -name "*.test.js" -o -name "*.test.cjs" \) \
+    -not -path "*/node_modules/*" -not -path "*/.git/*"
+  ```
 
+Store the list as `$TEST_FILES`.
+
+**1b. Empty check:**
+
+If `$TEST_FILES` is empty, stop: "No test files found."
+
+**1c. File existence check:**
+
+For each file in `$TEST_FILES`, verify it exists on disk:
 ```bash
-find . \( -name "*.test.js" -o -name "*.test.cjs" \) \
-  -not -path "*/node_modules/*" \
-  -not -path "*/.git/*"
+ls $TEST_FILES 2>&1
 ```
 
-Store the list as `$TEST_FILES`. If no files found, stop: "No test files found."
+If any file is missing, display:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► QUORUM-TEST: BLOCK (missing test files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Missing: <list of missing files>
+Fix: Run `find . -name "*.test.*" | grep -v node_modules` to re-discover valid test files.
+```
+
+STOP — do not proceed to test execution.
+
+**1d. npm test script validation (mandatory when package.json exists):**
+
+Check if `package.json` exists:
+```bash
+ls package.json 2>/dev/null
+```
+
+If it exists, read the `"test"` script value. Extract each file path argument (words ending in `.js` or `.cjs`). For each extracted path, check if it exists on disk.
+
+If any path is missing, display:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► QUORUM-TEST: BLOCK (npm test script broken)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+package.json "test" script references missing file(s): <list>
+Fix: Update package.json test script to:
+  "test": "node --test <discovered test files from step 1>"
+```
+
+STOP — do not proceed.
+
+**1e. Validation summary:**
+
+Display:
+```
+✓ N test file(s) validated.
+✓ npm test script OK. (or: ⚠ package.json not found — skipping script check)
+Proceeding to test execution...
+```
 
 **Step 2: Capture execution bundle**
 
@@ -53,6 +113,12 @@ Read the full source of every file in `$TEST_FILES`. Store as `$TEST_SOURCES` �
 === hooks/config-loader.test.js ===
 <full source>
 ```
+
+When reading each test source file:
+- If the file content is empty: include `[WARN] empty source: <filename>` in place of content
+- If the Read tool returns an error: include `[ERROR] read failed: <filename> — <reason>` in place of content
+
+This lets quorum workers see exactly what happened per file rather than silently receiving an incomplete bundle.
 
 **Step 3: Immediate BLOCK if exit code ≠ 0**
 
