@@ -1106,6 +1106,17 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.Stop.length === 0) delete settings.hooks.Stop;
     }
+    if (settings.hooks && settings.hooks.PreToolUse) {
+      const before = settings.hooks.PreToolUse.length;
+      settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-circuit-breaker')))
+      );
+      if (settings.hooks.PreToolUse.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed QGSD circuit breaker hook`);
+      }
+      if (settings.hooks.PreToolUse.length === 0) delete settings.hooks.PreToolUse;
+    }
 
     // Clean up empty hooks object
     if (settings.hooks && Object.keys(settings.hooks).length === 0) {
