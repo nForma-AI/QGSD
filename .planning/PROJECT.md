@@ -8,15 +8,19 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.2 Anti-Oscillation Pattern
+## Current Milestone: v0.3 Release Preparation
 
-**Goal:** Move R5 (Circuit Breaker) from CLAUDE.md behavioral policy into structural Claude Code hooks — making oscillation detection and execution blocking impossible to skip, the same way R3 (Quorum) was moved in v0.1.
+**Goal:** Ship QGSD v0.2.0 to npm — complete v0.2 verification gap closure, finalize CHANGELOG, rebuild dist, validate the full test suite, bump version, archive the milestone, create git tag, and publish.
 
 **Target features:**
-- PreToolUse hook on Bash that detects oscillation (≥3 of last 6 commits alternating on the same file set with no net stability improvement)
-- Persistent circuit breaker state file tracks active breakers and their context across hook invocations
-- Execution blocked via `decision:block` when circuit breaker is active
-- Allowed operations enforced during active breaker: only root cause analysis and dependency mapping
+- Phase 9 + 10 executed: verification gap closure + 3 integration bug fixes (INST-08, RECV-01, INST-10)
+- CHANGELOG.md `[0.2.0]` entry with all circuit breaker + QGSD rebranding changes (Phases 5–8, quick tasks 1–12)
+- `hooks/dist/` rebuilt from current source (all Phases 5–8 included)
+- Full test suite green (`npm test` passes)
+- `package.json` version bumped `0.1.0` → `0.2.0`
+- v0.2 milestone archived in `MILESTONES.md`
+- Git tag `v0.2.0` created and pushed
+- `npx qgsd@0.2.0` published to npm
 
 ## Requirements
 
@@ -45,12 +49,16 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Active
 
-<!-- Current scope for v0.2 Anti-Oscillation Pattern. Building toward these. -->
+<!-- Current scope for v0.3 Release Preparation. Building toward these. -->
 
-- [ ] PreToolUse hook on Bash detects oscillation in git commit history
-- [ ] Persistent circuit breaker state file tracks active breakers
-- [ ] Hook blocks Bash execution via decision:block when circuit breaker active
-- [ ] Allowed operations enforced during circuit breaker: root cause analysis only
+- [ ] Complete v0.2 verification gap closure (Phases 9–10): DETECT/STATE/ENFC/CONF/INST/RECV requirements verified and bugs fixed
+- [ ] CHANGELOG.md `[0.2.0]` entry covering all v0.2 changes
+- [ ] `hooks/dist/` rebuilt from current source
+- [ ] Full test suite passes (`npm test`)
+- [ ] `package.json` version bumped to `0.2.0`
+- [ ] v0.2 milestone archived in `MILESTONES.md`
+- [ ] Git tag `v0.2.0` created and pushed to remote
+- [ ] `qgsd@0.2.0` published to npm
 
 ### Out of Scope
 
@@ -95,4 +103,4 @@ The GSD codebase already has hooks infrastructure (see `hooks/` directory). QGSD
 | ~/.claude.json as MCP detection source | Verified live: ~/.claude/settings.json has no mcpServers; ~/.claude.json top-level mcpServers is the correct detection target | Phase 2 — MCP-01 verified |
 
 ---
-*Last updated: 2026-02-20 after Phase 3 (installer-distribution) — all 11 Phase 3 requirements satisfied, human checkpoint approved, multi-model review PASS (Codex+Gemini+OpenCode). Phase 4 (narrow quorum scope) also complete. ALL PHASES COMPLETE.*
+*Last updated: 2026-02-21 after v0.3 milestone start (Release Preparation) — v0.2 Anti-Oscillation Pattern complete (Phases 6–8), Phases 9–10 pending verification. Target: qgsd@0.2.0 npm publish.*
