@@ -132,8 +132,8 @@ All features are v1. No deferral.
 
 ### Build & Test (BLD)
 
-- [ ] **BLD-01**: `hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 and GUARD 5 code from Phase 5
-- [ ] **BLD-02**: `npm test` passes with 0 failures across all test suites (config-loader, stop hook, circuit breaker)
+- [x] **BLD-01**: `hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 and GUARD 5 code from Phase 5
+- [x] **BLD-02**: `npm test` passes with 0 failures across all test suites (config-loader, stop hook, circuit breaker)
 
 ### Release (RLS)
 
@@ -241,8 +241,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORES-05 | Phase 13 | Complete |
 | CL-01 | Phase 11 | Complete |
 | CL-02 | Phase 11 | Complete |
-| BLD-01 | Phase 11 | Pending |
-| BLD-02 | Phase 11 | Pending |
+| BLD-01 | Phase 11 | Complete |
+| BLD-02 | Phase 11 | Complete |
 | RLS-01 | Phase 12 | Pending |
 | RLS-02 | Phase 12 | Pending |
 | RLS-03 | Phase 12 | Pending |
@@ -254,7 +254,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - v0.3 requirements: 8 total — 8/8 mapped (Phases 11–12)
 - Unmapped v0.2: 0 ✓
 - Unmapped v0.3: 0 ✓
-- Pending (awaiting verification): 20 (v0.2: ORES-01..05 + v0.3: CL-01..02, BLD-01..02, RLS-01..04)
+- Pending (awaiting verification): 18 (v0.2: ORES-01..05 + v0.3: RLS-01..04)
 
 ---
 *Requirements defined: 2026-02-20*
