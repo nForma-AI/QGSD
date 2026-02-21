@@ -26,6 +26,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
+- ✓ All 20 v0.2 Anti-Oscillation requirements verified and bugs fixed — Phases 9–10: DETECT/STATE requirements (Phase 9), ENFC/CONF/INST/RECV requirements + 3 integration bug fixes INST-08/RECV-01/INST-10 (Phase 10)
 - ✓ UserPromptSubmit hook detects GSD planning commands and injects quorum instructions into Claude's context — Phase 1 (UPS-01 through UPS-05)
 - ✓ Stop hook reads transcript JSONL, checks for Codex/Gemini/OpenCode tool call evidence, and blocks with decision:block if quorum is missing — Phase 1 (STOP-01 through STOP-09)
 - ✓ Configurable scope: default set is high-stakes GSD commands (new-project, plan-phase, new-milestone, discuss-phase, verify-work, research-phase) — Phase 1 (UPS-02, CONF hardcoded defaults)
@@ -51,7 +52,6 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 <!-- Current scope for v0.3 Release Preparation. Building toward these. -->
 
-- [ ] Complete v0.2 verification gap closure (Phases 9–10): DETECT/STATE/ENFC/CONF/INST/RECV requirements verified and bugs fixed
 - [ ] CHANGELOG.md `[0.2.0]` entry covering all v0.2 changes
 - [ ] `hooks/dist/` rebuilt from current source
 - [ ] Full test suite passes (`npm test`)
@@ -101,6 +101,9 @@ The GSD codebase already has hooks infrastructure (see `hooks/` directory). QGSD
 | quorum_instructions generated from detected prefixes | Behavioral instructions (UserPromptSubmit injection) must name the same tools as structural enforcement (Stop hook); generating from detected models prevents mismatch when servers are renamed | Phase 2 — MCP-03 |
 | required_models field name (not quorum_models) | CONF-03 used quorum_models as a placeholder name; required_models is richer (dict with tool_prefix + required flag) and was already implemented in Phase 1 | Phase 2 — CONF-03 approved divergence |
 | ~/.claude.json as MCP detection source | Verified live: ~/.claude/settings.json has no mcpServers; ~/.claude.json top-level mcpServers is the correct detection target | Phase 2 — MCP-01 verified |
+| INST-08 fix: PreToolUse removal in uninstall() | Used identical filter pattern (h.command.includes) to Stop/UserPromptSubmit blocks; settingsModified flag ensures write only on actual removal | Phase 10 — bug fix |
+| RECV-01 fix: git rev-parse for state path | git rev-parse --show-toplevel with process.cwd() fallback; state file is always at projectRoot/.claude/circuit-breaker-state.json regardless of invocation directory | Phase 10 — bug fix |
+| INST-10 fix: two-tier sub-key backfill | Top-level absence → write full default block; else branch checks each sub-key via `=== undefined` independently — prevents overwriting user-customized values on partial configs | Phase 10 — bug fix |
 
 ---
-*Last updated: 2026-02-21 after v0.3 milestone start (Release Preparation) — v0.2 Anti-Oscillation Pattern complete (Phases 6–8), Phases 9–10 pending verification. Target: qgsd@0.2.0 npm publish.*
+*Last updated: 2026-02-21 after Phase 10 — all 20 v0.2 requirements verified, 3 integration bugs fixed. Next: Phase 11 Changelog & Build → Phase 12 Version & Publish → qgsd@0.2.0.*
