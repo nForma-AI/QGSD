@@ -94,7 +94,7 @@ All features are v1. No deferral.
 
 ### Recovery (RECV)
 
-- [ ] **RECV-01**: `npx qgsd --reset-breaker` CLI flag clears `.claude/circuit-breaker-state.json` and logs confirmation — enables manual recovery when circuit breaker deadlocks due to blocked git commit
+- [x] **RECV-01**: `npx qgsd --reset-breaker` CLI flag clears `.claude/circuit-breaker-state.json` and logs confirmation — enables manual recovery when circuit breaker deadlocks due to blocked git commit
 
 ### Config Extensions (CONF)
 
@@ -105,9 +105,9 @@ All features are v1. No deferral.
 
 ### Installer Extensions (INST)
 
-- [ ] **INST-08**: Installer registers PreToolUse circuit breaker hook in `~/.claude/settings.json` alongside existing hooks
-- [ ] **INST-09**: Installer writes default `circuit_breaker` config block to qgsd.json on first install
-- [ ] **INST-10**: Reinstall (idempotent) adds missing `circuit_breaker` config block without overwriting user-modified values
+- [x] **INST-08**: Installer registers PreToolUse circuit breaker hook in `~/.claude/settings.json` alongside existing hooks
+- [x] **INST-09**: Installer writes default `circuit_breaker` config block to qgsd.json on first install
+- [x] **INST-10**: Reinstall (idempotent) adds missing `circuit_breaker` config block without overwriting user-modified values
 
 ## Future Requirements (v0.3+)
 
@@ -197,10 +197,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONF-07 | Phase 7 | Complete |
 | CONF-08 | Phase 7 | Complete |
 | CONF-09 | Phase 7 | Complete |
-| INST-08 | Phase 8 | Pending |
-| INST-09 | Phase 8 | Pending |
-| INST-10 | Phase 8 | Pending |
-| RECV-01 | Phase 8 | Pending |
+| INST-08 | Phase 8 | Complete |
+| INST-09 | Phase 8 | Complete |
+| INST-10 | Phase 8 | Complete |
+| RECV-01 | Phase 8 | Complete |
 
 **Coverage:**
 - v1 requirements: 39 total — all complete (v0.1)
