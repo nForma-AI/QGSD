@@ -102,7 +102,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.research false
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► RESEARCHING
+ QGSD ► RESEARCHING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning 4 researchers in parallel...
@@ -180,7 +180,7 @@ Commit after writing.
 Display key findings from SUMMARY.md:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► RESEARCH COMPLETE ✓
+ QGSD ► RESEARCH COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Stack additions:** [from SUMMARY.md]
@@ -194,7 +194,7 @@ Display key findings from SUMMARY.md:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► DEFINING REQUIREMENTS
+ QGSD ► DEFINING REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -265,7 +265,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requ
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► CREATING ROADMAP
+ QGSD ► CREATING ROADMAP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning roadmapper...
@@ -347,7 +347,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] road
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► MILESTONE INITIALIZED ✓
+ QGSD ► MILESTONE INITIALIZED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Milestone v[X.Y]: [Name]**
@@ -392,7 +392,7 @@ fi
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► AUTO-ADVANCING TO PLAN PHASE ${FIRST_PHASE}
+ QGSD ► AUTO-ADVANCING TO PLAN PHASE ${FIRST_PHASE}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Roadmap complete. Spawning plan-phase...
@@ -415,7 +415,7 @@ Task(
 - **PLANNING COMPLETE** → Display:
   ```
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   GSD ► PHASE ${FIRST_PHASE} PLANNED ✓
+   QGSD ► PHASE ${FIRST_PHASE} PLANNED ✓
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Auto-advance pipeline finished.
