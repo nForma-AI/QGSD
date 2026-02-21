@@ -152,7 +152,12 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
    - Check `git log --oneline --all --grep="{phase}-{plan}"` returns ≥1 commit
    - Check for `## Self-Check: FAILED` marker
 
-   If ANY spot-check fails: report which plan failed, route to failure handler — ask "Retry plan?" or "Continue with remaining waves?"
+   If ANY spot-check fails: report which plan failed, then check SUMMARY.md for diagnosis markers.
+
+   **Diagnosis detection heuristic:** SUMMARY.md is diagnosed when it contains any of: `Root Cause:`, `Diagnosed`, `Bug 1 —`, `Bug 2 —`, `CI Failures`, `Deferred: CI fixes`.
+
+   - **Diagnosis present:** Read the diagnosis section. Auto-spawn quick task with the diagnosis as description (no user gate) — see auto-spawn mechanism below.
+   - **No diagnosis:** Ask "Retry plan?" or "Continue with remaining waves?" (existing behavior).
 
    If pass:
    ```
@@ -174,7 +179,27 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
    **Known Claude Code bug (classifyHandoffIfNeeded):** If an agent reports "failed" with error containing `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a GSD or agent issue. The error fires in the completion handler AFTER all tool calls finish. In this case: run the same spot-checks as step 4 (SUMMARY.md exists, git commits present, no Self-Check: FAILED). If spot-checks PASS → treat as **successful**. If spot-checks FAIL → treat as real failure below.
 
-   For real failures: report which plan failed → ask "Continue?" or "Stop?" → if continue, dependent plans may also fail. If stop, partial completion report.
+   For real failures: report which plan failed, then check SUMMARY.md for diagnosis markers (same heuristic as step 4: `Root Cause:`, `Diagnosed`, `Bug 1 —`, `Bug 2 —`, `CI Failures`, `Deferred: CI fixes`).
+
+   - **Diagnosis present:** Read the diagnosis section. Auto-spawn quick task with the diagnosis as description (no user gate) — see auto-spawn mechanism below.
+   - **No diagnosis:** Ask "Continue?" or "Stop?" → if continue, dependent plans may also fail. If stop, partial completion report.
+
+   **Auto-spawn quick task mechanism** (used by both step 4 and step 5):
+   Extract the diagnosis text from SUMMARY.md (all lines under any "Root Cause", "Diagnosed", "Bug N —", "CI Failures", or "Deferred: CI fixes" headings). Compose a description: "Fix CI failures diagnosed in {phase}-{plan}: {first-line-of-diagnosis}".
+
+   Then execute these steps inline (no user gate):
+   ```bash
+   INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init quick "$DESCRIPTION")
+   # Parse next_num, slug, task_dir, planner_model, executor_model from INIT
+   mkdir -p "${task_dir}"
+   node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+     "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
+   ```
+   Then spawn qgsd-planner Task with the description and QUICK_DIR (same prompt as quick.md Step 5 standard mode).
+   After planner returns, run quorum review (quick.md Step 5.7).
+   After quorum approves, spawn qgsd-executor Task (same prompt as quick.md Step 6).
+   After executor completes, update STATE.md quick tasks table and commit (same as quick.md Steps 7-8).
+   Then resume phase execution from the failed plan.
 
 6. **Execute checkpoint plans between waves** — see `<checkpoint_handling>`.
 
@@ -459,6 +484,7 @@ Orchestrator: ~10-15% context. Subagents: fresh 200k each. No polling (Task bloc
 
 <failure_handling>
 - **classifyHandoffIfNeeded false failure:** Agent reports "failed" but error is `classifyHandoffIfNeeded is not defined` → Claude Code bug, not GSD. Spot-check (SUMMARY exists, commits present) → if pass, treat as success
+- **CI failures with diagnosed root causes:** Executor SUMMARY.md contains sections with "Root Cause:", "Diagnosed", "Bug N —", "CI Failures", or "Deferred: CI fixes" → read diagnosis → auto-spawn quick task using init quick + qgsd-planner + qgsd-executor sequence (quick.md Steps 2-6 pattern), no user gate → resume phase execution after quick task completes
 - **Agent fails mid-plan:** Missing SUMMARY.md → report, ask user how to proceed
 - **Dependency chain breaks:** Wave 1 fails → Wave 2 dependents likely fail → user chooses attempt or skip
 - **All agents in wave fail:** Systemic issue → stop, report for investigation
