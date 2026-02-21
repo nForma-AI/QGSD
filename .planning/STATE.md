@@ -166,6 +166,7 @@ Recent decisions affecting current work:
 | 10 | Review all docs for QGSD framework sync: add /qgsd:quorum-test to tables, fix GSD prose in README + CHANGELOG | 2026-02-21 | 4066bb4 | Verified | [10-review-all-docs-for-qgsd-framework-sync-](./quick/10-review-all-docs-for-qgsd-framework-sync-/) |
 | 12 | Fix qgsd:debug to auto-proceed when quorum reaches consensus instead of asking user permission | 2026-02-21 | a39d422 | Verified | [12-fix-qgsd-debug-to-auto-proceed-when-quor](./quick/12-fix-qgsd-debug-to-auto-proceed-when-quor/) |
 | 12 | Fix /qgsd:debug Step 7 to auto-execute consensus next step instead of user-permission gate | 2026-02-21 | a39d422 | Verified | [12-fix-qgsd-debug-to-auto-proceed-when-quor](./quick/12-fix-qgsd-debug-to-auto-proceed-when-quor/) |
+| 14 | Add Circuit Breaker & Oscillation Resolution diagram to docs/USER-GUIDE.md | 2026-02-21 | b637f65 | Complete | [14-add-oscillation-resolution-mode-diagram-](./quick/14-add-oscillation-resolution-mode-diagram-/) |
 
 ### Blockers/Concerns
 
@@ -176,5 +177,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed 11-02-PLAN.md — hooks/dist/ rebuilt from source, npm test 141/141 passing, BLD-01 and BLD-02 satisfied. Phase 11 complete. Phase 12 (Version & Publish) next.
+Stopped at: Completed quick-14 — Circuit Breaker & Oscillation Resolution diagram added to docs/USER-GUIDE.md (section inserted between Execution Wave Coordination and Brownfield Workflow).
 Resume file: N/A
