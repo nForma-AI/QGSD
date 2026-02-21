@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-21 after v0.2 milestone complete)
 Phase: Milestone v0.2 complete
 Plan: N/A — milestone archived
 Status: v0.2 SHIPPED — 17 phases complete, 40/40 plans, git tag v0.2.0 pushed. Milestone archived to .planning/milestones/. REQUIREMENTS.md deleted (fresh for next milestone). npm publish (RLS-04) deferred.
-Last activity: 2026-02-21 - Completed quick task 35: after roadmapper reaches quorum consensus, automatically proceed to plan-phase 1 (add auto-advance with orchestrator agent to avoid context bloat)
+Last activity: 2026-02-21 - Completed quick task 36: add quorum resolution loop for human_needed verifier status in execute-phase and quick (--full) workflows
 
 Progress: [████████████████████] 40/40 plans (100%)
 
@@ -201,6 +201,7 @@ Recent decisions affecting current work:
 | 33 | Make workflow.auto_advance default to true — YOLO on by default without explicit config entry | 2026-02-21 | 3a64716 | Complete | [33-make-workflow-auto-advance-default-to-tr](./quick/33-make-workflow-auto-advance-default-to-tr/) |
 | 34 | Add debate category metadata to quorum scoreboard: 5-category taxonomy, --category/--subcategory/--task-description flags, Haiku auto-classification | 2026-02-21 | e7296ab | Verified | [34-add-debate-category-metadata-to-quorum-s](./quick/34-add-debate-category-metadata-to-quorum-s/) |
 | 35 | Auto-advance new-project and new-milestone to plan-phase via Task spawn after roadmap approval; AUTO_CFG config check; SlashCommand removed | 2026-02-21 | 9b08f6b | Verified | [35-after-roadmapper-reaches-quorum-consensu](./quick/35-after-roadmapper-reaches-quorum-consensu/) |
+| 36 | Add quorum resolution loop for human_needed verifier status in execute-phase and quick (--full) workflows | 2026-02-21 | 045f2fc | Complete | [36-add-quorum-resolution-loop-for-human-nee](./quick/36-add-quorum-resolution-loop-for-human-nee/) |
 
 ### Blockers/Concerns
 
@@ -211,5 +212,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: quick-35 complete — auto-advance new-project and new-milestone to plan-phase via Task spawn; SlashCommand removed; AUTO_CFG config check added to both workflows
+Stopped at: quick-36 complete — quorum resolution loop added to execute-phase.md and quick.md for human_needed status; sequential R3.2-compliant model queries before user escalation
 Resume file: None
