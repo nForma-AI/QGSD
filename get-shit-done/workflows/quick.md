@@ -32,7 +32,7 @@ If still empty, re-prompt: "Please provide a task description."
 If `$FULL_MODE`:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► QUICK TASK (FULL MODE)
+ QGSD ► QUICK TASK (FULL MODE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Plan checking + verification enabled
@@ -146,7 +146,7 @@ Skip this step entirely if NOT `$FULL_MODE`.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► CHECKING PLAN
+ QGSD ► CHECKING PLAN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning plan checker...
@@ -322,7 +322,7 @@ Skip this step entirely if NOT `$FULL_MODE`.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- GSD ► VERIFYING RESULTS
+ QGSD ► VERIFYING RESULTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning verifier...
@@ -355,8 +355,32 @@ Store as `$VERIFICATION_STATUS`.
 | Status | Action |
 |--------|--------|
 | `passed` | Store `$VERIFICATION_STATUS = "Verified"`, continue to step 7 |
-| `human_needed` | Display items needing manual check, store `$VERIFICATION_STATUS = "Needs Review"`, continue |
+| `human_needed` | Run quorum resolution loop (see below). If quorum resolves → store `$VERIFICATION_STATUS = "Verified"`, continue. If quorum cannot resolve → display items, store `$VERIFICATION_STATUS = "Needs Review"`, continue |
 | `gaps_found` | Display gap summary, offer: 1) Re-run executor to fix gaps, 2) Accept as-is. Store `$VERIFICATION_STATUS = "Gaps"` |
+
+**Quorum resolution loop for human_needed:**
+
+1. Read the full `human_verification` section from `${QUICK_DIR}/${next_num}-VERIFICATION.md`.
+
+2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)?
+
+3. Query each quorum model **sequentially** (separate tool calls, never parallel — R3.2):
+
+   ```
+   Quick task ${next_num} verification produced human_needed status.
+   The following items require human judgment per the verifier:
+
+   [Paste full human_verification section from VERIFICATION.md]
+
+   Using available tools (grep, file inspection, quorum-test), try to resolve each item.
+   Vote RESOLVED (with tool evidence) or UNRESOLVABLE (with reason for each unresolvable item).
+   ```
+
+   Fail-open: if a model is UNAVAILABLE (quota/error), skip it and proceed with available models.
+
+4. Evaluate votes:
+   - **All available models vote RESOLVED** → Consensus reached. Store `$VERIFICATION_STATUS = "Verified"`. Proceed to step 7.
+   - **Any model votes UNRESOLVABLE** → Cannot auto-resolve. Display items needing manual check to user. Store `$VERIFICATION_STATUS = "Needs Review"`. Continue to step 7.
 
 ---
 
