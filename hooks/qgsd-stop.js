@@ -56,13 +56,47 @@ function getCurrentTurnLines(lines) {
   return lastUserIdx >= 0 ? lines.slice(lastUserIdx) : lines;
 }
 
+// Extracts the value of the <command-name> XML tag injected by Claude Code for real slash command
+// invocations. Returns the trimmed tag content or null if the tag is absent.
+// This tag is ONLY present for actual invocations — never in @file-expanded workflow content.
+function extractCommandTag(entry) {
+  let text = '';
+  const content = entry.message?.content;
+  if (typeof content === 'string') {
+    text = content;
+  } else if (Array.isArray(content)) {
+    const first = content.find(c => c?.type === 'text');
+    text = first ? (first.text || '') : '';
+  }
+  const m = text.match(/<command-name>([\s\S]*?)<\/command-name>/);
+  return m ? m[1].trim() : null;
+}
+
 // Returns true if any user entry in currentTurnLines contains a GSD quorum command.
+// Uses XML-tag-first strategy: if a <command-name> tag is present, only that tag is tested
+// against cmdPattern (never the full body). Falls back to first 300 chars of message text
+// when no tag is found, to avoid matching @file-expanded workflow content.
 function hasQuorumCommand(currentTurnLines, cmdPattern) {
   for (const line of currentTurnLines) {
     try {
       const entry = JSON.parse(line);
       if (entry.type !== 'user') continue;
-      if (cmdPattern.test(JSON.stringify(entry.message || entry))) return true;
+      const tag = extractCommandTag(entry);
+      if (tag !== null) {
+        // Tag present: test only the tag value — do NOT fall through to body scan
+        if (cmdPattern.test(tag)) return true;
+        continue;
+      }
+      // No tag: fall back to first 300 chars of message text (avoids @file-expanded content)
+      const content = entry.message?.content;
+      let textContent = '';
+      if (typeof content === 'string') {
+        textContent = content;
+      } else if (Array.isArray(content)) {
+        const first = content.find(c => c?.type === 'text');
+        textContent = first ? (first.text || '') : '';
+      }
+      if (cmdPattern.test(textContent.slice(0, 300))) return true;
     } catch {
       // Skip malformed lines
     }
@@ -71,15 +105,30 @@ function hasQuorumCommand(currentTurnLines, cmdPattern) {
 }
 
 // Extracts the matched /gsd:<command> or /qgsd:<command> text from the first matching user line.
-// Falls back to '/qgsd:plan-phase' if no match is found (should not happen
-// since hasQuorumCommand already confirmed a match).
+// Uses XML-tag-first strategy: prefers the <command-name> tag for accurate command identification.
+// Falls back to first 300 chars of message text, then to '/qgsd:plan-phase' as ultimate fallback.
 function extractCommand(currentTurnLines, cmdPattern) {
   for (const line of currentTurnLines) {
     try {
       const entry = JSON.parse(line);
       if (entry.type !== 'user') continue;
-      const match = cmdPattern.exec(JSON.stringify(entry.message || entry));
-      if (match) return match[0];
+      const tag = extractCommandTag(entry);
+      if (tag !== null) {
+        const tagMatch = cmdPattern.exec(tag);
+        if (tagMatch) return tagMatch[0];
+        continue; // Tag present but wrong command — do not fall through
+      }
+      // No tag: fall back to first 300 chars of message text
+      const content = entry.message?.content;
+      let textContent = '';
+      if (typeof content === 'string') {
+        textContent = content;
+      } else if (Array.isArray(content)) {
+        const first = content.find(c => c?.type === 'text');
+        textContent = first ? (first.text || '') : '';
+      }
+      const textMatch = cmdPattern.exec(textContent.slice(0, 300));
+      if (textMatch) return textMatch[0];
     } catch {
       // Skip malformed lines
     }
