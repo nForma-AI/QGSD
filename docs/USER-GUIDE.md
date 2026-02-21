@@ -257,6 +257,7 @@ A detailed reference for workflows, troubleshooting, and configuration. For quic
 | `/qgsd:quick` | Ad-hoc task with QGSD guarantees | Bug fixes, small features, config changes |
 | `/qgsd:debug [desc]` | Systematic debugging with persistent state | When something breaks |
 | `/qgsd:quorum-test` | Run multi-model quorum on a plan or verification artifact | During checkpoint:verify or manual plan review |
+| `/qgsd:quorum [question]` | Ask a question and get full five-model consensus answer | Architectural decisions, design tradeoffs |
 | `/qgsd:add-todo [desc]` | Capture an idea for later | Think of something during a session |
 | `/qgsd:check-todos` | List pending todos | Review captured ideas |
 | `/qgsd:settings` | Configure workflow toggles and model profile | Change model, toggle agents |
@@ -342,17 +343,17 @@ Disable these to speed up phases in familiar domains or when conserving tokens.
 
 | Agent | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
-| gsd-planner | Opus | Opus | Sonnet |
-| gsd-roadmapper | Opus | Sonnet | Sonnet |
-| gsd-executor | Opus | Sonnet | Sonnet |
-| gsd-phase-researcher | Opus | Sonnet | Haiku |
-| gsd-project-researcher | Opus | Sonnet | Haiku |
-| gsd-research-synthesizer | Sonnet | Sonnet | Haiku |
-| gsd-debugger | Opus | Sonnet | Sonnet |
-| gsd-codebase-mapper | Sonnet | Haiku | Haiku |
-| gsd-verifier | Sonnet | Sonnet | Haiku |
-| gsd-plan-checker | Sonnet | Sonnet | Haiku |
-| gsd-integration-checker | Sonnet | Sonnet | Haiku |
+| qgsd-planner | Opus | Opus | Sonnet |
+| qgsd-roadmapper | Opus | Sonnet | Sonnet |
+| qgsd-executor | Opus | Sonnet | Sonnet |
+| qgsd-phase-researcher | Opus | Sonnet | Haiku |
+| qgsd-project-researcher | Opus | Sonnet | Haiku |
+| qgsd-research-synthesizer | Sonnet | Sonnet | Haiku |
+| qgsd-debugger | Opus | Sonnet | Sonnet |
+| qgsd-codebase-mapper | Sonnet | Haiku | Haiku |
+| qgsd-verifier | Sonnet | Sonnet | Haiku |
+| qgsd-plan-checker | Sonnet | Sonnet | Haiku |
+| qgsd-integration-checker | Sonnet | Sonnet | Haiku |
 
 **Profile philosophy:**
 - **quality** -- Opus for all decision-making agents, Sonnet for read-only verification. Use when quota is available and the work is critical.

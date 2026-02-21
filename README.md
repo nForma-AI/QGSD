@@ -6,18 +6,18 @@
 
 **Solves context rot — the quality degradation that happens as Claude fills its context window.**
 
-[![npm version](https://img.shields.io/npm/v/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
-[![npm downloads](https://img.shields.io/npm/dm/get-shit-done-cc?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/get-shit-done-cc)
+[![npm version](https://img.shields.io/npm/v/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/qgsd)
+[![npm downloads](https://img.shields.io/npm/dm/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/qgsd)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/5JJgD5svVS)
 [![X (Twitter)](https://img.shields.io/badge/X-@gsd__foundation-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/gsd_foundation)
 [![$GSD Token](https://img.shields.io/badge/$GSD-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
-[![GitHub stars](https://img.shields.io/github/stars/glittercowboy/get-shit-done?style=for-the-badge&logo=github&color=181717)](https://github.com/glittercowboy/get-shit-done)
+[![GitHub stars](https://img.shields.io/github/stars/LangBlaze-AI/QGSD?style=for-the-badge&logo=github&color=181717)](https://github.com/LangBlaze-AI/QGSD)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br>
 
 ```bash
-npx get-shit-done-cc@latest
+npx qgsd@latest
 ```
 
 **Works on Mac, Windows, and Linux.**
@@ -75,7 +75,7 @@ People who want to describe what they want and have it built correctly — witho
 ## Getting Started
 
 ```bash
-npx get-shit-done-cc@latest
+npx qgsd@latest
 ```
 
 The installer prompts you to choose:
@@ -89,7 +89,7 @@ Verify with `/qgsd:help` inside your chosen runtime.
 QGSD evolves fast. Update periodically:
 
 ```bash
-npx get-shit-done-cc@latest
+npx qgsd@latest
 ```
 
 <details>
@@ -97,17 +97,17 @@ npx get-shit-done-cc@latest
 
 ```bash
 # Claude Code
-npx get-shit-done-cc --claude --global   # Install to ~/.claude/
-npx get-shit-done-cc --claude --local    # Install to ./.claude/
+npx qgsd --claude --global   # Install to ~/.claude/
+npx qgsd --claude --local    # Install to ./.claude/
 
 # OpenCode (open source, free models)
-npx get-shit-done-cc --opencode --global # Install to ~/.config/opencode/
+npx qgsd --opencode --global # Install to ~/.config/opencode/
 
 # Gemini CLI
-npx get-shit-done-cc --gemini --global   # Install to ~/.gemini/
+npx qgsd --gemini --global   # Install to ~/.gemini/
 
 # All runtimes
-npx get-shit-done-cc --all --global      # Install to all directories
+npx qgsd --all --global      # Install to all directories
 ```
 
 Use `--global` (`-g`) or `--local` (`-l`) to skip the location prompt.
@@ -121,8 +121,8 @@ Use `--claude`, `--opencode`, `--gemini`, or `--all` to skip the runtime prompt.
 Clone the repository and run the installer locally:
 
 ```bash
-git clone https://github.com/glittercowboy/get-shit-done.git
-cd get-shit-done
+git clone https://github.com/LangBlaze-AI/QGSD.git
+cd QGSD
 node bin/install.js --claude --local
 ```
 
@@ -506,6 +506,7 @@ You're never locked in. The system adapts.
 | `/qgsd:check-todos` | List pending todos |
 | `/qgsd:debug [desc]` | Systematic debugging with persistent state |
 | `/qgsd:quorum-test` | Run multi-model quorum on a plan or verification artifact |
+| `/qgsd:quorum [question]` | Ask a question and get full five-model consensus answer |
 | `/qgsd:quick [--full]` | Execute ad-hoc task with QGSD guarantees (`--full` adds plan-checking and verification) |
 | `/qgsd:health [--repair]` | Validate `.planning/` directory integrity, auto-repair with `--repair` |
 
@@ -617,7 +618,7 @@ This prevents Claude from reading these files entirely, regardless of what comma
 
 **Commands not found after install?**
 - Restart Claude Code to reload slash commands
-- Verify files exist in `~/.claude/commands/gsd/` (global) or `./.claude/commands/gsd/` (local)
+- Verify files exist in `~/.claude/commands/qgsd/` (global) or `./.claude/commands/qgsd/` (local)
 
 **Commands not working as expected?**
 - Run `/qgsd:help` to verify installation
@@ -625,7 +626,7 @@ This prevents Claude from reading these files entirely, regardless of what comma
 
 **Updating to the latest version?**
 ```bash
-npx get-shit-done-cc@latest
+npx qgsd@latest
 ```
 
 **Using Docker or containerized environments?**
@@ -642,12 +643,12 @@ To remove QGSD completely:
 
 ```bash
 # Global installs
-npx get-shit-done-cc --claude --global --uninstall
-npx get-shit-done-cc --opencode --global --uninstall
+npx qgsd --claude --global --uninstall
+npx qgsd --opencode --global --uninstall
 
 # Local installs (current project)
-npx get-shit-done-cc --claude --local --uninstall
-npx get-shit-done-cc --opencode --local --uninstall
+npx qgsd --claude --local --uninstall
+npx qgsd --opencode --local --uninstall
 ```
 
 This removes all QGSD commands, agents, hooks, and settings while preserving your other configurations.
