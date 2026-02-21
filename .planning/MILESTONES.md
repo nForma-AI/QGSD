@@ -30,3 +30,13 @@ Phase 4 scope requirements: SCOPE-01–07 (7/7)
 ---
 
 *Archive committed: 2026-02-21*
+
+## v0.2 Gap Closure — Activity Resume Routing (Shipped: 2026-02-21)
+
+**Phases completed:** 17 phases, 40 plans, 13 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+

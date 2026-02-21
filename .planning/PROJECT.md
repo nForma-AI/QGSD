@@ -2,108 +2,80 @@
 
 ## What This Is
 
-QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement from CLAUDE.md behavioral policy into structural Claude Code hooks. It installs on top of GSD without modifying it, adding a hook-based quorum layer: a UserPromptSubmit hook injects quorum instructions at the right moment, and a Stop hook verifies quorum actually happened by parsing the conversation transcript before allowing Claude to deliver planning output.
+QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement from CLAUDE.md behavioral policy into structural Claude Code hooks. It installs on top of GSD without modifying it, adding a hook-based quorum layer: a UserPromptSubmit hook injects quorum instructions at the right moment, a Stop hook verifies quorum actually happened by parsing the conversation transcript before allowing Claude to deliver planning output, and a PreToolUse circuit breaker hook detects oscillation in git history and blocks Bash execution when repetitive patterns emerge. When the circuit breaker fires, a structured oscillation resolution mode guides quorum diagnosis and unified solution approval. An activity sidecar tracks every workflow stage transition so `resume-work` can recover to the exact interrupted step.
 
 ## Core Value
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.3 Release Preparation
-
-**Goal:** Ship QGSD v0.2.0 to npm — complete v0.2 verification gap closure, finalize CHANGELOG, rebuild dist, validate the full test suite, bump version, archive the milestone, create git tag, and publish.
-
-**Target features:**
-- Phase 9 + 10 executed: verification gap closure + 3 integration bug fixes (INST-08, RECV-01, INST-10)
-- CHANGELOG.md `[0.2.0]` entry with all circuit breaker + QGSD rebranding changes (Phases 5–8, quick tasks 1–12)
-- `hooks/dist/` rebuilt from current source (all Phases 5–8 included)
-- Full test suite green (`npm test` passes)
-- `package.json` version bumped `0.1.0` → `0.2.0`
-- v0.2 milestone archived in `MILESTONES.md`
-- Git tag `v0.2.0` created and pushed
-- `npx qgsd@0.2.0` published to npm
-
 ## Requirements
 
 ### Validated
 
-- ✓ All 20 v0.2 Anti-Oscillation requirements verified and bugs fixed — Phases 9–10: DETECT/STATE requirements (Phase 9), ENFC/CONF/INST/RECV requirements + 3 integration bug fixes INST-08/RECV-01/INST-10 (Phase 10)
-- ✓ UserPromptSubmit hook detects GSD planning commands and injects quorum instructions into Claude's context — Phase 1 (UPS-01 through UPS-05)
-- ✓ Stop hook reads transcript JSONL, checks for Codex/Gemini/OpenCode tool call evidence, and blocks with decision:block if quorum is missing — Phase 1 (STOP-01 through STOP-09)
-- ✓ Configurable scope: default set is high-stakes GSD commands (new-project, plan-phase, new-milestone, discuss-phase, verify-work, research-phase) — Phase 1 (UPS-02, CONF hardcoded defaults)
-- ✓ Fail-open behavior: when a model is unavailable, proceed with available models and note reduced quorum — Phase 1 (STOP-09, loadConfig fallback)
-- ✓ Installs globally into ~/.claude/ — same behavior as GSD installer — Phase 1 (INST partial: hooks installed, full installer Phase 3)
-- ✓ Works alongside GSD without any modification to GSD internals — Phase 1 (additive hooks only, zero GSD coupling)
-- ✓ QGSD config file lets users customize which commands require quorum — Phase 1 (templates/qgsd.json + ~/.claude/qgsd.json)
-- ✓ Two-layer config merge: global ~/.claude/qgsd.json + per-project .claude/qgsd.json (project wins on all overlapping keys) — Phase 2 (CONF-01, CONF-02)
-- ✓ Config validation with stderr-only warnings: invalid fields corrected to defaults, malformed files skipped without crash — Phase 2 (CONF-05)
-- ✓ Fail-open unavailability detection: Stop hook reads ~/.claude.json mcpServers at runtime to distinguish "model not called" (block) from "model not installed" (pass) — Phase 2 (CONF-04)
-- ✓ MCP auto-detection at install time: installer reads ~/.claude.json, keyword-matches server names, writes detected prefixes into qgsd.json — Phase 2 (MCP-01 through MCP-05)
-- ✓ Prefix-based tool matching: startsWith() so mcp__codex-cli__review and mcp__codex-cli__codex both satisfy codex quorum — Phase 2 (MCP-06, already implemented in Phase 1, regression-tested in Phase 2)
-- ✓ npm package published as qgsd v0.1.0 with peerDependency on get-shit-done-cc >= 1.20.0 and dual bin entry — Phase 3 (INST-01, INST-02, SYNC-01, SYNC-03)
-- ✓ Installer performs per-model MCP validation warning on every install run; fail-open always — Phase 3 (INST-05)
-- ✓ Installer idempotent: second run prints config summary instead of "already exists — skipping"; no duplicate hook entries — Phase 3 (INST-06)
-- ✓ --redetect-mcps flag: deletes qgsd.json and regenerates from fresh MCP detection — Phase 3 (INST-06/REL-04)
-- ✓ hooks/dist/ rebuilt with Phase 2 config-loader integration; SYNC-04 audit passed: zero GSD source imports — Phase 3 (SYNC-04)
-- ✓ Human checkpoint approved 2026-02-20; multi-model consensus (Codex + Gemini + OpenCode: PASS) — Phase 3 complete
-- ✓ Stop hook GUARD 5: decision turn detection (hasArtifactCommit + hasDecisionMarker) — quorum only fires on turns delivering project decisions — Phase 4 (SCOPE-01 through SCOPE-07)
-- ✓ UserPromptSubmit hook injects <!-- GSD_DECISION --> marker instruction into DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK — Phase 4 (SCOPE-06, SCOPE-07)
+- ✓ Stop hook reads transcript JSONL and hard-gates all GSD planning commands — quorum cannot be skipped regardless of instructions — v0.1
+- ✓ UserPromptSubmit hook injects quorum instructions into Claude's context window when a planning command is detected — v0.1
+- ✓ Two-layer config system: global `~/.claude/qgsd.json` + per-project `.claude/qgsd.json` with project values taking precedence — v0.1
+- ✓ MCP auto-detection at install time: installer reads `~/.claude.json`, keyword-matches server names, writes detected prefixes into `qgsd.json` — v0.1
+- ✓ `npx qgsd@latest` installs GSD + quorum hooks globally in one command, idempotent, writes directly to `~/.claude/settings.json` — v0.1
+- ✓ Stop hook GUARD 5: quorum enforcement fires only on project decision turns (hasArtifactCommit + hasDecisionMarker) — not on routing, questioning, or agent operations — v0.1
+- ✓ PreToolUse circuit breaker hook detects oscillation (strict set equality across commit window), persists state across tool calls, blocks write Bash execution — v0.2
+- ✓ Circuit breaker config (oscillation_depth, commit_window) configurable via two-layer qgsd.json; installer writes default block idempotently — v0.2
+- ✓ Oscillation resolution mode: when breaker fires, quorum diagnoses structural coupling and proposes a unified solution; user approves before execution resumes — v0.2 (Phase 13)
+- ✓ CHANGELOG.md `[0.2.0]` entry written, `[Unreleased]` cleared, `hooks/dist/` rebuilt, `npm test` 141/141 passing — v0.2 (Phase 11)
+- ✓ qgsd@0.2.0 released: package.json bumped, MILESTONES.md archived, git tag v0.2.0 pushed; npm publish deferred — v0.2 (Phase 12)
+- ✓ Activity sidecar `.planning/current-activity.json` tracks every workflow stage boundary; `resume-work` routes to exact interrupted step with 15-row routing table — v0.2 (Phases 14–16)
+- ✓ All qqgsd-* agent name typos corrected to qgsd-* across 12 installed + source files — v0.2 (Phase 17)
 
 ### Active
 
-<!-- Current scope for v0.3 Release Preparation. Building toward these. -->
+<!-- Next milestone scope — defined during /qgsd:new-milestone -->
 
-- [ ] CHANGELOG.md `[0.2.0]` entry covering all v0.2 changes
-- [ ] `hooks/dist/` rebuilt from current source
-- [ ] Full test suite passes (`npm test`)
-- [ ] `package.json` version bumped to `0.2.0`
-- [ ] v0.2 milestone archived in `MILESTONES.md`
-- [ ] Git tag `v0.2.0` created and pushed to remote
-- [ ] `qgsd@0.2.0` published to npm
+- [ ] npm publish qgsd@0.2.0 deferred — run `npm publish --access public` when ready (RLS-04)
 
 ### Out of Scope
 
 - Calling model CLIs directly from hooks (fragile, external dependencies, auth complexity) — deferred as optional strict mode
 - Modifying GSD workflows or agents — QGSD is additive only
-- Per-project install (global only in v1 — matches GSD's install behavior)
+- Per-project install (global only — matches GSD's install behavior)
 - Fail-closed mode in v1 — fail-open matches CLAUDE.md R6 and avoids blocking work
 
 ## Context
 
-GSD currently has a CLAUDE.md policy (R2–R7) that instructs Claude to run quorum (R3) before presenting planning outputs. The problem: CLAUDE.md is read once at session start and relies on behavioral compliance. If Claude forgets or rationalizes around the policy mid-session, quorum doesn't happen.
+QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by user decision.
 
-QGSD's structural approach:
-- UserPromptSubmit fires at the right moment (when command is invoked, not session start)
-- Stop hook provides a hard gate — Claude literally cannot complete its response without evidence of quorum in the transcript
-- Quorum consensus was already reached (Claude + Codex + OpenCode) on this architecture before PROJECT.md was written — Gemini unavailable (quota)
-
-The GSD codebase already has hooks infrastructure (see `hooks/` directory). QGSD adds new hooks as a separate plugin, not modifications to existing ones.
+**Codebase:** ~81,752 lines (JS + MD), 391 files, 1,138 commits across the full development cycle.
+**Tech stack:** Node.js, Claude Code hooks (UserPromptSubmit + Stop + PreToolUse), npm package.
+**Known tech debt:** Phase 12 VERIFICATION.md missing; `~/.claude/get-shit-done/` lacks activity tracking (out of scope — upstream GSD package boundary).
 
 ## Constraints
 
 - **Architecture**: Plugin extension only — no GSD source modifications, zero coupling to GSD version
 - **Dependencies**: Pure Claude Code hooks system — no external CLIs, no API keys beyond what Claude Code already manages via MCPs
 - **Install**: Global (~/.claude/) following GSD's install pattern
-- **Scope**: v1 covers quorum enforcement only — other QGSD features (if any) are future milestones
+- **Scope**: v1 covers quorum enforcement + circuit breaker + activity tracking
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| A+C: UserPromptSubmit injection + Stop hook gate | Three-model quorum (Claude + Codex + OpenCode) reached consensus; Option B (direct CLI calls) is fragile and maintenance-heavy | Implemented — Phase 1 |
-| High-stakes commands as default scope | All /qgsd:* is too broad (execute-phase doesn't need quorum); user-configurable override future-proofs against GSD command evolution | Implemented — Phase 1 (6-command allowlist) |
-| Fail-open | Matches CLAUDE.md R6 behavior; prevents blocking work when models have quota issues | Implemented — Phase 1 (loadConfig fallback, fail_mode: "open") |
-| Plugin extension, not fork | No trade-offs vs fork — hooks are additive; GSD updates don't require QGSD changes | Confirmed — Phase 1 (zero GSD source modifications) |
-| Global install | Matches GSD's default behavior; quorum should apply everywhere, not require per-project opt-in | Implemented — Phase 1 (hooks in ~/.claude/, config in ~/.claude/qgsd.json) |
-| Hook installation via settings.json directly | Confirmed Claude Code bug #10225: plugin hooks.json silently discards UserPromptSubmit output; must write to settings.json | Implemented — Phase 1 (bin/install.js writes to ~/.claude/settings.json) |
-| STOP-05 fast-path omitted by design | last_assistant_message substring matching is unreliable (Claude can summarize without naming tool prefixes); JSONL parse is synchronous and correct for all transcript sizes | Design decision — Phase 1 gap closure (quorum: Claude + Codex + Gemini) |
-| Shallow merge for config layering | Project required_models should fully replace global (not deep-merge), enabling a project to restrict quorum to a subset of models | Phase 2 — CONF-02 |
-| QGSD_CLAUDE_JSON env var for testing | getAvailableMcpPrefixes() uses env override in tests to avoid mutating real ~/.claude.json; production always reads real file | Phase 2 — CONF-04 |
-| quorum_instructions generated from detected prefixes | Behavioral instructions (UserPromptSubmit injection) must name the same tools as structural enforcement (Stop hook); generating from detected models prevents mismatch when servers are renamed | Phase 2 — MCP-03 |
-| required_models field name (not quorum_models) | CONF-03 used quorum_models as a placeholder name; required_models is richer (dict with tool_prefix + required flag) and was already implemented in Phase 1 | Phase 2 — CONF-03 approved divergence |
-| ~/.claude.json as MCP detection source | Verified live: ~/.claude/settings.json has no mcpServers; ~/.claude.json top-level mcpServers is the correct detection target | Phase 2 — MCP-01 verified |
-| INST-08 fix: PreToolUse removal in uninstall() | Used identical filter pattern (h.command.includes) to Stop/UserPromptSubmit blocks; settingsModified flag ensures write only on actual removal | Phase 10 — bug fix |
-| RECV-01 fix: git rev-parse for state path | git rev-parse --show-toplevel with process.cwd() fallback; state file is always at projectRoot/.claude/circuit-breaker-state.json regardless of invocation directory | Phase 10 — bug fix |
-| INST-10 fix: two-tier sub-key backfill | Top-level absence → write full default block; else branch checks each sub-key via `=== undefined` independently — prevents overwriting user-customized values on partial configs | Phase 10 — bug fix |
+| A+C: UserPromptSubmit injection + Stop hook gate | Three-model quorum consensus; Option B (direct CLI calls) fragile and maintenance-heavy | Implemented — Phase 1 |
+| High-stakes commands as default scope | All /qgsd:* too broad; user-configurable override future-proofs against GSD evolution | Implemented — Phase 1 (6-command allowlist) |
+| Fail-open | Matches CLAUDE.md R6; prevents blocking work during quota issues | Implemented — Phase 1 |
+| Plugin extension, not fork | No trade-offs vs fork — hooks are additive; GSD updates don't require QGSD changes | Confirmed — Phase 1 |
+| Global install | Matches GSD's default behavior; quorum applies everywhere without per-project opt-in | Implemented — Phase 1 |
+| Hook installation via settings.json directly | Claude Code bug #10225: plugin hooks.json silently discards UserPromptSubmit output | Implemented — Phase 1 |
+| STOP-05 fast-path omitted by design | last_assistant_message substring matching unreliable; JSONL parse synchronous and correct | Design decision — Phase 1 gap closure |
+| Shallow merge for config layering | Project required_models should fully replace global (not deep-merge) | Phase 2 — CONF-02 |
+| QGSD_CLAUDE_JSON env var for testing | Avoids mutating real ~/.claude.json in tests; production always reads real file | Phase 2 |
+| required_models field name | Richer than quorum_models (dict with tool_prefix + required flag) | Phase 2 — CONF-03 |
+| INST-08 fix: PreToolUse removal in uninstall() | Identical filter pattern to Stop/UserPromptSubmit blocks | Phase 10 — bug fix |
+| RECV-01 fix: git rev-parse for state path | Handles invocation from any subdirectory | Phase 10 — bug fix |
+| INST-10 fix: two-tier sub-key backfill | Prevents overwriting user-customized values on partial configs | Phase 10 — bug fix |
+| Oscillation resolution mode replaces hard-stop | Hard-stop creates deadlocks; structured quorum diagnosis with user approval gate is recoverable | Phase 13 — ORES-01..05 |
+| Activity sidecar as separate JSON file | No schema pollution of STATE.md; file presence/absence = activity in progress/complete | Phase 14 — ACT-01..07 |
+| /gsd:* namespace excluded from activity tracking | Upstream GSD package boundary — QGSD modifications stay in /qgsd:* namespace | Phase 14 — ACT scope decision |
+| RLS-04 npm publish deferred | User decision — publish timing separate from milestone archival | Phase 12 |
+| escapedReqId regex safety in gsd-tools | REQ-IDs with regex-special chars (e.g. from informal labels in ROADMAP) break new RegExp() construction | Phase 17 housekeeping |
 
 ---
-*Last updated: 2026-02-21 after Phase 10 — all 20 v0.2 requirements verified, 3 integration bugs fixed. Next: Phase 11 Changelog & Build → Phase 12 Version & Publish → qgsd@0.2.0.*
+*Last updated: 2026-02-21 after v0.2 milestone complete — 17 phases, 40 plans, all requirements satisfied (RLS-04 deferred). Next: /qgsd:new-milestone*

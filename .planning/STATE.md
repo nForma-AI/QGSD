@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-21 after v0.3 milestone start)
+See: .planning/PROJECT.md (updated 2026-02-21 after v0.2 milestone complete)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 16 COMPLETE — ACT-02/ACT-04 formally verified, INT-02 fixed, traceability closed. Ready to plan Phase 17 (Fix Installed Agent Name Typos).
+**Current focus:** v0.2 milestone complete — all 17 phases, 40 plans shipped. Ready for /qgsd:new-milestone.
 
 ## Current Position
 
-Phase: 17 — fix-installed-agent-name-typos (Ready to plan)
-Plan: Not started
-Status: Phase 16 complete — 15-VERIFICATION.md produced, ACT-02/ACT-04 traceability = Complete, pending count = 18, INT-02 planning row disambiguation applied
-Last activity: 2026-02-21 — Completed quick task 28: rename gsd-integration-checker to qgsd-integration-checker in MODEL_PROFILES in both source and installed gsd-tools.cjs
+Phase: Milestone v0.2 complete
+Plan: N/A — milestone archived
+Status: v0.2 SHIPPED — 17 phases complete, 40/40 plans, git tag v0.2.0 pushed. Milestone archived to .planning/milestones/. REQUIREMENTS.md deleted (fresh for next milestone). npm publish (RLS-04) deferred.
+Last activity: 2026-02-21 — v0.2 milestone complete and archived
 
-Progress: [███████████████████░] 38/39 plans (97%)
+Progress: [████████████████████] 40/40 plans (100%)
 
 ## Performance Metrics
 
