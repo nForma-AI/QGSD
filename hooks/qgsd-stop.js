@@ -19,10 +19,10 @@ const os = require('os');
 
 const { loadConfig, DEFAULT_CONFIG } = require('./config-loader');
 
-// Builds the regex that matches /gsd:<quorum-command> in any text.
+// Builds the regex that matches /gsd:<quorum-command> or /qgsd:<quorum-command> in any text.
 function buildCommandPattern(quorumCommands) {
   const escaped = quorumCommands.map(c => c.replace(/-/g, '\\-'));
-  return new RegExp('\\/gsd:(' + escaped.join('|') + ')');
+  return new RegExp('\\/q?gsd:(' + escaped.join('|') + ')');
 }
 
 // Returns true if a parsed JSONL user entry is a human text message.
@@ -70,8 +70,8 @@ function hasQuorumCommand(currentTurnLines, cmdPattern) {
   return false;
 }
 
-// Extracts the matched /gsd:<command> text from the first matching user line.
-// Falls back to '/gsd:plan-phase' if no match is found (should not happen
+// Extracts the matched /gsd:<command> or /qgsd:<command> text from the first matching user line.
+// Falls back to '/qgsd:plan-phase' if no match is found (should not happen
 // since hasQuorumCommand already confirmed a match).
 function extractCommand(currentTurnLines, cmdPattern) {
   for (const line of currentTurnLines) {
@@ -84,7 +84,7 @@ function extractCommand(currentTurnLines, cmdPattern) {
       // Skip malformed lines
     }
   }
-  return '/gsd:plan-phase';
+  return '/qgsd:plan-phase';
 }
 
 // Scans assistant entries in currentTurnLines for tool_use blocks whose
