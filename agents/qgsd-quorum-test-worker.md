@@ -22,15 +22,16 @@ Return ONLY this structure — no prose, no explanation, no markdown headers:
 
 verdict: PASS | BLOCK | REVIEW-NEEDED
 concerns:
-  - <one-line concern> (or leave empty if none)
-  - <one-line concern>
+  - <most-impactful concern first, or "none" if no concerns>
+  - <second concern if applicable, or omit>
 
 Rules:
 - PASS: no concerns — tests are genuine and the pass is trustworthy
 - BLOCK: at least one test is provably trivial or a false positive
 - REVIEW-NEEDED: tests are real but have gaps or assumptions worth flagging
+- If bundle contains no test source code: return REVIEW-NEEDED with concern "Bundle missing test sources — cannot verify assertion quality"
 </output_format>
 
 <bundle>
-$BUNDLE
+$ARGUMENTS
 </bundle>
