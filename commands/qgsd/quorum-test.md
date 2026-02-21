@@ -115,6 +115,11 @@ concerns:
   - <second concern if applicable, or "none" if only one concern>
 
 Your job is NOT to confirm the pass. Read the assertion code and ask: if someone changed the implementation in a meaningful way, would this test catch it? Look for swallowed exceptions, trivially true assertions, mocked internals that bypass real logic.
+
+If the bundle contains no test source code, return:
+verdict: REVIEW-NEEDED
+concerns:
+  - Bundle missing test sources — cannot verify assertion quality
 ```
 
 Dispatch (each call in a single parallel message — Task subagents are isolated subprocesses; a failing Task does not propagate to co-submitted Tasks, unlike direct sibling MCP calls):
