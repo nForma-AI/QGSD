@@ -234,7 +234,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 13. Circuit Breaker Oscillation Resolution Mode | 2/2 | Complete    | 2026-02-21 |
 | 14. Activity Tracking | 4/4 | Complete    | 2026-02-21 |
 | 15. v0.4 Gap Closure — Activity Resume Routing | 1/1 | Complete | 2026-02-21 |
-| 16. Verify Phase 15 — ACT-02 and ACT-04 | 0/1 | Planned | — |
+| 16. Verify Phase 15 — ACT-02 and ACT-04 | 0/1 | Complete    | 2026-02-21 |
 | 17. Fix Installed Agent Name Typos | 0/1 | Planned | — |
 
 ### Phase 13: Circuit Breaker Oscillation Resolution Mode
@@ -278,7 +278,7 @@ Plans:
 **Depends on:** Phase 15
 **Requirements:** ACT-02, ACT-04
 **Gap Closure:** Closes gaps from v0.4 second audit — Phase 15 executed but lacked VERIFICATION.md; ACT-02 and ACT-04 remained partial
-**Plans:** 1/1 planned
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 16-01-PLAN.md — Fix INT-02 planning row label in both resume-project.md copies + produce 15-VERIFICATION.md (gsd-verifier, 5/5 truths) + update REQUIREMENTS.md ACT-02/ACT-04 traceability to Complete + commit all artifacts
