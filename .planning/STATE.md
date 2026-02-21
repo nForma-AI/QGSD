@@ -107,6 +107,7 @@ Recent decisions affecting current work:
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | Rebrand project to QGSD: Quorum Gets Shit Done | 2026-02-20 | f55eebf | [1-rebrand-project-to-qgsd-quorum-gets-shit](./quick/1-rebrand-project-to-qgsd-quorum-gets-shit/) |
+| 2 | Add R3.6 — Iterative Improvement Protocol to CLAUDE.md | 2026-02-21 | N/A (CLAUDE.md gitignored) | [2-in-qgsd-if-a-quorum-approved-a-plan-but-](./quick/2-in-qgsd-if-a-quorum-approved-a-plan-but-/) |
 
 ### Blockers/Concerns
 
@@ -116,6 +117,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-20
-Stopped at: Phase 3 plan 03-03 complete (Task 6 finalization). Phase 3 all 11 requirements marked. ALL PHASES COMPLETE.
-Resume file: N/A — project complete
+Last session: 2026-02-21
+Stopped at: Quick task 2 complete — R3.6 added to CLAUDE.md.
+Resume file: N/A
