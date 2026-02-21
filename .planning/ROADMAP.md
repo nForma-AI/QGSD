@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Fix GUARD 5 Delivery Gaps** - hooks/dist/ rebuilt + marker path propagated to installer users
 - [x] **Phase 6: Circuit Breaker Detection & State** - PreToolUse hook detects oscillation in git history and persists breaker state across invocations
 - [x] **Phase 7: Enforcement & Config Integration** - Bash execution blocked when breaker is active; circuit_breaker config block added to config-loader (completed 2026-02-21)
-- [ ] **Phase 8: Installer Integration** - Installer registers PreToolUse hook and writes default circuit_breaker config block idempotently
+- [x] **Phase 8: Installer Integration** - Installer registers PreToolUse hook and writes default circuit_breaker config block idempotently (completed 2026-02-21)
 
 ## Phase Details
 
@@ -161,4 +161,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 5. Fix GUARD 5 Delivery Gaps | 1/1 | Complete | 2026-02-21 |
 | 6. Circuit Breaker Detection & State | 1/1 | Complete | 2026-02-21 |
 | 7. Enforcement & Config Integration | 2/2 | Complete | 2026-02-21 |
-| 8. Installer Integration | 0/1 | Not started | - |
+| 8. Installer Integration | 1/1 | Complete   | 2026-02-21 |
