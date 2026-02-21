@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-21 after v0.2 milestone complete)
 Phase: Milestone v0.2 complete
 Plan: N/A — milestone archived
 Status: v0.2 SHIPPED — 17 phases complete, 40/40 plans, git tag v0.2.0 pushed. Milestone archived to .planning/milestones/. REQUIREMENTS.md deleted (fresh for next milestone). npm publish (RLS-04) deferred.
-Last activity: 2026-02-21 - Completed quick task 36: add quorum resolution loop for human_needed verifier status in execute-phase and quick (--full) workflows
+Last activity: 2026-02-21 - Completed quick task 37: refactor inline quorum model loops in 6 sites across 5 workflow files with Task(qgsd-quorum-orchestrator) spawns
 
 Progress: [████████████████████] 40/40 plans (100%)
 
@@ -202,6 +202,7 @@ Recent decisions affecting current work:
 | 34 | Add debate category metadata to quorum scoreboard: 5-category taxonomy, --category/--subcategory/--task-description flags, Haiku auto-classification | 2026-02-21 | e7296ab | Verified | [34-add-debate-category-metadata-to-quorum-s](./quick/34-add-debate-category-metadata-to-quorum-s/) |
 | 35 | Auto-advance new-project and new-milestone to plan-phase via Task spawn after roadmap approval; AUTO_CFG config check; SlashCommand removed | 2026-02-21 | 9b08f6b | Verified | [35-after-roadmapper-reaches-quorum-consensu](./quick/35-after-roadmapper-reaches-quorum-consensu/) |
 | 36 | Add quorum resolution loop for human_needed verifier status in execute-phase and quick (--full) workflows | 2026-02-21 | 045f2fc | Verified | [36-add-quorum-resolution-loop-for-human-nee](./quick/36-add-quorum-resolution-loop-for-human-nee/) |
+| 37 | Refactor inline quorum model loops in 6 sites across 5 workflow files: replace with Task(qgsd-quorum-orchestrator) spawns | 2026-02-21 | 4200c40 | Complete | [37-refactor-inline-quorum-model-loops-in-6-](./quick/37-refactor-inline-quorum-model-loops-in-6-/) |
 
 ### Blockers/Concerns
 
