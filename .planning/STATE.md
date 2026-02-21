@@ -56,6 +56,7 @@ Progress: [████████████████████░░░
 | Phase 08-installer-integration P01 | 2 | 3 tasks | 2 files |
 | Phase 09-verify-phases-5-6 P01 | 5 min | 1 task (verify) | 1 file |
 | Phase 09-verify-phases-5-6 P03 | 2 | 3 tasks | 2 files |
+| Phase 10-fix-bugs-verify-phases-7-8 P01 | 2 min | 3 tasks | 2 files |
 | Phase 13-circuit-breaker-oscillation-resolution-mode P01 | 2 min | 3 tasks | 3 files |
 
 ## Accumulated Context
@@ -119,6 +120,10 @@ Recent decisions affecting current work:
 - [Phase 13-circuit-breaker-oscillation-resolution-mode]: hookSpecificOutput JSON format unchanged — only permissionDecisionReason string content modified with commit graph table + R5 reference
 - [Phase 13-01]: CLAUDE.md is gitignored by project design — R5 oscillation resolution mode update applied to disk only (consistent with quick-4 precedent)
 - [Phase 13-01]: Environmental file fast-path in R5.2: config/lock files skip quorum entirely and escalate directly to user — structural diagnosis not applicable to external dependency oscillations
+- [Phase 10-01]: PreToolUse removal in uninstall() mirrors existing Stop/UserPromptSubmit pattern exactly (filter on command string, delete empty array)
+- [Phase 10-01]: RECV-01 uses inline require('child_process') in the reset-breaker block — spawnSync not used elsewhere in install.js; inline require is safe
+- [Phase 10-01]: INST-10 backfill uses === undefined (not falsy) to preserve user-set value of 0 (which validateConfig() warns about at runtime — correct behavior)
+- [Phase 10-01]: CONF-09 placed in _comment after existing required_models shallow merge paragraph for narrative flow
 - [Phase 13-01]: ORES requirements defined as pending (not implemented yet) — Phase 13 plans will implement the actual hook behavior changes
 
 ### Roadmap Evolution
@@ -162,5 +167,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Completed Phase 13-01-PLAN.md — ORES-01..05 defined in REQUIREMENTS.md, CLAUDE.md R5 updated (disk-only), oscillation-resolution-mode.md workflow document created.
+Stopped at: Completed Phase 10-01-PLAN.md — INST-08 PreToolUse removal in uninstall(), RECV-01 git root path for reset-breaker, INST-10 sub-key backfill, CONF-09 shallow merge docs. 141 tests pass.
 Resume file: N/A

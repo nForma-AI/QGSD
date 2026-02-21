@@ -171,7 +171,7 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 10-01-PLAN.md — Bug fixes: INST-08 uninstall cleanup, RECV-01 git root path, INST-10 sub-key backfill + CONF-09 template docs
+- [x] 10-01-PLAN.md — Bug fixes: INST-08 uninstall cleanup, RECV-01 git root path, INST-10 sub-key backfill + CONF-09 template docs
 - [ ] 10-02-PLAN.md — gsd-verifier for Phase 7 (ENFC-01..03, CONF-06..09); produces 07-VERIFICATION.md
 - [ ] 10-03-PLAN.md — gsd-verifier for Phase 8 (INST-08..10, RECV-01); produces 08-VERIFICATION.md
 - [ ] 10-04-PLAN.md — Gate check + REQUIREMENTS.md update + STATE.md/ROADMAP.md update + commit all artifacts
