@@ -130,6 +130,7 @@ Recent decisions affecting current work:
 | 8 | Update qgsd-stop.js and qgsd-prompt.js to recognize /qgsd: prefix; fix fallback to /qgsd:plan-phase | 2026-02-21 | 2e201c6 | Verified | [8-update-qgsd-stop-js-and-qgsd-prompt-js-t](./quick/8-update-qgsd-stop-js-and-qgsd-prompt-js-t/) |
 | 11 | Change GSD ASCII art banner to QGSD with Q in salmon; update tagline to "Quorum Gets Shit Done" | 2026-02-21 | 3819d38 | Verified | [11-change-gsd-ascii-art-to-qgsd-with-q-in-a](./quick/11-change-gsd-ascii-art-to-qgsd-with-q-in-a/) |
 | 9 | Update active policy docs: replace /gsd: with /qgsd: in REQUIREMENTS.md, STATE.md, PROJECT.md, 01-05-PLAN.md, quorum todo | 2026-02-21 | c50cebe | Verified | [9-make-sure-that-qgsd-wil-now-use-qgsd-com](./quick/9-make-sure-that-qgsd-wil-now-use-qgsd-com/) |
+| 10 | Review all docs for QGSD framework sync: add /qgsd:quorum-test to tables, fix GSD prose in README + CHANGELOG | 2026-02-21 | 4066bb4 | Verified | [10-review-all-docs-for-qgsd-framework-sync-](./quick/10-review-all-docs-for-qgsd-framework-sync-/) |
 
 ### Blockers/Concerns
 
@@ -140,5 +141,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Quick task 9 complete — updated /gsd: to /qgsd: in 5 active policy docs (c50cebe).
+Stopped at: Quick task 10 complete — added /qgsd:quorum-test to command tables, fixed GSD prose in README.md + CHANGELOG.md (4066bb4).
 Resume file: N/A
