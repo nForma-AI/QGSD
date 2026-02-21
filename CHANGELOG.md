@@ -1399,9 +1399,9 @@ and `templates/qgsd.json`. Then cut a QGSD patch release.
 - YOLO mode for autonomous execution
 - Interactive mode with checkpoints
 
-[Unreleased]: https://github.com/glittercowboy/get-shit-done/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/glittercowboy/get-shit-done/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/glittercowboy/get-shit-done/releases/tag/v0.1.0
+[Unreleased]: https://github.com/LangBlaze-AI/QGSD/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/LangBlaze-AI/QGSD/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/LangBlaze-AI/QGSD/releases/tag/v0.1.0
 [1.20.5]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.5
 [1.20.4]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.4
 [1.20.3]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.3
