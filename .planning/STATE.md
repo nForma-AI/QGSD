@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-21 after Phase 5 and v0.2 milestone start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.2 Anti-Oscillation Pattern — Phase 6 (Circuit Breaker Detection & State), ready to plan
+**Current focus:** v0.2 Anti-Oscillation Pattern — defining roadmap (Phases 6–8, 20 requirements)
 
 ## Current Position
 
 Phase: 6 of 8 (Circuit Breaker Detection & State) — v0.2 milestone
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-02-21 - Completed quick task 5: qgsd:quorum-test pre-flight validation — validate artifact collection before running tests
+Last activity: 2026-02-21 — ROADMAP.md updated: RECV-01 added to Phase 8, DETECT-03/ENFC-03 criteria clarified, Progress table reflects 20 v0.2 requirements
 
 Progress: [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 13% (Phase 5 pending, Phases 6–8 not started)
 
@@ -94,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 04-narrow-quorum-scope P02]: Injection mechanism (hookSpecificOutput.additionalContext, cmdPattern, config-loading) unchanged; only the fallback string content was modified
 - [Phase 04-narrow-quorum-scope P01]: TC6/TC9/TC12 updated (step 1a) to include artifact commit signals — preserves decision:block invariant after GUARD 5 is added
 - [v0.2 roadmap]: Circuit breaker hook is a new file hooks/qgsd-circuit-breaker.js (PreToolUse on Bash); uses existing config-loader.js; state at .claude/circuit-breaker-state.json (project-relative)
+- [v0.2 roadmap revision]: RECV-01 moved from Future to Phase 8 — deadlock fix; npx qgsd --reset-breaker clears state file; consensus Gemini+OpenCode+Copilot. DETECT-03 clarified to strict set equality (not intersection). ENFC-03 updated to explicitly instruct user to manually commit the fix.
+- [quick-4 scoring]: CLAUDE.md gitignored by project design — R8 rule applied to disk only, no git commit (matches quick-2/R3.6 precedent); scoreboard at .planning/quorum-scoreboard.md committed separately
+- [quick-4 scoring]: Improvement Accepted rows recorded as separate round log entries (not merged with TP row) to allow independent point visibility per round
 
 ### Roadmap Evolution
 
@@ -112,6 +115,7 @@ Recent decisions affecting current work:
 | 1 | Rebrand project to QGSD: Quorum Gets Shit Done | 2026-02-20 | f55eebf | | [1-rebrand-project-to-qgsd-quorum-gets-shit](./quick/1-rebrand-project-to-qgsd-quorum-gets-shit/) |
 | 2 | Add R3.6 — Iterative Improvement Protocol to CLAUDE.md | 2026-02-21 | ff20e54 | Verified | [2-in-qgsd-if-a-quorum-approved-a-plan-but-](./quick/2-in-qgsd-if-a-quorum-approved-a-plan-but-/) |
 | 3 | Replace human test checkpoints with /qgsd:quorum-test; create /qgsd:debug command | 2026-02-21 | 8a1f5df | Verified | [3-replace-human-test-checkpoints-with-qgsd](./quick/3-replace-human-test-checkpoints-with-qgsd/) |
+| 4 | Quorum agent scoring: track initial votes vs final consensus (TP/TN/FP/FN + improvement rates) | 2026-02-21 | 177c2c1 | Verified | [4-quorum-agent-scoring-track-initial-votes](./quick/4-quorum-agent-scoring-track-initial-votes/) |
 | 5 | qgsd:quorum-test pre-flight validation — validate artifact collection before running tests | 2026-02-21 | 072c755 | Verified | [5-an-qgsd-quorum-test-should-probably-firs](./quick/5-an-qgsd-quorum-test-should-probably-firs/) |
 
 ### Blockers/Concerns
@@ -123,5 +127,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Quick task 5 complete — qgsd:quorum-test pre-flight validation added (Step 1 expanded to 1a–1e, per-file [WARN]/[ERROR] logging in bundle assembly).
+Stopped at: Quick task 4 complete — R8 agent score tracking added to CLAUDE.md; quorum-scoreboard.md created with cumulative scores and backfilled round data from QT2/QT4/QT5.
 Resume file: N/A
