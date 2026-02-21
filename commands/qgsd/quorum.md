@@ -158,7 +158,8 @@ node bin/update-scoreboard.cjs \
   --result <vote_code> \
   --task "<task_label>" \
   --round <round_number> \
-  --verdict <VERDICT>
+  --verdict <VERDICT> \
+  --task-description "<question or topic being debated>"
 ```
 
 `--model` values: claude, gemini, opencode, copilot, codex
@@ -166,6 +167,7 @@ node bin/update-scoreboard.cjs \
 `--task` label: short identifier, e.g. "quick-25" or "plan-ph17"
 `--round`: the round number that just completed
 `--verdict`: the consensus verdict (APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND)
+`--task-description`: the full debate question/topic (the `[question]` value). Used by Haiku to auto-classify the category. Omit if the question is too long (>500 chars) — use a shortened summary instead.
 
 Run one command per model per round. Each call is atomic and idempotent — if re-run for the same task+round+model it overwrites that model's vote and recalculates from scratch.
 
@@ -198,7 +200,8 @@ node bin/update-scoreboard.cjs \
   --result <vote_code> \
   --task "<task_label>" \
   --round <round_number> \
-  --verdict <VERDICT>
+  --verdict <VERDICT> \
+  --task-description "<question or topic being debated>"
 ```
 
 `--model` values: claude, gemini, opencode, copilot, codex
@@ -206,6 +209,7 @@ node bin/update-scoreboard.cjs \
 `--task` label: short identifier, e.g. "quick-25" or "plan-ph17"
 `--round`: the round number that just completed
 `--verdict`: the consensus verdict (APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND)
+`--task-description`: the full debate question/topic (the `[question]` value). Used by Haiku to auto-classify the category. Omit if the question is too long (>500 chars) — use a shortened summary instead.
 
 Run one command per model per round. Each call is atomic and idempotent — if re-run for the same task+round+model it overwrites that model's vote and recalculates from scratch.
 
@@ -323,7 +327,8 @@ node bin/update-scoreboard.cjs \
   --result <vote_code> \
   --task "<task_label>" \
   --round <round_number> \
-  --verdict <VERDICT>
+  --verdict <VERDICT> \
+  --task-description "<debate topic from $ARGUMENTS>"
 ```
 
 `--model` values: claude, gemini, opencode, copilot, codex
@@ -331,5 +336,6 @@ node bin/update-scoreboard.cjs \
 `--task` label: short identifier, e.g. "quick-25" or "plan-ph17"
 `--round`: the round number that just completed
 `--verdict`: the consensus verdict (APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND)
+`--task-description`: a brief description of what was being verified/reviewed (from `$ARGUMENTS` or a short summary). Used by Haiku to auto-classify. Optional — omit if not meaningful.
 
 Run one command per model per round. Each call is atomic and idempotent — if re-run for the same task+round+model it overwrites that model's vote and recalculates from scratch.
