@@ -112,6 +112,7 @@ Recent decisions affecting current work:
 | 1 | Rebrand project to QGSD: Quorum Gets Shit Done | 2026-02-20 | f55eebf | | [1-rebrand-project-to-qgsd-quorum-gets-shit](./quick/1-rebrand-project-to-qgsd-quorum-gets-shit/) |
 | 2 | Add R3.6 — Iterative Improvement Protocol to CLAUDE.md | 2026-02-21 | ff20e54 | Verified | [2-in-qgsd-if-a-quorum-approved-a-plan-but-](./quick/2-in-qgsd-if-a-quorum-approved-a-plan-but-/) |
 | 3 | Replace human test checkpoints with /qgsd:quorum-test; create /qgsd:debug command | 2026-02-21 | 8a1f5df | Verified | [3-replace-human-test-checkpoints-with-qgsd](./quick/3-replace-human-test-checkpoints-with-qgsd/) |
+| 5 | qgsd:quorum-test pre-flight validation — validate artifact collection before running tests | 2026-02-21 | 072c755 | Complete | [5-an-qgsd-quorum-test-should-probably-firs](./quick/5-an-qgsd-quorum-test-should-probably-firs/) |
 
 ### Blockers/Concerns
 
@@ -122,5 +123,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Quick task 3 complete (Verified 5/5) — human-verify checkpoints updated with /qgsd:quorum-test references, /qgsd:debug command created.
+Stopped at: Quick task 5 complete — qgsd:quorum-test pre-flight validation added (Step 1 expanded to 1a–1e, per-file [WARN]/[ERROR] logging in bundle assembly).
 Resume file: N/A
