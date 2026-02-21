@@ -113,7 +113,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-- `2026-02-20-add-gsd-quorum-command-for-consensus-answers.md` — Add gsd:quorum command for consensus answers (area: planning)
+- `2026-02-20-add-gsd-quorum-command-for-consensus-answers.md` — Add qgsd:quorum command for consensus answers (area: planning)
 
 ### Quick Tasks Completed
 
@@ -129,6 +129,7 @@ Recent decisions affecting current work:
 | 7 | Update docs/USER-GUIDE.md Execution Wave Coordination diagram with checkpoint:verify pipeline | 2026-02-21 | 6cffc3f | Verified | [7-update-docs-user-guide-md-with-checkpoin](./quick/7-update-docs-user-guide-md-with-checkpoin/) |
 | 8 | Update qgsd-stop.js and qgsd-prompt.js to recognize /qgsd: prefix; fix fallback to /qgsd:plan-phase | 2026-02-21 | 2e201c6 | Verified | [8-update-qgsd-stop-js-and-qgsd-prompt-js-t](./quick/8-update-qgsd-stop-js-and-qgsd-prompt-js-t/) |
 | 11 | Change GSD ASCII art banner to QGSD with Q in salmon; update tagline to "Quorum Gets Shit Done" | 2026-02-21 | 3819d38 | Verified | [11-change-gsd-ascii-art-to-qgsd-with-q-in-a](./quick/11-change-gsd-ascii-art-to-qgsd-with-q-in-a/) |
+| 9 | Update active policy docs: replace /gsd: with /qgsd: in REQUIREMENTS.md, STATE.md, PROJECT.md, 01-05-PLAN.md, quorum todo | 2026-02-21 | c50cebe | Verified | [9-make-sure-that-qgsd-wil-now-use-qgsd-com](./quick/9-make-sure-that-qgsd-wil-now-use-qgsd-com/) |
 
 ### Blockers/Concerns
 
@@ -139,5 +140,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-21
-Stopped at: Quick task 11 complete — QGSD ASCII art banner (salmon Q + cyan GSD, tagline "Quorum Gets Shit Done") (3819d38).
+Stopped at: Quick task 9 complete — updated /gsd: to /qgsd: in 5 active policy docs (c50cebe).
 Resume file: N/A
