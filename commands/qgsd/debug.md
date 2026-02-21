@@ -163,14 +163,26 @@ next_step: [consensus next step or "no consensus"]
 [full $BUNDLE]
 ```
 
-**Step 7: Prompt for continuation**
+**Step 7: Execute or escalate**
 
-Display:
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Apply the consensus next step, then run /qgsd:debug again with updated output.
-To start a full autonomous debug session: /gsd:debug [description]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+IF consensus was reached (Step 4):
+  Execute the consensus next step autonomously using available tools (Bash, Read, Grep, etc.)
+  Display what was done.
+  Then display:
+  ```
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Consensus step executed. Run /qgsd:debug again to continue.
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ```
+
+IF no consensus:
+  Display:
+  ```
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  No consensus — review recommendations above and apply the most relevant step.
+  Then run /qgsd:debug again with updated output.
+  To start a full autonomous debug session: /gsd:debug [description]
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ```
 
 </process>
