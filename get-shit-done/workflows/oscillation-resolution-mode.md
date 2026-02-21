@@ -60,6 +60,11 @@ Display as a table to make the A→B→A→B ping-pong pattern visually obvious:
 <step name="quorum_diagnosis">
 ## Step 4 — Quorum Diagnosis
 
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"circuit_breaker\",\"sub_activity\":\"oscillation_diagnosis\"}"
+```
+
 Form your own structural coupling diagnosis first (before querying models).
 
 Then query each available quorum model with:
@@ -82,6 +87,11 @@ Apply R3.3 deliberation rules (up to 4 rounds, stop immediately on consensus).
 
 <step name="on_consensus">
 ## Step 5 — On Consensus
+
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"circuit_breaker\",\"sub_activity\":\"awaiting_approval\"}"
+```
 
 Present the unified solution plan to the user with:
 - Summary of structural coupling diagnosed

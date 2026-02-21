@@ -87,6 +87,11 @@ Store `$QUICK_DIR` for use in orchestration.
 
 **If NOT `$FULL_MODE`:** Use standard `quick` mode.
 
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
+```
+
 ```
 Task(
   prompt="
@@ -243,6 +248,11 @@ Offer: 1) Force proceed, 2) Abort
 
 Spawn qgsd-executor with plan reference:
 
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  "{\"activity\":\"quick\",\"sub_activity\":\"executing\"}"
+```
+
 ```
 Task(
   prompt="
@@ -398,6 +408,10 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIP
 Get final commit hash:
 ```bash
 commit_hash=$(git rev-parse --short HEAD)
+```
+
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 ```
 
 Display completion output:
