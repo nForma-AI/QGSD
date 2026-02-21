@@ -278,10 +278,10 @@ Plans:
 **Depends on:** Phase 15
 **Requirements:** ACT-02, ACT-04
 **Gap Closure:** Closes gaps from v0.4 second audit — Phase 15 executed but lacked VERIFICATION.md; ACT-02 and ACT-04 remained partial
-**Plans:** 0/1 planned
+**Plans:** 1/1 planned
 
 Plans:
-- [ ] 16-01-PLAN.md — Run gsd-verifier on Phase 15; produce 15-VERIFICATION.md; confirm REQUIREMENTS.md traceability Complete for ACT-02 and ACT-04
+- [ ] 16-01-PLAN.md — Fix INT-02 planning row label in both resume-project.md copies + produce 15-VERIFICATION.md (gsd-verifier, 5/5 truths) + update REQUIREMENTS.md ACT-02/ACT-04 traceability to Complete + commit all artifacts
 
 ### Phase 17: Fix Installed Agent Name Typos
 
