@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-21 after v0.3 milestone start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 14 in progress — activity-set/clear/get CLI commands implemented (plan 01 of 4 complete). Plans 14-02 and 14-03 ready to execute.
+**Current focus:** Phase 14 in progress — activity-set/clear/get CLI commands + execute-phase workflow injection complete (plans 01–02 of 4 done). Plan 14-03 ready to execute.
 
 ## Current Position
 
 Phase: 14 — activity-tracking (IN PROGRESS)
-Plan: 01 complete (1/4 plans done)
-Status: ACT-01 ✓, ACT-02 ✓, ACT-03 ✓, ACT-07 ✓ — activity-set/clear/get deployed; 148 tests pass
-Last activity: 2026-02-21 — Implemented activity tracking CLI commands in gsd-tools.cjs; deployed to ~/.claude/qgsd/bin/ and ~/.claude/get-shit-done/bin/
+Plan: 02 complete (2/4 plans done)
+Status: ACT-01 ✓, ACT-02 ✓, ACT-03 ✓, ACT-05 ✓, ACT-07 ✓ — activity-set/clear/get deployed; execute-phase workflow injected with 5 activity-set + 1 activity-clear calls; 148 tests pass
+Last activity: 2026-02-21 — Injected activity tracking into execute-phase workflow (installed + source); all 5 stage boundaries covered: executing_plan, checkpoint_verify, debug_loop, awaiting_human_verify, verifying_phase
 
 Progress: [████████████████████████████████] 12/13 phases complete (92%)
 
@@ -66,6 +66,7 @@ Progress: [███████████████████████
 | Phase 11-changelog-build P02 | 3 min | 2 tasks | 6 files |
 | Phase 12-version-publish P01 | 2 min | 3 tasks | 2 files |
 | Phase 14-activity-tracking P01 | 2min | 2 tasks | 2 files |
+| Phase 14-activity-tracking P02 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,7 @@ Recent decisions affecting current work:
 - [Phase 10]: INST-10 fix: sub-key backfill uses === undefined check (not falsy) to preserve user-set values including potentially 0; validateConfig() handles validation at runtime
 - [Phase 14-activity-tracking]: activity-set always overwrites updated with new Date().toISOString() for timestamp consistency — caller values are discarded
 - [Phase 14-activity-tracking]: activity-get returns {} on missing file (not an error) — resume-work can safely call without checking file existence first
+- [Phase 14-activity-tracking]: Activity tracking in execute-phase: variable names ${PHASE_NUMBER} (existing), ${PLAN_FILE}/${WAVE_N}/${DEBUG_ROUND} introduced; prose instruction blocks format matching workflow style
 
 ### Roadmap Evolution
 
