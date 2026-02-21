@@ -112,21 +112,37 @@ function writeState(statePath, fileSet, snapshot) {
 // Builds the block reason message for the deny decision (ENFC-02/03)
 function buildBlockReason(state) {
   const fileList = (state.file_set || []).join(', ') || '(unknown)';
-  return [
+  const snapshot = state.commit_window_snapshot;
+  const lines = [
     'CIRCUIT BREAKER ACTIVE',
     '',
     'Oscillating file set detected: ' + fileList,
     '',
-    'Claude cannot execute write Bash commands while the circuit breaker is active.',
+  ];
+
+  if (Array.isArray(snapshot) && snapshot.length > 0) {
+    lines.push('Commit Graph (most recent first):');
+    lines.push('| # | Files Changed |');
+    lines.push('|---|---------------|');
+    snapshot.forEach((files, index) => {
+      const fileStr = Array.isArray(files) && files.length > 0 ? files.join(', ') : '(empty)';
+      lines.push(`| ${index + 1} | ${fileStr} |`);
+    });
+    lines.push('');
+  } else {
+    lines.push('(commit graph unavailable)');
+    lines.push('');
+  }
+
+  lines.push(
+    'Invoke Oscillation Resolution Mode per R5 in CLAUDE.md — see get-shit-done/workflows/oscillation-resolution-mode.md for the full procedure.',
     '',
     'Allowed read-only operations: git log, git diff, grep, cat, ls, head, tail, find',
     '',
-    'Required actions before resuming:',
-    '1. Perform root cause analysis and map dependencies between the oscillating components.',
-    '2. Design a unified solution that resolves both components simultaneously.',
-    '3. You must commit the fix manually — Claude cannot run git commit while the breaker is active.',
-    '   Run \'npx qgsd --reset-breaker\' to clear the breaker after committing.',
-  ].join('\n');
+    'After committing the fix manually, run \'npx qgsd --reset-breaker\' to clear the circuit breaker.'
+  );
+
+  return lines.join('\n');
 }
 
 function main() {
@@ -185,4 +201,6 @@ function main() {
   });
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { buildBlockReason };
