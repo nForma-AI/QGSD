@@ -19,6 +19,8 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 **Phase range:** 23–28
 **Phase 23 complete:** 2026-02-22
+**Phase 24 complete:** 2026-02-22 (Gen1→Gen2 architecture port: claude 62✓, codex 77✓, copilot 58✓, openhands 13✓)
+**Phase 25 complete:** 2026-02-22 (constants.ts + logger.ts + identity tool in all 6 repos; STD-04, STD-08 done)
 
 ---
 
@@ -54,8 +56,8 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 <!-- v0.3 scope: test suite maintenance tool -->
 
-- [ ] User can run `/qgsd:fix-tests` to discover all jest/playwright/pytest tests in a project
-- [ ] Tool randomly batches tests into groups of 100 and executes each batch
+- ✓ User can run `/qgsd:fix-tests` to discover all jest/playwright/pytest tests in a project — Phase 20
+- ✓ Tool randomly batches tests into groups of 100 and iterates through batches with progress banners — Phase 20
 - [ ] Claude categorizes each failure into 5 action types (valid skip / adapt / isolate / real bug / fixture)
 - [ ] Tool iterates via debug→quick→debug loop until all tests are classified and actioned
 - [ ] npm publish qgsd@0.2.0 deferred — run `npm publish --access public` when ready (RLS-04)
@@ -108,6 +110,12 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 | Mulberry32 PRNG inline (no external dep) | Zero-dep policy for gsd-tools; inline implementation ensures deterministic shuffle without npm add | Phase 18 — EXEC-01 |
 | spawn (not spawnSync) for test execution | File-based stdout/stderr capture via spawnToFile prevents Node.js maxBuffer overflow on large jest JSON output | Phase 18 — EXEC-02/04 |
 | gsd-tools.cjs monolith noted as tech debt | Parallel wave agents all modifying same file triggered circuit breaker false positive; modularization deferred to future phase | Phase 18 — architectural note |
+| Stub categorization marks all failures as real_bug | Conservative placeholder for Phase 20; Phase 21 replaces with AI classification (CATG-01/02/03); never dispatches auto-actions in Phase 20 | Phase 20 — ITER-01/02 |
+| consecutive_no_progress stored in state JSON | Survives interruption; resume logic can correctly continue progress guard count without resetting | Phase 20 — ITER-02 |
+| ToolArguments re-export skipped in constants.ts | None of the 4 Gen1-ported repos define ToolArguments in types.ts — each uses specific Zod schemas; re-export would TypeScript error | Phase 25 — Plan 01 |
+| No console.log replacements in Phase 25 | Gen2 port (Phase 24) already eliminated all console.log from operational source files in all 4 repos | Phase 25 — Plan 02 |
+| gemini identityTool was registered but export-only | identityTool was exported from simple-tools.ts but never pushed to toolRegistry in index.ts — registered in Plan 03 | Phase 25 — Plan 03 bug fix |
+| AVAILABLE_OPENCODE_MODELS defined inline in simple-tools.ts | opencode types.ts uses interface pattern without MODELS/TOOLS consts; inline avoids misfit import | Phase 25 — Plan 03 |
 
 ---
-*Last updated: 2026-02-22 after Phase 23 — v0.4 MCP Ecosystem Phase 23 complete (surface fixes: identity rename, licenses, metadata, Makefiles, CHANGELOG/CLAUDE.md)*
+*Last updated: 2026-02-22 after Phase 25 — constants.ts + Logger + identity tool standardized across all 6 MCP repos; STD-04 and STD-08 complete; Phase 26 (mcp-status command) ready to plan*

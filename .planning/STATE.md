@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22 after Phase 23)
+See: .planning/PROJECT.md (updated 2026-02-22 after Phase 25)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.4 MCP Ecosystem — Phase 24 complete, ready to plan Phase 25
+**Current focus:** v0.4 MCP Ecosystem — Phase 25 complete, ready to plan Phase 26 (mcp-status command)
 
 ## Current Position
 
-Phase: 20 of 28 (Workflow Orchestrator) — COMPLETE
-Plan: 1 of 1 in current phase — ALL PLANS COMPLETE
-Status: Phase 20 complete — /qgsd:fix-tests command and workflow orchestrator delivered
-Last activity: 2026-02-22 - Completed Phase 20 Plan 01 execution (fix-tests.md command stub + 9-step workflow, 4 files created)
+Phase: 26 of 28 (MCP Status Command)
+Plan: Not started
+Status: Ready to plan — Phase 25 complete (constants.ts + logger.ts + identity tool in all 6 repos, 317 tests passing)
+Last activity: 2026-02-22 - Completed Phase 25 execution (3 plans, STD-04 + STD-08 done)
 
-Progress: [███████░░░░░░░░░░░░░] 1/3 plans (33%)
+Progress: [████████████████████] 3/3 plans (100%)
 
 ## Performance Metrics
 
@@ -101,5 +101,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed Phase 24 — all 4 MCP servers ported from Gen1 to Gen2 architecture; 210 tests passing across 4 repos
+Stopped at: Phase 25 complete, ready to plan Phase 26 (mcp-status command)
 Resume file: None
