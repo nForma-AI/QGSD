@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22 after Phase 22)
+See: .planning/PROJECT.md (updated 2026-02-22 after Phase 26)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 23 — MCP Repo Surface Fixes (v0.4 MCP Ecosystem)
+**Current focus:** Phase 27 — Model Switching (v0.4 MCP Ecosystem)
 
 ## Current Position
 
-Phase: 22 of 28 (Integration Tests) — COMPLETE
-Plan: 22-02 (Wave 2) — complete
-Status: Phase 22 complete — v0.3 milestone verified; all 14 v0.3 requirements PASSED; 135 tests, 0 failures
-Last activity: 2026-02-22 - Completed quick task 49: fix sibling tool call errors in quorum by making calls sequential
+Phase: 26 of 28 (MCP Status Command) — COMPLETE
+Plan: 26-01 — complete
+Status: Phase 26 complete — /qgsd:mcp-status live; OBS-01..04 satisfied; 10 agents in identity table; Phases 23–26 all done
+Last activity: 2026-02-22 - Completed Phase 26: /qgsd:mcp-status command with scoreboard UNAVAIL counts and health state
 
-Progress: [███████████████████░] 21/22 plans (95%)
+Progress: [████████████████████░] 26/28 phases (93%)
 
 ## Performance Metrics
 
@@ -86,6 +86,10 @@ Recent decisions affecting current work:
 - [22-01]: TC-RESUME-2 uses 3-batch manifest with empty files arrays — exercises --batch-index 2 routing without needing real test runner
 - [Phase 22]: 22-VERIFICATION.md written with evidence chains for all 14 v0.3 requirements — 135 tests passing, all verdicts PASSED, v0.3 milestone complete
 - [Phase 22]: REQUIREMENTS.md: 7 requirements (CATG-01/02/03, ITER-01/02, INTG-01/03) marked Complete with Phase 22 as verifying phase
+- [Phase 23]: 6 MCP repos unified: openhands renamed, dynamic versioning, MIT license, Makefile, CHANGELOG, npm scoping
+- [Phase 24]: Gen1→Gen2 architecture port: per-tool *.tool.ts + registry.ts for claude/codex/copilot/openhands
+- [Phase 25]: identity tool (5-field schema: name/version/model/available_models/install_method) + constants.ts + logger.ts (stderr-only via console.warn) in all 6 repos
+- [Phase 26]: /qgsd:mcp-status reads identity tool on all 10 quorum agents + scoreboard UNAVAIL counts; health = available/quota-exceeded/error; claude-glm is 10th agent; NOT in quorum_commands (R2.1)
 
 ### Pending Todos
 
@@ -114,5 +118,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 22 complete — v0.3 milestone verified (135 tests, 14/14 requirements PASSED); PROJECT.md and STATE.md evolved; ready to plan Phase 23 (MCP Repo Surface Fixes)
+Stopped at: Phase 26 complete — /qgsd:mcp-status live with 10 agents, scoreboard UNAVAIL, health state; Phases 23–26 all done; ready to plan Phase 27 (Model Switching)
 Resume file: None
