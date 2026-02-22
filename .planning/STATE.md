@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-22 after v0.4 gap closure)
 Phase: 32 of 36 (Wizard Scaffold — v0.5 start)
 Plan: 02 of 02
 Status: Executed — pending verification
-Last activity: 2026-02-22 - Executed Phase 32 (2 plans): /qgsd:mcp-setup wizard command created
+Last activity: 2026-02-22 - Completed quick task 54: add unit tests for remaining untested modules
 
 Progress: [████████████████████] 30/30 plans (100%)
 
@@ -70,6 +70,7 @@ Recent decisions affecting current work:
 |---|-------------|------|--------|--------|-----------|
 | 52 | is it clean ? | 2026-02-22 | a7e4c9f | Complete | [52-is-it-clean](./quick/52-is-it-clean/) |
 | 53 | we need full unit test coverage | 2026-02-22 | 76b24b5 | Verified | [53-we-need-full-unit-test-coverage](./quick/53-we-need-full-unit-test-coverage/) |
+| 54 | add unit tests for remaining untested modules | 2026-02-22 | Pending | Pending | [54-add-unit-tests-for-remaining-untested-mo](./quick/54-add-unit-tests-for-remaining-untested-mo/) |
 
 ## Session Continuity
 
