@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-22 after v0.3 milestone started)
 Phase: Not started (defining requirements)
 Plan: —
 Status: Defining requirements
-Last activity: 2026-02-22 — Milestone v0.3 started (test suite maintenance tool)
+Last activity: 2026-02-22 - Completed quick task 40: we should never skip research, just run it
 
 Progress: [████████████████████] 40/40 plans (100%)
 
@@ -204,7 +204,7 @@ Recent decisions affecting current work:
 | 36 | Add quorum resolution loop for human_needed verifier status in execute-phase and quick (--full) workflows | 2026-02-21 | 045f2fc | Verified | [36-add-quorum-resolution-loop-for-human-nee](./quick/36-add-quorum-resolution-loop-for-human-nee/) |
 | 37 | Refactor inline quorum model loops in 6 sites across 5 workflow files: replace with Task(qgsd-quorum-orchestrator) spawns | 2026-02-21 | 4200c40 | Complete | [37-refactor-inline-quorum-model-loops-in-6-](./quick/37-refactor-inline-quorum-model-loops-in-6-/) |
 | 38 | Codify trust + audit enforcement philosophy: add Design Principles section to CLAUDE.md with audit-trail principle, three named mechanisms, FSM contrast | 2026-02-21 | disk-only | Complete | [38-codify-trust-plus-audit-enforcement-phil](./quick/38-codify-trust-plus-audit-enforcement-phil/) |
-| 40 | Remove has_research shortcut from plan-phase Step 5: research now always runs on /qgsd:plan-phase invocation | 2026-02-22 | 8ac9ca8 | Complete | [40-we-should-never-skip-research-just-run-i](./quick/40-we-should-never-skip-research-just-run-i/) |
+| 40 | Remove has_research shortcut from plan-phase Step 5: research now always runs on /qgsd:plan-phase invocation | 2026-02-22 | 8ac9ca8 | Verified | [40-we-should-never-skip-research-just-run-i](./quick/40-we-should-never-skip-research-just-run-i/) |
 
 ### Blockers/Concerns
 
