@@ -116,7 +116,7 @@ Store the key using this Bash command (substitute AGENT_KEY and API_KEY):
 
 ```bash
 KEY_RESULT=$(node -e "
-const { set, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 const agentKey = process.env.AGENT_KEY;
 const apiKey   = process.env.API_KEY;
 (async () => {
@@ -250,6 +250,15 @@ process.stdout.write('');
 
 ### Step 3c: Write entries to ~/.claude.json
 
+If `$CLAUDE_MCP_PATH` is empty (Step 3b returned empty string), display a warning and use the fallback:
+
+```bash
+if [ -z "$CLAUDE_MCP_PATH" ]; then
+  echo "⚠ Could not resolve claude-mcp-server path automatically. The mcpServers entry will use 'claude-mcp-server' as the args value. You may need to update the path manually after installation."
+  CLAUDE_MCP_PATH="claude-mcp-server"
+fi
+```
+
 For each pending agent, add the mcpServers entry. Use this inline node script as a template (adapt for the actual pending agents in the session):
 
 ```bash
@@ -289,7 +298,7 @@ process.stdout.write(JSON.stringify({ written: true, count: pendingAgents.length
 
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 syncToClaudeJson(SERVICE)
   .then(() => process.stdout.write('synced\n'))
   .catch(e => process.stderr.write('sync warning: ' + e.message + '\n'));
@@ -355,7 +364,7 @@ const os   = require('os');
 
     let keyStatus = 'no key';
     try {
-      const { get, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+      const { get, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
       const keyName = 'ANTHROPIC_API_KEY_' + name.toUpperCase().replace(/-/g,'_');
       const stored  = await get(SERVICE, keyName);
       keyStatus = stored ? 'key stored' : (env.ANTHROPIC_API_KEY ? 'key in env' : 'no key');
@@ -449,7 +458,7 @@ Store the key using bin/secrets.cjs (agent name and key passed via env vars — 
 
 ```bash
 KEY_RESULT=$(node -e "
-const { set, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 const agentKey = process.env.AGENT_KEY;
 const apiKey   = process.env.API_KEY;
 (async () => {
@@ -466,7 +475,27 @@ const apiKey   = process.env.API_KEY;
 
 Parse KEY_RESULT:
 - `stored: true` — proceed to Step C
-- `stored: false` — keytar unavailable fallback: use AskUserQuestion to confirm env_block storage (with warning that key will be stored unencrypted in ~/.claude.json), write audit log to `~/.claude/debug/mcp-setup-audit.log`, or cancel back to roster
+- `stored: false` — keytar unavailable fallback:
+
+  Use AskUserQuestion:
+  - header: "Keychain Unavailable"
+  - question: "System keychain unavailable. API key will be stored unencrypted in ~/.claude.json (less secure). Confirm?\n\nLinux users: sudo apt install libsecret-1-dev gnome-keyring"
+  - options:
+    - "Store unencrypted in ~/.claude.json (less secure)"
+    - "Cancel — back to roster"
+
+  If "Cancel — back to roster": display "No changes made." Return to roster display.
+
+  If "Store unencrypted in ~/.claude.json (less secure)": write audit log then mark agent as `method: env_block` in pending changes and proceed to Step C:
+  ```bash
+  mkdir -p ~/.claude/debug
+  node -e "
+  const fs = require('fs');
+  const ts = new Date().toISOString();
+  const msg = ts + ' QGSD mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+  fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
+  " AGENT_KEY="{agent-name}"
+  ```
 
 **Step C — Confirm + apply**
 
@@ -562,7 +591,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 4. Sync keytar secrets to ~/.claude.json:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -635,7 +664,7 @@ Run an inline node script to check whether a key is already stored in keytar for
 
 ```bash
 KEY_CHECK_RESULT=$(node -e "
-const { get, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { get, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 (async () => {
   try {
     const agentName = process.env.AGENT_NAME;
@@ -697,7 +726,7 @@ Run inline node script using `set()` from `bin/secrets.cjs`. Pass key via enviro
 
 ```bash
 KEY_STORE_RESULT=$(node -e "
-const { set, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 (async () => {
   try {
     const agentName = process.env.AGENT_NAME;
@@ -787,7 +816,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 3. Sync all keytar secrets back to ~/.claude.json:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -913,13 +942,21 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 " AGENT_NAME="{agent-name}" NEW_URL="{new-url}"
 ```
 
-3. Invoke `/qgsd:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
+3. Sync keytar secrets to ~/.claude.json:
+```bash
+node -e "
+const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
+"
+```
+
+4. Invoke `/qgsd:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
 ```
 ⚠ {agent-name}: restart failed. Config applied — reload on next Claude Code restart.
   Manual retry: /qgsd:mcp-restart {agent-name}
 ```
 
-4. Display:
+5. Display:
 ```
 ✓ Provider updated and agent restarted.
 
@@ -1033,7 +1070,7 @@ cp ~/.claude.json ~/.claude.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || 
 3. Sync keytar secrets:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
