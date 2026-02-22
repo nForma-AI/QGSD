@@ -17,6 +17,9 @@ files_modified:
   - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/default-model.test.ts
   - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/mcp-stdio.test.ts
   - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/context-building.test.ts
+  - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/edge-cases.test.ts
+  - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/error-scenarios.test.ts
+  - /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/model-selection.test.ts
   - /Users/jonathanborduas/code/claude-mcp-server/package.json
 autonomous: true
 requirements: [QUICK-42]
@@ -309,6 +312,9 @@ Two comments reference the codex CLI. Update them:
     /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/default-model.test.ts
     /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/mcp-stdio.test.ts
     /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/context-building.test.ts
+    /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/edge-cases.test.ts
+    /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/error-scenarios.test.ts
+    /Users/jonathanborduas/code/claude-mcp-server/src/__tests__/model-selection.test.ts
   </files>
   <action>
 These tests were written for the Codex fork. Update them to match the Claude implementation. Rewrite each file as follows:
@@ -379,6 +385,45 @@ These tests were written for the Codex fork. Update them to match the Claude imp
 - Update comment: `// Check what prompt was sent to Codex` -> `// Check what prompt was sent to Claude`
 - Update prompt index: old code checked index 4 (`exec, --model, gpt-5.3-codex, --skip-git-repo-check, prompt`). New cmdArgs are `['-p', enhancedPrompt, '--model', ...]` so enhanced prompt is at index 1 (`call?.[1]?.[1]`)
 - Mock responses: use `stdout: JSON.stringify({ result: 'Test response' })` so `result.content[0].text` equals `'Test response'`
+
+**edge-cases.test.ts:**
+- Replace all imports of `CodexToolHandler` -> `ClaudeToolHandler`
+- Replace all instantiations `new CodexToolHandler(...)` -> `new ClaudeToolHandler(...)`
+- Replace all `handler: CodexToolHandler` type annotations -> `ClaudeToolHandler`
+- Replace all `executeCommand('codex', [...])` call matchers with `executeCommand('claude', [...])` using the new arg format `['-p', prompt, '--model', 'claude-sonnet-4-6', '--output-format', 'json']`
+- Replace `TOOLS.CODEX` -> `TOOLS.CLAUDE` in all references
+- Replace `sessionStorage.getCodexConversationId` -> `sessionStorage.getClaudeSessionId`; `setCodexConversationId` -> `setClaudeSessionId`
+- Remove any `delete process.env.CODEX_MCP_CALLBACK_URI` calls from beforeEach
+- Mock responses: replace `stderr: 'conversation id: ...'` patterns with `stdout: JSON.stringify({ result: '...', session_id: '...' })`
+- Remove threadId, callbackUri, reasoningEffort, sandbox, fullAuto assertions throughout
+- Update model string assertions: `'gpt-5.3-codex'` -> `'claude-sonnet-4-6'`
+- Update describe block names: any 'Codex ...' -> 'Claude ...'
+
+**error-scenarios.test.ts:**
+- Replace all imports of `CodexToolHandler` -> `ClaudeToolHandler`
+- Replace all instantiations `new CodexToolHandler(...)` -> `new ClaudeToolHandler(...)`
+- Replace all `handler: CodexToolHandler` type annotations -> `ClaudeToolHandler`
+- Replace all `executeCommand('codex', [...])` call matchers with `executeCommand('claude', [...])` using the new arg format
+- Replace `TOOLS.CODEX` -> `TOOLS.CLAUDE` in all references
+- Update error message assertions: `'Failed to execute codex command'` -> `'Failed to execute claude command'`; `'codex'` -> `'claude'` in any error string checks
+- Replace `sessionStorage.getCodexConversationId` -> `sessionStorage.getClaudeSessionId`; `setCodexConversationId` -> `setClaudeSessionId`
+- Mock error responses: keep the error structure, but update any codex-specific error strings to claude equivalents
+- Remove CODEX_MCP_CALLBACK_URI env var cleanup from beforeEach
+- Update model string assertions: `'gpt-5.3-codex'` -> `'claude-sonnet-4-6'`
+- Update describe block names: any 'Codex ...' -> 'Claude ...'
+
+**model-selection.test.ts:**
+- Replace all imports of `CodexToolHandler` -> `ClaudeToolHandler`
+- Replace all instantiations `new CodexToolHandler(...)` -> `new ClaudeToolHandler(...)`
+- Replace all `handler: CodexToolHandler` type annotations -> `ClaudeToolHandler`
+- Replace all `executeCommand('codex', [...])` call matchers with `executeCommand('claude', [...])` using the new arg format
+- Replace `TOOLS.CODEX` -> `TOOLS.CLAUDE` in all references
+- Replace all `CODEX_DEFAULT_MODEL` / `CODEX_DEFAULT_MODEL_ENV_VAR` references with `CLAUDE_DEFAULT_MODEL` / `CLAUDE_DEFAULT_MODEL_ENV_VAR`
+- Replace all `process.env.CODEX_DEFAULT_MODEL` with `process.env.CLAUDE_DEFAULT_MODEL` (set/delete in beforeEach/afterEach)
+- Replace model string assertions: `'gpt-5.3-codex'` -> `'claude-sonnet-4-6'`; update AVAILABLE_MODELS assertions to reference `AVAILABLE_CLAUDE_MODELS` containing `['claude-sonnet-4-6', 'claude-opus-4-6', 'claude-haiku-4-5-20251001']`
+- Remove the `reasoningEffort` test entirely — reasoningEffort no longer exists in ClaudeToolSchema
+- Update describe block name: any 'Codex Model Selection' -> 'Claude Model Selection'
+- Update test names: 'should use gpt-5.3-codex as default' -> 'should use claude-sonnet-4-6 as default'
   </action>
   <verify>cd /Users/jonathanborduas/code/claude-mcp-server && grep -ri 'codex' src/__tests__/ || echo "No codex refs in tests"</verify>
   <done>No codex references remain in any test file; grep returns nothing (or the "No codex refs" echo)</done>
