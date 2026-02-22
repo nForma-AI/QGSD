@@ -48,8 +48,9 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
 - [v0.3 roadmap]: 5 phases (18–22): CLI Foundation → State Schema → Workflow Orchestrator → Categorization Engine → Integration Test
-- [v0.3 scope]: `/qgsd:maintain-tests` is execution-only — NOT added to quorum_commands (INTG-03 / R2.1)
-- [v0.3 scope]: Circuit breaker must be disabled at maintain-tests start and re-enabled at end (INTG-01) — prevents false oscillation on iterative fix commits
+- [v0.3 scope]: User-facing command is `/qgsd:fix-tests` — single autonomous command (discover → batch → run → categorize → fix → loop). Internal gsd-tools sub-commands remain as maintain-tests discover/batch/run-batch.
+- [v0.3 scope]: `/qgsd:fix-tests` is execution-only — NOT added to quorum_commands (INTG-03 / R2.1)
+- [v0.3 scope]: Circuit breaker must be disabled at fix-tests start and re-enabled at end (INTG-01) — prevents false oscillation on iterative fix commits
 - [v0.3 arch]: gsd-tools.cjs owns all mechanical ops (discover/batch/run-batch/save-state/load-state); workflow orchestrator owns reasoning (categorization, action dispatch, loop control)
 - [v0.3 arch]: node:sqlite for state on Node >= 22.5.0; JSON flat file fallback for older Node — state schema defined before workflow is written
 - [v0.3 arch]: Failing tests run 3 times before categorization — flakiness pre-check gates AI categorization queue (EXEC-04)
