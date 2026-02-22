@@ -2,10 +2,10 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22 after Phase 36)
+See: .planning/PROJECT.md (updated 2026-02-22 after Phase 37)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.6 Agent Slots & Quorum Composition — Roadmap appended (Phases 37–40); v0.5 all phases complete
+**Current focus:** v0.6 Agent Slots & Quorum Composition — Phase 38 (v0.5 bookkeeping) up next
 
 ## Current Position
 
@@ -14,7 +14,7 @@ Plan: 37-01 Complete
 Status: Phase 37 gap-closure plans executed; mcp-setup.md distributable — ready for /qgsd:verify-work or /qgsd:execute-phase 38
 Last activity: 2026-02-22 - Phase 37 executed — mcp-setup.md distribution defects fixed (9 hardcoded paths removed, 3 apply-flow fixes applied)
 
-Progress: [████████████████████] 36/40 phases defined (v0.6 phases pending execution)
+Progress: [████████████████████] 37/37 plans (100%)
 
 ## Performance Metrics
 
@@ -60,6 +60,8 @@ Recent decisions affecting current work:
 - [Phase 36]: hasClaudeMcpAgents() detection checks both known template names and args path for 'claude-mcp-server' substring; nudge only for Claude Code runtime; fail-open on read errors
 - [v0.6 roadmap]: SCBD-01..03 assigned to Phase 38 (not Phase 37) — scoreboard slot tracking is part of composition data model; slot names must exist (Phase 37) before scoreboard schema adopts them (Phase 38)
 - [v0.6 roadmap]: MULTI-03 ("add slot via wizard") assigned to Phase 39 alongside MULTI-01/02 — wizard composition screen (Phase 40) depends on multi-slot support existing in config first
+- [Phase 37]: `~/.claude/qgsd-bin/secrets.cjs` placeholder pattern confirmed for distributable commands; source retains placeholder, copyWithPathReplacement() substitutes at install time
+- [Phase 37]: All 5 apply flows now call syncToClaudeJson — Option 2 (Swap Provider) was the only missing one; symmetry enforced
 
 ### Pending Todos
 
@@ -82,5 +84,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: 2026-02-22 — v0.6 roadmap appended (Phases 37–40); v0.5 all phases complete. Ready for /qgsd:plan-phase 37
+Stopped at: Phase 37 complete — mcp-setup.md distribution defects fixed; auto-advancing to Phase 38 (v0.5 bookkeeping)
 Resume file: None
