@@ -295,7 +295,7 @@
 | 26. MCP Status Command | v0.4 | 1/1 | Complete | 2026-02-22 |
 | 27. Model Switching | v0.4 | 2/2 | Complete | 2026-02-22 |
 | 28. Update and Restart Commands | v0.4 | TBD | Complete | 2026-02-22 |
-| 29. Wizard Scaffold | 1/1 | Complete   | 2026-02-22 | - |
+| 29. Wizard Scaffold | 1/1 | Complete    | 2026-02-22 | - |
 | 30. API Key Management | v0.5 | 0/TBD | Not started | - |
 | 31. Provider Swap | v0.5 | 0/TBD | Not started | - |
 | 32. Agent Roster | v0.5 | 0/TBD | Not started | - |
