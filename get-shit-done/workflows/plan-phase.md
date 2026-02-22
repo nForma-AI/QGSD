@@ -67,9 +67,7 @@ If "Run discuss-phase first": Display `/qgsd:discuss-phase {X}` and exit workflo
 
 **Skip if:** `--gaps` flag, `--skip-research` flag, or `research_enabled` is false (from init) without `--research` override.
 
-**If `has_research` is true (from init) AND no `--research` flag:** Use existing, skip to step 6.
-
-**If RESEARCH.md missing OR `--research` flag:**
+**Research always runs** (overwriting any existing RESEARCH.md unless skipped via flags above). Research is not cached between plan-phase invocations.
 
 Display banner:
 ```
@@ -439,7 +437,7 @@ Output this markdown directly (not as a code block):
 | 1    | 01, 02 | [objectives] |
 | 2    | 03     | [objective]  |
 
-Research: {Completed | Used existing | Skipped}
+Research: {Completed | Skipped}
 Verification: {Passed | Passed with override | Skipped}
 
 ───────────────────────────────────────────────────────────────
@@ -466,7 +464,7 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Phase validated against roadmap
 - [ ] Phase directory created if needed
 - [ ] CONTEXT.md loaded early (step 4) and passed to ALL agents
-- [ ] Research completed (unless --skip-research or --gaps or exists)
+- [ ] Research completed (unless --skip-research or --gaps or research_enabled=false)
 - [ ] qgsd-phase-researcher spawned with CONTEXT.md
 - [ ] Existing plans checked
 - [ ] qgsd-planner spawned with CONTEXT.md + RESEARCH.md
