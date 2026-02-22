@@ -129,6 +129,8 @@
  *   activity-get                       Read .planning/current-activity.json; returns {} if missing
  *
  * Test Maintenance:
+ *   maintain-tests discover [--runner auto|jest|playwright|pytest] [--dir path] [--output-file path]
+ *                              Detect test frameworks from config files and list all tests via framework CLI
  *   maintain-tests batch --input-file <path> [--size N] [--seed N] [--exclude-file <path>] [--manifest-file <path>]
  *                              Shuffle and split test list into batches; write manifest to disk before execution
  *   maintain-tests run-batch --batch-file <path> [--timeout N] [--env KEY=VALUE...] [--output-file <path>]
@@ -5388,8 +5390,19 @@ async function main() {
           }, raw);
           break;
         }
+        case 'discover': {
+          const runnerIdx = args.indexOf('--runner');
+          const dirIdx = args.indexOf('--dir');
+          const outputIdx = args.indexOf('--output-file');
+          cmdMaintainTestsDiscover(cwd, {
+            runner: runnerIdx !== -1 ? args[runnerIdx + 1] : 'auto',
+            dir: dirIdx !== -1 ? args[dirIdx + 1] : null,
+            outputFile: outputIdx !== -1 ? args[outputIdx + 1] : null,
+          }, raw);
+          break;
+        }
         default:
-          error(`Unknown maintain-tests subcommand: ${subCmd}\nAvailable: batch, run-batch`);
+          error(`Unknown maintain-tests subcommand: ${subCmd}\nAvailable: discover, batch, run-batch`);
       }
       break;
     }
@@ -5517,6 +5530,213 @@ function cmdMaintainTestsBatch(cwd, options, raw) {
 
   // Always output to stdout
   output(manifest, raw);
+}
+
+// ─── Maintain-Tests: Discover ─────────────────────────────────────────────────
+
+/**
+ * Detect test frameworks from config files and list all tests via framework CLI.
+ * Never globs for test files — always uses each framework's own CLI invocation.
+ */
+function cmdMaintainTestsDiscover(cwd, options, raw) {
+  const searchDir = options.dir ? path.resolve(cwd, options.dir) : cwd;
+
+  // ── Framework Detection ────────────────────────────────────────────────────
+
+  function detectJest(dir) {
+    const configFiles = [
+      'jest.config.js', 'jest.config.cjs', 'jest.config.mjs',
+      'jest.config.ts', 'jest.config.json',
+    ];
+    for (const f of configFiles) {
+      if (fs.existsSync(path.join(dir, f))) return true;
+    }
+    const pkgPath = path.join(dir, 'package.json');
+    if (fs.existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+        if (pkg.jest) return true;
+        const deps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+        if (deps.jest) return true;
+      } catch (e) { /* ignore parse errors */ }
+    }
+    return false;
+  }
+
+  function detectPlaywright(dir) {
+    const configFiles = [
+      'playwright.config.js', 'playwright.config.cjs',
+      'playwright.config.mjs', 'playwright.config.ts',
+    ];
+    return configFiles.some(f => fs.existsSync(path.join(dir, f)));
+  }
+
+  function detectPytest(dir) {
+    if (fs.existsSync(path.join(dir, 'pytest.ini'))) return true;
+    const setupCfg = path.join(dir, 'setup.cfg');
+    if (fs.existsSync(setupCfg)) {
+      try {
+        const content = fs.readFileSync(setupCfg, 'utf-8');
+        if (content.includes('[tool:pytest]')) return true;
+      } catch (e) { /* ignore */ }
+    }
+    const pyproject = path.join(dir, 'pyproject.toml');
+    if (fs.existsSync(pyproject)) {
+      try {
+        const content = fs.readFileSync(pyproject, 'utf-8');
+        if (content.includes('[tool.pytest.ini_options]')) return true;
+      } catch (e) { /* ignore */ }
+    }
+    return false;
+  }
+
+  // ── Determine which runners to invoke ─────────────────────────────────────
+
+  let runnersToUse;
+  if (options.runner && options.runner !== 'auto') {
+    runnersToUse = [options.runner];
+  } else {
+    runnersToUse = [];
+    if (detectJest(searchDir)) runnersToUse.push('jest');
+    if (detectPlaywright(searchDir)) runnersToUse.push('playwright');
+    if (detectPytest(searchDir)) runnersToUse.push('pytest');
+  }
+
+  // ── CLI invocation per framework ──────────────────────────────────────────
+
+  const warnings = [];
+  const byRunner = {};
+  const seenPaths = new Set();
+  const allFiles = [];
+
+  function addPaths(runner, paths) {
+    byRunner[runner] = [];
+    for (const p of paths) {
+      const abs = path.isAbsolute(p) ? p : path.resolve(searchDir, p);
+      if (!seenPaths.has(abs)) {
+        seenPaths.add(abs);
+        allFiles.push(abs);
+        byRunner[runner].push(abs);
+      }
+    }
+  }
+
+  function invokeJest() {
+    // Try npx jest --listTests first, fall back to local binary
+    let result = spawnSync('npx', ['jest', '--listTests'], {
+      cwd: searchDir,
+      encoding: 'utf-8',
+    });
+    if (result.error || (result.status !== 0 && !(result.stdout || '').trim())) {
+      result = spawnSync('./node_modules/.bin/jest', ['--listTests'], {
+        cwd: searchDir,
+        encoding: 'utf-8',
+      });
+    }
+    if (result.error || (result.status !== 0 && !(result.stdout || '').trim())) {
+      const errMsg = result.error ? result.error.message : (result.stderr || 'non-zero exit');
+      warnings.push({ runner: 'jest', error: errMsg });
+      addPaths('jest', []);
+      return;
+    }
+    const lines = (result.stdout || '').split('\n').filter(l => l.trim() !== '');
+    addPaths('jest', lines);
+  }
+
+  function invokePlaywright() {
+    const result = spawnSync('npx', ['playwright', 'test', '--list'], {
+      cwd: searchDir,
+      encoding: 'utf-8',
+    });
+    if (result.error) {
+      warnings.push({ runner: 'playwright', error: result.error.message });
+      addPaths('playwright', []);
+      return;
+    }
+    if (result.status !== 0 && !(result.stdout || '').trim()) {
+      warnings.push({ runner: 'playwright', error: result.stderr || 'non-zero exit' });
+      addPaths('playwright', []);
+      return;
+    }
+    // Parse lines matching spec file paths
+    const specPattern = /\s+(\S+\.spec\.(ts|js|tsx|jsx))/;
+    const lines = (result.stdout || '').split('\n');
+    const files = [];
+    for (const line of lines) {
+      const match = line.match(specPattern);
+      if (match) {
+        const filePath = match[1].trim();
+        const abs = path.isAbsolute(filePath) ? filePath : path.resolve(searchDir, filePath);
+        files.push(abs);
+      }
+    }
+    addPaths('playwright', files);
+  }
+
+  function invokePytest() {
+    const result = spawnSync('python', ['-m', 'pytest', '--collect-only', '-q'], {
+      cwd: searchDir,
+      encoding: 'utf-8',
+    });
+    if (result.error) {
+      warnings.push({ runner: 'pytest', error: result.error.message });
+      addPaths('pytest', []);
+      return;
+    }
+    // pytest exits 1 when no tests found or some tests fail — that is acceptable.
+    // Only treat as invocation failure if the process could not be spawned (result.error).
+    // Output format: path/to/test.py::test_name
+    const lines = (result.stdout || '').split('\n');
+    const files = new Set();
+    for (const line of lines) {
+      if (line.startsWith('ERROR') || line.startsWith('=') || line.trim() === '') continue;
+      if (line.includes('::')) {
+        const filePart = line.split('::')[0].trim();
+        if (filePart) {
+          const abs = path.isAbsolute(filePart) ? filePart : path.resolve(searchDir, filePart);
+          files.add(abs);
+        }
+      }
+    }
+    addPaths('pytest', Array.from(files));
+  }
+
+  // ── Invoke detected runners ────────────────────────────────────────────────
+
+  if (runnersToUse.length === 0) {
+    warnings.push({ runner: null, error: 'No test framework config files detected' });
+  } else {
+    for (const runner of runnersToUse) {
+      if (runner === 'jest') invokeJest();
+      else if (runner === 'playwright') invokePlaywright();
+      else if (runner === 'pytest') invokePytest();
+      else warnings.push({ runner, error: `Unknown runner: ${runner}` });
+    }
+  }
+
+  // ── Build result ──────────────────────────────────────────────────────────
+
+  const discoverResult = {
+    runners: runnersToUse,
+    test_files: allFiles,
+    total_count: allFiles.length,
+    by_runner: byRunner,
+  };
+  if (warnings.length > 0) {
+    discoverResult.warnings = warnings;
+  }
+
+  // ── Output ────────────────────────────────────────────────────────────────
+
+  const json = JSON.stringify(discoverResult, null, 2);
+  if (options.outputFile) {
+    const outPath = path.isAbsolute(options.outputFile)
+      ? options.outputFile
+      : path.resolve(cwd, options.outputFile);
+    fs.writeFileSync(outPath, json, 'utf-8');
+  } else {
+    process.stdout.write(json + '\n');
+  }
 }
 
 // ─── Activity Commands ────────────────────────────────────────────────────────
