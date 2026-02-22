@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-22 after Phase 25)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.4 MCP Ecosystem — Phase 25 complete, ready to plan Phase 26 (mcp-status command)
+**Current focus:** v0.3 Fix-Tests Tool — Phase 21 complete (categorization engine + dispatch), Phase 22 (integration tests) ready to plan
 
 ## Current Position
 
-Phase: 26 of 28 (MCP Status Command)
+Phase: 22 of 28 (Integration Tests)
 Plan: Not started
-Status: Ready to plan — Phase 25 complete (constants.ts + logger.ts + identity tool in all 6 repos, 317 tests passing)
-Last activity: 2026-02-22 - Completed Phase 25 execution (3 plans, STD-04 + STD-08 done)
+Status: Ready to plan — Phase 21 complete (5-category AI classification + dispatch engine in fix-tests.md, CATG-01/02/03 done)
+Last activity: 2026-02-22 - Completed Phase 21 execution (2 plans, categorization engine + dispatch loop)
 
 Progress: [████████████████████] 3/3 plans (100%)
 
@@ -104,5 +104,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 20 complete — /qgsd:fix-tests workflow orchestrator delivered; all 4 files created; ITER-01/02 INTG-01/03 closed; Phase 21 (Categorization Engine) ready to plan
+Stopped at: Phase 21 complete — AI classification engine (Step 6d) and dispatch loop (Step 6h) delivered; both source and installed fix-tests.md updated; CATG-01/02/03 closed; Phase 22 (Integration Tests) ready to plan
 Resume file: None
