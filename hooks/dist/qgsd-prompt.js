@@ -88,7 +88,33 @@ process.stdin.on('end', () => {
     // ── Priority 2: Planning command → inject quorum instructions ────────────
     const config = loadConfig(cwd);
     const commands = config.quorum_commands;
-    const instructions = config.quorum_instructions || DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK;
+    let instructions = config.quorum_instructions || DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK;
+
+    // Append model override block if any preferences are set
+    const prefs = config.model_preferences || {};
+    const overrideEntries = Object.entries(prefs).filter(([, m]) => m && typeof m === 'string');
+    if (overrideEntries.length > 0) {
+      // Agent key → primary quorum tool call mapping
+      const AGENT_TOOL_MAP = {
+        'codex-cli':         'mcp__codex-cli__review',
+        'gemini-cli':        'mcp__gemini-cli__gemini',
+        'opencode':          'mcp__opencode__opencode',
+        'copilot-cli':       'mcp__copilot-cli__ask',
+        'claude-deepseek':   'mcp__claude-deepseek__claude',
+        'claude-minimax':    'mcp__claude-minimax__claude',
+        'claude-qwen-coder': 'mcp__claude-qwen-coder__claude',
+        'claude-kimi':       'mcp__claude-kimi__claude',
+        'claude-llama4':     'mcp__claude-llama4__claude',
+        'claude-glm':        'mcp__claude-glm__claude',
+      };
+      const lines = overrideEntries.map(([agent, model]) => {
+        const tool = AGENT_TOOL_MAP[agent] || ('mcp__' + agent);
+        return '  - When calling ' + tool + ', include model="' + model + '" in the tool input';
+      }).join('\n');
+      instructions += '\n\nModel overrides (from qgsd.json model_preferences):\n' +
+        'The following agents have preferred models configured. Pass the specified model parameter:\n' +
+        lines;
+    }
 
     // Anchored allowlist pattern — requires /gsd: or /qgsd: prefix and word boundary after command.
     const cmdPattern = new RegExp('^\\s*\\/q?gsd:(' + commands.join('|') + ')(\\s|$)');

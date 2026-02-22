@@ -32,6 +32,7 @@ const DEFAULT_CONFIG = {
     haiku_reviewer: true,          // call Claude Haiku to verify before blocking
     haiku_model: 'claude-haiku-4-5-20251001', // model used for review
   },
+  model_preferences: {},  // { "<mcp-server-name>": "<model-id>" }
 };
 
 // Reads and parses a JSON config file.
@@ -102,6 +103,20 @@ function validateConfig(config) {
     if (typeof config.circuit_breaker.haiku_model !== 'string') {
       process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.haiku_model must be a string; using default\n');
       config.circuit_breaker.haiku_model = DEFAULT_CONFIG.circuit_breaker.haiku_model;
+    }
+  }
+
+  // Validate model_preferences
+  if (typeof config.model_preferences !== 'object' || config.model_preferences === null || Array.isArray(config.model_preferences)) {
+    process.stderr.write('[qgsd] WARNING: qgsd.json: model_preferences must be an object; using {}\n');
+    config.model_preferences = {};
+  } else {
+    // Remove invalid entries (non-string values) with a warning
+    for (const [key, val] of Object.entries(config.model_preferences)) {
+      if (typeof val !== 'string' || val.trim() === '') {
+        process.stderr.write('[qgsd] WARNING: qgsd.json: model_preferences.' + key + ' must be a non-empty string; removing\n');
+        delete config.model_preferences[key];
+      }
     }
   }
 
