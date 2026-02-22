@@ -57,7 +57,7 @@
 - [x] **Phase 28: Update & Restart Commands** — /qgsd:mcp-update (all install methods) + /qgsd:mcp-restart (completed 2026-02-22)
 - [x] **Phase 29: Restore mcp-status v2 + Requirements Checkbox Cleanup** — Restore v2 mcp-status.md (regression fix) + mark OBS-01–04 complete in REQUIREMENTS.md (completed 2026-02-22)
 - [x] **Phase 30: Fix gemini-cli Package Reference** — Update ~/.claude.json gemini-cli args to unscoped package name; mark STD-10 complete (completed 2026-02-22)
-- [ ] **Phase 31: Merge Gen2 Branches + Phase 24 Verification** — Merge codex/copilot Gen2 branches to main + create Phase 24 VERIFICATION.md; close STD-02
+- [x] **Phase 31: Merge Gen2 Branches + Phase 24 Verification** — Merge codex/copilot Gen2 branches to main + create Phase 24 VERIFICATION.md; close STD-02 (completed 2026-02-22)
 
 ### ⏳ v0.5 — MCP Setup Wizard (Pending v0.4 Completion)
 
@@ -334,7 +334,7 @@
 | 28. Update and Restart Commands | v0.4 | TBD | Complete | 2026-02-22 |
 | 29. Restore mcp-status v2 + Checkbox Cleanup | v0.4 | 1/1 | Complete | 2026-02-22 |
 | 30. Fix gemini-cli Package Reference | v0.4 | Complete    | 2026-02-22 | - |
-| 31. Merge Gen2 Branches + Phase 24 Verification | v0.4 | 0/2 | Not started | - |
+| 31. Merge Gen2 Branches + Phase 24 Verification | v0.4 | Complete    | 2026-02-22 | - |
 | 32. Wizard Scaffold | v0.5 | 0/TBD | Not started | - |
 | 33. API Key Management | v0.5 | 0/TBD | Not started | - |
 | 34. Provider Swap | v0.5 | 0/TBD | Not started | - |
