@@ -87,11 +87,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WIZ-01 | Phase 29 | Pending |
-| WIZ-02 | Phase 29 | Pending |
-| WIZ-03 | Phase 29 | Pending |
-| WIZ-04 | Phase 29 | Pending |
-| WIZ-05 | Phase 29 | Pending |
+| WIZ-01 | Phase 32 | Pending |
+| WIZ-02 | Phase 32 | Pending |
+| WIZ-03 | Phase 32 | Pending |
+| WIZ-04 | Phase 32 | Pending |
+| WIZ-05 | Phase 32 | Pending |
 | KEY-01 | Phase 30 | Pending |
 | KEY-02 | Phase 30 | Pending |
 | KEY-03 | Phase 30 | Pending |
@@ -118,4 +118,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-22*
-*Last updated: 2026-02-22 — STD-02 marked Complete (Phase 31 gap closure)*
+*Last updated: 2026-02-22 — WIZ-01–05 traceability corrected to Phase 32 (Wizard Scaffold)*
