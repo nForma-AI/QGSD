@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-22 after v0.3 milestone started)
 Phase: 18 of 22 (CLI Foundation)
 Plan: 0 of ? in current phase
 Status: Ready to plan
-Last activity: 2026-02-22 — v0.3 roadmap created (Phases 18–22); Phase 18 ready for plan-phase
+Last activity: 2026-02-22 - Completed quick task 41: make qgsd:quorum use quorum automatically for follow-up questions
 
 Progress: [████████████████████░░░░░] 40/? plans (v0.2 100% — v0.3 not started)
 
@@ -65,6 +65,12 @@ Recent decisions affecting current work:
 - [Phase 21 research flag]: Quorum worker classification prompts for 5+1 category test failure categorization are novel — research-phase recommended before plan-phase for Phase 21
 - [Phase 12 carry-forward]: npm publish qgsd@0.2.0 deferred; run `npm publish --access public` when user decides to publish
 - [Phase 1 carry-forward] Integration test: `stop_hook_active` behavior on second Stop invocations with GSD subagents must be empirically confirmed against live Claude Code runtime
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 41 | make qgsd:quorum use quorum automatically for follow-up questions | 2026-02-22 | 4a24f0a | Verified | [41-make-qgsd-quorum-use-quorum-automaticall](./quick/41-make-qgsd-quorum-use-quorum-automaticall/) |
 
 ## Session Continuity
 
