@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22 after v0.3 milestone started)
 ## Current Position
 
 Phase: 18 of 22 (CLI Foundation)
-Plan: 2 of 4 in current phase
-Status: Executing — 18-02 complete (batch sub-command)
-Last activity: 2026-02-22 - Completed quick task 43: we need to review the qgsd quick command
+Plan: 3 of 4 in current phase
+Status: Executing — 18-03 complete (run-batch sub-command + unit tests)
+Last activity: 2026-02-22 - Completed 18-03: run-batch executor with spawnToFile, flakiness pre-check, timeout
 
-Progress: [████████████████████░░░░░] 42/44 plans (v0.2 100% — v0.3 Phase 18: 2/4 plans done)
+Progress: [████████████████████░░░░░] 43/44 plans (v0.2 100% — v0.3 Phase 18: 3/4 plans done)
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ Progress: [████████████████████░░░
 
 *Updated after each plan completion*
 | Phase quick-45 P01 | 334 | 2 tasks | 2 files |
+| Phase 18 P03 | 15min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,7 @@ Recent decisions affecting current work:
 - [18-02]: Batch manifest schema: seed, batch_size, total_files, total_batches, batches[].{batch_id, files, file_count}
 - [Phase quick-45]: Use total net change (additions - deletions) across consecutive oscillating commit pairs to distinguish TDD growth (positive) from true oscillation (zero/negative)
 - [Phase 18-01]: Use spawnSync (not execSync) for all CLI invocations in cmdMaintainTestsDiscover — eliminates shell injection risk
+- [Phase 18]: Use spawn (not spawnSync) for test runner invocation — prevents maxBuffer crash on large jest JSON output; each file run individually for result isolation
 
 ### Pending Todos
 
@@ -83,5 +85,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed quick-45 — diff-based circuit breaker fix; 18-03 and 18-04 remaining.
+Stopped at: Completed 18-03-SUMMARY.md — run-batch unit tests done; 18-04 remaining.
 Resume file: None
