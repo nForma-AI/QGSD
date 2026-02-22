@@ -395,17 +395,208 @@ Use AskUserQuestion:
 - question: "Enter the number of the agent to configure, or choose an option:"
 - options:
   - "1 — {agent-name}" (one per agent)
-  - "Add new agent (Phase 35)"
+  - "Add new agent"
   - "Exit"
 
 If "Exit": display "No changes made." Stop.
 
 If "Add new agent":
 
+**Step A — Select agent template**
+
+Read the current `~/.claude.json` mcpServers keys to build the exclusion list. Then use AskUserQuestion, filtering out templates whose agent name already appears as a key in mcpServers:
+
+- header: "Add Agent — Select Template"
+- question: "Select an agent template to add:\n\n(Agents already configured are excluded)"
+- options (omit names already in mcpServers):
+  - "1 — claude-deepseek (AkashML, DeepSeek-V3)"
+  - "2 — claude-minimax (AkashML, MiniMax-M2.5)"
+  - "3 — claude-qwen-coder (Together.xyz, Qwen3-Coder-480B)"
+  - "4 — claude-llama4 (Together.xyz, Llama-4-M)"
+  - "5 — claude-kimi (Fireworks, kimi)"
+  - "Cancel — back to roster"
+
+If "Cancel — back to roster": display "No changes made." Return to roster display.
+
+Resolve agent details from the selection using this template map:
+- "1 — claude-deepseek…" → agentName=`claude-deepseek`, provider=`AkashML`, baseUrl=`https://api.akashml.com/v1`, model=`deepseek-ai/DeepSeek-V3`
+- "2 — claude-minimax…" → agentName=`claude-minimax`, provider=`AkashML`, baseUrl=`https://api.akashml.com/v1`, model=`MiniMaxAI/MiniMax-M2.5`
+- "3 — claude-qwen-coder…" → agentName=`claude-qwen-coder`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`Qwen/Qwen3-Coder-480B`
+- "4 — claude-llama4…" → agentName=`claude-llama4`, provider=`Together.xyz`, baseUrl=`https://api.together.xyz/v1`, model=`meta-llama/Llama-4-M`
+- "5 — claude-kimi…" → agentName=`claude-kimi`, provider=`Fireworks`, baseUrl=`https://api.fireworks.ai/inference/v1`, model=`kimi`
+
+**Step B — Collect API key**
+
+Use AskUserQuestion:
+- header: "API Key — {agent-name}"
+- question: `"Enter your {provider-name} API key.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."`
+- options:
+  - "Continue (I have my key ready)"
+  - "Cancel"
+
+If "Cancel": display "No changes made." Return to roster display.
+
+If "Continue": second AskUserQuestion:
+- header: "Enter API Key — {agent-name}"
+- question: `"Paste the API key for {agent-name} ({provider-name}):"`
+- options:
+  - "Confirm key"
+  - "Cancel"
+
+If "Cancel": display "No changes made." Return to roster display.
+
+Store the key using bin/secrets.cjs (agent name and key passed via env vars — never interpolated):
+
+```bash
+KEY_RESULT=$(node -e "
+const { set, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+const agentKey = process.env.AGENT_KEY;
+const apiKey   = process.env.API_KEY;
+(async () => {
+  try {
+    const keyName = 'ANTHROPIC_API_KEY_' + agentKey.toUpperCase().replace(/-/g,'_');
+    await set(SERVICE, keyName, apiKey);
+    process.stdout.write(JSON.stringify({ stored: true, method: 'keytar', keyName }) + '\n');
+  } catch (e) {
+    process.stdout.write(JSON.stringify({ stored: false, error: e.message }) + '\n');
+  }
+})();
+" AGENT_KEY="{agent-name}" API_KEY="{user-key}")
 ```
-⚠ Agent add/remove is implemented in Phase 35.
-  Run /qgsd:mcp-setup after Phase 35 is complete to use this feature.
+
+Parse KEY_RESULT:
+- `stored: true` — proceed to Step C
+- `stored: false` — keytar unavailable fallback: use AskUserQuestion to confirm env_block storage (with warning that key will be stored unencrypted in ~/.claude.json), write audit log to `~/.claude/debug/mcp-setup-audit.log`, or cancel back to roster
+
+**Step C — Confirm + apply**
+
+Show pending summary:
+
 ```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► REVIEW PENDING CHANGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ◆ {agent-name}  →  {provider-name}  ({base-url})
+    Key: {stored in system keychain | stored in env block (unencrypted)}
+```
+
+Use AskUserQuestion:
+- header: "Add Agent"
+- question: "Add {agent-name} to ~/.claude.json and start it?"
+- options:
+  - "Add and start"
+  - "Cancel — discard changes"
+
+If "Cancel — discard changes": display "Changes discarded." Return to roster display.
+
+If "Add and start":
+
+1. Backup ~/.claude.json:
+```bash
+cp ~/.claude.json ~/.claude.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || true
+```
+
+2. Resolve claude-mcp-server path (read from existing entries, then npm root fallback):
+```bash
+CLAUDE_MCP_PATH=$(node -e "
+const path = require('path');
+const fs   = require('fs');
+const os   = require('os');
+const { spawnSync } = require('child_process');
+
+// Strategy 1: read from existing ~/.claude.json entries
+try {
+  const cj = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8'));
+  for (const [, cfg] of Object.entries(cj.mcpServers || {})) {
+    if ((cfg.args || []).some(a => String(a).includes('claude-mcp-server'))) {
+      process.stdout.write(cfg.args[0]);
+      process.exit(0);
+    }
+  }
+} catch (e) {}
+
+// Strategy 2: check global npm root
+try {
+  const r = spawnSync('npm', ['root', '-g'], { encoding: 'utf8' });
+  const npmRoot = (r.stdout || '').trim();
+  const candidate = path.join(npmRoot, 'claude-mcp-server', 'dist', 'index.js');
+  if (fs.existsSync(candidate)) { process.stdout.write(candidate); process.exit(0); }
+} catch (e) {}
+
+process.stdout.write('');
+" 2>/dev/null)
+```
+
+If `CLAUDE_MCP_PATH` is empty: display warning and use placeholder args `["claude-mcp-server"]` (command: `"node"`).
+
+3. Write new mcpServers entry via inline node (all values passed via env vars — never interpolated):
+```bash
+node -e "
+const fs   = require('fs');
+const path = require('path');
+const os   = require('os');
+const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+let claudeJson = {};
+try { claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8')); } catch (e) {}
+if (!claudeJson.mcpServers) claudeJson.mcpServers = {};
+const agentName = process.env.AGENT_NAME;
+const baseUrl   = process.env.BASE_URL;
+const model     = process.env.MODEL;
+const mcpPath   = process.env.MCP_PATH;
+const apiKey    = process.env.API_KEY_ENV || '';
+claudeJson.mcpServers[agentName] = {
+  command: 'node',
+  args: [mcpPath],
+  env: {
+    ANTHROPIC_API_KEY: apiKey,
+    ANTHROPIC_BASE_URL: baseUrl,
+    CLAUDE_DEFAULT_MODEL: model
+  }
+};
+fs.writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
+process.stdout.write(JSON.stringify({ written: true }) + '\n');
+" AGENT_NAME="{agent-name}" BASE_URL="{base-url}" MODEL="{model}" MCP_PATH="$CLAUDE_MCP_PATH" API_KEY_ENV="{api-key-if-env-block-method}"
+```
+
+4. Sync keytar secrets to ~/.claude.json:
+```bash
+node -e "
+const { syncToClaudeJson, SERVICE } = require('/Users/jonathanborduas/code/QGSD/bin/secrets.cjs');
+syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
+"
+```
+
+5. Invoke `/qgsd:mcp-restart {agent-name}` to start the new agent process.
+
+**Step D — Identity ping (AGENT-03)**
+
+After restart, display: `"◆ Waiting for {agent-name} to start... calling identity tool"`
+
+Invoke the `identity` tool on the newly started agent. Display the result:
+
+If identity responds:
+```
+✓ Agent added and verified live.
+
+  ✓ {agent-name} — added, restarted, identity confirmed
+    Name:    {identity.name}
+    Version: {identity.version}
+    Model:   {identity.model}
+
+Run /qgsd:mcp-status to see full agent roster.
+```
+
+If identity times out or errors:
+```
+✓ Agent added and restarted.
+
+  ◆ {agent-name} — added, restarted (identity ping timed out — agent may need a moment to start)
+
+Run /qgsd:mcp-status to verify agent health.
+```
+
+Return to roster display (re-read roster to show new agent).
 
 Return to roster display.
 
@@ -433,7 +624,7 @@ Use AskUserQuestion:
 - options:
   - "1 — Set / update API key"
   - "2 — Swap provider"
-  - "3 — Remove agent (Phase 35)"
+  - "3 — Remove agent"
   - "Back — return to agent list"
 
 **Option 1 — Set / update API key:**
@@ -741,15 +932,67 @@ Return to Agent Sub-Menu (user can make further changes or go Back).
 
 **Option 3 — Remove agent:**
 
-```
-⚠ Agent removal is implemented in Phase 35.
+**Step A — Confirm removal**
 
-  To remove manually:
-    1. Delete the "{agent-name}" key from ~/.claude.json mcpServers
-    2. Restart Claude Code to deregister the agent
+Display removal warning:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► REMOVE AGENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ⚠ This will permanently remove {agent-name} from
+    ~/.claude.json. The agent will be deregistered on
+    the next Claude Code restart.
 ```
 
-Return to sub-menu.
+Use AskUserQuestion:
+- header: "Remove Agent — {agent-name}"
+- question: `"Remove {agent-name} from ~/.claude.json?\n\nThis deletes the mcpServers entry. The agent process will be deregistered on the next Claude Code restart."`
+- options:
+  - "Remove agent"
+  - "Cancel — back to agent menu"
+
+If "Cancel — back to agent menu": display "No changes made." Return to Agent Sub-Menu.
+
+**Step B — Delete mcpServers entry**
+
+If "Remove agent":
+
+1. Backup ~/.claude.json:
+```bash
+cp ~/.claude.json ~/.claude.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || true
+```
+
+2. Delete the agent's mcpServers entry via inline node (agent name passed via env var — never interpolated):
+```bash
+node -e "
+const fs   = require('fs');
+const path = require('path');
+const os   = require('os');
+const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+let claudeJson = {};
+try { claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8')); } catch (e) {}
+const agentName = process.env.AGENT_NAME;
+if (claudeJson.mcpServers && claudeJson.mcpServers[agentName]) {
+  delete claudeJson.mcpServers[agentName];
+}
+fs.writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
+process.stdout.write(JSON.stringify({ removed: true, agent: agentName }) + '\n');
+" AGENT_NAME="{agent-name}"
+```
+
+3. Display:
+```
+✓ Agent removed.
+
+  ✓ {agent-name} — removed from ~/.claude.json
+    The agent will be deregistered on next Claude Code restart.
+
+Run /qgsd:mcp-status to verify the updated agent roster.
+```
+
+Return to roster display (re-read roster — removed agent no longer appears).
 
 **Option "Back":** Return to Re-run Agent Menu.
 
@@ -817,7 +1060,9 @@ If a restart fails, leave config written and display:
 <success_criteria>
 - First-run (no mcpServers): welcome banner + agent template list + key collection (keytar/fallback) + batch-write + backup + restart + summary
 - Re-run (existing entries): numbered agent roster with model/provider/key-status columns
-- Sub-menu per agent: full API key set/update flow (Option 1), full provider swap flow (Option 2), remove stub (Phase 35)
+- Sub-menu per agent: full API key set/update flow (Option 1), full provider swap flow (Option 2), full remove-agent flow (Option 3)
+- Add-agent flow (roster menu): template select (filtered) → key collection → mcpServers write → syncToClaudeJson → restart → identity ping
+- Remove-agent flow (Option 3): confirm → backup → delete mcpServers[agent] entry → write
 - Option 1 API key flow: key-status check → "(key stored)" hint → key input → keytar store → confirm → backup → patch ~/.claude.json → syncToClaudeJson → mcp-restart
 - Option 2 provider swap flow: current provider display → curated list (AkashML/Together.xyz/Fireworks) + Custom URL → confirm → backup → patch ANTHROPIC_BASE_URL → mcp-restart
 - Confirm+apply+restart: backup then write then sync keytar then mcp-restart per agent then confirmation
