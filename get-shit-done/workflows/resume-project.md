@@ -178,6 +178,12 @@ Route based on `activity` + `sub_activity`:
 | awaiting_approval | `/qgsd:execute-phase {phase}` — unified solution is ready, user approval is needed |
 | executing | `/qgsd:quick` — quick task execution was in progress |
 | planning (activity=quick) | `/qgsd:quick` — quick task planning was in progress |
+| discovering_tests (activity=maintain_tests) | `/qgsd:fix-tests` — re-trigger discovery; no state file means fresh run |
+| running_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state file, re-run batch {batch} of {batch_total} |
+| categorizing_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, batch results on disk, re-enter categorization for batch {batch} |
+| actioning_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, dispatch quick tasks for batch {batch} failures |
+| verifying_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, re-run verification for actioned tests in batch {batch} |
+| complete (activity=maintain_tests) | `/qgsd:fix-tests` — session already complete; print summary and clear activity state |
 
 Present the matched recovery option to the user as the PRIMARY action.
 
