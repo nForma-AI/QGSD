@@ -36,6 +36,7 @@ Progress: [████████████████████░░░
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase quick-45 P01 | 334 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -57,6 +58,7 @@ Recent decisions affecting current work:
 - [18-02]: Mulberry32 PRNG implemented inline (no external dep) for deterministic test batch shuffling
 - [18-02]: Batch manifest written to disk BEFORE returning when --manifest-file provided — enables crashed-run resume
 - [18-02]: Batch manifest schema: seed, batch_size, total_files, total_batches, batches[].{batch_id, files, file_count}
+- [Phase quick-45]: Use total net change (additions - deletions) across consecutive oscillating commit pairs to distinguish TDD growth (positive) from true oscillation (zero/negative)
 
 ### Pending Todos
 
@@ -74,9 +76,10 @@ Recent decisions affecting current work:
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 41 | make qgsd:quorum use quorum automatically for follow-up questions | 2026-02-22 | 4a24f0a | Verified | [41-make-qgsd-quorum-use-quorum-automaticall](./quick/41-make-qgsd-quorum-use-quorum-automaticall/) |
+| 45 | fix circuit breaker false positive for TDD patterns (diff-based reversion detection) | 2026-02-22 | 7eedb28 | Verified | [45-fix-circuit-breaker-false-positive-repla](./quick/45-fix-circuit-breaker-false-positive-repla/) |
 
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 18-02 complete — cmdMaintainTestsBatch implemented; 18-03 and 18-04 remaining.
+Stopped at: Completed quick-45 — diff-based circuit breaker fix; 18-03 and 18-04 remaining.
 Resume file: None
