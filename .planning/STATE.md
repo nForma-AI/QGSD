@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-22 after v0.3 milestone started)
 ## Current Position
 
 Phase: 18 of 22 (CLI Foundation)
-Plan: 3 of 4 in current phase
-Status: Executing — 18-03 complete (run-batch sub-command + unit tests)
-Last activity: 2026-02-22 - Completed 18-03: run-batch executor with spawnToFile, flakiness pre-check, timeout
+Plan: 4 of 4 in current phase
+Status: Complete — 18-04 done (integration + edge-case tests for all maintain-tests sub-commands)
+Last activity: 2026-02-22 - Completed 18-04: monorepo dedup, pytest parametrized ID, buffer overflow regression tests
 
-Progress: [████████████████████░░░░░] 43/44 plans (v0.2 100% — v0.3 Phase 18: 3/4 plans done)
+Progress: [█████████████████████░░░░] 44/44 plans (v0.2 100% — v0.3 Phase 18: 4/4 plans done)
 
 ## Performance Metrics
 
@@ -38,6 +38,7 @@ Progress: [████████████████████░░░
 *Updated after each plan completion*
 | Phase quick-45 P01 | 334 | 2 tasks | 2 files |
 | Phase 18 P03 | 15min | 3 tasks | 2 files |
+| Phase 18 P04 | 12min | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,8 @@ Recent decisions affecting current work:
 - [Phase quick-45]: Use total net change (additions - deletions) across consecutive oscillating commit pairs to distinguish TDD growth (positive) from true oscillation (zero/negative)
 - [Phase 18-01]: Use spawnSync (not execSync) for all CLI invocations in cmdMaintainTestsDiscover — eliminates shell injection risk
 - [Phase 18]: Use spawn (not spawnSync) for test runner invocation — prevents maxBuffer crash on large jest JSON output; each file run individually for result isolation
+- [18-04]: Test parsePytestCollectOutput via Option A (replicate parser inline in test describe block) rather than mock scripts — isolates parsing logic from CLI invocation
+- [18-04]: Test deduplication invariant via Set.size == array.length rather than mock CLI injection — works without jest/playwright/pytest installed
 
 ### Pending Todos
 
@@ -87,5 +90,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Completed quick-44 — execute-phase --auto chains through all phases; two workflow gates fixed.
+Stopped at: Completed 18-04-SUMMARY.md — Phase 18 CLI Foundation complete (all 4 plans done). 177 tests pass.
 Resume file: None
