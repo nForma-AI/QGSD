@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-22 after v0.4 gap closure)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.4 MCP Ecosystem gap closure — Phase 31 (Merge Gen2 Branches and Phase 24 Verification)
+**Current focus:** v0.4 gap closure complete — ready for v0.5 MCP Setup Wizard (Phase 32)
 
 ## Current Position
 
-Phase: 31 of 36 (Merge Gen2 Branches and Phase 24 Verification)
+Phase: 32 of 36 (Wizard Scaffold — v0.5 start)
 Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-02-22 — Completed Phase 30: fixed gemini-cli package reference (@tuannvm → unscoped), marked STD-10 complete
+Last activity: 2026-02-22 — Completed Phase 31: merged Gen2 branches to main, created Phase 24 VERIFICATION.md, marked STD-02 complete
 
-Progress: [████████████████████] 28/28 plans (100%)
+Progress: [████████████████████] 30/30 plans (100%)
 
 ## Performance Metrics
 
@@ -67,5 +67,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: 2026-02-22 — Phase 30 complete, ready to plan Phase 31 (Merge Gen2 Branches and Phase 24 Verification)
+Stopped at: 2026-02-22 — Phase 31 complete; all v0.4 gap closure phases done; ready to plan Phase 32 (Wizard Scaffold, v0.5 start)
 Resume file: None
