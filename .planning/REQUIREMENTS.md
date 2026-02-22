@@ -108,6 +108,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CATG-01 | Phase 21 | Pending |
 | CATG-02 | Phase 21 | Pending |
 | CATG-03 | Phase 21 | Pending |
+| STD-01 | Phase 23 | Pending |
+| STD-03 | Phase 23 | Pending |
+| STD-05 | Phase 23 | Pending |
+| STD-06 | Phase 23 | Pending |
+| STD-07 | Phase 23 | Pending |
+| STD-09 | Phase 23 | Pending |
+| STD-10 | Phase 23 | Pending |
+| STD-02 | Phase 24 | Pending |
+| STD-04 | Phase 25 | Pending |
+| STD-08 | Phase 25 | Pending |
+| OBS-01 | Phase 26 | Pending |
+| OBS-02 | Phase 26 | Pending |
+| OBS-03 | Phase 26 | Pending |
+| OBS-04 | Phase 26 | Pending |
+| MGR-01 | Phase 27 | Pending |
+| MGR-02 | Phase 27 | Pending |
+| MGR-03 | Phase 28 | Pending |
+| MGR-04 | Phase 28 | Pending |
+| MGR-05 | Phase 28 | Pending |
+| MGR-06 | Phase 28 | Pending |
 
 **v0.3 Coverage:**
 - v0.3 requirements: 14 total
@@ -115,10 +135,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Unmapped: 0 ✓
 
 **v0.4 Coverage:**
-- v0.4 requirements: 16 total (STD: 10, OBS: 4, MGR: 6 — minus STD-10 merged into STD phases)
-- Mapped to phases: TBD (roadmapper pending)
-- Unmapped: 16 ⚠️ (roadmap not yet created)
+- v0.4 requirements: 20 total (STD: 10, OBS: 4, MGR: 6)
+- Mapped to phases: 20
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-02-22*
-*Last updated: 2026-02-22 — v0.4 MCP Ecosystem requirements added (STD/OBS/MGR)*
+*Last updated: 2026-02-22 — v0.4 MCP Ecosystem requirements mapped to Phases 23–28*

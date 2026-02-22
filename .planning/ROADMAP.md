@@ -4,6 +4,7 @@
 
 - ✅ **v0.2 — Gap Closure & Activity Resume Routing** — Phases 1–17 (shipped 2026-02-21)
 - 🚧 **v0.3 — Test Suite Maintenance Tool** — Phases 18–22 (in progress)
+- ⏳ **v0.4 — MCP Ecosystem** — Phases 23–28 (pending v0.3 completion)
 
 ## Phases
 
@@ -41,6 +42,17 @@
 - [ ] **Phase 20: Workflow Orchestrator** — fix-tests.md command + orchestrator: batch loop, circuit breaker lifecycle, loop termination
 - [ ] **Phase 21: Categorization Engine** — 5-category AI diagnosis, git pickaxe context, quick task dispatch grouping
 - [ ] **Phase 22: Integration Test** — End-to-end validation of the full fix-tests loop
+
+### ⏳ v0.4 — MCP Ecosystem (Pending v0.3 Completion)
+
+**Milestone Goal:** Standardize the 6 coding-agent MCP server repos to a unified Gen2 architecture, then build QGSD commands to observe, configure, and update connected agents.
+
+- [ ] **Phase 23: MCP Repo Surface Fixes** — openhands rename, dynamic versioning, MIT license, package.json metadata, Makefile, CHANGELOG/CLAUDE.md, npm scoping across all 6 repos
+- [ ] **Phase 24: Gen1→Gen2 Architecture Port** — Per-tool *.tool.ts + registry.ts structure for claude/codex/copilot/openhands repos
+- [ ] **Phase 25: Identity Tool & Shared Utilities** — identity tool + constants.ts + Logger utility in src/utils/logger.ts across all 6 repos
+- [ ] **Phase 26: MCP Status Command** — /qgsd:mcp-status showing all agents, models, health state, and UNAVAIL counts
+- [ ] **Phase 27: Model Switching** — /qgsd:mcp-set-model with qgsd.json persistence and quorum call injection
+- [ ] **Phase 28: Update & Restart Commands** — /qgsd:mcp-update (all install methods) + /qgsd:mcp-restart
 
 ## Phase Details
 
@@ -103,6 +115,71 @@
   4. A VERIFICATION.md for Phases 18–21 documents all 14 v0.3 requirements as verified with evidence
 **Plans**: TBD
 
+### Phase 23: MCP Repo Surface Fixes
+**Goal**: All 6 MCP server repos have correct identity metadata, licenses, package.json configuration, Makefile, CHANGELOG/CLAUDE.md, and consistent npm scoping — the openhands rename is corrected and every repo reads its version dynamically
+**Depends on**: Phase 22
+**Requirements**: STD-01, STD-03, STD-05, STD-06, STD-07, STD-09, STD-10
+**Success Criteria** (what must be TRUE):
+  1. openhands-mcp-server package.json `name`, class names, and server config all read `openhands-mcp-server` — no remaining references to `codex-mcp-server` in that repo
+  2. All 6 repos read their version string from `package.json` at runtime — `index.ts` contains no hardcoded version string
+  3. All 6 repos have a `LICENSE` file containing MIT license text with the correct author
+  4. All 6 repos have `engines: {node: ">=18"}`, a `prepublishOnly` build script, and `publishConfig: {access: "public"}` in package.json
+  5. All 6 repos have a Makefile with at least lint, format, test, build, clean, and dev targets; all 6 repos have CHANGELOG.md and CLAUDE.md present; npm scoping is uniform across all 6 repos (all `@tuannvm/` or all unscoped — not mixed)
+**Plans**: TBD
+
+### Phase 24: Gen1 to Gen2 Architecture Port
+**Goal**: The 4 Gen1 MCP server repos (claude, codex, copilot, openhands) use the Gen2 per-tool file architecture — each tool lives in its own `*.tool.ts` file and is wired through a `registry.ts`, matching the gemini and opencode repos
+**Depends on**: Phase 23
+**Requirements**: STD-02
+**Success Criteria** (what must be TRUE):
+  1. claude-mcp-server, codex-mcp-server, copilot-mcp-server, and openhands-mcp-server each have a `src/tools/` directory containing individual `*.tool.ts` files — no monolithic tool file remains
+  2. Each of the 4 repos has a `src/registry.ts` (or equivalent) that wires all tool files into the MCP server — adding a new tool requires only creating a new `*.tool.ts` and registering it
+  3. `npm run build` succeeds in all 4 repos after the port; existing tool behaviors are preserved (tools respond correctly to the same inputs as before the port)
+**Plans**: TBD
+
+### Phase 25: Identity Tool and Shared Utilities
+**Goal**: All 6 MCP server repos expose a consistent `identity` tool and share the same `constants.ts` and `Logger` utility structure — the identity tool response is the data source for the mcp-status command in the next phase
+**Depends on**: Phase 24
+**Requirements**: STD-04, STD-08
+**Success Criteria** (what must be TRUE):
+  1. All 6 repos expose an `identity` MCP tool that returns `{name, version, model, available_models, install_method}` — calling the tool via Claude returns all 5 fields with non-empty values
+  2. All 6 repos have `src/constants.ts` defining at least the server name and default model constants — no magic strings for these values remain in `index.ts` or tool files
+  3. All 6 repos have `src/utils/logger.ts` providing a `Logger` utility used for structured log output — direct `console.log` calls for operational output are replaced with Logger calls
+**Plans**: TBD
+
+### Phase 26: MCP Status Command
+**Goal**: Users can run `/qgsd:mcp-status` from any project and see a formatted table of all connected MCP agents with their name, version, model, health state, available models, and recent UNAVAIL count
+**Depends on**: Phase 25
+**Requirements**: OBS-01, OBS-02, OBS-03, OBS-04
+**Success Criteria** (what must be TRUE):
+  1. Typing `/qgsd:mcp-status` in any Claude Code session produces a formatted display listing every configured quorum agent with name, current version, and current model
+  2. The status display shows each agent's health state (available / quota-exceeded / error) derived from the quorum scoreboard file — an agent that has logged quota errors in the scoreboard shows `quota-exceeded`, not `available`
+  3. The status display shows the `available_models` list for each agent, sourced from the `identity` tool response — the list reflects what the running MCP server reports, not a hardcoded config value
+  4. The status display shows a per-agent UNAVAIL count from the quorum scoreboard — the count matches the number of failed quorum attempts recorded for that agent
+**Plans**: TBD
+
+### Phase 27: Model Switching
+**Goal**: Users can change the default model for any quorum worker and have that preference persist across sessions — the next quorum call uses the new model without any manual config editing
+**Depends on**: Phase 26
+**Requirements**: MGR-01, MGR-02
+**Success Criteria** (what must be TRUE):
+  1. Running `/qgsd:mcp-set-model <agent> <model>` with a valid agent name and model name completes without error and prints a confirmation showing the agent, old model, and new model
+  2. After running `/qgsd:mcp-set-model`, the `qgsd.json` file (global or project, as appropriate) contains the updated model preference for that agent — inspecting the file confirms the value changed
+  3. The next quorum invocation after a model switch injects the new model value into the tool call for that agent — verified by inspecting the quorum instructions injected by the UserPromptSubmit hook
+  4. Running `/qgsd:mcp-set-model` with an unrecognized agent name or a model not in the agent's `available_models` list produces a clear error message — it does not silently write an invalid value
+**Plans**: TBD
+
+### Phase 28: Update and Restart Commands
+**Goal**: Users can update any MCP server to its latest version using the correct install-method-aware command, update all agents in one command, and restart a specific server process — without knowing the install method or process ID
+**Depends on**: Phase 27
+**Requirements**: MGR-03, MGR-04, MGR-05, MGR-06
+**Success Criteria** (what must be TRUE):
+  1. Running `/qgsd:mcp-update <agent>` detects the install method (npm global / brew / pipx / binary) for that agent and runs the correct update command — the detection is derived from the `install_method` field returned by the agent's `identity` tool
+  2. Running `/qgsd:mcp-update all` updates all configured agents sequentially, printing per-agent status (updated / already-latest / error) as each completes
+  3. Running `/qgsd:mcp-restart <agent>` terminates the named MCP server process and signals Claude Code to reconnect to it — the agent becomes reachable again after restart without restarting the full Claude Code session
+  4. All three commands (`mcp-update <agent>`, `mcp-update all`, `mcp-restart`) produce actionable error output when the agent is unrecognized, the update command fails, or the process cannot be found — they never fail silently
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -124,8 +201,14 @@
 | 15. v0.4 Gap Closure — Activity Resume Routing | v0.2 | 1/1 | Complete | 2026-02-21 |
 | 16. Verify Phase 15 | v0.2 | 1/1 | Complete | 2026-02-21 |
 | 17. Fix Agent Name Typos | v0.2 | 1/1 | Complete | 2026-02-21 |
-| 18. CLI Foundation | 4/4 | Complete    | 2026-02-22 | - |
+| 18. CLI Foundation | v0.3 | 4/4 | Complete | 2026-02-22 |
 | 19. State Schema & Activity Integration | v0.3 | 0/? | Not started | - |
 | 20. Workflow Orchestrator | v0.3 | 0/? | Not started | - |
 | 21. Categorization Engine | v0.3 | 0/? | Not started | - |
 | 22. Integration Test | v0.3 | 0/? | Not started | - |
+| 23. MCP Repo Surface Fixes | v0.4 | 0/? | Not started | - |
+| 24. Gen1 to Gen2 Architecture Port | v0.4 | 0/? | Not started | - |
+| 25. Identity Tool and Shared Utilities | v0.4 | 0/? | Not started | - |
+| 26. MCP Status Command | v0.4 | 0/? | Not started | - |
+| 27. Model Switching | v0.4 | 0/? | Not started | - |
+| 28. Update and Restart Commands | v0.4 | 0/? | Not started | - |
