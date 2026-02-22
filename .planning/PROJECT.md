@@ -164,6 +164,7 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 
 | Key passed via env var in node -e scripts | Prevents key value from appearing in shell history, audit logs, or displayed text — pattern used in both keytar store and ~/.claude.json patch steps | Phase 33 — KEY-02 |
 | syncToClaudeJson called after ANTHROPIC_API_KEY patch | Ensures all keytar secrets propagate to all agent env blocks after any single-agent update — order: patch → sync | Phase 33 — KEY-03 |
+| URL passed via NEW_URL env var in provider swap node scripts | Same security pattern as KEY env var in Phase 33 — prevents URL injection into script body; canonical URLs hardcoded in step C resolution, user-entered custom URL also env-var-only | Phase 34 — PROV-03 |
 
 ---
-*Last updated: 2026-02-22 after Phase 33 — API key management complete (KEY-01..KEY-04); mcp-setup.md Option 1 fully implemented; Phase 34 provider swap next*
+*Last updated: 2026-02-22 after Phase 34 — provider swap complete (PROV-01..PROV-03); mcp-setup.md Option 2 fully implemented; Phase 35 agent roster next*

@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22 after Phase 33)
+See: .planning/PROJECT.md (updated 2026-02-22 after Phase 34)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.5 MCP Setup Wizard — Phase 34 executed (Provider Swap complete)
+**Current focus:** v0.5 MCP Setup Wizard — Phase 35 ready to plan (Agent Roster)
 
 ## Current Position
 
-Phase: 34 of 36 (Provider Swap)
-Plan: 01 of 01
-Status: Executed — pending phase verification
-Last activity: 2026-02-22 - Phase 34 plan 01 complete: full provider swap flow in mcp-setup.md Option 2
+Phase: 35 of 36 (Agent Roster)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-02-22 - Phase 34 complete (PROV-01..PROV-03 shipped); advanced to Phase 35
 
 Progress: [████████████████████] 30/30 plans (100%)
 
@@ -55,6 +55,7 @@ Recent decisions affecting current work:
 - [Phase 29]: OBS-01–04 absent from REQUIREMENTS.md (v0.5 rewrite removed them) — added v0.4 Requirements (Complete) section with [x] entries rather than flip-from-[ ]
 - [Phase 33]: Key value always passed via environment variable in node -e scripts (AGENT_NAME + API_KEY) — prevents shell history leaks; pattern established for Phase 34
 - [Phase 33]: syncToClaudeJson called after per-agent ANTHROPIC_API_KEY patch — ensures all keytar secrets propagate to all env blocks as a second pass
+- [Phase 34]: URL value passed via NEW_URL env var in provider swap scripts — same security pattern as Phase 33 KEY env var; applies to both curated and custom URL paths
 
 ### Pending Todos
 
@@ -77,5 +78,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: 2026-02-22 — Phase 34 plan 01 executed; provider swap flow (PROV-01..PROV-03) implemented in mcp-setup.md
+Stopped at: 2026-02-22 — Phase 34 complete; transitioned to Phase 35 (Agent Roster) ready to plan
 Resume file: None
