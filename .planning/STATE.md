@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-22 after Phase 36)
 
 ## Current Position
 
-Phase: 36 of 40 (v0.5 complete; v0.6 roadmap appended, execution not yet started)
-Plan: Complete (v0.5)
-Status: v0.5 milestone complete; v0.6 roadmap created — ready for /qgsd:plan-phase 37
-Last activity: 2026-02-22 - v0.6 roadmap appended (Phases 37–40; SLOT/COMP/MULTI/WIZ-08-10/SCBD; 17 requirements mapped)
+Phase: 37 of 40 (Phase 37 complete; Phase 38 up next)
+Plan: 37-01 Complete
+Status: Phase 37 gap-closure plans executed; mcp-setup.md distributable — ready for /qgsd:verify-work or /qgsd:execute-phase 38
+Last activity: 2026-02-22 - Phase 37 executed — mcp-setup.md distribution defects fixed (9 hardcoded paths removed, 3 apply-flow fixes applied)
 
 Progress: [████████████████████] 36/40 phases defined (v0.6 phases pending execution)
 
