@@ -679,6 +679,117 @@ test('CB-TC-BR3: Deny message still references --reset-breaker instruction', () 
   assert.ok(reason.includes('npx qgsd --reset-breaker'), 'deny reason must include --reset-breaker command');
 });
 
+// Test CB-TC20: TDD pattern — same file extended with new content each time does not trigger oscillation
+test('CB-TC20: TDD pattern — same file extended with new content each time does not trigger oscillation', () => {
+  // Simulate Phase 18 false-positive scenario:
+  // gsd-tools.cjs (new fn A) → gsd-tools.test.cjs (tests A) →
+  // gsd-tools.cjs (new fn B) → gsd-tools.test.cjs (tests B) →
+  // planning file → gsd-tools.cjs (new fn C)
+  //
+  // Each commit to gsd-tools.cjs ADDS new lines — never reverts previous content.
+  // Result: should NOT trigger circuit breaker.
+  const repoDir = createTempGitRepo();
+  try {
+    const implFile = 'gsd-tools.cjs';
+    const testFile = 'gsd-tools.test.cjs';
+    const planFile = 'planning-note.md';
+
+    // Commit 1: implement fn A (initial content)
+    spawnSync('git', ['add', implFile], { cwd: repoDir, encoding: 'utf8' });
+    commitInRepo(repoDir, implFile, 'function fnA() { return "a"; }\nmodule.exports = { fnA };\n', 'feat: implement fn A');
+
+    // Commit 2: tests for fn A (different file → creates run-group boundary for implFile)
+    commitInRepo(repoDir, testFile, 'const { fnA } = require("./gsd-tools.cjs");\nconsole.assert(fnA() === "a");\n', 'test: add tests for fn A');
+
+    // Commit 3: implement fn B — append to implFile (purely additive, no deletions)
+    commitInRepo(repoDir, implFile,
+      'function fnA() { return "a"; }\nfunction fnB() { return "b"; }\nmodule.exports = { fnA, fnB };\n',
+      'feat: implement fn B');
+
+    // Commit 4: tests for fn B (different file → creates another run-group boundary for implFile)
+    commitInRepo(repoDir, testFile,
+      'const { fnA, fnB } = require("./gsd-tools.cjs");\nconsole.assert(fnA() === "a");\nconsole.assert(fnB() === "b");\n',
+      'test: add tests for fn B');
+
+    // Commit 5: planning file (yet another file between impl commits)
+    commitInRepo(repoDir, planFile, '# Planning notes\n- fn A: done\n- fn B: done\n', 'docs: update planning notes');
+
+    // Commit 6: implement fn C — append to implFile (purely additive, no deletions)
+    commitInRepo(repoDir, implFile,
+      'function fnA() { return "a"; }\nfunction fnB() { return "b"; }\nfunction fnC() { return "c"; }\nmodule.exports = { fnA, fnB, fnC };\n',
+      'feat: implement fn C');
+
+    // Now gsd-tools.cjs has 3 run-groups but all consecutive pairs are purely additive.
+    // Circuit breaker must NOT trigger.
+    const { stdout, exitCode } = runHook({
+      tool_name: 'Bash',
+      tool_input: { command: 'echo write > output.txt', description: 'test', timeout: 5000 },
+      cwd: repoDir,
+      hook_event_name: 'PreToolUse',
+      tool_use_id: 'test-id',
+      session_id: 'test-session',
+      transcript_path: '/tmp/test.jsonl',
+      permission_mode: 'default',
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.strictEqual(stdout, '', 'stdout must be empty — TDD progression must not trigger circuit breaker');
+    const statePath = path.join(repoDir, '.claude', 'circuit-breaker-state.json');
+    assert(!fs.existsSync(statePath), 'state file must NOT be written — TDD pattern is not oscillation (CB-TC20)');
+  } finally {
+    fs.rmSync(repoDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-TC21: True oscillation — lines added then removed then added again triggers detection
+test('CB-TC21: True oscillation — lines added then removed then added again triggers detection', () => {
+  // Commit 1: app.js has 'function foo() { return 1; }'
+  // Commit 2: filler (creates run-group boundary for app.js)
+  // Commit 3: app.js has 'function foo() { return 2; }' (removes original line, adds new line)
+  // Commit 4: filler (creates another run-group boundary)
+  // Commit 5: app.js has 'function foo() { return 1; }' (removes commit-3 line, re-adds original)
+  // Result: SHOULD trigger circuit breaker (net deletions exist between consecutive pairs)
+  const repoDir = createTempGitRepo();
+  try {
+    // Commit 1: app.js with original content
+    commitInRepo(repoDir, 'app.js', 'function foo() { return 1; }\n', 'feat: add foo returning 1');
+
+    // Commit 2: filler (different file → creates run-group boundary)
+    commitInRepo(repoDir, 'filler1.txt', 'filler content 1\n', 'chore: filler 1');
+
+    // Commit 3: app.js with modified content (removes original line, net deletion)
+    commitInRepo(repoDir, 'app.js', 'function foo() { return 2; }\n', 'fix: change foo to return 2');
+
+    // Commit 4: filler (different file → another run-group boundary)
+    commitInRepo(repoDir, 'filler2.txt', 'filler content 2\n', 'chore: filler 2');
+
+    // Commit 5: app.js reverted to original (removes commit-3 line, re-adds original — reversion!)
+    commitInRepo(repoDir, 'app.js', 'function foo() { return 1; }\n', 'revert: revert foo back to 1');
+
+    // Now app.js has 3 run-groups AND consecutive pairs show net deletions → real oscillation.
+    // Circuit breaker MUST trigger.
+    const { stdout, exitCode } = runHook({
+      tool_name: 'Bash',
+      tool_input: { command: 'echo write > output.txt', description: 'test', timeout: 5000 },
+      cwd: repoDir,
+      hook_event_name: 'PreToolUse',
+      tool_use_id: 'test-id',
+      session_id: 'test-session',
+      transcript_path: '/tmp/test.jsonl',
+      permission_mode: 'default',
+    });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.strictEqual(stdout, '', 'stdout must be empty (state written, no blocking output on first detection)');
+    const statePath = path.join(repoDir, '.claude', 'circuit-breaker-state.json');
+    assert(fs.existsSync(statePath), 'state file MUST be written — true oscillation detected (CB-TC21)');
+    const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    assert.strictEqual(state.active, true, 'state.active must be true — circuit breaker must activate');
+    assert(Array.isArray(state.file_set), 'file_set must be an array');
+    assert(state.file_set.includes('app.js'), 'file_set must include app.js');
+  } finally {
+    fs.rmSync(repoDir, { recursive: true, force: true });
+  }
+});
+
 // Test CB-TC19 (NEW): config commit_window integration — project config window:3 excludes older commits
 test('CB-TC19: Project config commit_window:3 excludes commits beyond window from oscillation check', () => {
   const repoDir = createTempGitRepo();

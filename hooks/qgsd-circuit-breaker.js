@@ -91,20 +91,30 @@ function getCommitDiff(gitRoot, olderHash, newerHash, files) {
 
 // Second-pass reversion check: given the hashes (newest-first) belonging to
 // run-groups for an oscillating file set key, and the files in that set,
-// check whether any consecutive pair shows net deletions (true reversion) or
-// all pairs are purely additive (TDD progression).
+// determines whether the pattern is true oscillation or TDD progression.
+//
+// Algorithm: sum net change (additions - deletions) across all consecutive pairs.
+// - Positive total net change → file grew overall → TDD progression (not oscillation).
+// - Zero or negative total net change → file didn't grow → true oscillation.
+//
+// This correctly handles TDD patterns where a line like `module.exports` is modified
+// (1 deletion, 1 addition per commit) alongside net-new lines — the net change remains
+// positive because new functions are added each time.
+//
+// For true oscillation (same content toggled back and forth), each pair is symmetric
+// (same number added as removed) so the total net change is zero.
 //
 // hashes: all commit hashes (newest-first) in the oscillating run-groups
 // files: file paths in the oscillating set
 // gitRoot: git repository root
 //
-// Returns true if real oscillation (net deletions found), false if TDD progression.
+// Returns true if real oscillation (net change <= 0), false if TDD progression (net change > 0).
 // Returns true also if ALL pairs errored out (git unavailable → fall back to original behavior).
 function hasReversionInHashes(gitRoot, hashes, files) {
   // hashes are newest-first; consecutive pairs: (hashes[i], hashes[i-1]) where
   // hashes[i] is older (higher index = earlier in time), hashes[i-1] is newer.
   // We diff older → newer: git diff <hashes[i]> <hashes[i-1]>
-  let pairsChecked = 0;
+  let totalNetChange = 0;
   let errorsOnly = true;
 
   for (let i = hashes.length - 1; i >= 1; i--) {
@@ -118,9 +128,8 @@ function hasReversionInHashes(gitRoot, hashes, files) {
     }
 
     errorsOnly = false;
-    pairsChecked++;
 
-    // Parse diff: count net deletions (lines starting with '-' but not '---')
+    // Parse diff: count additions and deletions (excluding file header lines)
     const lines = diff.split('\n');
     let additions = 0;
     let deletions = 0;
@@ -130,17 +139,15 @@ function hasReversionInHashes(gitRoot, hashes, files) {
       else if (line.startsWith('-')) deletions++;
     }
 
-    // Any net deletions in this pair → real oscillation (content was removed)
-    if (deletions > 0) {
-      return true;
-    }
+    totalNetChange += (additions - deletions);
   }
 
   // If all pairs errored out → fall back to original behavior (treat as oscillation)
   if (errorsOnly) return true;
 
-  // All pairs were purely additive → TDD progression, not oscillation
-  return false;
+  // Positive net change → file grew overall → TDD progression, not oscillation
+  // Zero or negative net change → file didn't grow → real oscillation
+  return totalNetChange <= 0;
 }
 
 // Detects true oscillation: returns { detected: bool, fileSet: string[] }
