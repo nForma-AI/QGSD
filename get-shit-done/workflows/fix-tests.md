@@ -2,8 +2,8 @@
 
 ## Overview
 
-Discover → Batch → Execute → Stub-Categorize → Iterate loop with circuit breaker lifecycle and
-three-condition termination. Phase 21 replaces stub categorization with real AI classification.
+Discover → Batch → Execute → Categorize → Dispatch → Iterate loop with circuit breaker lifecycle and
+three-condition termination. Phase 21 delivers real AI classification (5-category) and actionable dispatch.
 
 ---
 
@@ -63,7 +63,7 @@ Print: `QGSD fix-tests: Batching complete — {total_files} tests in {total_batc
 Build initial state JSON and save:
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '{"schema_version":1,"session_id":"<ISO timestamp>","manifest_path":".planning/maintain-tests-manifest.json","total_tests":<total_files>,"batches_complete":0,"batch_status":{},"processed_files":[],"results_by_category":{"valid_skip":[],"adapt":[],"isolate":[],"real_bug":[],"fixture":[]},"flaky_tests":[],"iteration_count":0,"last_unresolved_count":<total_files>,"consecutive_no_progress":0,"deferred_tests":[]}'
+  --state-json '{"schema_version":1,"session_id":"<ISO timestamp>","manifest_path":".planning/maintain-tests-manifest.json","total_tests":<total_files>,"batches_complete":0,"batch_status":{},"processed_files":[],"results_by_category":{"valid_skip":[],"adapt":[],"isolate":[],"real_bug":[],"fixture":[]},"flaky_tests":[],"iteration_count":0,"last_unresolved_count":<total_files>,"consecutive_no_progress":0,"deferred_tests":[],"categorization_verdicts":[],"dispatched_tasks":[],"deferred_report":{"real_bug":[],"low_context":[]}}'
 ```
 
 Read `ITERATION_CAP` from `.claude/qgsd.json` path `maintain_tests.iteration_cap` — default 5 if not set.
@@ -99,14 +99,117 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
   '{"activity":"maintain_tests","sub_activity":"categorizing_batch","batch":<B+1>,"batch_total":<total_batches>,"state_file":".planning/maintain-tests-state.json"}'
 ```
 
-### 6d. Stub-categorize results (Phase 20 placeholder — Phase 21 replaces this)
+### 6d. Categorize confirmed failures (Phase 21 — AI classification)
 
-For each result in batch_result.results:
-- If `status == "failed"`: append `result.file` to `state.results_by_category.real_bug`
-- If `status == "flaky"`: append `result.file` to `state.flaky_tests`
-- If `status == "passed"` or `status == "skipped"`: append `result.file` to `state.processed_files`
+**Phase 20 stub detection:** Before processing, check if `state.categorization_verdicts` is empty AND any `state.results_by_category` array is non-empty. If true: this is Phase 20 stub state. Clear all category arrays and re-classify:
+```bash
+# Clear stub: reset results_by_category, categorization_verdicts, deferred_report in state
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
+  --state-json '<current state with results_by_category all empty arrays, categorization_verdicts=[], dispatched_tasks=[], deferred_report={"real_bug":[],"low_context":[]}>'
+```
+Print: `QGSD fix-tests: Clearing Phase 20 stub state — re-classifying all failures`
 
-DO NOT dispatch /qgsd:quick tasks in Phase 20. Classification dispatch is Phase 21 (CATG-03).
+**Sort batch results:**
+- `passed_or_skipped` = results where status == "passed" OR status == "skipped"
+- `flaky` = results where status == "flaky"
+- `confirmed_failures` = results where status == "failed" AND flaky == false
+
+Append `passed_or_skipped` files to `state.processed_files`.
+Append `flaky` files to `state.flaky_tests`.
+
+**Skip already-classified failures (resume safety):**
+Before classifying a failure, check if `result.file` already appears in any `results_by_category` array OR in `categorization_verdicts[].file`. If found: skip classification, reuse existing verdict for dispatch grouping.
+
+**Context assembly for each confirmed failure:**
+For each failure in `confirmed_failures` in groups of 20 (to avoid context overflow):
+
+  1. Read the test file:
+     ```
+     Read(result.file)  — truncate mentally at 4000 chars if very large
+     ```
+
+  2. Extract source file paths from `result.error_summary`:
+     - Lines matching pattern: `at .* \((src|lib|app)/` or `File "(src|lib|app)/`
+     - Take first 2 unique paths that are NOT node_modules and NOT the test file itself
+     - Read each: `Read(stack_path_1)`, `Read(stack_path_2)` — skip if file does not exist
+
+  3. Compute `context_score`:
+     - +1 if test file source is non-empty
+     - +1 if at least 1 stack trace source file was read successfully
+     - +1 if `result.error_summary` is non-null and non-empty
+     - Range: 0–3
+
+  4. If `context_score < 2`: add to `state.deferred_tests` AND `state.deferred_report.low_context`. Do NOT classify. Continue to next failure.
+
+**5-category classification (inline Claude reasoning for context_score >= 2):**
+
+For the current group of up to 20 failures with their assembled context, produce a JSON verdict array. Use the following decision rules:
+
+| Category | Classify when |
+|----------|--------------|
+| `valid-skip` | Test was already skipped/pending in test file source; tests a removed/deprecated feature; checks `process.env.CI` to skip itself |
+| `adapt` | Failure caused by a real code change that mutated asserted behavior; error_summary shows assertion mismatch ("expected X got Y") clearly traceable to a code change; no environment dependency |
+| `isolate` | Fails only due to environment/ordering dependency with no real code change; error shows missing env var, port conflict, race condition, or depends on another test's side effects |
+| `real-bug` | Failure reveals a genuine defect requiring developer judgment; stack trace shows panic/crash/wrong logic not explainable by environment or code change |
+| `fixture` | Fails because a fixture file, test data, snapshot, or generated mock is stale/missing/mismatched |
+
+If uncertain: classify as `real-bug` (conservative — better to defer than to auto-action incorrectly).
+
+Produce for each classified failure:
+```json
+{
+  "file": "path/to/test.test.js",
+  "category": "<one of the 5>",
+  "confidence": "high|medium|low",
+  "context_score": "<0-3>",
+  "reason": "<one sentence explaining classification>",
+  "error_type": "<assertion_mismatch|import_error|snapshot_mismatch|fixture_missing|env_missing|port_conflict|timeout|unknown>",
+  "pickaxe_context": null
+}
+```
+
+Append each verdict to `state.categorization_verdicts`.
+Append each file to the matching `state.results_by_category.<category>` array.
+
+**Git pickaxe enrichment for adapt failures (CATG-02):**
+After producing verdicts for a group, for each verdict where `category == "adapt"`:
+
+  1. Extract the primary identifier from the test source:
+     - Try regex: `describe\(['"](\w[\w\s]+)['"]` → first match
+     - Fallback: primary import name from `import .* from ['"](.+)['"]` → last path segment
+     - Keep identifier <= 60 chars; strip quotes
+
+  2. Run pickaxe (scoped search first):
+     ```bash
+     PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+     git -C "$PROJECT_ROOT" log -S"<identifier>" --oneline --diff-filter=M -- src/ lib/ app/ 2>/dev/null | head -10
+     ```
+
+  3. If empty, run broader fallback:
+     ```bash
+     git -C "$PROJECT_ROOT" log -S"<identifier>" --oneline -10 2>/dev/null
+     ```
+
+  4. Set `pickaxe_context`:
+     ```json
+     {
+       "identifier": "<identifier>",
+       "commits": ["<hash> <message>", "..."],
+       "command_run": "git log -S\"<identifier>\" --oneline -10"
+     }
+     ```
+     If git is unavailable or project is not a git repo: set `pickaxe_context = null` — still categorize as adapt.
+     If no commits returned: set `commits = []` — still dispatch as adapt (pickaxe is enhancement, not gating).
+
+  5. Update the verdict in `state.categorization_verdicts` with the `pickaxe_context` value.
+
+**Update state after each group of 20:**
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
+  --state-json '<state with updated results_by_category, categorization_verdicts, deferred_tests, deferred_report>'
+```
+
+**Note on dispatch:** Adapt/fixture/isolate dispatch happens in Step 6h (added by Plan 02). This step (6d) only produces verdicts and updates state.
 
 ### 6e. Print progress banner
 
@@ -198,16 +301,19 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear
  Batches run: {batches_complete} / {total_batches}
  Iterations: {iteration_count} / {ITERATION_CAP}
 
- Results:
-   Classified (real_bug / stub): {len(real_bug)}
-   Flaky:                        {len(flaky_tests)}
-   Passed / Skipped:             {len(processed_files)}
-   Unresolved:                   {unresolved}
+ Results by category:
+   valid-skip:  {len(valid_skip)}
+   adapt:       {len(adapt)}
+   isolate:     {len(isolate)}
+   real-bug:    {len(real_bug)}   ← deferred (see report below)
+   fixture:     {len(fixture)}
+   flaky:       {len(flaky_tests)}
+   deferred:    {len(deferred_tests)}   ← context_score < 2
+   Passed/skipped: {len(processed_files)}
+   Dispatched tasks: {len(dispatched_tasks)}
 
- Note: Phase 20 stub — all failures marked as real_bug.
- Run Phase 21 categorization to replace with accurate classification.
-
- State saved to: .planning/maintain-tests-state.json
+ State saved to:  .planning/maintain-tests-state.json
+ Dispatched:      {len(dispatched_tasks)} quick tasks
 ```
 
 ---
