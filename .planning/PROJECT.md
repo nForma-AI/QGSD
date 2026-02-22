@@ -160,6 +160,7 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 | npx restart: kill npm exec parent first, then node child | npm exec parent respawns node child if only child is killed; parent kill prevents stale respawn | Phase 28 — Plan 02 |
 
 | gemini-mcp-server unscoping in ~/.claude.json | Phase 23 unscoped the npm package name but didn't update ~/.claude.json args — mcp-update derives install target from args[-1]; Phase 30 closed the gap | ~/.claude.json gemini-cli args now ["-y", "gemini-mcp-server"] |
+| Gen2 branch merge for codex/copilot | Phase 24 ported both to Gen2 but left work on feature branches; codex origin/main had a diverged PR merge requiring a merge commit rather than ff-only | Both repos Gen2 on main and origin/main via Phase 31 |
 
 ---
-*Last updated: 2026-02-22 after Phase 30 — v0.4 gap closure phase 30 complete; Phase 31 pending; v0.5 MCP Setup Wizard at phases 32–36*
+*Last updated: 2026-02-22 after Phase 31 — all v0.4 gap closure phases complete (STD-02, STD-10, OBS-01–04); v0.5 MCP Setup Wizard starts at Phase 32*
