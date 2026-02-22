@@ -21,6 +21,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 **Phase 23 complete:** 2026-02-22
 **Phase 24 complete:** 2026-02-22 (Gen1→Gen2 architecture port: claude 62✓, codex 77✓, copilot 58✓, openhands 13✓)
 **Phase 25 complete:** 2026-02-22 (constants.ts + logger.ts + identity tool in all 6 repos; STD-04, STD-08 done)
+**Phase 26 complete:** 2026-02-22 (/qgsd:mcp-status — 10-agent identity polling, scoreboard UNAVAIL counts, health state table; OBS-01..04 done)
 
 ---
 
@@ -125,6 +126,9 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 | No console.log replacements in Phase 25 | Gen2 port (Phase 24) already eliminated all console.log from operational source files in all 4 repos | Phase 25 — Plan 02 |
 | gemini identityTool was registered but export-only | identityTool was exported from simple-tools.ts but never pushed to toolRegistry in index.ts — registered in Plan 03 | Phase 25 — Plan 03 bug fix |
 | AVAILABLE_OPENCODE_MODELS defined inline in simple-tools.ts | opencode types.ts uses interface pattern without MODELS/TOOLS consts; inline avoids misfit import | Phase 25 — Plan 03 |
+| mcp-status v2 replaces v1 (identity polling replaces HTTP probe) | v1 used provider health_check + HTTP probe; v2 reads scoreboard UNAVAIL from rounds[].votes inline node script + identity tool for all 10 agents — matches OBS-01..04 exactly | Phase 26 |
+| mcp-status NOT in quorum_commands | Read-only observation — no planning decisions made; R2.1 compliance; health_check not needed (identity faster, no LLM call) | Phase 26 — OBS design |
+| claude-glm as 10th quorum agent | Added after original 9-agent plan; glm not yet in scoreboard VALID_MODELS so UNAVAIL=0 correct — forward-compatible | Phase 26 — Plan 01 |
 
 ---
-*Last updated: 2026-02-22 after Phase 22 — integration tests (135 passing, 0 failures) + VERIFICATION.md close all 14 v0.3 requirements; v0.3 milestone COMPLETE; Phase 23 (MCP Repo Surface Fixes) next*
+*Last updated: 2026-02-22 after Phase 26 — /qgsd:mcp-status command complete (OBS-01..04); v0.4 read layer done; Phase 27 (Model Switching) next*
