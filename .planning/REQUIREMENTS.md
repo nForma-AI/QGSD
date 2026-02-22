@@ -7,7 +7,7 @@
 
 ### Discovery
 
-- [x] **DISC-01**: User can run `/qgsd:maintain-tests` and have the tool auto-detect jest, playwright, and pytest by reading project config files (jest.config.*, playwright.config.*, pytest.ini/pyproject.toml)
+- [x] **DISC-01**: User can run `/qgsd:fix-tests` and have the tool auto-detect jest, playwright, and pytest by reading project config files (jest.config.*, playwright.config.*, pytest.ini/pyproject.toml)
 - [x] **DISC-02**: Tool uses each framework's own CLI as the authoritative test source (jest --listTests, playwright --list, pytest --collect-only) — never file system globs
 
 ### Execution
@@ -32,7 +32,7 @@
 
 - [ ] **INTG-01**: Tool disables QGSD circuit breaker at run start and re-enables on completion (prevent false oscillation detection during iterative fix commits)
 - [ ] **INTG-02**: Tool activity state integrates with `/qgsd:resume-work` routing so interrupted maintenance runs recover to the correct step
-- [ ] **INTG-03**: `/qgsd:maintain-tests` is implemented as execution-only — not added to `quorum_commands` (R2.1 compliance)
+- [ ] **INTG-03**: `/qgsd:fix-tests` is implemented as execution-only — not added to `quorum_commands` (R2.1 compliance)
 
 ## v0.4 Requirements
 

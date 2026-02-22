@@ -10,7 +10,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ## Current Milestone: v0.3 Test Suite Maintenance
 
-**Goal:** Build a `/qgsd:maintain-tests` command that discovers, batches, and AI-categorizes test failures across large suites (20k+ tests), iterating until all tests are classified and actioned.
+**Goal:** Build `/qgsd:fix-tests` — a single autonomous command that discovers, batches, runs, AI-categorizes, and iteratively fixes test failures across large suites (20k+ tests), looping until no failures remain.
 
 **Target features:**
 - Test discovery across jest, playwright, and pytest suites in any project
@@ -40,7 +40,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 <!-- v0.3 scope: test suite maintenance tool -->
 
-- [ ] User can run `/qgsd:maintain-tests` to discover all jest/playwright/pytest tests in a project
+- [ ] User can run `/qgsd:fix-tests` to discover all jest/playwright/pytest tests in a project
 - [ ] Tool randomly batches tests into groups of 100 and executes each batch
 - [ ] Claude categorizes each failure into 5 action types (valid skip / adapt / isolate / real bug / fixture)
 - [ ] Tool iterates via debug→quick→debug loop until all tests are classified and actioned

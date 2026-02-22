@@ -34,13 +34,13 @@
 
 ### 🚧 v0.3 — Test Suite Maintenance Tool (In Progress)
 
-**Milestone Goal:** Build `/qgsd:maintain-tests` — a command that discovers, batches, AI-categorizes, and iteratively actions test failures across large suites (20k+ tests).
+**Milestone Goal:** Build `/qgsd:fix-tests` — a single command that discovers, batches, runs, AI-categorizes, and iteratively fixes test failures across large suites (20k+ tests). Fully autonomous.
 
 - [x] **Phase 18: CLI Foundation** — gsd-tools.cjs maintain-tests sub-commands: discover, batch, run-batch + integration tests (4 plans) (completed 2026-02-22)
 - [ ] **Phase 19: State Schema & Activity Integration** — maintain-tests-state.json schema + resume-work routing rows
-- [ ] **Phase 20: Workflow Orchestrator** — maintain-tests.md command + orchestrator: batch loop, circuit breaker lifecycle, loop termination
+- [ ] **Phase 20: Workflow Orchestrator** — fix-tests.md command + orchestrator: batch loop, circuit breaker lifecycle, loop termination
 - [ ] **Phase 21: Categorization Engine** — 5-category AI diagnosis, git pickaxe context, quick task dispatch grouping
-- [ ] **Phase 22: Integration Test** — End-to-end validation of the full maintain-tests loop
+- [ ] **Phase 22: Integration Test** — End-to-end validation of the full fix-tests loop
 
 ## Phase Details
 
@@ -61,7 +61,7 @@
   - 18-04: Integration tests — monorepo collision, parametrized pytest IDs, buffer overflow regression [Wave 2]
 
 ### Phase 19: State Schema & Activity Integration
-**Goal**: The maintain-tests workflow has a stable, version-correct state file schema and is reachable by `/qgsd:resume-work` — interrupted runs on 20k+ suites can be recovered to the exact interrupted step
+**Goal**: The fix-tests workflow has a stable, version-correct state file schema and is reachable by `/qgsd:resume-work` — interrupted runs on 20k+ suites can be recovered to the exact interrupted step
 **Depends on**: Phase 18
 **Requirements**: EXEC-03, INTG-02
 **Success Criteria** (what must be TRUE):
@@ -71,14 +71,14 @@
 **Plans**: TBD
 
 ### Phase 20: Workflow Orchestrator
-**Goal**: The `/qgsd:maintain-tests` command exists and runs the complete batch loop with placeholder categorization — the full mechanical orchestration is validated before the high-risk categorization logic is added
+**Goal**: The `/qgsd:fix-tests` command exists and runs the complete batch loop with placeholder categorization — the full mechanical orchestration is validated before the high-risk categorization logic is added
 **Depends on**: Phase 19
 **Requirements**: ITER-01, ITER-02, INTG-01, INTG-03
 **Success Criteria** (what must be TRUE):
-  1. Typing `/qgsd:maintain-tests` starts the full discovery → batch → execute → iterate loop; a progress banner is printed after each batch completion
+  1. Typing `/qgsd:fix-tests` starts the full discovery → batch → execute → categorize → fix → iterate loop; a progress banner is printed after each batch completion
   2. The loop terminates cleanly on all three terminal conditions: all tests classified, no progress in last 5 batches (progress guard), or configurable iteration cap reached (default 5)
-  3. The circuit breaker is disabled at maintain-tests start (`npx qgsd --disable-breaker`) and re-enabled at completion or interruption (`npx qgsd --enable-breaker`) — verified by checking circuit-breaker-state.json before and after a run
-  4. `/qgsd:maintain-tests` is NOT listed in `quorum_commands` in any config file — confirmed by inspection of installed config and source; R2.1 compliance verified
+  3. The circuit breaker is disabled at fix-tests start (`npx qgsd --disable-breaker`) and re-enabled at completion or interruption (`npx qgsd --enable-breaker`) — verified by checking circuit-breaker-state.json before and after a run
+  4. `/qgsd:fix-tests` is NOT listed in `quorum_commands` in any config file — confirmed by inspection of installed config and source; R2.1 compliance verified
 **Plans**: TBD
 
 ### Phase 21: Categorization Engine
@@ -93,13 +93,13 @@
 **Plans**: TBD
 
 ### Phase 22: Integration Test
-**Goal**: The full `/qgsd:maintain-tests` loop is validated end-to-end against a real or fixture test suite — all integration edge cases are verified and a VERIFICATION.md confirms the v0.3 milestone is shippable
+**Goal**: The full `/qgsd:fix-tests` loop is validated end-to-end against a real or fixture test suite — all integration edge cases are verified and a VERIFICATION.md confirms the v0.3 milestone is shippable
 **Depends on**: Phase 21
 **Requirements**: (validates DISC-01, DISC-02, EXEC-01, EXEC-02, EXEC-03, EXEC-04, CATG-01, CATG-02, CATG-03, ITER-01, ITER-02, INTG-01, INTG-02, INTG-03 end-to-end)
 **Success Criteria** (what must be TRUE):
-  1. Running `/qgsd:maintain-tests` on a fixture project with controllable failures produces a complete loop: discovery → batching → execution → flakiness pre-check → categorization → action dispatch → loop termination
+  1. Running `/qgsd:fix-tests` on a fixture project with controllable failures produces a complete loop: discovery → batching → execution → flakiness pre-check → categorization → action dispatch → loop termination
   2. Interrupting a run mid-batch and resuming via `/qgsd:resume-work` continues from the correct step with no data loss or duplicate batch execution
-  3. The circuit breaker does not trigger during a legitimate maintain-tests run that produces multiple iterative fix commits
+  3. The circuit breaker does not trigger during a legitimate fix-tests run that produces multiple iterative fix commits
   4. A VERIFICATION.md for Phases 18–21 documents all 14 v0.3 requirements as verified with evidence
 **Plans**: TBD
 
