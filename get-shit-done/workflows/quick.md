@@ -248,9 +248,7 @@ Offer: 1) Force proceed, 2) Abort
 
 This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/qgsd:quick`.
 
-Form your own position on the plan first: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale).
-
-Read the full plan content from `${QUICK_DIR}/${next_num}-PLAN.md`.
+Form your own position on the plan first: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale). Base your position on the task description and the planner's reported summary — do NOT read the plan file yourself (pass the path to the quorum orchestrator instead).
 
 Spawn the quorum orchestrator sub-agent:
 
@@ -258,8 +256,14 @@ Spawn the quorum orchestrator sub-agent:
 Task(
   subagent_type="qgsd-quorum-orchestrator",
   description="Quorum review: quick plan ${next_num}",
-  prompt="claude_vote: [Your APPROVE/BLOCK vote with 1-2 sentence rationale]
-artifact: [Full plan content from ${QUICK_DIR}/${next_num}-PLAN.md]"
+  prompt="claude_vote: [Your APPROVE/BLOCK vote with 1-2 sentence rationale based on the
+task description: ${DESCRIPTION}. Vote based on whether the plan structure addresses the
+task, not on plan file content — you have not read it.]
+
+artifact_path: ${QUICK_DIR}/${next_num}-PLAN.md
+
+Instructions for quorum orchestrator: Read the plan file at artifact_path before polling
+quorum workers. Pass the plan content to workers as part of your quorum prompt."
 )
 ```
 
@@ -295,9 +299,20 @@ Execute quick task ${next_num}.
 
 <constraints>
 - Execute all tasks in the plan
-- Commit each task atomically
+- Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
 - Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
 - Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
+- After creating the SUMMARY.md, update STATE.md "Quick Tasks Completed" table:
+  - If the table doesn't exist, create it after "### Blockers/Concerns" with columns:
+    | # | Description | Date | Commit | Status | Directory |
+  - Append a new row: | ${next_num} | ${DESCRIPTION} | ${date} | {commit_hash} | Pending | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
+    Use "Pending" as the Status placeholder (orchestrator will update when verifier runs, if --full)
+  - Update "Last activity" line: "${date} - Completed quick task ${next_num}: ${DESCRIPTION}"
+- Commit STATE.md alongside PLAN.md and SUMMARY.md in a single final commit:
+  node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" \
+    --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
+- After committing, run: node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+- Return the final commit hash in your completion response (format: "Commit: {hash}")
 </constraints>
 ",
   subagent_type="qgsd-executor",
@@ -308,14 +323,31 @@ Execute quick task ${next_num}.
 
 After executor returns:
 1. Verify summary exists at `${QUICK_DIR}/${next_num}-SUMMARY.md`
-2. Extract commit hash from executor output
-3. Report completion status
+2. Extract commit hash from executor output ("Commit: {hash}" pattern)
+3. Display the completion banner (see below)
 
 **Known Claude Code bug (classifyHandoffIfNeeded):** If executor reports "failed" with error `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a real failure. Check if summary file exists and git log shows commits. If so, treat as successful.
 
 If summary not found, error: "Executor failed to create ${next_num}-SUMMARY.md"
 
 Note: For quick tasks producing multiple plans (rare), spawn executors in parallel waves per execute-phase patterns.
+
+**Completion banner (NOT --full, or --full before verification):**
+
+```
+---
+
+GSD > QUICK TASK COMPLETE
+
+Quick Task ${next_num}: ${DESCRIPTION}
+
+Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
+Commit: ${commit_hash}
+
+---
+
+Ready for next task: /qgsd:quick
+```
 
 ---
 
@@ -358,7 +390,7 @@ Store as `$VERIFICATION_STATUS`.
 
 | Status | Action |
 |--------|--------|
-| `passed` | Store `$VERIFICATION_STATUS = "Verified"`, continue to step 7 |
+| `passed` | Store `$VERIFICATION_STATUS = "Verified"`, continue to status update |
 | `human_needed` | Run quorum resolution loop (see below). If quorum resolves → store `$VERIFICATION_STATUS = "Verified"`, continue. If quorum cannot resolve → display items, store `$VERIFICATION_STATUS = "Needs Review"`, continue |
 | `gaps_found` | Display gap summary, offer: 1) Re-run executor to fix gaps, 2) Accept as-is. Store `$VERIFICATION_STATUS = "Gaps"` |
 
@@ -387,93 +419,21 @@ Can each item be resolved using available tools (grep, file inspection, quorum-t
    Fail-open: if the Task itself errors, note it and treat as BLOCK (escalate to user).
 
 4. Route on quorum_result:
-   - **APPROVED** → Consensus reached. Store `$VERIFICATION_STATUS = "Verified"`. Proceed to step 7.
-   - **BLOCKED** → Cannot auto-resolve. Display items needing manual check to user. Store `$VERIFICATION_STATUS = "Needs Review"`. Continue to step 7.
-   - **ESCALATED** → Present escalation to user as "Needs Review". Continue to step 7.
+   - **APPROVED** → Consensus reached. Store `$VERIFICATION_STATUS = "Verified"`. Proceed to status update.
+   - **BLOCKED** → Cannot auto-resolve. Display items needing manual check to user. Store `$VERIFICATION_STATUS = "Needs Review"`. Continue to status update.
+   - **ESCALATED** → Present escalation to user as "Needs Review". Continue to status update.
 
----
+**Update STATE.md Status cell after verification:**
 
-**Step 7: Update STATE.md**
-
-Update STATE.md with quick task completion record.
-
-**7a. Check if "Quick Tasks Completed" section exists:**
-
-Read STATE.md and check for `### Quick Tasks Completed` section.
-
-**7b. If section doesn't exist, create it:**
-
-Insert after `### Blockers/Concerns` section:
-
-**If `$FULL_MODE`:**
-```markdown
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Status | Directory |
-|---|-------------|------|--------|--------|-----------|
-```
-
-**If NOT `$FULL_MODE`:**
-```markdown
-### Quick Tasks Completed
-
-| # | Description | Date | Commit | Directory |
-|---|-------------|------|--------|-----------|
-```
-
-**Note:** If the table already exists, match its existing column format. If adding `--full` to a project that already has quick tasks without a Status column, add the Status column to the header and separator rows, and leave Status empty for the new row's predecessors.
-
-**7c. Append new row to table:**
-
-Use `date` from init:
-
-**If `$FULL_MODE` (or table has Status column):**
-```markdown
-| ${next_num} | ${DESCRIPTION} | ${date} | ${commit_hash} | ${VERIFICATION_STATUS} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
-```
-
-**If NOT `$FULL_MODE` (and table has no Status column):**
-```markdown
-| ${next_num} | ${DESCRIPTION} | ${date} | ${commit_hash} | [${next_num}-${slug}](./quick/${next_num}-${slug}/) |
-```
-
-**7d. Update "Last activity" line:**
-
-Use `date` from init:
-```
-Last activity: ${date} - Completed quick task ${next_num}: ${DESCRIPTION}
-```
-
-Use Edit tool to make these changes atomically
-
----
-
-**Step 8: Final commit and completion**
-
-Stage and commit quick task artifacts:
-
-Build file list:
-- `${QUICK_DIR}/${next_num}-PLAN.md`
-- `${QUICK_DIR}/${next_num}-SUMMARY.md`
-- `.planning/STATE.md`
-- If `$FULL_MODE` and verification file exists: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
+Read STATE.md, find the row for `${next_num}`, replace "Pending" with the actual `$VERIFICATION_STATUS`. Then commit:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" --files ${file_list}
+node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): update verification status" \
+  --files .planning/STATE.md ${QUICK_DIR}/${next_num}-VERIFICATION.md
 ```
 
-Get final commit hash:
-```bash
-commit_hash=$(git rev-parse --short HEAD)
-```
+Display final completion banner:
 
-```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
-```
-
-Display completion output:
-
-**If `$FULL_MODE`:**
 ```
 ---
 
@@ -483,22 +443,6 @@ Quick Task ${next_num}: ${DESCRIPTION}
 
 Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
-Commit: ${commit_hash}
-
----
-
-Ready for next task: /qgsd:quick
-```
-
-**If NOT `$FULL_MODE`:**
-```
----
-
-GSD > QUICK TASK COMPLETE
-
-Quick Task ${next_num}: ${DESCRIPTION}
-
-Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Commit: ${commit_hash}
 
 ---
@@ -519,6 +463,6 @@ Ready for next task: /qgsd:quick
 - [ ] (--full) Plan checker validates plan, revision loop capped at 2
 - [ ] `${next_num}-SUMMARY.md` created by executor
 - [ ] (--full) `${next_num}-VERIFICATION.md` created by verifier
-- [ ] STATE.md updated with quick task row (Status column when --full)
-- [ ] Artifacts committed
+- [ ] Executor commits PLAN.md + SUMMARY.md + STATE.md atomically
+- [ ] (--full) Orchestrator updates STATE.md Status cell after verification
 </success_criteria>
