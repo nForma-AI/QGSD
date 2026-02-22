@@ -23,6 +23,9 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 **Phase 25 complete:** 2026-02-22 (constants.ts + logger.ts + identity tool in all 6 repos; STD-04, STD-08 done)
 **Phase 26 complete:** 2026-02-22 (/qgsd:mcp-status — 10-agent identity polling, scoreboard UNAVAIL counts, health state table; OBS-01..04 done)
 **Phase 27 complete:** 2026-02-22 (/qgsd:mcp-set-model — 6-step slash command with live identity validation + model_preferences persistence + quorum override injection; MGR-01, MGR-02 done)
+**Phase 28 complete:** 2026-02-22 (/qgsd:mcp-update + /qgsd:mcp-restart — update via npm install -g or git pull+build; restart via pkill-f + Claude Code auto-reconnect + identity verification; MGR-03..06 done)
+
+**v0.4 MILESTONE COMPLETE** — All 20 MCP Ecosystem requirements shipped (STD-04/08, OBS-01..04, MGR-01..06; STD-01..03/05..07/09..10 deferred per scope decision).
 
 ---
 
@@ -135,6 +138,11 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 | model_preferences in global qgsd.json only | Per-project model override out of scope — simplifies merge logic; global config shallow merge already handles model_preferences | Phase 27 — Plan 01 |
 | Agent name validated before identity call | Prevents hang when user typos agent name; 10-agent hardcoded list checked at Step 2, identity call deferred to Step 3 | Phase 27 — Plan 02 |
 | AGENT_TOOL_MAP in qgsd-prompt.js | Maps 10 agent keys to their primary quorum tool — makes override instructions human-readable in additionalContext | Phase 27 — Plan 01 |
+| Install method from ~/.claude.json (not identity tool) | Identity tool unavailable when agent is offline; claude.json command field is always readable, works for offline agents | Phase 28 — Plan 01 |
+| Package name = args[args.length - 1] for npx agents | codex-cli args: ['-y', 'codex-mcp-server'] — package is last arg, not args[0]; avoids npm install -g -y failure | Phase 28 — Plan 01 |
+| Deduplication by repo dir for "all" mode | 6 claude-* agents share claude-mcp-server — build once, mark others SKIPPED; prevents 6x redundant builds | Phase 28 — Plan 01 |
+| pkill -f for MCP restart (not claude mcp restart) | No `claude mcp restart` subcommand exists; process kill + Claude Code auto-restart is the only mechanism | Phase 28 — Plan 02 |
+| npx restart: kill npm exec parent first, then node child | npm exec parent respawns node child if only child is killed; parent kill prevents stale respawn | Phase 28 — Plan 02 |
 
 ---
-*Last updated: 2026-02-22 after Phase 27 — /qgsd:mcp-set-model command complete (MGR-01, MGR-02); v0.4 write layer (model switching) done; Phase 28 (Update & Restart Commands) next*
+*Last updated: 2026-02-22 after Phase 28 — /qgsd:mcp-update + /qgsd:mcp-restart complete (MGR-03..06); v0.4 MCP Ecosystem milestone complete*

@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-22 after Phase 27)
+See: .planning/PROJECT.md (updated 2026-02-22 after Phase 28)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Phase 28 — Update & Restart Commands (v0.4 MCP Ecosystem)
+**Current focus:** v0.4 MCP Ecosystem — COMPLETE (all 28 phases done)
 
 ## Current Position
 
-Phase: 27 of 28 (Model Switching) — COMPLETE
-Plan: 27-02 — complete
-Status: Phase 27 complete — /qgsd:mcp-set-model live; MGR-01 and MGR-02 satisfied; model_preferences persistence + quorum injection both working
-Last activity: 2026-02-22 - Completed quick task 50: Fix claude-mcp-server health_check subprocess env passthrough
+Phase: 28 of 28 (Update & Restart Commands) — COMPLETE
+Plan: 28-02 — complete
+Status: Phase 28 complete — /qgsd:mcp-update + /qgsd:mcp-restart live; MGR-03/04/05/06 satisfied; v0.4 MCP Ecosystem milestone complete
+Last activity: 2026-02-22 - Completed Phase 28: /qgsd:mcp-update (install method detection + deduplication) + /qgsd:mcp-restart (pkill + Claude Code auto-reconnect + identity verification)
 
-Progress: [█████████████████████░] 27/28 phases (96%)
+Progress: [██████████████████████] 28/28 phases (100%)
 
 ## Performance Metrics
 
@@ -92,6 +92,10 @@ Recent decisions affecting current work:
 - [Phase 26]: /qgsd:mcp-status reads identity tool on all 10 quorum agents + scoreboard UNAVAIL counts; health = available/quota-exceeded/error; claude-glm is 10th agent; NOT in quorum_commands (R2.1)
 - [Phase 27]: model_preferences global-only (no per-project); agent name validated before identity call (no hang on typos); AGENT_TOOL_MAP in qgsd-prompt.js maps 10 agents to primary quorum tools
 - [Phase 27]: /qgsd:mcp-set-model NOT in quorum_commands (R2.1); validates model via identity available_models (live truth); old model captured before write for confirmation
+- [Phase 28]: install method from ~/.claude.json (not identity tool) — works offline; package name = args[args.length-1] for npx; repo dir = dirname(dirname(args[0])) for local node
+- [Phase 28]: "all" mode deduplicates by repo dir — 6 claude-* agents share one binary, built once; others marked SKIPPED
+- [Phase 28]: mcp-restart uses pkill -f; for npx: kills npm exec parent first then node child to prevent respawn
+- [Phase 28]: /qgsd:mcp-update and /qgsd:mcp-restart NOT in quorum_commands (R2.1); identity verification sequential not sibling (R3.2)
 
 ### Pending Todos
 
@@ -121,5 +125,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-22
-Stopped at: Phase 27 complete — /qgsd:mcp-set-model live, model_preferences config + override injection shipped; Phases 23–27 all done; ready to plan Phase 28 (Update & Restart Commands)
+Stopped at: Phase 28 complete — /qgsd:mcp-update + /qgsd:mcp-restart live; v0.4 MCP Ecosystem milestone complete; all 28 phases done; 201/201 tests passing
 Resume file: None
