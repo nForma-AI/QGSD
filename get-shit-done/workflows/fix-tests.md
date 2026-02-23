@@ -2,899 +2,938 @@
 
 ## Overview
 
-Discover → Batch → Execute → Categorize → Dispatch → Iterate loop with three-condition termination.
-Phase 21 delivers real AI classification (5-category) and actionable dispatch.
+4-phase ddmin pipeline: (1) full-suite pinned-order baseline capture + per-test ddmin isolation + dependency graph construction, (2) triage report generation + R3 quorum approval gate, (3) sequential dependency-ordered fixing with per-fix quorum approval + regression detection, (4) final full-suite verification + quorum-reviewed terminal report.
+
+This workflow replaces the batch-based approach. Batching hides cross-batch test pollution — a fix in one batch that changes how another batch's test fails goes undetected because the post-batch run still reports the same test as failing. The ddmin pipeline eliminates this blind spot: tests are fixed in dependency order after the pollution topology is fully understood and quorum-approved.
 
 ---
 
-## Step 1: Determine Run Mode
+## Invocation
 
-**Fresh start (default):** Plain invocation always starts fresh — existing state is ignored.
-
-**Resume mode (explicit only):** Pass `--resume` to the slash command to continue an interrupted run.
+Fresh start is default. `--resume` resumes from the saved `pipeline_phase` in state.
 
 ```bash
-# Check if --resume was passed as an argument to this invocation
-# $RESUME_FLAG = true if "--resume" was present in the command arguments, false otherwise
+# Check if --resume flag was passed
+# If --resume AND valid state exists: load state, resume from saved pipeline_phase
+# If fresh start: clear any existing ddmin-*.json planning files and start from Step 1.1
 ```
 
-- If `$RESUME_FLAG` is false (plain invocation): this is a FRESH START — proceed to Step 2.
-- If `$RESUME_FLAG` is true (`--resume` passed): attempt resume:
+On fresh start, clear stale artifacts:
+```bash
+rm -f .planning/ddmin-discover.json .planning/ddmin-manifest.json .planning/ddmin-baseline.json \
+      .planning/ddmin-triage-report.md .planning/ddmin-final-report.md \
+      .planning/ddmin-signatures.json .planning/ddmin-flakiness.json \
+      .planning/ddmin-results-all.json .planning/ddmin-graph.json
+```
 
-  ```bash
-  STATE_JSON=$(node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests load-state 2>/dev/null)
-  ```
+---
 
-  - If STATE_JSON is a valid JSON object: RESUME — extract `batches_complete` and `manifest_path`
-    from the state, then skip Steps 2-3 (discovery and batching), jump directly to Step 5 starting
-    at batch index `batches_complete`.
-  - If STATE_JSON is `null` or empty: no saved state found — fall through to FRESH START (Step 2).
+## Phase 1: ddmin Isolation
 
-## Step 2: Discover Tests (fresh start only)
+### Step 1.1: Set Activity
 
-Set discovering activity:
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
-  '{"activity":"maintain_tests","sub_activity":"discovering_tests","state_file":".planning/maintain-tests-state.json"}'
+  '{"activity":"fix_tests","sub_activity":"ddmin_isolation","state_file":".planning/maintain-tests-state.json"}'
 ```
 
-Run discovery:
+Print: `QGSD fix-tests: Phase 1 — ddmin isolation`
+
+### Step 1.2: Discover Tests
+
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests discover \
-  --output-file .planning/maintain-tests-discover.json
+  --output-file .planning/ddmin-discover.json
 ```
 
-Print: `QGSD fix-tests: Discovery complete — {N} tests found`
+Read `.planning/ddmin-discover.json`. Extract total test count.
 
-## Step 3: Batch Tests (fresh start only)
+Print: `QGSD fix-tests: Discovered {N} tests`
+
+### Step 1.3: Full-Suite Pinned Run (Baseline Capture)
+
+Pin execution order with a fixed seed. **This seed MUST be used for all subsequent ddmin invocations** to guarantee the same relative test ordering.
 
 ```bash
+BASELINE_SEED=42
+
+# Create a single mega-batch containing ALL tests in seed-pinned order
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests batch \
-  --input-file .planning/maintain-tests-discover.json \
-  --manifest-file .planning/maintain-tests-manifest.json
+  --input-file .planning/ddmin-discover.json \
+  --seed $BASELINE_SEED \
+  --size 9999 \
+  --manifest-file .planning/ddmin-manifest.json
+
+# Run all tests (single batch, index 0)
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests run-batch \
+  --batch-file .planning/ddmin-manifest.json \
+  --batch-index 0 \
+  --timeout 3600 \
+  --output-file .planning/ddmin-baseline.json
 ```
 
-Parse the manifest to extract `total_batches` and `total_files`.
-Print: `QGSD fix-tests: Batching complete — {total_files} tests in {total_batches} batches`
+Read `.planning/ddmin-baseline.json`. Extract:
+- `passing_tests`: results where `status == "passed"` or `status == "skipped"`
+- `failing_tests`: results where `status == "failed"` and `flaky != true`
+- `flaky_initial`: results where `status == "flaky"`
 
-## Step 4: Initialize State (fresh start only)
+Print: `QGSD fix-tests: Baseline complete — {pass_count} passed, {fail_count} failed, {flaky_count} initially-flaky`
 
-Build initial state JSON and save:
+### Step 1.4: Compute Failure Signatures
+
+For each test in `failing_tests`, compute a normalized SHA-256 error signature using an inline Python script. Write the Python script to `/tmp/compute-signatures.py` using the Write tool, then execute it.
+
+The script reads `.planning/ddmin-baseline.json`, applies these normalization rules to each failed test's `error_summary`:
+1. Strip line numbers: replace `:\d+:\d+` patterns with `:LINE:COL`
+2. Strip absolute paths: replace the CWD prefix with `<ROOT>/`
+3. Strip UUIDs: replace `[0-9a-f-]{36}` with `<UUID>`
+4. Strip ISO timestamps: replace `\d{4}-\d{2}-\d{2}T[\d:.Z]+` with `<TS>`
+5. Lowercase and strip
+
+Compute SHA-256 of the normalized string. Write output to `.planning/ddmin-signatures.json`:
+```json
+{
+  "seed": 42,
+  "signatures": {
+    "path/to/test.test.js": {
+      "status": "failed",
+      "error_hash": "<sha256>",
+      "error_summary": "<first 500 chars of original error_summary>",
+      "normalized": "<normalized error text>"
+    }
+  }
+}
+```
+
+```bash
+python3 /tmp/compute-signatures.py
+```
+
+Print: `QGSD fix-tests: Signatures computed for {N} failing tests`
+
+### Step 1.5: Flakiness Pre-Filter (N=10 reruns)
+
+Before running ddmin, classify each failing test as STABLE (fail rate >= 8/10) or FLAKY (fail rate < 8/10). Only STABLE tests proceed to ddmin.
+
+Write an inline Python script to `/tmp/flakiness-filter.py` using the Write tool. The script:
+1. Reads the list of failing tests from `.planning/ddmin-signatures.json`
+2. For each failing test, reruns it 10 times in isolation using `run-batch` with a single-test manifest
+3. Counts fail_count out of 10
+4. Classifies: if `fail_count >= 8` → STABLE; else → FLAKY
+5. Writes `.planning/ddmin-flakiness.json`:
+
+```json
+{
+  "stable": ["path/to/stable.test.js"],
+  "flaky": ["path/to/flaky.test.js"],
+  "details": {
+    "path/to/test.test.js": {"rerun_count": 10, "fail_count": 7, "is_flaky": true}
+  }
+}
+```
+
+Script uses the same `BASELINE_SEED` for all single-test reruns. The GSD_TOOLS path is `/Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs`. Each single-test rerun invocation MUST include `--timeout 60` to prevent hung runners from stalling the flakiness loop indefinitely.
+
+```bash
+python3 /tmp/flakiness-filter.py
+```
+
+Read `.planning/ddmin-flakiness.json`. Extract `stable` (list of tests proceeding to ddmin) and `flaky` (list skipped from ddmin).
+
+Print: `QGSD fix-tests: Flakiness filter — {stable_count} stable (→ ddmin), {flaky_count} flaky (→ skipped)`
+
+### Step 1.6: ddmin Per Failing Test
+
+For each test in `stable` from Step 1.5, run ddmin. **Cap: if `stable` has more than 100 tests, process only the first 100 and flag the rest as `unanalyzed` in state.** (Scope bound to prevent runaway execution time.)
+
+Write a Python orchestration script to `/tmp/ddmin-orchestrator.py`. The script:
+
+1. Reads `.planning/ddmin-manifest.json` (the pinned-order full-suite manifest) to get the ordered list of all tests.
+2. Reads `.planning/ddmin-flakiness.json` to get the `stable` list.
+3. For each failing test in `stable` (up to 100):
+
+   a. Build a candidates list: ALL tests from the pinned manifest EXCEPT the target failing test, preserving the original seed order. This is critical — same order as baseline.
+
+   b. Write candidates to `.planning/ddmin-candidates-<hash>.json` where `<hash>` is the first 8 chars of SHA-256 of the test file path.
+
+   c. Run ddmin via shell:
+   ```bash
+   node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests ddmin \
+     --failing-test <target_test> \
+     --candidates-file .planning/ddmin-candidates-<hash>.json \
+     --run-cap 200 \
+     --timeout 300 \
+     --output-file .planning/ddmin-result-<hash>.json
+   ```
+
+   d. Read `.planning/ddmin-result-<hash>.json`. Record: `failing_test`, `polluter_set`, `ddmin_ran`, `runs_performed`, `reason`.
+
+4. Writes `.planning/ddmin-results-all.json`:
+```json
+{
+  "results": [
+    {
+      "failing_test": "path/to/test.test.js",
+      "polluter_set": ["path/to/polluter.test.js"],
+      "ddmin_ran": true,
+      "runs_performed": 12,
+      "reason": "minimal polluter set found",
+      "run_cap_reached": false
+    }
+  ],
+  "unanalyzed": ["path/to/test-101.test.js"]
+}
+```
+
+```bash
+python3 /tmp/ddmin-orchestrator.py
+```
+
+Print progress for each ddmin run: `QGSD fix-tests: ddmin [{target}] → {N} polluters ({runs} runs)`
+
+Print after all: `QGSD fix-tests: ddmin complete — {N} tests analyzed, {U} unanalyzed (>100 cap)`
+
+### Step 1.7: Build Dependency Graph + Detect Cycles
+
+Write a Python script to `/tmp/build-graph.py`. The script:
+
+1. Reads `.planning/ddmin-results-all.json`.
+2. Builds a directed graph: edge `polluter → failing_test` (polluter must be fixed before failing_test).
+3. Classifies each test:
+   - `independent_failures`: `ddmin_ran == true` AND `polluter_set == []` (fails alone consistently)
+   - `pollution_chains`: `polluter_set` non-empty → directed dependency edges
+   - `unanalyzed`: from `unanalyzed` list in results
+
+4. Cycle detection using iterative DFS (Tarjan-style SCC):
+   - Find all strongly connected components with size > 1 → these are cycle groups
+   - Mark nodes in cycle groups separately
+
+5. Topological sort (Kahn's algorithm) over the DAG (excluding cycle-group nodes) to produce `fix_order`:
+   - Order: independent_failures first, then topologically sorted pollution chain nodes (polluters before polluted), then flaky tests (from Step 1.5), then cycle groups last, then unanalyzed last
+   - Within each group: sort by test file path for determinism
+
+6. Writes `.planning/ddmin-graph.json`:
+```json
+{
+  "nodes": ["path/to/a.test.js"],
+  "edges": [{"from": "path/to/polluter.test.js", "to": "path/to/victim.test.js", "type": "pollutes", "run_cap_reached": false}],
+  "cycles": [["path/to/a.test.js", "path/to/b.test.js"]],
+  "independent_failures": ["path/to/c.test.js"],
+  "flaky": ["path/to/d.test.js"],
+  "unanalyzed": [],
+  "fix_order": ["path/to/c.test.js", "path/to/polluter.test.js", "path/to/victim.test.js"]
+}
+```
+
+```bash
+python3 /tmp/build-graph.py
+```
+
+Print: `QGSD fix-tests: Graph built — {independent} independent, {chains} pollution chains, {cycles} cycle groups, {flaky} flaky`
+
+### Step 1.8: Save Phase 1 State
+
+Save the full Phase 1 state using `maintain-tests save-state`. Build the state JSON conforming to schema_version 2:
+
+```json
+{
+  "schema_version": 2,
+  "pipeline_phase": "triage",
+  "baseline_seed": 42,
+  "baseline_signatures": "<contents of ddmin-signatures.json signatures field>",
+  "flakiness": "<contents of ddmin-flakiness.json details field>",
+  "dependency_graph": "<contents of ddmin-graph.json>",
+  "triage_report_path": ".planning/ddmin-triage-report.md",
+  "triage_quorum_verdict": null,
+  "fix_order": "<fix_order array from ddmin-graph.json>",
+  "fix_log": [],
+  "current_fix_index": 0,
+  "regression_detected": false,
+  "final_report_path": ".planning/ddmin-final-report.md",
+  "final_quorum_verdict": null
+}
+```
+
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '{"schema_version":1,"session_id":"<ISO timestamp>","manifest_path":".planning/maintain-tests-manifest.json","total_tests":<total_files>,"batches_complete":0,"batch_status":{},"processed_files":[],"results_by_category":{"valid_skip":[],"adapt":[],"isolate":[],"real_bug":[],"fixture":[]},"flaky_tests":[],"iteration_count":0,"last_unresolved_count":<total_files>,"consecutive_no_progress":0,"deferred_tests":[],"categorization_verdicts":[],"dispatched_tasks":[],"deferred_report":{"real_bug":[],"low_context":[]},"ddmin_results":[]}'
+  --state-json '<state JSON>'
 ```
 
-Read `ITERATION_CAP` from `.claude/qgsd.json` path `maintain_tests.iteration_cap` — default 5 if not set.
-
-## Step 5: Batch Loop
-
-### Execution Strategy
-
-**Default (all runs):** Generate and execute the Python batch runner script. The script runs all remaining batches in a single subprocess, applies heuristic pre-classification inline, and saves state to disk after every batch. This prevents per-batch context accumulation from exhausting the context window regardless of suite size.
-
-**Fallback (runner unavailable):** If `python3` is not available or the runner fails to start, fall back to the manual loop (Steps 6a–6h below). The manual loop is retained for portability only — use it only when Python is unavailable.
-
-### Python Batch Runner (default path)
-
-Generate a Python script at `/tmp/fix-tests-runner.py` using Write tool, then execute it:
-
-```bash
-python3 /tmp/fix-tests-runner.py
-```
-
-**Script template** (substitute actual values for `MANIFEST`, `STATE_FILE`, `GSD_TOOLS`, `START_BATCH`, `TOTAL_BATCHES`):
-
-```python
-#!/usr/bin/env python3
-"""QGSD fix-tests batch runner — generated by fix-tests workflow."""
-import json, subprocess, sys, tempfile, os
-from collections import defaultdict
-
-MANIFEST = '.planning/maintain-tests-manifest.json'
-STATE_FILE = '.planning/maintain-tests-state.json'
-STATE_TMP = '/tmp/fix-tests-state-working.json'
-RESULT_FILE = '.planning/maintain-tests-batch-result.json'
-GSD_TOOLS = 'node <QGSD_BIN>/gsd-tools.cjs'
-START_BATCH = <batches_complete>   # 0-based index of first unprocessed batch
-TOTAL_BATCHES = <total_batches>
-
-with open(MANIFEST) as f:
-    manifest = json.load(f)
-
-# Load current state from state file (not tmp — source of truth)
-try:
-    out = subprocess.run(f'{GSD_TOOLS} maintain-tests load-state', shell=True,
-                         capture_output=True, text=True).stdout.strip()
-    state = json.loads(out) if out and out != 'null' else {}
-except Exception:
-    state = {}
-
-if not state:
-    print("ERROR: Could not load state — run fresh start instead")
-    sys.exit(1)
-
-def run(cmd, timeout=None):
-    r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
-    return r.stdout.strip(), r.stderr.strip(), r.returncode
-
-def save_state():
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tf:
-        json.dump(state, tf)
-        tf_path = tf.name
-    state_json = json.dumps(state).replace("'", "'\\''")
-    out, err, rc = run(f"{GSD_TOOLS} maintain-tests save-state --state-json '{state_json}'")
-    if rc != 0:
-        print(f"  WARN: save-state error: {err[:100]}")
-    os.unlink(tf_path)
-
-def heuristic_categorize(fpath, error_summary):
-    """Fast heuristic pre-classification. Falls back to real_bug for AI review."""
-    es = error_summary.lower()
-    if 'asyncio.wait_for' in error_summary and '.result()' in error_summary:
-        return 'adapt', 'asyncio.wait_for(unit.result()) antipattern', 'import_error'
-    if any(x in es for x in ['connecterror', 'connectionrefused', 'connection refused']):
-        return 'isolate', 'httpx/connection error — requires running infrastructure', 'port_conflict'
-    if 'httpcore' in es and 'connect' in es:
-        return 'isolate', 'httpx connection error — requires running infrastructure', 'port_conflict'
-    if 'modulenotfounderror' in es or 'no module named' in es:
-        return 'adapt', f'ImportError: {error_summary[:100]}', 'import_error'
-    if 'api key' in es or 'apikey' in es or 'unauthorized' in es:
-        return 'isolate', 'Requires API credentials not configured', 'env_missing'
-    if 'no valid judgments' in es or ('provider' in es and 'failed' in es):
-        return 'isolate', 'LLM provider not available', 'env_missing'
-    if 'snapshot' in es or 'inline snapshot' in es:
-        return 'fixture', 'Snapshot mismatch', 'snapshot_mismatch'
-    if 'timeout' in es and 'asyncio' not in es:
-        return 'isolate', 'Timeout in test — infrastructure timing', 'timeout'
-    # Conservative fallback: flag for AI review
-    return 'real_bug', f'Unclassified (heuristic fallback): {error_summary[:150]}', 'unknown'
-
-for batch_num in range(START_BATCH + 1, TOTAL_BATCHES + 1):  # 1-based for display
-    batch_idx = batch_num - 1
-    batch_files = manifest['batches'][batch_idx]['files']
-
-    print(f"\n{'='*60}")
-    print(f"BATCH {batch_num}/{TOTAL_BATCHES}: {len(batch_files)} files")
-    print('='*60)
-    sys.stdout.flush()
-
-    activity = json.dumps({"activity": "maintain_tests", "sub_activity": "running_batch",
-                           "batch": batch_num, "batch_total": TOTAL_BATCHES,
-                           "state_file": STATE_FILE})
-    run(f"{GSD_TOOLS} activity-set '{activity}'")
-
-    cmd = (f'{GSD_TOOLS} maintain-tests run-batch'
-           f' --batch-file {MANIFEST} --batch-index {batch_idx}'
-           f' --timeout 1200 --output-file {RESULT_FILE}')
-    print("Running tests...")
-    sys.stdout.flush()
-
-    try:
-        out, err, rc = run(cmd, timeout=1500)
-    except subprocess.TimeoutExpired:
-        print(f"  TIMEOUT: batch {batch_num} exceeded 1500s")
-        state['batch_status'][str(batch_num)] = 'timed_out'
-        save_state()
-        continue
-
-    if rc != 0:
-        print(f"  ERROR rc={rc}: {err[:200]}")
-        state['batch_status'][str(batch_num)] = 'timed_out'
-        save_state()
-        continue
-
-    try:
-        with open(RESULT_FILE) as f:
-            d = json.load(f)
-    except Exception as e:
-        print(f"  PARSE ERROR: {e}")
-        state['batch_status'][str(batch_num)] = 'timed_out'
-        save_state()
-        continue
-
-    timed_out = d.get('batch_timed_out', False)
-    timeout_count = d.get('timeout_count', 0)
-    print(f"  timed_out={timed_out} timeout_count={timeout_count}")
-
-    if timed_out and timeout_count > 0:
-        state['batch_status'][str(batch_num)] = 'timed_out'
-        save_state()
-        continue
-
-    # Process results
-    state['batch_status'][str(batch_num)] = 'complete'
-    existing_files = set(state.get('processed_files', []))
-    existing_verdicts = set(v['file'] for v in state.get('categorization_verdicts', []))
-    # Also check results_by_category
-    for cat_files in state.get('results_by_category', {}).values():
-        existing_verdicts.update(cat_files)
-
-    passed_count = failed_count = 0
-    for r in d.get('results', []):
-        fpath = r['file']
-        s = r.get('status')
-        if s in ('passed', 'skipped'):
-            passed_count += 1
-            if fpath not in existing_files:
-                state['processed_files'].append(fpath)
-                existing_files.add(fpath)
-        elif s == 'flaky':
-            if fpath not in state.get('flaky_tests', []):
-                state.setdefault('flaky_tests', []).append(fpath)
-        elif s == 'failed' and not r.get('flaky', False):
-            failed_count += 1
-            if fpath not in existing_verdicts:
-                es = r.get('error_summary', '')
-                category, reason, error_type = heuristic_categorize(fpath, es)
-                state.setdefault('categorization_verdicts', []).append({
-                    'file': fpath, 'category': category, 'confidence': 'medium',
-                    'context_score': 1, 'reason': reason, 'error_type': error_type,
-                    'error_summary': es[:500], 'heuristic': True
-                })
-                state.setdefault('results_by_category', {}).setdefault(
-                    category.replace('-', '_'), []).append(fpath)
-                existing_verdicts.add(fpath)
-                print(f"  CLASSIFIED: {fpath.split('/')[-1]} → {category}: {reason[:60]}")
-
-    state['batches_complete'] = batch_num
-    print(f"  passed={passed_count} failed={failed_count} batches_complete={batch_num}")
-    save_state()
-    sys.stdout.flush()
-
-print("\n\nRUNNER COMPLETE")
-print(f"batches_complete: {state['batches_complete']}")
-for cat, files in state.get('results_by_category', {}).items():
-    if files:
-        print(f"  {cat}: {len(files)} files")
-```
-
-### Step 5-post: AI Reclassification of Heuristic real_bug Verdicts (all runs)
-
-After the Python batch runner exits, read the state file and identify all verdicts where:
-- `verdict.heuristic == true` AND `verdict.category == "real_bug"`
-
-These are heuristic fallbacks that need AI review. For each batch of up to 20 such verdicts, run the AI classification Task from Step 6d (the same sub-agent prompt). Replace the heuristic verdicts in `state.categorization_verdicts` with the AI verdict. Update `state.results_by_category` accordingly.
-
-After reclassification, proceed directly to Step 6h for dispatch (skip to "Group and dispatch actionable failures"). The manual loop below is fallback-only (see Execution Strategy above).
-
-### State Handoff Block
-
-The Python runner prints a structured summary as its final output after `RUNNER COMPLETE`. After the runner exits, read this output and the state file to confirm:
-- `batches_complete` value (how many batches ran)
-- Category counts from `results_by_category` (printed by runner)
-- Count of heuristic real_bug verdicts needing AI review (all `categorization_verdicts` where `heuristic == true` AND `category == "real_bug"`)
-
-This handoff information drives Step 5-post: if the heuristic real_bug count is 0, skip Step 5-post and go directly to Step 6h dispatch.
+Print: `QGSD fix-tests: Phase 1 complete — state saved (pipeline_phase: triage)`
 
 ---
 
-### Manual Loop (fallback only — use only when Python is unavailable)
+## Phase 2: Triage Report + Quorum Approval
 
-For each batch index B starting from `batches_complete` up to `total_batches - 1` (zero-based):
+### Step 2.1: Generate Triage Report
 
-### 6a. Set activity: running_batch
+Write an inline Python script to `/tmp/generate-triage.py` that reads `.planning/ddmin-graph.json`, `.planning/ddmin-flakiness.json`, and `.planning/ddmin-results-all.json`, and writes `.planning/ddmin-triage-report.md` using this exact template:
 
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
-  '{"activity":"maintain_tests","sub_activity":"running_batch","batch":<B+1>,"batch_total":<total_batches>,"state_file":".planning/maintain-tests-state.json"}'
+```markdown
+# QGSD ddmin Triage Report
+
+**Generated:** <ISO timestamp>
+**Baseline seed:** 42
+**Total tests:** {total} | **Failing (stable):** {stable_count} | **Flaky:** {flaky_count} | **Cycle groups:** {cycle_count} | **Unanalyzed:** {unanalyzed_count}
+
+## 1. Independent Failures (fix first — no dependencies)
+
+| Test | Ddmin Runs | Notes |
+|------|-----------|-------|
+| {test_path} | {runs_performed} | isolated {fail_count}/10 |
+
+(If none: "None identified.")
+
+## 2. Pollution Chains (fix polluters before polluted tests)
+
+### Chain {N}
+| Order | Test | Role |
+|-------|------|------|
+| 1 | {polluter_path} | POLLUTER |
+| 2 | {victim_path} | POLLUTED |
+
+(If none: "No pollution chains identified.")
+
+## 3. Cycle Groups (require atomic fix or quarantine)
+
+### Cycle {N}
+Tests: [{test_a}, {test_b}]
+Note: Tests pollute each other. Fix atomically (shared state in beforeEach/afterEach) or quarantine.
+
+(If none: "No cycles detected.")
+
+## 4. Flaky Tests (fix last or skip)
+
+| Test | Fail Rate | Notes |
+|------|-----------|-------|
+| {test_path} | {fail_count}/10 | Statistical flakiness |
+
+(If none: "No flaky tests identified.")
+
+## 5. Proposed Fix Order
+
+{fix_order list, one per line with index}
+
+## 6. Unanalyzed (>100 test cap)
+
+{unanalyzed list or "None — all failing tests were analyzed."}
 ```
 
-### 6b. Execute batch
+```bash
+python3 /tmp/generate-triage.py
+```
+
+Print: `QGSD fix-tests: Triage report generated → .planning/ddmin-triage-report.md`
+
+### Step 2.2: Quorum Approval Gate
+
+**This is a hard gate. Do NOT proceed to Phase 3 until quorum returns APPROVED.**
+
+Spawn the quorum orchestrator as a Task to review the triage report. Use Mode A (pure question — no code execution):
+
+```
+Task(
+  subagent_type="qgsd-quorum-orchestrator",
+  prompt="claude_vote: [Your APPROVE/BLOCK verdict based on whether the triage report correctly categorizes test failures and the fix ordering is sound.]
+
+artifact_path: .planning/ddmin-triage-report.md
+
+Review the triage report at artifact_path. Evaluate:
+1. Do the independent failures look like genuine standalone bugs (not pollution or flakiness)?
+2. Are the pollution chains ordered correctly (polluter comes before polluted in fix order)?
+3. Are cycle groups properly identified and marked for atomic fix?
+4. Is the proposed fix order safe to execute sequentially?
+
+Vote APPROVE if the triage is correct and fixing can begin.
+Vote BLOCK with specific concerns if you see misclassifications, ordering errors, or missing cycles."
+)
+```
+
+Wait for the Task to return. Parse the quorum verdict from the orchestrator response.
+
+- If `APPROVED`: continue to Step 2.3.
+- If `BLOCKED`: print the block reason, update state `triage_quorum_verdict = "BLOCKED"`, save state, and HALT. Print instructions to the user: `QGSD fix-tests: Triage BLOCKED by quorum. Review .planning/ddmin-triage-report.md and re-run after addressing concerns.`
+
+Print: `QGSD fix-tests: Triage quorum verdict: {verdict}`
+
+### Step 2.3: Save Phase 2 State
+
+Update state: set `triage_quorum_verdict = "APPROVED"`, `pipeline_phase = "fixing"`.
+
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
+  --state-json '<updated state with triage_quorum_verdict = "APPROVED" and pipeline_phase = "fixing">'
+```
+
+Print: `QGSD fix-tests: Phase 2 complete — quorum approved, pipeline_phase: fixing`
+
+---
+
+## Phase 3: Sequential Fixing
+
+Phase 3 iterates through `state.fix_order` (from the dependency graph). Each fix is:
+1. State-diffed for root-cause evidence
+2. AI-proposed with quorum approval
+3. Committed with regression test + approval record
+4. Followed by a full-suite re-run and signature diff
+
+### Step 3.0: Pre-Phase Guard + Load Fix Order
+
+**Working tree check (skip if `current_fix_index > 0` — i.e., resuming mid-phase):**
+```bash
+git status --porcelain
+```
+If output is non-empty: print `QGSD fix-tests: ERROR — working tree is dirty before Phase 3 begins. Commit or stash changes before running fix-tests.` and exit.
+
+**Branch isolation (skip if resuming):**
+Create a timestamped fix branch to keep fixes isolated:
+```bash
+git checkout -b fix-tests/$(date +%Y%m%d-%H%M%S)
+```
+If branch creation fails (already on a fix-tests/* branch from a previous run): continue on current branch — this is a resume scenario.
+
+Load state via `maintain-tests load-state`. Extract:
+- `fix_order`: ordered list of tests to fix
+- `current_fix_index`: index of next test to fix (allows resume)
+- `fix_log`: existing fix records
+- `dependency_graph.cycles`: cycle groups
+
+Read `current_fix_index`. If it equals `len(fix_order)`: all tests processed — skip to Phase 4.
+
+### Step 3.1: Handle Cycle Groups First
+
+Before processing `fix_order`, identify cycle groups from `state.dependency_graph.cycles`. For each cycle group:
+
+**Cycle resolution strategy:**
+Spawn a Task sub-agent to diagnose the shared state causing the cycle and propose an atomic fix:
+
+```
+Task(
+  prompt="You are diagnosing a test cycle group that requires an atomic fix.
+
+Cycle group: {list of test files in cycle}
+
+Instructions:
+1. Read each test file in the cycle group.
+2. Identify the shared state (global variable, DB table, file, module-level singleton, or beforeAll/afterAll hook) that creates the bidirectional pollution.
+3. Propose a single atomic fix that resolves all tests in the cycle simultaneously (typically: add beforeEach/afterEach cleanup for the shared state).
+4. The fix must not change test assertions — only add isolation teardown.
+
+Return a JSON object:
+{
+  'shared_state_identified': '<description>',
+  'fix_description': '<one paragraph>',
+  'files_to_modify': ['path/to/file.js'],
+  'confidence': 'high|medium|low'
+}
+",
+  description="Diagnose cycle group: {cycle_tests}"
+)
+```
+
+Wait for the Task to return.
+
+- If `confidence == "high"` or `"medium"`: proceed to per-fix quorum approval (Step 3.3) with the proposed cycle fix. Apply it atomically (all files in the cycle group in a single commit). After commit, proceed to regression check (Step 3.4).
+- If `confidence == "low"` or Task fails: quarantine the cycle group. Write a quarantine record to state:
+  ```json
+  {
+    "cycle_group": ["path/to/a.test.js", "path/to/b.test.js"],
+    "status": "quarantined",
+    "reason": "No shared state identified with sufficient confidence",
+    "timestamp": "<ISO timestamp>"
+  }
+  ```
+  Append to `state.fix_log`. Save state. Print: `QGSD fix-tests: Cycle group quarantined — {files}. Documented in fix_log.`
+  Continue to next group.
+
+Print per-cycle outcome: `QGSD fix-tests: Cycle group {N} → {resolved|quarantined}`
+
+**After all cycle groups processed — filter fix_order:**
+Build `cycle_group_tests`: the union of all test paths that appear in ANY entry of `state.dependency_graph.cycles`. Filter `state.fix_order` to remove all entries in `cycle_group_tests`. Update `state.fix_order` in the state JSON and save state. This prevents cycle group tests from being re-encountered in the sequential fix loop.
+
+```
+state.fix_order = [t for t in state.fix_order if t not in cycle_group_tests]
+state.current_fix_index = 0  # Reset since list changed
+```
+
+Print: `QGSD fix-tests: Filtered {N} cycle-group tests from fix_order. Sequential loop has {len(fix_order)} tests.`
+
+### Step 3.2: Capture State Diff (per fix)
+
+For the current test at `fix_order[current_fix_index]`:
+
+Print: `QGSD fix-tests: Fixing [{current_fix_index + 1}/{len(fix_order)}] {test_file}`
+
+Set activity:
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  '{"activity":"fix_tests","sub_activity":"fixing","test_file":"{test_file}","fix_index":{current_fix_index},"state_file":".planning/maintain-tests-state.json"}'
+```
+
+**Capture pre-fix state evidence.** This diff will be passed to the fix proposal agent as context.
+
+Run the failing test once in isolation to capture its current failure output:
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests run-batch \
+  --batch-file /tmp/single-test-manifest-{hash}.json \
+  --batch-index 0 \
+  --timeout 120 \
+  --output-file /tmp/pre-fix-result-{hash}.json
+```
+(Build the single-test manifest using `maintain-tests batch --input-json '{"test_files":["<test_file>"]}' --seed $BASELINE_SEED --size 1 --manifest-file /tmp/single-test-manifest-{hash}.json`)
+
+Record the current failure output (`error_summary`) as `pre_fix_error`.
+
+Get polluter context from state: read `state.dependency_graph.edges` to find edges where `to == test_file`. These are the polluter tests. Pass their paths as additional context.
+
+### Step 3.3: AI Proposes Fix + Quorum Approval
+
+Spawn a fix proposal Task sub-agent:
+
+```
+Task(
+  prompt="You are proposing a fix for a failing test.
+
+Test file: {test_file}
+Failure output (pre-fix):
+{pre_fix_error}
+
+Polluters (tests that cause this failure when run first):
+{polluter_list — or 'None (independent failure)'}
+
+From the dependency graph:
+- This test is: {independent failure | polluted by <polluters>}
+- Ddmin runs to confirm: {runs_performed}
+
+Instructions:
+1. Read the test file: Read({test_file})
+2. If polluters exist: read the first polluter file to understand the shared state.
+3. Identify the root cause (shared global variable, uncleaned DB state, unreset module-level variable, etc.).
+4. Propose a minimal fix:
+   - For pollution: add beforeEach/afterEach cleanup in the TEST file (not the source code) to reset the shared state.
+   - For independent failures: fix the underlying code defect or update the test assertion if the code was intentionally changed.
+5. Write a one-paragraph fix description including: root cause, specific variable/function/table being cleaned, which file is modified, and why.
+
+Return a JSON object:
+{
+  'root_cause': '<one sentence>',
+  'fix_description': '<one paragraph>',
+  'files_to_modify': ['path/to/file.js'],
+  'fix_type': 'cleanup|assertion_update|code_fix',
+  'confidence': 'high|medium|low'
+}
+",
+  description="Propose fix for {test_file}"
+)
+```
+
+Wait for the Task to return. Extract `fix_description`, `files_to_modify`, `root_cause`.
+
+**Write fix evidence bundle to `.planning/fix-evidence-{hash}.md`:**
+
+```markdown
+# Fix Evidence: {test_file}
+
+**Fix index:** {current_fix_index}
+**Timestamp:** <ISO timestamp>
+
+## Failure Output (pre-fix)
+{pre_fix_error}
+
+## Polluters
+{polluter_list or "None"}
+
+## Proposed Fix
+{fix_description}
+
+## Root Cause
+{root_cause}
+
+## Files to Modify
+{files_to_modify}
+```
+
+**Quorum approval gate:**
+
+Spawn quorum orchestrator as a Task (Mode A):
+
+```
+Task(
+  subagent_type="qgsd-quorum-orchestrator",
+  prompt="claude_vote: [Your APPROVE/BLOCK verdict on whether this fix correctly addresses the root cause without introducing regressions.]
+
+artifact_path: .planning/fix-evidence-{hash}.md
+
+Review the fix evidence at artifact_path. Evaluate:
+1. Does the root cause explanation match the failure output?
+2. Is the proposed fix minimal and correct (addresses the root cause without changing unrelated behavior)?
+3. Will this fix prevent the pollution chain described in the evidence?
+
+Vote APPROVE to proceed with implementing and committing this fix.
+Vote BLOCK with specific concerns if the fix is incorrect, incomplete, or likely to introduce regressions."
+)
+```
+
+Wait for verdict.
+
+- If `APPROVED`: proceed to Step 3.4.
+- If `BLOCKED`: print block reason. Save state (do not increment `current_fix_index`). Print: `QGSD fix-tests: Fix BLOCKED by quorum for {test_file}. Halting. Review .planning/fix-evidence-{hash}.md and re-run.` Then HALT.
+
+Print: `QGSD fix-tests: Fix quorum verdict [{test_file}]: {verdict}`
+
+### Step 3.4: Apply Fix, Add Regression Test, Commit
+
+Spawn a fix-application Task sub-agent:
+
+```
+Task(
+  prompt="Apply an approved fix to a test file.
+
+Fix details:
+{fix_description}
+
+Files to modify: {files_to_modify}
+
+Instructions:
+1. Apply the fix exactly as described — no scope creep.
+2. Write a regression test that verifies the fix:
+   - Create a new file at `tests/__regression__/{test_file_stem}-regression.test.{ext}` (use same extension as original test file).
+   - The regression test must: import the relevant module/function, set up the SAME conditions that caused the failure (including the shared state that was polluting), and assert the test passes without cleanup.
+   - If a regression test is not applicable (e.g., the fix is a beforeEach cleanup): create a minimal regression test that verifies the cleanup runs correctly.
+3. Run the fixed test in isolation to confirm it passes:
+   ```bash
+   node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests run-batch \
+     --batch-file /tmp/single-test-manifest-{hash}.json \
+     --batch-index 0 \
+     --timeout 120 \
+     --output-file /tmp/post-fix-result-{hash}.json
+   ```
+4. Read `/tmp/post-fix-result-{hash}.json`. Confirm `status == 'passed'`.
+5. If the test still fails after the fix: report the failure output and DO NOT commit. Return: {'status': 'fix_failed', 'error': '<failure output>'}
+6. If the test passes: commit with this exact structure:
+
+```bash
+git add {files_to_modify} tests/__regression__/{regression_file}
+git commit -m 'fix(tests): {one-line fix description}
+
+Root cause: {root_cause}
+
+Fix: {fix_description}
+
+Regression test: tests/__regression__/{regression_file}
+
+Quorum approval: APPROVED ({model_count} models: {model_list})
+Approval timestamp: {timestamp}'
+```
+
+7. Return: {'status': 'committed', 'commit_hash': '<hash>', 'regression_test': '<path>'}
+",
+  description="Apply fix for {test_file}"
+)
+```
+
+Wait for Task to return.
+
+- If `status == 'fix_failed'`: print failure output, save state without advancing `current_fix_index`, HALT with message: `QGSD fix-tests: Fix application failed for {test_file}. The quorum-approved fix did not make the test pass. Manual review required.`
+- If `status == 'committed'`: record in fix_log, proceed to Step 3.5.
+
+### Step 3.5: Post-Fix Full-Suite Run + Signature Diff
+
+After each successful commit, re-run the full suite to detect regressions:
 
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests run-batch \
-  --batch-file .planning/maintain-tests-manifest.json \
-  --batch-index <B> \
-  --output-file .planning/maintain-tests-batch-result.json
+  --batch-file .planning/ddmin-manifest.json \
+  --batch-index 0 \
+  --timeout 3600 \
+  --output-file .planning/ddmin-post-fix-run.json
 ```
 
-Read `.planning/maintain-tests-batch-result.json` to get batch results.
+Compute post-fix signatures using the same normalization as Step 1.4 (write and run `/tmp/compute-signatures-postfix.py`). Write to `.planning/ddmin-signatures-postfix.json`.
 
-If `batch_timed_out: true`: update `batch_status[B+1] = "timed_out"` in state, save state, continue to next batch (do NOT advance `batches_complete`).
+**Diff signatures against baseline:**
 
-### 6c. Set activity: categorizing_batch
+Write an inline Python script to `/tmp/diff-signatures.py` that compares `.planning/ddmin-signatures.json` (baseline) with `.planning/ddmin-signatures-postfix.json` (post-fix) and identifies:
+- `resolved`: tests that were failing and are now passing → good
+- `new_failures`: tests not in baseline failing set that are now failing → REGRESSION
+- `signature_changed`: tests still failing but with different error hash → shifted failure, investigate
+
+```bash
+python3 /tmp/diff-signatures.py
+```
+
+**If `new_failures` is non-empty:**
+
+Print: `QGSD fix-tests: REGRESSION DETECTED — {N} new failures after fix of {test_file}`
+
+Set `state.regression_detected = true`.
+
+Revert the polluting commit immediately:
+```bash
+git revert HEAD --no-edit
+```
+
+Print: `QGSD fix-tests: Reverted fix commit. Running ddmin on regression delta...`
+
+Run ddmin on each new failure to understand what the just-reverted fix broke. Use the orchestrator from Step 1.6 logic, scoped to only the `new_failures` tests. Save results to `.planning/ddmin-regression-results.json`.
+
+Append a regression record to `state.fix_log`:
+```json
+{
+  "test_file": "{test_file}",
+  "fix_quorum_verdict": "APPROVED",
+  "commit_hash": null,
+  "status": "reverted_regression",
+  "regression_tests": ["<new failure paths>"],
+  "regression_ddmin_path": ".planning/ddmin-regression-results.json",
+  "timestamp": "<ISO>"
+}
+```
+
+Save state WITHOUT advancing `current_fix_index`.
+
+Print: `QGSD fix-tests: Fix reverted. Regression ddmin saved to .planning/ddmin-regression-results.json. Re-run after reviewing.`
+
+HALT.
+
+**If `new_failures` is empty:**
+
+Update `state.fix_log` with the committed fix record:
+```json
+{
+  "test_file": "{test_file}",
+  "fix_type": "{fix_type}",
+  "fix_description": "{fix_description}",
+  "fix_quorum_verdict": "APPROVED",
+  "commit_hash": "{commit_hash}",
+  "regression_test_added": true,
+  "regression_test_path": "{regression_test}",
+  "resolved_count": "{len(resolved)}",
+  "signature_changed_count": "{len(signature_changed)}",
+  "timestamp": "<ISO>"
+}
+```
+
+Increment `current_fix_index` by 1.
+
+If `signature_changed` is non-empty: print a warning but continue. `QGSD fix-tests: Warning — {N} tests changed failure signature. Not blocking; recording in fix_log.`
+
+**Advance baseline signatures:** Update `.planning/ddmin-signatures.json` to use post-fix signatures as the new baseline for the next comparison. (The post-fix state IS the new baseline.)
+
+Save state.
+
+Print: `QGSD fix-tests: Fix committed [{test_file}]. {resolved_count} tests resolved. Next: [{current_fix_index + 1}/{len(fix_order)}]`
+
+### Step 3.6: Loop or Advance to Phase 4
+
+If `current_fix_index < len(fix_order)`: go back to Step 3.2 with the next test.
+
+If `current_fix_index == len(fix_order)`: all fixes processed.
+
+Update state: `pipeline_phase = "verification"`. Save state.
 
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
-  '{"activity":"maintain_tests","sub_activity":"categorizing_batch","batch":<B+1>,"batch_total":<total_batches>,"state_file":".planning/maintain-tests-state.json"}'
+  '{"activity":"fix_tests","sub_activity":"verification","state_file":".planning/maintain-tests-state.json"}'
 ```
 
-### 6d. Categorize confirmed failures (Phase 21 — AI classification)
+Print: `QGSD fix-tests: Phase 3 complete — {len(fix_log)} fixes applied. Advancing to Phase 4.`
 
-**Phase 20 stub detection:** Before processing, check if `state.categorization_verdicts` is empty AND any `state.results_by_category` array is non-empty. If true: this is Phase 20 stub state. Clear all category arrays and re-classify:
-```bash
-# Clear stub: reset results_by_category, categorization_verdicts, deferred_report in state
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<current state with results_by_category all empty arrays, categorization_verdicts=[], dispatched_tasks=[], deferred_report={"real_bug":[],"low_context":[]}>'
-```
-Print: `QGSD fix-tests: Clearing Phase 20 stub state — re-classifying all failures`
-
-**Sort batch results:**
-- `passed_or_skipped` = results where status == "passed" OR status == "skipped"
-- `flaky` = results where status == "flaky"
-- `confirmed_failures` = results where status == "failed" AND flaky == false
-
-Append `passed_or_skipped` files to `state.processed_files`.
-Append `flaky` files to `state.flaky_tests`.
-
-**Skip already-classified failures (resume safety):**
-Before classifying a failure, check if `result.file` already appears in any `results_by_category` array OR in `categorization_verdicts[].file`. If found: skip classification, reuse existing verdict for dispatch grouping.
-
-**Delegate categorization to a sub-agent:**
-Collect all `confirmed_failures` that are NOT already classified (after the resume-safety check above). Call these `unclassified_failures`.
-
-If `unclassified_failures` is empty: skip to state save below.
-
-If `unclassified_failures` is non-empty, spawn a SINGLE Task sub-agent for the entire batch's unclassified failures:
-
-```
-Task(
-  prompt="You are a test failure categorizer. Classify each failing test below into exactly one of 5 categories and return ONLY a JSON array.
-
-## Failures to classify
-
-{for each unclassified failure in confirmed_failures:}
-File: {result.file}
-Error summary:
-{result.error_summary}
 ---
 
-## Classification rules
+## Phase 4: Final Verification
 
-| Category | Classify when |
-|----------|--------------|
-| valid-skip | Test was already skipped/pending in test file source; tests a removed/deprecated feature; checks process.env.CI to skip itself |
-| adapt | Failure caused by a real code change that mutated asserted behavior; error_summary shows assertion mismatch clearly traceable to a code change; no environment dependency |
-| isolate | Fails only due to environment/ordering dependency; error shows missing env var, port conflict, race condition, or depends on another test's side effects |
-| real-bug | Failure reveals a genuine defect requiring developer judgment; stack trace shows panic/crash/wrong logic not explainable by environment or code change |
-| fixture | Fails because a fixture file, test data, snapshot, or generated mock is stale/missing/mismatched |
-
-If uncertain: classify as real-bug (conservative).
-
-## Instructions
-
-For each failure:
-1. Read the test file: Read({result.file})
-2. Extract source file paths from error_summary matching pattern: at .* \\((src|lib|app)/ or File \"(src|lib|app)/
-   — take first 2 unique non-node_modules, non-test paths
-3. Read each source path (skip if does not exist)
-4. Compute context_score: +1 if test file non-empty, +1 if at least 1 source file read, +1 if error_summary non-empty (range 0-3)
-5. If context_score < 2: category = \"deferred\", add to low_context list
-6. Classify using the rules above
-7. For adapt verdicts: extract describe() or primary import identifier (<=60 chars), run:
-   git -C $(git rev-parse --show-toplevel 2>/dev/null) log -S\"<identifier>\" --oneline --diff-filter=M -- src/ lib/ app/ 2>/dev/null | head -10
-   If empty, run broader: git log -S\"<identifier>\" --oneline -10 2>/dev/null
-   Set pickaxe_context = { identifier, commits: [...], command_run: \"...\" }
-
-Return ONLY a JSON array (no markdown, no explanation):
-[
-  {
-    \"file\": \"path/to/test.test.js\",
-    \"category\": \"<valid-skip|adapt|isolate|real-bug|fixture|deferred>\",
-    \"confidence\": \"high|medium|low\",
-    \"context_score\": 0,
-    \"reason\": \"one sentence\",
-    \"error_type\": \"<assertion_mismatch|import_error|snapshot_mismatch|fixture_missing|env_missing|port_conflict|timeout|unknown>\",
-    \"pickaxe_context\": null
-  }
-]
-",
-  description="Categorize batch {B+1} failures ({count} tests)"
-)
-```
-
-**Parse verdicts from sub-agent response:**
-- If the Task returns valid JSON array: use it as the verdict list.
-- If the Task returns malformed JSON or errors out: treat ALL failures in this batch as deferred (low_context) — set `category = "deferred"` for each — and continue. Never block the loop on a categorization failure.
-
-**Process verdicts:**
-- For each verdict where `category == "deferred"`: add file to `state.deferred_tests` AND `state.deferred_report.low_context`
-- For all other verdicts: append to `state.categorization_verdicts`, append file to matching `state.results_by_category` array
-
-**Save state after processing verdicts:**
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<state with updated results_by_category, categorization_verdicts, deferred_tests, deferred_report>'
-```
-
-**Note on dispatch:** Adapt/fixture/isolate dispatch happens in Step 6h (added by Plan 02). This step (6d) only produces verdicts and updates state.
-
-### 6d.1. Ddmin enrichment for isolate verdicts
-
-For each verdict produced in 6d where `category == "isolate"` AND `verdict.polluter_set` is not yet set:
-
-1. Build a candidates list: all OTHER test files in the current batch (batch's `files` list minus the failing test itself).
-
-2. If `candidates` is empty: set `verdict.polluter_set = []`, `verdict.ddmin_ran = false`. Skip to next.
-
-3. Write candidates to a temp file:
-   ```bash
-   echo '{"test_files":["<file1>","<file2>","..."]}' > .planning/ddmin-candidates-temp.json
-   ```
-
-4. Run ddmin:
-   ```bash
-   node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests ddmin \
-     --failing-test <verdict.file> \
-     --candidates-file .planning/ddmin-candidates-temp.json \
-     --timeout 30 \
-     --output-file .planning/ddmin-result-temp.json
-   ```
-
-5. Read `.planning/ddmin-result-temp.json`. Extract `polluter_set` and `ddmin_ran`.
-
-6. Update the verdict in `state.categorization_verdicts`:
-   - Set `verdict.polluter_set = ddmin_result.polluter_set`
-   - Set `verdict.ddmin_ran = ddmin_result.ddmin_ran`
-   - Set `verdict.ddmin_reason = ddmin_result.reason`
-   - Set `verdict.ddmin_candidates_tested = ddmin_result.candidates_tested`
-   - Set `verdict.ddmin_runs_performed = ddmin_result.runs_performed`
-
-7. Save state after all isolate verdicts in this batch are enriched.
-
-Print after each enrichment:
-`QGSD fix-tests: ddmin [{verdict.file}] → {len(polluter_set)} polluters found`
-
-**Note:** Ddmin is best-effort — if it times out or returns no result, proceed with `polluter_set = []`. Never block dispatch on ddmin failure.
-
-### 6e. Print progress banner
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► FIX-TESTS: Batch {B+1} / {total_batches} complete
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
- Passed: {passed_count}  |  Failed: {failed_count}  |  Flaky: {flaky_count}  |  Skipped: {skipped_count}
- Total classified: {sum(all category arrays)} / {total_tests}
- Iteration: {iteration_count + 1} / {ITERATION_CAP}
-```
-
-### 6f. Update state
-
-Increment `batches_complete` by 1.
-Update `batch_status[B+1] = "complete"`.
-Calculate:
-- `classified = len(valid_skip) + len(adapt) + len(isolate) + len(real_bug) + len(fixture)`
-- `flaky_count = len(flaky_tests)`
-- `unresolved = total_tests - classified - flaky_count`
-
-If `unresolved == last_unresolved_count`:
-  increment `consecutive_no_progress` by 1
-Else:
-  set `consecutive_no_progress = 0`
-
-Set `last_unresolved_count = unresolved`.
-
-If `batches_complete == total_batches`:
-  increment `iteration_count` by 1
-
-Save state:
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<updated state JSON>'
-```
-
-### 6g. Check termination conditions (in this order)
-
-**Condition 1 — All tests classified:**
-```
-IF unresolved == 0:
-  TERMINAL: "all tests classified"
-  → break loop, go to Step 6
-```
-
-**Condition 2 — No progress in 5 consecutive batches:**
-```
-IF consecutive_no_progress >= 5:
-  TERMINAL: "no progress in last 5 batches"
-  → break loop, go to Step 6
-```
-
-**Condition 3 — Iteration cap reached (check at end of last batch in iteration):**
-```
-IF iteration_count >= ITERATION_CAP AND B == total_batches - 1:
-  TERMINAL: "iteration cap reached ({ITERATION_CAP} iterations)"
-  → break loop, go to Step 6
-```
-
-If no terminal condition: continue to next batch (or loop back to batch 0 if `B == total_batches - 1`).
-When looping back: increment `iteration_count` by 1 before resetting B to 0.
-
-### 6h. Group and dispatch actionable failures (CATG-03)
-
-**Skip if terminal condition fired in 6g.** Only dispatch if the loop will continue after this batch.
-
-**Collect new verdicts from this batch:**
-Identify all entries in `state.categorization_verdicts` that correspond to files in the current batch's `confirmed_failures` AND have not yet been recorded in `state.dispatched_tasks[].test_files`. These are the new verdicts eligible for dispatch.
-
-**Filter actionable categories:**
-- Actionable: `adapt`, `fixture`, `isolate`, `real-bug` (via quorum investigation — see Step 6h.1 below)
-- Not actionable: `deferred` / context_score < 2 (already in `state.deferred_report.low_context`)
-
-**Grouping algorithm:**
-Group actionable verdicts by composite key:
-```
-group_key = category + "_" + error_type + "_" + directory_prefix
-```
-Where `directory_prefix` = first 2 path segments of `verdict.file`
-(e.g., file "src/auth/user.test.js" → directory_prefix = "src/auth")
-
-For each group, collect all verdict files with that group_key.
-
-**Chunking (max 20 per task):**
-For each group, split files into chunks of at most 20.
-If a group has N chunks (N > 1), number them: batch 1/N, batch 2/N, etc.
-
-**Deduplication check:**
-Before dispatching a chunk, check `state.dispatched_tasks` for an entry with the same `category`, `error_type`, `directory`, and `test_files` list. If found: skip (already dispatched, likely a resume).
-
-**For each chunk: save state record THEN dispatch Task — SEQUENTIAL ONLY:**
-
-> **RAM SAFETY — ONE TASK AT A TIME:** Process chunks one by one. Spawn the Task for chunk N, wait for it to fully complete and return, THEN proceed to chunk N+1. Never dispatch multiple Task agents simultaneously. Running several agents in parallel exhausts RAM and will crash VS Code when Claude Code runs inside its integrated terminal.
-
-1. Build task description:
-```
-Fix {count} {category} test failures in {directory_prefix} — {error_type}{chunk_suffix}
-
-Test files:
-- {file1} (reason: {verdict1.reason})
-- {file2} (reason: {verdict2.reason})
-[...up to 20 files]
-
-Category: {category}
-Error pattern: {error_type}
-{if category == "adapt" AND pickaxe_context.commits is non-empty:
-"Git context (recent commits touching code under test):
-{pickaxe_context.commits[0]}
-{pickaxe_context.commits[1] if exists}"}
-{if category == "isolate" AND verdict.polluter_set is non-empty:
-"Polluter analysis (ddmin result — tests that cause this failure when run first):
-{polluter_set[0]}
-{polluter_set[1] if exists}
-{polluter_set[2] if exists}
-{polluter_set[3] if exists}
-{polluter_set[4] if exists}
-Tip: the polluter test(s) likely share state (global var, DB, port, file) with the failing test."}
-{if category == "isolate" AND verdict.ddmin_ran == true AND verdict.polluter_set is empty:
-"Ddmin exhaustive search result — NO polluter found:
-  Candidates tested: {verdict.ddmin_candidates_tested}
-  Runs performed:    {verdict.ddmin_runs_performed}
-  Reason:            {verdict.ddmin_reason}
-
-Ddmin ran every co-runner against this test and could NOT reproduce the failure with any
-subset. Shared state from another test is NOT the cause. Do NOT investigate global vars,
-DB side-effects, or port conflicts.
-
-Instead, investigate:
-  - Timing / race condition: async teardown that doesn't fully await, timers not cleared
-  - I/O side-effects: file system writes in one test run that affect the next run (not another test)
-  - Process-level state: singleton caches, module-level variables reset between runs but not within a run
-  - Non-deterministic behavior: randomness, clock sensitivity, network calls without mocks
-  - Test harness ordering: beforeAll/afterAll hooks that run once but should run per-test"}
-{if category == "isolate" AND verdict.ddmin_ran == false AND verdict.polluter_set is empty:
-"Ddmin did not run (no candidates in this batch or skipped). Order dependency suspected but
-unconfirmed. Check for shared global state, ports, DB side-effects, or async teardown issues."}
-```
-Where `{chunk_suffix}` = "" if only 1 chunk, or " (batch {n}/{total})" if multiple chunks.
-
-2. Build dispatched_task record:
-```json
-{
-  "task_id": "<ISO timestamp + chunk index>",
-  "category": "<category>",
-  "error_type": "<error_type>",
-  "directory": "<directory_prefix>",
-  "test_count": "<chunk file count>",
-  "test_files": ["<file1>", "<file2>", "..."],
-  "dispatched_at": "<ISO timestamp>"
-}
-```
-
-3. Save state with this record appended to `dispatched_tasks` BEFORE spawning the Task:
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<state with new dispatched_task appended>'
-```
-
-4. Spawn the /qgsd:quick Task agent:
-```
-Task(
-  prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.
-
-<planning_context>
-Mode: quick
-Description: {task_description}
-
-<files_to_read>
-- .planning/STATE.md
-- ./CLAUDE.md (if exists)
-</files_to_read>
-</planning_context>
-",
-  subagent_type="qgsd-planner",
-  description="Fix {category}/{error_type}: {directory_prefix}{chunk_suffix}"
-)
-```
-
-**WAIT:** Do not proceed to the next chunk until this Task has returned. The Task agent must finish completely before the next chunk is dispatched.
-
-Print after each dispatch: `QGSD fix-tests: Dispatched task — {category}/{error_type} in {directory_prefix} ({test_count} tests)`
-
-**Print dispatch summary after all chunks dispatched:**
-```
-QGSD fix-tests: Batch {B+1} dispatch complete — {N} tasks dispatched (adapt/fixture/isolate); real-bug handled in 6h.1
-```
-
-After 6h, proceed to next batch or loop termination.
-
-### 6h.1. Quorum investigation and dispatch for real-bug verdicts
-
-**Purpose:** For each real-bug verdict, run a focused quorum investigation to produce a fix hypothesis, then dispatch a /qgsd:quick fix task with that hypothesis as context.
-
-**Collect real-bug verdicts for this batch:**
-Identify all entries in the current batch's new verdicts (same set used in 6h) where `category == "real-bug"` AND the file has not already been recorded in `state.dispatched_tasks[].test_files`.
-
-If no real-bug verdicts in this batch: skip 6h.1 entirely.
-
-**For each real-bug verdict (process one at a time — sequential):**
-
-Spawn an investigation Task for this verdict and wait for it to return before proceeding to the next verdict:
-
-```
-Task(
-  prompt="You are investigating a real-bug test failure to produce a fix hypothesis.
-
-## Failure details
-
-Test file: {verdict.file}
-Classification reason: {verdict.reason}
-Error type: {verdict.error_type}
-Context score: {verdict.context_score}
-
-Error / failure output:
-{verdict.error_summary — full, not truncated}
-
-## Instructions
-
-1. Read the test file: Read({verdict.file})
-2. Extract first 100 lines of test content for context
-3. Extract docstring/describe context: first describe(), it(), or test() block header plus leading block comment (up to 10 lines)
-4. Assemble an investigation bundle from the above
-
-5. State your own fix hypothesis (1-3 sentences: root cause + specific, concrete fix recommendation naming specific functions/variables/code paths visible in the context). This is Round 1 / Claude hypothesis.
-
-6. Query quorum models SEQUENTIALLY to get their hypotheses. Use this prompt template for each model:
-
-   QGSD fix-tests — Real-bug Investigation
-
-   [paste investigation bundle]
-
-   You are reviewing a test failure classified as a real bug. Your task: deliberate on the most likely fix hypothesis.
-
-   Claude's hypothesis: [your hypothesis from step 5]
-
-   Do you agree with Claude's hypothesis, or do you have a different or more specific fix hypothesis? Give:
-   - hypothesis: [1-2 sentence specific, actionable fix hypothesis]
-   - confidence: high | medium | low
-   - reasoning: [1-3 sentences grounded in the failure output and test context]
-
-   Query order (sequential, NEVER parallel):
-   1. mcp__codex-cli-1__review
-   2. mcp__gemini-cli-1__gemini
-   3. mcp__opencode-1__opencode
-   4. mcp__copilot-1__ask
-   Then any available claude-mcp instances.
-   Handle UNAVAILABLE: note and skip.
-
-7. Synthesize consensus hypothesis:
-   - If majority (>50% of available models) agree on a specific fix direction → use that
-   - If split: pick the hypothesis with the most concrete, evidence-grounded reasoning
-   - If only you responded: your hypothesis IS the consensus
-
-8. Return ONLY a single JSON object (no markdown, no explanation):
-{
-  \"consensus_hypothesis\": \"<one paragraph specific actionable fix hypothesis>\",
-  \"model_count\": <number of models that responded>,
-  \"confidence\": \"high|medium|low\"
-}
-",
-  description="Investigate real-bug: {verdict.file}"
-)
-```
-
-**WAIT:** Do not move to the next real-bug verdict until this investigation Task has returned.
-
-**Parse result from investigation Task:**
-- If the Task returns valid JSON: extract `consensus_hypothesis` as `$CONSENSUS_HYPOTHESIS`.
-- If the Task returns malformed JSON or errors out: use fallback `"Quorum investigation failed — review {verdict.file} manually: {verdict.reason}"` as `$CONSENSUS_HYPOTHESIS`.
-
-Print consensus:
-```
-QGSD fix-tests: Real-bug consensus [{verdict.file}] → {one-sentence summary of $CONSENSUS_HYPOTHESIS}
-```
-
-**Step E — Append to deferred_report and save state:**
-
-Append to `state.deferred_report.real_bug` (even though a task will be dispatched — this preserves the audit trail):
-```json
-{
-  "file": "{verdict.file}",
-  "reason": "{verdict.reason}",
-  "consensus_hypothesis": "{$CONSENSUS_HYPOTHESIS}"
-}
-```
-
-Save state:
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<state with updated deferred_report.real_bug>'
-```
-
-**Step F — Build and dispatch /qgsd:quick fix task:**
-
-Build task description:
-```
-Fix real-bug test failure: {verdict.file}
-
-Classification: real-bug
-Error type: {verdict.error_type}
-Failure reason: {verdict.reason}
-
-Quorum fix hypothesis (consensus from {N} models):
-{$CONSENSUS_HYPOTHESIS}
-
-Test file: {verdict.file}
-Error output summary:
-{verdict.error_summary — first 500 chars}
-
-Apply the quorum hypothesis. Run the test after fixing to confirm it passes.
-```
-
-Build dispatched_task record:
-```json
-{
-  "task_id": "<ISO timestamp + 'real-bug'>",
-  "category": "real-bug",
-  "error_type": "{verdict.error_type}",
-  "directory": "{first 2 path segments of verdict.file}",
-  "test_count": 1,
-  "test_files": ["{verdict.file}"],
-  "dispatched_at": "<ISO timestamp>",
-  "consensus_hypothesis": "{$CONSENSUS_HYPOTHESIS}"
-}
-```
-
-Save state with this record appended to `dispatched_tasks` BEFORE spawning the Task:
-```bash
-node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-state \
-  --state-json '<state with new dispatched_task appended>'
-```
-
-Spawn the /qgsd:quick Task agent:
-```
-Task(
-  prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.
-
-<planning_context>
-Mode: quick
-Description: {task_description}
-
-<files_to_read>
-- .planning/STATE.md
-- ./CLAUDE.md (if exists)
-</files_to_read>
-</planning_context>
-",
-  subagent_type="qgsd-planner",
-  description="Fix real-bug: {verdict.file}"
-)
-```
-
-**WAIT:** Do not move to the next real-bug verdict until this Task has returned. One real-bug Task at a time.
-
-Print after each dispatch:
-```
-QGSD fix-tests: Dispatched real-bug task — {verdict.file} ({N} quorum models deliberated)
-```
-
-**After all real-bug verdicts in this batch are processed:**
-
-Print:
-```
-QGSD fix-tests: Batch {B+1} real-bug dispatch complete — {N} tasks dispatched via quorum investigation
-```
-
-## Step 6: Clear Activity State
+### Step 4.1: Final Full-Suite Run
 
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
-  '{"activity":"maintain_tests","sub_activity":"complete","state_file":".planning/maintain-tests-state.json"}'
+  '{"activity":"fix_tests","sub_activity":"final_verification","state_file":".planning/maintain-tests-state.json"}'
+```
+
+Print: `QGSD fix-tests: Phase 4 — final verification run`
+
+Run the full suite one final time with the same pinned seed:
+
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests run-batch \
+  --batch-file .planning/ddmin-manifest.json \
+  --batch-index 0 \
+  --timeout 3600 \
+  --output-file .planning/ddmin-final-run.json
+```
+
+Compute final signatures using the normalization script pattern from Step 1.4. Write to `.planning/ddmin-signatures-final.json`.
+
+Diff `.planning/ddmin-signatures.json` (original baseline from Phase 1) against `.planning/ddmin-signatures-final.json` (final state) to produce the complete picture:
+- `resolved`: tests fixed by Phase 3
+- `still_failing`: tests still failing (were in baseline, still failing in final)
+- `new_failures`: tests not in baseline that are now failing (regressions not caught by Phase 3)
+
+### Step 4.2: Generate Final Report
+
+Write an inline Python script to `/tmp/generate-final-report.py` that reads all ddmin artifacts and state, and writes `.planning/ddmin-final-report.md`:
+
+```markdown
+# QGSD fix-tests Final Report
+
+**Run completed:** <ISO timestamp>
+**Baseline seed:** {baseline_seed}
+**Phase 3 fixes applied:** {len(fix_log)}
+**Quarantined cycle groups:** {quarantine_count}
+
+## Summary
+
+| Category | Count |
+|----------|-------|
+| Tests resolved (now passing) | {resolved_count} |
+| Tests still failing | {still_failing_count} |
+| Regressions introduced (net new failures) | {new_failures_count} |
+| Flaky (excluded from ddmin) | {flaky_count} |
+| Cycle groups quarantined | {quarantine_count} |
+| Tests unanalyzed (>100 cap) | {unanalyzed_count} |
+
+## Resolved Tests
+
+{list of resolved tests, one per line with fix description from fix_log}
+
+(If none: "No tests were resolved in this run.")
+
+## Still Failing Tests
+
+| Test | Original Failure Type | Notes |
+|------|----------------------|-------|
+| {test_path} | {failure_type_from_triage} | {notes} |
+
+(If none: "All originally failing tests were resolved.")
+
+## Regressions
+
+| Test | Introduced By | Notes |
+|------|--------------|-------|
+| {test_path} | {fix_commit or "unknown"} | {notes} |
+
+(If none: "No regressions detected.")
+
+## Quarantined Cycle Groups
+
+{for each quarantined group: list the tests and the reason for quarantine}
+
+(If none: "No cycle groups were quarantined.")
+
+## Flaky Tests (excluded from analysis)
+
+{flaky test list from Phase 1}
+
+## Fix Log (Phase 3 audit trail)
+
+{for each entry in fix_log:}
+### Fix {N}: {test_file}
+- **Status:** {committed|reverted_regression|quarantined}
+- **Root cause:** {root_cause if available}
+- **Commit:** {commit_hash or "N/A"}
+- **Regression test:** {regression_test_path or "N/A"}
+- **Quorum verdict:** APPROVED
+```
+
+```bash
+python3 /tmp/generate-final-report.py
+```
+
+Print: `QGSD fix-tests: Final report generated → .planning/ddmin-final-report.md`
+
+### Step 4.3: Quorum Final Review
+
+Spawn quorum orchestrator as a Task (Mode A):
+
+```
+Task(
+  subagent_type="qgsd-quorum-orchestrator",
+  prompt="claude_vote: [Your APPROVE/NOTE verdict on the final state of the test suite after the fix pipeline.]
+
+artifact_path: .planning/ddmin-final-report.md
+
+Review the final report at artifact_path. Evaluate:
+1. Were the applied fixes sound (based on fix descriptions in the log)?
+2. Are the remaining failures documented with sufficient diagnosis?
+3. Are the quarantined cycle groups appropriately explained?
+4. Is the pipeline complete and the state trustworthy?
+
+Vote APPROVE if the pipeline completed correctly and the report is accurate.
+Vote NOTE (non-blocking) if you have observations but the pipeline should be considered complete.
+Vote BLOCK only if you detect a critical error in the fix log or unexplained regressions."
+)
+```
+
+Wait for verdict. This quorum call is advisory — a NOTE does not halt the workflow. Only BLOCK halts.
+
+- If `APPROVED` or `NOTE`: update state `final_quorum_verdict = "APPROVED"`, `pipeline_phase = "complete"`. Save state.
+- If `BLOCKED`: update state `final_quorum_verdict = "BLOCKED"`, save state. Print block concerns. The workflow still prints the terminal summary, but marks status as BLOCKED.
+
+Print: `QGSD fix-tests: Final quorum verdict: {verdict}`
+
+### Step 4.4: Clear Activity + Terminal Summary
+
+```bash
+node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+  '{"activity":"fix_tests","sub_activity":"complete","state_file":".planning/maintain-tests-state.json"}'
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 ```
 
-## Step 7: Print Terminal Summary
+Print the terminal summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► FIX-TESTS: Complete
+ QGSD ► FIX-TESTS: ddmin Pipeline Complete
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
- Terminal condition: {condition}
- Batches run: {batches_complete} / {total_batches}
- Iterations: {iteration_count} / {ITERATION_CAP}
+ Pipeline phases completed: 4/4
+ Baseline seed: {baseline_seed}
 
- Results by category:
-   valid-skip:  {len(valid_skip)}
-   adapt:       {len(adapt)}
-   isolate:     {len(isolate)}
-   real-bug:    {len(real_bug)}   ← investigated by quorum + dispatched (see report below)
-   fixture:     {len(fixture)}
-   flaky:       {len(flaky_tests)}
-   deferred:    {len(deferred_tests)}   ← context_score < 2
-   Passed/skipped: {len(processed_files)}
-   Dispatched tasks: {len(dispatched_tasks)}
+ Triage quorum: {triage_quorum_verdict}
+ Final quorum:  {final_quorum_verdict}
 
- State saved to:  .planning/maintain-tests-state.json
- Dispatched:      {len(dispatched_tasks)} quick tasks
- Ddmin runs:      {count of categorization_verdicts where ddmin_ran == true} tests enriched
+ Tests resolved:        {resolved_count}
+ Tests still failing:   {still_failing_count}
+ Regressions:           {new_failures_count}
+ Flaky (excluded):      {flaky_count}
+ Cycle groups:          {cycle_total} total ({quarantine_count} quarantined)
+ Fixes applied:         {committed_count}
+ Fixes reverted:        {reverted_count}
 
-{if state.deferred_report.real_bug is non-empty OR state.deferred_report.low_context is non-empty:}
-
+ Triage report:  .planning/ddmin-triage-report.md
+ Final report:   .planning/ddmin-final-report.md
+ State file:     .planning/maintain-tests-state.json
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► FIX-TESTS: Deferred Failures (Action Required)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Real bugs (quorum-investigated, fix task dispatched):
-{for each entry in state.deferred_report.real_bug:}
-  - {entry.file} — {entry.reason}
-    Hypothesis: {entry.consensus_hypothesis}
-
-Low context (could not classify reliably):
-{for each file in state.deferred_report.low_context:}
-  - {file} — context_score: {matching verdict.context_score or "<1"}
-
-These failures were NOT auto-actioned. Review manually.
-Full details: .planning/maintain-tests-state.json → deferred_report
-
-{if state.deferred_report.real_bug is empty AND state.deferred_report.low_context is empty:}
- All failures were classified and dispatched.
 ```
 
 ---
 
-## Error Handling
+## Error Handling (all phases)
 
-If any Bash step fails (non-zero exit code):
-1. Print: `QGSD fix-tests: ERROR at <step name> — <error output>`
+If any Bash or Python step exits with non-zero:
+1. Print: `QGSD fix-tests: ERROR at <step name> — <stderr first 300 chars>`
 2. Run: `node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear`
-3. Surface the original error to the user
+3. Surface the original error to the user.
+4. Do NOT continue to the next step.
 
----
+## Resume Logic
 
-## Resume Logic Detail
-
-On a RESUME (`--resume` passed AND STATE_JSON is not null):
-
-1. Skip Steps 2-3 (discover and batch — manifest already exists at `state.manifest_path`)
-2. Read `total_batches` from the manifest at `state.manifest_path`
-3. Read `ITERATION_CAP` as normal
-4. Start batch loop at index `state.batches_complete` (the first un-completed batch)
-5. Use state's existing `results_by_category`, `flaky_tests`, `processed_files` as the running totals
-6. Do NOT reset `consecutive_no_progress` or `iteration_count` — resume from exact interrupted point
+On `--resume`:
+1. Load state via `maintain-tests load-state`.
+2. Read `pipeline_phase` from state:
+   - `ddmin_isolation` → resume from Step 1.3 (re-run baseline).
+   - `triage` → skip Phase 1, jump to Step 2.1.
+   - `fixing` → skip Phases 1 and 2, jump to Phase 3 (Step 3.0).
+   - `verification` → skip to Phase 4.
+   - `complete` → print "Already complete" and exit.
 
 ---
 
 ## INTG-03 Compliance Note
 
-This workflow calls quorum workers ONLY for real-bug investigation (Step 6h.1) — a targeted,
-per-test deliberation to produce a fix hypothesis before dispatching a /qgsd:quick task.
+This workflow calls the quorum orchestrator at three explicit gates:
+1. Phase 2.2 — Triage approval (APPROVE/BLOCK)
+2. Phase 3.3 — Per-fix approval (APPROVE/BLOCK, once per test in fix_order)
+3. Phase 4.3 — Final review (APPROVE/NOTE/BLOCK, advisory)
 
-Quorum MUST NOT be called for classification of adapt/fixture/isolate failures. Those categories
-dispatch /qgsd:quick tasks directly. fix-tests MUST NOT be added to `quorum_commands` in qgsd.json
-— that would cause the Stop hook to block every fix-tests response waiting for a planning quorum
-that was never dispatched (R2.1 violation).
-
-The real-bug quorum calls in Step 6h.1 are inline investigation calls, not planning quorum.
-They are safe because fix-tests is not in quorum_commands and the Stop hook only intercepts
-responses from commands listed there.
+All quorum calls are via Task(subagent_type="qgsd-quorum-orchestrator") — NEVER direct MCP tool calls. fix-tests MUST NOT be in `quorum_commands` in qgsd.json (same reason as the original workflow). The quorum gates here are inline investigation calls, not planning quorum.
