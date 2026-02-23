@@ -106,6 +106,9 @@
 **Goal**: The quorum orchestrator reads its agent list from a `quorum.active` config array instead of a hardcoded list — which slots participate in quorum is now a config decision, not a code change; the scoreboard tracks each slot by name with the loaded model shown as context
 **Depends on**: Phase 39
 **Requirements**: COMP-01, COMP-02, COMP-03, COMP-04, SCBD-01, SCBD-02, SCBD-03
+**Also closes (tech debt from Phase 39)**:
+  - INT-04: Fix `quorum.md` Mode B scoreboard key derivation — change "strip `claude-` prefix from server name" to "use model field from health_check response" (matches Mode A and orchestrator)
+  - INT-05: Add `copilot` to `QGSD_KEYWORD_MAP` in `bin/install.js` — installer currently won't auto-detect/write copilot-1 to `qgsd.json` required_models
 **Success Criteria** (what must be TRUE):
   1. A user can add or remove a slot name from the `quorum.active` array in `qgsd.json` and the next quorum call includes or excludes that slot without any code change — verified by toggling a slot and inspecting the quorum instructions injected by the UserPromptSubmit hook
   2. `check-provider-health.cjs` and scoreboard tooling derive the agent list from `quorum.active` at runtime — hardcoded agent arrays no longer exist in those files
@@ -177,6 +180,6 @@
 | 37. Fix mcp-setup.md Distribution Issues | v0.5 | 1/1 | Complete | 2026-02-22 |
 | 38. v0.5 Bookkeeping — Requirements & SUMMARY | v0.5 | 1/1 | Complete | 2026-02-23 |
 | 39. Rename and Migration | v0.6 | 3/3 | Complete | 2026-02-23 |
-| 40. Composition Architecture | v0.7 | TBD | Not started | - |
-| 41. Multiple Slots | v0.7 | TBD | Not started | - |
-| 42. Wizard Composition Screen | v0.7 | TBD | Not started | - |
+| 40. Composition Architecture | v0.7 | TBD | Pending | - |
+| 41. Multiple Slots | v0.7 | TBD | Pending | - |
+| 42. Wizard Composition Screen | v0.7 | TBD | Pending | - |
