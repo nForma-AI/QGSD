@@ -6,6 +6,7 @@ wave: 1
 depends_on: []
 files_modified:
   - commands/qgsd/mcp-status.md
+  - ~/.claude/commands/qgsd/mcp-status.md
 autonomous: true
 requirements: []
 
@@ -14,15 +15,23 @@ must_haves:
     - "Steps 1, 2, and 3 Bash commands each have an explicit 'run this first, then the next' instruction ensuring sequential execution"
     - "No parallel Bash batching occurs — each step's command completes before the next step starts"
     - "The workflow logic and all Bash command bodies are otherwise unchanged"
+    - "Installed copy at ~/.claude/commands/qgsd/mcp-status.md is in sync with the repo source after the install script runs"
   artifacts:
     - path: "commands/qgsd/mcp-status.md"
       provides: "mcp-status workflow with sequential step ordering"
-      contains: "Run this Bash command FIRST"
+      contains: "run this Bash command"
+    - path: "~/.claude/commands/qgsd/mcp-status.md"
+      provides: "Installed copy in sync with source — contains the same sequencing language"
+      contains: "run this Bash command"
   key_links:
     - from: "commands/qgsd/mcp-status.md Step 1"
       to: "commands/qgsd/mcp-status.md Step 2"
       via: "sequential instruction — Step 2 must not start until Step 1 output is stored"
       pattern: "FIRST.*then.*Step 2"
+    - from: "commands/qgsd/mcp-status.md (source)"
+      to: "~/.claude/commands/qgsd/mcp-status.md (installed)"
+      via: "node /Users/jonathanborduas/code/QGSD/bin/install.js --claude --global"
+      pattern: "install sync"
 ---
 
 <objective>
@@ -91,16 +100,45 @@ Three step headers in mcp-status.md contain explicit sequencing language. No oth
   </done>
 </task>
 
+<task type="auto">
+  <name>Task 2: Sync installed copy via install script</name>
+  <files>~/.claude/commands/qgsd/mcp-status.md</files>
+  <action>
+Run the install script to push the updated source file to the installed location:
+
+```bash
+node /Users/jonathanborduas/code/QGSD/bin/install.js --claude --global
+```
+
+This copies `commands/qgsd/mcp-status.md` (and all other source files) to the installed location at `~/.claude/commands/qgsd/mcp-status.md`. The `--claude` flag targets the Claude Code installation, `--global` installs system-wide.
+
+After the install completes, verify the installed copy contains the sequencing language:
+
+```bash
+grep -n "run this Bash command" ~/.claude/commands/qgsd/mcp-status.md | wc -l
+```
+
+Expected: exactly 3.
+  </action>
+  <verify>
+`grep -n "run this Bash command" ~/.claude/commands/qgsd/mcp-status.md | wc -l` returns 3.
+  </verify>
+  <done>Installed copy at ~/.claude/commands/qgsd/mcp-status.md contains exactly 3 lines with the sequencing language, confirming source and install are in sync.</done>
+</task>
+
 </tasks>
 
 <verification>
-grep -n "run this Bash command" /Users/jonathanborduas/code/QGSD/commands/qgsd/mcp-status.md
-# Must return exactly 3 lines: Step 1, Step 2, Step 3 headers
+1. grep -n "run this Bash command" /Users/jonathanborduas/code/QGSD/commands/qgsd/mcp-status.md | wc -l
+   # Must return 3 — one each for Step 1, Step 2, Step 3 headers
+2. grep -n "run this Bash command" ~/.claude/commands/qgsd/mcp-status.md | wc -l
+   # Must also return 3 — installed copy is in sync with source
 </verification>
 
 <success_criteria>
 - commands/qgsd/mcp-status.md has sequential-execution language on Steps 1, 2, 3 headers
 - No Bash command body content is modified
+- Installed copy at ~/.claude/commands/qgsd/mcp-status.md reflects the same sequencing language (install script ran)
 - Running /qgsd:mcp-status will no longer issue Steps 1-3 as a parallel batch
 </success_criteria>
 
