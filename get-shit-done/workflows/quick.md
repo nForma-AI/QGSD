@@ -337,7 +337,7 @@ Note: For quick tasks producing multiple plans (rare), spawn executors in parall
 ```
 ---
 
-GSD > QUICK TASK COMPLETE
+QGSD > QUICK TASK COMPLETE
 
 Quick Task ${next_num}: ${DESCRIPTION}
 
@@ -437,7 +437,7 @@ Display final completion banner:
 ```
 ---
 
-GSD > QUICK TASK COMPLETE (FULL MODE)
+QGSD > QUICK TASK COMPLETE (FULL MODE)
 
 Quick Task ${next_num}: ${DESCRIPTION}
 
