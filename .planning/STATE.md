@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 Phase: MILESTONE COMPLETE — v0.7 archived
 Plan: —
 Status: v0.7 archived to .planning/milestones/; git tag v0.7 created; ready for /qgsd:new-milestone
-Last activity: 2026-02-23 - Completed quick task 075: isolate each calls to avoid Sibling tool call errored
+Last activity: 2026-02-23 - Completed quick task 77: oscillation memory log
 
 Progress: [████████████████████] 46/46 plans (100%)
 
@@ -113,9 +113,10 @@ Recent decisions affecting current work:
 | 73 | modify so that mcp status already pulls real fresh info | 2026-02-23 | 810090a | Verified | [73-modify-so-that-mcp-status-already-pulls-](./quick/73-modify-so-that-mcp-status-already-pulls-/) |
 | 74 | Replace blocking circuit breaker PreToolUse hook with non-blocking notification | 2026-02-23 | 03b4800 | Pending | [74-replace-blocking-circuit-breaker-pretool](./quick/74-replace-blocking-circuit-breaker-pretool/) |
 | 075 | isolate each calls to avoid Sibling tool call errored | 2026-02-23 | 9a348a0 | Verified | [075-isolate-each-calls-to-avoid-sibling-tool](.planning/quick/75-isolate-each-calls-to-avoid-sibling-tool/) |
+| 77 | oscillation memory log: persist each detected oscillation keyed by fileSetHash+patternHash, PostToolUse Haiku classifier checks if new commit resolves active entries, PreToolUse suppresses warning if already resolved | 2026-02-23 | 15c0966 | Pending | [77-oscillation-memory-log-persist-each-dete](./quick/77-oscillation-memory-log-persist-each-dete/) |
 
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: 2026-02-23 - Completed quick task 71: Extend unified-mcp-server with HTTP transport and roster
+Stopped at: 2026-02-23 - Completed quick task 77: oscillation memory log
 Resume file: None
