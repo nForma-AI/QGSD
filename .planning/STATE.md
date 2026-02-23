@@ -94,7 +94,7 @@ Recent decisions affecting current work:
 | 56 | softer circuit breaker with LLM false-negative detection and auto-continue | 2026-02-23 | 70175b7 | Verified | [56-softer-circuit-breaker-with-llm-false-ne](./quick/56-softer-circuit-breaker-with-llm-false-ne/) |
 | 57 | Fix GSD branding to QGSD in install.js statusline prompt and completion banners | 2026-02-23 | 74dc5f3 | Complete | [57-fix-gsd-branding-to-qgsd-in-install-js-s](./quick/57-fix-gsd-branding-to-qgsd-in-install-js-s/) |
 | 58 | in fix-tests.md step 6h dispatch template, when ddmin_ran is true but polluter_set is empty, make it crystal clear to the fixer agent that ddmin exhaustively searched and ruled out test pollution — show run count, candidate count, and explicitly redirect the agent away from shared-state investigation toward timing/async/io causes | 2026-02-23 | 0f9a0c7 | Pending | [58-in-fix-tests-md-step-6h-dispatch-templat](./quick/58-in-fix-tests-md-step-6h-dispatch-templat/) |
-| 59 | phase numbering scheme redesign to avoid milestone collision | 2026-02-23 | 4b370c0 | Pending | [59-phase-numbering-scheme-redesign-to-avoid](./quick/59-phase-numbering-scheme-redesign-to-avoid/) |
+| 59 | phase numbering scheme redesign to avoid milestone collision | 2026-02-23 | 4b370c0 | Verified | [59-phase-numbering-scheme-redesign-to-avoid](./quick/59-phase-numbering-scheme-redesign-to-avoid/) |
 | 60 | in fix-tests.md: (1) remove Steps 2 and 7 (circuit breaker disable/enable) entirely; (2) make fresh run the default, gate resume behind --resume flag | 2026-02-23 | 65808c6 | Pending | [60-in-fix-tests-md-1-remove-steps-2-and-7-c](./quick/60-in-fix-tests-md-1-remove-steps-2-and-7-c/) |
 
 ## Session Continuity
