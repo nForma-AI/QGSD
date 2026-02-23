@@ -38,7 +38,7 @@ This command is read-only (observation only). It does NOT invoke quorum and is N
 
 Run the following Bash command and store the output as SCOREBOARD_INFO:
 
-node -e "
+node << 'EOF'
 const fs=require('fs');
 const p='.planning/quorum-scoreboard.json';
 if(!fs.existsSync(p)){console.log('{}');process.exit(0);}
@@ -51,7 +51,7 @@ for(const r of d.rounds||[]){
 }
 const info={counts,totalRounds:(d.rounds||[]).length,lastUpdate:d.team?.captured_at||null};
 console.log(JSON.stringify(info));
-"
+EOF
 
 Parse `counts` (object: model key → UNAVAIL count), `totalRounds`, `lastUpdate`.
 
