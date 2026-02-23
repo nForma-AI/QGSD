@@ -2,36 +2,35 @@
 
 ## Overview
 
-Discover → Batch → Execute → Categorize → Dispatch → Iterate loop with circuit breaker lifecycle and
-three-condition termination. Phase 21 delivers real AI classification (5-category) and actionable dispatch.
+Discover → Batch → Execute → Categorize → Dispatch → Iterate loop with three-condition termination.
+Phase 21 delivers real AI classification (5-category) and actionable dispatch.
 
 ---
 
-## Step 1: Load Existing State (Resume Check)
+## Step 1: Determine Run Mode
 
-Run:
+**Fresh start (default):** Plain invocation always starts fresh — existing state is ignored.
+
+**Resume mode (explicit only):** Pass `--resume` to the slash command to continue an interrupted run.
+
 ```bash
-STATE_JSON=$(node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests load-state 2>/dev/null)
+# Check if --resume was passed as an argument to this invocation
+# $RESUME_FLAG = true if "--resume" was present in the command arguments, false otherwise
 ```
 
-- If STATE_JSON is `null` or empty: this is a FRESH START — proceed to Step 2.
-- If STATE_JSON is a JSON object: this is a RESUME — extract `batches_complete` and `manifest_path`
-  from the state, then skip Steps 3-4 (discovery and batching), jump directly to Step 6 starting
-  at batch index `batches_complete`.
+- If `$RESUME_FLAG` is false (plain invocation): this is a FRESH START — proceed to Step 2.
+- If `$RESUME_FLAG` is true (`--resume` passed): attempt resume:
 
-## Step 2: Disable Circuit Breaker
+  ```bash
+  STATE_JSON=$(node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests load-state 2>/dev/null)
+  ```
 
-Run:
-```bash
-node ~/.claude/qgsd-bin/qgsd.cjs --disable-breaker
-```
+  - If STATE_JSON is a valid JSON object: RESUME — extract `batches_complete` and `manifest_path`
+    from the state, then skip Steps 2-3 (discovery and batching), jump directly to Step 5 starting
+    at batch index `batches_complete`.
+  - If STATE_JSON is `null` or empty: no saved state found — fall through to FRESH START (Step 2).
 
-This writes `{ "disabled": true, "active": false }` to `.claude/circuit-breaker-state.json`.
-The breaker MUST be re-enabled on every exit path (normal completion AND error). If the workflow
-aborts mid-run, print the re-enable command so the user can run it manually:
-`node ~/.claude/qgsd-bin/qgsd.cjs --enable-breaker`
-
-## Step 3: Discover Tests (fresh start only)
+## Step 2: Discover Tests (fresh start only)
 
 Set discovering activity:
 ```bash
@@ -47,7 +46,7 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests discov
 
 Print: `QGSD fix-tests: Discovery complete — {N} tests found`
 
-## Step 4: Batch Tests (fresh start only)
+## Step 3: Batch Tests (fresh start only)
 
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests batch \
@@ -58,7 +57,7 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests batch 
 Parse the manifest to extract `total_batches` and `total_files`.
 Print: `QGSD fix-tests: Batching complete — {total_files} tests in {total_batches} batches`
 
-## Step 5: Initialize State (fresh start only)
+## Step 4: Initialize State (fresh start only)
 
 Build initial state JSON and save:
 ```bash
@@ -68,7 +67,7 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-s
 
 Read `ITERATION_CAP` from `.claude/qgsd.json` path `maintain_tests.iteration_cap` — default 5 if not set.
 
-## Step 6: Batch Loop
+## Step 5: Batch Loop
 
 For each batch index B starting from `batches_complete` up to `total_batches - 1` (zero-based):
 
@@ -292,21 +291,21 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests save-s
 ```
 IF unresolved == 0:
   TERMINAL: "all tests classified"
-  → break loop, go to Step 7
+  → break loop, go to Step 6
 ```
 
 **Condition 2 — No progress in 5 consecutive batches:**
 ```
 IF consecutive_no_progress >= 5:
   TERMINAL: "no progress in last 5 batches"
-  → break loop, go to Step 7
+  → break loop, go to Step 6
 ```
 
 **Condition 3 — Iteration cap reached (check at end of last batch in iteration):**
 ```
 IF iteration_count >= ITERATION_CAP AND B == total_batches - 1:
   TERMINAL: "iteration cap reached ({ITERATION_CAP} iterations)"
-  → break loop, go to Step 7
+  → break loop, go to Step 6
 ```
 
 If no terminal condition: continue to next batch (or loop back to batch 0 if `B == total_batches - 1`).
@@ -437,15 +436,7 @@ QGSD fix-tests: Batch {B+1} dispatch complete — {N} tasks dispatched, {M} real
 
 After 6h, proceed to next batch or loop termination.
 
-## Step 7: Re-enable Circuit Breaker
-
-```bash
-node ~/.claude/qgsd-bin/qgsd.cjs --enable-breaker
-```
-
-This writes `{ "disabled": false, "active": false }` to `.claude/circuit-breaker-state.json`.
-
-## Step 8: Clear Activity State
+## Step 6: Clear Activity State
 
 ```bash
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
@@ -453,7 +444,7 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 ```
 
-## Step 9: Print Terminal Summary
+## Step 7: Print Terminal Summary
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -506,17 +497,16 @@ Full details: .planning/maintain-tests-state.json → deferred_report
 
 If any Bash step fails (non-zero exit code):
 1. Print: `QGSD fix-tests: ERROR at <step name> — <error output>`
-2. Run: `node ~/.claude/qgsd-bin/qgsd.cjs --enable-breaker` (always — do not skip)
-3. Run: `node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear`
-4. Surface the original error to the user
+2. Run: `node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs activity-clear`
+3. Surface the original error to the user
 
 ---
 
 ## Resume Logic Detail
 
-On a RESUME (STATE_JSON is not null):
+On a RESUME (`--resume` passed AND STATE_JSON is not null):
 
-1. Skip Steps 3-4 (discover and batch — manifest already exists at `state.manifest_path`)
+1. Skip Steps 2-3 (discover and batch — manifest already exists at `state.manifest_path`)
 2. Read `total_batches` from the manifest at `state.manifest_path`
 3. Read `ITERATION_CAP` as normal
 4. Start batch loop at index `state.batches_complete` (the first un-completed batch)
