@@ -8,6 +8,7 @@ files_modified:
   - /Users/jonathanborduas/.claude/qgsd/workflows/execute-phase.md
   - /Users/jonathanborduas/.claude/qgsd/workflows/research-phase.md
   - /Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md
+  - /Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md
   - /Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md
 autonomous: true
 requirements: []
@@ -24,6 +25,8 @@ must_haves:
       provides: "researcher Task (line ~44) with description= added"
     - path: "/Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md"
       provides: "integration-checker Task (line ~80) with description= added"
+    - path: "/Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md"
+      provides: "categorizer Task (line ~332) and investigation Task (line ~645) with description= added"
     - path: "/Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md"
       provides: "reference example Task with description= added"
   key_links:
@@ -39,6 +42,14 @@ must_haves:
       to: "description= parameter"
       via: "description=\"Research phase {phase}\""
       pattern: "description=.Research phase"
+    - from: "fix-tests.md categorizer Task"
+      to: "description= parameter"
+      via: "description=\"Classify test failures\""
+      pattern: "description=.Classify test"
+    - from: "fix-tests.md investigation Task"
+      to: "description= parameter"
+      via: "description=\"Investigate real-bug failure: {verdict.file}\""
+      pattern: "description=.Investigate real-bug"
 ---
 
 <objective>
@@ -46,7 +57,7 @@ Add the missing `description=` parameter to every Task() sub-agent spawn call in
 
 Purpose: The `description` parameter identifies what a sub-agent is doing in the Claude Code UI and activity log. Without it, parallel or sequential Task spawns appear as anonymous agents, making debugging and observability harder. Every Task() call should declare its purpose.
 
-Output: Four files patched so all Task() calls have a `description=` parameter with a meaningful value.
+Output: Five files patched so all Task() calls have a `description=` parameter with a meaningful value.
 </objective>
 
 <execution_context>
@@ -107,14 +118,15 @@ Should show at least 3 results: one for the executor Task, one for the verifier 
 </task>
 
 <task type="auto">
-  <name>Task 2: Add description= to research-phase.md, audit-milestone.md, and model-profile-resolution.md</name>
+  <name>Task 2: Add description= to research-phase.md, audit-milestone.md, fix-tests.md, and model-profile-resolution.md</name>
   <files>
     /Users/jonathanborduas/.claude/qgsd/workflows/research-phase.md
     /Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md
+    /Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md
     /Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md
   </files>
   <action>
-Read all three files first, then patch each one.
+Read all four files first, then patch each one.
 
 **research-phase.md (around line 44):**
 The Task block ends with:
@@ -146,6 +158,41 @@ Add description so it becomes:
 )
 ```
 
+**fix-tests.md — two Task() calls missing description=:**
+
+1. Categorizer Task (around line 332):
+The Task block starts with:
+```
+Task(
+  prompt="You are a test failure categorizer. Classify each failing test below...
+```
+Add `description="Classify test failures"` as the last parameter before the closing `)`:
+```
+  subagent_type="...",   (or whatever the last parameter before ) is)
+  description="Classify test failures"
+)
+```
+If there is no explicit subagent_type and the Task call closes directly after the prompt string, add the description after the prompt's closing `"`:
+```
+  prompt="...",
+  description="Classify test failures"
+)
+```
+
+2. Investigation Task (around line 645):
+The Task block starts with:
+```
+Task(
+  prompt="You are investigating a real-bug test failure to produce a fix hypothesis.
+```
+Add `description="Investigate real-bug failure: {verdict.file}"` as the last parameter before the closing `)`:
+```
+  prompt="...",
+  description="Investigate real-bug failure: {verdict.file}"
+)
+```
+Read the actual closing lines of each Task block before editing to ensure the comma placement is correct.
+
 **references/model-profile-resolution.md (around line 20):**
 The example Task block is:
 ```
@@ -166,12 +213,13 @@ Task(
 ```
 Note: the inline comment on the model line needs the comma moved — change `model="{resolved_model}"  # comment` to `model="{resolved_model}",  # comment` and add the description line after.
 
-After all three files are edited, commit all four changed files (execute-phase.md from Task 1 + these three) in a single commit:
+After all four files are edited, commit all five changed files (execute-phase.md from Task 1 + these four) in a single commit:
 ```bash
 node /Users/jonathanborduas/code/QGSD/bin/gsd-tools.cjs commit "fix(workflows): add description= to all Task() spawns" \
   --files /Users/jonathanborduas/.claude/qgsd/workflows/execute-phase.md \
          /Users/jonathanborduas/.claude/qgsd/workflows/research-phase.md \
          /Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md \
+         /Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md \
          /Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md
 ```
 
@@ -180,9 +228,10 @@ Then create the SUMMARY.md and update STATE.md quick tasks table.
   <verify>
 grep -n "description=" /Users/jonathanborduas/.claude/qgsd/workflows/research-phase.md
 grep -n "description=" /Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md
+grep -n "description=" /Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md
 grep -n "description=" /Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md
 
-Each should return at least 1 result with description=.
+Each should return at least 1 result with description=. fix-tests.md should return at least 2 results.
 
 Also run the full audit to confirm zero missing:
 python3 -c "
@@ -191,6 +240,7 @@ files = [
     '/Users/jonathanborduas/.claude/qgsd/workflows/execute-phase.md',
     '/Users/jonathanborduas/.claude/qgsd/workflows/research-phase.md',
     '/Users/jonathanborduas/.claude/qgsd/workflows/audit-milestone.md',
+    '/Users/jonathanborduas/.claude/qgsd/workflows/fix-tests.md',
     '/Users/jonathanborduas/.claude/qgsd/references/model-profile-resolution.md',
 ]
 for path in files:
@@ -204,19 +254,19 @@ for path in files:
 print('Audit complete')
 "
   </verify>
-  <done>All four files have description= on every Task() call. Git commit created. STATE.md quick tasks table updated with entry for task 89.</done>
+  <done>All five files have description= on every Task() call. Git commit created. STATE.md quick tasks table updated with entry for task 89.</done>
 </task>
 
 </tasks>
 
 <verification>
-Run the audit script from the verify block above. Output should be only "Audit complete" with no MISSING lines.
+Run the audit script from the verify block above. Output should be only "Audit complete" with no MISSING lines. The script scans all five files: execute-phase.md, research-phase.md, audit-milestone.md, fix-tests.md, and model-profile-resolution.md.
 </verification>
 
 <success_criteria>
-- Every Task() call in execute-phase.md, research-phase.md, audit-milestone.md, and model-profile-resolution.md has a description= parameter
+- Every Task() call in execute-phase.md, research-phase.md, audit-milestone.md, fix-tests.md, and model-profile-resolution.md has a description= parameter
 - Description values are meaningful identifiers (not empty strings, not generic "sub-agent")
-- Single git commit created with all four files
+- Single git commit created with all five files
 - STATE.md updated with quick task 89 entry
 </success_criteria>
 
