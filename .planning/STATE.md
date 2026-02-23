@@ -2,10 +2,10 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-23 after Phase v0.7-02)
+See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.7 milestone complete — all phases v0.7-01 through v0.7-04 done; ready for milestone close or next milestone
+**Current focus:** v0.7 milestone archived — planning next milestone with `/qgsd:new-milestone`
 
 ## Current Position
 
