@@ -884,3 +884,271 @@ test('TC20c: real /qgsd:new-project tag on a decision turn blocks when quorum mi
     fs.unlinkSync(tmpFile);
   }
 });
+
+// ── TC-CEIL-1/2/3: Hard ceiling and error-response exclusion ──────────────────────────────────
+//
+// TC-CEIL-1: ceiling passes with exactly 5 successful calls out of an 11-agent pool
+// TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been called
+// TC-CEIL-3: error response does not count — 5 calls made but one is error → still blocks
+//
+// These tests use quorum_active (not required_models) and minSize config to exercise
+// the success-counter loop in qgsd-stop.js main().
+
+// Helper: build a user JSONL line with a tool_result that has is_error:true
+// Simulates an agent returning a quota/error response.
+function toolResultErrorLine(toolUseId, errorText, uuid) {
+  return JSON.stringify({
+    type: 'user',
+    message: {
+      role: 'user',
+      content: [{
+        type: 'tool_result',
+        tool_use_id: toolUseId,
+        is_error: true,
+        content: [{ type: 'text', text: errorText }],
+      }],
+    },
+    timestamp: '2026-02-20T00:02:00Z',
+    uuid: uuid || `tr-err-${toolUseId}`,
+  });
+}
+
+// Helper: build a user JSONL line with a successful (non-error) tool_result
+function toolResultSuccessLine(toolUseId, resultText, uuid) {
+  return JSON.stringify({
+    type: 'user',
+    message: {
+      role: 'user',
+      content: [{
+        type: 'tool_result',
+        tool_use_id: toolUseId,
+        content: [{ type: 'text', text: resultText }],
+      }],
+    },
+    timestamp: '2026-02-20T00:02:00Z',
+    uuid: uuid || `tr-ok-${toolUseId}`,
+  });
+}
+
+// TC-CEIL-1: 11-agent pool, minSize=5, preferSub=true
+// First 5 sorted agents (4 sub + 1 api) all have successful responses → ceiling satisfied → pass
+test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent pool', () => {
+  // Build config: 11 slots (4 sub + 7 api), minSize = 5, preferSub = true
+  const slots = [
+    'slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4',  // sub agents
+    'slot-api-1', 'slot-api-2', 'slot-api-3', 'slot-api-4',
+    'slot-api-5', 'slot-api-6', 'slot-api-7',               // api agents
+  ];
+  const agentConfig = {};
+  for (const s of slots) {
+    agentConfig[s] = { auth_type: s.startsWith('slot-sub') ? 'sub' : 'api' };
+  }
+  const configPayload = JSON.stringify({
+    quorum_commands: ['plan-phase'],
+    quorum_active: slots,
+    agent_config: agentConfig,
+    quorum: { minSize: 5, preferSub: true },
+  });
+  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil1-${Date.now()}`);
+  const claudeDir = path.join(homeDir, '.claude');
+  fs.mkdirSync(claudeDir, { recursive: true });
+  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+
+  // ~/.claude.json lists all 11 slots as available MCP servers
+  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil1-${Date.now()}.json`);
+  const mcpServers = {};
+  for (const s of slots) mcpServers[s] = {};
+  fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
+
+  // Transcript: plan-phase command + PLAN.md commit + first 5 agents called with successful results
+  // Sorted order (sub-first): slot-sub-1, slot-sub-2, slot-sub-3, slot-sub-4, slot-api-1
+  const first5 = ['slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4', 'slot-api-1'];
+  const transcriptLines = [
+    userLine('/qgsd:plan-phase 1', 'human-ceil1'),
+    assistantLine([
+      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+    ], 'assistant-commit'),
+  ];
+  for (const slot of first5) {
+    const toolName = `mcp__${slot}__review`;
+    transcriptLines.push(
+      assistantLine([toolUseBlock(toolName)], `assistant-${slot}`),
+      toolResultSuccessLine(`toolu_${toolName}`, `${slot} review OK`, `tr-${slot}`)
+    );
+  }
+  transcriptLines.push(
+    assistantLine([{ type: 'text', text: 'Plan complete with ceiling satisfied.' }], 'assistant-final')
+  );
+
+  const tmpFile = writeTempTranscript(transcriptLines);
+
+  try {
+    const { stdout, exitCode } = runHookWithEnv(
+      {
+        stop_hook_active: false,
+        hook_event_name: 'Stop',
+        transcript_path: tmpFile,
+        last_assistant_message: 'Plan complete with ceiling satisfied.',
+      },
+      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.strictEqual(stdout, '', 'stdout must be empty — 5 successful responses satisfies ceiling');
+  } finally {
+    fs.unlinkSync(tmpFile);
+    fs.unlinkSync(claudeJsonTmp);
+  }
+});
+
+// TC-CEIL-2: Same 11-agent pool, minSize=5, but only 4 of the first 5 agents called → block
+test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been called', () => {
+  const slots = [
+    'slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4',
+    'slot-api-1', 'slot-api-2', 'slot-api-3', 'slot-api-4',
+    'slot-api-5', 'slot-api-6', 'slot-api-7',
+  ];
+  const agentConfig = {};
+  for (const s of slots) {
+    agentConfig[s] = { auth_type: s.startsWith('slot-sub') ? 'sub' : 'api' };
+  }
+  const configPayload = JSON.stringify({
+    quorum_commands: ['plan-phase'],
+    quorum_active: slots,
+    agent_config: agentConfig,
+    quorum: { minSize: 5, preferSub: true },
+  });
+  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil2-${Date.now()}`);
+  const claudeDir = path.join(homeDir, '.claude');
+  fs.mkdirSync(claudeDir, { recursive: true });
+  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+
+  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil2-${Date.now()}.json`);
+  const mcpServers = {};
+  for (const s of slots) mcpServers[s] = {};
+  fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
+
+  // Only 4 of the first 5 sorted agents called (skip slot-api-1 — the 5th)
+  const only4 = ['slot-sub-1', 'slot-sub-2', 'slot-sub-3', 'slot-sub-4'];
+  const transcriptLines = [
+    userLine('/qgsd:plan-phase 1', 'human-ceil2'),
+    assistantLine([
+      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+    ], 'assistant-commit'),
+  ];
+  for (const slot of only4) {
+    const toolName = `mcp__${slot}__review`;
+    transcriptLines.push(
+      assistantLine([toolUseBlock(toolName)], `assistant-${slot}`),
+      toolResultSuccessLine(`toolu_${toolName}`, `${slot} review OK`, `tr-${slot}`)
+    );
+  }
+  transcriptLines.push(
+    assistantLine([{ type: 'text', text: 'Plan with only 4 agents.' }], 'assistant-final')
+  );
+
+  const tmpFile = writeTempTranscript(transcriptLines);
+
+  try {
+    const { stdout, exitCode } = runHookWithEnv(
+      {
+        stop_hook_active: false,
+        hook_event_name: 'Stop',
+        transcript_path: tmpFile,
+        last_assistant_message: 'Plan with only 4 agents.',
+      },
+      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+    );
+    assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
+    assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(parsed.decision, 'block', 'decision must be block — only 4 of 5 required');
+    assert.ok(parsed.reason.startsWith('QUORUM REQUIRED:'), 'reason must start with QUORUM REQUIRED:');
+    // The 5th agent (slot-api-1) should be named as missing
+    assert.ok(parsed.reason.includes('slot-api-1'), 'block reason must name slot-api-1 as missing');
+  } finally {
+    fs.unlinkSync(tmpFile);
+    fs.unlinkSync(claudeJsonTmp);
+  }
+});
+
+// TC-CEIL-3: error response does not count toward ceiling
+// 6 slots active, minSize=5 (so failover scenario: 5 calls made but slot-3 returns error → only 4 successful → block)
+test('TC-CEIL-3: error response does not count toward ceiling — still blocks when one call errored', () => {
+  // 6 slots configured (>= minSize) to test the failover-beyond-ceiling scenario
+  // minSize = 5, but one of the 5 calls returns an error → successCount = 4 → block
+  const slots = [
+    'slot-api-1', 'slot-api-2', 'slot-api-3',
+    'slot-api-4', 'slot-api-5', 'slot-api-6',
+  ];
+  const agentConfig = {};
+  for (const s of slots) {
+    agentConfig[s] = { auth_type: 'api' };
+  }
+  const configPayload = JSON.stringify({
+    quorum_commands: ['plan-phase'],
+    quorum_active: slots,
+    agent_config: agentConfig,
+    quorum: { minSize: 5, preferSub: false },
+  });
+  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil3-${Date.now()}`);
+  const claudeDir = path.join(homeDir, '.claude');
+  fs.mkdirSync(claudeDir, { recursive: true });
+  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+
+  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil3-${Date.now()}.json`);
+  const mcpServers = {};
+  for (const s of slots) mcpServers[s] = {};
+  fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
+
+  // Transcript: all 5 first agents called, but slot-api-3's tool_result is an error
+  // toolUseBlock(name) uses id: `toolu_${name}` pattern
+  const firstFive = ['slot-api-1', 'slot-api-2', 'slot-api-3', 'slot-api-4', 'slot-api-5'];
+  const transcriptLines = [
+    userLine('/qgsd:plan-phase 1', 'human-ceil3'),
+    assistantLine([
+      bashCommitBlock('node /path/gsd-tools.cjs commit "docs: plan" --files 04-01-PLAN.md'),
+    ], 'assistant-commit'),
+  ];
+  for (const slot of firstFive) {
+    const toolName = `mcp__${slot}__review`;
+    transcriptLines.push(
+      assistantLine([toolUseBlock(toolName)], `assistant-${slot}`)
+    );
+    if (slot === 'slot-api-3') {
+      // Slot 3 returns quota error — does NOT count toward ceiling
+      transcriptLines.push(
+        toolResultErrorLine(`toolu_${toolName}`, 'quota exceeded', `tr-${slot}`)
+      );
+    } else {
+      transcriptLines.push(
+        toolResultSuccessLine(`toolu_${toolName}`, `${slot} review OK`, `tr-${slot}`)
+      );
+    }
+  }
+  transcriptLines.push(
+    assistantLine([{ type: 'text', text: 'Plan with one errored agent.' }], 'assistant-final')
+  );
+
+  const tmpFile = writeTempTranscript(transcriptLines);
+
+  try {
+    const { stdout, exitCode } = runHookWithEnv(
+      {
+        stop_hook_active: false,
+        hook_event_name: 'Stop',
+        transcript_path: tmpFile,
+        last_assistant_message: 'Plan with one errored agent.',
+      },
+      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+    );
+    // Only 4 successful responses (slot-api-3 errored) — ceiling requires 5 → block
+    assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
+    assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
+    const parsed = JSON.parse(stdout);
+    assert.strictEqual(parsed.decision, 'block', 'decision must be block — error response does not count');
+    assert.ok(parsed.reason.startsWith('QUORUM REQUIRED:'), 'reason must start with QUORUM REQUIRED:');
+  } finally {
+    fs.unlinkSync(tmpFile);
+    fs.unlinkSync(claudeJsonTmp);
+  }
+});
