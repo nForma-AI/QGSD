@@ -1911,6 +1911,21 @@ function install(isGlobal, runtime = 'claude') {
             console.log(`  ${green}✓${reset} Backfilled quorum_active (${discoveredSlots.length} slots) in qgsd.json`);
           }
         }
+
+        // MULTI-03: Incremental quorum_active update — append new slots discovered since last install
+        // Only runs if quorum_active is already set (non-empty); new slots are appended, existing preserved
+        if (existingConfig.quorum_active && existingConfig.quorum_active.length > 0) {
+          const { addSlotToQuorumActive } = require('./migrate-to-slots.cjs');
+          const allCurrentSlots = buildActiveSlots();
+          const newSlots = allCurrentSlots.filter(s => !existingConfig.quorum_active.includes(s));
+          for (const newSlot of newSlots) {
+            const result = addSlotToQuorumActive(newSlot, qgsdConfigPath);
+            if (result.added) {
+              console.log(`  ${green}✓${reset} Added new slot to quorum_active: ${newSlot}`);
+              existingConfig.quorum_active.push(newSlot); // keep in-memory copy consistent
+            }
+          }
+        }
         // If quorum_active is already set and non-empty: do NOT overwrite (user config preserved)
       } catch {
         console.log(`  ${dim}↳ ~/.claude/qgsd.json already exists — skipping (user config preserved)${reset}`);
