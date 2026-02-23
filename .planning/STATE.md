@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-23 after Phase 38)
+See: .planning/PROJECT.md (updated 2026-02-23 after Phase 39)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.6 Agent Slots & Quorum Composition — v0.5 gap closure complete; Phase 39 (Rename and Migration) up next
+**Current focus:** v0.6 MILESTONE COMPLETE — slot rename (SLOT-01..04) delivered in Phase 39; v0.7 not yet planned
 
 ## Current Position
 
-Phase: 38 of 42 (Phase 38 complete; v0.5 gap closure phases 37–38 done; v0.6 Phase 39 up next)
-Plan: 38-01 Complete
-Status: v0.5 milestone fully audited and documented; v0.6 Phases 39–42 not yet planned
-Last activity: 2026-02-23 - Completed quick task 55: in qgsd:fix-tests, we could use ddmin instead of batch to isolate tests that causes instabilities in other, and that would guide our isolation strategies!
+Phase: 39 of 39 (Phase 39 complete; v0.6 milestone complete — is_last_phase=true)
+Plan: 39-03 Complete
+Status: v0.6 milestone fully shipped; all 10 quorum agents use slot-based names; SLOT-01..04 verified
+Last activity: 2026-02-23 - Phase 39 complete: slot rename across all source files, migration script, zero old model-based names in commands/agents/hooks/templates
 
 Progress: [████████████████████] 38/38 plans (100%)
 
@@ -63,6 +63,10 @@ Recent decisions affecting current work:
 - [Phase 37]: `~/.claude/qgsd-bin/secrets.cjs` placeholder pattern confirmed; copyWithPathReplacement() substitutes at install time
 - [Phase 37]: All 5 apply flows now call syncToClaudeJson — Option 2 was the only missing one
 - [Phase 38]: SUMMARY.md requirements frontmatter is the canonical way to link plans to requirements; body sections are supplemental
+- [Phase 39]: Slot naming scheme `<family>-<N>` decouples agent identity from provider/model — stable identifiers even as models change
+- [Phase 39]: SLOT_MIGRATION_MAP in bin/migrate-to-slots.cjs — non-destructive (skip if newName present), idempotent, --dry-run supported
+- [Phase 39]: Display name = slot name as-is (no prefix stripping); scoreboard --model from health_check response, not server name
+- [Phase 39]: hasClaudeMcpAgents() regex updated to /^claude-\d+$/ for slot-based names; Install 39-01 adds --migrate-slots flag
 
 ### Pending Todos
 
@@ -86,5 +90,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: Phase 38 complete — v0.5 gap closure fully done; v0.6 Phase 39 (Rename and Migration) ready to plan
+Stopped at: Phase 39 complete — v0.6 milestone complete; is_last_phase=true; slot rename fully shipped; transition workflow complete
 Resume file: None
