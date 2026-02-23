@@ -220,4 +220,36 @@ if (require.main === module) {
   process.exit(0);
 }
 
-module.exports = { migrateClaudeJson, migrateQgsdJson, populateActiveSlots, SLOT_MIGRATION_MAP };
+/**
+ * Append a single slot name to quorum_active in qgsd.json if not already present.
+ * Idempotent: no-op if slot is already in the array.
+ * @param {string} slotName - e.g. "copilot-2"
+ * @param {string} qgsdJsonPath - path to ~/.claude/qgsd.json
+ * @param {boolean} dryRun - if true, report but do not write
+ * @returns {{ added: boolean, slot: string, skipped: boolean }}
+ */
+function addSlotToQuorumActive(slotName, qgsdJsonPath, dryRun = false) {
+  let qgsdConfig = {};
+  try {
+    if (fs.existsSync(qgsdJsonPath)) {
+      qgsdConfig = JSON.parse(fs.readFileSync(qgsdJsonPath, 'utf8'));
+    }
+  } catch (e) {
+    return { added: false, slot: slotName, skipped: true, error: e.message };
+  }
+
+  const active = Array.isArray(qgsdConfig.quorum_active) ? qgsdConfig.quorum_active : [];
+  if (active.includes(slotName)) {
+    return { added: false, slot: slotName, skipped: true, reason: 'already present' };
+  }
+
+  if (dryRun) {
+    return { added: true, slot: slotName, skipped: false, dryRun: true };
+  }
+
+  qgsdConfig.quorum_active = [...active, slotName];
+  fs.writeFileSync(qgsdJsonPath, JSON.stringify(qgsdConfig, null, 2) + '\n');
+  return { added: true, slot: slotName, skipped: false };
+}
+
+module.exports = { migrateClaudeJson, migrateQgsdJson, populateActiveSlots, addSlotToQuorumActive, SLOT_MIGRATION_MAP };
