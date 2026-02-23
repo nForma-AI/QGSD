@@ -8,6 +8,7 @@
 - ✅ **v0.5 — MCP Setup Wizard** — Phases 32–38 (shipped 2026-02-23)
 - ✅ **v0.6 — Agent Slots & Quorum Composition** — Phase 39 (shipped 2026-02-23)
 - ✅ **v0.7 — Composition Config & Multi-Slot** — Phases v0.7-01..v0.7-04 (shipped 2026-02-23)
+- 🔄 **v0.8 — fix-tests ddmin Pipeline** — Phase v0.8-01 (in progress)
 
 ## Phases
 
@@ -104,6 +105,29 @@
 
 </details>
 
+<details>
+<summary>🔄 v0.8 — fix-tests ddmin Pipeline (Phase v0.8-01) — IN PROGRESS</summary>
+
+- [ ] **Phase v0.8-01: fix-tests ddmin Pipeline** — Replace batch-based approach with 4-phase autonomous pipeline: ddmin isolation (pinned order, hermetic sandbox), AI quorum triage report (dependency graph, cycle detection, flakiness), sequential fixing with state diffing + per-fix quorum approval + regression test per commit, final quorum-verified report. No batches. All quorum gates are AI model consensus via R3.
+
+### Phase v0.8-01: fix-tests ddmin Pipeline
+
+**Goal:** Redesign fix-tests.md workflow replacing the batch-based approach with a fully autonomous, structurally correct 4-phase pipeline that eliminates cross-batch pollution blind spots.
+
+**Phase 1 — ddmin Isolation:** Run full suite with pinned execution order (fixed seed). Capture baseline: every failing test's pass/fail + full error + stack trace. Use ddmin to find all minimal failing subsets, distinguishing independent failures from pollution chains. Detect cycles (A→B→A). Classify flaky tests statistically (N=10 reruns). Produce a dependency graph.
+
+**Phase 2 — Triage Report + Quorum Approval:** Generate structured action report: independent failures, pollution chains (with dependency order), cycle groups, flaky tests. Quorum (R3 AI consensus) reviews and approves triage before any fixing begins.
+
+**Phase 3 — Sequential Fixing:** Fix tests in dependency order. For each fix: capture state diffs (DB, files, env, PRNG) as evidence → AI proposes fix with root-cause reasoning → quorum approves → commit includes fix + regression test + approval record. After each commit: re-run full suite, diff failure signatures. If new regression: ddmin on delta, revert polluter, add to chain.
+
+**Phase 4 — Final Verification:** Full suite run. Quorum reviews final state report. Remaining failures documented with diagnosis.
+
+**Constraints:** No batches. No human approval gates — all quorum gates are AI model consensus via R3 protocol. Clear traces and action reports at every step.
+
+**Requirements:** DDMIN-01, DDMIN-02, DDMIN-03, DDMIN-04, TRIAGE-01, TRIAGE-02, FIX-01, FIX-02, FIX-03, VERIFY-01
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -151,3 +175,4 @@
 | v0.7-02. Multiple Slots | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.7-03. Wizard Composition Screen | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | 2/2 | Complete | 2026-02-23 |
+| v0.8-01. fix-tests ddmin Pipeline | v0.8 | 0/? | In Progress | — |
