@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.7 milestone archived — planning next milestone with `/qgsd:new-milestone`
+**Current focus:** v0.8 milestone shipped — fix-tests ddmin pipeline complete
 
 ## Current Position
 
-Phase: MILESTONE COMPLETE — v0.7 archived
+Phase: MILESTONE COMPLETE — v0.8 shipped
 Plan: —
-Status: v0.7 archived to .planning/milestones/; git tag v0.7 created; ready for /qgsd:new-milestone
-Last activity: 2026-02-23 - Completed quick task 89: make sure that every time we spawn a Task sub-agent we include the task description in the allowedPrompts list
+Status: v0.8-01 complete — 4-phase ddmin pipeline written, --run-cap flag added; ready for /qgsd:new-milestone
+Last activity: 2026-02-23 - Completed phase v0.8-01: fix-tests ddmin pipeline (plans 01 + 02)
 
 Progress: [████████████████████] 46/46 plans (100%)
 
@@ -46,6 +46,9 @@ Progress: [████████████████████] 46/46 p
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [Phase v0.8-01]: --run-cap N flag added to maintain-tests ddmin (default 50 backward-compatible; use 200 for whole-suite)
+- [Phase v0.8-01]: fix-tests.md completely rewritten as 4-phase ddmin pipeline; no batch loop logic remains
+- [Phase v0.8-01]: All 4 phases written in a single rewrite rather than appending phases across 2 plans — file coherence over wave structure
 - [v0.5 scope]: Wizard implemented as /qgsd:mcp-setup slash command using AskUserQuestion for interactivity
 - [v0.5 scope]: ~/.claude.json is the config file for MCP servers (mcpServers section with env blocks)
 - [v0.5 scope]: keytar (bin/secrets.cjs) is the secure secret store — already built in quick-51
@@ -131,5 +134,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: 2026-02-23 - Completed quick task 91: Tier 1 improvements to manage-agents.cjs
+Stopped at: 2026-02-23 - Completed phase v0.8-01: fix-tests ddmin pipeline (plans 01 + 02)
 Resume file: None

@@ -8,7 +8,7 @@
 - ✅ **v0.5 — MCP Setup Wizard** — Phases 32–38 (shipped 2026-02-23)
 - ✅ **v0.6 — Agent Slots & Quorum Composition** — Phase 39 (shipped 2026-02-23)
 - ✅ **v0.7 — Composition Config & Multi-Slot** — Phases v0.7-01..v0.7-04 (shipped 2026-02-23)
-- 🔄 **v0.8 — fix-tests ddmin Pipeline** — Phase v0.8-01 (in progress)
+- ✅ **v0.8 — fix-tests ddmin Pipeline** — Phase v0.8-01 (shipped 2026-02-23)
 
 ## Phases
 
@@ -106,7 +106,7 @@
 </details>
 
 <details>
-<summary>🔄 v0.8 — fix-tests ddmin Pipeline (Phase v0.8-01) — IN PROGRESS</summary>
+<summary>✅ v0.8 — fix-tests ddmin Pipeline (Phase v0.8-01) — SHIPPED 2026-02-23</summary>
 
 - [ ] **Phase v0.8-01: fix-tests ddmin Pipeline** — Replace batch-based approach with 4-phase autonomous pipeline: ddmin isolation (pinned order, hermetic sandbox), AI quorum triage report (dependency graph, cycle detection, flakiness), sequential fixing with state diffing + per-fix quorum approval + regression test per commit, final quorum-verified report. No batches. All quorum gates are AI model consensus via R3.
 
@@ -129,8 +129,8 @@
 **Plans:** 2 plans
 
 Plans:
-- [ ] v0.8-01-01-PLAN.md — Add --run-cap flag to gsd-tools.cjs + write fix-tests.md Phases 1 and 2
-- [ ] v0.8-01-02-PLAN.md — Write fix-tests.md Phases 3 and 4 (complete pipeline)
+- [x] v0.8-01-01-PLAN.md — Add --run-cap flag to gsd-tools.cjs + write fix-tests.md Phases 1 and 2
+- [x] v0.8-01-02-PLAN.md — Write fix-tests.md Phases 3 and 4 (complete pipeline)
 
 </details>
 
@@ -181,4 +181,4 @@ Plans:
 | v0.7-02. Multiple Slots | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.7-03. Wizard Composition Screen | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | 2/2 | Complete | 2026-02-23 |
-| v0.8-01. fix-tests ddmin Pipeline | v0.8 | 0/2 | In Progress | — |
+| v0.8-01. fix-tests ddmin Pipeline | v0.8 | 2/2 | Complete | 2026-02-23 |
