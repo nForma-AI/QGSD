@@ -86,6 +86,7 @@ Capture the active team fingerprint (idempotent — run once per session).
 **claude-mcp-server instances** — iterate over `$CLAUDE_MCP_SERVERS` in order:
 
 For each server with `available: true`:
+**Timeout guard:** Each `health_check` and `mcp__<serverName>__claude` inference call must complete within 30 seconds. If a call hangs or errors (including MCP timeout), immediately mark that server UNAVAIL, log `[<serverName>] TIMEOUT — marked UNAVAIL`, and continue to the next server. Do NOT wait for a hung call to resolve.
 - Call `mcp__<serverName>__health_check`
 - If `"healthy": true` → add to TEAM_JSON: `"<display-name>": { "type": "claude-mcp", "model": "<model>" }`
 - Else → mark UNAVAIL
@@ -151,6 +152,8 @@ Call order (sequential):
 Iterate over the participating slot list (intersection of `$QUORUM_ACTIVE` and `$CLAUDE_MCP_SERVERS`).
 Skip slots where `available: false`.
 
+**Per-model timeout:** Each `mcp__<slotName>__claude` inference call must resolve within 30 seconds. If the MCP tool call hangs, times out, or returns an error, mark that slot UNAVAIL immediately, log `[<slotName>] TIMEOUT — marked UNAVAIL`, and proceed to the next slot. Do not retry. Continue quorum with remaining available models.
+
 For each slot in the participating list (call sequentially):
 - **Native CLI slots** (`codex-cli-*`, `gemini-cli-*`, `opencode-*`, `copilot-*`):
   Call the appropriate tool: `mcp__<slotName>__review` (codex), `mcp__<slotName>__gemini` (gemini),
@@ -203,6 +206,7 @@ clearly (2–4 sentences).
 ```
 
 Each model called **sequentially**. Stop immediately upon CONSENSUS.
+Apply the same 30 seconds timeout guard: any model that hangs or errors during deliberation is marked UNAVAIL for the remainder of this quorum run.
 After 4 total rounds with no consensus → **Escalate**.
 
 ### Consensus output
@@ -350,6 +354,8 @@ reasoning: [2–4 sentences grounded in the actual trace output — not assumpti
 ```
 
 Dispatch sequentially (one Task per message turn — NOT sibling calls):
+
+**Per-worker timeout:** If a Task worker spawn or the underlying MCP call within it takes longer than 30 seconds without a response, treat that worker's verdict as UNAVAIL. Continue collecting verdicts from remaining workers.
 
 **Native agents:**
 - `Task(subagent_type="general-purpose", prompt="Call mcp__gemini-cli-1__gemini with: [full worker prompt with bundle inlined]")`
