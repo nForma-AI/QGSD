@@ -99,6 +99,7 @@
 - [x] **Phase v0.7-01: Composition Architecture** — `quorum_active` config array; orchestrator reads it dynamically; scoreboard tracks by slot name with model as context (COMP-01..04, SCBD-01..03) (completed 2026-02-23)
 - [x] **Phase v0.7-02: Multiple Slots** — Support N instances per family; `~/.claude.json` entries for copilot-1/2, opencode-1/2, etc.; add-slot supported by config and wizard (MULTI-01..03) (completed 2026-02-23)
 - [x] **Phase v0.7-03: Wizard Composition Screen** — "Edit Quorum Composition" option in mcp-setup re-run menu; slot toggle on/off; add new slot from within wizard (WIZ-08..10) (completed 2026-02-23)
+- [ ] **Phase v0.7-04: Orchestrator Scoreboard Slot Wiring** — Propagate INT-04 fix to orchestrator Mode A; use --slot + --model-id for claude-mcp servers so SCBD-01..03 slot tracking works on all quorum paths (SCBD-01, SCBD-02, SCBD-03)
 
 ## Phase Details
 
@@ -140,6 +141,16 @@ Plans:
   1. The `/qgsd:mcp-setup` re-run menu includes an "Edit Quorum Composition" option alongside the existing agent list — selecting it opens the composition screen without disrupting other wizard flows
   2. The composition screen lists every discovered slot with a clear on/off indicator for `quorum.active` inclusion — toggling a slot and confirming writes the updated `quorum.active` array to `qgsd.json` and takes effect on the next quorum call
   3. From within the composition screen, a user can add a new slot for any supported family (claude, copilot, opencode, codex-cli, gemini-cli) by entering a slot index — the wizard writes the new `~/.claude.json` mcpServers entry, adds the slot to `quorum.active`, and triggers restart
+**Plans**: TBD
+
+### Phase v0.7-04: Orchestrator Scoreboard Slot Wiring
+**Goal**: All quorum paths — orchestrator Mode A and `quorum.md` Mode B — use `--slot + --model-id` for claude-mcp servers so the scoreboard consistently tracks slot-keyed entries in `data.slots{}` with the full model ID as context
+**Depends on**: Phase v0.7-01 (scoreboard infrastructure), Phase v0.7-03
+**Requirements**: SCBD-01, SCBD-02, SCBD-03
+**Gap Closure**: Closes gaps from v0.7 audit — MC-1 (orchestrator Mode A missing --slot path), Flow-4, Flow-5
+**Success Criteria** (what must be TRUE):
+  1. After a quorum round executed through the orchestrator, `quorum-scoreboard.md` contains a row with the slot name (`claude-1`, `claude-2`, etc.) as the key and the full model ID (e.g., `deepseek-ai/DeepSeek-V3`) as the model context field
+  2. When the same slot is used with two different models across two rounds, the scoreboard shows two separate rows — the older row is preserved with its historical vote data
 **Plans**: TBD
 
 ## Progress
@@ -188,3 +199,4 @@ Plans:
 | v0.7-01. Composition Architecture | v0.7 | Complete    | 2026-02-23 | - |
 | v0.7-02. Multiple Slots | 0/2 | Complete    | 2026-02-23 | - |
 | v0.7-03. Wizard Composition Screen | 2/2 | Complete    | 2026-02-23 | - |
+| v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | TBD | Pending | - |
