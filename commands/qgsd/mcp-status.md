@@ -18,7 +18,9 @@ This command is read-only (observation only). It does NOT invoke quorum and is N
 
 <process>
 
-## Step 1: Read UNAVAIL counts from scoreboard
+> **IMPORTANT: Run every Bash call in this workflow sequentially (one at a time). Never issue two Bash calls in parallel. A failure in one parallel sibling cancels all other parallel siblings — sequential execution isolates failures.**
+
+## Step 1: Read UNAVAIL counts from scoreboard (sequential — run this bash call first, alone, before Steps 2 and 3)
 
 Run the following Bash command and store the output as SCOREBOARD_INFO:
 
@@ -59,7 +61,7 @@ For HTTP agents, derive UNAVAIL count using: `Math.max(counts[slot] || 0, counts
 
 If scoreboard file does not exist, treat all counts as 0.
 
-## Step 2: Load HTTP provider info from providers.json
+## Step 2: Load HTTP provider info from providers.json (sequential — run this bash call second, after Step 1 completes)
 
 Run the following Bash command and store the output as HTTP_PROVIDERS:
 
@@ -81,7 +83,7 @@ console.log(JSON.stringify(httpMap));
 
 Parse the result as a map: `{ "claude-1": { model, description, baseUrl, apiKeyEnv }, ... }`.
 
-## Step 3: Probe HTTP endpoints
+## Step 3: Probe HTTP endpoints (sequential — run this bash call third, after Step 2 completes)
 
 Run the following Bash command and store the output as ENDPOINT_HEALTH:
 
