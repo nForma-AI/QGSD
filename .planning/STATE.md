@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 
 ## Current Position
 
-Phase: v0.7-04 COMPLETE — all v0.7 phases done
-Plan: All plans complete (v0.7-04 = 2/2)
-Status: Phase v0.7-04 complete; v0.7 milestone all phases done; ready for /qgsd:complete-milestone or next milestone
-Last activity: 2026-02-23 - Completed quick task 65: fix pytest discover in maintain-tests: add --override-ini=addopts= flag and fallback parsing for <Module> tree format
+Phase: MILESTONE COMPLETE — v0.7 archived
+Plan: —
+Status: v0.7 archived to .planning/milestones/; git tag v0.7 created; ready for /qgsd:new-milestone
+Last activity: 2026-02-23 - Archived v0.7 milestone (Composition Config & Multi-Slot)
 
 Progress: [████████████████████] 46/46 plans (100%)
 
@@ -103,7 +103,7 @@ Recent decisions affecting current work:
 | 62 | resume-work should also look at quick tasks and incomplete qgsd:debug sessions | 2026-02-23 | 15ab74f | Verified | [62-resume-work-should-also-look-at-quick-ta](.planning/quick/62-resume-work-should-also-look-at-quick-ta/) |
 | 63 | fix v0.7-03 gaps: run install sync and mark WIZ-08/09 complete in REQUIREMENTS.md | 2026-02-23 | 351e42f | Verified | [63-fix-v0-7-03-gaps-run-install-sync-and-ma](./quick/63-fix-v0-7-03-gaps-run-install-sync-and-ma/) |
 | 64 | fix SCBD-01/02/03: propagate INT-04 --slot/--model-id fix from quorum.md Mode B to qgsd-quorum-orchestrator.md Mode A scoreboard block | 2026-02-23 | 8de229c | Verified | [64-fix-scbd-01-02-03-propagate-int-04-slot-](./quick/64-fix-scbd-01-02-03-propagate-int-04-slot-/) |
-| 65 | fix pytest discover in maintain-tests: add --override-ini=addopts= flag and fallback parsing for <Module> tree format | 2026-02-23 | bd73e44 | Pending | [65-fix-pytest-discover-in-maintain-tests-ad](./quick/65-fix-pytest-discover-in-maintain-tests-ad/) |
+| 65 | fix pytest discover in maintain-tests: add --override-ini=addopts= flag and fallback parsing for <Module> tree format | 2026-02-23 | bd73e44 | Verified | [65-fix-pytest-discover-in-maintain-tests-ad](./quick/65-fix-pytest-discover-in-maintain-tests-ad/) |
 
 ## Session Continuity
 
