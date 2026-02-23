@@ -106,7 +106,7 @@ Recent decisions affecting current work:
 | 65 | fix pytest discover in maintain-tests: add --override-ini=addopts= flag and fallback parsing for <Module> tree format | 2026-02-23 | bd73e44 | Verified | [65-fix-pytest-discover-in-maintain-tests-ad](./quick/65-fix-pytest-discover-in-maintain-tests-ad/) |
 | 67 | harden all quorum calls against hangs — add per-model timeout wrapper so hung models are skipped with UNAVAIL status | 2026-02-23 | fccf683 | Verified | [67-harden-all-quorum-calls-against-hangs-ad](./quick/67-harden-all-quorum-calls-against-hangs-ad/) |
 | 68 | audit and update README and documentation to reflect all features shipped in v0.1-v0.7 | 2026-02-23 | fe2c3cd | Verified | [68-audit-and-update-readme-and-documentatio](./quick/68-audit-and-update-readme-and-documentatio/) |
-| 69 | qgsd:fix-tests must use more sub-agents, tasks, so that we don't fill the context of the top-level agent | 2026-02-23 | {commit_hash} | Pending | [69-qgsd-fix-tests-must-use-more-sub-agents-](./quick/69-qgsd-fix-tests-must-use-more-sub-agents-/) |
+| 69 | qgsd:fix-tests must use more sub-agents, tasks, so that we don't fill the context of the top-level agent | 2026-02-23 | 160466a | Pending | [69-qgsd-fix-tests-must-use-more-sub-agents-](./quick/69-qgsd-fix-tests-must-use-more-sub-agents-/) |
 
 ## Session Continuity
 
