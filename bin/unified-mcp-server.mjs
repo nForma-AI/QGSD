@@ -2,6 +2,10 @@
 // unified-mcp-server.mjs — config-driven MCP stdio server
 // Implements raw JSON-RPC stdio (no SDK dependency)
 // Wraps multiple CLI providers as MCP tools, driven by providers.json
+//
+// Modes:
+//   default         — exposes all providers as slot-named tools (unified-1 usage)
+//   PROVIDER_SLOT=X — exposes only provider X with its original tool names
 
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -24,6 +28,15 @@ try {
   process.exit(1);
 }
 
+// ─── PROVIDER_SLOT mode detection ─────────────────────────────────────────────
+const SLOT = process.env.PROVIDER_SLOT ?? null;
+const slotProvider = SLOT ? providers.find(p => p.name === SLOT) : null;
+
+if (SLOT && !slotProvider) {
+  process.stderr.write(`[unified-mcp-server] Unknown PROVIDER_SLOT: ${SLOT}\n`);
+  process.exit(1);
+}
+
 // ─── MCP response helpers ──────────────────────────────────────────────────────
 function send(obj) {
   process.stdout.write(JSON.stringify(obj) + '\n');
@@ -37,8 +50,10 @@ function sendError(id, code, message) {
   send({ jsonrpc: '2.0', id, error: { code, message } });
 }
 
-// ─── Build tool definitions from providers ─────────────────────────────────────
-function buildTools() {
+// ─── Tool definitions ──────────────────────────────────────────────────────────
+
+/** All-providers mode: one tool per provider using provider name as tool name */
+function buildAllProviderTools() {
   return providers.map(p => ({
     name: p.name,
     description: p.description,
@@ -57,6 +72,93 @@ function buildTools() {
       required: ['prompt'],
     },
   }));
+}
+
+const PROMPT_SCHEMA = {
+  type: 'object',
+  properties: {
+    prompt: { type: 'string', description: 'The prompt or task to send' },
+    timeout_ms: { type: 'number', description: 'Timeout in milliseconds' },
+  },
+  required: ['prompt'],
+};
+
+const NO_ARGS_SCHEMA = { type: 'object', properties: {}, required: [] };
+
+/** PROVIDER_SLOT mode: expose original tool names for the given provider */
+function buildSlotTools(provider) {
+  const tools = [];
+
+  // Universal: ping
+  tools.push({
+    name: 'ping',
+    description: 'Test connectivity by echoing a message back.',
+    inputSchema: {
+      type: 'object',
+      properties: { prompt: { type: 'string', default: '', description: 'Message to echo' } },
+      required: [],
+    },
+  });
+
+  // Universal: identity
+  tools.push({
+    name: 'identity',
+    description: 'Get server identity: name, version, active LLM model, and MCP server name. Used by QGSD to fingerprint the active quorum team.',
+    inputSchema: NO_ARGS_SCHEMA,
+  });
+
+  if (provider.type === 'subprocess') {
+    // Main tool
+    tools.push({
+      name: provider.mainTool,
+      description: provider.description,
+      inputSchema: PROMPT_SCHEMA,
+    });
+
+    // Help tool
+    tools.push({
+      name: 'help',
+      description: `Display ${provider.mainTool} CLI help and available options.`,
+      inputSchema: NO_ARGS_SCHEMA,
+    });
+
+    // Extra tools
+    for (const extra of provider.extraTools ?? []) {
+      tools.push({
+        name: extra.name,
+        description: extra.description,
+        inputSchema: extra.checkUpdate ? NO_ARGS_SCHEMA : PROMPT_SCHEMA,
+      });
+    }
+  } else if (provider.type === 'http') {
+    // claude tool
+    tools.push({
+      name: 'claude',
+      description: 'Execute Claude Code CLI in non-interactive mode for AI assistance',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          prompt: { type: 'string', description: 'The coding task, question, or analysis request' },
+          timeout_ms: { type: 'number', description: 'Timeout in milliseconds' },
+        },
+        required: ['prompt'],
+      },
+    });
+
+    // health_check tool
+    tools.push({
+      name: 'health_check',
+      description: 'Verify the upstream LLM endpoint is reachable by making a minimal API call. Returns { healthy, latencyMs, model } or { healthy: false, error }.',
+      inputSchema: NO_ARGS_SCHEMA,
+    });
+  }
+
+  return tools;
+}
+
+function buildTools() {
+  if (slotProvider) return buildSlotTools(slotProvider);
+  return buildAllProviderTools();
 }
 
 // ─── Subprocess execution ──────────────────────────────────────────────────────
@@ -133,6 +235,77 @@ async function runProvider(provider, toolArgs) {
   });
 }
 
+/** Run a subprocess with explicit args (used for help, extraTools) */
+async function runSubprocessWithArgs(provider, args, timeoutMs = 30000) {
+  const env = { ...process.env, ...(provider.env ?? {}) };
+
+  return new Promise((resolve) => {
+    let child;
+    try {
+      child = spawn(provider.cli, args, { env, stdio: ['pipe', 'pipe', 'pipe'] });
+    } catch (err) {
+      resolve(`[spawn error: ${err.message}]`);
+      return;
+    }
+
+    child.stdin.end();
+    let stdout = '';
+    let stderr = '';
+
+    const timer = setTimeout(() => {
+      child.kill('SIGTERM');
+    }, timeoutMs);
+
+    child.stdout.on('data', d => { stdout += d.toString(); });
+    child.stderr.on('data', d => { stderr += d.toString().slice(0, 4096); });
+
+    child.on('close', () => {
+      clearTimeout(timer);
+      resolve(stdout || stderr || '(no output)');
+    });
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      resolve(`[spawn error: ${err.message}]`);
+    });
+  });
+}
+
+/** Run npm view opencode version to check for updates */
+async function runCheckUpdate() {
+  return new Promise((resolve) => {
+    let child;
+    try {
+      child = spawn('npm', ['view', 'opencode', 'version'], {
+        env: process.env,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
+    } catch (err) {
+      resolve(`[error checking update: ${err.message}]`);
+      return;
+    }
+
+    child.stdin.end();
+    let stdout = '';
+    let stderr = '';
+
+    const timer = setTimeout(() => { child.kill('SIGTERM'); }, 30000);
+
+    child.stdout.on('data', d => { stdout += d.toString(); });
+    child.stderr.on('data', d => { stderr += d.toString().slice(0, 1000); });
+
+    child.on('close', () => {
+      clearTimeout(timer);
+      resolve(stdout.trim() || stderr || '(no output)');
+    });
+
+    child.on('error', (err) => {
+      clearTimeout(timer);
+      resolve(`[error: ${err.message}]`);
+    });
+  });
+}
+
 // ─── HTTP provider execution ───────────────────────────────────────────────────
 async function runHttpProvider(provider, toolArgs) {
   const prompt = toolArgs.prompt;
@@ -200,6 +373,154 @@ async function runHttpProvider(provider, toolArgs) {
   });
 }
 
+/** Slot-mode HTTP execution: reads ANTHROPIC_BASE_URL/KEY/MODEL from env */
+async function runSlotHttpProvider(provider, toolArgs) {
+  const effectiveProvider = {
+    ...provider,
+    baseUrl: process.env.ANTHROPIC_BASE_URL ?? provider.baseUrl,
+    model: process.env.CLAUDE_DEFAULT_MODEL ?? provider.model,
+    apiKeyEnv: 'ANTHROPIC_API_KEY',
+    timeout_ms: parseInt(process.env.CLAUDE_MCP_TIMEOUT_MS ?? '0') || provider.timeout_ms,
+  };
+  return runHttpProvider(effectiveProvider, toolArgs);
+}
+
+/** health_check: POST minimal request, return { healthy, latencyMs, model } */
+async function runHealthCheck(provider) {
+  const baseUrl = process.env.ANTHROPIC_BASE_URL ?? provider.baseUrl;
+  const apiKey = process.env.ANTHROPIC_API_KEY ?? process.env[provider.apiKeyEnv] ?? '';
+  const model = process.env.CLAUDE_DEFAULT_MODEL ?? provider.model;
+  const timeoutMs = parseInt(process.env.CLAUDE_MCP_HEALTH_TIMEOUT_MS ?? '30000');
+
+  const body = JSON.stringify({
+    model,
+    messages: [{ role: 'user', content: 'hi' }],
+    max_tokens: 1,
+    stream: false,
+  });
+
+  const url = new URL(baseUrl + '/chat/completions');
+  const isHttps = url.protocol === 'https:';
+  const transport = isHttps ? https : http;
+
+  const options = {
+    hostname: url.hostname,
+    port: url.port || (isHttps ? 443 : 80),
+    path: url.pathname,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Length': Buffer.byteLength(body),
+    },
+  };
+
+  const startTime = Date.now();
+
+  return new Promise((resolve) => {
+    let timedOut = false;
+    const req = transport.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        if (timedOut) return;
+        const latencyMs = Date.now() - startTime;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed?.choices || parsed?.id) {
+            resolve({ healthy: true, latencyMs, model });
+          } else if (parsed?.error) {
+            resolve({ healthy: false, error: parsed.error.message ?? JSON.stringify(parsed.error), latencyMs });
+          } else {
+            resolve({ healthy: false, error: `Unexpected response: ${data.slice(0, 200)}`, latencyMs });
+          }
+        } catch (e) {
+          resolve({ healthy: false, error: `JSON parse failed: ${data.slice(0, 200)}`, latencyMs });
+        }
+      });
+    });
+
+    const timer = setTimeout(() => {
+      timedOut = true;
+      req.destroy();
+      resolve({ healthy: false, error: `Timed out after ${timeoutMs}ms`, latencyMs: timeoutMs });
+    }, timeoutMs);
+
+    req.on('error', (err) => {
+      clearTimeout(timer);
+      resolve({ healthy: false, error: err.message, latencyMs: Date.now() - startTime });
+    });
+
+    req.on('close', () => clearTimeout(timer));
+
+    req.write(body);
+    req.end();
+  });
+}
+
+/** Build identity JSON for slot mode */
+function buildIdentityResult(provider) {
+  let version = '0.0.0';
+  try {
+    const pkg = JSON.parse(fs.readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
+    version = pkg.version ?? version;
+  } catch (_) { /* ignore */ }
+
+  const model = provider.type === 'http'
+    ? (process.env.CLAUDE_DEFAULT_MODEL ?? provider.model)
+    : (provider.mainTool ?? provider.cli);
+
+  return JSON.stringify({
+    name: 'unified-mcp-server',
+    version,
+    slot: provider.name,
+    type: provider.type,
+    model,
+    provider: provider.description,
+    install_method: 'qgsd-monorepo',
+  });
+}
+
+// ─── Slot mode tool dispatcher ────────────────────────────────────────────────
+async function handleSlotToolCall(toolName, toolArgs) {
+  if (toolName === 'ping') {
+    const message = toolArgs.prompt ?? 'pong';
+    return `${message} (slot: ${slotProvider.name})`;
+  }
+
+  if (toolName === 'identity') {
+    return buildIdentityResult(slotProvider);
+  }
+
+  if (slotProvider.type === 'subprocess') {
+    if (toolName === 'help') {
+      return runSubprocessWithArgs(slotProvider, slotProvider.helpArgs ?? ['--help']);
+    }
+
+    if (toolName === slotProvider.mainTool) {
+      return runProvider(slotProvider, toolArgs);
+    }
+
+    const extra = (slotProvider.extraTools ?? []).find(e => e.name === toolName);
+    if (extra) {
+      if (extra.checkUpdate) return runCheckUpdate();
+      // Run with extra's own args_template
+      return runProvider({ ...slotProvider, args_template: extra.args_template }, toolArgs);
+    }
+  }
+
+  if (slotProvider.type === 'http') {
+    if (toolName === 'claude') {
+      return runSlotHttpProvider(slotProvider, toolArgs);
+    }
+    if (toolName === 'health_check') {
+      return JSON.stringify(await runHealthCheck(slotProvider));
+    }
+  }
+
+  return null; // unknown tool
+}
+
 // ─── Request handlers ──────────────────────────────────────────────────────────
 const toolMap = new Map(providers.map(p => [p.name, p]));
 
@@ -227,6 +548,35 @@ async function handleRequest(req) {
   if (method === 'tools/call') {
     const toolName = params?.name;
     const toolArgs = params?.arguments ?? {};
+
+    // ── PROVIDER_SLOT mode dispatch ──────────────────────────────────────────
+    if (slotProvider) {
+      let output;
+      try {
+        output = await handleSlotToolCall(toolName, toolArgs);
+      } catch (err) {
+        sendResult(id, {
+          content: [{ type: 'text', text: `Error: ${err.message}` }],
+          isError: true,
+        });
+        return;
+      }
+
+      if (output === null) {
+        sendResult(id, {
+          content: [{ type: 'text', text: `Unknown tool in slot ${slotProvider.name}: ${toolName}` }],
+          isError: true,
+        });
+      } else {
+        sendResult(id, {
+          content: [{ type: 'text', text: typeof output === 'string' ? output : JSON.stringify(output) }],
+          isError: false,
+        });
+      }
+      return;
+    }
+
+    // ── All-providers mode dispatch ──────────────────────────────────────────
     const provider = toolMap.get(toolName);
 
     if (!provider) {
@@ -278,4 +628,5 @@ rl.on('line', async (line) => {
 
 rl.on('close', () => process.exit(0));
 
-process.stderr.write('[unified-mcp-server] started\n');
+const slotLabel = SLOT ? ` [slot: ${SLOT}]` : ' [all-providers]';
+process.stderr.write(`[unified-mcp-server] started${slotLabel}\n`);

@@ -4,8 +4,17 @@
       "name": "codex-1",
       "type": "subprocess",
       "description": "Execute Codex CLI agent non-interactively (slot 1)",
+      "mainTool": "codex",
       "cli": "/opt/homebrew/bin/codex",
       "args_template": ["exec", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [
+        {
+          "name": "review",
+          "description": "Run a code review against the current repository using Codex CLI",
+          "args_template": ["review", "{prompt}"]
+        }
+      ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
@@ -14,8 +23,17 @@
       "name": "codex-2",
       "type": "subprocess",
       "description": "Execute Codex CLI agent non-interactively (slot 2)",
+      "mainTool": "codex",
       "cli": "/opt/homebrew/bin/codex",
       "args_template": ["exec", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [
+        {
+          "name": "review",
+          "description": "Run a code review against the current repository using Codex CLI",
+          "args_template": ["review", "{prompt}"]
+        }
+      ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
@@ -24,8 +42,11 @@
       "name": "gemini-1",
       "type": "subprocess",
       "description": "Query Gemini CLI agent non-interactively (slot 1)",
+      "mainTool": "gemini",
       "cli": "/opt/homebrew/bin/gemini",
       "args_template": ["-p", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
@@ -34,8 +55,11 @@
       "name": "gemini-2",
       "type": "subprocess",
       "description": "Query Gemini CLI agent non-interactively (slot 2)",
+      "mainTool": "gemini",
       "cli": "/opt/homebrew/bin/gemini",
       "args_template": ["-p", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
@@ -44,8 +68,17 @@
       "name": "opencode-1",
       "type": "subprocess",
       "description": "Run OpenCode agent non-interactively with a message",
+      "mainTool": "opencode",
       "cli": "/opt/homebrew/bin/opencode",
       "args_template": ["run", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [
+        {
+          "name": "opencode_check_update",
+          "description": "Check whether a newer version of OpenCode is available on npm. Returns current version, latest version, and whether an update is available.",
+          "checkUpdate": true
+        }
+      ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
@@ -54,8 +87,22 @@
       "name": "copilot-1",
       "type": "subprocess",
       "description": "Execute GitHub Copilot CLI non-interactively",
+      "mainTool": "ask",
       "cli": "/opt/homebrew/bin/copilot",
-      "args_template": ["-p", "{prompt}", "--yolo"],
+      "args_template": ["ask", "--", "{prompt}"],
+      "helpArgs": ["--help"],
+      "extraTools": [
+        {
+          "name": "suggest",
+          "description": "Ask GitHub Copilot to suggest a shell, git, or gh CLI command for a given task.",
+          "args_template": ["suggest", "--shell", "--", "{prompt}"]
+        },
+        {
+          "name": "explain",
+          "description": "Ask GitHub Copilot to explain what a shell command does in plain language.",
+          "args_template": ["explain", "--", "{prompt}"]
+        }
+      ],
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "env": {}
