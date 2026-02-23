@@ -660,9 +660,7 @@ If identity times out or errors:
 Run /qgsd:mcp-status to verify agent health.
 ```
 
-Return to roster display (re-read roster to show new agent).
-
-Return to roster display.
+**Return path:** If this add-slot flow was entered from the Composition Screen (via "Add new slot"), return to Composition Screen after identity ping. Otherwise, return to roster display (re-read roster to show new agent).
 
 ---
 
@@ -768,7 +766,7 @@ If identity times out or errors:
 Run /qgsd:mcp-status to verify agent health.
 ```
 
-Return to roster display (re-read roster to show new agent).
+**Return path:** If this add-slot flow was entered from the Composition Screen (via "Add new slot"), return to Composition Screen after identity ping. Otherwise, return to roster display (re-read roster to show new agent).
 
 ---
 
@@ -879,6 +877,14 @@ If `written: true`: display:
 Return to roster display.
 
 If error: display error message and return to roster.
+
+**Add new slot handler:** When "Add new slot" selected:
+
+Route to **Step A** (EXISTING_SERVERS detection + template selection). This is the same flow as "Add new agent" from the roster menu. After Step D (identity ping) completes:
+
+- Return to **Composition Screen** (re-read fresh `slots` and `active` data from disk).
+- The newly added slot will appear in the table with ● ON status (it was added to `quorum_active` during the Step B or Step B-native apply flow).
+- Re-display the Composition Screen AskUserQuestion.
 
 **Cancel handler:** When "Cancel" selected:
 
@@ -1359,4 +1365,7 @@ If a restart fails, leave config written and display:
 - No changes applied without explicit user confirmation
 - Keytar failure: warning + Linux hint + confirmation before env-block fallback + audit log
 - Key value never appears in displayed text, log output, or shell history (passed via env var only)
+- Edit Quorum Composition flow (WIZ-08): re-run menu option "Edit Quorum Composition" → routes to Composition Screen
+- Composition toggle flow (WIZ-09): slot list with ● ON / ○ OFF indicators → toggle updates PENDING_ACTIVE → apply writes quorum_active to ~/.claude/qgsd.json → no restart required
+- Add slot from composition flow (WIZ-10): "Add new slot" → Step A/B/B-native → identity ping → return to Composition Screen showing new slot ● ON
 </success_criteria>
