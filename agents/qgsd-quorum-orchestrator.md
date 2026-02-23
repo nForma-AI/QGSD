@@ -19,7 +19,7 @@ You are the QGSD quorum orchestrator. When invoked, execute the full R3 quorum p
 for the question or bundle passed in `$ARGUMENTS`.
 
 **SEQUENTIAL CALLS ONLY — NO SIBLING TOOL CALLS.**
-Every MCP tool call and every Task spawn MUST be issued as a separate, standalone message
+Every model call and every Task spawn MUST be issued as a separate, standalone message
 turn — never batched or co-submitted as sibling calls. One call → wait → proceed.
 
 **Two modes** — detect automatically from `$ARGUMENTS`:
@@ -28,7 +28,25 @@ turn — never batched or co-submitted as sibling calls. One call → wait → p
 - **Mode B — Execution + Trace Review**: The input explicitly requires running a command before a verdict. Triggers when `$ARGUMENTS` contains phrases like "run [command] and tell me if...", "does this pass", "review the output of...", "verify that [thing] works".
 
 **Default: Mode A.**
+
+**Important:** All quorum model calls go through `call-quorum-slot.cjs` via Bash — NOT via
+MCP tool calls. MCP tools are not available in sub-agent sessions. Use the bash pattern below.
 </role>
+
+---
+
+### Pre-step — Parse $ARGUMENTS extras
+
+Before Step 1, extract optional fields from `$ARGUMENTS` and capture working directory context.
+
+**artifact_path** — scan `$ARGUMENTS` text for a line matching `artifact_path: <value>`.
+
+- If found: use the **Read tool** to read that file path. Store the result as `$ARTIFACT_PATH` (the path string) and `$ARTIFACT_LINE_COUNT` (approximate line count of the file). Do NOT embed the raw contents in worker prompts — workers will read the file themselves using their own Read tool.
+- If not found or Read fails: set `$ARTIFACT_PATH` to empty string and `$ARTIFACT_LINE_COUNT` to 0. No error — artifact injection is optional.
+
+**cwd** — run `Bash(pwd)` and store the result as `$REPO_DIR`.
+
+These two variables (`$ARTIFACT_PATH`, `$REPO_DIR`) are available to all subsequent steps.
 
 ---
 
@@ -46,8 +64,7 @@ Parse the JSON output. Build:
 2. **`$CLAUDE_MCP_SERVERS`**: flat list of `{ serverName, model, providerName, available }`.
    A server's `available` is `false` if its provider's `healthy` is `false`.
 
-Any server with `available: false` → mark UNAVAIL immediately — skip health_check and
-inference calls. This prevents hangs from unresponsive provider endpoints.
+Any server with `available: false` → mark UNAVAIL immediately — skip inference calls entirely.
 
 3. **`$QUORUM_ACTIVE`**: read from `~/.claude/qgsd.json` (project config takes precedence):
 ```bash
@@ -66,13 +83,13 @@ If `$QUORUM_ACTIVE` is empty (`[]`), all entries in `$CLAUDE_MCP_SERVERS` partic
 If non-empty, intersect: only servers whose `serverName` appears in `$QUORUM_ACTIVE` are called.
 A server in `$QUORUM_ACTIVE` but absent from `$CLAUDE_MCP_SERVERS` = skip silently (fail-open).
 
-**Pre-flight slot skip:** After building `$CLAUDE_MCP_SERVERS`, immediately filter the list for the quorum run:
+**Pre-flight slot skip:** After building `$CLAUDE_MCP_SERVERS`, immediately filter:
 - For each server with `available: false`, log: `Pre-flight skip: <serverName> (<providerName> DOWN)`
-- Remove these servers from the working list for all subsequent steps (team capture, Round 1, deliberation).
-- Reorder the remaining working list: healthy servers first (preserving discovery order within each group).
-- Log the final working list as: `Active slots: <slot1>, <slot2>, ...`
+- Remove these from the working list for all subsequent steps.
+- Reorder: healthy servers first (preserving discovery order within each group).
+- Log: `Active slots: <slot1>, <slot2>, ...`
 
-**min_quorum_size check:** Read `min_quorum_size` from `~/.claude/qgsd.json` (project config takes precedence; default: 3 if absent):
+**min_quorum_size check:** Read from `~/.claude/qgsd.json` (project config takes precedence; default: 3 if absent):
 ```bash
 node -e "
 const fs = require('fs'), os = require('os'), path = require('path');
@@ -107,30 +124,45 @@ Provider pre-flight: <providerName>=✓/✗ ...  (<N> claude-mcp servers found)
 
 Capture the active team fingerprint (idempotent — run once per session).
 
-**Native CLI slots** (sequential — skip UNAVAIL per R6):
-1. `mcp__unified-1__codex-1` with prompt "identity" → parse JSON
-2. `mcp__unified-1__gemini-1` with prompt "identity" → parse JSON
-3. `mcp__unified-1__opencode-1` with prompt "identity" → parse JSON
-4. `mcp__unified-1__copilot-1` with prompt "identity" → parse JSON
+Build `TEAM_JSON` directly from `providers.json` and the available slot list — no model calls needed for identity:
 
-**HTTP provider slots** — claude-1, claude-2, claude-3, claude-4, claude-5, claude-6:
+```bash
+node -e "
+const fs = require('fs'), path = require('path'), os = require('os');
 
-All HTTP providers are marked as participating. Availability is checked at call time via
-the timeout guard (no separate pre-flight health_check). For the TEAM_JSON entry, use the
-slot name and the model string from providers.json as the model-id.
+// Find providers.json
+const searchPaths = [
+  path.join(os.homedir(), '.claude', 'qgsd-bin', 'providers.json'),
+];
+try {
+  const cj = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8'));
+  const u1args = cj?.mcpServers?.['unified-1']?.args ?? [];
+  const srv = u1args.find(a => typeof a === 'string' && a.endsWith('unified-mcp-server.mjs'));
+  if (srv) searchPaths.unshift(path.join(path.dirname(srv), 'providers.json'));
+} catch(_) {}
 
-**Timeout guard:** Each `mcp__unified-1__<slotName>` call must complete within the slot's `quorum_timeout_ms` value from `providers.json` (fallback: 30000ms if field absent). Read the full providers.json once at the start of Step 2 and build a lookup map `$SLOT_TIMEOUTS: { slotName: quorum_timeout_ms }`. Apply the slot's timeout to every subsequent call to that slot (Steps 2, Mode A, Mode B, deliberation).
-If a call hangs or errors (including MCP timeout), immediately mark that slot UNAVAIL,
-log `[<slotName>] TIMEOUT — marked UNAVAIL`, and continue to the next slot.
-Do NOT wait for a hung call to resolve.
+let providers = [];
+for (const p of searchPaths) {
+  try { providers = JSON.parse(fs.readFileSync(p, 'utf8')).providers; break; } catch(_) {}
+}
 
-Display name = slot name as-is (e.g. `claude-1`, `gemini-1`). For HTTP providers,
-the model-id is the full model string from providers.json (e.g. `deepseek-ai/DeepSeek-V3.2`)
-— use it as `--model-id` with `--slot` when updating the scoreboard; do NOT derive a short key.
+// Read quorum_active
+const globalCfg = path.join(os.homedir(), '.claude', 'qgsd.json');
+const projCfg   = path.join(process.cwd(), '.claude', 'qgsd.json');
+let cfg = {};
+for (const f of [globalCfg, projCfg]) {
+  try { Object.assign(cfg, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch(_) {}
+}
+const active = cfg.quorum_active || [];
 
-Build `TEAM_JSON` keyed by display name:
-- CLI slots: `codex-1`, `codex-2`, `gemini-1`, `gemini-2`, `opencode-1`, `copilot-1`
-- HTTP slots: `claude-1`, `claude-2`, `claude-3`, `claude-4`, `claude-5`, `claude-6`
+const team = {};
+for (const p of providers) {
+  if (active.length > 0 && !active.includes(p.name)) continue;
+  team[p.name] = { model: p.model };
+}
+console.log(JSON.stringify(team));
+"
+```
 
 Detect Claude model ID: `CLAUDE_MODEL` env → `ANTHROPIC_MODEL` env → session model from context.
 
@@ -139,6 +171,9 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" init-team \
   --claude-model "<claude_model_id>" \
   --team '<TEAM_JSON>'
 ```
+
+**Timeout guard:** Build `$SLOT_TIMEOUTS` from providers.json: `{ slotName: quorum_timeout_ms }`.
+Use this as the `--timeout` value for each `call-quorum-slot.cjs` call (fallback: 30000ms).
 
 ---
 
@@ -168,7 +203,7 @@ Store as `$CLAUDE_POSITION`.
 
 ### Query models (sequential)
 
-Call each model with this prompt — **each call is a separate sequential tool call**:
+Call each model with this prompt — **each call is a separate sequential Bash tool call**:
 
 ```
 QGSD Quorum — Round 1
@@ -180,36 +215,44 @@ honest answer with reasoning. Be concise (3–6 sentences). State your position 
 Do not defer to other models.
 ```
 
-Call order (sequential):
+**Bash call pattern** (one Bash call per slot, strictly sequential):
 
-**All quorum slots** — driven by `$QUORUM_ACTIVE` (read in provider pre-flight):
+```bash
+node "$HOME/.claude/qgsd-bin/call-quorum-slot.cjs" --slot <slotName> --timeout <quorum_timeout_ms> <<'QUORUM_PROMPT'
+QGSD Quorum — Round 1
 
-Iterate over the participating slot list. Skip slots where `available: false`.
+Question: [question]
 
-**Per-model timeout:** Each `mcp__unified-1__<slotName>` call must resolve within the slot's `quorum_timeout_ms` from `$SLOT_TIMEOUTS` (fallback: 30000ms).
-If the MCP tool call hangs, times out, or returns an error, mark that slot UNAVAIL immediately,
-log `[<slotName>] TIMEOUT — marked UNAVAIL`, and proceed to the next slot. Do not retry.
-Continue quorum with remaining available models.
+You are one of the quorum members evaluating this question independently. Give your
+honest answer with reasoning. Be concise (3–6 sentences). State your position clearly.
+Do not defer to other models.
+QUORUM_PROMPT
+```
 
-Call order (all go through unified-1, call sequentially):
+Call order (all sequential — one Bash call per turn):
 
 **Native CLI slots:**
-- `mcp__unified-1__codex-1` with prompt field
-- `mcp__unified-1__codex-2` with prompt field
-- `mcp__unified-1__gemini-1` with prompt field
-- `mcp__unified-1__gemini-2` with prompt field
-- `mcp__unified-1__opencode-1` with prompt field
-- `mcp__unified-1__copilot-1` with prompt field
+- slot: `codex-1`
+- slot: `codex-2`
+- slot: `gemini-1`
+- slot: `gemini-2`
+- slot: `opencode-1`
+- slot: `copilot-1`
 
 **HTTP slots:**
-- `mcp__unified-1__claude-1` with prompt field
-- `mcp__unified-1__claude-2` with prompt field
-- `mcp__unified-1__claude-3` with prompt field
-- `mcp__unified-1__claude-4` with prompt field
-- `mcp__unified-1__claude-5` with prompt field
-- `mcp__unified-1__claude-6` with prompt field
+- slot: `claude-1`
+- slot: `claude-2`
+- slot: `claude-3`
+- slot: `claude-4`
+- slot: `claude-5`
+- slot: `claude-6`
 
-If `$QUORUM_ACTIVE` is empty, all 12 unified-1 slots participate.
+Only call slots that are in the available working list (not pre-flight filtered, not UNAVAIL).
+If `$QUORUM_ACTIVE` is non-empty, only call slots in that list.
+
+**Timeout/error handling:** If `call-quorum-slot.cjs` exits non-zero (stderr contains TIMEOUT or error),
+mark that slot UNAVAIL, log `[<slotName>] TIMEOUT — marked UNAVAIL`, and proceed to the next slot.
+Do NOT retry.
 
 Handle UNAVAILABLE per R6: note, continue with remaining models.
 
@@ -225,7 +268,7 @@ Display positions table:
 │ Gemini       │ [summary or UNAVAIL]                                     │
 │ OpenCode     │ [summary or UNAVAIL]                                     │
 │ Copilot      │ [summary or UNAVAIL]                                     │
-│ <claude-mcp display-name> │ [summary or UNAVAIL]                        │
+│ <HTTP slot display-name> │ [summary or UNAVAIL]                         │
 └──────────────┴──────────────────────────────────────────────────────────┘
 ```
 
@@ -253,9 +296,9 @@ Given the above, do you maintain your answer or revise it? State your updated po
 clearly (2–4 sentences).
 ```
 
-Each model called **sequentially**. Stop immediately upon CONSENSUS.
-Apply the same timeout guard: any `mcp__unified-1__<slotName>` call that hangs or errors during deliberation is marked UNAVAIL for the remainder of this quorum run (timeout = slot's `quorum_timeout_ms` from `$SLOT_TIMEOUTS`, fallback: 30000ms).
-After 4 total rounds with no consensus → **Escalate**.
+Each model called with one Bash `call-quorum-slot.cjs` call per turn (sequential).
+Apply the same timeout guard: exit non-zero → slot UNAVAIL for remainder.
+Stop immediately upon CONSENSUS. After 4 total rounds with no consensus → **Escalate**.
 
 ### Consensus output
 
@@ -303,7 +346,7 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
 ```
 
 - `--model` for CLI slots: `claude`, `codex`, `gemini`, `opencode`, `copilot` (short family name)
-- For HTTP slots: use `--slot <slotName>` (e.g. `claude-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3.2` — the exact string from providers.json, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
+- For HTTP slots: use `--slot <slotName>` (e.g. `claude-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3.2` — the exact string from providers.json). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
 - `--result`: TP, TN, FP, FN, TP+, UNAVAIL, or empty.
 - `--verdict`: APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND.
 
@@ -326,33 +369,7 @@ Core disagreement: [1–2 sentences]
 Claude's recommendation: [position with rationale]
 ```
 
-Update scoreboard — one command per model per round:
-
-```bash
-# For CLI slots (use --model with short family name):
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
-  --model <model_family> \
-  --result <vote_code> \
-  --task "<task_label>" \
-  --round <round_number> \
-  --verdict <VERDICT> \
-  --task-description "<question or topic>"
-
-# For HTTP slots (use --slot + --model-id, NOT --model):
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
-  --slot <slotName> \
-  --model-id <fullModelId> \
-  --result <vote_code> \
-  --task "<task_label>" \
-  --round <round_number> \
-  --verdict <VERDICT> \
-  --task-description "<question or topic>"
-```
-
-- `--model` for CLI slots: `claude`, `codex`, `gemini`, `opencode`, `copilot` (short family name)
-- For HTTP slots: use `--slot <slotName>` (e.g. `claude-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3.2` — the exact string from providers.json, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
-- `--result`: TP, TN, FP, FN, TP+, UNAVAIL, or empty.
-- `--verdict`: APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND.
+Update scoreboard using same pattern as Consensus output above.
 
 ---
 
@@ -372,65 +389,54 @@ Commands: [list]
 Running commands...
 ```
 
-Run each command, capturing full stdout + stderr + exit code as `$TRACES`.
+Run each command via Bash, capturing full stdout + stderr + exit code as `$TRACES`:
+```
+=== Command: [cmd] ===
+Exit code: N
+Output:
+[full output — not summarized]
+```
 
 Claude gives its own verdict before dispatching workers.
 
-### Assemble review bundle
+### Query models with trace bundle (sequential)
 
-```
+Use the same `call-quorum-slot.cjs` pattern as Mode A, but pass the full review bundle as the prompt:
+
+```bash
+node "$HOME/.claude/qgsd-bin/call-quorum-slot.cjs" --slot <slotName> --timeout <quorum_timeout_ms> <<'QUORUM_PROMPT'
+QGSD Quorum — Execution Review
+
 QUESTION: [original question]
 
 === EXECUTION TRACES ===
-$TRACES
-```
-
-### Dispatch quorum workers via Task (sequential — one per message turn)
-
-Worker prompt:
-```
-QGSD Quorum — Execution Review
-
-[bundle]
-
-Question: [original question]
+[full $TRACES — not summarized or truncated]
 
 Review the execution traces above. Give:
 
 verdict: APPROVE | REJECT | FLAG
 reasoning: [2–4 sentences grounded in the actual trace output — not assumptions]
+
+APPROVE if output clearly shows the question is satisfied.
+REJECT if output shows it is NOT satisfied.
+FLAG if output is ambiguous or requires human judgment.
+QUORUM_PROMPT
 ```
 
-Dispatch sequentially (one Task per message turn — NOT sibling calls):
-
-**Per-worker timeout:** If a Task worker spawn or the underlying MCP call within it takes longer than the slot's `quorum_timeout_ms` from `$SLOT_TIMEOUTS` (fallback: 30000ms) without a response, treat that worker's verdict as UNAVAIL. Continue collecting verdicts from remaining workers.
-
-**All slots via unified-1** (one Task per available slot, call sequentially):
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__codex-1 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__codex-2 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__gemini-1 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__gemini-2 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__opencode-1 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__copilot-1 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-1 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-2 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-3 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-4 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-5 with prompt=[full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__claude-6 with prompt=[full worker prompt with bundle inlined]")`
+Call each available slot sequentially (same order and UNAVAIL handling as Mode A).
 
 ### Collect verdicts and output consensus
 
-Parse each worker response for `verdict:` and `reasoning:`. Mark non-parseable as `UNAVAIL`.
+Parse each response for `verdict:` and `reasoning:` lines. Mark non-parseable as `UNAVAIL`.
 
 Consensus rules:
 - All available APPROVE → `APPROVE`
 - Any REJECT → `REJECT`
-- All FLAG → `FLAG`
+- All FLAG (no APPROVE, no REJECT) → `FLAG`
 - Mixed APPROVE/FLAG → `FLAG`
 - All UNAVAIL → stop: "All quorum models unavailable — cannot evaluate."
 
-If split: run deliberation (up to 3 rounds) with traces always in context.
+If split: run deliberation (up to 3 rounds) with traces always included in context.
 
 Display:
 ```
@@ -446,7 +452,7 @@ Display:
 │ OpenCode     │ [verdict]    │ [summary or UNAVAIL]                     │
 │ Copilot      │ [verdict]    │ [summary or UNAVAIL]                     │
 │ Codex        │ [verdict]    │ [summary or UNAVAIL]                     │
-│ <display-name> │ [verdict] │ [summary or UNAVAIL]                     │
+│ <HTTP slot>  │ [verdict]    │ [summary or UNAVAIL]                     │
 ├──────────────┼──────────────┼──────────────────────────────────────────┤
 │ CONSENSUS    │ [verdict]    │ [N APPROVE, N REJECT, N FLAG, N UNAVAIL] │
 └──────────────┴──────────────┴──────────────────────────────────────────┘
