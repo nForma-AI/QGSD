@@ -77,25 +77,30 @@ Provider pre-flight: <providerName>=✓/✗ ...  (<N> claude-mcp servers found)
 
 Capture the active team fingerprint (idempotent — run once per session).
 
-**Native CLI agents** (sequential — skip UNAVAIL per R6):
-1. `mcp__codex-cli-1__identity` → parse JSON
-2. `mcp__gemini-cli-1__identity` → parse JSON
-3. `mcp__opencode-1__identity` → parse JSON
-4. `mcp__copilot-1__identity` → parse JSON
+**Native CLI slots** (sequential — skip UNAVAIL per R6):
+1. `mcp__unified-1__codex-1` with prompt "identity" → parse JSON
+2. `mcp__unified-1__gemini-1` with prompt "identity" → parse JSON
+3. `mcp__unified-1__opencode-1` with prompt "identity" → parse JSON
+4. `mcp__unified-1__copilot-1` with prompt "identity" → parse JSON
 
-**claude-mcp-server instances** — iterate over `$CLAUDE_MCP_SERVERS` in order:
+**HTTP provider slots** — deepseek-1, minimax-1, qwen-1, kimi-1, llama4-1, glm-1:
 
-For each server with `available: true`:
-**Timeout guard:** Each `health_check` and `mcp__<serverName>__claude` inference call must complete within 30 seconds. If a call hangs or errors (including MCP timeout), immediately mark that server UNAVAIL, log `[<serverName>] TIMEOUT — marked UNAVAIL`, and continue to the next server. Do NOT wait for a hung call to resolve.
-- Call `mcp__<serverName>__health_check`
-- If `"healthy": true` → add to TEAM_JSON: `"<display-name>": { "type": "claude-mcp", "model": "<model>" }`
-- Else → mark UNAVAIL
+All HTTP providers are marked as participating. Availability is checked at call time via
+the timeout guard (no separate pre-flight health_check). For the TEAM_JSON entry, use the
+slot name and the model string from providers.json as the model-id.
 
-Display name = slot name as-is (e.g. `claude-1`, `claude-2`) — no prefix stripping. For native CLI agents: `codex-cli-1`, `gemini-cli-1`, etc. For claude-mcp servers, capture the full `model` field from `health_check` (e.g. `deepseek-ai/DeepSeek-V3`) — use it as `--model-id` with `--slot` when updating the scoreboard; do NOT derive a short key.
+**Timeout guard:** Each `mcp__unified-1__<slotName>` call must complete within 30 seconds.
+If a call hangs or errors (including MCP timeout), immediately mark that slot UNAVAIL,
+log `[<slotName>] TIMEOUT — marked UNAVAIL`, and continue to the next slot.
+Do NOT wait for a hung call to resolve.
+
+Display name = slot name as-is (e.g. `deepseek-1`, `gemini-1`). For HTTP providers,
+the model-id is the full model string from providers.json (e.g. `deepseek-ai/DeepSeek-V3.2`)
+— use it as `--model-id` with `--slot` when updating the scoreboard; do NOT derive a short key.
 
 Build `TEAM_JSON` keyed by display name:
-- Native: `codex`, `gemini`, `opencode`, `copilot`
-- claude-mcp: stripped display name
+- CLI slots: `codex-1`, `codex-2`, `gemini-1`, `gemini-2`, `opencode-1`, `copilot-1`
+- HTTP slots: `deepseek-1`, `minimax-1`, `qwen-1`, `kimi-1`, `llama4-1`, `glm-1`
 
 Detect Claude model ID: `CLAUDE_MODEL` env → `ANTHROPIC_MODEL` env → session model from context.
 
@@ -149,19 +154,32 @@ Call order (sequential):
 
 **All quorum slots** — driven by `$QUORUM_ACTIVE` (read in provider pre-flight):
 
-Iterate over the participating slot list (intersection of `$QUORUM_ACTIVE` and `$CLAUDE_MCP_SERVERS`).
-Skip slots where `available: false`.
+Iterate over the participating slot list. Skip slots where `available: false`.
 
-**Per-model timeout:** Each `mcp__<slotName>__claude` inference call must resolve within 30 seconds. If the MCP tool call hangs, times out, or returns an error, mark that slot UNAVAIL immediately, log `[<slotName>] TIMEOUT — marked UNAVAIL`, and proceed to the next slot. Do not retry. Continue quorum with remaining available models.
+**Per-model timeout:** Each `mcp__unified-1__<slotName>` call must resolve within 30 seconds.
+If the MCP tool call hangs, times out, or returns an error, mark that slot UNAVAIL immediately,
+log `[<slotName>] TIMEOUT — marked UNAVAIL`, and proceed to the next slot. Do not retry.
+Continue quorum with remaining available models.
 
-For each slot in the participating list (call sequentially):
-- **Native CLI slots** (`codex-cli-*`, `gemini-cli-*`, `opencode-*`, `copilot-*`):
-  Call the appropriate tool: `mcp__<slotName>__review` (codex), `mcp__<slotName>__gemini` (gemini),
-  `mcp__<slotName>__opencode` (opencode), `mcp__<slotName>__ask` (copilot)
-- **claude-mcp slots** (`claude-*`):
-  Call `mcp__<slotName>__claude` with the query prompt (field name: `prompt`)
+Call order (all go through unified-1, call sequentially):
 
-If `$QUORUM_ACTIVE` is empty, all entries in `$CLAUDE_MCP_SERVERS` participate.
+**Native CLI slots:**
+- `mcp__unified-1__codex-1` with prompt field
+- `mcp__unified-1__codex-2` with prompt field
+- `mcp__unified-1__gemini-1` with prompt field
+- `mcp__unified-1__gemini-2` with prompt field
+- `mcp__unified-1__opencode-1` with prompt field
+- `mcp__unified-1__copilot-1` with prompt field
+
+**HTTP slots:**
+- `mcp__unified-1__deepseek-1` with prompt field
+- `mcp__unified-1__minimax-1` with prompt field
+- `mcp__unified-1__qwen-1` with prompt field
+- `mcp__unified-1__kimi-1` with prompt field
+- `mcp__unified-1__llama4-1` with prompt field
+- `mcp__unified-1__glm-1` with prompt field
+
+If `$QUORUM_ACTIVE` is empty, all 12 unified-1 slots participate.
 
 Handle UNAVAILABLE per R6: note, continue with remaining models.
 
@@ -206,7 +224,7 @@ clearly (2–4 sentences).
 ```
 
 Each model called **sequentially**. Stop immediately upon CONSENSUS.
-Apply the same 30 seconds timeout guard: any model that hangs or errors during deliberation is marked UNAVAIL for the remainder of this quorum run.
+Apply the same 30 seconds timeout guard: any `mcp__unified-1__<slotName>` call that hangs or errors during deliberation is marked UNAVAIL for the remainder of this quorum run.
 After 4 total rounds with no consensus → **Escalate**.
 
 ### Consensus output
@@ -234,16 +252,16 @@ Supporting positions:
 Update scoreboard — one command per model per round:
 
 ```bash
-# For native agents:
+# For CLI slots (use --model with short family name):
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
-  --model <model_name> \
+  --model <model_family> \
   --result <vote_code> \
   --task "<task_label>" \
   --round <round_number> \
   --verdict <VERDICT> \
   --task-description "<question or topic>"
 
-# For each claude-mcp server (use slot + full model-id, NOT --model):
+# For HTTP slots (use --slot + --model-id, NOT --model):
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --slot <slotName> \
   --model-id <fullModelId> \
@@ -254,8 +272,8 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --task-description "<question or topic>"
 ```
 
-- `--model` for native agents: `claude`, `gemini`, `opencode`, `copilot`, `codex`
-- For claude-mcp servers: use `--slot <slotName>` (e.g. `claude-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3` — the exact string from health_check, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
+- `--model` for CLI slots: `claude`, `codex`, `gemini`, `opencode`, `copilot` (short family name)
+- For HTTP slots: use `--slot <slotName>` (e.g. `deepseek-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3.2` — the exact string from providers.json, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
 - `--result`: TP, TN, FP, FN, TP+, UNAVAIL, or empty.
 - `--verdict`: APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND.
 
@@ -281,16 +299,16 @@ Claude's recommendation: [position with rationale]
 Update scoreboard — one command per model per round:
 
 ```bash
-# For native agents:
+# For CLI slots (use --model with short family name):
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
-  --model <model_name> \
+  --model <model_family> \
   --result <vote_code> \
   --task "<task_label>" \
   --round <round_number> \
   --verdict <VERDICT> \
   --task-description "<question or topic>"
 
-# For each claude-mcp server (use slot + full model-id, NOT --model):
+# For HTTP slots (use --slot + --model-id, NOT --model):
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --slot <slotName> \
   --model-id <fullModelId> \
@@ -301,8 +319,8 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --task-description "<question or topic>"
 ```
 
-- `--model` for native agents: `claude`, `gemini`, `opencode`, `copilot`, `codex`
-- For claude-mcp servers: use `--slot <slotName>` (e.g. `claude-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3` — the exact string from health_check, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
+- `--model` for CLI slots: `claude`, `codex`, `gemini`, `opencode`, `copilot` (short family name)
+- For HTTP slots: use `--slot <slotName>` (e.g. `deepseek-1`) and `--model-id <fullModelId>` (e.g. `deepseek-ai/DeepSeek-V3.2` — the exact string from providers.json, NOT a derived short key). This writes to `data.slots{}` with composite key `<slot>:<model-id>`.
 - `--result`: TP, TN, FP, FN, TP+, UNAVAIL, or empty.
 - `--verdict`: APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND.
 
@@ -357,14 +375,19 @@ Dispatch sequentially (one Task per message turn — NOT sibling calls):
 
 **Per-worker timeout:** If a Task worker spawn or the underlying MCP call within it takes longer than 30 seconds without a response, treat that worker's verdict as UNAVAIL. Continue collecting verdicts from remaining workers.
 
-**Native agents:**
-- `Task(subagent_type="general-purpose", prompt="Call mcp__gemini-cli-1__gemini with: [full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__opencode-1__opencode with: [full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__copilot-1__ask with: [full worker prompt with bundle inlined]")`
-- `Task(subagent_type="general-purpose", prompt="Call mcp__codex-cli-1__review with: [full worker prompt with bundle inlined]")`
-
-**claude-mcp instances** (one Task per available server):
-- `Task(subagent_type="general-purpose", prompt="Call mcp__<serverName>__claude with prompt=[full worker prompt with bundle inlined]")`
+**All slots via unified-1** (one Task per available slot, call sequentially):
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__codex-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__codex-2 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__gemini-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__gemini-2 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__opencode-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__copilot-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__deepseek-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__minimax-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__qwen-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__kimi-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__llama4-1 with prompt=[full worker prompt with bundle inlined]")`
+- `Task(subagent_type="general-purpose", prompt="Call mcp__unified-1__glm-1 with prompt=[full worker prompt with bundle inlined]")`
 
 ### Collect verdicts and output consensus
 
