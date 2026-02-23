@@ -8,7 +8,7 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Upcoming Milestone: v0.6 Agent Slots & Quorum Composition
+## Previous Milestone: v0.6 Agent Slots & Quorum Composition
 
 **Goal:** Rename all quorum agents to slot-based names (claude-1, copilot-1, gemini-cli-1, etc.), ship a `quorum.active` composition config that the orchestrator reads instead of a hardcoded list, and extend `/qgsd:mcp-setup` with a composition screen for managing which slots participate in quorum.
 
@@ -19,7 +19,12 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - mcp-setup extension: "Edit Quorum Composition" screen to toggle slots on/off and add new slots
 - Scoreboard: tracks by slot name, model shown as context
 
-**Phase range:** 37–40
+**Phase range:** 37–42
+**Phase 37 complete:** 2026-02-23 (v0.5 SUMMARY.md requirements frontmatter + syncToClaudeJson gap closure)
+**Phase 38 complete:** 2026-02-23 (v0.5 SUMMARY.md audit complete; all plans have requirements frontmatter)
+**Phase 39 complete:** 2026-02-23 (slot rename across all source files; migration script; zero old model-based names in commands/agents/hooks/templates)
+
+**v0.6 MILESTONE COMPLETE** — All 4 slot naming requirements shipped (SLOT-01..04); composition config (SCBD-01..03, MULTI-03, Phase 42 wizard) deferred to v0.7.
 
 ---
 
@@ -183,6 +188,10 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 
 | `~/.claude/qgsd-bin/secrets.cjs` placeholder for distributable commands | Source file retains `~/.claude/` prefix; `copyWithPathReplacement()` in bin/install.js substitutes real install path in installed copy — same pattern used by all other installed commands | Phase 37 — INTEGRATION-01 closure |
 | syncToClaudeJson required in every apply flow | All 5 apply paths (first-run, add-agent, Option 1, Option 2, Confirm+Apply+Restart) must call syncToClaudeJson after writing ~/.claude.json — ensures keytar secrets propagate symmetrically | Phase 37 — INTEGRATION-02 closure |
+| Slot naming scheme: `<family>-<N>` (claude-1..6, codex-cli-1, gemini-cli-1, opencode-1, copilot-1) | Decouples agent identity from provider/model — slots are stable identifiers even when model or provider changes; N suffix enables multiple instances of same family | Phase 39 — SLOT-01 |
+| SLOT_MIGRATION_MAP: 10 hardcoded old→new entries in bin/migrate-to-slots.cjs | Migration is non-destructive (skip if newName already present) and idempotent — safe to run multiple times; `--dry-run` flag shows all renames without applying | Phase 39 — SLOT-02 |
+| Display name = slot name as-is (no prefix stripping) | Model-based names needed stripping (claude-deepseek → deepseek); slot names are already short and stable — identity output shows full slot name in scoreboard and quorum display | Phase 39 — SLOT-01 |
+| Scoreboard --model derived from health_check response, not server name | Slot names (claude-1) carry no model info; model field in health_check API response is the authoritative source for scoreboard model column | Phase 39 — SLOT-04 |
 
 ---
-*Last updated: 2026-02-23 after Phase 38 — v0.5 gap closure complete; all SUMMARY.md files have requirements frontmatter; v0.5 milestone fully audited and documented*
+*Last updated: 2026-02-23 after Phase 39 — v0.6 slot rename complete; all 10 quorum agents use slot-based names; SLOT-01..04 delivered*
