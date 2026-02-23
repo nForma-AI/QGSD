@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 Phase: MILESTONE COMPLETE — v0.7 archived
 Plan: —
 Status: v0.7 archived to .planning/milestones/; git tag v0.7 created; ready for /qgsd:new-milestone
-Last activity: 2026-02-23 - Completed quick task 78: improve the QGSD quorum system: harden, faster, stronger
+Last activity: 2026-02-23 - Completed quick task 079: generalize fix-tests workflow for extremely large test suites
 
 Progress: [████████████████████] 46/46 plans (100%)
 
@@ -116,9 +116,10 @@ Recent decisions affecting current work:
 | 76 | isolate each bash call in mcp-status to avoid Sibling tool call errored | 2026-02-23 | 20b3660 | Verified | [76-isolate-each-bash-call-in-mcp-status-to-](./quick/76-isolate-each-bash-call-in-mcp-status-to-/) |
 | 77 | oscillation memory log: persist each detected oscillation keyed by fileSetHash+patternHash, PostToolUse Haiku classifier checks if new commit resolves active entries, PreToolUse suppresses warning if already resolved | 2026-02-23 | 15c0966 | Pending | [77-oscillation-memory-log-persist-each-dete](./quick/77-oscillation-memory-log-persist-each-dete/) |
 | 78 | improve the QGSD quorum system: harden, faster, stronger | 2026-02-23 | 2222f2f | Pending | [78-improve-the-qgsd-quorum-system-harden-fa](./quick/78-improve-the-qgsd-quorum-system-harden-fa/) |
+| 079 | generalize fix-tests workflow for extremely large test suites | 2026-02-23 | Pending | Pending | [79-generalize-fix-tests-workflow-for-extrem](.planning/quick/79-generalize-fix-tests-workflow-for-extrem/) |
 
 ## Session Continuity
 
 Last session: 2026-02-23
-Stopped at: 2026-02-23 - Completed quick task 78: improve the QGSD quorum system: harden, faster, stronger
+Stopped at: 2026-02-23 - Completed quick task 079: generalize fix-tests workflow for extremely large test suites
 Resume file: None
