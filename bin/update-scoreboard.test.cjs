@@ -320,3 +320,74 @@ test('SC-TC15: init-team is idempotent — second identical call outputs "no cha
     cleanup(claudeJsonTmp);
   }
 });
+
+// SC-TC-SLOT-1: --slot creates slots{} entry with composite key and model field (SCBD-01 + SCBD-02)
+test('SC-TC-SLOT-1: --slot creates slots entry with composite key and model field', () => {
+  const sb = tmpScoreboard();
+  try {
+    const { exitCode, stdout, stderr } = runCLI([
+      '--slot', 'claude-1',
+      '--model-id', 'deepseek-ai/DeepSeek-V3',
+      '--result', 'TP',
+      '--task', 'plan-ph40',
+      '--round', '1',
+      '--verdict', 'APPROVE',
+      '--scoreboard', sb,
+    ]);
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    const data = JSON.parse(fs.readFileSync(sb, 'utf8'));
+    const key = 'claude-1:deepseek-ai/DeepSeek-V3';
+    assert.ok(data.slots, 'slots map must exist');
+    assert.ok(data.slots[key], 'composite key must exist in slots');
+    assert.strictEqual(data.slots[key].slot, 'claude-1', 'slot field must match');
+    assert.strictEqual(data.slots[key].model, 'deepseek-ai/DeepSeek-V3', 'model field must match (SCBD-02)');
+    assert.strictEqual(data.slots[key].score, 1, 'TP adds 1 to score');
+  } finally { cleanup(sb); }
+});
+
+// SC-TC-SLOT-2: second model on same slot creates new row, first preserved (SCBD-03)
+test('SC-TC-SLOT-2: different model on same slot creates new row, first preserved (SCBD-03)', () => {
+  const sb = tmpScoreboard();
+  try {
+    runCLI(['--slot', 'claude-1', '--model-id', 'deepseek-ai/DeepSeek-V3',
+            '--result', 'TP', '--task', 'plan-ph40', '--round', '1',
+            '--verdict', 'APPROVE', '--scoreboard', sb]);
+    runCLI(['--slot', 'claude-1', '--model-id', 'Qwen/Qwen2.5-72B',
+            '--result', 'TN', '--task', 'plan-ph40', '--round', '2',
+            '--verdict', 'APPROVE', '--scoreboard', sb]);
+    const data = JSON.parse(fs.readFileSync(sb, 'utf8'));
+    assert.ok(data.slots['claude-1:deepseek-ai/DeepSeek-V3'], 'first model entry preserved');
+    assert.ok(data.slots['claude-1:Qwen/Qwen2.5-72B'], 'second model entry created');
+    assert.strictEqual(data.slots['claude-1:deepseek-ai/DeepSeek-V3'].score, 1, 'first entry score intact');
+    assert.strictEqual(data.slots['claude-1:Qwen/Qwen2.5-72B'].score, 5, 'TN adds 5 to score');
+  } finally { cleanup(sb); }
+});
+
+// SC-TC-SLOT-3: --slot and --model are mutually exclusive
+test('SC-TC-SLOT-3: --slot and --model together exits 1 with mutual-exclusion error', () => {
+  const sb = tmpScoreboard();
+  try {
+    const { exitCode, stderr } = runCLI([
+      '--slot', 'claude-1', '--model', 'claude',
+      '--model-id', 'deepseek-ai/DeepSeek-V3',
+      '--result', 'TP', '--task', 'x', '--round', '1',
+      '--verdict', 'APPROVE', '--scoreboard', sb,
+    ]);
+    assert.strictEqual(exitCode, 1, 'exit code must be 1');
+    assert.ok(stderr.includes('mutually exclusive'), 'stderr must say mutually exclusive');
+  } finally { cleanup(sb); }
+});
+
+// SC-TC-SLOT-4: --slot without --model-id exits 1
+test('SC-TC-SLOT-4: --slot without --model-id exits 1', () => {
+  const sb = tmpScoreboard();
+  try {
+    const { exitCode, stderr } = runCLI([
+      '--slot', 'claude-1',
+      '--result', 'TP', '--task', 'x', '--round', '1',
+      '--verdict', 'APPROVE', '--scoreboard', sb,
+    ]);
+    assert.strictEqual(exitCode, 1, 'exit code must be 1');
+    assert.ok(stderr.includes('--model-id is required'), 'stderr must mention --model-id');
+  } finally { cleanup(sb); }
+});
