@@ -8,7 +8,7 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Completed Milestone: v0.7 Composition Config & Multi-Slot
+## Previous Milestone: v0.7 Composition Config & Multi-Slot
 
 **Goal:** Ship `quorum_active` composition config so the orchestrator reads its agent list from config instead of hardcoded code; extend to N-instance-per-family multi-slot support; add composition management screen to the mcp-setup wizard.
 
@@ -117,6 +117,17 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - ✓ `bin/migrate-to-slots.cjs` migration script renames existing `~/.claude.json` mcpServers entries to slot names non-destructively and idempotently — v0.6 (Phase 39 — SLOT-02)
 - ✓ All QGSD source files (hooks, orchestrator, commands, templates) updated to slot names — zero old model-based names in source — v0.6 (Phase 39 — SLOT-03)
 - ✓ `mcp-status`, `mcp-set-model`, `mcp-update`, `mcp-restart` accept and display slot names correctly — v0.6 (Phase 39 — SLOT-04)
+- ✓ User can define a `quorum_active` array in `qgsd.json` listing which slots participate in quorum — v0.7 (Phase v0.7-01 — COMP-01)
+- ✓ Quorum orchestrator reads `quorum_active` from config instead of hardcoded list; qgsd-prompt.js generates dynamic fallback steps from it — v0.7 (Phase v0.7-01 — COMP-02)
+- ✓ `check-provider-health.cjs` filters by `quorum_active`; no hardcoded agent arrays remain — v0.7 (Phase v0.7-01 — COMP-03)
+- ✓ `quorum_active` auto-populated at install/migration time via `buildActiveSlots()` + `populateActiveSlots()` — v0.7 (Phase v0.7-01 — COMP-04)
+- ✓ Scoreboard tracks performance by slot name as stable key; composite `<slot>:<model-id>` key separates per-model stats — v0.7 (Phase v0.7-01/v0.7-04 — SCBD-01..03)
+- ✓ User can have multiple `claude-*` slots each running a different model or provider — v0.7 (Phase v0.7-02 — MULTI-01)
+- ✓ User can have multiple `copilot-N`, `opencode-N`, `codex-cli-N`, `gemini-cli-N` slots — v0.7 (Phase v0.7-02 — MULTI-02)
+- ✓ Adding a new slot supported by both direct config edit and mcp-setup wizard — v0.7 (Phase v0.7-02 — MULTI-03)
+- ✓ `/qgsd:mcp-setup` re-run includes "Edit Quorum Composition" option — v0.7 (Phase v0.7-03 — WIZ-08)
+- ✓ Composition screen shows all slots with on/off toggle for `quorum_active` inclusion — v0.7 (Phase v0.7-03 — WIZ-09)
+- ✓ User can add a new slot for any family from within the wizard — v0.7 (Phase v0.7-03 — WIZ-10)
 
 ### Active
 
@@ -130,20 +141,6 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - [ ] Tool iterates via debug→quick→debug loop until all tests are classified and actioned
 - [ ] npm publish qgsd@0.2.0 deferred — run `npm publish --access public` when ready (RLS-04)
 
-<!-- v0.7 scope: composition config & multi-slot -->
-
-- ✓ User can define a `quorum_active` array in `qgsd.json` listing which slots participate in quorum — Phase v0.7-01 (COMP-01)
-- ✓ Quorum orchestrator reads `quorum_active` from config instead of hardcoded list; qgsd-prompt.js generates dynamic fallback steps from it — Phase v0.7-01 (COMP-02)
-- ✓ `check-provider-health.cjs` filters by `quorum_active`; no hardcoded agent arrays remain — Phase v0.7-01 (COMP-03)
-- ✓ `quorum_active` auto-populated at install/migration time via `buildActiveSlots()` + `populateActiveSlots()` — Phase v0.7-01 (COMP-04)
-- ✓ Scoreboard tracks performance by slot name as stable key; composite `<slot>:<model-id>` key separates per-model stats; historical rows preserved — Phase v0.7-01 (SCBD-01..03 infrastructure)
-- ✓ Orchestrator Mode A + quorum.md Mode A use `--slot + --model-id` for claude-mcp servers; data.slots{} populated on all quorum paths — Phase v0.7-04 (SCBD-01..03 gap closure)
-- ✓ User can have multiple `claude-*` slots each running a different model or provider — Phase v0.7-02 (MULTI-01)
-- ✓ User can have multiple `copilot-N`, `opencode-N`, `codex-cli-N`, `gemini-cli-N` slots — Phase v0.7-02 (MULTI-02)
-- ✓ Adding a new slot supported by both direct config edit and mcp-setup wizard — Phase v0.7-02 (MULTI-03)
-- ✓ `/qgsd:mcp-setup` re-run includes "Edit Quorum Composition" option — Phase v0.7-03 (WIZ-08)
-- ✓ Composition screen shows all slots with on/off toggle for `quorum.active` inclusion — Phase v0.7-03 (WIZ-09)
-- ✓ User can add a new slot for any family from within the wizard — Phase v0.7-03 (WIZ-10)
 
 ### Out of Scope
 
@@ -154,11 +151,11 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ## Context
 
-QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by user decision.
+QGSD v0.7 shipped 2026-02-23. v0.2.0 git tag pushed; npm publish deferred by user decision.
 
-**Codebase:** ~81,752 lines (JS + MD), 391 files, 1,138 commits across the full development cycle.
+**Codebase:** ~87,000+ lines (JS + MD), 450+ files across the full development cycle.
 **Tech stack:** Node.js, Claude Code hooks (UserPromptSubmit + Stop + PreToolUse), npm package.
-**Known tech debt:** Phase 12 VERIFICATION.md missing; `~/.claude/get-shit-done/` lacks activity tracking (out of scope — upstream GSD package boundary).
+**Known tech debt:** Phase 12 VERIFICATION.md missing; `~/.claude/get-shit-done/` lacks activity tracking (out of scope — upstream GSD package boundary); orchestrator Mode B scoreboard block uses back-reference rather than inline dual-variant bash blocks (low risk — Mode A always read first).
 
 ## Constraints
 
@@ -240,4 +237,4 @@ QGSD v0.2 shipped 2026-02-21. qgsd@0.2.0 git tag pushed; npm publish deferred by
 | Orchestrator Mode A + quorum.md Mode A Escalate sections expanded (not back-referenced) | Escalate section previously said "same pattern as Consensus above" — expanded to explicit dual-variant block so Escalate is self-contained; prevents misinterpretation in future edits | Phase v0.7-04 — MC-1/Flow-4/Flow-5 |
 
 ---
-*Last updated: 2026-02-23 after Phase v0.7-04 — v0.7 milestone complete; all 13 requirements (COMP-01..04, SCBD-01..03, MULTI-01..03, WIZ-08..10) shipped across phases v0.7-01..v0.7-04*
+*Last updated: 2026-02-23 after v0.7 milestone — all 13 v0.7 requirements validated; planning next milestone*

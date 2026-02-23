@@ -59,3 +59,21 @@ Phase 4 scope requirements: SCOPE-01–07 (7/7)
 
 ---
 
+
+## v0.7 Composition Config & Multi-Slot (Shipped: 2026-02-23)
+
+**Phases completed:** 4 phases (v0.7-01..v0.7-04), 10 plans
+**Git range:** 03fffb3..36ad405 (61 files changed, +5,555/-219 lines)
+
+**Delivered:** Shipped `quorum_active` composition config so which slots participate in quorum is a config decision not a code change, extended to N-slot-per-family multi-slot support, added a Composition Screen to the mcp-setup wizard, and fixed scoreboard slot tracking on all quorum paths.
+
+**Key accomplishments:**
+- `quorum_active` config field added — users define slot composition via `qgsd.json`; auto-populated at install/migrate time via `buildActiveSlots()` / `populateActiveSlots()` (COMP-01..04)
+- Scoreboard slot tracking — `update-scoreboard.cjs` extended with `slots{}` schema and `--slot`/`--model-id` CLI args; composite key `<slot>:<model-id>` for per-slot-per-model stats (SCBD-01..03)
+- Dynamic quorum wiring — quorum.md and orchestrator provider pre-flight read `quorum_active`; no more hardcoded agent lists (COMP-02)
+- Multi-slot support — multiple claude/copilot/opencode/codex-cli/gemini-cli slots; mcp-setup `Add new agent` expanded with native CLI second-slot options 6–9 (MULTI-01..03)
+- Wizard Composition Screen — `/qgsd:mcp-setup` re-run gains "Edit Quorum Composition" with on/off slot toggle, apply-to-disk, and add-from-composition routing (WIZ-08..10)
+- Orchestrator scoreboard slot fix — quorum.md + orchestrator Mode A use `--slot`/`--model-id`; Escalate sections expanded to inline dual-variant blocks; closes SCBD-01..03 audit gap (Phase v0.7-04)
+
+---
+
