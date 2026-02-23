@@ -5,7 +5,7 @@ type: execute
 wave: 1
 depends_on: []
 files_modified:
-  - /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md
+  - /Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md
 autonomous: true
 requirements:
   - QUICK-87-GAP1
@@ -18,7 +18,7 @@ must_haves:
     - "Every worker prompt includes a Repository header showing the working directory so workers know where code lives"
     - "Artifact reading is skipped gracefully when artifact_path is absent (backward compatible)"
   artifacts:
-    - path: "/Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md"
+    - path: "/Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md"
       provides: "Updated orchestrator spec with artifact_path parsing and cwd injection"
       contains: "artifact_path"
   key_links:
@@ -36,7 +36,7 @@ must_haves:
 Fix the quorum orchestrator to (1) parse and read the artifact_path file from $ARGUMENTS and inject its content into every worker prompt, and (2) inject the working directory into all worker prompts so models have repo context.
 
 Purpose: Workers currently receive no context about what plan they are reviewing and no knowledge of where the code lives. Both gaps cause shallow or off-target quorum feedback.
-Output: Updated /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md with artifact_path parsing block and cwd/artifact injection in Mode A and Mode B prompt templates.
+Output: Updated /Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md with artifact_path parsing block and cwd/artifact injection in Mode A and Mode B prompt templates.
 </objective>
 
 <execution_context>
@@ -44,7 +44,7 @@ Output: Updated /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.m
 </execution_context>
 
 <context>
-@/Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md
+@/Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md
 @/Users/jonathanborduas/.claude/qgsd/workflows/quick.md
 </context>
 
@@ -52,7 +52,7 @@ Output: Updated /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.m
 
 <task type="auto">
   <name>Task 1: Add artifact_path parsing block after the role section</name>
-  <files>/Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md</files>
+  <files>/Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md</files>
   <action>
 Insert a new "### Pre-step — Parse $ARGUMENTS extras" section immediately after the closing `</role>` tag (after line 34, before the `---` separator and Step 1 heading).
 
@@ -124,7 +124,7 @@ Since the orchestrator is a markdown instruction spec (not executable code), wri
 This is simpler and correct: the orchestrator is Claude, it has a Read tool. Write it as natural language instructions.
   </action>
   <verify>
-Read /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md and confirm:
+Read /Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md and confirm:
 - A "Pre-step — Parse $ARGUMENTS extras" section exists after the role block
 - It instructs the orchestrator to scan $ARGUMENTS for artifact_path
 - It instructs use of the Read tool to load the file into $ARTIFACT_CONTENT
@@ -135,7 +135,7 @@ Read /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md and confi
 
 <task type="auto">
   <name>Task 2: Inject $ARTIFACT_CONTENT and $REPO_DIR into Mode A and Mode B worker prompts</name>
-  <files>/Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md</files>
+  <files>/Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md</files>
   <action>
 In Mode A, the worker prompt template (the heredoc passed to call-quorum-slot.cjs) currently reads:
 
@@ -212,7 +212,7 @@ Review the execution traces above. Give: ...
 Write all these as markdown instruction text (not code), since the orchestrator is a Claude agent spec. The instructions should say: "If $ARTIFACT_CONTENT is non-empty, include the artifact block. Always include the Repository header."
   </action>
   <verify>
-Read /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md and confirm:
+Read /Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md and confirm:
 - Mode A Round 1 prompt template includes "Repository: [value of $REPO_DIR]"
 - Mode A Round 1 prompt template references $ARTIFACT_CONTENT injection with conditional block
 - Mode B execution review prompt template includes "Repository: [value of $REPO_DIR]"
@@ -222,6 +222,28 @@ Read /Users/jonathanborduas/.claude/agents/qgsd-quorum-orchestrator.md and confi
   <done>
 All worker-facing prompt templates in Mode A (rounds + deliberation) and Mode B include Repository header and conditional artifact block. Workers will receive plan content and repo location for every quorum call that includes an artifact_path.
   </done>
+</task>
+
+<task type="auto">
+  <name>Task 3: Sync repo source to installed copy</name>
+  <files>/Users/jonathanborduas/code/QGSD/agents/qgsd-quorum-orchestrator.md</files>
+  <action>
+Run the installer to propagate the updated repo source file to the installed location at ~/.claude/agents/:
+
+```bash
+node /Users/jonathanborduas/code/QGSD/bin/install.js --claude --global
+```
+
+The installer reads from the repo's agents/ directory and writes to ~/.claude/agents/. Without this step, changes to the repo source are overwritten on the next install run and the running Claude instance continues to use the stale installed copy.
+  </action>
+  <verify>
+Run:
+```bash
+grep -c "artifact_path" ~/.claude/agents/qgsd-quorum-orchestrator.md
+```
+Result must be > 0, confirming the installed copy reflects the changes from Tasks 1 and 2.
+  </verify>
+  <done>Installed copy at ~/.claude/agents/qgsd-quorum-orchestrator.md contains artifact_path and REPO_DIR references, matching the repo source.</done>
 </task>
 
 </tasks>
