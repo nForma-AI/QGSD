@@ -14,9 +14,9 @@ Requirements for the Agent Slots & Quorum Composition milestone. Phase 39 satisf
 - [x] **SLOT-03**: All QGSD source files (hooks, orchestrator, commands, scoreboard tooling) updated to use new slot names — no old names remain
 - [x] **SLOT-04**: `mcp-status`, `mcp-set-model`, `mcp-update`, `mcp-restart` accept and display slot names correctly
 
-## v0.7 Requirements (Complete)
+## v0.7 Requirements (In Progress)
 
-Requirements for the Composition Config & Multi-Slot milestone. Completed 2026-02-23.
+Requirements for the Composition Config & Multi-Slot milestone. COMP/MULTI/WIZ complete; SCBD gap closure in Phase v0.7-04.
 
 ### Composition Config (COMP)
 
@@ -39,9 +39,9 @@ Requirements for the Composition Config & Multi-Slot milestone. Completed 2026-0
 
 ### Scoreboard Slot Tracking (SCBD)
 
-- [x] **SCBD-01**: Scoreboard tracks performance by slot name (`claude-1`, `copilot-1`) — slot is the stable key
-- [x] **SCBD-02**: Each scoreboard entry displays the current model loaded in that slot as context
-- [x] **SCBD-03**: When a slot's model changes, a new scoreboard row is created for that slot
+- [ ] **SCBD-01**: Scoreboard tracks performance by slot name (`claude-1`, `copilot-1`) — slot is the stable key
+- [ ] **SCBD-02**: Each scoreboard entry displays the current model loaded in that slot as context
+- [ ] **SCBD-03**: When a slot's model changes, a new scoreboard row is created for that slot
 
 ## v2 Requirements
 
@@ -84,9 +84,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COMP-02 | Phase v0.7-01 | Complete |
 | COMP-03 | Phase v0.7-01 | Complete |
 | COMP-04 | Phase v0.7-01 | Complete |
-| SCBD-01 | Phase v0.7-01 | Complete |
-| SCBD-02 | Phase v0.7-01 | Complete |
-| SCBD-03 | Phase v0.7-01 | Complete |
+| SCBD-01 | Phase v0.7-04 | Pending |
+| SCBD-02 | Phase v0.7-04 | Pending |
+| SCBD-03 | Phase v0.7-04 | Pending |
 | MULTI-01 | Phase v0.7-02 | Complete |
 | MULTI-02 | Phase v0.7-02 | Complete |
 | MULTI-03 | Phase v0.7-02 | Complete |
@@ -96,10 +96,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 **Coverage:**
 - v0.6 SLOT requirements: 4 total — all Complete ✓
-- v0.7 requirements: 13 total — all Complete ✓
+- v0.7 requirements: 13 total — 10 Complete ✓, 3 Pending (SCBD-01..03 → Phase v0.7-04)
 - Mapped to phases: 17 (SLOT + COMP + SCBD + MULTI + WIZ)
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-02-22*
-*Last updated: 2026-02-23 — v0.7 milestone complete; all COMP-01..04, SCBD-01..03, MULTI-01..03, WIZ-08..10 marked [x] per phase VERIFICATION.md evidence; traceability table updated from Phase 40/41 to v0.7-01/v0.7-02*
+*Last updated: 2026-02-23 — v0.7 audit: SCBD-01..03 reset to [ ] (orchestrator Mode A gap); reassigned to Phase v0.7-04 for gap closure*
