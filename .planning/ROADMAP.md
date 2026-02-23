@@ -186,5 +186,5 @@ Plans:
 | 38. v0.5 Bookkeeping — Requirements & SUMMARY | v0.5 | 1/1 | Complete | 2026-02-23 |
 | 39. Rename and Migration | v0.6 | 3/3 | Complete | 2026-02-23 |
 | v0.7-01. Composition Architecture | v0.7 | Complete    | 2026-02-23 | - |
-| v0.7-02. Multiple Slots | v0.7 | TBD | Pending | - |
+| v0.7-02. Multiple Slots | 0/2 | Planned    |  | - |
 | v0.7-03. Wizard Composition Screen | v0.7 | TBD | Pending | - |
