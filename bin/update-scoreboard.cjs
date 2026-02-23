@@ -75,12 +75,23 @@ const USAGE = `Usage: node bin/update-scoreboard.cjs --model <name> --result <co
   --verdict           APPROVE | BLOCK | DELIBERATE | CONSENSUS | GAPS_FOUND | —
   --category          (optional) explicit parent category name
   --subcategory       (optional) explicit subcategory name
-  --task-description  (optional) debate question/topic text; used by Haiku auto-classification when --category/--subcategory omitted`;
+  --task-description  (optional) debate question/topic text; used by Haiku auto-classification when --category/--subcategory omitted
+  --slot              slot name (e.g. claude-1) — use instead of --model for MCP server instances
+  --model-id          full model id from health_check (e.g. "deepseek-ai/DeepSeek-V3") — required with --slot`;
 
 function validate(args) {
   const errors = [];
 
-  if (!args.model)   errors.push('--model is required');
+  // --slot and --model are mutually exclusive
+  if (args.slot && args.model) {
+    errors.push('--slot and --model are mutually exclusive');
+  } else if (args.slot) {
+    // Slot mode: require --model-id
+    if (!args['model-id']) errors.push('--model-id is required when using --slot');
+  } else {
+    // Model mode: require --model
+    if (!args.model)   errors.push('--model is required');
+  }
   if (!args.task)    errors.push('--task is required');
   if (!args.round)   errors.push('--round is required');
   if (!args.verdict) errors.push('--verdict is required');
@@ -108,6 +119,8 @@ function validate(args) {
 
   return {
     model:           args.model,
+    slot:            args.slot            || null,
+    modelId:         args['model-id']     || null,
     result:          result,
     task:            args.task,
     round:           roundNum,
@@ -141,6 +154,7 @@ function emptyData() {
       kimi:        emptyModelStats(),
       llama4:      emptyModelStats(),
     },
+    slots: {},        // NEW: slot-keyed map; key = '<slot-name>:<model-id>'
     categories: {},
     rounds: [],
   };
@@ -157,6 +171,10 @@ function loadData(scoreboard) {
     // Backward compat: ensure categories exists
     if (!data.categories) {
       data.categories = {};
+    }
+    // Backward compat: ensure slots exists
+    if (!data.slots) {
+      data.slots = {};
     }
     return data;
   } catch (e) {
@@ -199,6 +217,40 @@ function recomputeStats(data) {
       if (vote === 'FP')                   m.fp += 1;
       if (vote === 'FN')                   m.fn += 1;
       if (vote === 'TP+')                  m.impr += 1;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Slot-keyed stats helpers
+// ---------------------------------------------------------------------------
+
+function emptySlotStats(slot, modelId) {
+  return { slot, model: modelId, score: 0, tp: 0, tn: 0, fp: 0, fn: 0, impr: 0 };
+}
+
+function recomputeSlots(data) {
+  // Reset all slot stats in data.slots
+  for (const key of Object.keys(data.slots)) {
+    const s = data.slots[key];
+    s.score = 0; s.tp = 0; s.tn = 0; s.fp = 0; s.fn = 0; s.impr = 0;
+  }
+  // Replay all rounds — look for votes keyed by composite slot:model-id keys
+  for (const round of data.rounds) {
+    const votes = round.votes || {};
+    for (const [key, vote] of Object.entries(votes)) {
+      if (!key.includes(':')) continue;  // slot keys contain ':'
+      if (!vote || vote === 'UNAVAIL' || vote === '') continue;
+      if (!data.slots[key]) continue;  // key not in slots map — skip
+      const s = data.slots[key];
+      const delta = SCORE_DELTAS[vote];
+      if (delta === undefined) continue;
+      s.score += delta;
+      if (vote === 'TP' || vote === 'TP+') s.tp += 1;
+      if (vote === 'TN')  s.tn += 1;
+      if (vote === 'FP')  s.fp += 1;
+      if (vote === 'FN')  s.fn += 1;
+      if (vote === 'TP+') s.impr += 1;
     }
   }
 }
@@ -359,6 +411,47 @@ async function main() {
   const cfg     = validate(parsed);
 
   const data = loadData(cfg.scoreboard);
+
+  // ---------------------------------------------------------------------------
+  // Slot mode: --slot + --model-id path (SCBD-01, SCBD-02, SCBD-03)
+  // ---------------------------------------------------------------------------
+  if (cfg.slot) {
+    const compositeKey = `${cfg.slot}:${cfg.modelId}`;
+
+    // Ensure slot entry exists in data.slots
+    if (!data.slots[compositeKey]) {
+      data.slots[compositeKey] = emptySlotStats(cfg.slot, cfg.modelId);
+    }
+
+    // Append to rounds with vote keyed by compositeKey
+    const roundEntry = {
+      date:    todayMMDD(),
+      task:    cfg.task,
+      round:   cfg.round,
+      votes:   { [compositeKey]: cfg.result },
+      verdict: cfg.verdict,
+    };
+    if (data.team && data.team.fingerprint) {
+      roundEntry.team_fingerprint = data.team.fingerprint;
+    }
+    data.rounds.push(roundEntry);
+
+    // Recompute slot stats only (do NOT call recomputeStats — that is for --model path)
+    recomputeSlots(data);
+
+    // Write back
+    const absPath = path.resolve(process.cwd(), cfg.scoreboard);
+    fs.mkdirSync(path.dirname(absPath), { recursive: true });
+    fs.writeFileSync(absPath, JSON.stringify(data, null, 2) + '\n', 'utf8');
+
+    // Print confirmation
+    process.stdout.write(`[update-scoreboard] slot ${cfg.slot} (${cfg.modelId}): ${cfg.result} | score=${data.slots[compositeKey].score}\n`);
+    return;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Model mode: --model path (existing behavior, unchanged)
+  // ---------------------------------------------------------------------------
 
   // Ensure all model keys exist
   for (const model of VALID_MODELS) {
