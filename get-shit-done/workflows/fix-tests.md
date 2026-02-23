@@ -239,6 +239,8 @@ For each verdict produced in 6d where `category == "isolate"` AND `verdict.pollu
    - Set `verdict.polluter_set = ddmin_result.polluter_set`
    - Set `verdict.ddmin_ran = ddmin_result.ddmin_ran`
    - Set `verdict.ddmin_reason = ddmin_result.reason`
+   - Set `verdict.ddmin_candidates_tested = ddmin_result.candidates_tested`
+   - Set `verdict.ddmin_runs_performed = ddmin_result.runs_performed`
 
 7. Save state after all isolate verdicts in this batch are enriched.
 
