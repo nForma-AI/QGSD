@@ -151,7 +151,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. After a quorum round executed through the orchestrator, `quorum-scoreboard.md` contains a row with the slot name (`claude-1`, `claude-2`, etc.) as the key and the full model ID (e.g., `deepseek-ai/DeepSeek-V3`) as the model context field
   2. When the same slot is used with two different models across two rounds, the scoreboard shows two separate rows — the older row is preserved with its historical vote data
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.7-04-01-PLAN.md — Fix orchestrator + quorum.md Mode A scoreboard --slot wiring + install sync
+- [ ] v0.7-04-02-PLAN.md — Verify fix + close SCBD-01..03 requirements
 
 ## Progress
 
@@ -199,4 +202,4 @@ Plans:
 | v0.7-01. Composition Architecture | v0.7 | Complete    | 2026-02-23 | - |
 | v0.7-02. Multiple Slots | 0/2 | Complete    | 2026-02-23 | - |
 | v0.7-03. Wizard Composition Screen | 2/2 | Complete    | 2026-02-23 | - |
-| v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | TBD | Pending | - |
+| v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | 0/2 | Pending | - |
