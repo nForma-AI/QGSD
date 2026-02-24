@@ -258,21 +258,15 @@ async function listAgents() {
         connType = 'http';
       }
     } else {
-      // Check if this is the unified all-providers fan-out server (no PROVIDER_SLOT)
-      const isUnified = cfg.args && cfg.args.some(a => String(a).includes('unified-mcp-server'));
-      if (isUnified) {
-        model = 'all providers';
-        provider = 'unified';
-        timeout = '—';
-        connType = 'unified';
-      } else {
-        model = (cfg.env && cfg.env.CLAUDE_DEFAULT_MODEL) || `(${cfg.command || '?'})`;
-        provider = shortProvider(cfg);
-        timeout = (cfg.env && cfg.env.CLAUDE_MCP_TIMEOUT_MS)
-          ? cfg.env.CLAUDE_MCP_TIMEOUT_MS + 'ms'
-          : '—';
-        connType = cfg.command || '—';
-      }
+      // Skip the unified all-providers fan-out server — no per-agent info to show
+      if (cfg.args && cfg.args.some(a => String(a).includes('unified-mcp-server'))) return;
+      // Fallback for old-style entries
+      model = (cfg.env && cfg.env.CLAUDE_DEFAULT_MODEL) || `(${cfg.command || '?'})`;
+      provider = shortProvider(cfg);
+      timeout = (cfg.env && cfg.env.CLAUDE_MCP_TIMEOUT_MS)
+        ? cfg.env.CLAUDE_MCP_TIMEOUT_MS + 'ms'
+        : '—';
+      connType = cfg.command || '—';
     }
 
     const authType = (agentConfig[name] && agentConfig[name].auth_type) || '—';
