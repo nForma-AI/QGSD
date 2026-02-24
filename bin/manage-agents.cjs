@@ -1479,6 +1479,101 @@ async function manageCcrProviders() {
 }
 
 // ---------------------------------------------------------------------------
+// Clone slot
+// ---------------------------------------------------------------------------
+
+async function cloneSlot() {
+  const data = readClaudeJson();
+  const mcpServers = getGlobalMcpServers(data);
+  const slots = Object.keys(mcpServers);
+
+  if (slots.length === 0) {
+    console.log('\n  No agents to clone.\n');
+    return;
+  }
+
+  let secretsLib = null;
+  try { secretsLib = require('./secrets.cjs'); } catch (_) {}
+
+  // Step 1: Select source slot
+  const { sourceSlot } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'sourceSlot',
+      message: 'Select slot to clone:',
+      choices: slots.map((name) => {
+        const cfg = mcpServers[name];
+        const model = (cfg.env && cfg.env.CLAUDE_DEFAULT_MODEL) || cfg.command || '?';
+        const url = (cfg.env && cfg.env.ANTHROPIC_BASE_URL) || '\u2014';
+        const shortUrl = url.replace(/^https?:\/\//, '').slice(0, 30);
+        return { name: `${name.padEnd(14)} ${model.slice(0, 28).padEnd(28)} (${shortUrl})`, value: name, short: name };
+      }),
+    },
+  ]);
+
+  // Step 2: New slot name (unique, no spaces)
+  const { newSlotName } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'newSlotName',
+      message: 'New slot name:',
+      validate(val) {
+        if (!val || !val.trim()) return 'Required';
+        if (/\s/.test(val)) return 'No spaces allowed';
+        if (slots.includes(val.trim())) return `"${val.trim()}" already exists`;
+        return true;
+      },
+    },
+  ]);
+
+  const newName = newSlotName.trim();
+  const sourceCfg = mcpServers[sourceSlot];
+
+  // Step 3: Build new entry using pure function (ANTHROPIC_API_KEY excluded)
+  const newEntry = buildCloneEntry(sourceCfg, newName);
+
+  // Step 4: Optional API key for new slot (keytar-isolated — never reads source key)
+  const { setKey } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'setKey',
+      message: `Set an API key for the new slot "${newName}"?`,
+      default: false,
+    },
+  ]);
+
+  if (setKey) {
+    const { apiKey } = await inquirer.prompt([
+      {
+        type: 'password',
+        name: 'apiKey',
+        message: `API key for ${newName}:`,
+        mask: '*',
+        validate: (v) => (v && v.trim() ? true : 'Cannot be empty'),
+      },
+    ]);
+    const newAccount = deriveKeytarAccount(newName);
+    if (secretsLib) {
+      await secretsLib.set('qgsd', newAccount, apiKey.trim());
+    } else {
+      // Fallback: plaintext if keytar unavailable
+      newEntry.env.ANTHROPIC_API_KEY = apiKey.trim();
+    }
+  }
+  // If setKey === false: slot has no key — shows [no key] in listAgents()
+
+  // Step 5: Write new slot
+  data.mcpServers = Object.assign({}, mcpServers, { [newName]: newEntry });
+  writeClaudeJson(data);
+
+  if (setKey) {
+    console.log(`\n  \x1b[32m✓ Cloned "${sourceSlot}" → "${newName}" (key set)\x1b[0m\n`);
+  } else {
+    console.log(`\n  \x1b[32m✓ Cloned "${sourceSlot}" → "${newName}" \x1b[90m[no key]\x1b[0m\n`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main menu
 // ---------------------------------------------------------------------------
 
@@ -1493,17 +1588,18 @@ async function mainMenu() {
         choices: [
           { name: '1. List agents', value: 'list' },
           { name: '2. Add agent', value: 'add' },
-          { name: '3. Edit agent', value: 'edit' },
-          { name: '4. Remove agent', value: 'remove' },
-          { name: '5. Reorder agents', value: 'reorder' },
-          { name: '6. Check agent health', value: 'health' },
+          { name: '3. Clone slot', value: 'clone' },
+          { name: '4. Edit agent', value: 'edit' },
+          { name: '5. Remove agent', value: 'remove' },
+          { name: '6. Reorder agents', value: 'reorder' },
+          { name: '7. Check agent health', value: 'health' },
           new inquirer.Separator(),
-          { name: '7. Add subprocess provider', value: 'add-sub' },
-          { name: '8. Edit subprocess provider', value: 'edit-sub' },
+          { name: '8. Add subprocess provider', value: 'add-sub' },
+          { name: '9. Edit subprocess provider', value: 'edit-sub' },
           new inquirer.Separator(),
-          { name: '9. Manage CCR provider keys', value: 'ccr-keys' },
+          { name: '10. Manage CCR provider keys', value: 'ccr-keys' },
           new inquirer.Separator(),
-          { name: '10. Update coding agents', value: 'update-agents' },
+          { name: '11. Update coding agents', value: 'update-agents' },
           new inquirer.Separator(),
           { name: '0. Exit', value: 'exit' },
         ],
@@ -1513,6 +1609,7 @@ async function mainMenu() {
     try {
       if (action === 'list') await listAgents();
       else if (action === 'add') await addAgent();
+      else if (action === 'clone') await cloneSlot();
       else if (action === 'edit') await editAgent();
       else if (action === 'remove') await removeAgent();
       else if (action === 'reorder') await reorderAgents();
