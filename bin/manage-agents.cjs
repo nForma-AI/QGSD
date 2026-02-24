@@ -1275,6 +1275,132 @@ async function batchRotateKeys() {
   console.log(`\n  \x1b[32m✓ ${selectedSlots.length} slot(s) updated\x1b[0m\n`);
 }
 
+/**
+ * Probe all slots in parallel (Promise.all is safe — read-only, no writes).
+ * Subprocess slots return sentinel { healthy: null, latencyMs: 0, statusCode: null, error: 'subprocess' }.
+ * Reuses existing probeProviderUrl().
+ */
+async function probeAllSlots(mcpServers, slots, secretsLib) {
+  const results = await Promise.all(slots.map(async (slotName) => {
+    const cfg = mcpServers[slotName] || {};
+    const env = cfg.env || {};
+    if (!env.ANTHROPIC_BASE_URL) {
+      return [slotName, { healthy: null, latencyMs: 0, statusCode: null, error: 'subprocess' }];
+    }
+    const account = 'ANTHROPIC_API_KEY_' + slotName.toUpperCase().replace(/-/g, '_');
+    let apiKey = env.ANTHROPIC_API_KEY || '';
+    if (secretsLib) {
+      try {
+        const k = await secretsLib.get('qgsd', account);
+        if (k) apiKey = k;
+      } catch (_) {}
+    }
+    const probe = await probeProviderUrl(env.ANTHROPIC_BASE_URL, apiKey);
+    return [slotName, probe];
+  }));
+  return Object.fromEntries(results);
+}
+
+/**
+ * Full-screen live health dashboard.
+ * Architecture: readline mode-switch — inquirer fully exits before raw stdin loop starts.
+ * TTY guard: checks process.stdout.isTTY before entering raw mode; falls back to static print.
+ */
+async function liveDashboard() {
+  const readline = require('readline');
+  const data = readClaudeJson();
+  const mcpServers = getGlobalMcpServers(data);
+  const slots = Object.keys(mcpServers);
+
+  let secretsLib = null;
+  try { secretsLib = require('./secrets.cjs'); } catch (_) {}
+
+  // Non-TTY fallback (DASH-01 SC4): single static print, no raw mode
+  if (!process.stdout.isTTY) {
+    console.log('\n  Health check (non-TTY mode):\n');
+    const healthMap = await probeAllSlots(mcpServers, slots, secretsLib);
+    const lines = buildDashboardLines(slots, mcpServers, healthMap, Date.now());
+    console.log(lines.join('\n'));
+    return;
+  }
+
+  // Enter raw mode AFTER inquirer has fully resolved (mode-switch invariant)
+  readline.emitKeypressEvents(process.stdin);
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  process.stdout.write('\x1b[?25l');  // hide cursor
+
+  let healthMap = {};
+  let lastUpdated = null;
+  let isRefreshing = false;
+  let exitResolve;
+
+  function renderScreen() {
+    const lines = buildDashboardLines(slots, mcpServers, healthMap, lastUpdated);
+    process.stdout.write('\x1b[2J\x1b[H');
+    process.stdout.write(lines.join('\n') + '\n');
+  }
+
+  function renderProbing() {
+    process.stdout.write('\x1b[2J\x1b[H');
+    process.stdout.write('  QGSD Live Health Dashboard\n');
+    process.stdout.write('  ' + '\u2500'.repeat(60) + '\n\n');
+    process.stdout.write('  \x1b[90mProbing ' + slots.length + ' slot(s)...\x1b[0m\n');
+  }
+
+  async function doRefresh() {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    renderProbing();
+    try {
+      healthMap = await probeAllSlots(mcpServers, slots, secretsLib);
+      lastUpdated = Date.now();
+    } finally {
+      isRefreshing = false;
+    }
+    renderScreen();
+  }
+
+  function cleanup() {
+    clearInterval(staleCheck);
+    // Step 1: Remove listener BEFORE disabling raw mode (prevents spurious keypress during teardown)
+    process.stdin.removeAllListeners('keypress');
+    // Step 2: Exit raw mode
+    process.stdin.setRawMode(false);
+    // Step 3: Pause stdin (prevents Node keeping process alive)
+    process.stdin.pause();
+    // Step 4: Restore cursor
+    process.stdout.write('\x1b[?25h');
+    // Step 5: Clear screen before returning to menu
+    process.stdout.write('\x1b[2J\x1b[H');
+    // Step 6: Signal the await Promise to resolve
+    exitResolve();
+  }
+
+  // Stale indicator interval — only re-renders, does NOT probe
+  const staleCheck = setInterval(() => {
+    if (lastUpdated && Date.now() - lastUpdated > 60_000 && !isRefreshing) {
+      renderScreen();
+    }
+  }, 5_000);
+
+  function onKeypress(str, key) {
+    if (!key) return;
+    if (key.name === 'space' || key.name === 'r') { doRefresh(); return; }
+    if (key.name === 'q' || key.name === 'escape' || (key.ctrl && key.name === 'c')) {
+      cleanup();
+    }
+  }
+
+  process.stdin.on('keypress', onKeypress);
+
+  // Initial load
+  await doRefresh();
+
+  // Wait for exit signal (q / Esc / Ctrl+C)
+  await new Promise((resolve) => { exitResolve = resolve; });
+}
+
 // ---------------------------------------------------------------------------
 // Subprocess provider helpers (providers.json)
 // ---------------------------------------------------------------------------
@@ -1805,7 +1931,9 @@ async function mainMenu() {
           new inquirer.Separator(),
           { name: '11. Batch rotate keys', value: 'batch-rotate' },
           new inquirer.Separator(),
-          { name: '12. Update coding agents', value: 'update-agents' },
+          { name: '13. Live health dashboard', value: 'dashboard' },
+          new inquirer.Separator(),
+          { name: '14. Update coding agents', value: 'update-agents' },
           new inquirer.Separator(),
           { name: '0. Exit', value: 'exit' },
         ],
@@ -1824,6 +1952,7 @@ async function mainMenu() {
       else if (action === 'edit-sub') await editSubprocessProvider();
       else if (action === 'ccr-keys') await manageCcrProviders();
       else if (action === 'batch-rotate') await batchRotateKeys();
+      else if (action === 'dashboard') await liveDashboard();
       else if (action === 'update-agents') await updateAgents();
       else if (action === 'exit') { running = false; console.log('\n  Goodbye!\n'); }
     } catch (err) {
