@@ -287,7 +287,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] v0.10-04-01-PLAN.md — Wave 0: failing stubs for buildDashboardLines (8 cases) + formatTimestamp (3 cases) (DASH-01, DASH-02)
+- [x] v0.10-04-01-PLAN.md — Wave 0: failing stubs for buildDashboardLines (8 cases) + formatTimestamp (3 cases) (DASH-01, DASH-02)
 - [ ] v0.10-04-02-PLAN.md — Wave 1 GREEN: implement buildDashboardLines + formatTimestamp pure functions + _pure export (DASH-01, DASH-02)
 - [ ] v0.10-04-03-PLAN.md — Wave 2 integration: probeAllSlots + liveDashboard raw mode loop + mainMenu wiring + non-TTY fallback + human verify (DASH-01, DASH-02, DASH-03)
 
@@ -401,7 +401,7 @@ Plans:
 | v0.10-01. Foundation | v0.10 | Complete    | 2026-02-24 | 2026-02-24 |
 | v0.10-02. Presets and Cloning | v0.10 | 0/2 | Not started | - |
 | v0.10-03. Credential Management | v0.10 | 0/? | Not started | - |
-| v0.10-04. Live Health Dashboard | v0.10 | 0/3 | Not started | - |
+| v0.10-04. Live Health Dashboard | v0.10 | 1/3 | In progress | 2026-02-24 |
 | v0.10-05. Policy UIs | v0.10 | 0/? | Not started | - |
 | v0.10-06. Import/Export | v0.10 | 0/? | Not started | - |
 | v0.11-01. Parallel Quorum Wave-Barrier | v0.11 | 3/3 | Complete | 2026-02-24 |
