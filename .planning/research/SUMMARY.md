@@ -1,17 +1,17 @@
 # Project Research Summary
 
-**Project:** QGSD v0.10 — Roster Toolkit
-**Domain:** Node.js CJS CLI extension — interactive agent roster management (manage-agents.cjs)
+**Project:** QGSD v0.12 — Formal Verification
+**Domain:** Formal verification tooling (TLA+, XState, Alloy, PRISM, Petri Net, conformance log checking) integrated into an existing Node.js Claude Code plugin
 **Researched:** 2026-02-24
-**Confidence:** HIGH
+**Confidence:** HIGH (stack and architecture verified against official sources; pitfalls grounded in direct source code inspection and post-mortem literature)
 
 ## Executive Summary
 
-QGSD v0.10 adds 10 roster management features to an existing, stable CJS Node.js CLI tool (`bin/manage-agents.cjs`). The codebase is a well-structured 1569-line monolith with a proven pattern: inquirer@8 menus, `module.exports._pure` for testable pure functions, atomic JSON writes via tmp-rename, and keytar for credential storage. All 10 features are achievable as additive modifications to this single file — no new npm dependencies are required, and the monolith should not be split. The one new artifact is a static data file (`bin/provider-presets.json`) with no runtime library backing it.
+QGSD v0.12 adds a formal verification layer to a mature, stable plugin codebase. The core challenge is not building something novel — each tool (TLA+, XState, Alloy, PRISM) is well-understood in isolation — but integrating them as a cohesive layer that preserves the existing hook pipeline's fail-open, zero-dependency philosophy. The existing architecture (CJS hooks, no ESM, no build step, fail-silent I/O) imposes hard constraints on how and where each formal tool can be wired in. Violating these constraints (e.g., importing XState directly into hooks, running PRISM synchronously inside the Stop hook) will silently break production sessions.
 
-The recommended build order is six phases ordered by dependency risk: read-only display enhancements first (zero write-path risk), then the `readQgsdJson`/`writeQgsdJson` helper that later phases depend on, then credential-touching features (slot cloning, batch key rotation, key expiry detection), then the live dashboard (highest implementation complexity), then policy UIs, and finally import/export (broadest data model coverage). This ordering ensures each phase validates a narrow surface area before the next phase builds on it, and the most novel pattern (the mode-switch dashboard) is introduced only after all credential and config infrastructure is stable.
+The recommended approach is a strict separation of concerns: hooks emit lightweight append-only conformance events as a fire-and-forget side effect, and all formal analysis — XState replay, TLA+ model checking, Alloy counterexample search, PRISM probabilistic verification — runs offline as developer-initiated CLI commands. The only user-facing deliverable is `bin/validate-traces.cjs`, which reads the conformance log and replays it against the compiled XState machine. All JVM-based tools (TLA+, Alloy, PRISM) are optional external dependencies gated by environment variable checks; they must never be required for `npm test` to pass.
 
-The principal risks are all known and documented with precise prevention strategies: the `setInterval`/inquirer stdin conflict that corrupts the terminal if the dashboard is built incorrectly; API key leakage via the keytar fallback path in the export serializer; keychain concurrency errors if batch key rotation uses `Promise.all` instead of sequential iteration; fragile CCR provider name mapping due to a hardcoded name list; and silent partial-apply on import if schema validation is skipped. None of these are novel — they all stem from existing codebase patterns that must be respected rather than bypassed.
+The dominant risks are: (1) TLA+ state explosion if all 10 slots are modeled as named constants without symmetry sets, (2) conformance log schema drift if hooks and the validator each define their own event field lists independently, and (3) hook stdout contamination if conformance logging accidentally touches `process.stdout` inside the Stop hook. All three risks are preventable at the start of Phase 1 through a shared schema module, a documented emit helper, and a pre-commitment benchmark of Stop hook latency.
 
 ---
 
@@ -19,172 +19,147 @@ The principal risks are all known and documented with precise prevention strateg
 
 ### Recommended Stack
 
-All 10 features are implementable with Node.js stdlib and extensions to existing in-file functions. Zero new npm packages are added to `package.json`. The constraint is CJS-only: inquirer@8.2.7 is installed and confirmed CJS; inquirer@9, `log-update@4+`, `ansi-escapes@5+`, `blessed`, and `ink` are all ESM-only or stdin-conflicting and must not be introduced. Pin inquirer to `~8.2.7` (tilde, not caret) to prevent minor-version drift.
+Three npm packages are added (`xstate@5.28.0`, `ajv@8.18.0`, `@hpcc-js/wasm-graphviz@2.32.3+`) plus two dev dependencies (`typescript@5.x`, `tsup` latest). All are CJS-compatible via conditional exports — `require('xstate')` and `require('ajv')` work in Node.js CommonJS scripts. Three external JVM tools require manual installation: `tla2tools.jar` v1.8.0 (Java 11+), `alloy.jar` v6.2.0 (Java 17+), and PRISM v4.10 (Java 9+). A single `brew install openjdk@17` satisfies all three because Alloy sets the highest JVM floor. No native Graphviz installation is needed — `@hpcc-js/wasm-graphviz` bundles Graphviz as WASM.
 
 **Core technologies:**
 
-- `node:readline` (stdlib) — cursor movement, line clearing, and `emitKeypressEvents` for the live dashboard; replaces all ESM-only ANSI libraries; all methods verified present in Node v25.6.1
-- `inquirer@8.2.7` (existing, CJS) — all interactive prompts; must not be upgraded; `~8.2.7` pin
-- `node:fs` + atomic `renameSync` (existing pattern) — all config reads and writes; extend to cover `qgsd.json` with new `readQgsdJson`/`writeQgsdJson` helpers using the same tmp-rename pattern
-- `probeProviderUrl()` (existing in-file function) — provider health probes; extended to classify 401 responses for key expiry detection via new `classifyProbeResult()` pure function
-- `bin/provider-presets.json` (new static data file, no npm dep) — curated provider preset library; loaded via native CJS `require('./provider-presets.json')`
+- `xstate@5.28.0`: Executable state machine + trace replay — CJS-compatible via dual package; TypeScript 5.x required for full type inference; `createActor` + `actor.send()` is the replay API
+- `ajv@8.18.0`: JSON Schema validation of conformance log events — fastest Node.js validator; plain JSON Schema avoids TypeScript-compilation dependency for CJS bin/ scripts
+- `@hpcc-js/wasm-graphviz@2.32.3+`: DOT-to-SVG rendering for Petri Net — zero OS-level Graphviz install; WASM bundled; CI-verified on Node 20/22/24
+- `tla2tools.jar@1.8.0`: TLA+ parsing + TLC model checking — official monolith JAR; CLI invocation only via `child_process.spawnSync('java', ['-cp', ...])`
+- `alloy.jar@6.2.0`: Alloy Analyzer + SAT solving — `exec -t json` CLI mode for counterexample output; bundles Sat4j/MiniSat/Glucose; Java 17 required
+- PRISM 4.10: Probabilistic DTMC verification — `-pf` flag for inline property; binary distribution; Java 9+
+- `typescript@5.x` + `tsup`: Compile `formal/qgsd-machine.ts` to CJS via `tsconfig.formal.json` with `"module": "commonjs"`
 
-**Do not use:** `Promise.all` for keytar writes (causes keychain concurrency errors and index file race), background polling daemons for 401 detection (unnecessary complexity), schema validation libraries (`ajv`/`zod` are overkill for flat JSON with ~10 known fields), or any ESM-only library in a CJS file.
+**What NOT to use:** `xstate@4.x` (deprecated API), `zod` for log validation (TypeScript-first, awkward in CJS), native `dot` CLI (requires OS install), any npm Petri Net library (`petri-net` last published 10 years ago), TLAPS proof system (requires Isabelle/HOL, overkill for bounded model), LoLA analyzer (C++ native binary, overkill when TLC covers reachability).
 
 ### Expected Features
 
-All 10 features are in scope for v0.10. Priority ordering reflects implementation risk and dependency chain.
+All 6 features are in scope for v0.12. The dependency chain determines delivery order.
 
-**Must have (table stakes — P1):**
-- Provider preset library — name-based provider selection (`aws configure` pattern); auto-fills base URL; `Custom` escape hatch
-- Slot cloning — "duplicate and modify" for any N-slot config manager; keytar keys are NOT cloned (new slot has no key until explicitly set)
-- CCR routing visibility — read-only list column showing which CCR backend each slot routes through; cross-references `providers.json` `args_template[0]`
-- Quorum scoreboard inline — W/L stats per slot in the main list from `.planning/quorum-scoreboard.json`; fail-silent when file absent
-- Key expiry warnings — 401 probe badge (`[key invalid]`) in `listAgents()` using TTL cache; live probe in health dashboard only
+**Must have (table stakes — without these the milestone is not "formal verification"):**
 
-**Should have (differentiators — P2):**
-- Per-agent timeout tuning — surface existing `perfRow` MCP log suggestion more prominently in `editAgent()` summary card; mandatory restart note after every timeout write
-- Auto-update policy — `"auto"` / `"ask"` / `"never"` per slot in `qgsd.json agent_config`; audit log at `~/.claude/qgsd-update.log`
-- Batch key rotation — multi-select checkbox + sequential key prompts (`for...of`, never `Promise.all`) + single `syncToClaudeJson()` at end
-- Import/export config — portable JSON with explicit credential stripping; per-slot three-way conflict resolution (overwrite/keep/rename)
-- Live health dashboard — full-screen ANSI cursor-up rewrite; mode-switch architecture (exit inquirer before entering refresh loop); 5s `setInterval`; mandatory "Last updated" timestamp footer
+- Conformance event logger — JSONL append-only event emission from hooks; data source for everything else; must be the first deliverable built
+- XState TypeScript machine (`formal/qgsd-machine.ts`) — 4 states (`IDLE`, `COLLECTING_VOTES`, `DELIBERATING`, `DECIDED`), 4 typed guards; compiled to CJS; the executable spec
+- `bin/validate-traces.cjs` — the only user-facing CLI artifact; reads conformance log, replays against XState machine, reports violations with exit code 0/1/2
+- TLA+ spec with named invariants (`formal/tla/qgsd-workflow.tla`) — `TypeInvariant`, `MinQuorumMet`, `PhaseMonotonicallyAdvances` (safety), `EventualConsensus` (liveness); TLC-verified at N=3 slots
 
-**Defer to v0.10.x or v0.11+:**
-- Scoreboard reset per slot — useful post-provider-swap; not blocking for launch
-- Key health history — timestamp tracking of 401 events; additive to key expiry warnings
-- Live quorum vote streaming — requires daemon/IPC; out of `manage-agents.cjs` scope
-- Export to shareable provider preset (gist/file) — deferred
+**Should have (differentiators — without these the milestone is incomplete but functional):**
+
+- Alloy vote-counting model (`formal/alloy/quorum-vote.als`) — structural counterexample generation; catches off-by-one errors in vote counting; independent of trace data
+- PRISM probabilistic model + generator (`bin/export-prism-constants.cjs` + `formal/prism/`) — scoreboard-derived DTMC; `P>=0.95 [F<=3 consensus]` property
+- Petri Net generator (`bin/generate-petri-net.cjs`) — DOT-format output rendered to SVG; analytical deadlock check for min_quorum_size; lowest complexity deliverable
+
+**Defer to v0.12.x / v0.13+:**
+
+- Continuous conformance CI (run `validate-traces.cjs` in CI on every push)
+- XState Stately visualizer JSON export
+- Circuit breaker TLA+ spec (requires modeling git history state — high complexity)
+- PRISM per-round degradation model (quota saturation over time)
 
 ### Architecture Approach
 
-The architecture decision is to extend `manage-agents.cjs` as a single CJS monolith. The `_pure` export pattern scales to 10+ new pure functions without any test infrastructure change. Splitting would require new `require()` chains, install-sync steps, and test file updates — high cost for cosmetic gain. Eight new pure functions are exported via `module.exports._pure` for unit testing. The new `readQgsdJson`/`writeQgsdJson` helper pair (using the existing atomic tmp-rename pattern) is the one structural addition that unlocks Group 2 features.
+The v0.12 architecture adds a passive event emission layer to the existing hook pipeline without altering the hooks' decision logic. Three hooks (`qgsd-prompt.js`, `qgsd-stop.js`, `qgsd-circuit-breaker.js`) gain a single fire-and-forget `appendConformanceEvent()` call each, placed after their existing decision logic. The function lives in `hooks/config-loader.js` (already required by all three hooks) and uses async `fs.appendFile` with a no-op callback. All formal verification artifacts live under a new `formal/` directory with tool-specific subdirectories (`tla/`, `alloy/`, `prism/`, `petri/`). The XState machine is the sole TypeScript file in the project, compiled separately via `tsconfig.formal.json` to CJS for consumption by `validate-traces.cjs`.
 
-**Major components and responsibilities:**
+**Major components:**
 
-1. `manage-agents.cjs` — interactive roster UI; all 10 new features as new functions + `_pure` exports; extends `mainMenu()` with 4+ new items
-2. `secrets.cjs` — keytar wrapper; key index; `syncToClaudeJson`; unchanged for v0.10 (existing API sufficient for batch rotation)
-3. `update-agents.cjs` — CLI update flow; gains policy check (`agent_config[slot].update_policy`) before each install; gains audit log writes
-4. `check-provider-health.cjs` — HTTP probe + TTL cache; `listAgents()` reads cache read-only; no write path change
-5. Config files (`~/.claude.json`, `~/.claude/qgsd.json`, `bin/providers.json`) — unchanged structure; new fields only (`update_policy`, `key_status`)
+1. `hooks/config-loader.js` (modified) — adds `appendConformanceEvent()` helper; async, fail-silent, never touches stdout
+2. `.planning/conformance-log.ndjson` (new, gitignored) — append-only NDJSON event stream; one JSON object per line
+3. `bin/conformance-schema.cjs` (new) — single shared source of truth for `VALID_ACTIONS`, `VALID_PHASES`, `VALID_OUTCOMES`; imported by both hooks (emitters) and `validate-traces.cjs` (consumer)
+4. `formal/qgsd-machine.ts` compiled to `formal/dist/qgsd-machine.cjs` (new) — XState v5 machine with `setup()` guards; never imported by any hook file
+5. `bin/validate-traces.cjs` (new) — user-facing CLI; reads log, schema-validates with Ajv, replays via XState actor, reports violations
+6. `formal/tla/` (new) — TLA+ spec + two TLC configs (safety with symmetry, liveness without); checked offline
+7. `formal/alloy/` (new) — Alloy `.als` model; `pred`-only constraints; checked via Alloy Analyzer JAR
+8. `formal/prism/` (new) — PRISM `.pm` + `.pctl`; `bin/export-prism-constants.cjs` generates `rates.const` from scoreboard; `rates.const` gitignored
+9. `formal/petri/` (new) — DOT-format Petri Net; `bin/generate-petri-net.cjs`; SVG rendered via `@hpcc-js/wasm-graphviz`
 
 **Key patterns to follow:**
 
-- Fail-silent reads for optional display data (scoreboard, CCR config): `try/catch` returns `null`; UI renders `—`
-- Mode switch for non-inquirer UIs: exit inquirer loop, run raw stdin loop, re-enter `mainMenu()` on exit — never run `setInterval` while inquirer is active
-- Collect-all-inputs-then-apply-once: batch operations show full change set and confirm before any write
-- Atomic write via tmp-rename: all `writeXxx()` helpers use `.tmp` + `renameSync`; `writeQgsdJson()` must follow same pattern
+- Fail-silent side-effect emission: `appendConformanceEvent` uses async `fs.appendFile` with empty callback; never throws, never blocks hook critical path
+- Compiled TypeScript in CJS project: `tsconfig.formal.json` with `"module": "commonjs"`; compiled `.cjs` output committed alongside `.ts` source
+- NDJSON for append-only log: `fs.appendFile` writes; `readFileSync + split('\n')` reads; no JSON array rewrite needed
+- Generated constants isolate spec from data: PRISM `rates.const` generated per-project from scoreboard; committed `.pm` model is data-independent template
 
 ### Critical Pitfalls
 
-1. **setInterval inside inquirer corrupts stdin ownership** — `setInterval` writing to stdout while inquirer holds the TTY garbles the display with interleaved ANSI sequences. Prevention: mode-switch pattern is mandatory for the live dashboard — exit the inquirer menu loop before starting any refresh timer, re-enter `mainMenu()` on exit. Never call `inquirer.prompt()` while a timer has stdout write access.
+1. **TLA+ state explosion from UNAVAIL permutations** — Modeling all 10 slots as named constants without symmetry produces 3^10 state combinations; TLC times out. Prevention: define two separate TLC model configs from the start — `qgsd_safety.cfg` (symmetry sets enabled, N=5) and `qgsd_liveness.cfg` (no symmetry, N=3). Liveness properties cannot use symmetry sets.
 
-2. **Export leaks API keys via keytar fallback path** — `addAgent()` has a keytar-unavailable fallback that writes `ANTHROPIC_API_KEY` directly into `~/.claude.json` env blocks; `syncToClaudeJson()` patches live key values back before serialization. Prevention: `buildExportPayload()` must call `sanitizeEnvForExport()` unconditionally, stripping any env key matching `/_KEY$|_SECRET$|_TOKEN$|_PASSWORD$/i`. Never call `syncToClaudeJson()` before reading for export. Unit test: assert zero credential keys in any export payload.
+2. **Conformance log schema drift** — Hooks and validator independently defining event field lists leads to silent false passes when new verdict types (e.g., `GAPS_FOUND`) are added. Prevention: write `bin/conformance-schema.cjs` as the very first deliverable of Phase 1; both hooks and validator import from it; TypeScript union types enforce guard completeness at compile time.
 
-3. **Batch key rotation — keychain concurrency and index file race** — `Promise.all` with `secretsLib.set()` triggers macOS keychain lock contention; concurrent `writeIndex()` calls have a read-modify-write race that silently drops entries from `qgsd-key-index.json`. Prevention: sequential `for...of` loop only; print per-slot progress after each `await`; unit test verifies all entries appear in the index after a multi-slot run.
+3. **Hook stdout contamination** — Any `console.log()` inside a hook file while debugging conformance logging corrupts the hook decision channel (stdout is the decision protocol). Prevention: `appendConformanceEvent()` helper uses only `fs.appendFile` + `process.stderr.write()`; Stop hook tests confirm clean stdout after adding emission.
 
-4. **CCR config name mismatch from hardcoded `CCR_KEY_NAMES`** — the current hardcoded list (`akashml`, `together`, `fireworks`) breaks silently when the user renames providers in `~/.claude-code-router/config.json`. Prevention: read CCR config dynamically via `readCcrConfigSafe()`; derive provider names from the live file; normalize to lowercase before matching.
+4. **XState ESM in CJS hooks** — `require('xstate')` in a hook file throws `ERR_REQUIRE_ESM` in production because XState v5 is ESM-primary. Prevention: XState machine lives in `formal/` and is compiled to CJS by tsup; no hook file ever imports it; hooks maintain zero npm runtime dependencies.
 
-5. **Import partial-apply with non-portable absolute paths** — imported slot configs from other machines contain absolute paths (e.g., `/Users/other-user/...`) in `args` arrays; these fail silently at agent startup. Prevention: `validateImportSlot()` checks all `args` entries for `/Users/` or `/home/` patterns; reports all validation errors before any write; zero partial applies.
+5. **PRISM model with sparse scoreboard data** — Computing transition probabilities from fewer than 30 rounds per slot produces statistically meaningless verification results. Prevention: generator enforces a 30-round minimum threshold; sparse slots use conservative priors (UNAVAIL=0.3, TP=0.7); `.pm` file header annotates sample sizes and 95% Wilson confidence intervals for every transition probability.
 
 ---
 
 ## Implications for Roadmap
 
-Based on the dependency build order in ARCHITECTURE.md and the phase groupings in FEATURES.md, 6 phases are recommended.
+Research identifies three phases driven by a clear dependency chain. Event emission infrastructure must precede the XState replay checker. Both must precede the static formal specs. The three JVM-based tools (TLA+, Alloy, PRISM) can be developed in parallel within Phase 3. The Petri Net is the capstone visualization artifact with no new code dependencies.
 
-### Phase v0.10-01: Foundation — Read-Only Display and Helper Infrastructure
+### Phase v0.12-01: Conformance Event Infrastructure
 
-**Rationale:** These additions carry zero write-path risk. They only modify `listAgents()` output and add read-only helpers. Building them first validates the new column structure (scoreboard, CCR, key-expiry-from-cache) before any mutation feature builds on top. The `readQgsdJson`/`writeQgsdJson` helper pair is also introduced here as a precondition for all later phases.
+**Rationale:** Every downstream component depends on having a stable event schema and a working log emitter. The shared schema module (`conformance-schema.cjs`) is the foundation that prevents schema drift permanently — it must exist before any hook instrumentation is written. `CONFORMANCE_MAPPING.md` (spec action to implementation event sequence mapping) must also be the first deliverable because validator logic depends on this granularity decision. This phase has zero external tool dependencies.
 
-**Delivers:** `PROVIDER_PRESETS` const and `bin/provider-presets.json`; `readQgsdJson`/`writeQgsdJson` atomic helper pair; `readScoreboardSafe()`; `readCcrConfigSafe()` + `buildCcrRouteMap()`; extended `listAgents()` table with Score (W/L), CCR, and stale-cache key status columns; all new `_pure` exports and unit tests including missing-file edge cases.
+**Delivers:** `bin/conformance-schema.cjs` (shared schema with `VALID_ACTIONS`, `VALID_PHASES`, `VALID_OUTCOMES`, `schema_version`), `CONFORMANCE_MAPPING.md` (action granularity document), `appendConformanceEvent()` helper in `hooks/config-loader.js` (async, fail-silent), PHASE_START emission in `qgsd-prompt.js`, QUORUM_VERDICT emission in `qgsd-stop.js`, OSCILLATION_DETECTED emission in `qgsd-circuit-breaker.js`, `.planning/conformance-log.ndjson` gitignored, hooks synced to `hooks/dist/` + installed
 
-**Addresses:** Provider preset const (data layer), quorum scoreboard inline, CCR routing visibility.
+**Addresses:** Table-stakes feature: Conformance event logger
 
-**Avoids:** Scoreboard ENOENT crash on fresh install — `existsSync` guard required (Pitfall 9). CCR name mismatch — dynamic read from CCR config, not hardcoded list (Pitfall 4).
+**Avoids:** Pitfalls 2 (schema drift — shared schema module from day one), 3 (stdout contamination — emit helper established before hook instrumentation), 6 (spec-to-implementation granularity mismatch — CONFORMANCE_MAPPING.md as first deliverable)
 
----
+**Install sync required:** All three modified hooks must be synced to `hooks/dist/` and installed via `node bin/install.js --claude --global` after changes. Benchmark Stop hook latency on a 300-line transcript before and after adding emission to verify no timing regression.
 
-### Phase v0.10-02: Preset-Aware Add and Slot Cloning
+### Phase v0.12-02: XState Machine and Trace Validator
 
-**Rationale:** Provider presets slot into the existing `addAgent()` and `editAgent()` base-URL prompts as a `list` prompt replacing an `input` prompt. Slot cloning reuses the same `readClaudeJson`/`writeClaudeJson` data flow with a new function. Both are pure config manipulation with no credential writes except the optional new-key prompt in cloning.
+**Rationale:** `bin/validate-traces.cjs` is the only user-facing CLI artifact of the entire milestone. It requires both the compiled XState machine and a working event log from Phase 1. This phase delivers the core user value: a runnable conformance checker. Critically, writing the XState machine here finalizes the canonical state names (`IDLE`, `COLLECTING_VOTES`, `DELIBERATING`, `DECIDED`) that TLA+ and Alloy in Phase 3 must mirror. Finalizing state names before writing specs prevents naming divergence.
 
-**Delivers:** `PROVIDER_PRESETS` wired into `addAgent()` and `editAgent()` base-URL steps with pre-flight provider probe before committing; `cloneAgent()` function and menu item; post-clone prompt to set API key on new slot; slot name uniqueness validation reusing `addAgent()` pattern.
+**Delivers:** `formal/qgsd-machine.ts` (XState v5 with `setup()` guards, 4 states, 4 typed guards including fallback `unknownVerdictError` target), `tsconfig.formal.json` (`"module": "commonjs"`), `formal/dist/qgsd-machine.cjs` (compiled output, committed), `bin/validate-traces.cjs` (Ajv 8.x schema validation + XState actor replay + human-readable output + `--json` flag + exit codes 0/1/2), updated `package.json` (`xstate`, `ajv`, `typescript`, `tsup` dependencies, `build` and `test:formal` scripts), unit tests for machine guards including `GAPS_FOUND` unrecognized verdict routing to `unknownVerdictError`
 
-**Addresses:** Provider preset library (full UX), slot cloning.
+**Addresses:** Table-stakes features: XState executable machine, `validate-traces.cjs` CLI
 
-**Avoids:** Cloned slot showing `[no key]` without explanation — explicit post-clone key prompt (UX Pitfalls table). Provider preset showing unreachable provider — probe runs on selection before slot is written (UX Pitfalls table).
+**Uses stack:** `xstate@5.28.0`, `ajv@8.18.0`, `typescript@5.x`, `tsup`
 
----
+**Avoids:** Pitfall 4 (XState ESM in CJS hooks — machine compiled separately, never in hook runtime), Pitfall 9 (guard incompleteness — explicit `unknownVerdictError` fallback from the first state transition modeled)
 
-### Phase v0.10-03: Key Credential Features (Expiry Detection + Batch Rotation)
+### Phase v0.12-03: Static Formal Specifications
 
-**Rationale:** Both features touch the credential layer and share `probeProviderUrl()` and `secretsLib` as dependencies. Grouping them means `classifyProbeResult()` is available for both the key expiry badge (used here in `listAgents()` via TTL cache) and the live dashboard in the next phase.
+**Rationale:** All four static and probabilistic tools are independent of each other and of the runtime conformance log (PRISM reads only the scoreboard JSON). They can be developed in parallel within this phase. TLA+ should be written first because it is the formal ground truth and its invariant names inform the Alloy predicate and PRISM state naming. Alloy and PRISM can proceed in parallel after TLA+ state names are established. Petri Net is purely a visualization artifact and should be done last.
 
-**Delivers:** `classifyProbeResult()` pure function; `[key invalid]` badge in `listAgents()` driven by TTL cache (not live probe on every render); `batchKeyRotation()` function and menu item; sequential `for...of` key-set loop with per-slot progress output; unit test verifying all rotated slots appear in `qgsd-key-index.json`.
+**Delivers:**
 
-**Addresses:** Key expiry warnings, batch key rotation.
+- `formal/tla/qgsd-workflow.tla` + `qgsd-workflow.cfg` (two TLC configs: `qgsd_safety.cfg` with symmetry sets N=5, `qgsd_liveness.cfg` without symmetry N=3); TLC-verified with no violations on both configs; `formal/tla/Makefile` for TLC invocation
+- `formal/alloy/quorum-vote.als` with `pred`-based vote-counting predicate and `NoSpuriousApproval` `check` assertion; explicit `run` scenarios for zero-agent and all-UNAVAIL edge cases; Alloy Analyzer confirms no counterexamples for N≤5 slots
+- `formal/prism/quorum-consensus.pm` + `quorum-consensus.pctl`; `bin/export-prism-constants.cjs` (scoreboard → `rates.const` with 30-round minimum threshold, conservative priors for sparse slots, sample size and CI width annotations in `.pm` header); `rates.const` gitignored
+- `bin/generate-petri-net.cjs` (reads `qgsd.json`, writes DOT-format Petri Net to `formal/petri/quorum-net.dot`, renders SVG via `@hpcc-js/wasm-graphviz`, analytical deadlock check for min_quorum_size)
+- `VERIFICATION_TOOLS.md` with JDK installation instructions (Java 17 satisfies all three JVM tools); all JVM invocations gated on `PRISM_BIN`/`JAVA_HOME` env var; `npm test` passes without Java installed
 
-**Avoids:** `Promise.all` keychain concurrency and index race — sequential loop is the only acceptable pattern (Pitfall 3). Key expiry badge persisting after valid key rotation — badge derives from live probe in dashboard, cache-based in list; cache invalidated on rotation (Security Mistakes table).
+**Addresses:** Differentiator features: Alloy vote-counting model, PRISM probabilistic model, Petri Net generator; Table-stakes feature: TLA+ specification with named invariants
 
----
+**Uses stack:** `tla2tools.jar@1.8.0`, `alloy.jar@6.2.0`, PRISM 4.10 (all external JVM tools), `@hpcc-js/wasm-graphviz@2.32.3+`
 
-### Phase v0.10-04: Live Health Dashboard
-
-**Rationale:** The dashboard is the highest-complexity feature and depends on `classifyProbeResult()` (Phase 3) for key expiry badges and `readScoreboardSafe()` (Phase 1) for inline score display. Deferring it until all supporting helpers are stable ensures the render surface is complete before the non-trivial stdin/stdout architecture is introduced.
-
-**Delivers:** `liveHealthDashboard()` with mode-switch architecture (exits inquirer, runs raw stdin loop, re-enters `mainMenu()` on exit); `Promise.all` parallel probes with shared 5s timeout; 5s `setInterval` refresh; mandatory "Last updated: HH:MM:SS" footer; yellow stale warning after 60s; `[q]` / Ctrl-C exit with `setRawMode(false)` + `removeAllListeners` teardown before returning; TTY guard falls back to static one-time print in non-TTY contexts.
-
-**Addresses:** Live health dashboard.
-
-**Avoids:** setInterval/inquirer stdin conflict — mode-switch pattern enforced by architecture (Pitfall 1). Missing "Last updated" timestamp — mandatory render element, not optional (Pitfall 6). Sequential probes blocking dashboard — `Promise.all` with shared timeout is required for parallelism (Performance Traps table).
-
----
-
-### Phase v0.10-05: Policy UIs (Timeout Tuning + Auto-Update Policy)
-
-**Rationale:** Both features read/write `qgsd.json` via the helper pair built in Phase 1. They are naturally grouped as the "per-slot policy settings" surface. Per-agent timeout is primarily a display enhancement on existing edit flows; auto-update policy introduces a new `qgsd.json` field and a light `update-agents.cjs` integration.
-
-**Delivers:** Dedicated "Tune timeouts" sub-screen surfacing `perfRow` suggestion with explicit label at top of summary card; mandatory restart-required note after every timeout write; `agent_config[slot].update_policy` field (`"auto"` / `"ask"` / `"never"`); auto-update policy settings screen in `mainMenu()`; `update-agents.cjs` policy check before each CLI install; `~/.claude/qgsd-update.log` audit file with timestamped entries; `listAgents()` banner when log contains recent ERROR entries.
-
-**Addresses:** Per-agent timeout tuning, auto-update policy.
-
-**Avoids:** Timeout change with no restart note — restart note is mandatory after every timeout write (Pitfall 7). Auto-update silent failures — audit log is a mandatory component; banner surfaces failures on next `listAgents()` call (Pitfall 8).
-
----
-
-### Phase v0.10-06: Import/Export and Milestone Verification
-
-**Rationale:** Import/export has the broadest data model coverage — it touches every config source (`~/.claude.json`, `providers.json`, `qgsd.json`, CCR config). Building it last means all config write helpers and the complete `agent_config` schema (including `update_policy` from Phase 5) are stable before the export payload is defined. The verification step covers all 10 features end-to-end.
-
-**Delivers:** `exportRoster()` and `importRoster()` functions; `buildExportPayload()`, `validateImportPayload()`, `mergeImportedSlots()` pure functions; `sanitizeEnvForExport()` with defense-in-depth credential stripping (regex + explicit key list); pre-import backup to `~/.claude.json.pre-import.<timestamp>`; per-slot three-way conflict resolution (overwrite/keep existing/rename incoming); `import` command whitelist (`command` must be `node` or `npx`); VERIFICATION.md for all v0.10 requirements.
-
-**Addresses:** Import/export config.
-
-**Avoids:** Export leaking API keys via keytar fallback path — `sanitizeEnvForExport()` runs unconditionally; tested against slot with known plaintext key (Pitfall 2). Import partial-apply with non-portable paths — `validateImportSlot()` checks all `args` before any write (Pitfall 5). Import overwriting production slots silently — per-slot three-way confirmation before write (Anti-Pattern 2 in ARCHITECTURE.md).
-
----
+**Avoids:** Pitfall 1 (TLA+ state explosion — two model configs with symmetry sets from the start), Pitfall 5 (PRISM sparse data — 30-round minimum threshold enforced), Pitfall 7 (Alloy fact overconstrain — `pred`-only, explicit edge case `run` scenarios), Pitfall 8 (JVM in CI — all JVM invocations are optional, gated on env var)
 
 ### Phase Ordering Rationale
 
-- **Read-only first (Phases 1-2):** Zero write-path risk. If a column rendering bug exists, it cannot cause data loss. The new column structure is validated on a real roster before any mutation feature builds on top.
-- **Credentials together (Phase 3):** All `secretsLib` write paths are in one phase. The sequential-write constraint and keychain behavior are validated once; the lesson is not spread across phases.
-- **Dashboard after credential features (Phase 4):** The live dashboard incorporates key expiry badges and scoreboard inline — both helpers must be validated before the dashboard render loop uses them.
-- **Policy after dashboard (Phase 5):** Policy settings write only to `qgsd.json`. Sequencing them after the most complex feature (dashboard) keeps each phase's risk surface bounded.
-- **Import/export last (Phase 6):** The broadest data model coverage requires all prior schemas (agent_config, update_policy, providers, CCR routes) to be stable. The full `_pure` export surface is available for comprehensive verification.
+- Phase 1 must come first because all downstream components consume the schema module or the event log. Writing `conformance-schema.cjs` before any hook code is the single highest-leverage decision in the milestone — it permanently prevents the most common real-world failure mode (schema drift leading to silent false passes).
+- Phase 2 comes before Phase 3 because the XState machine finalizes the canonical state names that TLA+ and Alloy must mirror. Writing specs before the machine risks naming divergence between the executable model and the formal specifications.
+- Phase 3 bundles all JVM-based tools together because they share the Java 17 installation prerequisite, are all independent of the Phase 1/2 runtime log, and can be developed in parallel within the phase.
+- The Petri Net is last within Phase 3 because it is purely a visualization artifact derived from the fully stable Phase 2-3 model — it adds no new runtime capability and requires no new code dependencies beyond `@hpcc-js/wasm-graphviz`.
 
 ### Research Flags
 
-**Phases needing deeper research during planning:**
+Phases likely needing deeper research during planning:
 
-- **Phase v0.10-03 (Key Credential Features):** macOS keychain sequential write behavior under rapid `secretsLib.set()` calls needs a manual test to confirm the `for...of` loop is sufficient. The `qgsd-key-index.json` read-modify-write race has not been stress-tested with 5+ rapid writes. Validate before shipping batch rotation.
-- **Phase v0.10-04 (Live Health Dashboard):** stdin raw mode teardown sequence (`setRawMode(false)`, `removeAllListeners`, cursor restore) on macOS has MEDIUM confidence from community sources. Linux raw mode behavior in non-TTY contexts (CI environments) is not validated. The TTY guard (`process.stdout.isTTY` check before entering dashboard) needs an explicit test.
+- **Phase v0.12-03 (TLA+ spec):** TLA+ is a new language for this project. The liveness property `EventualConsensus` requires a `WF_vars(Next)` fairness assumption in the `.cfg` file — whether standard weak fairness is sufficient or stronger `SF_vars` is needed for the deliberation loop has not been determined. TLC profiler output for N=5 with symmetry sets on the QGSD model is not yet benchmarked. Recommend `/qgsd:research-phase` before writing the TLA+ spec.
+- **Phase v0.12-03 (PRISM model):** The mapping from scoreboard `tp`/`tn`/`unavail` categories to DTMC transition probability parameters is designed from first principles — no direct prior art was found for this specific application. The exact syntax for PRISM 4.10's `-const` flag for injecting a constants file (vs inline `-const key=val`) should be verified. Recommend `/qgsd:research-phase` before writing the PRISM model.
 
-**Phases with standard patterns (skip research-phase):**
+Phases with standard patterns (skip research-phase):
 
-- **Phase v0.10-01 (Foundation):** All patterns are read-only `listAgents()` column extensions. Fail-silent try/catch is a two-liner. No novel patterns.
-- **Phase v0.10-02 (Preset + Cloning):** Provider preset is a `list` prompt replacing an `input` prompt — standard inquirer substitution. Slot cloning reuses `readClaudeJson`/`writeClaudeJson` exactly.
-- **Phase v0.10-05 (Policy UIs):** Both features use the `readQgsdJson`/`writeQgsdJson` helper pair from Phase 1. Auto-update policy check in `update-agents.cjs` is a single conditional before the existing `runUpdate()` call.
-- **Phase v0.10-06 (Import/Export):** Full data model documented in ARCHITECTURE.md with field-by-field export decisions. `sanitizeEnvForExport()` is a straightforward regex + allowlist pass.
+- **Phase v0.12-01 (Conformance event logger):** Established pattern. `fs.appendFile` in a try/catch, NDJSON line format, shared constants module — all standard Node.js. No new API surface. Architecture.md provides exact insertion points in each hook file.
+- **Phase v0.12-02 (XState + validate-traces):** XState v5 `createActor` + `actor.send()` replay is well-documented with official examples. Ajv 8.x JSON Schema validation is standard. tsup CJS compilation is zero-config. No research needed.
+- **Phase v0.12-03 (Alloy model):** Alloy predicate and assertion syntax is confirmed HIGH confidence via haslab formal-software-design docs. The `run` vs `check` command semantics, `pred`-vs-`fact` distinction, and bounded model checking are all well-documented.
+- **Phase v0.12-03 (Petri Net):** DOT format generation is trivial. `@hpcc-js/wasm-graphviz` async API is confirmed and CI-verified. No research needed.
 
 ---
 
@@ -192,52 +167,56 @@ Based on the dependency build order in ARCHITECTURE.md and the phase groupings i
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All technology decisions validated against live source files. Node.js stdlib methods verified against Node v25.6.1 runtime. inquirer@8.2.7 CJS confirmed from `node_modules`. ESM-only rejection of log-update/ansi-escapes/ink confirmed from GitHub release notes. Zero new npm deps. |
-| Features | HIGH | All 10 features derived from direct read of `bin/manage-agents.cjs` and `bin/providers.json`. Existing patterns (probeProviderUrl, fetchProviderModels, keytar via secretsLib, summary card, checkbox picker) confirmed for each feature's implementation approach. Complexity estimates based on actual line-count analysis. |
-| Architecture | HIGH | All source files read directly. All integration points traced from live code at specific line numbers. No novel external APIs. Build order derived from actual dependency graph, not assumptions. |
-| Pitfalls | HIGH | All 10 pitfalls derived from direct inspection of specific line numbers in existing source (e.g., keytar fallback at lines 394-399, CCR_KEY_NAMES at lines 1295-1299, syncToClaudeJson at lines 117-127). Failure modes are documented from real codebase patterns, not hypothetical scenarios. |
+| Stack | HIGH | All tool versions verified against official sources (GitHub releases, npm registry, official download pages); JVM requirements cross-checked; XState and Ajv CJS compatibility confirmed via multiple sources; WASM Graphviz CI matrix confirmed |
+| Features | HIGH (P1) / MEDIUM (P2) | XState v5 guard patterns HIGH confidence (official docs); TLA+ invariant categories HIGH confidence (academic consensus); PRISM DTMC syntax MEDIUM (official docs verified, no direct QGSD analog); Alloy predicate patterns MEDIUM (vote-counting logic designed from first principles, no direct prior art found) |
+| Architecture | HIGH | All 7 integration points derived from direct inspection of live source files; anti-patterns grounded in confirmed hook pipeline behavior; data flow diagram validated against actual hook execution sequence |
+| Pitfalls | HIGH | 7 of 10 pitfalls grounded in official documentation or direct source inspection at specific line numbers; MongoDB conformance checking post-mortem is primary source for spec-to-implementation granularity pitfall; XState silent guard drop confirmed via official docs behavior description |
 
-**Overall confidence: HIGH**
+**Overall confidence:** HIGH for Phases 1-2; MEDIUM for Phase 3 TLA+ and PRISM sub-phases.
 
 ### Gaps to Address
 
-- **Dashboard raw mode teardown on Linux:** The `process.stdin.setRawMode(false)` + `removeAllListeners('keypress')` sequence is documented as safe for macOS. Linux behavior (particularly in non-TTY contexts like CI) has MEDIUM confidence only. Address during Phase v0.10-04 with an explicit TTY guard (`process.stdout.isTTY`) before entering dashboard mode and an explicit test covering a non-TTY fallback path.
+- **TLA+ fairness assumption:** The liveness property `EventualConsensus` requires a fairness assumption. Whether `WF_vars(Next)` (weak fairness) is sufficient for the deliberation loop depends on whether the `DELIBERATING → COLLECTING_VOTES` transition can be infinitely deferred. This needs validation during TLA+ spec authoring — address in `/qgsd:research-phase` for the TLA+ sub-phase.
 
-- **Scoreboard composite key format for partial quorum history:** The scoreboard `slots{}` map uses `"<slot>:<model-id>"` composite keys. If a slot has never participated in a quorum round it has no key in the map. Validate `readScoreboardSafe()` against a project with partial quorum participation (some slots present, some absent) during Phase v0.10-01 testing.
+- **PRISM `-const` flag syntax:** PRISM 4.10 supports a `-const` flag for constant override. The exact syntax for injecting a separate `rates.const` file (vs encoding constants inline in the `.pm` file) should be verified against PRISM 4.10 release notes before the Phase 3 PRISM plan is written.
 
-- **CCR config absent (no CCR installed):** If `~/.claude-code-router/config.json` does not exist (user has no CCR), the CCR column must show `—` for all slots without any error banner. The `readCcrConfigSafe()` fail-silent pattern handles this, but the test should include a machine state where the CCR config file is absent entirely.
+- **Scoreboard data sparsity at execution time:** If the scoreboard has fewer than 30 rounds per slot when Phase 3 executes, the PRISM model must use conservative priors throughout. The Phase 3 PRISM plan should document this as a conditional: proceed with `illustrative` status (not `verified`) and a prominent header comment if scoreboard is sparse.
+
+- **Petri Net format choice (PNML vs DOT):** ARCHITECTURE.md recommends PNML (ISO standard XML) as the primary format, while STACK.md recommends hand-written DOT with `@hpcc-js/wasm-graphviz` as the primary format. These are compatible (DOT is the rendering format; PNML is a data interchange format) but the implementation plan must pick one as primary and document the other as optional. Recommend DOT as primary (simpler, no additional library, directly renderable by `@hpcc-js/wasm-graphviz`).
 
 ---
 
 ## Sources
 
-### Primary (HIGH confidence — first-party source reads)
+### Primary (HIGH confidence)
 
-- `/Users/jonathanborduas/code/QGSD/bin/manage-agents.cjs` — full 1569-line source; all existing flows, data paths, `_pure` export pattern, keytar fallback at lines 394-399, CCR_KEY_NAMES at lines 1295-1299
-- `/Users/jonathanborduas/code/QGSD/bin/secrets.cjs` — keytar wrapper, `syncToClaudeJson` credential patch at lines 117-127, key index read-modify-write pattern at lines 18-21
-- `/Users/jonathanborduas/code/QGSD/bin/update-agents.cjs` — CLI update flow, `buildCliList()`, `spawnSync` pattern, `runUpdate()` error reporting
-- `/Users/jonathanborduas/code/QGSD/bin/check-provider-health.cjs` — TTL cache structure, probe logic, `quorum_active` filtering
-- `/Users/jonathanborduas/code/QGSD/bin/ccr-secure-config.cjs` — CCR config path (line 15), hardcoded `providerKeyMap` (lines 69-73) identified as fragility
-- `/Users/jonathanborduas/code/QGSD/bin/providers.json` — all 10 provider entries, CCR routing fields (`args_template`, `display_type`)
-- `/Users/jonathanborduas/.claude/qgsd.json` — `agent_config` structure, quorum_active, circuit_breaker
-- `/Users/jonathanborduas/.claude-code-router/config.json` — live CCR provider names and `Router.default`; `api_key` fields confirmed present (must not export)
-- `/Users/jonathanborduas/code/QGSD/.planning/quorum-scoreboard.json` — `slots{}` composite key format `"<slot>:<model-id>"`, `models{}` family map
-- `node_modules/inquirer/package.json` — confirmed version 8.2.7, `"type": "commonjs"`
-- Node.js readline official docs — `cursorTo`, `moveCursor`, `clearLine`, `clearScreenDown`, `emitKeypressEvents` all confirmed present in Node v25.6.1 via `node -e` runtime verification
+- `hooks/qgsd-stop.js`, `hooks/qgsd-prompt.js`, `hooks/qgsd-circuit-breaker.js`, `hooks/config-loader.js` — direct source inspection; hook pipeline mechanics, CJS constraint, fail-open philosophy, stdout decision channel confirmed
+- `bin/update-scoreboard.cjs` — `VALID_VERDICTS` (includes `GAPS_FOUND`), scoreboard schema, per-slot composite key format confirmed
+- `agents/qgsd-quorum-orchestrator.md` — 4-phase quorum workflow, verdict types (APPROVE/BLOCK/CONSENSUS/ESCALATE), Mode A/B, sequential slot calls confirmed
+- GitHub `tlaplus/tlaplus` releases — `tla2tools.jar` v1.8.0 "The Clarke release" (2025-02-24); Java 11 minimum
+- GitHub `statelyai/xstate` releases — XState 5.28.0 (2026-02-12); TypeScript 5.0+ required; dual CJS/ESM package
+- npm registry `ajv` — v8.18.0 confirmed; ~15,000 dependents; CJS-compatible
+- npm registry `@hpcc-js/wasm` — v2.32.3 (February 2026); CI-verified on Node 20/22/24
+- GitHub `AlloyTools/org.alloytools.alloy` releases — Alloy 6.2.0 (2025-01-09); Java 17 minimum; `exec -t json` CLI confirmed via Alloy discourse
+- `prismmodelchecker.org/download.php` — PRISM 4.10 (2026-01-29); Java 9+; binary for macOS ARM64/x86
+- [MongoDB Conformance Checking Post-mortem](https://www.mongodb.com/blog/post/engineering/conformance-checking-at-mongodb-testing-our-code-matches-our-tla-specs) — spec-to-implementation granularity mismatch; state snapshot fragility; multiple focused specs recommendation
+- [learntla.com optimization guide](https://learntla.com/topics/optimization.html) — symmetry set reduction (N! factor); separate safety/liveness models; constant minimization
+- [TLA+ model values and symmetry docs](https://tla.msr-inria.inria.fr/tlatoolbox/doc/model-values.html) — liveness incompatibility with symmetry sets explicitly documented
 
-### Secondary (MEDIUM confidence — community sources)
+### Secondary (MEDIUM confidence)
 
-- GitHub sindresorhus/log-update issue #54 — ESM-only from v4 confirmed; `require()` throws `ERR_REQUIRE_ESM`
-- GitHub sindresorhus/ansi-escapes releases — ESM-only from v5.0.0 (April 2020); v4.3.2 last CJS
-- GitHub SBoudrias/Inquirer.js discussion #1126 — v9 is ESM-only; v8 is CJS confirmed
-- GitHub SBoudrias/Inquirer.js issues #495, #1358, #811, #870, #894 — stdin raw mode conflicts with concurrent TUI libraries; process.stdin ownership during active prompt
-- GitHub chjj/blessed — last commit 2019; confirms unmaintained status; anti-feature rationale validated
-- Docker stats ANSI cursor-up rewrite pattern — standard approach for non-TUI live refresh; confirmed in multiple tools (npm install progress, `docker stats` source)
+- [Stately.ai XState v5 docs — Guards](https://stately.ai/docs/guards) — `setup()` API, parameterized guards, multiple guarded transitions evaluated in order, silent drop on no-match behavior confirmed
+- [PRISM manual — Property Specification](https://www.prismmodelchecker.org/manual/PropertySpecification/SyntaxAndSemantics) — `P>=0.95 [F<=3 "consensus"]` syntax confirmed; `-pf` inline property flag confirmed
+- [haslab formal-software-design overview](https://haslab.github.io/formal-software-design/overview/index.html) — `run` vs `check` command semantics; predicate definitions; bounded model checking scope
+- [Hillel Wayne — Don't let Alloy facts make your specs a fiction](https://www.hillelwayne.com/post/alloy-facts/) — `fact` overconstrain pitfall; use `pred` for structural constraints
+- [Jack Vanlightly — TLA+ Primer](https://jack-vanlightly.com/blog/2023/10/10/a-primer-on-formal-verification-and-tla) — safety vs liveness property distinction; state space explosion mechanics
+- [PRISM manual — Installing PRISM / Common Problems](https://www.prismmodelchecker.org/manual/InstallingPRISM/CommonProblemsAndQuestions) — JDK architecture mismatch on macOS; `UnsatisfiedLinkError` from ARM64/x86 mismatch
 
-### Tertiary (LOW confidence — general direction only)
+### Tertiary (LOW confidence)
 
-- WebSearch results on credential rotation batch UX patterns (AWS IAM rotation flow)
-- WebSearch results on JSON export redaction best practices (Terraform `show -json`, AWS CLI `export-credentials`)
+- WebSearch: Petri net quorum deadlock patterns, PRISM consensus property examples, XState backend workflow examples — supporting directional evidence only; no specific implementation validated
+- [Validating Traces Against TLA+ (arXiv 2024)](https://arxiv.org/pdf/2404.16075v2) — confirms active 2024 research area; abstract-only access; confirms trace validation from distributed logs to TLA+ specs is feasible
+- [Validating Traces of Distributed Programs Against TLA+ (Springer 2024)](https://link.springer.com/chapter/10.1007/978-3-031-77382-2_8) — partial-log trace checking; conformance completeness limitations; MEDIUM for abstract-derived findings
 
 ---
 *Research completed: 2026-02-24*
