@@ -17,12 +17,15 @@ must_haves:
     - "User can select an individual agent to update from a filtered list of outdated agents"
     - "User can skip without making changes"
     - "If a CLI is not installed, status shows '? unknown' and it is excluded from update prompts"
+    - "listAgents() table in manage-agents.cjs has an 'Upd' column showing ✓ (up-to-date, dim), ↑ (update available, yellow), or ? (unknown, dim) inline for each agent row"
+    - "getUpdateStatuses() is exported from bin/update-agents.cjs and called from listAgents() at the start of listing"
+    - "node --test bin/manage-agents.test.cjs still passes with no regressions"
   artifacts:
     - path: "bin/update-agents.cjs"
       provides: "Standalone update management module with detect/display/update logic"
-      exports: ["updateAgents"]
+      exports: ["updateAgents", "getUpdateStatuses"]
     - path: "bin/manage-agents.cjs"
-      provides: "Main menu with item 10 wired to updateAgents()"
+      provides: "Main menu with item 10 wired to updateAgents(), and listAgents() table with Upd column"
       contains: "update-agents"
   key_links:
     - from: "bin/manage-agents.cjs"
@@ -139,32 +142,79 @@ Print `\n  Updated: <cli>` after each or show error if spawnSync status !== 0.
 
 **Module export:**
 ```js
-module.exports = { updateAgents };
+module.exports = { updateAgents, getUpdateStatuses };
 ```
+
+**`getUpdateStatuses()` export (new — used by listAgents in manage-agents.cjs):**
+
+Add a separate exported async function `getUpdateStatuses()` that:
+1. Builds the same CLI list from `providers.json` as `updateAgents()` (reuse shared helper)
+2. Runs ALL version checks (current + latest per CLI) in parallel via `Promise.all` — NOT sequentially — so the agent list appears quickly
+3. Returns a `Map` keyed by binary name (e.g. `'codex'`, `'gemini'`) with value `{ current, latest, status }` where `status` is one of `'up-to-date' | 'update-available' | 'unknown'`
+4. Must never throw — wrap in try/catch and return an empty Map on total failure; individual CLI failures return `{ current: null, latest: null, status: 'unknown' }`
+
+```js
+async function getUpdateStatuses() {
+  // Build CLI list (same as updateAgents)
+  // Run all detections in parallel
+  const results = await Promise.all(cliList.map(async ({ name, meta }) => {
+    try {
+      const current = await detectCurrent(meta);
+      const latest  = await detectLatest(meta);
+      const status  = deriveStatus(current, latest); // 'up-to-date'|'update-available'|'unknown'
+      return [name, { current, latest, status }];
+    } catch {
+      return [name, { current: null, latest: null, status: 'unknown' }];
+    }
+  }));
+  return new Map(results);
+}
+```
+
+Refactor the current/latest detection logic from `updateAgents()` into shared helpers (`detectCurrent`, `detectLatest`, `deriveStatus`) so both `updateAgents()` and `getUpdateStatuses()` use them without duplication.
 
 **No top-level await. Use async function `updateAgents()`.** All spawnSync calls get try/catch returning null on error. Do not use `exec` or `execSync` — use `spawnSync` for version detection (consistent with rest of codebase).
   </action>
   <verify>
-Run: `node -e "const {updateAgents} = require('./bin/update-agents.cjs'); console.log('loaded ok');"` from `/Users/jonathanborduas/code/QGSD` — must print "loaded ok" without throwing.
+Run: `node -e "const {updateAgents, getUpdateStatuses} = require('./bin/update-agents.cjs'); console.log('loaded ok');"` from `/Users/jonathanborduas/code/QGSD` — must print "loaded ok" without throwing.
+Run: `node -e "const {getUpdateStatuses} = require('./bin/update-agents.cjs'); getUpdateStatuses().then(m => { console.log('map size:', m.size); m.forEach((v,k)=>console.log(k, v.status)); }).catch(e=>{console.error(e);process.exit(1)});"` — must print map size 5 (or fewer if some CLIs absent from providers.json) with status strings for each entry, no crash.
 Run: `node -e "const {updateAgents} = require('./bin/update-agents.cjs'); updateAgents().catch(e=>{console.error(e);process.exit(1)});"` — must display the version table and exit cleanly (no crash, even if some CLIs are not installed).
   </verify>
   <done>
-`bin/update-agents.cjs` exists, loads without error, prints a version status table for all 5 CLIs, and prompts for update action (or prints "All agents are up to date." if nothing to update).
+`bin/update-agents.cjs` exists, exports both `updateAgents` and `getUpdateStatuses`, loads without error. `getUpdateStatuses()` returns a Map with entries for each known CLI. `updateAgents()` prints a version status table for all 5 CLIs and prompts for update action (or prints "All agents are up to date." if nothing to update).
   </done>
 </task>
 
 <task type="auto">
-  <name>Task 2: Wire menu item 10 in bin/manage-agents.cjs</name>
+  <name>Task 2: Wire menu item 10 and add Upd column to listAgents() in bin/manage-agents.cjs</name>
   <files>bin/manage-agents.cjs</files>
   <action>
-Edit `/Users/jonathanborduas/code/QGSD/bin/manage-agents.cjs` to add menu item 10.
+Edit `/Users/jonathanborduas/code/QGSD/bin/manage-agents.cjs` to add menu item 10 AND an "Upd" column to the existing agent list table.
 
-**1. Add require at top of file** (after existing requires, around line 11):
+**1. Update require at top of file** (after existing requires, around line 11):
 ```js
-const { updateAgents } = require('./update-agents.cjs');
+const { updateAgents, getUpdateStatuses } = require('./update-agents.cjs');
 ```
 
-**2. Add menu choice** in the `mainMenu()` choices array, after the `ccr-keys` entry and before the `0. Exit` entry. The current structure around lines 1397–1403 is:
+**2. Update listAgents() to call getUpdateStatuses() and display "Upd" column:**
+
+At the start of the `listAgents()` function, before building the table rows, add:
+```js
+const updateStatuses = await getUpdateStatuses();
+```
+
+When building each agent's table row, look up the agent's binary name via its `PROVIDER_SLOT` → provider's `display_type` (or `type`) → binary name, then look up the status in `updateStatuses`. Add an "Upd" cell using these values:
+- `status === 'up-to-date'` → `\x1b[2m✓\x1b[0m` (dim checkmark)
+- `status === 'update-available'` → `\x1b[33m↑\x1b[0m` (yellow up-arrow)
+- `status === 'unknown'` or key not found → `\x1b[2m?\x1b[0m` (dim question mark)
+
+Add "Upd" as a column header in the table header row. The column should be narrow (3 chars wide) and positioned after the existing columns (e.g. after Status or Version if present, otherwise at the end before any action column).
+
+The mapping from agent → binary name: each agent config has a `PROVIDER_SLOT` or similar field pointing to a provider entry in `providers.json`. The provider entry has a `cli` field whose basename is the binary name (e.g. `/usr/local/bin/codex` → `codex`). Use `path.basename(provider.cli)` to get it, then look up in `updateStatuses`.
+
+If `getUpdateStatuses()` throws (defensive), catch the error and use an empty Map so `listAgents()` still works without the Upd data.
+
+**3. Add menu choice** in the `mainMenu()` choices array, after the `ccr-keys` entry and before the `0. Exit` entry. The current structure around lines 1397–1403 is:
 ```js
 { name: '9. Manage CCR provider keys', value: 'ccr-keys' },
 new inquirer.Separator(),
@@ -179,7 +229,7 @@ new inquirer.Separator(),
 { name: '0. Exit', value: 'exit' },
 ```
 
-**3. Add handler** in the `if/else if` dispatch block after the `ccr-keys` handler (around line 1417):
+**4. Add handler** in the `if/else if` dispatch block after the `ccr-keys` handler (around line 1417):
 ```js
 else if (action === 'ccr-keys') await manageCcrProviders();
 else if (action === 'update-agents') await updateAgents();
@@ -189,10 +239,11 @@ Do NOT touch any other part of the file. Do not reformat or reorder existing cod
   </action>
   <verify>
 Run: `node -e "require('./bin/manage-agents.cjs')" 2>&1` — must load without syntax errors.
-Run: `grep -n "update-agents\|updateAgents\|Update coding" /Users/jonathanborduas/code/QGSD/bin/manage-agents.cjs` — must show 3 matches (require line, choice line, handler line).
+Run: `grep -n "update-agents\|updateAgents\|Update coding\|getUpdateStatuses\|Upd" /Users/jonathanborduas/code/QGSD/bin/manage-agents.cjs` — must show matches for: require line (getUpdateStatuses import), getUpdateStatuses() call in listAgents, "Upd" column header, choice line, and handler line.
+Run: `node --test bin/manage-agents.test.cjs` — must pass with no failures.
   </verify>
   <done>
-`bin/manage-agents.cjs` has the require for update-agents.cjs, menu item 10 "Update coding agents", and the dispatch handler. Running `node bin/manage-agents.cjs` shows item 10 in the main menu.
+`bin/manage-agents.cjs` has the require for both exports from update-agents.cjs, `listAgents()` calls `getUpdateStatuses()` and shows an "Upd" column inline in the agent table, menu item 10 "Update coding agents" exists, and the dispatch handler routes to `updateAgents()`. Running `node bin/manage-agents.cjs` shows item 10 in the main menu. Existing test suite passes.
   </done>
 </task>
 
@@ -200,17 +251,22 @@ Run: `grep -n "update-agents\|updateAgents\|Update coding" /Users/jonathanbordua
 
 <verification>
 1. `node bin/manage-agents.cjs` — main menu shows items 1–10 plus 0. Exit
-2. Select item 10 — update table renders showing all 5 CLIs with version info
-3. `node -e "const {updateAgents}=require('./bin/update-agents.cjs'); updateAgents()" 2>&1` — exits cleanly (no unhandled rejections)
-4. `grep "update-agents" bin/manage-agents.cjs` — shows require, choice, and handler
+2. Agent list view (triggered before or from main menu) shows an "Upd" column with ✓, ↑, or ? for each agent inline in the table
+3. Select item 10 — update table renders showing all 5 CLIs with version info
+4. `node -e "const {updateAgents, getUpdateStatuses}=require('./bin/update-agents.cjs'); getUpdateStatuses().then(m=>console.log('size:',m.size))" 2>&1` — prints size without error
+5. `node -e "const {updateAgents}=require('./bin/update-agents.cjs'); updateAgents()" 2>&1` — exits cleanly (no unhandled rejections)
+6. `grep "update-agents\|getUpdateStatuses" bin/manage-agents.cjs` — shows require (with getUpdateStatuses), call in listAgents, choice, and handler
+7. `node --test bin/manage-agents.test.cjs` — passes with no failures
 </verification>
 
 <success_criteria>
-- `bin/update-agents.cjs` exists and exports `updateAgents()`
-- Version table displays codex, gemini, opencode, copilot, ccr with correct install type labels
+- `bin/update-agents.cjs` exists and exports both `updateAgents()` and `getUpdateStatuses()`
+- `getUpdateStatuses()` runs all version checks in parallel (Promise.all) and returns a Map of `{ binaryName → { current, latest, status } }`
+- `listAgents()` in manage-agents.cjs calls `getUpdateStatuses()` and displays an "Upd" column inline in the agent table
+- Version table (from item 10) displays codex, gemini, opencode, copilot, ccr with correct install type labels
 - Update prompt appears when outdated agents exist; "All agents are up to date." otherwise
 - Menu item 10 in manage-agents.cjs routes to updateAgents()
-- No regressions: existing menu items 1–9 still work
+- No regressions: existing menu items 1–9 still work; `node --test bin/manage-agents.test.cjs` passes
 </success_criteria>
 
 <output>
