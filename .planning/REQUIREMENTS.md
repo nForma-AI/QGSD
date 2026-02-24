@@ -54,28 +54,28 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CTX-01 | — | Pending |
-| CTX-02 | — | Pending |
-| CTX-03 | — | Pending |
-| CTX-04 | — | Pending |
-| CTX-05 | — | Pending |
-| NYQ-01 | — | Pending |
-| NYQ-02 | — | Pending |
-| NYQ-03 | — | Pending |
-| NYQ-04 | — | Pending |
-| DSC-01 | — | Pending |
-| DSC-02 | — | Pending |
-| DSC-03 | — | Pending |
-| FIX-01 | — | Pending |
-| FIX-02 | — | Pending |
-| FIX-03 | — | Pending |
-| FIX-04 | — | Pending |
+| CTX-01 | v0.9-01 | Pending |
+| CTX-02 | v0.9-01 | Pending |
+| CTX-03 | v0.9-01 | Pending |
+| CTX-04 | v0.9-01 | Pending |
+| CTX-05 | v0.9-01 | Pending |
+| NYQ-01 | v0.9-02 | Pending |
+| NYQ-02 | v0.9-02 | Pending |
+| NYQ-03 | v0.9-02 | Pending |
+| NYQ-04 | v0.9-02 | Pending |
+| DSC-01 | v0.9-03 | Pending |
+| DSC-02 | v0.9-03 | Pending |
+| DSC-03 | v0.9-03 | Pending |
+| FIX-01 | v0.9-04 | Pending |
+| FIX-02 | v0.9-04 | Pending |
+| FIX-03 | v0.9-04 | Pending |
+| FIX-04 | v0.9-04 | Pending |
 
 **Coverage:**
 - v0.9 requirements: 16 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16 (roadmap complete)
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-24*
-*Last updated: 2026-02-24 after initial definition*
+*Last updated: 2026-02-24 — traceability filled after v0.9 roadmap creation*
