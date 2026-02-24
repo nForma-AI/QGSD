@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.10 Agent Display — Phase v0.10-04-live-health-dashboard in progress — Plan 02 (Wave 1 pure functions) complete
+**Current focus:** v0.10 Agent Display — Phase v0.10-05-policy-uis in progress — Plan 01 (TDD RED stubs for 5 new pure functions) complete
 
 ## Current Position
 
-Phase: v0.10-04-live-health-dashboard of v0.10 (Roster Toolkit)
-Plan: 2 of 3 in current phase (Plan 02 COMPLETE — Wave 1 buildDashboardLines + formatTimestamp GREEN)
-Status: v0.10-04-02 complete — 88/88 tests pass; both pure functions exported via _pure; Wave 2 liveDashboard() pending
-Last activity: 2026-02-24 — v0.10-04-02 complete (Wave 1: buildDashboardLines + formatTimestamp pure functions implemented, all 11 stubs GREEN)
+Phase: v0.10-05-policy-uis of v0.10 (Roster Toolkit)
+Plan: 1 of N in current phase (Plan 01 COMPLETE — 24 RED stubs added, 94 existing tests unchanged)
+Status: v0.10-05-01 complete — 94 pass / 24 fail; 5 new function stubs not yet implemented; Plan 02 implements GREEN
+Last activity: 2026-02-24 — v0.10-05-01 complete (TDD RED: 24 failing stubs for buildTimeoutChoices, applyTimeoutUpdate, buildPolicyChoices, buildUpdateLogEntry, parseUpdateLogErrors)
 
 Progress: [████████████████████] 46/46 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 0/3 phases | v0.10: 2/6 phases (v0.10-01 both plans done) | v0.9 parallel: 3/5 phases
 
@@ -37,6 +37,7 @@ Progress: [████████████████████] 46/46 p
 | v0.10-01 P02 | 1 | 1 min | 1 min |
 | v0.10-04 P01 | 1 | 1 min | 1 min |
 | v0.10-04 P02 | 2 | 1 min | 1 min |
+| v0.10-05 P01 | 1 | 2 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: stable
@@ -67,6 +68,7 @@ Recent decisions affecting current work:
 - [v0.10-04-01]: buildDashboardLines stale threshold: 60s — test uses 70s (stale) and 10s (fresh) as deterministic boundary cases
 - [v0.10-04-02]: formatTimestamp inserted after writeKeyStatus, before probeWithRetryOrCancel — keeps pure functions together near other pure functions
 - [v0.10-04-02]: ANSI escape codes embedded in buildDashboardLines return strings — caller (liveDashboard) renders as-is, no abstraction layer needed
+- [v0.10-05-01]: Plan stated 22 stubs but action block contained 24 (4+4+4+5+7); applied all 24 — code specification is authoritative over prose count
 
 ### Pending Todos
 
@@ -91,5 +93,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: Completed v0.10-04-02-PLAN.md (Wave 1 pure functions — buildDashboardLines + formatTimestamp, 88/88 tests GREEN)
+Stopped at: Completed v0.10-05-01-PLAN.md (TDD RED: 24 failing stubs for 5 new pure functions; 94 existing tests unchanged)
 Resume file: None
