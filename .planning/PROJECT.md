@@ -8,15 +8,27 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.9 GSD Sync
+## Current Milestone: v0.10 Roster Toolkit
+
+**Goal:** Extend `bin/manage-agents.cjs` into a full-featured agent roster management UI — provider presets, slot cloning, live health dashboard, key lifecycle management, scoreboard visibility, CCR routing, per-agent tuning, import/export, and auto-update policy.
+
+**Target features:**
+- Provider preset library — curated provider configs user can select by name instead of typing URLs
+- Slot cloning — duplicate an existing agent slot with a different provider in one step
+- Live health dashboard — auto-refreshing status view showing all slots' real-time health
+- Quorum scoreboard inline — win/loss stats displayed per slot in the main list view
+- CCR routing visibility — which CCR provider each slot uses, shown in slot list
+- Batch key rotation — rotate multiple API keys across slots in a single flow
+- Key expiry warnings — detect 401 errors and surface `[key invalid]` badge in the UI
+- Per-agent quorum timeout tuning — configure quorum timeout per slot from the menu
+- Import/export config — save, restore, and share the full agent roster as a portable file
+- Auto-update policy — configure automatic vs. prompted update behavior per slot
+
+## Parallel Milestone: v0.9 GSD Sync (in progress — 1/4 phases)
 
 **Goal:** Port GSD 1.20.6 improvements into QGSD — context window self-monitoring hook, pre-execution Nyquist test validation, discuss-phase UX refinements, and bundled small fixes.
 
-**Target features:**
-- Context window monitor hook — injects WARNING/CRITICAL into `additionalContext` when context window fills during long quorum sessions
-- Nyquist validation layer — generates `VALIDATION.md` at plan-phase step 5.5 with per-task test-map and sampling spec
-- Discuss-phase UX — recommended option highlighting per choice + gray-area loop-back instead of hard stop
-- Tier 3 fixes — skill tool spawn guards, Gemini TOML fix, decimal phase number parsing consistency
+**Remaining phases:** v0.9-02 (Nyquist), v0.9-03 (discuss-phase UX), v0.9-04 (tier-3 fixes)
 
 ## Previous Milestone: v0.8 Fix-Tests ddmin Pipeline
 
@@ -269,4 +281,4 @@ QGSD v0.7 shipped 2026-02-23. v0.2.0 git tag pushed; npm publish deferred by use
 | hooks/dist/ new files are gitignored | `.gitignore` covers `hooks/dist/`; new files (gsd-context-monitor.js) sync to disk but not tracked; existing tracked files (config-loader.js) updated via `git add -f` | Phase v0.9-01 |
 
 ---
-*Last updated: 2026-02-24 after Phase v0.9-01 — context window monitor hook shipped; v0.9-02 (Nyquist) next*
+*Last updated: 2026-02-24 after Milestone v0.10 started — Roster Toolkit; v0.9 GSD Sync running in parallel*
