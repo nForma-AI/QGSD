@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-23 after v0.7 milestone)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.8 milestone shipped — fix-tests ddmin pipeline complete
+**Current focus:** v0.9 GSD Sync — porting GSD 1.20.6 improvements (context monitor hook, Nyquist validation, discuss-phase UX)
 
 ## Current Position
 
-Phase: MILESTONE COMPLETE — v0.8 shipped
+Phase: Not started (defining requirements)
 Plan: —
-Status: v0.8-01 complete — 4-phase ddmin pipeline written, --run-cap flag added; ready for /qgsd:new-milestone
-Last activity: 2026-02-24 - Completed quick task 94: i want to find the right balance between user convenience and security
+Status: Defining requirements
+Last activity: 2026-02-24 — Milestone v0.9 GSD Sync started
 
 Progress: [████████████████████] 46/46 plans (100%)
 
