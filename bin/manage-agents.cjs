@@ -15,6 +15,7 @@ const CLAUDE_JSON_PATH = path.join(os.homedir(), '.claude.json');
 const CLAUDE_JSON_TMP = CLAUDE_JSON_PATH + '.tmp';
 const QGSD_JSON_PATH = path.join(os.homedir(), '.claude', 'qgsd.json');
 const CCR_CONFIG_PATH = path.join(os.homedir(), '.claude-code-router', 'config.json');
+const UPDATE_LOG_PATH = path.join(os.homedir(), '.claude', 'qgsd-update.log');
 
 // Provider preset library — hardcoded table (user-extensible presets deferred to v0.11+)
 // Source: MEMORY.md Provider Map (2026-02-22)
@@ -1302,6 +1303,97 @@ async function probeAllSlots(mcpServers, slots, secretsLib) {
 }
 
 /**
+ * tuneTimeouts — PLCY-01
+ * Show each slot's current quorum timeout and allow per-slot update.
+ * Writes updated values to providers.json via writeProvidersJson().
+ * Shows "restart required" note after any change is saved.
+ */
+async function tuneTimeouts() {
+  const data = readClaudeJson();
+  const mcpServers = getGlobalMcpServers(data);
+  const slots = Object.keys(mcpServers);
+  if (!slots.length) {
+    console.log('\n  No slots configured.\n');
+    return;
+  }
+  let providersData;
+  try { providersData = readProvidersJson(); } catch { providersData = { providers: [] }; }
+
+  const rows = buildTimeoutChoices(slots, mcpServers, providersData);
+  let changed = false;
+
+  for (const { slotName, providerSlot, currentMs } of rows) {
+    const currentDisplay = currentMs != null ? String(currentMs) : '';
+    const { newMs } = await inquirer.prompt([{
+      type: 'input',
+      name: 'newMs',
+      message: `${slotName.padEnd(14)} current: ${currentMs != null ? currentMs + ' ms' : '\u2014'}  \u2192  New timeout (ms, blank = keep):`,
+      default: currentDisplay,
+      validate: (v) => {
+        if (!v || !v.trim()) return true;  // blank = keep
+        const n = parseInt(v.trim(), 10);
+        if (isNaN(n) || n < 1000) return 'Must be a number >= 1000';
+        return true;
+      },
+    }]);
+    const trimmed = newMs.trim();
+    if (trimmed && parseInt(trimmed, 10) !== currentMs) {
+      const updated = applyTimeoutUpdate(providersData, providerSlot, parseInt(trimmed, 10));
+      Object.assign(providersData, updated);
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    writeProvidersJson(providersData);
+    // MANDATORY per PLCY-01 success criterion: show restart-required note after save
+    console.log('\n  \x1b[33mTimeout changes require a Claude Code restart to take effect.\x1b[0m\n');
+  } else {
+    console.log('\n  No changes made.\n');
+  }
+}
+
+/**
+ * setUpdatePolicy — PLCY-02
+ * Let the user pick a slot, then choose auto/prompt/skip.
+ * Persists to qgsd.json agent_config[slot].update_policy via writeUpdatePolicy().
+ */
+async function setUpdatePolicy() {
+  const data = readClaudeJson();
+  const mcpServers = getGlobalMcpServers(data);
+  const slots = Object.keys(mcpServers);
+  if (!slots.length) {
+    console.log('\n  No slots configured.\n');
+    return;
+  }
+  const qgsd = readQgsdJson();
+  const agentConfig = qgsd.agent_config || {};
+
+  // Step 1: pick a slot
+  const { slotName } = await inquirer.prompt([{
+    type: 'list',
+    name: 'slotName',
+    message: 'Select slot to configure update policy:',
+    choices: slots.map((s) => ({
+      name: `${s.padEnd(14)} policy: ${(agentConfig[s] || {}).update_policy || '\u2014'}`,
+      value: s,
+    })),
+  }]);
+
+  // Step 2: pick a policy
+  const currentPolicy = (agentConfig[slotName] || {}).update_policy || null;
+  const { policy } = await inquirer.prompt([{
+    type: 'list',
+    name: 'policy',
+    message: `Update policy for ${slotName}:`,
+    choices: buildPolicyChoices(currentPolicy),
+  }]);
+
+  writeUpdatePolicy(slotName, policy);
+  console.log(`\n  \x1b[32m\u2713 ${slotName}: update_policy = ${policy}\x1b[0m\n`);
+}
+
+/**
  * Full-screen live health dashboard.
  * Architecture: readline mode-switch — inquirer fully exits before raw stdin loop starts.
  * TTY guard: checks process.stdout.isTTY before entering raw mode; falls back to static print.
@@ -2097,6 +2189,20 @@ function writeQgsdJson(data, filePath) {
   const tmp = p + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
   fs.renameSync(tmp, p);
+}
+
+/**
+ * Persist update_policy for a slot to qgsd.json agent_config.
+ * slotName: string
+ * policy: 'auto' | 'prompt' | 'skip'
+ * filePath: optional override for testability (default: QGSD_JSON_PATH)
+ */
+function writeUpdatePolicy(slotName, policy, filePath) {
+  const qgsd = readQgsdJson(filePath);
+  if (!qgsd.agent_config) qgsd.agent_config = {};
+  if (!qgsd.agent_config[slotName]) qgsd.agent_config[slotName] = {};
+  qgsd.agent_config[slotName].update_policy = policy;
+  writeQgsdJson(qgsd, filePath);
 }
 
 /**
