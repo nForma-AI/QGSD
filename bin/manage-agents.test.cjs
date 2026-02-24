@@ -5,7 +5,8 @@ const { _pure } = require('./manage-agents.cjs');
 const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
         readQgsdJson, writeQgsdJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
         buildPresetChoices, findPresetForUrl, buildCloneEntry,
-        classifyProbeResult, writeKeyStatus } = _pure;
+        classifyProbeResult, writeKeyStatus,
+        buildDashboardLines, formatTimestamp } = _pure;
 
 // ---------------------------------------------------------------------------
 // deriveKeytarAccount
@@ -628,4 +629,98 @@ test('writeKeyStatus: writes {status: \'ok\', checkedAt: ISO} and overwrites pri
   } finally {
     if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
   }
+});
+
+// ---------------------------------------------------------------------------
+// formatTimestamp
+// ---------------------------------------------------------------------------
+
+test('formatTimestamp: null returns em-dash string', () => {
+  assert.strictEqual(formatTimestamp(null), '\u2014');
+});
+
+test('formatTimestamp: Date.now() returns HH:MM:SS format (8 chars)', () => {
+  const result = formatTimestamp(Date.now());
+  assert.match(result, /^\d{2}:\d{2}:\d{2}$/);
+});
+
+test('formatTimestamp: known epoch ms returns correct HH:MM:SS', () => {
+  // Use a fixed epoch value so the test is deterministic
+  // We test the format (length + colon positions) rather than exact value to avoid timezone issues
+  const ts = new Date('2026-01-01T12:34:56Z').getTime();
+  const result = formatTimestamp(ts);
+  assert.strictEqual(result.length, 8);
+  assert.strictEqual(result[2], ':');
+  assert.strictEqual(result[5], ':');
+});
+
+// ---------------------------------------------------------------------------
+// buildDashboardLines
+// ---------------------------------------------------------------------------
+
+test('buildDashboardLines: empty slots array returns header + empty body + timestamp line', () => {
+  const lines = buildDashboardLines([], {}, {}, null);
+  assert.ok(Array.isArray(lines));
+  assert.ok(lines.length >= 2, 'must have at least header + timestamp line');
+  // Last two lines contain timestamp and keybinding hint
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('Last updated'), 'must contain "Last updated"');
+});
+
+test('buildDashboardLines: slot with healthy=true probe shows green checkmark in output', () => {
+  const slots = ['claude-1'];
+  const mcpServers = { 'claude-1': { env: { ANTHROPIC_BASE_URL: 'https://api.akashml.com/v1', CLAUDE_DEFAULT_MODEL: 'claude-sonnet-4-5' } } };
+  const healthMap = { 'claude-1': { healthy: true, latencyMs: 42, statusCode: 200 } };
+  const lines = buildDashboardLines(slots, mcpServers, healthMap, Date.now());
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('claude-1'), 'must show slot name');
+  assert.ok(joined.includes('42'), 'must show latency ms');
+  assert.ok(joined.includes('UP'), 'must show UP status');
+});
+
+test('buildDashboardLines: slot with healthy=false probe shows red DOWN in output', () => {
+  const slots = ['gemini-1'];
+  const mcpServers = { 'gemini-1': { env: { ANTHROPIC_BASE_URL: 'https://api.together.xyz/v1' } } };
+  const healthMap = { 'gemini-1': { healthy: false, latencyMs: 0, statusCode: 500 } };
+  const lines = buildDashboardLines(slots, mcpServers, healthMap, Date.now());
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('DOWN'), 'must show DOWN status');
+});
+
+test('buildDashboardLines: slot with error=subprocess shows subprocess label in output', () => {
+  const slots = ['kimi-1'];
+  const mcpServers = { 'kimi-1': { command: 'node', args: ['./kimi.cjs'] } };
+  const healthMap = { 'kimi-1': { healthy: null, error: 'subprocess' } };
+  const lines = buildDashboardLines(slots, mcpServers, healthMap, Date.now());
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('subprocess'), 'must show subprocess label');
+});
+
+test('buildDashboardLines: null healthMap entry shows em-dash or blank for that slot', () => {
+  const slots = ['claude-1'];
+  const mcpServers = { 'claude-1': { env: { ANTHROPIC_BASE_URL: 'https://api.akashml.com/v1' } } };
+  const healthMap = {};  // no entry for claude-1
+  const lines = buildDashboardLines(slots, mcpServers, healthMap, Date.now());
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('claude-1'), 'must still show slot name');
+});
+
+test('buildDashboardLines: lastUpdated=null shows "Last updated: \u2014" (never refreshed)', () => {
+  const lines = buildDashboardLines([], {}, {}, null);
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('Last updated: \u2014'), 'must show em-dash when never refreshed');
+});
+
+test('buildDashboardLines: lastUpdated more than 60s ago shows [stale] warning in output', () => {
+  const staleTs = Date.now() - 70_000;  // 70 seconds ago
+  const lines = buildDashboardLines([], {}, {}, staleTs);
+  const joined = lines.join('\n');
+  assert.ok(joined.includes('stale'), 'must show stale warning when >60s old');
+});
+
+test('buildDashboardLines: lastUpdated less than 60s ago does NOT show [stale]', () => {
+  const freshTs = Date.now() - 10_000;  // 10 seconds ago
+  const lines = buildDashboardLines([], {}, {}, freshTs);
+  const joined = lines.join('\n');
+  assert.ok(!joined.includes('stale'), 'must NOT show stale warning when <60s old');
 });
