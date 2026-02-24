@@ -1107,6 +1107,10 @@ async function checkAgentHealth() {
 
   process.stdout.write(`\n  Probing ${env.ANTHROPIC_BASE_URL} ...`);
   const probe = await probeProviderUrl(env.ANTHROPIC_BASE_URL, healthApiKey);
+  const classification = classifyProbeResult(probe);
+  if (classification !== 'unreachable') {
+    writeKeyStatus(slotName, classification);
+  }
   const statusLine = probe.healthy
     ? `\x1b[32m✓ UP (${probe.latencyMs}ms) [${probe.statusCode}]\x1b[0m`
     : `\x1b[31m✗ DOWN [${probe.error || probe.statusCode || 'timeout'}]\x1b[0m`;
