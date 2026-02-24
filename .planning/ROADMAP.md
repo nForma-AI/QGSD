@@ -284,7 +284,12 @@ Plans:
   2. Pressing space or `r` triggers an immediate refresh of all slots' health status; a "Last updated: HH:MM:SS" timestamp is shown at the bottom of the screen after every refresh; if the displayed data becomes more than 60 seconds old without a refresh, a yellow "stale" warning appears next to the timestamp
   3. Pressing `q` or Escape exits the dashboard and returns to the main menu with stdin fully restored — `setRawMode(false)` and `removeAllListeners('keypress')` are called before `mainMenu()` is re-entered, and no characters typed after exit are swallowed by a stale raw-mode listener
   4. When the dashboard is invoked in a non-TTY context (piped output, CI), it falls back to a single static one-time health print and returns immediately rather than entering raw mode; the TTY guard checks `process.stdout.isTTY` before entering dashboard mode
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] v0.10-04-01-PLAN.md — Wave 0: failing stubs for buildDashboardLines (8 cases) + formatTimestamp (3 cases) (DASH-01, DASH-02)
+- [ ] v0.10-04-02-PLAN.md — Wave 1 GREEN: implement buildDashboardLines + formatTimestamp pure functions + _pure export (DASH-01, DASH-02)
+- [ ] v0.10-04-03-PLAN.md — Wave 2 integration: probeAllSlots + liveDashboard raw mode loop + mainMenu wiring + non-TTY fallback + human verify (DASH-01, DASH-02, DASH-03)
 
 ### Phase v0.10-05: Policy UIs
 **Goal**: Users can configure quorum timeout and update policy per slot from the main menu, and slots set to auto are checked for updates on startup
@@ -396,7 +401,7 @@ Plans:
 | v0.10-01. Foundation | v0.10 | Complete    | 2026-02-24 | 2026-02-24 |
 | v0.10-02. Presets and Cloning | v0.10 | 0/2 | Not started | - |
 | v0.10-03. Credential Management | v0.10 | 0/? | Not started | - |
-| v0.10-04. Live Health Dashboard | v0.10 | 0/? | Not started | - |
+| v0.10-04. Live Health Dashboard | v0.10 | 0/3 | Not started | - |
 | v0.10-05. Policy UIs | v0.10 | 0/? | Not started | - |
 | v0.10-06. Import/Export | v0.10 | 0/? | Not started | - |
 | v0.11-01. Parallel Quorum Wave-Barrier | v0.11 | 3/3 | Complete | 2026-02-24 |
