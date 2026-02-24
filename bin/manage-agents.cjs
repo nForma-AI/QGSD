@@ -16,6 +16,14 @@ const CLAUDE_JSON_TMP = CLAUDE_JSON_PATH + '.tmp';
 const QGSD_JSON_PATH = path.join(os.homedir(), '.claude', 'qgsd.json');
 const CCR_CONFIG_PATH = path.join(os.homedir(), '.claude-code-router', 'config.json');
 
+// Provider preset library — hardcoded table (user-extensible presets deferred to v0.11+)
+// Source: MEMORY.md Provider Map (2026-02-22)
+const PROVIDER_PRESETS = [
+  { name: 'AkashML',       value: 'https://api.akashml.com/v1',             label: 'AkashML       (api.akashml.com/v1)' },
+  { name: 'Together.xyz',  value: 'https://api.together.xyz/v1',            label: 'Together.xyz  (api.together.xyz/v1)' },
+  { name: 'Fireworks.ai',  value: 'https://api.fireworks.ai/inference/v1',  label: 'Fireworks.ai  (api.fireworks.ai/inference/v1)' },
+];
+
 // ---------------------------------------------------------------------------
 // Core helpers
 // ---------------------------------------------------------------------------
@@ -1677,6 +1685,58 @@ function getKeyInvalidBadge(slotName, agentConfig, hasKeyFn) {
   return ' [key invalid]';
 }
 
+/**
+ * Build inquirer list choices for the provider preset selector.
+ * Returns choice array: 3 preset entries + Separator + Custom option.
+ * Pure function — no side effects.
+ */
+function buildPresetChoices() {
+  return [
+    ...PROVIDER_PRESETS.map((p) => ({
+      name: p.label,
+      value: p.value,
+      short: p.name,
+    })),
+    new inquirer.Separator(),
+    { name: 'Custom (enter URL manually)', value: '__custom__', short: 'Custom' },
+  ];
+}
+
+/**
+ * Reverse lookup: given a base URL, return the matching preset value or '__custom__'.
+ * url: string | null | undefined
+ * Returns the preset value string (same as the URL) if found, otherwise '__custom__'.
+ * Pure function — no side effects.
+ */
+function findPresetForUrl(url) {
+  if (!url) return '__custom__';
+  const found = PROVIDER_PRESETS.find((p) => p.value === url);
+  return found ? found.value : '__custom__';
+}
+
+/**
+ * Build a new MCP server entry for a cloned slot.
+ * sourceCfg: the source slot's config object (type, command, args, env)
+ * newName: the new slot name (string)
+ * Returns a new config entry with provider/model fields copied and ANTHROPIC_API_KEY excluded.
+ * PROVIDER_SLOT is explicitly set to newName. Pure function — no side effects.
+ */
+function buildCloneEntry(sourceCfg, newName) {
+  const sourceEnv = (sourceCfg && sourceCfg.env) || {};
+  const newEnv = {};
+  if (sourceEnv.ANTHROPIC_BASE_URL)    newEnv.ANTHROPIC_BASE_URL    = sourceEnv.ANTHROPIC_BASE_URL;
+  if (sourceEnv.CLAUDE_DEFAULT_MODEL)  newEnv.CLAUDE_DEFAULT_MODEL  = sourceEnv.CLAUDE_DEFAULT_MODEL;
+  if (sourceEnv.CLAUDE_MCP_TIMEOUT_MS) newEnv.CLAUDE_MCP_TIMEOUT_MS = sourceEnv.CLAUDE_MCP_TIMEOUT_MS;
+  newEnv.PROVIDER_SLOT = newName;
+  // ANTHROPIC_API_KEY intentionally excluded — keytar isolation
+  return {
+    type: (sourceCfg && sourceCfg.type) || 'stdio',
+    command: (sourceCfg && sourceCfg.command) || 'node',
+    args: (sourceCfg && sourceCfg.args) ? [...sourceCfg.args] : [],
+    env: newEnv,
+  };
+}
+
 module.exports._pure = {
   deriveKeytarAccount,
   maskKey,
@@ -1691,4 +1751,7 @@ module.exports._pure = {
   readCcrConfigSafe,
   getCcrProviderForSlot,
   getKeyInvalidBadge,
+  buildPresetChoices,
+  findPresetForUrl,
+  buildCloneEntry,
 };
