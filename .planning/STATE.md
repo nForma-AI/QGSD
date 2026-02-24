@@ -132,7 +132,7 @@ Recent decisions affecting current work:
 | 91 | Add Tier 1 improvements to manage-agents.cjs: provider pre-flight check on Add/Edit, agent health-check menu option, and performance intel in Edit | 2026-02-23 | fc58045 | Verified | [91-add-tier-1-improvements-to-manage-agents](./quick/91-add-tier-1-improvements-to-manage-agents/) |
 | 92 | claude-1..6 should use a real claude-code coding agent, but with different backend | 2026-02-24 | 7ae37d8 | Complete | [92-claude-1-6-should-use-a-real-claude-code](./quick/92-claude-1-6-should-use-a-real-claude-code/) |
 | 93 | Add CLI auto-discovery to resolve codex, gemini, opencode, copilot across PATH, Homebrew, npm, apt — write resolved path into providers.json via manage-agents.cjs | 2026-02-24 | 21f9395 | Verified | [93-add-cli-auto-discovery-to-resolve-codex-](./quick/93-add-cli-auto-discovery-to-resolve-codex-/) |
-| 94 | i want to find the right balance between user convenience and security | 2026-02-24 | dc5ba85 | Pending | [94-i-want-to-find-the-right-balance-between](./quick/94-i-want-to-find-the-right-balance-between/) |
+| 94 | i want to find the right balance between user convenience and security | 2026-02-24 | dc5ba85 | Verified | [94-i-want-to-find-the-right-balance-between](./quick/94-i-want-to-find-the-right-balance-between/) |
 
 ## Session Continuity
 
