@@ -8,6 +8,32 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.9 GSD Sync
+
+**Goal:** Port GSD 1.20.6 improvements into QGSD — context window self-monitoring hook, pre-execution Nyquist test validation, discuss-phase UX refinements, and bundled small fixes.
+
+**Target features:**
+- Context window monitor hook — injects WARNING/CRITICAL into `additionalContext` when context window fills during long quorum sessions
+- Nyquist validation layer — generates `VALIDATION.md` at plan-phase step 5.5 with per-task test-map and sampling spec
+- Discuss-phase UX — recommended option highlighting per choice + gray-area loop-back instead of hard stop
+- Tier 3 fixes — skill tool spawn guards, Gemini TOML fix, decimal phase number parsing consistency
+
+## Previous Milestone: v0.8 Fix-Tests ddmin Pipeline
+
+**Goal:** Rewrite `/qgsd:fix-tests` as a principled 4-phase ddmin pipeline to replace the ad-hoc batch loop.
+
+**Target features:**
+- 4-phase ddmin pipeline rewrite in `fix-tests.md` (discover → isolate → categorize → fix)
+- `--run-cap N` flag added to `maintain-tests ddmin` (default 50, backward-compatible)
+- Phase numbering: v0.8-01 (single phase milestone)
+
+**Phase range:** v0.8-01
+**Phase v0.8-01 complete:** 2026-02-24 (ddmin pipeline + --run-cap flag)
+
+**v0.8 MILESTONE COMPLETE** — fix-tests rewritten as 4-phase ddmin pipeline.
+
+---
+
 ## Previous Milestone: v0.7 Composition Config & Multi-Slot
 
 **Goal:** Ship `quorum_active` composition config so the orchestrator reads its agent list from config instead of hardcoded code; extend to N-instance-per-family multi-slot support; add composition management screen to the mcp-setup wizard.
@@ -48,7 +74,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ---
 
-## Current Milestone: v0.5 MCP Setup Wizard
+## Previous Milestone: v0.5 MCP Setup Wizard
 
 **Goal:** Ship `/qgsd:mcp-setup` — a hybrid wizard that takes users from zero agents to a fully configured quorum in one command, or lets them reconfigure any existing agent (model, provider, API key) without touching config files manually.
 
@@ -84,7 +110,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ---
 
-## Current Milestone: v0.3 Test Suite Maintenance
+## Previous Milestone: v0.3 Test Suite Maintenance
 
 **Goal:** Build `/qgsd:fix-tests` — a single autonomous command that discovers, batches, runs, AI-categorizes, and iteratively fixes test failures across large suites (20k+ tests), looping until no failures remain.
 
@@ -131,14 +157,17 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Active
 
-<!-- v0.3 scope: test suite maintenance tool -->
+<!-- v0.9 scope: GSD 1.20.6 port -->
 
-- ✓ User can run `/qgsd:fix-tests` to discover all jest/playwright/pytest tests in a project — Phase 20
-- ✓ Tool randomly batches tests into groups of 100 and iterates through batches with progress banners — Phase 20
-- ✓ Claude categorizes each failure into 5 action types (valid skip / adapt / isolate / real bug / fixture) with context_score gating and git pickaxe enrichment for adapt — Phase 21
-- ✓ Actionable failures (adapt/fixture/isolate) are grouped by category+error_type+directory and dispatched as /qgsd:quick Tasks (max 20/task); real-bug failures deferred to user report — Phase 21
-- ✓ 135 integration tests verify all v0.3 seams end-to-end: INTG-03 compliance, circuit breaker lifecycle, resume mid-batch, termination state, Phase 21 schema round-trips — Phase 22
-- [ ] Tool iterates via debug→quick→debug loop until all tests are classified and actioned
+- [ ] Context window monitor hook injects WARNING/CRITICAL into `additionalContext` at configurable thresholds
+- [ ] Nyquist validation layer generates `VALIDATION.md` at plan-phase step 5.5 with per-task test-map
+- [ ] Discuss-phase recommended option highlighting per choice with brief rationale
+- [ ] Discuss-phase gray-area looping — user can explore more areas before finalizing context
+- [ ] Skill tool spawn guards added to plan-phase and discuss-phase workflow spawn points
+- [ ] Gemini TOML fix applied to QGSD Gemini templates (quorum slot relevance)
+- [ ] Decimal phase number parsing consistent across gsd-tools.cjs
+
+<!-- Carry-forward: deferred from v0.3 -->
 - [ ] npm publish qgsd@0.2.0 deferred — run `npm publish --access public` when ready (RLS-04)
 
 
@@ -237,4 +266,4 @@ QGSD v0.7 shipped 2026-02-23. v0.2.0 git tag pushed; npm publish deferred by use
 | Orchestrator Mode A + quorum.md Mode A Escalate sections expanded (not back-referenced) | Escalate section previously said "same pattern as Consensus above" — expanded to explicit dual-variant block so Escalate is self-contained; prevents misinterpretation in future edits | Phase v0.7-04 — MC-1/Flow-4/Flow-5 |
 
 ---
-*Last updated: 2026-02-23 after v0.7 milestone — all 13 v0.7 requirements validated; planning next milestone*
+*Last updated: 2026-02-24 after v0.8 milestone — fix-tests ddmin pipeline shipped; v0.9 GSD Sync milestone started*
