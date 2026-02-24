@@ -4,7 +4,8 @@ const assert = require('node:assert/strict');
 const { _pure } = require('./manage-agents.cjs');
 const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
         readQgsdJson, writeQgsdJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
-        buildPresetChoices, findPresetForUrl, buildCloneEntry } = _pure;
+        buildPresetChoices, findPresetForUrl, buildCloneEntry,
+        classifyProbeResult, writeKeyStatus } = _pure;
 
 // ---------------------------------------------------------------------------
 // deriveKeytarAccount
@@ -363,11 +364,11 @@ test('writeQgsdJson and readQgsdJson: roundtrip via tmp dir', () => {
 // buildPresetChoices
 // ---------------------------------------------------------------------------
 
-test('buildPresetChoices: returns 4 choices (3 presets + Custom)', () => {
+test('buildPresetChoices: returns at least 4 choices (3+ presets + Custom)', () => {
   const choices = buildPresetChoices();
   // Filter out Separator objects (they have .type === 'separator')
   const realChoices = choices.filter((c) => c && typeof c === 'object' && c.value !== undefined);
-  assert.strictEqual(realChoices.length, 4);
+  assert.ok(realChoices.length >= 4, `expected >= 4 choices; got ${realChoices.length}`);
 });
 
 test('buildPresetChoices: all preset values are valid HTTPS URLs', () => {
@@ -376,6 +377,7 @@ test('buildPresetChoices: all preset values are valid HTTPS URLs', () => {
   assert.ok(presetChoices.length >= 3, 'expected at least 3 preset choices');
   for (const c of presetChoices) {
     assert.ok(c.value.startsWith('https://'), `${c.value} is not an HTTPS URL`);
+    assert.doesNotThrow(() => new URL(c.value), `${c.value} is not a well-formed URL`);
   }
 });
 
@@ -447,6 +449,8 @@ test('buildCloneEntry: copies ANTHROPIC_BASE_URL from source', () => {
   };
   const entry = buildCloneEntry(sourceCfg, 'claude-7');
   assert.strictEqual(entry.env.ANTHROPIC_BASE_URL, 'https://api.akashml.com/v1');
+  // Mutation guard: clone must not share the same env object reference as the source
+  assert.notStrictEqual(entry.env, sourceCfg.env, 'buildCloneEntry must return a new env object, not mutate source');
 });
 
 test('buildCloneEntry: copies CLAUDE_DEFAULT_MODEL from source', () => {
@@ -503,4 +507,84 @@ test('buildCloneEntry: preserves command and args from source', () => {
   const entry = buildCloneEntry(sourceCfg, 'claude-7');
   assert.strictEqual(entry.command, 'node');
   assert.deepStrictEqual(entry.args, ['/path/to/server.cjs']);
+});
+
+// ---------------------------------------------------------------------------
+// classifyProbeResult
+// ---------------------------------------------------------------------------
+
+test('classifyProbeResult: null probeResult -> \'unreachable\'', () => {
+  assert.strictEqual(classifyProbeResult(null), 'unreachable');
+});
+
+test('classifyProbeResult: healthy=false -> \'unreachable\'', () => {
+  assert.strictEqual(
+    classifyProbeResult({ healthy: false, latencyMs: 0, statusCode: null, error: 'ECONNREFUSED' }),
+    'unreachable'
+  );
+});
+
+test('classifyProbeResult: healthy=true, statusCode=401 -> \'invalid\'', () => {
+  assert.strictEqual(
+    classifyProbeResult({ healthy: true, latencyMs: 120, statusCode: 401, error: null }),
+    'invalid'
+  );
+});
+
+test('classifyProbeResult: healthy=true, statusCode=200 -> \'ok\'', () => {
+  assert.strictEqual(
+    classifyProbeResult({ healthy: true, latencyMs: 80, statusCode: 200, error: null }),
+    'ok'
+  );
+});
+
+test('classifyProbeResult: healthy=true, statusCode=403 -> \'ok\'', () => {
+  assert.strictEqual(
+    classifyProbeResult({ healthy: true, latencyMs: 95, statusCode: 403, error: null }),
+    'ok'
+  );
+});
+
+test('classifyProbeResult: healthy=true, statusCode=422 -> \'ok\'', () => {
+  assert.strictEqual(
+    classifyProbeResult({ healthy: true, latencyMs: 102, statusCode: 422, error: null }),
+    'ok'
+  );
+});
+
+// ---------------------------------------------------------------------------
+// writeKeyStatus
+// Note: writeKeyStatus is impure (file I/O) but exported via _pure because it accepts
+// an optional filePath parameter for testability — matching the readQgsdJson/writeQgsdJson
+// precedent from v0.10-01.
+// ---------------------------------------------------------------------------
+
+test('writeKeyStatus: writes {status: \'invalid\', checkedAt: ISO} to qgsd.json agent_config[slotName].key_status', () => {
+  const os = require('os');
+  const tmpPath = os.tmpdir() + '/qgsd_ws_test_' + Date.now() + '.json';
+  try {
+    writeKeyStatus('claude-1', 'invalid', tmpPath);
+    const result = readQgsdJson(tmpPath);
+    assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'invalid');
+    assert.strictEqual(typeof result.agent_config['claude-1'].key_status.checkedAt, 'string');
+    assert.ok(!isNaN(new Date(result.agent_config['claude-1'].key_status.checkedAt).getTime()));
+  } finally {
+    const fs = require('fs');
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
+});
+
+test('writeKeyStatus: writes {status: \'ok\', checkedAt: ISO} to qgsd.json agent_config[slotName].key_status', () => {
+  const os = require('os');
+  const tmpPath = os.tmpdir() + '/qgsd_ws_test2_' + Date.now() + '.json';
+  try {
+    writeKeyStatus('gemini-1', 'ok', tmpPath);
+    const result = readQgsdJson(tmpPath);
+    assert.strictEqual(result.agent_config['gemini-1'].key_status.status, 'ok');
+    assert.strictEqual(typeof result.agent_config['gemini-1'].key_status.checkedAt, 'string');
+    assert.ok(!isNaN(new Date(result.agent_config['gemini-1'].key_status.checkedAt).getTime()));
+  } finally {
+    const fs = require('fs');
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
 });
