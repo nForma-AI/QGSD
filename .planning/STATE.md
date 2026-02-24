@@ -38,6 +38,7 @@ Progress: [████████████████████] 46/46 p
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase v0.11-01 P02 | 3 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,8 @@ Recent decisions affecting current work:
 - [v0.11-01-01]: Mode A verdicts are free-form position summaries; Mode B verdicts are APPROVE/REJECT/FLAG/UNAVAIL
 - [v0.11-01-01]: UNAVAIL_HINT lines emitted by synthesizer before SYNTHESIS_RESULT: for sequential set-availability processing at barrier
 - [v0.11-01-01]: CROSS_POLLINATION_BUNDLE content is verbatim-pasteable into prior_positions: of Round 2 worker $ARGUMENTS
+- [Phase v0.11-01]: atomic-write pattern: tmpPath + renameSync replaces all direct writeFileSync(absPath) in update-scoreboard.cjs
+- [Phase v0.11-01]: merge-wave: reads per-slot vote files from --dir, applies in memory, single atomic write; exits 0 gracefully when dir is empty or missing
 
 ### Pending Todos
 
