@@ -414,13 +414,9 @@ async function editAgent() {
     return;
   }
 
-  // Load keytar accounts + qgsd.json agent_config to show real key/billing status
-  let keytarAccounts = new Set();
-  try {
-    const secrets = require('./secrets.cjs');
-    const creds = await secrets.list('qgsd');
-    creds.forEach(c => keytarAccounts.add(c.account));
-  } catch (_) {}
+  // Load secrets module for index-based key existence checks (no keychain prompt)
+  let secretsLib = null;
+  try { secretsLib = require('./secrets.cjs'); } catch (_) {}
 
   let agentCfg = {};
   try {
@@ -451,7 +447,7 @@ async function editAgent() {
         } else {
           // Derive keytar account: ANTHROPIC_API_KEY_<SLOT_UPPER>
           const account = 'ANTHROPIC_API_KEY_' + name.toUpperCase().replace(/-/g, '_');
-          keyStatus = keytarAccounts.has(account)
+          keyStatus = (secretsLib && secretsLib.hasKey(account))
             ? '\x1b[32m[key ✓]\x1b[0m'
             : '\x1b[90m[no key]\x1b[0m';
         }
@@ -731,8 +727,14 @@ async function editAgent() {
   if ('model' in updates) newEnv.CLAUDE_DEFAULT_MODEL = updates.model;
 
   if ('apiKey' in updates) {
-    if (updates.apiKey === '__REMOVE__') delete newEnv.ANTHROPIC_API_KEY;
-    else newEnv.ANTHROPIC_API_KEY = updates.apiKey;
+    const keytarAccount = 'ANTHROPIC_API_KEY_' + slotName.toUpperCase().replace(/-/g, '_');
+    if (updates.apiKey === '__REMOVE__') {
+      delete newEnv.ANTHROPIC_API_KEY;
+      if (secretsLib) secretsLib.delete('qgsd', keytarAccount).catch(() => {});
+    } else {
+      newEnv.ANTHROPIC_API_KEY = updates.apiKey;
+      if (secretsLib) await secretsLib.set('qgsd', keytarAccount, updates.apiKey);
+    }
   }
 
   if ('baseUrl' in updates) {

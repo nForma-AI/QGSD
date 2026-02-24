@@ -1,5 +1,29 @@
 'use strict';
+const os = require('os');
+const fs = require('fs');
+const path = require('path');
 const SERVICE = 'qgsd';
+
+const INDEX_PATH = path.join(os.homedir(), '.claude', 'qgsd-key-index.json');
+
+// Read the key index (no keychain access needed — just a JSON file)
+function readIndex() {
+  try {
+    return new Set(JSON.parse(fs.readFileSync(INDEX_PATH, 'utf8')).accounts || []);
+  } catch (_) {
+    return new Set();
+  }
+}
+
+function writeIndex(accounts) {
+  fs.mkdirSync(path.dirname(INDEX_PATH), { recursive: true });
+  fs.writeFileSync(INDEX_PATH, JSON.stringify({ accounts: [...accounts] }, null, 2));
+}
+
+// Check if a key exists — no keychain prompt, reads local index only
+function hasKey(key) {
+  return readIndex().has(key);
+}
 
 // Lazy-load keytar with a graceful error if the native addon is missing
 function getKeytar() {
@@ -15,6 +39,9 @@ function getKeytar() {
 
 async function set(service, key, value) {
   await getKeytar().setPassword(service, key, value);
+  const idx = readIndex();
+  idx.add(key);
+  writeIndex(idx);
 }
 
 async function get(service, key) {
@@ -22,7 +49,11 @@ async function get(service, key) {
 }
 
 async function del(service, key) {
-  return getKeytar().deletePassword(service, key);
+  const result = await getKeytar().deletePassword(service, key);
+  const idx = readIndex();
+  idx.delete(key);
+  writeIndex(idx);
+  return result;
 }
 
 async function list(service) {
@@ -100,4 +131,4 @@ async function syncToClaudeJson(service) {
   }
 }
 
-module.exports = { set, get, delete: del, list, syncToClaudeJson, SERVICE };
+module.exports = { set, get, delete: del, list, hasKey, syncToClaudeJson, SERVICE };
