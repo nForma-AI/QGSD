@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.10 Agent Display — Phase v0.10-01-foundation COMPLETE (both plans done) — awaiting human visual verification of listAgents() output before advancing
+**Current focus:** v0.10 Agent Display — Phase v0.10-04-live-health-dashboard in progress — Plan 01 (Wave 0 TDD stubs) complete
 
 ## Current Position
 
-Phase: v0.10-03-credential-management of v0.10 (Roster Toolkit)
-Plan: 3 of 3 in current phase (all plans COMPLETE — pending human verify on Plan 03 Task 4)
-Status: v0.10-03 automated tasks complete — awaiting human visual verification of batch rotate flow + key_status persistence
-Last activity: 2026-02-24 — v0.10-03-03 complete (classifyProbeResult + writeKeyStatus + batchRotateKeys + mainMenu wiring)
+Phase: v0.10-04-live-health-dashboard of v0.10 (Roster Toolkit)
+Plan: 1 of 3 in current phase (Plan 01 COMPLETE — Wave 0 RED stubs committed)
+Status: v0.10-04-01 complete — 11 failing TDD stubs for buildDashboardLines + formatTimestamp committed; Wave 1 implementation pending
+Last activity: 2026-02-24 — v0.10-04-01 complete (Wave 0: TDD RED stubs for buildDashboardLines and formatTimestamp)
 
 Progress: [████████████████████] 46/46 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 0/3 phases | v0.10: 2/6 phases (v0.10-01 both plans done) | v0.9 parallel: 3/5 phases
 
@@ -35,6 +35,7 @@ Progress: [████████████████████] 46/46 p
 | v0.11-01 P03 | 1 | 3 min | 3 min |
 | v0.10-01 P01 | 2 | 2 min | 1 min |
 | v0.10-01 P02 | 1 | 1 min | 1 min |
+| v0.10-04 P01 | 1 | 1 min | 1 min |
 
 **Recent Trend:**
 - Last 5 plans: stable
@@ -61,6 +62,8 @@ Recent decisions affecting current work:
 - [v0.10-01-01]: listAgents() deduplication — 2 separate inline qgsd.json reads replaced by single readQgsdJson() call
 - [v0.10-01-02]: hasKeyFn=()=>true in listAgents() — key_status is written only after health probe (key configured), so invalid status implies key existed at probe time; badge fires unconditionally on invalid status
 - [v0.10-01-02]: scoreboardData loaded from process.cwd()/.planning/quorum-scoreboard.json (project-relative, not home-relative)
+- [v0.10-04-01]: formatTimestamp tests check format structure (length + colon positions) not exact HH:MM:SS to avoid UTC vs local timezone flakiness
+- [v0.10-04-01]: buildDashboardLines stale threshold: 60s — test uses 70s (stale) and 10s (fresh) as deterministic boundary cases
 
 ### Pending Todos
 
@@ -85,5 +88,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: v0.10-03 all 3 plans executed; checkpoint:human-verify on Plan 03 Task 4 (batch rotate flow + key_status persistence)
+Stopped at: Completed v0.10-04-01-PLAN.md (Wave 0 TDD stubs — 11 failing tests for buildDashboardLines + formatTimestamp)
 Resume file: None
