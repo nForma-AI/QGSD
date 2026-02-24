@@ -62,7 +62,7 @@ Recent decisions affecting current work:
 
 | # | Name | Date | Commit | Status | Link |
 |---|------|------|--------|--------|------|
-| 95 | Comprehensive secure CCR credential management | 2026-02-24 | d0530ed | Complete | [95-comprehensive-secure-ccr-credential-mana](./quick/95-comprehensive-secure-ccr-credential-mana/) |
+| 95 | Comprehensive secure CCR credential management | 2026-02-24 | d0530ed | Verified | [95-comprehensive-secure-ccr-credential-mana](./quick/95-comprehensive-secure-ccr-credential-mana/) |
 
 ## Session Continuity
 
