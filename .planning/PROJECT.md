@@ -124,6 +124,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
+- ✓ Context window monitor hook injects WARNING/CRITICAL into `additionalContext` at configurable thresholds — v0.9 (Phase v0.9-01 — CTX-01..05)
 - ✓ Stop hook reads transcript JSONL and hard-gates all GSD planning commands — quorum cannot be skipped regardless of instructions — v0.1
 - ✓ UserPromptSubmit hook injects quorum instructions into Claude's context window when a planning command is detected — v0.1
 - ✓ Two-layer config system: global `~/.claude/qgsd.json` + per-project `.claude/qgsd.json` with project values taking precedence — v0.1
@@ -159,7 +160,6 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 <!-- v0.9 scope: GSD 1.20.6 port -->
 
-- [ ] Context window monitor hook injects WARNING/CRITICAL into `additionalContext` at configurable thresholds
 - [ ] Nyquist validation layer generates `VALIDATION.md` at plan-phase step 5.5 with per-task test-map
 - [ ] Discuss-phase recommended option highlighting per choice with brief rationale
 - [ ] Discuss-phase gray-area looping — user can explore more areas before finalizing context
@@ -265,5 +265,8 @@ QGSD v0.7 shipped 2026-02-23. v0.2.0 git tag pushed; npm publish deferred by use
 | INT-04 fix: --slot + --model-id replaces "strip claude- prefix" in quorum.md Mode B | Slot names like `claude-2` would need only the digit stripped — prefix-stripping was wrong; --slot passes the full slot name; --model-id from health_check response is the correct model source | Phase v0.7-01 — INT-04 |
 | Orchestrator Mode A + quorum.md Mode A Escalate sections expanded (not back-referenced) | Escalate section previously said "same pattern as Consensus above" — expanded to explicit dual-variant block so Escalate is self-contained; prevents misinterpretation in future edits | Phase v0.7-04 — MC-1/Flow-4/Flow-5 |
 
+| PostToolUse hook fires stateless on every tool call | No debounce in v1 — stateless design satisfies test criteria cleanly; debounce deferred to v2 if desired | Phase v0.9-01 |
+| hooks/dist/ new files are gitignored | `.gitignore` covers `hooks/dist/`; new files (gsd-context-monitor.js) sync to disk but not tracked; existing tracked files (config-loader.js) updated via `git add -f` | Phase v0.9-01 |
+
 ---
-*Last updated: 2026-02-24 after v0.8 milestone — fix-tests ddmin pipeline shipped; v0.9 GSD Sync milestone started*
+*Last updated: 2026-02-24 after Phase v0.9-01 — context window monitor hook shipped; v0.9-02 (Nyquist) next*

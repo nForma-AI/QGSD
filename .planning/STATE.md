@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.9 roadmap creation)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.9 GSD Sync — Phase v0.9-01: Context Window Monitor
+**Current focus:** v0.9 GSD Sync — Phase v0.9-02: Nyquist Validation Layer
 
 ## Current Position
 
@@ -50,6 +50,7 @@ Recent decisions affecting current work:
 - [v0.9 roadmap]: NYQ step 5.5 generates VALIDATION.md before plan artifacts — runs in plan-phase after research, before output
 - [quick-59]: Phase numbering is milestone-scoped (v0.9-01 format); gsd-tools.cjs parses both integer and milestone-scoped formats
 - [v0.9-01-01]: gsd-context-monitor is stateless (no debounce in v1); fires every PostToolUse when above threshold; hooks/dist/ is gitignored for new files
+- [v0.9-01 transition]: CTX-01..05 complete; v0.9-02 Nyquist Validation Layer is next
 
 ### Pending Todos
 
@@ -70,5 +71,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-24
-Stopped at: 2026-02-24 — Completed v0.9-01-01-PLAN.md (Context Window Monitor Hook)
+Stopped at: Phase v0.9-01 complete, ready to plan Phase v0.9-02 (Nyquist Validation Layer)
 Resume file: None
