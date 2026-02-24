@@ -132,7 +132,7 @@
 
 **Milestone Goal:** Extend `bin/manage-agents.cjs` into a full-featured agent roster management UI — provider presets, slot cloning, live health dashboard, key lifecycle management, scoreboard visibility, CCR routing, per-agent tuning, import/export, and auto-update policy.
 
-- [ ] **Phase v0.10-01: Foundation** — Read-only display columns (quorum W/L, CCR routing, key-invalid badge) + readQgsdJson/writeQgsdJson helper pair infrastructure
+- [x] **Phase v0.10-01: Foundation** — Read-only display columns (quorum W/L, CCR routing, key-invalid badge) + readQgsdJson/writeQgsdJson helper pair infrastructure (completed 2026-02-24)
 - [ ] **Phase v0.10-02: Presets and Cloning** — Provider preset library wired into addAgent/editAgent + slot cloning flow
 - [ ] **Phase v0.10-03: Credential Management** — Key expiry detection with classifyProbeResult() + batch key rotation with sequential-only write loop
 - [ ] **Phase v0.10-04: Live Health Dashboard** — Full-screen auto-refreshing status view with readline mode-switch architecture and keypress exit
@@ -384,7 +384,7 @@ Plans:
 | v0.9-03. Discuss-Phase UX | v0.9 | 1/1 | Complete | 2026-02-24 |
 | v0.9-04. Tier 3 Fixes | v0.9 | 0/1 | Not started | - |
 | v0.9-05. Rename get-shit-done/ → qgsd-core/ | v0.9 | 0/1 | Not started | - |
-| v0.10-01. Foundation | v0.10 | 2/2 | Complete (human-verify pending) | 2026-02-24 |
+| v0.10-01. Foundation | v0.10 | Complete    | 2026-02-24 | 2026-02-24 |
 | v0.10-02. Presets and Cloning | v0.10 | 0/? | Not started | - |
 | v0.10-03. Credential Management | v0.10 | 0/? | Not started | - |
 | v0.10-04. Live Health Dashboard | v0.10 | 0/? | Not started | - |
