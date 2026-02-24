@@ -1168,6 +1168,17 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.PreToolUse.length === 0) delete settings.hooks.PreToolUse;
     }
+    if (settings.hooks && settings.hooks.PostToolUse) {
+      const before = settings.hooks.PostToolUse.length;
+      settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-context-monitor')))
+      );
+      if (settings.hooks.PostToolUse.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed QGSD context monitor hook`);
+      }
+      if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
+    }
 
     // Clean up empty hooks object
     if (settings.hooks && Object.keys(settings.hooks).length === 0) {
@@ -1835,6 +1846,18 @@ function install(isGlobal, runtime = 'claude') {
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-circuit-breaker.js'), timeout: 10 }]
       });
       console.log(`  ${green}✓${reset} Configured QGSD circuit breaker hook (PreToolUse)`);
+    }
+
+    // Register QGSD context monitor hook (PostToolUse — context window warnings)
+    if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
+    const hasContextMonitorHook = settings.hooks.PostToolUse.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-context-monitor'))
+    );
+    if (!hasContextMonitorHook) {
+      settings.hooks.PostToolUse.push({
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'gsd-context-monitor.js') }]
+      });
+      console.log(`  ${green}✓${reset} Configured QGSD context monitor hook (PostToolUse)`);
     }
 
     // Write QGSD config — skip if exists unless --redetect-mcps flag set
