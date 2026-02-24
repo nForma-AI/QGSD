@@ -1,106 +1,98 @@
-# Requirements: QGSD v0.10 Roster Toolkit
+# Requirements: QGSD v0.12 Formal Verification
 
 **Defined:** 2026-02-24
 **Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## v0.10 Requirements
+## v0.12 Requirements
 
-Roster management features for `bin/manage-agents.cjs`. All additive to the existing CJS monolith. Zero new npm dependencies.
+### Conformance Logging
 
-### Display
+- [ ] **LOG-01**: Developer can require a shared `conformance-schema.cjs` module from both hooks and `validate-traces.cjs` — single source of truth for event field definitions
+- [ ] **LOG-02**: Stop, UserPromptSubmit, and PreToolUse hooks emit structured NDJSON events to `.planning/conformance-events.jsonl` on every quorum decision turn
+- [ ] **LOG-03**: Each emitted event contains `{ ts, phase, action, slots_available, vote_result, outcome }` matching the schema module definition
 
-- [ ] **DISP-01**: `listAgents()` shows quorum W/L column per slot (graceful empty state when scoreboard file absent)
-- [ ] **DISP-02**: `listAgents()` shows CCR provider name per slot when CCR routing applies to that slot
-- [ ] **DISP-03**: `listAgents()` shows `[key invalid]` badge when last health probe returned 401 AND a key is configured for that slot
+### XState Machine
 
-### Presets & Cloning
+- [ ] **XST-01**: Developer can find `src/machines/qgsd-workflow.machine.ts` — a 4-phase XState v5 state machine modeling QGSD's planning → research → execution → verification workflow
+- [ ] **XST-02**: `tsconfig.formal.json` + `tsup` build step compiles the machine to CJS output usable by `validate-traces.cjs` without importing XState in hook files
+- [ ] **XST-03**: Machine guards encode quorum predicates: `minQuorumMet`, `noInfiniteDeliberation`, `phaseMonotonicallyAdvances`
 
-- [ ] **PRST-01**: User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of manually typing a URL
-- [ ] **PRST-02**: User can clone an existing slot — copies provider URL and model config, prompts for new slot name
+### Trace Validator
 
-### Credentials
+- [ ] **VAL-01**: User can run `bin/validate-traces.cjs` to replay `.planning/conformance-events.jsonl` through the XState machine and see divergences flagged
+- [ ] **VAL-02**: Validator outputs a deviation score (% of traces that are valid XState executions) — the "closeness" metric
+- [ ] **VAL-03**: `validate-traces.cjs` is shipped to users via npm install and runnable as `node ~/.claude/qgsd-bin/validate-traces.cjs`
 
-- [ ] **CRED-01**: User can rotate API keys across multiple slots in a single batch flow from the main menu
-- [ ] **CRED-02**: Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)
+### TLA+ Spec
 
-### Dashboard
+- [ ] **TLA-01**: Developer can find `formal/tla/QGSDQuorum.tla` — formal TLA+ spec of QGSD states, actions, and invariants
+- [ ] **TLA-02**: `formal/tla/MCsafety.cfg` configures TLC with symmetry sets to check safety invariants (MinQuorumMet, NoInvalidTransition)
+- [ ] **TLA-03**: `formal/tla/MCliveness.cfg` configures TLC with N=3 bounded model to check liveness (EventualConsensus)
+- [ ] **TLA-04**: Developer can run `bin/run-tlc.cjs` to invoke TLC JAR; script checks Java ≥17 and exits cleanly if `JAVA_HOME` unset
 
-- [ ] **DASH-01**: User can open a live health dashboard from main menu showing all slots' provider, model, and health status
-- [ ] **DASH-02**: Dashboard refreshes on keypress (space / r) with a visible "last updated" timestamp shown at bottom
-- [ ] **DASH-03**: Dashboard exits cleanly on Q or Escape, returning to main menu with stdin fully restored (no character-swallowing)
+### Alloy Model
 
-### Policy
+- [ ] **ALY-01**: Developer can find `formal/alloy/quorum-votes.als` — vote-counting predicates using `pred` (not `fact`) to enable counterexample generation
+- [ ] **ALY-02**: Developer can run `bin/run-alloy.cjs` to invoke Alloy 6 JAR headless; gated on `JAVA_HOME`
 
-- [ ] **PLCY-01**: User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent
-- [ ] **PLCY-02**: User can configure update policy per slot: auto / prompt / skip
-- [ ] **PLCY-03**: Auto-update policy check runs on manage-agents startup for slots configured as `auto`
+### PRISM Model
 
-### Portability
+- [ ] **PRM-01**: Developer can find `formal/prism/quorum.pm` — DTMC model of quorum convergence with transition probabilities
+- [ ] **PRM-02**: Developer can run `bin/export-prism-constants.cjs` to read scoreboard TP/TN/UNAVAIL data and export empirical rates as a `.const` file for PRISM
+- [ ] **PRM-03**: Rate exporter warns and uses conservative priors when scoreboard has fewer than 30 rounds per slot
 
-- [ ] **PORT-01**: User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholders
-- [ ] **PORT-02**: User can import roster config from JSON file — validates schema, prompts to re-enter any redacted key, confirms before applying
-- [ ] **PORT-03**: Import creates a timestamped backup of `~/.claude.json` before applying any changes
+### Petri Net
 
-## v0.9 Requirements (Addendum)
-
-Rename the source directory from `get-shit-done/` to `qgsd-core/` to match QGSD identity.
-
-- [ ] **REN-01**: `git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved
-- [ ] **REN-02**: `bin/install.js` updated to read from `qgsd-core/` instead of `get-shit-done/` — `node bin/install.js --claude --global` succeeds
-- [ ] **REN-03**: All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files
-- [ ] **REN-04**: `~/.claude/qgsd/` installed runtime is functionally identical before and after rename (verified by spot-check)
+- [ ] **PET-01**: Developer can run `bin/generate-petri-net.cjs` to emit a Graphviz DOT file of the quorum token-passing net
+- [ ] **PET-02**: `generate-petri-net.cjs` renders DOT to SVG via `@hpcc-js/wasm-graphviz` (no system Graphviz install required)
+- [ ] **PET-03**: Script emits a structural deadlock warning if `min_quorum_size > available_slots` (net can never fire)
 
 ## Future Requirements
 
-Deferred to v0.11 or later.
+### Extended Verification
 
-### Presets
-
-- **PRST-03**: User-extensible preset library — custom presets persisted under `custom_presets` key in `qgsd.json`
-
-### Dashboard
-
-- **DASH-04**: Dashboard auto-refresh on configurable interval (requires resolving inquirer stdin conflict in a TTY-safe way)
+- **EXT-01**: CI integration — run `validate-traces.cjs` automatically after each quorum round
+- **EXT-02**: TLA+ PlusCal variant for human-readable spec alongside machine-checkable version
+- **EXT-03**: Real-time dashboard showing conformance deviation score trend over time
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| blessed / ink terminal UI | blessed unmaintained since 2019; ink requires React rewrite incompatible with existing CJS inquirer tool |
-| TOML / env-file export format | No ecosystem precedent; env-file format is a security risk (keys in plaintext) |
-| Inquirer v9 upgrade | ESM-only; breaks require() in existing CJS monolith |
-| Per-project roster config | Global-only matches existing QGSD install pattern |
-| Key export in plaintext | Security invariant — export must always redact |
+| Hook-time formal checking | Hooks are fail-open, zero-dep, stdout-gated — no JVM or TypeScript import allowed at runtime |
+| PRISM web UI | Offline CLI tooling only; no server process |
+| Automated TLA+ spec generation from code | Too fragile — spec is hand-authored against CLAUDE.md R0–R8 invariants |
+| Petri Net PNML format | DOT + WASM Graphviz is simpler and eliminates JVM dependency for visualization |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DISP-01 | v0.10-01 | Pending |
-| DISP-02 | v0.10-01 | Pending |
-| DISP-03 | v0.10-01 | Pending |
-| PRST-01 | v0.10-02 | Pending |
-| PRST-02 | v0.10-02 | Pending |
-| CRED-01 | v0.10-03 | Pending |
-| CRED-02 | v0.10-03 | Pending |
-| DASH-01 | v0.10-04 | Pending |
-| DASH-02 | v0.10-04 | Pending |
-| DASH-03 | v0.10-04 | Pending |
-| PLCY-01 | v0.10-05 | Pending |
-| PLCY-02 | v0.10-05 | Pending |
-| PLCY-03 | v0.10-05 | Pending |
-| PORT-01 | v0.10-06 | Pending |
-| PORT-02 | v0.10-06 | Pending |
-| PORT-03 | v0.10-06 | Pending |
-| REN-01 | v0.9-05 | Pending |
-| REN-02 | v0.9-05 | Pending |
-| REN-03 | v0.9-05 | Pending |
-| REN-04 | v0.9-05 | Pending |
+| LOG-01 | v0.12-01 | Pending |
+| LOG-02 | v0.12-01 | Pending |
+| LOG-03 | v0.12-01 | Pending |
+| XST-01 | v0.12-01 | Pending |
+| XST-02 | v0.12-01 | Pending |
+| XST-03 | v0.12-01 | Pending |
+| VAL-01 | v0.12-01 | Pending |
+| VAL-02 | v0.12-01 | Pending |
+| VAL-03 | v0.12-01 | Pending |
+| TLA-01 | v0.12-02 | Pending |
+| TLA-02 | v0.12-02 | Pending |
+| TLA-03 | v0.12-02 | Pending |
+| TLA-04 | v0.12-02 | Pending |
+| ALY-01 | v0.12-03 | Pending |
+| ALY-02 | v0.12-03 | Pending |
+| PRM-01 | v0.12-03 | Pending |
+| PRM-02 | v0.12-03 | Pending |
+| PRM-03 | v0.12-03 | Pending |
+| PET-01 | v0.12-03 | Pending |
+| PET-02 | v0.12-03 | Pending |
+| PET-03 | v0.12-03 | Pending |
 
 **Coverage:**
-- v0.10 requirements: 16 total
-- v0.9 addendum requirements: 4 total
-- Mapped to phases: 20
+- v0.12 requirements: 21 total
+- Mapped to phases: 21
 - Unmapped: 0 ✓
 
 ---
