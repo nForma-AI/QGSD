@@ -13,6 +13,8 @@ const { updateAgents, getUpdateStatuses } = require('./update-agents.cjs');
 
 const CLAUDE_JSON_PATH = path.join(os.homedir(), '.claude.json');
 const CLAUDE_JSON_TMP = CLAUDE_JSON_PATH + '.tmp';
+const QGSD_JSON_PATH = path.join(os.homedir(), '.claude', 'qgsd.json');
+const CCR_CONFIG_PATH = path.join(os.homedir(), '.claude-code-router', 'config.json');
 
 // ---------------------------------------------------------------------------
 // Core helpers
@@ -194,27 +196,17 @@ async function listAgents() {
     updateStatuses = await getUpdateStatuses();
   } catch (_) {}
 
-  // Read orchestrator config from qgsd.json
+  // Read qgsd.json once for orchestrator config and agent_config
+  const qgsd = readQgsdJson();
   let orchestrator = { model: 'claude-sonnet-4-6', provider: 'Anthropic', billing: 'sub' };
-  try {
-    const qgsdPath = path.join(os.homedir(), '.claude', 'qgsd.json');
-    const qgsd = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
-    if (qgsd.orchestrator) Object.assign(orchestrator, qgsd.orchestrator);
-  } catch (_) {}
+  if (qgsd.orchestrator) Object.assign(orchestrator, qgsd.orchestrator);
+  let agentConfig = qgsd.agent_config || {};
 
   // Build providers lookup for PROVIDER_SLOT cross-reference
   let providerMap = {};
   try {
     const pdata = readProvidersJson();
     for (const p of (pdata.providers || [])) providerMap[p.name] = p;
-  } catch (_) {}
-
-  // Read auth_type from qgsd.json agent_config
-  let agentConfig = {};
-  try {
-    const qgsdPath = path.join(os.homedir(), '.claude', 'qgsd.json');
-    const qgsd = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
-    agentConfig = qgsd.agent_config || {};
   } catch (_) {}
 
   const W = { n: 3, slot: 14, model: 38, provider: 26, type: 16, billing: 7, upd: 3 };
@@ -1558,6 +1550,99 @@ async function applyCcrProviderUpdate(subAction, selectedKey, keyValue, secretsL
   return null;
 }
 
+/**
+ * Read ~/.claude/qgsd.json safely. Returns {} on absent or invalid JSON.
+ * filePath: optional override for testability (defaults to QGSD_JSON_PATH)
+ */
+function readQgsdJson(filePath) {
+  const p = filePath || QGSD_JSON_PATH;
+  if (!fs.existsSync(p)) return {};
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (_) {
+    return {};
+  }
+}
+
+/**
+ * Write data to ~/.claude/qgsd.json atomically via tmp-rename.
+ * filePath: optional override for testability (defaults to QGSD_JSON_PATH)
+ */
+function writeQgsdJson(data, filePath) {
+  const p = filePath || QGSD_JSON_PATH;
+  const tmp = p + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
+  fs.renameSync(tmp, p);
+}
+
+/**
+ * Extract the family name from a slot name by stripping the trailing numeric suffix.
+ * e.g. 'claude-3' -> 'claude', 'gemini-1' -> 'gemini', 'no-suffix' -> 'no-suffix'
+ */
+function slotToFamily(slotName) {
+  return slotName.replace(/-\d+$/, '');
+}
+
+/**
+ * Format the win/loss display from scoreboard data.
+ * family: string (e.g. 'claude', 'gemini')
+ * scoreboardData: object with .models[family].{tp, fn}, or null
+ * Returns '—' when data is absent, 'NNW/NNL' when present.
+ */
+function getWlDisplay(family, scoreboardData) {
+  if (!scoreboardData) return '\u2014';
+  const entry = scoreboardData.models && scoreboardData.models[family];
+  if (!entry) return '\u2014';
+  return String(entry.tp || 0) + 'W/' + String(entry.fn || 0) + 'L';
+}
+
+/**
+ * Read the Claude Code Router config file safely.
+ * ccrConfigPath: optional override for testability (defaults to CCR_CONFIG_PATH)
+ * Returns parsed object on success, null on absent or invalid JSON.
+ */
+function readCcrConfigSafe(ccrConfigPath) {
+  const p = ccrConfigPath || CCR_CONFIG_PATH;
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Find the CCR provider name for a given model.
+ * model: string (e.g. 'claude-sonnet-4-6'), or null
+ * ccrConfig: parsed CCR config object with .providers[], or null
+ * Returns provider name string, or null if not found.
+ */
+function getCcrProviderForSlot(model, ccrConfig) {
+  if (!ccrConfig || !model) return null;
+  for (const provider of (ccrConfig.providers || [])) {
+    if ((provider.models || []).includes(model)) {
+      return provider.name;
+    }
+  }
+  return null;
+}
+
+/**
+ * Return ' [key invalid]' badge if the slot has an invalid key configured.
+ * slotName: string
+ * agentConfig: object mapping slotName -> { key_status: { status } }
+ * hasKeyFn: function(slotName) -> boolean (dependency-injected for testability)
+ * Returns ' [key invalid]' or ''.
+ */
+function getKeyInvalidBadge(slotName, agentConfig, hasKeyFn) {
+  const slotCfg = agentConfig && agentConfig[slotName];
+  if (!slotCfg) return '';
+  const ks = slotCfg.key_status;
+  if (!ks || ks.status !== 'invalid') return '';
+  if (!hasKeyFn || !hasKeyFn(slotName)) return '';
+  return ' [key invalid]';
+}
+
 module.exports._pure = {
   deriveKeytarAccount,
   maskKey,
@@ -1565,4 +1650,11 @@ module.exports._pure = {
   buildAgentChoiceLabel,
   applyKeyUpdate,
   applyCcrProviderUpdate,
+  readQgsdJson,
+  writeQgsdJson,
+  slotToFamily,
+  getWlDisplay,
+  readCcrConfigSafe,
+  getCcrProviderForSlot,
+  getKeyInvalidBadge,
 };
