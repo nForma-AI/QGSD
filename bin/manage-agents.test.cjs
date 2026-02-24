@@ -211,3 +211,150 @@ test('applyCcrProviderUpdate: unknown subAction -> returns null, no secretsLib c
   assert.strictEqual(result, null);
   assert.strictEqual(calls.length, 0, 'no secretsLib calls should be made for unknown action');
 });
+
+// ---------------------------------------------------------------------------
+// slotToFamily
+// ---------------------------------------------------------------------------
+
+const { slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge, readQgsdJson, writeQgsdJson } = _pure;
+
+test('slotToFamily: claude-3 -> claude', () => {
+  assert.strictEqual(slotToFamily('claude-3'), 'claude');
+});
+
+test('slotToFamily: gemini-1 -> gemini', () => {
+  assert.strictEqual(slotToFamily('gemini-1'), 'gemini');
+});
+
+test('slotToFamily: opencode-1 -> opencode', () => {
+  assert.strictEqual(slotToFamily('opencode-1'), 'opencode');
+});
+
+test('slotToFamily: codex-1 -> codex', () => {
+  assert.strictEqual(slotToFamily('codex-1'), 'codex');
+});
+
+test('slotToFamily: no-suffix -> no-suffix (no numeric suffix, unchanged)', () => {
+  assert.strictEqual(slotToFamily('no-suffix'), 'no-suffix');
+});
+
+// ---------------------------------------------------------------------------
+// getWlDisplay
+// ---------------------------------------------------------------------------
+
+test('getWlDisplay: null scoreboardData -> dash (EDGE CASE 1: absent scoreboard)', () => {
+  assert.strictEqual(getWlDisplay('claude', null), '\u2014');
+});
+
+test('getWlDisplay: family not in models -> dash', () => {
+  assert.strictEqual(getWlDisplay('missing', { models: {} }), '\u2014');
+});
+
+test('getWlDisplay: claude with tp=114, fn=0 -> 114W/0L', () => {
+  assert.strictEqual(getWlDisplay('claude', { models: { claude: { tp: 114, fn: 0 } } }), '114W/0L');
+});
+
+test('getWlDisplay: gemini with tp=45, fn=2 -> 45W/2L', () => {
+  assert.strictEqual(getWlDisplay('gemini', { models: { gemini: { tp: 45, fn: 2 } } }), '45W/2L');
+});
+
+// ---------------------------------------------------------------------------
+// readCcrConfigSafe
+// ---------------------------------------------------------------------------
+
+const os = require('os');
+const fs = require('fs');
+
+test('readCcrConfigSafe: non-existent path -> null (EDGE CASE 2: absent CCR config)', () => {
+  const result = readCcrConfigSafe('/tmp/__qgsd_test_nonexistent_ccr_config_' + Date.now() + '.json');
+  assert.strictEqual(result, null);
+});
+
+test('readCcrConfigSafe: valid JSON file -> parsed object', () => {
+  const tmpPath = require('path').join(os.tmpdir(), 'qgsd_ccr_test_' + Date.now() + '.json');
+  const testData = { providers: [{ name: 'TestProvider', models: ['model-x'] }] };
+  fs.writeFileSync(tmpPath, JSON.stringify(testData), 'utf8');
+  try {
+    const result = readCcrConfigSafe(tmpPath);
+    assert.deepStrictEqual(result, testData);
+  } finally {
+    fs.unlinkSync(tmpPath);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// getCcrProviderForSlot
+// ---------------------------------------------------------------------------
+
+test('getCcrProviderForSlot: null ccrConfig -> null', () => {
+  assert.strictEqual(getCcrProviderForSlot('model-x', null), null);
+});
+
+test('getCcrProviderForSlot: null model -> null', () => {
+  assert.strictEqual(getCcrProviderForSlot(null, { providers: [] }), null);
+});
+
+test('getCcrProviderForSlot: model found in provider -> returns provider name', () => {
+  const ccrConfig = { providers: [{ name: 'ProviderA', models: ['model-a', 'model-b'] }] };
+  assert.strictEqual(getCcrProviderForSlot('model-a', ccrConfig), 'ProviderA');
+});
+
+test('getCcrProviderForSlot: model not in any provider -> null', () => {
+  const ccrConfig = { providers: [{ name: 'ProviderA', models: ['model-a'] }] };
+  assert.strictEqual(getCcrProviderForSlot('model-z', ccrConfig), null);
+});
+
+// ---------------------------------------------------------------------------
+// getKeyInvalidBadge
+// ---------------------------------------------------------------------------
+
+test('getKeyInvalidBadge: agentConfig missing slot -> empty string (EDGE CASE 3: key_status absent)', () => {
+  assert.strictEqual(getKeyInvalidBadge('claude-1', {}, () => true), '');
+});
+
+test('getKeyInvalidBadge: slot present but key_status absent -> empty string', () => {
+  assert.strictEqual(getKeyInvalidBadge('claude-1', { 'claude-1': {} }, () => true), '');
+});
+
+test('getKeyInvalidBadge: key_status present but status is ok -> empty string', () => {
+  assert.strictEqual(
+    getKeyInvalidBadge('claude-1', { 'claude-1': { key_status: { status: 'ok' } } }, () => true),
+    ''
+  );
+});
+
+test('getKeyInvalidBadge: status invalid but hasKeyFn returns false -> empty string', () => {
+  assert.strictEqual(
+    getKeyInvalidBadge('claude-1', { 'claude-1': { key_status: { status: 'invalid' } } }, () => false),
+    ''
+  );
+});
+
+test('getKeyInvalidBadge: status invalid and hasKeyFn returns true -> [key invalid]', () => {
+  assert.strictEqual(
+    getKeyInvalidBadge('claude-1', { 'claude-1': { key_status: { status: 'invalid' } } }, () => true),
+    ' [key invalid]'
+  );
+});
+
+// ---------------------------------------------------------------------------
+// readQgsdJson / writeQgsdJson
+// ---------------------------------------------------------------------------
+
+test('readQgsdJson: non-existent file -> empty object {}', () => {
+  const tmpPath = '/tmp/__qgsd_test_nonexistent_' + Date.now() + '.json';
+  const result = readQgsdJson(tmpPath);
+  assert.deepStrictEqual(result, {});
+});
+
+test('writeQgsdJson and readQgsdJson: roundtrip via tmp dir', () => {
+  const tmpPath = require('path').join(os.tmpdir(), 'qgsd_rw_test_' + Date.now() + '.json');
+  const testData = { orchestrator: { model: 'test-model' }, agent_config: {} };
+  try {
+    writeQgsdJson(testData, tmpPath);
+    const result = readQgsdJson(tmpPath);
+    assert.deepStrictEqual(result, testData);
+  } finally {
+    try { fs.unlinkSync(tmpPath); } catch (_) {}
+  }
+});
