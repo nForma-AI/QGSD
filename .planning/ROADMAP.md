@@ -119,7 +119,7 @@
 
 **Milestone Goal:** Port GSD 1.20.6 improvements into QGSD — context window self-monitoring hook, Nyquist validation layer, discuss-phase UX refinements, and Tier 3 fixes.
 
-- [ ] **Phase v0.9-01: Context Window Monitor** — New PostToolUse hook that injects WARNING/CRITICAL into `additionalContext` at configurable thresholds + install sync
+- [x] **Phase v0.9-01: Context Window Monitor** — New PostToolUse hook that injects WARNING/CRITICAL into `additionalContext` at configurable thresholds + install sync (completed 2026-02-24)
 - [ ] **Phase v0.9-02: Nyquist Validation Layer** — VALIDATION.md template + plan-phase step 5.5 insertion + gsd-tools init field
 - [ ] **Phase v0.9-03: Discuss-Phase UX** — Recommended option highlighting per choice + gray-area loop-back instead of hard stop
 - [ ] **Phase v0.9-04: Tier 3 Fixes** — Skill tool spawn guards, Gemini TOML fix, decimal phase number parsing consistency
@@ -230,7 +230,7 @@ Plans:
 | v0.7-03. Wizard Composition Screen | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.7-04. Orchestrator Scoreboard Slot Wiring | v0.7 | 2/2 | Complete | 2026-02-23 |
 | v0.8-01. fix-tests ddmin Pipeline | v0.8 | 2/2 | Complete | 2026-02-24 |
-| v0.9-01. Context Window Monitor | v0.9 | 0/1 | Not started | - |
+| v0.9-01. Context Window Monitor | 1/1 | Complete   | 2026-02-24 | - |
 | v0.9-02. Nyquist Validation Layer | v0.9 | 0/1 | Not started | - |
 | v0.9-03. Discuss-Phase UX | v0.9 | 0/1 | Not started | - |
 | v0.9-04. Tier 3 Fixes | v0.9 | 0/1 | Not started | - |

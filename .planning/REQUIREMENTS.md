@@ -9,11 +9,11 @@ Requirements for the GSD Sync milestone. Ports GSD 1.20.6 improvements into QGSD
 
 ### Hooks — Context Window Monitor
 
-- [ ] **CTX-01**: Context window monitor hook (`hooks/gsd-context-monitor.js`) created and registered as PostToolUse in `bin/install.js`
-- [ ] **CTX-02**: Hook injects WARNING into `additionalContext` when context usage exceeds configurable threshold (default: 70%)
-- [ ] **CTX-03**: Hook injects CRITICAL into `additionalContext` when context usage exceeds configurable threshold (default: 90%)
-- [ ] **CTX-04**: Thresholds configurable via `qgsd.json` (`context_monitor.warn_pct`, `context_monitor.critical_pct`); two-layer merge applies
-- [ ] **CTX-05**: Hook copied to `hooks/dist/` and global install sync run (`node bin/install.js --claude --global`)
+- [x] **CTX-01**: Context window monitor hook (`hooks/gsd-context-monitor.js`) created and registered as PostToolUse in `bin/install.js`
+- [x] **CTX-02**: Hook injects WARNING into `additionalContext` when context usage exceeds configurable threshold (default: 70%)
+- [x] **CTX-03**: Hook injects CRITICAL into `additionalContext` when context usage exceeds configurable threshold (default: 90%)
+- [x] **CTX-04**: Thresholds configurable via `qgsd.json` (`context_monitor.warn_pct`, `context_monitor.critical_pct`); two-layer merge applies
+- [x] **CTX-05**: Hook copied to `hooks/dist/` and global install sync run (`node bin/install.js --claude --global`)
 
 ### Plan — Nyquist Validation Layer
 
@@ -56,11 +56,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CTX-01 | v0.9-01 | Pending |
-| CTX-02 | v0.9-01 | Pending |
-| CTX-03 | v0.9-01 | Pending |
-| CTX-04 | v0.9-01 | Pending |
-| CTX-05 | v0.9-01 | Pending |
+| CTX-01 | v0.9-01 | Complete |
+| CTX-02 | v0.9-01 | Complete |
+| CTX-03 | v0.9-01 | Complete |
+| CTX-04 | v0.9-01 | Complete |
+| CTX-05 | v0.9-01 | Complete |
 | NYQ-01 | v0.9-02 | Pending |
 | NYQ-02 | v0.9-02 | Pending |
 | NYQ-03 | v0.9-02 | Pending |
