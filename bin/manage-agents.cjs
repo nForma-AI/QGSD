@@ -2259,6 +2259,66 @@ function applyTimeoutUpdate(providersData, providerSlot, newTimeoutMs) {
   return { ...providersData, providers };
 }
 
+/**
+ * Build the policy choices list for the setUpdatePolicy inquirer prompt.
+ * currentPolicy: 'auto' | 'prompt' | 'skip' | null
+ * Returns: array of 3 choice objects for inquirer `list`.
+ * The choice matching currentPolicy has '  ← current' appended to its name (ANSI dim).
+ * Pure function — no side effects.
+ */
+const POLICY_MENU_CHOICES = [
+  { name: 'auto   — check for updates on startup', value: 'auto' },
+  { name: 'prompt — ask before updating',          value: 'prompt' },
+  { name: 'skip   — never check for updates',      value: 'skip' },
+];
+
+function buildPolicyChoices(currentPolicy) {
+  return POLICY_MENU_CHOICES.map((c) => ({
+    ...c,
+    name: c.value === currentPolicy
+      ? c.name + '  \x1b[90m\u2190 current\x1b[0m'
+      : c.name,
+  }));
+}
+
+/**
+ * Build a single NDJSON log entry for the update log.
+ * slotName: string
+ * status: 'OK' | 'UPDATE_AVAILABLE' | 'ERROR' | 'SKIP'
+ * detail: string | null | undefined
+ * Returns: a JSON string + '\n' — ready to pass to fs.appendFileSync.
+ * Pure function — no side effects. ts is set at call time via new Date().toISOString().
+ */
+function buildUpdateLogEntry(slotName, status, detail) {
+  return JSON.stringify({
+    ts: new Date().toISOString(),
+    slot: slotName,
+    status,
+    detail: detail != null ? detail : null,
+  }) + '\n';
+}
+
+/**
+ * Parse update log content and return recent ERROR entries.
+ * logContent: string (full or tail of log file) | null | undefined
+ * maxAgeMs: number (ms lookback window; default 86400000 = 24 hours)
+ * Returns: array of parsed log entry objects with status === 'ERROR' and ts within window.
+ * Skips malformed JSON lines silently.
+ * Pure function — no file I/O, no side effects.
+ */
+const UPDATE_LOG_DEFAULT_MAX_AGE_MS = 86400000; // 24 hours
+
+function parseUpdateLogErrors(logContent, maxAgeMs) {
+  if (!logContent) return [];
+  const cutoff = Date.now() - (maxAgeMs != null ? maxAgeMs : UPDATE_LOG_DEFAULT_MAX_AGE_MS);
+  return logContent
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => { try { return JSON.parse(line); } catch { return null; } })
+    .filter(Boolean)
+    .filter((e) => e.status === 'ERROR' && new Date(e.ts).getTime() > cutoff);
+}
+
 module.exports._pure = {
   deriveKeytarAccount,
   maskKey,
@@ -2283,4 +2343,7 @@ module.exports._pure = {
   // v0.10-05 additions
   buildTimeoutChoices,
   applyTimeoutUpdate,
+  buildPolicyChoices,
+  buildUpdateLogEntry,
+  parseUpdateLogErrors,
 };
