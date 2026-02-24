@@ -64,7 +64,7 @@ Generate 3-4 **phase-specific** gray areas, not generic categories.
 - Ask 4 questions per area before checking
 - "More questions about [area], or move to next?"
 - If more → ask 4 more, check again
-- After all areas → "Ready to create context?"
+- After all areas → "Explore more gray areas" / "I'm ready for context" (loop-back or proceed)
 
 **Do NOT ask about (Claude handles these):**
 - Technical implementation
