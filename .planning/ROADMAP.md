@@ -178,10 +178,10 @@ Plans:
   1. Each option presented in `present_gray_areas` includes a recommended choice with brief reasoning explaining why it is preferred
   2. After all selected gray areas conclude, the user sees an "Explore more gray areas" option rather than being hard-stopped at "I'm ready for context"
   3. Choosing "Explore more gray areas" re-runs `present_gray_areas` with 2-4 newly identified areas that were not already explored — previously explored areas do not reappear
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] v0.9-03-01: Update `discuss-phase.md` — add recommended choice + rationale to each option in `present_gray_areas`; replace hard-stop with loop-back option; implement deduplication of already-explored areas on re-entry
+- [ ] v0.9-03-01-PLAN.md — Apply DSC-01, DSC-02, DSC-03 to `discuss-phase.md` + update command wrapper + install sync
 
 ### Phase v0.9-04: Tier 3 Fixes
 **Goal**: Skill tool spawn guards, Gemini TOML correctness, and decimal phase parsing are all consistent and correct
@@ -358,4 +358,4 @@ Plans:
 | v0.10-04. Live Health Dashboard | v0.10 | 0/? | Not started | - |
 | v0.10-05. Policy UIs | v0.10 | 0/? | Not started | - |
 | v0.10-06. Import/Export | v0.10 | 0/? | Not started | - |
-| v0.11-01. Parallel Quorum Wave-Barrier | 2/3 | In Progress|  | - |
+| v0.11-01. Parallel Quorum Wave-Barrier | v0.11 | 0/3 | Not started | - |
