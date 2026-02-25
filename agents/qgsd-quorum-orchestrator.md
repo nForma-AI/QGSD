@@ -19,7 +19,7 @@ You are the QGSD quorum orchestrator. When invoked, execute the full R3 quorum p
 for the question or bundle passed in `$ARGUMENTS`.
 
 **SEQUENTIAL CALLS ONLY — NO SIBLING TOOL CALLS.**
-Every model call and every Task spawn MUST be issued as a separate, standalone message
+Every model call and every Bash call MUST be issued as a separate, standalone message
 turn — never batched or co-submitted as sibling calls. One call → wait → proceed.
 
 **Exception — parallel worker wave:** When dispatching a quorum worker round, ALL worker
@@ -35,7 +35,8 @@ active slot). This is the only case where sibling tool calls are permitted. All 
 **Default: Mode A.**
 
 **Important:** All quorum model calls go through `call-quorum-slot.cjs` via Bash — NOT via
-MCP tool calls. MCP tools are not available in sub-agent sessions. Use the bash pattern below.
+MCP tool calls. MCP tools are not available in sub-agent sessions. Use the bash pattern in
+the slot worker.
 </role>
 
 ---
@@ -236,119 +237,109 @@ Display:
 Question: [question]
 ```
 
-### Claude's position (Round 1)
+### Claude's position (state before Round 1)
 
-State own answer and reasoning before querying any model:
+State own answer and reasoning before dispatching any worker:
 ```
 Claude (Round 1): [answer + reasoning — 2–4 sentences]
 ```
 Store as `$CLAUDE_POSITION`.
 
-### Round 1 — Parallel worker wave
+### Round loop — up to 10 rounds with inline synthesis
 
-Dispatch all active slots as parallel Task spawns in a single message turn. Each Task spawns a `qgsd-quorum-worker` agent:
-
-**For each active slot (all in one message turn — sibling Tasks):**
 ```
-Task(subagent_type=qgsd-quorum-worker, prompt="""
+$MAX_ROUNDS = 10
+$CURRENT_ROUND = 1
+$CROSS_POLL_BUNDLE = ""   (empty on Round 1, populated after each non-consensus round)
+$CONSENSUS_REACHED = false
+$ALL_ROUND_RESULTS = []   (accumulates results across all rounds for scoreboard)
+```
+
+**LOOP** while `$CURRENT_ROUND <= $MAX_ROUNDS` and not `$CONSENSUS_REACHED`:
+
+#### Round banner
+
+Display before dispatching each round:
+```
+─────────────────────────────────────────────
+ QGSD ► QUORUM Round $CURRENT_ROUND / up to $MAX_ROUNDS
+─────────────────────────────────────────────
+```
+
+#### Dispatch all active slots as SIBLING Task calls (one message turn)
+
+All workers for this round are dispatched as parallel sibling Task calls in one message turn:
+
+```
+Task(
+  subagent_type="qgsd-quorum-slot-worker",
+  description="<slotName> quorum R<$CURRENT_ROUND>",
+  prompt="""
 slot: <slotName>
-round: 1
+round: $CURRENT_ROUND
 timeout_ms: <$SLOT_TIMEOUTS[slotName]>
 repo_dir: <$REPO_DIR>
 mode: A
 question: <question text>
 [artifact_path: <$ARTIFACT_PATH>]
-""")
+[prior_positions: |
+  <$CROSS_POLL_BUNDLE>]   # Round 2+ only, omit on Round 1
+"""
+)
 ```
 
-Collect all worker result blocks (structured output: slot/round/verdict/reasoning/raw/unavail_message).
-Store as `$ROUND1_RESULTS`.
+One Task per active slot — all sibling calls in same message turn.
 
-### Barrier 1 — Synthesizer
+Collect all worker result blocks → store as `$ROUND_RESULTS`. Append to `$ALL_ROUND_RESULTS`.
 
-Spawn the synthesizer once with all Round 1 results:
-```
-Task(subagent_type=qgsd-quorum-synthesizer, prompt="""
-round: 1
-mode: A
-question: <question text>
-workers:
-  [paste full $ROUND1_RESULTS blocks here, one per slot]
-[artifact_path: <$ARTIFACT_PATH>]
-""")
-```
+#### Process UNAVAIL results (sequential Bash calls)
 
-Store synthesizer output as `$SYNTH1`.
-
-**Process UNAVAIL hints (sequential Bash calls):**
-For each line matching `UNAVAIL_HINT: <slot> | <text>` in `$SYNTH1`:
+For each result where `verdict: UNAVAIL`:
 ```bash
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" set-availability \
   --slot <slot> \
-  --message "<hint text>" \
+  --message "<unavail_message text>" \
   --scoreboard .planning/quorum-scoreboard.json
 ```
-Log: `[<slot>] UNAVAIL recorded — <remaining_display>`
+Log: `[<slot>] UNAVAIL recorded`
 
-**Check SYNTHESIS_RESULT:**
-- If `$SYNTH1` contains `SYNTHESIS_RESULT: CONSENSUS REACHED` → skip Round 2, proceed to **Consensus output**.
-- If `$SYNTH1` contains `SYNTHESIS_RESULT: DELIBERATION NEEDED` → extract everything after the `CROSS_POLLINATION_BUNDLE:` marker (starting at the `Prior positions:` line, not including the marker itself) as `$DELIBERATION_BUNDLE`, proceed to Round 2.
+#### Display results table
 
-Display Round 1 positions table (from `$ROUND1_RESULTS`):
 ```
 ┌──────────────┬──────────────────────────────────────────────────────────┐
-│ Model        │ Round 1 Position                                         │
+│ Model        │ Round $CURRENT_ROUND Position                            │
 ├──────────────┼──────────────────────────────────────────────────────────┤
-│ Claude       │ [Claude's own position]                                  │
-│ <slot>       │ [verdict/reasoning summary or UNAVAIL]                   │
-[...]
+│ Claude       │ [Claude's own position — $CLAUDE_POSITION]              │
+│ <slot>       │ [verdict/reasoning or UNAVAIL]                          │
 └──────────────┴──────────────────────────────────────────────────────────┘
 ```
 
-### Round 2 — Parallel deliberation wave
+#### INLINE SYNTHESIS (no Task spawn — orchestrator synthesizes directly)
 
-Dispatch all available slots (non-UNAVAIL from Round 1) as parallel Task spawns in a single message turn, injecting the deliberation bundle:
+Filter available results (exclude `verdict: UNAVAIL`).
 
-**For each available slot (all in one message turn — sibling Tasks):**
-```
-Task(subagent_type=qgsd-quorum-worker, prompt="""
-slot: <slotName>
-round: 2
-timeout_ms: <$SLOT_TIMEOUTS[slotName]>
-repo_dir: <$REPO_DIR>
-mode: A
-question: <question text>
-[artifact_path: <$ARTIFACT_PATH>]
-prior_positions: |
-  <$DELIBERATION_BUNDLE — the full Prior positions: block from $SYNTH1>
-""")
-```
+**Mode A consensus check:** Do all available positions point to the same conclusion?
+(Equivalence is your judgment — focus on whether positions share the same recommendation
+or key conclusion, even if worded differently.)
 
-Collect all Round 2 worker results. Store as `$ROUND2_RESULTS`.
+- If YES → set `$CONSENSUS_REACHED = true`. Break loop.
+- If NO → build `$CROSS_POLL_BUNDLE`:
+  ```
+  Prior positions:
+  • Claude: <$CLAUDE_POSITION>
+  • <slot1>: <reasoning from result>
+  • <slot2>: <reasoning from result>
+  [• <slot>: UNAVAIL]
+  ```
+  Increment `$CURRENT_ROUND += 1`. Continue loop.
 
-### Barrier 2 — Final synthesizer
+**End LOOP**
 
-Spawn synthesizer once with all Round 2 results:
-```
-Task(subagent_type=qgsd-quorum-synthesizer, prompt="""
-round: 2
-mode: A
-question: <question text>
-workers:
-  [paste full $ROUND2_RESULTS blocks here]
-[artifact_path: <$ARTIFACT_PATH>]
-""")
-```
+---
 
-Store as `$SYNTH2`.
+### After loop — Consensus output (Mode A)
 
-Process UNAVAIL hints from `$SYNTH2` (same sequential Bash pattern as Barrier 1).
-
-**Check SYNTHESIS_RESULT:**
-- `CONSENSUS REACHED` → proceed to **Consensus output**.
-- `DELIBERATION NEEDED` after Round 2 → proceed to **Escalate**.
-
-### Consensus output
+If `$CONSENSUS_REACHED`:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -356,43 +347,27 @@ Process UNAVAIL hints from `$SYNTH2` (same sequential Bash pattern as Barrier 1)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
-Rounds to consensus: [N]
+Rounds to consensus: [$CURRENT_ROUND]
 
 CONSENSUS ANSWER:
 [Full consensus answer — detailed and actionable]
 
 Supporting positions:
 • Claude:    [brief]
-• Codex:     [brief or UNAVAIL]
-• Gemini:    [brief or UNAVAIL]
-• OpenCode:  [brief or UNAVAIL]
-• Copilot:   [brief or UNAVAIL]
-[• <display-name>: [brief or UNAVAIL]]
+• <slot>:    [brief or UNAVAIL]
+[... one line per slot ...]
 ```
 
-**Scoreboard update (single merge-wave transaction):**
+**Scoreboard update (single merge-wave transaction per round):**
 
 Write per-slot temp vote files to `.planning/scoreboard-tmp/`:
 ```bash
 mkdir -p .planning/scoreboard-tmp
 ```
 
-**`<voteCode>` mapping (scored per individual model against consensus verdict):**
+Mode A: `result: ''` — no binary ground truth at vote time; score is omitted.
 
-Mode A (pure question): `result: ''` — no binary ground truth at vote time; score is omitted.
-
-Mode B (execution + trace review) — peer-scored: individual verdict vs. final consensus:
-
-| Individual verdict | Consensus verdict | `<voteCode>` |
-|--------------------|-------------------|--------------|
-| `APPROVE`          | `APPROVE`         | `TP`         |
-| `REJECT`           | `REJECT`          | `TN`         |
-| `APPROVE`          | `REJECT`          | `FP`         |
-| `REJECT`           | `APPROVE`         | `FN`         |
-| `FLAG`             | any               | `TP+`        |
-| `UNAVAIL`          | —                 | `UNAVAIL`    |
-
-For each slot result in `$ROUND1_RESULTS` (and `$ROUND2_RESULTS` if Round 2 ran):
+For each slot result in `$ALL_ROUND_RESULTS`:
 ```bash
 node -e "
 const fs = require('fs'), path = require('path');
@@ -401,7 +376,7 @@ fs.writeFileSync(
   JSON.stringify({
     slot: '<slotName>',
     modelId: '<fullModelId from providers.json>',
-    result: '<voteCode — from mapping table above>',
+    result: '',
     verdict: '<VERDICT>',
     taskDescription: '<question first 100 chars>'
   })
@@ -409,7 +384,7 @@ fs.writeFileSync(
 "
 ```
 
-Then apply all votes in one transaction:
+Then apply all votes in one transaction per round:
 ```bash
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" merge-wave \
   --dir .planning/scoreboard-tmp \
@@ -418,25 +393,29 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" merge-wave \
   --scoreboard .planning/quorum-scoreboard.json
 ```
 
-Run one merge-wave call per round (Round 1 then Round 2 if applicable). Clean up temp dir:
+Run one merge-wave call per round (in order). Clean up temp dir:
 ```bash
 rm -rf .planning/scoreboard-tmp
 ```
 
 **Note:** For CLI slots (codex-1, gemini-1, opencode-1, copilot-1) that use --model not --slot, write vote files with `model: "<familyName>"` instead of `slot` + `modelId`.
 
-### Escalate — no consensus after 4 rounds
+---
+
+### After loop — Escalate (Mode A) — no consensus after 10 rounds
+
+If loop exhausted without `$CONSENSUS_REACHED`:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 4 ROUNDS
+ QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 10 ROUNDS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
 
 Final positions:
 • Claude:    [position + key reasoning]
-• Codex:     [position + key reasoning or UNAVAIL]
+• <slot>:    [position + key reasoning or UNAVAIL]
 [... one line per model ...]
 
 Core disagreement: [1–2 sentences]
@@ -444,7 +423,7 @@ Core disagreement: [1–2 sentences]
 Claude's recommendation: [position with rationale]
 ```
 
-Update scoreboard using same pattern as Consensus output above.
+Update scoreboard using same merge-wave pattern as Consensus output above.
 
 ---
 
@@ -472,17 +451,41 @@ Output:
 [full output — not summarized]
 ```
 
-Claude gives its own verdict before dispatching workers.
-
-### Round 1 — Parallel worker wave (Mode B)
-
-Dispatch all active slots as parallel Task spawns in a single message turn, injecting the execution traces:
-
-**For each active slot (all in one message turn — sibling Tasks):**
+Claude gives its own verdict before dispatching workers:
 ```
-Task(subagent_type=qgsd-quorum-worker, prompt="""
+Claude (Round 1): verdict=[APPROVE|REJECT|FLAG] — [reasoning 2–4 sentences]
+```
+Store as `$CLAUDE_POSITION`.
+
+### Round loop — up to 10 rounds with inline synthesis (Mode B)
+
+```
+$MAX_ROUNDS = 10
+$CURRENT_ROUND = 1
+$CROSS_POLL_BUNDLE = ""
+$CONSENSUS_REACHED = false
+$ALL_ROUND_RESULTS = []
+```
+
+**LOOP** while `$CURRENT_ROUND <= $MAX_ROUNDS` and not `$CONSENSUS_REACHED`:
+
+#### Round banner
+
+```
+─────────────────────────────────────────────
+ QGSD ► QUORUM Round $CURRENT_ROUND / up to $MAX_ROUNDS
+─────────────────────────────────────────────
+```
+
+#### Dispatch all active slots as SIBLING Task calls (one message turn)
+
+```
+Task(
+  subagent_type="qgsd-quorum-slot-worker",
+  description="<slotName> quorum R<$CURRENT_ROUND>",
+  prompt="""
 slot: <slotName>
-round: 1
+round: $CURRENT_ROUND
 timeout_ms: <$SLOT_TIMEOUTS[slotName]>
 repo_dir: <$REPO_DIR>
 mode: B
@@ -490,90 +493,69 @@ question: <original question text>
 [artifact_path: <$ARTIFACT_PATH>]
 traces: |
   <$TRACES — full execution trace output, not summarized>
-""")
+[prior_positions: |
+  <$CROSS_POLL_BUNDLE>]   # Round 2+ only
+"""
+)
 ```
 
-Collect all worker result blocks (structured output: slot/round/verdict/reasoning/raw/unavail_message).
-Store as `$ROUND1_RESULTS`.
+One Task per active slot — all sibling calls in same message turn.
 
-### Barrier 1 — Synthesizer (Mode B)
+Collect all worker result blocks → store as `$ROUND_RESULTS`. Append to `$ALL_ROUND_RESULTS`.
 
-Spawn the synthesizer once with all Round 1 results:
-```
-Task(subagent_type=qgsd-quorum-synthesizer, prompt="""
-round: 1
-mode: B
-question: <original question text>
-workers:
-  [paste full $ROUND1_RESULTS blocks here, one per slot]
-[artifact_path: <$ARTIFACT_PATH>]
-""")
-```
+#### Process UNAVAIL results (sequential Bash calls)
 
-Store synthesizer output as `$SYNTH1`.
-
-**Process UNAVAIL hints (sequential Bash calls):**
-For each line matching `UNAVAIL_HINT: <slot> | <text>` in `$SYNTH1`:
+For each result where `verdict: UNAVAIL`:
 ```bash
 node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" set-availability \
   --slot <slot> \
-  --message "<hint text>" \
+  --message "<unavail_message text>" \
   --scoreboard .planning/quorum-scoreboard.json
 ```
-Log: `[<slot>] UNAVAIL recorded — <remaining_display>`
 
-**Check SYNTHESIS_RESULT:**
-- If `$SYNTH1` contains `SYNTHESIS_RESULT: CONSENSUS REACHED` → proceed to **Consensus output (Mode B)**.
-- If `$SYNTH1` contains `SYNTHESIS_RESULT: DELIBERATION NEEDED` → extract everything after the `CROSS_POLLINATION_BUNDLE:` marker (starting at the `Prior positions:` line, not including the marker itself) as `$DELIBERATION_BUNDLE`, proceed to Round 2.
+#### Display results table
 
-### Round 2 — Parallel deliberation wave (Mode B)
-
-Dispatch all available slots (non-UNAVAIL from Round 1) as parallel Task spawns in a single message turn, injecting the deliberation bundle and traces:
-
-**For each available slot (all in one message turn — sibling Tasks):**
 ```
-Task(subagent_type=qgsd-quorum-worker, prompt="""
-slot: <slotName>
-round: 2
-timeout_ms: <$SLOT_TIMEOUTS[slotName]>
-repo_dir: <$REPO_DIR>
-mode: B
-question: <original question text>
-[artifact_path: <$ARTIFACT_PATH>]
-traces: |
-  <$TRACES — full execution trace output, not summarized>
-prior_positions: |
-  <$DELIBERATION_BUNDLE — the full Prior positions: block from $SYNTH1>
-""")
+┌──────────────┬──────────────┬──────────────────────────────────────────┐
+│ Model        │ Verdict      │ Reasoning                                │
+├──────────────┼──────────────┼──────────────────────────────────────────┤
+│ Claude       │ [verdict]    │ [summary — $CLAUDE_POSITION]            │
+│ <slot>       │ [verdict]    │ [reasoning or UNAVAIL]                  │
+└──────────────┴──────────────┴──────────────────────────────────────────┘
 ```
 
-Collect all Round 2 worker results. Store as `$ROUND2_RESULTS`.
+#### INLINE SYNTHESIS (no Task spawn — orchestrator synthesizes directly)
 
-### Barrier 2 — Final synthesizer (Mode B)
+Filter available results (exclude `verdict: UNAVAIL`).
 
-Spawn synthesizer once with all Round 2 results:
-```
-Task(subagent_type=qgsd-quorum-synthesizer, prompt="""
-round: 2
-mode: B
-question: <original question text>
-workers:
-  [paste full $ROUND2_RESULTS blocks here]
-[artifact_path: <$ARTIFACT_PATH>]
-""")
-```
+**Mode B consensus rules:**
+- All available APPROVE → consensus APPROVE
+- Any available REJECT → consensus REJECT (immediate)
+- All available FLAG (no APPROVE, no REJECT) → consensus FLAG
+- Mix of APPROVE and FLAG (no REJECT) → no consensus → DELIBERATION NEEDED
 
-Store as `$SYNTH2`.
+If CONSENSUS:
+- Set `$CONSENSUS_REACHED = true`. Break loop.
 
-Process UNAVAIL hints from `$SYNTH2` (same sequential Bash pattern as Barrier 1).
+If NO CONSENSUS:
+- Build `$CROSS_POLL_BUNDLE`:
+  ```
+  Prior positions:
+  • Claude: verdict=<$CLAUDE_VERDICT> — <$CLAUDE_POSITION>
+  • <slot1>: verdict=<VERDICT> — <reasoning>
+  [• <slot>: UNAVAIL]
+  ```
+- Increment `$CURRENT_ROUND += 1`. Continue loop.
 
-**Check SYNTHESIS_RESULT:**
-- `CONSENSUS REACHED` → proceed to **Consensus output (Mode B)**.
-- `DELIBERATION NEEDED` after Round 2 → proceed to **Escalate (Mode B)**.
+**End LOOP**
 
-### Consensus output (Mode B)
+---
 
-Parse `$SYNTH1` or `$SYNTH2` (whichever reached consensus) for verdicts. Display:
+### After loop — Consensus output (Mode B)
+
+If `$CONSENSUS_REACHED`:
+
+Parse final round results for verdicts. Display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -584,25 +566,34 @@ Parse `$SYNTH1` or `$SYNTH2` (whichever reached consensus) for verdicts. Display
 │ Model        │ Verdict      │ Reasoning                                │
 ├──────────────┼──────────────┼──────────────────────────────────────────┤
 │ Claude       │ [verdict]    │ [summary]                                │
-│ Gemini       │ [verdict]    │ [summary or UNAVAIL]                     │
-│ OpenCode     │ [verdict]    │ [summary or UNAVAIL]                     │
-│ Copilot      │ [verdict]    │ [summary or UNAVAIL]                     │
-│ Codex        │ [verdict]    │ [summary or UNAVAIL]                     │
-│ <HTTP slot>  │ [verdict]    │ [summary or UNAVAIL]                     │
+│ <slot>       │ [verdict]    │ [summary or UNAVAIL]                     │
 ├──────────────┼──────────────┼──────────────────────────────────────────┤
 │ CONSENSUS    │ [verdict]    │ [N APPROVE, N REJECT, N FLAG, N UNAVAIL] │
 └──────────────┴──────────────┴──────────────────────────────────────────┘
 ```
 
-**Scoreboard update (single merge-wave transaction):**
+**Scoreboard update (single merge-wave transaction per round):**
 
-Write per-slot temp vote files to `.planning/scoreboard-tmp/` and apply via merge-wave — same pattern as Mode A Consensus output scoreboard update above.
+Mode B (execution + trace review) — peer-scored: individual verdict vs. final consensus:
 
-### Escalate (Mode B) — no consensus after Round 2
+| Individual verdict | Consensus verdict | `<voteCode>` |
+|--------------------|-------------------|--------------|
+| `APPROVE`          | `APPROVE`         | `TP`         |
+| `REJECT`           | `REJECT`          | `TN`         |
+| `APPROVE`          | `REJECT`          | `FP`         |
+| `REJECT`           | `APPROVE`         | `FN`         |
+| `FLAG`             | any               | `TP+`        |
+| `UNAVAIL`          | —                 | `UNAVAIL`    |
+
+Write per-slot temp vote files to `.planning/scoreboard-tmp/` and apply via merge-wave — same pattern as Mode A Consensus output scoreboard update above (per round from `$ALL_ROUND_RESULTS`).
+
+---
+
+### After loop — Escalate (Mode B) — no consensus after 10 rounds
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER ROUND 2
+ QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 10 ROUNDS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [original question]
