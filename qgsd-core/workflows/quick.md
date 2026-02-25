@@ -248,26 +248,15 @@ Offer: 1) Force proceed, 2) Abort
 
 This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/qgsd:quick`.
 
-Form your own position on the plan first: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale). Base your position on the task description and the planner's reported summary — do NOT read the plan file yourself (pass the path to the quorum orchestrator instead).
+Form your own position on the plan first: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale).
 
-Spawn the quorum orchestrator sub-agent:
+Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+- Mode B — artifact review
+- artifact_path: `${QUICK_DIR}/${next_num}-PLAN.md`
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- Synthesize results inline, deliberate up to 10 rounds per R3.3
 
-```
-Task(
-  subagent_type="qgsd-quorum-orchestrator",
-  description="Quorum review: quick plan ${next_num}",
-  prompt="claude_vote: [Your APPROVE/BLOCK vote with 1-2 sentence rationale based on the
-task description: ${DESCRIPTION}. Vote based on whether the plan structure addresses the
-task, not on plan file content — you have not read it.]
-
-artifact_path: ${QUICK_DIR}/${next_num}-PLAN.md
-
-Instructions for quorum orchestrator: Read the plan file at artifact_path before polling
-quorum workers. Pass the plan content to workers as part of your quorum prompt."
-)
-```
-
-Fail-open: if the Task itself errors (agent unavailable), note it and proceed — same as R6 policy for individual models.
+Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
 
 **Route on quorum_result:**
 - **APPROVED:** Include `<!-- GSD_DECISION -->` in your response summarizing quorum results, then proceed to Step 6.
@@ -400,23 +389,14 @@ Store as `$VERIFICATION_STATUS`.
 
 2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely requires human eyes) with 1-2 sentence rationale per item.
 
-3. Spawn the quorum orchestrator sub-agent:
+3. Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+   - Mode A — pure question
+   - Question: "Can each human_needed item from quick task ${next_num} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
+   - Include the full `human_verification` section as context
+   - Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+   - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
-   ```
-   Task(
-     subagent_type="qgsd-quorum-orchestrator",
-     description="Quorum resolve human_needed: quick task ${next_num}",
-     prompt="claude_vote: [Your APPROVE/BLOCK vote — APPROVE means can be resolved programmatically, BLOCK means genuinely requires human]
-artifact: Quick task ${next_num} verification produced human_needed status.
-The following items require human judgment per the verifier:
-
-[Paste full human_verification section from VERIFICATION.md]
-
-Can each item be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve) or BLOCK (needs human) with tool evidence or reason."
-   )
-   ```
-
-   Fail-open: if the Task itself errors, note it and treat as BLOCK (escalate to user).
+   Fail-open: if all slots error, treat as BLOCK (escalate to user).
 
 4. Route on quorum_result:
    - **APPROVED** → Consensus reached. Store `$VERIFICATION_STATUS = "Verified"`. Proceed to status update.

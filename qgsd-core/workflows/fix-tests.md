@@ -48,7 +48,7 @@ node /Users/jonathanborduas/.claude/qgsd/bin/gsd-tools.cjs maintain-tests discov
 
 Read `.planning/ddmin-discover.json`. Extract total test count.
 
-Print: `QGSD fix-tests: Discovered {N} tests`
+Print: `QGSD fix-tests: Discovered {N} test files`
 
 ### Step 1.3: Full-Suite Pinned Run (Baseline Capture)
 
@@ -77,7 +77,7 @@ Read `.planning/ddmin-baseline.json`. Extract:
 - `failing_tests`: results where `status == "failed"` and `flaky != true`
 - `flaky_initial`: results where `status == "flaky"`
 
-Print: `QGSD fix-tests: Baseline complete — {pass_count} passed, {fail_count} failed, {flaky_count} initially-flaky`
+Print: `QGSD fix-tests: Baseline complete — {pass_count + fail_count + flaky_count} individual tests ({pass_count} passed, {fail_count} failed, {flaky_count} initially-flaky)`
 
 ### Step 1.4: Compute Failure Signatures
 
@@ -329,27 +329,13 @@ Print: `QGSD fix-tests: Triage report generated → .planning/ddmin-triage-repor
 
 **This is a hard gate. Do NOT proceed to Phase 3 until quorum returns APPROVED.**
 
-Spawn the quorum orchestrator as a Task to review the triage report. Use Mode A (pure question — no code execution):
+Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`) to review the triage report. Mode B — artifact review:
+- artifact_path: `.planning/ddmin-triage-report.md`
+- Question: "Does the triage report correctly categorize test failures and is the fix ordering sound? Evaluate: (1) independent failures look like genuine standalone bugs, (2) pollution chains ordered correctly, (3) cycle groups properly identified, (4) fix order safe to execute. Vote APPROVE to begin fixing, or BLOCK with specific concerns."
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- Synthesize results inline, deliberate up to 10 rounds per R3.3
 
-```
-Task(
-  subagent_type="qgsd-quorum-orchestrator",
-  prompt="claude_vote: [Your APPROVE/BLOCK verdict based on whether the triage report correctly categorizes test failures and the fix ordering is sound.]
-
-artifact_path: .planning/ddmin-triage-report.md
-
-Review the triage report at artifact_path. Evaluate:
-1. Do the independent failures look like genuine standalone bugs (not pollution or flakiness)?
-2. Are the pollution chains ordered correctly (polluter comes before polluted in fix order)?
-3. Are cycle groups properly identified and marked for atomic fix?
-4. Is the proposed fix order safe to execute sequentially?
-
-Vote APPROVE if the triage is correct and fixing can begin.
-Vote BLOCK with specific concerns if you see misclassifications, ordering errors, or missing cycles."
-)
-```
-
-Wait for the Task to return. Parse the quorum verdict from the orchestrator response.
+Parse the quorum verdict from inline synthesis.
 
 - If `APPROVED`: continue to Step 2.3.
 - If `BLOCKED`: print the block reason, update state `triage_quorum_verdict = "BLOCKED"`, save state, and HALT. Print instructions to the user: `QGSD fix-tests: Triage BLOCKED by quorum. Review .planning/ddmin-triage-report.md and re-run after addressing concerns.`
@@ -555,26 +541,11 @@ Wait for the Task to return. Extract `fix_description`, `files_to_modify`, `root
 
 **Quorum approval gate:**
 
-Spawn quorum orchestrator as a Task (Mode A):
-
-```
-Task(
-  subagent_type="qgsd-quorum-orchestrator",
-  prompt="claude_vote: [Your APPROVE/BLOCK verdict on whether this fix correctly addresses the root cause without introducing regressions.]
-
-artifact_path: .planning/fix-evidence-{hash}.md
-
-Review the fix evidence at artifact_path. Evaluate:
-1. Does the root cause explanation match the failure output?
-2. Is the proposed fix minimal and correct (addresses the root cause without changing unrelated behavior)?
-3. Will this fix prevent the pollution chain described in the evidence?
-
-Vote APPROVE to proceed with implementing and committing this fix.
-Vote BLOCK with specific concerns if the fix is incorrect, incomplete, or likely to introduce regressions."
-)
-```
-
-Wait for verdict.
+Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`). Mode B — artifact review:
+- artifact_path: `.planning/fix-evidence-{hash}.md`
+- Question: "Does this fix correctly address the root cause without introducing regressions? Evaluate: (1) root cause explanation matches failure output, (2) fix is minimal and correct, (3) fix prevents the pollution chain. Vote APPROVE to proceed, or BLOCK with specific concerns."
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- Synthesize results inline, deliberate up to 10 rounds per R3.3
 
 - If `APPROVED`: proceed to Step 3.4.
 - If `BLOCKED`: print block reason. Save state (do not increment `current_fix_index`). Print: `QGSD fix-tests: Fix BLOCKED by quorum for {test_file}. Halting. Review .planning/fix-evidence-{hash}.md and re-run.` Then HALT.
@@ -843,28 +814,13 @@ Print: `QGSD fix-tests: Final report generated → .planning/ddmin-final-report.
 
 ### Step 4.3: Quorum Final Review
 
-Spawn quorum orchestrator as a Task (Mode A):
+Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`). Mode B — artifact review:
+- artifact_path: `.planning/ddmin-final-report.md`
+- Question: "Is the fix pipeline complete and the final report accurate? Evaluate: (1) applied fixes were sound, (2) remaining failures documented with sufficient diagnosis, (3) quarantined cycle groups explained, (4) state trustworthy. Vote APPROVE if pipeline completed correctly, NOTE (non-blocking) if observations only, BLOCK only for critical errors or unexplained regressions."
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- Synthesize results inline
 
-```
-Task(
-  subagent_type="qgsd-quorum-orchestrator",
-  prompt="claude_vote: [Your APPROVE/NOTE verdict on the final state of the test suite after the fix pipeline.]
-
-artifact_path: .planning/ddmin-final-report.md
-
-Review the final report at artifact_path. Evaluate:
-1. Were the applied fixes sound (based on fix descriptions in the log)?
-2. Are the remaining failures documented with sufficient diagnosis?
-3. Are the quarantined cycle groups appropriately explained?
-4. Is the pipeline complete and the state trustworthy?
-
-Vote APPROVE if the pipeline completed correctly and the report is accurate.
-Vote NOTE (non-blocking) if you have observations but the pipeline should be considered complete.
-Vote BLOCK only if you detect a critical error in the fix log or unexplained regressions."
-)
-```
-
-Wait for verdict. This quorum call is advisory — a NOTE does not halt the workflow. Only BLOCK halts.
+This quorum call is advisory — a NOTE does not halt the workflow. Only BLOCK halts.
 
 - If `APPROVED` or `NOTE`: update state `final_quorum_verdict = "APPROVED"`, `pipeline_phase = "complete"`. Save state.
 - If `BLOCKED`: update state `final_quorum_verdict = "BLOCKED"`, save state. Print block concerns. The workflow still prints the terminal summary, but marks status as BLOCKED.
@@ -936,4 +892,4 @@ This workflow calls the quorum orchestrator at three explicit gates:
 2. Phase 3.3 — Per-fix approval (APPROVE/BLOCK, once per test in fix_order)
 3. Phase 4.3 — Final review (APPROVE/NOTE/BLOCK, advisory)
 
-All quorum calls are via Task(subagent_type="qgsd-quorum-orchestrator") — NEVER direct MCP tool calls. fix-tests MUST NOT be in `quorum_commands` in qgsd.json (same reason as the original workflow). The quorum gates here are inline investigation calls, not planning quorum.
+All quorum calls are via inline dispatch using `qgsd-quorum-slot-worker` Tasks (one per active slot per round) — NEVER the deprecated `qgsd-quorum-orchestrator` or direct MCP tool calls. Follow the `<dispatch_pattern>` in `commands/qgsd/quorum.md`. fix-tests MUST NOT be in `quorum_commands` in qgsd.json. The quorum gates here are inline investigation calls, not planning quorum.
