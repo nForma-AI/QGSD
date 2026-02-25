@@ -514,12 +514,14 @@ Plans:
   4. `bin/run-alloy.cjs`: error message uses the actual assertion name from `quorum-votes.als` (not the stale "NoSpuriousApproval")
   5. Either: `bin/export-prism-constants.cjs` generates aggregate `tp_rate`/`unavail` variables matching `quorum.pm`, OR `VERIFICATION_TOOLS.md` documents the manual aggregation step with a concrete example
   6. `bin/generate-petri-net.cjs`: deadlock condition uses a runtime-visible threshold (not hardcoded `MIN_QUORUM_SIZE=3` vs `SLOTS=5`); `npm test` 312/312 pass
-**Plans**: 3 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] v0.12-09-01-PLAN.md — GAP-5 workers fix + TLA-04 conditional-skip guard + ALY-02 stale name fix (GAP-5, TLA-04, ALY-02)
-- [ ] v0.12-09-02-PLAN.md — PRM-02 rates.const alignment or VERIFICATION_TOOLS.md documentation (PRM-02)
-- [ ] v0.12-09-03-PLAN.md — PET-03 deadlock condition parameterization + GREEN full test suite (PET-03)
+- [ ] v0.12-09-01-PLAN.md — GAP-5: change MCconvergence workers '1' (liveness-safe) (GAP-5)
+- [ ] v0.12-09-02-PLAN.md — TLA-04: conditional-skip guard for tla2tools.jar JAR-not-found test (TLA-04)
+- [ ] v0.12-09-03-PLAN.md — ALY-02: fix stale "NoSpuriousApproval" assertion name + alloy JAR skip guard (ALY-02)
+- [ ] v0.12-09-04-PLAN.md — PRM-02: document manual aggregation step in VERIFICATION_TOOLS.md (PRM-02)
+- [ ] v0.12-09-05-PLAN.md — PET-03: add --min-quorum CLI flag for runtime-parameterizable deadlock threshold (PET-03)
 
 ### Phase v0.12-10: Conformance Score Redesign
 **Goal**: The conformance score in validate-traces.cjs accurately reflects protocol violations rather than structural replay artifacts; VALID_PHASES includes "DECIDING" so the schema validator catches actual phase violations; the multi-step replay groups events into quorum sessions before evaluating state transitions
