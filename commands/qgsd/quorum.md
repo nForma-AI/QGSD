@@ -66,8 +66,7 @@ If $ARGUMENTS is empty: use the most recent open question or decision from the c
 
 ---
 
-> **SEQUENTIAL CALLS ONLY — NO SIBLING TOOL CALLS**
-> Every MCP tool call and every Task spawn in this command MUST be issued as a separate, standalone message turn — never batched or co-submitted as sibling calls. This applies to identity checks, health checks, inference calls, and Task subagent dispatches. A single failure in a sibling batch propagates "Sibling tool call errored" to all co-submitted calls, corrupting the entire quorum. When in doubt: one call, then wait for the response, then proceed.
+> **Worker Task dispatch is PARALLEL per round.** Dispatch all slot workers for a given round as sibling Task calls in one message turn. Between rounds (Bash scoreboard calls, set-availability) remain sequential.
 
 ---
 
@@ -268,7 +267,7 @@ If all available models agree → skip to **Consensus output**.
 
 ### Deliberation rounds (R3.3)
 
-Run up to 3 deliberation rounds (max 4 total rounds including Round 1).
+Run up to 9 deliberation rounds (max 10 total rounds including Round 1).
 
 For each round, share **all prior positions** with every model and ask each to reconsider or defend.
 
@@ -293,7 +292,7 @@ Each model is called **sequentially** (not as sibling calls).
 
 Stop deliberation **immediately** upon CONSENSUS (all available models agree).
 
-After 4 total rounds with no consensus → **Escalate**.
+After 10 total rounds with no consensus → **Escalate**.
 
 ### Consensus output
 
@@ -354,7 +353,7 @@ Run one command per model per round. Each call is atomic and idempotent — if r
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 4 ROUNDS
+ QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 10 ROUNDS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
@@ -446,9 +445,9 @@ QUESTION: [original question]
 $TRACES
 ```
 
-### Dispatch quorum workers via Task (sequential — one at a time)
+### Dispatch quorum workers via Task (parallel per round)
 
-Task subagents must be dispatched **sequentially**, one per message turn. Do NOT co-submit multiple Task calls in the same message, even though Task subagents are isolated. Sibling Task calls still produce "Sibling tool call errored" propagation in Claude Code when any one fails.
+Task subagents for each round MAY be dispatched as **parallel sibling calls** in one message turn — one Task per slot. The description= field on each Task creates the "⏺ Running N agents" parallel UI. Use description="<slotName> quorum R<roundN>".
 
 Worker prompt template:
 ```
