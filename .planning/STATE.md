@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.10-08 PLCY-03 auto-update bug fix — Wave 0 regression stubs complete (Plan 01 done); Plan 02 (implementation + export runAutoUpdateCheck via _pure + GREEN) remaining
+**Current focus:** v0.10-08 PLCY-03 auto-update bug fix — COMPLETE. Both plans done: stubs RED (Plan 01) + implementation + GREEN (Plan 02). 125 pass, 0 fail. PLCY-03 satisfied at code level.
 
 ## Current Position
 
 Phase: v0.10-08-plcy03-auto-update-bug-fix
-Plan: 1 of 2 complete (Plan 02 remaining)
-Status: v0.10-08 Plan 01 COMPLETE — 3 Wave 0 regression stubs added: stub 1 PASS (bug proof), stub 2 PASS (fix proof), stub 3 FAIL/RED (runAutoUpdateCheck not yet in _pure); 124/125 tests pass; commit 4951f47
-Last activity: 2026-02-25 - Completed quick task 104: normalize quorum.md dispatch to qgsd-quorum-slot-worker in Mode A and Mode B
+Plan: 2 of 2 complete — PHASE COMPLETE
+Status: v0.10-08 COMPLETE — Plan 01: Wave 0 regression stubs (3 stubs, stub 3 RED); Plan 02: fix runAutoUpdateCheck() statuses.get(binName) + providerMap + getStatusesFn injection + _pure export + docs update; 125 pass, 0 fail; commits 1f69cec + ee0f70f
+Last activity: 2026-02-25 - Completed v0.10-08-02: PLCY-03 Map bracket notation bug fix + documentation update
 
-Progress: [████████████████████] 46/46 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 3/3 phases COMPLETE (v0.12-01 + v0.12-02 + v0.12-03) | v0.10: v0.10-01 + v0.10-07 COMPLETE + v0.10-08 Plan 01 COMPLETE | v0.9 parallel: 3/5 phases
+Progress: [████████████████████] 47/47 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 3/3 phases COMPLETE (v0.12-01 + v0.12-02 + v0.12-03) | v0.10: v0.10-01 + v0.10-07 + v0.10-08 COMPLETE | v0.9 parallel: 3/5 phases
 
 ## Performance Metrics
 
@@ -40,6 +40,7 @@ Progress: [████████████████████] 46/46 p
 | v0.10-05 P01 | 1 | 2 min | 2 min |
 | v0.10-05 P02 | 2 | 2 min | 1 min |
 | v0.10-05 P03 | 3 | 28 min | 9 min |
+| v0.10-08 P02 | 2 | 6 min | 3 min |
 
 **Recent Trend:**
 - Last 5 plans: stable
@@ -102,7 +103,7 @@ Recent decisions affecting current work:
 | 101 | Unified quorum: new slot-worker agent, orchestrator 10-round parallel loop, inline synthesis, retire old workers | 2026-02-24 | 849ea36 | Verified | [101-unified-quorum-new-slot-worker-agent-orc](./quick/101-unified-quorum-new-slot-worker-agent-orc/) |
 | 102 | full review of Quick Task 101 | 2026-02-25 | e8cbabe | Verified | [102-full-review-of-quick-task-101](.planning/quick/102-full-review-of-quick-task-101/) |
 | 103 | deprecate qgsd-quorum-orchestrator and update quorum dispatch UX | 2026-02-25 | 7d327fc | Verified | [103-deprecate-qgsd-quorum-orchestrator-and-u](.planning/quick/103-deprecate-qgsd-quorum-orchestrator-and-u/) |
-| 104 | normalize quorum.md dispatch to qgsd-quorum-slot-worker in Mode A and Mode B | 2026-02-25 | fbf52a0 | Pending | [104-normalize-quorum-md-dispatch-to-qgsd-quo](.planning/quick/104-normalize-quorum-md-dispatch-to-qgsd-quo/) |
+| 104 | normalize quorum.md dispatch to qgsd-quorum-slot-worker in Mode A and Mode B | 2026-02-25 | fbf52a0 | Verified | [104-normalize-quorum-md-dispatch-to-qgsd-quo](.planning/quick/104-normalize-quorum-md-dispatch-to-qgsd-quo/) |
 
 ## Session Continuity
 
