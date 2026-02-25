@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-25 after v0.13 roadmap created)
+See: .planning/PROJECT.md (updated 2026-02-25 after v0.13-01 complete)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.12 Formal Verification — v0.12-05 Protocol Termination Proofs COMPLETE (2026-02-25). v0.12-06 Audit Trail Invariants is next.
+**Current focus:** v0.13 Autonomous Milestone Execution — Phase v0.13-01 Loop Wiring COMPLETE. v0.13-02 Quorum Gates is next.
 
 ## Current Position
 
-Phase: v0.12-06 of 8 (Audit Trail Invariants)
+Phase: v0.13-02 of 2 (Quorum Gates)
 Plan: —
-Status: v0.12-05 complete — ready to plan Phase v0.12-06
-Last activity: 2026-02-25 — v0.12-05 executed (QGSDDeliberation.tla, MCdeliberation.cfg, QGSDPreFilter.tla, MCprefilter.cfg, run-protocol-tlc.cjs — GAP-2, GAP-6 closed)
+Status: v0.13-01 complete — ready to plan Phase v0.13-02
+Last activity: 2026-02-25 — v0.13-01 executed (transition.md Route B audit gate, audit-milestone.md STATE.md update + plan-milestone-gaps auto-spawn — LOOP-01/02/03, STATE-01 closed)
 
-Progress: [░░░░░░░░░░] v0.13: 0/2 phases started | v0.12: v0.12-05 COMPLETE (5/8 phases done) | v0.9: 4/5 phases done
+Progress: [█████░░░░░] v0.13: 1/2 phases done | v0.12: v0.12-05 COMPLETE (5/8 phases done) | v0.9: 4/5 phases done
 
 ## Performance Metrics
 
@@ -57,13 +57,11 @@ Progress: [░░░░░░░░░░] v0.13: 0/2 phases started | v0.12: v0
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.13 roadmap]: Loop Wiring (v0.13-01) covers LOOP-01/02/03 + STATE-01 — all in transition.md and audit-milestone.md
+- [v0.13-01]: Used subagent_type="general-purpose" for plan-milestone-gaps Task spawn — no dedicated qgsd-plan-milestone-gaps subagent type registered; no model= to avoid resolve-model errors
+- [v0.13-01]: STATE.md update placed at end of Step 6 (before Step 7) — ensures update fires regardless of routing path taken in offer_next
 - [v0.13 roadmap]: Quorum Gates (v0.13-02) covers QUORUM-01/02/03 + LOOP-04 — plan-milestone-gaps, execute-phase, discuss-phase
 - [v0.13 roadmap]: Two phases total — natural delivery boundary between "wiring the chain" and "replacing AskUserQuestion with quorum"
 - [v0.12-04-03]: MCoscillation uses -workers 1 (liveness PROPERTY — avoids TLC v1.8.0 multi-worker liveness bug); MCconvergence uses -workers auto (safety-only)
-- [v0.12-04-03]: specPath dispatched from configName: MCoscillation → QGSDOscillation.tla, MCconvergence → QGSDConvergence.tla
-- [v0.12-04-02]: No SYMMETRY directive in MCoscillation.cfg — labels appear in ordered sequences; permutation symmetry gives incorrect results for sequence-based models
-- [v0.12-04-02]: WF_vars(EvaluateFlag) + WF_vars(CollapseRuns) in Spec — algorithm is a bounded finite loop, WF is sufficient over SF
 
 ### Pending Todos
 
@@ -96,5 +94,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: v0.12-05 complete — Phase v0.12-06 Audit Trail Invariants ready to plan
+Stopped at: v0.13-01 complete — Phase v0.13-02 Quorum Gates ready to plan
 Resume file: None
