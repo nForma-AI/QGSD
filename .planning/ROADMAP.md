@@ -162,7 +162,7 @@
 - [x] **Phase v0.12-06: Audit Trail Invariants** — Alloy models for scoreboard recomputation idempotency/no-vote-loss/no-double-counting and availability hint date arithmetic (GAP-3, GAP-9) (completed 2026-02-25)
 - [x] **Phase v0.12-07: Hook Transcript Verification** — Alloy model for qgsd-stop.js transcript scanning: boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement (GAP-4) (completed 2026-02-25)
 - [x] **Phase v0.12-08: Installer and Taxonomy Extensions** — Alloy extension to install-scope.als (rollback soundness, config sync completeness) and new taxonomy-safety.als (injection prevention, closed/open taxonomy consistency) (GAP-7, GAP-8) (completed 2026-02-25)
-- [ ] **Phase v0.12-09: Verification Infrastructure Quick Fixes** — workers bug fix in run-oscillation-tlc.cjs, conditional-skip guards for JAR-not-found tests, stale assertion name in run-alloy.cjs, rates.const/quorum.pm variable alignment, deadlock condition fix (GAP-5, TLA-04, ALY-02, PRM-02, PET-03)
+- [x] **Phase v0.12-09: Verification Infrastructure Quick Fixes** — workers bug fix in run-oscillation-tlc.cjs, conditional-skip guards for JAR-not-found tests, stale assertion name in run-alloy.cjs, rates.const/quorum.pm variable alignment, deadlock condition fix (GAP-5, TLA-04, ALY-02, PRM-02, PET-03) (completed 2026-02-25)
 - [ ] **Phase v0.12-10: Conformance Score Redesign** — Add DECIDING to VALID_PHASES in conformance-schema.cjs, refactor validate-traces.cjs to multi-step session replay so conformance score reflects real violations not structural artifacts (LOG-03, VAL-01, VAL-02)
 
 ### 🚧 v0.13 — Autonomous Milestone Execution (In Progress)
@@ -677,7 +677,7 @@ Plans:
 | v0.12-06. Audit Trail Invariants | v0.12 | 3/3 | Complete | 2026-02-25 |
 | v0.12-07. Hook Transcript Verification | v0.12 | 3/3 | Complete | 2026-02-25 |
 | v0.12-08. Installer and Taxonomy Extensions | v0.12 | 3/3 | Complete | 2026-02-25 |
-| v0.12-09. Verification Infrastructure Quick Fixes | 4/5 | In Progress|  | - |
+| v0.12-09. Verification Infrastructure Quick Fixes | 5/5 | Complete   | 2026-02-25 | - |
 | v0.12-10. Conformance Score Redesign | v0.12 | 0/3 | Not started | - |
 | v0.13-01. Loop Wiring | v0.13 | Complete    | 2026-02-25 | - |
 | v0.13-02. Quorum Gates | v0.13 | 0/3 | Planned | - |
