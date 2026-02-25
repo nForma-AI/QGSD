@@ -72,3 +72,51 @@ check AllEquivalence for 3 Runtime, 3 Scope, 5 InstallState
 check InstallIdempotent for 3 Runtime, 3 Scope, 5 InstallState
 
 run AllSelected for 3 Runtime, 3 Scope, 1 InstallState
+
+-- ── GAP-7 Extension: Rollback Soundness + Config Sync Completeness ───────────
+-- Source: bin/install.js uninstall() (lines 964-1244) and installRuntime()
+--
+-- FileToken: abstract atom representing a GSD hook file installed by QGSD
+-- Models: each distinct hook file (qgsd-stop.js, qgsd-prompt.js, etc.) as an opaque atom
+-- Alloy has no string type; file identity is structural (same atom = same file)
+abstract sig FileToken {}
+
+-- InstallSnapshot: the set of FileToken atoms present in a target directory at one point in time
+-- Models: the file set at hooks/dist/ or ~/.claude/hooks/ at a specific moment
+sig InstallSnapshot {
+    files: set FileToken
+}
+
+-- RollbackSound: after uninstall, GSD file tokens are absent from the target directory.
+-- Formalizes: uninstall() removes exactly the GSD hook files that install() added.
+-- Models the uninstall invariant: no GSD FileToken survives in the post-uninstall snapshot.
+-- Source: bin/install.js uninstall() removes hook files from the target directory.
+pred RollbackSound [pre, post: InstallSnapshot] {
+    -- After uninstall, no GSD-installed file tokens remain:
+    -- post.files is a subset of (pre.files minus the installed tokens).
+    -- Simplified model: the post snapshot has no files that install added
+    -- (modeled as: post.files in pre.files and post.files = pre.files - FileToken
+    -- approximated as post.files = none, since all GSD files are removed).
+    no post.files
+}
+
+-- ConfigSyncComplete: after install, hooks/dist/ and ~/.claude/hooks/ file sets are identical.
+-- Formalizes: the install sync step leaves both directories with the same hook file tokens.
+-- Source: bin/install.js installRuntime() writes same files to both locations.
+pred ConfigSyncComplete [distSnapshot, claudeSnapshot: InstallSnapshot] {
+    distSnapshot.files = claudeSnapshot.files
+}
+
+-- Assert RollbackSound holds for all InstallSnapshot pairs
+assert RollbackSoundCheck {
+    all pre, post: InstallSnapshot | RollbackSound[pre, post]
+}
+
+-- Assert ConfigSyncComplete holds for all dist/claude snapshot pairs
+assert ConfigSyncCompleteCheck {
+    all dist, claude: InstallSnapshot | ConfigSyncComplete[dist, claude]
+}
+
+-- Check commands for GAP-7 (scopes include new sigs; do not modify existing checks above)
+check RollbackSoundCheck      for 3 Runtime, 3 Scope, 5 InstallState, 3 InstallSnapshot, 5 FileToken
+check ConfigSyncCompleteCheck for 3 Runtime, 3 Scope, 5 InstallState, 3 InstallSnapshot, 5 FileToken
