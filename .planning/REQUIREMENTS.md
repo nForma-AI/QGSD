@@ -1,100 +1,68 @@
-# Requirements: QGSD v0.12 Formal Verification
+# Requirements: QGSD v0.13 Autonomous Milestone Execution
 
-**Defined:** 2026-02-24
+**Defined:** 2026-02-25
 **Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## v0.12 Requirements
+## v1 Requirements
 
-### Conformance Logging
+### Loop Wiring
 
-- [ ] **LOG-01**: Developer can require a shared `conformance-schema.cjs` module from both hooks and `validate-traces.cjs` — single source of truth for event field definitions
-- [ ] **LOG-02**: Stop, UserPromptSubmit, and PreToolUse hooks emit structured NDJSON events to `.planning/conformance-events.jsonl` on every quorum decision turn
-- [ ] **LOG-03**: Each emitted event contains `{ ts, phase, action, slots_available, vote_result, outcome }` matching the schema module definition
+Changes to `transition.md` and `audit-milestone.md` to close the audit gap and create the re-audit loop.
 
-### XState Machine
+- [ ] **LOOP-01**: The last-phase transition calls audit-milestone before complete-milestone (primary phase path)
+- [ ] **LOOP-02**: The last-phase transition detects the `**Gap Closure:**` ROADMAP marker on the completed phase and routes to audit-milestone instead of complete-milestone (gap closure re-audit path)
+- [ ] **LOOP-03**: audit-milestone auto-spawns a plan-milestone-gaps Task when result is gaps_found and at least one phase is classified missing_no_plan
+- [ ] **LOOP-04**: plan-milestone-gaps auto-spawns a plan-phase Task for the first gap phase after quorum approves the proposed phases
 
-- [ ] **XST-01**: Developer can find `src/machines/qgsd-workflow.machine.ts` — a 4-phase XState v5 state machine modeling QGSD's planning → research → execution → verification workflow
-- [ ] **XST-02**: `tsconfig.formal.json` + `tsup` build step compiles the machine to CJS output usable by `validate-traces.cjs` without importing XState in hook files
-- [ ] **XST-03**: Machine guards encode quorum predicates: `minQuorumMet`, `noInfiniteDeliberation`, `phaseMonotonicallyAdvances`
+### Quorum Gates
 
-### Trace Validator
+Every AskUserQuestion in the autonomous loop is replaced by R3 quorum.
 
-- [ ] **VAL-01**: User can run `bin/validate-traces.cjs` to replay `.planning/conformance-events.jsonl` through the XState machine and see divergences flagged
-- [ ] **VAL-02**: Validator outputs a deviation score (% of traces that are valid XState executions) — the "closeness" metric
-- [ ] **VAL-03**: `validate-traces.cjs` is shipped to users via npm install and runnable as `node ~/.claude/qgsd-bin/validate-traces.cjs`
+- [ ] **QUORUM-01**: plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces AskUserQuestion confirmation gate)
+- [ ] **QUORUM-02**: execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)
+- [ ] **QUORUM-03**: discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for gray areas)
 
-### TLA+ Spec
+### State Tracking
 
-- [ ] **TLA-01**: Developer can find `formal/tla/QGSDQuorum.tla` — formal TLA+ spec of QGSD states, actions, and invariants
-- [ ] **TLA-02**: `formal/tla/MCsafety.cfg` configures TLC with symmetry sets to check safety invariants (MinQuorumMet, NoInvalidTransition)
-- [ ] **TLA-03**: `formal/tla/MCliveness.cfg` configures TLC with N=3 bounded model to check liveness (EventualConsensus)
-- [ ] **TLA-04**: Developer can run `bin/run-tlc.cjs` to invoke TLC JAR; script checks Java ≥17 and exits cleanly if `JAVA_HOME` unset
+- [ ] **STATE-01**: audit-milestone updates STATE.md "Stopped at" and "Current Position" fields with the audit result (passed / gaps_found / tech_debt) after writing the MILESTONE-AUDIT.md artifact
 
-### Alloy Model
+## v2 Requirements
 
-- [ ] **ALY-01**: Developer can find `formal/alloy/quorum-votes.als` — vote-counting predicates using `pred` (not `fact`) to enable counterexample generation
-- [ ] **ALY-02**: Developer can run `bin/run-alloy.cjs` to invoke Alloy 6 JAR headless; gated on `JAVA_HOME`
+### Deferred
 
-### PRISM Model
-
-- [ ] **PRM-01**: Developer can find `formal/prism/quorum.pm` — DTMC model of quorum convergence with transition probabilities
-- [ ] **PRM-02**: Developer can run `bin/export-prism-constants.cjs` to read scoreboard TP/TN/UNAVAIL data and export empirical rates as a `.const` file for PRISM
-- [ ] **PRM-03**: Rate exporter warns and uses conservative priors when scoreboard has fewer than 30 rounds per slot
-
-### Petri Net
-
-- [ ] **PET-01**: Developer can run `bin/generate-petri-net.cjs` to emit a Graphviz DOT file of the quorum token-passing net
-- [ ] **PET-02**: `generate-petri-net.cjs` renders DOT to SVG via `@hpcc-js/wasm-graphviz` (no system Graphviz install required)
-- [ ] **PET-03**: Script emits a structural deadlock warning if `min_quorum_size > available_slots` (net can never fire)
-
-## Future Requirements
-
-### Extended Verification
-
-- **EXT-01**: CI integration — run `validate-traces.cjs` automatically after each quorum round
-- **EXT-02**: TLA+ PlusCal variant for human-readable spec alongside machine-checkable version
-- **EXT-03**: Real-time dashboard showing conformance deviation score trend over time
+- Parallel audit + gap closure (running multiple gap cycles concurrently) — deferred as over-engineering for v1
+- complete-milestone → new-milestone auto-advance — intentionally manual; new milestone goals require human intent
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Hook-time formal checking | Hooks are fail-open, zero-dep, stdout-gated — no JVM or TypeScript import allowed at runtime |
-| PRISM web UI | Offline CLI tooling only; no server process |
-| Automated TLA+ spec generation from code | Too fragile — spec is hand-authored against CLAUDE.md R0–R8 invariants |
-| Petri Net PNML format | DOT + WASM Graphviz is simpler and eliminates JVM dependency for visualization |
+| gsd-tools.cjs changes | No new tooling needed — infrastructure (Gap Closure marker, is_last_phase, R3 quorum) already exists |
+| gsd: workflow file updates | Downstream sync from qgsd: files; out of scope for this milestone |
+| complete-milestone → new-milestone auto-advance | New milestone goals require human intent; not a valid quorum decision |
+| New quorum models or providers | Infrastructure change, orthogonal to this milestone |
+| Per-phase audit (not just milestone audit) | Over-engineering; phase-level verification via quorum-test is sufficient |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOG-01 | v0.12-01 | Pending |
-| LOG-02 | v0.12-01 | Pending |
-| LOG-03 | v0.12-01 | Pending |
-| XST-01 | v0.12-01 | Pending |
-| XST-02 | v0.12-01 | Pending |
-| XST-03 | v0.12-01 | Pending |
-| VAL-01 | v0.12-01 | Pending |
-| VAL-02 | v0.12-01 | Pending |
-| VAL-03 | v0.12-01 | Pending |
-| TLA-01 | v0.12-02 | Pending |
-| TLA-02 | v0.12-02 | Pending |
-| TLA-03 | v0.12-02 | Pending |
-| TLA-04 | v0.12-02 | Pending |
-| ALY-01 | v0.12-03 | Pending |
-| ALY-02 | v0.12-03 | Pending |
-| PRM-01 | v0.12-03 | Pending |
-| PRM-02 | v0.12-03 | Pending |
-| PRM-03 | v0.12-03 | Pending |
-| PET-01 | v0.12-03 | Pending |
-| PET-02 | v0.12-03 | Pending |
-| PET-03 | v0.12-03 | Pending |
+| LOOP-01 | v0.13-01 | Pending |
+| LOOP-02 | v0.13-01 | Pending |
+| LOOP-03 | v0.13-01 | Pending |
+| STATE-01 | v0.13-01 | Pending |
+| QUORUM-01 | v0.13-02 | Pending |
+| LOOP-04 | v0.13-02 | Pending |
+| QUORUM-02 | v0.13-02 | Pending |
+| QUORUM-03 | v0.13-02 | Pending |
 
 **Coverage:**
-- v0.12 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 8 total
+- Mapped to phases: 8
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-02-24*
-*Last updated: 2026-02-24 after initial definition*
+*Requirements defined: 2026-02-25*
+*Last updated: 2026-02-25 after initial definition*
