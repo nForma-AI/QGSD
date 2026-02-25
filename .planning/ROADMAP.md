@@ -569,9 +569,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] v0.13-02-01-PLAN.md — Replace plan-milestone-gaps Step 5 confirmation gate with R3 quorum approval; replace Step 10 text suggestion with plan-phase auto-spawn Task (QUORUM-01, LOOP-04)
-- [ ] v0.13-02-02-PLAN.md — Replace execute-phase gaps_found manual suggestion with quorum diagnosis + plan-phase --gaps auto-spawn; update offer_next Exception note (QUORUM-02)
-- [ ] v0.13-02-03-PLAN.md — Add second quorum pass on for_user[] survivors in auto mode at discuss-phase present_gray_areas step (QUORUM-03)
+- [x] v0.13-02-01-PLAN.md — Replace plan-milestone-gaps Step 5 confirmation gate with R3 quorum approval; replace Step 10 text suggestion with plan-phase auto-spawn Task (QUORUM-01, LOOP-04)
+- [x] v0.13-02-02-PLAN.md — Replace execute-phase gaps_found manual suggestion with quorum diagnosis + plan-phase --gaps auto-spawn; update offer_next Exception note (QUORUM-02)
+- [x] v0.13-02-03-PLAN.md — Add second quorum pass on for_user[] survivors in auto mode at discuss-phase present_gray_areas step (QUORUM-03)
 
 ### Phase v0.13-03: Write VERIFICATION.md + Bookkeeping
 **Goal**: Produce formal VERIFICATION.md artifacts for both v0.13-01 and v0.13-02, closing the orphaned-requirement status for all 8 v0.13 requirements and completing the audit trail required by the QGSD trust+audit enforcement model
@@ -679,5 +679,5 @@ Plans:
 | v0.12-08. Installer and Taxonomy Extensions | v0.12 | 3/3 | Complete | 2026-02-25 |
 | v0.12-09. Verification Infrastructure Quick Fixes | 5/5 | Complete    | 2026-02-25 | - |
 | v0.12-10. Conformance Score Redesign | v0.12 | 0/3 | Not started | - |
-| v0.13-01. Loop Wiring | v0.13 | Complete    | 2026-02-25 | - |
-| v0.13-02. Quorum Gates | v0.13 | 0/3 | Planned | - |
+| v0.13-01. Loop Wiring | v0.13 | 1/1 | Complete   | 2026-02-25 |
+| v0.13-02. Quorum Gates | v0.13 | 3/3 | Complete | 2026-02-25 |

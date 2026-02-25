@@ -9,22 +9,22 @@
 
 Changes to `transition.md` and `audit-milestone.md` to close the audit gap and create the re-audit loop.
 
-- [ ] **LOOP-01**: The last-phase transition calls audit-milestone before complete-milestone (primary phase path)
-- [ ] **LOOP-02**: The last-phase transition detects the `**Gap Closure:**` ROADMAP marker on the completed phase and routes to audit-milestone instead of complete-milestone (gap closure re-audit path)
-- [ ] **LOOP-03**: audit-milestone auto-spawns a plan-milestone-gaps Task when result is gaps_found and at least one phase is classified missing_no_plan
-- [ ] **LOOP-04**: plan-milestone-gaps auto-spawns a plan-phase Task for the first gap phase after quorum approves the proposed phases
+- [x] **LOOP-01**: The last-phase transition calls audit-milestone before complete-milestone (primary phase path)
+- [x] **LOOP-02**: The last-phase transition detects the `**Gap Closure:**` ROADMAP marker on the completed phase and routes to audit-milestone instead of complete-milestone (gap closure re-audit path)
+- [x] **LOOP-03**: audit-milestone auto-spawns a plan-milestone-gaps Task when result is gaps_found and at least one phase is classified missing_no_plan
+- [x] **LOOP-04**: plan-milestone-gaps auto-spawns a plan-phase Task for the first gap phase after quorum approves the proposed phases
 
 ### Quorum Gates
 
 Every AskUserQuestion in the autonomous loop is replaced by R3 quorum.
 
-- [ ] **QUORUM-01**: plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces AskUserQuestion confirmation gate)
-- [ ] **QUORUM-02**: execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)
-- [ ] **QUORUM-03**: discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for gray areas)
+- [x] **QUORUM-01**: plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces AskUserQuestion confirmation gate)
+- [x] **QUORUM-02**: execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)
+- [x] **QUORUM-03**: discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for gray areas)
 
 ### State Tracking
 
-- [ ] **STATE-01**: audit-milestone updates STATE.md "Stopped at" and "Current Position" fields with the audit result (passed / gaps_found / tech_debt) after writing the MILESTONE-AUDIT.md artifact
+- [x] **STATE-01**: audit-milestone updates STATE.md "Stopped at" and "Current Position" fields with the audit result (passed / gaps_found / tech_debt) after writing the MILESTONE-AUDIT.md artifact
 
 ## v2 Requirements
 
@@ -49,14 +49,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOOP-01 | v0.13-01 (verified by v0.13-03) | Pending |
-| LOOP-02 | v0.13-01 (verified by v0.13-03) | Pending |
-| LOOP-03 | v0.13-01 (verified by v0.13-03) | Pending |
-| STATE-01 | v0.13-01 (verified by v0.13-03) | Pending |
-| QUORUM-01 | v0.13-02 (verified by v0.13-03) | Pending |
-| LOOP-04 | v0.13-02 (verified by v0.13-03) | Pending |
-| QUORUM-02 | v0.13-02 (verified by v0.13-03) | Pending |
-| QUORUM-03 | v0.13-02 (verified by v0.13-03) | Pending |
+| LOOP-01 | v0.13-01 (verified by v0.13-03) | Complete |
+| LOOP-02 | v0.13-01 (verified by v0.13-03) | Complete |
+| LOOP-03 | v0.13-01 (verified by v0.13-03) | Complete |
+| STATE-01 | v0.13-01 (verified by v0.13-03) | Complete |
+| QUORUM-01 | v0.13-02 (verified by v0.13-03) | Complete |
+| LOOP-04 | v0.13-02 (verified by v0.13-03) | Complete |
+| QUORUM-02 | v0.13-02 (verified by v0.13-03) | Complete |
+| QUORUM-03 | v0.13-02 (verified by v0.13-03) | Complete |
 
 **Coverage:**
 - v1 requirements: 8 total
