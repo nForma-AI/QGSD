@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 ## Current Position
 
-Phase: milestone-boundary
-Plan: —
-Status: v0.10 MILESTONE COMPLETE — all 8 phases shipped. v0.9 parallel (3/5 done: v0.9-01/02/03 complete; v0.9-04/05 remain). v0.12 in progress (0/3+ phases started). Quick task 106 has PLAN but no SUMMARY.
-Last activity: 2026-02-25 - Completed quick task 106: Extend v0.12 with phases v0.12-04 through v0.12-08
+Phase: v0.12-04
+Plan: 03
+Status: v0.12-04 Plan 02 COMPLETE — QGSDOscillation.tla (GAP-1) + QGSDConvergence.tla (GAP-5) authored with full invariant + liveness coverage; MCoscillation.cfg + MCconvergence.cfg configured for TLC. Next: v0.12-04-03 (run-oscillation-tlc.cjs runner implementation).
+Last activity: 2026-02-25 - Completed v0.12-04-02: TLA+ spec authoring for GAP-1 and GAP-5
 
-Progress: [████████████████████] v0.10: 8/8 COMPLETE (SHIPPED) | v0.11: 3/3 COMPLETE (SHIPPED) | v0.12: 0/3+ in progress | v0.9: 3/5 phases done
+Progress: [████████████████████] v0.10: 8/8 COMPLETE (SHIPPED) | v0.11: 3/3 COMPLETE (SHIPPED) | v0.12: v0.12-04-02 complete (2 plans done) | v0.9: 3/5 phases done
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Progress: [████████████████████] v0.10: 
 | v0.10-05 P02 | 2 | 2 min | 1 min |
 | v0.10-05 P03 | 3 | 28 min | 9 min |
 | v0.10-08 P02 | 2 | 6 min | 3 min |
+| v0.12-04 P02 | 2 | 4 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: stable
@@ -80,6 +81,9 @@ Recent decisions affecting current work:
 - [v0.10-08-01]: Wave 0 stub 3 uses _pure.runAutoUpdateCheck existence check as RED trigger — simplest assertion that fails before Plan 02 adds the export
 - [v0.10-08-02]: runAutoUpdateCheck() fix uses providerMap[slot]→p.cli→path.basename() for slot→binary resolution — follows listAgents() pattern exactly; getStatusesFn default parameter for backwards-compatible injection
 - [v0.10-08-02]: MILESTONE-AUDIT status changed to gaps_found_plcy03_fixed — 9/16 unsatisfied (down from 10); PLCY-03 moves to satisfied_code_fix_pending_human
+- [v0.12-04-02]: No SYMMETRY directive in MCoscillation.cfg — labels appear in ordered sequences; permutation symmetry gives incorrect results for sequence-based models
+- [v0.12-04-02]: WF_vars(EvaluateFlag) + WF_vars(CollapseRuns) in Spec — algorithm is a bounded finite loop, WF is sufficient over SF
+- [v0.12-04-02]: HaikuReturnsYES preconditioned on logWritten=FALSE — mirrors JS guard; resolvedAt is set exactly once per oscillation event
 
 ### Pending Todos
 
@@ -112,5 +116,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: 2026-02-25 - Completed quick task 106: Extend v0.12 with phases v0.12-04 through v0.12-08
+Stopped at: Completed v0.12-04-02-PLAN.md — TLA+ spec authoring (GAP-1 + GAP-5)
 Resume file: None
