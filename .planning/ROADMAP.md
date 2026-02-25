@@ -586,8 +586,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] v0.13-03-01-PLAN.md — Write VERIFICATION.md for v0.13-01 (LOOP-01..03, STATE-01) with per-requirement checklists and evidence citations from transition.md and audit-milestone.md
-- [ ] v0.13-03-02-PLAN.md — Write VERIFICATION.md for v0.13-02 (QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03) with per-requirement checklists; update REQUIREMENTS.md traceability (all 8 → Complete); update ROADMAP.md Progress table
+- [x] v0.13-03-01-PLAN.md — Write VERIFICATION.md for v0.13-01 (LOOP-01..03, STATE-01) with per-requirement checklists and evidence citations from transition.md and audit-milestone.md
+- [x] v0.13-03-02-PLAN.md — Write VERIFICATION.md for v0.13-02 (QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03) with per-requirement checklists; update REQUIREMENTS.md traceability (all 8 → Complete); update ROADMAP.md Progress table
 
 ### Phase v0.13-04: Fix Integration Issues
 **Goal**: Eliminate the two integration issues (INT-01 binary path inconsistency, INT-02 residual user-gate text) that the audit identified as portability risks and autonomous-execution blockers in the v0.13 workflow files
@@ -603,8 +603,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] v0.13-04-01-PLAN.md — Verify INT-01: confirm qgsd-bin/update-scoreboard.cjs path is already correct across all three workflow files; document canonical path finding
-- [ ] v0.13-04-02-PLAN.md — Fix INT-02: remove 3 user-gate text fragments from plan-milestone-gaps.md (nice-row, bare user-dialog line, stale success_criteria); add auto-mode guard to nice section
+- [x] v0.13-04-01-PLAN.md — Verify INT-01: confirm qgsd-bin/update-scoreboard.cjs path is already correct across all three workflow files; document canonical path finding
+- [x] v0.13-04-02-PLAN.md — Fix INT-02: remove 3 user-gate text fragments from plan-milestone-gaps.md (nice-row, bare user-dialog line, stale success_criteria); add auto-mode guard to nice section
 
 
 ## Progress
@@ -681,3 +681,5 @@ Plans:
 | v0.12-10. Conformance Score Redesign | v0.12 | 0/3 | Not started | - |
 | v0.13-01. Loop Wiring | v0.13 | 1/1 | Complete   | 2026-02-25 |
 | v0.13-02. Quorum Gates | v0.13 | 3/3 | Complete | 2026-02-25 |
+| v0.13-03. Write Verification Bookkeeping | v0.13 | 2/2 | Complete | 2026-02-25 |
+| v0.13-04. Fix Integration Issues | v0.13 | 2/2 | Complete | 2026-02-25 |
