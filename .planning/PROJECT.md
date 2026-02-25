@@ -318,4 +318,7 @@ QGSD v0.7 shipped 2026-02-23. v0.2.0 git tag pushed; npm publish deferred by use
 | voteCode mapping: Mode A = '' (no ground truth at vote time); Mode B peer-scored vs consensus | APPROVE∩APPROVE=TP, REJECT∩REJECT=TN, APPROVE∩REJECT=FP, REJECT∩APPROVE=FN, FLAG=TP+, UNAVAIL=UNAVAIL | Phase v0.11-01-03 tech debt fix |
 
 ---
-*Last updated: 2026-02-25 after v0.13 Autonomous Milestone Execution milestone started*
+| IS_GAP_CLOSURE uses -A 4 not -A 3: Gap Closure field at offset 4 from ^### Phase X: | Counting Goal/Depends on/Requirements/Gap Closure = 4 lines after heading; -A 3 would miss it; anchored grep eliminates false-positives from cross-phase Depends-on lines | Phase v0.13-05 — TECH-01 |
+
+---
+*Last updated: 2026-02-25 after Phase v0.13-05 — TECH-01 IS_GAP_CLOSURE fix*
