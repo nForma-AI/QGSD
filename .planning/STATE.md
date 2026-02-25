@@ -100,7 +100,7 @@ Recent decisions affecting current work:
 | 100 | Add global wall-clock timeout to quorum orchestrator to prevent indefinite hangs when all external models are unavailable | 2026-02-24 | 5483112 | Verified | [100-add-global-wall-clock-timeout-to-quorum-](./quick/100-add-global-wall-clock-timeout-to-quorum-/) |
 | 101 | Unified quorum: new slot-worker agent, orchestrator 10-round parallel loop, inline synthesis, retire old workers | 2026-02-24 | 849ea36 | Verified | [101-unified-quorum-new-slot-worker-agent-orc](./quick/101-unified-quorum-new-slot-worker-agent-orc/) |
 | 102 | full review of Quick Task 101 | 2026-02-25 | e8cbabe | Verified | [102-full-review-of-quick-task-101](.planning/quick/102-full-review-of-quick-task-101/) |
-| 103 | deprecate qgsd-quorum-orchestrator and update quorum dispatch UX | 2026-02-25 | 7d327fc | Pending | [103-deprecate-qgsd-quorum-orchestrator-and-u](.planning/quick/103-deprecate-qgsd-quorum-orchestrator-and-u/) |
+| 103 | deprecate qgsd-quorum-orchestrator and update quorum dispatch UX | 2026-02-25 | 7d327fc | Verified | [103-deprecate-qgsd-quorum-orchestrator-and-u](.planning/quick/103-deprecate-qgsd-quorum-orchestrator-and-u/) |
 
 ## Session Continuity
 
