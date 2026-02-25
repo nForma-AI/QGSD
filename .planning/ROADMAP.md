@@ -240,10 +240,12 @@ Plans:
   2. `bin/install.js` copies from `qgsd-core/` (not `get-shit-done/`) — running `node bin/install.js --claude --global` succeeds
   3. All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflows, agents, and templates
   4. `~/.claude/qgsd/` runtime is identical before and after rename+install (verified by diff)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] v0.9-05-01: `git mv get-shit-done/ qgsd-core/`, update all path references in `bin/install.js`, `bin/gsd-tools.cjs`, workflow @-references, and agents; run `node bin/install.js --claude --global`
+- [ ] v0.9-05-01-PLAN.md — git mv rename + bin/install.js skillSrc + package.json test path + pre-rename runtime baseline
+- [ ] v0.9-05-02-PLAN.md — agents/*.md 43 path refs + templates/phase-prompt.md + hooks/qgsd-circuit-breaker.js message strings
+- [ ] v0.9-05-03-PLAN.md — hooks/dist/ sync + node bin/install.js --claude --global + runtime verification
 
 ### Phase v0.10-01: Foundation
 **Goal**: The manage-agents list view shows quorum W/L, CCR routing, and key-invalid status per slot, and the readQgsdJson/writeQgsdJson helper pair is available for all later phases
@@ -507,10 +509,10 @@ Plans:
   2. When the completed phase's ROADMAP entry contains the `**Gap Closure:**` marker, the transition routes to audit-milestone instead of complete-milestone — the re-audit path fires automatically
   3. When audit-milestone produces a gaps_found result with at least one phase classified missing_no_plan, it auto-spawns a plan-milestone-gaps Task — no user confirmation step intervenes
   4. After audit-milestone writes the MILESTONE-AUDIT.md artifact, STATE.md "Stopped at" and "Current Position" fields are updated to reflect the audit result (passed / gaps_found / tech_debt) before the workflow exits
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] v0.13-01-01: Wire Route B audit gate in transition.md + Gap Closure marker detection; update audit-milestone.md auto-spawn logic + STATE.md update (LOOP-01, LOOP-02, LOOP-03, STATE-01)
+- [ ] v0.13-01-01-PLAN.md — Wire Route B audit gate + Gap Closure detection in transition.md; auto-spawn and STATE.md update in audit-milestone.md (LOOP-01, LOOP-02, LOOP-03, STATE-01)
 
 ### Phase v0.13-02: Quorum Gates
 **Goal**: Every decision point in the autonomous loop that previously halted execution and asked the user a question now calls R3 quorum instead — gap phase approval, plan-phase auto-spawn, gap resolution during execution, and gray-area decisions during discuss-phase all proceed without human checkpoints
