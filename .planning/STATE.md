@@ -57,6 +57,7 @@ Progress: [██████████] v0.13: 2/2 phases executed, audit gap
 | Phase v0.13-03 P01 | 5 | 2 tasks | 2 files |
 | Phase v0.13-03 P02 | 8 | 3 tasks | 3 files |
 | Phase v0.13-04 P01 | 1min | 1 tasks | 0 files |
+| Phase v0.13-04 P02 | 102s | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,7 @@ Recent decisions affecting current work:
 - [Phase v0.12-09]: PRM-02: Documentation approach for rates.const variable mismatch — avoids renaming variables in export-prism-constants.cjs, preserves existing tests and documented CLI usage
 - [Phase v0.13-03-02]: VERIFICATION.md cites qgsd-core/ paths for all evidence — portable across installs
 - [Phase v0.13-04]: INT-01 confirmed non-issue: canonical path qgsd-bin/update-scoreboard.cjs is already correct and consistent across all three workflow files; qgsd/bin/ path does not exist on disk
+- [Phase v0.13-04]: INT-02: nice-row uses auto-mode guard instead of 'Ask user:' — subagent-safe in --auto mode
 
 ### Pending Todos
 
@@ -112,5 +114,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed v0.13-04-01-PLAN.md — INT-01 verified closed; 0 file edits needed; canonical path qgsd-bin/update-scoreboard.cjs confirmed consistent across all three workflow files
+Stopped at: Completed v0.13-04-02-PLAN.md — INT-02 closed: removed 3 user-gate fragments from plan-milestone-gaps.md; QUORUM-01 gate intact
 Resume file: None
