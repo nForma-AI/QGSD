@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-25 after v0.13-01 complete)
 
 ## Current Position
 
-Phase: v0.13-03 — Write Verification Bookkeeping
-Plan: 01 complete (VERIFICATION.md for v0.13-01 written)
-Status: v0.13-03-01 complete — VERIFICATION.md for v0.13-01 Loop Wiring written (LOOP-01/02/03/STATE-01 all PASS); v0.13-03-02 pending (VERIFICATION.md for v0.13-02)
-Last activity: 2026-02-25 — v0.13-03-01 executed; .planning/phases/v0.13-01-loop-wiring/VERIFICATION.md created
+Phase: v0.13-04 — Fix Integration Issues
+Plan: 01 complete (INT-01 verified closed — canonical path confirmed correct across all three workflow files)
+Status: v0.13-04-01 complete — INT-01 verified closed via grep evidence; 0 file edits needed; v0.13-04-02 pending
+Last activity: 2026-02-25 — v0.13-04-01 executed; INT-01 confirmed non-issue
 
 Progress: [██████████] v0.13: 2/2 phases executed, audit gaps_found | v0.12: COMPLETE (8/8 phases done) | v0.9: COMPLETE (5/5 phases done)
 
@@ -56,6 +56,7 @@ Progress: [██████████] v0.13: 2/2 phases executed, audit gap
 | Phase v0.12-09 P04 | 1 | 1 tasks | 1 files |
 | Phase v0.13-03 P01 | 5 | 2 tasks | 2 files |
 | Phase v0.13-03 P02 | 8 | 3 tasks | 3 files |
+| Phase v0.13-04 P01 | 1min | 1 tasks | 0 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,7 @@ Recent decisions affecting current work:
 - [Phase v0.12-09]: ALY-02: JAR-existence skip guard pattern reused from run-audit-alloy.test.cjs for consistency
 - [Phase v0.12-09]: PRM-02: Documentation approach for rates.const variable mismatch — avoids renaming variables in export-prism-constants.cjs, preserves existing tests and documented CLI usage
 - [Phase v0.13-03-02]: VERIFICATION.md cites qgsd-core/ paths for all evidence — portable across installs
+- [Phase v0.13-04]: INT-01 confirmed non-issue: canonical path qgsd-bin/update-scoreboard.cjs is already correct and consistent across all three workflow files; qgsd/bin/ path does not exist on disk
 
 ### Pending Todos
 
@@ -110,5 +112,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed v0.13-03-02-PLAN.md — VERIFICATION.md for v0.13-02 written; REQUIREMENTS.md all 8 Complete; ROADMAP.md v0.13-02 marked complete; Phase v0.13-03 execution complete
+Stopped at: Completed v0.13-04-01-PLAN.md — INT-01 verified closed; 0 file edits needed; canonical path qgsd-bin/update-scoreboard.cjs confirmed consistent across all three workflow files
 Resume file: None
