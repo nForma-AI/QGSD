@@ -9,7 +9,8 @@ const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, app
         buildDashboardLines, formatTimestamp,
         buildTimeoutChoices, applyTimeoutUpdate,
         buildPolicyChoices,
-        buildUpdateLogEntry, parseUpdateLogErrors } = _pure;
+        buildUpdateLogEntry, parseUpdateLogErrors,
+        buildBackupPath, buildRedactedEnv, buildExportData, validateImportSchema } = _pure;
 
 // ---------------------------------------------------------------------------
 // deriveKeytarAccount
@@ -1062,4 +1063,129 @@ test('REGRESSION PLCY-03: runAutoUpdateCheck logs UPDATE_AVAILABLE not SKIP for 
   const { runAutoUpdateCheck } = require('./manage-agents.cjs')._pure;
   // runAutoUpdateCheck is not currently in _pure — this line throws, keeping the test RED.
   assert.ok(typeof runAutoUpdateCheck === 'function', 'runAutoUpdateCheck must be exported via _pure');
+});
+
+// ---------------------------------------------------------------------------
+// buildBackupPath
+// ---------------------------------------------------------------------------
+
+test('buildBackupPath: appends pre-import timestamp suffix', () => {
+  const ts = '2026-02-25T12-34-56-789Z';
+  assert.strictEqual(
+    buildBackupPath('/Users/alice/.claude.json', ts),
+    '/Users/alice/.claude.json.pre-import.2026-02-25T12-34-56-789Z'
+  );
+});
+
+test('buildBackupPath: works with arbitrary timestamp string', () => {
+  const result = buildBackupPath('/home/bob/.claude.json', 'TS');
+  assert.ok(result.endsWith('.pre-import.TS'));
+});
+
+// ---------------------------------------------------------------------------
+// buildRedactedEnv
+// ---------------------------------------------------------------------------
+
+test('buildRedactedEnv: redacts _KEY suffix', () => {
+  const result = buildRedactedEnv({ ANTHROPIC_API_KEY: 'sk-real-key' });
+  assert.strictEqual(result.ANTHROPIC_API_KEY, '__redacted__');
+});
+
+test('buildRedactedEnv: redacts _SECRET suffix', () => {
+  const result = buildRedactedEnv({ APP_SECRET: 'my-secret' });
+  assert.strictEqual(result.APP_SECRET, '__redacted__');
+});
+
+test('buildRedactedEnv: preserves non-sensitive keys', () => {
+  const result = buildRedactedEnv({ BASE_URL: 'https://example.com', MODEL: 'claude' });
+  assert.strictEqual(result.BASE_URL, 'https://example.com');
+  assert.strictEqual(result.MODEL, 'claude');
+});
+
+test('buildRedactedEnv: empty env returns {}', () => {
+  assert.deepStrictEqual(buildRedactedEnv({}), {});
+});
+
+// ---------------------------------------------------------------------------
+// buildExportData
+// ---------------------------------------------------------------------------
+
+test('buildExportData: redacts env values in mcpServers', () => {
+  const input = {
+    mcpServers: {
+      'claude-1': { command: 'node', args: [], env: { ANTHROPIC_API_KEY: 'sk-real' } }
+    }
+  };
+  const out = buildExportData(input);
+  assert.strictEqual(out.mcpServers['claude-1'].env.ANTHROPIC_API_KEY, '__redacted__');
+});
+
+test('buildExportData: preserves non-env fields', () => {
+  const input = {
+    mcpServers: {
+      'claude-1': { command: 'node', args: ['server.cjs'], env: {} }
+    }
+  };
+  const out = buildExportData(input);
+  assert.strictEqual(out.mcpServers['claude-1'].command, 'node');
+  assert.deepStrictEqual(out.mcpServers['claude-1'].args, ['server.cjs']);
+});
+
+test('buildExportData: replaced env values contain __redacted__ placeholder', () => {
+  const input = {
+    mcpServers: {
+      's1': { env: { SOME_TOKEN: 'tok-xyz', BASE_URL: 'https://api.example.com' } }
+    }
+  };
+  const out = buildExportData(input);
+  assert.strictEqual(out.mcpServers.s1.env.SOME_TOKEN, '__redacted__');
+  assert.strictEqual(out.mcpServers.s1.env.BASE_URL, 'https://api.example.com');
+});
+
+// ---------------------------------------------------------------------------
+// validateImportSchema
+// ---------------------------------------------------------------------------
+
+test('validateImportSchema: non-object root returns error', () => {
+  const errors = validateImportSchema('not-an-object');
+  assert.ok(errors.length > 0);
+  assert.ok(errors[0].includes('JSON object'));
+});
+
+test('validateImportSchema: invalid command returns error', () => {
+  const errors = validateImportSchema({
+    mcpServers: { 's1': { command: 'python', args: [] } }
+  });
+  assert.ok(errors.some(e => e.includes('"python"')));
+});
+
+test('validateImportSchema: absolute home path in args returns error', () => {
+  const errors = validateImportSchema({
+    mcpServers: { 's1': { command: 'node', args: ['/Users/alice/server.cjs'] } }
+  });
+  assert.ok(errors.some(e => e.includes('/Users/alice/server.cjs')));
+});
+
+test('validateImportSchema: valid minimal schema returns no errors', () => {
+  const errors = validateImportSchema({
+    mcpServers: { 's1': { command: 'node', args: ['./server.cjs'] } }
+  });
+  assert.strictEqual(errors.length, 0);
+});
+
+test('validateImportSchema: multiple errors all collected before return', () => {
+  const errors = validateImportSchema({
+    mcpServers: {
+      's1': { command: 'python', args: ['/home/bob/script.py'] },
+      's2': { command: 'ruby', args: [] },
+    }
+  });
+  assert.ok(errors.length >= 2);
+});
+
+test('validateImportSchema: __redacted__ value in env is not a validation error', () => {
+  const errors = validateImportSchema({
+    mcpServers: { 's1': { command: 'node', args: [], env: { ANTHROPIC_API_KEY: '__redacted__' } } }
+  });
+  assert.strictEqual(errors.length, 0);
 });
