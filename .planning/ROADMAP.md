@@ -167,7 +167,7 @@
 
 **Milestone Goal:** Remove all human checkpoints from the milestone execution loop and replace every uncertainty point with quorum consensus, enabling fully autonomous end-to-end milestone completion from new-milestone through complete-milestone with zero AskUserQuestion calls.
 
-- [ ] **Phase v0.13-01: Loop Wiring** — Wire audit-milestone into the last-phase transition chain; detect gap-closure re-audit vs. primary completion path; audit-milestone auto-spawns plan-milestone-gaps on gaps_found; STATE.md updated with audit result (LOOP-01, LOOP-02, LOOP-03, STATE-01)
+- [x] **Phase v0.13-01: Loop Wiring** — Wire audit-milestone into the last-phase transition chain; detect gap-closure re-audit vs. primary completion path; audit-milestone auto-spawns plan-milestone-gaps on gaps_found; STATE.md updated with audit result (LOOP-01, LOOP-02, LOOP-03, STATE-01) (completed 2026-02-25)
 - [ ] **Phase v0.13-02: Quorum Gates** — Replace every AskUserQuestion in the autonomous loop with R3 quorum: plan-milestone-gaps confirmation gate, execute-phase gap resolution, discuss-phase gray-area routing in auto mode (QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03)
 
 
@@ -599,5 +599,5 @@ Plans:
 | v0.12-06. Audit Trail Invariants | v0.12 | 0/3 | Not started | - |
 | v0.12-07. Hook Transcript Verification | v0.12 | 0/3 | Not started | - |
 | v0.12-08. Installer and Taxonomy Extensions | v0.12 | 0/3 | Not started | - |
-| v0.13-01. Loop Wiring | v0.13 | 0/1 | Not started | - |
+| v0.13-01. Loop Wiring | v0.13 | Complete    | 2026-02-25 | - |
 | v0.13-02. Quorum Gates | v0.13 | 0/1 | Not started | - |
