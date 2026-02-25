@@ -398,23 +398,14 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
 
 2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes) with 1-2 sentence rationale.
 
-3. Spawn the quorum orchestrator sub-agent:
+3. Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+   - Mode A — pure question
+   - Question: "Can each human_needed item from phase ${PHASE_NUMBER} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
+   - Include the full `human_verification` section as context
+   - Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+   - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
-   ```
-   Task(
-     subagent_type="qgsd-quorum-orchestrator",
-     description="Quorum resolve human_needed: phase ${PHASE_NUMBER}",
-     prompt="claude_vote: [Your APPROVE/BLOCK vote — APPROVE means can be resolved programmatically, BLOCK means genuinely requires human]
-artifact: Phase ${PHASE_NUMBER} verification produced human_needed status.
-The following items require human judgment per the verifier:
-
-[Paste full human_verification section from VERIFICATION.md]
-
-Can each item be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve) or BLOCK (needs human) with tool evidence or reason."
-   )
-   ```
-
-   Fail-open: if the Task itself errors, treat as BLOCK (escalate to user).
+   Fail-open: if all slots error, treat as BLOCK (escalate to user).
 
 4. Route on quorum_result:
    - **APPROVED** → Consensus reached. Treat as `passed`. Log: `Quorum resolved human_needed items — treating as passed`. Proceed to → update_roadmap.
