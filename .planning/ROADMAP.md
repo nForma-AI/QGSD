@@ -13,7 +13,7 @@
 - ✅ **v0.10 — Roster Toolkit** — Phases v0.10-01..v0.10-08 (shipped 2026-02-25)
 - ✅ **v0.11 — Parallel Quorum** — Phase v0.11-01 (shipped 2026-02-24)
 - 🚧 **v0.12 — Formal Verification** — Phases v0.12-01..v0.12-08 (in progress)
-- 🚧 **v0.13 — Autonomous Milestone Execution** — Phases v0.13-01..v0.13-05 (in progress)
+- 🚧 **v0.13 — Autonomous Milestone Execution** — Phases v0.13-01..v0.13-06 (in progress)
 
 ## Phases
 
@@ -174,6 +174,7 @@
 - [x] **Phase v0.13-03: Write VERIFICATION.md + Bookkeeping** — Write formal VERIFICATION.md artifacts for v0.13-01 and v0.13-02; update REQUIREMENTS.md traceability (all 8 → Complete); add per-requirement checklists; mark v0.13-02 [x] in bookkeeping pass (LOOP-01, LOOP-02, LOOP-03, STATE-01, QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03) (Gap Closure) (completed 2026-02-25)
 - [x] **Phase v0.13-04: Fix Integration Issues** — Align update-scoreboard.cjs binary path across plan-milestone-gaps.md, execute-phase.md, discuss-phase.md (INT-01); add --auto bypass guards to plan-milestone-gaps.md Step 5 and nice-to-have row; update stale success_criteria (INT-02) (Gap Closure) (completed 2026-02-25)
 - [x] **Phase v0.13-05: Fix IS_GAP_CLOSURE Pattern** — Anchor IS_GAP_CLOSURE grep in transition.md from `-A 15` to `-A 4` with `^### Phase` heading-block anchor to eliminate false-positive routing on primary phases with downstream gap-closure dependents (TECH-01) (Gap Closure) (completed 2026-02-25)
+- [ ] **Phase v0.13-06: Deploy IS_GAP_CLOSURE Fix to Installed Copy** — Sync corrected transition.md from qgsd-core/ to installed ~/.claude/qgsd/workflows/transition.md; verify -A 4 anchored pattern in installed file (LOOP-02) (Gap Closure)
 
 
 ## Phase Details
@@ -622,6 +623,21 @@ Plans:
 Plans:
 - [ ] v0.13-05-01-PLAN.md — Fix TECH-01: change transition.md IS_GAP_CLOSURE grep from -A 15 to -A 4 anchored to ^### Phase heading block; verify fix with grep checks
 
+### Phase v0.13-06: Deploy IS_GAP_CLOSURE Fix to Installed Copy
+**Goal**: Deploy the v0.13-05 IS_GAP_CLOSURE grep fix to the runtime-active installed copy at ~/.claude/qgsd/workflows/transition.md so LOOP-02 is satisfied at runtime (Claude Code reads the installed copy, not qgsd-core/)
+**Depends on**: Phase v0.13-05
+**Requirements**: LOOP-02
+**Gap Closure:** Closes gaps from audit — v0.13-MILESTONE-AUDIT.md (INT-03)
+**Success Criteria** (what must be TRUE):
+  1. `~/.claude/qgsd/workflows/transition.md` IS_GAP_CLOSURE grep uses `-A 4 "^### Phase ${COMPLETED_PHASE}:"` (not `-A 15`)
+  2. `grep -c '\-A 15.*Phase.*COMPLETED_PHASE' ~/.claude/qgsd/workflows/transition.md` returns 0
+  3. `grep -c 'A 4.*\^###.*Phase.*COMPLETED_PHASE' ~/.claude/qgsd/workflows/transition.md` returns 1
+  4. SUMMARY.md written with status: complete
+**Plans**: 1 plan
+
+Plans:
+- [ ] v0.13-06-01-PLAN.md — Sync qgsd-core/workflows/transition.md to ~/.claude/qgsd/workflows/transition.md via node bin/install.js --claude --global; verify installed copy uses anchored -A 4 pattern (LOOP-02)
+
 
 ## Progress
 
@@ -700,3 +716,4 @@ Plans:
 | v0.13-03. Write Verification Bookkeeping | v0.13 | 2/2 | Complete | 2026-02-25 |
 | v0.13-04. Fix Integration Issues | v0.13 | Complete    | 2026-02-25 | 2026-02-25 |
 | v0.13-05. Fix IS_GAP_CLOSURE Pattern | 1/1 | Complete    | 2026-02-25 | - |
+| v0.13-06. Deploy IS_GAP_CLOSURE Fix to Installed Copy | v0.13 | 0/1 | Pending | - |

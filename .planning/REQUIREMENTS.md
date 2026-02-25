@@ -10,7 +10,7 @@
 Changes to `transition.md` and `audit-milestone.md` to close the audit gap and create the re-audit loop.
 
 - [x] **LOOP-01**: The last-phase transition calls audit-milestone before complete-milestone (primary phase path)
-- [x] **LOOP-02**: The last-phase transition detects the `**Gap Closure:**` ROADMAP marker on the completed phase and routes to audit-milestone instead of complete-milestone (gap closure re-audit path)
+- [ ] **LOOP-02**: The last-phase transition detects the `**Gap Closure:**` ROADMAP marker on the completed phase and routes to audit-milestone instead of complete-milestone (gap closure re-audit path)
 - [x] **LOOP-03**: audit-milestone auto-spawns a plan-milestone-gaps Task when result is gaps_found and at least one phase is classified missing_no_plan
 - [x] **LOOP-04**: plan-milestone-gaps auto-spawns a plan-phase Task for the first gap phase after quorum approves the proposed phases
 
@@ -50,7 +50,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | LOOP-01 | v0.13-01 (verified by v0.13-03) | Complete |
-| LOOP-02 | v0.13-01 (verified by v0.13-03) | Complete |
+| LOOP-02 | v0.13-06 (gap closure — installed copy sync) | Pending |
 | LOOP-03 | v0.13-01 (verified by v0.13-03) | Complete |
 | STATE-01 | v0.13-01 (verified by v0.13-03) | Complete |
 | QUORUM-01 | v0.13-02 (verified by v0.13-03) | Complete |
@@ -60,9 +60,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 **Coverage:**
 - v1 requirements: 8 total
-- Mapped to phases: 8 (implemented in v0.13-01/02; formal verification in v0.13-03)
+- Mapped to phases: 8 (implemented in v0.13-01/02; formal verification in v0.13-03; LOOP-02 gap closure in v0.13-06)
 - Unmapped: 0 ✓
+- Pending: 1 (LOOP-02 — awaiting v0.13-06 install sync)
 
 ---
 *Requirements defined: 2026-02-25*
-*Last updated: 2026-02-25 — gap closure phases v0.13-03/04 added; traceability updated to reflect verifier phase; v0.13-05 added for TECH-01 IS_GAP_CLOSURE behavioral correctness fix (LOOP-01/LOOP-02)*
+*Last updated: 2026-02-25 — LOOP-02 reset to Pending (installed copy not synced by v0.13-05); v0.13-06 added as gap closure phase for install sync; traceability updated*
