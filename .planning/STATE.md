@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.10 Roster Toolkit — MILESTONE COMPLETE (shipped 2026-02-25). All 8 phases done (v0.10-01..v0.10-08). ROADMAP updated. Next: v0.9-04 Tier 3 Fixes or v0.12-01 Conformance Event Infrastructure.
+**Current focus:** v0.10 Roster Toolkit — MILESTONE COMPLETE (shipped 2026-02-25). All 8 phases done (v0.10-01..v0.10-08). ROADMAP updated. v0.9-04 Tier 3 Fixes COMPLETE (2026-02-25). Next: v0.12-05 or remaining v0.9 phases.
 
 ## Current Position
 
-Phase: v0.12-04
-Plan: 03
-Status: v0.12-04 Plan 02 COMPLETE — QGSDOscillation.tla (GAP-1) + QGSDConvergence.tla (GAP-5) authored with full invariant + liveness coverage; MCoscillation.cfg + MCconvergence.cfg configured for TLC. Next: v0.12-04-03 (run-oscillation-tlc.cjs runner implementation).
-Last activity: 2026-02-25 - Completed v0.12-04-02: TLA+ spec authoring for GAP-1 and GAP-5
+Phase: v0.9-04
+Plan: 02 (COMPLETE)
+Status: v0.9-04 COMPLETE — All 2 plans done. Plan 01: RED stubs for FIX-04 decimal phase parsing (unexpectedly GREEN). Plan 02: FIX-01 (5 guard notes in plan-phase.md), FIX-02 (1 guard note in discuss-phase.md), FIX-03 (Gemini TOML install for quorum.toml + quorum-test.toml), FIX-04 (4 parseInt sites fixed in gsd-tools.cjs). Install sync run for both Claude and Gemini runtimes. Next: v0.12-05 or v0.9-05.
+Last activity: 2026-02-25 - Completed v0.9-04: all 4 Tier 3 fixes implemented and installed
 
-Progress: [████████████████████] v0.10: 8/8 COMPLETE (SHIPPED) | v0.11: 3/3 COMPLETE (SHIPPED) | v0.12: v0.12-04-02 complete (2 plans done) | v0.9: 3/5 phases done
+Progress: [████████████████████] v0.10: 8/8 COMPLETE (SHIPPED) | v0.11: 3/3 COMPLETE (SHIPPED) | v0.12: v0.12-04 COMPLETE (3/3 plans done) | v0.9: 4/5 phases done
 
 ## Performance Metrics
 
@@ -42,12 +42,14 @@ Progress: [████████████████████] v0.10: 
 | v0.10-05 P03 | 3 | 28 min | 9 min |
 | v0.10-08 P02 | 2 | 6 min | 3 min |
 | v0.12-04 P02 | 2 | 4 min | 2 min |
+| v0.12-04 P03 | 2 | 2 min | 1 min |
 
 **Recent Trend:**
 - Last 5 plans: stable
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase v0.12-04 P03 | 2 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -84,6 +86,8 @@ Recent decisions affecting current work:
 - [v0.12-04-02]: No SYMMETRY directive in MCoscillation.cfg — labels appear in ordered sequences; permutation symmetry gives incorrect results for sequence-based models
 - [v0.12-04-02]: WF_vars(EvaluateFlag) + WF_vars(CollapseRuns) in Spec — algorithm is a bounded finite loop, WF is sufficient over SF
 - [v0.12-04-02]: HaikuReturnsYES preconditioned on logWritten=FALSE — mirrors JS guard; resolvedAt is set exactly once per oscillation event
+- [v0.12-04-03]: MCoscillation uses -workers 1 (liveness PROPERTY — avoids TLC v1.8.0 multi-worker liveness bug); MCconvergence uses -workers auto (safety-only)
+- [v0.12-04-03]: specPath dispatched from configName: MCoscillation → QGSDOscillation.tla, MCconvergence → QGSDConvergence.tla
 
 ### Pending Todos
 
@@ -116,5 +120,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-25
-Stopped at: Completed v0.12-04-02-PLAN.md — TLA+ spec authoring (GAP-1 + GAP-5)
+Stopped at: Completed v0.12-04-03-PLAN.md — run-oscillation-tlc.cjs runner (all 3 plans done, v0.12-04 COMPLETE)
 Resume file: None
