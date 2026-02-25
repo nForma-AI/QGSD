@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-24 after v0.12 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.12 Conformance Event Infrastructure — Phase v0.12-02 COMPLETE (TLA+ formal spec QGSDQuorum.tla, MCsafety.cfg, MCliveness.cfg, bin/run-tlc.cjs wrapper, 272 tests pass)
+**Current focus:** v0.10 milestone gap closure complete — Phase v0.10-07-retroactive-verification-closure COMPLETE (3 VERIFICATION.md documents created for v0.10-02/03/04; _pure export gap closed; menu numbering fixed; 122 tests pass)
 
 ## Current Position
 
-Phase: v0.12-02-tla-formal-spec of v0.12 (COMPLETE)
+Phase: v0.10-07-retroactive-verification-closure of v0.10 (COMPLETE)
 Plan: 3 of 3 in current phase (ALL COMPLETE)
-Status: v0.12-02 complete — TLA-01/02/03/04 all satisfied; QGSDQuorum.tla with safety invariants + liveness; MCsafety.cfg (N=5, symmetry) + MCliveness.cfg (N=3, no symmetry); bin/run-tlc.cjs wrapper; 272 tests pass
-Last activity: 2026-02-25 - Completed v0.12-02: TLA+ formal spec — QGSDQuorum.tla, config files, run-tlc.cjs wrapper
+Status: v0.10-07 complete — all 3 plans done; PRST-01/02, CRED-01/02, DASH-01/02/03 requirements traced; _pure export gap closed; menu gap fixed; 122 tests pass
+Last activity: 2026-02-25 - Completed v0.10-07 Plan 03: VERIFICATION.md docs for v0.10-02/03/04; v0.10-05 menu number update
 
-Progress: [████████████████████] 46/46 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 2/3 phases COMPLETE (v0.12-01 + v0.12-02) | v0.10: 2/6 phases (v0.10-01 both plans done) | v0.9 parallel: 3/5 phases
+Progress: [████████████████████] 46/46 plans (prior milestones 100%) | v0.11-01: 3/3 plans COMPLETE | v0.12: 2/3 phases COMPLETE (v0.12-01 + v0.12-02) | v0.10: v0.10-01 + v0.10-07 COMPLETE | v0.9 parallel: 3/5 phases
 
 ## Performance Metrics
 
