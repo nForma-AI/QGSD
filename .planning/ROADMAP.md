@@ -172,7 +172,7 @@
 - [x] **Phase v0.13-01: Loop Wiring** — Wire audit-milestone into the last-phase transition chain; detect gap-closure re-audit vs. primary completion path; audit-milestone auto-spawns plan-milestone-gaps on gaps_found; STATE.md updated with audit result (LOOP-01, LOOP-02, LOOP-03, STATE-01) (completed 2026-02-25)
 - [x] **Phase v0.13-02: Quorum Gates** — Replace every AskUserQuestion in the autonomous loop with R3 quorum: plan-milestone-gaps confirmation gate, execute-phase gap resolution, discuss-phase gray-area routing in auto mode (QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03) (completed 2026-02-25)
 - [x] **Phase v0.13-03: Write VERIFICATION.md + Bookkeeping** — Write formal VERIFICATION.md artifacts for v0.13-01 and v0.13-02; update REQUIREMENTS.md traceability (all 8 → Complete); add per-requirement checklists; mark v0.13-02 [x] in bookkeeping pass (LOOP-01, LOOP-02, LOOP-03, STATE-01, QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03) (Gap Closure) (completed 2026-02-25)
-- [ ] **Phase v0.13-04: Fix Integration Issues** — Align update-scoreboard.cjs binary path across plan-milestone-gaps.md, execute-phase.md, discuss-phase.md (INT-01); add --auto bypass guards to plan-milestone-gaps.md Step 5 and nice-to-have row; update stale success_criteria (INT-02) (Gap Closure)
+- [x] **Phase v0.13-04: Fix Integration Issues** — Align update-scoreboard.cjs binary path across plan-milestone-gaps.md, execute-phase.md, discuss-phase.md (INT-01); add --auto bypass guards to plan-milestone-gaps.md Step 5 and nice-to-have row; update stale success_criteria (INT-02) (Gap Closure) (completed 2026-02-25)
 
 
 ## Phase Details
