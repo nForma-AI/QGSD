@@ -159,7 +159,7 @@
 - [x] **Phase v0.12-03: Static Analysis Suite** — Alloy vote-counting model + runner, PRISM probabilistic DTMC + scoreboard rate exporter, Petri Net generator with WASM SVG rendering and structural deadlock detection (ALY-01..02, PRM-01..03, PET-01..03)
 - [x] **Phase v0.12-04: Circuit Breaker Algorithm Verification** — TLA+ models for run-collapse oscillation detection algorithm and circuit breaker state persistence + Haiku convergence (GAP-1, GAP-5) (completed 2026-02-25)
 - [x] **Phase v0.12-05: Protocol Termination Proofs** — TLA+ bounded termination specs for R3 deliberation loop (max 10 rounds + 10 improvement iterations) and R4 pre-filter protocol (max 3 rounds) (GAP-2, GAP-6) (completed 2026-02-25)
-- [ ] **Phase v0.12-06: Audit Trail Invariants** — Alloy models for scoreboard recomputation idempotency/no-vote-loss/no-double-counting and availability hint date arithmetic (GAP-3, GAP-9)
+- [x] **Phase v0.12-06: Audit Trail Invariants** — Alloy models for scoreboard recomputation idempotency/no-vote-loss/no-double-counting and availability hint date arithmetic (GAP-3, GAP-9) (completed 2026-02-25)
 - [ ] **Phase v0.12-07: Hook Transcript Verification** — Alloy model for qgsd-stop.js transcript scanning: boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement (GAP-4)
 - [ ] **Phase v0.12-08: Installer and Taxonomy Extensions** — Alloy extension to install-scope.als (rollback soundness, config sync completeness) and new taxonomy-safety.als (injection prevention, closed/open taxonomy consistency) (GAP-7, GAP-8)
 
@@ -526,7 +526,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] v0.13-02-01: Add R3 quorum gate to plan-milestone-gaps + auto-spawn plan-phase after APPROVE; update execute-phase gaps_found path; update discuss-phase auto mode (QUORUM-01, LOOP-04, QUORUM-02, QUORUM-03)
+- [ ] v0.13-02-01-PLAN.md — Replace plan-milestone-gaps Step 5 confirmation gate with R3 quorum approval; replace Step 10 text suggestion with plan-phase auto-spawn Task (QUORUM-01, LOOP-04)
+- [ ] v0.13-02-02-PLAN.md — Replace execute-phase gaps_found manual suggestion with quorum diagnosis + plan-phase --gaps auto-spawn; update offer_next Exception note (QUORUM-02)
+- [ ] v0.13-02-03-PLAN.md — Add second quorum pass on for_user[] survivors in auto mode at discuss-phase present_gray_areas step (QUORUM-03)
 
 
 ## Progress
@@ -600,4 +602,4 @@ Plans:
 | v0.12-07. Hook Transcript Verification | v0.12 | 0/3 | Not started | - |
 | v0.12-08. Installer and Taxonomy Extensions | v0.12 | 0/3 | Not started | - |
 | v0.13-01. Loop Wiring | v0.13 | Complete    | 2026-02-25 | - |
-| v0.13-02. Quorum Gates | v0.13 | 0/1 | Not started | - |
+| v0.13-02. Quorum Gates | v0.13 | 0/3 | Planned | - |

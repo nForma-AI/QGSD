@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-25 after v0.13-01 complete)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.13 Autonomous Milestone Execution — Phase v0.13-02 Quorum Gates COMPLETE. v0.13 milestone complete (2/2 phases done).
+**Current focus:** v0.12 Formal Verification — Phase v0.12-06 Audit Trail Invariants COMPLETE (6/8 phases done). Phase v0.12-07 Hook Transcript Verification next.
 
 ## Current Position
 
-Phase: v0.13-02 of 2 (Quorum Gates) — COMPLETE
+Phase: v0.12-06 of 8 (Audit Trail Invariants) — COMPLETE
 Plan: 3/3 plans executed
-Status: v0.13-02 complete — QUORUM-01/02/03 + LOOP-04 wired. v0.13 milestone complete.
-Last activity: 2026-02-25 — v0.13-02 executed (quorum gates in plan-milestone-gaps, execute-phase, discuss-phase — all 4 requirements wired)
+Status: v0.12-06 complete — GAP-3 (scoreboard-recompute.als) and GAP-9 (availability-parsing.als) formally verified. bin/run-audit-alloy.cjs runner implemented.
+Last activity: 2026-02-25 — v0.12-06 executed (scoreboard recomputation + availability date arithmetic Alloy specs; Alloy runner with --spec dispatch and dynamic CEX warning)
 
-Progress: [██████████] v0.13: 2/2 phases done | v0.12: v0.12-05 COMPLETE (5/8 phases done) | v0.9: COMPLETE (5/5 phases done)
+Progress: [████████░░] v0.13: 2/2 phases done | v0.12: v0.12-06 COMPLETE (6/8 phases done) | v0.9: COMPLETE (5/5 phases done)
 
 ## Performance Metrics
 
