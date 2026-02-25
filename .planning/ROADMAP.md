@@ -216,10 +216,11 @@ Plans:
   2. Every Task spawn point in `discuss-phase.md` has an explicit guard note instructing Claude not to use the Skill tool
   3. All QGSD Gemini quorum templates are free of TOML conversion issues that would break quorum consistency
   4. `gsd-tools.cjs` parses decimal phase numbers (N.M format) consistently with integer phase numbers across all subcommands — no subcommand treats N.M as invalid or strips the decimal part
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.9-04-01: Add Skill tool guards to `plan-phase.md` and `discuss-phase.md`; audit and fix Gemini TOML templates; fix decimal phase parsing in `gsd-tools.cjs`
+- [ ] v0.9-04-01-PLAN.md — RED stubs for decimal phase parsing (FIX-04)
+- [ ] v0.9-04-02-PLAN.md — Guard notes (FIX-01, FIX-02), Gemini install (FIX-03), parseInt fix + install sync (FIX-04)
 
 ### Phase v0.9-05: Rename get-shit-done/ → qgsd-core/
 **Goal**: The QGSD source directory is named `qgsd-core/` (not `get-shit-done/`), all references updated, and the installed runtime continues working correctly
@@ -539,7 +540,7 @@ Plans:
 | v0.9-01. Context Window Monitor | v0.9 | 1/1 | Complete | 2026-02-24 |
 | v0.9-02. Nyquist Validation Layer | v0.9 | 2/2 | Complete | 2026-02-24 |
 | v0.9-03. Discuss-Phase UX | v0.9 | 1/1 | Complete | 2026-02-24 |
-| v0.9-04. Tier 3 Fixes | v0.9 | 0/1 | Not started | - |
+| v0.9-04. Tier 3 Fixes | v0.9 | 0/2 | Not started | - |
 | v0.9-05. Rename get-shit-done/ → qgsd-core/ | v0.9 | 0/1 | Not started | - |
 | v0.10-01. Foundation | v0.10 | Complete    | 2026-02-24 | 2026-02-24 |
 | v0.10-02. Presets and Cloning | v0.10 | Complete    | 2026-02-24 | - |
