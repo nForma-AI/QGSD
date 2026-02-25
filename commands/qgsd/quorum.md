@@ -349,7 +349,7 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
 
 Run one command per model per round. Each call is atomic and idempotent — if re-run for the same task+round+model it overwrites that model's vote and recalculates from scratch.
 
-### Escalate — no consensus after 4 rounds
+### Escalate — no consensus after 10 rounds
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -467,7 +467,7 @@ REJECT if output shows it is NOT satisfied.
 FLAG if output is ambiguous or requires human judgment.
 ```
 
-Dispatch (sequential — one Task per message turn):
+Dispatch (parallel — all Tasks in one message turn):
 
 **Native agents** (hardcoded):
 - `Task(subagent_type="general-purpose", prompt="Call mcp__gemini-cli-1__gemini with the following prompt. Pass the full literal bundle inline — do not summarize or truncate: [full worker prompt with bundle inlined]")`
@@ -490,7 +490,7 @@ Determine consensus:
 - Mixed APPROVE/FLAG → `FLAG`
 - All UNAVAIL → stop: "All quorum models unavailable — cannot evaluate."
 
-If split: run deliberation (up to 3 rounds) with traces always included in context.
+If split: run deliberation (up to 9 deliberation rounds, max 10 total rounds including Round 1) with traces always included in context.
 
 ### Output consensus verdict
 
