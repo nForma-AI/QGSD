@@ -996,3 +996,42 @@ test('parseUpdateLogErrors: uses 24h window as default when maxAgeMs not provide
   const result = parseUpdateLogErrors(logContent);  // no maxAgeMs — uses default 24h
   assert.strictEqual(result.length, 1, '23h old ERROR must be within 24h default window');
 });
+
+// ── v0.10-07 Wave 0 stubs: probeAllSlots + liveDashboard _pure exports ──────
+// These stubs MUST fail with TypeError until Plan 02 adds the _pure exports.
+
+test('probeAllSlots: subprocess slots return healthy:null without HTTP probe', async () => {
+  const { probeAllSlots } = _pure;   // TypeError until _pure export added
+  const mockMcpServers = {
+    'subprocess-slot': { command: 'node', args: ['server.js'], env: {} },
+  };
+  const result = await probeAllSlots(mockMcpServers, ['subprocess-slot'], null);
+  assert.strictEqual(result['subprocess-slot'].healthy, null);
+  assert.strictEqual(result['subprocess-slot'].error, 'subprocess');
+});
+
+test('probeAllSlots: empty slots returns empty object', async () => {
+  const { probeAllSlots } = _pure;   // TypeError until _pure export added
+  const result = await probeAllSlots({}, [], null);
+  assert.deepStrictEqual(result, {});
+});
+
+test('probeAllSlots: returns one entry per slot', async () => {
+  const { probeAllSlots } = _pure;   // TypeError until _pure export added
+  const mockMcpServers = {
+    'slot-a': { env: {} },
+    'slot-b': { env: {} },
+  };
+  const result = await probeAllSlots(mockMcpServers, ['slot-a', 'slot-b'], null);
+  assert.strictEqual(Object.keys(result).length, 2);
+});
+
+test('liveDashboard smoke: non-TTY path resolves without throwing', async () => {
+  const { liveDashboard } = _pure;   // TypeError until _pure export added
+  // In node:test context process.stdout.isTTY is falsy — non-TTY branch fires.
+  // Guard: if somehow running in a real TTY, skip to avoid raw-mode hang.
+  if (process.stdout.isTTY) {
+    return;
+  }
+  await assert.doesNotReject(liveDashboard());
+});
