@@ -184,7 +184,7 @@
 <summary>🚧 v0.14 — FV Pipeline Integration (Phases v0.14-01..v0.14-05) — IN PROGRESS</summary>
 
 - [x] **Phase v0.14-01: FV Tool Integration** — Commit and wire xstate-to-tla.cjs and run-formal-verify.cjs into source tree with test coverage; CI formal-verify.yml committed and end-to-end pipeline wired (INTG-01, INTG-02, INTG-03, INTG-04) (completed 2026-02-26)
-- [ ] **Phase v0.14-02: Drift Detection + TLA+ Canonicalization** — Resolve BROKEN-01 (xstate-to-tla.cjs writes QGSDQuorum_xstate.tla not QGSDQuorum.tla, Option A); wire check-spec-sync.cjs into npm test; upgrade XState parsing from regex to AST; detect orphaned handwritten specs; remove CI continue-on-error masking; add missing CI path triggers (DRFT-01, DRFT-02, DRFT-03 + BROKEN-01 + MISSING-02)
+- [x] **Phase v0.14-02: Drift Detection + TLA+ Canonicalization** — Resolve BROKEN-01 (xstate-to-tla.cjs writes QGSDQuorum_xstate.tla not QGSDQuorum.tla, Option A); wire check-spec-sync.cjs into npm test; upgrade XState parsing from regex to AST; detect orphaned handwritten specs; remove CI continue-on-error masking; add missing CI path triggers (DRFT-01, DRFT-02, DRFT-03 + BROKEN-01 + MISSING-02) (completed 2026-02-26)
 - [ ] **Phase v0.14-03: Parallelization** — Run TLA+, Alloy, and PRISM tool groups concurrently; cut total runtime from ~10 min to ~2 min (PERF-01, PERF-02)
 - [ ] **Phase v0.14-04: PRISM Config Injection** — Scoreboard TP/TN rates auto-fed to PRISM model parameters at runtime; no manual .pm file editing required (PRISM-01, PRISM-02)
 - [ ] **Phase v0.14-05: Watch Mode** — --watch flag re-runs formal verification automatically on XState machine file changes (DX-01)
@@ -804,7 +804,7 @@ Plans:
 | v0.13-05. Fix IS_GAP_CLOSURE Pattern | 1/1 | Complete    | 2026-02-25 | - |
 | v0.13-06. Deploy IS_GAP_CLOSURE Fix to Installed Copy | v0.13 | Complete    | 2026-02-25 | - |
 | v0.14-01. FV Tool Integration | 3/3 | Complete    | 2026-02-26 | - |
-| v0.14-02. Drift Detection + TLA+ Canonicalization | 1/2 | In Progress|  | - |
+| v0.14-02. Drift Detection + TLA+ Canonicalization | 2/2 | Complete   | 2026-02-26 | - |
 | v0.14-03. Parallelization | v0.14 | 0/3 | Not started | - |
 | v0.14-04. PRISM Config Injection | v0.14 | 0/3 | Not started | - |
 | v0.14-05. Watch Mode | v0.14 | 0/2 | Not started | - |
