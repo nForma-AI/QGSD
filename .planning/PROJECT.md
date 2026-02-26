@@ -8,19 +8,23 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.14 FV Pipeline Integration
+## Current Milestone: v0.15 Health & Tooling Modernization
+
+**Goal:** Fix the GSD health checker to recognize QGSD's versioned phase naming convention, guard `--repair` against rich STATE.md data loss, archive legacy pre-versioning phase dirs, and surface quorum failure patterns in the health report.
+
+**Target features:**
+- Fix gsd-tools.cjs regex for W005/W007/W002 — add versioned pattern `^v\d+\.\d+-\d{2}` support; eliminate 33 W005 + 22 W007 false positives for QGSD `v0.X-YY-name` phase dirs
+- Guard `--repair` against rich STATE.md — show diff + require `--force` before `regenerateState` overwrites non-minimal content
+- Archive legacy dirs 18-39 to `.planning/archive/legacy/` — remove pre-versioning orphaned dirs from W007 noise
+- Integrate quorum-failures.json into `/qgsd:health` output — surface recurring slot failure patterns detected by quick-112
+
+## Just Shipped: v0.14 FV Pipeline Integration (2026-02-26)
 
 **Goal:** Commit and wire the existing untracked formal verification tools into the npm test suite and CI, parallelize the 20-step runner from 10 min to ~2 min, upgrade regex-based drift detection to AST, and add PRISM config injection from the quorum scoreboard.
 
-**Target features:**
-- Commit + integrate untracked FV tools (`xstate-to-tla.cjs`, `run-formal-verify.cjs`, `.github/workflows/formal-verify.yml`) with tests
-- Drift detector wired into `npm test` — drift in TLA+/Alloy/PRISM vs XState machine fails `npm test`
-- Parallelize `run-formal-verify.cjs` — 20 sequential steps → parallel tool groups (~10 min → ~2 min)
-- AST-based XState parsing in drift detector — replace regex with proper TS compiler/AST walk
-- Standardize PRISM config injection — scoreboard TP/TN rates auto-fed to PRISM model parameters
-- `--watch` mode for `run-formal-verify.cjs` — re-run on XState machine file changes
+**Phases:** v0.14-01..v0.14-05 (5 phases, 12 plans)
 
-## Just Shipped: v0.13 Autonomous Milestone Execution (2026-02-25)
+## Previously Shipped: v0.13 Autonomous Milestone Execution (2026-02-25)
 
 **Delivered:** Removed all human checkpoints from the milestone execution loop — zero AskUserQuestion calls from new-milestone through complete-milestone.
 
@@ -225,8 +229,16 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Active
 
-<!-- v0.14 scope: FV Pipeline Integration -->
+<!-- v0.15 scope: Health & Tooling Modernization -->
 
+- [ ] gsd-tools.cjs W005 recognizes QGSD versioned phase naming — no false positives for `v0.X-YY-name` dirs (HLTH-01)
+- [ ] gsd-tools.cjs W007 ROADMAP extractor matches `### Phase v0.X-YY:` headers — no false positives for versioned phases (HLTH-02)
+- [ ] gsd-tools.cjs W002 STATE.md extractor handles versioned phase refs — `Phase v0.14-01` style refs parsed correctly (HLTH-03)
+- [ ] `--repair` guard against rich STATE.md — shows diff + requires `--force` before overwriting non-minimal STATE.md (SAFE-01)
+- [ ] Legacy numeric phase dirs 18-39 archived to `.planning/archive/legacy/` — W007 orphan noise eliminated (SAFE-02)
+- [ ] `/qgsd:health` output surfaces quorum-failures.json warning patterns when file exists and count ≥ 3 (VIS-01)
+
+<!-- Carry-forward: deferred from v0.14 -->
 - [ ] `--watch` mode for `run-formal-verify.cjs` — re-run on XState machine file changes (DX-01)
 
 <!-- Carry-forward: deferred from v0.3 -->
@@ -355,4 +367,4 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
 
 ---
-*Last updated: 2026-02-26 after Phase v0.14-04*
+*Last updated: 2026-02-26 — started milestone v0.15 Health & Tooling Modernization*
