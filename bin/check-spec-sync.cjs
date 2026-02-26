@@ -14,7 +14,9 @@
 // Exit 0 = in sync; Exit 1 = drift detected.
 // Usage: node bin/check-spec-sync.cjs
 
+const { buildSync } = require('esbuild');
 const fs   = require('fs');
+const os   = require('os');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
@@ -29,23 +31,82 @@ function load(rel) {
   return fs.readFileSync(abs, 'utf8');
 }
 
-const machineSrc  = load('src/machines/qgsd-workflow.machine.ts');
 const tlaSrc      = load('formal/tla/QGSDQuorum.tla');
 const safetyCfg   = load('formal/tla/MCsafety.cfg');
 const livenessCfg = load('formal/tla/MCliveness.cfg');
 
-// ── 1. Extract XState facts (source of truth) ─────────────────────────────────
-// State names: lines matching `    UPPERCASE_NAME: {` (4-space indent, top-level states)
-const xstateStateNames = (machineSrc.match(/^    ([A-Z_]+):\s*\{/gm) || [])
-  .map(line => line.trim().split(':')[0]);
+// ── 1. Extract XState facts using esbuild+require() ────────────────────────────
+// Compile the TypeScript machine to a temporary CJS bundle, then require() it.
+// This gives us the live machine object — no regex parsing of raw source.
 
-// maxDeliberation default value from context initializer
-const maxDelibMatch = machineSrc.match(/maxDeliberation:\s*(\d+)/);
-const xstateMaxDelib = maxDelibMatch ? parseInt(maxDelibMatch[1], 10) : null;
+const MACHINE_FILE = path.join(ROOT, 'src/machines/qgsd-workflow.machine.ts');
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-spec-sync-'));
+const tmpBundle = path.join(tmpDir, 'machine.cjs');
 
-// Initial state name
-const initialMatch = machineSrc.match(/initial:\s*'([A-Z_]+)'/);
-const xstateInitial = initialMatch ? initialMatch[1] : null;
+let machineObj = null;
+let xstateExtractError = null;
+
+try {
+  buildSync({
+    entryPoints: [MACHINE_FILE],
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    outfile: tmpBundle,
+    logLevel: 'silent',
+  });
+  const m = require(tmpBundle);
+  // Find the exported machine — look for .config property (XState v5 machine)
+  machineObj = Object.values(m).find(v => v && typeof v === 'object' && v.config);
+} catch (err) {
+  xstateExtractError = err.message;
+}
+
+// Extract structural facts from the machine object
+let xstateStateNames = [];
+let xstateGuardNames = [];
+let xstateEventNames = [];
+let xstateMaxDelib = null;
+let xstateInitial = null;
+
+if (machineObj && machineObj.config) {
+  const cfg = machineObj.config;
+
+  // State names (all top-level states)
+  xstateStateNames = Object.keys(cfg.states || {});
+
+  // Initial state
+  xstateInitial = cfg.initial || null;
+
+  // Guard names from implementations.guards
+  const impls = machineObj.implementations || {};
+  xstateGuardNames = Object.keys(impls.guards || {});
+
+  // Event names from all transitions across all states
+  const eventSet = new Set();
+  for (const stateCfg of Object.values(cfg.states || {})) {
+    for (const evtName of Object.keys(stateCfg.on || {})) {
+      eventSet.add(evtName);
+    }
+  }
+  xstateEventNames = [...eventSet];
+
+  // maxDeliberation from context defaults
+  const ctxDefaults = cfg.context || {};
+  if (typeof ctxDefaults.maxDeliberation === 'number') {
+    xstateMaxDelib = ctxDefaults.maxDeliberation;
+  }
+} else if (xstateExtractError) {
+  // Fallback: use regex if esbuild fails (e.g., in environments without esbuild)
+  process.stderr.write('[check-spec-sync] esbuild extraction failed: ' + xstateExtractError + '\n');
+  process.stderr.write('[check-spec-sync] Falling back to regex extraction (limited)\n');
+  const machineSrc = load('src/machines/qgsd-workflow.machine.ts');
+  xstateStateNames = (machineSrc.match(/^    ([A-Z_]+):\s*\{/gm) || []).map(l => l.trim().split(':')[0]);
+  const md = machineSrc.match(/maxDeliberation:\s*(\d+)/);
+  xstateMaxDelib = md ? parseInt(md[1], 10) : null;
+  const im = machineSrc.match(/initial:\s*'([A-Z_]+)'/);
+  xstateInitial = im ? im[1] : null;
+}
 
 // ── 2. Extract TLA+ facts ────────────────────────────────────────────────────
 // Phase values in TypeOK: phase \in {"IDLE", "COLLECTING_VOTES", ...}
