@@ -253,7 +253,7 @@ Form your own position on the plan first: does it correctly address the task des
 Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
 - Mode B — artifact review
 - artifact_path: `${QUICK_DIR}/${next_num}-PLAN.md`
-- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku"` (one per slot)
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
@@ -393,7 +393,7 @@ Store as `$VERIFICATION_STATUS`.
    - Mode A — pure question
    - Question: "Can each human_needed item from quick task ${next_num} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
-   - Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+   - Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku"` (one per slot)
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
    Fail-open: if all slots error, treat as BLOCK (escalate to user).
