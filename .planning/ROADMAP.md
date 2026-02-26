@@ -841,7 +841,7 @@ Plans:
 | v0.9-04. Tier 3 Fixes | v0.9 | Complete    | 2026-02-26 | - |
 | v0.9-05. Rename get-shit-done/ → qgsd-core/ | v0.9 | Complete    | 2026-02-25 | - |
 | v0.9-06. v0.9-03 Retroactive Verification | v0.9 | Complete    | 2026-02-26 | - |
-| v0.9-07. Nyquist Parse-List Correction + Path Portability | 1/1 | Complete   | 2026-02-26 | - |
+| v0.9-07. Nyquist Parse-List Correction + Path Portability | 1/1 | Complete    | 2026-02-26 | - |
 | v0.9-08. Post-v0.9 Install Sync | v0.9 | 0/1 | Not started | - |
 | v0.9-09. SC-4 End-to-End Nyquist Demo | v0.9 | 0/1 | Not started | - |
 | v0.10-01. Foundation | v0.10 | Complete    | 2026-02-24 | 2026-02-24 |
