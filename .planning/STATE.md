@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-25 after v0.14 milestone started)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.14 FV Pipeline Integration — Phase v0.14-02 COMPLETE (2/2 plans done); drift detection wired into npm test; DRFT-01/02/03 complete
+**Current focus:** v0.14 FV Pipeline Integration — Phase v0.14-02 gap closure complete (3/3 plans done); guard drift enforcement + fixture-based drift tests added; DRFT-02/03 fully closed
 
 ## Current Position
 
-Phase: v0.14-02 (Drift Detection + TLA+ Canon) — COMPLETE (2/2 plans done)
-Plan: v0.14-02-01 DONE (cc71a2f) | v0.14-02-02 DONE (e023a6c)
-Status: All plans complete — BROKEN-01 resolved, MISSING-02 resolved, DRFT-01/02/03 complete; npm test runs drift detection (330 tests passing)
-Last activity: 2026-02-26 — v0.14-02-02 complete: esbuild+require() machine walk, TLA+ orphan hard-fail, Alloy scan, npm test wired
+Phase: v0.14-02 (Drift Detection + TLA+ Canon) — COMPLETE (3/3 plans done, including gap closure)
+Plan: v0.14-02-01 DONE (cc71a2f) | v0.14-02-02 DONE (e023a6c) | v0.14-02-03 DONE (842ad3d)
+Status: All plans complete + gap closure done — BROKEN-01, MISSING-02, DRFT-01/02/03 all resolved; guard drift enforced via Check 5 + guards/qgsd-workflow.json; 331 tests passing
+Last activity: 2026-02-26 — v0.14-02-03 gap closure: Check 5 guard drift, --tla-path/--guards-path fixtures, fixture-based drift injection tests (state + guard)
 
-Progress: [██████████] v0.13: SHIPPED | v0.14: 2/5 phases complete (v0.14-01 DONE, v0.14-02 DONE) | v0.12: in-progress (v0.12-10 pending) | v0.9: in-progress (v0.9-02..05 pending)
+Progress: [██████████] v0.13: SHIPPED | v0.14: 2/5 phases complete (v0.14-01 DONE, v0.14-02 DONE + gap closure) | v0.12: in-progress (v0.12-10 pending) | v0.9: in-progress (v0.9-02..05 pending)
 
 ## Performance Metrics
 
@@ -72,6 +72,9 @@ Progress: [██████████] v0.13: SHIPPED | v0.14: 2/5 phases co
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [Phase v0.14-02-03]: --tla-path/--guards-path CLI overrides in check-spec-sync.cjs for fixture-based drift injection tests — cleanest approach; no temp-file swap, no env var needed
+- [Phase v0.14-02-03]: Alloy guard orphan detection is ok() informational not fail() — Alloy abstracts guard logic under different predicate names; guards/qgsd-workflow.json is the authoritative bridge
+- [Phase v0.14-02-03]: Guard drift test added (phantomGuardXYZ fixture) per Copilot quorum improvement recommendation
 - [v0.13-02]: QUORUM-03 second pass uses 3-round deliberation cap (not 10) — secondary pre-filter pattern matches R4, not full R3
 - [v0.13-02]: QUORUM-02 uses compact prompt (1-sentence-per-gap, max 20 words) — execute-phase orchestrator context ~10-15%, full VERIFICATION.md text would overflow
 - [v0.13-02]: Scoreboard update ordering guarantee: update-scoreboard.cjs BEFORE any downstream Task spawn (all 3 plans)
