@@ -153,7 +153,8 @@ if (xstateStateNames.length === 0) {
       fail('XState states missing from TLA+ TypeOK: ' + missing.join(', '));
     }
     if (extra.length > 0) {
-      warn('TLA+ TypeOK has extra phases not in XState (may be intentional): ' + extra.join(', '));
+      fail('TLA+ TypeOK has orphaned phases not in XState machine: ' + extra.join(', ') +
+        '\n         (These TLA+ phases have no corresponding XState state — update QGSDQuorum.tla)');
     }
     if (missing.length === 0 && extra.length === 0) {
       ok('State names match exactly');
@@ -206,6 +207,25 @@ if (xstateInitial === null) {
   } else {
     ok('Initial state matches: "' + xstateInitial + '"');
   }
+}
+
+// Check 4: Alloy orphan detection
+// Scan Alloy .als files for string literals matching XState state-name patterns
+// that don't exist in the current machine.
+const alloyDir = path.join(ROOT, 'formal', 'alloy');
+if (fs.existsSync(alloyDir)) {
+  const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
+  for (const alsFile of alsFiles) {
+    const alsSrc = fs.readFileSync(path.join(alloyDir, alsFile), 'utf8');
+    // Extract quoted string literals that look like XState state names (ALL_CAPS)
+    const alloyStateRefs = (alsSrc.match(/"([A-Z_]{3,})"/g) || [])
+      .map(s => s.replace(/"/g, ''));
+    const orphaned = alloyStateRefs.filter(s => xstateStateNames.length > 0 && !xstateStateNames.includes(s));
+    if (orphaned.length > 0) {
+      warn('Alloy ' + alsFile + ' references states not in XState machine: ' + [...new Set(orphaned)].join(', '));
+    }
+  }
+  ok('Alloy orphan scan complete');
 }
 
 // ── 5. Report ────────────────────────────────────────────────────────────────
