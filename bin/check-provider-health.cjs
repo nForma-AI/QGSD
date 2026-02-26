@@ -33,6 +33,18 @@ const fs    = require('fs');
 const path  = require('path');
 const os    = require('os');
 
+// ─── Project root lookup (for quorum-failures.json) ───────────────────────────
+function findProjectRoot() {
+  let dir = __dirname;
+  for (let i = 0; i < 8; i++) {
+    if (fs.existsSync(path.join(dir, '.planning'))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return process.cwd();
+}
+
 const args         = process.argv.slice(2);
 const getArg       = (f) => { const i = args.indexOf(f); return i !== -1 && args[i+1] ? args[i+1] : null; };
 const hasFlag      = (f) => args.includes(f);
@@ -145,8 +157,60 @@ for (const [name, cfg] of Object.entries(activeMcpServers)) {
   providers[baseUrl].servers.push({ name, model });
 }
 
+// ─── Quorum Failure Patterns printer ─────────────────────────────────────────
+function printQuorumFailures() {
+  if (JSON_OUT) return;
+  try {
+    const failuresPath = path.join(findProjectRoot(), '.planning', 'quorum-failures.json');
+    if (!fs.existsSync(failuresPath)) return;
+
+    let records;
+    try {
+      records = JSON.parse(fs.readFileSync(failuresPath, 'utf8'));
+      if (!Array.isArray(records)) records = [];
+    } catch (_) { return; }
+
+    const fYellow = (s) => `\x1b[33m${s}\x1b[0m`;
+    const fRed    = (s) => `\x1b[31m${s}\x1b[0m`;
+    const fBold   = (s) => `\x1b[1m${s}\x1b[0m`;
+    const fCyan   = (s) => `\x1b[36m${s}\x1b[0m`;
+    const fDim    = (s) => `\x1b[2m${s}\x1b[0m`;
+
+    const hints = {
+      CLI_SYNTAX: 'Check CLI args_template in providers.json for this slot',
+      TIMEOUT:    'Check provider timeout_ms in providers.json or increase --timeout arg',
+      AUTH:       'Check API key env var / OAuth token for this slot',
+      UNKNOWN:    'Check stderr output in pattern field above',
+    };
+
+    let warnEmitted = false;
+    const bySlot = {};
+    for (const r of records) {
+      if (!bySlot[r.slot]) bySlot[r.slot] = {};
+      if (!bySlot[r.slot][r.error_type]) bySlot[r.slot][r.error_type] = r;
+    }
+
+    for (const [slotName, byType] of Object.entries(bySlot)) {
+      for (const [errorType, rec] of Object.entries(byType)) {
+        if (rec.count >= 3) {
+          if (!warnEmitted) {
+            console.log(fYellow('━━━ QUORUM SLOT FAILURE PATTERNS ━━━'));
+            console.log();
+            warnEmitted = true;
+          }
+          console.log(`  ${fYellow('WARN')}  quorum slot "${fCyan(slotName)}" has ${fRed(String(rec.count))} ${fBold(errorType)} failures (last: ${fDim(rec.last_seen)})`);
+          console.log(`        ${fDim('Pattern:')} ${fDim(rec.pattern)}`);
+          console.log(`        ${fDim('Hint:')} ${fDim(hints[errorType] ?? hints.UNKNOWN)}`);
+          console.log();
+        }
+      }
+    }
+  } catch (_) { /* silently skip — never crash health check */ }
+}
+
 if (Object.keys(providers).length === 0) {
   console.log('No claude-mcp-server instances with ANTHROPIC_BASE_URL found.');
+  printQuorumFailures();
   process.exit(0);
 }
 
@@ -315,6 +379,9 @@ async function main() {
     }
     console.log();
   }
+
+  // ── Quorum Failure Patterns ──────────────────────────────────────────────────
+  printQuorumFailures();
 
   process.exit(results.some(r => !r.healthy) ? 1 : 0);
 }
