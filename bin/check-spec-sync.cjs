@@ -10,9 +10,15 @@
 //   1. State names in QGSDQuorum.tla TypeOK match the XState machine states
 //   2. MaxDeliberation in MCsafety.cfg and MCliveness.cfg matches the XState context default
 //   3. Initial state in QGSDQuorum.tla Init matches the XState initial state
+//   4. Alloy .als files do not reference state names or guard names not in XState machine
+//   5. Guard names in XState machine match keys in formal/tla/guards/qgsd-workflow.json (bidirectional)
 //
 // Exit 0 = in sync; Exit 1 = drift detected.
-// Usage: node bin/check-spec-sync.cjs
+// Usage: node bin/check-spec-sync.cjs [--tla-path=<path>] [--guards-path=<path>]
+//
+// CLI overrides (for fixture-based tests):
+//   --tla-path=<abs-path>    Override path to QGSDQuorum.tla (default: formal/tla/QGSDQuorum.tla)
+//   --guards-path=<abs-path> Override path to guards JSON (default: formal/tla/guards/qgsd-workflow.json)
 
 const { buildSync } = require('esbuild');
 const fs   = require('fs');
@@ -20,6 +26,20 @@ const os   = require('os');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
+
+// ── CLI overrides (for fixture-based drift injection tests) ───────────────────
+// These allow tests to substitute temp fixture files without modifying the repo.
+const tlaPathOverride   = process.argv.find(a => a.startsWith('--tla-path='));
+const guardsPathOverride = process.argv.find(a => a.startsWith('--guards-path='));
+
+// Resolved paths (absolute)
+const TLA_ABS_PATH = tlaPathOverride
+  ? tlaPathOverride.slice('--tla-path='.length)
+  : path.join(ROOT, 'formal', 'tla', 'QGSDQuorum.tla');
+
+const GUARDS_ABS_PATH = guardsPathOverride
+  ? guardsPathOverride.slice('--guards-path='.length)
+  : path.join(ROOT, 'formal', 'tla', 'guards', 'qgsd-workflow.json');
 
 // ── Load files ───────────────────────────────────────────────────────────────
 function load(rel) {
@@ -31,7 +51,15 @@ function load(rel) {
   return fs.readFileSync(abs, 'utf8');
 }
 
-const tlaSrc      = load('formal/tla/QGSDQuorum.tla');
+function loadAbs(abs) {
+  if (!fs.existsSync(abs)) {
+    process.stderr.write('[check-spec-sync] File not found: ' + abs + '\n');
+    process.exit(1);
+  }
+  return fs.readFileSync(abs, 'utf8');
+}
+
+const tlaSrc      = loadAbs(TLA_ABS_PATH);
 const safetyCfg   = load('formal/tla/MCsafety.cfg');
 const livenessCfg = load('formal/tla/MCliveness.cfg');
 
@@ -210,22 +238,107 @@ if (xstateInitial === null) {
 }
 
 // Check 4: Alloy orphan detection
-// Scan Alloy .als files for string literals matching XState state-name patterns
-// that don't exist in the current machine.
+// Scan Alloy .als files for:
+//   (a) ALL_CAPS quoted string literals → cross-reference against xstateStateNames
+//   (b) camelCase guard name occurrences (verbatim word-boundary matches) → advisory cross-reference
+//
+// Note: Alloy orphan detection uses warn() not fail() because Alloy models are intentional
+// abstractions — they may use different predicate names (e.g., MajorityReached instead of
+// minQuorumMet). The authoritative guard mapping check is in Check 5 (guards/qgsd-workflow.json).
 const alloyDir = path.join(ROOT, 'formal', 'alloy');
 if (fs.existsSync(alloyDir)) {
   const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
   for (const alsFile of alsFiles) {
     const alsSrc = fs.readFileSync(path.join(alloyDir, alsFile), 'utf8');
-    // Extract quoted string literals that look like XState state names (ALL_CAPS)
+
+    // (a) State orphan scan: quoted ALL_CAPS string literals
     const alloyStateRefs = (alsSrc.match(/"([A-Z_]{3,})"/g) || [])
       .map(s => s.replace(/"/g, ''));
-    const orphaned = alloyStateRefs.filter(s => xstateStateNames.length > 0 && !xstateStateNames.includes(s));
-    if (orphaned.length > 0) {
-      warn('Alloy ' + alsFile + ' references states not in XState machine: ' + [...new Set(orphaned)].join(', '));
+    const orphanedStates = alloyStateRefs.filter(s => xstateStateNames.length > 0 && !xstateStateNames.includes(s));
+    if (orphanedStates.length > 0) {
+      warn('Alloy ' + alsFile + ' references states not in XState machine: ' + [...new Set(orphanedStates)].join(', '));
+    }
+
+    // (b) Guard name cross-reference: scan for verbatim camelCase XState guard names.
+    // Reports which XState guard names appear by exact name in the Alloy source (informational).
+    // Only flags Alloy files that reference XState guard names verbatim — PascalCase TLA+
+    // predicates (MinQuorumMet, DeliberationBounded) are NOT XState guard names and are not checked here.
+    if (xstateGuardNames.length > 0) {
+      const referencedGuards = xstateGuardNames.filter(g => {
+        const re = new RegExp('\\b' + g + '\\b');
+        return re.test(alsSrc);
+      });
+      if (referencedGuards.length > 0) {
+        ok('Alloy ' + alsFile + ' references XState guard names: ' + referencedGuards.join(', '));
+      }
     }
   }
   ok('Alloy orphan scan complete');
+}
+
+// Check 5: Guard drift enforcement
+// Verify each XState guard name is documented in the TLA+ guard mapping file, and vice versa.
+//
+// Mapping context:
+//   XState uses camelCase guard names (minQuorumMet, noInfiniteDeliberation, phaseMonotonicallyAdvances).
+//   TLA+ uses PascalCase predicates (MinQuorumMet, DeliberationBounded) — different names, same semantics.
+//   The bridge is formal/tla/guards/qgsd-workflow.json, which maps XState guard names to TLA+ expressions.
+//
+//   If a guard is renamed in the XState machine, it must also be updated in guards/qgsd-workflow.json.
+//   If a mapping entry is removed from guards/qgsd-workflow.json without removing the guard from
+//   the machine (or vice versa), this check will detect the inconsistency.
+//
+// This check also corroborates by scanning QGSDQuorum.tla source text for camelCase guard name
+// occurrences (they appear in the header comment block as documentation of guard translations).
+if (xstateGuardNames.length > 0) {
+  if (!fs.existsSync(GUARDS_ABS_PATH)) {
+    fail('formal/tla/guards/qgsd-workflow.json not found — cannot verify guard name sync');
+  } else {
+    let guardsJson = null;
+    try {
+      guardsJson = JSON.parse(fs.readFileSync(GUARDS_ABS_PATH, 'utf8'));
+    } catch (e) {
+      fail('Could not parse guards JSON at ' + GUARDS_ABS_PATH + ': ' + e.message);
+    }
+    if (guardsJson) {
+      const mappedGuardNames = Object.keys(guardsJson.guards || {});
+      ok('XState guard names:           ' + xstateGuardNames.join(', '));
+      ok('Guards JSON mapped names:     ' + mappedGuardNames.join(', '));
+
+      // Forward check: XState guard → guards JSON (drift detection)
+      // If a guard is renamed in XState but guards/qgsd-workflow.json still has the old name, this fires.
+      const missingFromMapping = xstateGuardNames.filter(g => !mappedGuardNames.includes(g));
+      if (missingFromMapping.length > 0) {
+        fail(
+          'XState guards not found in guards/qgsd-workflow.json: ' + missingFromMapping.join(', ') +
+          '\n         (Update formal/tla/guards/qgsd-workflow.json to map these guard names to their TLA+ predicates)'
+        );
+      }
+
+      // Reverse check: guards JSON → XState (orphan detection)
+      // If a guard mapping entry exists in guards/qgsd-workflow.json but the guard was removed from
+      // the XState machine, this is an orphaned mapping.
+      const orphanedGuards = mappedGuardNames.filter(g => !xstateGuardNames.includes(g));
+      if (orphanedGuards.length > 0) {
+        fail(
+          'guards/qgsd-workflow.json references guards not in XState machine: ' + orphanedGuards.join(', ') +
+          '\n         (These guard mappings are orphaned — remove them or restore the XState guard)'
+        );
+      }
+
+      if (missingFromMapping.length === 0 && orphanedGuards.length === 0) {
+        ok('Guard names match exactly between XState machine and guards/qgsd-workflow.json');
+      }
+
+      // Corroboration: check TLA+ source mentions guard names in comment references
+      const tlaGuardRefs = xstateGuardNames.filter(g => tlaSrc.includes(g));
+      if (tlaGuardRefs.length > 0) {
+        ok('TLA+ source references guard names (comment docs): ' + tlaGuardRefs.join(', '));
+      }
+    }
+  }
+} else {
+  warn('No guard names extracted from XState machine — skipping guard drift check');
 }
 
 // ── 5. Report ────────────────────────────────────────────────────────────────
