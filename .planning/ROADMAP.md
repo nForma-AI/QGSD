@@ -693,10 +693,10 @@ Plans:
   1. TLA+ model checking, Alloy analysis, and PRISM verification run concurrently (observable via process timing — they start within seconds of each other, not sequentially)
   2. Total wall-clock time for `node bin/run-formal-verify.cjs` on a standard machine completes in approximately 2 minutes or less (down from approximately 10 minutes)
   3. All verification results are still correct after parallelization — no tool group skipped or silently failed
-**Plans**:
-  - TASK-01: Replace `for..of` sequential step loop in run-formal-verify.cjs with `Promise.all` grouped by tool type (TLA+ group, Alloy group, PRISM group run concurrently; steps within each group run sequentially if order-dependent) (PERF-01)
-  - TASK-02: Add wall-clock timing instrumentation to run-formal-verify.cjs output; add a test assertion that total runtime is below 2 minutes on a standard machine (PERF-02)
-  - TASK-03: Integration smoke test: run all tool groups after parallelization and verify all results are correct — no step silently skipped or producing wrong output due to race condition
+**Plans**: 2 plans
+Plans:
+- [ ] v0.14-03-01-PLAN.md — Refactor sequential for..of loop to grouped Promise.all parallel execution (generate first, then tla/alloy/prism/petri concurrently)
+- [ ] v0.14-03-02-PLAN.md — Add wall-clock timing instrumentation + timing assertion test + integration smoke test for step completeness
 
 ### Phase v0.14-04: PRISM Config Injection
 **Goal**: The PRISM probabilistic model receives empirically-grounded TP/TN rates from the quorum scoreboard automatically at run time, eliminating the manual step of editing .pm files between quorum runs
