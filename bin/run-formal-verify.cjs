@@ -49,7 +49,7 @@ const STEPS = [
   // ─ Source extraction — must run first so generated specs are fresh ──────────
   {
     tool: 'generate', id: 'generate:tla-from-xstate',
-    label: 'Generate TLA+ spec + TLC model config from XState machine (xstate-to-tla)',
+    label: 'Generate TLA+ spec (QGSDQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
     type: 'node', script: 'xstate-to-tla.cjs',
     args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=formal/tla/guards/qgsd-workflow.json'],
   },
