@@ -1,35 +1,29 @@
 # quorum-test artifact
-date: 2026-02-24T21:00:00Z
-files: bin/manage-agents.test.cjs bin/migrate-to-slots.test.cjs bin/review-mcp-logs.test.cjs bin/update-scoreboard.test.cjs get-shit-done/bin/gsd-tools.test.cjs hooks/config-loader.test.js hooks/qgsd-circuit-breaker.test.js hooks/qgsd-prompt.test.js hooks/qgsd-statusline.test.js hooks/qgsd-stop.test.js
+date: 2026-02-24T00:00:00Z
+files: bin/manage-agents.test.cjs, bin/migrate-to-slots.test.cjs, bin/review-mcp-logs.test.cjs, bin/update-scoreboard.test.cjs, hooks/config-loader.test.js, hooks/qgsd-stop.test.js, hooks/qgsd-circuit-breaker.test.js, hooks/qgsd-statusline.test.js, hooks/qgsd-prompt.test.js, get-shit-done/bin/gsd-tools.test.cjs
 exit_code: 0
-tests: 348 pass / 0 fail
 
 ## verdict
-REVIEW-NEEDED (0 PASS, 4 REVIEW-NEEDED, 0 BLOCK)
+PASS (consensus after 1 deliberation round — Codex UNAVAILABLE)
 
 ## worker verdicts
+| Model    | R1 Verdict | Deliberation | Final   | R8     |
+|----------|-----------|--------------|---------|--------|
+| Gemini   | BLOCK     | Round 1: revised to PASS | PASS | FN (-1) |
+| OpenCode | PASS      | —            | PASS    | TP (+1) |
+| Copilot  | PASS      | —            | PASS    | TP (+1) |
+| Codex    | UNAVAIL   | —            | UNAVAIL | —      |
 
-| Model     | Verdict        | Primary Concern                                                                              |
-|-----------|----------------|----------------------------------------------------------------------------------------------|
-| gemini-1  | REVIEW-NEEDED  | Loose includes() matching masks ANSI/alignment bugs and status symbol swaps                  |
-| opencode-1| REVIEW-NEEDED  | Stale warning uses fragile substring match; padEnd values untested                           |
-| copilot-1 | REVIEW-NEEDED  | Dashboard permissiveness + formatTimestamp(0) falsy gap                                      |
-| codex-1   | REVIEW-NEEDED  | formatTimestamp(0) falsy; per-slot data mix-up undetectable via substring                    |
+## deliberation note
+Gemini R1 BLOCK claimed test used ES6 shorthand `{ fiveMinutesAgo, ... }` without explicit `ts:`. Actual source line 978 reads `{ ts: fiveMinutesAgo, slot: 'claude-1', status: 'ERROR', detail: 'recent' }`. Gemini confirmed correction and reversed to PASS in Round 1.
 
-## actionable gaps identified (v0.10-04 run)
+## test run summary
+tests: 378 | pass: 378 | fail: 0 | suites: 35 | duration_ms: 39097 | node: v25.6.1
 
-1. **buildDashboardLines — substring matching permissiveness**: `joined.includes('UP')` / `includes('42')` checks don't verify ANSI codes, exact column alignment, or per-slot attachment of data. A slot ordering swap would pass silently.
-2. **formatTimestamp(0) gap**: `if (!ts)` treats epoch `0` as falsy and returns `—`. No test covers this edge case. An `=== null || ts === undefined` guard would be more precise.
-3. **Stale threshold boundary**: Tests use 70s and 10s offsets, not the exact 60_000ms threshold. An off-by-one change to the threshold would not be caught.
-4. **UI structure uncovered**: Header separator line, footer keypress hints, and column padding values are not asserted.
-
-## previous run notes (v0.10-03 run, 334 tests)
-1. writeKeyStatus — no preservation test (now fixed in v0.10-03: tests seed existing data)
-2. 'unreachable' guard — not unit tested (documented in source comment)
-3. classifyProbeResult — healthy=true+statusCode=null is now documented
-4. findPresetForUrl identity-adjacent (acknowledged, discriminating cases also present)
-
-## previous run notes (v0.10-02, 326 tests)
-1. buildCloneEntry mutation: tests verify field values but don't assert `entry.env !== sourceCfg.env`
-2. Brittle count `=== 4` in buildPresetChoices (now `>= 4`, addressed)
-3. Weak URL validation offset by exact URL assertions
+## new tests verified (phase v0.10-05)
+24 tests for 5 pure functions in bin/manage-agents.test.cjs:
+- buildTimeoutChoices (4): quorum_timeout_ms lookup, timeout_ms fallback, no-match null, PROVIDER_SLOT env override
+- applyTimeoutUpdate (4): update, no mutation, non-target unchanged, no-op on missing key
+- buildPolicyChoices (4): 3 choices, current annotation, non-current no annotation, null current
+- buildUpdateLogEntry (5): string type, valid JSON fields, ISO 8601 ts, null detail, verbatim status
+- parseUpdateLogErrors (7): null input, empty string, filter non-ERROR, filter old entries, return recent, skip malformed, default 24h window
