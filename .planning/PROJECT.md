@@ -180,6 +180,8 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
+- ✓ PRISM config injection — `readScoreboardRates()` in run-prism.cjs reads quorum-scoreboard.json, injects empirical TP/unavail rates as `-const` flags; caller override wins; conservative priors (0.85/0.15) when no scoreboard; 4 integration tests in run-prism.test.cjs (PRISM-01, PRISM-02) — v0.14 (Phase v0.14-04)
+- ✓ Parallelized `run-formal-verify.cjs` — generate step sequential, tla/alloy/prism/petri groups concurrent via Promise.all; wall-clock timing in summary (PERF-01, PERF-02) — v0.14 (Phase v0.14-03)
 - ✓ Drift detector wired into `npm test` with esbuild+require() AST walk; TLA+ orphan phases = fail(), bidirectional guard drift enforcement via Check 5 (DRFT-01..03) — v0.14 (Phase v0.14-02)
 - ✓ BROKEN-01 resolved: xstate-to-tla.cjs writes to QGSDQuorum_xstate.tla, never clobbering hand-authored canonical spec; CI hardened (path triggers + continue-on-error removed) — v0.14 (Phase v0.14-02)
 - ✓ Commit and integrate untracked FV tools with test coverage; run-formal-verify.cjs calls xstate-to-tla.cjs as STEPS[0] (INTG-01..04) — v0.14 (Phase v0.14-01)
@@ -225,8 +227,6 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 <!-- v0.14 scope: FV Pipeline Integration -->
 
-- [ ] Parallelize `run-formal-verify.cjs` — 20 sequential steps → parallel tool groups (~10 min → ~2 min) (PERF-01, PERF-02)
-- [ ] Standardize PRISM config injection — scoreboard TP/TN rates auto-fed to PRISM model parameters (PRISM-01, PRISM-02)
 - [ ] `--watch` mode for `run-formal-verify.cjs` — re-run on XState machine file changes (DX-01)
 
 <!-- Carry-forward: deferred from v0.3 -->
@@ -351,5 +351,8 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | node --check for syntax smoke in run-formal-verify.test.cjs | Script has top-level async IIFE that spawns child processes immediately on require(); node --check validates syntax without triggering execution | Phase v0.14-01-02 — testing pattern |
 | VALID_CONFIGS guard in run-account-manager-tlc.cjs evaluated before Java check | --config=invalid test reliable without Java installed; guard order confirmed by reading source before writing tests | Phase v0.14-01-02 — testing pattern |
 
+| PRISM_BIN=prism sentinel in run-prism.test.cjs skips existence check | With `PRISM_BIN=prism`, the existence check is bypassed (sentinel value); spawnSync attempts `prism` from PATH (fails with ENOENT), but `[run-prism] Args:` log line is printed before spawn — enabling test assertion on -const flags without PRISM installed | Phase v0.14-04 — testing pattern |
+| readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
+
 ---
-*Last updated: 2026-02-26 after Phase v0.14-02*
+*Last updated: 2026-02-26 after Phase v0.14-04*
