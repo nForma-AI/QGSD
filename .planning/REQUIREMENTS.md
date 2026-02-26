@@ -20,9 +20,9 @@ Commit and wire the existing untracked formal verification tools into the source
 
 Drift between the XState machine (source of truth) and formal specs fails visibly in `npm test`.
 
-- [ ] **DRFT-01**: `npm test` fails when XState machine and TLA+/Alloy/PRISM specs are out of sync (check-spec-sync.cjs wired into test suite)
-- [ ] **DRFT-02**: Drift detector uses TypeScript compiler/AST walk instead of regex for state extraction — catches transition and guard names, not just state list
-- [ ] **DRFT-03**: Drift detector detects orphaned handwritten specs — TLA+ states or guards with no corresponding XState state
+- [x] **DRFT-01**: `npm test` fails when XState machine and TLA+/Alloy/PRISM specs are out of sync (check-spec-sync.cjs wired into test suite)
+- [x] **DRFT-02**: Drift detector uses TypeScript compiler/AST walk instead of regex for state extraction — catches transition and guard names, not just state list
+- [x] **DRFT-03**: Drift detector detects orphaned handwritten specs — TLA+ states or guards with no corresponding XState state
 
 ### Performance
 
@@ -72,9 +72,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INTG-02 | Phase v0.14-01 | Complete |
 | INTG-03 | Phase v0.14-01 | Complete |
 | INTG-04 | Phase v0.14-01 | Complete |
-| DRFT-01 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Pending |
-| DRFT-02 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Pending |
-| DRFT-03 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Pending |
+| DRFT-01 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
+| DRFT-02 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
+| DRFT-03 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
 | PERF-01 | Phase v0.14-03 | Pending |
 | PERF-02 | Phase v0.14-03 | Pending |
 | PRISM-01 | Phase v0.14-04 | Pending |
