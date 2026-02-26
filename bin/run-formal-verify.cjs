@@ -262,8 +262,13 @@ async function runGroup(groupSteps) {
   }
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-(async () => {
+// ── runOnce() — executes the full pipeline once ───────────────────────────────
+// Returns the count of failed steps (0 = all passed).
+// Does NOT call process.exit() — the caller decides (non-watch exits, watch loops).
+async function runOnce() {
+  // Reset results array so watch-mode re-runs start clean
+  results.length = 0;
+
   process.stdout.write(TAG + ' ' + HR + '\n');
   process.stdout.write(TAG + ' QGSD Formal Verification Suite\n');
   if (only) {
@@ -314,10 +319,73 @@ async function runGroup(groupSteps) {
   process.stdout.write(TAG + ' Wall-clock: ' + elapsedSec + 's (' + elapsedMs + 'ms)\n');
   process.stdout.write(TAG + ' ' + HR + '\n');
 
-  if (failed > 0) {
-    process.stderr.write(TAG + ' ' + failed + ' step(s) failed.\n');
+  return failed;
+}
+
+// ── Entry point ───────────────────────────────────────────────────────────────
+const watchArg = argv.includes('--watch');
+
+if (watchArg) {
+  // ── Watch mode ─────────────────────────────────────────────────────────────
+  // machineDir uses process.cwd() so tests can point the watcher at a tmpDir
+  // by spawning with a custom cwd. __dirname-relative paths would always point
+  // to the real repo's src/machines/ regardless of spawn cwd, breaking isolation.
+  const machineDir  = path.join(process.cwd(), 'src', 'machines');
+  const machineName = 'qgsd-workflow.machine.ts';
+  let debounceTimer = null;
+  let running       = false;  // concurrent-run guard
+  let watcher       = null;
+
+  process.stdout.write(TAG + ' ' + HR + '\n');
+  process.stdout.write(TAG + ' Watch mode enabled\n');
+  process.stdout.write(TAG + ' Watching: ' + path.join(machineDir, machineName) + '\n');
+  process.stdout.write(TAG + ' Press Ctrl+C to stop.\n');
+  process.stdout.write(TAG + ' Tip: use --only=generate for faster feedback.\n');
+  process.stdout.write(TAG + ' ' + HR + '\n\n');
+
+  // Existence check — fail fast if invoked from wrong directory
+  if (!fs.existsSync(machineDir)) {
+    process.stderr.write(TAG + ' Error: machine directory not found: ' + machineDir + '\n');
+    process.stderr.write(TAG + ' Run --watch from the project root (where src/machines/ exists).\n');
     process.exit(1);
   }
 
-  process.exit(0);
-})();
+  // Initial run
+  runOnce().catch(err => process.stderr.write(TAG + ' Error: ' + err.message + '\n'));
+
+  // Watch parent directory — NOT the file directly.
+  // On macOS, watching a file dies after first rename (editor atomic-write pattern).
+  watcher = fs.watch(machineDir, (eventType, filename) => {
+    if (filename === machineName) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (running) return;
+        running = true;
+        process.stdout.write('\n' + TAG + ' ' + HR + '\n');
+        process.stdout.write(TAG + ' Change detected — re-running verification\n');
+        process.stdout.write(TAG + ' ' + new Date().toISOString() + '\n');
+        process.stdout.write(TAG + ' ' + HR + '\n\n');
+        runOnce()
+          .catch(err => process.stderr.write(TAG + ' Error: ' + err.message + '\n'))
+          .finally(() => { running = false; });
+      }, 300);
+    }
+  });
+
+  process.on('SIGINT', () => {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    if (watcher) watcher.close();
+    process.stdout.write('\n' + TAG + ' Exiting watch mode.\n');
+    process.exit(0);
+  });
+
+} else {
+  // ── Non-watch mode: original behavior ──────────────────────────────────────
+  runOnce().then(failed => {
+    if (failed > 0) {
+      process.stderr.write(TAG + ' ' + failed + ' step(s) failed.\n');
+      process.exit(1);
+    }
+    process.exit(0);
+  });
+}
