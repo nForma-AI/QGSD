@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-25 after v0.14 milestone started)
 
 ## Current Position
 
-Phase: v0.14-01 (FV Tool Integration) — In Progress (2/3 plans complete)
-Plan: v0.14-01-01 DONE | v0.14-01-02 DONE (e4be528) | v0.14-01-03 (INTG-04 wiring + bookkeeping) — next
-Status: v0.14-01-02 complete (e4be528) — ready to execute Plan v0.14-01-03
-Last activity: 2026-02-25 — v0.14-01-02 executed: 5 FV tool test files added, npm test at 326 tests (0 failures)
+Phase: v0.14-01 (FV Tool Integration) — COMPLETE (3/3 plans done)
+Plan: v0.14-01-01 DONE | v0.14-01-02 DONE (e4be528) | v0.14-01-03 DONE (e619d8d) — all complete
+Status: v0.14-01 complete (e619d8d) — ready to plan v0.14-02
+Last activity: 2026-02-26 — v0.14-01 FV Tool Integration shipped (INTG-01..04 closed); 326 tests / 0 failures
 
 Progress: [██████████] v0.13: SHIPPED | v0.14: 1/5 phases planned (executing v0.14-01) | v0.12: in-progress (v0.12-10 pending) | v0.9: in-progress (v0.9-02..05 pending)
 
@@ -61,6 +61,7 @@ Progress: [██████████] v0.13: SHIPPED | v0.14: 1/5 phases pl
 | Phase v0.13-05 P01 | 4min | 4 tasks | 2 files |
 | Phase v0.14-01 P01 | 1min | 3 tasks | 12 files |
 | Phase v0.14-01 P02 | 2min | 7 tasks | 6 files |
+| Phase v0.14-01 P03 | 174s | 6 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -91,6 +92,8 @@ Recent decisions affecting current work:
 - [Phase v0.14-01]: Write tool used for formal-verify.yml update — Edit tool blocked by security_reminder_hook.py on workflow files; no functional impact
 - [Phase v0.14-01-02]: node --check used for syntax smoke in run-formal-verify.test.cjs — avoids executing the async IIFE which would attempt child process spawns
 - [Phase v0.14-01-02]: run-account-manager-tlc --config=invalid test fires before Java check (VALID_CONFIGS guard is first in script)
+- [Phase v0.14-01-03]: STEPS[0] split into generate:tla-from-xstate (xstate-to-tla.cjs) + generate:alloy-prism-specs (generate-formal-specs.cjs) — total steps 20→21; satisfies INTG-04
+- [Phase v0.14-01]: STEPS[0] split into generate:tla-from-xstate (xstate-to-tla.cjs) + generate:alloy-prism-specs; total steps 20→21; satisfies INTG-04
 
 ### Pending Todos
 
@@ -123,6 +126,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-02-25
-Stopped at: Completed v0.14-01-02-PLAN.md (e4be528) — 5 FV tool test files added, npm test at 326 tests; ready to execute v0.14-01-03
+Last session: 2026-02-26
+Stopped at: Completed v0.14-01-03-PLAN.md (e619d8d) — INTG-04 wired (xstate-to-tla.cjs as STEPS[0]); 326 tests; v0.14-01 phase complete; ready to plan v0.14-02
 Resume file: None
