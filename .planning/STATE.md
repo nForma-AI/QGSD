@@ -67,6 +67,7 @@ Progress: [████████████████████] 128/125
 | Phase v0.14-04 P02 | 2min | 1 tasks | 2 files |
 | Phase v0.9-06 P01 | 1min | 1 tasks | 1 files |
 | Phase v0.9-07 P01 | 89s | 2 tasks | 1 files |
+| Phase v0.9-08 P01 | 25s | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,8 @@ Recent decisions affecting current work:
 - [Phase v0.14-04]: PRISM_BIN=prism sentinel in run-prism.test.cjs skips existence check, enabling Args line capture without PRISM installed
 - [Phase v0.9-06]: Retroactive VERIFICATION.md sourced from SUMMARY.md inline grep evidence; verified date set to original execution date (2026-02-24)
 - [Phase v0.9-07]: nyquist_validation_enabled grouped with feature-flag booleans in Step 1 parse list; portable ~/.claude/ source prefix expanded by installer to absolute paths
+- [Phase v0.9-08]: install sync is idempotent — safe to run as formal closure step even when no drift exists; installer removes dest and copies fresh from source
+- [Phase v0.9-08]: no drift existed pre-sync: installed runtime timestamps postdate quick-110 and quick-111 commits; gap closure is formal record, not bug fix
 
 ### Pending Todos
 
