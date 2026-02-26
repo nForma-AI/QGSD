@@ -1,91 +1,63 @@
-# Requirements: QGSD v0.14 FV Pipeline Integration
+# Requirements: QGSD v0.15 Health & Tooling Modernization
 
-**Defined:** 2026-02-25
+**Defined:** 2026-02-26
 **Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## v1 Requirements
+## v0.15 Requirements
 
-Requirements for v0.14 release. Continuation of v0.12 formal verification tooling — integration, hardening, and performance.
+### HLTH — Health Checker Accuracy
 
-### Integration
+Root cause: `gsd-tools.cjs` validate health uses regex patterns designed for GSD's legacy `NN-name` numeric phase naming. QGSD uses `v0.X-YY-name` versioned naming — causing 33 W005 + 22 W007 false positives that mask real issues.
 
-Commit and wire the existing untracked formal verification tools into the source tree with proper test coverage and pipeline integration.
+- [ ] **HLTH-01**: Health checker W005 dir-naming validation recognizes QGSD versioned format `v0.X-YY-name` — zero false positives for all versioned phase dirs
+- [ ] **HLTH-02**: Health checker W007 ROADMAP extractor matches `### Phase v0.X-YY:` versioned headers — no phases appearing as "on disk but not in ROADMAP" when they are in ROADMAP
+- [ ] **HLTH-03**: Health checker W002 STATE.md parser extracts versioned phase references (`Phase v0.14-01`) — position reported correctly without false "invalid phase" warnings
 
-- [x] **INTG-01**: User can run `bin/xstate-to-tla.cjs` as a committed, tested tool that transpiles an XState machine to TLA+ spec + TLC model config
-- [x] **INTG-02**: User can run `bin/run-formal-verify.cjs` as a committed, tested master runner for all formal verification steps
-- [x] **INTG-03**: CI automatically runs formal verification on push/PR via `.github/workflows/formal-verify.yml` (file committed and verified)
-- [x] **INTG-04**: `run-formal-verify.cjs` calls `xstate-to-tla.cjs` as its spec generation step (pipeline is end-to-end wired)
+### SAFE — Safety & Data Integrity
 
-### Drift Detection
+Root cause: `--repair`'s `regenerateState` action replaces STATE.md with a 15-line blank template without checking current content; tested this session when it wiped the full QGSD state file.
 
-Drift between the XState machine (source of truth) and formal specs fails visibly in `npm test`.
+- [ ] **SAFE-01**: `--repair` action shows a content-length warning and requires explicit `--force` flag before overwriting a STATE.md with more than 50 lines — prevents silent data loss
+- [ ] **SAFE-02**: Legacy numeric phase dirs 18–39 archived to `.planning/archive/legacy/` — W007 orphan noise for pre-versioning era dirs eliminated
 
-- [x] **DRFT-01**: `npm test` fails when XState machine and TLA+/Alloy/PRISM specs are out of sync (check-spec-sync.cjs wired into test suite)
-- [x] **DRFT-02**: Drift detector uses TypeScript compiler/AST walk instead of regex for state extraction — catches transition and guard names, not just state list
-- [x] **DRFT-03**: Drift detector detects orphaned handwritten specs — TLA+ states or guards with no corresponding XState state
+### VIS — Visibility
 
-### Performance
+Root cause: quick-112 added `quorum-failures.json` failure logging but the patterns are only surfaced by `check-provider-health.cjs`. The primary `/qgsd:health` workflow has no visibility into recurring slot failures.
 
-Parallelization cuts total formal verification runtime by 5×.
+- [ ] **VIS-01**: `/qgsd:health` output includes quorum slot failure warnings from `.planning/quorum-failures.json` when recurring patterns detected (slot count ≥ 3) — surfaced as health warnings alongside standard W/E/I items
 
-- [ ] **PERF-01**: `run-formal-verify.cjs` runs TLA+, Alloy, and PRISM tool groups concurrently (parallel execution, not sequential)
-- [ ] **PERF-02**: Total formal verification runtime drops from ~10 min to ~2 min on a standard machine
+## Future Requirements
 
-### PRISM Config Injection
+### Deeper health checks (defer to v0.16+)
 
-Scoreboard empirical rates flow automatically into PRISM model parameters.
-
-- [x] **PRISM-01**: PRISM model receives TP/TN rates derived from quorum scoreboard as model parameters at run time
-- [x] **PRISM-02**: Rate injection is automatic — no manual editing of `.pm` files required between quorum runs
-
-### Developer Experience
-
-Watch mode enables continuous verification during development.
-
-- [ ] **DX-01**: `node bin/run-formal-verify.cjs --watch` re-runs verification automatically when the XState machine file changes
-
-## v2 Requirements
-
-Deferred to future release.
-
-- **INTG-05**: `xstate-to-tla.cjs` supports XState v5 parallel states (AND-states) in TLA+ output
-- **DRFT-04**: Drift detector produces a human-readable diff report (not just pass/fail)
-- **DX-02**: `--watch` mode shows incremental results per tool group (not full re-run summary)
-- **PRISM-03**: PRISM config injection supports per-milestone scoreboard slices (not just all-time rates)
+- **HLTH-04**: Health checker validates ROADMAP.md phase goal and success criteria fields are populated
+- **HLTH-05**: Health checker detects PLAN.md files without matching SUMMARY.md (beyond current I001)
+- **SAFE-03**: `--repair` dry-run mode shows all changes without applying
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| New formal models (new `.als`, `.pm`, `.tla` files) | v0.12 shipped the model set; v0.14 hardens the pipeline, not the models |
-| Modifying GSD workflows | QGSD is additive only — out of scope per architecture constraint |
-| TLA+ LSP / IDE integration | High effort, minimal gain; defer indefinitely |
-| PRISM GUI integration | GUI tooling conflicts with CI-first approach |
+| GSD upstream patch | QGSD is additive only — no GSD source modifications; regex fix stays in QGSD wrapper |
+| Per-project health config | Global install pattern; single config sufficient for v0.15 |
+| Interactive repair wizard | `--force` flag is sufficient safety gate for v0.15 |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INTG-01 | Phase v0.14-01 | Complete |
-| INTG-02 | Phase v0.14-01 | Complete |
-| INTG-03 | Phase v0.14-01 | Complete |
-| INTG-04 | Phase v0.14-01 | Complete |
-| DRFT-01 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
-| DRFT-02 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
-| DRFT-03 | Phase v0.14-02 (Drift Detection + TLA+ Canonicalization) | Complete |
-| PERF-01 | Phase v0.14-03 | Pending |
-| PERF-02 | Phase v0.14-03 | Pending |
-| PRISM-01 | Phase v0.14-04 | Complete |
-| PRISM-02 | Phase v0.14-04 | Complete |
-| DX-01 | Phase v0.14-05 | Pending |
+| HLTH-01 | v0.15-01 | Pending |
+| HLTH-02 | v0.15-01 | Pending |
+| HLTH-03 | v0.15-01 | Pending |
+| SAFE-01 | v0.15-02 | Pending |
+| SAFE-02 | v0.15-03 | Pending |
+| VIS-01 | v0.15-04 | Pending |
 
 **Coverage:**
-- v1 requirements: 12 total
-- Mapped to phases: 12
+- v0.15 requirements: 6 total
+- Mapped to phases: 6
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-02-25*
-*Last updated: 2026-02-26 after plan-milestone-gaps — gap closure phases v0.14-02..05 planned (quorum approved); v0.14-02 expanded to include BROKEN-01 resolution (Option A: QGSDQuorum_xstate.tla) and MISSING-02 CI hardening*
+*Requirements defined: 2026-02-26*
+*Last updated: 2026-02-26 after initial definition*
