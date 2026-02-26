@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-26 after Phase v0.14-02)
+See: .planning/PROJECT.md (updated 2026-02-26 after Phase v0.14-04)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.14 FV Pipeline Integration — Phase v0.14-04 COMPLETE; ready to plan v0.14-05
+**Current focus:** v0.14 FV Pipeline Integration — Phase v0.14-05 Watch Mode (ready to plan)
 
 ## Current Position
 
-Phase: v0.14-04 (PRISM Config Injection) — COMPLETE (2/2 plans done)
-Plan: v0.14-04-01 DONE (run-prism.cjs scoreboard injection) | v0.14-04-02 DONE (889b0c1)
-Status: All plans complete — PRISM-01 (scoreboard read) + PRISM-02 (correct -const injection) satisfied; 337 tests passing
-Last activity: 2026-02-26 — v0.14-04: run-prism.cjs scoreboard injection + 4 integration tests (run-prism.test.cjs), 337 tests total
+Phase: v0.14-05 (Watch Mode) — Ready to plan
+Plan: Not started
+Status: Phase v0.14-04 COMPLETE — PRISM-01/PRISM-02 satisfied; 337 tests passing; advancing to v0.14-05
+Last activity: 2026-02-26 — v0.14-04: PRISM scoreboard injection (run-prism.cjs) + 4 integration tests (run-prism.test.cjs)
 
-Progress: [██████████] v0.13: SHIPPED | v0.14: 4/5 phases complete (v0.14-01 DONE, v0.14-02 DONE, v0.14-03 DONE, v0.14-04 DONE) | v0.12: in-progress (v0.12-10 pending) | v0.9: in-progress (v0.9-02..05 pending)
+Progress: [██████████] v0.13: SHIPPED | v0.14: 4/5 phases complete (v0.14-01..04 DONE, v0.14-05 pending) | v0.12: in-progress (v0.12-10 pending) | v0.9: in-progress (v0.9-02..05 pending)
 
 ## Performance Metrics
 
@@ -139,7 +139,7 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last activity: 2026-02-26 - Completed Phase v0.14-03 (Parallelization): run-formal-verify.cjs parallelized, wall-clock timing added, 333 tests pass
+Last activity: 2026-02-26 - Completed Phase v0.14-04 (PRISM Config Injection): run-prism.cjs scoreboard injection + 4 integration tests, 337 tests pass
 Last session: 2026-02-26
-Stopped at: Phase v0.14-03 COMPLETE — PERF-01 (Promise.all parallel tool groups) + PERF-02 (Wall-clock timing) satisfied; 333 tests pass; ready to plan v0.14-04 (PRISM Config Injection)
+Stopped at: Phase v0.14-04 COMPLETE — PRISM-01 (scoreboard read) + PRISM-02 (correct -const injection) satisfied; 337 tests pass; auto-advancing to plan v0.14-05 (Watch Mode)
 Resume file: None
