@@ -132,9 +132,11 @@ Recent decisions affecting current work:
 | 105 | Add formal verification specs for QGSD CLI state machine: circuit breaker FSM (TLA+) and install scope matrix (Alloy) | 2026-02-25 | f3c3618 | Verified | [105-add-formal-verification-specs-for-qgsd-c](./quick/105-add-formal-verification-specs-for-qgsd-c/) |
 | 106 | Extend v0.12 Formal Verification milestone with phases v0.12-04 through v0.12-08 covering all 9 formal verification gaps | 2026-02-25 | e9b4ea4 | Verified | [106-extend-v0-12-formal-verification-milesto](./quick/106-extend-v0-12-formal-verification-milesto/) |
 | 107 | QGSD self-improvement passive telemetry: collector, classifier, cron installer, SessionStart injection | 2026-02-25 | 4ae7244 | Verified | [107-qgsd-self-improvement-passive-telemetry-](./quick/107-qgsd-self-improvement-passive-telemetry-/) |
+| 108 | Richer slot-worker result block: add citations field and increase raw output cap from 2000 to 5000 chars in qgsd-quorum-slot-worker.md | 2026-02-26 | a7d5dde | Pending | [108-richer-slot-worker-result-block-add-cita](./quick/108-richer-slot-worker-result-block-add-cita/) |
 
 ## Session Continuity
 
+Last activity: 2026-02-26 - Completed quick task 108: Richer slot-worker result block
 Last session: 2026-02-26
 Stopped at: Phase v0.14-02 COMPLETE — BROKEN-01 fixed (_xstate suffix), MISSING-02 fixed (CI paths), DRFT-01/02/03 satisfied (esbuild walk, guard drift Check 5, fixture-based tests), 331 tests pass; ready to plan v0.14-03 (Parallelization)
 Resume file: None
