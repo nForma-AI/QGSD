@@ -242,17 +242,9 @@ async function runWasmDotStep(step) {
   }
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
-(async () => {
-  process.stdout.write(TAG + ' ' + HR + '\n');
-  process.stdout.write(TAG + ' QGSD Formal Verification Suite\n');
-  if (only) {
-    process.stdout.write(TAG + ' Filter: --only=' + only + '\n');
-  }
-  process.stdout.write(TAG + ' Steps: ' + steps.length + '\n');
-  process.stdout.write(TAG + ' ' + HR + '\n\n');
-
-  for (const step of steps) {
+// ── Group runner — executes steps sequentially within a group ─────────────────
+async function runGroup(groupSteps) {
+  for (const step of groupSteps) {
     process.stdout.write(TAG + ' ' + SEP + '\n');
     process.stdout.write(TAG + ' [' + step.id + '] ' + step.label + '\n');
     process.stdout.write(TAG + ' ' + SEP + '\n');
@@ -267,6 +259,38 @@ async function runWasmDotStep(step) {
     const mark = passed ? '✓' : '✗';
     process.stdout.write('\n' + TAG + ' ' + mark + ' ' + step.id + '\n\n');
     record(step.id, step.label, passed);
+  }
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+(async () => {
+  process.stdout.write(TAG + ' ' + HR + '\n');
+  process.stdout.write(TAG + ' QGSD Formal Verification Suite\n');
+  if (only) {
+    process.stdout.write(TAG + ' Filter: --only=' + only + '\n');
+  }
+  process.stdout.write(TAG + ' Steps: ' + steps.length + '\n');
+  process.stdout.write(TAG + ' ' + HR + '\n\n');
+
+  const startMs = Date.now();
+
+  // ── Phase 1: Generate (sequential prerequisite) ────────────────────────────
+  const generateSteps = steps.filter(s => s.tool === 'generate');
+  const toolSteps     = steps.filter(s => s.tool !== 'generate');
+
+  if (generateSteps.length > 0) {
+    process.stdout.write(TAG + ' Phase 1: Running generate steps sequentially...\n\n');
+    await runGroup(generateSteps);
+  }
+
+  // ── Phase 2: Tool groups (concurrent) ─────────────────────────────────────
+  if (toolSteps.length > 0) {
+    const toolGroupNames = [...new Set(toolSteps.map(s => s.tool))];
+    process.stdout.write(TAG + ' Phase 2: Running tool groups concurrently: ' + toolGroupNames.join(', ') + '\n\n');
+
+    await Promise.all(
+      toolGroupNames.map(tool => runGroup(toolSteps.filter(s => s.tool === tool)))
+    );
   }
 
   // ── Summary ─────────────────────────────────────────────────────────────────
@@ -283,6 +307,11 @@ async function runWasmDotStep(step) {
     process.stdout.write(TAG + '  ' + mark + '  ' + r.id.padEnd(30) + r.label + extra + '\n');
   }
 
+  process.stdout.write(TAG + ' ' + HR + '\n');
+
+  const elapsedMs  = Date.now() - startMs;
+  const elapsedSec = (elapsedMs / 1000).toFixed(1);
+  process.stdout.write(TAG + ' Wall-clock: ' + elapsedSec + 's (' + elapsedMs + 'ms)\n');
   process.stdout.write(TAG + ' ' + HR + '\n');
 
   if (failed > 0) {
