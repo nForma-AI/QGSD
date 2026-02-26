@@ -277,9 +277,10 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 ```
 
 Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
-- Mode B — artifact review
+- Mode A — pure question (no execution traces; reviewers read the artifact directly)
 - artifact_path: all `${PHASE_DIR}/*-PLAN.md` files (pass paths; workers read them)
-- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks (one per slot)
+- review_context: "This is a pre-execution implementation plan. The code does not exist yet. Evaluate the plan's approach, task breakdown, and correctness — not whether the implementation already exists in the repository."
+- Dispatch all active slots as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku"` (one per slot)
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
