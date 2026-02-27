@@ -132,8 +132,8 @@
 - [x] **Phase v0.9-05: Rename get-shit-done/ → qgsd-core/** — Rename the source directory to match QGSD identity; update all path references in installer, gsd-tools, and workflows; re-sync installed runtime (completed 2026-02-25)
 - [x] **Phase v0.9-06: v0.9-03 Retroactive Verification** — Create formal VERIFICATION.md for v0.9-03 from SUMMARY.md inline evidence; closes DSC-01, DSC-02, DSC-03 requirement gaps (Gap Closure) (completed 2026-02-26)
 - [x] **Phase v0.9-07: Nyquist Parse-List Correction + Path Portability** — Add `nyquist_validation_enabled` to plan-phase.md Step 1 parse list; replace hardcoded absolute paths in step 5.5 with portable `~`-relative reference; closes NYQ-04 integration gap (Gap Closure) (completed 2026-02-26)
-- [ ] **Phase v0.9-08: Post-v0.9 Install Sync** — Run install sync for model=haiku quorum dispatch flag added in quick-110; verify installed runtime matches source; closes post-v0.9 drift tech debt (Gap Closure)
-- [ ] **Phase v0.9-09: SC-4 End-to-End Nyquist Demo** — Run a live plan-phase session with Nyquist enabled; capture VALIDATION.md output; document in a demo artifact; closes SC-4 undemonstrated tech debt (Gap Closure)
+- [x] **Phase v0.9-08: Post-v0.9 Install Sync** — Run install sync for model=haiku quorum dispatch flag added in quick-110; verify installed runtime matches source; closes post-v0.9 drift tech debt (Gap Closure) (completed 2026-02-27)
+- [x] **Phase v0.9-09: SC-4 End-to-End Nyquist Demo** — Run a live plan-phase session with Nyquist enabled; capture VALIDATION.md output; document in a demo artifact; closes SC-4 undemonstrated tech debt (Gap Closure) (completed 2026-02-27)
 
 ### ✅ v0.10 — Roster Toolkit (SHIPPED 2026-02-25)
 
