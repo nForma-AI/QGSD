@@ -183,7 +183,40 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" init-team \
   --team '<TEAM_JSON>'
 ```
 
-The command prints `[init-team] fingerprint: <fp> | no change` if unchanged, or `[init-team] fingerprint: <fp> (updated from <old>) | N agents` if updated. Then proceed to Mode A or Mode B.
+The command prints `[init-team] fingerprint: <fp> | no change` if unchanged, or `[init-team] fingerprint: <fp> (updated from <old>) | N agents` if updated. Then proceed to Envelope Risk Level read and Mode A or Mode B.
+
+### Envelope Risk Level (ENV-03 — fail-open)
+
+Read risk_level from task envelope if available. Falls back gracefully if absent or malformed.
+
+```bash
+# Parse envelope_path from context (passed by plan-phase.md)
+ENVELOPE_PATH=$(echo "${CONTEXT_YAML:-}" | grep '^envelope_path:' | sed 's/envelope_path:[[:space:]]*//')
+
+if [ -n "$ENVELOPE_PATH" ] && [ -f "$ENVELOPE_PATH" ]; then
+  RISK_LEVEL=$(node -e "
+    try {
+      const e = JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8'));
+      const valid = ['low','medium','high'];
+      const r = e.risk_level;
+      if (valid.includes(r)) { console.log(r); } else { process.stderr.write('[quorum] envelope risk_level=' + r + ' (invalid) → using medium\n'); console.log('medium'); }
+    } catch(err) {
+      process.stderr.write('[quorum] envelope parse error → using medium\n');
+      console.log('medium');
+    }
+  " "$ENVELOPE_PATH" 2>&1)
+  echo "Envelope risk_level: ${RISK_LEVEL}"
+else
+  RISK_LEVEL="medium"
+  if [ -n "$ENVELOPE_PATH" ]; then
+    echo "Envelope not found at ${ENVELOPE_PATH} — using default risk (medium)"
+  else
+    echo "No envelope_path provided — using default risk (medium)"
+  fi
+fi
+```
+
+The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. For now it is logged only (no fan-out logic yet — that is FAN-01..FAN-06 in v0.18-04).
 
 ---
 
