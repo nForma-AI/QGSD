@@ -186,6 +186,7 @@ Report final status.
 | W005 | warning | Phase directory naming mismatch | No |
 | W006 | warning | Phase in ROADMAP but no directory | No |
 | W007 | warning | Phase on disk but not in ROADMAP | No |
+| W008 | warning | Quorum slot has 3+ recurring failures | No |
 | I001 | info | Plan without SUMMARY (may be in progress) | No |
 
 </error_codes>

@@ -185,6 +185,8 @@ function loadConfig(cwd) {
     brave_search: false,
     auto_advance: true,
     nyquist_validation: true,
+    model_tier_planner: 'opus',   // Planner agents (gsd-planner, gsd-roadmapper) default to opus
+    model_tier_worker: 'haiku',   // Worker agents (researcher, checker, executor) default to haiku
   };
 
   try {
@@ -220,6 +222,8 @@ function loadConfig(cwd) {
       brave_search: get('brave_search') ?? defaults.brave_search,
       auto_advance: get('auto_advance', { section: 'workflow', field: 'auto_advance' }) ?? defaults.auto_advance,
       nyquist_validation: get('nyquist_validation', { section: 'workflow', field: 'nyquist_validation' }) ?? defaults.nyquist_validation,
+      model_tier_planner: get('model_tier_planner') ?? defaults.model_tier_planner,
+      model_tier_worker: get('model_tier_worker') ?? defaults.model_tier_worker,
     };
   } catch {
     return defaults;
@@ -1486,16 +1490,7 @@ function cmdResolveModel(cwd, agentType, raw) {
 
   const config = loadConfig(cwd);
   const profile = config.model_profile || 'balanced';
-
-  const agentModels = MODEL_PROFILES[agentType];
-  if (!agentModels) {
-    const result = { model: 'sonnet', profile, unknown_agent: true };
-    output(result, raw, 'sonnet');
-    return;
-  }
-
-  const resolved = agentModels[profile] || agentModels['balanced'] || 'sonnet';
-  const model = resolved === 'opus' ? 'inherit' : resolved;
+  const model = resolveModelInternal(cwd, agentType);
   const result = { model, profile };
   output(result, raw, model);
 }
@@ -3902,6 +3897,26 @@ function cmdValidateHealth(cwd, options, raw) {
     }
   }
 
+  // ─── Check 9: Quorum failure patterns ─────────────────────────────────────────
+  const failuresPath = path.join(planningDir, 'quorum-failures.json');
+  if (fs.existsSync(failuresPath)) {
+    try {
+      const failures = JSON.parse(fs.readFileSync(failuresPath, 'utf-8'));
+      if (Array.isArray(failures)) {
+        for (const entry of failures) {
+          if (typeof entry.count === 'number' && entry.count >= 3) {
+            addIssue(
+              'warning',
+              'W008',
+              `Quorum slot "${entry.slot}" has ${entry.count} recurring failures (${entry.error_type})`,
+              `Review slot "${entry.slot}" availability. Check .planning/quorum-failures.json for details.`
+            );
+          }
+        }
+      }
+    } catch {}
+  }
+
   // ─── Perform repairs if requested ─────────────────────────────────────────
   const repairActions = [];
   if (options.repair && repairs.length > 0) {
@@ -4164,6 +4179,27 @@ function resolveModelInternal(cwd, agentType) {
   const override = config.model_overrides?.[agentType];
   if (override) {
     return override === 'opus' ? 'inherit' : override;
+  }
+
+  // NEW: Tier lookup (after per-agent override, before profile fallback)
+  // Maps agent types to cost tiers: planner (high-value) vs worker (repetitive/cheap)
+  const agentToTier = {
+    'gsd-planner': 'planner',
+    'gsd-roadmapper': 'planner',
+    'gsd-phase-researcher': 'worker',
+    'gsd-plan-checker': 'worker',
+    'gsd-executor': 'worker',
+    'gsd-verifier': 'worker',
+    'gsd-codebase-mapper': 'worker',
+    'gsd-project-researcher': 'worker',
+    'gsd-research-synthesizer': 'worker',
+    'gsd-debugger': 'worker',
+  };
+  const tier = agentToTier[agentType] || 'worker';
+  const tierKey = 'model_tier_' + tier; // 'model_tier_planner' or 'model_tier_worker'
+  const tierModel = config[tierKey];
+  if (tierModel && ['haiku', 'sonnet', 'opus'].includes(tierModel)) {
+    return tierModel === 'opus' ? 'inherit' : tierModel;
   }
 
   // Fall back to profile lookup
