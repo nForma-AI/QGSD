@@ -28,6 +28,25 @@ const fs        = require('fs');
 const path      = require('path');
 const os        = require('os');
 
+// ─── Token sentinel for CLI slots (OBSV-04) ───────────────────────────────────
+function appendTokenSentinel(slotName) {
+  try {
+    const record = JSON.stringify({
+      ts:                          new Date().toISOString(),
+      session_id:                  null,
+      agent_id:                    null,
+      slot:                        slotName,
+      input_tokens:                null,
+      output_tokens:               null,
+      cache_creation_input_tokens: null,
+      cache_read_input_tokens:     null,
+    });
+    const logPath = path.join(findProjectRoot(), '.planning', 'token-usage.jsonl');
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    fs.appendFileSync(logPath, record + '\n', 'utf8');
+  } catch (_) {} // observational — never fails
+}
+
 // ─── Failure log ───────────────────────────────────────────────────────────────
 function findProjectRoot() {
   let dir = __dirname;
@@ -347,15 +366,18 @@ async function main() {
     } else {
       process.stderr.write(`[call-quorum-slot] Unknown provider type: ${provider.type}\n`);
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
+      appendTokenSentinel(slot);
       process.exit(1);
     }
 
     process.stdout.write(result);
     if (!result.endsWith('\n')) process.stdout.write('\n');
+    appendTokenSentinel(slot);
     process.exit(0);
   } catch (err) {
     process.stderr.write(`[call-quorum-slot] ${err.message}\n`);
     writeFailureLog(slot, err.message, '');
+    appendTokenSentinel(slot);
     process.exit(1);
   }
 }
