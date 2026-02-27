@@ -297,6 +297,15 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" set-availability \
 ```
 Log: `[<slot>] UNAVAIL recorded`
 
+#### Tiered fallback dispatch (FALLBACK-01)
+
+After recording all UNAVAIL results, check if replacements are needed:
+
+1. **T1 — unused sub-CLI agents** (codex-1, gemini-1, opencode-1, copilot-1 with `auth_type=sub`): build `$T1_UNUSED` = [all sub-CLI slots in working list] − `$DISPATCH_LIST`. For each UNAVAIL primary slot, dispatch the next available T1 unused slot as a replacement (parallel sibling Tasks in one message turn).
+2. **T2 — ccr agents** (claude-1..claude-6 with `auth_type=api`): only dispatch if `$T1_UNUSED` is empty or exhausted.
+
+**Label replacements** as `(T1 fallback)` or `(T2 fallback)` in the display table. Do not modify `$DISPATCH_LIST` — the tiered replacements are additional slots for this round only.
+
 #### Display results table
 
 ```
@@ -506,6 +515,14 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" set-availability \
   --message "<unavail_message text>" \
   --scoreboard .planning/quorum-scoreboard.json
 ```
+
+#### Tiered fallback dispatch (FALLBACK-01)
+
+After recording UNAVAIL results, apply the same tiered replacement logic as Mode A:
+1. **T1** — unused sub-CLI agents (codex-1, gemini-1, opencode-1, copilot-1) not in `$DISPATCH_LIST`
+2. **T2** — ccr agents (claude-1..claude-6), only if T1 is exhausted
+
+Label replacements `(T1 fallback)` or `(T2 fallback)` in the display.
 
 #### Display results table
 

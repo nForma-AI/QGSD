@@ -1,6 +1,6 @@
 ---
 name: qgsd:quorum
-description: Answer a question using full quorum consensus (Claude + native CLI agents + all configured claude-mcp-server instances) following CLAUDE.md R3 protocol. Use when no arguments provided to answer the current conversation's open question.
+description: Answer a question using full quorum consensus (Claude + native CLI agents + all configured claude-mcp-server instances) following QGSD quorum protocol. Use when no arguments provided to answer the current conversation's open question.
 argument-hint: "[question or prompt]"
 allowed-tools:
   - Read
@@ -278,7 +278,7 @@ Display:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  QGSD ► QUORUM: Round 1 — N workers dispatched
  Active: gemini-1, opencode-1, copilot-1, codex-1
- Fallback pool: claude-1..claude-6 (on UNAVAIL)
+ Fallback pool: opencode-1, copilot-1 (T1 sub-CLI) → claude-1..claude-6 (T2 ccr, on UNAVAIL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
@@ -327,7 +327,20 @@ Example dispatch (all Tasks in one message turn):
 
 The slot-worker reads repo context, builds its own prompt from the YAML arguments, calls the slot via `call-quorum-slot.cjs`, and returns a structured result block.
 
-Handle UNAVAILABLE per R6: note unavailability, continue with remaining models.
+Handle UNAVAILABLE per R6: note unavailability, then apply the **tiered fallback rule** below before continuing.
+
+#### Tiered fallback rule (FALLBACK-01)
+
+When a dispatched slot returns UNAVAIL, dispatch a replacement in this priority order:
+
+1. **T1 — unused sub-CLI agents** (codex-1, gemini-1, opencode-1, copilot-1): prefer any native CLI slot that was not included in the initial `$DISPATCH_LIST` due to the fan-out cap. These agents are equivalent tier to the primary — same subscription model, no extra cost.
+2. **T2 — ccr agents** (claude-1..claude-6): only if all T1 sub-CLI slots are either already dispatched or also UNAVAIL.
+
+**Why this matters:** With `FAN_OUT_COUNT=3`, only 2 external slots are dispatched. If both primaries (e.g., codex-1, gemini-1) are UNAVAIL, opencode-1 and copilot-1 are still fresh sub-CLI agents that should be tried before falling to ccr. Skipping them wastes cheaper, more reliable capacity.
+
+**Implementation:** After receiving UNAVAIL results, build a `$T1_UNUSED` list = `[all sub-CLI slots] − $DISPATCH_LIST`. If `$T1_UNUSED` is non-empty, dispatch from `$T1_UNUSED` first (parallel Tasks), then fall to T2 for any remaining needed slots.
+
+**Display label:** Use `(T1 fallback)` for sub-CLI replacements, `(T2 fallback)` for ccr replacements.
 
 ### Evaluate Round 1 — check for consensus
 
@@ -339,16 +352,17 @@ Display all positions as a table with one row per team member (native agents fir
 ├────────────────────────────────┼──────────────────────────────────────────────────────────┤
 │ Claude                         │ [summary — $CLAUDE_POSITION]                            │
 │ gemini-1 (primary)             │ [summary or UNAVAIL]                                     │
-│   └─ claude-1 (fallback)       │ [summary or UNAVAIL — only shown if primary UNAVAIL]    │
+│   ├─ opencode-1 (T1 fallback)  │ [summary or UNAVAIL — only shown if gemini UNAVAIL + opencode unused] │
+│   └─ claude-1 (T2 fallback)    │ [summary or UNAVAIL — only shown if all T1 also UNAVAIL]│
 │ codex-1 (primary)              │ [summary or UNAVAIL]                                     │
-│   ├─ claude-3 (fallback)       │ [summary or UNAVAIL — only shown if primary UNAVAIL]    │
-│   └─ claude-4 (fallback)       │ [summary or UNAVAIL — only shown if still need quorum]  │
-│ opencode-1 (primary)           │ [summary or UNAVAIL]                                     │
-│ copilot-1 (primary)            │ [summary or UNAVAIL]                                     │
+│   ├─ copilot-1 (T1 fallback)   │ [summary or UNAVAIL — only shown if codex UNAVAIL + copilot unused]  │
+│   └─ claude-3 (T2 fallback)    │ [summary or UNAVAIL — only shown if all T1 also UNAVAIL]│
+│ opencode-1 (primary)           │ [summary or UNAVAIL — only shown if in $DISPATCH_LIST]  │
+│ copilot-1 (primary)            │ [summary or UNAVAIL — only shown if in $DISPATCH_LIST]  │
 └────────────────────────────────┴──────────────────────────────────────────────────────────┘
 ```
 
-Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a claude-N fallback was dispatched in its place. If the primary responded, no fallback row is shown.
+Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a fallback was dispatched in its place. T1 fallback rows appear before T2. If the primary responded, no fallback row is shown. A T1 fallback row is omitted if that slot was already dispatched as a primary.
 
 If all available models agree → skip to **Consensus output**.
 
@@ -359,7 +373,7 @@ Run up to 9 deliberation rounds (max 10 total rounds including Round 1).
 For each round, dispatch one `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** as **parallel sibling calls**. Append `prior_positions` to the YAML block for Round 2+ dispatch:
 
 ```
-# skip_context_reads: true — worker already read CLAUDE.md, STATE.md, artifact in Round 1.
+# skip_context_reads: true — worker already read STATE.md and artifact in Round 1.
 # Skipping re-reads saves ~2 file reads per slot per deliberation round.
 slot: <slotName>
 round: <round_number>
@@ -620,7 +634,7 @@ traces: |
 
 For Round 2+ deliberation, also append:
 ```
-# skip_context_reads: true — worker already read CLAUDE.md, STATE.md, artifact in Round 1.
+# skip_context_reads: true — worker already read STATE.md and artifact in Round 1.
 # Skipping re-reads saves ~2 file reads per slot per deliberation round.
 skip_context_reads: true
 prior_positions: |
@@ -670,17 +684,18 @@ If split: run deliberation (up to 9 deliberation rounds, max 10 total rounds inc
 ├────────────────────────────────┼──────────────┼──────────────────────────────────────────┤
 │ Claude                         │ [verdict]    │ [summary]                                │
 │ gemini-1 (primary)             │ [verdict]    │ [summary or UNAVAIL]                     │
-│   └─ claude-1 (fallback)       │ [verdict]    │ [summary or UNAVAIL]                     │
+│   ├─ opencode-1 (T1 fallback)  │ [verdict]    │ [only if gemini UNAVAIL + opencode unused]│
+│   └─ claude-1 (T2 fallback)    │ [verdict]    │ [only if all T1 also UNAVAIL]            │
 │ codex-1 (primary)              │ [verdict]    │ [summary or UNAVAIL]                     │
-│   ├─ claude-3 (fallback)       │ [verdict]    │ [summary or UNAVAIL]                     │
-│   └─ claude-4 (fallback)       │ [verdict]    │ [summary or UNAVAIL]                     │
-│ opencode-1 (primary)           │ [verdict]    │ [summary or UNAVAIL]                     │
-│ copilot-1 (primary)            │ [verdict]    │ [summary or UNAVAIL]                     │
+│   ├─ copilot-1 (T1 fallback)   │ [verdict]    │ [only if codex UNAVAIL + copilot unused] │
+│   └─ claude-3 (T2 fallback)    │ [verdict]    │ [only if all T1 also UNAVAIL]            │
+│ opencode-1 (primary)           │ [verdict]    │ [only if in $DISPATCH_LIST]              │
+│ copilot-1 (primary)            │ [verdict]    │ [only if in $DISPATCH_LIST]              │
 ├────────────────────────────────┼──────────────┼──────────────────────────────────────────┤
 │ CONSENSUS                      │ [verdict]    │ [N APPROVE, N REJECT, N FLAG, N UNAVAIL] │
 └────────────────────────────────┴──────────────┴──────────────────────────────────────────┘
 
-Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a claude-N fallback was dispatched in its place. If the primary responded, no fallback row is shown.
+Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a fallback was dispatched. T1 fallback (sub-CLI: opencode-1, copilot-1) is tried before T2 (ccr: claude-N). If the primary responded, no fallback row is shown. A T1 row is omitted if that slot was already dispatched as primary.
 
 [rationale — what the traces showed]
 ```
