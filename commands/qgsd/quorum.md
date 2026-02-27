@@ -335,8 +335,8 @@ When a dispatched slot returns UNAVAIL, dispatch a replacement in this priority 
 
 Classification is based on runtime `auth_type` from `providers.json` / config — **not** hardcoded slot names. Any slot can be `sub` or `api` depending on how it is configured.
 
-1. **T1 — unused sub-CLI slots**: slots in the working list where `auth_type=sub`, not already in `$DISPATCH_LIST`. Build `$T1_UNUSED` = `[working-list slots with auth_type=sub] − $DISPATCH_LIST`. Dispatch `$T1_UNUSED` first — they are the same subscription tier as the primaries, no extra cost.
-2. **T2 — remaining slots**: slots in the working list where `auth_type≠sub` (typically `api`). Dispatch T2 only if `$T1_UNUSED` is empty or fully exhausted/UNAVAIL.
+1. **T1 — unused sub-CLI slots**: slots in the working list where `auth_type=sub` AND not in `$DISPATCH_LIST`. Build `$T1_UNUSED` = `[working-list slots with auth_type=sub] − $DISPATCH_LIST`. Dispatch `$T1_UNUSED` first — same subscription tier as the primaries, no extra cost.
+2. **T2 — final fallback slots**: slots in the working list where `auth_type≠sub` AND not in `$DISPATCH_LIST`. Dispatch T2 only if `$T1_UNUSED` is empty or fully exhausted/UNAVAIL. Slots already dispatched as primary are excluded from both T1 and T2.
 
 **Why this matters:** With `FAN_OUT_COUNT=3`, only 2 external slots are in `$DISPATCH_LIST`. If both primaries are UNAVAIL, any remaining `auth_type=sub` slots should be tried before falling to `auth_type=api` (ccr) slots. The exact slot names in each tier depend on `--n` and the runtime config — they are not fixed.
 

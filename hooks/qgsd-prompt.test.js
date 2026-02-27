@@ -645,3 +645,54 @@ test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_t
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+// TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: an api slot dispatched as primary must NOT
+// appear in Step 3 T2. Regression for the bug where t2Slots filtered all non-sub slots
+// without excluding cappedSlots, causing primary api slots to appear in both Step 1 and Step 3.
+test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary excluded from T2 list', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-t2excl-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    // Config: api-slot-A dispatched as primary (externalSlotCap=1); sub-slot-B is T1 unused;
+    // api-slot-C is the only genuine T2. api-slot-A must NOT appear in T2.
+    // quorum_active: ['api-slot-A', 'sub-slot-B', 'api-slot-C']
+    // preferSub: false → orderedSlots order preserved: api-slot-A, sub-slot-B, api-slot-C
+    // maxSize=2 → externalSlotCap=1 → cappedSlots=[api-slot-A]
+    // t1Unused = sub slots not in capped = [sub-slot-B]
+    // t2Slots (correct) = api slots not in capped = [api-slot-C]   (excludes api-slot-A)
+    // t2Slots (buggy)   = all api slots           = [api-slot-A, api-slot-C]  (includes primary!)
+    fs.writeFileSync(
+      path.join(claudeDir, 'qgsd.json'),
+      JSON.stringify({
+        quorum_active: ['api-slot-A', 'sub-slot-B', 'api-slot-C'],
+        quorum: { maxSize: 2, preferSub: false },
+        agent_config: {
+          'api-slot-A': { auth_type: 'api' },
+          'sub-slot-B': { auth_type: 'sub' },
+          'api-slot-C': { auth_type: 'api' },
+        },
+      }),
+      'utf8'
+    );
+    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+
+    assert.ok(ctx.includes('FALLBACK-01'), 'FALLBACK-01 must fire (sub-slot-B is T1 unused)');
+
+    const t2LineMatch = ctx.match(/Step 3 T2 ccr:\s+\[([^\]]+)\]/);
+    assert.ok(t2LineMatch, 'Step 3 T2 must be present');
+    const t2Slots = t2LineMatch[1].split(',').map(s => s.trim());
+
+    assert.ok(!t2Slots.includes('api-slot-A'), 'api-slot-A is primary — must NOT appear in Step 3 T2');
+    assert.ok(t2Slots.includes('api-slot-C'), 'api-slot-C is the only genuine T2 slot');
+
+    const primaryLineMatch = ctx.match(/Step 1 PRIMARY:\s+\[([^\]]+)\]/);
+    assert.ok(primaryLineMatch, 'Step 1 PRIMARY must be present');
+    const primarySlots = primaryLineMatch[1].split(',').map(s => s.trim());
+    assert.ok(primarySlots.includes('api-slot-A'), 'api-slot-A must appear in Step 1 PRIMARY');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

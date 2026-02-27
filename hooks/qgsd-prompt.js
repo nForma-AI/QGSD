@@ -264,7 +264,7 @@ process.stdin.on('end', () => {
         .filter(s => s.authType === 'sub' && !cappedSlotNames.has(s.slot))
         .map(s => s.slot);
       const t2Slots = orderedSlots
-        .filter(s => s.authType !== 'sub')
+        .filter(s => s.authType !== 'sub' && !cappedSlotNames.has(s.slot))
         .map(s => s.slot);
 
       // Build a structured dispatch sequence (enumerated steps, not prose rules).

@@ -304,7 +304,7 @@ After recording all UNAVAIL results, check if replacements are needed:
 Classification is determined by runtime `auth_type` from `providers.json` — **not** by slot name. Any slot can be `sub` or `api` depending on config. With `--n` large enough, all `auth_type=sub` slots may be primary, making T1 empty.
 
 1. **T1 — unused sub-CLI slots**: build `$T1_UNUSED` = [working-list slots with `auth_type=sub`] − `$DISPATCH_LIST`. For each UNAVAIL primary, dispatch the next available T1 slot as a replacement (parallel sibling Tasks in one message turn).
-2. **T2 — remaining slots**: working-list slots with `auth_type≠sub` (typically `api`). Only dispatch if `$T1_UNUSED` is empty or fully exhausted/UNAVAIL.
+2. **T2 — final fallback slots**: working-list slots with `auth_type≠sub` AND not in `$DISPATCH_LIST`. Slots already dispatched as primary are excluded. Only dispatch T2 if `$T1_UNUSED` is empty or fully exhausted/UNAVAIL.
 
 **Label replacements** as `(T1 fallback)` or `(T2 fallback)` in the display table. Do not modify `$DISPATCH_LIST` — the tiered replacements are additional slots for this round only.
 
@@ -522,8 +522,8 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" set-availability \
 
 After recording UNAVAIL results, apply the same tiered replacement logic as Mode A:
 Same tiered logic as Mode A — classification by runtime `auth_type`, not slot name:
-1. **T1** — working-list slots with `auth_type=sub` not in `$DISPATCH_LIST` (`$T1_UNUSED`)
-2. **T2** — working-list slots with `auth_type≠sub`, only if `$T1_UNUSED` is empty or exhausted
+1. **T1** — working-list slots with `auth_type=sub` AND not in `$DISPATCH_LIST` (`$T1_UNUSED`)
+2. **T2** — working-list slots with `auth_type≠sub` AND not in `$DISPATCH_LIST`. Only if `$T1_UNUSED` is empty or exhausted.
 
 Label replacements `(T1 fallback)` or `(T2 fallback)` in the display.
 
