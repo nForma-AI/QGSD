@@ -18,6 +18,21 @@ const path = require('path');
 const os = require('os');
 
 const { loadConfig, DEFAULT_CONFIG, slotToToolCall } = require('./config-loader');
+const { schema_version } = require('./conformance-schema.cjs');
+
+// Appends a structured conformance event to .planning/conformance-events.jsonl.
+// Uses appendFileSync (atomic for writes < POSIX PIPE_BUF = 4096 bytes).
+// Always wrapped in try/catch — hooks are fail-open; never crashes on logging failure.
+// NEVER writes to stdout — stdout is the Claude Code hook decision channel.
+function appendConformanceEvent(event) {
+  try {
+    const logPath = path.join(process.cwd(), '.planning', 'conformance-events.jsonl');
+    fs.mkdirSync(path.dirname(logPath), { recursive: true });
+    fs.appendFileSync(logPath, JSON.stringify(event) + '\n', 'utf8');
+  } catch (err) {
+    process.stderr.write('[qgsd] conformance log write failed: ' + err.message + '\n');
+  }
+}
 
 // Builds the regex that matches /gsd:<quorum-command> or /qgsd:<quorum-command> in any text.
 function buildCommandPattern(quorumCommands) {
@@ -136,9 +151,10 @@ function extractCommand(currentTurnLines, cmdPattern) {
   return '/qgsd:plan-phase';
 }
 
-// Returns true if any assistant turn used Task(subagent_type=qgsd-quorum-orchestrator).
-// The orchestrator handles all model calls internally — treat as full quorum evidence.
-function wasOrchestratorUsed(currentTurnLines) {
+// Returns true if any assistant turn used Task(subagent_type=qgsd-quorum-slot-worker).
+// Slot-workers are the inline dispatch mechanism — one per active slot per round.
+// Replaced qgsd-quorum-orchestrator (deprecated quick-103) as full quorum evidence.
+function wasSlotWorkerUsed(currentTurnLines) {
   for (const line of currentTurnLines) {
     try {
       const entry = JSON.parse(line);
@@ -149,7 +165,7 @@ function wasOrchestratorUsed(currentTurnLines) {
         if (block.type !== 'tool_use' || block.name !== 'Task') continue;
         const input = block.input || {};
         const subagentType = input.subagent_type || input.subagentType || '';
-        if (subagentType === 'qgsd-quorum-orchestrator') return true;
+        if (subagentType === 'qgsd-quorum-slot-worker') return true;
       }
     } catch { /* skip */ }
   }
@@ -345,6 +361,35 @@ function hasDecisionMarker(currentTurnLines) {
   return false;
 }
 
+// Parses --n N flag from a text string.
+// Returns N (integer >= 1) if found, or null if absent/invalid.
+function parseQuorumSizeFlag(text) {
+  const m = text.match(/--n\s+(\d+)/);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  return (Number.isInteger(n) && n >= 1) ? n : null;
+}
+
+// Extracts the user-typed prompt text from the current turn lines.
+// Checks <command-name> tag first; falls back to first 300 chars of message text.
+function extractPromptText(currentTurnLines) {
+  for (const line of currentTurnLines) {
+    try {
+      const entry = JSON.parse(line);
+      if (entry.type !== 'user') continue;
+      const tag = extractCommandTag(entry);
+      if (tag !== null) return tag;
+      const content = entry.message?.content;
+      if (typeof content === 'string') return content.slice(0, 300);
+      if (Array.isArray(content)) {
+        const first = content.find(c => c?.type === 'text');
+        return first ? (first.text || '').slice(0, 300) : '';
+      }
+    } catch { /* skip */ }
+  }
+  return '';
+}
+
 // Derives the canonical tool name for the block reason message.
 // Uses known model keys first; falls back to prefix + key for unknown models.
 function deriveMissingToolName(modelKey, modelDef) {
@@ -405,28 +450,50 @@ function main() {
         process.exit(0); // GSD-internal operation — not a project decision turn
       }
 
+      // Extract --n N flag from current-turn user prompt (if present)
+      const promptText = extractPromptText(currentTurnLines);
+      const quorumSizeOverride = parseQuorumSizeFlag(promptText);
+      const soloMode = quorumSizeOverride === 1;
+
+      // GUARD 6: Solo mode (--n 1) — Claude-only quorum, no external models required
+      if (soloMode) {
+        appendConformanceEvent({
+          ts: new Date().toISOString(),
+          phase: 'DECIDING',
+          action: 'quorum_complete',
+          slots_available: 0,
+          vote_result: 1,
+          outcome: 'APPROVE',
+          schema_version,
+        });
+        process.exit(0); // Solo mode: Claude's vote is the quorum — no block
+      }
+
       // Build agent pool from config
       const agentPool = buildAgentPool(config);
 
       // Get available MCP prefixes from ~/.claude.json
       const availablePrefixes = getAvailableMcpPrefixes();
 
-      // Check if orchestrator handled quorum (counts as full quorum evidence)
-      if (wasOrchestratorUsed(currentTurnLines)) {
+      // Check if slot-workers handled quorum (inline dispatch counts as full quorum evidence)
+      if (wasSlotWorkerUsed(currentTurnLines)) {
         process.exit(0);
       }
 
-      // Ceiling: require minSize successful (non-error) responses from the full pool.
-      // Named minSize for consistency with qgsd-prompt.js and the config schema.
-      const minSize = (config.quorum && Number.isInteger(config.quorum.minSize) && config.quorum.minSize >= 1)
-        ? config.quorum.minSize
-        : 5;
+      // Ceiling: require maxSize successful (non-error) responses from the full pool.
+      // Named maxSize for consistency with qgsd-prompt.js and the config schema.
+      // --n N override: N total participants means N-1 external models required.
+      const maxSize = quorumSizeOverride !== null && quorumSizeOverride > 1
+        ? quorumSizeOverride - 1  // --n N means N-1 external models required
+        : (config.quorum && Number.isInteger(config.quorum.maxSize) && config.quorum.maxSize >= 1)
+          ? config.quorum.maxSize
+          : 5;
 
       // Iterate the full agentPool (already sorted sub-first when preferSub is set).
       // Count successful (non-error) responses. Stop once ceiling is satisfied.
       // missingAgents is populated for failure reporting — only read in the block path below.
       let successCount = 0;
-      const missingAgents = []; // only read when successCount < minSize (block path)
+      const missingAgents = []; // only read when successCount < maxSize (block path)
       for (const agent of agentPool) {
         // If availablePrefixes is null (unknown), treat as available (conservative enforcement)
         const isAvailable = availablePrefixes === null || availablePrefixes.includes(agent.prefix);
@@ -434,7 +501,7 @@ function main() {
 
         if (wasSlotCalledSuccessfully(currentTurnLines, agent.prefix)) {
           successCount++;
-          if (successCount >= minSize) break; // ceiling satisfied — stop counting
+          if (successCount >= maxSize) break; // ceiling satisfied — stop counting
         } else {
           // Track failures for error reporting (only used in the block path below)
           let toolName;
@@ -447,8 +514,17 @@ function main() {
         }
       }
 
-      if (successCount < minSize) {
+      if (successCount < maxSize) {
         // Only read missingAgents here — never in the success path
+        appendConformanceEvent({
+          ts:              new Date().toISOString(),
+          phase:           'DECIDING',
+          action:          'quorum_block',
+          slots_available: agentPool.length,
+          vote_result:     successCount,
+          outcome:         'BLOCK',
+          schema_version,
+        });
         process.stdout.write(JSON.stringify({
           decision: 'block',
           reason: 'QUORUM REQUIRED: Missing tool calls for: ' + missingAgents.join(', ') + '. Run the required quorum agent(s) before completing this planning command.'
@@ -456,6 +532,15 @@ function main() {
         process.exit(0);
       }
 
+      appendConformanceEvent({
+        ts:              new Date().toISOString(),
+        phase:           'DECIDING',
+        action:          'quorum_complete',
+        slots_available: agentPool.length,
+        vote_result:     successCount,
+        outcome:         'APPROVE',
+        schema_version,
+      });
       process.exit(0);
 
     } catch {
