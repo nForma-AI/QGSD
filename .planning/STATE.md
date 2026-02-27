@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.15 archived + v0.18 activ
 
 ## Current Position
 
-Phase: v0.18-03 of 5 (Task Envelope Config Foundation) — IN PROGRESS
-Plan: 02 of 2 (add task_envelope_enabled config key: executed and complete)
-Status: v0.18-03-02 complete; ENV-04 feature gate implemented
-Last activity: 2026-02-27 — v0.18-03-02 executed: task_envelope_enabled added to DEFAULT_CONFIG + validateConfig(), 3 ENV-TC tests added, all 25 tests pass
+Phase: v0.18-03 of 5 (Task Envelope Config Foundation) — COMPLETE
+Plan: 02 of 2 (both plans complete: v0.18-03-01 task-envelope CLI + v0.18-03-02 config feature gate)
+Status: v0.18-03 fully complete; task-envelope.cjs with 11 tests + feature gate in config-loader.js
+Last activity: 2026-02-27 — v0.18-03-01 completed: task-envelope.cjs with init/update/read/validate CLI + 11 unit tests (ENB-TC1..11, all pass); SUMMARY.md written
 
 Progress: [████████████████████] prior milestones complete | v0.18: COMPLETE (5 phases, all plans done)
 
@@ -78,7 +78,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 - Completed v0.18-03-02-PLAN.md: config envelope feature gate
+Last activity: 2026-02-27 - Completed v0.18-03-01-PLAN.md: task-envelope CLI tool implementation
 Last session: 2026-02-27
-Stopped at: Completed v0.18-03-02 — SUMMARY.md created, ENV-04 requirement marked complete, all 2 tasks committed
+Stopped at: Completed v0.18-03-01 — SUMMARY.md created with 11 unit test results (all pass), both ENV-01/02 requirements implemented
 Resume file: None
