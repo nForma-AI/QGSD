@@ -448,7 +448,7 @@ Run one command per model per round. Each call is atomic and idempotent — if r
 
 **Post-consensus improvements extraction (Mode A, when `request_improvements: true`):**
 
-1. Collect `improvements:` fields from all worker result blocks where `verdict` is not UNAVAIL and `improvements:` is present and non-empty.
+1. Collect `improvements:` fields from worker result blocks of the **final consensus round** (the last round where all available models agreed — NOT aggregated across all rounds). Filter to blocks where `verdict` is not UNAVAIL and `improvements:` is present and non-empty.
 
 2. De-duplicate: if multiple models propose the same improvement (same suggestion text or semantically equivalent), keep only the first occurrence.
 

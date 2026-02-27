@@ -265,13 +265,19 @@ Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
 
-After quorum returns, parse the improvements signal:
+After quorum returns, extract the improvements signal from your own output:
 
+Scan for the HTML comment block in the quorum response:
 ```
-$QUORUM_IMPROVEMENTS = JSON array from <!-- QUORUM_IMPROVEMENTS_START [...] QUORUM_IMPROVEMENTS_END -->
+<!-- QUORUM_IMPROVEMENTS_START
+[...]
+QUORUM_IMPROVEMENTS_END -->
 ```
+Extract the text between `QUORUM_IMPROVEMENTS_START` and `QUORUM_IMPROVEMENTS_END`, trim whitespace, and parse as a JSON array. Store as `$QUORUM_IMPROVEMENTS`.
 
-If the signal is absent or malformed: treat as empty array (fail-open — R3.6 does not fire).
+**Do NOT summarize or paraphrase the JSON — extract the exact text between the delimiters.**
+
+If the signal is absent, the delimiters don't match, or JSON.parse would fail: set `$QUORUM_IMPROVEMENTS = []` (fail-open — R3.6 does not fire).
 
 **Route:**
 
@@ -330,8 +336,13 @@ If the signal is absent or malformed: treat as empty array (fail-open — R3.6 d
     )
     ```
 
-    After planner returns: plan at `${QUICK_DIR}/${next_num}-PLAN.md` is updated.
-    Continue loop.
+    After planner returns:
+    - **If planner returns `## PLANNING COMPLETE` or equivalent success:** plan at
+      `${QUICK_DIR}/${next_num}-PLAN.md` is updated. Continue loop.
+    - **If planner returns `## PLANNING INCONCLUSIVE` or fails to update the file:**
+      Do NOT loop again on the same improvements. Display:
+      > "R3.6: planner could not incorporate improvements in iteration ${improvement_iteration}. Proceeding with current plan."
+      Include `<!-- GSD_DECISION -->` summarizing quorum results. Proceed to Step 6. **Break loop.**
 
 **END LOOP**
 
@@ -513,8 +524,19 @@ Ready for next task: /qgsd:quick
 - [ ] Directory created at `.planning/quick/NNN-slug/`
 - [ ] `${next_num}-PLAN.md` created by planner
 - [ ] (--full) Plan checker validates plan, revision loop capped at 2
+- [ ] Quorum ran (step 5.7) with `request_improvements: true`
+- [ ] R3.6 loop ran: if improvements proposed, planner revision spawned; if none or planner failed, loop exited; `<!-- GSD_DECISION -->` present in response
 - [ ] `${next_num}-SUMMARY.md` created by executor
 - [ ] (--full) `${next_num}-VERIFICATION.md` created by verifier
 - [ ] Executor commits PLAN.md + SUMMARY.md + STATE.md atomically
 - [ ] (--full) Orchestrator updates STATE.md Status cell after verification
 </success_criteria>
+
+<anti_patterns>
+**R3.6 — do NOT:**
+- Do NOT skip the R3.6 loop because the plan "looks good enough" or improvements "seem trivial." The loop is MANDATORY when `$QUORUM_IMPROVEMENTS` is non-empty.
+- Do NOT pre-filter or discard improvements before passing them to the planner. Pass the full array.
+- Do NOT emit `<!-- GSD_DECISION -->` before the loop exits. Only emit it on the final break.
+- Do NOT run the R3.6 improvement planner as a parallel Task. It is always sequential: quorum → planner → quorum → ...
+- Do NOT loop again after a planner failure (`## PLANNING INCONCLUSIVE`). Break immediately with the failure note.
+</anti_patterns>

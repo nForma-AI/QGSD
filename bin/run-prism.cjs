@@ -58,6 +58,41 @@ if (!fs.existsSync(modelPath)) {
   process.exit(1);
 }
 
+// ── readMCPAvailabilityRates (MCPENV-04) ─────────────────────────────────────
+// Reads quorum-scoreboard.json and computes per-slot availability rates.
+// Returns { 'slot-name': availabilityRate, ... } or null if no data.
+// Rate = 1.0 - (unavail_count / total_count) per slot, excluding 'claude' (self).
+// Exported for tests.
+function readMCPAvailabilityRates(sbPath) {
+  const p = sbPath || path.join(process.cwd(), '.planning', 'quorum-scoreboard.json');
+  try {
+    const raw = fs.readFileSync(p, 'utf8');
+    const sb = JSON.parse(raw);
+    const rounds = Array.isArray(sb.rounds) ? sb.rounds : [];
+    if (rounds.length === 0) return null;
+
+    const slotStats = {};
+    for (const round of rounds) {
+      const votes = round.votes || {};
+      for (const [slot, code] of Object.entries(votes)) {
+        if (slot === 'claude') continue; // exclude self
+        if (!slotStats[slot]) slotStats[slot] = { total: 0, unavail: 0 };
+        slotStats[slot].total++;
+        if (code === 'UNAVAIL') slotStats[slot].unavail++;
+      }
+    }
+
+    const rates = {};
+    for (const [slot, stats] of Object.entries(slotStats)) {
+      if (stats.total === 0) continue;
+      rates[slot] = Math.round((1.0 - stats.unavail / stats.total) * 1e6) / 1e6;
+    }
+    return Object.keys(rates).length > 0 ? rates : null;
+  } catch (_) {
+    return null; // missing or malformed scoreboard — caller uses priors
+  }
+}
+
 // ── Read scoreboard for empirical tp_rate / unavail injection (PRISM-02) ────
 // Uses process.cwd()/.planning/quorum-scoreboard.json so tests can point to
 // a fixture by spawning with a custom cwd (same pattern as run-formal-verify).
@@ -183,31 +218,75 @@ if (coldStartState.inColdStart) {
 // If formal/prism/quorum.props exists, pass it as the properties file (runs all 4 properties).
 // Otherwise fall back to: -pf "P=? [ F s=1 ]"
 const extraArgs = process.argv.slice(2);
-const hasPf    = extraArgs.some(a => a === '-pf' || a === '-prop');
-const propsFile = path.join(__dirname, '..', 'formal', 'prism', 'quorum.props');
+
+// ── MCPENV-04: --model mcp-availability flag ─────────────────────────────────
+// When --model mcp-availability is passed, run mcp-availability.pm instead of quorum.pm.
+// Injects per-slot availability rates from scoreboard as -const flags.
+const modelArgIdx = extraArgs.indexOf('--model');
+const modelArgValue = modelArgIdx >= 0 ? extraArgs[modelArgIdx + 1] : null;
+const useMCPAvailabilityModel = modelArgValue === 'mcp-availability';
+
+// Strip --model <value> from extraArgs before forwarding to PRISM
+const filteredExtraArgs = useMCPAvailabilityModel
+  ? extraArgs.filter((a, i) => i !== modelArgIdx && i !== modelArgIdx + 1)
+  : extraArgs;
+
+let activeModelPath = modelPath; // default: quorum.pm
+let activeMcpRates = null;       // per-slot rates if mcp-availability model
+
+if (useMCPAvailabilityModel) {
+  const mcpModelPath = path.join(__dirname, '..', 'formal', 'prism', 'mcp-availability.pm');
+  if (!fs.existsSync(mcpModelPath)) {
+    process.stderr.write('[run-prism] mcp-availability.pm not found at: ' + mcpModelPath + '\n');
+    process.exit(1);
+  }
+  activeModelPath = mcpModelPath;
+  activeMcpRates = readMCPAvailabilityRates();
+  if (activeMcpRates) {
+    process.stdout.write('[run-prism] MCP rates from scoreboard: ' + JSON.stringify(activeMcpRates) + '\n');
+  } else {
+    process.stderr.write('[run-prism] No scoreboard rates for mcp-availability — using priors (0.85 per slot)\n');
+  }
+  process.stdout.write('[run-prism] Model: mcp-availability\n');
+}
+
+const hasPf    = filteredExtraArgs.some(a => a === '-pf' || a === '-prop');
+const propsFile = path.join(__dirname, '..', 'formal', 'prism', useMCPAvailabilityModel ? 'mcp-availability.props' : 'quorum.props');
 const hasProps  = !hasPf && fs.existsSync(propsFile);
 
 // Determine if caller already overrides tp_rate or unavail
-const callerOverridesTP     = extraArgs.some((a, i) => a === '-const' && (extraArgs[i + 1] || '').startsWith('tp_rate='));
-const callerOverridesUnavail = extraArgs.some((a, i) => a === '-const' && (extraArgs[i + 1] || '').startsWith('unavail='));
+const callerOverridesTP     = filteredExtraArgs.some((a, i) => a === '-const' && (filteredExtraArgs[i + 1] || '').startsWith('tp_rate='));
+const callerOverridesUnavail = filteredExtraArgs.some((a, i) => a === '-const' && (filteredExtraArgs[i + 1] || '').startsWith('unavail='));
 
-const prismArgs = [modelPath];
+const prismArgs = [activeModelPath];
 if (hasProps) {
   prismArgs.push(propsFile);
 } else if (!hasPf) {
   prismArgs.push('-pf', 'P=? [ F s=1 ]');
 }
-// Inject empirical/prior rates unless caller overrides
-if (!callerOverridesTP) {
-  prismArgs.push('-const', 'tp_rate=' + liveTPRate);
+
+if (useMCPAvailabilityModel) {
+  // Inject per-slot rates as -const flags (slot name: 'codex-1' → 'codex_1_avail')
+  if (activeMcpRates) {
+    for (const [slot, rate] of Object.entries(activeMcpRates)) {
+      const constName = slot.replace(/-/g, '_') + '_avail';
+      prismArgs.push('-const', constName + '=' + rate);
+    }
+  }
+  // No tp_rate/unavail injection for mcp-availability model
+} else {
+  // Inject empirical/prior rates unless caller overrides (quorum.pm path)
+  if (!callerOverridesTP) {
+    prismArgs.push('-const', 'tp_rate=' + liveTPRate);
+  }
+  if (!callerOverridesUnavail) {
+    prismArgs.push('-const', 'unavail=' + liveUnavail);
+  }
 }
-if (!callerOverridesUnavail) {
-  prismArgs.push('-const', 'unavail=' + liveUnavail);
-}
-prismArgs.push(...extraArgs);
+prismArgs.push(...filteredExtraArgs);
 
 process.stdout.write('[run-prism] Binary: ' + prismBin + '\n');
-process.stdout.write('[run-prism] Model:  ' + modelPath + '\n');
+process.stdout.write('[run-prism] Model:  ' + activeModelPath + '\n');
 process.stdout.write('[run-prism] Args:   ' + prismArgs.slice(1).join(' ') + '\n');
 
 // ── Invoke PRISM ─────────────────────────────────────────────────────────────
@@ -247,6 +326,12 @@ const observationMetadata = {
     n_events:    coldStartState.ciRunCount,
   },
 };
+
+// Add mcp_availability metadata when running mcp-availability model (MCPENV-04)
+if (useMCPAvailabilityModel) {
+  observationMetadata.model = 'mcp-availability';
+  observationMetadata.per_slot_rates = activeMcpRates || 'priors';
+}
 
 try {
   writeCheckResult({

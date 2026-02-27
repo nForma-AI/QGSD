@@ -339,13 +339,19 @@ Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
 
-After quorum returns, parse the improvements signal:
+After quorum returns, extract the improvements signal from your own output:
 
+Scan for the HTML comment block in the quorum response:
 ```
-$QUORUM_IMPROVEMENTS = JSON array from <!-- QUORUM_IMPROVEMENTS_START [...] QUORUM_IMPROVEMENTS_END -->
+<!-- QUORUM_IMPROVEMENTS_START
+[...]
+QUORUM_IMPROVEMENTS_END -->
 ```
+Extract the text between `QUORUM_IMPROVEMENTS_START` and `QUORUM_IMPROVEMENTS_END`, trim whitespace, and parse as a JSON array. Store as `$QUORUM_IMPROVEMENTS`.
 
-If the signal is absent or malformed: treat as empty array (fail-open — R3.6 does not fire).
+**Do NOT summarize or paraphrase the JSON — extract the exact text between the delimiters.**
+
+If the signal is absent, the delimiters don't match, or JSON.parse would fail: set `$QUORUM_IMPROVEMENTS = []` (fail-open — R3.6 does not fire).
 
 **Route:**
 
@@ -410,8 +416,13 @@ If the signal is absent or malformed: treat as empty array (fail-open — R3.6 d
     )
     ```
 
-    After planner returns: re-read `${PHASE_DIR}/*-PLAN.md` (artifact_path updated).
-    Continue loop.
+    After planner returns:
+    - **If planner returns `## PLANNING COMPLETE` or equivalent success:** re-read
+      `${PHASE_DIR}/*-PLAN.md` (plan files are now updated). Continue loop.
+    - **If planner returns `## PLANNING INCONCLUSIVE` or fails to update files:**
+      Do NOT loop again on the same improvements. Display:
+      > "R3.6: planner could not incorporate improvements in iteration ${improvement_iteration}. Proceeding with current plan."
+      Include `<!-- GSD_DECISION -->` summarizing quorum results. Proceed to step 9. **Break loop.**
 
 **END LOOP**
 
@@ -643,6 +654,17 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
 - [ ] qgsd-plan-checker spawned with CONTEXT.md
 - [ ] Verification passed OR user override OR max iterations with user decision
+- [ ] Quorum ran (step 8.5) with `request_improvements: true`
+- [ ] R3.6 loop ran: if improvements were proposed, planner revision was spawned; if none, loop exited cleanly; `<!-- GSD_DECISION -->` present in response
 - [ ] User sees status between agent spawns
 - [ ] User knows next steps
 </success_criteria>
+
+<anti_patterns>
+**R3.6 — do NOT:**
+- Do NOT skip the R3.6 loop because the plan "looks complete" or improvements "seem minor." The loop is MANDATORY when `request_improvements: true` returns a non-empty array.
+- Do NOT pre-filter or discard improvements before passing them to the planner. Pass the full `$QUORUM_IMPROVEMENTS` array.
+- Do NOT count the initial quorum run (improvement_iteration=0) as one of the 10 R3.6 iterations. Iteration counting starts at 1 when the first planner revision is spawned.
+- Do NOT emit `<!-- GSD_DECISION -->` before the loop exits. Only emit it on the final break.
+- Do NOT run the R3.6 improvement planner as a parallel Task alongside anything else. It must be sequential — quorum → planner → quorum → ...
+</anti_patterns>
