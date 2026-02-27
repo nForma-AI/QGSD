@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.18 milestone start)
 
 ## Current Position
 
-Phase: v0.18-02 of 4 (Tiered Model Sizing)
-Plan: 03 (completed)
-Status: 3/3 plans complete (v0.18-02-01, v0.18-02-02, v0.18-02-03) - Phase complete, ready for v0.18-03
-Last activity: 2026-02-27 — Executed v0.18-02-03: hook deployment and test verification (TIER-01, TIER-02, TIER-03 all requirements met)
+Phase: v0.18-02 of 4 (Tiered Model Sizing) — COMPLETE
+Plan: 04 (gap closure: executed and complete)
+Status: 4/4 plans complete (3 core + 1 gap-closure); all gaps closed
+Last activity: 2026-02-27 — v0.18-02-04 gap closure executed; 6 TIER unit tests added to gsd-tools.test.cjs; all tests pass; VERIFICATION.md marked complete
 
-Progress: [████████████████████] prior milestones complete | v0.18: Phase v0.18-02 complete (3/3 plans done)
+Progress: [████████████████████] prior milestones complete | v0.18: Phase v0.18-02 COMPLETE (4/4 plans done)
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
 - [Phase v0.15-04]: Check 9 added to cmdValidateHealth: W008 emitted for quorum slots with count >= 3 in .planning/quorum-failures.json. Threshold >= 3, try/catch swallows errors, Array.isArray + typeof count === 'number' guards applied.
+- [v0.18-02-04 execution]: 6 TIER unit tests added to gsd-tools.test.cjs (TIER-01 through TIER-03d); includes unknown agent fallback test per copilot-1 improvement suggestion; all 160 tests pass, zero regressions. Closed PLAN 02 gap of missing unit test coverage.
 - [v0.18-02-02 execution]: model_overrides field added to loadConfig return object — was missing but accessed in resolveModelInternal, causing Rule 1 auto-fix. Tier lookup order: per-agent override → tier key → profile → default.
 - [v0.18-02-01 execution]: TIER-03 implemented: flat keys model_tier_planner='opus', model_tier_worker='haiku' in DEFAULT_CONFIG with validation (whitelist: 'haiku'|'sonnet'|'opus')
 - [v0.18 roadmap]: Phase order fixed by dependency chain: OBSV (independent) → TIER (config schema first) → ENV (foundation for fan-out) → FAN (depends on both TIER config and ENV envelope)
