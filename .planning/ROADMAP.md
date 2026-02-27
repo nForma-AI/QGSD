@@ -856,7 +856,9 @@ Plans:
   1. Running `/qgsd:health` when `.planning/quorum-failures.json` contains a slot with count >= 3 prints a health warning identifying the slot name and failure count
   2. Running `/qgsd:health` when `.planning/quorum-failures.json` does not exist or all slot counts are < 3 produces no quorum-failure warning
   3. The quorum-failure warnings appear in the same output section as other W/E/I health items — not as a separate unrelated block
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.15-04-01-PLAN.md — VIS-01 test scaffold + Check 9 W008 implementation + install sync (VIS-01)
 
 ### Phase v0.18-01: Token Observability Foundation
 **Goal**: Users can see per-slot token consumption ranked by usage in /qgsd:health, and every quorum slot-worker run appends a structured token record to .planning/token-usage.jsonl
