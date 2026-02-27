@@ -16,7 +16,7 @@
 - ✅ **v0.13 — Autonomous Milestone Execution** — Phases v0.13-01..v0.13-06 (shipped 2026-02-25)
 - ✅ **v0.14 — FV Pipeline Integration** — Phases v0.14-01..v0.14-05 (shipped 2026-02-26)
 - ✅ **v0.15 — Health & Tooling Modernization** — Phases v0.15-01..v0.15-04 (shipped 2026-02-27)
-- 🚧 **v0.18 — Token Efficiency** — Phases v0.18-01..v0.18-04 (in progress)
+- 🚧 **v0.18 — Token Efficiency** — Phases v0.18-01..v0.18-05 (in progress)
 
 ## Phases
 
@@ -220,6 +220,7 @@
 - [x] **Phase v0.18-02: Tiered Model Sizing** — Researcher and plan-checker sub-agents in plan-phase.md use model=haiku; user-configurable tier keys model_tier_planner/model_tier_worker in qgsd.json; config-loader.js updated with flat keys (TIER-01, TIER-02, TIER-03) (completed 2026-02-27)
 - [ ] **Phase v0.18-03: Task Envelope** — bin/task-envelope.cjs writes task-envelope.json sidecar after research and planning with objective/constraints/risk_level/target_files/plan_path/key_decisions; quorum.md reads risk_level with fail-open (ENV-01, ENV-02, ENV-03, ENV-04)
 - [ ] **Phase v0.18-04: Adaptive Fan-Out** — qgsd-prompt.js readEnvelopeWorkerCount() helper; priority chain --n N > envelope > maxSize > pool; 2/3/max workers for routine/medium/high risk; --n N emitted for Stop hook R3.5 compliance; R6.4 reduced-quorum note (FAN-01, FAN-02, FAN-03, FAN-04, FAN-05, FAN-06)
+- [ ] **Phase v0.18-05: Verify Token Observability Foundation** — Write formal VERIFICATION.md for v0.18-01 from SUMMARY evidence; update ROADMAP.md v0.18-01 status to complete; close OBSV-01, OBSV-02, OBSV-03, OBSV-04 (Gap Closure)
 
 
 ## Phase Details
@@ -922,6 +923,20 @@ Plans:
   6. Passing --n 5 explicitly overrides envelope-driven fan-out — 5 workers are dispatched regardless of risk_level
 **Plans**: TBD
 
+### Phase v0.18-05: Verify Token Observability Foundation
+**Goal**: Formally close v0.18-01 by writing a VERIFICATION.md from existing SUMMARY evidence; update ROADMAP.md v0.18-01 to complete; close OBSV-01..04 gap from audit
+**Depends on**: Phase v0.18-01 (executed; awaiting formal verification)
+**Requirements**: OBSV-01, OBSV-02, OBSV-03, OBSV-04
+**Gap Closure**: Closes gaps from v0.18 audit — v0.18-01 executed (2 SUMMARYs, all tests pass) but VERIFICATION.md never written and ROADMAP.md never updated
+**Success Criteria** (what must be TRUE):
+  1. `.planning/phases/v0.18-01-token-observability-foundation/VERIFICATION.md` exists with evidence-backed pass/fail for each of OBSV-01, OBSV-02, OBSV-03, OBSV-04
+  2. ROADMAP.md Phase v0.18-01 checkbox updated to `[x]` with completion date
+  3. ROADMAP.md progress table updated: v0.18-01 status → Complete
+  4. REQUIREMENTS.md OBSV-01..04 checkboxes updated to `[x]`
+**Plans**: 1 plan
+Plans:
+- [ ] v0.18-05-01-PLAN.md — Write VERIFICATION.md for v0.18-01 + update ROADMAP.md + update REQUIREMENTS.md (OBSV-01, OBSV-02, OBSV-03, OBSV-04)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -1013,7 +1028,8 @@ Plans:
 | v0.15-02. Repair Safety Guard | 1/1 | Complete   | 2026-02-27 | - |
 | v0.15-03. Legacy Dir Archive | 1/1 | Complete | 2026-02-27 | - |
 | v0.15-04. Health Quorum Failure Visibility | 1/1 | Complete | 2026-02-27 | - |
-| v0.18-01. Token Observability Foundation | v0.18 | 0/TBD | Not started | - |
+| v0.18-01. Token Observability Foundation | v0.18 | 2/2 | Executed (unverified) | - |
 | v0.18-02. Tiered Model Sizing | 4/4 | Complete    | 2026-02-27 | 2026-02-27 |
 | v0.18-03. Task Envelope | v0.18 | 0/TBD | Not started | - |
 | v0.18-04. Adaptive Fan-Out | v0.18 | 0/TBD | Not started | - |
+| v0.18-05. Verify Token Observability Foundation | v0.18 | 0/1 | Not started | - |

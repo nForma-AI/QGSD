@@ -65,10 +65,10 @@ Requirements for the Token Efficiency milestone. Goal: reduce QGSD's per-run tok
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OBSV-01 | Phase v0.18-01 | Pending |
-| OBSV-02 | Phase v0.18-01 | Pending |
-| OBSV-03 | Phase v0.18-01 | Pending |
-| OBSV-04 | Phase v0.18-01 | Pending |
+| OBSV-01 | Phase v0.18-05 (gap closure) | Pending |
+| OBSV-02 | Phase v0.18-05 (gap closure) | Pending |
+| OBSV-03 | Phase v0.18-05 (gap closure) | Pending |
+| OBSV-04 | Phase v0.18-05 (gap closure) | Pending |
 | TIER-01 | Phase v0.18-02 | Complete |
 | TIER-02 | Phase v0.18-02 | Complete |
 | TIER-03 | Phase v0.18-02 | Complete |
