@@ -861,54 +861,11 @@ Plans:
 **Depends on**: Nothing (first v0.18 phase; architecturally independent)
 **Requirements**: OBSV-01, OBSV-02, OBSV-03, OBSV-04
 **Success Criteria** (what must be TRUE):
-  1. Running  after any quorum round shows a token consumption section listing each active slot with input/output token counts ranked by total usage
-  2. After a quorum round completes,  contains a new line with , , , , and  fields
+  1. Running /qgsd:health after any quorum round shows a token consumption section listing each active slot with input/output token counts ranked by total usage
+  2. After a quorum round completes, .planning/token-usage.jsonl contains a new line with slot, stage, input_tokens, output_tokens, and session_id fields
   3. Token records for MCP-based slots (claude-1..claude-6) contain non-null token counts correctly attributed to the slot name that dispatched them
-  4. Token records for CLI-based slots (gemini-1, codex-1) are present in the log with  — the slot is logged, not omitted
-  5. The SubagentStop hook is registered in  after 
-[38;5;209m  ██████╗ [36m ██████╗ ███████╗██████╗
-[38;5;209m ██╔═══██╗[36m██╔════╝ ██╔════╝██╔══██╗
-[38;5;209m ██║   ██║[36m██║  ███╗███████╗██║  ██║
-[38;5;209m ██║▄▄ ██║[36m██║   ██║╚════██║██║  ██║
-[38;5;209m ╚██████╔╝[36m╚██████╔╝███████║██████╔╝
-[38;5;209m  ╚══▀▀═╝ [36m ╚═════╝ ╚══════╝╚═════╝[0m
-
-  Quorum Gets Shit Done [2mv0.2.0[0m
-  Built on get-shit-done-cc by TÂCHES.
-  Full automation through quorum of coding agents. By Jonathan Borduas.
-
-[36m  The task of leadership is to create an alignment of strengths
-   so strong that it makes the system’s weaknesses irrelevant.
-[2m  — Peter Drucker[0m
-
-  Installing for [36mClaude Code[0m to [36m~/.claude[0m
-
-  [32m✓[0m Installed commands/qgsd
-  [32m✓[0m Installed qgsd
-  [32m✓[0m Installed agents
-  [32m✓[0m Installed CHANGELOG.md
-  [32m✓[0m Wrote VERSION (0.2.0)
-  [32m✓[0m Wrote package.json (CommonJS mode)
-  [32m✓[0m Installed hooks (bundled)
-  [32m✓[0m Installed qgsd-bin scripts
-  [2m↳ ~/.claude/qgsd.json exists — active config: codex → mcp__codex-1__, gemini → mcp__gemini-1__, opencode → mcp__opencode-1__, copilot → mcp__copilot-1__[0m
-  [2m  (run with --redetect-mcps to refresh MCP prefix detection)[0m
-  [32m✓[0m Wrote file manifest (qgsd-file-manifest.json)
-
-  [33mLocal patches detected[0m (from v0.2.0):
-     [36mcommands/qgsd/quorum.md[0m
-
-  Your modifications are saved in [36mqgsd-local-patches/[0m
-  Run [36m/qgsd:reapply-patches[0m to merge them into the new version.
-  Or manually compare and merge the files.
-
-  [33m⚠[0m Skipping statusline (already configured)
-    Use [36m--force-statusline[0m to replace
-
-
-  [32mDone![0m Launch Claude Code and run [36m/qgsd:help[0m.
-
-  [36mJoin the community:[0m https://discord.gg/5JJgD5svVS runs
+  4. Token records for CLI-based slots (gemini-1, codex-1) are present in the log with tokens: null — the slot is logged, not omitted
+  5. The SubagentStop hook is registered in ~/.claude/settings.json after node bin/install.js --claude --global runs
 **Plans**: TBD
 
 ### Phase v0.18-02: Tiered Model Sizing
@@ -916,54 +873,11 @@ Plans:
 **Depends on**: Phase v0.18-01
 **Requirements**: TIER-01, TIER-02, TIER-03
 **Success Criteria** (what must be TRUE):
-  1. A plan-phase session with default config dispatches the researcher Task with  visible in the Task call
-  2. A plan-phase session with default config dispatches the plan-checker Task with  visible in the Task call
-  3. Setting  in  causes the planner (not researcher/checker) to use sonnet — no regression on planner model selection
-  4. Setting  in  causes researcher and checker Tasks to use sonnet instead of haiku
-  5. Running 
-[38;5;209m  ██████╗ [36m ██████╗ ███████╗██████╗
-[38;5;209m ██╔═══██╗[36m██╔════╝ ██╔════╝██╔══██╗
-[38;5;209m ██║   ██║[36m██║  ███╗███████╗██║  ██║
-[38;5;209m ██║▄▄ ██║[36m██║   ██║╚════██║██║  ██║
-[38;5;209m ╚██████╔╝[36m╚██████╔╝███████║██████╔╝
-[38;5;209m  ╚══▀▀═╝ [36m ╚═════╝ ╚══════╝╚═════╝[0m
-
-  Quorum Gets Shit Done [2mv0.2.0[0m
-  Built on get-shit-done-cc by TÂCHES.
-  Full automation through quorum of coding agents. By Jonathan Borduas.
-
-[36m  The task of leadership is to create an alignment of strengths
-   so strong that it makes the system’s weaknesses irrelevant.
-[2m  — Peter Drucker[0m
-
-  Installing for [36mClaude Code[0m to [36m~/.claude[0m
-
-  [32m✓[0m Installed commands/qgsd
-  [32m✓[0m Installed qgsd
-  [32m✓[0m Installed agents
-  [32m✓[0m Installed CHANGELOG.md
-  [32m✓[0m Wrote VERSION (0.2.0)
-  [32m✓[0m Wrote package.json (CommonJS mode)
-  [32m✓[0m Installed hooks (bundled)
-  [32m✓[0m Installed qgsd-bin scripts
-  [2m↳ ~/.claude/qgsd.json exists — active config: codex → mcp__codex-1__, gemini → mcp__gemini-1__, opencode → mcp__opencode-1__, copilot → mcp__copilot-1__[0m
-  [2m  (run with --redetect-mcps to refresh MCP prefix detection)[0m
-  [32m✓[0m Wrote file manifest (qgsd-file-manifest.json)
-
-  [33mLocal patches detected[0m (from v0.2.0):
-     [36mcommands/qgsd/quorum.md[0m
-
-  Your modifications are saved in [36mqgsd-local-patches/[0m
-  Run [36m/qgsd:reapply-patches[0m to merge them into the new version.
-  Or manually compare and merge the files.
-
-  [33m⚠[0m Skipping statusline (already configured)
-    Use [36m--force-statusline[0m to replace
-
-
-  [32mDone![0m Launch Claude Code and run [36m/qgsd:help[0m.
-
-  [36mJoin the community:[0m https://discord.gg/5JJgD5svVS after the config-loader.js change installs the updated config-loader to 
+  1. A plan-phase session with default config dispatches the researcher Task with model="haiku" visible in the Task call
+  2. A plan-phase session with default config dispatches the plan-checker Task with model="haiku" visible in the Task call
+  3. Setting model_tier_planner: "sonnet" in qgsd.json causes the planner (not researcher/checker) to use sonnet — no regression on planner model selection
+  4. Setting model_tier_worker: "sonnet" in qgsd.json causes researcher and checker Tasks to use sonnet instead of haiku
+  5. Running node bin/install.js --claude --global after the config-loader.js change deploys the updated config-loader to ~/.claude/hooks/config-loader.js
 **Plans**: TBD
 
 ### Phase v0.18-03: Task Envelope
@@ -971,11 +885,11 @@ Plans:
 **Depends on**: Phase v0.18-02
 **Requirements**: ENV-01, ENV-02, ENV-03, ENV-04
 **Success Criteria** (what must be TRUE):
-  1. After plan-phase research step completes,  exists with , , , and  fields populated
-  2. After plan-phase planning step completes, the same envelope file contains  and  fields (updated, not replaced)
-  3. When  exists and contains a valid ,  pre-flight log shows the envelope-derived risk level
-  4. When  is absent or malformed, quorum proceeds without error using static  — fail-open behavior verified
-  5. Setting  in  disables envelope writes; quorum proceeds without envelope as if it were absent
+  1. After plan-phase research step completes, .planning/phases/<phase>/task-envelope.json exists with objective, constraints, risk_level, and target_files fields populated
+  2. After plan-phase planning step completes, the same envelope file contains plan_path and key_decisions fields (updated, not replaced)
+  3. When task-envelope.json exists and contains a valid risk_level, quorum.md pre-flight log shows the envelope-derived risk level
+  4. When task-envelope.json is absent or malformed, quorum proceeds without error using static max_quorum_size — fail-open behavior verified
+  5. Setting task_envelope.enabled: false in qgsd.json disables envelope writes; quorum proceeds without envelope as if it were absent
 **Plans**: TBD
 
 ### Phase v0.18-04: Adaptive Fan-Out
@@ -983,12 +897,12 @@ Plans:
 **Depends on**: Phase v0.18-03
 **Requirements**: FAN-01, FAN-02, FAN-03, FAN-04, FAN-05, FAN-06
 **Success Criteria** (what must be TRUE):
-  1. A quorum round with  from the envelope dispatches exactly 2 slot-worker Tasks (not max_quorum_size)
-  2. A quorum round with  from the envelope dispatches exactly 3 slot-worker Tasks
-  3. A quorum round with  (or no envelope) dispatches  workers — unchanged baseline behavior
-  4. The quorum prompt text injected by  contains  matching the actual worker count dispatched, so  passes the ceiling check correctly
-  5. When fan-out is below , the quorum output contains an R6.4 reduced-quorum note identifying how many workers were used vs. max
-  6. Passing  explicitly overrides envelope-driven fan-out — 5 workers are dispatched regardless of 
+  1. A quorum round with risk_level: "routine" from the envelope dispatches exactly 2 slot-worker Tasks (not max_quorum_size)
+  2. A quorum round with risk_level: "medium" from the envelope dispatches exactly 3 slot-worker Tasks
+  3. A quorum round with risk_level: "high" (or no envelope) dispatches max_quorum_size workers — unchanged baseline behavior
+  4. The quorum prompt text injected by qgsd-prompt.js contains --n N matching the actual worker count dispatched, so qgsd-stop.js passes the ceiling check correctly
+  5. When fan-out is below max_quorum_size, the quorum output contains an R6.4 reduced-quorum note identifying how many workers were used vs. max
+  6. Passing --n 5 explicitly overrides envelope-driven fan-out — 5 workers are dispatched regardless of risk_level
 **Plans**: TBD
 
 ## Progress
