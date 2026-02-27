@@ -22,6 +22,7 @@ on:
       - 'bin/write-check-result.cjs'
       - 'bin/check-results-exit.cjs'
       - 'bin/check-trace-redaction.cjs'
+      - 'bin/check-trace-schema-drift.cjs'
       - 'formal/trace/**'
   pull_request:
     paths:
@@ -43,6 +44,7 @@ on:
       - 'bin/write-check-result.cjs'
       - 'bin/check-results-exit.cjs'
       - 'bin/check-trace-redaction.cjs'
+      - 'bin/check-trace-schema-drift.cjs'
       - 'formal/trace/**'
   workflow_dispatch:  # manual trigger
 
@@ -145,6 +147,9 @@ jobs:
 
       - name: Trace redaction enforcement (check-trace-redaction.cjs)
         run: node bin/check-trace-redaction.cjs
+
+      - name: Trace schema drift guard (check-trace-schema-drift.cjs)
+        run: node bin/check-trace-schema-drift.cjs
 
       - name: Check NDJSON exit code (fail if any result=fail in check-results.ndjson)
         env:
