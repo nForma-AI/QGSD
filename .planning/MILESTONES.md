@@ -175,3 +175,25 @@ Archive: `.planning/milestones/v0.9-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.15 — Health & Tooling Modernization (Shipped: 2026-02-27)
+
+**Phases:** v0.15-01..v0.15-04 (4 phases, 4 plans)
+**Requirements:** 6/6 v0.15 requirements (HLTH-01..03, SAFE-01..02, VIS-01)
+**Git range:** 446c04a..586dc76 (100 commits, 220 files changed, +16023/-2535 lines)
+**Timeline:** 2026-02-26 → 2026-02-27 (1 day)
+
+**Delivered:** Fixed QGSD's health checker to fully support the versioned phase naming convention, eliminating 64 false-positive warnings; guarded `--repair` against silent STATE.md data loss; archived 22 legacy pre-versioning phase dirs; and added W008 health warnings for recurring quorum slot failures.
+
+**Key accomplishments:**
+- Health checker regex fix: extended `phasePattern` and W005/W007/W002 checks to match `v0.X-YY-name` versioned dirs — eliminated 41 W005, 22 W007, and 1 W002 false positives on the QGSD repo itself (HLTH-01..03, v0.15-01)
+- Repair safety guard: content-length threshold (50 lines) in `regenerateState` blocks silent STATE.md overwrite; `--force` flag added for explicit opt-in; 3 SAFE-01 TDD tests (SAFE-01, v0.15-02)
+- Legacy dir archive: moved 22 pre-versioning numeric phase dirs (18-39) to `.planning/archive/legacy/` — clean separation of pre-versioning history from active phases (SAFE-02, v0.15-03)
+- Quorum failure visibility: Check 9 in `cmdValidateHealth` reads `quorum-failures.json` and emits W008 for slots with ≥3 failures — live on QGSD repo showing codex-1 count=4, copilot-1 count=3 (VIS-01, v0.15-04)
+
+**Audit:**
+Milestone audit: TECH_DEBT (post-audit fix commit 586dc76 closed all items)
+Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
+
+---
+

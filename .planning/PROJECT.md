@@ -40,11 +40,11 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - Transition as spawnable Task — execute-phase spawns `transition.md` as `Task(subagent_type="qgsd-executor")` instead of calling inline; orchestrator context stays flat across all phase cycles
 - Chain validation — end-to-end test: auto-advance chain survives simulated compaction; resume-work routing updated for new chain state patterns
 
-## Planned Milestone: v0.15 Health & Tooling Modernization (deferred)
+## Shipped: v0.15 — Health & Tooling Modernization (2026-02-27)
 
 **Goal:** Fix the GSD health checker to recognize QGSD's versioned phase naming convention, guard `--repair` against rich STATE.md data loss, archive legacy pre-versioning phase dirs, and surface quorum failure patterns in the health report.
 
-**Target features:** 4 quick fixes — gsd-tools.cjs W005/W007/W002 versioned pattern support, `--repair` guard, legacy dir archive, quorum-failures.json surfacing in `/qgsd:health`.
+**Shipped:** 4 phases — gsd-tools.cjs W005/W007/W002 versioned pattern support (eliminated 64 false positives), `--repair` guard (50-line threshold + `--force` bypass), legacy dir archive (22 dirs → archive/legacy/), W008 quorum-failures.json health warning. 6/6 requirements satisfied.
 
 ## Just Shipped: v0.14 FV Pipeline Integration (2026-02-26)
 

@@ -2,7 +2,7 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-27 after v0.18 milestone start)
+See: .planning/PROJECT.md (updated 2026-02-27 after v0.15 archived + v0.18 active)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 **Current focus:** v0.18 Token Efficiency — roadmap defined, ready to plan Phase v0.18-01
