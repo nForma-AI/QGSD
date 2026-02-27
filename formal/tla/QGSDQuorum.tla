@@ -1,10 +1,10 @@
 ---- MODULE QGSDQuorum ----
 (*
  * formal/tla/QGSDQuorum.tla
- * GENERATED — do not edit by hand.
+ * Hand-extended: MaxSize constant added (quick-115). Regenerate with caution.
  * Source of truth: src/machines/qgsd-workflow.machine.ts
  * Regenerate:      node bin/generate-formal-specs.cjs
- * Generated:       2026-02-25
+ * Generated:       2026-02-27
 
  * Models the quorum workflow defined in src/machines/qgsd-workflow.machine.ts.
  * Guard translations:
@@ -15,12 +15,15 @@ EXTENDS Naturals, FiniteSets, TLC
 
 CONSTANTS
     Agents,          \* Set of quorum model slots (e.g., {"a1","a2","a3","a4","a5"})
-    MaxDeliberation  \* Maximum deliberation rounds before forced DECIDED (default: 7)
+    MaxDeliberation, \* Maximum deliberation rounds before forced DECIDED (default: 7)
+    MaxSize          \* Quorum ceiling: minimum successful responses required (= --n N - 1 or config.maxSize)
 
 ASSUME MaxDeliberation \in Nat /\ MaxDeliberation > 0
 
 \* N = total number of agents; used for majority calculation
 N == Cardinality(Agents)
+
+ASSUME MaxSize \in 1..N
 
 \* AgentSymmetry: referenced by MCsafety.cfg as SYMMETRY AgentSymmetry.
 AgentSymmetry == Permutations(Agents)
@@ -93,6 +96,11 @@ Next ==
 MinQuorumMet ==
     phase = "DECIDED" =>
         (successCount * 2 >= N \/ deliberationRounds >= MaxDeliberation)
+
+\* QuorumCeilingMet: if DECIDED via approval, at least MaxSize agents approved.
+QuorumCeilingMet ==
+    phase = "DECIDED" =>
+        (successCount >= MaxSize \/ deliberationRounds >= MaxDeliberation)
 
 \* NoInvalidTransition: IDLE can only advance to COLLECTING_VOTES.
 \* Kept for backwards compatibility; AllTransitionsValid covers this and all other states.
