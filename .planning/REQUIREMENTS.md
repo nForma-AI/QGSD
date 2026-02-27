@@ -111,7 +111,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CALIB-03 | Phase v0.19-02 | Complete |
 | CALIB-04 | Phase v0.19-02 | Complete |
 | LIVE-01 | Phase v0.19-03 | Pending |
-| LIVE-02 | Phase v0.19-03 | Pending |
+| LIVE-02 | Phase v0.19-07 | Pending |
 | REDACT-01 | Phase v0.19-04 | Pending |
 | REDACT-02 | Phase v0.19-04 | Pending |
 | REDACT-03 | Phase v0.19-04 | Pending |
@@ -120,19 +120,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DRIFT-01 | Phase v0.19-04 | Pending |
 | DRIFT-02 | Phase v0.19-04 | Pending |
 | MCPENV-01 | Phase v0.19-05 | Pending |
-| MCPENV-02 | Phase v0.19-05 | Pending |
+| MCPENV-02 | Phase v0.19-08 | Pending |
 | MCPENV-03 | Phase v0.19-05 | Pending |
-| MCPENV-04 | Phase v0.19-05 | Pending |
-| IMPR-01 | Phase v0.19-06 | Pending |
-| IMPR-02 | Phase v0.19-06 | Pending |
-| IMPR-03 | Phase v0.19-06 | Pending |
-| IMPR-04 | Phase v0.19-06 | Pending |
+| MCPENV-04 | Phase v0.19-08 | Pending |
+| IMPR-01 | Phase v0.19-06 | Complete |
+| IMPR-02 | Phase v0.19-06 | Complete |
+| IMPR-03 | Phase v0.19-06 | Complete |
+| IMPR-04 | Phase v0.19-06 | Complete |
 
 **Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
+- v1 requirements: 25 total (UNIF-01..04, CALIB-01..04, LIVE-01..02, REDACT-01..03, EVID-01..02, DRIFT-01..02, MCPENV-01..04, IMPR-01..04)
+- Mapped to phases: 25
 - Unmapped: 0 ✓
+- Gap closure phases: LIVE-02 → v0.19-07, MCPENV-02/04 → v0.19-08
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after roadmap creation — all 21 requirements mapped to phases, 100% coverage confirmed*
+*Last updated: 2026-02-27 after gap closure phases added — gap requirements (LIVE-02, MCPENV-02, MCPENV-04) reassigned to closure phases v0.19-07 and v0.19-08; coverage count corrected to 25 total*

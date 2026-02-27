@@ -236,6 +236,9 @@
 - [ ] **Phase v0.19-04: Enforcement Layer** — redaction.yaml defines forbidden keys/patterns; check-trace-redaction.cjs validates trace files and appends to check-results.ndjson; validate-traces.cjs never_observed output includes evidence confidence metadata; check-trace-schema-drift.cjs detects non-atomic schema changes; all three CI gates wired (REDACT-01..03, EVID-01..02, DRIFT-01..02)
 - [x] **Phase v0.19-05: MCP Environment Model** — environment.md models MCP servers as nondeterministic environment processes; QGSDMCPEnv.tla formally verifies quorum fault-tolerance under arbitrary MCP failures; trace schema extended with MCP-interaction fields; mcp-availability.pm PRISM model calibrated from scoreboard rates (MCPENV-01..04) (completed 2026-02-27)
 - [x] **Phase v0.19-06: R3.6 Improvement Iteration** — Implement the Iterative Improvement Protocol: slot-worker structured `improvements:` field, quorum improvement signal emission, and R3.6 outer loop in plan-phase + quick. Closes the gap between CLAUDE.md R3.6 specification and actual behavior. (completed 2026-02-27)
+- [ ] **Phase v0.19-07: Wire Liveness Check to All TLC Runners** — Add `detectLivenessProperties()` call to the 4 remaining TLC runners (run-oscillation-tlc.cjs, run-breaker-tlc.cjs, run-protocol-tlc.cjs, run-account-manager-tlc.cjs) that execute liveness .cfg files but currently bypass the fairness check. Closes 6 unchecked liveness properties across oscillation, breaker, protocol, and account-manager surfaces. (LIVE-02) (Gap Closure)
+- [ ] **Phase v0.19-08: MCP Formal Verification Pipeline Integration** — Fix 3 bugs in mcp-availability.pm (dead module.exports after process.exit, composite-key PRISM constant corruption, absent from pipeline); create formal/spec/mcp-calls/invariants.md with EventualDecision fairness declaration; add MCMCPEnv.cfg to run-tlc.cjs SURFACE_MAP; wire both QGSDMCPEnv.tla and mcp-availability.pm into run-formal-verify.cjs STEPS and CI workflow. (MCPENV-02, MCPENV-04) (Gap Closure)
+- [ ] **Phase v0.19-09: Requirements Traceability Cleanup** — Add 9 missing rows (DRIFT-02, MCPENV-01..04, IMPR-01..04) to REQUIREMENTS.md traceability table; update 13 stale checkboxes from [ ] to [x] for all completed requirements; update coverage count. Ensures accurate milestone state for archival. (Tech Debt) (Gap Closure)
 
 
 ## Phase Details
@@ -1055,6 +1058,42 @@ Plans:
 - [ ] v0.19-06-01-PLAN.md — IMPR-01 + IMPR-02: TDD unit tests for improvements parsing (slot-worker) and signal emission (quorum)
 - [ ] v0.19-06-02-PLAN.md — IMPR-04 (cleanup): remove CLAUDE.md file-read instructions from 7 agent/workflow files + audit test
 - [ ] v0.19-06-03-PLAN.md — IMPR-03 + IMPR-04 (install): sync updated plan-phase + quick to ~/.claude/qgsd/workflows/
+
+### Phase v0.19-07: Wire Liveness Check to All TLC Runners
+**Goal**: All TLC runners that execute liveness .cfg files call `detectLivenessProperties()` before TLC invocation, so that all 6 unchecked liveness properties (AlgorithmTerminates, ConvergenceEventuallyResolves, MonitoringReachable, ProtocolTerminates, PreFilterTerminates, IdleReachable) emit `result=inconclusive` when their companion `invariants.md` has no fairness declaration.
+**Gap Closure:** Closes LIVE-02 requirement gap, LIVE-02 integration gap, F-LIVE-CHECK flow gap
+**Requirements**: LIVE-02
+**Success Criteria** (what must be TRUE):
+  1. `bin/run-oscillation-tlc.cjs` calls `detectLivenessProperties()` before its TLC invocation for MCoscillation.cfg and MCconvergence.cfg
+  2. `bin/run-breaker-tlc.cjs` calls `detectLivenessProperties()` before its TLC invocation for MCbreaker.cfg
+  3. `bin/run-protocol-tlc.cjs` calls `detectLivenessProperties()` before its TLC invocation for MCdeliberation.cfg and MCprefilter.cfg
+  4. `bin/run-account-manager-tlc.cjs` calls `detectLivenessProperties()` before its TLC invocation for MCaccount-manager.cfg
+**Plans**: TBD
+
+### Phase v0.19-08: MCP Formal Verification Pipeline Integration
+**Goal**: Fix all three bugs in `mcp-availability.pm` (dead module.exports export, composite-key PRISM constant corruption, absent from pipeline), create the missing `formal/spec/mcp-calls/invariants.md`, add `QGSDMCPEnv.tla` to the automated TLC pipeline, and wire both the TLA+ MCP model and the PRISM MCP availability model into `run-formal-verify.cjs` STEPS and the CI workflow.
+**Gap Closure:** Closes MCPENV-02 requirement gap, MCPENV-04 requirement gap, three integration gaps (QGSDMCPEnv.tla → CI, mcp-availability.pm → CI, readMCPAvailabilityRates → testable), F-MCPENV-PIPELINE flow gap
+**Requirements**: MCPENV-02, MCPENV-04
+**Depends on**: Phase v0.19-07
+**Success Criteria** (what must be TRUE):
+  1. `formal/prism/mcp-availability.pm` uses `require.main === module` guard (same pattern as run-tlc.cjs) — `module.exports` is reachable via `require()`
+  2. Composite scoreboard keys (e.g. `claude-1:deepseek-ai/DeepSeek-V3.2`) are excluded by checking for `:` in key — no invalid PRISM constant names (with colons or slashes) are generated
+  3. `formal/spec/mcp-calls/invariants.md` exists and declares the fairness assumption for the `EventualDecision` property in `MCMCPEnv.cfg`
+  4. `MCMCPEnv.cfg` is added to `run-tlc.cjs` SURFACE_MAP so it can be invoked by the TLC runner
+  5. Both `QGSDMCPEnv.tla` (TLC) and `mcp-availability.pm` (PRISM) are listed in `run-formal-verify.cjs` STEPS
+  6. CI workflow includes steps for both MCP formal verification models
+**Plans**: TBD
+
+### Phase v0.19-09: Requirements Traceability Cleanup
+**Goal**: Complete the REQUIREMENTS.md traceability table by adding 9 missing rows (DRIFT-02, MCPENV-01, MCPENV-02, MCPENV-03, MCPENV-04, IMPR-01, IMPR-02, IMPR-03, IMPR-04) and correcting 13 stale checkboxes for requirements that are complete but still show `[ ]`, ensuring accurate milestone state for archival.
+**Gap Closure:** Closes REQUIREMENTS.md tech debt (v0.19-06 audit items)
+**Requirements**: N/A (bookkeeping)
+**Depends on**: Phase v0.19-08
+**Success Criteria** (what must be TRUE):
+  1. Traceability table in REQUIREMENTS.md contains rows for DRIFT-02, MCPENV-01..04, and IMPR-01..04 with correct phase assignments and status
+  2. All 13 stale checkboxes updated: LIVE-01/02, REDACT-01..03, EVID-01..02, DRIFT-01/02, MCPENV-01..04 changed from `[ ]` to `[x]`
+  3. Coverage count at top of REQUIREMENTS.md reflects correct satisfied/total numbers
+**Plans**: TBD
 
 
 ## Progress
