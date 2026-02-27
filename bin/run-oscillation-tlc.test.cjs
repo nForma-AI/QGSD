@@ -73,3 +73,32 @@ test('both MCoscillation and MCconvergence use -workers 1 (both have liveness PR
   // Assert 'auto' is not assigned as the workers value
   assert.doesNotMatch(src, /workers\s*=.*['"]auto['"]/);
 });
+
+// LIVE-02: liveness wiring tests (Wave 0 RED stubs — fail until implementation in Wave 1)
+
+test('run-oscillation-tlc.cjs requires run-tlc.cjs and destructures detectLivenessProperties', () => {
+  const fs = require('fs');
+  const src = fs.readFileSync(path.join(__dirname, 'run-oscillation-tlc.cjs'), 'utf8');
+  // Must require run-tlc.cjs
+  assert.match(src, /require\(['"]\.\/run-tlc\.cjs['"]\)/,
+    'run-oscillation-tlc.cjs must require ./run-tlc.cjs');
+  // Must destructure detectLivenessProperties from it
+  assert.match(src, /\{\s*detectLivenessProperties\s*\}\s*=\s*require\(['"]\.\/run-tlc\.cjs['"]\)/,
+    'run-oscillation-tlc.cjs must destructure detectLivenessProperties from ./run-tlc.cjs');
+});
+
+test('run-oscillation-tlc.cjs calls detectLivenessProperties with configName and cfgPath', () => {
+  const fs = require('fs');
+  const src = fs.readFileSync(path.join(__dirname, 'run-oscillation-tlc.cjs'), 'utf8');
+  // Must call detectLivenessProperties(configName, cfgPath)
+  assert.match(src, /detectLivenessProperties\s*\(\s*configName\s*,\s*cfgPath\s*\)/,
+    'run-oscillation-tlc.cjs must call detectLivenessProperties(configName, cfgPath)');
+});
+
+test('run-oscillation-tlc.cjs has inconclusive writeCheckResult call in source', () => {
+  const fs = require('fs');
+  const src = fs.readFileSync(path.join(__dirname, 'run-oscillation-tlc.cjs'), 'utf8');
+  // Must have result: 'inconclusive' in a writeCheckResult call
+  assert.match(src, /result\s*:\s*['"]inconclusive['"]/,
+    'run-oscillation-tlc.cjs must have result=inconclusive in writeCheckResult call');
+});
