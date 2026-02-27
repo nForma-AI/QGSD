@@ -1,0 +1,119 @@
+'use strict';
+
+const { test } = require('node:test');
+const assert   = require('node:assert');
+const fs       = require('fs');
+const os       = require('os');
+const path     = require('path');
+
+const MODULE_PATH = path.join(__dirname, 'write-check-result.cjs');
+
+// ─── Test 1: module loads without error ────────────────────────────────────
+test('module loads without error', () => {
+  assert.doesNotThrow(() => {
+    require(MODULE_PATH);
+  });
+});
+
+// ─── Test 2: writeCheckResult throws on missing tool field ─────────────────
+test('writeCheckResult throws on missing tool field', () => {
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({}),
+    /tool is required/
+  );
+});
+
+// ─── Test 3: throws on invalid formalism ───────────────────────────────────
+test('writeCheckResult throws on invalid formalism', () => {
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({ tool: 'x', formalism: 'bad', result: 'pass' }),
+    /formalism/
+  );
+});
+
+// ─── Test 4: throws on invalid result ──────────────────────────────────────
+test('writeCheckResult throws on invalid result', () => {
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({ tool: 'x', formalism: 'tla', result: 'bad' }),
+    /result/
+  );
+});
+
+// ─── Test 5: appends exactly one line to NDJSON file ─────────────────────
+test('writeCheckResult appends one line to NDJSON file', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    // Re-require with env override pointing to tmpDir file
+    const { writeCheckResult } = (() => {
+      const origEnv = process.env.CHECK_RESULTS_PATH;
+      process.env.CHECK_RESULTS_PATH = tmpFile;
+      // Force fresh require by clearing cache
+      delete require.cache[require.resolve(MODULE_PATH)];
+      const mod = require(MODULE_PATH);
+      process.env.CHECK_RESULTS_PATH = origEnv;
+      return mod;
+    })();
+
+    writeCheckResult({ tool: 'run-tlc', formalism: 'tla', result: 'pass' });
+
+    const content = fs.readFileSync(tmpFile, 'utf8');
+    const lines = content.split('\n').filter(l => l.trim().length > 0);
+    assert.strictEqual(lines.length, 1, 'Expected exactly 1 non-empty line');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
+
+// ─── Test 6: record has all required fields ────────────────────────────────
+test('writeCheckResult record has all required fields', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    const origEnv = process.env.CHECK_RESULTS_PATH;
+    process.env.CHECK_RESULTS_PATH = tmpFile;
+    delete require.cache[require.resolve(MODULE_PATH)];
+    const { writeCheckResult } = require(MODULE_PATH);
+
+    writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: 'test' } });
+
+    const line    = fs.readFileSync(tmpFile, 'utf8').trim();
+    const record  = JSON.parse(line);
+
+    assert.ok('tool'      in record, 'Missing field: tool');
+    assert.ok('formalism' in record, 'Missing field: formalism');
+    assert.ok('result'    in record, 'Missing field: result');
+    assert.ok('timestamp' in record, 'Missing field: timestamp');
+    assert.ok('metadata'  in record, 'Missing field: metadata');
+
+    assert.strictEqual(record.tool,      'run-alloy');
+    assert.strictEqual(record.formalism, 'alloy');
+    assert.strictEqual(record.result,    'fail');
+    assert.deepStrictEqual(record.metadata, { spec: 'test' });
+
+    process.env.CHECK_RESULTS_PATH = origEnv;
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
+
+// ─── Test 7: NDJSON_PATH exported correctly ────────────────────────────────
+test('NDJSON_PATH exported correctly', () => {
+  // Clear env override so we get the default path
+  const origEnv = process.env.CHECK_RESULTS_PATH;
+  delete process.env.CHECK_RESULTS_PATH;
+  delete require.cache[require.resolve(MODULE_PATH)];
+
+  const { NDJSON_PATH } = require(MODULE_PATH);
+  assert.strictEqual(typeof NDJSON_PATH, 'string');
+  assert.ok(NDJSON_PATH.endsWith('check-results.ndjson'), 'NDJSON_PATH should end with check-results.ndjson');
+
+  // Restore
+  if (origEnv !== undefined) process.env.CHECK_RESULTS_PATH = origEnv;
+  delete require.cache[require.resolve(MODULE_PATH)];
+});

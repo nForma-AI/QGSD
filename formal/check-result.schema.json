@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["tool", "formalism", "result", "timestamp"],
+  "properties": {
+    "tool": {
+      "type": "string"
+    },
+    "formalism": {
+      "type": "string",
+      "enum": ["tla", "alloy", "prism", "trace", "redaction"]
+    },
+    "result": {
+      "type": "string",
+      "enum": ["pass", "fail", "warn", "inconclusive"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}
