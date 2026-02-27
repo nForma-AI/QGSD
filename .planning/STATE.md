@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.18 milestone start)
 ## Current Position
 
 Phase: v0.18-02 of 4 (Tiered Model Sizing)
-Plan: 01 (completed)
-Status: Plan 02 ready to execute
-Last activity: 2026-02-27 — Executed v0.18-02-01: model tier key validation (TIER-03 requirement met)
+Plan: 02 (completed)
+Status: 2/3 plans complete (v0.18-02-01, v0.18-02-02); v0.18-02-03 ready to plan
+Last activity: 2026-02-27 — Executed v0.18-02-02: tier lookup logic + unit tests (TIER-01, TIER-02 requirements met)
 
-Progress: [████████████████████] prior milestones complete | v0.18: 1/4 phases in progress (v0.18-02-01 complete)
+Progress: [████████████████████] prior milestones complete | v0.18: 2/3 phase plans complete (v0.18-02-01, v0.18-02-02)
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.18-02-02 execution]: model_overrides field added to loadConfig return object — was missing but accessed in resolveModelInternal, causing Rule 1 auto-fix. Tier lookup order: per-agent override → tier key → profile → default.
 - [v0.18-02-01 execution]: TIER-03 implemented: flat keys model_tier_planner='opus', model_tier_worker='haiku' in DEFAULT_CONFIG with validation (whitelist: 'haiku'|'sonnet'|'opus')
 - [v0.18 roadmap]: Phase order fixed by dependency chain: OBSV (independent) → TIER (config schema first) → ENV (foundation for fan-out) → FAN (depends on both TIER config and ENV envelope)
 - [v0.18 research]: Flat config keys required for tier config — nested objects silently lost via shallow merge in config-loader.js
@@ -74,7 +75,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 - Completed quick task 115: add missing unit tests for default ceiling, --n 1 solo mode, --n N ceiling override in stop/prompt hooks, and extend TLA+ model with MaxSize constant
+Last activity: 2026-02-27 - Executed plan v0.18-02-02: tier lookup logic and unit tests (Rule 1 auto-fix for model_overrides field)
 Last session: 2026-02-27
-Stopped at: Roadmap created for v0.18 Token Efficiency; next step is /qgsd:plan-phase v0.18-01
+Stopped at: Plan v0.18-02-02 completed with SUMMARY created; 2/3 plans in v0.18-02 phase complete
 Resume file: None
