@@ -9,35 +9,35 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { writeCheckResult } = require('./write-check-result.cjs');
-// Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
-// When installed at ~/.claude/qgsd-bin/, ./dist/machines/ (qgsd-bin/ → qgsd-bin/dist/machines/)
-const machinePath = (function () {
-  const fs = require('fs');
-  const repoDist = require('path').join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-  const installDist = require('path').join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-  if (fs.existsSync(repoDist)) return repoDist;
-  if (fs.existsSync(installDist)) return installDist;
-  throw new Error('[validate-traces] Cannot find qgsd-workflow.machine.cjs in ' + repoDist + ' or ' + installDist);
-})();
-const { createActor, qgsdWorkflowMachine } = require(machinePath);
-const { VALID_ACTIONS, VALID_PHASES, VALID_OUTCOMES } = require('./conformance-schema.cjs');
 
-const logPath = path.join(process.cwd(), '.planning', 'conformance-events.jsonl');
+// ── Confidence tier constants and helpers ─────────────────────────────────────
 
-if (!fs.existsSync(logPath)) {
-  process.stdout.write('[validate-traces] No conformance log at: ' + logPath + ' — nothing to validate\n');
-  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'no-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
-  process.exit(0);
+const CONFIDENCE_THRESHOLDS = {
+  low:    { min_rounds: 0,     min_days: 0  },
+  medium: { min_rounds: 500,   min_days: 14 },
+  high:   { min_rounds: 10000, min_days: 90 },
+};
+
+function computeConfidenceTier(n_rounds, window_days) {
+  if (n_rounds >= CONFIDENCE_THRESHOLDS.high.min_rounds && window_days >= CONFIDENCE_THRESHOLDS.high.min_days) return 'high';
+  if (n_rounds >= CONFIDENCE_THRESHOLDS.medium.min_rounds && window_days >= CONFIDENCE_THRESHOLDS.medium.min_days) return 'medium';
+  return 'low';
 }
 
-const raw   = fs.readFileSync(logPath, 'utf8');
-const lines = raw.split('\n').filter(l => l.trim().length > 0);
-
-if (lines.length === 0) {
-  process.stdout.write('[validate-traces] Conformance log is empty — deviation score: 100.0% (0/0)\n');
-  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'empty-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
-  process.exit(0);
+function readScoreboardMeta() {
+  const scoreboardPath = path.join(process.cwd(), '.planning', 'quorum-scoreboard.json');
+  try {
+    const raw = fs.readFileSync(scoreboardPath, 'utf8');
+    const sb = JSON.parse(raw);
+    const rounds = Array.isArray(sb.rounds) ? sb.rounds : [];
+    const n_rounds = rounds.length;
+    if (n_rounds === 0) return { n_rounds: 0, window_days: 0 };
+    const dates = rounds.map(r => new Date(r.date).getTime()).filter(t => !isNaN(t));
+    const window_days = dates.length < 2 ? 0 : Math.floor((Math.max(...dates) - Math.min(...dates)) / 86400000);
+    return { n_rounds, window_days };
+  } catch (_) {
+    return { n_rounds: 0, window_days: 0 };
+  }
 }
 
 // Maps a conformance event action to the XState event type and payload.
@@ -67,57 +67,108 @@ function expectedState(event) {
   return null; // cannot determine — will count as divergence
 }
 
-let valid       = 0;
-const divergences = [];
+if (require.main === module) {
+  const { writeCheckResult } = require('./write-check-result.cjs');
+  // Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
+  // When installed at ~/.claude/qgsd-bin/, ./dist/machines/ (qgsd-bin/ → qgsd-bin/dist/machines/)
+  const machinePath = (function () {
+    const repoDist = path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+    const installDist = path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+    if (fs.existsSync(repoDist)) return repoDist;
+    if (fs.existsSync(installDist)) return installDist;
+    throw new Error('[validate-traces] Cannot find qgsd-workflow.machine.cjs in ' + repoDist + ' or ' + installDist);
+  })();
+  const { createActor, qgsdWorkflowMachine } = require(machinePath);
 
-for (const line of lines) {
-  let event;
-  try {
-    event = JSON.parse(line);
-  } catch (parseErr) {
-    divergences.push({ line, reason: 'json_parse_error: ' + parseErr.message });
-    continue;
+  const logPath = path.join(process.cwd(), '.planning', 'conformance-events.jsonl');
+
+  if (!fs.existsSync(logPath)) {
+    process.stdout.write('[validate-traces] No conformance log at: ' + logPath + ' — nothing to validate\n');
+    try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'no-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
+    process.exit(0);
   }
 
-  const xstateEvent = mapToXStateEvent(event);
-  if (!xstateEvent) {
-    divergences.push({ event, reason: 'unmappable_action: ' + event.action });
-    continue;
+  const raw   = fs.readFileSync(logPath, 'utf8');
+  const lines = raw.split('\n').filter(l => l.trim().length > 0);
+
+  if (lines.length === 0) {
+    process.stdout.write('[validate-traces] Conformance log is empty — deviation score: 100.0% (0/0)\n');
+    try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'empty-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
+    process.exit(0);
   }
 
-  // Fresh actor per event — each conformance event is a single-step trace
-  const actor = createActor(qgsdWorkflowMachine);
-  actor.start();
-  actor.send(xstateEvent);
-  const snapshot = actor.getSnapshot();
-  actor.stop();
+  // Read scoreboard metadata ONCE before the loop (avoid repeated file reads)
+  const scoreboardMeta = readScoreboardMeta();
+  const confidence = computeConfidenceTier(scoreboardMeta.n_rounds, scoreboardMeta.window_days);
 
-  const expected = expectedState(event);
-  if (expected === null || snapshot.matches(expected)) {
-    valid++;
-  } else {
-    divergences.push({
-      event,
-      actual:   snapshot.value,
-      expected,
-      reason:   'state_mismatch',
-    });
+  let valid       = 0;
+  const divergences = [];
+
+  for (const line of lines) {
+    let event;
+    try {
+      event = JSON.parse(line);
+    } catch (parseErr) {
+      divergences.push({
+        line,
+        reason: 'json_parse_error: ' + parseErr.message,
+        ...scoreboardMeta,
+        confidence,
+      });
+      continue;
+    }
+
+    const xstateEvent = mapToXStateEvent(event);
+    if (!xstateEvent) {
+      divergences.push({
+        event,
+        reason: 'unmappable_action: ' + event.action,
+        ...scoreboardMeta,
+        confidence,
+      });
+      continue;
+    }
+
+    // Fresh actor per event — each conformance event is a single-step trace
+    const actor = createActor(qgsdWorkflowMachine);
+    actor.start();
+    actor.send(xstateEvent);
+    const snapshot = actor.getSnapshot();
+    actor.stop();
+
+    const expected = expectedState(event);
+    if (expected === null || snapshot.matches(expected)) {
+      valid++;
+    } else {
+      divergences.push({
+        event,
+        actual:   snapshot.value,
+        expected,
+        reason:   'state_mismatch',
+        ...scoreboardMeta,
+        confidence,
+      });
+    }
   }
+
+  const total = lines.length;
+  const score = ((valid / total) * 100).toFixed(1);
+
+  process.stdout.write('[validate-traces] Deviation score: ' + score + '% valid (' + valid + '/' + total + ' traces)\n');
+
+  if (divergences.length > 0) {
+    process.stdout.write('[validate-traces] ' + divergences.length + ' divergence(s) found:\n');
+    for (const d of divergences) {
+      process.stdout.write('  ' + JSON.stringify(d) + '\n');
+    }
+    try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'fail', metadata: { divergences: divergences.length, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
+    process.exit(1);
+  }
+
+  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { valid, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
+  process.exit(0);
 }
 
-const total = lines.length;
-const score = ((valid / total) * 100).toFixed(1);
-
-process.stdout.write('[validate-traces] Deviation score: ' + score + '% valid (' + valid + '/' + total + ' traces)\n');
-
-if (divergences.length > 0) {
-  process.stdout.write('[validate-traces] ' + divergences.length + ' divergence(s) found:\n');
-  for (const d of divergences) {
-    process.stdout.write('  ' + JSON.stringify(d) + '\n');
-  }
-  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'fail', metadata: { divergences: divergences.length, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
-  process.exit(1);
+if (typeof module !== 'undefined') {
+  module.exports = { computeConfidenceTier, CONFIDENCE_THRESHOLDS };
 }
-
-try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { valid, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
-process.exit(0);
