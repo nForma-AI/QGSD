@@ -206,8 +206,8 @@
 
 - [x] **Phase v0.15-01: Health Checker Regex Fix** — Fix gsd-tools.cjs W005/W007/W002 regex patterns to recognize QGSD versioned phase naming `v0.X-YY-name` — eliminates 33 W005 + 22 W007 false positives (HLTH-01, HLTH-02, HLTH-03) (completed 2026-02-27)
 - [x] **Phase v0.15-02: Repair Safety Guard** — Guard `--repair` regenerateState action against overwriting rich STATE.md without explicit --force flag (SAFE-01) (completed 2026-02-27)
-- [ ] **Phase v0.15-03: Legacy Dir Archive** — Archive pre-versioning legacy phase dirs 18-39 to `.planning/archive/legacy/` — eliminates W007 orphan noise (SAFE-02)
-- [ ] **Phase v0.15-04: Health Quorum Failure Visibility** — Integrate quorum-failures.json data into `/qgsd:health` output as health warnings when recurring patterns detected (VIS-01)
+- [x] **Phase v0.15-03: Legacy Dir Archive** — Archive pre-versioning legacy phase dirs 18-39 to `.planning/archive/legacy/` — eliminates W007 orphan noise (SAFE-02) (completed 2026-02-27)
+- [x] **Phase v0.15-04: Health Quorum Failure Visibility** — Integrate quorum-failures.json data into `/qgsd:health` output as health warnings when recurring patterns detected (VIS-01) (completed 2026-02-27)
 
 ### 🚧 v0.18 — Token Efficiency (In Progress)
 
@@ -822,7 +822,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] v0.15-01-01-PLAN.md — Fix W005/W007/W002 regex in gsd-tools.cjs + test scaffolding + install sync (HLTH-01, HLTH-02, HLTH-03)
+- [x] v0.15-01-01-PLAN.md — Fix W005/W007/W002 regex in gsd-tools.cjs + test scaffolding + install sync (HLTH-01, HLTH-02, HLTH-03)
 
 ### Phase v0.15-02: Repair Safety Guard
 **Goal**: The `--repair` flag cannot silently overwrite a rich STATE.md — the user sees a content-length warning and must pass `--force` explicitly before regenerateState runs
@@ -834,7 +834,7 @@ Plans:
   3. A STATE.md with 50 lines or fewer is overwritten normally by `--repair` without requiring `--force`
 **Plans**: 1 plan
 Plans:
-- [ ] v0.15-02-01-PLAN.md — Content-length safety gate for --repair regenerateState + --force flag + install sync (SAFE-01)
+- [x] v0.15-02-01-PLAN.md — Content-length safety gate for --repair regenerateState + --force flag + install sync (SAFE-01)
 
 ### Phase v0.15-03: Legacy Dir Archive
 **Goal**: The pre-versioning legacy numeric phase dirs (18 through 39) are moved to `.planning/archive/legacy/` so W007 stops reporting them as orphaned phases not referenced in the ROADMAP
@@ -846,7 +846,7 @@ Plans:
   3. The `.planning/archive/legacy/` directory exists and contains the moved dirs
 **Plans**: 1 plan
 Plans:
-- [ ] v0.15-03-01-PLAN.md — SAFE-02 test scaffold + archive 22 legacy dirs to .planning/archive/legacy/ + full suite green
+- [x] v0.15-03-01-PLAN.md — SAFE-02 test scaffold + archive 22 legacy dirs to .planning/archive/legacy/ + full suite green
 
 ### Phase v0.15-04: Health Quorum Failure Visibility
 **Goal**: When `.planning/quorum-failures.json` exists and any slot has 3 or more failures logged, the `/qgsd:health` workflow output surfaces those patterns as named health warnings alongside standard W/E/I items
@@ -858,7 +858,7 @@ Plans:
   3. The quorum-failure warnings appear in the same output section as other W/E/I health items — not as a separate unrelated block
 **Plans**: 1 plan
 Plans:
-- [ ] v0.15-04-01-PLAN.md — VIS-01 test scaffold + Check 9 W008 implementation + install sync (VIS-01)
+- [x] v0.15-04-01-PLAN.md — VIS-01 test scaffold + Check 9 W008 implementation + install sync (VIS-01)
 
 ### Phase v0.18-01: Token Observability Foundation
 **Goal**: Users can see per-slot token consumption ranked by usage in /qgsd:health, and every quorum slot-worker run appends a structured token record to .planning/token-usage.jsonl
@@ -1007,8 +1007,8 @@ Plans:
 | v0.14-05. Watch Mode | v0.14 | Complete    | 2026-02-26 | - |
 | v0.15-01. Health Checker Regex Fix | 1/1 | Complete    | 2026-02-27 | - |
 | v0.15-02. Repair Safety Guard | 1/1 | Complete   | 2026-02-27 | - |
-| v0.15-03. Legacy Dir Archive | v0.15 | 0/TBD | Not started | - |
-| v0.15-04. Health Quorum Failure Visibility | v0.15 | 0/TBD | Not started | - |
+| v0.15-03. Legacy Dir Archive | 1/1 | Complete | 2026-02-27 | - |
+| v0.15-04. Health Quorum Failure Visibility | 1/1 | Complete | 2026-02-27 | - |
 | v0.18-01. Token Observability Foundation | v0.18 | 0/TBD | Not started | - |
 | v0.18-02. Tiered Model Sizing | 3/3 | Complete   | 2026-02-27 | 2026-02-27 |
 | v0.18-03. Task Envelope | v0.18 | 0/TBD | Not started | - |
