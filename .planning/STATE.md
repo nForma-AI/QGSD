@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-27 after v0.19 FV Pipeline Hardening started)
+See: .planning/PROJECT.md (updated 2026-02-27 after Phase v0.19-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.19 FV Pipeline Hardening — roadmap defined, ready for phase planning
+**Current focus:** v0.19 FV Pipeline Hardening — all 6 phases complete, milestone ready for audit
 
 ## Current Position
 
-Phase: v0.19-04 (Enforcement Layer) — COMPLETE (all 3 plans done)
-Plan: v0.19-04-01 — DONE; v0.19-04-02 — DONE; v0.19-04-03 — DONE
-Status: formal/trace/redaction.yaml + check-trace-redaction.cjs + check-trace-schema-drift.cjs + confidence tiers in validate-traces.cjs; 430/430 npm test suite green
-Last activity: 2026-02-27 — v0.19-04 Plan 01: trace redaction enforcement (REDACT-01..03); Plan 02: confidence tier TDD in validate-traces.cjs (EVID-01..02); Plan 03: schema drift guard TDD (DRIFT-01..02); 430/430 pass
+Phase: v0.19-06 (R3.6 Improvement Iteration) — COMPLETE (all 3 plans done)
+Plan: v0.19-06-01 — DONE; v0.19-06-02 — DONE; v0.19-06-03 — DONE
+Status: 27 new tests (improvements parsing + signal emission + CLAUDE.md audit); CLAUDE.md file-read refs removed from 7 files; plan-phase + quick R3.6 loops installed; all 4 IMPR requirements closed
+Last activity: 2026-02-27 — v0.19-06 complete: TDD tests for improvements parsing (IMPR-01, 13 tests), signal emission (IMPR-02, 13 tests), CLAUDE.md audit (IMPR-04, 1 test); install synced plan-phase + quick R3.6 loops (IMPR-03); v0.19 milestone 100% complete
 
-Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed) | v0.19: v0.19-01 COMPLETE (3/3 plans) | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE
+Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE — ALL PHASES DONE
 
 ## Performance Metrics
 
@@ -84,7 +84,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 — quick task 117: PreCompact hook (qgsd-precompact.js) for seamless context continuation; registered in ~/.claude/settings.json
+Last activity: 2026-02-27 — Phase v0.19-06 complete: R3.6 improvement protocol TDD tests (27 new tests), CLAUDE.md ref removal from 7 files, plan-phase + quick installed; v0.19 milestone 100% complete
 Last session: 2026-02-27
-Stopped at: Phase v0.19-04 complete, ready to plan Phase v0.19-05
+Stopped at: Phase v0.19-06 complete — v0.19 milestone all 6 phases done, ready for /qgsd:audit-milestone v0.19
 Resume file: None

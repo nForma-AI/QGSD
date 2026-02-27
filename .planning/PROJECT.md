@@ -228,6 +228,8 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
+- ✓ R3.6 iterative improvement protocol: slot-worker parses `Improvements:` field (IMPR-01), quorum emits `QUORUM_IMPROVEMENTS` HTML signal with de-duplication (IMPR-02), plan-phase and quick both implement R3.6 outer loop (IMPR-03/04); CLAUDE.md file-read instructions removed from 7 agent/workflow files and replaced with self-contained inline guidance; 27 new tests — v0.19 (Phase v0.19-06)
+- ✓ PRISM mcp-availability.pm model calibrated from scoreboard UNAVAIL rates; readMCPAvailabilityRates() helper + 4 integration tests (MCPENV-04) — v0.19 (Phase v0.19-05)
 - ✓ PRISM config injection — `readScoreboardRates()` in run-prism.cjs reads quorum-scoreboard.json, injects empirical TP/unavail rates as `-const` flags; caller override wins; conservative priors (0.85/0.15) when no scoreboard; 4 integration tests in run-prism.test.cjs (PRISM-01, PRISM-02) — v0.14 (Phase v0.14-04)
 - ✓ Parallelized `run-formal-verify.cjs` — generate step sequential, tla/alloy/prism/petri groups concurrent via Promise.all; wall-clock timing in summary (PERF-01, PERF-02) — v0.14 (Phase v0.14-03)
 - ✓ Drift detector wired into `npm test` with esbuild+require() AST walk; TLA+ orphan phases = fail(), bidirectional guard drift enforcement via Check 5 (DRFT-01..03) — v0.14 (Phase v0.14-02)
@@ -415,4 +417,4 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
 
 ---
-*Last updated: 2026-02-27 after Phase v0.19-02 — calibration governance complete: formal/policy.yaml cold-start thresholds, policy.schema.json, read-policy.cjs, run-prism.cjs cold-start warn override + observation_window metadata; CALIB-01..04 satisfied; 396/396 tests pass*
+*Last updated: 2026-02-27 after Phase v0.19-06 — R3.6 improvement protocol complete: slot-worker improvements parsing (IMPR-01, 13 tests), quorum signal emission (IMPR-02, 13 tests), plan-phase + quick R3.6 loops installed (IMPR-03/04), CLAUDE.md file-read refs removed from 7 agent/workflow files; v0.19 milestone all 6 phases complete*

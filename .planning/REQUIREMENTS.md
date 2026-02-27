@@ -63,6 +63,15 @@ Model MCP servers as nondeterministic environment processes to verify QGSD's ret
 - [ ] **MCPENV-03**: Trace schema extended to include `request_id`, `peer` (MCP slot name), `outcome` (success/fail/timeout), `attempt` (retry count) for MCP-interaction events; `validate-traces.cjs` validates these fields
 - [ ] **MCPENV-04**: PRISM model `formal/prism/mcp-availability.pm` calibrated from scoreboard UNAVAIL rates using existing `readScoreboardRates()` pattern; emits availability property check to `check-results.ndjson`
 
+### IMPR — R3.6 Iterative Improvement Protocol
+
+Implement R3.6 end-to-end: slot-worker improvements field, quorum signal emission, outer loop in orchestrators.
+
+- [x] **IMPR-01**: `agents/qgsd-quorum-slot-worker.md` parses `Improvements:` section from model output when `request_improvements: true`; result block includes `improvements:` YAML field; test coverage via unit or integration tests
+- [x] **IMPR-02**: `commands/qgsd/quorum.md` collects `improvements:` fields from final-round worker blocks, de-duplicates, and emits `<!-- QUORUM_IMPROVEMENTS_START [...] QUORUM_IMPROVEMENTS_END -->` HTML comment signal
+- [x] **IMPR-03**: `qgsd-core/workflows/plan-phase.md` implements R3.6 outer loop: parses QUORUM_IMPROVEMENTS signal, spawns improvement-revision planner, loops up to 10 iterations with conflict detection; installed to `~/.claude/qgsd/`
+- [x] **IMPR-04**: `qgsd-core/workflows/quick.md` implements matching R3.6 outer loop; all direct `CLAUDE.md` file-read instructions removed from workflow/agent files and replaced with self-contained references; installed to `~/.claude/qgsd/`
+
 ## v2 Requirements
 
 Deferred to future release.
@@ -114,6 +123,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MCPENV-02 | Phase v0.19-05 | Pending |
 | MCPENV-03 | Phase v0.19-05 | Pending |
 | MCPENV-04 | Phase v0.19-05 | Pending |
+| IMPR-01 | Phase v0.19-06 | Pending |
+| IMPR-02 | Phase v0.19-06 | Pending |
+| IMPR-03 | Phase v0.19-06 | Pending |
+| IMPR-04 | Phase v0.19-06 | Pending |
 
 **Coverage:**
 - v1 requirements: 21 total
