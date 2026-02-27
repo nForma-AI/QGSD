@@ -44,6 +44,7 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [Phase v0.15-04]: Check 9 added to cmdValidateHealth: W008 emitted for quorum slots with count >= 3 in .planning/quorum-failures.json. Threshold >= 3, try/catch swallows errors, Array.isArray + typeof count === 'number' guards applied.
 - [v0.18-02-02 execution]: model_overrides field added to loadConfig return object — was missing but accessed in resolveModelInternal, causing Rule 1 auto-fix. Tier lookup order: per-agent override → tier key → profile → default.
 - [v0.18-02-01 execution]: TIER-03 implemented: flat keys model_tier_planner='opus', model_tier_worker='haiku' in DEFAULT_CONFIG with validation (whitelist: 'haiku'|'sonnet'|'opus')
 - [v0.18 roadmap]: Phase order fixed by dependency chain: OBSV (independent) → TIER (config schema first) → ENV (foundation for fan-out) → FAN (depends on both TIER config and ENV envelope)
@@ -75,7 +76,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 - Executed plan v0.18-02-02: tier lookup logic and unit tests (Rule 1 auto-fix for model_overrides field)
+Last activity: 2026-02-27 - Executed v0.15-04-01: Check 9 W008 quorum-failure health warning; 154 unit tests pass; installed copy synced
 Last session: 2026-02-27
-Stopped at: Plan v0.18-02-02 completed with SUMMARY created; 2/3 plans in v0.18-02 phase complete
+Stopped at: Completed v0.15-04-01-PLAN.md — W008 health warning for quorum failures live
 Resume file: None
