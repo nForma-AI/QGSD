@@ -216,7 +216,39 @@ else
 fi
 ```
 
-The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. For now it is logged only (no fan-out logic yet — that is FAN-01..FAN-06 in v0.18-04).
+### Adaptive Fan-Out Dispatch Count (FAN-01..FAN-04)
+
+After reading RISK_LEVEL, compute the fan-out dispatch count:
+
+```bash
+# Map RISK_LEVEL to fan_out_count (total participants = Claude + external slots)
+if [ "$RISK_LEVEL" = "routine" ] || [ "$RISK_LEVEL" = "low" ]; then
+  FAN_OUT_COUNT=2
+elif [ "$RISK_LEVEL" = "medium" ]; then
+  FAN_OUT_COUNT=3
+else
+  # high, absent, or invalid → fail-open to max_quorum_size
+  FAN_OUT_COUNT="$MAX_QUORUM_SIZE"
+fi
+
+# The qgsd-prompt.js hook already emits --n $FAN_OUT_COUNT in the injected instructions.
+# This block documents the mapping for transparency and audit purposes.
+echo "Adaptive fan-out: risk_level=${RISK_LEVEL} → fan_out_count=${FAN_OUT_COUNT} (of max ${MAX_QUORUM_SIZE})"
+```
+
+### R6.4 Reduced-Quorum Note (FAN-05)
+
+When fan-out is below `max_quorum_size`, emit a reduced-quorum note per R6.4 so the user understands why fewer models are participating. This is an informational note — it does not block execution.
+
+```bash
+if [ "$FAN_OUT_COUNT" -lt "$MAX_QUORUM_SIZE" ] 2>/dev/null; then
+  EXTERNAL_COUNT=$((FAN_OUT_COUNT - 1))
+  echo "[R6.4 reduced-quorum note] Operating with ${FAN_OUT_COUNT} total participants (Claude + ${EXTERNAL_COUNT} external); max_quorum_size is ${MAX_QUORUM_SIZE}. Reason: envelope risk_level=${RISK_LEVEL}. This is intentional — routine/medium tasks use fewer models to reduce token cost (FAN-01, FAN-02)."
+fi
+# When FAN_OUT_COUNT = MAX_QUORUM_SIZE (high/absent): no note emitted.
+```
+
+The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. The fan-out logic is now implemented in both quorum.md (above) and qgsd-prompt.js (which emits `--n N` for downstream ceiling verification).
 
 ---
 
