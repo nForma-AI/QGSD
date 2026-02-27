@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.15 archived + v0.18 activ
 ## Current Position
 
 Phase: v0.18-04 of 5 (Adaptive Fan-Out) — IN PROGRESS
-Plan: 01 of 3 (Wave 0 test scaffold: 4 test files with 16 stub tests created)
-Status: v0.18-04-01 (Wave 0 test scaffold) complete; 16 tests defined (5+4+4+3) covering FAN-01..06 requirements
-Last activity: 2026-02-27 — v0.18-03-03 completed: envelope init/update calls wired into plan-phase.md, envelope risk_level read (fail-open) added to quorum.md; all tests passing (11 envelope + 25 config)
+Plan: 02 of 3 (Wave 1 implementation: mapRiskLevelToCount + fan-out wiring + dist sync)
+Status: v0.18-04-02 (Wave 1 implementation) complete; mapRiskLevelToCount exported, adaptive fan-out integrated into activeSlots, all 9 tests passing (5 unit + 4 integration, no regressions)
+Last activity: 2026-02-27 — v0.18-04-02 completed: fan-out implementation in qgsd-prompt.js, installer synced, SUMMARY.md written
 
 Progress: [████████████████████] prior milestones complete | v0.18: COMPLETE (5 phases × 3 plans = 15 total, all done)
 
@@ -44,6 +44,8 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.18-04-02 execution]: mapRiskLevelToCount helper maps risk_level to fan-out counts: routine→2, medium→3, high→maxSize (fail-open). Export block uses `typeof module !== 'undefined'` guard to allow require() in tests while script exits via process.exit() before reaching export line at runtime.
+- [v0.18-04-02 execution]: Risk level extraction uses regex `/^risk_level:\s*(\S+)/m` on input.context_yaml YAML string. Priority chain: user --n N > envelope risk_level > config.maxSize > available slots. minNote always emits --n N for Stop hook parseQuorumSizeFlag consistency.
 - [Phase v0.15-04]: Check 9 added to cmdValidateHealth: W008 emitted for quorum slots with count >= 3 in .planning/quorum-failures.json. Threshold >= 3, try/catch swallows errors, Array.isArray + typeof count === 'number' guards applied.
 - [v0.18-02-04 execution]: 6 TIER unit tests added to gsd-tools.test.cjs (TIER-01 through TIER-03d); includes unknown agent fallback test per copilot-1 improvement suggestion; all 160 tests pass, zero regressions. Closed PLAN 02 gap of missing unit test coverage.
 - [v0.18-02-02 execution]: model_overrides field added to loadConfig return object — was missing but accessed in resolveModelInternal, causing Rule 1 auto-fix. Tier lookup order: per-agent override → tier key → profile → default.
