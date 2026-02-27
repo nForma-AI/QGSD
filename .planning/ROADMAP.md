@@ -886,12 +886,13 @@ Plans:
   3. Setting model_tier_planner: "sonnet" in qgsd.json causes the planner (not researcher/checker) to use sonnet — no regression on planner model selection
   4. Setting model_tier_worker: "sonnet" in qgsd.json causes researcher and checker Tasks to use sonnet instead of haiku
   5. Running node bin/install.js --claude --global after the config-loader.js change deploys the updated config-loader to ~/.claude/hooks/config-loader.js
-**Plans**: 3 plans
+**Plans**: 4 plans (3 core + 1 gap closure)
 
 Plans:
 - [x] v0.18-02-01-PLAN.md — Tier key defaults and validation in config-loader.js (TDD: TIER-03)
 - [x] v0.18-02-02-PLAN.md — resolveModelInternal tier lookup in gsd-tools.cjs + unit tests (TIER-01, TIER-02)
-- [ ] v0.18-02-03-PLAN.md — dist sync, install deploy, full npm test suite (TIER-01, TIER-02, TIER-03)
+- [x] v0.18-02-03-PLAN.md — dist sync, install deploy, full npm test suite (TIER-01, TIER-02, TIER-03)
+- [x] v0.18-02-04-PLAN.md — Gap closure: 6 TIER unit tests added to gsd-tools.test.cjs (TIER-01, TIER-02, TIER-03)
 
 ### Phase v0.18-03: Task Envelope
 **Goal**: After research completes and after planning completes, a task-envelope.json sidecar is written to .planning/phases/<phase>/ containing structured context; quorum.md reads risk_level from it with fail-open behavior; feature is config-gated
@@ -1010,6 +1011,6 @@ Plans:
 | v0.15-03. Legacy Dir Archive | 1/1 | Complete | 2026-02-27 | - |
 | v0.15-04. Health Quorum Failure Visibility | 1/1 | Complete | 2026-02-27 | - |
 | v0.18-01. Token Observability Foundation | v0.18 | 0/TBD | Not started | - |
-| v0.18-02. Tiered Model Sizing | 3/3 | Complete   | 2026-02-27 | 2026-02-27 |
+| v0.18-02. Tiered Model Sizing | 4/4 | Complete   | 2026-02-27 | 2026-02-27 |
 | v0.18-03. Task Envelope | v0.18 | 0/TBD | Not started | - |
 | v0.18-04. Adaptive Fan-Out | v0.18 | 0/TBD | Not started | - |
