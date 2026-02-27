@@ -354,3 +354,26 @@ test('observation_window: timestamps are ISO 8601 format when present in NDJSON'
     }
   } finally { fs.rmSync(tmpDir, { recursive: true, force: true }); }
 });
+
+// -- MCP availability calibration (MCPENV-04) ---------------------------------
+// Wave 0 failing tests. These MUST be in RED state before Plan 04 implements
+// readMCPAvailabilityRates in run-prism.cjs.
+// Ref: .planning/phases/v0.19-05-mcp-environment-model/v0.19-05-01-PLAN.md
+
+test('run-prism extracts per-slot UNAVAIL rates from scoreboard', () => {
+  // readMCPAvailabilityRates does not yet exist in run-prism.cjs
+  // RED: turns GREEN in Plan 04 when readMCPAvailabilityRates is implemented
+  assert.fail('not yet implemented - readMCPAvailabilityRates does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+});
+
+test('run-prism calibrates mcp-availability.pm with empirical rates', () => {
+  // run-prism.cjs does not yet support --model mcp-availability
+  // RED: turns GREEN in Plan 04 when --model flag is implemented
+  assert.fail('not yet implemented - --model mcp-availability flag does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+});
+
+test('run-prism falls back to priors when scoreboard missing', () => {
+  // readMCPAvailabilityRates does not yet exist - null fallback not implemented
+  // RED: turns GREEN in Plan 04 when readMCPAvailabilityRates returns null on missing scoreboard
+  assert.fail('not yet implemented - readMCPAvailabilityRates does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+});
