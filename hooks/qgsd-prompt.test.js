@@ -583,3 +583,65 @@ test('TC-PROMPT-FALLBACK-T1-EXCLUDES-PRIMARIES: T1 list excludes slots already i
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+// TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification must be driven by runtime auth_type,
+// NOT by slot naming convention. A "ccr" named slot with auth_type=sub must land in T1;
+// a "native CLI" named slot with auth_type=api must land in T2.
+test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_type, not slot name', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-authtype-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    // Non-standard config: claude-1 (typically T2 name) → auth_type=sub (→ T1)
+    //                      codex-1 (typically T1 name) → auth_type=api (→ T2)
+    // maxSize=3 → externalSlotCap=2 → dispatch gemini-1 + claude-1 (ordered by sub-first preference)
+    // T1 unused = sub slots not in dispatch: none extra sub here
+    // Actually: orderedSlots = sub-first: gemini-1(sub), claude-1(sub), codex-1(api)
+    // cappedSlots (externalSlotCap=2) = [gemini-1, claude-1]
+    // T1_UNUSED = sub slots not in capped = [] (both sub slots are dispatched)
+    // T2 = [codex-1] (api)
+    // Result: no FALLBACK-01, simple Failover rule (no T1 unused)
+    //
+    // Better scenario for the test: add a third sub slot to ensure T1 unused exists.
+    // quorum_active: [gemini-1(sub), claude-1(sub), claude-2(sub), codex-1(api)]
+    // maxSize=3 → externalSlotCap=2 → dispatch [gemini-1, claude-1]
+    // T1_UNUSED = [claude-2] (sub, not dispatched)
+    // T2 = [codex-1] (api)
+    // FALLBACK-01 must fire with claude-2 in Step 2 T1 and codex-1 in Step 3 T2
+    fs.writeFileSync(
+      path.join(claudeDir, 'qgsd.json'),
+      JSON.stringify({
+        quorum_active: ['gemini-1', 'claude-1', 'claude-2', 'codex-1'],
+        quorum: { maxSize: 3 },
+        agent_config: {
+          'gemini-1': { auth_type: 'sub' },
+          'claude-1': { auth_type: 'sub' },  // normally api — overridden to sub
+          'claude-2': { auth_type: 'sub' },  // normally api — overridden to sub
+          'codex-1':  { auth_type: 'api' },  // normally sub — overridden to api
+        },
+      }),
+      'utf8'
+    );
+    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+
+    // FALLBACK-01 must fire — claude-2 is an unused sub slot
+    assert.ok(ctx.includes('FALLBACK-01'), 'FALLBACK-01 must fire when unused sub slot (claude-2) exists');
+
+    // claude-2 is sub but not dispatched → must appear in Step 2 T1
+    const t1LineMatch = ctx.match(/Step 2 T1 sub-CLI:\s+\[([^\]]+)\]/);
+    assert.ok(t1LineMatch, 'Step 2 T1 must list slots');
+    const t1Slots = t1LineMatch[1].split(',').map(s => s.trim());
+    assert.ok(t1Slots.includes('claude-2'), 'claude-2 (auth_type=sub) must appear in T1 despite its "ccr" name');
+
+    // codex-1 is api → must appear in Step 3 T2, NOT in Step 2 T1
+    assert.ok(!t1Slots.includes('codex-1'), 'codex-1 (auth_type=api) must NOT appear in T1 despite its "native CLI" name');
+    const t2LineMatch = ctx.match(/Step 3 T2 ccr:\s+\[([^\]]+)\]/);
+    assert.ok(t2LineMatch, 'Step 3 T2 must list slots');
+    const t2Slots = t2LineMatch[1].split(',').map(s => s.trim());
+    assert.ok(t2Slots.includes('codex-1'), 'codex-1 (auth_type=api) must appear in T2 despite its "native CLI" name');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});

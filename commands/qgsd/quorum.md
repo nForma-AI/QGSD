@@ -278,7 +278,7 @@ Display:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  QGSD ► QUORUM: Round 1 — N workers dispatched
  Active: gemini-1, opencode-1, copilot-1, codex-1
- Fallback pool: opencode-1, copilot-1 (T1 sub-CLI) → claude-1..claude-6 (T2 ccr, on UNAVAIL)
+ Fallback pool: T1 = unused slots with auth_type=sub; T2 = slots with auth_type≠sub (on UNAVAIL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
@@ -333,14 +333,14 @@ Handle UNAVAILABLE per R6: note unavailability, then apply the **tiered fallback
 
 When a dispatched slot returns UNAVAIL, dispatch a replacement in this priority order:
 
-1. **T1 — unused sub-CLI agents** (codex-1, gemini-1, opencode-1, copilot-1): prefer any native CLI slot that was not included in the initial `$DISPATCH_LIST` due to the fan-out cap. These agents are equivalent tier to the primary — same subscription model, no extra cost.
-2. **T2 — ccr agents** (claude-1..claude-6): only if all T1 sub-CLI slots are either already dispatched or also UNAVAIL.
+Classification is based on runtime `auth_type` from `providers.json` / config — **not** hardcoded slot names. Any slot can be `sub` or `api` depending on how it is configured.
 
-**Why this matters:** With `FAN_OUT_COUNT=3`, only 2 external slots are dispatched. If both primaries (e.g., codex-1, gemini-1) are UNAVAIL, opencode-1 and copilot-1 are still fresh sub-CLI agents that should be tried before falling to ccr. Skipping them wastes cheaper, more reliable capacity.
+1. **T1 — unused sub-CLI slots**: slots in the working list where `auth_type=sub`, not already in `$DISPATCH_LIST`. Build `$T1_UNUSED` = `[working-list slots with auth_type=sub] − $DISPATCH_LIST`. Dispatch `$T1_UNUSED` first — they are the same subscription tier as the primaries, no extra cost.
+2. **T2 — remaining slots**: slots in the working list where `auth_type≠sub` (typically `api`). Dispatch T2 only if `$T1_UNUSED` is empty or fully exhausted/UNAVAIL.
 
-**Implementation:** After receiving UNAVAIL results, build a `$T1_UNUSED` list = `[all sub-CLI slots] − $DISPATCH_LIST`. If `$T1_UNUSED` is non-empty, dispatch from `$T1_UNUSED` first (parallel Tasks), then fall to T2 for any remaining needed slots.
+**Why this matters:** With `FAN_OUT_COUNT=3`, only 2 external slots are in `$DISPATCH_LIST`. If both primaries are UNAVAIL, any remaining `auth_type=sub` slots should be tried before falling to `auth_type=api` (ccr) slots. The exact slot names in each tier depend on `--n` and the runtime config — they are not fixed.
 
-**Display label:** Use `(T1 fallback)` for sub-CLI replacements, `(T2 fallback)` for ccr replacements.
+**Display label:** Use `(T1 fallback)` for `auth_type=sub` replacements, `(T2 fallback)` for `auth_type≠sub` replacements.
 
 ### Evaluate Round 1 — check for consensus
 
@@ -350,19 +350,18 @@ Display all positions as a table with one row per team member (native agents fir
 ┌────────────────────────────────┬──────────────────────────────────────────────────────────┐
 │ Model                          │ Round N Position                                         │
 ├────────────────────────────────┼──────────────────────────────────────────────────────────┤
-│ Claude                         │ [summary — $CLAUDE_POSITION]                            │
-│ gemini-1 (primary)             │ [summary or UNAVAIL]                                     │
-│   ├─ opencode-1 (T1 fallback)  │ [summary or UNAVAIL — only shown if gemini UNAVAIL + opencode unused] │
-│   └─ claude-1 (T2 fallback)    │ [summary or UNAVAIL — only shown if all T1 also UNAVAIL]│
-│ codex-1 (primary)              │ [summary or UNAVAIL]                                     │
-│   ├─ copilot-1 (T1 fallback)   │ [summary or UNAVAIL — only shown if codex UNAVAIL + copilot unused]  │
-│   └─ claude-3 (T2 fallback)    │ [summary or UNAVAIL — only shown if all T1 also UNAVAIL]│
-│ opencode-1 (primary)           │ [summary or UNAVAIL — only shown if in $DISPATCH_LIST]  │
-│ copilot-1 (primary)            │ [summary or UNAVAIL — only shown if in $DISPATCH_LIST]  │
-└────────────────────────────────┴──────────────────────────────────────────────────────────┘
+│ Claude                         │ [summary — $CLAUDE_POSITION]                             │
+│ <slot-A> (primary)             │ [summary or UNAVAIL]                                      │
+│   ├─ <T1-next> (T1 fallback)  │ [summary or UNAVAIL — next unused auth_type=sub slot]     │
+│   └─ <T2-next> (T2 fallback)  │ [summary or UNAVAIL — first auth_type≠sub slot, T1 done]  │
+│ <slot-B> (primary)             │ [summary or UNAVAIL]                                      │
+│   ├─ <T1-next> (T1 fallback)  │ [summary or UNAVAIL — only if slot-B UNAVAIL + T1 unused] │
+│   └─ <T2-next> (T2 fallback)  │ [summary or UNAVAIL — only if all T1 also UNAVAIL]        │
+│ <slot-C> (primary)             │ [summary or UNAVAIL — only shown if in $DISPATCH_LIST]    │
+└────────────────────────────────┴───────────────────────────────────────────────────────────┘
 ```
 
-Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a fallback was dispatched in its place. T1 fallback rows appear before T2. If the primary responded, no fallback row is shown. A T1 fallback row is omitted if that slot was already dispatched as a primary.
+Actual slot names in each tier are resolved at runtime from `providers.json` based on `auth_type`. T1 = `auth_type=sub` slots not in `$DISPATCH_LIST`; T2 = `auth_type≠sub` slots. With `--n 5` all sub-CLI slots may be primary, leaving T1 empty. Fallback rows (├─ / └─) are only rendered when the corresponding primary returned UNAVAIL and a fallback was dispatched. A T1 row is omitted if that slot was already dispatched as a primary.
 
 If all available models agree → skip to **Consensus output**.
 
@@ -683,19 +682,18 @@ If split: run deliberation (up to 9 deliberation rounds, max 10 total rounds inc
 │ Model                          │ Verdict      │ Reasoning                                │
 ├────────────────────────────────┼──────────────┼──────────────────────────────────────────┤
 │ Claude                         │ [verdict]    │ [summary]                                │
-│ gemini-1 (primary)             │ [verdict]    │ [summary or UNAVAIL]                     │
-│   ├─ opencode-1 (T1 fallback)  │ [verdict]    │ [only if gemini UNAVAIL + opencode unused]│
-│   └─ claude-1 (T2 fallback)    │ [verdict]    │ [only if all T1 also UNAVAIL]            │
-│ codex-1 (primary)              │ [verdict]    │ [summary or UNAVAIL]                     │
-│   ├─ copilot-1 (T1 fallback)   │ [verdict]    │ [only if codex UNAVAIL + copilot unused] │
-│   └─ claude-3 (T2 fallback)    │ [verdict]    │ [only if all T1 also UNAVAIL]            │
-│ opencode-1 (primary)           │ [verdict]    │ [only if in $DISPATCH_LIST]              │
-│ copilot-1 (primary)            │ [verdict]    │ [only if in $DISPATCH_LIST]              │
+│ <slot-A> (primary)             │ [verdict]    │ [summary or UNAVAIL]                     │
+│   ├─ <T1-next> (T1 fallback)  │ [verdict]    │ [only if slot-A UNAVAIL + T1 unused]     │
+│   └─ <T2-next> (T2 fallback)  │ [verdict]    │ [only if all T1 also UNAVAIL]            │
+│ <slot-B> (primary)             │ [verdict]    │ [summary or UNAVAIL]                     │
+│   ├─ <T1-next> (T1 fallback)  │ [verdict]    │ [only if slot-B UNAVAIL + T1 unused]     │
+│   └─ <T2-next> (T2 fallback)  │ [verdict]    │ [only if all T1 also UNAVAIL]            │
+│ <slot-C> (primary)             │ [verdict]    │ [only if in $DISPATCH_LIST]              │
 ├────────────────────────────────┼──────────────┼──────────────────────────────────────────┤
 │ CONSENSUS                      │ [verdict]    │ [N APPROVE, N REJECT, N FLAG, N UNAVAIL] │
 └────────────────────────────────┴──────────────┴──────────────────────────────────────────┘
 
-Fallback rows (├─ / └─) are only rendered when the corresponding primary slot returned UNAVAIL and a fallback was dispatched. T1 fallback (sub-CLI: opencode-1, copilot-1) is tried before T2 (ccr: claude-N). If the primary responded, no fallback row is shown. A T1 row is omitted if that slot was already dispatched as primary.
+Slot names in each tier are resolved at runtime from `auth_type` in `providers.json`. T1 = `auth_type=sub` slots not in `$DISPATCH_LIST`; T2 = `auth_type≠sub` slots. Fallback rows are only rendered when the primary returned UNAVAIL and a replacement was dispatched. A T1 row is omitted if that slot was already dispatched as primary.
 
 [rationale — what the traces showed]
 ```
