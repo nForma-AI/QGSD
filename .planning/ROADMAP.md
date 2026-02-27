@@ -219,7 +219,7 @@
 - [x] **Phase v0.18-01: Token Observability Foundation** — New SubagentStop hook reads agent_transcript_path to sum token usage per slot; appends structured records to .planning/token-usage.jsonl; /qgsd:health displays ranked token consumption (OBSV-01, OBSV-02, OBSV-03, OBSV-04) (completed 2026-02-27)
 - [x] **Phase v0.18-02: Tiered Model Sizing** — Researcher and plan-checker sub-agents in plan-phase.md use model=haiku; user-configurable tier keys model_tier_planner/model_tier_worker in qgsd.json; config-loader.js updated with flat keys (TIER-01, TIER-02, TIER-03) (completed 2026-02-27)
 - [x] **Phase v0.18-03: Task Envelope** — bin/task-envelope.cjs writes task-envelope.json sidecar after research and planning with objective/constraints/risk_level/target_files/plan_path/key_decisions; quorum.md reads risk_level with fail-open (ENV-01, ENV-02, ENV-03, ENV-04) (completed 2026-02-27)
-- [ ] **Phase v0.18-04: Adaptive Fan-Out** — qgsd-prompt.js readEnvelopeWorkerCount() helper; priority chain --n N > envelope > maxSize > pool; 2/3/max workers for routine/medium/high risk; --n N emitted for Stop hook R3.5 compliance; R6.4 reduced-quorum note (FAN-01, FAN-02, FAN-03, FAN-04, FAN-05, FAN-06)
+- 🚧 **Phase v0.18-04: Adaptive Fan-Out** — Wave 0 test scaffold (v0.18-04-01 completed 2026-02-27 with 16 tests); Wave 1-2 implementation of mapRiskLevelToCount(), --n N emission, ceiling checks, R6.4 reduced-quorum note (FAN-01, FAN-02, FAN-03, FAN-04, FAN-05, FAN-06)
 - [x] **Phase v0.18-05: Verify Token Observability Foundation** — Write formal VERIFICATION.md for v0.18-01 from SUMMARY evidence; update ROADMAP.md v0.18-01 status to complete; close OBSV-01, OBSV-02, OBSV-03, OBSV-04 (Gap Closure) (completed 2026-02-27)
 
 
