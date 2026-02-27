@@ -415,4 +415,4 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
 
 ---
-*Last updated: 2026-02-27 — started milestone v0.19 FV Pipeline Hardening; v0.18 audit in progress*
+*Last updated: 2026-02-27 after Phase v0.19-02 — calibration governance complete: formal/policy.yaml cold-start thresholds, policy.schema.json, read-policy.cjs, run-prism.cjs cold-start warn override + observation_window metadata; CALIB-01..04 satisfied; 396/396 tests pass*
