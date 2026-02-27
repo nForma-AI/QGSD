@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.15 archived + v0.18 activ
 
 ## Current Position
 
-Phase: v0.18-05 of 5 (Verify Token Observability Foundation) — COMPLETE
-Plan: 01 (formal verification closure: executed and complete)
-Status: 5/5 phases complete; v0.18-05 gaps now closed
-Last activity: 2026-02-27 — v0.18-05-01 formal verification closure executed; VERIFICATION.md written for v0.18-01; ROADMAP.md and REQUIREMENTS.md updated; all OBSV-01..04 requirements marked complete
+Phase: v0.18-03 of 5 (Task Envelope Config Foundation) — IN PROGRESS
+Plan: 02 of 2 (add task_envelope_enabled config key: executed and complete)
+Status: v0.18-03-02 complete; ENV-04 feature gate implemented
+Last activity: 2026-02-27 — v0.18-03-02 executed: task_envelope_enabled added to DEFAULT_CONFIG + validateConfig(), 3 ENV-TC tests added, all 25 tests pass
 
 Progress: [████████████████████] prior milestones complete | v0.18: COMPLETE (5 phases, all plans done)
 
@@ -78,7 +78,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 - Completed v0.18-05-01-PLAN.md: formal verification closure for v0.18-01
+Last activity: 2026-02-27 - Completed v0.18-03-02-PLAN.md: config envelope feature gate
 Last session: 2026-02-27
-Stopped at: Completed v0.18-05-01 — VERIFICATION.md written, ROADMAP.md and REQUIREMENTS.md updated, all OBSV requirements closed
+Stopped at: Completed v0.18-03-02 — SUMMARY.md created, ENV-04 requirement marked complete, all 2 tasks committed
 Resume file: None
