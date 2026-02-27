@@ -381,17 +381,76 @@ test('TC-PROMPT-FAILOVER-RULE: injected context includes skip-if-UNAVAIL failove
     );
     const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
-    // The failover rule is the hook-level guarantee that UNAVAIL slots are skipped.
-    // It appears in the activeSlots branch (line ~240 of qgsd-prompt.js).
-    assert.ok(ctx.includes('Failover rule:'), 'injected context must contain "Failover rule:"');
+    // The failover rule is the hook-level guarantee that UNAVAIL slots are handled.
+    // Two variants exist: simple ("Failover rule: ...skip...") and tiered ("Failover rule (FALLBACK-01)...").
+    // Both start with "Failover rule" — test the shared prefix to support both variants.
+    assert.ok(ctx.includes('Failover rule'), 'injected context must contain "Failover rule"');
     assert.ok(ctx.includes('UNAVAIL'), 'failover rule must reference UNAVAIL state');
-    assert.ok(ctx.includes('skip'), 'failover rule must instruct to skip unresponsive slots');
+    // Both variants either skip or dispatch — the contract is: UNAVAIL slots don't block quorum.
+    assert.ok(
+      ctx.includes('skip') || ctx.includes('dispatch unused') || ctx.includes('tiered replacement'),
+      'failover rule must describe how to handle UNAVAIL (skip or tiered dispatch)'
+    );
     // Verify the rule explicitly says errors do not count toward the required total,
     // confirming that a failed slot does not reduce the consensus threshold.
     assert.ok(
       ctx.includes('do not count toward'),
       'failover rule must state that errors do not count toward required total'
     );
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-PROMPT-FALLBACK-T1-PRIORITY: when sub-CLI slots exceed the fan-out cap, the injected
+// instructions must name the unused sub-CLI slots (T1) in the Failover rule before any
+// ccr/api slots (T2). This regression test prevents the bug where both primary slots
+// (codex-1, gemini-1) were UNAVAIL and the fallback jumped directly to claude-1/claude-2
+// instead of trying opencode-1 and copilot-1 first.
+test('TC-PROMPT-FALLBACK-T1-PRIORITY: unused sub-CLI slots listed as T1 before ccr in Failover rule', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-t1-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    // 4 sub slots, maxSize=3 → externalSlotCap=2 → 2 are dispatched, 2 are T1 unused
+    fs.writeFileSync(
+      path.join(claudeDir, 'qgsd.json'),
+      JSON.stringify({
+        quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
+        quorum: { maxSize: 3 },
+        agent_config: {
+          'codex-1':    { auth_type: 'sub' },
+          'gemini-1':   { auth_type: 'sub' },
+          'opencode-1': { auth_type: 'sub' },
+          'copilot-1':  { auth_type: 'sub' },
+        },
+      }),
+      'utf8'
+    );
+    const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+
+    // Must use the FALLBACK-01 tiered rule, not the simple skip rule
+    assert.ok(ctx.includes('FALLBACK-01'), 'Must use tiered FALLBACK-01 rule when T1 slots are unused');
+
+    // T1 unused slots (opencode-1, copilot-1) must be named explicitly in the failover rule
+    assert.ok(ctx.includes('opencode-1'), 'T1 unused slot opencode-1 must appear in failover rule');
+    assert.ok(ctx.includes('copilot-1'), 'T1 unused slot copilot-1 must appear in failover rule');
+
+    // The dispatched steps (1., 2.) must only contain the first 2 capped sub slots
+    const dispatchedSlots = [...ctx.matchAll(/\d+\. Task\(subagent_type="qgsd-quorum-slot-worker", prompt="slot: (\S+)\\n/g)]
+      .map(m => m[1]);
+    assert.equal(dispatchedSlots.length, 2, 'Exactly 2 slots should be in the dispatch list (externalSlotCap=2)');
+    assert.ok(!dispatchedSlots.includes('opencode-1'), 'opencode-1 should NOT be in initial dispatch (it is T1 unused)');
+    assert.ok(!dispatchedSlots.includes('copilot-1'), 'copilot-1 should NOT be in initial dispatch (it is T1 unused)');
+
+    // The T1 section must appear BEFORE any mention of ccr/claude-N slots
+    const t1Pos = ctx.indexOf('(T1)');
+    const t2Pos = ctx.indexOf('(T2)');
+    assert.ok(t1Pos !== -1, '(T1) label must appear in the failover rule');
+    assert.ok(t2Pos !== -1, '(T2) label must appear in the failover rule');
+    assert.ok(t1Pos < t2Pos, 'T1 tier must appear before T2 tier in the failover rule');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

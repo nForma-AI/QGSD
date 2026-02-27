@@ -255,6 +255,21 @@ process.stdin.on('end', () => {
       }
       const dynamicSteps = stepLines.join('\n');
       const afterSteps = cappedSlots.length + 1;
+
+      // Compute T1 unused sub-CLI slots: sub agents that exist in the pool but were cut by the
+      // fan-out cap (i.e., not included in cappedSlots). These are the preferred fallback tier
+      // when a dispatched slot returns UNAVAIL — they must be tried before ccr (T2) agents.
+      const cappedSlotNames = new Set(cappedSlots.map(s => s.slot));
+      const t1Unused = orderedSlots
+        .filter(s => s.authType === 'sub' && !cappedSlotNames.has(s.slot))
+        .map(s => s.slot);
+      const failoverRule = t1Unused.length > 0
+        ? `Failover rule (FALLBACK-01): if a slot-worker returns UNAVAIL, apply tiered replacement — ` +
+          `(T1) dispatch unused sub-CLI slots first: [${t1Unused.join(', ')}]; ` +
+          `(T2) only if T1 exhausted, dispatch ccr slots (claude-1..6). ` +
+          `Errors do not count toward the ${maxSize} required.`
+        : `Failover rule: if a slot-worker returns UNAVAIL or error, skip it — errors do not count toward the ${maxSize} required.`;
+
       // Always emit --n N so Stop hook's parseQuorumSizeFlag reads the correct ceiling.
       // When user passed --n N explicitly: show OVERRIDE note.
       // When envelope-driven (routine/medium): show fan-out note with R6.4 context.
@@ -274,7 +289,7 @@ process.stdin.on('end', () => {
         `NEVER call mcp__*__* tools directly — use Task(subagent_type="qgsd-quorum-slot-worker") ONLY:\n` +
         (hasMixed ? '  [Subscription agents — preferred, flat-fee]\n' : '') +
         dynamicSteps + '\n\n' +
-        `Failover rule: if a slot-worker returns UNAVAIL or error, skip it — errors do not count toward the ${maxSize} required.\n\n` +
+        failoverRule + '\n\n' +
         `After quorum:\n` +
         `  ${afterSteps}. Synthesize results inline. Deliberate up to 10 rounds per R3.3 if no consensus.\n` +
         `  ${afterSteps + 1}. Update scoreboard: node ~/.claude/qgsd-bin/update-scoreboard.cjs merge-wave ...\n` +
