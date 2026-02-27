@@ -80,10 +80,11 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 | 114 | Fix objective line in v0.15-01-01-PLAN.md | 2026-02-27 | b143170 | Verified |
 | 115 | add missing unit tests for default ceiling, --n 1 solo mode, --n N ceiling override in stop/prompt hooks, and extend TLA+ model with MaxSize constant | 2026-02-27 | ab5a80c | Verified | [115-add-missing-unit-tests-for-default-ceili](./quick/115-add-missing-unit-tests-for-default-ceili/) |
 | 116 | make formal spec generator fully automatic — GUARD_REGISTRY, maxSize/polledCount extraction, regenerate all specs with unanimity semantics | 2026-02-27 | 4618236 | Completed | [116-make-formal-spec-generator-fully-automat](./quick/116-make-formal-spec-generator-fully-automat/) |
+| 117 | Add PreCompact hook for seamless context continuation | 2026-02-27 | c835f0d | Pending | [117-add-a-precompact-hook-to-qgsd-that-auto-](./quick/117-add-a-precompact-hook-to-qgsd-that-auto-/) |
 
 ## Session Continuity
 
-Last activity: 2026-02-27 — v0.19-04 complete: redaction.yaml + check-trace-redaction.cjs (REDACT-01..03) + confidence tiers in validate-traces.cjs (EVID-01..02) + check-trace-schema-drift.cjs (DRIFT-01..02); 430/430 npm tests pass
+Last activity: 2026-02-27 — quick task 117: PreCompact hook (qgsd-precompact.js) for seamless context continuation; registered in ~/.claude/settings.json
 Last session: 2026-02-27
 Stopped at: Phase v0.19-04 complete, ready to plan Phase v0.19-05
 Resume file: None
