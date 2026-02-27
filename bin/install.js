@@ -1860,6 +1860,32 @@ function install(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Configured QGSD context monitor hook (PostToolUse)`);
     }
 
+    // Register QGSD token collector hook (SubagentStop — logs per-slot token usage)
+    if (!settings.hooks.SubagentStop) settings.hooks.SubagentStop = [];
+    const hasTokenCollectorHook = settings.hooks.SubagentStop.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-token-collector'))
+    );
+    if (!hasTokenCollectorHook) {
+      settings.hooks.SubagentStop.push({
+        matcher: 'qgsd-quorum-slot-worker',
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-token-collector.js'), async: true }]
+      });
+      console.log(`  ${green}✓${reset} Configured QGSD token collector hook (SubagentStop)`);
+    }
+
+    // Register QGSD slot correlator hook (SubagentStart — writes agent_id correlation file)
+    if (!settings.hooks.SubagentStart) settings.hooks.SubagentStart = [];
+    const hasSlotCorrelatorHook = settings.hooks.SubagentStart.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-slot-correlator'))
+    );
+    if (!hasSlotCorrelatorHook) {
+      settings.hooks.SubagentStart.push({
+        matcher: 'qgsd-quorum-slot-worker',
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-slot-correlator.js'), async: true }]
+      });
+      console.log(`  ${green}✓${reset} Configured QGSD slot correlator hook (SubagentStart)`);
+    }
+
     // Write QGSD config — skip if exists unless --redetect-mcps flag set
     const qgsdConfigPath = path.join(targetDir, 'qgsd.json');
 
