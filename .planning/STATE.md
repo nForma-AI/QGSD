@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.19 FV Pipeline Hardening 
 
 ## Current Position
 
-Phase: v0.19-01 (Unified Verdict Format) — In progress (Plan 01 complete)
-Plan: v0.19-01-01 — DONE; v0.19-01-02 and v0.19-01-03 pending
-Status: NDJSON infrastructure created; runner wiring and orchestrator integration next
-Last activity: 2026-02-27 — v0.19-01 Plan 01 executed: formal/check-result.schema.json, bin/write-check-result.cjs, bin/check-results-exit.cjs created; 14 unit tests passing
+Phase: v0.19-01 (Unified Verdict Format) — In progress (Plans 01+02 complete)
+Plan: v0.19-01-01 — DONE; v0.19-01-02 — DONE; v0.19-01-03 pending
+Status: NDJSON infrastructure created; 13 runners wired; orchestrator integration next (Plan 03)
+Last activity: 2026-02-27 — v0.19-01 Plan 02 executed: writeCheckResult wired into all 13 runners (5 TLC, 5 Alloy, 2 PRISM, 1 trace)
 
 Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed) | v0.19: v0.19-01 Plan 01/3 complete
 
