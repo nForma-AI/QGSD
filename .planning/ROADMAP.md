@@ -1016,12 +1016,12 @@ Plans:
   3. `node bin/validate-traces.cjs` `never_observed` output for any path includes `n_rounds`, `window_days`, and `confidence` tier (`low`/`medium`/`high`) — absence evidence without time qualifiers is no longer emitted
   4. Confidence thresholds are observable in code or config: low = fewer than 50 rounds or fewer than 3 days; medium = 500 or more rounds and 14 or more days; high = 10000 or more rounds and 90 or more days
   5. Running `node bin/check-trace-schema-drift.cjs` detects when `formal/trace/trace.schema.json` is modified in a commit without co-modifying `validate-traces.cjs` or trace emitter files; CI step fails on non-atomic schema changes
-**Plans**: 2 plans
+**Plans**: 3 plans
 
 Plans:
-- [ ] v0.19-04-01: Author formal/trace/redaction.yaml + bin/check-trace-redaction.cjs + CI integration (REDACT-01, REDACT-02, REDACT-03)
-- [ ] v0.19-04-02: Add confidence metadata to validate-traces.cjs never_observed output (EVID-01, EVID-02)
-- [ ] v0.19-04-03: Author bin/check-trace-schema-drift.cjs + CI integration (DRIFT-01, DRIFT-02)
+- [ ] v0.19-04-01-PLAN.md — Redaction policy + check-trace-redaction.cjs + CI wiring (REDACT-01, REDACT-02, REDACT-03)
+- [ ] v0.19-04-02-PLAN.md — Confidence metadata in validate-traces.cjs never_observed output (EVID-01, EVID-02)
+- [ ] v0.19-04-03-PLAN.md — Schema drift guard check-trace-schema-drift.cjs + CI wiring (DRIFT-01, DRIFT-02)
 
 ### Phase v0.19-05: MCP Environment Model
 **Goal**: MCP servers are formally modeled as nondeterministic environment processes so QGSD's retry and fallback behavior can be verified against arbitrary MCP failure scenarios
