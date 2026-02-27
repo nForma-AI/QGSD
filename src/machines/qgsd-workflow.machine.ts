@@ -7,6 +7,8 @@ export interface QGSDContext {
   deliberationRounds: number;
   currentPhase:       string;
   maxDeliberation:    number;
+  maxSize:            number;   // cap on voters polled per round (--n N - 1 ceiling)
+  polledCount:        number;   // agents actually recruited this round
 }
 
 export type QGSDEvent =
@@ -24,6 +26,9 @@ export const qgsdWorkflowMachine = setup({
     minQuorumMet: ({ context }) =>
       context.successCount >= Math.ceil(context.slotsAvailable / 2),
 
+    unanimityMet: ({ context }) =>
+      context.successCount >= context.polledCount,
+
     noInfiniteDeliberation: ({ context }) =>
       context.deliberationRounds < context.maxDeliberation,
 
@@ -38,6 +43,8 @@ export const qgsdWorkflowMachine = setup({
     deliberationRounds: 0,
     currentPhase:       'IDLE',
     maxDeliberation:    7,
+    maxSize:            3,
+    polledCount:        0,
   },
   states: {
     IDLE: {
