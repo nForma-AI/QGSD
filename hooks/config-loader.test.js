@@ -350,6 +350,75 @@ test('TC-CB7: loadConfig() with invalid circuit_breaker writes nothing to stdout
   }
 });
 
+// TIER-TC1: No config → defaults are model_tier_planner='opus' and model_tier_worker='haiku'
+test('TIER-TC1: no config → DEFAULT_CONFIG has model_tier_planner=opus and model_tier_worker=haiku', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tier-tc1-'));
+  try {
+    // No .claude/qgsd.json written — use temp dir with no config
+    const config = loadConfig(projectDir);
+    assert.equal(config.model_tier_planner, 'opus', 'model_tier_planner should default to opus');
+    assert.equal(config.model_tier_worker, 'haiku', 'model_tier_worker should default to haiku');
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TIER-TC2: Valid model_tier_planner override → preserved as-is
+test('TIER-TC2: valid model_tier_planner: sonnet → preserved in config', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tier-tc2-'));
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ model_tier_planner: 'sonnet' }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.model_tier_planner, 'sonnet', 'valid model_tier_planner override should be preserved');
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TIER-TC3: Invalid model_tier_planner: 'gpt-4' → deleted + stderr WARNING
+test('TIER-TC3: invalid model_tier_planner: gpt-4 → deleted + stderr WARNING', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tier-tc3-'));
+  const stderrChunks = [];
+  const origStderr = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origStderr(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ model_tier_planner: 'gpt-4' }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.model_tier_planner, undefined, 'invalid model_tier_planner should be deleted');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING'), 'should emit a WARNING to stderr');
+    assert.ok(stderrOutput.includes('model_tier_planner'), 'WARNING should mention model_tier_planner');
+  } finally {
+    process.stderr.write = origStderr;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// TIER-TC4: Invalid model_tier_worker: 42 (non-string) → deleted + stderr WARNING
+test('TIER-TC4: invalid model_tier_worker: 42 (non-string) → deleted + stderr WARNING', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-tier-tc4-'));
+  const stderrChunks = [];
+  const origStderr = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...args) => {
+    stderrChunks.push(chunk);
+    return origStderr(chunk, ...args);
+  };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ model_tier_worker: 42 }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.model_tier_worker, undefined, 'invalid model_tier_worker (non-string) should be deleted');
+    const stderrOutput = stderrChunks.join('');
+    assert.ok(stderrOutput.includes('[qgsd] WARNING'), 'should emit a WARNING to stderr');
+    assert.ok(stderrOutput.includes('model_tier_worker'), 'WARNING should mention model_tier_worker');
+  } finally {
+    process.stderr.write = origStderr;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
 // TC-CB8: Both sub-keys invalid simultaneously (oscillation_depth='bad', commit_window=-1) →
 // each falls back independently (3 and 6), two WARNINGs on stderr, stdout stays empty
 test('TC-CB8: both circuit_breaker sub-keys invalid → each falls back independently, two warnings, no stdout', async (t) => {
