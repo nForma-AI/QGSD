@@ -26,6 +26,7 @@
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
+const { writeCheckResult } = require('./write-check-result.cjs');
 
 // ── Locate PRISM binary ──────────────────────────────────────────────────────
 const prismBin = process.env.PRISM_BIN || 'prism';
@@ -37,6 +38,7 @@ if (prismBin !== 'prism' && !fs.existsSync(prismBin)) {
     '[run-oauth-rotation-prism]   export PRISM_BIN="$HOME/prism/bin/prism"\n' +
     '[run-oauth-rotation-prism] Download: https://www.prismmodelchecker.org/download.php\n'
   );
+  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -46,6 +48,7 @@ if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-oauth-rotation-prism] Model file not found: ' + modelPath + '\n'
   );
+  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -107,7 +110,10 @@ const result = spawnSync(prismBin, prismArgs, {
 
 if (result.error) {
   process.stderr.write('[run-oauth-rotation-prism] Failed to launch PRISM: ' + result.error.message + '\n');
+  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
+const passed = (result.status || 0) === 0;
+try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: passed ? 'pass' : 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
 process.exit(result.status || 0);

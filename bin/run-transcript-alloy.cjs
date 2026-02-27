@@ -17,6 +17,7 @@
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
+const { writeCheckResult } = require('./write-check-result.cjs');
 
 // ── 0. Parse --spec argument ──────────────────────────────────────────────────
 const VALID_SPECS = ['transcript-scan'];
@@ -31,6 +32,7 @@ if (!VALID_SPECS.includes(specName)) {
     '[run-transcript-alloy] Unknown spec: ' + specName +
     '. Valid: ' + VALID_SPECS.join(', ') + '\n'
   );
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -45,6 +47,7 @@ if (JAVA_HOME) {
       '[run-transcript-alloy] JAVA_HOME is set but java binary not found at: ' + javaExe + '\n' +
       '[run-transcript-alloy] Unset JAVA_HOME or fix the path.\n'
     );
+    try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -55,6 +58,7 @@ if (JAVA_HOME) {
       '[run-transcript-alloy] Java not found. Install Java >=17 and set JAVA_HOME.\n' +
       '[run-transcript-alloy] Download: https://adoptium.net/\n'
     );
+    try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -64,6 +68,7 @@ if (JAVA_HOME) {
 const versionResult = spawnSync(javaExe, ['--version'], { encoding: 'utf8' });
 if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-transcript-alloy] Failed to run: ' + javaExe + ' --version\n');
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -75,6 +80,7 @@ if (javaMajor < 17) {
     '[run-transcript-alloy] Java >=17 required. Found: ' + versionOutput.split('\n')[0] + '\n' +
     '[run-transcript-alloy] Download Java 17+: https://adoptium.net/\n'
   );
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -87,6 +93,7 @@ if (!fs.existsSync(jarPath)) {
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
     '       -o formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -97,6 +104,7 @@ if (!fs.existsSync(alsPath)) {
     '[run-transcript-alloy] ' + specName + '.als not found at: ' + alsPath + '\n' +
     '[run-transcript-alloy] This file should exist in the repository. Check your git status.\n'
   );
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -117,6 +125,7 @@ const alloyResult = spawnSync(javaExe, [
 
 if (alloyResult.error) {
   process.stderr.write('[run-transcript-alloy] Alloy invocation failed: ' + alloyResult.error.message + '\n');
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -134,11 +143,14 @@ if (/Counterexample/i.test(stdout)) {
     '[run-transcript-alloy] WARNING: Counterexample found in ' + specName + '.als assertion.\n' +
     '[run-transcript-alloy] This indicates a spec violation — review formal/alloy/' + specName + '.als.\n'
   );
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
 if (alloyResult.status !== 0) {
+  try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(alloyResult.status || 1);
 }
 
+try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'pass', metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
 process.exit(0);

@@ -9,6 +9,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { writeCheckResult } = require('./write-check-result.cjs');
 // Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
 // When installed at ~/.claude/qgsd-bin/, ./dist/machines/ (qgsd-bin/ → qgsd-bin/dist/machines/)
 const machinePath = (function () {
@@ -26,6 +27,7 @@ const logPath = path.join(process.cwd(), '.planning', 'conformance-events.jsonl'
 
 if (!fs.existsSync(logPath)) {
   process.stdout.write('[validate-traces] No conformance log at: ' + logPath + ' — nothing to validate\n');
+  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'no-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(0);
 }
 
@@ -34,6 +36,7 @@ const lines = raw.split('\n').filter(l => l.trim().length > 0);
 
 if (lines.length === 0) {
   process.stdout.write('[validate-traces] Conformance log is empty — deviation score: 100.0% (0/0)\n');
+  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { reason: 'empty-log' } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(0);
 }
 
@@ -112,7 +115,9 @@ if (divergences.length > 0) {
   for (const d of divergences) {
     process.stdout.write('  ' + JSON.stringify(d) + '\n');
   }
+  try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'fail', metadata: { divergences: divergences.length, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
+try { writeCheckResult({ tool: 'validate-traces', formalism: 'trace', result: 'pass', metadata: { valid, total } }); } catch (e) { process.stderr.write('[validate-traces] Warning: failed to write check result: ' + e.message + '\n'); }
 process.exit(0);
