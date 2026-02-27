@@ -20,10 +20,10 @@ Normalize all FV tool output to one canonical stream so triage, CI, and dashboar
 
 Prevent day-one calibration thrash: PRISM checks must warn (not fail) until sufficient evidence accumulates.
 
-- [ ] **CALIB-01**: `formal/policy.yaml` defines cold-start thresholds (`min_ci_runs`, `min_quorum_rounds`, `min_days`) and steady-state calibration mode (`warn`/`fail`)
-- [ ] **CALIB-02**: `run-prism.cjs` reads `policy.yaml` and emits `result=warn` (never `result=fail`) for calibration checks during cold start
-- [ ] **CALIB-03**: Evidence-driven checks include `observation_window` metadata (window_start/end, n_rounds, n_events) in their `check-results.ndjson` entry
-- [ ] **CALIB-04**: PRISM conservative-priors fallthrough documented in `policy.yaml` with threshold values for switching from priors to empirical scoreboard rates
+- [x] **CALIB-01**: `formal/policy.yaml` defines cold-start thresholds (`min_ci_runs`, `min_quorum_rounds`, `min_days`) and steady-state calibration mode (`warn`/`fail`)
+- [x] **CALIB-02**: `run-prism.cjs` reads `policy.yaml` and emits `result=warn` (never `result=fail`) for calibration checks during cold start
+- [x] **CALIB-03**: Evidence-driven checks include `observation_window` metadata (window_start/end, n_rounds, n_events) in their `check-results.ndjson` entry
+- [x] **CALIB-04**: PRISM conservative-priors fallthrough documented in `policy.yaml` with threshold values for switching from priors to empirical scoreboard rates
 
 ### LIVE — Liveness Fairness Declarations
 
@@ -97,10 +97,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UNIF-02 | Phase v0.19-01 | Pending |
 | UNIF-03 | Phase v0.19-01 | Pending |
 | UNIF-04 | Phase v0.19-01 | Pending |
-| CALIB-01 | Phase v0.19-02 | Pending |
-| CALIB-02 | Phase v0.19-02 | Pending |
-| CALIB-03 | Phase v0.19-02 | Pending |
-| CALIB-04 | Phase v0.19-02 | Pending |
+| CALIB-01 | Phase v0.19-02 | Complete |
+| CALIB-02 | Phase v0.19-02 | Complete |
+| CALIB-03 | Phase v0.19-02 | Complete |
+| CALIB-04 | Phase v0.19-02 | Complete |
 | LIVE-01 | Phase v0.19-03 | Pending |
 | LIVE-02 | Phase v0.19-03 | Pending |
 | REDACT-01 | Phase v0.19-04 | Pending |
@@ -122,4 +122,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-27*
-*Last updated: 2026-02-27 after initial definition*
+*Last updated: 2026-02-27 after roadmap creation — all 21 requirements mapped to phases, 100% coverage confirmed*

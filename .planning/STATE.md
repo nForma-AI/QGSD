@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-02-27 after v0.19 FV Pipeline Hardening 
 
 ## Current Position
 
-Phase: v0.19-01 (Unified Verdict Format) — COMPLETE (all 3 plans done)
-Plan: v0.19-01-01 — DONE; v0.19-01-02 — DONE; v0.19-01-03 — DONE
-Status: NDJSON infrastructure, 13 runners wired, orchestrator integration + CI gate all complete
-Last activity: 2026-02-27 — v0.19-01 Plan 03 executed: run-formal-verify.cjs NDJSON init/summary, CI gate step, .gitignore entry, npm test 389/389 pass
+Phase: v0.19-02 (Calibration Governance) — COMPLETE (all 2 plans done)
+Plan: v0.19-02-01 — DONE; v0.19-02-02 — DONE
+Status: Policy data layer + cold-start governance complete; 396/396 npm test suite green
+Last activity: 2026-02-27 — v0.19-02 Plan 02 executed: cold-start governance + observation_window in run-prism.cjs; 7 new tests; 396/396 pass
 
 Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed) | v0.19: v0.19-01 COMPLETE (3/3 plans)
 
