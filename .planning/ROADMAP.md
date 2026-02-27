@@ -763,7 +763,7 @@ Plans:
   2. User can run `node bin/run-formal-verify.cjs` and it executes the full formal verification pipeline end-to-end, including calling xstate-to-tla.cjs as its first step
   3. `.github/workflows/formal-verify.yml` is committed and a push to the repo triggers the formal verification CI job
   4. `npm test` includes xstate-to-tla.cjs and run-formal-verify.cjs in its test suite and those tests pass
-**Plans**: TBD
+**Plans**: 2 plans
 
 ### Phase v0.14-02: Drift Detection + TLA+ Canonicalization
 **Goal**: Any divergence between the XState machine (source of truth) and the formal specs is caught automatically by npm test, using a proper AST walk rather than regex so structural changes like renamed guards and transitions are detected; critical BROKEN-01 integration gap resolved by adopting Option A (generated model writes QGSDQuorum_xstate.tla, preserving hand-authored QGSDQuorum.tla); CI hardened by removing continue-on-error masking and adding missing path triggers
@@ -986,11 +986,11 @@ Plans:
   2. Running `node bin/run-prism.cjs` on a fresh install (below cold-start thresholds) emits `result=warn` entries in `check-results.ndjson` — never `result=fail` — for calibration checks
   3. Evidence-driven PRISM checks include `observation_window` metadata in their `check-results.ndjson` entry: `window_start`, `window_end`, `n_rounds`, `n_events`
   4. `formal/policy.yaml` documents the conservative-priors fallthrough: threshold values at which `run-prism.cjs` switches from conservative priors to empirical scoreboard rates
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.19-02-01: Author formal/policy.yaml schema + cold-start threshold definitions + conservative-priors fallthrough docs (CALIB-01, CALIB-04)
-- [ ] v0.19-02-02: Update run-prism.cjs to read policy.yaml and emit result=warn during cold-start; add observation_window to NDJSON entries (CALIB-02, CALIB-03)
+- [ ] v0.19-02-01-PLAN.md — Author formal/policy.yaml + policy.schema.json + read-policy.cjs helper with tests (CALIB-01, CALIB-04)
+- [ ] v0.19-02-02-PLAN.md — Update run-prism.cjs cold-start governance + observation_window metadata + tests (CALIB-02, CALIB-03)
 
 ### Phase v0.19-03: Liveness Fairness
 **Goal**: Every liveness property in QGSD's TLA+ specs has a human-readable fairness declaration, and the TLA+ checker emits inconclusive (not pass) when the declaration is missing
@@ -1000,7 +1000,7 @@ Plans:
   1. Each liveness property across all TLA+ specs has a companion entry in the relevant `formal/spec/<surface>/invariants.md` declaring the fairness assumption (`WF_vars`, `SF_vars`, or `SF_actions`) and a one-sentence realism rationale explaining why the assumption holds in QGSD's deployment context
   2. When `node bin/run-tlc.cjs` processes a liveness `.cfg` file but the corresponding `invariants.md` has no fairness declaration entry for that property, the `check-results.ndjson` entry shows `result=inconclusive` with a `reason` field — not `result=pass`
   3. When `invariants.md` is fully populated for a liveness spec, TLC runs normally and emits `result=pass` or `result=fail` based on model checking outcome
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] v0.19-03-01: Author invariants.md entries for all existing liveness specs (QGSDQuorum MCliveness, QGSDDeliberation, QGSDPreFilter) (LIVE-01)
@@ -1016,7 +1016,7 @@ Plans:
   3. `node bin/validate-traces.cjs` `never_observed` output for any path includes `n_rounds`, `window_days`, and `confidence` tier (`low`/`medium`/`high`) — absence evidence without time qualifiers is no longer emitted
   4. Confidence thresholds are observable in code or config: low = fewer than 50 rounds or fewer than 3 days; medium = 500 or more rounds and 14 or more days; high = 10000 or more rounds and 90 or more days
   5. Running `node bin/check-trace-schema-drift.cjs` detects when `formal/trace/trace.schema.json` is modified in a commit without co-modifying `validate-traces.cjs` or trace emitter files; CI step fails on non-atomic schema changes
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] v0.19-04-01: Author formal/trace/redaction.yaml + bin/check-trace-redaction.cjs + CI integration (REDACT-01, REDACT-02, REDACT-03)
@@ -1032,7 +1032,7 @@ Plans:
   2. `formal/tla/QGSDMCPEnv.tla` models MCP call behavior with nondeterministic response choices within declared bounds; TLC model-checks QGSD's fault-tolerance properties (quorum still reaches consensus or escalates correctly) under arbitrary MCP failures
   3. `formal/trace/trace.schema.json` is extended with `request_id`, `peer` (MCP slot name), `outcome` (success/fail/timeout), and `attempt` (retry count) fields for MCP-interaction events; `validate-traces.cjs` validates these fields when present
   4. `formal/prism/mcp-availability.pm` is calibrated from scoreboard UNAVAIL rates using the existing `readScoreboardRates()` pattern; running `node bin/run-prism.cjs` emits an availability property check entry to `check-results.ndjson`
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] v0.19-05-01: Author formal/spec/mcp-calls/environment.md + formal/tla/QGSDMCPEnv.tla (MCPENV-01, MCPENV-02)
@@ -1136,7 +1136,7 @@ Plans:
 | v0.18-03. Task Envelope | v0.18 | Complete    | 2026-02-27 | 2026-02-27 |
 | v0.18-04. Adaptive Fan-Out | v0.18 | Complete    | 2026-02-27 | 2026-02-27 |
 | v0.18-05. Verify Token Observability Foundation | v0.18 | Complete    | 2026-02-27 | 2026-02-27 |
-| v0.19-01. Unified Verdict Format | v0.19 | 0/3 | Not started | - |
+| v0.19-01. Unified Verdict Format | 0/3 | Planned    |  | - |
 | v0.19-02. Calibration Governance | v0.19 | 0/2 | Not started | - |
 | v0.19-03. Liveness Fairness | v0.19 | 0/2 | Not started | - |
 | v0.19-04. Enforcement Layer | v0.19 | 0/3 | Not started | - |
