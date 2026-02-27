@@ -3964,3 +3964,69 @@ describe('VIS-01: quorum failure health warnings', () => {
     assert.ok(!w008, `VIS-01-TC-03: W008 falsely emitted when quorum-failures.json absent: ${JSON.stringify(data.warnings)}`);
   });
 });
+
+describe('TIER: resolveModelInternal tier lookup', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('TIER-01: default config → gsd-phase-researcher resolves to haiku', () => {
+    // No config.json — uses DEFAULT_CONFIG where model_tier_worker = 'haiku'
+    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'haiku', `TIER-01: expected haiku, got ${data.model}`);
+  });
+
+  test('TIER-02: default config → gsd-plan-checker resolves to haiku', () => {
+    // No config.json — uses DEFAULT_CONFIG where model_tier_worker = 'haiku'
+    const result = runGsdTools('resolve-model gsd-plan-checker', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'haiku', `TIER-02: expected haiku, got ${data.model}`);
+  });
+
+  test('TIER-03a: default config → gsd-planner resolves to inherit (opus tier)', () => {
+    // No config.json — planner tier = 'planner', model_tier_planner = 'opus' → 'inherit'
+    const result = runGsdTools('resolve-model gsd-planner', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'inherit', `TIER-03a: expected inherit, got ${data.model}`);
+  });
+
+  test('TIER-03b: model_tier_worker:sonnet in config → gsd-phase-researcher resolves to sonnet', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ model_tier_worker: 'sonnet' })
+    );
+    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'sonnet', `TIER-03b: expected sonnet, got ${data.model}`);
+  });
+
+  test('TIER-03c: per-agent model_overrides beats tier key for gsd-phase-researcher', () => {
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ model_overrides: { 'gsd-phase-researcher': 'sonnet' } })
+    );
+    const result = runGsdTools('resolve-model gsd-phase-researcher', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'sonnet', `TIER-03c: expected sonnet (override), got ${data.model}`);
+  });
+
+  test('TIER-03d: unknown agent type falls back to worker tier (haiku)', () => {
+    // Unknown agents fall through agentToTier default '|| worker'
+    const result = runGsdTools('resolve-model gsd-unknown-agent-xyz', tmpDir);
+    assert.ok(result.success, `resolve-model failed: ${result.error}`);
+    const data = JSON.parse(result.output);
+    assert.strictEqual(data.model, 'haiku', `TIER-03d: expected haiku worker fallback, got ${data.model}`);
+  });
+});
