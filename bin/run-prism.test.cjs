@@ -356,24 +356,85 @@ test('observation_window: timestamps are ISO 8601 format when present in NDJSON'
 });
 
 // -- MCP availability calibration (MCPENV-04) ---------------------------------
-// Wave 0 failing tests. These MUST be in RED state before Plan 04 implements
-// readMCPAvailabilityRates in run-prism.cjs.
-// Ref: .planning/phases/v0.19-05-mcp-environment-model/v0.19-05-01-PLAN.md
+// GREEN tests: readMCPAvailabilityRates implemented in run-prism.cjs (Plan 04).
+// Tests use subprocess approach (same as existing tests) since run-prism.cjs
+// runs main logic at require-time (no require.main guard).
 
 test('run-prism extracts per-slot UNAVAIL rates from scoreboard', () => {
-  // readMCPAvailabilityRates does not yet exist in run-prism.cjs
-  // RED: turns GREEN in Plan 04 when readMCPAvailabilityRates is implemented
-  assert.fail('not yet implemented - readMCPAvailabilityRates does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+  // Build a fixture scoreboard with codex-1: 2 UNAVAIL / 10 total → avail=0.8
+  // and gemini-1: 1 UNAVAIL / 10 total → avail=0.9
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
+  try {
+    const planningDir = path.join(tmpDir, '.planning');
+    fs.mkdirSync(planningDir, { recursive: true });
+    const rounds = [];
+    for (let i = 0; i < 10; i++) {
+      rounds.push({
+        date: '02-27', task: 'r' + i, round: 1,
+        votes: {
+          claude: 'TP',
+          'codex-1': i < 2 ? 'UNAVAIL' : 'TP',    // 2 UNAVAIL, 8 TP
+          'gemini-1': i < 1 ? 'UNAVAIL' : 'TP',    // 1 UNAVAIL, 9 TP
+        }
+      });
+    }
+    fs.writeFileSync(
+      path.join(planningDir, 'quorum-scoreboard.json'),
+      JSON.stringify({ models: {}, rounds }), 'utf8'
+    );
+    const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
+      encoding: 'utf8', cwd: tmpDir,
+      env: { ...process.env, PRISM_BIN: 'prism' },
+    });
+    // Should log MCP rates from scoreboard
+    assert.match(result.stdout, /MCP rates from scoreboard/, 'should log scoreboard rates');
+    // Args should contain -const codex-1_avail or codex_1_avail
+    assert.match(result.stdout, /codex.1.avail/, 'Args should inject codex-1 availability rate');
+    assert.match(result.stdout, /gemini.1.avail/, 'Args should inject gemini-1 availability rate');
+  } finally { fs.rmSync(tmpDir, { recursive: true, force: true }); }
 });
 
 test('run-prism calibrates mcp-availability.pm with empirical rates', () => {
-  // run-prism.cjs does not yet support --model mcp-availability
-  // RED: turns GREEN in Plan 04 when --model flag is implemented
-  assert.fail('not yet implemented - --model mcp-availability flag does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+  // Verify --model mcp-availability selects mcp-availability.pm (not quorum.pm)
+  // and injects per-slot rates as -const flags
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
+  try {
+    const planningDir = path.join(tmpDir, '.planning');
+    fs.mkdirSync(planningDir, { recursive: true });
+    const rounds = [];
+    for (let i = 0; i < 5; i++) {
+      rounds.push({
+        date: '02-27', task: 'r' + i, round: 1,
+        votes: { claude: 'TP', 'codex-1': 'TP', 'gemini-1': 'TP' }
+      });
+    }
+    fs.writeFileSync(
+      path.join(planningDir, 'quorum-scoreboard.json'),
+      JSON.stringify({ models: {}, rounds }), 'utf8'
+    );
+    const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
+      encoding: 'utf8', cwd: tmpDir,
+      env: { ...process.env, PRISM_BIN: 'prism' },
+    });
+    // Model line should reference mcp-availability (not quorum.pm)
+    assert.match(result.stdout, /mcp-availability/, 'Model should be mcp-availability');
+    // Should NOT have tp_rate or unavail in Args (those belong to quorum.pm model)
+    assert.doesNotMatch(result.stdout, /Args:.*tp_rate/, 'Args should not include tp_rate for mcp-availability model');
+  } finally { fs.rmSync(tmpDir, { recursive: true, force: true }); }
 });
 
 test('run-prism falls back to priors when scoreboard missing', () => {
-  // readMCPAvailabilityRates does not yet exist - null fallback not implemented
-  // RED: turns GREEN in Plan 04 when readMCPAvailabilityRates returns null on missing scoreboard
-  assert.fail('not yet implemented - readMCPAvailabilityRates does not exist in run-prism.cjs (turns GREEN in Plan 04)');
+  // Without a scoreboard, --model mcp-availability uses prior rates (no -const injection from data)
+  // and logs a warning about missing scoreboard rates
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-mcp-'));
+  try {
+    // No .planning/ dir — scoreboard absent
+    const result = spawnSync(process.execPath, [RUN_PRISM, '--model', 'mcp-availability'], {
+      encoding: 'utf8', cwd: tmpDir,
+      env: { ...process.env, PRISM_BIN: 'prism' },
+    });
+    // Should warn about no scoreboard rates
+    assert.match(result.stderr, /No scoreboard rates|No scoreboard/i,
+      'stderr should warn about missing scoreboard');
+  } finally { fs.rmSync(tmpDir, { recursive: true, force: true }); }
 });

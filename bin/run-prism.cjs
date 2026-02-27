@@ -345,3 +345,7 @@ try {
 }
 
 process.exit(passed ? 0 : (finalResult === 'warn' ? 0 : 1));
+
+if (typeof module !== 'undefined') {
+  module.exports = { readMCPAvailabilityRates };
+}
