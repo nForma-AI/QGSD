@@ -3667,3 +3667,75 @@ describe('milestone-scoped phase IDs', () => {
     assert.strictEqual(output.phases[0].summary_count, 1, '1 summary found');
   });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HLTH: versioned phase dir health check fixes
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('HLTH: versioned phase dir health check fixes', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+    // Write minimal valid project scaffold used by all HLTH tests
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ model_profile: 'quality' })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'ROADMAP.md'),
+      '# Roadmap\n\n### Phase v0.15-01: Health Fix\n'
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      '# Project State\n\n## Current Position\n\nPhase v0.15-01\nPlan: 1\nStatus: in-progress\n'
+    );
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.15-01-health-fix'), { recursive: true });
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('HLTH-01-TC-01: W005 not emitted for v0.X-YY-name dirs', () => {
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const w005 = (data.warnings || []).some(
+      i => i.code === 'W005' && i.message && i.message.includes('v0.15-01-health-fix')
+    );
+    assert.ok(!w005, `HLTH-01-TC-01: W005 false positive for v0.15-01-health-fix: ${JSON.stringify(data.warnings)}`);
+  });
+
+  test('HLTH-01-TC-02: W005 not emitted for v0.X-YY-name dirs with dots in name segment (v0.9-08-post-v0.9-install-sync)', () => {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.9-08-post-v0.9-install-sync'), { recursive: true });
+
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const w005 = (data.warnings || []).some(
+      i => i.code === 'W005' && i.message && i.message.includes('v0.9-08-post-v0.9-install-sync')
+    );
+    assert.ok(!w005, `HLTH-01-TC-02: W005 false positive for v0.9-08-post-v0.9-install-sync: ${JSON.stringify(data.warnings)}`);
+  });
+
+  test('HLTH-02-TC-01: W007 not emitted for versioned phases present on both disk and ROADMAP', () => {
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const w007 = (data.warnings || []).some(
+      i => i.code === 'W007' && i.message && i.message.includes('v0.15-01')
+    );
+    assert.ok(!w007, `HLTH-02-TC-01: W007 false positive for v0.15-01: ${JSON.stringify(data.warnings)}`);
+  });
+
+  test('HLTH-03-TC-01: W002 not emitted for Phase v0.X-YY STATE.md references when dir exists', () => {
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const w002 = (data.warnings || []).some(
+      i => i.code === 'W002' && i.message && i.message.includes('v0.15-01')
+    );
+    assert.ok(!w002, `HLTH-03-TC-01: W002 false positive for v0.15-01: ${JSON.stringify(data.warnings)}`);
+  });
+});
