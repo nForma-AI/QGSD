@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-27 after v0.19 FV Pipeline Hardening started)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.19 FV Pipeline Hardening — defining requirements
+**Current focus:** v0.19 FV Pipeline Hardening — roadmap defined, ready for phase planning
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-27 — Milestone v0.19 started
+Phase: v0.19-01 (Unified Verdict Format) — In progress (Plan 01 complete)
+Plan: v0.19-01-01 — DONE; v0.19-01-02 and v0.19-01-03 pending
+Status: NDJSON infrastructure created; runner wiring and orchestrator integration next
+Last activity: 2026-02-27 — v0.19-01 Plan 01 executed: formal/check-result.schema.json, bin/write-check-result.cjs, bin/check-results-exit.cjs created; 14 unit tests passing
 
-Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed)
+Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed) | v0.19: v0.19-01 Plan 01/3 complete
 
 ## Performance Metrics
 
@@ -44,6 +44,9 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.19 roadmap]: UNIF-01 is the foundation phase — all other phases depend on check-results.ndjson schema existing; v0.19-01 has no upstream dependency. Dependency chain: UNIF (foundation) → CALIB (extends run-prism.cjs) → LIVE (extends run-tlc.cjs, parallel) → ENFORCE (adds redaction/evidence/drift, parallel) → MCPENV (depends on CALIB cold-start policy + UNIF output stream).
+- [v0.19 roadmap]: LIVE-01..02 and REDACT-01..03/EVID-01..02/DRIFT-01..02 are parallel to CALIB — both depend only on UNIF-01 being done. Grouped into separate phases (v0.19-03 and v0.19-04) to keep each phase coherent.
+- [v0.19 roadmap]: MCPENV-04 (mcp-availability.pm) depends on CALIB policy infrastructure (run-prism.cjs reads policy.yaml) — so v0.19-05 depends on v0.19-02.
 - [v0.18-04-02 execution]: mapRiskLevelToCount helper maps risk_level to fan-out counts: routine→2, medium→3, high→maxSize (fail-open). Export block uses `typeof module !== 'undefined'` guard to allow require() in tests while script exits via process.exit() before reaching export line at runtime.
 - [v0.18-04-02 execution]: Risk level extraction uses regex `/^risk_level:\s*(\S+)/m` on input.context_yaml YAML string. Priority chain: user --n N > envelope risk_level > config.maxSize > available slots. minNote always emits --n N for Stop hook parseQuorumSizeFlag consistency.
 - [Phase v0.15-04]: Check 9 added to cmdValidateHealth: W008 emitted for quorum slots with count >= 3 in .planning/quorum-failures.json. Threshold >= 3, try/catch swallows errors, Array.isArray + typeof count === 'number' guards applied.
@@ -80,7 +83,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 - Completed v0.18-04-03-PLAN.md Wave 2: R6.4 note + ceiling verification + VALIDATION sign-off
+Last activity: 2026-02-27 - v0.19 roadmap created: 5 phases, 21 requirements mapped, ROADMAP.md/STATE.md/REQUIREMENTS.md updated
 Last session: 2026-02-27
-Stopped at: Completed v0.18-04-03 (Wave 2 verification) — Phase v0.18-04 COMPLETE; all 3 plans executed; all 6 FAN requirements verified with 16/16 tests passing
+Stopped at: v0.19 roadmap complete — next step is /qgsd:plan-phase v0.19-01
 Resume file: None
