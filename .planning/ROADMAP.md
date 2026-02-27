@@ -1003,8 +1003,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] v0.19-03-01: Author invariants.md entries for all existing liveness specs (QGSDQuorum MCliveness, QGSDDeliberation, QGSDPreFilter) (LIVE-01)
-- [ ] v0.19-03-02: Update run-tlc.cjs to detect missing fairness declaration and emit result=inconclusive (LIVE-02)
+- [ ] v0.19-03-01-PLAN.md — Author formal/spec/<surface>/invariants.md for all 8 liveness surfaces (LIVE-01)
+- [ ] v0.19-03-02-PLAN.md — Add detectLivenessProperties to run-tlc.cjs; emit result=inconclusive for missing declarations (LIVE-02)
 
 ### Phase v0.19-04: Enforcement Layer
 **Goal**: PII/secret redaction is structurally enforced in CI, never_observed evidence includes time-qualified confidence, and trace schema changes are blocked unless validator and emitter are updated in the same commit
