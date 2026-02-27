@@ -112,6 +112,21 @@ function parseQuorumSizeFlag(prompt) {
   return (Number.isInteger(n) && n >= 1) ? n : null;
 }
 
+// Maps task envelope risk_level to a fan-out count (total participants including Claude).
+// routine → 2 (Claude + 1 external: minimum R3.5 valid quorum)
+// medium  → 3 (Claude + 2 external: balanced quorum)
+// high    → maxSize (Claude + maxSize-1 external: full pool, unchanged behavior)
+// absent/invalid → maxSize (fail-open: conservative)
+//
+// Note: 'low' is mapped like 'routine' (2 workers).
+// maxSize from config.quorum.maxSize is the ceiling — never exceed it.
+function mapRiskLevelToCount(riskLevel, maxSize) {
+  if (riskLevel === 'routine' || riskLevel === 'low') return Math.min(2, maxSize);
+  if (riskLevel === 'medium') return Math.min(3, maxSize);
+  // 'high', undefined, null, invalid string → fail-open to maxSize
+  return maxSize;
+}
+
 // Check if the circuit breaker is active (and not disabled) for a given git root.
 function isBreakerActive(cwd) {
   const gitResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
@@ -306,3 +321,12 @@ process.stdin.on('end', () => {
     process.exit(0); // Fail-open on any error
   }
 });
+
+// Export helpers for unit testing (tree-shaken at runtime — no cost)
+// The file is a script and exits via process.exit() before reaching this line in normal operation.
+// When require()d by tests, the stdin handler is registered but never fires, so module.exports is set.
+if (typeof module !== 'undefined') {
+  module.exports = module.exports || {};
+  module.exports.mapRiskLevelToCount = mapRiskLevelToCount;
+  module.exports.parseQuorumSizeFlag = parseQuorumSizeFlag;
+}
