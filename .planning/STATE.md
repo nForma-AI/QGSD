@@ -152,5 +152,5 @@ Recent decisions affecting current work:
 
 Last activity: 2026-02-27 - Completed quick task 114: Fix objective line in v0.15-01-01-PLAN.md to say 6 regex sites not five
 Last session: 2026-02-26
-Stopped at: v0.9 audit complete — gaps_found; plan-milestone-gaps spawned for gap closure
+Stopped at: v0.9 audit PASSED — all 3 gaps closed (v0.9-06/07/08/09), integration PASS, ready for /qgsd:complete-milestone
 Resume file: None
