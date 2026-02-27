@@ -8,7 +8,19 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.18 Token Efficiency
+## Current Milestone: v0.19 FV Pipeline Hardening
+
+**Goal:** Add a governance layer to QGSD's existing formal verification pipeline — unified check-results output, cold-start calibration policy, liveness fairness declarations, redaction enforcement, evidence confidence qualifiers, and trace schema drift guards — making the FV infrastructure production-grade.
+
+**Target features:**
+- Unified verdict format — all FV checkers (TLC, Alloy, PRISM, trace validator) emit normalized JSON to `formal/check-results.ndjson`; triage bundle reads from this canonical stream
+- Calibration governance — `formal/policy.yaml` defines cold-start thresholds; PRISM calibration emits `warn` (not `fail`) during cold start; observation window metadata added to evidence checks
+- Liveness fairness — each liveness TLA+ property carries explicit `WF_vars`/`SF_vars` declaration in companion `invariants.md`; checker emits `inconclusive` when fairness is absent
+- Redaction enforcement — `formal/trace/redaction.yaml` + `bin/check-trace-redaction.cjs` validate no forbidden keys in trace events; CI fails on violation
+- Evidence confidence — `validate-traces.cjs` `never_observed` entries include support metadata (n_events, window_days) and confidence tier
+- Schema drift guard — `bin/check-trace-schema-drift.cjs` blocks atomic schema changes that miss co-updating validator/emitter
+
+## Shipped: v0.18 Token Efficiency (2026-02-27, audit in progress)
 
 **Goal:** Reduce QGSD's per-run token consumption (currently 380k+ tokens per Nyquist-class run) by establishing per-slot token observability, enforcing tiered model sizing, introducing a structured task envelope context handoff, and making quorum fan-out risk-adaptive.
 
@@ -265,11 +277,13 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Active
 
-<!-- v0.18 scope: Token Efficiency -->
-- [ ] Token observability — per-slot token consumption tracked via SubagentStop hook + transcript parsing; surfaced in /qgsd:health (OBSV-01..04) — v0.18
-- [ ] Tiered model sizing — researcher/checker use haiku, planner uses sonnet; user-configurable tier keys (TIER-01..03) — v0.18
-- [ ] Task envelope — task-envelope.json sidecar written by researcher/planner; quorum reads risk_level; fail-open (ENV-01..04) — v0.18
-- [ ] Adaptive quorum fan-out — risk_level → 2/3/max workers; --n N emitted for Stop hook compliance (FAN-01..06) — v0.18
+<!-- v0.19 scope: FV Pipeline Hardening -->
+- [ ] Unified verdict format — all FV checkers emit to check-results.ndjson; triage bundle reads from canonical stream (UNIF-01..04) — v0.19
+- [ ] Calibration governance — policy.yaml cold-start thresholds; PRISM warns during cold start; observation window metadata (CALIB-01..04) — v0.19
+- [ ] Liveness fairness — WF_vars/SF_vars declared in invariants.md; inconclusive when absent (LIVE-01..02) — v0.19
+- [ ] Redaction enforcement — redaction.yaml + check-trace-redaction.cjs; CI fails on forbidden keys (REDACT-01..03) — v0.19
+- [ ] Evidence confidence — never_observed entries include support metadata and confidence tier (EVID-01..02) — v0.19
+- [ ] Schema drift guard — check-trace-schema-drift.cjs blocks non-atomic schema changes (DRIFT-01..02) — v0.19
 
 <!-- Carry-forward: deferred from v0.15 -->
 - [ ] gsd-tools.cjs W005/W007/W002 versioned phase pattern support (HLTH-01..03) — v0.15 deferred
@@ -401,4 +415,4 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
 
 ---
-*Last updated: 2026-02-27 — started milestone v0.18 Token Efficiency; v0.16 Formal Plan Verification deferred*
+*Last updated: 2026-02-27 — started milestone v0.19 FV Pipeline Hardening; v0.18 audit in progress*

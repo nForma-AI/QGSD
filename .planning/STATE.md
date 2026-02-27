@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-27 after v0.15 archived + v0.18 active)
+See: .planning/PROJECT.md (updated 2026-02-27 after v0.19 FV Pipeline Hardening started)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.18 Token Efficiency — roadmap defined, ready to plan Phase v0.18-01
+**Current focus:** v0.19 FV Pipeline Hardening — defining requirements
 
 ## Current Position
 
-Phase: v0.18-04 of 5 (Adaptive Fan-Out) — COMPLETE
-Plan: 03 of 3 (Wave 2 verification: R6.4 note + qgsd-stop.js ceiling verification)
-Status: v0.18-04 PHASE COMPLETE; all FAN-01 through FAN-06 requirements implemented and verified; 16/16 fan-out tests passing; VALIDATION.md signed off with nyquist_compliant=true
-Last activity: 2026-02-27 — v0.18-04-03 completed: R6.4 note wiring, qgsd-stop ceiling tests, VALIDATION sign-off, SUMMARY.md written
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-27 — Milestone v0.19 started
 
-Progress: [████████████████████] prior milestones complete | v0.18: COMPLETE (5 phases × 3 plans = 15 total, all done)
+Progress: [████████████████████] prior milestones complete | v0.18: AUDIT COMPLETE — gaps_found (2 gap-closure phases needed)
 
 ## Performance Metrics
 
