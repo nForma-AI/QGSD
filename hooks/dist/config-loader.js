@@ -83,6 +83,9 @@ const DEFAULT_CONFIG = {
   // Valid values: 'haiku' | 'sonnet' | 'opus'. Flat keys required — nested objects lost in shallow merge.
   model_tier_planner: 'opus',
   model_tier_worker: 'haiku',
+  // task_envelope_enabled: master switch for task-envelope.json sidecar writes.
+  // Flat key required — nested objects lost in shallow merge.
+  task_envelope_enabled: true,
 };
 
 // Reads and parses a JSON config file.
@@ -250,6 +253,14 @@ function validateConfig(config) {
     if (typeof config.model_tier_worker !== 'string' || !VALID_TIERS.includes(config.model_tier_worker)) {
       process.stderr.write('[qgsd] WARNING: qgsd.json: model_tier_worker must be "haiku", "sonnet", or "opus"; removing\n');
       delete config.model_tier_worker;
+    }
+  }
+
+  // Validate task_envelope_enabled
+  if (config.task_envelope_enabled !== undefined) {
+    if (typeof config.task_envelope_enabled !== 'boolean') {
+      process.stderr.write('[qgsd] WARNING: qgsd.json: task_envelope_enabled must be a boolean; using default true\n');
+      config.task_envelope_enabled = true;
     }
   }
 
