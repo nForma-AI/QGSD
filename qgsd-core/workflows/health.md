@@ -94,6 +94,56 @@ N issues can be auto-repaired. Run: /qgsd:health --repair
 ```
 </step>
 
+<step name="display_token_usage">
+**Display per-slot token consumption:**
+
+Run the following to read and display token usage data:
+
+```bash
+node -e "
+const fs = require('fs');
+const path = require('path');
+const logPath = path.join(process.cwd(), '.planning', 'token-usage.jsonl');
+if (!fs.existsSync(logPath)) {
+  console.log('  No token data yet. Run a quorum round to populate.');
+  process.exit(0);
+}
+const lines = fs.readFileSync(logPath, 'utf8').split('\n').filter(l => l.trim());
+// Last 100 records only (file size guard — prevents slow display after extended use)
+const recent = lines.slice(-100);
+const slots = {};
+for (const line of recent) {
+  try {
+    const r = JSON.parse(line);
+    const key = r.slot || 'unknown';
+    if (!slots[key]) slots[key] = { input: 0, output: 0, rounds: 0, hasNull: false };
+    if (r.input_tokens === null) {
+      slots[key].hasNull = true;
+    } else {
+      slots[key].input  += (r.input_tokens || 0);
+      slots[key].output += (r.output_tokens || 0);
+    }
+    slots[key].rounds++;
+  } catch (_) {}
+}
+const sorted = Object.entries(slots).sort((a, b) => (b[1].input + b[1].output) - (a[1].input + a[1].output));
+if (sorted.length === 0) { console.log('  No token data yet.'); process.exit(0); }
+console.log('');
+console.log('  TOKEN CONSUMPTION (per slot, last 100 records)');
+console.log('  slot             input        output       rounds');
+console.log('  ─────────────────────────────────────────────────');
+for (const [slot, data] of sorted) {
+  const inp = data.hasNull && data.input === 0 ? 'null (CLI)' : data.input.toLocaleString();
+  const out = data.hasNull && data.output === 0 ? 'null (CLI)' : data.output.toLocaleString();
+  console.log('  ' + slot.padEnd(16) + inp.padStart(12) + out.padStart(13) + String(data.rounds).padStart(9));
+}
+console.log('');
+"
+```
+
+Display the output inline in the health report, between the main status section and the Errors/Warnings section.
+</step>
+
 <step name="offer_repair">
 **If repairable issues exist and --repair was NOT used:**
 
