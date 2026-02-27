@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 // hooks/qgsd-prompt.js
-// UserPromptSubmit hook — two responsibilities:
+// UserPromptSubmit hook — three responsibilities:
 //
 // 1. CIRCUIT BREAKER RECOVERY: If the circuit breaker is active, inject the
 //    oscillation-resolution-mode workflow into Claude's context so resolution
 //    starts automatically on the next user message.
 //
-// 2. QUORUM INJECTION: If the prompt is a GSD planning command, inject quorum
+// 2. PENDING TASK INJECTION: If a pending-task file exists, atomically claim it
+//    and inject it as a queued command (survives /clear). Session-scoped files
+//    take priority over the generic file to prevent cross-session delivery.
+//
+// 3. QUORUM INJECTION: If the prompt is a GSD planning command, inject quorum
 //    instructions so Claude runs multi-model review before presenting output.
 //
 // Output mechanism: hookSpecificOutput.additionalContext (NOT systemMessage)
@@ -65,6 +69,49 @@ function findResolutionWorkflow(cwd) {
   return null;
 }
 
+// Atomically claim and read a pending-task file, if one exists.
+// Checks session-scoped file first (.claude/pending-task-<sessionId>.txt) to prevent
+// cross-session delivery, then falls back to the generic .claude/pending-task.txt.
+// Uses fs.renameSync for atomic claiming — POSIX guarantees only one process wins.
+// Returns the task string, or null if no pending task exists.
+function consumePendingTask(cwd, sessionId) {
+  const claudeDir = path.join(cwd, '.claude');
+  if (!fs.existsSync(claudeDir)) return null;
+
+  const candidates = [];
+  if (sessionId) candidates.push(path.join(claudeDir, `pending-task-${sessionId}.txt`));
+  candidates.push(path.join(claudeDir, 'pending-task.txt'));
+
+  for (const pendingFile of candidates) {
+    if (!fs.existsSync(pendingFile)) continue;
+
+    const claimedFile = pendingFile + '.claimed';
+    try {
+      fs.renameSync(pendingFile, claimedFile); // atomic claim — only one session wins
+    } catch {
+      continue; // another session claimed it first, or file vanished — skip
+    }
+
+    try {
+      const task = fs.readFileSync(claimedFile, 'utf8').trim();
+      fs.unlinkSync(claimedFile);
+      if (task) return task;
+    } catch {
+      try { fs.unlinkSync(claimedFile); } catch {} // best-effort cleanup
+    }
+  }
+  return null;
+}
+
+// Parses --n N flag from a prompt string.
+// Returns N (integer >= 1) if found, or null if absent/invalid.
+function parseQuorumSizeFlag(prompt) {
+  const m = prompt.match(/--n\s+(\d+)/);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  return (Number.isInteger(n) && n >= 1) ? n : null;
+}
+
 // Check if the circuit breaker is active (and not disabled) for a given git root.
 function isBreakerActive(cwd) {
   const gitResult = spawnSync('git', ['rev-parse', '--show-toplevel'], {
@@ -86,8 +133,9 @@ process.stdin.on('data', chunk => raw += chunk);
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
-    const prompt = (input.prompt || '').trim();
-    const cwd    = input.cwd || process.cwd();
+    const prompt    = (input.prompt || '').trim();
+    const cwd       = input.cwd || process.cwd();
+    const sessionId = input.session_id || null;
 
     // ── Priority 1: Circuit breaker active → inject resolution workflow ──────
     if (isBreakerActive(cwd)) {
@@ -104,9 +152,24 @@ process.stdin.on('end', () => {
       process.exit(0);
     }
 
-    // ── Priority 2: Planning command → inject quorum instructions ────────────
+    // ── Priority 2: Pending task → inject queued command ─────────────────────
+    const pendingTask = consumePendingTask(cwd, sessionId);
+    if (pendingTask) {
+      process.stdout.write(JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: 'UserPromptSubmit',
+          additionalContext: `PENDING QUEUED TASK — Execute this immediately before anything else:\n\n${pendingTask}\n\n(This task was queued via /qgsd:queue before the previous /clear.)`,
+        }
+      }));
+      process.exit(0);
+    }
+
+    // ── Priority 3: Planning command → inject quorum instructions ────────────
     const config = loadConfig(cwd);
     const commands = config.quorum_commands;
+
+    // Parse --n N override from the raw prompt
+    const quorumSizeOverride = parseQuorumSizeFlag(prompt);
 
     // Dynamic fallback step generation from quorum_active (COMP-02)
     const activeSlots = (config.quorum_active && config.quorum_active.length > 0)
@@ -114,16 +177,22 @@ process.stdin.on('end', () => {
       : null; // null = use hardcoded fallback list
 
     let instructions;
-    if (config.quorum_instructions) {
+
+    // Solo mode: --n 1 means Claude-only quorum — bypass all external slot dispatches
+    if (quorumSizeOverride === 1) {
+      instructions = `<!-- QGSD_SOLO_MODE -->\nSOLO MODE ACTIVE (--n 1): Self-quorum only. Skip ALL external slot-worker Task dispatches. Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output. The Stop hook is informed.\n\n`;
+    } else if (config.quorum_instructions) {
       // Explicit quorum_instructions in config — use as-is
       instructions = config.quorum_instructions;
     } else if (activeSlots) {
       // Build ordered slot list, sub agents first when preferSub is set
       const agentCfg = config.agent_config || {};
       const preferSub = config.quorum && config.quorum.preferSub === true;
-      const minSize = (config.quorum && Number.isInteger(config.quorum.minSize) && config.quorum.minSize >= 1)
-        ? config.quorum.minSize
-        : activeSlots.length;
+      const maxSize = quorumSizeOverride !== null
+        ? quorumSizeOverride
+        : (config.quorum && Number.isInteger(config.quorum.maxSize) && config.quorum.maxSize >= 1)
+          ? config.quorum.maxSize
+          : activeSlots.length;
 
       let orderedSlots = activeSlots.map(slot => ({
         slot,
@@ -137,12 +206,16 @@ process.stdin.on('end', () => {
         });
       }
 
+      // Cap external slots to N-1 when --n N override is active (N total = Claude + N-1 external)
+      const externalSlotCap = quorumSizeOverride !== null ? quorumSizeOverride - 1 : orderedSlots.length;
+      const cappedSlots = orderedSlots.slice(0, externalSlotCap);
+
       // Generate step list, with optional section headers when preferSub is on
       let stepLines = [];
       let stepNum = 1;
-      const hasMixed = preferSub && orderedSlots.some(s => s.authType === 'sub') && orderedSlots.some(s => s.authType !== 'sub');
+      const hasMixed = preferSub && cappedSlots.some(s => s.authType === 'sub') && cappedSlots.some(s => s.authType !== 'sub');
       let inApiSection = false;
-      for (const { slot, authType } of orderedSlots) {
+      for (const { slot, authType } of cappedSlots) {
         if (hasMixed && authType !== 'sub' && !inApiSection) {
           stepLines.push('  [API agents — overflow if sub count insufficient]');
           inApiSection = true;
@@ -151,10 +224,12 @@ process.stdin.on('end', () => {
         stepNum++;
       }
       const dynamicSteps = stepLines.join('\n');
-      const afterSteps = activeSlots.length + 1;
-      const minNote = minSize < activeSlots.length
-        ? ` (hard ceiling: ${minSize} successful responses required — sub agents first)`
-        : '';
+      const afterSteps = cappedSlots.length + 1;
+      const minNote = quorumSizeOverride !== null
+        ? ` (QUORUM SIZE OVERRIDE (--n ${quorumSizeOverride}): Cap at ${quorumSizeOverride} total participants — Claude + ${externalSlotCap} external slot${externalSlotCap !== 1 ? 's' : ''})`
+        : maxSize < activeSlots.length
+          ? ` (hard ceiling: ${maxSize} successful responses required — sub agents first)`
+          : '';
 
       instructions = `QUORUM REQUIRED${minNote} (structural enforcement — Stop hook will verify)\n\n` +
         `Run the full R3 quorum protocol inline (dispatch_pattern from commands/qgsd/quorum.md):\n` +
@@ -162,7 +237,7 @@ process.stdin.on('end', () => {
         `NEVER call mcp__*__* tools directly — use Task(subagent_type="qgsd-quorum-slot-worker") ONLY:\n` +
         (hasMixed ? '  [Subscription agents — preferred, flat-fee]\n' : '') +
         dynamicSteps + '\n\n' +
-        `Failover rule: if a slot-worker returns UNAVAIL or error, skip it — errors do not count toward the ${minSize} required.\n\n` +
+        `Failover rule: if a slot-worker returns UNAVAIL or error, skip it — errors do not count toward the ${maxSize} required.\n\n` +
         `After quorum:\n` +
         `  ${afterSteps}. Synthesize results inline. Deliberate up to 10 rounds per R3.3 if no consensus.\n` +
         `  ${afterSteps + 1}. Update scoreboard: node ~/.claude/qgsd-bin/update-scoreboard.cjs merge-wave ...\n` +
@@ -203,7 +278,7 @@ process.stdin.on('end', () => {
         lines;
     }
 
-    // Anchored allowlist pattern — requires /gsd: or /qgsd: prefix and word boundary after command.
+    // Anchored allowlist — requires /gsd: or /qgsd: prefix and word boundary after command name.
     const cmdPattern = new RegExp('^\\s*\\/q?gsd:(' + commands.join('|') + ')(\\s|$)');
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
