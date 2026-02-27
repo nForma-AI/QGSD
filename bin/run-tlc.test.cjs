@@ -10,6 +10,7 @@ const assert   = require('node:assert');
 const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 const RUN_TLC = path.join(__dirname, 'run-tlc.cjs');
 
@@ -55,4 +56,44 @@ test('exits non-zero and lists valid configs in error output for invalid config'
   });
   assert.strictEqual(result.status, 1);
   assert.match(result.stderr, /MCsafety|MCliveness/i);
+});
+
+test('detectLivenessProperties returns [] for config with no PROPERTY lines (safety config)', () => {
+  const { detectLivenessProperties } = require('./run-tlc.cjs');
+  // MCsafety.cfg has PROPERTY lines but is not in SURFACE_MAP — returns [] for unknown surface
+  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCsafety.cfg');
+  const result = detectLivenessProperties('MCsafety', cfgPath);
+  assert.deepStrictEqual(result, []);
+});
+
+test('detectLivenessProperties returns missing property names when invariants.md does not exist', () => {
+  const { detectLivenessProperties } = require('./run-tlc.cjs');
+  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
+  // Use a non-existent specDir to simulate missing invariants.md
+  const missingSpecDir = path.join(os.tmpdir(), 'no-such-dir-' + Date.now());
+  const result = detectLivenessProperties('MCliveness', cfgPath, missingSpecDir);
+  assert.ok(result.includes('EventualConsensus'), 'Expected EventualConsensus in missing list');
+});
+
+test('detectLivenessProperties returns [] when invariants.md has matching ## header', () => {
+  const { detectLivenessProperties } = require('./run-tlc.cjs');
+  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
+  // Use the actual formal/spec/quorum/invariants.md created in Plan 01
+  const specDir = path.join(__dirname, '..', 'formal', 'spec');
+  const result = detectLivenessProperties('MCliveness', cfgPath, specDir);
+  assert.deepStrictEqual(result, [], 'Expected no missing declarations when invariants.md is present with correct header');
+});
+
+test('detectLivenessProperties returns property name when invariants.md exists but header is missing', () => {
+  const { detectLivenessProperties } = require('./run-tlc.cjs');
+  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
+  // Create a tmp invariants.md with wrong/no header
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tlc-test-'));
+  const quorumDir = path.join(tmpDir, 'quorum');
+  fs.mkdirSync(quorumDir, { recursive: true });
+  fs.writeFileSync(path.join(quorumDir, 'invariants.md'), '# Liveness Fairness Declarations\n\n(empty — no entries yet)\n');
+  const result = detectLivenessProperties('MCliveness', cfgPath, tmpDir);
+  assert.ok(result.includes('EventualConsensus'), 'Expected EventualConsensus in missing list when header absent from invariants.md');
+  // Cleanup
+  fs.rmSync(tmpDir, { recursive: true, force: true });
 });
