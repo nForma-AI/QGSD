@@ -908,7 +908,12 @@ Plans:
   3. When task-envelope.json exists and contains a valid risk_level, quorum.md pre-flight log shows the envelope-derived risk level
   4. When task-envelope.json is absent or malformed, quorum proceeds without error using static max_quorum_size — fail-open behavior verified
   5. Setting task_envelope.enabled: false in qgsd.json disables envelope writes; quorum proceeds without envelope as if it were absent
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] v0.18-03-01-PLAN.md — TDD: bin/task-envelope.cjs init/update/validate + test suite (ENV-01, ENV-02)
+- [ ] v0.18-03-02-PLAN.md — config-loader.js task_envelope_enabled key + dist sync + ENV-04 unit tests (ENV-04)
+- [ ] v0.18-03-03-PLAN.md — plan-phase.md envelope init/update wiring + quorum.md risk_level read fail-open (ENV-01, ENV-02, ENV-03)
 
 ### Phase v0.18-04: Adaptive Fan-Out
 **Goal**: Quorum dispatches 2/3/max workers for routine/medium/high risk_level tasks, emits --n N for Stop hook R3.5 compliance, logs a reduced-quorum note when below maxSize, and respects --n N user override as highest priority
@@ -1030,6 +1035,6 @@ Plans:
 | v0.15-04. Health Quorum Failure Visibility | 1/1 | Complete | 2026-02-27 | - |
 | v0.18-01. Token Observability Foundation | v0.18 | 2/2 | Complete | 2026-02-27 |
 | v0.18-02. Tiered Model Sizing | 4/4 | Complete    | 2026-02-27 | 2026-02-27 |
-| v0.18-03. Task Envelope | v0.18 | 0/TBD | Not started | - |
+| v0.18-03. Task Envelope | v0.18 | 0/3 | Planned | - |
 | v0.18-04. Adaptive Fan-Out | v0.18 | 0/TBD | Not started | - |
 | v0.18-05. Verify Token Observability Foundation | v0.18 | Complete    | 2026-02-27 | 2026-02-27 |
