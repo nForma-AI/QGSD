@@ -1011,6 +1011,6 @@ Plans:
 | v0.15-03. Legacy Dir Archive | 1/1 | Complete | 2026-02-27 | - |
 | v0.15-04. Health Quorum Failure Visibility | 1/1 | Complete | 2026-02-27 | - |
 | v0.18-01. Token Observability Foundation | v0.18 | 0/TBD | Not started | - |
-| v0.18-02. Tiered Model Sizing | 4/4 | Complete   | 2026-02-27 | 2026-02-27 |
+| v0.18-02. Tiered Model Sizing | 4/4 | Complete    | 2026-02-27 | 2026-02-27 |
 | v0.18-03. Task Envelope | v0.18 | 0/TBD | Not started | - |
 | v0.18-04. Adaptive Fan-Out | v0.18 | 0/TBD | Not started | - |
