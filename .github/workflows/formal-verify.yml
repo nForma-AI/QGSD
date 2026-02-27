@@ -19,6 +19,8 @@ on:
       - 'bin/run-oauth-rotation-prism.cjs'
       - 'bin/run-account-pool-alloy.cjs'
       - 'bin/run-account-manager-tlc.cjs'
+      - 'bin/write-check-result.cjs'
+      - 'bin/check-results-exit.cjs'
   pull_request:
     paths:
       - 'src/machines/qgsd-workflow.machine.ts'
@@ -36,6 +38,8 @@ on:
       - 'bin/run-oauth-rotation-prism.cjs'
       - 'bin/run-account-pool-alloy.cjs'
       - 'bin/run-account-manager-tlc.cjs'
+      - 'bin/write-check-result.cjs'
+      - 'bin/check-results-exit.cjs'
   workflow_dispatch:  # manual trigger
 
 jobs:
@@ -134,3 +138,8 @@ jobs:
         env:
           PRISM_BIN: /tmp/prism/bin/prism
         run: node bin/run-formal-verify.cjs
+
+      - name: Check NDJSON exit code (fail if any result=fail in check-results.ndjson)
+        env:
+          PRISM_BIN: /tmp/prism/bin/prism
+        run: node bin/check-results-exit.cjs

@@ -268,6 +268,9 @@ async function runGroup(groupSteps) {
 async function runOnce() {
   // Reset results array so watch-mode re-runs start clean
   results.length = 0;
+  // Truncate NDJSON file — fresh run (UNIF-02)
+  const ndjsonPath = path.join(__dirname, '..', 'formal', 'check-results.ndjson');
+  fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');
   process.stdout.write(TAG + ' QGSD Formal Verification Suite\n');
@@ -318,6 +321,23 @@ async function runOnce() {
   const elapsedSec = (elapsedMs / 1000).toFixed(1);
   process.stdout.write(TAG + ' Wall-clock: ' + elapsedSec + 's (' + elapsedMs + 'ms)\n');
   process.stdout.write(TAG + ' ' + HR + '\n');
+
+  // NDJSON-based summary (UNIF-03)
+  try {
+    const ndjsonLines = fs.readFileSync(ndjsonPath, 'utf8')
+      .split('\n').filter(l => l.trim().length > 0);
+    const checkResults = ndjsonLines.map(l => JSON.parse(l));
+    const ndjsonFailed = checkResults.filter(r => r.result === 'fail').length;
+    const ndjsonPassed = checkResults.filter(r => r.result === 'pass').length;
+    const ndjsonOther  = checkResults.length - ndjsonFailed - ndjsonPassed;
+    process.stdout.write(
+      TAG + ' check-results.ndjson: ' + ndjsonPassed + ' pass, ' +
+      ndjsonFailed + ' fail' +
+      (ndjsonOther > 0 ? ', ' + ndjsonOther + ' warn/inconclusive' : '') + '\n'
+    );
+  } catch (err) {
+    process.stderr.write(TAG + ' Warning: could not read check-results.ndjson: ' + err.message + '\n');
+  }
 
   return failed;
 }
