@@ -1,91 +1,123 @@
-# Requirements: QGSD v0.18 Token Efficiency
+# Requirements: QGSD v0.19 FV Pipeline Hardening
 
 **Defined:** 2026-02-27
 **Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## v0.18 Requirements
+## v1 Requirements
 
-Requirements for the Token Efficiency milestone. Goal: reduce QGSD's per-run token consumption (currently 380k+ tokens for a single Nyquist-class run) by establishing observability, enforcing tiered model sizing, introducing a structured context handoff, and making quorum fan-out risk-adaptive.
+Requirements for v0.19 milestone. Adapted from external v2.1 plan to QGSD's existing FV substrate (v0.12/v0.14 tools).
 
-### Token Observability (OBSV)
+### UNIF — Unified Verdict Format
 
-- [x] **OBSV-01**: User can see per-slot token consumption ranked by usage in `/qgsd:health` output
-- [x] **OBSV-02**: System appends a structured record to `.planning/token-usage.jsonl` after each quorum slot-worker completes (via `SubagentStop` hook reading `agent_transcript_path`)
-- [x] **OBSV-03**: Token records correctly attribute usage to named slot (`claude-1`, `gemini-1`, etc.) via correlation protocol written at dispatch time
-- [x] **OBSV-04**: CLI-based slots (gemini-1, codex-1) are logged with `tokens: null` — present in log, not omitted
+Normalize all FV tool output to one canonical stream so triage, CI, and dashboards read a single source.
 
-### Tiered Model Sizing (TIER)
+- [ ] **UNIF-01**: All FV checkers (TLC, Alloy, PRISM, trace validator, redaction) append one normalized JSON line to `formal/check-results.ndjson` per check run, conforming to `formal/check-result.schema.json`
+- [ ] **UNIF-02**: `run-formal-verify.cjs` orchestrator generates `formal/check-results.ndjson` as its canonical output artifact (replacing ad-hoc per-tool stdout)
+- [ ] **UNIF-03**: Triage bundle (diff-report summary in `run-formal-verify.cjs`) reads from `check-results.ndjson`, not tool stdout
+- [ ] **UNIF-04**: CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`
 
-- [x] **TIER-01**: Researcher sub-agent in `plan-phase.md` runs on `haiku` model by default
-- [x] **TIER-02**: Plan-checker sub-agent in `plan-phase.md` runs on `haiku` model by default
-- [x] **TIER-03**: User can override tier assignments via `model_tier_planner` / `model_tier_worker` flat keys in `qgsd.json`
+### CALIB — Calibration Governance
 
-### Task Envelope (ENV)
+Prevent day-one calibration thrash: PRISM checks must warn (not fail) until sufficient evidence accumulates.
 
-- [ ] **ENV-01**: After research completes, a `task-envelope.json` sidecar is written to `.planning/phases/<phase>/` with `objective`, `constraints`, `risk_level`, and `target_files`
-- [ ] **ENV-02**: After planning completes, envelope is updated with `plan_path` and `key_decisions`
-- [ ] **ENV-03**: `quorum.md` reads `risk_level` from envelope when available; fails open when envelope is absent
-- [x] **ENV-04**: Feature is gated by `task_envelope_enabled` in `qgsd.json` (default: `true` when v0.18-03 ships)
+- [ ] **CALIB-01**: `formal/policy.yaml` defines cold-start thresholds (`min_ci_runs`, `min_quorum_rounds`, `min_days`) and steady-state calibration mode (`warn`/`fail`)
+- [ ] **CALIB-02**: `run-prism.cjs` reads `policy.yaml` and emits `result=warn` (never `result=fail`) for calibration checks during cold start
+- [ ] **CALIB-03**: Evidence-driven checks include `observation_window` metadata (window_start/end, n_rounds, n_events) in their `check-results.ndjson` entry
+- [ ] **CALIB-04**: PRISM conservative-priors fallthrough documented in `policy.yaml` with threshold values for switching from priors to empirical scoreboard rates
 
-### Adaptive Fan-Out (FAN)
+### LIVE — Liveness Fairness Declarations
 
-- [ ] **FAN-01**: Quorum dispatches 2 workers for `routine` risk_level tasks (vs current 8)
-- [ ] **FAN-02**: Quorum dispatches 3 workers for `medium` risk_level tasks
-- [ ] **FAN-03**: Quorum dispatches `max_quorum_size` workers for `high` risk_level tasks (unchanged behavior)
-- [ ] **FAN-04**: Adaptive fan-out emits `--n N` so `qgsd-stop.js` verifies correct reduced count (R3.5 compliance)
-- [ ] **FAN-05**: R6.4 reduced-quorum note emitted in output when fan-out is below `max_quorum_size`
-- [ ] **FAN-06**: `--n N` user override takes highest precedence over all adaptive logic
+Make liveness properties operationally meaningful by requiring explicit fairness assumptions.
 
-## Future Requirements (v0.19+)
+- [ ] **LIVE-01**: Each liveness property in TLA+ specs has a companion entry in `formal/spec/<surface>/invariants.md` declaring the fairness assumption (`WF_vars`/`SF_vars`/`SF_actions`) and realism rationale
+- [ ] **LIVE-02**: TLA+ checker emits `result=inconclusive` (not `result=pass`) when a liveness `.cfg` is present but the corresponding `invariants.md` has no fairness declaration
 
-### Token Budget Alerts
+### REDACT — Redaction Enforcement
 
-- **BDGT-01**: System warns when a quorum round exceeds configurable token threshold (default 50k tokens)
-- **BDGT-02**: Cross-session token trend analysis aggregates `token-usage.jsonl` over multiple sessions
+Make PII/secret redaction structurally enforced, not just documented.
 
-### Envelope Enhancements
+- [ ] **REDACT-01**: `formal/trace/redaction.yaml` defines forbidden keys (field names) and forbidden value patterns (regex) for trace event payloads
+- [ ] **REDACT-02**: `bin/check-trace-redaction.cjs` validates all trace event files against `redaction.yaml` and appends a `formalism=redaction` entry to `check-results.ndjson`
+- [ ] **REDACT-03**: CI step runs `check-trace-redaction.cjs` and fails when any forbidden key or pattern is found in trace artifacts
 
-- **ENV-05**: Envelope diff mode — skip full PLAN.md re-read in deliberation rounds when envelope checksum matches prior round
-- **ENV-06**: Benched slot warm-up suppression — skip `health_check` for slots not selected for this round
+### EVID — Evidence Confidence
 
-### Provider Cost Mapping
+"Never observed" paths require time qualifiers before they can be trusted as absence evidence.
 
-- **COST-01**: USD cost estimation per provider (Together.xyz / Fireworks / AkashML pricing table)
+- [ ] **EVID-01**: `validate-traces.cjs` `never_observed` output includes support metadata: `n_rounds`, `window_days`, `confidence` tier
+- [ ] **EVID-02**: Confidence thresholds defined: low = <50 rounds or <3 days; medium = ≥500 rounds and ≥14 days; high = ≥10k rounds and ≥90 days (quorum rounds as event volume analogue)
+
+### DRIFT — Trace Schema Drift Guard
+
+Schema changes to `trace.schema.json` must atomically co-update validator and emitter.
+
+- [ ] **DRIFT-01**: `bin/check-trace-schema-drift.cjs` detects when `formal/trace/trace.schema.json` is modified without co-modifying `validate-traces.cjs` or trace emitter files in the same commit
+- [ ] **DRIFT-02**: CI step runs `check-trace-schema-drift.cjs` and fails on non-atomic schema changes
+
+### MCPENV — MCP Environment Modeling
+
+Model MCP servers as nondeterministic environment processes to verify QGSD's retry/fallback behavior formally.
+
+- [ ] **MCPENV-01**: `formal/spec/mcp-calls/environment.md` defines MCP servers as nondeterministic environment processes with allowed response set (success/failure/timeout/reorder) and timing model (retry limits, backoff assumptions)
+- [ ] **MCPENV-02**: TLA+ spec `formal/tla/QGSDMCPEnv.tla` models MCP call behavior — nondeterministic response choices within declared bounds; checks quorum's fault-tolerance properties under arbitrary MCP failures
+- [ ] **MCPENV-03**: Trace schema extended to include `request_id`, `peer` (MCP slot name), `outcome` (success/fail/timeout), `attempt` (retry count) for MCP-interaction events; `validate-traces.cjs` validates these fields
+- [ ] **MCPENV-04**: PRISM model `formal/prism/mcp-availability.pm` calibrated from scoreboard UNAVAIL rates using existing `readScoreboardRates()` pattern; emits availability property check to `check-results.ndjson`
+
+## v2 Requirements
+
+Deferred to future release.
+
+### MCPENV Extensions
+
+- **MCPENV-05**: Alloy model for MCP roster constraints (which combinations of UNAVAILABLE slots still satisfy min_quorum)
+- **MCPENV-06**: Petri net visualization of MCP call lifecycle with deadlock detection
+
+### v0.16 Deferred
+
+- **SPEC-01**: Plan-to-spec pipeline — PLAN.md → formal spec fragments (TLA+/Alloy/PRISM)
+- **SPEC-02**: Iterative verification loop — Claude iterates on PLAN.md until formal verification passes
+- **SPEC-03**: Mind map generation — PLAN.md → Mermaid mind map for quorum visual context
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Token quota hard blocks | Violates R6 fail-open; could deadlock critical phases mid-execution; warn-only is the correct policy |
-| Per-slot model override for CLI slots (gemini-cli, codex-cli) | These use provider-configured models; QGSD does not control their model from within the pipeline |
-| Lossy context compression (auto-summarization) | Structured extraction (task envelope) is correct; automatic summarization removes details the planner needs, causing failed quorums that cost more tokens than the savings |
-| Bypassing quorum for low-risk tasks | Stop hook enforces quorum; bypassing would require modifying core enforcement guarantee; `routine` fan-out satisfies R3.5 minimum (Claude + 1 external) at lowest cost |
+| v0.17 Auto-Chain Context Resilience | Different milestone track — execute-phase re-entrancy; not part of FV hardening |
+| Alloy environment model for MCP | Deferred to v2 (MCPENV-05) — add after TLA+ model validated |
+| Redaction of PLAN.md content | Out of scope — traces only; PLAN.md redaction is a separate concern |
+| Per-surface PRISM models beyond quorum + MCP | High complexity; MCPENV-04 covers the highest-value case |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OBSV-01 | Phase v0.18-05 (gap closure) | Complete |
-| OBSV-02 | Phase v0.18-05 (gap closure) | Complete |
-| OBSV-03 | Phase v0.18-05 (gap closure) | Complete |
-| OBSV-04 | Phase v0.18-05 (gap closure) | Complete |
-| TIER-01 | Phase v0.18-02 | Complete |
-| TIER-02 | Phase v0.18-02 | Complete |
-| TIER-03 | Phase v0.18-02 | Complete |
-| ENV-01 | Phase v0.18-03 | Pending |
-| ENV-02 | Phase v0.18-03 | Pending |
-| ENV-03 | Phase v0.18-03 | Pending |
-| ENV-04 | Phase v0.18-03-02 | Complete |
-| FAN-01 | Phase v0.18-04 | Pending |
-| FAN-02 | Phase v0.18-04 | Pending |
-| FAN-03 | Phase v0.18-04 | Pending |
-| FAN-04 | Phase v0.18-04 | Pending |
-| FAN-05 | Phase v0.18-04 | Pending |
-| FAN-06 | Phase v0.18-04 | Pending |
+| UNIF-01 | Phase v0.19-01 | Pending |
+| UNIF-02 | Phase v0.19-01 | Pending |
+| UNIF-03 | Phase v0.19-01 | Pending |
+| UNIF-04 | Phase v0.19-01 | Pending |
+| CALIB-01 | Phase v0.19-02 | Pending |
+| CALIB-02 | Phase v0.19-02 | Pending |
+| CALIB-03 | Phase v0.19-02 | Pending |
+| CALIB-04 | Phase v0.19-02 | Pending |
+| LIVE-01 | Phase v0.19-03 | Pending |
+| LIVE-02 | Phase v0.19-03 | Pending |
+| REDACT-01 | Phase v0.19-04 | Pending |
+| REDACT-02 | Phase v0.19-04 | Pending |
+| REDACT-03 | Phase v0.19-04 | Pending |
+| EVID-01 | Phase v0.19-04 | Pending |
+| EVID-02 | Phase v0.19-04 | Pending |
+| DRIFT-01 | Phase v0.19-04 | Pending |
+| DRIFT-02 | Phase v0.19-04 | Pending |
+| MCPENV-01 | Phase v0.19-05 | Pending |
+| MCPENV-02 | Phase v0.19-05 | Pending |
+| MCPENV-03 | Phase v0.19-05 | Pending |
+| MCPENV-04 | Phase v0.19-05 | Pending |
 
 **Coverage:**
-- v0.18 requirements: 17 total
-- Mapped to phases: 17
+- v1 requirements: 21 total
+- Mapped to phases: 21
 - Unmapped: 0 ✓
 
 ---
