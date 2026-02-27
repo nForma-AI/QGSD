@@ -84,7 +84,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-27 — Phase v0.19-06 complete: R3.6 improvement protocol TDD tests (27 new tests), CLAUDE.md ref removal from 7 files, plan-phase + quick installed; v0.19 milestone 100% complete
+Last activity: 2026-02-27 — Milestone v0.19 audit: gaps_found (21/25 requirements) — 3 VERIFICATION.md files written during audit (v0.19-01, v0.19-03, v0.19-04 all PASSED); 3 blocker gaps: LIVE-02 (4 TLC runners not wired to detectLivenessProperties), MCPENV-02 (TLA+ spec not in pipeline + invariants.md absent), MCPENV-04 (dead module.exports + composite-key PRISM bug + not in pipeline)
 Last session: 2026-02-27
-Stopped at: Phase v0.19-06 complete — v0.19 milestone all 6 phases done, ready for /qgsd:audit-milestone v0.19
+Stopped at: Milestone v0.19 audit complete — gaps_found (21/25 requirements). See .planning/v0.19-MILESTONE-AUDIT.md
 Resume file: None
