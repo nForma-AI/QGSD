@@ -163,6 +163,40 @@ This re-reads `~/.claude.json`, re-derives tool prefixes from your registered se
 
 </details>
 
+### Agent Manager TUI
+
+```bash
+node bin/manage-agents-blessed.cjs
+```
+
+A full-featured keyboard-navigable terminal interface for managing your quorum agents. Requires a local clone (`git clone https://github.com/LangBlaze-AI/QGSD.git`).
+
+The TUI is a split-pane screen: left panel is the menu, right panel shows agent list or context for the selected action.
+
+**Capabilities:**
+
+| Action | What it does |
+|--------|--------------|
+| List Agents | Show all configured slots with provider, model, key status |
+| Add Agent | Add a new slot with provider preset, model, and API key |
+| Clone Slot | Duplicate an existing slot to a new name |
+| Edit Agent | Update provider, base URL, model, or key for a slot |
+| Remove Agent | Delete a slot from `~/.claude.json` |
+| Reorder Agents | Drag slots up/down to change quorum priority order |
+| Check Agent Health | Ping a single slot and show latency + model response |
+| Login / Auth | Open the auth flow for CLI-based agents (gh, gemini, codex) |
+| Provider Keys | View and update global API keys (AkashML, Together.xyz, Fireworks.ai) |
+| Batch Rotate Keys | Rotate API keys across multiple slots in one operation |
+| Live Health | Poll all configured slots simultaneously and display health table |
+| Update Agents | Pull the latest version of all MCP server packages |
+| Settings | View current quorum composition and configuration |
+| Tune Timeouts | Adjust per-slot timeout values |
+| Set Update Policy | Configure auto-update behavior per slot |
+| Export Roster | Save the full agent configuration to a portable JSON file |
+| Import Roster | Load agent configuration from a previously exported file |
+
+**Navigation:** arrow keys to move, Enter to select, Escape or `q` to go back or exit.
+
 > [!NOTE]
 > QGSD works with as few as one quorum member — more models means stronger consensus. Claude is always the fifth voting member in every quorum round.
 
@@ -598,6 +632,62 @@ lmn012o feat(08-02): create registration endpoint
 > **Benefits:** Git bisect finds exact failing task. Each task independently revertable. Clear history for Claude in future sessions. Better observability in AI-automated workflow.
 
 Every commit is surgical, traceable, and meaningful.
+
+### Formal Verification
+
+> **Note:** The formal verification pipeline is optional and primarily intended for developers who want to verify the correctness of QGSD's protocol implementation. If you just want to use QGSD, skip this section — you do not need Java 17, PRISM, or Alloy to run QGSD normally.
+
+QGSD ships formal models of its core protocols — quorum consensus, circuit breaker, account manager, MCP availability — verified by four independent tools: TLA+, Alloy, PRISM, and Petri nets.
+
+These aren't documentation. They're executable specs that check safety, liveness, and probabilistic properties of the protocols that govern how your planning decisions get made.
+
+#### Prerequisites
+
+**TLA+ (model checker):** Requires Java 17+.
+
+```bash
+# Install Java 17: https://adoptium.net/
+# Then download tla2tools.jar (~50MB, gitignored):
+curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \
+     -o formal/tla/tla2tools.jar
+```
+
+**Alloy (relational logic):** Download from [alloytools.org](https://alloytools.org/download.html). Place the `org.alloytools.alloy.dist.jar` in `formal/alloy/`. Java 17+ required.
+
+**PRISM (probabilistic model checker):** Install from [prismmodelchecker.org](https://www.prismmodelchecker.org/). Ensure `prism` is on your PATH.
+
+**Petri nets:** Rendered via `@hpcc-js/wasm-graphviz` (included as a dev dependency — no additional install needed).
+
+#### Running Verification
+
+```bash
+# Full pipeline — all 21 steps (generate → Petri → TLA+ → Alloy → PRISM)
+node bin/run-formal-verify.cjs
+
+# Subsets
+node bin/run-formal-verify.cjs --only=tla      # 8 TLA+ model checks
+node bin/run-formal-verify.cjs --only=alloy    # 7 Alloy assertions
+node bin/run-formal-verify.cjs --only=prism    # 2 PRISM analyses (quorum + oauth-rotation)
+node bin/run-formal-verify.cjs --only=petri    # 2 Petri net renders
+node bin/run-formal-verify.cjs --only=generate # Regenerate specs from source only
+```
+
+Exit code 0 = all checks pass. Exit code 1 = at least one violation or configuration error.
+
+#### What Gets Checked
+
+| Tool | Models | Properties |
+|------|--------|------------|
+| TLA+ | Quorum, CircuitBreaker, Oscillation, Convergence, Deliberation, PreFilter, AccountManager, MCP Environment | Safety invariants + liveness (quorum always terminates, breaker never infinite-loops) |
+| Alloy | Quorum votes, scoreboard recompute, availability parsing, transcript scan, install scope, taxonomy safety, account pool structure | Structural correctness (no impossible states) |
+| PRISM | Quorum consensus, OAuth rotation, MCP availability | Probabilistic reachability (convergence probability, expected rounds to consensus) |
+| Petri nets | Quorum flow, account manager lifecycle | Visual concurrency model (token flow, place/transition reachability) |
+
+Individual runners are in `bin/run-tlc.cjs`, `bin/run-alloy.cjs`, `bin/run-prism.cjs`, and `bin/generate-petri-net.cjs`. Spec source files are in `formal/tla/`, `formal/alloy/`, `formal/prism/`, and `formal/petri/`.
+
+---
+
+[Back to top](#table-of-contents)
 
 ### Modular by Design
 

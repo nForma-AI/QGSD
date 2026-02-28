@@ -84,10 +84,11 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 | 115 | add missing unit tests for default ceiling, --n 1 solo mode, --n N ceiling override in stop/prompt hooks, and extend TLA+ model with MaxSize constant | 2026-02-27 | ab5a80c | Verified | [115-add-missing-unit-tests-for-default-ceili](./quick/115-add-missing-unit-tests-for-default-ceili/) |
 | 116 | make formal spec generator fully automatic — GUARD_REGISTRY, maxSize/polledCount extraction, regenerate all specs with unanimity semantics | 2026-02-27 | 4618236 | Completed | [116-make-formal-spec-generator-fully-automat](./quick/116-make-formal-spec-generator-fully-automat/) |
 | 117 | Add PreCompact hook for seamless context continuation | 2026-02-27 | ccefbfa | Verified | [117-add-a-precompact-hook-to-qgsd-that-auto-](./quick/117-add-a-precompact-hook-to-qgsd-that-auto-/) |
+| 118 | Update all user-facing documentation: README with blessed TUI capabilities and formal analysis tools (PRISM, Alloy, TLA+, Petri nets) with installation instructions | 2026-02-28 | {COMMIT_HASH} | Pending | [118-update-all-user-facing-documentation-rea](./quick/118-update-all-user-facing-documentation-rea/) |
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — v0.19 milestone re-audit complete: all 25/25 requirements satisfied (status: tech_debt). LIVE-02/MCPENV-02/MCPENV-04 confirmed closed. 4 tech-debt items remain (2 low, 1 medium, 1 low). REQUIREMENTS.md documentation stale (13 unchecked checkboxes + 9 missing traceability rows) — addressed by v0.19-09. Audit artifact written to .planning/v0.19-MILESTONE-AUDIT.md.
+Last activity: 2026-02-28 — Completed quick task 118: Update all user-facing documentation: README with blessed TUI capabilities and formal analysis tools (PRISM, Alloy, TLA+, Petri nets) with installation instructions.
 Last session: 2026-02-28
 Stopped at: v0.19 milestone re-audit complete (tech_debt), v0.19-09 Requirements Traceability Cleanup next
 Resume file: None
