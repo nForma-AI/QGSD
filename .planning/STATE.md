@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 ## Current Position
 
 Phase: v0.20-01 of 6 (Schema Enrichment)
-Plan: 04 of 05 (Completed)
-Status: Executing Phase
-Last activity: 2026-02-28 — v0.20-01-04 executed (update 9 remaining callers with v2.1 fields)
+Plan: 05 of 05 (Completed)
+Status: Phase Complete
+Last activity: 2026-02-28 — v0.20-01-05 executed (integration smoke verification — SCHEMA-01/02/03 end-to-end complete)
 
-Progress: [▓▓░░░░░░░░░░░░░░░░░░░░] v0.20: 1/6 phases (Plan 04/05 complete)
+Progress: [▓▓░░░░░░░░░░░░░░░░░░░░] v0.20: 1/6 phases (Plan 05/05 complete, Phase 1 done)
 
 ## Performance Metrics
 
@@ -46,7 +46,8 @@ Progress: [▓▓░░░░░░░░░░░░░░░░░░░░] v
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.20-01-03 execution]: All 5 TLA+ runners (run-tlc.cjs, run-oscillation-tlc.cjs, run-protocol-tlc.cjs, run-breaker-tlc.cjs, run-account-manager-tlc.cjs) updated to v2.1 spec. Timer placement (immediately before spawnSync) ensures runtime_ms measures actual TLC execution, not module load time. Timeout-risk annotation at 120s threshold enables CI timeout-adequacy decisions. Plan 03 covers 9 of 21 STEPS entries; Plan 04 will cover remaining 12 (Alloy, PRISM, formal-verify CI tool calls).
+- [v0.20-01-05 completion]: Phase v0.20-01 Schema Enrichment COMPLETE. All 3 requirements satisfied: SCHEMA-01 (schema updated with v2.1 fields), SCHEMA-02 (writeCheckResult enforces validation), SCHEMA-03 (all 21 active callers updated). Integration smoke test confirms end-to-end pipeline: TLA+ runners call writeCheckResult with v2.1 fields, records appear in check-results.ndjson with correct structure. 9 fresh v2.1 records generated with runtime_ms > 0. Backwards compatibility verified (0 parse errors). Phase ready for downstream v0.20-02 through v0.20-06 which all depend on this enriched NDJSON.
+- [v0.20-01-03 execution]: All 5 TLA+ runners (run-tlc.cjs, run-oscillation-tlc.cjs, run-protocol-tlc.cjs, run-breaker-tlc.cjs, run-account-manager-tlc.cjs) updated to v2.1 spec. Timer placement (immediately before spawnSync) ensures runtime_ms measures actual TLC execution, not module load time. Timeout-risk annotation at 120s threshold enables CI timeout-adequacy decisions. Plan 03 covers 9 of 21 STEPS entries; Plan 04 covered remaining 12 (Alloy, PRISM, formal-verify CI tool calls).
 - [v0.20 roadmap]: v0.20-01 Schema Enrichment is the sole foundation phase — all other phases read check-results.ndjson with enriched v2.1 fields; no other phase can run until SCHEMA-01/02/03 are complete.
 - [v0.20 roadmap]: v0.20-02 through v0.20-06 depend only on v0.20-01 and are parallelizable in execution: v0.20-02 (LIVE), v0.20-03 (PLAN), v0.20-04 (VERIFY), v0.20-05 (EVID), v0.20-06 (TRIAGE) can run in any order after v0.20-01.
 - [v0.20 roadmap]: Planning gate is fail-open (PLAN-03) — TLC failures surface as warnings to the planner, never hard blockers. FV flakiness cannot break the planning workflow.
