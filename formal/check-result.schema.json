@@ -20,6 +20,31 @@
     },
     "metadata": {
       "type": "object"
+    },
+    "check_id": {
+      "type": "string"
+    },
+    "surface": {
+      "type": "string"
+    },
+    "property": {
+      "type": "string"
+    },
+    "runtime_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "summary": {
+      "type": "string"
+    },
+    "triage_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observation_window": {
+      "type": "object"
     }
   },
   "additionalProperties": false
