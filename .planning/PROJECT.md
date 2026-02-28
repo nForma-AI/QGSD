@@ -237,6 +237,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 ### Validated
 
 - ✓ Liveness fairness lint — centralized check-liveness-fairness.cjs CI step with dynamic MC*.cfg discovery; emits result=inconclusive for liveness configs lacking fairness declarations; ci:liveness-fairness-lint as 26th STEPS entry in run-formal-verify.cjs (LIVE-01..02) — v0.20 (Phase v0.20-02)
+- ✓ Planning gate — plan-phase.md step 8.3 runs `run-formal-verify.cjs --only=tla` pre-quorum; result=fail NDJSON entries surfaced as FV_HYPOTHESES in quorum review_context; fail-open (|| FV_EXIT=$?) so TLC failures never block plan creation (PLAN-01..03) — v0.20 (Phase v0.20-03)
 - ✓ Schema enrichment — check-result.schema.json v2.1 (check_id, surface, property, runtime_ms, summary, triage_tags, observation_window); write-check-result.cjs + all 21 active callers updated (SCHEMA-01..03) — v0.20 (Phase v0.20-01)
 - ✓ Unified verdict format: all 13 FV checkers emit normalized NDJSON to check-results.ndjson; check-results-exit.cjs CI gate exits non-zero on any result=fail (UNIF-01..04) — v0.19 (Phases v0.19-01, v0.19-11)
 - ✓ Calibration governance: formal/policy.yaml cold-start thresholds + read-policy.cjs; conservative_priors.tp_rate/unavail wired directly to run-prism.cjs fallback constants; 18/18 tests (CALIB-01..04) — v0.19 (Phases v0.19-02, v0.19-10)
@@ -296,7 +297,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 ### Active
 
 <!-- v0.20 scope: FV as Active Planning Gate -->
-- [ ] Planning gate — run-formal-verify --only=tla wired into plan-phase.md pre-quorum; TLC violations as hypotheses to planner; fail-open (PLAN-01..03) — v0.20
+- [x] Planning gate — run-formal-verify --only=tla wired into plan-phase.md pre-quorum; TLC violations as hypotheses to planner; fail-open (PLAN-01..03) — v0.20
 - [ ] Verification gate — run-formal-verify wired into qgsd-verifier; check-results.ndjson digest in VERIFICATION.md (VERIFY-01..02) — v0.20
 - [ ] Evidence confidence — never_observed entries carry confidence: low/medium/high + observation_window metadata (EVID-01..02) — v0.20
 - [ ] Triage bundle — generate-triage-bundle.cjs writes diff-report.md and suspects.md from check-results.ndjson (TRIAGE-01..02) — v0.20
@@ -433,4 +434,4 @@ QGSD v0.19 FV Pipeline Hardening shipped 2026-02-28 (11 phases, 26 plans, 25/25 
 | readMCPAvailabilityRates composite-key filter (contains ':' or '/') | Scoreboard keys like `claude-1:model-id` and `/path/to/file` are not PRISM model IDs; composite-key filter before rates object construction prevents PRISM constant corruption | Phase v0.19-08 — MCPENV-04 |
 
 ---
-*Last updated: 2026-02-28 after Phase v0.20-02 — Liveness Fairness Lint complete. LIVE-01..02 satisfied: check-liveness-fairness.cjs implemented with dynamic MC*.cfg discovery, ci:liveness-fairness-lint wired as 26th STEPS entry in run-formal-verify.cjs. v0.20-03 (Planning Gate) next.*
+*Last updated: 2026-02-28 after Phase v0.20-03 — Planning Gate complete. PLAN-01..03 satisfied: plan-phase.md step 8.3 runs run-formal-verify.cjs --only=tla, extracts result=fail entries as FV_HYPOTHESES, injects into quorum review_context, fail-open via || FV_EXIT=$?. v0.20-04 (Verification Gate) next.*

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.20 Phase v0.20-03 — Planning Gate
+**Current focus:** v0.20 Phase v0.20-04 — Verification Gate
 
 ## Current Position
 
-Phase: v0.20-03 of 7 (Planning Gate)
+Phase: v0.20-04 of 7 (Verification Gate)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-02-28 — v0.20-02 complete (LIVE-01 + LIVE-02 satisfied)
+Last activity: 2026-02-28 — v0.20-03 complete (PLAN-01 + PLAN-02 + PLAN-03 satisfied)
 
-Progress: [▓▓▓▓░░░░░░░░░░░░░░░░░░░] v0.20: 2/7 phases complete (v0.20-02 done, advancing to v0.20-03)
+Progress: [▓▓▓▓▓▓░░░░░░░░░░░░░░░░░] v0.20: 3/7 phases complete (v0.20-03 done, advancing to v0.20-04)
 
 ## Performance Metrics
 
