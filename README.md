@@ -685,20 +685,25 @@ These aren't documentation. They're executable specs that check safety, liveness
 
 #### Prerequisites
 
-**TLA+ (model checker):** Requires Java 17+.
+TLA+, Alloy, and PRISM all require Java 17+. Petri nets need no extra install (bundled via npm).
+
+One-step install:
 
 ```bash
-# Install Java 17: https://adoptium.net/
-# Then download tla2tools.jar (~50MB, gitignored):
-curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \
-     -o formal/tla/tla2tools.jar
+node bin/install-formal-tools.cjs
+# or: node bin/install.js --formal
 ```
 
-**Alloy (relational logic):** Download from [alloytools.org](https://alloytools.org/download.html). Place the `org.alloytools.alloy.dist.jar` in `formal/alloy/`. Java 17+ required.
+Full per-tool documentation: **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**
 
-**PRISM (probabilistic model checker):** Install from [prismmodelchecker.org](https://www.prismmodelchecker.org/). Ensure `prism` is on your PATH.
+Quick summary:
 
-**Petri nets:** Rendered via `@hpcc-js/wasm-graphviz` (included as a dev dependency — no additional install needed).
+| Tool | Requires | One-time setup |
+|------|----------|----------------|
+| TLA+ | Java 17+ | Auto-downloaded to `formal/tla/` by install script |
+| Alloy 6 | Java 17+ | Auto-downloaded to `formal/alloy/` by install script |
+| PRISM | Java 17+ | Downloaded + installed by script; set `PRISM_BIN` as instructed |
+| Petri nets | — | Nothing — bundled via `@hpcc-js/wasm-graphviz` |
 
 #### Running Verification
 

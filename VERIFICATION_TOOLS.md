@@ -2,26 +2,27 @@
 
 This file documents installation and usage for all QGSD formal verification tools.
 
-## Shared Prerequisite: Java 17
+## Prerequisites
 
-TLA+, Alloy, and PRISM are all JVM-based tools. **Install Java 17 once** and all three tools work.
-
-### Install Java 17
-
-Download from https://adoptium.net/ — select Java 17 (LTS).
-
-After install, set JAVA_HOME:
+Install all formal verification tools in one step:
 
 ```bash
-# macOS (after Adoptium install)
-export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-
-# Linux
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-
-# Verify
-java --version  # must show "openjdk 17.x.x" or higher
+node bin/install-formal-tools.cjs
+# or via the installer:
+node bin/install.js --formal
 ```
+
+This script:
+- Checks for Java 17+ (required by TLA+, Alloy, PRISM) and warns if missing
+- Downloads `tla2tools.jar` into `formal/tla/`
+- Downloads `org.alloytools.alloy.dist.jar` into `formal/alloy/`
+- Downloads and installs PRISM for your platform, prints `PRISM_BIN` export
+- Notes that Petri nets require no install (bundled via npm)
+
+Idempotent — safe to run multiple times. PRISM install is non-blocking.
+
+If you prefer manual installation, download Java 17 from https://adoptium.net/
+and follow the per-tool instructions below.
 
 ---
 
