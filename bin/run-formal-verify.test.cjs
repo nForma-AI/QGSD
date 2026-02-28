@@ -254,3 +254,21 @@ test('watch mode (DX-01): exits cleanly on SIGINT with exit code 0', { timeout: 
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+test('UNIF-03: --only=ci filter resolves ci:trace-redaction and ci:trace-schema-drift steps', () => {
+  const result = spawnSync(process.execPath, [RUN_FV, '--only=ci'], {
+    encoding: 'utf8',
+    timeout: 30000,
+  });
+  // Must NOT exit with "Unknown --only value" error (which happens when no STEPS match)
+  assert.doesNotMatch(result.stderr || '', /Unknown --only value/i);
+  const output = (result.stdout || '') + (result.stderr || '');
+  assert.ok(
+    output.includes('ci:trace-redaction'),
+    'ci:trace-redaction must be in STEPS — UNIF-03 fix requires both CI enforcement steps inside orchestrator'
+  );
+  assert.ok(
+    output.includes('ci:trace-schema-drift'),
+    'ci:trace-schema-drift must be in STEPS — UNIF-03 fix requires both CI enforcement steps inside orchestrator'
+  );
+});
