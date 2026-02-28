@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.20 milestone complete — all 4 active phases done (v0.20-01, v0.20-02, v0.20-03, v0.20-04)
+**Current focus:** v0.20 — 5 of 8 phases complete; v0.20-06 (Triage Bundle) is next
 
 ## Current Position
 
-Phase: v0.20-04 of 7 (Verification Gate) — COMPLETE
+Phase: v0.20-05 (Evidence Confidence) — COMPLETE
 Plan: All 3 plans complete
-Status: Phase complete — v0.20-04 is last phase in milestone
-Last activity: 2026-02-28 — v0.20-04 complete (VERIFY-01 + VERIFY-02 satisfied)
+Status: Ready to plan v0.20-06
+Last activity: 2026-02-28 — v0.20-05 complete (EVID-01 + EVID-02 satisfied); v0.20-08 Sensitivity Analysis added
 
-Progress: [▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░] v0.20: 4/7 phases complete (v0.20-04 done, is_last_phase=true)
+Progress: [▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░] v0.20: 5/8 phases complete (v0.20-04 done, v0.20-06..08 pending)
 
 ## Performance Metrics
 

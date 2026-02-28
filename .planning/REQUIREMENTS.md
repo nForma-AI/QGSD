@@ -24,24 +24,30 @@
 
 ### Verification Gate (VERIFY)
 
-- [ ] **VERIFY-01**: `qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIFICATION.md`
-- [ ] **VERIFY-02**: `VERIFICATION.md` template gains a `## Formal Verification` section summarizing pass/fail/warn counts per formalism (tla, alloy, prism, ci)
+- [x] **VERIFY-01**: `qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIFICATION.md`
+- [x] **VERIFY-02**: `VERIFICATION.md` template gains a `## Formal Verification` section summarizing pass/fail/warn counts per formalism (tla, alloy, prism, ci)
 
 ### Evidence Confidence (EVID)
 
-- [ ] **EVID-01**: `never_observed` path entries in `validate-traces.cjs` evidence output carry `confidence: low|medium|high` based on trace volume and window duration
-- [ ] **EVID-02**: `observation_window` metadata (window_start, window_end, n_traces, n_events, window_days) written to `check-results.ndjson` for evidence-driven checks
+- [x] **EVID-01**: `never_observed` path entries in `validate-traces.cjs` evidence output carry `confidence: low|medium|high` based on trace volume and window duration
+- [x] **EVID-02**: `observation_window` metadata (window_start, window_end, n_traces, n_events, window_days) written to `check-results.ndjson` for evidence-driven checks
 
 ### Triage Bundle (TRIAGE)
 
-- [ ] **TRIAGE-01**: `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` (per-check delta from last run) and `formal/suspects.md` (checks with `result=fail` or `triage_tags` set)
-- [ ] **TRIAGE-02**: `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step after all checks complete
+- [x] **TRIAGE-01**: `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` (per-check delta from last run) and `formal/suspects.md` (checks with `result=fail` or `triage_tags` set)
+- [x] **TRIAGE-02**: `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step after all checks complete
 
 ### UPPAAL Timed Race Modeling (UPPAAL)
 
 - [ ] **UPPAAL-01**: A UPPAAL timed automaton model (`formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.
 - [ ] **UPPAAL-02**: `bin/run-uppaal.cjs` executes the UPPAAL model checker (verifyta CLI) against `quorum-races.xml` and writes a check result to `check-results.ndjson` using the v2.1 schema (SCHEMA-01 prerequisite). The STEPS entry `uppaal:quorum-races` is added to `run-formal-verify.cjs`.
 - [ ] **UPPAAL-03**: The model surfaces at least two critical measurement points as annotated properties: (a) the minimum inter-slot response gap that prevents a race condition, (b) the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.
+
+### Sensitivity Analysis (SENS)
+
+- [ ] **SENS-01**: `bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.
+- [ ] **SENS-02**: `plan-phase.md` step 8.3 (FV gate) is extended to also run `run-sensitivity-sweep.cjs` (fail-open) and inject `SENSITIVITY_CONTEXT` into the quorum `review_context`, surfacing the top-3 highest-impact parameters as planning recommendations: which code paths control them, which boundary values to test, and which metrics to monitor.
+- [ ] **SENS-03**: `bin/sensitivity-report.cjs` generates `formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.
 
 ## Out of Scope
 
@@ -64,19 +70,22 @@
 | PLAN-01 | v0.20-03 | Complete |
 | PLAN-02 | v0.20-03 | Complete |
 | PLAN-03 | v0.20-03 | Complete |
-| VERIFY-01 | v0.20-04 | Pending |
-| VERIFY-02 | v0.20-04 | Pending |
-| EVID-01 | v0.20-05 | Pending |
-| EVID-02 | v0.20-05 | Pending |
-| TRIAGE-01 | v0.20-06 | Pending |
-| TRIAGE-02 | v0.20-06 | Pending |
+| VERIFY-01 | v0.20-04 | Complete |
+| VERIFY-02 | v0.20-04 | Complete |
+| EVID-01 | v0.20-05 | Complete |
+| EVID-02 | v0.20-05 | Complete |
+| TRIAGE-01 | v0.20-06 | Complete |
+| TRIAGE-02 | v0.20-06 | Complete |
 | UPPAAL-01 | v0.20-07 | Pending |
 | UPPAAL-02 | v0.20-07 | Pending |
 | UPPAAL-03 | v0.20-07 | Pending |
+| SENS-01 | v0.20-08 | Pending |
+| SENS-02 | v0.20-08 | Pending |
+| SENS-03 | v0.20-08 | Pending |
 
 **Coverage:**
-- v0.20 requirements: 17 total
-- Mapped to phases: 17
+- v0.20 requirements: 20 total
+- Mapped to phases: 20
 - Unmapped: 0 ✓
 
 ---
