@@ -1097,7 +1097,10 @@ Plans:
   1. Traceability table in REQUIREMENTS.md contains rows for DRIFT-02, MCPENV-01..04, and IMPR-01..04 with correct phase assignments and status
   2. All 13 stale checkboxes updated: LIVE-01/02, REDACT-01..03, EVID-01..02, DRIFT-01/02, MCPENV-01..04 changed from `[ ]` to `[x]`
   3. Coverage count at top of REQUIREMENTS.md reflects correct satisfied/total numbers
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] v0.19-09-01-PLAN.md — Fix 13 stale checkboxes, add 9 missing traceability rows, update footer
 
 
 ## Progress
