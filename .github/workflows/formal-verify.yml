@@ -139,6 +139,11 @@ jobs:
           PRISM_BIN: /tmp/prism/bin/prism
         run: node bin/run-prism.cjs
 
+      - name: PRISM mcp-availability — per-slot MCP availability rates (MCPENV-04)
+        env:
+          PRISM_BIN: /tmp/prism/bin/prism
+        run: node bin/run-prism.cjs --model=mcp-availability
+
       - name: Quorum health check (requires scoreboard — advisory only in CI)
         run: node bin/verify-quorum-health.cjs || echo "[verify-quorum-health] No scoreboard in CI — skipped (run locally against live data)"
         continue-on-error: true

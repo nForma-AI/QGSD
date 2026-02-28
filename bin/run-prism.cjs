@@ -76,6 +76,15 @@ function readMCPAvailabilityRates(sbPath) {
       const votes = round.votes || {};
       for (const [slot, code] of Object.entries(votes)) {
         if (slot === 'claude') continue; // exclude self
+        // FILTER FIRST — inside readMCPAvailabilityRates, before building the rates object.
+        // Composite keys (e.g. 'claude-1:deepseek-ai/DeepSeek-V3.2') contain ':' or '/'
+        // which are illegal PRISM identifier characters. Filter them out here so the returned
+        // rates object contains only base keys — making the function directly testable with
+        // realistic scoreboards that include composite keys.
+        if (slot.includes(':') || slot.includes('/')) {
+          process.stderr.write('[run-prism] Skipping composite key (invalid PRISM identifier): ' + slot + '\n');
+          continue;
+        }
         if (!slotStats[slot]) slotStats[slot] = { total: 0, unavail: 0 };
         slotStats[slot].total++;
         if (code === 'UNAVAIL') slotStats[slot].unavail++;
@@ -344,8 +353,8 @@ try {
   process.stderr.write('[run-prism] Warning: failed to write check result: ' + e.message + '\n');
 }
 
-process.exit(passed ? 0 : (finalResult === 'warn' ? 0 : 1));
-
-if (typeof module !== 'undefined') {
-  module.exports = { readMCPAvailabilityRates };
+if (require.main === module) {
+  process.exit(passed ? 0 : (finalResult === 'warn' ? 0 : 1));
 }
+
+module.exports = { readMCPAvailabilityRates };

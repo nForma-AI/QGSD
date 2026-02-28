@@ -168,6 +168,11 @@ const STEPS = [
     label: 'PRISM oauth-rotation probability',
     type: 'node', script: 'run-oauth-rotation-prism.cjs', args: [],
   },
+  {
+    tool: 'prism', id: 'prism:mcp-availability',
+    label: 'PRISM mcp-availability — per-slot MCP availability rates (MCPENV-04)',
+    type: 'node', script: 'run-prism.cjs', args: ['--model=mcp-availability'],
+  },
 ];
 
 // ── CLI filter ────────────────────────────────────────────────────────────────
