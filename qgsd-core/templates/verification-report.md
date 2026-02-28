@@ -320,3 +320,38 @@ None needed until automated gaps are fixed.
 *Verified: 2025-01-15T14:30:00Z*
 *Verifier: Claude (subagent)*
 ```
+
+---
+
+## Formal Verification
+
+> This section is generated automatically by `qgsd-verifier` after running `run-formal-verify --only=tla`.
+> Phase post-verification uses TLA+ only for consistency with the planning gate (PLAN-01).
+> For comprehensive analysis across all formalisms, run `node bin/run-formal-verify.cjs` separately.
+
+**Command:** `run-formal-verify --only=tla`
+**Completed:** {ISO_TIMESTAMP}
+**Overall Status:** {pass | inconclusive | fail}
+
+### TLA+ Results
+
+| Result | Count | Notes |
+|--------|-------|-------|
+| pass | {N} | Checks verified |
+| fail | {N} | Critical: investigation needed |
+| warn | {N} | Advisory: review recommended |
+| inconclusive | {N} | Requires fairness assumptions or additional data |
+
+### Summary by Result Type
+
+| Result | Count | Notes |
+|--------|-------|-------|
+| pass | {TOTAL_PASS} | All formal properties verified |
+| fail | {TOTAL_FAIL} | Critical: formal properties violated |
+| warn | {TOTAL_WARN} | Advisory items |
+| inconclusive | {TOTAL_INCONCLUSIVE} | Requires additional verification |
+
+**Conclusion:** {Generated from result counts — see bin/verify-formal-results.cjs generateFVSection}
+
+> Replace all `{PLACEHOLDER}` values above with actual results when using this template.
+> For phases with no formal verification run, omit this section or note "FV not run for this phase."
