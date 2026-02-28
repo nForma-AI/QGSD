@@ -192,6 +192,11 @@ const STEPS = [
     label: 'Liveness-fairness lint — detect liveness properties without fairness declarations (LIVE-01, LIVE-02)',
     type: 'node', script: 'check-liveness-fairness.cjs', args: [],
   },
+  {
+    tool: 'ci', id: 'ci:conformance-traces',
+    label: 'Conformance trace validation — XState machine replay with evidence confidence (EVID-01, EVID-02)',
+    type: 'node', script: 'validate-traces.cjs', args: [],
+  },
 ];
 
 // ── CLI filter ────────────────────────────────────────────────────────────────

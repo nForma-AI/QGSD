@@ -280,3 +280,10 @@ test('LIVE-02: STEPS includes ci:liveness-fairness-lint entry', () => {
   assert.match(src, /check-liveness-fairness\.cjs/);
   assert.match(src, /tool:\s*['"]ci['"]/);
 });
+
+test('STEPS contains ci:conformance-traces entry', () => {
+  // Guard: ensures the ci:conformance-traces STEPS entry is not accidentally removed (EVID-01, EVID-02)
+  const src = fs.readFileSync(path.join(__dirname, 'run-formal-verify.cjs'), 'utf8');
+  assert.ok(src.includes("id: 'ci:conformance-traces'"), "STEPS must include ci:conformance-traces");
+  assert.ok(src.includes("validate-traces.cjs"), "STEPS ci:conformance-traces must reference validate-traces.cjs");
+});
