@@ -1236,4 +1236,4 @@ Plans:
 | v0.19-04. Enforcement Layer | v0.19 | 0/3 | Not started | - |
 | v0.19-05. MCP Environment Model | v0.19 | Complete    | 2026-02-27 | - |
 | v0.19-10. CALIB-04 Policy Wire-Up | v0.19 | Complete    | 2026-02-28 | - |
-| v0.19-11. UNIF-03 Summary Fix + Checkbox Cleanup | v0.19 | 1/2 | In progress | 2026-02-28 |
+| v0.19-11. UNIF-03 Summary Fix + Checkbox Cleanup | v0.19 | Complete    | 2026-02-28 | 2026-02-28 |
