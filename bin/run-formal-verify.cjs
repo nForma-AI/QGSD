@@ -12,16 +12,18 @@
 //   Alloy      (7)  — quorum-votes, scoreboard-recompute, availability-parsing,
 //                     transcript-scan, install-scope, taxonomy-safety, account-pool-structure
 //   PRISM      (2)  — quorum, oauth-rotation
+//   CI enforce (2)  — check-trace-redaction.cjs, check-trace-schema-drift.cjs
 //   ─────────────────────────────────────────────────────────────
-//   Total:    21 steps
+//   Total:    23 steps
 //
 // Usage:
-//   node bin/run-formal-verify.cjs                    # all 21 steps
+//   node bin/run-formal-verify.cjs                    # all 23 steps
 //   node bin/run-formal-verify.cjs --only=generate    # source extraction only (2 steps)
 //   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (8 steps)
 //   node bin/run-formal-verify.cjs --only=alloy       # Alloy only (7 steps)
 //   node bin/run-formal-verify.cjs --only=prism       # PRISM only (2 steps)
 //   node bin/run-formal-verify.cjs --only=petri       # Petri only (2 steps)
+//   node bin/run-formal-verify.cjs --only=ci          # CI enforcement only (2 steps)
 //
 // Behaviour:
 //   - Runs steps sequentially; streams child output to stdout/stderr.
@@ -172,6 +174,18 @@ const STEPS = [
     tool: 'prism', id: 'prism:mcp-availability',
     label: 'PRISM mcp-availability — per-slot MCP availability rates (MCPENV-04)',
     type: 'node', script: 'run-prism.cjs', args: ['--model=mcp-availability'],
+  },
+
+  // ─ CI enforcement — redaction + schema drift ──────────────────────────────
+  {
+    tool: 'ci', id: 'ci:trace-redaction',
+    label: 'Trace redaction enforcement (check-trace-redaction.cjs)',
+    type: 'node', script: 'check-trace-redaction.cjs', args: [],
+  },
+  {
+    tool: 'ci', id: 'ci:trace-schema-drift',
+    label: 'Trace schema drift guard (check-trace-schema-drift.cjs)',
+    type: 'node', script: 'check-trace-schema-drift.cjs', args: [],
   },
 ];
 
