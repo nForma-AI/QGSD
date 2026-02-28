@@ -117,3 +117,160 @@ test('NDJSON_PATH exported correctly', () => {
   if (origEnv !== undefined) process.env.CHECK_RESULTS_PATH = origEnv;
   delete require.cache[require.resolve(MODULE_PATH)];
 });
+
+// ─── Test 8: writeCheckResult throws on missing check_id ──────────────────
+test('writeCheckResult throws on missing check_id', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({ tool: 'run-tlc', formalism: 'tla', result: 'pass' }),
+    /check_id/
+  );
+});
+
+// ─── Test 9: writeCheckResult throws on missing surface ───────────────────
+test('writeCheckResult throws on missing surface', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({ tool: 'run-tlc', formalism: 'tla', result: 'pass', check_id: 'tla:quorum-safety' }),
+    /surface/
+  );
+});
+
+// ─── Test 10: writeCheckResult throws on missing property ─────────────────
+test('writeCheckResult throws on missing property', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({ tool: 'run-tlc', formalism: 'tla', result: 'pass', check_id: 'tla:quorum-safety', surface: 'tla' }),
+    /property/
+  );
+});
+
+// ─── Test 11: writeCheckResult throws on missing runtime_ms ───────────────
+test('writeCheckResult throws on missing runtime_ms', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({
+      tool: 'run-tlc', formalism: 'tla', result: 'pass',
+      check_id: 'tla:quorum-safety', surface: 'tla',
+      property: 'Safety invariants', summary: 'pass: MCsafety in 0ms'
+    }),
+    /runtime_ms/
+  );
+});
+
+// ─── Test 12: writeCheckResult throws on missing summary ──────────────────
+test('writeCheckResult throws on missing summary', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { writeCheckResult } = require(MODULE_PATH);
+  assert.throws(
+    () => writeCheckResult({
+      tool: 'run-tlc', formalism: 'tla', result: 'pass',
+      check_id: 'tla:quorum-safety', surface: 'tla',
+      property: 'Safety invariants', runtime_ms: 1823
+    }),
+    /summary/
+  );
+});
+
+// ─── Test 13: v2.1 record has all required fields at top level ─────────────
+test('v2.1 record has all required fields at top level', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    const origEnv = process.env.CHECK_RESULTS_PATH;
+    process.env.CHECK_RESULTS_PATH = tmpFile;
+    delete require.cache[require.resolve(MODULE_PATH)];
+    const { writeCheckResult } = require(MODULE_PATH);
+
+    writeCheckResult({
+      tool: 'run-tlc', formalism: 'tla', result: 'pass',
+      check_id: 'tla:quorum-safety', surface: 'tla',
+      property: 'Safety invariants — TypeInvariant, SafetyInvariant',
+      runtime_ms: 1823, summary: 'pass: MCsafety verified in 1823ms',
+      triage_tags: [], metadata: { config: 'MCsafety' }
+    });
+
+    const line   = fs.readFileSync(tmpFile, 'utf8').trim();
+    const record = JSON.parse(line);
+
+    assert.ok('check_id'    in record, 'Missing top-level field: check_id');
+    assert.ok('surface'     in record, 'Missing top-level field: surface');
+    assert.ok('property'    in record, 'Missing top-level field: property');
+    assert.ok('runtime_ms'  in record, 'Missing top-level field: runtime_ms');
+    assert.ok('summary'     in record, 'Missing top-level field: summary');
+    assert.ok('triage_tags' in record, 'Missing top-level field: triage_tags');
+
+    assert.strictEqual(record.runtime_ms, 1823, 'runtime_ms must be integer 1823 (not float)');
+    assert.ok(Number.isInteger(record.runtime_ms), 'runtime_ms must be an integer');
+    assert.deepStrictEqual(record.triage_tags, [], 'triage_tags must deep-equal []');
+
+    process.env.CHECK_RESULTS_PATH = origEnv;
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
+
+// ─── Test 14: v2.1 record without observation_window omits the field ───────
+test('v2.1 record without observation_window omits the field', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    const origEnv = process.env.CHECK_RESULTS_PATH;
+    process.env.CHECK_RESULTS_PATH = tmpFile;
+    delete require.cache[require.resolve(MODULE_PATH)];
+    const { writeCheckResult } = require(MODULE_PATH);
+
+    writeCheckResult({
+      tool: 'run-tlc', formalism: 'tla', result: 'pass',
+      check_id: 'tla:quorum-safety', surface: 'tla',
+      property: 'Safety invariants', runtime_ms: 1823,
+      summary: 'pass: MCsafety verified in 1823ms',
+      triage_tags: [], metadata: { config: 'MCsafety' }
+    });
+
+    const line   = fs.readFileSync(tmpFile, 'utf8').trim();
+    const record = JSON.parse(line);
+
+    assert.strictEqual('observation_window' in record, false, 'observation_window must be absent when not provided');
+
+    process.env.CHECK_RESULTS_PATH = origEnv;
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
+
+// ─── Test 15: triage_tags defaults to empty array when not provided ─────────
+test('triage_tags defaults to empty array when not provided', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    const origEnv = process.env.CHECK_RESULTS_PATH;
+    process.env.CHECK_RESULTS_PATH = tmpFile;
+    delete require.cache[require.resolve(MODULE_PATH)];
+    const { writeCheckResult } = require(MODULE_PATH);
+
+    writeCheckResult({
+      tool: 'run-tlc', formalism: 'tla', result: 'pass',
+      check_id: 'tla:quorum-safety', surface: 'tla',
+      property: 'Safety invariants', runtime_ms: 1823,
+      summary: 'pass: MCsafety verified in 1823ms'
+    });
+
+    const line   = fs.readFileSync(tmpFile, 'utf8').trim();
+    const record = JSON.parse(line);
+
+    assert.ok(Array.isArray(record.triage_tags) && record.triage_tags.length === 0,
+      'triage_tags must default to empty array []');
+
+    process.env.CHECK_RESULTS_PATH = origEnv;
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
