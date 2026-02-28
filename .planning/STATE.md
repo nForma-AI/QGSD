@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.20 Phase v0.20-02 — Liveness Fairness Lint
+**Current focus:** v0.20 Phase v0.20-03 — Planning Gate
 
 ## Current Position
 
-Phase: v0.20-02 of 6 (Liveness Fairness Lint)
-Plan: 03 of 03 (Completed)
-Status: All Plans Complete — Verification In Progress
-Last activity: 2026-02-28 — v0.20-02-03 executed (ci:liveness-fairness-lint STEPS registration)
+Phase: v0.20-03 of 7 (Planning Gate)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-02-28 — v0.20-02 complete (LIVE-01 + LIVE-02 satisfied)
 
-Progress: [▓▓▓░░░░░░░░░░░░░░░░░░░░] v0.20: 2/6 phases (Plan 03/03 complete, all implementation done)
+Progress: [▓▓▓▓░░░░░░░░░░░░░░░░░░░] v0.20: 2/7 phases complete (v0.20-02 done, advancing to v0.20-03)
 
 ## Performance Metrics
 
@@ -83,7 +83,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — Phase v0.20-02 Plan 02 Implementation complete (check-liveness-fairness.cjs)
+Last activity: 2026-02-28 — Phase v0.20-02 complete, all 3 plans done, LIVE-01 + LIVE-02 satisfied
 Last session: 2026-02-28
-Stopped at: v0.20-02-03 complete, all 3 plans done — phase verification running
+Stopped at: Phase v0.20-02 complete, ready to plan Phase v0.20-03 (Planning Gate)
 Resume file: None

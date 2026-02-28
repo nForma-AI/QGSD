@@ -236,6 +236,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
+- ✓ Liveness fairness lint — centralized check-liveness-fairness.cjs CI step with dynamic MC*.cfg discovery; emits result=inconclusive for liveness configs lacking fairness declarations; ci:liveness-fairness-lint as 26th STEPS entry in run-formal-verify.cjs (LIVE-01..02) — v0.20 (Phase v0.20-02)
 - ✓ Schema enrichment — check-result.schema.json v2.1 (check_id, surface, property, runtime_ms, summary, triage_tags, observation_window); write-check-result.cjs + all 21 active callers updated (SCHEMA-01..03) — v0.20 (Phase v0.20-01)
 - ✓ Unified verdict format: all 13 FV checkers emit normalized NDJSON to check-results.ndjson; check-results-exit.cjs CI gate exits non-zero on any result=fail (UNIF-01..04) — v0.19 (Phases v0.19-01, v0.19-11)
 - ✓ Calibration governance: formal/policy.yaml cold-start thresholds + read-policy.cjs; conservative_priors.tp_rate/unavail wired directly to run-prism.cjs fallback constants; 18/18 tests (CALIB-01..04) — v0.19 (Phases v0.19-02, v0.19-10)
@@ -295,7 +296,6 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 ### Active
 
 <!-- v0.20 scope: FV as Active Planning Gate -->
-- [ ] Liveness fairness lint — CI step detects liveness properties lacking fairness declaration; emits result=inconclusive (LIVE-01..02) — v0.20
 - [ ] Planning gate — run-formal-verify --only=tla wired into plan-phase.md pre-quorum; TLC violations as hypotheses to planner; fail-open (PLAN-01..03) — v0.20
 - [ ] Verification gate — run-formal-verify wired into qgsd-verifier; check-results.ndjson digest in VERIFICATION.md (VERIFY-01..02) — v0.20
 - [ ] Evidence confidence — never_observed entries carry confidence: low/medium/high + observation_window metadata (EVID-01..02) — v0.20
@@ -433,4 +433,4 @@ QGSD v0.19 FV Pipeline Hardening shipped 2026-02-28 (11 phases, 26 plans, 25/25 
 | readMCPAvailabilityRates composite-key filter (contains ':' or '/') | Scoreboard keys like `claude-1:model-id` and `/path/to/file` are not PRISM model IDs; composite-key filter before rates object construction prevents PRISM constant corruption | Phase v0.19-08 — MCPENV-04 |
 
 ---
-*Last updated: 2026-02-28 after Phase v0.20-01 — Schema Enrichment complete. SCHEMA-01..03 satisfied: check-result.schema.json v2.1, writeCheckResult v2.1 enforced, all 21 active callers updated. v0.20-02 (Liveness Fairness Lint) next.*
+*Last updated: 2026-02-28 after Phase v0.20-02 — Liveness Fairness Lint complete. LIVE-01..02 satisfied: check-liveness-fairness.cjs implemented with dynamic MC*.cfg discovery, ci:liveness-fairness-lint wired as 26th STEPS entry in run-formal-verify.cjs. v0.20-03 (Planning Gate) next.*
