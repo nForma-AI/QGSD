@@ -197,3 +197,13 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.19 FV Pipeline Hardening (Shipped: 2026-02-28)
+
+**Phases completed:** 57 phases, 132 plans, 61 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+

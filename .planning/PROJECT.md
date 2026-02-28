@@ -24,7 +24,9 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 **Goal:** Add a governance layer to QGSD's existing formal verification pipeline — unified check-results output, cold-start calibration policy, liveness fairness declarations, redaction enforcement, evidence confidence qualifiers, and trace schema drift guards — making the FV infrastructure production-grade.
 
-**Shipped:** 25/25 requirements satisfied (UNIF-01..04, CALIB-01..04, LIVE-01..02, REDACT-01..03, EVID-01..02, DRIFT-01..02, MCPENV-01..04, REQT-01..04). All implementation gaps closed. Documentation debt resolved.
+**Shipped:** 25/25 requirements satisfied (UNIF-01..04, CALIB-01..04, LIVE-01..02, REDACT-01..03, EVID-01..02, DRIFT-01..02, MCPENV-01..04, IMPR-01..04). All implementation gaps closed. All tech debt resolved (CALIB-04 wired v0.19-10, UNIF-03 fixed v0.19-11). Zero residual debt.
+
+**Phases:** v0.19-01..v0.19-11 (11 phases, 26 plans)
 
 ## Shipped: v0.18 Token Efficiency (2026-02-27, audit in progress)
 
@@ -234,8 +236,13 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
-- ✓ Liveness fairness wiring: all 4 remaining TLC runners (run-oscillation-tlc.cjs, run-breaker-tlc.cjs, run-protocol-tlc.cjs, run-account-manager-tlc.cjs) now call `detectLivenessProperties(configName, cfgPath)` on the success path, emitting `result=inconclusive` when the companion `invariants.md` has no fairness declaration — closes LIVE-02, 12 new tests GREEN — v0.19 (Phase v0.19-07)
+- ✓ Unified verdict format: all 13 FV checkers emit normalized NDJSON to check-results.ndjson; check-results-exit.cjs CI gate exits non-zero on any result=fail (UNIF-01..04) — v0.19 (Phases v0.19-01, v0.19-11)
+- ✓ Calibration governance: formal/policy.yaml cold-start thresholds + read-policy.cjs; conservative_priors.tp_rate/unavail wired directly to run-prism.cjs fallback constants; 18/18 tests (CALIB-01..04) — v0.19 (Phases v0.19-02, v0.19-10)
+- ✓ Liveness fairness: invariants.md fairness declarations for all 8 surfaces; detectLivenessProperties() wired to all 5 TLC runners — emits result=inconclusive on missing declaration (LIVE-01..02) — v0.19 (Phases v0.19-03, v0.19-07)
+- ✓ Enforcement layer: check-trace-redaction.cjs, never_observed confidence metadata in validate-traces.cjs, check-trace-schema-drift.cjs; all CI-wired via run-formal-verify.cjs STEPS (REDACT-01..03, EVID-01..02, DRIFT-01..02) — v0.19 (Phase v0.19-04)
+- ✓ MCP environment model: QGSDMCPEnv.tla formal fault-tolerance proof; MCMCPEnv in SURFACE_MAP + VALID_CONFIGS; invariants.md EventualDecision fairness; mcp-availability.pm composite-key filter + module.exports fix; all CI-wired (MCPENV-01..04) — v0.19 (Phases v0.19-05, v0.19-08)
 - ✓ R3.6 iterative improvement protocol: slot-worker parses `Improvements:` field (IMPR-01), quorum emits `QUORUM_IMPROVEMENTS` HTML signal with de-duplication (IMPR-02), plan-phase and quick both implement R3.6 outer loop (IMPR-03/04); CLAUDE.md file-read instructions removed from 7 agent/workflow files and replaced with self-contained inline guidance; 27 new tests — v0.19 (Phase v0.19-06)
+- ✓ Liveness fairness wiring: all 4 remaining TLC runners (run-oscillation-tlc.cjs, run-breaker-tlc.cjs, run-protocol-tlc.cjs, run-account-manager-tlc.cjs) now call `detectLivenessProperties(configName, cfgPath)` on the success path, emitting `result=inconclusive` when the companion `invariants.md` has no fairness declaration — closes LIVE-02, 12 new tests GREEN — v0.19 (Phase v0.19-07)
 - ✓ PRISM mcp-availability.pm model calibrated from scoreboard UNAVAIL rates; readMCPAvailabilityRates() helper + 4 integration tests (MCPENV-04) — v0.19 (Phase v0.19-05)
 - ✓ PRISM config injection — `readScoreboardRates()` in run-prism.cjs reads quorum-scoreboard.json, injects empirical TP/unavail rates as `-const` flags; caller override wins; conservative priors (0.85/0.15) when no scoreboard; 4 integration tests in run-prism.test.cjs (PRISM-01, PRISM-02) — v0.14 (Phase v0.14-04)
 - ✓ Parallelized `run-formal-verify.cjs` — generate step sequential, tla/alloy/prism/petri groups concurrent via Promise.all; wall-clock timing in summary (PERF-01, PERF-02) — v0.14 (Phase v0.14-03)
@@ -286,17 +293,14 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Active
 
-<!-- v0.19 scope: FV Pipeline Hardening -->
-- [ ] Unified verdict format — all FV checkers emit to check-results.ndjson; triage bundle reads from canonical stream (UNIF-01..04) — v0.19
-- [ ] Calibration governance — policy.yaml cold-start thresholds; PRISM warns during cold start; observation window metadata (CALIB-01..04) — v0.19
-- [ ] Liveness fairness — WF_vars/SF_vars declared in invariants.md; LIVE-01 (wiring in run-tlc.cjs) complete; LIVE-02 complete (all 4 runners) — v0.19
-- [ ] Redaction enforcement — redaction.yaml + check-trace-redaction.cjs; CI fails on forbidden keys (REDACT-01..03) — v0.19
-- [ ] Evidence confidence — never_observed entries include support metadata and confidence tier (EVID-01..02) — v0.19
-- [ ] Schema drift guard — check-trace-schema-drift.cjs blocks non-atomic schema changes (DRIFT-01..02) — v0.19
-
-<!-- Carry-forward: deferred from v0.15 -->
-- [ ] gsd-tools.cjs W005/W007/W002 versioned phase pattern support (HLTH-01..03) — v0.15 deferred
-- [ ] `--repair` guard + legacy dir archive + health quorum-failures surfacing (SAFE-01/02, VIS-01) — v0.15 deferred
+<!-- v0.20 scope: FV as Active Planning Gate -->
+- [ ] Schema enrichment — check-result.schema.json v2.1 (check_id, surface, property, runtime_ms, summary, triage_tags, observation_window); write-check-result.cjs + all 23 callers updated (SCHEMA-01..03) — v0.20
+- [ ] Liveness fairness lint — CI step detects liveness properties lacking fairness declaration; emits result=inconclusive (LIVE-01..02) — v0.20
+- [ ] Planning gate — run-formal-verify --only=tla wired into plan-phase.md pre-quorum; TLC violations as hypotheses to planner; fail-open (PLAN-01..03) — v0.20
+- [ ] Verification gate — run-formal-verify wired into qgsd-verifier; check-results.ndjson digest in VERIFICATION.md (VERIFY-01..02) — v0.20
+- [ ] Evidence confidence — never_observed entries carry confidence: low/medium/high + observation_window metadata (EVID-01..02) — v0.20
+- [ ] Triage bundle — generate-triage-bundle.cjs writes diff-report.md and suspects.md from check-results.ndjson (TRIAGE-01..02) — v0.20
+- [ ] UPPAAL timed race modeling — quorum-races.xml + run-uppaal.cjs + uppaal:quorum-races STEPS entry (UPPAAL-01..03) — v0.20
 
 <!-- Carry-forward: deferred from v0.3 -->
 - [ ] npm publish qgsd@0.2.0 deferred — run `npm publish --access public` when ready (RLS-04)
@@ -311,7 +315,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ## Context
 
-QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution complete (8/8 requirements). v0.2.0 npm publish still deferred by user decision.
+QGSD v0.19 FV Pipeline Hardening shipped 2026-02-28 (11 phases, 26 plans, 25/25 requirements, zero tech debt). v0.20 FV as Active Planning Gate in progress (6 phases, roadmap created 2026-02-28). v0.2.0 npm publish still deferred by user decision.
 
 **Codebase:** ~87,000+ lines (JS + MD), 450+ files across the full development cycle.
 **Tech stack:** Node.js, Claude Code hooks (UserPromptSubmit + Stop + PreToolUse), npm package.
@@ -423,5 +427,10 @@ QGSD v0.14 milestone started 2026-02-25. v0.13 Autonomous Milestone Execution co
 | PRISM_BIN=prism sentinel in run-prism.test.cjs skips existence check | With `PRISM_BIN=prism`, the existence check is bypassed (sentinel value); spawnSync attempts `prism` from PATH (fails with ENOENT), but `[run-prism] Args:` log line is printed before spawn — enabling test assertion on -const flags without PRISM installed | Phase v0.14-04 — testing pattern |
 | readScoreboardRates() computes aggregate mean across SLOTS | Per-slot TP and UNAVAIL rates averaged across ['gemini', 'opencode', 'copilot', 'codex']; 4 fallback paths all return conservative priors 0.85/0.15 | Phase v0.14-04 — PRISM-01 |
 
+| STEPS ordering: CI enforcement runs inside orchestrator before NDJSON summary read | NDJSON summary read at end of runOnce() must see all CI entries; ci:trace-redaction + ci:trace-schema-drift added as STEPS entries (tool: 'ci'); both scripts are idempotent — safe to run inside orchestrator + standalone CI | Phase v0.19-11 — UNIF-03 |
+| conservative_priors wired directly to run-prism.cjs fallback constants | policy.yaml is authoritative source; hardcoded constants overrode policy values at runtime; CALIB-04 closes the gap — `policy.conservative_priors.tp_rate` and `.unavail` replace PRISM_PRIOR_TP/UNAVAIL | Phase v0.19-10 — CALIB-04 |
+| MCMCPEnv in SURFACE_MAP + separate invariants.md with EventualDecision fairness | TLC verifies quorum fault-tolerance under arbitrary MCP failures; WF_vars triple for slots × rounds × votes declares weak fairness explicitly; CI step added to formal-verify.yml | Phase v0.19-08 — MCPENV-02 |
+| readMCPAvailabilityRates composite-key filter (contains ':' or '/') | Scoreboard keys like `claude-1:model-id` and `/path/to/file` are not PRISM model IDs; composite-key filter before rates object construction prevents PRISM constant corruption | Phase v0.19-08 — MCPENV-04 |
+
 ---
-*Last updated: 2026-02-27 after Phase v0.19-06 — R3.6 improvement protocol complete: slot-worker improvements parsing (IMPR-01, 13 tests), quorum signal emission (IMPR-02, 13 tests), plan-phase + quick R3.6 loops installed (IMPR-03/04), CLAUDE.md file-read refs removed from 7 agent/workflow files; v0.19 milestone all 6 phases complete*
+*Last updated: 2026-02-28 after v0.19 milestone completion — 11 phases, 26 plans, 25/25 requirements satisfied, zero tech debt. v0.20 FV as Active Planning Gate started.*
