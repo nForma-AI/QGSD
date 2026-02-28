@@ -234,3 +234,125 @@ test('validate-traces ignores MCP metadata fields for non-mcp_call actions', () 
   const result = validateMCPMetadata(event);
   assert.strictEqual(result, true, 'should return true for non-mcp_call events regardless of missing MCP fields');
 });
+
+// ── EVID-01 + EVID-02 Wave 0 RED Tests ───────────────────────────────────────
+// These MUST FAIL before Plan 02 implements observation_window and v2.1 fields
+// in validate-traces.cjs. They pass after Plan 02.
+// Ref: .planning/phases/v0.20-05-evidence-confidence/v0.20-05-01-PLAN.md
+
+// Helper: run validator and keep tmpDir for NDJSON inspection
+function runValidatorKeepTmp(ndjsonLines) {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-evid-test-'));
+  const planningDir = path.join(tmpDir, '.planning');
+  fs.mkdirSync(planningDir, { recursive: true });
+  if (ndjsonLines !== null) {
+    const logFile = path.join(planningDir, 'conformance-events.jsonl');
+    fs.writeFileSync(logFile, ndjsonLines.join('\n') + '\n', 'utf8');
+  }
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'validate-traces.cjs')
+  ], { cwd: tmpDir, encoding: 'utf8' });
+  // NOTE: tmpDir is NOT cleaned up — caller must do so after reading NDJSON
+  result.tmpDir = tmpDir;
+  return result;
+}
+
+// Helper: read last NDJSON record written by validate-traces.cjs
+function getLastNDJSON(tmpDir) {
+  const ndjsonPath = path.join(tmpDir, 'formal', 'check-results.ndjson');
+  if (!fs.existsSync(ndjsonPath)) return null;
+  const lines = fs.readFileSync(ndjsonPath, 'utf8').split('\n').filter(l => l.trim().length > 0);
+  if (lines.length === 0) return null;
+  return JSON.parse(lines[lines.length - 1]);
+}
+
+// Helper: write scoreboard fixture to tmpDir
+function writeScoreboard(tmpDir, rounds) {
+  fs.writeFileSync(
+    path.join(tmpDir, '.planning', 'quorum-scoreboard.json'),
+    JSON.stringify({ rounds }),
+    'utf8'
+  );
+}
+
+const VALID_EVENT = JSON.stringify({ action: 'plan_phase', timestamp: new Date().toISOString() });
+
+test('observation_window.window_start is ISO-8601 string', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.match(record.observation_window.window_start, /^\d{4}-\d{2}-\d{2}T/, 'window_start must be ISO-8601');
+});
+
+test('observation_window.window_end is ISO-8601 string', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.match(record.observation_window.window_end, /^\d{4}-\d{2}-\d{2}T/, 'window_end must be ISO-8601');
+});
+
+test('observation_window.n_traces is 0 without scoreboard', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.strictEqual(record.observation_window.n_traces, 0, 'n_traces must be 0 when no scoreboard');
+});
+
+test('observation_window.n_events equals conformance log line count', () => {
+  const events = [VALID_EVENT, VALID_EVENT, VALID_EVENT];
+  const result = runValidatorKeepTmp(events);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.strictEqual(record.observation_window.n_events, 3, 'n_events must equal conformance log line count');
+});
+
+test('observation_window.window_days is 0 without scoreboard', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.strictEqual(record.observation_window.window_days, 0, 'window_days must be 0 when no scoreboard');
+});
+
+test('observation_window.window_days matches multi-day scoreboard span', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  // Write scoreboard with rounds 10 days apart
+  writeScoreboard(result.tmpDir, [
+    { date: '2026-01-01T00:00:00.000Z' },
+    { date: '2026-01-11T00:00:00.000Z' },
+  ]);
+  // Re-run with scoreboard present
+  const result2 = spawnSync(process.execPath, [
+    path.join(__dirname, 'validate-traces.cjs')
+  ], { cwd: result.tmpDir, encoding: 'utf8' });
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.ok(record.observation_window, 'observation_window must be present');
+  assert.strictEqual(record.observation_window.window_days, 10, 'window_days must equal 10 for a 10-day scoreboard span');
+});
+
+test('check_id is ci:conformance-traces', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.strictEqual(record.check_id, 'ci:conformance-traces', 'check_id must be ci:conformance-traces');
+});
+
+test('surface is ci', () => {
+  const result = runValidatorKeepTmp([VALID_EVENT]);
+  const record = getLastNDJSON(result.tmpDir);
+  fs.rmSync(result.tmpDir, { recursive: true, force: true });
+  assert.ok(record, 'NDJSON record must be written');
+  assert.strictEqual(record.surface, 'ci', 'surface must be ci');
+});
