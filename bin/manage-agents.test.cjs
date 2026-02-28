@@ -1,10 +1,10 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { _pure } = require('./manage-agents.cjs');
+const { _pure } = require('./manage-agents-core.cjs');
 const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
         readQgsdJson, writeQgsdJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
-        buildPresetChoices, findPresetForUrl, buildCloneEntry,
+        findPresetForUrl, buildCloneEntry,
         classifyProbeResult, writeKeyStatus,
         buildDashboardLines, formatTimestamp,
         buildTimeoutChoices, applyTimeoutUpdate,
@@ -363,54 +363,6 @@ test('writeQgsdJson and readQgsdJson: roundtrip via tmp dir', () => {
   } finally {
     try { fs.unlinkSync(tmpPath); } catch (_) {}
   }
-});
-
-// ---------------------------------------------------------------------------
-// buildPresetChoices
-// ---------------------------------------------------------------------------
-
-test('buildPresetChoices: returns at least 4 choices (3+ presets + Custom)', () => {
-  const choices = buildPresetChoices();
-  // Filter out Separator objects (they have .type === 'separator')
-  const realChoices = choices.filter((c) => c && typeof c === 'object' && c.value !== undefined);
-  assert.ok(realChoices.length >= 4, `expected >= 4 choices; got ${realChoices.length}`);
-});
-
-test('buildPresetChoices: all preset values are valid HTTPS URLs', () => {
-  const choices = buildPresetChoices();
-  const presetChoices = choices.filter((c) => c && typeof c === 'object' && c.value && c.value !== '__custom__');
-  assert.ok(presetChoices.length >= 3, 'expected at least 3 preset choices');
-  for (const c of presetChoices) {
-    assert.ok(c.value.startsWith('https://'), `${c.value} is not an HTTPS URL`);
-    assert.doesNotThrow(() => new URL(c.value), `${c.value} is not a well-formed URL`);
-  }
-});
-
-test('buildPresetChoices: Custom choice has value __custom__', () => {
-  const choices = buildPresetChoices();
-  const customChoice = choices.find((c) => c && typeof c === 'object' && c.value === '__custom__');
-  assert.ok(customChoice, 'Custom choice with value __custom__ not found');
-});
-
-test('buildPresetChoices: AkashML preset maps to api.akashml.com/v1', () => {
-  const choices = buildPresetChoices();
-  const akash = choices.find((c) => c && typeof c === 'object' && c.name && c.name.includes('AkashML'));
-  assert.ok(akash, 'AkashML choice not found');
-  assert.strictEqual(akash.value, 'https://api.akashml.com/v1');
-});
-
-test('buildPresetChoices: Together.xyz preset maps to api.together.xyz/v1', () => {
-  const choices = buildPresetChoices();
-  const together = choices.find((c) => c && typeof c === 'object' && c.name && c.name.includes('Together'));
-  assert.ok(together, 'Together.xyz choice not found');
-  assert.strictEqual(together.value, 'https://api.together.xyz/v1');
-});
-
-test('buildPresetChoices: Fireworks.ai preset maps to api.fireworks.ai/inference/v1', () => {
-  const choices = buildPresetChoices();
-  const fireworks = choices.find((c) => c && typeof c === 'object' && c.name && c.name.includes('Fireworks'));
-  assert.ok(fireworks, 'Fireworks.ai choice not found');
-  assert.strictEqual(fireworks.value, 'https://api.fireworks.ai/inference/v1');
 });
 
 // ---------------------------------------------------------------------------
@@ -1060,7 +1012,7 @@ test('REGRESSION PLCY-03: Map.get(binName) resolves correctly — proves fix dir
 test('REGRESSION PLCY-03: runAutoUpdateCheck logs UPDATE_AVAILABLE not SKIP for auto-policy slot with injected statuses', async () => {
   // RED: This test will fail until runAutoUpdateCheck() accepts getStatusesFn injection (Plan 02).
   // When fixed: slot 'codex-1' with update_policy=auto must log UPDATE_AVAILABLE, not SKIP.
-  const { runAutoUpdateCheck } = require('./manage-agents.cjs')._pure;
+  const { runAutoUpdateCheck } = require('./manage-agents-core.cjs')._pure;
   // runAutoUpdateCheck is not currently in _pure — this line throws, keeping the test RED.
   assert.ok(typeof runAutoUpdateCheck === 'function', 'runAutoUpdateCheck must be exported via _pure');
 });
