@@ -80,10 +80,11 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 | 117 | Add PreCompact hook for seamless context continuation | 2026-02-27 | ccefbfa | Verified | [117-add-a-precompact-hook-to-qgsd-that-auto-](./quick/117-add-a-precompact-hook-to-qgsd-that-auto-/) |
 | 118 | Update all user-facing documentation: README with blessed TUI capabilities and formal analysis tools (PRISM, Alloy, TLA+, Petri nets) with installation instructions | 2026-02-28 | 01a4e608 | Verified | [118-update-all-user-facing-documentation-rea](./quick/118-update-all-user-facing-documentation-rea/) |
 | 119 | major documentation refresh — update all documentation | 2026-02-28 | 225369a9 | Verified | [119-major-documentation-refresh-update-all-d](./quick/119-major-documentation-refresh-update-all-d/) |
+| 121 | Build install-formal-tools.cjs cross-platform installer for TLA+ Alloy PRISM with --formal flag in install.js | 2026-02-28 | e765606c | Pending | [121-build-install-formal-tools-cjs-cross-pla](./quick/121-build-install-formal-tools-cjs-cross-pla/) |
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — Phase v0.20-02 complete, all 3 plans done, LIVE-01 + LIVE-02 satisfied
+Last activity: 2026-02-28 — Quick task 121 complete (install-formal-tools.cjs cross-platform installer)
 Last session: 2026-02-28
 Stopped at: Phase v0.20-02 complete, ready to plan Phase v0.20-03 (Planning Gate)
 Resume file: None
