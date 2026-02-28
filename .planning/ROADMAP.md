@@ -1162,7 +1162,11 @@ Plans:
   1. Every `never_observed` entry in `validate-traces.cjs` output includes a `confidence` field with value `low`, `medium`, or `high` derived from trace volume and window duration
   2. `check-results.ndjson` entries for evidence-driven checks include an `observation_window` object with `window_start`, `window_end`, `n_traces`, `n_events`, and `window_days` fields
   3. A run with fewer than the low-confidence threshold traces produces `confidence: low`; a run above the high-confidence threshold produces `confidence: high`
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] v0.20-05-01-PLAN.md — Wave 0 RED test scaffold for observation_window and v2.1 fields (EVID-01, EVID-02)
+- [ ] v0.20-05-02-PLAN.md — Implement observation_window in validate-traces.cjs (EVID-01, EVID-02)
+- [ ] v0.20-05-03-PLAN.md — Wire ci:conformance-traces STEPS entry and integration smoke (EVID-01, EVID-02)
 
 ### Phase v0.20-06: Triage Bundle
 **Goal**: After every formal verification run, `generate-triage-bundle.cjs` produces two human-readable files — a per-check delta report and a suspects list — giving the developer an immediate view of what changed and what needs attention.
