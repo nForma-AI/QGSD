@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
+See: .planning/PROJECT.md (updated 2026-02-28 after Phase v0.20-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.20 — 5 of 8 phases complete; v0.20-06 (Triage Bundle) is next
+**Current focus:** v0.20 — 6 of 8 phases complete; v0.20-07 (UPPAAL Timed Race Modeling) is next
 
 ## Current Position
 
-Phase: v0.20-05 (Evidence Confidence) — COMPLETE
+Phase: v0.20-06 (Triage Bundle) — COMPLETE
 Plan: All 3 plans complete
-Status: Ready to plan v0.20-06
-Last activity: 2026-02-28 — v0.20-05 complete (EVID-01 + EVID-02 satisfied); v0.20-08 Sensitivity Analysis added
+Status: Ready to plan v0.20-07
+Last activity: 2026-02-28 — v0.20-06 complete (TRIAGE-01 + TRIAGE-02 satisfied); triage bundle generator wired into run-formal-verify.cjs
 
-Progress: [▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░] v0.20: 5/8 phases complete (v0.20-04 done, v0.20-06..08 pending)
+Progress: [▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░] v0.20: 6/8 phases complete (v0.20-06 done, v0.20-07..08 pending)
 
 ## Performance Metrics
 
@@ -47,6 +47,8 @@ Progress: [▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░░
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.20-06-03 Implementation]: ci:triage-bundle STEPS entry added to run-formal-verify.cjs (27th entry, final position). Marked nonCritical: true — triage failure is visible in summary table but does not block exit code. record() and runGroup() updated to propagate nonCritical flag. Header updated: Triage (1), Total: 27 steps, --only=ci now 4 steps. TRIAGE-02 RED test (Wave 0 test 7) now GREEN. All 7 RED→GREEN cycle complete.
+- [v0.20-06-02 Implementation]: generate-triage-bundle.cjs implements parseCurrentNDJSON (delegates to verify-formal-results.cjs), generateSuspects (fail + triage_tags filter), computeDeltas (transitioned/new/removed checks), loadPreviousSnapshot (extracts embedded JSON block from diff-report.md), formatDiffReport (first-run/delta modes), formatSuspectsReport (grouped by priority). Snapshot embedded in diff-report.md JSON block for next-run delta computation. TRIAGE-01 satisfied.
 - [v0.20-02-03 Implementation]: ci:liveness-fairness-lint STEPS entry added to run-formal-verify.cjs (26th entry). Header updated: CI enforce (3), Total: 26 steps. LIVE-02 RED test from Plan 01 now GREEN. --only=ci runs all 3 CI steps including check-liveness-fairness.cjs. All verification criteria met.
 - [v0.20-02-02 Implementation]: Liveness fairness lint check-liveness-fairness.cjs complete. Implemented as centralized CI step with dynamic MC*.cfg discovery (no hardcoded config list). Detects liveness properties lacking fairness declarations and emits v2.1 NDJSON result='pass'|'inconclusive'. Always exits 0 (inconclusive not a failure). Enhanced detectLivenessProperties with fallback surface mapping (strip 'MC' prefix if config unknown) to support test isolation. All 6 Wave 0 RED tests now GREEN. LIVE-01 and LIVE-02 requirements satisfied.
 - [v0.20-02-01 Wave 0 Scaffold]: Liveness fairness lint RED test scaffold complete. 6 tests in check-liveness-fairness.test.cjs specify the contract (exit 0 always, pass/inconclusive results, dynamic config discovery). 1 test in run-formal-verify.test.cjs asserts ci:liveness-fairness-lint entry in STEPS. All 7 tests fail in RED state — implementation tasks must satisfy them. LIVE-01 and LIVE-02 requirements scoped by Wave 0 tests.
@@ -85,7 +87,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — Phase v0.20-04 complete (Verification Gate: VERIFY-01, VERIFY-02 satisfied)
+Last activity: 2026-02-28 — Phase v0.20-06 complete (Triage Bundle: TRIAGE-01 + TRIAGE-02 satisfied)
 Last session: 2026-02-28
-Stopped at: Phase v0.20-04 complete (is_last_phase=true in gsd-tools); all plans verified GREEN; milestone v0.20 execution complete
+Stopped at: Phase v0.20-06 complete; all 7 Wave 0 tests GREEN; ready to plan Phase v0.20-07 (UPPAAL Timed Race Modeling)
 Resume file: None
