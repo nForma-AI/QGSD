@@ -272,3 +272,11 @@ test('UNIF-03: --only=ci filter resolves ci:trace-redaction and ci:trace-schema-
     'ci:trace-schema-drift must be in STEPS — UNIF-03 fix requires both CI enforcement steps inside orchestrator'
   );
 });
+
+test('LIVE-02: STEPS includes ci:liveness-fairness-lint entry', () => {
+  const src = fs.readFileSync(path.join(__dirname, 'run-formal-verify.cjs'), 'utf8');
+  // Verify the entry exists with correct tool='ci' and script='check-liveness-fairness.cjs'
+  assert.match(src, /ci:liveness-fairness-lint/);
+  assert.match(src, /check-liveness-fairness\.cjs/);
+  assert.match(src, /tool:\s*['"]ci['"]/);
+});
