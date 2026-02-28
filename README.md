@@ -165,13 +165,17 @@ This re-reads `~/.claude.json`, re-derives tool prefixes from your registered se
 
 ### Agent Manager TUI
 
+A full-featured keyboard-navigable terminal interface for managing your quorum agents — add, edit, reorder, health-check, and rotate keys without touching `~/.claude.json` by hand.
+
 ```bash
+# Requires a local clone
+git clone https://github.com/LangBlaze-AI/QGSD.git
+cd QGSD && npm install
+
 node bin/agents.cjs
 ```
 
-A full-featured keyboard-navigable terminal interface for managing your quorum agents. Requires a local clone (`git clone https://github.com/LangBlaze-AI/QGSD.git`).
-
-The TUI is a split-pane screen: left panel is the menu, right panel shows agent list or context for the selected action.
+The TUI opens as a split-pane screen: left panel is the menu, right panel shows your agent roster or context for the selected action.
 
 **Capabilities:**
 
