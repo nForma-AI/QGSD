@@ -31,7 +31,9 @@ if (!VALID_CONFIGS.includes(configName)) {
     '[run-breaker-tlc] Unknown config: ' + configName +
     '. Valid: ' + VALID_CONFIGS.join(', ') + '\n'
   );
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  const _startMs = Date.now();
+  const _runtimeMs = 0;
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: unknown config in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -46,7 +48,9 @@ if (JAVA_HOME) {
       '[run-breaker-tlc] JAVA_HOME is set but java binary not found at: ' + javaExe + '\n' +
       '[run-breaker-tlc] Unset JAVA_HOME or fix the path.\n'
     );
-    try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    const _startMs = Date.now();
+    const _runtimeMs = 0;
+    try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -57,7 +61,9 @@ if (JAVA_HOME) {
       '[run-breaker-tlc] Java not found. Install Java >=17 and set JAVA_HOME.\n' +
       '[run-breaker-tlc] Download: https://adoptium.net/\n'
     );
-    try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    const _startMs = Date.now();
+    const _runtimeMs = 0;
+    try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -67,7 +73,9 @@ if (JAVA_HOME) {
 const versionResult = spawnSync(javaExe, ['--version'], { encoding: 'utf8' });
 if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-breaker-tlc] Failed to run: ' + javaExe + ' --version\n');
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  const _startMs = Date.now();
+  const _runtimeMs = 0;
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -79,7 +87,9 @@ if (javaMajor < 17) {
     '[run-breaker-tlc] Java >=17 required. Found: ' + versionOutput.split('\n')[0] + '\n' +
     '[run-breaker-tlc] Download Java 17+: https://adoptium.net/\n'
   );
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  const _startMs = Date.now();
+  const _runtimeMs = 0;
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -92,7 +102,9 @@ if (!fs.existsSync(jarPath)) {
     '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
     '       -o formal/tla/tla2tools.jar\n'
   );
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  const _startMs = Date.now();
+  const _runtimeMs = 0;
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -107,20 +119,23 @@ process.stdout.write('[run-breaker-tlc] Config: ' + configName + '  Workers: ' +
 process.stdout.write('[run-breaker-tlc] Spec:   ' + specPath + '\n');
 process.stdout.write('[run-breaker-tlc] Cfg:    ' + cfgPath + '\n');
 
+const _startMs = Date.now();
 const tlcResult = spawnSync(javaExe, [
   '-jar', jarPath,
   '-config', cfgPath,
   '-workers', workers,
   specPath,
 ], { encoding: 'utf8', stdio: 'inherit' });
+const _runtimeMs = Date.now() - _startMs;
 
 if (tlcResult.error) {
   process.stderr.write('[run-breaker-tlc] TLC invocation failed: ' + tlcResult.error.message + '\n');
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
 const passed = (tlcResult.status || 0) === 0;
+const triage_tags = _runtimeMs > 120000 ? ['timeout-risk'] : [];
 
 if (passed) {
   const missingDeclarations = detectLivenessProperties(configName, cfgPath);
@@ -130,6 +145,12 @@ if (passed) {
         tool: 'run-breaker-tlc',
         formalism: 'tla',
         result: 'inconclusive',
+        check_id: 'tla:breaker',
+        surface: 'tla',
+        property: 'Circuit breaker state persistence and oscillation detection algorithm',
+        runtime_ms: _runtimeMs,
+        summary: 'inconclusive: fairness missing in ' + _runtimeMs + 'ms',
+        triage_tags: ['needs-fairness'],
         metadata: {
           config: configName,
           reason: 'Fairness declaration missing for: ' + missingDeclarations.join(', '),
@@ -141,9 +162,9 @@ if (passed) {
     process.stdout.write('[run-breaker-tlc] Result: inconclusive — fairness declaration missing for: ' + missingDeclarations.join(', ') + '\n');
     process.exit(0);
   }
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'pass', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'pass', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'pass: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(0);
 } else {
-  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-breaker-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:breaker', surface: 'tla', property: 'Circuit breaker state persistence and oscillation detection algorithm', runtime_ms: _runtimeMs, summary: 'fail: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, metadata: {} }); } catch (e) { process.stderr.write('[run-breaker-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(tlcResult.status || 0);
 }
