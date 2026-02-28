@@ -34,6 +34,11 @@ function makeScoreboard(nRounds, votesFn) {
 // ── Tests ───────────────────────────────────────────────────────────────────
 
 test('conservative priors used and logged when no scoreboard exists', () => {
+  const { readPolicy } = require('./read-policy.cjs');
+  const policy = readPolicy(path.join(__dirname, '..', 'formal', 'policy.yaml'));
+  const priorTP      = String(policy.conservative_priors.tp_rate);
+  const priorUnavail = String(policy.conservative_priors.unavail);
+
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-test-'));
   try {
     // No .planning/ directory — scoreboard absent
@@ -43,10 +48,10 @@ test('conservative priors used and logged when no scoreboard exists', () => {
       env:      { ...process.env, PRISM_BIN: 'prism' },
     });
     // Conservative priors must appear in the Args log line
-    assert.match(result.stdout, /Args:.*-const tp_rate=0\.85/,
-      'Args line should have -const tp_rate=0.85 (prior)');
-    assert.match(result.stdout, /Args:.*-const unavail=0\.15/,
-      'Args line should have -const unavail=0.15 (prior)');
+    assert.match(result.stdout, new RegExp('Args:.*-const tp_rate=' + priorTP.replace('.', '\\.')),
+      'Args line should have -const tp_rate=' + priorTP + ' (from policy.yaml prior)');
+    assert.match(result.stdout, new RegExp('Args:.*-const unavail=' + priorUnavail.replace('.', '\\.')),
+      'Args line should have -const unavail=' + priorUnavail + ' (from policy.yaml prior)');
     // Warning should mention no scoreboard
     assert.match(result.stderr, /No scoreboard/i,
       'stderr should note no scoreboard found');
