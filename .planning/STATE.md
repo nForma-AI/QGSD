@@ -81,10 +81,11 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 | 118 | Update all user-facing documentation: README with blessed TUI capabilities and formal analysis tools (PRISM, Alloy, TLA+, Petri nets) with installation instructions | 2026-02-28 | 01a4e608 | Verified | [118-update-all-user-facing-documentation-rea](./quick/118-update-all-user-facing-documentation-rea/) |
 | 119 | major documentation refresh — update all documentation | 2026-02-28 | 225369a9 | Verified | [119-major-documentation-refresh-update-all-d](./quick/119-major-documentation-refresh-update-all-d/) |
 | 121 | Build install-formal-tools.cjs cross-platform installer for TLA+ Alloy PRISM with --formal flag in install.js | 2026-02-28 | e765606c | Pending | [121-build-install-formal-tools-cjs-cross-pla](./quick/121-build-install-formal-tools-cjs-cross-pla/) |
+| 122 | wire best-effort formal tools install into bin/install.js always-on best-effort each tool independent always exit 0 | 2026-02-28 | e8bb56d5 | Pending | [122-wire-best-effort-formal-tools-install-in](./quick/122-wire-best-effort-formal-tools-install-in/) |
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — v0.20-03 complete (PLAN-01 + PLAN-02 + PLAN-03 satisfied)
+Last activity: 2026-02-28 — Quick task 122 complete (wire best-effort formal tools into main installer)
 Last session: 2026-02-28
 Stopped at: Phase v0.20-03 complete, ready to plan Phase v0.20-04 (Verification Gate)
 Resume file: None
