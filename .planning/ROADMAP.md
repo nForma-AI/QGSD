@@ -1130,8 +1130,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] v0.19-11-01-PLAN.md — Fix run-formal-verify.cjs summary ordering: post-all-CI summary pass (UNIF-03)
-- [ ] v0.19-11-02-PLAN.md — Update UNIF-01..04 checkboxes from [ ] to [x] in REQUIREMENTS.md
+- [ ] v0.19-11-01-PLAN.md — TDD: add ci:trace-redaction and ci:trace-schema-drift to STEPS so NDJSON summary is complete (UNIF-03)
+- [ ] v0.19-11-02-PLAN.md — Confirm UNIF-01..04 checkboxes already [x]; update UNIF-03 traceability row to v0.19-11
 
 
 ## Progress
