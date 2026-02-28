@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-28 after Phase v0.19-08)
 ## Current Position
 
 Phase: v0.19 milestone re-audit + cleanup — COMPLETE (status: tech_debt, 25/25 requirements, documentation cleaned)
-Plan: v0.19-08-01 — DONE; v0.19-08-02 — DONE; re-audit — DONE; v0.19-11-02 — DONE
-Status: All 25 v0.19 requirements satisfied. No implementation gaps. Documentation debt closed: REQUIREMENTS.md traceability corrected for UNIF-03 (Phase v0.19-11); UNIF-01..04 checkboxes confirmed complete.
-Last activity: 2026-02-28 — v0.19-11 Plan 02 complete: UNIF-03 traceability updated to Phase v0.19-11; UNIF-01..04 checkbox verification passed
+Plan: v0.19-08-01 — DONE; v0.19-08-02 — DONE; re-audit — DONE; v0.19-11-01 — DONE; v0.19-11-02 — DONE
+Status: All 25 v0.19 requirements satisfied. No implementation gaps. UNIF-03 timing fix completed: ci:trace-redaction and ci:trace-schema-drift added to STEPS orchestrator. Documentation debt closed: REQUIREMENTS.md traceability corrected; UNIF-01..04 checkboxes confirmed complete.
+Last activity: 2026-02-28 — v0.19-11 Plan 01 complete: UNIF-03 timing bug fixed by adding CI enforcement steps inside orchestrator STEPS array (2 new entries, header updated to 23 steps, 9 tests pass)
 
-Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE | v0.19-07 COMPLETE | v0.19-08 COMPLETE | re-audit COMPLETE (25/25, tech_debt) | v0.19-11 COMPLETE (doc cleanup)
+Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE | v0.19-07 COMPLETE | v0.19-08 COMPLETE | re-audit COMPLETE (25/25, tech_debt) | v0.19-11 COMPLETE (UNIF-03 impl + doc cleanup) — Plans 1/2 complete
 
 ## Performance Metrics
 
@@ -44,7 +44,8 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.19 milestone re-audit]: Final status tech_debt — all 25/25 requirements satisfied, 0 implementation gaps. Four tech-debt items: UNIF-03 (triage summary early read, low), CALIB-04 (conservative_priors parsed but not consumed by run-prism.cjs, medium), REQUIREMENTS.md stale checkboxes (13 complete reqs show [ ]), REQUIREMENTS.md missing traceability rows (DRIFT-02, MCPENV-01..04, IMPR-01..04). Phase v0.19-09 closes documentation debt. Audit artifact: .planning/v0.19-MILESTONE-AUDIT.md.
+- [v0.19-11-01 execution]: UNIF-03 timing bug fixed — added ci:trace-redaction and ci:trace-schema-drift as STEPS entries in orchestrator (tool: 'ci') so their NDJSON writes happen before summary read at end of runOnce(). STEPS now 23 (was 21). Both CI scripts are idempotent; double execution (inside orchestrator + standalone workflow steps) is safe. Kept standalone CI steps in formal-verify.yml for explicit step reporting.
+- [v0.19 milestone re-audit]: Final status tech_debt — all 25/25 requirements satisfied, 0 implementation gaps. Four tech-debt items: UNIF-03 (triage summary early read, RESOLVED by v0.19-11-01), CALIB-04 (conservative_priors parsed but not consumed by run-prism.cjs, medium), REQUIREMENTS.md stale checkboxes (resolved — all [x]), REQUIREMENTS.md missing traceability rows (resolved by v0.19-09). Audit artifact: .planning/v0.19-MILESTONE-AUDIT.md.
 - [v0.19-08 execution]: MCPENV gap closure — Plan 01: MCMCPEnv added to SURFACE_MAP ('MCMCPEnv':'mcp-calls') + VALID_CONFIGS, invariants.md created with EventualDecision fairness declaration (3 WF_vars operators), tla:mcp-environment STEPS entry, CI step. Plan 02: run-prism.cjs module.exports moved behind require.main===module guard; composite-key filter added INSIDE readMCPAvailabilityRates (not just at call site) so exported function returns clean data testable with realistic scoreboards; prism:mcp-availability STEPS entry + CI step. 5 new tests, 648 suite GREEN.
 - [v0.19-07 execution]: LIVE-02 gap closure: detectLivenessProperties was already implemented in run-tlc.cjs — the wiring to the 4 runners (oscillation, breaker, protocol, account-manager) was all that was needed. TDD RED→GREEN approach: 12 stub tests written first, then 4 commits wiring each runner.
 - [v0.19 roadmap]: UNIF-01 is the foundation phase — all other phases depend on check-results.ndjson schema existing; v0.19-01 has no upstream dependency. Dependency chain: UNIF (foundation) → CALIB (extends run-prism.cjs) → LIVE (extends run-tlc.cjs, parallel) → ENFORCE (adds redaction/evidence/drift, parallel) → MCPENV (depends on CALIB cold-start policy + UNIF output stream).
