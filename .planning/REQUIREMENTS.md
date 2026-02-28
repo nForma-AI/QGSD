@@ -11,10 +11,10 @@ Requirements for v0.19 milestone. Adapted from external v2.1 plan to QGSD's exis
 
 Normalize all FV tool output to one canonical stream so triage, CI, and dashboards read a single source.
 
-- [ ] **UNIF-01**: All FV checkers (TLC, Alloy, PRISM, trace validator, redaction) append one normalized JSON line to `formal/check-results.ndjson` per check run, conforming to `formal/check-result.schema.json`
-- [ ] **UNIF-02**: `run-formal-verify.cjs` orchestrator generates `formal/check-results.ndjson` as its canonical output artifact (replacing ad-hoc per-tool stdout)
-- [ ] **UNIF-03**: Triage bundle (diff-report summary in `run-formal-verify.cjs`) reads from `check-results.ndjson`, not tool stdout
-- [ ] **UNIF-04**: CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`
+- [x] **UNIF-01**: All FV checkers (TLC, Alloy, PRISM, trace validator, redaction) append one normalized JSON line to `formal/check-results.ndjson` per check run, conforming to `formal/check-result.schema.json`
+- [x] **UNIF-02**: `run-formal-verify.cjs` orchestrator generates `formal/check-results.ndjson` as its canonical output artifact (replacing ad-hoc per-tool stdout)
+- [x] **UNIF-03**: Triage bundle (diff-report summary in `run-formal-verify.cjs`) reads from `check-results.ndjson`, not tool stdout
+- [x] **UNIF-04**: CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`
 
 ### CALIB — Calibration Governance
 
@@ -102,10 +102,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UNIF-01 | Phase v0.19-01 | Pending |
-| UNIF-02 | Phase v0.19-01 | Pending |
-| UNIF-03 | Phase v0.19-01 | Pending |
-| UNIF-04 | Phase v0.19-01 | Pending |
+| UNIF-01 | Phase v0.19-01 | Complete |
+| UNIF-02 | Phase v0.19-01 | Complete |
+| UNIF-03 | Phase v0.19-01 | Complete |
+| UNIF-04 | Phase v0.19-01 | Complete |
 | CALIB-01 | Phase v0.19-02 | Complete |
 | CALIB-02 | Phase v0.19-02 | Complete |
 | CALIB-03 | Phase v0.19-02 | Complete |
