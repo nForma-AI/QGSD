@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-28 after Phase v0.19-08)
+See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.19 FV Pipeline Hardening — re-audit complete (25/25 req satisfied, status: tech_debt); v0.19-09/11 Requirements Traceability Cleanup complete before milestone archive
+**Current focus:** v0.20 FV as Active Planning Gate — defining requirements
 
 ## Current Position
 
-Phase: v0.19 milestone re-audit + cleanup — COMPLETE (status: tech_debt, 25/25 requirements, documentation cleaned)
-Plan: v0.19-08-01 — DONE; v0.19-08-02 — DONE; re-audit — DONE; v0.19-11-01 — DONE; v0.19-11-02 — DONE
-Status: All 25 v0.19 requirements satisfied. No implementation gaps. UNIF-03 timing fix completed: ci:trace-redaction and ci:trace-schema-drift added to STEPS orchestrator. Documentation debt closed: REQUIREMENTS.md traceability corrected; UNIF-01..04 checkboxes confirmed complete.
-Last activity: 2026-02-28 — v0.19-11 Plan 01 complete: UNIF-03 timing bug fixed by adding CI enforcement steps inside orchestrator STEPS array (2 new entries, header updated to 23 steps, 9 tests pass)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v0.20
+Last activity: 2026-02-28 — Milestone v0.20 started
 
-Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE | v0.19-07 COMPLETE | v0.19-08 COMPLETE | re-audit COMPLETE (25/25, tech_debt) | v0.19-11 COMPLETE (UNIF-03 impl + doc cleanup) — Plans 1/2 complete
+Progress: [░░░░░░░░░░░░░░░░░░░░] v0.20: defining requirements
 
 ## Performance Metrics
 

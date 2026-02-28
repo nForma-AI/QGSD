@@ -8,17 +8,23 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.19 FV Pipeline Hardening
+## Current Milestone: v0.20 FV as Active Planning Gate
+
+**Goal:** Wire QGSD's formal verification pipeline into its planning and verification workflows — TLC/Alloy/PRISM findings surface as hypotheses during `plan-phase`, formal check results appear in `VERIFICATION.md` during `execute-phase`, and the check-result schema is enriched to v2.1 spec to enable triage bundles and evidence dashboards.
+
+**Target features:**
+- Enriched check-result schema — `formal/check-result.schema.json` extended to v2.1 (adds `check_id`, `surface`, `property`, `runtime_ms`, `summary`, `triage_tags`, `observation_window`); `write-check-result.cjs` and all 23 callers updated
+- Liveness fairness CI lint — checker emits `result=inconclusive` when a liveness property lacks an explicit fairness declaration in `invariants.md`; enforced as a CI gate
+- Planning gate — `run-formal-verify --only=tla` wired into `plan-phase.md` pre-quorum; TLC violations surface as hypotheses passed to the planner for the plan to address
+- Verification gate — `run-formal-verify` wired into `qgsd-verifier`; `check-results.ndjson` digest included in `VERIFICATION.md`
+- Evidence confidence — `never_observed` path entries in evidence summaries carry `confidence: low/medium/high` + `observation_window` metadata
+- Triage bundle — `diff-report.md` and `suspects.md` generated from `check-results.ndjson` (replaces ad-hoc stdout parsing)
+
+## Just Shipped: v0.19 FV Pipeline Hardening (2026-02-28)
 
 **Goal:** Add a governance layer to QGSD's existing formal verification pipeline — unified check-results output, cold-start calibration policy, liveness fairness declarations, redaction enforcement, evidence confidence qualifiers, and trace schema drift guards — making the FV infrastructure production-grade.
 
-**Target features:**
-- Unified verdict format — all FV checkers (TLC, Alloy, PRISM, trace validator) emit normalized JSON to `formal/check-results.ndjson`; triage bundle reads from this canonical stream
-- Calibration governance — `formal/policy.yaml` defines cold-start thresholds; PRISM calibration emits `warn` (not `fail`) during cold start; observation window metadata added to evidence checks
-- Liveness fairness — each liveness TLA+ property carries explicit `WF_vars`/`SF_vars` declaration in companion `invariants.md`; checker emits `inconclusive` when fairness is absent
-- Redaction enforcement — `formal/trace/redaction.yaml` + `bin/check-trace-redaction.cjs` validate no forbidden keys in trace events; CI fails on violation
-- Evidence confidence — `validate-traces.cjs` `never_observed` entries include support metadata (n_events, window_days) and confidence tier
-- Schema drift guard — `bin/check-trace-schema-drift.cjs` blocks atomic schema changes that miss co-updating validator/emitter
+**Shipped:** 25/25 requirements satisfied (UNIF-01..04, CALIB-01..04, LIVE-01..02, REDACT-01..03, EVID-01..02, DRIFT-01..02, MCPENV-01..04, REQT-01..04). All implementation gaps closed. Documentation debt resolved.
 
 ## Shipped: v0.18 Token Efficiency (2026-02-27, audit in progress)
 
