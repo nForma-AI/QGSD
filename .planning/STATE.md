@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-28 after Phase v0.19-08)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.19 FV Pipeline Hardening — gap closure phases v0.19-07 and v0.19-08 done; milestone re-audit next
+**Current focus:** v0.19 FV Pipeline Hardening — re-audit complete (25/25 req satisfied, status: tech_debt); v0.19-09 Requirements Traceability Cleanup next before milestone archive
 
 ## Current Position
 
-Phase: v0.19-08 (MCP Formal Verification Pipeline Integration) — COMPLETE (all 2 plans done)
-Plan: v0.19-08-01 — DONE; v0.19-08-02 — DONE
-Status: MCPENV-02 and MCPENV-04 closed — MCMCPEnv.tla wired into TLC pipeline with fairness declaration; run-prism.cjs module.exports fixed + composite-key filter; both models in run-formal-verify.cjs STEPS and CI; 5 new tests GREEN
-Last activity: 2026-02-28 — v0.19-08 complete: MCMCPEnv TLC pipeline registration (invariants.md, SURFACE_MAP, CI step); PRISM mcp-availability module.exports fix + composite-key filter; MCPENV-02 and MCPENV-04 fully closed
+Phase: v0.19 milestone re-audit — COMPLETE (status: tech_debt, 25/25 requirements)
+Plan: v0.19-08-01 — DONE; v0.19-08-02 — DONE; re-audit — DONE
+Status: All 25 v0.19 requirements satisfied. No implementation gaps. Tech debt: UNIF-03 (triage summary early read), CALIB-04 (conservative_priors unwired), REQUIREMENTS.md stale checkboxes (13) and missing traceability rows (9). v0.19-09 closes documentation debt before archive.
+Last activity: 2026-02-28 — v0.19 milestone re-audit complete: 25/25 req satisfied, status tech_debt; LIVE-02/MCPENV-02/MCPENV-04 all confirmed closed; audit artifact at .planning/v0.19-MILESTONE-AUDIT.md
 
-Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE | v0.19-07 COMPLETE | v0.19-08 COMPLETE — gap closure phases done, milestone re-audit next
+Progress: [████████████████████] prior milestones complete | v0.19: v0.19-01 COMPLETE | v0.19-02 COMPLETE | v0.19-03 COMPLETE | v0.19-04 COMPLETE | v0.19-05 COMPLETE | v0.19-06 COMPLETE | v0.19-07 COMPLETE | v0.19-08 COMPLETE | re-audit COMPLETE (25/25, tech_debt) — v0.19-09 doc cleanup next
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [████████████████████] prior m
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.19 milestone re-audit]: Final status tech_debt — all 25/25 requirements satisfied, 0 implementation gaps. Four tech-debt items: UNIF-03 (triage summary early read, low), CALIB-04 (conservative_priors parsed but not consumed by run-prism.cjs, medium), REQUIREMENTS.md stale checkboxes (13 complete reqs show [ ]), REQUIREMENTS.md missing traceability rows (DRIFT-02, MCPENV-01..04, IMPR-01..04). Phase v0.19-09 closes documentation debt. Audit artifact: .planning/v0.19-MILESTONE-AUDIT.md.
 - [v0.19-08 execution]: MCPENV gap closure — Plan 01: MCMCPEnv added to SURFACE_MAP ('MCMCPEnv':'mcp-calls') + VALID_CONFIGS, invariants.md created with EventualDecision fairness declaration (3 WF_vars operators), tla:mcp-environment STEPS entry, CI step. Plan 02: run-prism.cjs module.exports moved behind require.main===module guard; composite-key filter added INSIDE readMCPAvailabilityRates (not just at call site) so exported function returns clean data testable with realistic scoreboards; prism:mcp-availability STEPS entry + CI step. 5 new tests, 648 suite GREEN.
 - [v0.19-07 execution]: LIVE-02 gap closure: detectLivenessProperties was already implemented in run-tlc.cjs — the wiring to the 4 runners (oscillation, breaker, protocol, account-manager) was all that was needed. TDD RED→GREEN approach: 12 stub tests written first, then 4 commits wiring each runner.
 - [v0.19 roadmap]: UNIF-01 is the foundation phase — all other phases depend on check-results.ndjson schema existing; v0.19-01 has no upstream dependency. Dependency chain: UNIF (foundation) → CALIB (extends run-prism.cjs) → LIVE (extends run-tlc.cjs, parallel) → ENFORCE (adds redaction/evidence/drift, parallel) → MCPENV (depends on CALIB cold-start policy + UNIF output stream).
@@ -86,7 +87,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — v0.19-08 complete: MCPENV-02 and MCPENV-04 closed — MCMCPEnv TLC pipeline wired, PRISM mcp-availability module.exports fixed + composite-key filter, 5 new tests GREEN. Milestone re-audit next.
+Last activity: 2026-02-28 — v0.19 milestone re-audit complete: all 25/25 requirements satisfied (status: tech_debt). LIVE-02/MCPENV-02/MCPENV-04 confirmed closed. 4 tech-debt items remain (2 low, 1 medium, 1 low). REQUIREMENTS.md documentation stale (13 unchecked checkboxes + 9 missing traceability rows) — addressed by v0.19-09. Audit artifact written to .planning/v0.19-MILESTONE-AUDIT.md.
 Last session: 2026-02-28
-Stopped at: Phase v0.19-08 complete (gap closure), milestone v0.19 re-audit ready
+Stopped at: v0.19 milestone re-audit complete (tech_debt), v0.19-09 Requirements Traceability Cleanup next
 Resume file: None
