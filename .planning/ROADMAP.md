@@ -1147,7 +1147,12 @@ Plans:
   1. `agents/qgsd-verifier.md` workflow includes a step that runs `run-formal-verify` after the implementation is complete
   2. `VERIFICATION.md` for any phase verified after this change contains a `## Formal Verification` section with at minimum a count of pass/fail/warn results per formalism (tla, alloy, prism, ci)
   3. The `VERIFICATION.md` template in `qgsd-core/templates/` is updated with the `## Formal Verification` section so all future verifications include it by default
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] v0.20-04-01-PLAN.md — Wave 0 RED test scaffold for NDJSON parsing + template section (VERIFY-01, VERIFY-02)
+- [ ] v0.20-04-02-PLAN.md — Implement verify-formal-results.cjs + update verification-report.md template (VERIFY-01, VERIFY-02)
+- [ ] v0.20-04-03-PLAN.md — Wire FV step into qgsd-verifier.md workflow (VERIFY-01)
 
 ### Phase v0.20-05: Evidence Confidence
 **Goal**: Evidence-driven checks in `validate-traces.cjs` annotate `never_observed` paths with a confidence level and write `observation_window` metadata to `check-results.ndjson`, making it clear whether "never seen" means "truly safe" or "insufficient data".
