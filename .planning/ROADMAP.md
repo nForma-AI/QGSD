@@ -258,7 +258,7 @@ Archive: `.planning/milestones/v0.19-ROADMAP.md`
 - [x] **Phase v0.20-02: Liveness Fairness Lint** — CI step detects liveness properties lacking a fairness declaration and emits `result=inconclusive`; wired as `ci:liveness-fairness-lint` in the STEPS pipeline (LIVE-01, LIVE-02) [3/3 plans complete] (completed 2026-02-28)
 - [x] **Phase v0.20-03: Planning Gate** — `plan-phase.md` runs `run-formal-verify --only=tla` pre-quorum; TLC `fail` results surfaced as hypotheses to the planner; gate is fail-open (PLAN-01, PLAN-02, PLAN-03) (completed 2026-02-28)
 - [x] **Phase v0.20-04: Verification Gate** — `qgsd-verifier` agent runs `run-formal-verify` post-implementation; `VERIFICATION.md` gains a `## Formal Verification` section with pass/fail/warn counts (VERIFY-01, VERIFY-02) (completed 2026-02-28)
-- [ ] **Phase v0.20-05: Evidence Confidence** — `never_observed` trace entries carry `confidence: low|medium|high`; `observation_window` metadata written to `check-results.ndjson` (EVID-01, EVID-02)
+- [x] **Phase v0.20-05: Evidence Confidence** — `never_observed` trace entries carry `confidence: low|medium|high`; `observation_window` metadata written to `check-results.ndjson` (EVID-01, EVID-02) (completed 2026-02-28)
 - [ ] **Phase v0.20-06: Triage Bundle** — `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` and `formal/suspects.md`; called as final step in `run-formal-verify.cjs` (TRIAGE-01, TRIAGE-02)
 - [ ] **Phase v0.20-07: UPPAAL Timed Race Modeling** — UPPAAL timed automaton model answers "when do races fire relative to each other?"; uses empirical `runtime_ms` bounds from `check-results.ndjson` as clock guards; surfaces minimum inter-slot gap and maximum timeout for consensus before deadline (UPPAAL-01, UPPAAL-02, UPPAAL-03)
 
@@ -1191,6 +1191,6 @@ Plans:
 | v0.20-02. Liveness Fairness Lint | 3/3 | Complete    | 2026-02-28 | check-liveness-fairness.cjs complete |
 | v0.20-03. Planning Gate | v0.20 | Complete    | 2026-02-28 | - |
 | v0.20-04. Verification Gate | v0.20 | Complete    | 2026-02-28 | - |
-| v0.20-05. Evidence Confidence | v0.20 | 0/TBD | Not started | - |
+| v0.20-05. Evidence Confidence | v0.20 | Complete    | 2026-02-28 | - |
 | v0.20-06. Triage Bundle | v0.20 | 0/TBD | Not started | - |
 | v0.20-07. UPPAAL Timed Race Modeling | v0.20 | 0/TBD | Not started | - |
