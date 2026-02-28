@@ -37,6 +37,12 @@
 - [ ] **TRIAGE-01**: `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` (per-check delta from last run) and `formal/suspects.md` (checks with `result=fail` or `triage_tags` set)
 - [ ] **TRIAGE-02**: `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step after all checks complete
 
+### UPPAAL Timed Race Modeling (UPPAAL)
+
+- [ ] **UPPAAL-01**: A UPPAAL timed automaton model (`formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.
+- [ ] **UPPAAL-02**: `bin/run-uppaal.cjs` executes the UPPAAL model checker (verifyta CLI) against `quorum-races.xml` and writes a check result to `check-results.ndjson` using the v2.1 schema (SCHEMA-01 prerequisite). The STEPS entry `uppaal:quorum-races` is added to `run-formal-verify.cjs`.
+- [ ] **UPPAAL-03**: The model surfaces at least two critical measurement points as annotated properties: (a) the minimum inter-slot response gap that prevents a race condition, (b) the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.
+
 ## Out of Scope
 
 | Feature | Reason |
@@ -64,10 +70,13 @@
 | EVID-02 | v0.20-05 | Pending |
 | TRIAGE-01 | v0.20-06 | Pending |
 | TRIAGE-02 | v0.20-06 | Pending |
+| UPPAAL-01 | v0.20-07 | Pending |
+| UPPAAL-02 | v0.20-07 | Pending |
+| UPPAAL-03 | v0.20-07 | Pending |
 
 **Coverage:**
-- v0.20 requirements: 14 total
-- Mapped to phases: 14
+- v0.20 requirements: 17 total
+- Mapped to phases: 17
 - Unmapped: 0 ✓
 
 ---

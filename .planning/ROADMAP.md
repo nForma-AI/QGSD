@@ -18,7 +18,7 @@
 - ✅ **v0.15 — Health & Tooling Modernization** — Phases v0.15-01..v0.15-04 (shipped 2026-02-27)
 - 🔍 **v0.18 — Token Efficiency** — Phases v0.18-01..v0.18-07 (audit: gaps_found — gap closure in progress)
 - ✅ **v0.19 — FV Pipeline Hardening** — Phases v0.19-01..v0.19-11 (completed 2026-02-28)
-- 🚧 **v0.20 — FV as Active Planning Gate** — Phases v0.20-01..v0.20-06 (in progress)
+- 🚧 **v0.20 — FV as Active Planning Gate** — Phases v0.20-01..v0.20-07 (in progress)
 
 ## Phases
 
@@ -255,6 +255,7 @@
 - [ ] **Phase v0.20-04: Verification Gate** — `qgsd-verifier` agent runs `run-formal-verify` post-implementation; `VERIFICATION.md` gains a `## Formal Verification` section with pass/fail/warn counts (VERIFY-01, VERIFY-02)
 - [ ] **Phase v0.20-05: Evidence Confidence** — `never_observed` trace entries carry `confidence: low|medium|high`; `observation_window` metadata written to `check-results.ndjson` (EVID-01, EVID-02)
 - [ ] **Phase v0.20-06: Triage Bundle** — `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` and `formal/suspects.md`; called as final step in `run-formal-verify.cjs` (TRIAGE-01, TRIAGE-02)
+- [ ] **Phase v0.20-07: UPPAAL Timed Race Modeling** — UPPAAL timed automaton model answers "when do races fire relative to each other?"; uses empirical `runtime_ms` bounds from `check-results.ndjson` as clock guards; surfaces minimum inter-slot gap and maximum timeout for consensus before deadline (UPPAAL-01, UPPAAL-02, UPPAAL-03)
 
 
 ## Phase Details
@@ -1320,9 +1321,20 @@ Plans:
   2. `run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as its final step — after all checks complete — and this call is visible in the run summary
   3. When no previous run exists, `diff-report.md` notes "first run" rather than failing or producing empty output
 **Plans**: TBD
+
+### Phase v0.20-07: UPPAAL Timed Race Modeling
+**Goal**: A UPPAAL timed automaton model answers the question "when do quorum races fire relative to each other?" — using empirical `runtime_ms` bounds from `check-results.ndjson` as clock guards (not hardcoded constants), surfacing the minimum inter-slot response gap that prevents race conditions and the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.
+**Depends on**: Phase v0.20-01 (needs v2.1 `runtime_ms` data as timing bound inputs)
+**Requirements**: UPPAAL-01, UPPAAL-02, UPPAAL-03
+**Success Criteria** (what must be TRUE):
+  1. `formal/uppaal/quorum-races.xml` exists as a valid UPPAAL timed automaton model; clock guards and invariants reference empirical timing bounds derived from `check-results.ndjson`, not hardcoded values
+  2. `bin/run-uppaal.cjs` executes `verifyta` against `quorum-races.xml` and writes a v2.1 check result to `check-results.ndjson`; STEPS entry `uppaal:quorum-races` is present in `run-formal-verify.cjs`
+  3. The model's output explicitly annotates two critical measurement points: (a) minimum inter-slot gap below which a race fires, (b) maximum timeout threshold above which consensus fails before the planning gate deadline
+**Plans**: TBD
 | v0.20-01. Schema Enrichment | v0.20 | 0/5 | Planned | - |
 | v0.20-02. Liveness Fairness Lint | v0.20 | 0/TBD | Not started | - |
 | v0.20-03. Planning Gate | v0.20 | 0/TBD | Not started | - |
 | v0.20-04. Verification Gate | v0.20 | 0/TBD | Not started | - |
 | v0.20-05. Evidence Confidence | v0.20 | 0/TBD | Not started | - |
 | v0.20-06. Triage Bundle | v0.20 | 0/TBD | Not started | - |
+| v0.20-07. UPPAAL Timed Race Modeling | v0.20 | 0/TBD | Not started | - |
