@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-28 after Milestone v0.20 start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.20 Phase v0.20-04 — Verification Gate
+**Current focus:** v0.20 milestone complete — all 4 active phases done (v0.20-01, v0.20-02, v0.20-03, v0.20-04)
 
 ## Current Position
 
-Phase: v0.20-04 of 7 (Verification Gate)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-02-28 — v0.20-03 complete (PLAN-01 + PLAN-02 + PLAN-03 satisfied)
+Phase: v0.20-04 of 7 (Verification Gate) — COMPLETE
+Plan: All 3 plans complete
+Status: Phase complete — v0.20-04 is last phase in milestone
+Last activity: 2026-02-28 — v0.20-04 complete (VERIFY-01 + VERIFY-02 satisfied)
 
-Progress: [▓▓▓▓▓▓░░░░░░░░░░░░░░░░░] v0.20: 3/7 phases complete (v0.20-03 done, advancing to v0.20-04)
+Progress: [▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░] v0.20: 4/7 phases complete (v0.20-04 done, is_last_phase=true)
 
 ## Performance Metrics
 
@@ -85,7 +85,7 @@ See previous STATE.md entries for quick tasks 95-114. Most recent:
 
 ## Session Continuity
 
-Last activity: 2026-02-28 — Quick task 122 complete (wire best-effort formal tools into main installer)
+Last activity: 2026-02-28 — Phase v0.20-04 complete (Verification Gate: VERIFY-01, VERIFY-02 satisfied)
 Last session: 2026-02-28
-Stopped at: Phase v0.20-03 complete, ready to plan Phase v0.20-04 (Verification Gate)
+Stopped at: Phase v0.20-04 complete (is_last_phase=true in gsd-tools); all plans verified GREEN; milestone v0.20 execution complete
 Resume file: None
