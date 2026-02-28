@@ -17,7 +17,7 @@
 - ✅ **v0.14 — FV Pipeline Integration** — Phases v0.14-01..v0.14-05 (shipped 2026-02-26)
 - ✅ **v0.15 — Health & Tooling Modernization** — Phases v0.15-01..v0.15-04 (shipped 2026-02-27)
 - 🔍 **v0.18 — Token Efficiency** — Phases v0.18-01..v0.18-07 (audit: gaps_found — gap closure in progress)
-- 🚧 **v0.19 — FV Pipeline Hardening** — Phases v0.19-01..v0.19-05 (in progress)
+- 🚧 **v0.19 — FV Pipeline Hardening** — Phases v0.19-01..v0.19-11 (in progress)
 
 ## Phases
 
@@ -239,6 +239,8 @@
 - [x] **Phase v0.19-07: Wire Liveness Check to All TLC Runners** — Add `detectLivenessProperties()` call to the 4 remaining TLC runners (run-oscillation-tlc.cjs, run-breaker-tlc.cjs, run-protocol-tlc.cjs, run-account-manager-tlc.cjs) that execute liveness .cfg files but currently bypass the fairness check. Closes 6 unchecked liveness properties across oscillation, breaker, protocol, and account-manager surfaces. (LIVE-02) (Gap Closure) (completed 2026-02-27)
 - [x] **Phase v0.19-08: MCP Formal Verification Pipeline Integration** — Fix 3 bugs in mcp-availability.pm (dead module.exports after process.exit, composite-key PRISM constant corruption, absent from pipeline); create formal/spec/mcp-calls/invariants.md with EventualDecision fairness declaration; add MCMCPEnv.cfg to run-tlc.cjs SURFACE_MAP; wire both QGSDMCPEnv.tla and mcp-availability.pm into run-formal-verify.cjs STEPS and CI workflow. (MCPENV-02, MCPENV-04) (Gap Closure) (completed 2026-02-28)
 - [x] **Phase v0.19-09: Requirements Traceability Cleanup** — Add 9 missing rows (DRIFT-02, MCPENV-01..04, IMPR-01..04) to REQUIREMENTS.md traceability table; update 13 stale checkboxes from [ ] to [x] for all completed requirements; update coverage count. Ensures accurate milestone state for archival. (Tech Debt) (Gap Closure) (completed 2026-02-28)
+- [ ] **Phase v0.19-10: CALIB-04 Policy Wire-Up** — Wire `read-policy.cjs` `conservative_priors` fields to `run-prism.cjs` PRISM_PRIOR_TP/UNAVAIL constants; currently `policy.yaml` values are parsed but hardcoded constants override them at runtime — policy changes have no runtime effect. (CALIB-04) (Tech Debt)
+- [ ] **Phase v0.19-11: UNIF-03 Summary Fix + Checkbox Cleanup** — Fix `run-formal-verify.cjs` triage summary ordering so all CI step results (including redaction and drift) are included in the count; update UNIF-01..04 checkboxes from `[ ]` to `[x]` in REQUIREMENTS.md to resolve doc mismatch. (UNIF-03) (Tech Debt)
 
 
 ## Phase Details
@@ -1102,6 +1104,35 @@ Plans:
 Plans:
 - [ ] v0.19-09-01-PLAN.md — Fix 13 stale checkboxes, add 9 missing traceability rows, update footer
 
+### Phase v0.19-10: CALIB-04 Policy Wire-Up
+**Goal**: Wire `read-policy.cjs` `conservative_priors` values to `run-prism.cjs` runtime constants so `policy.yaml` changes actually affect PRISM prior probability behaviour.
+**Gap Closure:** Closes CALIB-04 tech debt — `policy.conservative_priors` is parsed but never consumed
+**Requirements**: CALIB-04
+**Depends on**: Phase v0.19-09
+**Success Criteria** (what must be TRUE):
+  1. `run-prism.cjs` reads `conservative_priors.tp` and `conservative_priors.unavail` from `readPolicy()` instead of using hardcoded constants
+  2. Changing `formal/policy.yaml` `conservative_priors` values changes the PRISM model parameters at runtime
+  3. Tests confirm policy.yaml values are respected (not overridden by hardcoded constants)
+**Plans**: 2 plans
+
+Plans:
+- [ ] v0.19-10-01-PLAN.md — TDD: failing tests confirming policy.yaml conservative_priors are consumed at runtime (CALIB-04)
+- [ ] v0.19-10-02-PLAN.md — Wire readPolicy() conservative_priors to run-prism.cjs constants; tests green (CALIB-04)
+
+### Phase v0.19-11: UNIF-03 Summary Fix + Checkbox Cleanup
+**Goal**: Fix `run-formal-verify.cjs` triage summary to include all CI step results (currently misses 2 late CI steps); update UNIF-01..04 checkboxes in REQUIREMENTS.md from `[ ]` to `[x]` to resolve documentation mismatch.
+**Gap Closure:** Closes UNIF-03 tech debt + UNIF-01..04 checkbox doc mismatch
+**Requirements**: UNIF-03
+**Depends on**: Phase v0.19-10
+**Success Criteria** (what must be TRUE):
+  1. `run-formal-verify.cjs` triage summary count includes entries from redaction and drift CI steps (all N entries, not N-2)
+  2. REQUIREMENTS.md UNIF-01..04 checkboxes all show `[x]`
+**Plans**: 2 plans
+
+Plans:
+- [ ] v0.19-11-01-PLAN.md — Fix run-formal-verify.cjs summary ordering: post-all-CI summary pass (UNIF-03)
+- [ ] v0.19-11-02-PLAN.md — Update UNIF-01..04 checkboxes from [ ] to [x] in REQUIREMENTS.md
+
 
 ## Progress
 
@@ -1204,3 +1235,5 @@ Plans:
 | v0.19-03. Liveness Fairness | v0.19 | 2/2 | Complete | 2026-02-27 |
 | v0.19-04. Enforcement Layer | v0.19 | 0/3 | Not started | - |
 | v0.19-05. MCP Environment Model | v0.19 | Complete    | 2026-02-27 | - |
+| v0.19-10. CALIB-04 Policy Wire-Up | v0.19 | 0/2 | Planned | - |
+| v0.19-11. UNIF-03 Summary Fix + Checkbox Cleanup | v0.19 | 0/2 | Planned | - |
