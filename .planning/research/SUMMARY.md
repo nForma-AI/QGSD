@@ -1,194 +1,292 @@
-# Project Research Summary
+# Research Summary: QGSD v0.22 Requirements Envelope
 
-**Project:** QGSD v0.18 — Token Efficiency
-**Domain:** Retrofitting token observability, risk-adaptive routing, and structured context handoffs into an existing multi-agent quorum orchestration pipeline (Node.js, Claude Code hooks)
-**Researched:** 2026-02-27
+**Project:** QGSD v0.22 Requirements Envelope (ENV-01..05)
+**Domain:** Formal verification infrastructure — requirements-as-formal-artifacts with LLM validation, immutability enforcement, and drift detection
+**Researched:** 2026-03-01
 **Confidence:** HIGH
 
 ## Executive Summary
 
-QGSD v0.18 introduces four token-efficiency features into a mature pipeline that already handles multi-model quorum consensus, iterative plan verification, and structured agent handoffs. The research establishes a clear, validated approach grounded entirely in the existing codebase: zero new npm dependencies are required for any of the four features. Token observability reads per-agent usage data from the `agent_transcript_path` field exposed by Claude Code's `SubagentStop` hook; adaptive fan-out extends the existing `--n N` override mechanism already understood by both `qgsd-prompt.js` and `qgsd-stop.js`; tiered model sizing enforces a pattern that is already partially correct in `quorum.md` (slot-workers already use `model="haiku"`); and the task envelope is a plain JSON sidecar file that follows the same atomic-write and config-gate patterns used by the scoreboard, conformance event log, and circuit breaker state files.
+The Requirements Envelope system (v0.22) adds a formal correctness boundary to QGSD's verification pipeline. Requirements are aggregated from planning documents into a frozen JSON artifact (`formal/requirements.json`), validated by Haiku for duplicates and conflicts, then used as the authoritative source for formal spec generation. The system includes immutability enforcement (via git hooks) and drift detection to catch working copy divergence. This is a critical foundational layer for formal verification: specifications cannot be correct if requirements are ambiguous or incomplete.
 
-The recommended phase ordering is determined by strict dependency chains and by the constraint that the Stop hook's quorum evidence detection must never be broken. Features 3 (adaptive fan-out) and 4 (tiered models) both read from the task envelope, so the envelope (Feature 2) must ship before them. Feature 1 (token observability) is architecturally independent but should ship first to establish a measurement baseline against which the impact of the other three features can be verified. This ordering also isolates the highest-risk integration work (the task envelope's multi-agent protocol change) to a later phase where the observability infrastructure can confirm it is working. The four features deliver a coherent risk-responsive quorum stack: the envelope captures plan risk level, adaptive fan-out converts risk level to worker count, and tiered models convert risk level to model quality — all observable through the token log.
+The recommended approach uses a lightweight, proven stack: **ajv** for schema validation, **@anthropic-ai/sdk** for Haiku semantic checks, **husky** for git hook management, and **diff** for drift detection. All technologies are standard Node.js patterns with no external services required. The architecture integrates seamlessly with existing QGSD formal verification systems (model registry, TLA+ generation, quorum context injection).
 
-The dominant risk is protocol contract breakage between the dispatch layer and the Stop hook's quorum verification logic. `qgsd-stop.js` makes binary decisions (`quorum_complete` vs `quorum_block`) based on the `subagent_type="qgsd-quorum-slot-worker"` string and the worker count implied by the `--n N` token in the injected prompt. Any change that dispatches fewer workers without emitting `--n N`, or that uses a different `subagent_type`, silently blocks every plan delivery even after valid quorum completes. The second major risk is the shallow-merge trap in `config-loader.js`: any nested config object introduced for tiered models will be silently replaced by a partial project override, reverting unspecified tier sub-keys to `undefined`. Both risks are avoidable through design choices made at the schema and dispatch level before implementation begins.
+The primary risk is **non-deterministic Haiku validation**: LLM-based duplicate/conflict detection is probabilistic and requires explicit rubrics, aggregation, and determinism testing to be reliable. Secondary risks include drift detection false positives (overwhelming teams with noise) and immutability enforcement breaking legitimate development workflows. All risks have well-documented mitigations from formal verification and infrastructure-as-code literature.
 
 ## Key Findings
 
 ### Recommended Stack
 
-All four v0.18 capabilities are implemented using Node.js stdlib and extensions to existing files. The zero-new-dependency constraint is not a compromise — it is the correct decision for each feature. Token observability uses `SubagentStop` hook + JSONL transcript parsing (`fs.readFileSync` + `JSON.parse`): this is the only in-process trigger that receives `agent_transcript_path`, which contains per-agent usage data confirmed via direct inspection of actual subagent transcript files on this machine. The task envelope uses `JSON.parse`/`JSON.stringify` + `fs.renameSync` atomic writes, following the exact pattern used by the scoreboard. Adaptive fan-out is a 15-line extension to `qgsd-prompt.js` that reads `worker_count` from the envelope file. Tiered model sizing is a 10-line extension that merges `model_tiers` config into the existing `model_preferences` injection path.
+The requirements envelope requires five core tools, all mature and standard in Node.js ecosystems:
 
 **Core technologies:**
-- `SubagentStop` hook (Claude Code, current): trigger for token collection — only hook that fires with `agent_transcript_path`; matcher `qgsd-quorum-slot-worker` scopes it to quorum workers only
-- JSONL transcript parsing (Node.js stdlib): sum `message.usage` fields from `agent_transcript_path`; structure confirmed via direct transcript inspection (`input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`)
-- `fs.appendFileSync` (stdlib): append token records to `.planning/token-usage.jsonl`; atomic for records under 4KB (POSIX PIPE_BUF); matches conformance-events pattern
-- `fs.renameSync` atomic write (stdlib): task envelope writes; same pattern as `update-scoreboard.cjs`
-- `readEnvelopeWorkerCount()` helper (inline, 15 lines): reads `worker_count` from `TASK_ENVELOPE.json` via `current-activity.json` phase lookup; additive to existing hook logic
-- `model_tiers` config key in `qgsd.json`: per-tier model assignment map; extends existing `model_preferences` pattern; no new data structure
+- **ajv** (^8.12.0): JSON Schema validation — 50% faster than alternatives, uses code generation, adopted by ESLint/Webpack. Validates requirements envelope structure at parse time with zero runtime interpretation overhead.
+- **@anthropic-ai/sdk** (^0.24.0+): Native Claude API for Haiku LLM calls — official Anthropic SDK, handles auth/timeouts/streaming, already used in QGSD's existing hook infrastructure. Haiku 4.5 is cost-optimal ($1/$5 per M tokens) for semantic validation passes.
+- **husky** (^9.0.0+): Git hook management — de facto Node.js standard, installs hooks in committed `.husky/` directory, enables per-project enforcement without global state contamination.
+- **diff** (jsdiff, ^5.2.0+): Text differencing — lightweight, battle-tested, supports diffChars/diffLines for semantic drift detection.
+- **yaml** (^2.3.0): YAML parsing — already in devDependencies, used to parse requirement source documents from task-envelope.json and REQUIREMENTS.md.
 
-**What NOT to add:**
-- `zod` / `ajv`: ESM footprint (zod v4 is pure ESM); 5-field internal schema does not justify the dep
-- Any UUID library: `Date.now().toString(16)` is sufficient for session-scoped file naming
-- OpenTelemetry / Prometheus / `pino` / `winston`: designed for microservices; `.planning/token-usage.jsonl` with `appendFileSync` is the correct QGSD pattern
-- SQLite: overkill; JSONL append is correct at QGSD's scale (hundreds of rounds per session)
+**Why NOT alternatives:** tv4 is deprecated (2015); manual semantic similarity requires ML infrastructure (~500MB deps); full formal specs (Alloy/TLA+) are overkill for requirement structure validation; hierarchical requirement grouping creates rigid coupling that breaks under refactoring.
+
+**Installation cost:** Negligible. All packages are standard; no breaking conflicts with existing QGSD dependencies.
 
 ### Expected Features
 
-**Must have (table stakes — v0.18 milestone is not credible without all four):**
-- Tiered model sizing: enforce `model="haiku"` for researcher/checker sub-agents; only planner uses sonnet; policy already correct in `quorum.md` for slot-workers, needs extending to two additional spawn sites in `plan-phase.md` — P1 because it has zero new infrastructure and delivers the highest cost reduction (15-20x per researcher/checker invocation)
-- Adaptive quorum fan-out: `risk_level` → worker count via envelope; extends existing `max_quorum_size` mechanism; reduces token cost 3-8x on low/medium-risk quorums without weakening the consensus guarantee — P1 because it targets the dominant token waste (dispatching 8 workers for a simple quick-task)
-- Token observability: per-slot token tracking via `SubagentStop` hook; `.planning/token-usage.jsonl` writes; `/qgsd:health` token section — P1 because measurement must precede verification of the other features' impact
-- Compact context handoffs (task envelope): JSON schema passed research → plan → quorum; eliminates N full PLAN.md re-reads per quorum round (N=5 workers × 500-line PLAN.md is the single largest token expenditure per round) — P2 due to highest integration surface (4 integration points: researcher, planner, quorum.md, plan-phase.md)
+The Requirements Envelope system implements a carefully scoped feature set based on dependency analysis and formal verification standards.
 
-**Should have (differentiators — add in v0.18.x post-validation):**
-- Token budget alerts: warn when a quorum round exceeds configurable threshold (default 50K tokens); depends on observability data being established first; warn-only, consistent with R6 fail-open
-- Benched slot warm-up suppression: skip `health_check` for benched slots (over-cap slots that will not be dispatched this round); low effort, follows from confirmed benching behavior
-- Envelope diff mode: skip full PLAN.md re-read in deliberation rounds when envelope checksum matches prior round; medium effort, requires envelope to have been in use for 1-2 milestones first
+**Must have (table stakes — v0.22 launch):**
+- **Requirements Aggregation** — Consolidate all phase requirements into `formal/requirements.json`; REQ-ID, text, category, phase, provenance fields.
+- **Machine-Readable Format** — JSON structure with schema (type checking); prerequisite for formal tools to read requirements programmatically.
+- **Duplication Detection** — Haiku validation identifies semantic duplicates; user resolves before freezing.
+- **Conflict Detection** — Haiku validation identifies contradictions (requirement A says X, requirement B says not X).
+- **Immutability Enforcement** — Pre-commit hook prevents modifications outside formal amendment workflow.
+- **Formal Constraint Validation** — `generate-phase-spec.cjs` reads frozen envelope and ensures generated TLA+ PROPERTY checks respect constraints.
+- **Amendment Workflow** — Structured workflow to modify frozen envelope: propose → validate → approve → re-lock.
 
-**Defer to v0.19+:**
-- Cross-session token trend analysis: aggregate `token-usage.jsonl` over multiple sessions; requires persistence strategy beyond current disk-only pattern
-- Provider-level token cost mapping: USD cost per provider (Together/Fireworks/AkashML pricing differs); requires price table maintenance; out of scope for v0.18
+**Should have (v0.23, improves reliability):**
+- **Drift Detection** — Monitor `.planning/REQUIREMENTS.md` post-freeze; alert on divergence; route to amendment workflow.
+- **Version History** — Amendment records with user, timestamp, old/new text, approval quorum; supports audits and reverts.
+- **Coverage Gap Analysis** — Identify phases with no mapped requirements.
 
-**Anti-features (explicitly excluded):**
-- Token quota hard blocks: violates R6 fail-open; could deadlock critical phases mid-execution; warn-only is the correct policy
-- Per-slot model override for external CLI slots (gemini-cli, codex-cli): these use provider-configured models; QGSD does not override them from within the pipeline
-- Lossy context compression: structured extraction (task envelope) is correct; automatic summarization removes details the planner needs, causing failed quorums that cost more tokens than the savings
+**Defer (v0.24+):**
+- **Automated Spec Generation** — Requirements text → TLA+ PROPERTY translation (currently manual).
+- **Risk-Stratified Requirements** — Tag by risk level; vary verification intensity.
+- **Ambiguity Explanation** — When duplication detected, explain why two requirements are equivalent.
+- **Requirement-to-Test Traceability** — Link requirements to CI/CD test coverage.
+
+**Feature dependencies:** Aggregation → Machine-Readable Format. Immutability → Amendment Workflow → Duplication/Conflict Detection. Drift → Immutability. Automated Spec Gen → Formal Constraint Validation.
 
 ### Architecture Approach
 
-The v0.18 architecture is purely additive to the stable v0.16/v0.17 baseline. No existing workflow steps are restructured. The four features insert at well-defined seams: the `SubagentStop` hook slot (new hook registration), the `qgsd-prompt.js` worker count resolution path (additive helper), the `quorum.md` slot selection step (pre-cap adjustment), and the `plan-phase.md` stage transition boundaries (envelope init/update calls). The task envelope follows the same sidecar artifact pattern as `current-activity.json` (v0.4) and `conformance-events.jsonl` — a per-context file that accumulates data without polluting STATE.md. Two new bin/ scripts are required (`task-envelope.cjs`, `task-envelope.test.cjs`) and one new hook file (`qgsd-token-collector.js`). All other changes are extensions to existing files.
+The requirements envelope integrates at four critical touchpoints in QGSD's existing formal verification system:
+
+1. **Data generation (ENV-01):** During `/qgsd:new-milestone`, `bin/aggregate-requirements.cjs` compiles `.planning/REQUIREMENTS.md` → `formal/requirements.json` (unvalidated, `frozen_at: null`).
+
+2. **Validation gate (ENV-02):** Immediately after aggregation, `bin/validate-requirements-haiku.cjs` invokes Haiku validator (via Task subagent) to detect duplicates/conflicts. Haiku returns structured findings; user resolves or accepts. Upon approval, `frozen_at` is set to current timestamp, envelope becomes immutable.
+
+3. **Spec constraint binding (ENV-03):** During `plan-phase` formal verification, `bin/generate-phase-spec.cjs` reads the frozen envelope, filters requirements by phase, converts to TLA+ PROPERTY statements (templates like `<> (envelope_01 = TRUE)`), and merges with phase-specific truths from task-envelope.json. Envelope properties take formal precedence.
+
+4. **Immutability + drift (ENV-04, ENV-05):** Hook-based protection prevents direct edits to frozen envelope; amendment workflow provides structured escape hatch. Drift detector compares working copy against frozen envelope on every planning command, injects warnings into Claude's context (non-blocking).
 
 **Major components:**
-1. `hooks/qgsd-token-collector.js` (NEW) — SubagentStop hook; reads `agent_transcript_path` JSONL, sums `message.usage` fields across non-sidechain assistant entries, correlates `agent_id` to slot name via correlation file written by dispatch before spawn, appends structured record to `.planning/token-usage.jsonl`; `async: true` (non-blocking, observational)
-2. `bin/task-envelope.cjs` (NEW) — init, update, and read operations on `task-envelope.json` per phase; atomic writes via `tmpPath + renameSync`; schema validation with fail-open on missing file; `task_envelope.enabled` config gate
-3. `hooks/qgsd-prompt.js` (EXTENDED) — `readEnvelopeWorkerCount()` helper reads `worker_count` from task envelope via `current-activity.json` phase lookup; priority chain: `--n N flag > envelope worker_count > config.quorum.maxSize > pool length`; envelope-driven model tier selection (`effectivePrefs = { ...model_preferences, ...tierPrefs }`)
-4. `hooks/qgsd-stop.js` (EXTENDED) — add envelope-based worker count cap to `maxSize` resolution; same `quorumSizeOverride` path that handles `--n N`; no change to `wasSlotWorkerUsed()` contract (subagent_type string unchanged)
-5. `commands/qgsd/quorum.md` (MODIFIED) — read `envelope_path` → parse `risk_level` → compute `effective_size` (adaptive fan-out) and `effective_tier` (tiered models); log decisions in pre-flight; update envelope with quorum section after consensus
-6. `qgsd-core/workflows/plan-phase.md` (MODIFIED) — insert `task-envelope.cjs init` after researcher step; `task-envelope.cjs update --section plan` after planner step; pass `envelope_path` to quorum dispatch; enforce `model="haiku"` at researcher and checker Task spawn sites
-7. `hooks/config-loader.js` (EXTENDED) — add `model_tiers`, `task_envelope.enabled`, `quorum.minSize`, `quorum.highRiskBonus`, `quorum.adaptiveFanOut`, `quorum.tierMap`, `quorum.defaultTier` to DEFAULT_CONFIG and `validateConfig()`
+1. `bin/aggregate-requirements.cjs` — Compile REQUIREMENTS.md → JSON with YAML parsing, ID validation, provenance tracking.
+2. `bin/validate-requirements-haiku.cjs` — Haiku semantic validation gate with structured prompt + issue presentation + freeze logic.
+3. `bin/extract-requirements-properties.cjs` — Filter frozen envelope by phase, convert to TLA+ PROPERTY templates.
+4. `bin/amend-requirements.cjs` — Amendment workflow: accepts changes, applies to pending copy, re-validates, re-freezes.
+5. `bin/detect-requirements-drift.cjs` — Compare working vs frozen, classify drift type (semantic vs noise), generate report.
+6. `agents/qgsd-haiku-validator.md` — Agent role for lightweight LLM validation (input: requirements array; output: JSON issues + summary).
 
-**Key architectural patterns:**
-- Additive optional fields in YAML blocks: `envelope_path` is optional in quorum.md slot-worker YAML; absent = fall back to static `maxSize` and default tier; zero regression risk
-- Config gate for every new feature: `task_envelope.enabled`, `quorum.adaptiveFanOut`, `quorum.tierMap` absence = disabled; consistent with `research_enabled`, `formal_verify_enabled` pattern
-- Fail-open on envelope absence: missing/malformed `task-envelope.json` causes all envelope-dependent features to fall back to static config; R6 compliance; envelope is optimization not hard requirement
-- Hook edit requires dist/ sync + install: `hooks/qgsd-token-collector.js`, `hooks/qgsd-stop.js`, `hooks/config-loader.js` edits ALL require `cp hooks/<file>.js hooks/dist/<file>.js && node bin/install.js --claude --global`
-- Flat config keys for tier config: avoid nested objects that would be silently lost on partial project override via shallow merge; `model_tier_cheap` not `model_tiers: { cheap: ... }`
+**Modified existing components:**
+- `bin/generate-phase-spec.cjs` — Read frozen envelope (if exists), check `frozen_at` before using, merge properties with phase truths.
+- `bin/run-formal-verify.cjs` — Add envelope validation step (optional for backward compat), analyze ENV property results separately in summary.
+- `hooks/qgsd-prompt.js` — Call drift detector early in UserPromptSubmit, inject drift report into context (non-blocking).
+- `hooks/qgsd-stop.js` — Detect direct modifications to `formal/requirements.json`, block unless amendment approval marker present.
 
 ### Critical Pitfalls
 
-1. **Token count assumed available in hook payloads — it is not** — `SubagentStop` payload contains `agent_transcript_path`, not `token_usage`. Read the transcript file to sum usage. Verify exact payload shape via `node bin/review-mcp-logs.cjs` before writing any observability code. Designing around an assumed field that returns `undefined` will silently emit no logs with no error (fail-open hooks).
+**1. Haiku Validation Non-Determinism** (HIGH impact)
+LLM validation is probabilistic — same envelope returns different results on different runs. Envelope passes Tuesday, fails Wednesday.
+- **Mitigation:** Use explicit rubrics, aggregate 3+ independent passes, generate deterministic hashes of findings, version the validation rubric. Only findings appearing in 2+ passes count as HIGH confidence. Test for determinism: run same envelope 5 times, check hash stability.
+- **Phase to address:** Phase 2 (Validation Gate) — establish rubric before freezing. End-to-end test must validate determinism before production use.
 
-2. **Task envelope or new subagent_type breaks Stop hook quorum evidence detection** — `qgsd-stop.js` `wasSlotWorkerUsed()` (line 157) matches exactly `"qgsd-quorum-slot-worker"`. Any new dispatch variant using a different subagent_type silently blocks every plan delivery. The envelope MUST be delivered as fields in the YAML prompt body, never as a change to `subagent_type`. If `wasSlotWorkerUsed()` must change, it MUST be updated in the same plan phase as the dispatch change, with hook sync and install run in the same plan.
+**2. Drift Detection False Positives** (HIGH impact)
+Naive string diffs flag formatting changes, whitespace, reordering as drift. Teams get 100+ drift alerts per phase, ignore them, miss real drift.
+- **Mitigation:** Use semantic fingerprinting (Haiku summary hash), not text diffs. Define drift categories: NOISE (formatting, typos) vs SEMANTIC DRIFT (scope changes, precondition relaxation). Threshold: >20% text difference = drift. Disable drift checking during plan-phase (requirements evolving), enable during execute-phase (should be stable). Whitelist known-safe changes.
+- **Phase to address:** Phase 5 (Drift Detection) — finalize semantic fingerprinting. Test false positive rate <5% before deployment. Start with drift disabled; enable after validation.
 
-3. **Adaptive fan-out that does not emit `--n N` blocks every reduced-fan-out turn** — The Stop hook ceiling check reads worker count from `parseQuorumSizeFlag()` which scans for the `--n N` token in prompt text. Adaptive logic that silently slices `cappedSlots` to fewer workers without emitting `--n N` causes Stop to block every reduced-fan-out turn. All fan-out sizing MUST flow through the `--n N` injection path. This also constitutes an R3.5 violation if available models are silently excluded.
+**3. Immutability Enforcement Lacks Amendment Path** (HIGH impact)
+Hook blocks envelope modifications but provides no clear workflow for legitimate changes (typos, spec discovery of missing requirement). User hits block, has no guidance, either hacks hook or maintains shadow document.
+- **Mitigation:** Define amendment classes upfront: Class A (typos, non-semantic fixes, auto-approves), Class B (scope changes, need re-validation), Class C (add/remove requirements, roadmap impact). Amendment request format: `formal/requirements.AMENDMENT-<timestamp>.json` with before/after + class + rationale. Amendment validator gates B/C to explicit approval; Phase-specific amendment windows (only during plan-phase, not execute-phase).
+- **Phase to address:** Phase 3 (Immutability) — implement amendment workflow before hook installation. Test against real workflows (merge resolution, metadata update).
 
-4. **Tiered model config as nested object causes silent data loss via shallow merge** — `config-loader.js` uses strict shallow spread (`{ ...DEFAULT_CONFIG, ...global, ...project }`). A project `.claude/qgsd.json` that sets `quorum: { tierMap: { fast: {...} } }` (without specifying all tiers) silently replaces the entire `quorum` block, reverting unspecified tiers to `undefined`. Use flat config keys or require full block replacement with a `validateConfig()` warning that backfills missing sub-keys from defaults.
+**4. Formal Spec Generation Discovers Requirements Incomplete** (MEDIUM impact)
+Envelope passes Haiku validation but spec generation fails: "REQ-02 postcondition not satisfiable given REQ-05." Specification blocked but envelope immutable.
+- **Mitigation:** Add "formal specification compatibility" dry-run BEFORE Haiku validation. Attempt `generate-phase-spec --validate-only` on aggregated envelope. Report conflicts early. Implement staged freezing: Semantic Validation (Haiku) → Formal Compatibility (spec gen) → Immutable Envelope. Amendment window stays open until Phase 2 spec generation completes.
+- **Phase to address:** Phase 2 (Validation) — include pre-Haiku spec gen dry-run. Don't freeze fully until formal compatibility passes.
 
-5. **Hook install sync omitted after hook edits — silent non-deployment** — source edits to `hooks/` are ignored at runtime; `~/.claude/hooks/` is what Claude Code loads. Every plan modifying any hook file MUST include: `cp hooks/<name>.js hooks/dist/<name>.js && node bin/install.js --claude --global`. Verify with `diff hooks/dist/<name>.js ~/.claude/hooks/<name>.js` — diff must be empty. This has burned QGSD before (Phase v0.13-06 INT-03).
+**5. Hook Installation Sync Breaks Enforcement** (MEDIUM impact)
+Developer modifies `hooks/qgsd-requirements-guard.js`, forgets to sync to `hooks/dist/` and reinstall globally to `~/.claude/hooks/`. Old version keeps running. Enforcement inconsistent between developers.
+- **Mitigation:** Add post-merge git hook checking if source is newer than dist. Version-stamp hook with `HOOK_VERSION` constant; check at phase start. CI enforces installation. Keep independent CI gate as backstop: even if client hook isn't installed, CI gate protects.
+- **Phase to address:** Phase 3 (Immutability) — implement version checking and post-merge sync validation. Add explicit README section documenting installation requirement.
+
+**6. Schema Versioning Creates Brittle Structure** (MEDIUM impact)
+Schema defined once, but as QGSD evolves, schema must change to support new constraint types or traceability fields. Breaking changes or sprawling over-design.
+- **Mitigation:** Version schema explicitly (`"schema_version": "1.0"` at root). Use `additionalProperties: false` (fail-fast on unknown fields). Keep `"requirements_metadata"` as extensible object absorbing new types. Plan migrations in advance: v1.0 → v1.1 mapping tool defined before locking. Don't try to "future-proof" everything.
+- **Phase to address:** Phase 1 (Foundation) — finalize schema design before freezing. Phase 2 extends only metadata, not structure.
 
 ## Implications for Roadmap
 
-Based on combined research, 4 table-stakes features decompose into 4 implementation phases in strict dependency order. Features 3 (adaptive fan-out) and 4 (tiered models) both require the task envelope (Feature 2) for their runtime inputs. Token observability (Feature 1) is independent but ships first to establish baseline measurement.
+Based on research, the requirements envelope requires a carefully sequenced five-phase implementation driven by dependencies and risk mitigation.
 
-### Phase v0.18-01: Token Observability Foundation
+### Phase 1: Requirements Envelope Foundation (ENV-01 + ENV-02 foundation)
+**Rationale:** Aggregation and validation are prerequisites for all downstream work. No specs can be correct without a validated requirements source. Foundation phase establishes the artifact format and validation pattern.
 
-**Rationale:** Independent of all other features; establishes the measurement baseline that validates the impact of Phases 2-4. Ships first because: (a) it proves the `SubagentStop` hook + `agent_transcript_path` transcript parsing approach works before that infrastructure is relied on by health display; (b) the token log data makes the improvements from later phases visible and verifiable; (c) this phase has the lowest integration surface (new hook + extension to two existing scripts).
-**Delivers:** `hooks/qgsd-token-collector.js` (SubagentStop hook); `.planning/token-usage.jsonl` append-only log; `/qgsd:health` token usage section (reads log, aggregates by slot); correlation file protocol (`quorum-slot-corr-<agent_id>.json`) written by `qgsd-prompt.js` at dispatch, read and cleaned up by hook; `~/.claude/settings.json` SubagentStop hook registration.
-**Addresses:** Token observability table-stakes feature from FEATURES.md.
-**Stack used:** `SubagentStop` hook (Claude Code); `fs.readFileSync` + `JSON.parse` (transcript parsing); `fs.appendFileSync` (JSONL log); Node.js stdlib throughout.
-**Avoids:** Pitfall 1 (verify payload shape via `review-mcp-logs.cjs` before coding; design around `agent_transcript_path` not assumed `token_usage` field); Pitfall 5 (hook sync + install required for new hook registration).
+**Delivers:**
+- `bin/aggregate-requirements.cjs` — Compile REQUIREMENTS.md → `formal/requirements.json` (schema validated, unvalidated semantically)
+- `bin/validate-requirements-haiku.cjs` — Haiku validator with explicit rubric, determinism testing, structured issue output
+- `agents/qgsd-haiku-validator.md` — Lightweight validator agent
+- `formal/schemas/requirements.schema.json` — JSON Schema Draft-07 with versioning + extensible metadata
+- Full roundtrip test: REQUIREMENTS.md → aggregation → validation → frozen envelope
 
-### Phase v0.18-02: Tiered Model Sizing
+**Addresses:** Table stakes features (Aggregation, Machine-Readable Format, Duplication/Conflict Detection)
 
-**Rationale:** Lowest integration surface of the remaining three features. Enforces a pattern that is already partially correct (quorum.md already uses `model="haiku"` for slot-workers); extends it to the researcher and checker spawn sites in `plan-phase.md`. No new protocols, no new files beyond config schema additions. Ships second because its changes to `plan-phase.md` and `config-loader.js` establish clean baseline state before Phase 3 modifies the same config-loader and Phase 4 modifies the same plan-phase.md.
-**Delivers:** `model="haiku"` enforced at researcher Task spawn (plan-phase.md Step 5) and checker Task spawn (plan-phase.md Step 10); `model_tiers` config key in `qgsd.json` schema; `quorum.tierMap`, `quorum.defaultTier` in `config-loader.js` DEFAULT_CONFIG and `validateConfig()`; `model_tier` field in `gsd-tools.cjs` INIT JSON output; explicit documentation of tier policy in `quorum.md` and `plan-phase.md`.
-**Addresses:** Tiered model sizing table-stakes feature from FEATURES.md.
-**Stack used:** Config extension only; no new npm packages.
-**Avoids:** Pitfall 4 (flat config keys or full-block replacement semantics with `validateConfig()` backfill warning); Pitfall 5 (config-loader.js edit requires dist/ sync + install).
+**Avoids:** Pitfalls 1 (non-determinism via rubric + aggregation), 6 (schema brittleness via versioning)
 
-### Phase v0.18-03: Task Envelope
+**Research needed:** Verify Haiku latency/cost for 100+ requirement envelope; establish rubric patterns from requirements domain
 
-**Rationale:** Foundation for Phase 4 (adaptive fan-out reads `risk_level` from envelope) and Phase 4's tiered model extension (reads `model_tier` from envelope). Ships third because: (a) Phases 3 and 4 are blocked on the envelope existing; (b) this phase has the most integration surface (researcher agent, planner agent, quorum.md, plan-phase.md) and deserves its own phase for careful end-to-end testing; (c) token observability from Phase 1 can measure envelope read overhead and confirm the context reduction claim.
-**Delivers:** `bin/task-envelope.cjs` (init/update/read with atomic writes and schema validation); `bin/task-envelope.test.cjs` (unit tests: schema, idempotency, fail-open on missing file); `task_envelope.enabled` config gate in `config-loader.js`; `plan-phase.md` Step 5 and Step 8 envelope init/update calls; `quorum.md` optional `envelope_path` field reading with fail-open fallback; `qgsd-planner` and `qgsd-phase-researcher` agent instructions updated to write envelope at completion.
-**Addresses:** Compact context handoffs table-stakes feature from FEATURES.md.
-**Stack used:** `JSON.parse`/`JSON.stringify` + `fs.renameSync` (atomic writes); Node.js stdlib.
-**Avoids:** Pitfall 2 (envelope delivered as YAML body fields, never as subagent_type change; `wasSlotWorkerUsed()` unchanged); Pitfall 5 (config-loader.js + plan-phase.md edits require dist/ sync + install); anti-pattern 3 (shallow merge: project config must provide full tierMap or use validateConfig() backfill).
+---
 
-### Phase v0.18-04: Adaptive Fan-Out and Coupled Tier Dispatch
+### Phase 2: Formal Spec Integration (ENV-03 + ENV-02 spec compatibility)
+**Rationale:** Frozen envelope must be compatible with formal spec generation. This phase integrates envelope with downstream spec tooling and discovers incompatibilities early.
 
-**Rationale:** Depends on Phase 3 envelope (reads `risk_level`) and Phase 2 tiered model config (reads `effective_tier`). The two features are designed as a coupled pair — adaptive fan-out determines effective worker count from risk_level, tiered models determine effective slot-worker model from risk_level — and share the same quorum.md insertion point. Shipping together avoids two separate modifications to the same slot-selection code block.
-**Delivers:** `readEnvelopeWorkerCount()` helper in `qgsd-prompt.js` (reads envelope via `current-activity.json` phase lookup); priority chain `--n N > envelope worker_count > config.quorum.maxSize > pool length` implemented in both `qgsd-prompt.js` and `qgsd-stop.js`; `quorum.md` adaptive fan-out logic (risk_level → effective_size, logged in pre-flight); `quorum.md` tier dispatch logic (effective_tier → slotWorkerModel in Task dispatch); `quorum.minSize`, `quorum.highRiskBonus`, `quorum.adaptiveFanOut` config keys; R6.4 reduced-quorum log when fan-out is below maxSize.
-**Addresses:** Adaptive quorum fan-out table-stakes feature from FEATURES.md; completes tiered model sizing (now envelope-driven).
-**Stack used:** Config extension; no new npm packages.
-**Avoids:** Pitfall 3 (`--n N` injection MUST be emitted for any reduced fan-out; Stop hook reads count from prompt text only); Pitfall 5 (qgsd-prompt.js + qgsd-stop.js edits require dist/ sync + install); anti-pattern 4 (`--n N` user override takes highest precedence over adaptive logic).
+**Delivers:**
+- `bin/extract-requirements-properties.cjs` — Convert envelope requirements to TLA+ PROPERTY templates
+- Modified `bin/generate-phase-spec.cjs` — Read frozen envelope, merge with phase truths, inject ENV-* properties
+- Modified `bin/run-formal-verify.cjs` — Envelope validation step (optional for backward compat), analyze ENV property results
+- Pre-Haiku spec generation dry-run (included in validate-requirements-haiku.cjs)
+- Integration test: new-milestone → plan-phase with envelope → formal verify with ENV properties
+
+**Addresses:** Formal Constraint Validation feature; integrates envelope as source of truth for specs
+
+**Avoids:** Pitfall 4 (spec generation discovers incomplete requirements) via early dry-run
+
+**Research needed:** Verify TLA+ PROPERTY generation from requirement text; test property-to-requirement traceability
+
+---
+
+### Phase 3: Immutability + Amendment Workflow (ENV-04)
+**Rationale:** Frozen envelope needs an escape hatch for legitimate changes. Amendment workflow must be designed and tested BEFORE enforcement hook is installed.
+
+**Delivers:**
+- `bin/amend-requirements.cjs` — Amendment workflow: Class A auto-approve, B/C route to explicit approval, re-validation gate
+- Modified `hooks/qgsd-stop.js` — Detect direct modifications, block unless amendment approval marker present
+- `.husky/pre-commit` hook (via husky) — Alternative enforcement at git level
+- Amendment class definitions (A/B/C) documented in CLAUDE.md
+- Test against real workflows: merge resolution, metadata updates, multiple amendments
+
+**Addresses:** Immutability Enforcement + Amendment Workflow features
+
+**Avoids:** Pitfalls 3 (unclear amendment path), 6 (hook installation sync breaks enforcement)
+
+**Research needed:** Validate that metadata separation (envelope vs operational data) doesn't break legitimate tooling workflows
+
+---
+
+### Phase 4: Drift Detection Semantics (ENV-05 foundation)
+**Rationale:** Working copy divergence detection requires semantic fingerprinting to avoid false positive flood. This phase establishes the fingerprinting algorithm and false positive thresholds.
+
+**Delivers:**
+- `bin/detect-requirements-drift.cjs` — Semantic drift detection using fingerprinting (not naive diffs)
+- Drift category definitions (NOISE vs SEMANTIC DRIFT) with thresholds (>20% change = drift)
+- `.driftignore` whitelisting mechanism for intentional changes
+- Modified `hooks/qgsd-prompt.js` — Call drift detector, inject report into context (non-blocking)
+- Test suite: validate false positive rate <5% before deployment
+- Drift detection DISABLED by default; enabled only during execute-phase
+
+**Addresses:** Drift Detection feature (deferred to v0.23 in MVP but positioned for Phase 4)
+
+**Avoids:** Pitfall 2 (false positives overwhelm signal) via semantic fingerprinting + windows + whitelisting
+
+**Research needed:** Validate Haiku fingerprint stability (determinism of summaries); measure false positive rate on real REQUIREMENTS.md edits
+
+---
+
+### Phase 5: Integration Testing + Production Hardening
+**Rationale:** End-to-end validation across all five requirements envelope features plus integration with formal verification pipeline.
+
+**Delivers:**
+- Full roundtrip test: new-milestone → aggregate → validate (with determinism checks) → plan-phase (with envelope specs) → drift detection (with false positive rate validation) → amend-requirements (workflow test)
+- Performance testing: envelope validation/drift detection latency at 10K+ requirements
+- Immutability enforcement tested with: direct edits (blocked), amendments (allowed), merge conflicts (resolved), hook installation sync (checked)
+- Documentation: amendment workflow guide, drift categories, schema versioning strategy, installation requirements
+- Production checklist: all pitfall mitigations verified, confidence thresholds met
+
+**Addresses:** System-wide validation; ensures no hidden integration gaps
+
+**Avoids:** All pitfalls via comprehensive testing against recovery strategies
+
+---
 
 ### Phase Ordering Rationale
 
-- **Phase 1 → Phases 2-4 (measurement first):** Token observability ships first so the health output can quantify the impact of each subsequent phase. Without the log baseline, improvement claims are unverified.
-- **Phase 2 before Phase 3 (config schema stability):** Tiered model sizing introduces `config-loader.js` additions (`model_tiers`, `quorum.tierMap`). Phase 3 also modifies `config-loader.js` (adds `task_envelope.enabled`). Completing Phase 2 first establishes a stable config schema before Phase 3's additions. Reduces merge surface.
-- **Phase 3 before Phase 4 (hard data dependency):** Adaptive fan-out reads `risk_level` from `task-envelope.json`. Tiered model dispatch reads `model_tier` from `task-envelope.json`. Both features are inoperable (fall back to static defaults) without the envelope being written by the researcher and planner. Phase 4 can technically be partially functional without the envelope (static defaults), but the adaptive behavior only activates with Phase 3 in place.
-- **Phases 2 and 3 are independently sequenced (no coupling between them):** They touch non-overlapping protocol surfaces. If timeline requires it, Phase 3 could swap with Phase 2 — but Phase 2 first is preferable for config schema stability.
-- **Phase 4 last (depends on both Phase 2 and Phase 3):** Cannot fully test adaptive fan-out without an envelope providing `risk_level`. Cannot fully test tier dispatch without `model_tiers` config from Phase 2.
+**Foundation before specs:** ENV-01/ENV-02 must complete before ENV-03. Specs cannot be generated from unvalidated requirements.
+
+**Specs before immutability:** ENV-03 integration tests envelope reading; immutability enforcement (ENV-04) must come after specs are proven to work with envelope.
+
+**Immutability before drift:** ENV-04 (frozen state) is prerequisite for ENV-05 (drift detection). Can't detect drift without a stable baseline.
+
+**Drift semantics before deployment:** ENV-05 false positives are the highest UX risk. Must be solved BEFORE enabling drift checks in production workflows.
+
+**Dependencies satisfied:** Phase 1 (aggregation + validation) → Phase 2 (spec generation + dry-run) → Phase 3 (amendments + hook) → Phase 4 (drift) → Phase 5 (integration).
 
 ### Research Flags
 
-Phases likely needing deeper research during planning:
-- **Phase v0.18-01 (Token Observability):** MEDIUM research need. The correlation file protocol (mapping `agent_id` assigned at Task spawn time to the slot name known before spawn) is new infrastructure. The timing of `agent_id` assignment by Claude Code is not documented — verify via MCP logs whether `agent_id` is predictable before spawn or only assignable after. If not predictable pre-spawn, the correlation file must be written after spawn using a different keying strategy. Address during Phase v0.18-01 planning before implementing the hook.
-- **Phase v0.18-04 (Adaptive Fan-Out):** MEDIUM research need. The `--n N` injection mechanism must be verified to reach `qgsd-stop.js`'s `parseQuorumSizeFlag()` correctly when the number comes from the envelope (not user input). Verify via a test quorum turn with an envelope-driven reduced fan-out that `conformance-events.jsonl` shows `quorum_complete` not `quorum_block`. The R3.5 compliance notification format (R6.4 reduced-quorum log) must be explicitly designed and tested.
+**Phases needing deeper research during planning:**
+- **Phase 1 (Validation):** Haiku latency/cost for large envelopes; rubric development for domain-specific duplicates/conflicts; determinism testing methodology
+- **Phase 2 (Spec Integration):** TLA+ PROPERTY generation from natural language requirements; property-to-requirement traceability patterns; dry-run failure reporting
+- **Phase 4 (Drift Semantics):** Fingerprinting algorithm (embedding vs hashing); false positive measurement methodology; phase-specific window definitions
 
-Phases with standard patterns (skip research-phase):
-- **Phase v0.18-02 (Tiered Model Sizing):** LOW research need. Extends existing `model="haiku"` pattern already in `quorum.md`. Config key additions follow the exact same schema as `research_enabled`/`formal_verify_enabled`. The only decision is flat vs nested config structure — research has already resolved this (flat keys required given shallow merge semantics). No new API surface.
-- **Phase v0.18-03 (Task Envelope):** LOW-MEDIUM research need. The envelope schema is first-principles design, but the integration points are fully mapped (4 points with exact file/line context from architecture research). The `bin/task-envelope.cjs` init/update/read pattern follows the scoreboard pattern precisely. The main uncertainty is the exact YAML block syntax for the optional `envelope_path` field — verify against the existing `artifact_path` optional field pattern in `qgsd-quorum-slot-worker.md` during planning.
+**Phases with standard patterns (skip research-phase):**
+- **Phase 3 (Amendment Workflow):** Well-established pattern from formal verification literature (staged freezing, audit trails); amendment class taxonomy is standard
+- **Phase 5 (Integration):** Standard integration testing methodology; pitfall recovery strategies documented in research
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Zero new npm deps confirmed with rationale for each rejected library; `SubagentStop` `agent_transcript_path` field confirmed via official docs AND direct transcript inspection on this machine; all implementation patterns trace to existing working code in the codebase |
-| Features | HIGH for table stakes; MEDIUM for differentiators | Table stakes confirmed via PRIMARY SOURCE reads of `quorum.md`, `plan-phase.md`, `qgsd-prompt.js`, `qgsd-stop.js`; differentiators (budget alerts, envelope diff mode) are additive and well-bounded; feature dependencies fully mapped |
-| Architecture | HIGH | All integration seams identified via live source inspection; build order dependency graph derived from actual file dependencies; component boundary table covers all 7 modified/new files with change type and sync requirements; UNCHANGED files documented with rationale |
-| Pitfalls | HIGH | All 5 critical pitfalls grounded in live source inspection of the exact code paths at risk (`wasSlotWorkerUsed()` line 157, `parseQuorumSizeFlag()` line 364 in `qgsd-stop.js`; shallow merge line 259 in `config-loader.js`; `merge-wave` subcommand in `update-scoreboard.cjs`; CLAUDE.md R3.5/R6.4 requirements); recovery strategies provided for each |
+| Stack | HIGH | All technologies verified with official documentation; ajv adoption proven (ESLint/Webpack); @anthropic-ai/sdk used in existing QGSD hooks; husky standard in Node.js; no conflicts with existing deps |
+| Features | MEDIUM-HIGH | Features derived from formal verification standards (ISO 26262, TLA+ literature); Table stakes clearly defined; dependency graph validated; MVP scope is conservative but sufficient |
+| Architecture | HIGH | Integration points well-documented; new components follow existing QGSD patterns (bin/ tools, hook modifications); data flow diagrams complete; backward compatibility confirmed (existing projects without envelope still work) |
+| Pitfalls | HIGH | All 9 critical pitfalls mapped to academic literature (requirements validation, data drift, immutability patterns); mitigation strategies documented with recovery costs; testing approaches clear |
 
-**Overall confidence:** HIGH
+**Overall confidence: HIGH**
+
+The requirements envelope is a well-researched, standard-in-the-industry feature with proven patterns from formal verification, requirements engineering, and infrastructure-as-code domains. No novel technologies required; all integration points are clear. Primary risk is **Haiku validation determinism** (HIGH impact, well-mitigated via rubrics + aggregation); secondary risks have lower impact and clear solutions.
 
 ### Gaps to Address
 
-- **`agent_id` assignment timing:** The correlation file protocol assumes that `agent_id` is assigned after Task spawn and that `qgsd-prompt.js` writes the correlation file before the SubagentStop event fires for that agent. This timing assumption needs verification in Phase v0.18-01 planning. Fallback: use `last_assistant_message` vote line parsing (the vote output already contains `slot:` in the YAML block) as a secondary slot-name derivation method.
+1. **Haiku Rubric Development:** Explicit duplicate/conflict patterns for QGSD domain (quorum, formal verification, model checking) — infer from existing v0.21 requirements, validate during Phase 1.
 
-- **`--n N` emission verification for envelope-driven fan-out:** Phase v0.18-04 requires that the adaptive fan-out logic emits `--n N` into the prompt text so `qgsd-stop.js` reads it correctly. The exact injection point in `qgsd-prompt.js` where `--n N` is synthesized needs to be verified during Phase v0.18-04 planning — confirm it is the same code path that the Stop hook scans, not a different injection location.
+2. **TLA+ PROPERTY Generation Completeness:** How to translate "requirement text" → TLA+ LTL formulas without manual intervention — likely requires category-specific templates (e.g., "must not happen" → `[]¬property`, "eventually happens" → `<>property`). Validate during Phase 2.
 
-- **Envelope `risk_level` classification accuracy:** The `classifyRiskTier()` heuristic (regex scan for ROADMAP, architecture, security, breaking change keywords) may misclassify phases. Post-Phase 3, monitor token logs to confirm low-risk phases are actually receiving `routine` classification and the fan-out reduction is occurring. If misclassification is common, the regex keyword list needs tuning.
+3. **Fingerprinting Algorithm Selection:** Embedding-based vs hashing-based semantic similarity — cost/accuracy tradeoff not fully explored. Test both approaches during Phase 4; measure latency at 10K+ requirements.
 
-- **`VALID_MODELS` guard in `update-scoreboard.cjs`:** If Phase v0.18-04 introduces new slot family names for tiered model groups, those names must be added to the `VALID_MODELS` array at line 44 of `update-scoreboard.cjs`. Omitting this causes silent UNAVAIL counting errors. Verify during Phase v0.18-04 planning.
+4. **Phase-Specific Amendment Windows:** Validate that amendments during plan-phase don't break execute-phase specs. Define contractual boundaries (which phases can amend, which freeze). Clarify during Phase 3.
+
+5. **Backward Compatibility with Existing Projects:** Confirm all graceful fallbacks work (envelope missing, unvalidated, old schema versions). Full test during Phase 5.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- `/Users/jonathanborduas/code/QGSD/hooks/qgsd-stop.js` — `wasSlotWorkerUsed()` line 157; ceiling check line 486; `parseQuorumSizeFlag()` line 364; confirms exact subagent_type contract and `--n N` override path
-- `/Users/jonathanborduas/code/QGSD/hooks/qgsd-prompt.js` — `parseQuorumSizeFlag()` line 109; `cappedSlots` line 211; `externalSlotCap` logic; confirms `--n N` is the authoritative fan-out control channel
-- `/Users/jonathanborduas/code/QGSD/hooks/config-loader.js` — shallow merge line 259: `{ ...DEFAULT_CONFIG, ...(globalObj || {}), ...(projectObj || {}) }`; confirms partial override pitfall for nested config objects
-- `/Users/jonathanborduas/code/QGSD/bin/update-scoreboard.cjs` — `VALID_MODELS` line 44; `merge-wave` subcommand structure; confirms token field handling must go through merge-wave
-- `/Users/jonathanborduas/code/QGSD/commands/qgsd/quorum.md` — full inline R3 protocol; `max_quorum_size` mechanism; `preferSub` sorting; slot-worker YAML block format; benched pool pattern
-- `/Users/jonathanborduas/code/QGSD/qgsd-core/workflows/plan-phase.md` — Steps 5/8/8.5/10 researcher/planner/checker spawn points; model= field; files_to_read blocks that envelope will optimize
-- `/Users/jonathanborduas/code/QGSD/.planning/PROJECT.md` — v0.18 target features; existing feature list; constraints (no GSD source modification, global install pattern)
-- `/Users/jonathanborduas/code/QGSD/CLAUDE.md` — R3.5 minimum quorum; R6.2-R6.4 fail-open and reduced-quorum documentation requirements
-- Claude Code Hooks reference (code.claude.com/docs/en/hooks) — SubagentStop payload schema; `agent_transcript_path` field; SubagentStop matcher values; `async` hook option
-- Direct transcript inspection on target machine: `~/.claude/projects/.../subagents/agent-ae63d1e.jsonl` — confirmed `message.usage.{input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens}` structure
-- Feature request github.com/anthropics/claude-code/issues/13994 — confirms per-sub-agent metrics NOT in hook payload; transcript parsing is the only available method
+- **QGSD Project Documentation:** `.planning/PROJECT.md` (v0.22 envelope requirements overview), `.planning/REQUIREMENTS.md` (detailed ENV-01..05 specs), `formal/model-registry.json` (central artifact index)
+- **Official Package Docs:**
+  - [Ajv JSON Schema validator](https://ajv.js.org/) — Performance benchmarks, code generation, Draft-07 support
+  - [npm: @anthropic-ai/sdk](https://www.npmjs.com/package/@anthropic-ai/sdk) — Official SDK, Claude Haiku 4.5 pricing
+  - [Husky](https://typicode.github.io/husky/) — Git hook patterns, Node.js standard
+  - [GitHub - kpdecker/jsdiff](https://github.com/kpdecker/jsdiff) — Text differencing for drift detection
+- **QGSD Formal Verification:** `bin/run-formal-verify.cjs`, `bin/generate-phase-spec.cjs`, `formal/tla/` specs — existing infrastructure patterns
+- **Hook System:** `hooks/qgsd-prompt.js`, `hooks/qgsd-stop.js` — integration patterns
 
 ### Secondary (MEDIUM confidence)
-- Claude Code Manage Costs Documentation (code.claude.com/docs/en/costs) — `model="haiku"` for subagents is the endorsed pattern; agent teams ~7x more tokens than standard sessions
-- ACON: Optimizing Context Compression for Long-horizon LLM Agents (arXiv 2510.00615) — structured extraction over lossy summarization; confirms task envelope direction
-- IETF draft-chang-agent-token-efficient-01 — schema deduplication via JSON $ref; adaptive field inclusion; confirms structured envelope approach
-- Context Engineering for Reliable AI Agents (Azure SRE Agent, Microsoft) — context as first-class engineering concern; structured state handoff between agent stages
-- LLM Cost Optimization Guide 2025 (futureagi.com) — 30-70% cost reduction via routing; tiered model usage confirmed as primary strategy
-- Langfuse Token and Cost Tracking — per-call token attribution as table-stakes for production observability
-- liambx.com/blog/claude-code-log-analysis-with-duckdb — confirmed JSONL structure; `isSidechain`/`isApiErrorMessage` filter fields; `message.usage` path
+- **Formal Methods & Requirements Engineering:**
+  - [Formal Specification and Validation of Security Policies](https://inria.hal.science/inria-00507300/file/FormalSpecificationandValidationofSecurityPolicies.pdf)
+  - [TLA+ Specification Language and Model Checking](https://lamport.azurewebsites.net/pubs/spec-book-chap.pdf)
+  - [Specification Pattern System (Dwyer et al.)](https://people.cs.ksu.edu/~dwyer/spec-patterns.ORIGINAL) — Property patterns for verification
+- **LLM-Based Validation:**
+  - [Requirements Ambiguity Detection and Explanation with LLMs: An Industrial Study](https://www.ipr.mdu.se/pdf_publications/7221.pdf)
+  - [Supervised Semantic Similarity-based Conflict Detection Algorithm (S3CDA)](https://arxiv.org/html/2206.13690v2)
+  - [Transfer Learning for Conflict and Duplicate Detection in Software Requirement Pairs](https://arxiv.org/html/2301.03709v2)
+- **Drift Detection & Infrastructure as Code:**
+  - [Drift Detection in IaC: Prevent Your Infrastructure from Breaking](https://www.env0.com/blog/drift-detection-in-iac-prevent-your-infrastructure-from-breaking) — False positive mitigation patterns
+  - [Data Drift: Key Detection and Monitoring Techniques in 2026](https://labelyourdata.com/articles/machine-learning/data-drift) — PSI, KL Divergence, KS test patterns
 
-### Tertiary (LOW confidence)
-- requesty.ai/mindstudio.ai LLM routing guides — risk-based routing for cost efficiency; confirms quorum fan-out as a routing problem; WebSearch summaries only
+### Tertiary (validation needed)
+- **JSON Schema Versioning:** [JSON Schema - Towards a stable JSON Schema](https://json-schema.org/blog/posts/future-of-json-schema) — Breaking change history; migration strategy design validated during Phase 1
+- **Pre-commit Hook Practices:** [Effortless Code Quality: The Ultimate Pre-Commit Hooks Guide for 2025](https://gatlenculp.medium.com/effortless-code-quality-the-ultimate-pre-commit-hooks-guide-for-2025-57ca501d9835) — Hook patterns; file immutability strategies
 
 ---
-*Research completed: 2026-02-27*
-*Ready for roadmap: yes*
+
+**Research completed:** 2026-03-01
+**Ready for roadmap creation:** YES
+
+The requirements envelope research is comprehensive and ready to inform detailed phase planning. Recommended next step: use this SUMMARY.md as context for `/qgsd:roadmap` to generate detailed v0.22 phase structure with task envelopes.
