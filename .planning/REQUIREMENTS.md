@@ -37,17 +37,17 @@ All phase requirements from `new-milestone` are aggregated into a machine-readab
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENV-01 | TBD | Pending |
-| ENV-02 | TBD | Pending |
-| ENV-03 | TBD | Pending |
-| ENV-04 | TBD | Pending |
-| ENV-05 | TBD | Pending |
+| ENV-01 | v0.22-01 | Pending |
+| ENV-02 | v0.22-01 | Pending |
+| ENV-03 | v0.22-02 | Pending |
+| ENV-04 | v0.22-03 | Pending |
+| ENV-05 | v0.22-04 | Pending |
 
 **Coverage:**
 - v0.22 requirements: 5 total
-- Mapped to phases: 0
-- Unmapped: 5 ⚠️
+- Mapped to phases: 5
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-01*
-*Last updated: 2026-03-01 after v0.22 milestone start*
+*Last updated: 2026-03-01 after v0.22 roadmap creation*

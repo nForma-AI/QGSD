@@ -2,22 +2,24 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-01 after v0.21-05 Planning Integration complete)
+See: .planning/PROJECT.md (updated 2026-03-01 after v0.22 roadmap creation)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 **Current focus:** v0.22 — Requirements Envelope
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: v0.22-01 of 4 (Requirements Envelope Foundation)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-01 — Milestone v0.22 started
+Status: Ready to plan
+Last activity: 2026-03-01 — Roadmap created for v0.22 (4 phases, 5 requirements)
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 46+ (across v0.2–v0.9)
+- Total plans completed: 46+ (across v0.2–v0.21)
 - Average duration: 3.5 min
 - Total execution time: ~2.7 hours
 
@@ -25,9 +27,9 @@ Last activity: 2026-03-01 — Milestone v0.22 started
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| v0.20-09 P01 | 1 | - | - |
-| v0.20-08 P03 | 1 | - | - |
-| v0.20-08 P01 | 1 | 600s | 600s |
+| v0.21-06 | 4 | - | - |
+| v0.21-05 | 3 | - | - |
+| v0.21-04 | 4 | - | - |
 
 **Recent Trend:**
 - Last 5 plans: stable
@@ -42,22 +44,10 @@ Last activity: 2026-03-01 — Milestone v0.22 started
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.21-05 shipped]: PLAN-01/02/03 complete — `bin/generate-proposed-changes.cjs` (TLA+ delta synthesis from PLAN.md truths, 8/8 tests), `bin/run-phase-tlc.cjs` (TLC verification runner with iterative feedback, 9/9 tests), `bin/quorum-formal-context.cjs` (formal evidence block generator for quorum prompts, 11/11 tests). Total: 28/28 tests GREEN. ProposedChanges.tla filename must match MODULE name for TLC parsing.
-- [v0.21-05 finding]: TLA+ MODULE name must match the .tla filename exactly (TLC parsing requirement). Changed from `proposed-changes.tla` to `ProposedChanges.tla` to match `MODULE ProposedChanges`.
-- [v0.21-04 shipped]: SPEC-01/02/03/04 complete — `formal/tla/QGSDStopHook.tla` (TLC 523ms, 5/5 tests), oscillation spec audit (no drift, 4 comparison points confirmed), `formal/alloy/quorum-composition.als` (Alloy 810ms, 3 facts, 4/4 tests), `bin/generate-phase-spec.cjs` (reads *-PLAN.md frontmatter, 26 truths, 8/8 tests). Total: 21/21 tests GREEN. run-formal-verify.cjs now at 30 STEPS (10 TLA+, 8 Alloy).
-- [v0.21-04 finding]: WF_vars() fairness must be declared inside the Spec formula in the .tla file — never as a separate FAIRNESS line in .cfg. Mixing causes TLC conflict.
-- [v0.21-04 finding]: Alloy 6.2.0 CLI exec mode does not support `min[a, b]` in integer expressions. Over-approximation (`>= #c.availableSlots`) is sound when `selectedSlots in availableSlots` constraint bounds selection.
-- [v0.21-04 finding]: generate-phase-spec.cjs must read truths from *-PLAN.md YAML frontmatter, not task-envelope.json (which has empty truths at planning time). 26 truths extracted from 4 v0.21-04 plan files.
-- [v0.21-03 shipped]: LOOP-01/02/03/04 complete — `bin/run-prism.cjs` pre-step calibration, `hooks/qgsd-spec-regen.js` PostToolUse hook, `bin/sensitivity-sweep-feedback.cjs` (DEVIATION_THRESHOLD=0.05), `bin/propose-debug-invariants.cjs` + debug.md Step H. 32/32 tests GREEN.
-- [v0.21-03 finding]: PRISM is installed on dev machine (`~/prism/bin/prism`), so LOOP-03 exit-1 logic cannot rely on PRISM exit code for flip-to-fail detection. Fixed: conservative exit-1 when flip-to-fail record within 2×threshold of empirical rate, before PRISM runs.
-- [v0.21-02 shipped]: DIAG-01/02/03 complete — `bin/xstate-trace-walker.cjs` (single-actor replay), `bin/attribute-trace-divergence.cjs` (root-cause attribution), `bin/validate-traces.cjs` H1 fix (expectedState phase check). 49/49 tests GREEN. `formal/.divergences.json` TTrace export. `formal/diff-report.md` populated. State_mismatch rate: 0/8966 mapped events (0%).
-- [v0.21-02 finding]: The 69% divergence rate was a methodology artifact (H1), not a code bug (H2). Fresh-actor validator started in IDLE for quorum_block/quorum_complete events that happened mid-session (phase=DECIDING). Fix: return null from expectedState() for phase!=IDLE events.
-- [v0.21-01 shipped]: ARCH-01/02/03 complete — `formal/model-registry.json` (22 entries), `initialize-model-registry.cjs`, `promote-model.cjs`, `accept-debug-invariant.cjs`. 18/18 tests GREEN.
-- [v0.21 roadmap]: LOOP and SPEC phases (v0.21-03, v0.21-04) are parallelizable — both depend only on v0.21-01; LOOP-04 debug invariants require ARCH-03 write path.
-- [v0.21 roadmap]: PLAN-01/02/03 (v0.21-05) depends on ARCH + DIAG being stable before trusting FV results as planning gates.
-- [v0.21 roadmap]: SIG-01/02/03/04 (v0.21-06) are last — consumes FV output from LOOP and SPEC phases; SIG-04 PRISM gate depends on calibrated rates from v0.21-03.
-- [v0.21-06 shipped]: SIG-01/02/03/04 complete — `bin/detect-coverage-gaps.cjs` (TLC state coverage gap detector, 8/8 tests), `bin/generate-petri-net.cjs --roadmap` (roadmap Petri net + critical path, 12/12 tests), `bin/prism-priority.cjs` (PRISM failure priority ranker, 9/9 tests), `bin/quorum-consensus-gate.cjs` (Poisson binomial consensus probability gate, 10/10 tests). Total: 39/39 tests GREEN.
-- [v0.21-06 finding]: Poisson binomial DP (closed-form) is mathematically equivalent to PRISM mcp-availability.pm but runs in <1ms (vs PRISM requiring Java + model checking). Used for pre-quorum gating where latency matters.
+- [v0.22 roadmap]: 4 phases derived from 5 requirements. ENV-01+ENV-02 combined into Phase 1 (aggregation+validation are one coherent capability). ENV-03 separate (spec integration). ENV-04 separate (immutability+amendment). ENV-05 separate (drift detection).
+- [v0.22 roadmap]: Phase ordering: Foundation -> Spec Integration -> Immutability -> Drift. Immutability before drift (can't detect drift without a frozen baseline). Spec integration before immutability (specs must work with envelope before locking it).
+- [v0.22 research]: Primary risk is Haiku validation non-determinism -- mitigated by explicit rubrics, aggregation of 3+ passes, determinism testing. Secondary risk is drift detection false positives -- mitigated by semantic fingerprinting, not naive diffs.
+- [v0.22 research]: Recommended stack: ajv (schema validation), @anthropic-ai/sdk (Haiku calls), husky (git hooks), diff/jsdiff (drift detection), yaml (parsing).
 
 ### Pending Todos
 
@@ -82,5 +72,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-01
-Stopped at: Milestone v0.21 complete — all 6 phases shipped (v0.21-01 through v0.21-06). Last phase: v0.21-06 Operational Signals — 4 plans, 39/39 tests GREEN. detect-coverage-gaps.cjs, generate-petri-net.cjs --roadmap, prism-priority.cjs, quorum-consensus-gate.cjs. Ready for milestone audit or next milestone.
+Stopped at: v0.22 roadmap created — 4 phases, 5 requirements, 100% coverage. Ready to plan Phase v0.22-01.
 Resume file: None
