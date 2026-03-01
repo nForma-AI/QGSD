@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN'
+                     'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+  <declaration>
+    // QGSD Quorum Race Detection Model — UPPAAL-01
+    // Models concurrent slot worker responses under timing constraints.
+    //
+    // Constants are parameterized (not hardcoded) so run-uppaal.cjs can
+    // override them via verifyta -C flags with empirical values from
+    // check-results.ndjson at runtime.
+    //
+    // Requirements: UPPAAL-01, UPPAAL-02, UPPAAL-03
+
+    // Timing constants (defaults; overridden by run-uppaal.cjs with empirical bounds)
+    const int MIN_SLOT_MS = 50;    // Minimum slot response time in ms
+    const int MAX_SLOT_MS = 500;   // Maximum slot response time in ms
+    const int TIMEOUT_MS  = 1500;  // Planning gate deadline in ms
+    const int MIN_GAP_MS  = 10;    // Minimum inter-slot response gap for race-free operation
+
+    // Quorum configuration
+    const int N_SLOTS   = 4;  // Number of quorum slot workers (QGSD default)
+    const int MIN_QUORUM = 3; // Minimum votes for consensus
+
+    // Synchronization: broadcast so all waiting orchestrators hear a single response signal
+    broadcast chan response;
+
+    // Shared state
+    int votes    = 0;
+    bool race_fired = false;
+  </declaration>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       Template 1: SlotWorker
+       Represents a single quorum slot worker responding to a dispatch.
+       Clock x measures time since dispatch.
+       Invariant: x &lt;= MAX_SLOT_MS (slot must respond within deadline)
+       Transition: responds when x &gt;= MIN_SLOT_MS (not before min response time)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <template>
+    <name>SlotWorker</name>
+    <declaration>clock x;</declaration>
+
+    <location id="id0" x="0" y="0">
+      <name x="-10" y="-30">Waiting</name>
+      <label kind="invariant" x="-10" y="20">x &lt;= MAX_SLOT_MS</label>
+    </location>
+
+    <location id="id1" x="200" y="0">
+      <name x="190" y="-30">Responded</name>
+      <committed/>
+    </location>
+
+    <init ref="id0"/>
+
+    <transition>
+      <source ref="id0"/>
+      <target ref="id1"/>
+      <label kind="guard" x="50" y="-20">x &gt;= MIN_SLOT_MS</label>
+      <label kind="synchronisation" x="50" y="0">response!</label>
+    </transition>
+  </template>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       Template 2: QuorumOrchestrator
+       Collects slot responses until quorum or timeout.
+       Clock t measures time since dispatch start.
+       Invariant: t &lt;= TIMEOUT_MS (must decide before planning gate deadline)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <template>
+    <name>QuorumOrchestrator</name>
+    <declaration>clock t; int v = 0;</declaration>
+
+    <location id="id2" x="0" y="0">
+      <name x="-10" y="-30">Collecting</name>
+      <label kind="invariant" x="-10" y="20">t &lt;= TIMEOUT_MS</label>
+    </location>
+
+    <location id="id3" x="250" y="-80">
+      <name x="240" y="-110">Decided</name>
+    </location>
+
+    <location id="id4" x="250" y="80">
+      <name x="240" y="100">TimedOut</name>
+    </location>
+
+    <init ref="id2"/>
+
+    <!-- Collect response: increment vote counter, stay in Collecting -->
+    <transition>
+      <source ref="id2"/>
+      <target ref="id2"/>
+      <label kind="synchronisation" x="-100" y="60">response?</label>
+      <label kind="assignment" x="-100" y="80">v++</label>
+    </transition>
+
+    <!-- Consensus reached: quorum threshold met -->
+    <transition>
+      <source ref="id2"/>
+      <target ref="id3"/>
+      <label kind="guard" x="50" y="-60">v &gt;= MIN_QUORUM</label>
+    </transition>
+
+    <!-- Timeout: planning gate deadline fired before quorum reached -->
+    <transition>
+      <source ref="id2"/>
+      <target ref="id4"/>
+      <label kind="guard" x="50" y="60">t &gt;= TIMEOUT_MS</label>
+    </transition>
+  </template>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       Template 3: RaceDetector
+       Detects when two slot responses arrive at the same logical instant.
+       Race.Race is reachable iff a race condition can fire.
+       UPPAAL-03a: A[] not race.Race verifies race-free operation.
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <template>
+    <name>RaceDetector</name>
+    <declaration>int pending = 0;</declaration>
+
+    <location id="id5" x="0" y="0">
+      <name x="-10" y="-30">Idle</name>
+    </location>
+
+    <location id="id6" x="200" y="0">
+      <name x="190" y="-30">Counting</name>
+    </location>
+
+    <location id="id7" x="400" y="0">
+      <name x="390" y="-30">Race</name>
+      <!-- Race is reachable if two responses arrive simultaneously -->
+    </location>
+
+    <init ref="id5"/>
+
+    <!-- First response received: start counting simultaneous arrivals -->
+    <transition>
+      <source ref="id5"/>
+      <target ref="id6"/>
+      <label kind="synchronisation" x="50" y="-20">response?</label>
+      <label kind="assignment" x="50" y="0">pending = 1, race_fired = false</label>
+    </transition>
+
+    <!-- Second response received in same committed step: race detected -->
+    <transition>
+      <source ref="id6"/>
+      <target ref="id7"/>
+      <label kind="synchronisation" x="250" y="-20">response?</label>
+      <label kind="assignment" x="250" y="0">race_fired = true</label>
+    </transition>
+
+    <!-- Single response — no race, return to Idle -->
+    <transition>
+      <source ref="id6"/>
+      <target ref="id5"/>
+      <label kind="assignment" x="50" y="40">pending = 0</label>
+    </transition>
+  </template>
+
+  <!-- System declaration: 4 slot workers + 1 orchestrator + 1 race detector -->
+  <system>
+    slot1 = SlotWorker();
+    slot2 = SlotWorker();
+    slot3 = SlotWorker();
+    slot4 = SlotWorker();
+    orch = QuorumOrchestrator();
+    race = RaceDetector();
+    system slot1, slot2, slot3, slot4, orch, race;
+  </system>
+</nta>

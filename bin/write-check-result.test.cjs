@@ -255,6 +255,15 @@ test('v2.1 record without observation_window omits the field', () => {
   }
 });
 
+// ─── Test 15a: VALID_FORMALISMS includes uppaal (UPPAAL-02) ───────────────
+test('VALID_FORMALISMS includes uppaal (UPPAAL-02)', () => {
+  const { VALID_FORMALISMS } = require(MODULE_PATH);
+  assert.ok(
+    VALID_FORMALISMS.includes('uppaal'),
+    'VALID_FORMALISMS must include "uppaal" for run-uppaal.cjs writeCheckResult calls'
+  );
+});
+
 // ─── Test 15: triage_tags defaults to empty array when not provided ─────────
 test('triage_tags defaults to empty array when not provided', () => {
   const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
