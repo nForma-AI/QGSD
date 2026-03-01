@@ -531,6 +531,47 @@ test('run-prism --model mcp-availability: composite-key filter runs before const
   fs.rmSync(tmpDir, { recursive: true });
 });
 
+test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', async (t) => {
+  // This test verifies that running run-prism.cjs causes export-prism-constants.cjs
+  // to execute as a pre-step, writing rates.const to the formal/prism/ directory.
+  // RED: Will fail until LOOP-01 is implemented in plan 02.
+  const { spawnSync } = require('child_process');
+  const path = require('path');
+  const fs = require('fs');
+  const os = require('os');
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-loop01-'));
+  try {
+    // Create minimal scoreboard file that export-prism-constants.cjs expects
+    const scoreboardPath = path.join(tmpDir, 'quorum-scoreboard.md');
+    fs.writeFileSync(scoreboardPath, '## Scoreboard\n\n| Slot | Wins | Losses |\n|------|------|--------|\n| claude-1 | 5 | 1 |\n', 'utf8');
+
+    // Create formal/prism/ directory structure for rates.const
+    const prismDir = path.join(tmpDir, 'formal', 'prism');
+    fs.mkdirSync(prismDir, { recursive: true });
+
+    // Run run-prism.cjs with tmpDir as cwd — PRISM binary absent is expected (inconclusive result)
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'run-prism.cjs')
+    ], {
+      encoding: 'utf8',
+      cwd: tmpDir,
+      env: { ...process.env, PRISM_BIN: '/nonexistent/prism' },
+      timeout: 15000,
+    });
+
+    // RED assertion: rates.const must be written by the pre-step
+    // This will fail until LOOP-01 wires export-prism-constants as a pre-step
+    const ratesConstPath = path.join(prismDir, 'rates.const');
+    assert.ok(
+      fs.existsSync(ratesConstPath),
+      'LOOP-01: rates.const was not written — export-prism-constants pre-step not yet implemented'
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('policy.yaml conservative_priors values are used as PRISM constants when no scoreboard', () => {
   // RED phase: this test verifies that run-prism.cjs reads conservative_priors from
   // policy.yaml rather than using hardcoded PRISM_PRIOR_TP / PRISM_PRIOR_UNAVAIL constants.
