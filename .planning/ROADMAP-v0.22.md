@@ -10,7 +10,7 @@ v0.22 promotes milestone requirements from a working document (`.planning/REQUIR
 - Milestone-scoped phases (v0.22-01, v0.22-02): Phases scoped to v0.22
 - Decimal phases (v0.22-01.1): Urgent gap insertions within milestone
 
-- [x] **Phase v0.22-01: Requirements Envelope Foundation** - Aggregate requirements into `formal/requirements.json` and validate with Haiku for duplicates, conflicts, and ambiguity (Plan 01: COMPLETE)
+- [x] **Phase v0.22-01: Requirements Envelope Foundation** - Aggregate requirements into `formal/requirements.json` and validate with Haiku for duplicates, conflicts, and ambiguity (COMPLETE: 3/3 plans)
 - [ ] **Phase v0.22-02: Formal Spec Integration** - Frozen envelope becomes the source of truth for TLA+ PROPERTY generation in `generate-phase-spec.cjs`
 - [ ] **Phase v0.22-03: Immutability and Amendment Workflow** - Lock the frozen envelope against automated modification; provide a structured amendment workflow requiring user consent
 - [ ] **Phase v0.22-04: Drift Detection** - Detect and warn when `.planning/REQUIREMENTS.md` diverges from the frozen envelope after freeze
@@ -65,7 +65,7 @@ Phases execute in milestone-then-sequence order: v0.22-01 -> v0.22-02 -> v0.22-0
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.22-01. Requirements Envelope Foundation | 1/3 | In progress | 2026-03-01 (Plan 01: ENV-01 aggregation) |
+| v0.22-01. Requirements Envelope Foundation | 3/3 | COMPLETE | 2026-03-01 (All plans: aggregation, validation, freezing) |
 | v0.22-02. Formal Spec Integration | 0/TBD | Not started | - |
 | v0.22-03. Immutability and Amendment Workflow | 0/TBD | Not started | - |
 | v0.22-04. Drift Detection | 0/TBD | Not started | - |
