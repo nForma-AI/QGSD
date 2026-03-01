@@ -3,6 +3,7 @@
     {
       "name": "codex-1",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Execute Codex CLI agent non-interactively (slot 1)",
       "mainTool": "codex",
       "model": "gpt-5.3-codex",
@@ -40,6 +41,7 @@
     {
       "name": "codex-2",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Execute Codex CLI agent non-interactively (slot 2)",
       "mainTool": "codex",
       "model": "gpt-5.3-codex",
@@ -76,6 +78,7 @@
     {
       "name": "gemini-1",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Query Gemini CLI agent non-interactively (slot 1)",
       "mainTool": "gemini",
       "model": "gemini-3-pro-preview",
@@ -102,6 +105,7 @@
     {
       "name": "gemini-2",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Query Gemini CLI agent non-interactively (slot 2)",
       "mainTool": "gemini",
       "model": "gemini-3-pro-preview",
@@ -127,6 +131,7 @@
     {
       "name": "opencode-1",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Run OpenCode agent non-interactively with a message",
       "mainTool": "opencode",
       "model": "grok-code-fast-1",
@@ -161,6 +166,7 @@
     {
       "name": "copilot-1",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Execute GitHub Copilot CLI non-interactively",
       "mainTool": "ask",
       "model": "gpt-4.1",
@@ -211,6 +217,7 @@
     {
       "name": "claude-1",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "DeepSeek-V3.2 via AkashML — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "deepseek-ai/DeepSeek-V3.2",
@@ -237,6 +244,7 @@
     {
       "name": "claude-2",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "MiniMax-M2.5 via AkashML — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "MiniMaxAI/MiniMax-M2.5",
@@ -263,6 +271,7 @@
     {
       "name": "claude-3",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Qwen3-Coder-480B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
@@ -289,6 +298,7 @@
     {
       "name": "claude-4",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Kimi-K2 via Fireworks — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "accounts/fireworks/models/kimi-k2p5",
@@ -315,6 +325,7 @@
     {
       "name": "claude-5",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "Llama-4-Maverick-17B via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
@@ -341,6 +352,7 @@
     {
       "name": "claude-6",
       "type": "subprocess",
+      "has_file_access": true,
       "description": "GLM-5 via Fireworks — real Claude Code CLI via ccr",
       "mainTool": "claude",
       "model": "accounts/fireworks/models/glm-5",

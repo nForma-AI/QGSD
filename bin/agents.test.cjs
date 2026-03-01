@@ -460,7 +460,49 @@ test('providers.json: write preserves multiple providers in order', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 10. pad() edge cases for display formatting
+// 10. providers.json schema: has_file_access field
+// ─────────────────────────────────────────────────────────────────────────────
+
+test('providers.json: every entry has has_file_access as a boolean', () => {
+  const src = path.join(__dirname, 'providers.json');
+  const data = JSON.parse(fs.readFileSync(src, 'utf8'));
+  assert.ok(Array.isArray(data.providers), 'providers should be an array');
+  assert.ok(data.providers.length > 0, 'providers should not be empty');
+  for (const entry of data.providers) {
+    assert.strictEqual(
+      typeof entry.has_file_access, 'boolean',
+      `${entry.name}: has_file_access should be a boolean, got ${typeof entry.has_file_access}`
+    );
+  }
+});
+
+test('providers.json: all subprocess entries have has_file_access: true', () => {
+  const src = path.join(__dirname, 'providers.json');
+  const data = JSON.parse(fs.readFileSync(src, 'utf8'));
+  const subproc = data.providers.filter(e => e.type === 'subprocess');
+  assert.ok(subproc.length > 0, 'should have subprocess entries');
+  for (const entry of subproc) {
+    assert.strictEqual(
+      entry.has_file_access, true,
+      `${entry.name}: subprocess slots must have has_file_access: true (they are coding agents with file system access)`
+    );
+  }
+});
+
+test('providers.json: has_file_access field is positioned after type field', () => {
+  const src = path.join(__dirname, 'providers.json');
+  const data = JSON.parse(fs.readFileSync(src, 'utf8'));
+  for (const entry of data.providers) {
+    const keys = Object.keys(entry);
+    const typeIdx = keys.indexOf('type');
+    const accessIdx = keys.indexOf('has_file_access');
+    assert.ok(accessIdx !== -1, `${entry.name}: has_file_access field missing`);
+    assert.strictEqual(accessIdx, typeIdx + 1, `${entry.name}: has_file_access should immediately follow type`);
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. pad() edge cases for display formatting
 // ─────────────────────────────────────────────────────────────────────────────
 
 test('pad: produces correct table alignment for slot names', () => {
