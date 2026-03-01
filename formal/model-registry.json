@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-01T10:53:15.810Z",
+  "last_sync": "2026-03-01T18:00:00.000Z",
   "models": {
     "formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -27,10 +27,10 @@
       "description": ""
     },
     "formal/alloy/quorum-votes.als": {
-      "version": 1,
-      "last_updated": "2026-03-01T10:53:06.235Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 4,
+      "last_updated": "2026-03-01T16:23:42.708Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
@@ -75,10 +75,10 @@
       "description": ""
     },
     "formal/prism/quorum.pm": {
-      "version": 1,
-      "last_updated": "2026-03-01T10:53:06.235Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 4,
+      "last_updated": "2026-03-01T16:23:42.709Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
@@ -139,10 +139,10 @@
       "description": ""
     },
     "formal/tla/QGSDQuorum.tla": {
-      "version": 1,
-      "last_updated": "2026-03-01T10:53:06.234Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 4,
+      "last_updated": "2026-03-01T16:23:42.708Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
@@ -162,11 +162,27 @@
       "session_id": null,
       "description": ""
     },
+    "formal/tla/QGSDStopHook.tla": {
+      "version": 1,
+      "last_updated": "2026-03-01T18:00:00.000Z",
+      "update_source": "manual",
+      "source_id": null,
+      "session_id": null,
+      "description": "SPEC-01: Stop hook decision logic — HasPlanningCommand ∧ ¬HasQuorumEvidence ⟹ BLOCK"
+    },
     "formal/tla/TUINavigation.tla": {
       "version": 1,
       "last_updated": "2026-02-28T21:21:26.037Z",
       "update_source": "manual",
       "source_id": null,
+      "session_id": null,
+      "description": ""
+    },
+    "../../../../tmp/promote-test/formal/tla/QGSDQuorum.tla": {
+      "version": 1,
+      "last_updated": "2026-03-01T10:54:22.160Z",
+      "update_source": "plan-promote",
+      "source_id": "test-001",
       "session_id": null,
       "description": ""
     }

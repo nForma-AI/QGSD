@@ -7,8 +7,9 @@
 //   Generate   (2)  — xstate-to-tla.cjs (XState → TLA+, cfg)
 //                     generate-formal-specs.cjs (XState → Alloy, PRISM)
 //   Petri net  (2)  — generate-petri-net.cjs  + render account-manager DOT → SVG
-//   TLA+       (9)  — MCsafety, MCliveness, MCoscillation, MCconvergence,
-//                     MCbreaker, MCdeliberation, MCprefilter, MCaccount-manager, MCMCPEnv
+//   TLA+       (10) — MCsafety, MCliveness, MCoscillation, MCconvergence,
+//                     MCbreaker, MCdeliberation, MCprefilter, MCaccount-manager, MCMCPEnv,
+//                     MCStopHook
 //   Alloy      (7)  — quorum-votes, scoreboard-recompute, availability-parsing,
 //                     transcript-scan, install-scope, taxonomy-safety, account-pool-structure
 //   PRISM      (3)  — quorum, oauth-rotation, mcp-availability
@@ -16,12 +17,12 @@
 //   UPPAAL     (1)  — run-uppaal.cjs (quorum-races.xml, empirical timing bounds)
 //   Triage     (1)  — generate-triage-bundle.cjs (diff-report.md + suspects.md)
 //   ─────────────────────────────────────────────────────────────
-//   Total:    28 steps
+//   Total:    29 steps
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
 //   node bin/run-formal-verify.cjs --only=generate    # source extraction only (2 steps)
-//   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (9 steps)
+//   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (10 steps)
 //   node bin/run-formal-verify.cjs --only=alloy       # Alloy only (7 steps)
 //   node bin/run-formal-verify.cjs --only=prism       # PRISM only (3 steps)
 //   node bin/run-formal-verify.cjs --only=petri       # Petri only (2 steps)
@@ -123,6 +124,11 @@ const STEPS = [
     tool: 'tla', id: 'tla:mcp-environment',
     label: 'TLA+ QGSDMCPEnv — MCMCPEnv (MCPENV-02)',
     type: 'node', script: 'run-tlc.cjs', args: ['MCMCPEnv'],
+  },
+  {
+    tool: 'tla', id: 'tla:stop-hook',
+    label: 'TLA+ QGSDStopHook — MCStopHook (SPEC-01)',
+    type: 'node', script: 'run-stop-hook-tlc.cjs', args: ['MCStopHook'],
   },
 
   // ─ Alloy structural verification ───────────────────────────────────────────
