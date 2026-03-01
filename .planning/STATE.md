@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-01 after Milestone v0.21 roadmap created)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.21 — FV Closed Loop (Phase v0.21-01: Central Model Registry)
+**Current focus:** v0.21 — FV Closed Loop (Phase v0.21-02: Conformance Crisis Fix)
 
 ## Current Position
 
-Phase: v0.21-01 of 6 (Central Model Registry)
+Phase: v0.21-02 of 6 (Conformance Crisis Fix)
 Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-03-01 — v0.21 FV Closed Loop roadmap created; 21 requirements across 6 phases defined; all 21 requirements mapped
+Last activity: 2026-03-01 — v0.21-01 Central Model Registry complete: 4 plans, 18/18 tests GREEN, ARCH-01/02/03 satisfied
 
-Progress: [░░░░░░░░░░░░░░░░░░░░░░░] v0.21: 0/6 phases (0%)
+Progress: [████░░░░░░░░░░░░░░░░░░░] v0.21: 1/6 phases (17%)
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [░░░░░░░░░░░░░░░░░░░░░░░
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.21-01 shipped]: ARCH-01/02/03 complete — `formal/model-registry.json` (22 entries), `initialize-model-registry.cjs`, `promote-model.cjs`, `accept-debug-invariant.cjs`. Generate/debug/plan-promote flows all write to `formal/` atomically. 18/18 tests GREEN.
 - [v0.21 roadmap]: ARCH-01/02/03 are Phase v0.21-01 (foundation) — all other phases write to `formal/` directly, never per-phase scratch only; must come first.
 - [v0.21 roadmap]: DIAG-01/02/03 are Phase v0.21-02 — urgent (69% conformance crisis); depends on ARCH to have `formal/diff-report.md` destination; second in sequence.
 - [v0.21 roadmap]: LOOP and SPEC phases (v0.21-03, v0.21-04) are parallelizable after ARCH — both depend only on v0.21-01; LOOP-04 debug invariants require ARCH-03 write path.
@@ -65,5 +66,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-01
-Stopped at: v0.21 roadmap created — 6 phases, 21 requirements mapped, ROADMAP.md + STATE.md + REQUIREMENTS.md traceability updated; ready for /qgsd:plan-phase v0.21-01
+Stopped at: Phase v0.21-01 complete — 4 plans, 18/18 tests GREEN, ARCH-01/02/03 satisfied. Central model registry shipped. Ready to plan Phase v0.21-02 (Conformance Crisis Fix).
 Resume file: None
