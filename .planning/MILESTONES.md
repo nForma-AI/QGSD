@@ -232,3 +232,39 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.21 — FV Closed Loop (Shipped: 2026-03-01)
+
+**Phases:** v0.21-01..v0.21-06 (6 phases, 24 plans)
+**Requirements:** 18/21 satisfied (ARCH-01–03, DIAG-01–03, LOOP-01–04, SPEC-01–04, PLAN-01–03, SIG-01–04)
+**Git range:** bb1ee434..86c2880d (86 commits, 131 files, +18,559/−159 lines)
+**Timeline:** 2026-03-01 (~9.5 hours)
+
+**Delivered:** Closed the feedback loop between QGSD's formal verification pipeline and itself — specs auto-regenerate from code, debug sessions capture new invariants, sensitivity results recalibrate PRISM, and every plan is TLC-verified before quorum sees it.
+
+**Key accomplishments:**
+- Central model registry: `formal/model-registry.json` as single source of truth with provenance tracking; `promote-model.cjs` for atomic promotion; `accept-debug-invariant.cjs` for debug-discovered invariants (ARCH-01–03)
+- Conformance crisis resolved: reduced 69% trace divergence to 0% on mapped events via fresh-actor methodology fix in `expectedState()`; `xstate-trace-walker.cjs` + `attribute-trace-divergence.cjs` for root-cause attribution (DIAG-01–03)
+- Self-calibrating feedback loops: PRISM auto-calibrates from scoreboard via `export-prism-constants` pre-step; `qgsd-spec-regen.js` PostToolUse hook regenerates specs on XState changes; `propose-debug-invariants.cjs` mines TLA+ candidates from debug sessions (LOOP-01–04)
+- Critical subsystems formally specified: `QGSDStopHook.tla` (TLA+), `QGSDOscillation.tla` audit (no drift), `quorum-composition.als` (Alloy, 3 rules hold), `generate-phase-spec.cjs` auto-generates per-phase TLA+ specs (SPEC-01–04)
+- Plans TLC-verified before quorum: `generate-proposed-changes.cjs` synthesizes TLA+ deltas; `run-phase-tlc.cjs` iterative verification loop; `quorum-formal-context.cjs` generates evidence blocks for quorum slots (PLAN-01–03)
+- Operational signals drive decisions: `detect-coverage-gaps.cjs` for TLC coverage, `generate-petri-net.cjs --roadmap` for phase dependencies, `prism-priority.cjs` for failure ranking, `quorum-consensus-gate.cjs` Poisson binomial gate (SIG-01–04)
+
+### Known Gaps
+
+- **DIAG-01**: Conformance trace divergence reduced to 0% — implemented and tested (49/49 GREEN) but VERIFICATION.md artifact never generated for v0.21-02
+- **DIAG-02**: `attribute-trace-divergence.cjs` root-cause attribution tool — implemented and tested but VERIFICATION.md missing
+- **DIAG-03**: `formal/diff-report.md` complete attribution — delivered but VERIFICATION.md missing
+
+**Tech debt incurred:**
+- 3983 unmappable_action divergences (circuit_break: 2988, no-action: 995) — correctly excluded from state_mismatch rate
+- 2 todo tests in `oscillation-audit.test.cjs` (require unexported functions from circuit-breaker)
+- Alloy `min[]` workaround uses over-approximation (Alloy 6.2.0 CLI limitation)
+- SPEC-04 generates PLACEHOLDER properties — developers must fill before TLC verification
+- REQUIREMENTS.md traceability checkboxes never updated during milestone execution
+
+**Audit:** GAPS_FOUND (3 procedural gaps — all implementation complete, missing VERIFICATION.md for v0.21-02)
+**Archive:** `.planning/milestones/v0.21-MILESTONE-AUDIT.md`
+
+---
+

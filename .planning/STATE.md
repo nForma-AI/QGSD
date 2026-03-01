@@ -2,10 +2,11 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-01 after v0.22 roadmap creation)
+See: .planning/PROJECT.md (updated 2026-03-01 after v0.21 milestone completion)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 **Current focus:** v0.22 — Requirements Envelope
+**Last shipped:** v0.21 — FV Closed Loop (2026-03-01, 6 phases, 24 plans, 18/21 requirements)
 
 ## Current Position
 
