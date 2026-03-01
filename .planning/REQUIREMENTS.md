@@ -9,7 +9,7 @@
 
 All phase requirements from `new-milestone` are aggregated into a machine-readable canonical document inside `formal/`. A lightweight model validates the set for duplicates and conflicts. The validated set becomes the correctness envelope that formal specs must respect. Modifications require explicit user consent.
 
-- [ ] **ENV-01**: Requirements are aggregated into `formal/requirements.json` — during `new-milestone`, after roadmap creation, all phase requirements are compiled into a single structured JSON document in `formal/` with REQ-ID, text, category, phase assignment, and provenance; this is the canonical requirements envelope
+- [x] **ENV-01**: Requirements are aggregated into `formal/requirements.json` — during `new-milestone`, after roadmap creation, all phase requirements are compiled into a single structured JSON document in `formal/` with REQ-ID, text, category, phase assignment, and provenance; this is the canonical requirements envelope
 - [ ] **ENV-02**: A Haiku validation pass detects duplicates and conflicts — before the envelope is frozen, a lightweight model (claude-haiku-4-5) reviews the full requirement set for semantic duplicates (different IDs, same intent), contradictions (requirements that cannot both be satisfied), and ambiguity (requirements that admit multiple incompatible interpretations); results are presented to the user for resolution
 - [ ] **ENV-03**: The validated envelope constrains formal specs — formal methods (TLA+, Alloy, PRISM) must prove they respect the envelope; `generate-phase-spec.cjs` reads `formal/requirements.json` as its source of truth for PROPERTY generation; any formal spec that contradicts a frozen requirement is flagged as a violation
 - [ ] **ENV-04**: The envelope is immutable without user consent — `formal/requirements.json` cannot be modified by any automated workflow; modifications require explicit user approval through an amendment workflow that re-runs ENV-02 validation on the updated set; a hook or pre-commit guard enforces this
@@ -37,7 +37,7 @@ All phase requirements from `new-milestone` are aggregated into a machine-readab
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENV-01 | v0.22-01 | Pending |
+| ENV-01 | v0.22-01 | Complete |
 | ENV-02 | v0.22-01 | Pending |
 | ENV-03 | v0.22-02 | Pending |
 | ENV-04 | v0.22-03 | Pending |
