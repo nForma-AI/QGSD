@@ -8,9 +8,22 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.21 FV Closed Loop
+## Current Milestone: v0.22 Requirements Envelope
+
+**Goal:** Promote milestone requirements from a working document (`.planning/REQUIREMENTS.md`) into a validated, immutable formal artifact (`formal/requirements.json`) that constrains what formal specs must prove — a Haiku validation pass catches duplicates, conflicts, and ambiguity before freezing, and modifications require explicit user consent.
+
+**Target features:**
+- Requirements aggregation — `new-milestone` compiles all phase requirements into `formal/requirements.json` (structured, machine-readable) after roadmap creation
+- Haiku validation gate — lightweight model reviews the full set for semantic duplicates, contradictions, and ambiguity; results presented to user for resolution before freezing
+- Formal constraint binding — `generate-phase-spec.cjs` reads the envelope as source of truth for PROPERTY generation; specs that contradict frozen requirements are flagged as violations
+- Immutability contract — hook/pre-commit guard blocks automated modifications to `formal/requirements.json`; amendment workflow requires user approval + re-validation
+- Drift detection — checker warns when `.planning/REQUIREMENTS.md` diverges from the frozen envelope; legitimate changes route through the amendment workflow
+
+## Just Shipped: v0.21 FV Closed Loop (2026-03-01)
 
 **Goal:** Transform QGSD's formal verification from a static pipeline into a living, self-updating system — feedback loops that update PRISM priors from empirical observations, structural models that track XState changes automatically, debugging tools that bridge spec↔impl divergence, a plan-to-spec pipeline that formally verifies planning decisions before quorum sees them, and operational signals that use FV results to drive roadmap prioritization and runtime decisions.
+
+**Shipped:** 21/21 requirements satisfied (ARCH-01–03, LOOP-01–04, SPEC-01–04, DIAG-01–03, PLAN-01–03, SIG-01–04). 6 phases, 22 plans.
 
 **Target features:**
 - Central model registry — `formal/model-registry.json` as single source of truth; all update flows (generate, debug, plan-promote, manual) write to `formal/` directly; `promote-model.cjs` path for per-phase proposals → canonical specs; debug-discovered invariants write directly to `formal/tla/` specs with session provenance

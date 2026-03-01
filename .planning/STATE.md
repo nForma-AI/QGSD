@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-01 after v0.21-05 Planning Integration complete)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.21 — FV Closed Loop (COMPLETE -- all 6 phases shipped)
+**Current focus:** v0.22 — Requirements Envelope
 
 ## Current Position
 
-Phase: v0.21-06 of 6 (Operational Signals) -- COMPLETE
-Plan: All 4/4 plans executed
-Status: Milestone v0.21 complete -- all 6 phases shipped
-Last activity: 2026-03-01 - Completed quick task 125: Implement thin passthrough slot worker
-
-Progress: [████████████████████████] v0.21: 6/6 phases (100%)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-01 — Milestone v0.22 started
 
 ## Performance Metrics
 
