@@ -1167,13 +1167,14 @@ Plans:
   2. Editing `src/machines/qgsd-workflow.machine.ts` and saving triggers automatic re-generation of TLA+ and Alloy specs via a PostToolUse hook — no manual regeneration step required
   3. After `run-sensitivity-sweep.cjs` completes, if empirical rates deviate from tested PRISM ranges, `rates.const` is updated and PRISM re-runs automatically; CI fails if a threshold violation is newly detected
   4. After a `/qgsd:debug` session, the user is presented with proposed new TLA+ `PROPERTY` candidates derived from state transitions observed during the session, and can accept or reject each individually
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] v0.21-03-01: Wire `export-prism-constants.cjs` as pre-step inside `run-prism.cjs` (LOOP-01)
-- [ ] v0.21-03-02: Implement PostToolUse hook on writes to `qgsd-workflow.machine.ts` → triggers `generate-formal-specs.cjs` (LOOP-02)
-- [ ] v0.21-03-03: Wire sensitivity deviation detection → `rates.const` update → PRISM re-run + CI threshold check (LOOP-03)
-- [ ] v0.21-03-04: Add post-session invariant capture step to `/qgsd:debug` with accept/reject flow (LOOP-04)
+- [ ] v0.21-03-01-PLAN.md — Wave 0 test scaffolding: RED test stubs for all four LOOPs + register in package.json (LOOP-01, LOOP-02, LOOP-03, LOOP-04)
+- [ ] v0.21-03-02-PLAN.md — LOOP-01: Add export-prism-constants pre-step to run-prism.cjs (LOOP-01)
+- [ ] v0.21-03-03-PLAN.md — LOOP-02: PostToolUse hook qgsd-spec-regen.js + installer registration (LOOP-02)
+- [ ] v0.21-03-04-PLAN.md — LOOP-03: sensitivity-sweep-feedback.cjs feedback wrapper (LOOP-03)
+- [ ] v0.21-03-05-PLAN.md — LOOP-04: propose-debug-invariants.cjs + Step H in debug.md (LOOP-04)
 
 ### Phase v0.21-04: Spec Completeness
 **Goal**: The most critical QGSD subsystems have formal models — Stop hook logic, oscillation algorithm, quorum composition, and plan `must_haves` truths are all TLC/Alloy verifiable
