@@ -1180,6 +1180,18 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
     }
+    // Remove qgsd-spec-regen hook (uninstall path)
+    if (settings.hooks && settings.hooks.PostToolUse) {
+      const before = settings.hooks.PostToolUse.length;
+      settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-spec-regen')))
+      );
+      if (settings.hooks.PostToolUse.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed QGSD spec-regen hook`);
+      }
+      if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
+    }
     if (settings.hooks && settings.hooks.PreCompact) {
       const before = settings.hooks.PreCompact.length;
       settings.hooks.PreCompact = settings.hooks.PreCompact.filter(entry =>
@@ -1870,6 +1882,18 @@ function install(isGlobal, runtime = 'claude') {
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'gsd-context-monitor.js') }]
       });
       console.log(`  ${green}✓${reset} Configured QGSD context monitor hook (PostToolUse)`);
+    }
+
+    // Register QGSD spec-regen hook (PostToolUse — auto-regenerate specs on machine file write)
+    if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
+    const hasSpecRegenHook = settings.hooks.PostToolUse.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-spec-regen'))
+    );
+    if (!hasSpecRegenHook) {
+      settings.hooks.PostToolUse.push({
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-spec-regen.js') }]
+      });
+      console.log(`  ${green}✓${reset} Configured QGSD spec-regen hook (PostToolUse)`);
     }
 
     // Register QGSD PreCompact hook (phase state injection at compaction time)
