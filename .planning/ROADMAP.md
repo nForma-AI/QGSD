@@ -1185,13 +1185,13 @@ Plans:
   2. `formal/tla/QGSDOscillation.tla` is audited against `qgsd-circuit-breaker.js` — any divergence (especially the second-pass net-diff check) is documented and the spec updated to match correct behavior; TLC re-verifies
   3. `formal/alloy/quorum-composition.als` exists; Alloy verifies all three composition rules: no-empty-selection, high-risk full fan-out, solo-mode single slot; wired into `run-alloy.cjs`
   4. `plan-phase.md` generates a per-phase scratch TLA+ spec from `must_haves: truths:` blocks; `qgsd-verifier` runs TLC against it and reports "proved" vs "satisfied" in `VERIFICATION.md`
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] v0.21-04-01: Write `QGSDStopHook.tla`; wire into STEPS; TLC verifies safety + liveness (SPEC-01)
-- [ ] v0.21-04-02: Audit `QGSDOscillation.tla` against `qgsd-circuit-breaker.js`; resolve drift; TLC re-verify (SPEC-02)
-- [ ] v0.21-04-03: Write `quorum-composition.als`; wire into `run-alloy.cjs`; verify 3 composition rules (SPEC-03)
-- [ ] v0.21-04-04: Add `must_haves: truths:` → TLA+ PROPERTY translation to `plan-phase.md` + `qgsd-verifier` reporting (SPEC-04)
+- [ ] v0.21-04-01-PLAN.md — Write QGSDStopHook.tla, MCStopHook.cfg, run-stop-hook-tlc.cjs; wire into STEPS; TLC verifies safety + liveness (SPEC-01)
+- [ ] v0.21-04-02-PLAN.md — Audit QGSDOscillation.tla against qgsd-circuit-breaker.js; resolve drift; write oscillation-audit.test.cjs (SPEC-02)
+- [ ] v0.21-04-03-PLAN.md — Write quorum-composition.als, run-quorum-composition-alloy.cjs; wire into STEPS; verify 3 composition rules (SPEC-03)
+- [ ] v0.21-04-04-PLAN.md — Write generate-phase-spec.cjs; translate must_haves: truths: to TLA+ INVARIANT/PROPERTY stubs (SPEC-04)
 
 ### Phase v0.21-05: Planning Integration
 **Goal**: Every plan is TLC-verified before quorum sees it, and quorum slots receive mathematical context (formal spec summary + verification result) with their vote request
