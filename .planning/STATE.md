@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-01 after Milestone v0.21 roadmap created)
+See: .planning/PROJECT.md (updated 2026-03-01 after v0.21-02 Conformance Crisis Fix complete)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.21 — FV Closed Loop (Phase v0.21-02: Conformance Crisis Fix)
+**Current focus:** v0.21 — FV Closed Loop (Phase v0.21-03: Self-Calibrating Feedback Loops)
 
 ## Current Position
 
-Phase: v0.21-02 of 6 (Conformance Crisis Fix)
+Phase: v0.21-03 of 6 (Self-Calibrating Feedback Loops)
 Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-03-01 — v0.21-01 Central Model Registry complete: 4 plans, 18/18 tests GREEN, ARCH-01/02/03 satisfied
+Last activity: 2026-03-01 — v0.21-02 Conformance Crisis Fix complete: 4 plans, 49/49 tests GREEN, DIAG-01/02/03 satisfied
 
-Progress: [████░░░░░░░░░░░░░░░░░░░] v0.21: 1/6 phases (17%)
+Progress: [████████░░░░░░░░░░░░░░░] v0.21: 2/6 phases (33%)
 
 ## Performance Metrics
 
@@ -44,13 +44,12 @@ Progress: [████░░░░░░░░░░░░░░░░░░░
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.21-01 shipped]: ARCH-01/02/03 complete — `formal/model-registry.json` (22 entries), `initialize-model-registry.cjs`, `promote-model.cjs`, `accept-debug-invariant.cjs`. Generate/debug/plan-promote flows all write to `formal/` atomically. 18/18 tests GREEN.
-- [v0.21 roadmap]: ARCH-01/02/03 are Phase v0.21-01 (foundation) — all other phases write to `formal/` directly, never per-phase scratch only; must come first.
-- [v0.21 roadmap]: DIAG-01/02/03 are Phase v0.21-02 — urgent (69% conformance crisis); depends on ARCH to have `formal/diff-report.md` destination; second in sequence.
-- [v0.21 roadmap]: LOOP and SPEC phases (v0.21-03, v0.21-04) are parallelizable after ARCH — both depend only on v0.21-01; LOOP-04 debug invariants require ARCH-03 write path.
+- [v0.21-02 shipped]: DIAG-01/02/03 complete — `bin/xstate-trace-walker.cjs` (single-actor replay), `bin/attribute-trace-divergence.cjs` (root-cause attribution), `bin/validate-traces.cjs` H1 fix (expectedState phase check). 49/49 tests GREEN. `formal/.divergences.json` TTrace export. `formal/diff-report.md` populated. State_mismatch rate: 0/8966 mapped events (0%).
+- [v0.21-02 finding]: The 69% divergence rate was a methodology artifact (H1), not a code bug (H2). Fresh-actor validator started in IDLE for quorum_block/quorum_complete events that happened mid-session (phase=DECIDING). Fix: return null from expectedState() for phase!=IDLE events.
+- [v0.21-01 shipped]: ARCH-01/02/03 complete — `formal/model-registry.json` (22 entries), `initialize-model-registry.cjs`, `promote-model.cjs`, `accept-debug-invariant.cjs`. 18/18 tests GREEN.
+- [v0.21 roadmap]: LOOP and SPEC phases (v0.21-03, v0.21-04) are parallelizable — both depend only on v0.21-01; LOOP-04 debug invariants require ARCH-03 write path.
 - [v0.21 roadmap]: PLAN-01/02/03 (v0.21-05) depends on ARCH + DIAG being stable before trusting FV results as planning gates.
 - [v0.21 roadmap]: SIG-01/02/03/04 (v0.21-06) are last — consumes FV output from LOOP and SPEC phases; SIG-04 PRISM gate depends on calibrated rates from v0.21-03.
-- [v0.20 completion]: v0.20 shipped 2026-03-01 — 9 phases, 20/20 requirements, FV as active planning gate delivered.
 
 ### Pending Todos
 
@@ -61,10 +60,10 @@ Recent decisions affecting current work:
 
 - [Phase 12 carry-forward]: npm publish qgsd@0.2.0 deferred; run `npm publish --access public` when user decides
 - [v0.18-06/07 open]: v0.18-06 (FAN-04 Stop hook ceiling fix) and v0.18-07 (ENV-03 envelope path wiring) are not yet started — gap closure phases for v0.18
-- [v0.21-02 urgency]: 69% conformance divergence is the most pressing technical debt from v0.12 — v0.21-02 must reduce this to <5%
+- [v0.21-02 carry-forward]: 3983 unmappable_action divergences remain (circuit_break: 2988, no-action events: 995) — these are correctly excluded from the state_mismatch rate but may need a separate tracking mechanism
 
 ## Session Continuity
 
 Last session: 2026-03-01
-Stopped at: Phase v0.21-01 complete — 4 plans, 18/18 tests GREEN, ARCH-01/02/03 satisfied. Central model registry shipped. Ready to plan Phase v0.21-02 (Conformance Crisis Fix).
+Stopped at: Phase v0.21-02 complete — 4 plans, 49/49 tests GREEN, DIAG-01/02/03 satisfied. Conformance crisis fixed (0% state_mismatch of mapped events). Ready to plan Phase v0.21-03 (Self-Calibrating Feedback Loops).
 Resume file: None
