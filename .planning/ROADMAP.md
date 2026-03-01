@@ -1150,12 +1150,13 @@ Plans:
   2. `bin/attribute-trace-divergence.cjs` takes one divergent trace, walks all XState machine guards, identifies which transition fails, and outputs either "fix XState guard X" or "fix hook implementation Y at line Z" — not a generic error
   3. When `attribute-trace-divergence.cjs` finds a violation, `formal/diff-report.md` is updated with both fix directions (spec-bug vs impl-bug) and supporting evidence for each
   4. After the root-cause fix is applied, conformance trace divergence rate measured by `validate-traces.cjs` falls below 5%
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] v0.21-02-01: Update `validate-traces.cjs` to export divergent traces as TTrace structured objects (DIAG-01)
-- [ ] v0.21-02-02: Implement `bin/attribute-trace-divergence.cjs` — XState guard walker + divergence attributor (DIAG-02)
-- [ ] v0.21-02-03: Implement `formal/diff-report.md` pivot decision output; diagnose and fix root cause of current divergences (DIAG-01, DIAG-03)
+- [ ] v0.21-02-01-PLAN.md — TDD: xstate-trace-walker.cjs shared library (evaluateTransitions, replayTrace) (DIAG-01, DIAG-02)
+- [ ] v0.21-02-02-PLAN.md — validate-traces.cjs TTrace export + buildTTrace helper + formal/.divergences.json (DIAG-01)
+- [ ] v0.21-02-03-PLAN.md — attribute-trace-divergence.cjs root-cause attribution tool (DIAG-02)
+- [ ] v0.21-02-04-PLAN.md — Run pipeline, implement fix, populate formal/diff-report.md, confirm rate <5% (DIAG-01, DIAG-03)
 
 ### Phase v0.21-03: Self-Calibrating Feedback Loops
 **Goal**: The formal verification pipeline updates its own inputs from what it observes — PRISM calibrates from scoreboard, specs regenerate from XState changes, and debug sessions produce invariant candidates
