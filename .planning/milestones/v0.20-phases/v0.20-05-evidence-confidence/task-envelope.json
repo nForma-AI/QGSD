@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.20-05",
+  "created_at": "2026-02-28T22:50:32.772Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Phase v0.20-05 adds evidence-driven confidence annotations to `validate-traces.cjs` output. The tool already computes confidence tiers (`low`, `medium`, `high`) based on quorum rounds (n_rounds) and o",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.20-05-evidence-confidence/v0.20-05-01-PLAN.md",
+    "key_decisions": []
+  }
+}

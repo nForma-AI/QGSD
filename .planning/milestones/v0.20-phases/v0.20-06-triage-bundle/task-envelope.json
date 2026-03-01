@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.20-06",
+  "created_at": "2026-02-28T23:27:58.622Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Phase v0.20-06 produces two human-readable triage documents from `check-results.ndjson` after every formal verification run. The requirement is to implement `bin/generate-triage-bundle.cjs`, a tool th",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.20-06-triage-bundle/v0.20-06-01-PLAN.md",
+    "key_decisions": []
+  }
+}
