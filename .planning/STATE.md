@@ -60,6 +60,7 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - `2026-02-20-add-gsd-quorum-command-for-consensus-answers.md` — Add qgsd:quorum command for consensus answers (area: planning)
+- `2026-03-01-enforce-spec-requirements-never-reduce-objectives-to-match-reality.md` — Enforce spec requirements — never reduce objectives to match reality (area: planning)
 - Phase 22 post-validation: 5-category taxonomy may need refinement based on empirical categorization results
 
 ### Blockers/Concerns
