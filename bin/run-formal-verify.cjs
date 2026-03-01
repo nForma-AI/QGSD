@@ -13,18 +13,20 @@
 //                     transcript-scan, install-scope, taxonomy-safety, account-pool-structure
 //   PRISM      (3)  — quorum, oauth-rotation, mcp-availability
 //   CI enforce (3)  — check-trace-redaction.cjs, check-trace-schema-drift.cjs, check-liveness-fairness.cjs
+//   UPPAAL     (1)  — run-uppaal.cjs (quorum-races.xml, empirical timing bounds)
 //   Triage     (1)  — generate-triage-bundle.cjs (diff-report.md + suspects.md)
 //   ─────────────────────────────────────────────────────────────
-//   Total:    27 steps
+//   Total:    28 steps
 //
 // Usage:
-//   node bin/run-formal-verify.cjs                    # all 27 steps
+//   node bin/run-formal-verify.cjs                    # all 28 steps
 //   node bin/run-formal-verify.cjs --only=generate    # source extraction only (2 steps)
 //   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (9 steps)
 //   node bin/run-formal-verify.cjs --only=alloy       # Alloy only (7 steps)
 //   node bin/run-formal-verify.cjs --only=prism       # PRISM only (3 steps)
 //   node bin/run-formal-verify.cjs --only=petri       # Petri only (2 steps)
 //   node bin/run-formal-verify.cjs --only=ci          # CI enforcement only (4 steps)
+//   node bin/run-formal-verify.cjs --only=uppaal      # UPPAAL only (1 step)
 //
 // Behaviour:
 //   - Runs steps sequentially; streams child output to stdout/stderr.
@@ -197,6 +199,15 @@ const STEPS = [
     tool: 'ci', id: 'ci:conformance-traces',
     label: 'Conformance trace validation — XState machine replay with evidence confidence (EVID-01, EVID-02)',
     type: 'node', script: 'validate-traces.cjs', args: [],
+  },
+
+  // ─ UPPAAL timed race modeling ────────────────────────────────────────────
+  {
+    tool: 'uppaal', id: 'uppaal:quorum-races',
+    label: 'UPPAAL quorum-races — timed race detection with empirical timing bounds (UPPAAL-01, UPPAAL-02, UPPAAL-03)',
+    type: 'node', script: 'run-uppaal.cjs', args: [],
+    // Non-critical: verifyta usually not installed; timed race analysis is informational
+    nonCritical: true,
   },
 
   // ─ Triage bundle ─────────────────────────────────────────────────────────
