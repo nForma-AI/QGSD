@@ -19,6 +19,7 @@
 - 🔍 **v0.18 — Token Efficiency** — Phases v0.18-01..v0.18-07 (audit: gaps_found — gap closure in progress)
 - ✅ **v0.19 — FV Pipeline Hardening** — Phases v0.19-01..v0.19-11 (completed 2026-02-28)
 - ✅ **v0.20 — FV as Active Planning Gate** — Phases v0.20-01..v0.20-09 (shipped 2026-03-01)
+- 🚧 **v0.21 — FV Closed Loop** — Phases v0.21-01..v0.21-06 (in progress)
 
 ## Phases
 
@@ -266,6 +267,18 @@ Archive: `.planning/milestones/v0.19-ROADMAP.md`
 **Archive:** `.planning/milestones/v0.20-ROADMAP.md`
 
 </details>
+
+
+### 🚧 v0.21 — FV Closed Loop (In Progress)
+
+**Milestone Goal:** Close the feedback loop between QGSD's formal verification pipeline and itself — specs auto-regenerate from code, debug sessions capture new invariants, sensitivity results recalibrate PRISM, and every plan is TLC-verified before quorum sees it.
+
+- [ ] **Phase v0.21-01: Central Model Registry** — Declare  as single source of truth;  tracks provenance;  atomic promotion; debug invariants write directly to canonical specs (ARCH-01, ARCH-02, ARCH-03)
+- [ ] **Phase v0.21-02: Conformance Crisis Fix** — Reduce 69% divergence to <5%; export divergent traces as TTrace objects;  walks XState guards to root cause; pivot decision surfaced in  (DIAG-01, DIAG-02, DIAG-03)
+- [ ] **Phase v0.21-03: Self-Calibrating Feedback Loops** — PRISM always uses current scoreboard rates (pre-step calibration); PostToolUse hook auto-regenerates TLA+/Alloy specs on XState machine changes; sensitivity deviations trigger PRISM re-run;  proposes new invariant candidates post-session (LOOP-01, LOOP-02, LOOP-03, LOOP-04)
+- [ ] **Phase v0.21-04: Spec Completeness** — Stop hook formalized in ; oscillation spec audited against ; quorum composition verified in ;  blocks translated to TLA+ PROPERTY checks (SPEC-01, SPEC-02, SPEC-03, SPEC-04)
+- [ ] **Phase v0.21-05: Planning Integration** — Plans auto-synthesize TLA+ deltas from ; iterative TLC verification loop gates planning (3-attempt cap); quorum slots receive  +  fields (PLAN-01, PLAN-02, PLAN-03)
+- [ ] **Phase v0.21-06: Operational Signals** — TLC coverage gaps visible in ; Petri net from roadmap phase dependencies; PRISM failure probabilities rank roadmap items; quorum rounds gated by PRISM consensus probability threshold (SIG-01, SIG-02, SIG-03, SIG-04)
 
 
 ## Phase Details
@@ -1110,3 +1123,108 @@ Plans:
 | v0.20-09. Restore TLA+ Planning Gate | v0.20 | 1/1 | Complete | 2026-03-01 |
 
 > **v0.20 phase details archived to** `.planning/milestones/v0.20-ROADMAP.md`
+
+### Phase v0.21-01: Central Model Registry
+**Goal**: All formal models have a single canonical home in `formal/` with provenance tracking, atomic promotion from per-phase specs, and debug-discovered invariants writing directly to canonical specs
+**Depends on**: Nothing (first v0.21 phase)
+**Requirements**: ARCH-01, ARCH-02, ARCH-03
+**Success Criteria** (what must be TRUE):
+  1. `formal/model-registry.json` exists and records `last_updated`, `update_source` (`generate`, `debug`, `plan-promote`, `manual`), and `version` for each model file in `formal/`
+  2. Running `promote-model.cjs` on an accepted `proposed-changes.tla` merges invariants into `formal/tla/` and updates `model-registry.json` atomically (tmp file + rename — no partial writes visible)
+  3. When `/qgsd:debug` accepts a new invariant candidate, it is written directly to the appropriate `formal/tla/<surface>.tla` spec (not a sidecar) with `update_source: "debug"` and session ID recorded in `model-registry.json`
+  4. Zero update flows write to per-phase scratch only — all three flows (generate, debug, plan-promote) write to `formal/` as their primary destination
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-01-01: Create `formal/model-registry.json` schema + `update-model-registry.cjs` helper; update generate flow to write registry entry on every spec generation
+- [ ] v0.21-01-02: Implement `promote-model.cjs` with atomic tmp-rename merge; wire into post-verification promotion step
+- [ ] v0.21-01-03: Wire debug invariant acceptance to write directly to canonical spec + registry (`update_source: "debug"`)
+
+### Phase v0.21-02: Conformance Crisis Fix
+**Goal**: The 69% conformance trace divergence rate is reduced to <5%, with tooling to attribute any remaining divergence to specific XState guards or hook implementations
+**Depends on**: Phase v0.21-01
+**Requirements**: DIAG-01, DIAG-02, DIAG-03
+**Success Criteria** (what must be TRUE):
+  1. `validate-traces.cjs` exports the first 10 divergent traces as structured TTrace objects; running it on the current conformance log produces a structured divergence report, not just a percentage
+  2. `bin/attribute-trace-divergence.cjs` takes one divergent trace, walks all XState machine guards, identifies which transition fails, and outputs either "fix XState guard X" or "fix hook implementation Y at line Z" — not a generic error
+  3. When `attribute-trace-divergence.cjs` finds a violation, `formal/diff-report.md` is updated with both fix directions (spec-bug vs impl-bug) and supporting evidence for each
+  4. After the root-cause fix is applied, conformance trace divergence rate measured by `validate-traces.cjs` falls below 5%
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-02-01: Update `validate-traces.cjs` to export divergent traces as TTrace structured objects (DIAG-01)
+- [ ] v0.21-02-02: Implement `bin/attribute-trace-divergence.cjs` — XState guard walker + divergence attributor (DIAG-02)
+- [ ] v0.21-02-03: Implement `formal/diff-report.md` pivot decision output; diagnose and fix root cause of current divergences (DIAG-01, DIAG-03)
+
+### Phase v0.21-03: Self-Calibrating Feedback Loops
+**Goal**: The formal verification pipeline updates its own inputs from what it observes — PRISM calibrates from scoreboard, specs regenerate from XState changes, and debug sessions produce invariant candidates
+**Depends on**: Phase v0.21-01
+**Requirements**: LOOP-01, LOOP-02, LOOP-03, LOOP-04
+**Success Criteria** (what must be TRUE):
+  1. Running `run-prism.cjs` always uses the latest scoreboard rates — `export-prism-constants.cjs` runs as an internal pre-step so `rates.const` is never stale relative to the scoreboard
+  2. Editing `src/machines/qgsd-workflow.machine.ts` and saving triggers automatic re-generation of TLA+ and Alloy specs via a PostToolUse hook — no manual regeneration step required
+  3. After `run-sensitivity-sweep.cjs` completes, if empirical rates deviate from tested PRISM ranges, `rates.const` is updated and PRISM re-runs automatically; CI fails if a threshold violation is newly detected
+  4. After a `/qgsd:debug` session, the user is presented with proposed new TLA+ `PROPERTY` candidates derived from state transitions observed during the session, and can accept or reject each individually
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-03-01: Wire `export-prism-constants.cjs` as pre-step inside `run-prism.cjs` (LOOP-01)
+- [ ] v0.21-03-02: Implement PostToolUse hook on writes to `qgsd-workflow.machine.ts` → triggers `generate-formal-specs.cjs` (LOOP-02)
+- [ ] v0.21-03-03: Wire sensitivity deviation detection → `rates.const` update → PRISM re-run + CI threshold check (LOOP-03)
+- [ ] v0.21-03-04: Add post-session invariant capture step to `/qgsd:debug` with accept/reject flow (LOOP-04)
+
+### Phase v0.21-04: Spec Completeness
+**Goal**: The most critical QGSD subsystems have formal models — Stop hook logic, oscillation algorithm, quorum composition, and plan `must_haves` truths are all TLC/Alloy verifiable
+**Depends on**: Phase v0.21-01
+**Requirements**: SPEC-01, SPEC-02, SPEC-03, SPEC-04
+**Success Criteria** (what must be TRUE):
+  1. `formal/tla/QGSDStopHook.tla` exists; TLC verifies safety (`BLOCK => HasPlanningCommand`) and liveness (`HasQuorumEvidence => <>PASS`); `run-formal-verify.cjs` includes it in its STEPS pipeline
+  2. `formal/tla/QGSDOscillation.tla` is audited against `qgsd-circuit-breaker.js` — any divergence (especially the second-pass net-diff check) is documented and the spec updated to match correct behavior; TLC re-verifies
+  3. `formal/alloy/quorum-composition.als` exists; Alloy verifies all three composition rules: no-empty-selection, high-risk full fan-out, solo-mode single slot; wired into `run-alloy.cjs`
+  4. `plan-phase.md` generates a per-phase scratch TLA+ spec from `must_haves: truths:` blocks; `qgsd-verifier` runs TLC against it and reports "proved" vs "satisfied" in `VERIFICATION.md`
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-04-01: Write `QGSDStopHook.tla`; wire into STEPS; TLC verifies safety + liveness (SPEC-01)
+- [ ] v0.21-04-02: Audit `QGSDOscillation.tla` against `qgsd-circuit-breaker.js`; resolve drift; TLC re-verify (SPEC-02)
+- [ ] v0.21-04-03: Write `quorum-composition.als`; wire into `run-alloy.cjs`; verify 3 composition rules (SPEC-03)
+- [ ] v0.21-04-04: Add `must_haves: truths:` → TLA+ PROPERTY translation to `plan-phase.md` + `qgsd-verifier` reporting (SPEC-04)
+
+### Phase v0.21-05: Planning Integration
+**Goal**: Every plan is TLC-verified before quorum sees it, and quorum slots receive mathematical context (formal spec summary + verification result) with their vote request
+**Depends on**: Phase v0.21-01, Phase v0.21-02
+**Requirements**: PLAN-01, PLAN-02, PLAN-03
+**Success Criteria** (what must be TRUE):
+  1. After `plan-phase.md` produces a plan, a scratch TLA+ spec fragment is automatically generated from the plan's `must_haves: truths:` block and saved to `.planning/phases/<phase>/formal/proposed-changes.tla`
+  2. TLC runs against `proposed-changes.tla`; if it fails, `plan-phase.md` iterates on the plan (capped at 3 attempts); a plan that reaches quorum either passes TLC or has documented TLC failures from all 3 attempts
+  3. Each quorum slot-worker prompt includes a `formal_spec_summary` field (proposed TLA+ properties in plain language) and a `verification_result` field (TLC pass/fail/inconclusive) — agents vote with formal evidence attached
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-05-01: Add TLA+ delta synthesis step to `plan-phase.md` — generates `proposed-changes.tla` from `must_haves: truths:` block (PLAN-01)
+- [ ] v0.21-05-02: Implement iterative TLC verification loop in `plan-phase.md` (3-attempt cap, document failures) (PLAN-02)
+- [ ] v0.21-05-03: Add `formal_spec_summary` + `verification_result` fields to quorum slot-worker prompt (PLAN-03)
+
+### Phase v0.21-06: Operational Signals
+**Goal**: Formal verification output drives operational decisions — coverage gaps are visible as a test backlog, phase dependencies are modeled as a Petri net, PRISM failures rank roadmap items, and weak quorum rounds are deferred
+**Depends on**: Phase v0.21-03, Phase v0.21-04
+**Requirements**: SIG-01, SIG-02, SIG-03, SIG-04
+**Success Criteria** (what must be TRUE):
+  1. Running `bin/detect-coverage-gaps.cjs` produces `formal/coverage-gaps.md` listing TLC states that are never reached in conformance traces — the file is a concrete test backlog, not a diagnostic log
+  2. Running `generate-petri-net.cjs --roadmap` produces a Petri net from the current roadmap's phase dependency structure and outputs the critical path — phases are transitions, completion tokens enable downstream phases
+  3. Running `bin/prism-priority.cjs` reads PRISM model results and outputs a ranked list of failure modes by `P(failure) × impact` — this list is injected into `plan-phase.md` quorum context as a roadmap prioritization signal
+  4. Before each quorum round, current scoreboard availability rates are plugged into `mcp-availability.pm`; if `P(consensus_reached) < 0.70`, the round is deferred with a structured warning (not silently proceeded with a weak quorum)
+**Plans**: TBD
+
+Plans:
+- [ ] v0.21-06-01: Implement `bin/detect-coverage-gaps.cjs` — diff TLC states vs conformance trace states → `formal/coverage-gaps.md` (SIG-01)
+- [ ] v0.21-06-02: Extend `generate-petri-net.cjs` with `--roadmap` flag for phase dependency Petri net + critical path (SIG-02)
+- [ ] v0.21-06-03: Implement `bin/prism-priority.cjs` + inject into `plan-phase.md` quorum context (SIG-03)
+- [ ] v0.21-06-04: Wire PRISM consensus probability gate before each quorum round (SIG-04)
+
+| v0.21-01. Central Model Registry | v0.21 | 0/3 | Not started | - |
+| v0.21-02. Conformance Crisis Fix | v0.21 | 0/3 | Not started | - |
+| v0.21-03. Self-Calibrating Feedback Loops | v0.21 | 0/4 | Not started | - |
+| v0.21-04. Spec Completeness | v0.21 | 0/4 | Not started | - |
+| v0.21-05. Planning Integration | v0.21 | 0/3 | Not started | - |
+| v0.21-06. Operational Signals | v0.21 | 0/4 | Not started | - |

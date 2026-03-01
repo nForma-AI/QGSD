@@ -73,36 +73,34 @@ Formal verification produces results that currently go unused for operational de
 
 ## Traceability
 
-*Populated during roadmap creation.*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ARCH-01 | — | Pending |
-| ARCH-02 | — | Pending |
-| ARCH-03 | — | Pending |
-| LOOP-01 | — | Pending |
-| LOOP-02 | — | Pending |
-| LOOP-03 | — | Pending |
-| LOOP-04 | — | Pending |
-| SPEC-01 | — | Pending |
-| SPEC-02 | — | Pending |
-| SPEC-03 | — | Pending |
-| SPEC-04 | — | Pending |
-| DIAG-01 | — | Pending |
-| DIAG-02 | — | Pending |
-| DIAG-03 | — | Pending |
-| PLAN-01 | — | Pending |
-| PLAN-02 | — | Pending |
-| PLAN-03 | — | Pending |
-| SIG-01 | — | Pending |
-| SIG-02 | — | Pending |
-| SIG-03 | — | Pending |
-| SIG-04 | — | Pending |
+| ARCH-01 | v0.21-01 | Pending |
+| ARCH-02 | v0.21-01 | Pending |
+| ARCH-03 | v0.21-01 | Pending |
+| LOOP-01 | v0.21-03 | Pending |
+| LOOP-02 | v0.21-03 | Pending |
+| LOOP-03 | v0.21-03 | Pending |
+| LOOP-04 | v0.21-03 | Pending |
+| SPEC-01 | v0.21-04 | Pending |
+| SPEC-02 | v0.21-04 | Pending |
+| SPEC-03 | v0.21-04 | Pending |
+| SPEC-04 | v0.21-04 | Pending |
+| DIAG-01 | v0.21-02 | Pending |
+| DIAG-02 | v0.21-02 | Pending |
+| DIAG-03 | v0.21-02 | Pending |
+| PLAN-01 | v0.21-05 | Pending |
+| PLAN-02 | v0.21-05 | Pending |
+| PLAN-03 | v0.21-05 | Pending |
+| SIG-01 | v0.21-06 | Pending |
+| SIG-02 | v0.21-06 | Pending |
+| SIG-03 | v0.21-06 | Pending |
+| SIG-04 | v0.21-06 | Pending |
 
 **Coverage:**
 - v0.21 requirements: 21 total
-- Mapped to phases: 0
-- Unmapped: 21 ⚠️
+- Mapped to phases: 21
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-01*
