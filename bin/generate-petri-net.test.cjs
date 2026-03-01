@@ -5,7 +5,7 @@
 // Tests cover: DOT output structure, WASM SVG render, deadlock warning.
 // Requirements: PET-01, PET-02, PET-03
 
-const { test } = require('node:test');
+const { test, describe } = require('node:test');
 const assert   = require('node:assert');
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -95,4 +95,120 @@ test('emits structural deadlock WARNING to stderr when min_quorum_size > availab
     });
     assert.strictEqual(result.status, 1, 'Expected non-zero exit when implementation missing');
   }
+});
+
+// ── Roadmap Petri Net tests (SIG-02) ─────────────────────────────────────────
+
+const { parseRoadmapPhases, buildRoadmapDot, computeCriticalPath } = require('./generate-petri-net.cjs')._pure;
+
+describe('parseRoadmapPhases', () => {
+  test('extracts phases and dependencies from ROADMAP.md content', () => {
+    const content = [
+      '### Phase v0.21-01: Central Model Registry',
+      '**Depends on**: Nothing (first v0.21 phase)',
+      '',
+      '### Phase v0.21-02: Conformance Crisis Fix',
+      '**Depends on**: Phase v0.21-01',
+      '',
+      '### Phase v0.21-03: Self-Calibrating Loops',
+      '**Depends on**: Phase v0.21-01, Phase v0.21-02',
+    ].join('\n');
+
+    const phases = parseRoadmapPhases(content);
+    assert.strictEqual(phases.length, 3);
+    assert.strictEqual(phases[0].number, 'v0.21-01');
+    assert.strictEqual(phases[0].name, 'Central Model Registry');
+    assert.deepStrictEqual(phases[0].dependsOn, []);
+    assert.strictEqual(phases[1].number, 'v0.21-02');
+    assert.deepStrictEqual(phases[1].dependsOn, ['v0.21-01']);
+    assert.strictEqual(phases[2].number, 'v0.21-03');
+    assert.deepStrictEqual(phases[2].dependsOn, ['v0.21-01', 'v0.21-02']);
+  });
+
+  test('handles phases with no dependencies', () => {
+    const content = [
+      '### Phase v0.10-01: Foundation',
+      '**Depends on**: Nothing',
+      '',
+      '### Phase v0.10-02: Extension',
+      '**Depends on**: Nothing (independent)',
+    ].join('\n');
+
+    const phases = parseRoadmapPhases(content);
+    assert.strictEqual(phases.length, 2);
+    assert.deepStrictEqual(phases[0].dependsOn, []);
+    assert.deepStrictEqual(phases[1].dependsOn, []);
+  });
+
+  test('detects completion status from checkboxes', () => {
+    const content = [
+      '### Phase v0.21-01: Central Model Registry',
+      '**Depends on**: Nothing',
+      '',
+      '### Phase v0.21-02: Conformance Crisis Fix',
+      '**Depends on**: Phase v0.21-01',
+      '',
+      '- [x] Phase v0.21-01',
+      '- [ ] Phase v0.21-02',
+    ].join('\n');
+
+    const phases = parseRoadmapPhases(content);
+    assert.strictEqual(phases[0].completed, true, 'v0.21-01 should be completed (checked)');
+    assert.strictEqual(phases[1].completed, false, 'v0.21-02 should not be completed');
+  });
+});
+
+describe('buildRoadmapDot', () => {
+  test('produces valid DOT with transitions and places', () => {
+    const phases = [
+      { number: 'v0.21-01', name: 'Registry', dependsOn: [], completed: false },
+      { number: 'v0.21-02', name: 'Crisis Fix', dependsOn: ['v0.21-01'], completed: false },
+    ];
+    const dot = buildRoadmapDot(phases);
+    assert.ok(dot.includes('digraph'), 'Should contain digraph header');
+    assert.ok(dot.includes('t_v0_21_01'), 'Should contain phase transition node');
+    assert.ok(dot.includes('t_v0_21_02'), 'Should contain phase transition node');
+    assert.ok(dot.includes('shape=circle'), 'Should contain place nodes');
+    assert.ok(dot.includes('shape=rect'), 'Should contain transition nodes');
+  });
+
+  test('marks completed phases with green fill', () => {
+    const phases = [
+      { number: 'v0.21-01', name: 'Registry', dependsOn: [], completed: true },
+      { number: 'v0.21-02', name: 'Crisis Fix', dependsOn: ['v0.21-01'], completed: false },
+    ];
+    const dot = buildRoadmapDot(phases);
+    // Completed phase should have green fill (#4CAF50)
+    assert.ok(dot.includes('#4CAF50'), 'Completed phase should have green fill');
+  });
+
+  test('handles empty phases array', () => {
+    const dot = buildRoadmapDot([]);
+    assert.ok(dot.includes('digraph'), 'Should contain digraph header');
+    assert.ok(!dot.includes('shape=rect'), 'Should not contain transition nodes');
+  });
+});
+
+describe('computeCriticalPath', () => {
+  test('returns longest path through DAG', () => {
+    // A -> B -> C and A -> D (two paths: A-B-C length 3, A-D length 2)
+    const phases = [
+      { number: 'A', name: 'Alpha', dependsOn: [], completed: false },
+      { number: 'B', name: 'Beta', dependsOn: ['A'], completed: false },
+      { number: 'C', name: 'Charlie', dependsOn: ['B'], completed: false },
+      { number: 'D', name: 'Delta', dependsOn: ['A'], completed: false },
+    ];
+    const result = computeCriticalPath(phases);
+    assert.strictEqual(result.length, 3, 'Critical path should be length 3 (A -> B -> C)');
+    assert.deepStrictEqual(result.path, ['A', 'B', 'C']);
+  });
+
+  test('handles independent phases', () => {
+    const phases = [
+      { number: 'X', name: 'Ex', dependsOn: [], completed: false },
+      { number: 'Y', name: 'Why', dependsOn: [], completed: false },
+    ];
+    const result = computeCriticalPath(phases);
+    assert.strictEqual(result.length, 1, 'Independent phases should have critical path length 1');
+  });
 });

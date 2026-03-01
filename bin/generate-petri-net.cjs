@@ -75,40 +75,323 @@ function buildDot(slots, minQuorum) {
   ].join('\n');
 }
 
+// ── Roadmap Petri Net (SIG-02) ───────────────────────────────────────────────
+
+/**
+ * parseRoadmapPhases(roadmapContent) — parses ROADMAP.md to extract phases and dependencies.
+ * @param {string} roadmapContent - Raw ROADMAP.md content
+ * @returns {Array<{ number: string, name: string, dependsOn: string[], completed: boolean }>}
+ */
+function parseRoadmapPhases(roadmapContent) {
+  const lines = roadmapContent.split('\n');
+  const phases = [];
+  let currentPhase = null;
+
+  const phaseHeaderRe = /^### Phase (v[\d.]+-\d+):\s*(.+)/;
+  const dependsOnRe = /^\*\*Depends on\*\*:\s*(.+)/;
+  const checkboxRe = /^- \[(x| )\].*(?:Phase )?(v[\d.]+-\d+)/;
+
+  const completedFromCheckboxes = new Set();
+
+  for (const line of lines) {
+    const headerMatch = phaseHeaderRe.exec(line);
+    if (headerMatch) {
+      if (currentPhase) phases.push(currentPhase);
+      currentPhase = {
+        number: headerMatch[1],
+        name: headerMatch[2].trim(),
+        dependsOn: [],
+        completed: false,
+      };
+      if (line.includes('completed')) currentPhase.completed = true;
+      continue;
+    }
+
+    if (currentPhase) {
+      const depsMatch = dependsOnRe.exec(line);
+      if (depsMatch) {
+        const depsStr = depsMatch[1];
+        const phaseRefs = depsStr.match(/v[\d.]+-\d+/g);
+        if (phaseRefs) {
+          currentPhase.dependsOn = phaseRefs;
+        }
+        continue;
+      }
+    }
+
+    const cbMatch = checkboxRe.exec(line);
+    if (cbMatch && cbMatch[1] === 'x') {
+      completedFromCheckboxes.add(cbMatch[2]);
+    }
+  }
+  if (currentPhase) phases.push(currentPhase);
+
+  // Mark completed from checkboxes and content patterns
+  for (const phase of phases) {
+    if (completedFromCheckboxes.has(phase.number)) {
+      phase.completed = true;
+    }
+  }
+
+  // Second pass: detect "(completed YYYY-MM-DD)" near phase headers
+  let currentPhaseIdx = -1;
+  for (const line of lines) {
+    const headerMatch = phaseHeaderRe.exec(line);
+    if (headerMatch) {
+      currentPhaseIdx = phases.findIndex(function(p) { return p.number === headerMatch[1]; });
+      continue;
+    }
+    if (currentPhaseIdx >= 0 && /completed\s+\d{4}-\d{2}-\d{2}/.test(line)) {
+      phases[currentPhaseIdx].completed = true;
+    }
+  }
+
+  return phases;
+}
+
+/**
+ * buildRoadmapDot(phases) — generates a Petri net DOT from parsed phases.
+ * @param {Array<{ number: string, name: string, dependsOn: string[], completed: boolean }>} phases
+ * @returns {string} DOT source
+ */
+function buildRoadmapDot(phases) {
+  const lines = [
+    'digraph roadmap_petri_net {',
+    '  rankdir=LR;',
+    '  label="QGSD Roadmap Petri Net (' + phases.length + ' phases)";',
+    '  node [fontname="Helvetica"];',
+    '',
+  ];
+
+  if (phases.length === 0) {
+    lines.push('}');
+    return lines.join('\n');
+  }
+
+  const phaseNumbers = new Set(phases.map(function(p) { return p.number; }));
+  const hasDependents = new Set();
+  for (const phase of phases) {
+    for (const dep of phase.dependsOn) {
+      if (phaseNumbers.has(dep)) hasDependents.add(dep);
+    }
+  }
+
+  lines.push('  // Places (circles)');
+  lines.push('  node [shape=circle, fixedsize=true, width=0.8];');
+
+  const sourcesExist = phases.some(function(p) { return p.dependsOn.length === 0; });
+  if (sourcesExist) {
+    lines.push('  p_start [label="start"];');
+  }
+
+  for (const phase of phases) {
+    for (const dep of phase.dependsOn) {
+      if (!phaseNumbers.has(dep)) continue;
+      const placeId = 'p_' + dep.replace(/[.-]/g, '_') + '__' + phase.number.replace(/[.-]/g, '_');
+      lines.push('  ' + placeId + ' [label=""];');
+    }
+  }
+
+  const sinksExist = phases.some(function(p) { return !hasDependents.has(p.number); });
+  if (sinksExist) {
+    lines.push('  p_done [label="done"];');
+  }
+
+  lines.push('');
+  lines.push('  // Transitions (rectangles) -- phases');
+  for (const phase of phases) {
+    const nodeId = 't_' + phase.number.replace(/[.-]/g, '_');
+    const label = phase.number + '\\n' + phase.name.substring(0, 30);
+    if (phase.completed) {
+      lines.push('  ' + nodeId + ' [shape=rect, height=0.5, width=2.0, style=filled, fillcolor="#4CAF50", fontcolor=white, label="' + label + '"];');
+    } else {
+      lines.push('  ' + nodeId + ' [shape=rect, height=0.5, width=2.0, style=filled, fillcolor=black, fontcolor=white, label="' + label + '"];');
+    }
+  }
+
+  lines.push('');
+  lines.push('  // Arcs');
+  for (const phase of phases) {
+    const nodeId = 't_' + phase.number.replace(/[.-]/g, '_');
+
+    if (phase.dependsOn.length === 0 && sourcesExist) {
+      lines.push('  p_start -> ' + nodeId + ';');
+    }
+
+    for (const dep of phase.dependsOn) {
+      if (!phaseNumbers.has(dep)) continue;
+      const placeId = 'p_' + dep.replace(/[.-]/g, '_') + '__' + phase.number.replace(/[.-]/g, '_');
+      lines.push('  ' + placeId + ' -> ' + nodeId + ';');
+    }
+
+    for (const downstream of phases) {
+      if (downstream.dependsOn.includes(phase.number)) {
+        const placeId = 'p_' + phase.number.replace(/[.-]/g, '_') + '__' + downstream.number.replace(/[.-]/g, '_');
+        lines.push('  ' + nodeId + ' -> ' + placeId + ';');
+      }
+    }
+
+    if (!hasDependents.has(phase.number) && sinksExist) {
+      lines.push('  ' + nodeId + ' -> p_done;');
+    }
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+/**
+ * computeCriticalPath(phases) — finds the longest path through the phase DAG.
+ * @param {Array<{ number: string, name: string, dependsOn: string[], completed: boolean }>} phases
+ * @returns {{ path: string[], length: number }}
+ */
+function computeCriticalPath(phases) {
+  if (phases.length === 0) return { path: [], length: 0 };
+
+  const phaseMap = new Map();
+  for (const p of phases) phaseMap.set(p.number, p);
+
+  // Kahn's algorithm for topological sort + longest path DP
+  const inDegree = new Map();
+  const adj = new Map();
+
+  for (const p of phases) {
+    if (!inDegree.has(p.number)) inDegree.set(p.number, 0);
+    if (!adj.has(p.number)) adj.set(p.number, []);
+  }
+
+  for (const p of phases) {
+    for (const dep of p.dependsOn) {
+      if (!phaseMap.has(dep)) continue;
+      if (!adj.has(dep)) adj.set(dep, []);
+      adj.get(dep).push(p.number);
+      inDegree.set(p.number, (inDegree.get(p.number) || 0) + 1);
+    }
+  }
+
+  const queue = [];
+  for (const [node, deg] of inDegree) {
+    if (deg === 0) queue.push(node);
+  }
+
+  const dist = new Map();
+  const pred = new Map();
+  for (const p of phases) {
+    dist.set(p.number, 1);
+    pred.set(p.number, null);
+  }
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+    for (const next of (adj.get(node) || [])) {
+      if (dist.get(node) + 1 > dist.get(next)) {
+        dist.set(next, dist.get(node) + 1);
+        pred.set(next, node);
+      }
+      inDegree.set(next, inDegree.get(next) - 1);
+      if (inDegree.get(next) === 0) queue.push(next);
+    }
+  }
+
+  let maxDist = 0;
+  let endNode = null;
+  for (const [node, d] of dist) {
+    if (d > maxDist) {
+      maxDist = d;
+      endNode = node;
+    }
+  }
+
+  const criticalPath = [];
+  let current = endNode;
+  while (current !== null) {
+    criticalPath.unshift(current);
+    current = pred.get(current);
+  }
+
+  return { path: criticalPath, length: criticalPath.length };
+}
+
 // Export pure functions for unit testing
-module.exports._pure = { buildDot };
+module.exports._pure = { buildDot, buildRoadmapDot, computeCriticalPath, parseRoadmapPhases };
 
 // Guard against running main logic when required as a module (test imports)
 if (require.main === module) {
-  const dotContent = buildDot(QUORUM_SLOTS, effectiveMinQuorum);
-  const outDir     = path.join(process.cwd(), 'formal', 'petri');
-  const dotPath    = path.join(outDir, 'quorum-petri-net.dot');
-  const svgPath    = path.join(outDir, 'quorum-petri-net.svg');
+  const isRoadmap = process.argv.includes('--roadmap');
 
-  fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(dotPath, dotContent);
-  process.stdout.write('[generate-petri-net] DOT written to: ' + dotPath + '\n');
-
-  // PET-02: render DOT to SVG via @hpcc-js/wasm-graphviz (ESM-primary — dynamic import)
-  (async () => {
-    let Graphviz;
-    try {
-      ({ Graphviz } = await import('@hpcc-js/wasm-graphviz'));
-    } catch (importErr) {
-      process.stderr.write(
-        '[generate-petri-net] @hpcc-js/wasm-graphviz not installed.\n' +
-        '[generate-petri-net] Run: npm install --save-dev @hpcc-js/wasm-graphviz\n'
-      );
+  if (isRoadmap) {
+    // ── Roadmap Petri Net mode ──────────────────────────────────────────────
+    const roadmapPath = path.join(process.cwd(), '.planning', 'ROADMAP.md');
+    if (!fs.existsSync(roadmapPath)) {
+      process.stderr.write('[generate-petri-net] ROADMAP.md not found at: ' + roadmapPath + '\n');
       process.exit(1);
     }
-    try {
-      const graphviz = await Graphviz.load();
-      const svg      = graphviz.dot(dotContent);
-      fs.writeFileSync(svgPath, svg);
-      process.stdout.write('[generate-petri-net] SVG written to: ' + svgPath + '\n');
-    } catch (renderErr) {
-      process.stderr.write('[generate-petri-net] SVG render failed: ' + renderErr.message + '\n');
-      process.exit(1);
-    }
-  })();
+
+    const content = fs.readFileSync(roadmapPath, 'utf8');
+    const phases = parseRoadmapPhases(content);
+    const dotContent = buildRoadmapDot(phases);
+    const criticalPath = computeCriticalPath(phases);
+
+    const outDir  = path.join(process.cwd(), 'formal', 'petri');
+    const dotPath = path.join(outDir, 'roadmap-petri-net.dot');
+    const svgPath = path.join(outDir, 'roadmap-petri-net.svg');
+
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(dotPath, dotContent);
+    process.stdout.write('[generate-petri-net] Roadmap DOT written to: ' + dotPath + '\n');
+    process.stdout.write('[generate-petri-net] Phases: ' + phases.length + '\n');
+    process.stdout.write('[generate-petri-net] Critical path (' + criticalPath.length + '): ' + criticalPath.path.join(' -> ') + '\n');
+
+    // Render SVG
+    (async () => {
+      let Graphviz;
+      try {
+        ({ Graphviz } = await import('@hpcc-js/wasm-graphviz'));
+      } catch (_e) {
+        process.stderr.write('[generate-petri-net] @hpcc-js/wasm-graphviz not installed -- SVG skipped.\n');
+        process.exit(0);
+      }
+      try {
+        const graphviz = await Graphviz.load();
+        const svg      = graphviz.dot(dotContent);
+        fs.writeFileSync(svgPath, svg);
+        process.stdout.write('[generate-petri-net] Roadmap SVG written to: ' + svgPath + '\n');
+      } catch (renderErr) {
+        process.stderr.write('[generate-petri-net] SVG render failed: ' + renderErr.message + '\n');
+        process.exit(1);
+      }
+    })();
+  } else {
+    // ── Quorum Petri Net mode (existing) ────────────────────────────────────
+    const dotContent = buildDot(QUORUM_SLOTS, effectiveMinQuorum);
+    const outDir     = path.join(process.cwd(), 'formal', 'petri');
+    const dotPath    = path.join(outDir, 'quorum-petri-net.dot');
+    const svgPath    = path.join(outDir, 'quorum-petri-net.svg');
+
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(dotPath, dotContent);
+    process.stdout.write('[generate-petri-net] DOT written to: ' + dotPath + '\n');
+
+    (async () => {
+      let Graphviz;
+      try {
+        ({ Graphviz } = await import('@hpcc-js/wasm-graphviz'));
+      } catch (importErr) {
+        process.stderr.write(
+          '[generate-petri-net] @hpcc-js/wasm-graphviz not installed.\n' +
+          '[generate-petri-net] Run: npm install --save-dev @hpcc-js/wasm-graphviz\n'
+        );
+        process.exit(1);
+      }
+      try {
+        const graphviz = await Graphviz.load();
+        const svg      = graphviz.dot(dotContent);
+        fs.writeFileSync(svgPath, svg);
+        process.stdout.write('[generate-petri-net] SVG written to: ' + svgPath + '\n');
+      } catch (renderErr) {
+        process.stderr.write('[generate-petri-net] SVG render failed: ' + renderErr.message + '\n');
+        process.exit(1);
+      }
+    })();
+  }
 }
