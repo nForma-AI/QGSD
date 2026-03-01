@@ -1133,12 +1133,13 @@ Plans:
   2. Running `promote-model.cjs` on an accepted `proposed-changes.tla` merges invariants into `formal/tla/` and updates `model-registry.json` atomically (tmp file + rename — no partial writes visible)
   3. When `/qgsd:debug` accepts a new invariant candidate, it is written directly to the appropriate `formal/tla/<surface>.tla` spec (not a sidecar) with `update_source: "debug"` and session ID recorded in `model-registry.json`
   4. Zero update flows write to per-phase scratch only — all three flows (generate, debug, plan-promote) write to `formal/` as their primary destination
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] v0.21-01-01: Create `formal/model-registry.json` schema + `update-model-registry.cjs` helper; update generate flow to write registry entry on every spec generation
-- [ ] v0.21-01-02: Implement `promote-model.cjs` with atomic tmp-rename merge; wire into post-verification promotion step
-- [ ] v0.21-01-03: Wire debug invariant acceptance to write directly to canonical spec + registry (`update_source: "debug"`)
+- [ ] v0.21-01-01-PLAN.md — Wave 0 TDD scaffold: RED test stubs for all four registry scripts (ARCH-01, ARCH-02, ARCH-03)
+- [ ] v0.21-01-02-PLAN.md — Registry initialization + generate flow wiring: initialize-model-registry.cjs + formal/model-registry.json (ARCH-01)
+- [ ] v0.21-01-03-PLAN.md — Atomic promotion script: promote-model.cjs with duplicate detection (ARCH-02)
+- [ ] v0.21-01-04-PLAN.md — Debug invariant write path: accept-debug-invariant.cjs + registry session provenance (ARCH-03)
 
 ### Phase v0.21-02: Conformance Crisis Fix
 **Goal**: The 69% conformance trace divergence rate is reduced to <5%, with tooling to attribute any remaining divergence to specific XState guards or hook implementations
