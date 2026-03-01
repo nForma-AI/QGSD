@@ -273,7 +273,7 @@ Archive: `.planning/milestones/v0.19-ROADMAP.md`
 
 **Milestone Goal:** Close the feedback loop between QGSD's formal verification pipeline and itself — specs auto-regenerate from code, debug sessions capture new invariants, sensitivity results recalibrate PRISM, and every plan is TLC-verified before quorum sees it.
 
-- [ ] **Phase v0.21-01: Central Model Registry** — Declare  as single source of truth;  tracks provenance;  atomic promotion; debug invariants write directly to canonical specs (ARCH-01, ARCH-02, ARCH-03)
+- [x] **Phase v0.21-01: Central Model Registry** — Declare  as single source of truth;  tracks provenance;  atomic promotion; debug invariants write directly to canonical specs (ARCH-01, ARCH-02, ARCH-03) (completed 2026-03-01)
 - [ ] **Phase v0.21-02: Conformance Crisis Fix** — Reduce 69% divergence to <5%; export divergent traces as TTrace objects;  walks XState guards to root cause; pivot decision surfaced in  (DIAG-01, DIAG-02, DIAG-03)
 - [ ] **Phase v0.21-03: Self-Calibrating Feedback Loops** — PRISM always uses current scoreboard rates (pre-step calibration); PostToolUse hook auto-regenerates TLA+/Alloy specs on XState machine changes; sensitivity deviations trigger PRISM re-run;  proposes new invariant candidates post-session (LOOP-01, LOOP-02, LOOP-03, LOOP-04)
 - [ ] **Phase v0.21-04: Spec Completeness** — Stop hook formalized in ; oscillation spec audited against ; quorum composition verified in ;  blocks translated to TLA+ PROPERTY checks (SPEC-01, SPEC-02, SPEC-03, SPEC-04)
@@ -1223,7 +1223,7 @@ Plans:
 - [ ] v0.21-06-03: Implement `bin/prism-priority.cjs` + inject into `plan-phase.md` quorum context (SIG-03)
 - [ ] v0.21-06-04: Wire PRISM consensus probability gate before each quorum round (SIG-04)
 
-| v0.21-01. Central Model Registry | v0.21 | 0/3 | Not started | - |
+| v0.21-01. Central Model Registry | v0.21 | Complete    | 2026-03-01 | - |
 | v0.21-02. Conformance Crisis Fix | v0.21 | 0/3 | Not started | - |
 | v0.21-03. Self-Calibrating Feedback Loops | v0.21 | 0/4 | Not started | - |
 | v0.21-04. Spec Completeness | v0.21 | 0/4 | Not started | - |
