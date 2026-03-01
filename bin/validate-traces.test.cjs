@@ -374,3 +374,62 @@ test('surface is ci', () => {
   assert.ok(record, 'NDJSON record must be written');
   assert.strictEqual(record.surface, 'ci', 'surface must be ci');
 });
+
+// ── buildTTrace unit tests (v0.21-02-02) ─────────────────────────────────────
+
+test('buildTTrace: returns required TTrace fields', () => {
+  const { buildTTrace } = require('../bin/validate-traces.cjs');
+  const event = { action: 'quorum_complete', outcome: 'APPROVE', vote_result: 3, slots_available: 3 };
+  const scoreboardMeta = { n_rounds: 5, window_days: 1 };
+  // Pass walker=null and machine=null to test the structure without XState dependency
+  const result = buildTTrace(event, 'DECIDED', 'DELIBERATING', 'state_mismatch', scoreboardMeta, 'low', null, null, [event]);
+  assert.ok(result.event, 'event field required');
+  assert.strictEqual(result.actualState, 'DECIDED');
+  assert.strictEqual(result.expectedState, 'DELIBERATING');
+  assert.strictEqual(result.divergenceType, 'state_mismatch');
+  assert.strictEqual(result.confidence, 'low');
+  assert.ok(result.observation_window, 'observation_window required');
+  assert.ok(Array.isArray(result.guardEvaluations), 'guardEvaluations must be array');
+});
+
+test('buildTTrace: observation_window populated from scoreboardMeta', () => {
+  const { buildTTrace } = require('../bin/validate-traces.cjs');
+  const scoreboardMeta = { n_rounds: 42, window_days: 7 };
+  const result = buildTTrace({}, 'A', 'B', 'state_mismatch', scoreboardMeta, 'medium', null, null, [{}]);
+  assert.strictEqual(result.observation_window.n_rounds, 42);
+  assert.strictEqual(result.observation_window.window_days, 7);
+});
+
+test('buildTTrace: fail-open when walker is null — guardEvaluations is empty array, event is NOT dropped', () => {
+  const { buildTTrace } = require('../bin/validate-traces.cjs');
+  // Standalone event (no round_id) with walker=null: must return a TTrace record, not null/undefined.
+  // Silent data loss (returning null or skipping) is the bug this test prevents.
+  const standaloneEvent = { action: 'quorum_complete' }; // no round_id
+  const result = buildTTrace(standaloneEvent, 'DECIDED', 'DELIBERATING', 'state_mismatch',
+    { n_rounds: 0, window_days: 0 }, 'low', null, null, [standaloneEvent]);
+  assert.ok(result !== null && result !== undefined, 'Standalone event must not be silently dropped');
+  assert.deepStrictEqual(result.guardEvaluations, [], 'guardEvaluations must be empty array when walker=null');
+  assert.strictEqual(result.event, standaloneEvent, 'event field must preserve original event');
+});
+
+test('buildTTrace: standalone event (no round_id) produces TTrace with empty precedingEvents', () => {
+  const { buildTTrace } = require('../bin/validate-traces.cjs');
+  // When roundEvents = [event] (standalone), no preceding context is replayed.
+  // The result is still a valid TTrace (no silent drop), and guardEvaluations may be empty.
+  const event = { action: 'quorum_vote' }; // no round_id field
+  const result = buildTTrace(event, 'COLLECTING_VOTES', 'DELIBERATING', 'state_mismatch',
+    { n_rounds: 1, window_days: 0 }, 'low', null, null, [event]);
+  assert.ok(typeof result === 'object' && result !== null, 'Must return TTrace object, not null');
+  assert.strictEqual(result.actualState, 'COLLECTING_VOTES');
+  assert.strictEqual(result.divergenceType, 'state_mismatch');
+});
+
+test('buildTTrace: validateMCPMetadata non-mcp_call event returns true', () => {
+  const { validateMCPMetadata } = require('../bin/validate-traces.cjs');
+  assert.strictEqual(validateMCPMetadata({ action: 'quorum_start' }), true);
+});
+
+test('buildTTrace: exported and callable from module.exports', () => {
+  const m = require('../bin/validate-traces.cjs');
+  assert.strictEqual(typeof m.buildTTrace, 'function', 'buildTTrace must be exported');
+});

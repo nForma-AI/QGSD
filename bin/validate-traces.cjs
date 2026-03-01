@@ -85,6 +85,85 @@ function mapToXStateEvent(event) {
   }
 }
 
+// buildTTrace: construct a structured TTrace record for a divergent conformance event.
+// Uses xstate-trace-walker to get guard evaluation details.
+// IMPORTANT: roundEvents is the full ordered array of conformance events for this round_id group
+// (or just [event] for standalone events with no round_id). Guards are evaluated with the actor
+// replayed through all preceding events in the group, so guard context at event N reflects
+// context accumulated from events 1..N-1 — not from a fresh IDLE snapshot.
+//
+// STANDALONE EVENT TRADE-OFF (intentional approximation):
+// When an event has no round_id, roundEvents = [event] — a single-event group with no
+// preceding context. The actor starts fresh (IDLE) before evaluating the guard.
+// This is an acceptable methodological approximation because:
+//   1. Standalone events represent ad-hoc or non-session actions where cross-event context
+//      is not meaningful — evaluating them in isolation accurately reflects their runtime
+//      execution environment.
+//   2. The accuracy cost is bounded: only guards that depend on context set by earlier
+//      events in the same round will be misclassified. Guards that depend only on the
+//      event's own payload (the majority) are evaluated correctly.
+//   3. The alternative (silently dropping standalone events) would introduce undetected
+//      divergence blind spots — the approximation is always preferable to omission.
+// Consequence: a standalone guard failure may be classified as impl-bug when it is a
+// methodology artifact. attribute-trace-divergence.cjs should treat standalone TTrace
+// records with lower specBugConfidence when no preceding context is present.
+//
+// scoreboardMeta and confidence are passed from the outer loop.
+// walker is the result of require('./xstate-trace-walker.cjs') — passed in to keep helper pure.
+function buildTTrace(event, actualState, expectedStateName, divergenceType, scoreboardMeta, confidence, walker, machine, roundEvents) {
+  let guardEvaluations = [];
+  if (walker && machine) {
+    try {
+      const _path = require('path');
+      const _fs   = require('fs');
+      const _machinePath = (() => {
+        const repoDist    = _path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+        const installDist = _path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+        return _fs.existsSync(repoDist) ? repoDist : installDist;
+      })();
+      const { createActor } = require(_machinePath);
+
+      // Find the index of this event in its round group
+      const groupEvents = roundEvents || [event];
+      const eventIndex  = groupEvents.indexOf(event);
+      const precedingEvents = groupEvents.slice(0, eventIndex);
+
+      // Replay preceding events through a single actor to accumulate session context.
+      // Guards evaluated here will see slotsAvailable, polledCount, etc. as set by
+      // QUORUM_START and earlier events — not from a fresh IDLE snapshot.
+      const xstateEvt = mapToXStateEvent(event);
+      if (xstateEvt) {
+        const actor = createActor(machine);
+        actor.start();
+        for (const prev of precedingEvents) {
+          const prevEvt = mapToXStateEvent(prev);
+          if (prevEvt) actor.send(prevEvt);
+        }
+        const beforeSnap = actor.getSnapshot();
+        actor.stop();
+        const walkerResult = walker.evaluateTransitions(beforeSnap, xstateEvt, machine);
+        guardEvaluations = walkerResult.possibleTransitions.map(t => ({
+          guardName: t.guardName || 'none',
+          passed:    t.guardPassed,
+          context:   t.guardContext,
+        }));
+      }
+    } catch (_) { /* fail-open — guard evaluation failure must not break validation */ }
+  }
+  return {
+    event,
+    actualState,
+    expectedState: expectedStateName,
+    guardEvaluations,
+    divergenceType,
+    confidence,
+    observation_window: {
+      n_rounds:    scoreboardMeta.n_rounds,
+      window_days: scoreboardMeta.window_days,
+    },
+  };
+}
+
 // Returns the expected XState state after this event, based on the event's outcome field.
 function expectedState(event) {
   if (event.outcome === 'APPROVE') return 'DECIDED';
@@ -136,6 +215,12 @@ if (require.main === module) {
   })();
   const { createActor, qgsdWorkflowMachine } = require(machinePath);
 
+  // Load walker for TTrace export (DIAG-01) — lazy-loaded here to avoid breaking module.exports usage
+  let walker = null;
+  try {
+    walker = require('./xstate-trace-walker.cjs');
+  } catch (_) { /* walker not available — TTrace export will use empty guardEvaluations */ }
+
   const logPath = path.join(process.cwd(), '.planning', 'conformance-events.jsonl');
 
   if (!fs.existsSync(logPath)) {
@@ -179,13 +264,19 @@ if (require.main === module) {
   const scoreboardMeta = readScoreboardMeta();
   const confidence = computeConfidenceTier(scoreboardMeta.n_rounds, scoreboardMeta.window_days);
 
+  // Parse all events first so we can group by round_id for session-based buildTTrace calls.
+  const parsedEvents = [];
   let valid       = 0;
   const divergences = [];
 
-  for (const line of lines) {
+  // First pass: parse JSON lines
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     let event;
     try {
       event = JSON.parse(line);
+      event._lineIndex = i; // internal index for standalone event keying
+      parsedEvents.push(event);
     } catch (parseErr) {
       divergences.push({
         line,
@@ -193,9 +284,20 @@ if (require.main === module) {
         ...scoreboardMeta,
         confidence,
       });
-      continue;
     }
+  }
 
+  // Group events by round_id for session-based guard evaluation in buildTTrace.
+  // Events without round_id form singleton groups (standalone events).
+  const roundGroups = new Map(); // round_id_key → events[]
+  for (const evt of parsedEvents) {
+    const key = evt.round_id || evt.session_id || '__standalone__' + evt._lineIndex;
+    if (!roundGroups.has(key)) roundGroups.set(key, []);
+    roundGroups.get(key).push(evt);
+  }
+
+  // Second pass: validate each parsed event
+  for (const event of parsedEvents) {
     // MCPENV-03: validate MCP interaction metadata for mcp_call events
     const mcpErrors = validateMCPMetadata(event);
     if (mcpErrors !== true) {
@@ -203,6 +305,7 @@ if (require.main === module) {
         event,
         reason: 'mcp_field_validation',
         errors: mcpErrors,
+        divergenceType: 'mcp_field_validation',
         ...scoreboardMeta,
         confidence,
       });
@@ -214,6 +317,7 @@ if (require.main === module) {
       divergences.push({
         event,
         reason: 'unmappable_action: ' + event.action,
+        divergenceType: 'unmappable_action',
         ...scoreboardMeta,
         confidence,
       });
@@ -231,20 +335,34 @@ if (require.main === module) {
     if (expected === null || snapshot.matches(expected)) {
       valid++;
     } else {
-      divergences.push({
-        event,
-        actual:   snapshot.value,
-        expected,
-        reason:   'state_mismatch',
-        ...scoreboardMeta,
-        confidence,
-      });
+      // Build TTrace record with session-based guard evaluation (DIAG-01)
+      const roundKey    = event.round_id || event.session_id || '__standalone__' + event._lineIndex;
+      const roundEvents = roundGroups.get(roundKey) || [event];
+      divergences.push(
+        buildTTrace(event, snapshot.value, expected, 'state_mismatch', scoreboardMeta, confidence, walker, qgsdWorkflowMachine, roundEvents)
+      );
     }
   }
 
   const total = lines.length;
   const score = ((valid / total) * 100).toFixed(1);
   const observationWindow = buildObservationWindow(scoreboardMeta, total);
+
+  // Export first 10 state_mismatch TTrace records to formal/.divergences.json (DIAG-01)
+  // Atomic write (tmp + rename) consistent with project pattern.
+  const ttraceDivergences = divergences
+    .filter(d => d.divergenceType === 'state_mismatch')
+    .slice(0, 10);
+  if (ttraceDivergences.length > 0) {
+    const divergencesPath = path.join(process.cwd(), 'formal', '.divergences.json');
+    const tmpPath = divergencesPath + '.tmp.' + Date.now();
+    try {
+      fs.writeFileSync(tmpPath, JSON.stringify(ttraceDivergences, null, 2), 'utf8');
+      fs.renameSync(tmpPath, divergencesPath);
+    } catch (e) {
+      process.stderr.write('[validate-traces] Warning: failed to write .divergences.json: ' + e.message + '\n');
+    }
+  }
 
   process.stdout.write('[validate-traces] Deviation score: ' + score + '% valid (' + valid + '/' + total + ' traces)\n');
 
@@ -283,5 +401,5 @@ if (require.main === module) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { computeConfidenceTier, CONFIDENCE_THRESHOLDS, validateMCPMetadata };
+  module.exports = { computeConfidenceTier, CONFIDENCE_THRESHOLDS, validateMCPMetadata, buildTTrace };
 }
