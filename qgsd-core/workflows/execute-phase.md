@@ -363,6 +363,67 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"verifying_phase\",\"phase\":\"${PHASE_NUMBER}\"}"
 ```
 
+**Formal check (before verifier spawn):**
+
+Run the keyword-match scan and formal check before spawning the verifier. The scan is identical to the plan-phase Step 4.5 algorithm.
+
+```bash
+# Formal scope scan — identical algorithm to plan-phase Step 4.5
+FORMAL_SPEC_CONTEXT=()
+if [ -d "formal/spec" ]; then
+  PHASE_DESC=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // empty')
+  for MODULE_DIR in formal/spec/*/; do
+    MODULE=$(basename "$MODULE_DIR")
+    INVARIANTS_FILE="formal/spec/${MODULE}/invariants.md"
+    if [ -f "$INVARIANTS_FILE" ]; then
+      DESC_LOWER=$(echo "$PHASE_DESC" | tr '[:upper:]' '[:lower:]')
+      MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
+      MATCHED=0
+      for KEYWORD in $(echo "$DESC_LOWER" | tr ' -' '\n' | grep -v '^$'); do
+        if echo "$MODULE_LOWER" | grep -qF "$KEYWORD"; then
+          MATCHED=1
+          break
+        fi
+      done
+      if [ $MATCHED -eq 1 ]; then
+        FORMAL_SPEC_CONTEXT+=("{\"module\":\"${MODULE}\",\"path\":\"${INVARIANTS_FILE}\"}")
+      fi
+    fi
+  done
+fi
+```
+
+```bash
+# Module extraction (bash-only, no node dependency)
+MODULES=""
+for ctx_entry in "${FORMAL_SPEC_CONTEXT[@]}"; do
+  MOD=$(echo "$ctx_entry" | sed 's/.*"module":"\([^"]*\)".*/\1/')
+  MODULES="${MODULES:+${MODULES},}${MOD}"
+done
+```
+
+```bash
+# Conditional formal check invocation
+if [ -n "$MODULES" ]; then
+  echo "◆ Running formal check for modules: ${MODULES}"
+  FORMAL_CHECK_OUTPUT=$(node bin/run-formal-check.cjs --modules="${MODULES}" 2>&1)
+  FORMAL_CHECK_EXIT=$?
+  FORMAL_CHECK_RESULT=$(echo "$FORMAL_CHECK_OUTPUT" | grep '^FORMAL_CHECK_RESULT=' | cut -d= -f2-)
+  echo "$FORMAL_CHECK_OUTPUT"
+  if [ "$FORMAL_CHECK_EXIT" -eq 0 ]; then
+    echo "◆ Formal check: PASSED (or tooling absent — see result)"
+  else
+    echo "◆ Formal check: COUNTEREXAMPLE FOUND — see output above"
+  fi
+else
+  FORMAL_CHECK_RESULT=null
+  FORMAL_CHECK_EXIT=0
+  echo "◆ Formal check: SKIPPED (no keyword-matched modules in formal/spec/)"
+fi
+```
+
+**Fail-open clause:** If `node bin/run-formal-check.cjs` fails to launch (script not found, Node error): log `◆ Formal check: WARNING — run-formal-check.cjs errored. Skipping.` Set `FORMAL_CHECK_RESULT=null`, `FORMAL_CHECK_EXIT=0`. Continue without blocking.
+
 ```
 Task(
   prompt="Verify phase {phase_number} goal achievement.
@@ -371,6 +432,19 @@ Phase goal: {goal from ROADMAP.md}
 Phase requirement IDs: {phase_req_ids}
 Check must_haves against actual codebase.
 Cross-reference requirement IDs from PLAN frontmatter against REQUIREMENTS.md — every ID MUST be accounted for.
+
+<formal_context>
+${FORMAL_CHECK_RESULT !== "null" ?
+`Formal check completed. Result (real TLC/Alloy/PRISM output — not estimated):
+${FORMAL_CHECK_RESULT}
+
+Rules:
+- If failed > 0: set status: counterexample_found in VERIFICATION.md. This is a HARD FAILURE — no must_haves can pass when a counterexample was found. Include counterexamples array in VERIFICATION.md frontmatter under formal_check: key.
+- If skipped only (failed == 0, passed == 0): tooling was absent. Include skip warning in VERIFICATION.md but proceed normally (do NOT set counterexample_found).
+- If passed > 0 and failed == 0: formal checks passed. Include pass/skip counts in VERIFICATION.md as evidence under formal_check: frontmatter key.` :
+`No formal scope matched this phase (FORMAL_SPEC_CONTEXT was empty) or tooling unavailable. Skip formal verification section entirely.`}
+</formal_context>
+
 Create VERIFICATION.md.",
   subagent_type="qgsd-verifier",
   model="{verifier_model}",
@@ -388,6 +462,7 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 | `passed` | → update_roadmap |
 | `human_needed` | Present items for human testing, get approval or feedback |
 | `gaps_found` | Present gap summary, offer `/qgsd:plan-phase {phase} --gaps` |
+| `counterexample_found` | → override prompt (see below) |
 
 **If human_needed:**
 
@@ -482,6 +557,69 @@ Route on quorum_result:
   ```
 
 Gap closure cycle: `/qgsd:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/qgsd:execute-phase {X} --gaps-only` → verifier re-runs.
+
+**If counterexample_found:**
+
+Read counterexample details from VERIFICATION.md:
+```bash
+grep "formal_check:" -A 20 "${PHASE_DIR}"/*-VERIFICATION.md | head -25
+```
+
+Present to user:
+```
+## Formal Counterexample Found — Phase {PHASE_NUMBER}
+
+A formal model checker (TLC/Alloy/PRISM) found counterexamples:
+
+{counterexamples from VERIFICATION.md formal_check section}
+
+This is a hard block. You have two options:
+
+1. **Investigate and fix**: Address the counterexample before proceeding.
+   The counterexample indicates the formal model was violated.
+
+2. **Override with acknowledgment**: Provide a reason why this is acceptable
+   to proceed despite the formal violation. Your reason will be written to
+   VERIFICATION.md with a timestamp as an audit trail.
+
+Type your override reason, or type "abort" to stop.
+```
+
+If user provides a non-empty reason (not "abort"):
+1. Spawn a continuation verifier Task to write the override record:
+```
+Task(
+  prompt="Update VERIFICATION.md at {phase_dir}/{phase_num}-VERIFICATION.md.
+User acknowledged counterexample block with reason: '{override_reason}'.
+Write to VERIFICATION.md frontmatter a new field:
+counterexample_override:
+  acknowledged_at: {ISO timestamp now}
+  reason: '{override_reason}'
+  override_by: user
+Also change status: from counterexample_found to passed.
+Preserve ALL other existing VERIFICATION.md content unchanged.",
+  subagent_type="qgsd-verifier",
+  model="{verifier_model}",
+  description="Write counterexample override to VERIFICATION.md"
+)
+```
+2. After Task completes, read updated VERIFICATION.md status:
+```bash
+grep "^status:" "${PHASE_DIR}"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
+```
+3. Confirm `counterexample_override:` field present:
+```bash
+grep "counterexample_override:" "${PHASE_DIR}"/*-VERIFICATION.md
+```
+4. If status is now `passed` and `counterexample_override:` present → continue to update_roadmap.
+5. If field is missing → log error: "Override audit trail not written. Do not advance." Report to user.
+
+If user types "abort":
+- Report: "Phase {PHASE_NUMBER} halted due to formal counterexample. STATE.md position unchanged."
+- Do NOT call update_roadmap.
+- Do NOT advance phase completion.
+
+Key constraint: ANY override MUST produce a `counterexample_override:` entry with timestamp and reason in VERIFICATION.md. Execute-phase confirms the field exists before advancing. This is the ENF-02 audit trail requirement — there is NO silent bypass path.
 </step>
 
 <step name="update_roadmap">
