@@ -1024,7 +1024,7 @@ function cmdRoadmapGetPhase(cwd, phaseNum, raw) {
     const section = content.slice(headerIndex, sectionEnd).trim();
 
     // Extract goal if present
-    const goalMatch = section.match(/\*\*Goal:\*\*\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     // Extract success criteria as structured array
@@ -2609,7 +2609,7 @@ function cmdRoadmapAnalyze(cwd, raw) {
     const sectionEnd = nextHeader ? sectionStart + nextHeader.index : content.length;
     const section = content.slice(sectionStart, sectionEnd);
 
-    const goalMatch = section.match(/\*\*Goal:\*\*\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     const dependsMatch = section.match(/\*\*Depends on:\*\*\s*([^\n]+)/i);
@@ -4367,7 +4367,7 @@ function getRoadmapPhaseInternal(cwd, phaseNum) {
     const sectionEnd = nextHeaderMatch ? headerIndex + nextHeaderMatch.index : content.length;
     const section = content.slice(headerIndex, sectionEnd).trim();
 
-    const goalMatch = section.match(/\*\*Goal:\*\*\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     return {
