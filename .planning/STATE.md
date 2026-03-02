@@ -60,6 +60,7 @@ Recent decisions affecting current work:
 - [v0.24 roadmap]: 4 phases derived from 10 requirements. FAIL-01+FAIL-02 in v0.24-01 (provider mapping is foundational). DISP-01+DISP-02+DISP-03 in v0.24-02 (dispatch reliability needs provider map). OBS-01+OBS-02+OBS-03 in v0.24-03 (observability captures data). HEAL-01+HEAL-02 in v0.24-04 (self-healing consumes observability data).
 - [v0.24 roadmap]: EventualConsensus formal invariant (`<>(phase = "DECIDED")`) sharpened success criteria for v0.24-01 (SC4) and v0.24-04 (SC3) -- quorum must reach DECIDED state even under partial failure and early escalation.
 - [v0.24 roadmap]: Phase v0.24-03 depends only on v0.24-01 (not v0.24-02) -- observability can proceed in parallel with dispatch reliability once provider infrastructure exists.
+- [v0.24-05 added]: Slot Worker Thin Passthrough — moves prompt construction and output parsing from Haiku agent into call-quorum-slot.cjs. Depends on v0.24-01 (same file modified). Requirements DISP-04, DISP-05 added.
 
 ### Pending Todos
 

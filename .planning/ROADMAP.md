@@ -22,7 +22,7 @@
 - ✅ **v0.21 — FV Closed Loop** — Phases v0.21-01..v0.21-06 (shipped 2026-03-01)
 - 🚧 **v0.22 — Requirements Envelope** — Phases v0.22-01..v0.22-04 (in progress)
 - 🔧 **v0.23 — Formal Gates** — Phases v0.23-01..v0.23-04 (gap closure in progress — v0.23-03..04 need plans)
-- 🚧 **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-04 (in progress: v0.24-01 complete 3/3 ✓)
+- 🚧 **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-05 (in progress: v0.24-01 complete 3/3 ✓)
 
 ## Phases
 
@@ -1339,3 +1339,17 @@ Plans:
 | v0.24-02. Dispatch Reliability | v0.24 | 0/TBD | Not started | - |
 | v0.24-03. Quorum Observability | v0.24 | 0/TBD | Not started | - |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
+
+### Phase v0.24-05: Slot Worker Thin Passthrough
+**Goal**: Move prompt construction (Mode A/B, Round 1/2+, conditional sections) and output parsing (verdict/reasoning/citations/improvements extraction) from the Haiku slot-worker agent into call-quorum-slot.cjs (or a wrapper script), reducing worker token usage from 22-25k to under 5k per slot dispatch by eliminating LLM-driven string manipulation
+**Depends on**: Phase v0.24-01
+**Requirements**: DISP-04, DISP-05
+**Success Criteria** (what must be TRUE):
+  1. The qgsd-quorum-slot-worker agent definition is under 30 lines and makes exactly 1 Bash call per dispatch -- no conditional prompt construction by Haiku
+  2. `call-quorum-slot.cjs` (or wrapper) accepts `--mode`, `--round`, `--question`, `--artifact-path`, `--review-context`, `--prior-positions-file`, `--request-improvements` flags and builds the Mode A/B prompt deterministically in JavaScript
+  3. The script parses raw CLI output and returns structured YAML (slot, round, verdict, reasoning, citations, improvements, raw) -- the worker agent returns this output verbatim
+  4. Per-worker token usage drops below 5k tokens (measured by comparing before/after on a real quorum round)
+  5. All existing quorum flows (Mode A pure question, Mode A with artifact, Mode B execution review, R3.6 improvement iteration) produce identical verdicts when run through the refactored path
+**Plans**: TBD
+
+| v0.24-05. Slot Worker Thin Passthrough | v0.24 | 0/TBD | Not started | - |
