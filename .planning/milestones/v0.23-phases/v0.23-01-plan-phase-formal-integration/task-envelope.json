@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.23-01",
+  "created_at": "2026-03-02T10:33:55.848Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Plan-phase formal integration adds a discovery and injection stage to the `plan-phase` workflow that surfaces formal invariants before the planner spawns. The implementation follows the pattern establ",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.23-01-plan-phase-formal-integration/v0.23-01-01-PLAN.md",
+    "key_decisions": []
+  }
+}

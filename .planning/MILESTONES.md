@@ -268,3 +268,24 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.23 — Formal Gates (Shipped: 2026-03-02)
+
+**Phases:** v0.23-01..v0.23-04 (4 phases, 12 plans)
+**Requirements:** 11/11 (WFI-01–05, ENF-01–03, IVL-01–03)
+**Git range:** ce84d53f..fade53fa (88 files changed, +12,828/−192 lines)
+**Timeline:** 2026-03-02 (single day)
+
+**Delivered:** Made TLC/Alloy/PRISM actual enforcing gates in every major QGSD workflow step — plan-phase discovers and injects formal invariants, execute-phase runs model checkers and hard-blocks on counterexamples, the roadmapper reads invariants when designing phases, and a 22-test integration suite proves the entire chain fires end-to-end with real tool output.
+
+**Key accomplishments:**
+- plan-phase formal integration: Step 4.5 scope scan populates `$FORMAL_SPEC_CONTEXT` from `formal/spec/*/invariants.md`; Step 10 checker enforces `formal_artifacts:` frontmatter as BLOCKER when specs match; fail-open when tooling absent (WFI-01, WFI-02, ENF-03, v0.23-01)
+- execute-phase + verifier formal integration: executor fires `run-formal-check.cjs` after wave completion; verifier receives real TLC/Alloy/PRISM stdout as ground truth; counterexample causes hard block with user-override audit trail; TDD scaffold with 4 plans (WFI-03, WFI-04, ENF-01, ENF-02, v0.23-02)
+- Roadmapper formal integration: fixed keyword-match algorithm inconsistency between plan-phase and execute-phase (ISSUE-1); fixed gsd-tools goal regex at 3 occurrences (ISSUE-2); new-milestone scans formal specs and injects into roadmapper prompt; fail-open preserved (WFI-05, ENF-03, v0.23-03)
+- Integration validation suite: 22-test integration script (`bin/test-formal-integration.test.cjs`) with zero mocking — all tests use real subprocess invocation via `spawnSync`; IVL-01 smoke/structural (5 tests), ENF-03 fail-open (2 tests), IVL-03 all-specs regression for 10 TLA+ modules (11 tests), IVL-02 full chain plan→execute→verify (4 tests) (IVL-01–03, v0.23-04)
+
+**Audit:** PASSED — 11/11 requirements, 4/4 phases verified, 4/4 E2E flows complete
+**Archive:** `.planning/milestones/v0.23-MILESTONE-AUDIT.md`
+
+---
+

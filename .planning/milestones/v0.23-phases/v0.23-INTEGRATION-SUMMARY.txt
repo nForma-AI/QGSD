@@ -1,0 +1,300 @@
+================================================================================
+                  v0.23 FORMAL GATES INTEGRATION CHECK
+                          EXECUTIVE SUMMARY
+================================================================================
+
+MILESTONE SCOPE: v0.23 (Formal Gates)
+  - v0.23-01: plan-phase formal integration (COMPLETE)
+  - v0.23-02: execute-phase + verifier formal integration (COMPLETE)
+  - v0.23-03: roadmapper formal integration (NOT YET PLANNED)
+  - v0.23-04: integration validation suite (NOT YET PLANNED)
+
+================================================================================
+                            INTEGRATION VERDICT
+================================================================================
+
+STATUS:        PARTIAL SUCCESS WITH 2 CONSISTENCY ISSUES
+
+WIRED:         7 of 10 requirements have end-to-end wiring
+ORPHANED:      0 (no unimplemented exports)
+MISSING:       2 future phases (v0.23-03, v0.23-04) not yet planned
+BROKEN FLOWS:  0 (but consistency issues identified)
+
+INSTALLED:     Both workflows live and tested
+  - ~/.claude/qgsd/workflows/execute-phase.md (contains formal gate)
+  - ~/.claude/agents/qgsd-verifier.md (contains counterexample_found)
+
+TEST STATUS:   17/17 tests PASS (11 unit + 6 structural GREEN)
+  - All formal gate patterns present
+  - Fail-open logic verified in all critical paths
+
+================================================================================
+                         CRITICAL FINDINGS
+================================================================================
+
+ISSUE 1: KEYWORD MATCHING ALGORITHM MISMATCH
+────────────────────────────────────────────
+Severity:    MEDIUM
+Location:    plan-phase.md (line 80) vs execute-phase.md (line 374)
+Status:      BLOCKS v0.23-03 ROADMAPPER INTEGRATION
+Risk:        Inconsistent formal scope detection between planning and execution
+
+Details:
+  • plan-phase uses `.phase_name` → execute-phase uses `.goal` (different fields)
+  • plan-phase splits on ' -/' (3 separators) → execute-phase splits on ' -' (2)
+  • plan-phase does bidirectional match → execute-phase does unidirectional match
+  • Result: If phase goal differs from name, scope detection differs
+
+Example: Phase "TUI/Navigation" with goal "Navigate TUI"
+  - plan-phase would match: tui, navigation, gui (3 keywords from name)
+  - execute-phase would match: navigate, tui (2 keywords from goal, no /)
+
+Impact on WFI-01 (plan scope) and WFI-03 (execute scope):
+  - Planner may include invariants not checked at execution
+  - Executor may skip checks planner prepared for
+
+Recommendation BEFORE v0.23-03:
+  [PRIORITY: HIGH]
+  1. Standardize to use `.goal` field in BOTH phases
+  2. Standardize keyword split to ' -/' in BOTH
+  3. Implement bidirectional match in BOTH (safer for substring matches)
+  4. Test with phases containing / or - in goal field
+  5. Update v0.23-01 and v0.23-02 to use consistent algorithm
+
+Affected Requirements: WFI-01, WFI-03
+
+
+ISSUE 2: MISSING JQ FALLBACK ASYMMETRY
+───────────────────────────────────────
+Severity:    MEDIUM
+Location:    execute-phase.md line 374 only
+Status:      COULD CAUSE SKIPPED CHECKS
+
+Details:
+  • execute-phase uses `.goal // empty` (treats missing goal as empty string)
+  • plan-phase uses `.phase_name` (always expected to exist)
+  • If a phase lacks `.goal` field in ROADMAP.md, execute-phase scope is empty
+  • planner may have prepared for formal checks that executor skips
+
+Impact on WFI-03 (execute gate must run):
+  - Phases with missing goal fields would skip formal checking
+  - No error logged, silent skip (looks like "no formal modules matched")
+
+Recommendation BEFORE v0.23-03:
+  [PRIORITY: MEDIUM]
+  1. Audit ROADMAP.md — ensure all phases have both `.phase_name` AND `.goal`
+  2. If `.goal` is optional, use consistent fallback in BOTH:
+     - plan-phase: use `.goal // .phase_name` 
+     - execute-phase: use `.goal // .phase_name`
+  3. Document that `.goal` is required if formal specs exist
+  4. Add validation to gsd-tools roadmap command
+
+Affected Requirements: WFI-01, WFI-03
+
+================================================================================
+                      REQUIREMENTS INTEGRATION MAP
+================================================================================
+
+REQ-ID | Phase     | Integration Path                   | Status | Issue
+───────┼───────────┼────────────────────────────────────┼────────┼──────────
+WFI-01 │ v0.23-01  │ plan-phase Step 4.5 scan          │ WIRED  │ ISSUE 1
+WFI-02 │ v0.23-01  │ plan-phase Step 8+10 validation   │ WIRED  │ —
+WFI-03 │ v0.23-02  │ execute-phase verify gate         │ WIRED  │ ISSUE 2
+WFI-04 │ v0.23-02  │ qgsd-verifier Step 8.5 parsing    │ WIRED  │ —
+WFI-05 │ v0.23-03  │ [NOT YET PLANNED]                 │ UNWIRED│ —
+ENF-01 │ v0.23-02  │ counterexample_found status       │ WIRED  │ —
+ENF-02 │ v0.23-02  │ counterexample_override audit     │ WIRED  │ —
+ENF-03 │ v0.23-01+02 │ Fail-open guards everywhere      │ WIRED  │ —
+IVL-01 │ v0.23-04  │ [NOT YET PLANNED]                 │ UNWIRED│ —
+IVL-02 │ v0.23-04  │ [NOT YET PLANNED]                 │ UNWIRED│ —
+
+CROSS-PHASE WIRING STATUS:
+  ✓ v0.23-01 → v0.23-02: plan-phase FORMAL_SPEC_CONTEXT → execute-phase re-scan
+  ✓ v0.23-02 → verifier: FORMAL_CHECK_RESULT JSON parsing
+  ✓ run-formal-check.cjs: invoked + parsed correctly
+  ✓ VERIFICATION.md: counterexample_found + counterexample_override fields
+
+UNIMPLEMENTED PHASES (REQUIRED FOR FULL INTEGRATION):
+  ✗ v0.23-03 (roadmapper): needs consistent keyword-match algorithm
+  ✗ v0.23-04 (integration suite): needs run-formal-check.cjs end-to-end validation
+
+================================================================================
+                     FAIL-OPEN VERIFICATION SUMMARY
+================================================================================
+
+Scenario: Java not found
+  plan-phase: ✓ proceeds (no Java invoked)
+  execute-phase: ✓ run-formal-check.cjs skips all (exit 0)
+  verifier: ✓ recognizes skipped (tooling_absent, not counterexample_found)
+  Result: SAFE — workflow continues
+
+Scenario: formal/spec/ missing
+  plan-phase: ✓ guards with `if [ -d "formal/spec" ]` → FORMAL_SPEC_CONTEXT=[]
+  execute-phase: ✓ same guard → FORMAL_CHECK_RESULT=null
+  verifier: ✓ sees null → skips formal section
+  Result: SAFE — no overhead when no formal specs exist
+
+Scenario: run-formal-check.cjs not found
+  execute-phase: ✓ documented fail-open clause (line 425)
+  Action: log warning, set FORMAL_CHECK_RESULT=null, continue
+  Result: SAFE — but warning should be added to implementation
+
+Overall Fail-Open: ✓ VERIFIED across all critical paths
+
+================================================================================
+                      E2E FLOW COMPLETION STATUS
+================================================================================
+
+Flow 1: Plan Phase with Formal Scope
+  Step 1 (scan):               ✓ plan-phase Step 4.5
+  Step 2 (inject):             ✓ plan-phase Step 8 formal_context
+  Step 3 (declare):            ✓ planner formal_artifacts:
+  Step 4 (validate):           ✓ plan-phase Step 10 BLOCKER check
+  Overall: COMPLETE
+
+Flow 2: Execute Phase Formal Check
+  Step 1 (re-scan):            ✓ execute-phase verify_phase_goal
+  Step 2 (extract modules):    ✓ bash loop with sed parsing
+  Step 3 (invoke tool):        ✓ run-formal-check.cjs --modules=X,Y
+  Step 4 (run checks):         ✓ TLC/Alloy/PRISM invocation
+  Step 5 (extract result):     ✓ grep '^FORMAL_CHECK_RESULT=' + cut
+  Step 6 (pass to verifier):   ✓ formal_context block in Task prompt
+  Overall: COMPLETE
+
+Flow 3: Verifier Formal Result Processing
+  Step 1 (parse JSON):         ✓ qgsd-verifier Step 8.5
+  Step 2 (route):              ✓ failed>0 → counterexample_found
+  Step 3 (skip if tooling):    ✓ all-skipped → tooling_absent (fail-open)
+  Step 4 (write VERIFICATION): ✓ formal_check: frontmatter field
+  Overall: COMPLETE
+
+Flow 4: Counterexample Override
+  Step 1 (detect):             ✓ execute-phase reads status field
+  Step 2 (prompt):             ✓ user-facing message with details
+  Step 3 (spawn):              ✓ continuation verifier Task
+  Step 4 (write audit):        ✓ counterexample_override: with timestamp
+  Step 5 (confirm):            ✓ assert field present before advancing
+  Step 6 (abort path):         ✓ user can abort without advancing
+  Overall: COMPLETE — no silent bypass
+
+================================================================================
+                     API / TOOL INTERFACE VERIFICATION
+================================================================================
+
+run-formal-check.cjs Exit Code Contract:
+  • Exit 0: success (pass or skip, no counterexample)
+  • Exit 1: failure (counterexample found)
+  Status: ✓ VERIFIED in bin/run-formal-check.cjs lines 386–387
+
+run-formal-check.cjs JSON Output Format:
+  Expected: { passed: N, failed: N, skipped: N, counterexamples: [...] }
+  Actual:   JSON.stringify({ passed, failed, skipped, counterexamples })
+  Status: ✓ COMPATIBLE (lines 383 and 325)
+
+execute-phase Extraction Logic:
+  Command: grep '^FORMAL_CHECK_RESULT=' | cut -d= -f2-
+  Test case: "FORMAL_CHECK_RESULT={"passed":2,"failed":0,"skipped":1}"
+  Result: correctly extracts JSON value
+  Status: ✓ COMPATIBLE
+
+qgsd-verifier Parsing Logic:
+  Input: FORMAL_CHECK_RESULT from prompt
+  Routing: failed>0 → counterexample_found, all-skipped → tooling_absent
+  Status: ✓ COMPATIBLE with JSON structure
+
+Overall API Compatibility: ✓ VERIFIED
+
+================================================================================
+                           RECOMMENDATIONS
+================================================================================
+
+IMMEDIATE (before v0.23-03):
+  [P0] Fix ISSUE 1 — standardize keyword-match algorithm
+    • Both phases should use same field, separators, match direction
+    • Update plan-phase.md Step 4.5 and execute-phase.md lines 374-394
+    • Add unit tests for keyword-match logic (new test file recommended)
+
+  [P1] Fix ISSUE 2 — standardize JQ fallback
+    • Audit ROADMAP.md for missing .goal fields
+    • Use `.goal // .phase_name` in both phases if .goal is optional
+    • Document requirement that .goal field should exist if formal specs present
+
+  [P2] Document fail-open warning
+    • execute-phase line 425 says "log warning" but implementation missing
+    • Add actual error handling that logs the warning message
+    • Verify error path is tested (may require new test case)
+
+BEFORE v0.23-04 (Integration Tests):
+  [P0] Create test for keyword-match consistency
+    • Test: same phase → same modules selected in plan vs execute phase
+    • Use parametrized test with phases containing /, -, spaces
+
+  [P1] Verify all existing TLA+ specs pass TLC
+    • Run `node bin/run-formal-check.cjs --modules=quorum,tui-nav,breaker,...`
+    • Confirm exit code 0 (pass or skip, no counterexample)
+    • Document results in IVL-02 evidence
+
+  [P2] Create end-to-end flow test
+    • Trace one phase through plan → execute → verify → result
+    • Confirm FORMAL_SPEC_CONTEXT flows through correctly
+    • Verify JSON marshaling/parsing round-trip
+
+DOCUMENTATION:
+  [P2] Update REQUIREMENTS.md with cross-phase relationships
+    • Document which phases are depended on by which
+    • List the interfaces (FORMAL_SPEC_CONTEXT, FORMAL_CHECK_RESULT)
+    • Add notes about fail-open behavior
+
+  [P2] Add formal gate troubleshooting guide
+    • How to debug "no formal modules found"
+    • How to verify FORMAL_CHECK_RESULT is being passed
+    • How to test without Java installed
+
+================================================================================
+                            TEST COVERAGE
+================================================================================
+
+Current Test Status:
+  bin/execute-phase-formal-gate.test.cjs
+    ✓ 7 unit tests (module extraction, status routing) — GREEN
+    ✓ 4 structural tests (pattern matching in installed files) — GREEN
+
+  bin/verifier-formal-context.test.cjs
+    ✓ 4 unit tests (status mapping) — GREEN
+    ✓ 2 structural tests (pattern matching in installed files) — GREEN
+
+  Total: 17 tests PASS (0 failures)
+
+NOT YET TESTED:
+  • Keyword-match consistency between plan-phase and execute-phase
+  • run-formal-check.cjs invocation with real modules (depends on tooling)
+  • Full round-trip: plan → execute → verify with FORMAL_CHECK_RESULT
+  • Override path (counterexample detection → prompt → audit write)
+
+Recommended Additional Tests:
+  • test/v0.23-keyword-match.test.cjs — parametrized keyword matching
+  • test/v0.23-e2e-flow.test.cjs — mock plan/execute/verify flow
+  • test/v0.23-override-audit.test.cjs — audit trail generation
+
+================================================================================
+                              CONCLUSION
+================================================================================
+
+v0.23 phases 01–02 are FUNCTIONALLY COMPLETE and INSTALLED:
+  • All 4 E2E flows are wired end-to-end
+  • All critical fail-open paths are guarded
+  • All tests pass (17/17 GREEN)
+  • API interfaces are compatible
+
+However, TWO CONSISTENCY ISSUES must be resolved before phases 03–04:
+  • ISSUE 1: Keyword-match algorithm asymmetry (plan vs execute)
+  • ISSUE 2: JQ fallback field asymmetry (phase_name vs goal)
+
+These issues do NOT break current execution (both phases work independently),
+but they CREATE RISK for roadmapper phase (v0.23-03), which must implement
+consistent formal scope detection logic that aligns with both plan and execute.
+
+RECOMMENDATION: Resolve ISSUE 1 and ISSUE 2 (estimated 2–3 hours), then
+proceed with v0.23-03 and v0.23-04 phases.
+
+================================================================================

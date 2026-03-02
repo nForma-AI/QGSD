@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.23-04",
+  "created_at": "2026-03-02T16:36:43.759Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Phase v0.23-04 must create an integration test suite that proves the formal gates chain actually executes end-to-end with real tool output, not mocked behavior. The phase depends on v0.23-02 and v0.23",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.23-04-integration-validation-suite/v0.23-04-01-PLAN.md",
+    "key_decisions": []
+  }
+}

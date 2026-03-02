@@ -2,11 +2,11 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-02 after milestone v0.24 roadmap created)
+See: .planning/PROJECT.md (updated 2026-03-02 after v0.23 milestone completion)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following -- a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 **Current focus:** v0.24 -- Quorum Reliability Hardening
-**Last shipped:** v0.23-03 -- Roadmapper Formal Integration (2026-03-02, 4 plans)
+**Last shipped:** v0.23 -- Formal Gates (2026-03-02, 4 phases, 12 plans, 11/11 requirements)
 
 ## Current Position
 
