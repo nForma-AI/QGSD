@@ -13,7 +13,7 @@ See: .planning/PROJECT.md (updated 2026-03-02 after Phase v0.23-01)
 Phase: v0.23-02 of 4 (execute-phase + verifier Formal Gates)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-03-02 — v0.23-01 complete — plan-phase formal gate chain live (WFI-01, WFI-02, ENF-03)
+Last activity: 2026-03-02 — quick-131 complete — qgsd-quorum-slot-worker rewritten as thin passthrough (Bash only)
 
 Progress: [████████████████████] 135/132 plans (102%)
 
@@ -68,6 +68,7 @@ Recent decisions affecting current work:
 | 128 | Upgrade quick --full mode: formal/ integration | 2026-03-02 | a267b8fe | Pending | [128-upgrade-quick-full-mode-formal-integrati](./quick/128-upgrade-quick-full-mode-formal-integrati/) |
 | 129 | Review --full mode workflow claims | 2026-03-02 | 2ead1785 | Verified | [129-review-full-mode-workflow-claims-scan-fo](.planning/quick/129-review-full-mode-workflow-claims-scan-fo/) |
 | 130 | Wire actual TLC/Alloy/PRISM execution into --full mode | 2026-03-02 | c6324688 | Verified | [130-wire-actual-tlc-alloy-prism-execution-in](.planning/quick/130-wire-actual-tlc-alloy-prism-execution-in/) |
+| 131 | rewrite qgsd-quorum-slot-worker thin passthrough bash only | 2026-03-02 | 8f277b5a | Pending | [131-rewrite-qgsd-quorum-slot-worker-thin-pas](.planning/quick/131-rewrite-qgsd-quorum-slot-worker-thin-pas/) |
 
 ## Session Continuity
 
