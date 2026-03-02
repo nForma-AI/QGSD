@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-03-02T18:02:25.043Z",
+  "generated_at": "2026-03-02T18:14:18.019Z",
   "phases": [
     {"phase_id":"v0.10-01-foundation","phase_name":"Foundation Verification Report","status":"human_needed","requirement_ids":["DISP-01","DISP-02","DISP-03"],"keywords":["foundation","verification","report","scoreboard","ctl","readqgsdjson","returns","when","claude","qgsd","json","absent"],"verification_path":".planning/phases/v0.10-01-foundation/v0.10-01-VERIFICATION.md"},
     {"phase_id":"v0.10-02-presets-and-cloning","phase_name":"Presets and Cloning Verification Report","status":"human_needed","requirement_ids":["PRST-01","PRST-02","SUMMARY-02"],"keywords":["presets","cloning","verification","report","mcp","preset","selector","replaces","free","text","url","input"],"verification_path":".planning/phases/v0.10-02-presets-and-cloning/v0.10-02-VERIFICATION.md"},

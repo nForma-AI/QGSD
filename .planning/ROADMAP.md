@@ -1206,7 +1206,7 @@ Plans:
 - [x] **Phase v0.23-01: plan-phase Formal Integration** - plan-phase performs formal scope scan, populates $FORMAL_SPEC_CONTEXT, requires formal_artifacts declaration in PLAN.md frontmatter, with fail-open preservation (completed 2026-03-02)
 - [x] **Phase v0.23-02: execute-phase + Verifier Formal Integration** - execute-phase runs run-formal-check.cjs after executor wave; verifier incorporates TLC/Alloy/PRISM output as ground truth; counterexample causes hard block with user-override audit trail (completed 2026-03-02)
 - [x] **Phase v0.23-03: Roadmapper Formal Integration** - qgsd-roadmapper reads invariants for keyword-matched modules when designing phases; fail-open preserved (completed 2026-03-02)
-- [ ] **Phase v0.23-04: Integration Validation Suite** - Integration test script proves formal tools actually ran; covers full chain from plan-phase scan through verifier; all existing TLA+ specs pass TLC clean
+- [x] **Phase v0.23-04: Integration Validation Suite** - Integration test script proves formal tools actually ran; covers full chain from plan-phase scan through verifier; all existing TLA+ specs pass TLC clean (completed 2026-03-02)
 
 ### Phase v0.23-01: plan-phase Formal Integration
 **Goal**: plan-phase discovers and injects formal invariants before the planner spawns, and requires planner acknowledgment when relevant specs exist
@@ -1278,7 +1278,7 @@ Plans:
 | v0.23-01. plan-phase Formal Integration | v0.23 | Complete    | 2026-03-02 | - |
 | v0.23-02. execute-phase + Verifier Formal Integration | v0.23 | Complete    | 2026-03-02 | - |
 | v0.23-03. Roadmapper Formal Integration | 4/4 | Complete    | 2026-03-02 | - |
-| v0.23-04. Integration Validation Suite | v0.23 | 0/2 | Not started | - |
+| v0.23-04. Integration Validation Suite | v0.23 | Complete    | 2026-03-02 | - |
 
 ### 📋 v0.24 — Quorum Reliability Hardening
 
