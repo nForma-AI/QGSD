@@ -548,6 +548,16 @@ Flag as BLOCKER if:
 Objective relaxation is NEVER acceptable as a plan optimization. Missing or weakened
 criteria = blocker, not warning.
 </binding_rule>
+
+<check_dimensions>
+- **formal_artifacts (mandatory):** Every PLAN.md frontmatter MUST declare `formal_artifacts:`. If `$FORMAL_SPEC_CONTEXT` was non-empty at planning time, the value must be one of `none`, `update: [list]`, or `create: [list]`. Missing `formal_artifacts:` field = BLOCKER.
+- **formal_artifacts path validation:** If `formal_artifacts: update: [paths]`, each path must not be vague (not ending in "/", not a glob pattern). If `formal_artifacts: create: [list]`, each entry must have `path` and `type` (tla|alloy|prism). Vague paths = BLOCKER.
+- **invariant compliance (soft check):** If `$FORMAL_SPEC_CONTEXT` is non-empty, scan each plan task's `<action>` and `<done>` blocks for operations that would violate the identified invariants. Report as WARNING (not BLOCKER) — actual model checking occurs at execution time.
+</check_dimensions>
+
+<formal_context>
+${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ')}. Check plan formal_artifacts declaration and invariant compliance per <check_dimensions> above.` : 'No formal modules matched. Verify every PLAN.md declares formal_artifacts: none.'}
+</formal_context>
 </verification_context>
 
 <expected_output>
