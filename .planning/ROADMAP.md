@@ -1350,6 +1350,10 @@ Plans:
   3. The script parses raw CLI output and returns structured YAML (slot, round, verdict, reasoning, citations, improvements, raw) -- the worker agent returns this output verbatim
   4. Per-worker token usage drops below 5k tokens (measured by comparing before/after on a real quorum round)
   5. All existing quorum flows (Mode A pure question, Mode A with artifact, Mode B execution review, R3.6 improvement iteration) produce identical verdicts when run through the refactored path
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] v0.24-05-01-PLAN.md -- TDD test scaffolding for prompt construction and output parsing
+- [ ] v0.24-05-02-PLAN.md -- Implement quorum-slot-dispatch.cjs (prompt builder + output parser + parseImprovements migration)
+- [ ] v0.24-05-03-PLAN.md -- Rewrite agent spec to thin passthrough shim + install sync
+- [ ] v0.24-05-04-PLAN.md -- Human verification of real quorum dispatch (token reduction + correctness)
 
-| v0.24-05. Slot Worker Thin Passthrough | v0.24 | 0/TBD | Not started | - |
+| v0.24-05. Slot Worker Thin Passthrough | v0.24 | 0/4 | Not started | - |
