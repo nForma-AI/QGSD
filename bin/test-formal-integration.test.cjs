@@ -167,18 +167,16 @@ describe('ENF-03 fail-open: graceful degradation', () => {
 // IVL-03: All TLA+ specs pass TLC clean
 // ═══════════════════════════════════════════════════════════════════════════
 //
-// Known pre-existing spec issues (NOT introduced by integration wiring):
-// - deliberation: invariant DeliberationMonotone uses primes (not a state predicate)
-// - oscillation: unresolved prefix operator `-.'
-// - convergence: unknown operator `vars'
-// - mcp-calls: temporal property violation (counterexample in EventualDecision)
+// Previously known spec issues (fixed in v0.24-01 TLA+ spec fixes):
+// - deliberation: MCdeliberation.cfg reclassified temporal formulas INVARIANT→PROPERTY
+// - oscillation: QGSDOscillation.tla Naturals→Integers for unary minus
+// - convergence: QGSDConvergence.tla added vars definition + reclassified temporal properties
+// - mcp-calls: QGSDMCPEnv.tla added Done stuttering step for terminal DECIDED state
 //
-// These modules have TLA+ spec issues that predate the integration test suite.
-// The integration tests validate that run-formal-check correctly reports these
-// failures (proper exit code, valid FORMAL_CHECK_RESULT structure).
+// All 4 modules now pass TLC clean and are promoted to the must-pass regression path.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const KNOWN_SPEC_ISSUES = new Set(['deliberation', 'oscillation', 'convergence', 'mcp-calls']);
+const KNOWN_SPEC_ISSUES = new Set([]);
 
 describe('IVL-03: all TLA+ specs pass TLC clean', () => {
   test('IVL-03 regression: all modules produce valid FORMAL_CHECK_RESULT', {

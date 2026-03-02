@@ -107,12 +107,20 @@ QuorumDecide ==
   /\ quorumPhase' = "DECIDED"
   /\ UNCHANGED <<slotStatus, callState>>
 
+\* Done: Terminal stuttering step for DECIDED state.
+\* DECIDED is a legitimate terminal state — this prevents false deadlock reports
+\* while keeping CHECK_DEADLOCK TRUE to catch real deadlocks in COLLECTING/DECIDING.
+Done ==
+  /\ quorumPhase = "DECIDED"
+  /\ UNCHANGED vars
+
 \* ── Next state ───────────────────────────────────────────────────────────────
 Next ==
   \/ MCPEnvironmentStep
   \/ TimeoutAction
   \/ QuorumProcessOutcomes
   \/ QuorumDecide
+  \/ Done
 
 \* ── Specification ────────────────────────────────────────────────────────────
 \* Weak fairness on outcome delivery and quorum processing ensures liveness.

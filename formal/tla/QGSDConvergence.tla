@@ -18,6 +18,8 @@ EXTENDS Naturals, TLC
 
 VARIABLES logWritten, stateDeleted, haikuVerdict
 
+vars == <<logWritten, stateDeleted, haikuVerdict>>
+
 HaikuVerdicts == {"YES", "NO", "UNAVAILABLE"}
 
 \* ── Type invariant ───────────────────────────────────────────────────────────
@@ -73,10 +75,12 @@ ResolvedAtWriteOnce ==
 LogBeforeDelete ==
     stateDeleted => logWritten
 
-\* HaikuUnavailableNoCorruption: when Haiku is unavailable, no state is mutated.
+\* HaikuUnavailableNoCorruption: when the system transitions TO unavailable,
+\* logWritten and stateDeleted are preserved. Checks the action (next-state),
+\* not the current state — so recovery from UNAVAILABLE is not blocked.
 HaikuUnavailableNoCorruption ==
-    haikuVerdict = "UNAVAILABLE" =>
-        UNCHANGED <<logWritten, stateDeleted>>
+    [][haikuVerdict' = "UNAVAILABLE" =>
+        (logWritten' = logWritten /\ stateDeleted' = stateDeleted)]_vars
 
 \* ── Liveness ─────────────────────────────────────────────────────────────────
 

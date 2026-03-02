@@ -26,7 +26,7 @@
  *   flagged    -- BOOLEAN: whether oscillation was detected
  *   algorithmDone -- BOOLEAN: all algorithm steps have completed
  *)
-EXTENDS Naturals, Sequences, FiniteSets, TLC
+EXTENDS Integers, Sequences, FiniteSets, TLC
 
 CONSTANTS
     Labels,       \* Abstract file-set identifiers e.g. {A, B, C}
