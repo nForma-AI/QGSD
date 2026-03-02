@@ -1,53 +1,68 @@
-# Requirements: QGSD v0.22 Requirements Envelope
+# Requirements: QGSD v0.23 Formal Gates
 
-**Defined:** 2026-03-01
+**Defined:** 2026-03-02
 **Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## v0.22 Requirements
+## v0.23 Requirements — Formal Gates
 
-### Requirements Envelope — ENV
+TLC/Alloy/PRISM become actual enforcing gates in every major QGSD workflow step. Not specs that Claude reads — tools that run, produce output, and hard-block on violations. An integration test suite proves the chain is live.
 
-All phase requirements from `new-milestone` are aggregated into a machine-readable canonical document inside `formal/`. A lightweight model validates the set for duplicates and conflicts. The validated set becomes the correctness envelope that formal specs must respect. Modifications require explicit user consent.
+### Workflow Integration
 
-- [x] **ENV-01**: Requirements are aggregated into `formal/requirements.json` — during `new-milestone`, after roadmap creation, all phase requirements are compiled into a single structured JSON document in `formal/` with REQ-ID, text, category, phase assignment, and provenance; this is the canonical requirements envelope
-- [ ] **ENV-02**: A Haiku validation pass detects duplicates and conflicts — before the envelope is frozen, a lightweight model (claude-haiku-4-5) reviews the full requirement set for semantic duplicates (different IDs, same intent), contradictions (requirements that cannot both be satisfied), and ambiguity (requirements that admit multiple incompatible interpretations); results are presented to the user for resolution
-- [ ] **ENV-03**: The validated envelope constrains formal specs — formal methods (TLA+, Alloy, PRISM) must prove they respect the envelope; `generate-phase-spec.cjs` reads `formal/requirements.json` as its source of truth for PROPERTY generation; any formal spec that contradicts a frozen requirement is flagged as a violation
-- [ ] **ENV-04**: The envelope is immutable without user consent — `formal/requirements.json` cannot be modified by any automated workflow; modifications require explicit user approval through an amendment workflow that re-runs ENV-02 validation on the updated set; a hook or pre-commit guard enforces this
-- [ ] **ENV-05**: Drift detection flags divergence — when `.planning/REQUIREMENTS.md` is modified after the envelope is frozen, a checker compares the working copy against `formal/requirements.json` and warns if they diverge; legitimate changes must go through the amendment workflow (ENV-04)
+- [ ] **WFI-01**: `plan-phase` workflow performs formal scope scan before planner spawns — discovers `formal/spec/*/invariants.md` for keyword-matched modules and populates `$FORMAL_SPEC_CONTEXT`
+- [ ] **WFI-02**: `plan-phase` requires `formal_artifacts:` declaration in PLAN.md frontmatter when `$FORMAL_SPEC_CONTEXT` is non-empty; planner receives invariants in `<files_to_read>`
+- [ ] **WFI-03**: `execute-phase` runs `bin/run-formal-check.cjs` after executor wave completes and before verifier fires; `FORMAL_CHECK_RESULT` passed to verifier
+- [ ] **WFI-04**: `qgsd-verifier` agent invokes `run-formal-check.cjs` and incorporates actual TLC/Alloy/PRISM output as ground truth in verification pass — not LLM eyeballing
+- [ ] **WFI-05**: `qgsd-roadmapper` reads `formal/spec/*/invariants.md` for keyword-matched modules when designing phases; invariant constraints visible in phase planning context
 
-## Future Requirements (deferred)
+### Enforcement
 
-### Future Planning Integration
+- [ ] **ENF-01**: TLC/Alloy/PRISM counterexample (`run-formal-check.cjs` exit 1) causes hard verification failure — workflow blocked, not warned; verifier status set to `counterexample_found`
+- [ ] **ENF-02**: User can explicitly override a counterexample block with acknowledgment logged to VERIFICATION.md (audit trail preserved)
+- [ ] **ENF-03**: Fail-open preserved across all wired workflows — missing java, missing jars, missing PRISM binary → skip with warning, never block
 
-- **PLAN-FUTURE-01**: Mind map generation — PLAN.md → Mermaid mind map saved to `.planning/phases/<phase>/MINDMAP.md`, injected into quorum slot-worker context
-- **PLAN-FUTURE-02**: General-purpose code → spec — expose the QGSD code-to-spec pipeline as a reusable tool for any project using QGSD (hybrid AST + JSDoc annotations)
+### Integration Validation
+
+- [ ] **IVL-01**: Integration test script (`bin/test-formal-integration.cjs` or equivalent) proves formal tools actually ran by checking stdout/exit codes — not just that workflow text says they should
+- [ ] **IVL-02**: Test covers the full chain: plan-phase scan → `FORMAL_SPEC_CONTEXT` populated → executor → `run-formal-check` fires → verifier receives `FORMAL_CHECK_RESULT` with real TLC output
+- [ ] **IVL-03**: All existing TLA+ specs (`QGSDDeliberation.tla`, `MCbreaker.cfg`, `MCliveness.cfg`, etc.) pass TLC clean after integration — no regressions introduced
+
+## Already Delivered (quick-130, 2026-03-02)
+
+- `bin/run-formal-check.cjs` — lightweight per-module runner, fail-open, emits `FORMAL_CHECK_RESULT` JSON
+- Step 6.3 in `quick --full` — post-execution formal check, guard on `$FORMAL_SPEC_CONTEXT`, hard-fail on counterexample
+- Installed copy synced to `~/.claude/qgsd/workflows/quick.md`
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Continuous Bayesian prior update | Cold-start → steady-state threshold (policy.yaml) is the right model; continuous Bayes adds complexity without proportional benefit |
-| UPPAAL expansion beyond quorum races | Timed automata modelling is covered; additional UPPAAL models require tool expertise investment disproportionate to value |
-| General-purpose JSDoc annotation spec extraction | Deferred to future milestone |
-| Real-time collaborative requirement editing | Undermines formal correctness guarantees; amendments require explicit workflow |
-| Automated requirement merging | Auto-merge conflicts with immutability contract; always require user approval |
-| Requirement dependency graph | Adds complexity; phase ordering from roadmap is sufficient for v0.22 |
+| New TLA+/Alloy/PRISM spec authoring | v0.22+ covers spec generation; v0.23 is about running existing specs |
+| GUI/dashboard for FV results | Out of scope for CLI-first tool |
+| Parallel TLC workers | Single-threaded TLC sufficient; parallelism is a future perf optimization |
+| Automatic counterexample repair | Counterexample should surface to human/quorum for diagnosis, not auto-fixed |
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENV-01 | v0.22-01 | Complete |
-| ENV-02 | v0.22-01 | Pending |
-| ENV-03 | v0.22-02 | Pending |
-| ENV-04 | v0.22-03 | Pending |
-| ENV-05 | v0.22-04 | Pending |
+| WFI-01 | v0.23-01 | Pending |
+| WFI-02 | v0.23-01 | Pending |
+| WFI-03 | v0.23-02 | Pending |
+| WFI-04 | v0.23-02 | Pending |
+| WFI-05 | v0.23-03 | Pending |
+| ENF-01 | v0.23-02 | Pending |
+| ENF-02 | v0.23-02 | Pending |
+| ENF-03 | v0.23-01 | Pending |
+| IVL-01 | v0.23-04 | Pending |
+| IVL-02 | v0.23-04 | Pending |
+| IVL-03 | v0.23-04 | Pending |
 
 **Coverage:**
-- v0.22 requirements: 5 total
-- Mapped to phases: 5
-- Unmapped: 0
+- v0.23 requirements: 11 total
+- Mapped to phases: 11
+- Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-01*
-*Last updated: 2026-03-01 after v0.22 roadmap creation*
+*Requirements defined: 2026-03-02*
+*Last updated: 2026-03-02 after v0.23 milestone initialization*
