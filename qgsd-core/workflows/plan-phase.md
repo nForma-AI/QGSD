@@ -735,17 +735,32 @@ Task(
 ```
 
 **Handle execute-phase return:**
-- **PHASE COMPLETE** → Display final summary:
-  ```
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   QGSD ► PHASE ${PHASE} COMPLETE ✓
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- **PHASE COMPLETE** → In --auto mode, determine NEXT_PHASE routing:
 
-  Auto-advance pipeline finished.
+  1. Determine NEXT_PHASE from the execute-phase result (use the `next_phase` field returned by the transition/phase-complete call — same field used in execute-phase.md line ~639).
 
-  Next: /qgsd:discuss-phase ${NEXT_PHASE} --auto
-  ```
-- **GAPS FOUND / VERIFICATION FAILED** → Display result, stop chain:
+  2. Check if NEXT_PHASE already has CONTEXT.md:
+     ```bash
+     NEXT_CONTEXT=$(ls .planning/phases/*${NEXT_PHASE}*/*-CONTEXT.md 2>/dev/null | head -1)
+     ```
+
+  3. Display banner:
+     ```
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      QGSD ► PHASE ${PHASE} COMPLETE ✓
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+     Auto-advance pipeline finished.
+
+     Next: /qgsd:discuss-phase ${NEXT_PHASE} --auto
+     ```
+     (If CONTEXT.md exists, show `Next: /qgsd:plan-phase ${NEXT_PHASE} --auto` instead)
+
+  4. Invoke SlashCommand:
+     - If `$NEXT_CONTEXT` is non-empty (CONTEXT.md exists): `SlashCommand("/qgsd:plan-phase ${NEXT_PHASE} --auto")`
+     - Otherwise: `SlashCommand("/qgsd:discuss-phase ${NEXT_PHASE} --auto")`
+
+- **GAPS FOUND / VERIFICATION FAILED** → Display result, stop chain (unchanged):
   ```
   Auto-advance stopped: Execution needs review.
 

@@ -515,6 +515,42 @@ Plans verified and ready for execution.
 
 ───────────────────────────────────────────────────────────────
 ```
+
+**Auto-advance (when --auto flag present OR `workflow.auto_advance` config is true):**
+
+Check for --auto flag and config:
+```bash
+AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+```
+
+**If `--auto` flag present OR `AUTO_CFG` is true:**
+
+Two sub-cases based on gap result:
+
+**Sub-case A — Gaps found (fix plans were created):**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► AUTO-ADVANCING TO EXECUTE GAPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Gap fix plans ready. Spawning execute-phase --gaps-only...
+```
+Invoke: `SlashCommand("/qgsd:execute-phase ${PHASE} --gaps-only --auto")`
+
+**Sub-case B — All tests pass (no gaps found):**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► VERIFICATION COMPLETE ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+All tests pass. Advancing to next phase...
+```
+Invoke: `SlashCommand("/qgsd:discuss-phase ${NEXT_PHASE} --auto")`
+
+(NEXT_PHASE = the phase number immediately after the current phase, read from ROADMAP.md or `gsd-tools.cjs roadmap get-phase` next field)
+
+**If neither --auto nor config enabled:** Keep existing display-and-stop behavior unchanged.
+
 </step>
 
 </process>
