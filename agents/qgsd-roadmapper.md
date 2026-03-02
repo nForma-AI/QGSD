@@ -433,6 +433,24 @@ Apply phase identification methodology:
 
 ## Step 5: Derive Success Criteria
 
+### Step 5.1: Check formal_context (if injected by new-milestone.md)
+
+If the `<formal_context>` block in the prompt is non-empty (contains module names, not the
+"No formal modules matched" default message):
+
+1. Read each injected invariants.md file listed in `<files_to_read>`
+2. For each phase that covers a formal-matched module (use keyword matching on phase name/goal
+   against the module names from the formal_context block):
+   - Include at least one success criterion that reflects the formal invariant's observable behavior
+   - Translate formal notation to user-visible outcome language:
+     - EventualConsensus → "Quorum reaches a DECIDED state on every run where at least one slot responds"
+     - Invariant "no two slots DECIDE differently" → "All DECIDED slots always agree on the same value"
+     - Safety invariant → "The property holds in all reachable states"
+3. Phases unrelated to any formal module use standard goal-backward criteria (no change)
+
+If `<formal_context>` was empty or contained the default "No formal modules matched" message:
+proceed with standard success criteria derivation — no formal context required.
+
 For each phase, apply goal-backward:
 1. State phase goal (outcome, not task)
 2. Derive 2-5 observable truths (user perspective)
