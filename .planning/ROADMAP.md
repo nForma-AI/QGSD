@@ -21,6 +21,7 @@
 - ✅ **v0.20 — FV as Active Planning Gate** — Phases v0.20-01..v0.20-09 (shipped 2026-03-01)
 - ✅ **v0.21 — FV Closed Loop** — Phases v0.21-01..v0.21-06 (shipped 2026-03-01)
 - 🚧 **v0.22 — Requirements Envelope** — Phases v0.22-01..v0.22-04 (in progress)
+- 📋 **v0.23 — Formal Gates** — Phases v0.23-01..v0.23-04 (planned)
 
 ## Phases
 
@@ -1141,7 +1142,7 @@ Plans:
 
 **Milestone Goal:** Promote milestone requirements from a working document into a validated, immutable formal artifact that constrains what formal specs must prove.
 
-- [ ] **Phase v0.22-01: Requirements Envelope Foundation** - Aggregate requirements into `formal/requirements.json` and validate with Haiku for duplicates, conflicts, and ambiguity
+- [x] **Phase v0.22-01: Requirements Envelope Foundation** - Aggregate requirements into `formal/requirements.json` and validate with Haiku for duplicates, conflicts, and ambiguity (completed 2026-03-01)
 - [ ] **Phase v0.22-02: Formal Spec Integration** - Frozen envelope becomes the source of truth for TLA+ PROPERTY generation in `generate-phase-spec.cjs`
 - [ ] **Phase v0.22-03: Immutability and Amendment Workflow** - Lock the frozen envelope against automated modification; provide a structured amendment workflow requiring user consent
 - [ ] **Phase v0.22-04: Drift Detection** - Detect and warn when `.planning/REQUIREMENTS.md` diverges from the frozen envelope after freeze
@@ -1192,7 +1193,64 @@ Plans:
   3. The drift warning directs the user to the amendment workflow (ENV-04) for legitimate changes -- there is no path to silently accept drift
 **Plans**: TBD
 
-| v0.22-01. Requirements Envelope Foundation | v0.22 | 0/3 | Not started | - |
+| v0.22-01. Requirements Envelope Foundation | v0.22 | Complete    | 2026-03-01 | - |
 | v0.22-02. Formal Spec Integration | v0.22 | 0/TBD | Not started | - |
 | v0.22-03. Immutability and Amendment Workflow | v0.22 | 0/TBD | Not started | - |
 | v0.22-04. Drift Detection | v0.22 | 0/TBD | Not started | - |
+
+### 📋 v0.23 — Formal Gates
+
+**Milestone Goal:** TLC/Alloy/PRISM become actual enforcing gates in every major QGSD workflow step — tools that run, produce output, and hard-block on violations. An integration test suite proves the chain is live end-to-end.
+
+- [ ] **Phase v0.23-01: plan-phase Formal Integration** - plan-phase performs formal scope scan, populates $FORMAL_SPEC_CONTEXT, requires formal_artifacts declaration in PLAN.md frontmatter, with fail-open preservation
+- [ ] **Phase v0.23-02: execute-phase + Verifier Formal Integration** - execute-phase runs run-formal-check.cjs after executor wave; verifier incorporates TLC/Alloy/PRISM output as ground truth; counterexample causes hard block with user-override audit trail
+- [ ] **Phase v0.23-03: Roadmapper Formal Integration** - qgsd-roadmapper reads invariants for keyword-matched modules when designing phases; fail-open preserved
+- [ ] **Phase v0.23-04: Integration Validation Suite** - Integration test script proves formal tools actually ran; covers full chain from plan-phase scan through verifier; all existing TLA+ specs pass TLC clean
+
+### Phase v0.23-01: plan-phase Formal Integration
+**Goal**: plan-phase discovers and injects formal invariants before the planner spawns, and requires planner acknowledgment when relevant specs exist
+**Depends on**: Nothing (builds on existing bin/run-formal-check.cjs from quick-130)
+**Requirements**: WFI-01, WFI-02, ENF-03
+**Success Criteria** (what must be TRUE):
+  1. Running plan-phase on a module with keyword-matched specs in formal/spec/ populates $FORMAL_SPEC_CONTEXT and includes the matching invariants.md files in the planner's files_to_read
+  2. A PLAN.md produced by plan-phase when $FORMAL_SPEC_CONTEXT is non-empty contains a formal_artifacts: declaration in its frontmatter -- plan-phase refuses to complete without it
+  3. Running plan-phase on a project where Java is not installed (or TLAToolbox.jar is absent) completes normally with a skip warning -- formal gate never blocks planning due to missing tooling
+  4. Running plan-phase on a module with no keyword-matched specs completes without any formal scope scan overhead or formal_artifacts requirement
+**Plans**: TBD
+
+### Phase v0.23-02: execute-phase + Verifier Formal Integration
+**Goal**: The full execution cycle runs formal verification as a structural gate -- executor fires it, verifier receives real tool output, and counterexamples block the workflow with a traceable override path
+**Depends on**: Phase v0.23-01
+**Requirements**: WFI-03, WFI-04, ENF-01, ENF-02, ENF-03
+**Success Criteria** (what must be TRUE):
+  1. After an executor wave completes, execute-phase automatically runs bin/run-formal-check.cjs and passes FORMAL_CHECK_RESULT to the verifier before the verifier fires
+  2. The qgsd-verifier agent uses actual TLC/Alloy/PRISM stdout/exit-code from FORMAL_CHECK_RESULT as evidence -- VERIFICATION.md shows pass/fail counts from real tool output, not LLM estimation
+  3. When run-formal-check.cjs exits 1 (counterexample found), the workflow is hard-blocked -- verifier sets status to counterexample_found and execute-phase does not advance
+  4. The user can explicitly override a counterexample block by providing an acknowledgment; the acknowledgment is written to VERIFICATION.md with timestamp and reason -- no silent bypass path exists
+  5. When Java or PRISM binaries are absent, execute-phase completes with a skip warning in VERIFICATION.md -- the counterexample gate never fires on tooling absence
+**Plans**: TBD
+
+### Phase v0.23-03: Roadmapper Formal Integration
+**Goal**: qgsd-roadmapper reads formal invariants for keyword-matched modules when designing phases, making invariant constraints visible in the phase planning context
+**Depends on**: Phase v0.23-01
+**Requirements**: WFI-05, ENF-03
+**Success Criteria** (what must be TRUE):
+  1. When qgsd-roadmapper is given a project with formal/spec/*/invariants.md files whose keywords match the milestone scope, those invariant files appear in the roadmapper's files_to_read context
+  2. Phase success criteria and goals produced by the roadmapper when invariants are present reflect the constraints stated in those invariants -- not generic templates
+  3. When no keyword-matched invariants exist, or when formal/spec/ is absent entirely, the roadmapper completes without error and without injecting any formal context
+**Plans**: TBD
+
+### Phase v0.23-04: Integration Validation Suite
+**Goal**: An integration test script proves the full formal gates chain actually executed -- not that the workflow text says it should, but that tools ran and produced verifiable output
+**Depends on**: Phase v0.23-02, Phase v0.23-03
+**Requirements**: IVL-01, IVL-02, IVL-03
+**Success Criteria** (what must be TRUE):
+  1. Running bin/test-formal-integration.cjs (or equivalent) completes without error and reports that run-formal-check.cjs actually executed with real stdout/exit codes captured -- not mocked
+  2. The test covers the full chain: plan-phase keyword scan populates FORMAL_SPEC_CONTEXT, executor fires run-formal-check.cjs, verifier receives FORMAL_CHECK_RESULT containing actual TLC output with at least one checked property
+  3. All existing TLA+ specs (QGSDDeliberation.tla, MCbreaker.cfg, MCliveness.cfg, and any others in formal/tla/) pass TLC clean -- no regressions introduced by the integration wiring
+**Plans**: TBD
+
+| v0.23-01. plan-phase Formal Integration | v0.23 | 0/TBD | Not started | - |
+| v0.23-02. execute-phase + Verifier Formal Integration | v0.23 | 0/TBD | Not started | - |
+| v0.23-03. Roadmapper Formal Integration | v0.23 | 0/TBD | Not started | - |
+| v0.23-04. Integration Validation Suite | v0.23 | 0/TBD | Not started | - |
