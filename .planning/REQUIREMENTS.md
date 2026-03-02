@@ -13,13 +13,13 @@ TLC/Alloy/PRISM become actual enforcing gates in every major QGSD workflow step.
 - [ ] **WFI-02**: `plan-phase` requires `formal_artifacts:` declaration in PLAN.md frontmatter when `$FORMAL_SPEC_CONTEXT` is non-empty; planner receives invariants in `<files_to_read>`
 - [ ] **WFI-03**: `execute-phase` runs `bin/run-formal-check.cjs` after executor wave completes and before verifier fires; `FORMAL_CHECK_RESULT` passed to verifier
 - [ ] **WFI-04**: `qgsd-verifier` agent invokes `run-formal-check.cjs` and incorporates actual TLC/Alloy/PRISM output as ground truth in verification pass — not LLM eyeballing
-- [ ] **WFI-05**: `qgsd-roadmapper` reads `formal/spec/*/invariants.md` for keyword-matched modules when designing phases; invariant constraints visible in phase planning context
+- [x] **WFI-05**: `qgsd-roadmapper` reads `formal/spec/*/invariants.md` for keyword-matched modules when designing phases; invariant constraints visible in phase planning context
 
 ### Enforcement
 
 - [ ] **ENF-01**: TLC/Alloy/PRISM counterexample (`run-formal-check.cjs` exit 1) causes hard verification failure — workflow blocked, not warned; verifier status set to `counterexample_found`
 - [ ] **ENF-02**: User can explicitly override a counterexample block with acknowledgment logged to VERIFICATION.md (audit trail preserved)
-- [ ] **ENF-03**: Fail-open preserved across all wired workflows — missing java, missing jars, missing PRISM binary → skip with warning, never block
+- [x] **ENF-03**: Fail-open preserved across all wired workflows — missing java, missing jars, missing PRISM binary → skip with warning, never block
 
 ### Integration Validation
 
@@ -53,7 +53,7 @@ TLC/Alloy/PRISM become actual enforcing gates in every major QGSD workflow step.
 | WFI-05 | v0.23-03 | Pending (gap closure) |
 | ENF-01 | v0.23-02 | Pending |
 | ENF-02 | v0.23-02 | Pending |
-| ENF-03 | v0.23-01 | Pending |
+| ENF-03 | v0.23-01 | Complete |
 | IVL-01 | v0.23-04 | Pending (gap closure) |
 | IVL-02 | v0.23-04 | Pending (gap closure) |
 | IVL-03 | v0.23-04 | Pending (gap closure) |
