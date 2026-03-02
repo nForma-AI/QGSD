@@ -69,7 +69,7 @@ Recent decisions affecting current work:
 | 129 | Review --full mode workflow claims | 2026-03-02 | 2ead1785 | Verified | [129-review-full-mode-workflow-claims-scan-fo](.planning/quick/129-review-full-mode-workflow-claims-scan-fo/) |
 | 130 | Wire actual TLC/Alloy/PRISM execution into --full mode | 2026-03-02 | c6324688 | Verified | [130-wire-actual-tlc-alloy-prism-execution-in](.planning/quick/130-wire-actual-tlc-alloy-prism-execution-in/) |
 | 131 | rewrite qgsd-quorum-slot-worker thin passthrough bash only | 2026-03-02 | 8f277b5a | Pending | [131-rewrite-qgsd-quorum-slot-worker-thin-pas](.planning/quick/131-rewrite-qgsd-quorum-slot-worker-thin-pas/) |
-| 132 | Fix auto-advance chain breaks in plan-phase.md and verify-work.md | 2026-03-02 | TBD | Pending | [132-fix-auto-advance-chain-breaks-in-plan-ph](./quick/132-fix-auto-advance-chain-breaks-in-plan-ph/) |
+| 132 | Fix auto-advance chain breaks in plan-phase.md and verify-work.md | 2026-03-02 | 7be77d42 | Complete | [132-fix-auto-advance-chain-breaks-in-plan-ph](./quick/132-fix-auto-advance-chain-breaks-in-plan-ph/) |
 
 ## Session Continuity
 
