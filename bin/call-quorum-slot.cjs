@@ -28,6 +28,11 @@ const fs        = require('fs');
 const path      = require('path');
 const os        = require('os');
 
+// ─── Utilities ──────────────────────────────────────────────────────────────
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // ─── Token sentinel for CLI slots (OBSV-04) ───────────────────────────────────
 function appendTokenSentinel(slotName) {
   try {
@@ -99,6 +104,54 @@ function writeFailureLog(slotName, errorMsg, stderrText) {
 
     fs.writeFileSync(logPath, JSON.stringify(records, null, 2), 'utf8');
   } catch (_) { /* failure logging must never interrupt the primary flow */ }
+}
+
+// ─── Retry with exponential backoff (FAIL-01) ───────────────────────────────
+function isRetryable(error) {
+  const msg = (error && error.message) ? error.message : String(error);
+
+  // Non-retryable errors: fail immediately
+  if (/spawn error/i.test(msg)) {
+    return false;
+  }
+  if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) {
+    return false;
+  }
+
+  // Retryable errors: TIMEOUT and network errors
+  if (/TIMEOUT/i.test(msg)) {
+    return true;
+  }
+  if (/ECONNREFUSED|ENOTFOUND|ECONNRESET|ETIMEDOUT/i.test(msg)) {
+    return true;
+  }
+
+  // Fail-open: unknown errors are retryable
+  return true;
+}
+
+async function retryWithBackoff(fn, slotName, maxRetries = 2, delays = [1000, 3000]) {
+  const MAX_RETRIES = maxRetries;
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await fn();
+      return result;
+    } catch (err) {
+      const isLastAttempt = attempt >= MAX_RETRIES;
+      const isNonRetryable = !isRetryable(err);
+
+      // Fail immediately if non-retryable or no more retries
+      if (isNonRetryable || isLastAttempt) {
+        throw err;
+      }
+
+      // Log retry attempt and sleep before next attempt
+      const delayMs = delays[attempt] ?? 3000; // default to 3s if delay not specified
+      process.stderr.write(`[call-quorum-slot] retry ${attempt + 1}/${MAX_RETRIES} for slot ${slotName} after ${delayMs}ms\n`);
+      await sleep(delayMs);
+    }
+  }
 }
 
 // ─── Args ──────────────────────────────────────────────────────────────────────
@@ -252,7 +305,8 @@ async function runSubprocessWithRotation(provider, prompt, timeoutMs) {
       await spawnRotateCmd(rot.rotate_cmd);
     }
     try {
-      const out = await runSubprocess(provider, prompt, timeoutMs);
+      // Wrap inner call with retry-with-backoff (each oauth attempt gets retry protection)
+      const out = await retryWithBackoff(() => runSubprocess(provider, prompt, timeoutMs), provider.name);
       if (matchesRotationPattern(out, patterns) && attempt < max) {
         lastErr = new Error('quota/auth pattern in output');
         continue;
@@ -383,9 +437,9 @@ async function main() {
     if (provider.type === 'subprocess') {
       result = provider.oauth_rotation?.enabled
         ? await runSubprocessWithRotation(provider, prompt, effectiveTimeout)
-        : await runSubprocess(provider, prompt, effectiveTimeout);
+        : await retryWithBackoff(() => runSubprocess(provider, prompt, effectiveTimeout), slot);
     } else if (provider.type === 'http') {
-      result = await runHttp(provider, prompt, effectiveTimeout);
+      result = await retryWithBackoff(() => runHttp(provider, prompt, effectiveTimeout), slot);
     } else {
       process.stderr.write(`[call-quorum-slot] Unknown provider type: ${provider.type}\n`);
       writeFailureLog(slot, `Unknown provider type: ${provider.type}`, '');
