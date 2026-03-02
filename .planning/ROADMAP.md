@@ -22,6 +22,7 @@
 - ✅ **v0.21 — FV Closed Loop** — Phases v0.21-01..v0.21-06 (shipped 2026-03-01)
 - 🚧 **v0.22 — Requirements Envelope** — Phases v0.22-01..v0.22-04 (in progress)
 - 🔧 **v0.23 — Formal Gates** — Phases v0.23-01..v0.23-04 (gap closure in progress — v0.23-03..04 need plans)
+- 📋 **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-04 (planned)
 
 ## Phases
 
@@ -1274,3 +1275,60 @@ Plans:
 | v0.23-02. execute-phase + Verifier Formal Integration | v0.23 | Complete    | 2026-03-02 | - |
 | v0.23-03. Roadmapper Formal Integration | 4/4 | Complete   | 2026-03-02 | - |
 | v0.23-04. Integration Validation Suite | v0.23 | 0/TBD | Not started | - |
+
+### 📋 v0.24 — Quorum Reliability Hardening
+
+**Milestone Goal:** Make quorum dispatch reliable end-to-end — every quorum call reliably delivers 3 votes by detecting dead slots pre-dispatch, self-healing around mid-session failures without user action, and providing observability into slot health, success rates, and flakiness.
+
+- [ ] **Phase v0.24-01: Provider Infrastructure and Failover** - Explicit provider-to-slot mapping in providers.json and retry-with-backoff in call-quorum-slot.cjs
+- [ ] **Phase v0.24-02: Dispatch Reliability** - Pre-dispatch health probes, scoreboard availability windows, and success-rate-ordered dispatch list
+- [ ] **Phase v0.24-03: Quorum Observability** - Structured per-round telemetry, delivery rate tracking in scoreboard, and per-slot flakiness scoring
+- [ ] **Phase v0.24-04: Self-Healing Consensus** - Early escalation when P(consensus) drops below threshold and auto-adjustment of maxDeliberation
+
+### Phase v0.24-01: Provider Infrastructure and Failover
+**Goal**: Every slot has a known provider mapping, and failed slot calls are retried with backoff before being recorded as unavailable -- so transient provider glitches do not immediately degrade quorum
+**Depends on**: Nothing (first v0.24 phase)
+**Requirements**: FAIL-01, FAIL-02
+**Success Criteria** (what must be TRUE):
+  1. `providers.json` contains an explicit slot-to-provider mapping for every slot in `quorum_active` -- running `node bin/probe-quorum-slots.cjs` resolves each slot to its backing provider without ambiguity
+  2. When a slot call fails (timeout or error), `call-quorum-slot.cjs` retries up to 2 times with exponential backoff (1s then 3s delays observable in logs) before recording UNAVAIL in `quorum-failures.json`
+  3. When a provider health probe returns DOWN, all slots backed by that provider are skipped in a single dispatch decision -- no per-slot probing of a known-dead provider
+  4. Quorum still reaches a DECIDED state on every run where at least one provider with responsive slots remains available (EventualConsensus preserved under partial provider failure)
+**Plans**: TBD
+
+### Phase v0.24-02: Dispatch Reliability
+**Goal**: The dispatch list is built from live health data rather than static configuration -- dead providers are excluded, cooling-down slots are skipped, and the most reliable slots are tried first
+**Depends on**: Phase v0.24-01
+**Requirements**: DISP-01, DISP-02, DISP-03
+**Success Criteria** (what must be TRUE):
+  1. Before building the dispatch list, `qgsd-prompt.js` runs a fast health probe (<3s) per provider and excludes all slots on providers that fail the probe -- observable via dispatch log showing "excluded: provider X down"
+  2. Slots whose `available_at` timestamp in the scoreboard is in the future are excluded from the dispatch list -- a slot marked unavailable until 14:30 is not dispatched at 14:25
+  3. The dispatch list is ordered by descending recent success rate from scoreboard slot stats -- the slot with the highest success rate appears first in DISPATCH_LIST
+  4. When all preferred slots are excluded (all providers down or cooling), dispatch falls back gracefully to any remaining slot rather than failing with zero candidates
+**Plans**: TBD
+
+### Phase v0.24-03: Quorum Observability
+**Goal**: Every quorum round produces structured telemetry that enables diagnosis of reliability problems -- per-slot latency, per-round delivery rates, and flakiness scores are all captured and surfaced
+**Depends on**: Phase v0.24-01
+**Requirements**: OBS-01, OBS-02, OBS-03
+**Success Criteria** (what must be TRUE):
+  1. After a quorum round completes, a per-session log file contains structured telemetry for every slot that was dispatched: slot name, round number, verdict, latency in milliseconds, and provider status
+  2. The scoreboard tracks quorum delivery rate -- after N quorum rounds, running `/qgsd:health` shows the percentage of rounds that achieved the target vote count (e.g., "3/3: 87%, 2/3: 13%")
+  3. Each slot has a flakiness score computed from recent UNAVAIL/timeout frequency -- a slot with 3 timeouts in the last 10 rounds has a visibly higher flakiness score than one with 0 timeouts
+  4. High-flakiness slots are deprioritized in dispatch ordering -- observable by comparing dispatch position before and after a slot accumulates failures
+**Plans**: TBD
+
+### Phase v0.24-04: Self-Healing Consensus
+**Goal**: The quorum system detects when consensus is unlikely and acts early rather than wasting rounds -- escalation fires before maxDeliberation is exhausted, and the system recommends configuration changes when persistent degradation is detected
+**Depends on**: Phase v0.24-02, Phase v0.24-03
+**Requirements**: HEAL-01, HEAL-02
+**Success Criteria** (what must be TRUE):
+  1. After each deliberation round, the system computes P(consensus | remaining rounds) and, when P drops below 10%, escalation fires immediately -- observable by the escalation message appearing before the final deliberation round
+  2. When `verify-quorum-health` detects that P(consensus) has been below 95% across recent runs, it recommends a specific maxDeliberation adjustment and auto-applies it to `qgsd.json` after user approval
+  3. Quorum reaches a DECIDED state on every run where at least one slot responds with a valid vote -- the EventualConsensus property holds even when early escalation fires (escalation produces a decision, not a hang)
+**Plans**: TBD
+
+| v0.24-01. Provider Infrastructure and Failover | v0.24 | 0/TBD | Not started | - |
+| v0.24-02. Dispatch Reliability | v0.24 | 0/TBD | Not started | - |
+| v0.24-03. Quorum Observability | v0.24 | 0/TBD | Not started | - |
+| v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
