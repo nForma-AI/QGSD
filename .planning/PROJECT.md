@@ -8,7 +8,17 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.22 Requirements Envelope
+## Current Milestone: v0.23 Formal Gates
+
+**Goal:** Make TLC/Alloy/PRISM actual enforcing gates in every major QGSD workflow step — plan-phase, execute-phase, qgsd-verifier, and qgsd-roadmapper all run the model checkers and hard-block on counterexamples, with an integration test suite that proves the entire chain fires end-to-end.
+
+**Target features:**
+- Workflow integration — `plan-phase` performs formal scope scan + injects invariants before planner spawns; `execute-phase` runs `bin/run-formal-check.cjs` after executor wave; `qgsd-verifier` invokes `run-formal-check.cjs` as ground truth; `qgsd-roadmapper` reads invariants when designing phases
+- Hard enforcement — TLC/Alloy/PRISM counterexample causes hard verification failure (workflow blocked, not warned); user can explicitly override with audit trail
+- Fail-open preserved — missing java/jars/PRISM binary never blocks; tool absence = skip with warning
+- Integration validation — test script proves formal tools actually ran (checks stdout/exit codes); test covers full chain from plan-phase scan through verifier receiving real TLC output; existing specs pass TLC clean after integration
+
+## Previous Milestone: v0.22 Requirements Envelope (in progress)
 
 **Goal:** Promote milestone requirements from a working document (`.planning/REQUIREMENTS.md`) into a validated, immutable formal artifact (`formal/requirements.json`) that constrains what formal specs must prove — a Haiku validation pass catches duplicates, conflicts, and ambiguity before freezing, and modifications require explicit user consent.
 
