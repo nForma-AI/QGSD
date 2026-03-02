@@ -10,85 +10,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert');
 
-// ── Inline implementation of parseImprovements (from spec: qgsd-quorum-slot-worker.md lines 251-260) ──
-//
-// Scans rawOutput for an 'Improvements:' section, parses each `- suggestion: ... rationale: ...`
-// entry into { suggestion, rationale } objects. Returns array; omit field entirely when empty/absent.
-// Never throws on parse errors — improvements are additive, not required.
-//
-// MAINTAINABILITY NOTE: If the spec in qgsd-quorum-slot-worker.md changes,
-// update this implementation and its tests together.
-function parseImprovements(rawOutput) {
-  if (!rawOutput || typeof rawOutput !== 'string') return [];
-
-  const lines = rawOutput.split('\n');
-  let inSection = false;
-  const results = [];
-  let currentEntry = null;
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Detect section start
-    if (!inSection && line.trimStart().startsWith('Improvements:')) {
-      inSection = true;
-      continue;
-    }
-
-    if (!inSection) continue;
-
-    // Detect section end: non-indented non-empty line that isn't a list item
-    const trimmed = line.trim();
-    if (trimmed === '') continue; // blank lines: skip, stay in section
-
-    // Check if this is a new top-level key (non-indented, non-list-item) — section ends
-    if (!line.startsWith(' ') && !line.startsWith('\t') && !trimmed.startsWith('-') && trimmed !== '') {
-      // End of improvements section
-      if (currentEntry && currentEntry.suggestion && currentEntry.rationale) {
-        results.push({ suggestion: currentEntry.suggestion, rationale: currentEntry.rationale });
-      }
-      currentEntry = null;
-      inSection = false;
-      continue;
-    }
-
-    // Match `- suggestion:` line — starts a new entry
-    const suggestionMatch = trimmed.match(/^-\s+suggestion:\s*(.*)$/);
-    if (suggestionMatch) {
-      // Save previous entry if complete
-      if (currentEntry && currentEntry.suggestion && currentEntry.rationale) {
-        results.push({ suggestion: currentEntry.suggestion, rationale: currentEntry.rationale });
-      }
-      const val = stripQuotes(suggestionMatch[1].trim());
-      currentEntry = { suggestion: val, rationale: null };
-      continue;
-    }
-
-    // Match `rationale:` line (indented continuation)
-    const rationaleMatch = trimmed.match(/^rationale:\s*(.*)$/);
-    if (rationaleMatch && currentEntry) {
-      const val = stripQuotes(rationaleMatch[1].trim());
-      currentEntry.rationale = val;
-      continue;
-    }
-  }
-
-  // Flush last entry
-  if (currentEntry && currentEntry.suggestion && currentEntry.rationale) {
-    results.push({ suggestion: currentEntry.suggestion, rationale: currentEntry.rationale });
-  }
-
-  return results;
-}
-
-function stripQuotes(s) {
-  if (!s) return s;
-  // Strip surrounding single or double quotes
-  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
-    return s.slice(1, -1);
-  }
-  return s;
-}
+// parseImprovements is the canonical implementation in bin/quorum-slot-dispatch.cjs (DISP-05).
+// Migrated from inline definition in this file as part of v0.24-05-02.
+const { parseImprovements } = require('./quorum-slot-dispatch.cjs');
 
 // ── Test cases ────────────────────────────────────────────────────────────────
 
