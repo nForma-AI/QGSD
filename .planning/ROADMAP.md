@@ -1269,12 +1269,16 @@ Plans:
   1. Running bin/test-formal-integration.cjs (or equivalent) completes without error and reports that run-formal-check.cjs actually executed with real stdout/exit codes captured -- not mocked
   2. The test covers the full chain: plan-phase keyword scan populates FORMAL_SPEC_CONTEXT, executor fires run-formal-check.cjs, verifier receives FORMAL_CHECK_RESULT containing actual TLC output with at least one checked property
   3. All existing TLA+ specs (QGSDDeliberation.tla, MCbreaker.cfg, MCliveness.cfg, and any others in formal/tla/) pass TLC clean -- no regressions introduced by the integration wiring
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] v0.23-04-01-PLAN.md — Integration test file with IVL-01 smoke/structural tests + IVL-03 all-specs regression
+- [ ] v0.23-04-02-PLAN.md — IVL-02 full chain validation (plan-phase -> execute-phase -> verifier handoff)
 
 | v0.23-01. plan-phase Formal Integration | v0.23 | Complete    | 2026-03-02 | - |
 | v0.23-02. execute-phase + Verifier Formal Integration | v0.23 | Complete    | 2026-03-02 | - |
 | v0.23-03. Roadmapper Formal Integration | 4/4 | Complete    | 2026-03-02 | - |
-| v0.23-04. Integration Validation Suite | v0.23 | 0/TBD | Not started | - |
+| v0.23-04. Integration Validation Suite | v0.23 | 0/2 | Not started | - |
 
 ### 📋 v0.24 — Quorum Reliability Hardening
 
