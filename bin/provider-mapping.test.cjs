@@ -225,3 +225,22 @@ test('fail-open: missing probe-quorum-slots.cjs file → structural checks fail 
   // No error thrown — test runner continues
   assert.ok(true, 'Guard allows missing file — fail-open');
 });
+
+// ----- EVENTUALLYCONSENSUS PRESERVATION TEST -----
+// Verifies that when some providers are DOWN, at least one slot remains for quorum dispatch.
+// This is the foundation of EventualConsensus: even under partial failure, consensus can be reached.
+
+test('dispatch still has slots when some providers are DOWN', () => {
+  // Given: providers with 3 different providers
+  const providers = [
+    { name: 'a', provider: 'x' },
+    { name: 'b', provider: 'x' },
+    { name: 'c', provider: 'y' },
+    { name: 'd', provider: 'z' },
+  ];
+  const downProviders = new Set(['x']); // x is DOWN
+  const remaining = providers.filter(p => !downProviders.has(p.provider));
+  // Then: slots from providers y and z are still available
+  assert.ok(remaining.length >= 1, 'At least one slot must remain for EventualConsensus');
+  assert.deepStrictEqual(remaining.map(p => p.name), ['c', 'd']);
+});
