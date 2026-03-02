@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-03-02 after v0.23 milestone completion)
 
 ## Current Position
 
-Phase: v0.24-01 of 4 (Provider Infrastructure and Failover)
-Plan: 04/04 complete (Acceptance Tests and npm test Integration)
-Status: v0.24-01 phase complete — Ready for Phase v0.24-02 (Dispatch Reliability)
-Last activity: 2026-03-02 - Completed v0.24-01-04: Acceptance tests pass + add to npm test suite (FAIL-01, FAIL-02)
+Phase: v0.24-05 of 5 (Slot Worker Thin Passthrough)
+Plan: 01/03 complete (TDD Test Scaffolding for Quorum Slot Dispatch)
+Status: In progress — Plan 01 complete, Plan 02 (GREEN implementation) ready to start
+Last activity: 2026-03-02 - Completed v0.24-05-01: TDD RED scaffolding for quorum-slot-dispatch.cjs (DISP-04, DISP-05)
 
-Progress: [###.........] 25% (4 of 12 plans complete: 4/4 in v0.24-01)
+Progress: [####........] 33% (5 of 15 plans complete: 4/4 in v0.24-01, 1/3 in v0.24-05)
 
 ## Performance Metrics
 
@@ -61,6 +61,8 @@ Recent decisions affecting current work:
 - [v0.24 roadmap]: EventualConsensus formal invariant (`<>(phase = "DECIDED")`) sharpened success criteria for v0.24-01 (SC4) and v0.24-04 (SC3) -- quorum must reach DECIDED state even under partial failure and early escalation.
 - [v0.24 roadmap]: Phase v0.24-03 depends only on v0.24-01 (not v0.24-02) -- observability can proceed in parallel with dispatch reliability once provider infrastructure exists.
 - [v0.24-05 added]: Slot Worker Thin Passthrough — moves prompt construction and output parsing from Haiku agent into call-quorum-slot.cjs. Depends on v0.24-01 (same file modified). Requirements DISP-04, DISP-05 added.
+- [v0.24-05-01]: TDD RED scaffolding: 27 failing tests for quorum-slot-dispatch.cjs (buildModeAPrompt, buildModeBPrompt, parseVerdict, parseReasoning, parseCitations, emitResultBlock, parseImprovements). Fail-open guard prevents runner crash on missing module. All 13 existing improvements tests unchanged and GREEN.
+- [v0.24-05-01]: Fail-open module guard pattern: `let mod = null; try { mod = require('./quorum-slot-dispatch.cjs'); } catch(e) {}` — each test checks `assert.ok(mod)` to fail cleanly rather than crashing the test runner.
 
 ### Pending Todos
 
@@ -83,7 +85,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed v0.24-01-04 Acceptance tests and npm test integration (478 seconds)
+Stopped at: Completed v0.24-05-01 TDD RED scaffolding for quorum-slot-dispatch.cjs (~2 minutes)
 Resume file: None
 
 **v0.24-01 Phase Complete:** All 4 plans finished (TDD scaffolding, retry backoff, provider infrastructure, acceptance tests). Total: 2 requirements (FAIL-01, FAIL-02) fully implemented and verified. Foundation ready for v0.24-02 (dispatch reliability) and v0.24-03 (observability).
+
+**v0.24-05 In Progress:** Plan 01 complete (27 RED tests). Plan 02 (GREEN implementation of quorum-slot-dispatch.cjs) is next.

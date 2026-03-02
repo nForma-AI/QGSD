@@ -12,8 +12,8 @@ Make quorum dispatch reliable end-to-end -- every quorum call reliably delivers 
 - [ ] **DISP-01**: qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from DISPATCH_LIST
 - [ ] **DISP-02**: qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch
 - [ ] **DISP-03**: Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most reliable slots dispatched first
-- [ ] **DISP-04**: Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens deterministically in JavaScript (call-quorum-slot.cjs or wrapper), not via LLM string manipulation in the slot worker agent
-- [ ] **DISP-05**: Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YAML output -- the slot worker agent returns script output verbatim without LLM post-processing
+- [x] **DISP-04**: Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens deterministically in JavaScript (call-quorum-slot.cjs or wrapper), not via LLM string manipulation in the slot worker agent
+- [x] **DISP-05**: Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YAML output -- the slot worker agent returns script output verbatim without LLM post-processing
 
 ### Failover & Recovery
 
@@ -53,8 +53,8 @@ Make quorum dispatch reliable end-to-end -- every quorum call reliably delivers 
 | OBS-01 | v0.24-03 | Pending |
 | OBS-02 | v0.24-03 | Pending |
 | OBS-03 | v0.24-03 | Pending |
-| DISP-04 | v0.24-05 | Pending |
-| DISP-05 | v0.24-05 | Pending |
+| DISP-04 | v0.24-05 | Complete |
+| DISP-05 | v0.24-05 | Complete |
 | HEAL-01 | v0.24-04 | Pending |
 | HEAL-02 | v0.24-04 | Pending |
 

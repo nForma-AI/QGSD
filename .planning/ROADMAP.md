@@ -1293,4 +1293,4 @@ Plans:
 - [ ] v0.24-05-03-PLAN.md -- Rewrite agent spec to thin passthrough shim + install sync
 - [ ] v0.24-05-04-PLAN.md -- Human verification of real quorum dispatch (token reduction + correctness)
 
-| v0.24-05. Slot Worker Thin Passthrough | v0.24 | 0/4 | Not started | - |
+| v0.24-05. Slot Worker Thin Passthrough | 1/4 | In Progress|  | - |
