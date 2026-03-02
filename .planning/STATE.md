@@ -74,7 +74,7 @@ Recent decisions affecting current work:
 | 126 | Enforce spec requirements — never reduce objectives to match reality (R9 rule + binding prompts + baseline capture) | 2026-03-01 | 51c8c08f | Verified | [126-enforce-spec-requirements-never-reduce-o](./quick/126-enforce-spec-requirements-never-reduce-o/) |
 | 127 | Fix auto-advance chain: execute-phase returns structured result, plan-phase invokes next phase | 2026-03-02 | c218070d | Verified | [127-fix-auto-advance-chain-execute-phase-ret](./quick/127-fix-auto-advance-chain-execute-phase-ret/) |
 | 128 | Upgrade quick --full mode: formal/ integration | 2026-03-02 | a267b8fe | Pending | [128-upgrade-quick-full-mode-formal-integrati](./quick/128-upgrade-quick-full-mode-formal-integrati/) |
-| 129 | Review --full mode workflow claims: scan formal spec, inject invariants, require formal_artifacts declaration, atomic formal commits, quorum on verification | 2026-03-02 | (pending) | Pending | [129-review-full-mode-workflow-claims-scan-fo](.planning/quick/129-review-full-mode-workflow-claims-scan-fo/) |
+| 129 | Review --full mode workflow claims: scan formal spec, inject invariants, require formal_artifacts declaration, atomic formal commits, quorum on verification | 2026-03-02 | 2ead1785 | Pending | [129-review-full-mode-workflow-claims-scan-fo](.planning/quick/129-review-full-mode-workflow-claims-scan-fo/) |
 
 ## Session Continuity
 
