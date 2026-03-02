@@ -1332,7 +1332,7 @@ Plans:
   3. Quorum reaches a DECIDED state on every run where at least one slot responds with a valid vote -- the EventualConsensus property holds even when early escalation fires (escalation produces a decision, not a hang)
 **Plans**: TBD
 
-| v0.24-01. Provider Infrastructure and Failover | v0.24 | 0/TBD | Not started | - |
+| v0.24-01. Provider Infrastructure and Failover | v0.24 | 1/3 | In progress | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | 0/TBD | Not started | - |
 | v0.24-03. Quorum Observability | v0.24 | 0/TBD | Not started | - |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
