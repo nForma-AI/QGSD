@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.23-02",
+  "created_at": "2026-03-02T11:30:09.455Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Phase v0.23-02 wires formal verification into the execute-phase workflow and the qgsd-verifier agent so that real TLC/Alloy/PRISM tool output (not LLM estimation) gates workflow advancement. The imple",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.23-02-execute-phase-verifier-formal-integration/v0.23-02-01-PLAN.md",
+    "key_decisions": []
+  }
+}
