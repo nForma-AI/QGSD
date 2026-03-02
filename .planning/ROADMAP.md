@@ -22,7 +22,7 @@
 - ✅ **v0.21 — FV Closed Loop** — Phases v0.21-01..v0.21-06 (shipped 2026-03-01)
 - 🚧 **v0.22 — Requirements Envelope** — Phases v0.22-01..v0.22-04 (in progress)
 - 🔧 **v0.23 — Formal Gates** — Phases v0.23-01..v0.23-04 (gap closure in progress — v0.23-03..04 need plans)
-- 🚧 **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-04 (in progress: v0.24-01 2/3 plans complete)
+- 🚧 **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-04 (in progress: v0.24-01 complete 3/3 ✓)
 
 ## Phases
 
@@ -1335,7 +1335,7 @@ Plans:
   3. Quorum reaches a DECIDED state on every run where at least one slot responds with a valid vote -- the EventualConsensus property holds even when early escalation fires (escalation produces a decision, not a hang)
 **Plans**: TBD
 
-| v0.24-01. Provider Infrastructure and Failover | v0.24 | 2/3 | In progress | 2026-03-02 |
+| v0.24-01. Provider Infrastructure and Failover | v0.24 | 3/3 ✓ | Complete | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | 0/TBD | Not started | - |
 | v0.24-03. Quorum Observability | v0.24 | 0/TBD | Not started | - |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |

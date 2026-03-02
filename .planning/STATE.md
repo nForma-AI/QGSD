@@ -11,11 +11,11 @@ See: .planning/PROJECT.md (updated 2026-03-02 after milestone v0.24 roadmap crea
 ## Current Position
 
 Phase: v0.24-01 of 4 (Provider Infrastructure and Failover)
-Plan: 02/03 complete (Retry Backoff Implementation)
-Status: Ready for Plan 03 (Provider Field and Provider-Aware Dispatch)
-Last activity: 2026-03-02 -- Completed v0.24-01-02 Retry implementation (FAIL-01)
+Plan: 03/03 complete (Provider Field and Provider-Aware Dispatch Skip)
+Status: v0.24-01 phase complete — Ready for Phase v0.24-02 (Dispatch Reliability)
+Last activity: 2026-03-02 -- Completed v0.24-01-03 Provider field + dispatch skip (FAIL-02)
 
-Progress: [##.........] 17% (2 of 12 plans complete: 2/3 in v0.24-01)
+Progress: [###.........] 25% (3 of 12 plans complete: 3/3 in v0.24-01)
 
 ## Performance Metrics
 
@@ -45,6 +45,11 @@ Progress: [##.........] 17% (2 of 12 plans complete: 2/3 in v0.24-01)
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.24-01-03]: Provider field placement: after "name" field for readability in providers.json
+- [v0.24-01-03]: Hostname normalization: strip "api." prefix and TLDs (.com, .ai, .xyz, .io) to create match keys for cache-to-provider mapping
+- [v0.24-01-03]: Provider matching strategy: substring containment (provider field includes or is-included-by hostname) for flexibility across provider configurations
+- [v0.24-01-03]: Fail-open on all I/O: any file read, JSON parse, or URL operation error returns empty skip list to prevent cascading failures
+- [v0.24-01-03]: TTL alignment: use same values as check-provider-health.cjs (180s healthy, 300s unhealthy) for consistency
 - [v0.24-01-02]: Retry wrapping strategy: Non-OAuth slots wrapped at main() dispatch; OAuth slots wrapped inside rotation loop (per-attempt protection). This ensures retry logic does not interfere with the existing OAuth rotation mechanism.
 - [v0.24-01-02]: Error classification: Fail-open for unknown errors (retryable by default); explicitly non-retryable: CLI_SYNTAX (usage/unknown flag patterns) and spawn errors. Rationale: unknown errors during service degradation should retry, not immediately fail.
 - [v0.24-01-02]: Max retries: 2 (3 total attempts), delays [1000ms, 3000ms] (exponential). Rationale: balances retry overhead against recovery time; matches existing timeout patterns.
@@ -71,5 +76,7 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-02
-Stopped at: Completed v0.24-01-02 Retry backoff implementation (62 seconds)
+Stopped at: Completed v0.24-01-03 Provider field + dispatch skip (299 seconds)
 Resume file: None
+
+**v0.24-01 Phase Complete:** All 3 plans finished (TDD scaffolding, retry backoff, provider infrastructure). Total: 2 requirements (FAIL-01, FAIL-02) implemented. Foundation ready for v0.24-02 (dispatch reliability) and v0.24-03 (observability).
