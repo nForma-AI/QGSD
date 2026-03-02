@@ -38,6 +38,7 @@ Progress: [████████████████████] 135/132
 
 *Updated after each plan completion*
 | Phase v0.23-03 P01 | 2 | 1 tasks | 1 files |
+| Phase v0.23-03 P02 | 8 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -51,6 +52,8 @@ Recent decisions affecting current work:
 - [v0.23 roadmap]: bin/run-formal-check.cjs exists (quick-130) — phases build on it, do not recreate it. quick --full already has Step 6.3 — phases extend the same pattern to plan-phase + execute-phase + qgsd-verifier + roadmapper.
 - [Phase v0.23-03]: plan-phase.md and execute-phase.md keyword-match patterns already fixed by quick-132; structural tests GREEN not RED for those groups — accepted as pre-existing fixes
 - [Phase v0.23-03]: Test reads qgsd-core/ source files (not installed ~/.claude/ copies); roadmapper agent at top-level agents/qgsd-roadmapper.md not qgsd-core/agents/
+- [Phase v0.23-03]: Template strings in gsd-tools.cjs creating new ROADMAP entries fixed to **Goal**: format (colon outside) for parser consistency
+- [Phase v0.23-03]: Keyword-match algorithm canonical: .goal // .phase_name source, tr ' -/' separator, bidirectional grep-qF — standardized across plan-phase and execute-phase
 
 ### Pending Todos
 
