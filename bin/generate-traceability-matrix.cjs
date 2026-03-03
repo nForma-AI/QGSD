@@ -15,7 +15,7 @@
 //   node bin/generate-traceability-matrix.cjs --json     # print JSON to stdout
 //   node bin/generate-traceability-matrix.cjs --quiet    # suppress summary output
 //
-// Requirements: TRACE-01, TRACE-02, ANNOT-05
+// Requirements: TRACE-01, TRACE-02, TRACE-04, ANNOT-05
 
 const fs   = require('fs');
 const path = require('path');
@@ -139,6 +139,136 @@ function buildCheckResultMap(checkResults) {
     }
   }
   return reqMap;
+}
+
+// ── Bidirectional Validation (TRACE-04) ─────────────────────────────────────
+
+/**
+ * Cross-validate model-registry requirements arrays against requirements.json
+ * formal_models arrays. Detects asymmetric links and stale references.
+ *
+ * @param {Object} registry — parsed model-registry.json
+ * @param {Array} requirements — array of requirement objects from requirements.json
+ * @returns {{ asymmetric_links: Array, stale_links: Array, summary: Object }}
+ */
+function validateBidirectionalLinks(registry, requirements) {
+  const asymmetricLinks = [];
+  const staleLinks = [];
+  const checkedPairs = new Set(); // "modelFile|reqId" to deduplicate
+
+  // Build maps
+  const registryReqs = {}; // modelFile -> Set<reqId>
+  for (const [modelFile, entry] of Object.entries(registry.models || {})) {
+    const reqs = entry.requirements || [];
+    if (reqs.length > 0) {
+      registryReqs[modelFile] = new Set(reqs);
+    }
+  }
+
+  const reqModels = {}; // reqId -> Set<modelFile>
+  const reqIdSet = new Set();
+  for (const req of requirements) {
+    reqIdSet.add(req.id);
+    const models = req.formal_models || [];
+    if (models.length > 0) {
+      reqModels[req.id] = new Set(models);
+    }
+  }
+
+  // Direction 1: model claims requirement — check if requirement claims model back
+  for (const [modelFile, reqIds] of Object.entries(registryReqs)) {
+    for (const reqId of reqIds) {
+      const pairKey = modelFile + '|' + reqId;
+      if (checkedPairs.has(pairKey)) continue;
+      checkedPairs.add(pairKey);
+
+      // Check if requirement ID exists at all
+      if (!reqIdSet.has(reqId)) {
+        staleLinks.push({
+          type: 'unknown_requirement_id',
+          reference: reqId,
+          referenced_by: 'model-registry ' + modelFile + ' requirements',
+        });
+        process.stderr.write(TAG + ' warn: stale link — model-registry ' + modelFile + ' references requirement ' + reqId + ' which does not exist in requirements.json\n');
+        continue;
+      }
+
+      // Check if requirement's formal_models lists this model
+      const modelsForReq = reqModels[reqId];
+      if (!modelsForReq || !modelsForReq.has(modelFile)) {
+        asymmetricLinks.push({
+          model_file: modelFile,
+          requirement_id: reqId,
+          direction: 'model_claims_requirement',
+          detail: 'model-registry lists ' + reqId + ' for ' + modelFile + ' but requirements.json ' + reqId + ' does not list ' + modelFile + ' in formal_models',
+        });
+        process.stderr.write(TAG + ' warn: asymmetric link — model-registry lists ' + reqId + ' for ' + modelFile + ' but requirements.json ' + reqId + ' does not list ' + modelFile + ' in formal_models\n');
+      }
+    }
+  }
+
+  // Direction 2: requirement claims model — check if model claims requirement back
+  for (const [reqId, modelFiles] of Object.entries(reqModels)) {
+    for (const modelFile of modelFiles) {
+      const pairKey = modelFile + '|' + reqId;
+      if (checkedPairs.has(pairKey)) {
+        // Already checked from direction 1 — skip
+        continue;
+      }
+      checkedPairs.add(pairKey);
+
+      // Check if model file exists in registry
+      if (!registry.models || !registry.models[modelFile]) {
+        // Check if file exists on disk
+        const diskPath = path.join(ROOT, modelFile);
+        if (!fs.existsSync(diskPath)) {
+          staleLinks.push({
+            type: 'missing_model_file',
+            reference: modelFile,
+            referenced_by: 'requirements.json ' + reqId + ' formal_models',
+          });
+          process.stderr.write(TAG + ' warn: stale link — requirements.json ' + reqId + ' references ' + modelFile + ' but file does not exist\n');
+        } else {
+          // File exists on disk but not in registry
+          asymmetricLinks.push({
+            model_file: modelFile,
+            requirement_id: reqId,
+            direction: 'requirement_claims_model',
+            detail: 'requirements.json ' + reqId + ' lists ' + modelFile + ' in formal_models but model file is not in model-registry.json',
+          });
+          process.stderr.write(TAG + ' warn: asymmetric link — requirements.json ' + reqId + ' lists ' + modelFile + ' in formal_models but model file is not in model-registry.json\n');
+        }
+        continue;
+      }
+
+      // Model is in registry — check if it claims this requirement back
+      const regsForModel = registryReqs[modelFile];
+      if (!regsForModel || !regsForModel.has(reqId)) {
+        asymmetricLinks.push({
+          model_file: modelFile,
+          requirement_id: reqId,
+          direction: 'requirement_claims_model',
+          detail: 'requirements.json ' + reqId + ' lists ' + modelFile + ' in formal_models but model-registry ' + modelFile + ' does not list ' + reqId + ' in requirements',
+        });
+        process.stderr.write(TAG + ' warn: asymmetric link — requirements.json ' + reqId + ' lists ' + modelFile + ' in formal_models but model-registry ' + modelFile + ' does not list ' + reqId + ' in requirements\n');
+      }
+    }
+  }
+
+  const totalChecked = checkedPairs.size;
+  const asymmetricCount = asymmetricLinks.length;
+  const staleCount = staleLinks.length;
+
+  return {
+    asymmetric_links: asymmetricLinks,
+    stale_links: staleLinks,
+    summary: {
+      total_checked: totalChecked,
+      asymmetric_count: asymmetricCount,
+      stale_count: staleCount,
+      clean: asymmetricCount === 0 && staleCount === 0,
+    },
+  };
 }
 
 // ── Matrix Construction ─────────────────────────────────────────────────────
@@ -291,12 +421,16 @@ function buildMatrix() {
     }
   }
 
+  // ── Bidirectional validation (TRACE-04) ──
+
+  const bidirectionalValidation = validateBidirectionalLinks(registry, requirements);
+
   // ── Build matrix ──
 
   const matrix = {
     metadata: {
       generated_at: new Date().toISOString(),
-      generator_version: '1.0',
+      generator_version: '1.1',
       data_sources: {
         annotations: {
           file_count: annotatedFiles.size,
@@ -320,6 +454,7 @@ function buildMatrix() {
       uncovered_requirements: uncoveredRequirements,
       orphan_properties: orphanProperties,
     },
+    bidirectional_validation: bidirectionalValidation,
   };
 
   return matrix;
@@ -347,11 +482,14 @@ function main() {
       if (prop.check_id) matchedChecks.add(prop.check_id);
     }
 
+    const bv = matrix.bidirectional_validation.summary;
+
     process.stdout.write(TAG + ' Generated formal/traceability-matrix.json\n');
     process.stdout.write(TAG + '   Requirements: ' + cs.covered_count + ' covered / ' + cs.total_requirements + ' total (' + cs.coverage_percentage + '%)\n');
     process.stdout.write(TAG + '   Properties: ' + ds.annotations.property_count + ' (' + ds.annotations.file_count + ' files)\n');
     process.stdout.write(TAG + '   Orphan properties: ' + cs.orphan_properties.length + '\n');
     process.stdout.write(TAG + '   Check results matched: ' + matchedChecks.size + '\n');
+    process.stdout.write(TAG + '   Bidirectional validation: ' + bv.asymmetric_count + ' asymmetric, ' + bv.stale_count + ' stale (' + bv.total_checked + ' pairs checked)\n');
   }
 }
 
