@@ -22,7 +22,7 @@ Requirements for milestone v0.26. Each maps to roadmap phases.
 - [ ] **CRED-02**: Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)
 - [x] **PLCY-01**: User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent
 - [x] **PLCY-02**: User can configure update policy per slot: auto / prompt / skip
-- [ ] **PLCY-03**: Auto-update policy check runs on manage-agents startup for slots configured as `auto`
+- [x] **PLCY-03**: Auto-update policy check runs on manage-agents startup for slots configured as `auto`
 
 ### Observability & Diagnostics
 
@@ -64,7 +64,7 @@ Updated during roadmap creation.
 |-------------|-------|--------|
 | PLCY-01 | v0.26-01 | Complete |
 | PLCY-02 | v0.26-01 | Complete |
-| PLCY-03 | v0.26-01 | Pending |
+| PLCY-03 | v0.26-01 | Complete |
 | CRED-01 | v0.26-02 | Pending |
 | CRED-02 | v0.26-02 | Pending |
 | PORT-01 | v0.26-03 | Pending |
