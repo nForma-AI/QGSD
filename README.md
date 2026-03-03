@@ -4,9 +4,9 @@
 
 **Every planning decision verified by a quorum of AI models before Claude executes a single line.**
 
-[![npm version](https://img.shields.io/npm/v/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/qgsd)
-[![npm downloads](https://img.shields.io/npm/dm/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/qgsd)
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/servers/1474810068636663886)
+[![npm version](https://img.shields.io/npm/v/@nforma.ai/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/qgsd)
+[![npm downloads](https://img.shields.io/npm/dm/@nforma.ai/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/qgsd)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/M8SevJEuZG)
 [![X (Twitter)](https://img.shields.io/badge/X-@JonathanBorduas-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/JonathanBorduas)
 [![GitHub stars](https://img.shields.io/github/stars/nForma-AI/QGSD?style=for-the-badge&logo=github&color=181717)](https://github.com/nForma-AI/QGSD)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
@@ -78,88 +78,60 @@ The fastest path is the interactive wizard — it handles everything from instal
 <details>
 <summary><strong>Manual setup (advanced)</strong></summary>
 
-QGSD's quorum requires each model to run as an MCP server inside Claude Code. This is a **one-time setup per machine** — three steps per model: install the CLI, authenticate, register with Claude Code.
+All quorum agents run through QGSD's **unified MCP server** (`bin/unified-mcp-server.mjs`). There are two agent families:
 
-QGSD uses a **slot-based naming scheme** (`<family>-<N>`) so you can run multiple instances of the same agent family. `claude-1` is the first Claude slot, `copilot-1` is the first Copilot slot, etc. Adding a second Copilot would be `copilot-2`.
+- **CLI agents** (codex, gemini, opencode, copilot) — wrap native CLI tools
+- **API agents** (claude-1..6) — route requests to third-party LLM providers via [Claude Code Router (CCR)](https://github.com/musistudio/claude-code-router)
+
+QGSD uses a **slot-based naming scheme** (`<family>-<N>`) so you can run multiple instances of the same agent family. `claude-1` is the first Claude slot, `copilot-1` is the first Copilot slot, etc.
 
 ---
 
-#### OpenAI Codex — [codex-mcp-server](https://github.com/LangBlaze-AI/codex-mcp-server)
+#### CLI Agents — Prerequisites
+
+Each CLI agent needs its native tool installed and authenticated:
 
 ```bash
-# 1. Install Codex CLI (v0.75.0+)
+# OpenAI Codex (v0.75.0+)
 npm i -g @openai/codex
-
-# 2. Authenticate
 codex login --api-key "your-openai-api-key"
 
-# 3. Register with Claude Code
-claude mcp add codex-cli-1 -- npx -y codex-mcp-server
-```
-
----
-
-#### Google Gemini — [gemini-mcp-server](https://github.com/LangBlaze-AI/gemini-mcp-server)
-
-```bash
-# 1. Install Gemini CLI
+# Google Gemini (free tier: 60 req/min, 1000 req/day)
 npm install -g @google/gemini-cli
-
-# 2. Authenticate (free tier: 60 req/min, 1000 req/day)
 gemini  # follow the Google login flow
 
-# 3. Register with Claude Code
-claude mcp add gemini-cli-1 -- npx -y gemini-mcp-server
-```
-
----
-
-#### OpenCode — [opencode-mcp-server](https://github.com/LangBlaze-AI/opencode-mcp-server)
-
-```bash
-# 1. Install OpenCode CLI
+# OpenCode
 npm install -g opencode-ai
-
-# 2. Authenticate
 opencode  # follow the auth flow
 
-# 3. Register with Claude Code
-claude mcp add opencode-1 -- npx -y opencode-mcp-server
-```
-
----
-
-#### GitHub Copilot — [copilot-mcp-server](https://github.com/LangBlaze-AI/copilot-mcp-server)
-
-```bash
-# 1. Requires an active GitHub Copilot subscription
-#    Authenticate via GitHub CLI if not already done:
+# GitHub Copilot (requires active subscription)
 gh auth login
-
-# 2. Register with Claude Code
-claude mcp add copilot-1 -- npx -y copilot-mcp-server
 ```
 
 ---
 
-#### Claude MCP — [claude-mcp-server](https://github.com/LangBlaze-AI/claude-mcp-server)
+#### API Agents — Claude Code Router (CCR)
+
+API-based slots (`claude-1` through `claude-6`) use [Claude Code Router](https://github.com/musistudio/claude-code-router) to route requests to providers like AkashML, Together.xyz, and Fireworks. See the [CCR README](https://github.com/musistudio/claude-code-router#-getting-started) for installation and configuration.
+
+---
+
+#### Registration
+
+The `/qgsd:mcp-setup` wizard handles all registration automatically. If you prefer manual setup, slots are registered in `~/.claude.json` pointing to the unified server:
 
 ```bash
-# Register with Claude Code (API key configured via /qgsd:mcp-setup)
-claude mcp add claude-1 -- npx -y claude-mcp-server
+# All slots use the same entrypoint
+claude mcp add <slot-name> -- node /path/to/QGSD/bin/unified-mcp-server.mjs
 ```
 
----
-
-#### After adding MCPs — refresh QGSD's detection
-
-QGSD auto-detects your MCP server names on install and caches the result. After adding or renaming any MCP server, re-run with `--redetect-mcps` to update the cache:
+After adding or renaming any MCP server, re-run with `--redetect-mcps` to update the cache:
 
 ```bash
 npx qgsd@latest --redetect-mcps
 ```
 
-This re-reads `~/.claude.json`, re-derives tool prefixes from your registered servers, and rewrites `~/.claude/qgsd.json`. Without this step, QGSD's hooks may reference stale default prefixes.
+This re-reads `~/.claude.json`, re-derives tool prefixes from your registered servers, and rewrites `~/.claude/qgsd.json`.
 
 </details>
 
@@ -177,6 +149,8 @@ node bin/qgsd.cjs
 
 The TUI opens as a split-pane screen: left panel is the menu, right panel shows your agent roster or context for the selected action.
 
+![Agent Manager TUI](roster.png)
+
 **Capabilities:**
 
 | Action | What it does |
@@ -193,12 +167,16 @@ The TUI opens as a split-pane screen: left panel is the menu, right panel shows 
 | Batch Rotate Keys | Rotate API keys across multiple slots in one operation |
 | Live Health | Poll all configured slots simultaneously and display health table |
 | Scoreboard | Quorum performance dashboard — normalized scores, TP/TN/FP/FN breakdown per slot |
-| Update Agents | Pull the latest version of all MCP server packages |
+| Update Agents | Pull the latest version of CLI tools and CCR |
 | Settings | View current quorum composition and configuration |
 | Tune Timeouts | Adjust per-slot timeout values |
 | Set Update Policy | Configure auto-update behavior per slot |
 | Export Roster | Save the full agent configuration to a portable JSON file |
 | Import Roster | Load agent configuration from a previously exported file |
+
+The TUI also includes a **requirements management** section — browse, filter, check coverage, and view traceability for all requirements in `.formal/requirements.json`.
+
+![Requirements Management](requirements.png)
 
 **Navigation:** arrow keys to move, Enter to select, Escape or `q` to go back or exit.
 
@@ -808,6 +786,7 @@ Each verification run produces machine-readable outputs:
 | `/qgsd:map-codebase` | Analyze existing codebase before new-project |
 | `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `.formal/requirements.json` |
 | `/qgsd:add-requirement [--id=PREFIX-NN] [--text="..."]` | Add a single requirement with duplicate/conflict checks |
+| `/qgsd:close-formal-gaps [--category="..."] [--ids=...] [--all]` | Generate formal models for uncovered requirements |
 
 ### Phase Management
 

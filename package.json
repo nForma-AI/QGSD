@@ -8,16 +8,18 @@
   },
   "files": [
     "bin",
+    "!**/*.test.*",
     "commands",
     "get-shit-done",
     "agents",
     "hooks/dist",
     "scripts",
+    "!scripts/generate-logo-svg.js",
+    "!scripts/generate-terminal-svg.js",
+    "!scripts/lint-isolation.js",
+    "!scripts/publish.sh",
     "templates"
   ],
-  "peerDependencies": {
-    "get-shit-done-cc": ">=1.20.0"
-  },
   "keywords": [
     "claude",
     "claude-code",
@@ -28,7 +30,7 @@
     "gemini",
     "gemini-cli"
   ],
-  "author": "TÂCHES",
+  "author": "nForma AI",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -42,12 +44,13 @@
     "node": ">=16.7.0"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "inquirer": "^8.2.7",
     "keytar": "^7.9.0"
   },
   "devDependencies": {
     "@hpcc-js/wasm-graphviz": "^1.21.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.27.3",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "xstate": "^5.28.0"
@@ -58,6 +61,7 @@
     "generate-terminal": "node scripts/generate-terminal-svg.js",
     "generate-logo": "node scripts/generate-logo-svg.js",
     "generate-assets": "npm run generate-terminal && npm run generate-logo",
+    "publish:npm": "bash scripts/publish.sh",
     "prepublishOnly": "npm run build:hooks",
     "xstate-to-tla": "node bin/xstate-to-tla.cjs",
     "formal-verify": "node bin/run-formal-verify.cjs",

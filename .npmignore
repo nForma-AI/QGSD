@@ -1,1 +1,28 @@
+# Backup files
 **/*.bak
+
+# Test files — all patterns used in the repo
+# (Primary exclusion is via negation in package.json "files" array;
+#  these patterns provide defense-in-depth)
+**/*.test.*
+**/*.test.cjs
+**/*.test.js
+**/*.test.mjs
+
+# Dev-only scripts (not needed by consumers)
+scripts/generate-logo-svg.js
+scripts/generate-terminal-svg.js
+scripts/lint-isolation.js
+scripts/publish.sh
+
+# Formal verification artifacts (internal development only)
+.formal/
+formal/
+
+# Planning and project management
+.planning/
+.agents/
+
+# Build artifacts and caches
+.formal/tla/*_TTrace_*
+.formal/check-results.ndjson
