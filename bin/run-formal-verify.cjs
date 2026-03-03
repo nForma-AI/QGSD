@@ -17,8 +17,9 @@
 //   CI enforce (3)  — check-trace-redaction.cjs, check-trace-schema-drift.cjs, check-liveness-fairness.cjs
 //   UPPAAL     (1)  — run-uppaal.cjs (quorum-races.xml, empirical timing bounds)
 //   Triage     (1)  — generate-triage-bundle.cjs (diff-report.md + suspects.md)
+//   Traceability (1) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //   ─────────────────────────────────────────────────────────────
-//   Total:    30 steps
+//   Total:    31 steps
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
@@ -230,6 +231,15 @@ const STEPS = [
     // Non-critical: failure does not block exit code; triage is informational
     nonCritical: true,
   },
+
+  // ─ Traceability matrix ─────────────────────────────────────────────────────
+  {
+    tool: 'traceability', id: 'traceability:matrix',
+    label: 'Generate traceability matrix (requirements <-> formal properties)',
+    type: 'node', script: 'generate-traceability-matrix.cjs', args: ['--quiet'],
+    // Non-critical: matrix generation is informational, does not block exit code
+    nonCritical: true,
+  },
 ];
 
 // ── CLI filter ────────────────────────────────────────────────────────────────
@@ -351,7 +361,8 @@ async function runOnce() {
 
   // ── Phase 1: Generate (sequential prerequisite) ────────────────────────────
   const generateSteps = steps.filter(s => s.tool === 'generate');
-  const toolSteps     = steps.filter(s => s.tool !== 'generate');
+  const toolSteps     = steps.filter(s => s.tool !== 'generate' && s.tool !== 'traceability');
+  const postSteps     = steps.filter(s => s.tool === 'traceability');
 
   if (generateSteps.length > 0) {
     process.stdout.write(TAG + ' Phase 1: Running generate steps sequentially...\n\n');
@@ -366,6 +377,12 @@ async function runOnce() {
     await Promise.all(
       toolGroupNames.map(tool => runGroup(toolSteps.filter(s => s.tool === tool)))
     );
+  }
+
+  // ── Phase 3: Post-processing (needs fully populated check-results.ndjson) ──
+  if (postSteps.length > 0) {
+    process.stdout.write(TAG + ' Phase 3: Post-processing (traceability matrix)...\n\n');
+    await runGroup(postSteps);
   }
 
   // ── Summary ─────────────────────────────────────────────────────────────────
