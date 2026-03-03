@@ -1,0 +1,2348 @@
+{
+  "metadata": {
+    "generated_at": "2026-03-03T11:44:50.903Z",
+    "generator_version": "1.0",
+    "data_sources": {
+      "annotations": {
+        "file_count": 23,
+        "property_count": 93
+      },
+      "model_registry": {
+        "file_count": 24,
+        "used_as_fallback": 2
+      },
+      "check_results": {
+        "entry_count": 4
+      }
+    }
+  },
+  "requirements": {
+    "CRED-07": {
+      "id": "CRED-07",
+      "properties": [
+        {
+          "model_file": "formal/alloy/account-pool-structure.als",
+          "property_name": "AddPreservesValidity",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-08": {
+      "id": "CRED-08",
+      "properties": [
+        {
+          "model_file": "formal/alloy/account-pool-structure.als",
+          "property_name": "SwitchPreservesValidity",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-09": {
+      "id": "CRED-09",
+      "properties": [
+        {
+          "model_file": "formal/alloy/account-pool-structure.als",
+          "property_name": "RemovePreservesValidity",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-10": {
+      "id": "CRED-10",
+      "properties": [
+        {
+          "model_file": "formal/alloy/account-pool-structure.als",
+          "property_name": "SwitchPreservesPool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-11": {
+      "id": "CRED-11",
+      "properties": [
+        {
+          "model_file": "formal/alloy/account-pool-structure.als",
+          "property_name": "RemoveShrinksPool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CALIB-01": {
+      "id": "CALIB-01",
+      "properties": [
+        {
+          "model_file": "formal/alloy/availability-parsing.als",
+          "property_name": "ParseCorrect",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CALIB-02": {
+      "id": "CALIB-02",
+      "properties": [
+        {
+          "model_file": "formal/alloy/availability-parsing.als",
+          "property_name": "YearRolloverHandled",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CALIB-03": {
+      "id": "CALIB-03",
+      "properties": [
+        {
+          "model_file": "formal/alloy/availability-parsing.als",
+          "property_name": "FallbackIsNull",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "INST-02": {
+      "id": "INST-02",
+      "properties": [
+        {
+          "model_file": "formal/alloy/install-scope.als",
+          "property_name": "AllEquivalence",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "INST-03": {
+      "id": "INST-03",
+      "properties": [
+        {
+          "model_file": "formal/alloy/install-scope.als",
+          "property_name": "InstallIdempotent",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "INST-01": {
+      "id": "INST-01",
+      "properties": [
+        {
+          "model_file": "formal/alloy/install-scope.als",
+          "property_name": "NoConflict",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "INST-04": {
+      "id": "INST-04",
+      "properties": [
+        {
+          "model_file": "formal/alloy/install-scope.als",
+          "property_name": "RollbackSoundCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "INST-05": {
+      "id": "INST-05",
+      "properties": [
+        {
+          "model_file": "formal/alloy/install-scope.als",
+          "property_name": "ConfigSyncCompleteCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SPEC-03": {
+      "id": "SPEC-03",
+      "properties": [
+        {
+          "model_file": "formal/alloy/quorum-composition.als",
+          "property_name": "AllRulesHold",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "COMP-01": {
+      "id": "COMP-01",
+      "properties": [
+        {
+          "model_file": "formal/alloy/quorum-composition.als",
+          "property_name": "AllRulesHold",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "QUORUM-02": {
+      "id": "QUORUM-02",
+      "properties": [
+        {
+          "model_file": "formal/alloy/quorum-votes.als",
+          "property_name": "ThresholdPasses",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/alloy/quorum-votes.als",
+          "property_name": "BelowThresholdFails",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "UnanimityMet",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SAFE-01": {
+      "id": "SAFE-01",
+      "properties": [
+        {
+          "model_file": "formal/alloy/quorum-votes.als",
+          "property_name": "ThresholdPasses",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/alloy/quorum-votes.als",
+          "property_name": "BelowThresholdFails",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "UnanimityMet",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SAFE-04": {
+      "id": "SAFE-04",
+      "properties": [
+        {
+          "model_file": "formal/alloy/quorum-votes.als",
+          "property_name": "ZeroApprovalsFail",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-01": {
+      "id": "SCBD-01",
+      "properties": [
+        {
+          "model_file": "formal/alloy/scoreboard-recompute.als",
+          "property_name": "RecomputeIdempotent",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-02": {
+      "id": "SCBD-02",
+      "properties": [
+        {
+          "model_file": "formal/alloy/scoreboard-recompute.als",
+          "property_name": "NoVoteLoss",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-03": {
+      "id": "SCBD-03",
+      "properties": [
+        {
+          "model_file": "formal/alloy/scoreboard-recompute.als",
+          "property_name": "NoDoubleCounting",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-04": {
+      "id": "SCBD-04",
+      "properties": [
+        {
+          "model_file": "formal/alloy/scoreboard-recompute.als",
+          "property_name": "TNplusScoreIsCorrect",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-05": {
+      "id": "SCBD-05",
+      "properties": [
+        {
+          "model_file": "formal/alloy/taxonomy-safety.als",
+          "property_name": "NoInjection",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-06": {
+      "id": "SCBD-06",
+      "properties": [
+        {
+          "model_file": "formal/alloy/taxonomy-safety.als",
+          "property_name": "TaxonomyClosed",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SCBD-07": {
+      "id": "SCBD-07",
+      "properties": [
+        {
+          "model_file": "formal/alloy/taxonomy-safety.als",
+          "property_name": "NewCategoryConsistent",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-08": {
+      "id": "STOP-08",
+      "properties": [
+        {
+          "model_file": "formal/alloy/transcript-scan.als",
+          "property_name": "BoundaryCorrectCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-09": {
+      "id": "STOP-09",
+      "properties": [
+        {
+          "model_file": "formal/alloy/transcript-scan.als",
+          "property_name": "PairingUniqueCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-10": {
+      "id": "STOP-10",
+      "properties": [
+        {
+          "model_file": "formal/alloy/transcript-scan.als",
+          "property_name": "NoDuplicateCountingCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-11": {
+      "id": "STOP-11",
+      "properties": [
+        {
+          "model_file": "formal/alloy/transcript-scan.als",
+          "property_name": "SuccessCountNeverExceedsMinSizeCheck",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-01": {
+      "id": "CRED-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-02": {
+      "id": "CRED-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "ActiveIsPoolMember",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-03": {
+      "id": "CRED-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "NoActiveWhenEmpty",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-04": {
+      "id": "CRED-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "IdleNoPending",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-05": {
+      "id": "CRED-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "OpMatchesState",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-06": {
+      "id": "CRED-06",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDAccountManager.tla",
+          "property_name": "IdleReachable",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-01": {
+      "id": "DETECT-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-02": {
+      "id": "DETECT-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+          "property_name": "DisabledExcludesActive",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-03": {
+      "id": "DETECT-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+          "property_name": "MonitoringReachable",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "ORES-01": {
+      "id": "ORES-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDConvergence.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "ORES-03": {
+      "id": "ORES-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDConvergence.tla",
+          "property_name": "ResolvedAtWriteOnce",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "ORES-02": {
+      "id": "ORES-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDConvergence.tla",
+          "property_name": "LogBeforeDelete",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "ORES-04": {
+      "id": "ORES-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDConvergence.tla",
+          "property_name": "HaikuUnavailableNoCorruption",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "ORES-05": {
+      "id": "ORES-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDConvergence.tla",
+          "property_name": "ConvergenceEventuallyResolves",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-01": {
+      "id": "PLAN-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDDeliberation.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "LOOP-02": {
+      "id": "LOOP-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDDeliberation.tla",
+          "property_name": "TotalRoundsBounded",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SAFE-03": {
+      "id": "SAFE-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDDeliberation.tla",
+          "property_name": "DeliberationMonotone",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "DeliberationMonotone",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "IMPR-01": {
+      "id": "IMPR-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDDeliberation.tla",
+          "property_name": "ImprovementMonotone",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-02": {
+      "id": "PLAN-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDDeliberation.tla",
+          "property_name": "ProtocolTerminates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "MCPENV-02": {
+      "id": "MCPENV-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDMCPEnv.tla",
+          "property_name": "NoSpuriousConsensus",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "MCPENV-01": {
+      "id": "MCPENV-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDMCPEnv.tla",
+          "property_name": "TypeInvariantHolds",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "MCPENV-03": {
+      "id": "MCPENV-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDMCPEnv.tla",
+          "property_name": "EventualDecision",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-04": {
+      "id": "DETECT-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDOscillation.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-05": {
+      "id": "DETECT-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDOscillation.tla",
+          "property_name": "OscillationFlaggedCorrectly",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "DETECT-06": {
+      "id": "DETECT-06",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDOscillation.tla",
+          "property_name": "AlgorithmTerminates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-03": {
+      "id": "PLAN-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDPreFilter.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-04": {
+      "id": "PLAN-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDPreFilter.tla",
+          "property_name": "AutoResolutionSound",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "LOOP-03": {
+      "id": "LOOP-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDPreFilter.tla",
+          "property_name": "FilterRoundsBounded",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-05": {
+      "id": "PLAN-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDPreFilter.tla",
+          "property_name": "AutoResolvedPhaseConsistent",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PLAN-06": {
+      "id": "PLAN-06",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDPreFilter.tla",
+          "property_name": "PreFilterTerminates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "QUORUM-01": {
+      "id": "QUORUM-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/tla/QGSDQuorum_xstate.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "QUORUM-03": {
+      "id": "QUORUM-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "QuorumCeilingMet",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SLOT-01": {
+      "id": "SLOT-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "QuorumCeilingMet",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SAFE-02": {
+      "id": "SAFE-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "AllTransitionsValid",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "LOOP-01": {
+      "id": "LOOP-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "DeliberationBounded",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "P=? [ F<=9 s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "QUORUM-04": {
+      "id": "QUORUM-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "EventualConsensus",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "P=? [ F s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "RECV-01": {
+      "id": "RECV-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDQuorum.tla",
+          "property_name": "EventualConsensus",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SLOT-02": {
+      "id": "SLOT-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDRecruiting.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SLOT-03": {
+      "id": "SLOT-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDRecruiting.tla",
+          "property_name": "PolledCeiling",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SLOT-04": {
+      "id": "SLOT-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDRecruiting.tla",
+          "property_name": "SubslotsFirst",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SLOT-05": {
+      "id": "SLOT-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDRecruiting.tla",
+          "property_name": "FullRecruitment",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-01": {
+      "id": "STOP-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-02": {
+      "id": "STOP-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "SafetyInvariant1",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "SPEC-01": {
+      "id": "SPEC-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "SafetyInvariant1",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-03": {
+      "id": "STOP-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "SafetyInvariant2",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-04": {
+      "id": "STOP-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "SafetyInvariant3",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-05": {
+      "id": "STOP-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "LivenessProperty1",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-06": {
+      "id": "STOP-06",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "LivenessProperty2",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "STOP-07": {
+      "id": "STOP-07",
+      "properties": [
+        {
+          "model_file": "formal/tla/QGSDStopHook.tla",
+          "property_name": "LivenessProperty3",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-01": {
+      "id": "TUI-01",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-02": {
+      "id": "TUI-02",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "NoDeadlock",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-03": {
+      "id": "TUI-03",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "DepthBounded",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-04": {
+      "id": "TUI-04",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "EscapeProgress",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-05": {
+      "id": "TUI-05",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "EventuallyExits",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "TUI-06": {
+      "id": "TUI-06",
+      "properties": [
+        {
+          "model_file": "formal/tla/TUINavigation.tla",
+          "property_name": "MainMenuReachable",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "MCPENV-04": {
+      "id": "MCPENV-04",
+      "properties": [
+        {
+          "model_file": "formal/prism/mcp-availability.props",
+          "property_name": "S=? [ \"min_quorum_available\" ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/mcp-availability.props",
+          "property_name": "S=? [ \"total_outage\" ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/mcp-availability.props",
+          "property_name": "S=? [ \"majority_available\" ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/mcp-availability.pm",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "FAIL-01": {
+      "id": "FAIL-01",
+      "properties": [
+        {
+          "model_file": "formal/prism/mcp-availability.props",
+          "property_name": "S=? [ \"total_outage\" ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/mcp-availability.pm",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PRM-AM-01": {
+      "id": "PRM-AM-01",
+      "properties": [
+        {
+          "model_file": "formal/prism/oauth-rotation.props",
+          "property_name": "P=? [ F s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/oauth-rotation.props",
+          "property_name": "P=? [ F s=0 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/oauth-rotation.props",
+          "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/oauth-rotation.pm",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "CRED-12": {
+      "id": "CRED-12",
+      "properties": [
+        {
+          "model_file": "formal/prism/oauth-rotation.props",
+          "property_name": "P=? [ F s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/oauth-rotation.pm",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "PRM-01": {
+      "id": "PRM-01",
+      "properties": [
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "P=? [ F s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "R{\"rounds\"}=? [ F s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "P=? [ F<=9 s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": "formal/prism/quorum.props",
+          "property_name": "P=? [ F<=10 s=1 ]",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    }
+  },
+  "properties": {
+    "formal/alloy/account-pool-structure.als::AddPreservesValidity": {
+      "model_file": "formal/alloy/account-pool-structure.als",
+      "property_name": "AddPreservesValidity",
+      "requirement_ids": [
+        "CRED-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/account-pool-structure.als::SwitchPreservesValidity": {
+      "model_file": "formal/alloy/account-pool-structure.als",
+      "property_name": "SwitchPreservesValidity",
+      "requirement_ids": [
+        "CRED-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/account-pool-structure.als::RemovePreservesValidity": {
+      "model_file": "formal/alloy/account-pool-structure.als",
+      "property_name": "RemovePreservesValidity",
+      "requirement_ids": [
+        "CRED-09"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/account-pool-structure.als::SwitchPreservesPool": {
+      "model_file": "formal/alloy/account-pool-structure.als",
+      "property_name": "SwitchPreservesPool",
+      "requirement_ids": [
+        "CRED-10"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/account-pool-structure.als::RemoveShrinksPool": {
+      "model_file": "formal/alloy/account-pool-structure.als",
+      "property_name": "RemoveShrinksPool",
+      "requirement_ids": [
+        "CRED-11"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/availability-parsing.als::ParseCorrect": {
+      "model_file": "formal/alloy/availability-parsing.als",
+      "property_name": "ParseCorrect",
+      "requirement_ids": [
+        "CALIB-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/availability-parsing.als::YearRolloverHandled": {
+      "model_file": "formal/alloy/availability-parsing.als",
+      "property_name": "YearRolloverHandled",
+      "requirement_ids": [
+        "CALIB-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/availability-parsing.als::FallbackIsNull": {
+      "model_file": "formal/alloy/availability-parsing.als",
+      "property_name": "FallbackIsNull",
+      "requirement_ids": [
+        "CALIB-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/install-scope.als::AllEquivalence": {
+      "model_file": "formal/alloy/install-scope.als",
+      "property_name": "AllEquivalence",
+      "requirement_ids": [
+        "INST-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/install-scope.als::InstallIdempotent": {
+      "model_file": "formal/alloy/install-scope.als",
+      "property_name": "InstallIdempotent",
+      "requirement_ids": [
+        "INST-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/install-scope.als::NoConflict": {
+      "model_file": "formal/alloy/install-scope.als",
+      "property_name": "NoConflict",
+      "requirement_ids": [
+        "INST-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/install-scope.als::RollbackSoundCheck": {
+      "model_file": "formal/alloy/install-scope.als",
+      "property_name": "RollbackSoundCheck",
+      "requirement_ids": [
+        "INST-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/install-scope.als::ConfigSyncCompleteCheck": {
+      "model_file": "formal/alloy/install-scope.als",
+      "property_name": "ConfigSyncCompleteCheck",
+      "requirement_ids": [
+        "INST-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/quorum-composition.als::AllRulesHold": {
+      "model_file": "formal/alloy/quorum-composition.als",
+      "property_name": "AllRulesHold",
+      "requirement_ids": [
+        "SPEC-03",
+        "COMP-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/quorum-votes.als::ThresholdPasses": {
+      "model_file": "formal/alloy/quorum-votes.als",
+      "property_name": "ThresholdPasses",
+      "requirement_ids": [
+        "QUORUM-02",
+        "SAFE-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/quorum-votes.als::BelowThresholdFails": {
+      "model_file": "formal/alloy/quorum-votes.als",
+      "property_name": "BelowThresholdFails",
+      "requirement_ids": [
+        "QUORUM-02",
+        "SAFE-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
+      "model_file": "formal/alloy/quorum-votes.als",
+      "property_name": "ZeroApprovalsFail",
+      "requirement_ids": [
+        "SAFE-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/scoreboard-recompute.als::RecomputeIdempotent": {
+      "model_file": "formal/alloy/scoreboard-recompute.als",
+      "property_name": "RecomputeIdempotent",
+      "requirement_ids": [
+        "SCBD-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/scoreboard-recompute.als::NoVoteLoss": {
+      "model_file": "formal/alloy/scoreboard-recompute.als",
+      "property_name": "NoVoteLoss",
+      "requirement_ids": [
+        "SCBD-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/scoreboard-recompute.als::NoDoubleCounting": {
+      "model_file": "formal/alloy/scoreboard-recompute.als",
+      "property_name": "NoDoubleCounting",
+      "requirement_ids": [
+        "SCBD-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/scoreboard-recompute.als::TNplusScoreIsCorrect": {
+      "model_file": "formal/alloy/scoreboard-recompute.als",
+      "property_name": "TNplusScoreIsCorrect",
+      "requirement_ids": [
+        "SCBD-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/taxonomy-safety.als::NoInjection": {
+      "model_file": "formal/alloy/taxonomy-safety.als",
+      "property_name": "NoInjection",
+      "requirement_ids": [
+        "SCBD-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/taxonomy-safety.als::TaxonomyClosed": {
+      "model_file": "formal/alloy/taxonomy-safety.als",
+      "property_name": "TaxonomyClosed",
+      "requirement_ids": [
+        "SCBD-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/taxonomy-safety.als::NewCategoryConsistent": {
+      "model_file": "formal/alloy/taxonomy-safety.als",
+      "property_name": "NewCategoryConsistent",
+      "requirement_ids": [
+        "SCBD-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/transcript-scan.als::BoundaryCorrectCheck": {
+      "model_file": "formal/alloy/transcript-scan.als",
+      "property_name": "BoundaryCorrectCheck",
+      "requirement_ids": [
+        "STOP-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/transcript-scan.als::PairingUniqueCheck": {
+      "model_file": "formal/alloy/transcript-scan.als",
+      "property_name": "PairingUniqueCheck",
+      "requirement_ids": [
+        "STOP-09"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/transcript-scan.als::NoDuplicateCountingCheck": {
+      "model_file": "formal/alloy/transcript-scan.als",
+      "property_name": "NoDuplicateCountingCheck",
+      "requirement_ids": [
+        "STOP-10"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/alloy/transcript-scan.als::SuccessCountNeverExceedsMinSizeCheck": {
+      "model_file": "formal/alloy/transcript-scan.als",
+      "property_name": "SuccessCountNeverExceedsMinSizeCheck",
+      "requirement_ids": [
+        "STOP-11"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "CRED-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::ActiveIsPoolMember": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "ActiveIsPoolMember",
+      "requirement_ids": [
+        "CRED-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::NoActiveWhenEmpty": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "NoActiveWhenEmpty",
+      "requirement_ids": [
+        "CRED-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::IdleNoPending": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "IdleNoPending",
+      "requirement_ids": [
+        "CRED-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::OpMatchesState": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "OpMatchesState",
+      "requirement_ids": [
+        "CRED-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDAccountManager.tla::IdleReachable": {
+      "model_file": "formal/tla/QGSDAccountManager.tla",
+      "property_name": "IdleReachable",
+      "requirement_ids": [
+        "CRED-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDCircuitBreaker.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "DETECT-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDCircuitBreaker.tla::DisabledExcludesActive": {
+      "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+      "property_name": "DisabledExcludesActive",
+      "requirement_ids": [
+        "DETECT-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDCircuitBreaker.tla::MonitoringReachable": {
+      "model_file": "formal/tla/QGSDCircuitBreaker.tla",
+      "property_name": "MonitoringReachable",
+      "requirement_ids": [
+        "DETECT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDConvergence.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDConvergence.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "ORES-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDConvergence.tla::ResolvedAtWriteOnce": {
+      "model_file": "formal/tla/QGSDConvergence.tla",
+      "property_name": "ResolvedAtWriteOnce",
+      "requirement_ids": [
+        "ORES-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDConvergence.tla::LogBeforeDelete": {
+      "model_file": "formal/tla/QGSDConvergence.tla",
+      "property_name": "LogBeforeDelete",
+      "requirement_ids": [
+        "ORES-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDConvergence.tla::HaikuUnavailableNoCorruption": {
+      "model_file": "formal/tla/QGSDConvergence.tla",
+      "property_name": "HaikuUnavailableNoCorruption",
+      "requirement_ids": [
+        "ORES-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDConvergence.tla::ConvergenceEventuallyResolves": {
+      "model_file": "formal/tla/QGSDConvergence.tla",
+      "property_name": "ConvergenceEventuallyResolves",
+      "requirement_ids": [
+        "ORES-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDDeliberation.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDDeliberation.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "PLAN-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDDeliberation.tla::TotalRoundsBounded": {
+      "model_file": "formal/tla/QGSDDeliberation.tla",
+      "property_name": "TotalRoundsBounded",
+      "requirement_ids": [
+        "LOOP-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDDeliberation.tla::DeliberationMonotone": {
+      "model_file": "formal/tla/QGSDDeliberation.tla",
+      "property_name": "DeliberationMonotone",
+      "requirement_ids": [
+        "SAFE-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDDeliberation.tla::ImprovementMonotone": {
+      "model_file": "formal/tla/QGSDDeliberation.tla",
+      "property_name": "ImprovementMonotone",
+      "requirement_ids": [
+        "IMPR-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDDeliberation.tla::ProtocolTerminates": {
+      "model_file": "formal/tla/QGSDDeliberation.tla",
+      "property_name": "ProtocolTerminates",
+      "requirement_ids": [
+        "PLAN-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDMCPEnv.tla::NoSpuriousConsensus": {
+      "model_file": "formal/tla/QGSDMCPEnv.tla",
+      "property_name": "NoSpuriousConsensus",
+      "requirement_ids": [
+        "MCPENV-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDMCPEnv.tla::TypeInvariantHolds": {
+      "model_file": "formal/tla/QGSDMCPEnv.tla",
+      "property_name": "TypeInvariantHolds",
+      "requirement_ids": [
+        "MCPENV-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDMCPEnv.tla::EventualDecision": {
+      "model_file": "formal/tla/QGSDMCPEnv.tla",
+      "property_name": "EventualDecision",
+      "requirement_ids": [
+        "MCPENV-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDOscillation.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDOscillation.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "DETECT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDOscillation.tla::OscillationFlaggedCorrectly": {
+      "model_file": "formal/tla/QGSDOscillation.tla",
+      "property_name": "OscillationFlaggedCorrectly",
+      "requirement_ids": [
+        "DETECT-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDOscillation.tla::AlgorithmTerminates": {
+      "model_file": "formal/tla/QGSDOscillation.tla",
+      "property_name": "AlgorithmTerminates",
+      "requirement_ids": [
+        "DETECT-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDPreFilter.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDPreFilter.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "PLAN-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDPreFilter.tla::AutoResolutionSound": {
+      "model_file": "formal/tla/QGSDPreFilter.tla",
+      "property_name": "AutoResolutionSound",
+      "requirement_ids": [
+        "PLAN-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDPreFilter.tla::FilterRoundsBounded": {
+      "model_file": "formal/tla/QGSDPreFilter.tla",
+      "property_name": "FilterRoundsBounded",
+      "requirement_ids": [
+        "LOOP-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDPreFilter.tla::AutoResolvedPhaseConsistent": {
+      "model_file": "formal/tla/QGSDPreFilter.tla",
+      "property_name": "AutoResolvedPhaseConsistent",
+      "requirement_ids": [
+        "PLAN-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDPreFilter.tla::PreFilterTerminates": {
+      "model_file": "formal/tla/QGSDPreFilter.tla",
+      "property_name": "PreFilterTerminates",
+      "requirement_ids": [
+        "PLAN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "QUORUM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::UnanimityMet": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "UnanimityMet",
+      "requirement_ids": [
+        "QUORUM-02",
+        "SAFE-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "QuorumCeilingMet",
+      "requirement_ids": [
+        "QUORUM-03",
+        "SLOT-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::AllTransitionsValid": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "AllTransitionsValid",
+      "requirement_ids": [
+        "SAFE-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::DeliberationBounded": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "DeliberationBounded",
+      "requirement_ids": [
+        "LOOP-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::DeliberationMonotone": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "DeliberationMonotone",
+      "requirement_ids": [
+        "SAFE-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum.tla::EventualConsensus": {
+      "model_file": "formal/tla/QGSDQuorum.tla",
+      "property_name": "EventualConsensus",
+      "requirement_ids": [
+        "QUORUM-04",
+        "RECV-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDQuorum_xstate.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDQuorum_xstate.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "QUORUM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDRecruiting.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDRecruiting.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "SLOT-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDRecruiting.tla::PolledCeiling": {
+      "model_file": "formal/tla/QGSDRecruiting.tla",
+      "property_name": "PolledCeiling",
+      "requirement_ids": [
+        "SLOT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDRecruiting.tla::SubslotsFirst": {
+      "model_file": "formal/tla/QGSDRecruiting.tla",
+      "property_name": "SubslotsFirst",
+      "requirement_ids": [
+        "SLOT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDRecruiting.tla::FullRecruitment": {
+      "model_file": "formal/tla/QGSDRecruiting.tla",
+      "property_name": "FullRecruitment",
+      "requirement_ids": [
+        "SLOT-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::TypeOK": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "STOP-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::SafetyInvariant1": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "SafetyInvariant1",
+      "requirement_ids": [
+        "STOP-02",
+        "SPEC-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::SafetyInvariant2": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "SafetyInvariant2",
+      "requirement_ids": [
+        "STOP-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::SafetyInvariant3": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "SafetyInvariant3",
+      "requirement_ids": [
+        "STOP-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::LivenessProperty1": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "LivenessProperty1",
+      "requirement_ids": [
+        "STOP-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::LivenessProperty2": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "LivenessProperty2",
+      "requirement_ids": [
+        "STOP-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/QGSDStopHook.tla::LivenessProperty3": {
+      "model_file": "formal/tla/QGSDStopHook.tla",
+      "property_name": "LivenessProperty3",
+      "requirement_ids": [
+        "STOP-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::TypeOK": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "TUI-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::NoDeadlock": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "NoDeadlock",
+      "requirement_ids": [
+        "TUI-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::DepthBounded": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "DepthBounded",
+      "requirement_ids": [
+        "TUI-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::EscapeProgress": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "EscapeProgress",
+      "requirement_ids": [
+        "TUI-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::EventuallyExits": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "EventuallyExits",
+      "requirement_ids": [
+        "TUI-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/tla/TUINavigation.tla::MainMenuReachable": {
+      "model_file": "formal/tla/TUINavigation.tla",
+      "property_name": "MainMenuReachable",
+      "requirement_ids": [
+        "TUI-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/mcp-availability.props::S=? [ \"min_quorum_available\" ]": {
+      "model_file": "formal/prism/mcp-availability.props",
+      "property_name": "S=? [ \"min_quorum_available\" ]",
+      "requirement_ids": [
+        "MCPENV-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/mcp-availability.props::S=? [ \"total_outage\" ]": {
+      "model_file": "formal/prism/mcp-availability.props",
+      "property_name": "S=? [ \"total_outage\" ]",
+      "requirement_ids": [
+        "MCPENV-04",
+        "FAIL-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/mcp-availability.props::S=? [ \"majority_available\" ]": {
+      "model_file": "formal/prism/mcp-availability.props",
+      "property_name": "S=? [ \"majority_available\" ]",
+      "requirement_ids": [
+        "MCPENV-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/oauth-rotation.props::P=? [ F s=1 ]": {
+      "model_file": "formal/prism/oauth-rotation.props",
+      "property_name": "P=? [ F s=1 ]",
+      "requirement_ids": [
+        "PRM-AM-01",
+        "CRED-12"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/oauth-rotation.props::P=? [ F s=0 ]": {
+      "model_file": "formal/prism/oauth-rotation.props",
+      "property_name": "P=? [ F s=0 ]",
+      "requirement_ids": [
+        "PRM-AM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/oauth-rotation.props::R{\"rotations\"}=? [ F s<=1 ]": {
+      "model_file": "formal/prism/oauth-rotation.props",
+      "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
+      "requirement_ids": [
+        "PRM-AM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/quorum.props::P=? [ F s=1 ]": {
+      "model_file": "formal/prism/quorum.props",
+      "property_name": "P=? [ F s=1 ]",
+      "requirement_ids": [
+        "PRM-01",
+        "QUORUM-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/quorum.props::R{\"rounds\"}=? [ F s=1 ]": {
+      "model_file": "formal/prism/quorum.props",
+      "property_name": "R{\"rounds\"}=? [ F s=1 ]",
+      "requirement_ids": [
+        "PRM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/quorum.props::P=? [ F<=9 s=1 ]": {
+      "model_file": "formal/prism/quorum.props",
+      "property_name": "P=? [ F<=9 s=1 ]",
+      "requirement_ids": [
+        "PRM-01",
+        "LOOP-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/quorum.props::P=? [ F<=10 s=1 ]": {
+      "model_file": "formal/prism/quorum.props",
+      "property_name": "P=? [ F<=10 s=1 ]",
+      "requirement_ids": [
+        "PRM-01"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/mcp-availability.pm::(model-level)": {
+      "model_file": "formal/prism/mcp-availability.pm",
+      "property_name": "(model-level)",
+      "requirement_ids": [
+        "MCPENV-04",
+        "FAIL-01"
+      ],
+      "source": "model-registry",
+      "latest_result": null,
+      "check_id": null
+    },
+    "formal/prism/oauth-rotation.pm::(model-level)": {
+      "model_file": "formal/prism/oauth-rotation.pm",
+      "property_name": "(model-level)",
+      "requirement_ids": [
+        "PRM-AM-01",
+        "CRED-12"
+      ],
+      "source": "model-registry",
+      "latest_result": null,
+      "check_id": null
+    }
+  },
+  "coverage_summary": {
+    "total_requirements": 210,
+    "covered_count": 57,
+    "coverage_percentage": 27.1,
+    "uncovered_requirements": [
+      "ACT-01",
+      "ACT-02",
+      "ACT-03",
+      "ACT-04",
+      "ACT-05",
+      "ACT-06",
+      "ACT-07",
+      "AGENT-01",
+      "AGENT-02",
+      "AGENT-03",
+      "ARCH-01",
+      "ARCH-02",
+      "ARCH-03",
+      "BLD-01",
+      "BLD-02",
+      "CALIB-04",
+      "CL-01",
+      "CL-02",
+      "COMP-02",
+      "COMP-03",
+      "COMP-04",
+      "CONF-01",
+      "CONF-02",
+      "CONF-03",
+      "CONF-04",
+      "CONF-05",
+      "CONF-06",
+      "CONF-07",
+      "CONF-08",
+      "CONF-09",
+      "DASH-01",
+      "DASH-02",
+      "DASH-03",
+      "DIAG-01",
+      "DIAG-02",
+      "DIAG-03",
+      "DISP-01",
+      "DISP-02",
+      "DISP-03",
+      "DISP-04",
+      "DISP-05",
+      "DRIFT-01",
+      "DRIFT-02",
+      "ENFC-02",
+      "ENFC-03",
+      "EVID-01",
+      "EVID-02",
+      "FAIL-02",
+      "HEAL-01",
+      "HEAL-02",
+      "HLTH-01",
+      "HLTH-02",
+      "HLTH-03",
+      "IMPR-02",
+      "IMPR-03",
+      "IMPR-04",
+      "INST-06",
+      "INST-07",
+      "INST-08",
+      "INST-09",
+      "INST-10",
+      "KEY-01",
+      "KEY-02",
+      "KEY-03",
+      "KEY-04",
+      "LIVE-01",
+      "LIVE-02",
+      "LOOP-04",
+      "MCP-01",
+      "MCP-02",
+      "MCP-03",
+      "MCP-04",
+      "MCP-05",
+      "MCP-06",
+      "META-01",
+      "META-02",
+      "META-03",
+      "MULTI-01",
+      "MULTI-02",
+      "MULTI-03",
+      "OBS-01",
+      "OBS-02",
+      "OBS-03",
+      "OBS-04",
+      "PLCY-01",
+      "PLCY-02",
+      "PLCY-03",
+      "PORT-01",
+      "PORT-02",
+      "PORT-03",
+      "PROV-01",
+      "PROV-02",
+      "PROV-03",
+      "PRST-01",
+      "PRST-02",
+      "REDACT-01",
+      "REDACT-02",
+      "REDACT-03",
+      "REN-01",
+      "REN-02",
+      "REN-03",
+      "REN-04",
+      "RLS-01",
+      "RLS-02",
+      "RLS-03",
+      "RLS-04",
+      "SCHEMA-01",
+      "SCHEMA-02",
+      "SCHEMA-03",
+      "SENS-01",
+      "SENS-02",
+      "SENS-03",
+      "SIG-01",
+      "SIG-02",
+      "SIG-03",
+      "SIG-04",
+      "SPEC-02",
+      "SPEC-04",
+      "STATE-01",
+      "STATE-02",
+      "STATE-03",
+      "STATE-04",
+      "STD-02",
+      "STD-10",
+      "SYNC-01",
+      "SYNC-02",
+      "SYNC-03",
+      "SYNC-04",
+      "TRIAGE-01",
+      "TRIAGE-02",
+      "UNIF-01",
+      "UNIF-02",
+      "UNIF-03",
+      "UNIF-04",
+      "UPPAAL-01",
+      "UPPAAL-02",
+      "UPPAAL-03",
+      "UPS-01",
+      "UPS-02",
+      "UPS-03",
+      "UPS-04",
+      "UPS-05",
+      "VERIFY-01",
+      "VERIFY-02",
+      "VIS-01",
+      "WIZ-01",
+      "WIZ-02",
+      "WIZ-03",
+      "WIZ-04",
+      "WIZ-05",
+      "WIZ-08",
+      "WIZ-09",
+      "WIZ-10"
+    ],
+    "orphan_properties": []
+  }
+}
