@@ -1295,7 +1295,11 @@ Archive: .planning/milestones/v0.25-ROADMAP.md
   1. User can rotate API keys across multiple slots in a single batch flow from the main menu without editing each slot individually
   2. After a health probe, key validity status (valid/invalid/unknown) persists to qgsd.json so subsequent sessions show status without re-probing
   3. Batch rotation does not block quorum dispatch (rotation is async or sequenced to avoid slot downtime)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] v0.26-02-01-PLAN.md -- Wire writeKeyStatus into health probe flow (CRED-02)
+- [ ] v0.26-02-02-PLAN.md -- Batch rotation post-validation + integration tests (CRED-01, CRED-02)
 
 ### Phase v0.26-03: Portable Installer & Presets
 **Goal**: Users can portably export, import, and configure their roster across machines
