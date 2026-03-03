@@ -20,6 +20,7 @@ const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { parseNDJSON } = require('./verify-formal-results.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 const CHECK_ID  = 'uppaal:quorum-races';
 const SURFACE   = 'uppaal';
@@ -100,6 +101,7 @@ function main() {
       runtime_ms: Date.now() - startMs,
       summary: 'inconclusive: model files not found — run Plan 03 first',
       triage_tags: ['missing-model'],
+      requirement_ids: getRequirementIds(CHECK_ID),
       metadata: { missing },
     });
     process.exit(0);
@@ -122,6 +124,7 @@ function main() {
       runtime_ms: Date.now() - startMs,
       summary: 'inconclusive: verifyta not installed — install UPPAAL to run model checker',
       triage_tags: ['no-verifyta'],
+      requirement_ids: getRequirementIds(CHECK_ID),
       metadata: {
         min_slot_ms: bounds.minSlotMs,
         max_slot_ms: bounds.maxSlotMs,
@@ -154,6 +157,7 @@ function main() {
       runtime_ms: runtimeMs,
       summary: 'fail: verifyta launch error — ' + result.error.message,
       triage_tags: ['verifyta-error'],
+      requirement_ids: getRequirementIds(CHECK_ID),
       metadata: { bounds },
     });
     process.exit(0);
@@ -169,6 +173,7 @@ function main() {
       ' (min_slot=' + bounds.minSlotMs + 'ms, max_slot=' + bounds.maxSlotMs +
       'ms, timeout=' + bounds.timeoutMs + 'ms)',
     triage_tags: passed ? [] : ['race-detected'],
+    requirement_ids: getRequirementIds(CHECK_ID),
     metadata: { bounds, exit_status: result.status },
   });
 }

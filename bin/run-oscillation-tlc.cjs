@@ -18,6 +18,7 @@ const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { detectLivenessProperties } = require('./run-tlc.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 const CHECK_ID_MAP = {
   'MCoscillation': 'tla:oscillation',
@@ -44,7 +45,7 @@ if (!VALID_CONFIGS.includes(configName)) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: unknown config in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: unknown config in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -61,7 +62,7 @@ if (JAVA_HOME) {
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -74,7 +75,7 @@ if (JAVA_HOME) {
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -86,7 +87,7 @@ if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-oscillation-tlc] Failed to run: ' + javaExe + ' --version\n');
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -100,7 +101,7 @@ if (javaMajor < 17) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -115,7 +116,7 @@ if (!fs.existsSync(jarPath)) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -149,7 +150,7 @@ if (tlcResult.error) {
   process.stderr.write('[run-oscillation-tlc] TLC invocation failed: ' + tlcResult.error.message + '\n');
   const check_id = CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase());
   const property = PROPERTY_MAP[configName] || configName;
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms', metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds(check_id), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -172,6 +173,7 @@ if (passed) {
         runtime_ms: _runtimeMs,
         summary: 'inconclusive: fairness missing in ' + _runtimeMs + 'ms',
         triage_tags: ['needs-fairness'],
+        requirement_ids: getRequirementIds(check_id),
         metadata: {
           config: configName,
           reason: 'Fairness declaration missing for: ' + missingDeclarations.join(', '),
@@ -183,9 +185,9 @@ if (passed) {
     process.stdout.write('[run-oscillation-tlc] Result: inconclusive — fairness declaration missing for: ' + missingDeclarations.join(', ') + '\n');
     process.exit(0);
   }
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'pass', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'pass: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'pass', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'pass: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, requirement_ids: getRequirementIds(check_id), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(0);
 } else {
-  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oscillation-tlc', formalism: 'tla', result: 'fail', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + configName + ' in ' + _runtimeMs + 'ms', triage_tags: triage_tags, requirement_ids: getRequirementIds(check_id), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-oscillation-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(tlcResult.status || 0);
 }

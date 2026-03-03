@@ -22,6 +22,7 @@ const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { readPolicy } = require('./read-policy.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 // ── Check ID mapping for multi-model support ─────────────────────────────────
 const CHECK_ID_MAP = {
@@ -49,6 +50,7 @@ if (prismBin !== 'prism' && !fs.existsSync(prismBin)) {
       tool: 'run-prism', formalism: 'prism', result: 'fail',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
       runtime_ms: 0, summary: 'fail: prism:quorum (binary not found)', triage_tags: [],
+      requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
     });
@@ -67,6 +69,7 @@ if (!fs.existsSync(modelPath)) {
       tool: 'run-prism', formalism: 'prism', result: 'fail',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
       runtime_ms: 0, summary: 'fail: prism:quorum (model not found)', triage_tags: [],
+      requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
     });
@@ -137,6 +140,7 @@ try {
       tool: 'run-prism', formalism: 'prism', result: 'fail',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
       runtime_ms: 0, summary: 'fail: prism:quorum (policy load failed)', triage_tags: [],
+      requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
     });
@@ -354,6 +358,7 @@ if (result.error) {
       tool: 'run-prism', formalism: 'prism', result: 'fail',
       check_id: check_id, surface: 'prism', property: PROPERTY_MAP[modelName],
       runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: [],
+      requirement_ids: getRequirementIds(check_id),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
     });
@@ -412,6 +417,7 @@ try {
     runtime_ms:         _runtimeMs,
     summary:            finalResult + ': ' + modelName + ' in ' + _runtimeMs + 'ms',
     triage_tags:        tags,
+    requirement_ids:    getRequirementIds(check_id),
     observation_window: observationWindow,
     metadata:           metadata,
   });

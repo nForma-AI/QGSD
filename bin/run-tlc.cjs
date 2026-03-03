@@ -17,6 +17,7 @@ const { spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 const VALID_CONFIGS = ['MCsafety', 'MCliveness', 'MCMCPEnv'];
 
@@ -126,6 +127,7 @@ if (require.main === module) {
         property: 'Unknown config: ' + configName,
         runtime_ms: _runtimeMs,
         summary: 'fail: unknown config in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds('tla:unknown'),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -157,6 +159,7 @@ if (require.main === module) {
           property: PROPERTY_MAP[configName] || configName,
           runtime_ms: _runtimeMs,
           summary: 'fail: Java not found in ' + _runtimeMs + 'ms',
+          requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
           metadata: { config: configName }
         });
       } catch (e) {
@@ -184,6 +187,7 @@ if (require.main === module) {
           property: PROPERTY_MAP[configName] || configName,
           runtime_ms: _runtimeMs,
           summary: 'fail: Java not found in ' + _runtimeMs + 'ms',
+          requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
           metadata: { config: configName }
         });
       } catch (e) {
@@ -210,6 +214,7 @@ if (require.main === module) {
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
         summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -238,6 +243,7 @@ if (require.main === module) {
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
         summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -267,6 +273,7 @@ if (require.main === module) {
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
         summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -308,6 +315,7 @@ if (require.main === module) {
         property: property,
         runtime_ms: _runtimeMs,
         summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds(check_id),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -336,6 +344,7 @@ if (require.main === module) {
           runtime_ms: _runtimeMs,
           summary: 'inconclusive: fairness missing in ' + _runtimeMs + 'ms',
           triage_tags: ['needs-fairness'],
+          requirement_ids: getRequirementIds(check_id),
           metadata: {
             config: configName,
             reason: 'Fairness declaration missing for: ' + missingDeclarations.join(', '),
@@ -358,6 +367,7 @@ if (require.main === module) {
           runtime_ms: _runtimeMs,
           summary: 'pass: ' + configName + ' in ' + _runtimeMs + 'ms',
           triage_tags: triage_tags,
+          requirement_ids: getRequirementIds(check_id),
           metadata: { config: configName }
         });
       } catch (e) {
@@ -377,6 +387,7 @@ if (require.main === module) {
         runtime_ms: _runtimeMs,
         summary: 'fail: ' + configName + ' in ' + _runtimeMs + 'ms',
         triage_tags: triage_tags,
+        requirement_ids: getRequirementIds(check_id),
         metadata: { config: configName }
       });
     } catch (e) {

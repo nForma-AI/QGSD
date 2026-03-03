@@ -10,6 +10,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 const DEFAULT_POLICY_PATH = path.join(__dirname, '..', 'formal', 'trace', 'redaction.yaml');
 
@@ -170,6 +171,7 @@ if (require.main === module) {
         result: 'pass',
         check_id: 'ci:trace-redaction', surface: 'ci', property: 'Trace redaction — no forbidden keys or patterns in conformance event logs',
         runtime_ms: Date.now() - _startMs, summary: 'pass: ci:trace-redaction in ' + (Date.now() - _startMs) + 'ms', triage_tags: [],
+        requirement_ids: getRequirementIds('ci:trace-redaction'),
         metadata: { reason: 'no-trace-directory', directory: traceDir },
       });
     } catch (e) {
@@ -190,6 +192,7 @@ if (require.main === module) {
         result: 'pass',
         check_id: 'ci:trace-redaction', surface: 'ci', property: 'Trace redaction — no forbidden keys or patterns in conformance event logs',
         runtime_ms: Date.now() - _startMs, summary: 'pass: ci:trace-redaction in ' + (Date.now() - _startMs) + 'ms', triage_tags: [],
+        requirement_ids: getRequirementIds('ci:trace-redaction'),
         metadata: { reason: 'no-trace-events', directory: traceDir },
       });
     } catch (e) {
@@ -237,6 +240,7 @@ if (require.main === module) {
         result: 'fail',
         check_id: 'ci:trace-redaction', surface: 'ci', property: 'Trace redaction — no forbidden keys or patterns in conformance event logs',
         runtime_ms: _runtimeMs, summary: 'fail: ci:trace-redaction in ' + _runtimeMs + 'ms', triage_tags: [],
+        requirement_ids: getRequirementIds('ci:trace-redaction'),
         metadata: {
           violations: allViolations.slice(0, 10),
           total_violations: allViolations.length,
@@ -255,6 +259,7 @@ if (require.main === module) {
       result: 'pass',
       check_id: 'ci:trace-redaction', surface: 'ci', property: 'Trace redaction — no forbidden keys or patterns in conformance event logs',
       runtime_ms: _runtimeMs, summary: 'pass: ci:trace-redaction in ' + _runtimeMs + 'ms', triage_tags: [],
+      requirement_ids: getRequirementIds('ci:trace-redaction'),
       metadata: { files_checked: fileCount, events_checked: eventCount },
     });
   } catch (e) {

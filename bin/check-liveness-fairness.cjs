@@ -10,6 +10,7 @@ const fs   = require('fs');
 const path = require('path');
 const { detectLivenessProperties } = require('./run-tlc.cjs');
 const { writeCheckResult }         = require('./write-check-result.cjs');
+const { getRequirementIds }        = require('./requirement-map.cjs');
 
 const TAG = '[check-liveness-fairness]';
 
@@ -67,6 +68,7 @@ try {
     runtime_ms: runtimeMs,
     summary:    summaryText,
     triage_tags: hasMissing ? ['needs-fairness'] : [],
+    requirement_ids: getRequirementIds('ci:liveness-fairness-lint'),
     metadata: {
       configs_checked: configsChecked,
       configs_missing: allMissing.length,

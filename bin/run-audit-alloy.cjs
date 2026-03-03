@@ -19,6 +19,7 @@ const { spawnSync } = require('child_process');
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
+const { getRequirementIds } = require('./requirement-map.cjs');
 
 // ── 0. Parse --spec argument ──────────────────────────────────────────────────
 const VALID_SPECS = ['scoreboard-recompute', 'availability-parsing'];
@@ -43,7 +44,7 @@ if (!VALID_SPECS.includes(specName)) {
     '. Valid: ' + VALID_SPECS.join(', ') + '\n'
   );
   const check_id = CHECK_ID_MAP[specName] || ('alloy:' + specName);
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: PROPERTY_MAP[specName] || specName, runtime_ms: 0, summary: 'fail: ' + check_id + ' (invalid spec)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: PROPERTY_MAP[specName] || specName, runtime_ms: 0, summary: 'fail: ' + check_id + ' (invalid spec)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -61,7 +62,7 @@ if (JAVA_HOME) {
       '[run-audit-alloy] JAVA_HOME is set but java binary not found at: ' + javaExe + '\n' +
       '[run-audit-alloy] Unset JAVA_HOME or fix the path.\n'
     );
-    try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java not found)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -72,7 +73,7 @@ if (JAVA_HOME) {
       '[run-audit-alloy] Java not found. Install Java >=17 and set JAVA_HOME.\n' +
       '[run-audit-alloy] Download: https://adoptium.net/\n'
     );
-    try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java not found)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -82,7 +83,7 @@ if (JAVA_HOME) {
 const versionResult = spawnSync(javaExe, ['--version'], { encoding: 'utf8' });
 if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-audit-alloy] Failed to run: ' + javaExe + ' --version\n');
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (version check failed)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (version check failed)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -94,7 +95,7 @@ if (javaMajor < 17) {
     '[run-audit-alloy] Java >=17 required. Found: ' + versionOutput.split('\n')[0] + '\n' +
     '[run-audit-alloy] Download Java 17+: https://adoptium.net/\n'
   );
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java < 17)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (Java < 17)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -107,7 +108,7 @@ if (!fs.existsSync(jarPath)) {
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
     '       -o formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (JAR not found)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -118,7 +119,7 @@ if (!fs.existsSync(alsPath)) {
     '[run-audit-alloy] ' + specName + '.als not found at: ' + alsPath + '\n' +
     '[run-audit-alloy] This file should exist in the repository. Check your git status.\n'
   );
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (ALS not found)', triage_tags: [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (ALS not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -142,7 +143,7 @@ const alloyResult = spawnSync(javaExe, [
 if (alloyResult.error) {
   process.stderr.write('[run-audit-alloy] Alloy invocation failed: ' + alloyResult.error.message + '\n');
   const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -161,16 +162,16 @@ if (/Counterexample/i.test(stdout)) {
     '[run-audit-alloy] This indicates a spec violation — review formal/alloy/' + specName + '.als.\n'
   );
   const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
 if (alloyResult.status !== 0) {
   const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(alloyResult.status || 1);
 }
 
 const _runtimeMs = Date.now() - _startMs;
-try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'pass', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'pass: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'pass', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'pass: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
 process.exit(0);
