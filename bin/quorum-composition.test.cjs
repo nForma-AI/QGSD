@@ -3,10 +3,10 @@
 // bin/quorum-composition.test.cjs
 // Tests for the Alloy quorum composition model — SPEC-03.
 //
-// Test 1: formal/alloy/quorum-composition.als exists
+// Test 1: .formal/alloy/quorum-composition.als exists
 // Test 2: quorum-composition.als contains all 3 required facts
 // Test 3: Alloy verifies composition rules: no counterexample found (skips if JAR unavailable)
-// Test 4: model-registry.json has entry for formal/alloy/quorum-composition.als with update_source=manual
+// Test 4: model-registry.json has entry for .formal/alloy/quorum-composition.als with update_source=manual
 
 const { test } = require('node:test');
 const assert   = require('node:assert');
@@ -15,13 +15,13 @@ const path = require('path');
 const fs   = require('fs');
 
 const ROOT      = path.join(__dirname, '..');
-const ALS_FILE  = path.join(ROOT, 'formal', 'alloy', 'quorum-composition.als');
-const JAR_PATH  = path.join(ROOT, 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const ALS_FILE  = path.join(ROOT, '.formal', 'alloy', 'quorum-composition.als');
+const JAR_PATH  = path.join(ROOT, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 const RUNNER    = path.join(__dirname, 'run-quorum-composition-alloy.cjs');
-const REGISTRY  = path.join(ROOT, 'formal', 'model-registry.json');
+const REGISTRY  = path.join(ROOT, '.formal', 'model-registry.json');
 
-test('formal/alloy/quorum-composition.als exists', () => {
-  assert.ok(fs.existsSync(ALS_FILE), 'formal/alloy/quorum-composition.als must exist');
+test('.formal/alloy/quorum-composition.als exists', () => {
+  assert.ok(fs.existsSync(ALS_FILE), '.formal/alloy/quorum-composition.als must exist');
 });
 
 test('quorum-composition.als contains all 3 required facts', () => {
@@ -60,11 +60,11 @@ test('Alloy verifies composition rules: no counterexample found', (t) => {
   );
 });
 
-test('model-registry.json has entry for formal/alloy/quorum-composition.als with update_source=manual', () => {
-  assert.ok(fs.existsSync(REGISTRY), 'formal/model-registry.json must exist');
+test('model-registry.json has entry for .formal/alloy/quorum-composition.als with update_source=manual', () => {
+  assert.ok(fs.existsSync(REGISTRY), '.formal/model-registry.json must exist');
   const registry = JSON.parse(fs.readFileSync(REGISTRY, 'utf8'));
-  const entry = (registry.models || {})['formal/alloy/quorum-composition.als'];
-  assert.ok(entry, 'model-registry.json must have an entry for formal/alloy/quorum-composition.als');
+  const entry = (registry.models || {})['.formal/alloy/quorum-composition.als'];
+  assert.ok(entry, 'model-registry.json must have an entry for .formal/alloy/quorum-composition.als');
   assert.strictEqual(entry.update_source, 'manual', 'update_source must be "manual"');
   assert.ok(entry.description && entry.description.includes('SPEC-03'), 'description must reference SPEC-03');
 });

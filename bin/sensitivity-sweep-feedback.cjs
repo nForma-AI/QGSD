@@ -15,11 +15,11 @@ const DEVIATION_THRESHOLD = 0.05;
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 /**
- * Read formal/sensitivity-report.ndjson from cwd.
+ * Read .formal/sensitivity-report.ndjson from cwd.
  * Returns array of parsed NDJSON records, or null if file absent/malformed.
  */
 function readSweepRecords(cwd) {
-  const reportPath = path.join(cwd, 'formal', 'sensitivity-report.ndjson');
+  const reportPath = path.join(cwd, '.formal', 'sensitivity-report.ndjson');
   if (!fs.existsSync(reportPath)) {
     return null;
   }
@@ -72,7 +72,7 @@ const cwd = process.cwd();
 // 1. Read sensitivity report
 const allRecords = readSweepRecords(cwd);
 if (allRecords === null) {
-  process.stdout.write('[sensitivity-sweep-feedback] Warning: formal/sensitivity-report.ndjson not found — no feedback to process.\n');
+  process.stdout.write('[sensitivity-sweep-feedback] Warning: .formal/sensitivity-report.ndjson not found — no feedback to process.\n');
   process.exit(0);
 }
 

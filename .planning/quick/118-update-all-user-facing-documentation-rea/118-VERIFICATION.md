@@ -40,7 +40,7 @@ score: 5/5 must-haves verified
 | README.md section (line 166) | `bin/manage-agents-blessed.cjs` | Invocation command `node bin/manage-agents-blessed.cjs` | ✓ WIRED | File exists at `/Users/jonathanborduas/code/QGSD/bin/manage-agents-blessed.cjs` (77.7 KB), directly referenced in README |
 | README.md section (line 665) | `bin/run-formal-verify.cjs` | Invocation command `node bin/run-formal-verify.cjs` | ✓ WIRED | File exists at `/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs` (17.8 KB), directly referenced in README with all flags documented |
 | README.md section (line 686) | Individual runners (tlc, alloy, prism, petri) | Direct reference to `bin/run-tlc.cjs`, `bin/run-alloy.cjs`, `bin/run-prism.cjs`, `bin/generate-petri-net.cjs` | ✓ WIRED | All four files exist; runners are: `run-tlc.cjs` (10.9 KB), `run-alloy.cjs` (7.3 KB), `run-prism.cjs` (15.7 KB), `generate-petri-net.cjs` (4.5 KB) |
-| README.md formal verification section (lines 650-659) | Formal spec directories | Direct reference to `formal/tla/`, `formal/alloy/`, `formal/prism/`, `formal/petri/` | ✓ WIRED | All four directories exist and are properly referenced |
+| README.md formal verification section (lines 650-659) | Formal spec directories | Direct reference to `.formal/tla/`, `.formal/alloy/`, `.formal/prism/`, `.formal/petri/` | ✓ WIRED | All four directories exist and are properly referenced |
 
 ### Placement Verification
 
@@ -68,7 +68,7 @@ score: 5/5 must-haves verified
 | Formal Verification: Exit code explanation | ✓ | Lines 675 explains exit codes 0 and 1 |
 | Formal Verification: What Gets Checked table | ✓ | Lines 679-684 covers TLA+, Alloy, PRISM, Petri nets |
 | Formal Verification: Individual runner references | ✓ | Line 686 lists bin/run-tlc.cjs, bin/run-alloy.cjs, bin/run-prism.cjs, bin/generate-petri-net.cjs |
-| Formal Verification: Spec directory references | ✓ | Line 686 lists formal/tla/, formal/alloy/, formal/prism/, formal/petri/ |
+| Formal Verification: Spec directory references | ✓ | Line 686 lists .formal/tla/, .formal/alloy/, .formal/prism/, .formal/petri/ |
 | Back to top link | ✓ | Line 690 has `[Back to top](#table-of-contents)` |
 
 ### Anti-Pattern Scan

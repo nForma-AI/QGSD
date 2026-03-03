@@ -5,9 +5,9 @@ type: execute
 wave: 1
 depends_on: []
 files_modified:
-  - formal/tla/QGSDCircuitBreaker.tla
-  - formal/tla/MCbreaker.cfg
-  - formal/alloy/install-scope.als
+  - .formal/tla/QGSDCircuitBreaker.tla
+  - .formal/tla/MCbreaker.cfg
+  - .formal/alloy/install-scope.als
   - bin/run-breaker-tlc.cjs
   - bin/run-breaker-tlc.test.cjs
 autonomous: true
@@ -15,20 +15,20 @@ requirements:
   - QT-105
 must_haves:
   truths:
-    - "formal/tla/QGSDCircuitBreaker.tla is a valid standalone TLA+ spec (MODULE/EXTENDS/VARIABLES/Init/Next/==== structure)"
+    - ".formal/tla/QGSDCircuitBreaker.tla is a valid standalone TLA+ spec (MODULE/EXTENDS/VARIABLES/Init/Next/==== structure)"
     - "DisabledExcludesActive invariant is defined: disabled=TRUE => active=FALSE"
     - "MonitoringReachable liveness property is defined: <>(active=FALSE /\\ disabled=FALSE)"
     - "MCbreaker.cfg references QGSDCircuitBreaker spec with INVARIANT DisabledExcludesActive and PROPERTY MonitoringReachable"
-    - "formal/alloy/install-scope.als contains NoConflictingScope fact/assertion for the runtime scope matrix"
+    - ".formal/alloy/install-scope.als contains NoConflictingScope fact/assertion for the runtime scope matrix"
     - "bin/run-breaker-tlc.test.cjs passes with node (error-path tests only, no TLC execution required)"
   artifacts:
-    - path: "formal/tla/QGSDCircuitBreaker.tla"
+    - path: ".formal/tla/QGSDCircuitBreaker.tla"
       provides: "TLA+ circuit breaker FSM spec"
       contains: "MODULE QGSDCircuitBreaker"
-    - path: "formal/tla/MCbreaker.cfg"
+    - path: ".formal/tla/MCbreaker.cfg"
       provides: "TLC model config for circuit breaker"
       contains: "SPECIFICATION Spec"
-    - path: "formal/alloy/install-scope.als"
+    - path: ".formal/alloy/install-scope.als"
       provides: "Alloy 6 install scope matrix spec"
       contains: "module install_scope"
     - path: "bin/run-breaker-tlc.cjs"
@@ -38,12 +38,12 @@ must_haves:
       provides: "Error-path tests for run-breaker-tlc.cjs"
       contains: "run-breaker-tlc.cjs"
   key_links:
-    - from: "formal/tla/MCbreaker.cfg"
-      to: "formal/tla/QGSDCircuitBreaker.tla"
+    - from: ".formal/tla/MCbreaker.cfg"
+      to: ".formal/tla/QGSDCircuitBreaker.tla"
       via: "SPECIFICATION Spec directive"
       pattern: "SPECIFICATION Spec"
     - from: "bin/run-breaker-tlc.cjs"
-      to: "formal/tla/QGSDCircuitBreaker.tla"
+      to: ".formal/tla/QGSDCircuitBreaker.tla"
       via: "specPath resolved to QGSDCircuitBreaker.tla"
       pattern: "QGSDCircuitBreaker\\.tla"
     - from: "bin/run-breaker-tlc.test.cjs"
@@ -66,8 +66,8 @@ quorum:
 <objective>
 Add two formal verification specs for QGSD CLI state machines and a runnable test harness:
 
-1. TLA+ circuit breaker FSM (`formal/tla/QGSDCircuitBreaker.tla` + `formal/tla/MCbreaker.cfg`) — verifies safety and liveness of the MONITORING/TRIGGERED/DISABLED state machine that backs `hooks/qgsd-circuit-breaker.js`.
-2. Alloy install-scope spec (`formal/alloy/install-scope.als`) — verifies the installer scope constraints for `bin/install.js` (3 runtimes × 3 scopes, no conflicting local+global, `--all` equivalence, idempotency).
+1. TLA+ circuit breaker FSM (`.formal/tla/QGSDCircuitBreaker.tla` + `.formal/tla/MCbreaker.cfg`) — verifies safety and liveness of the MONITORING/TRIGGERED/DISABLED state machine that backs `hooks/qgsd-circuit-breaker.js`.
+2. Alloy install-scope spec (`.formal/alloy/install-scope.als`) — verifies the installer scope constraints for `bin/install.js` (3 runtimes × 3 scopes, no conflicting local+global, `--all` equivalence, idempotency).
 3. Runner + test harness (`bin/run-breaker-tlc.cjs` + `bin/run-breaker-tlc.test.cjs`) — mirrors the existing `run-tlc.cjs` / `run-tlc.test.cjs` pattern, making the circuit breaker spec runnable and tested.
 
 Purpose: Extend the formal verification layer (v0.12-03 groundwork) to cover the CLI state machines that are NOT modeled in the XState machine and therefore cannot be generated from `bin/generate-formal-specs.cjs`.
@@ -82,10 +82,10 @@ Output: 5 new files. The TLA+ spec is standalone (NOT generated — add comment 
 
 <context>
 @.planning/STATE.md
-@formal/tla/QGSDQuorum.tla
-@formal/tla/MCsafety.cfg
-@formal/tla/MCliveness.cfg
-@formal/alloy/quorum-votes.als
+@.formal/tla/QGSDQuorum.tla
+@.formal/tla/MCsafety.cfg
+@.formal/tla/MCliveness.cfg
+@.formal/alloy/quorum-votes.als
 @bin/run-tlc.cjs
 @bin/run-tlc.test.cjs
 </context>
@@ -95,18 +95,18 @@ Output: 5 new files. The TLA+ spec is standalone (NOT generated — add comment 
 <task type="auto">
   <name>Task 1: Create TLA+ circuit breaker spec and MCbreaker.cfg</name>
   <files>
-    formal/tla/QGSDCircuitBreaker.tla
-    formal/tla/MCbreaker.cfg
+    .formal/tla/QGSDCircuitBreaker.tla
+    .formal/tla/MCbreaker.cfg
   </files>
   <action>
-Create `formal/tla/QGSDCircuitBreaker.tla` as a standalone TLA+ module. Use the same header format as `QGSDQuorum.tla` but WITHOUT the "GENERATED" notice — instead add: "Handwritten — not generated from XState. Source: hooks/qgsd-circuit-breaker.js + bin/qgsd.cjs"
+Create `.formal/tla/QGSDCircuitBreaker.tla` as a standalone TLA+ module. Use the same header format as `QGSDQuorum.tla` but WITHOUT the "GENERATED" notice — instead add: "Handwritten — not generated from XState. Source: hooks/qgsd-circuit-breaker.js + bin/qgsd.cjs"
 
 **Module structure:**
 
 ```tla
 ---- MODULE QGSDCircuitBreaker ----
 (*
- * formal/tla/QGSDCircuitBreaker.tla
+ * .formal/tla/QGSDCircuitBreaker.tla
  * Handwritten — not generated from XState.
  * Source: hooks/qgsd-circuit-breaker.js + bin/qgsd.cjs
  *
@@ -201,10 +201,10 @@ Spec == Init /\ [][Next]_vars
 
 ---
 
-Create `formal/tla/MCbreaker.cfg` mirroring `MCsafety.cfg` structure:
+Create `.formal/tla/MCbreaker.cfg` mirroring `MCsafety.cfg` structure:
 
 ```
-\* formal/tla/MCbreaker.cfg
+\* .formal/tla/MCbreaker.cfg
 \* Handwritten — not generated from XState.
 \* TLC safety + liveness model for QGSDCircuitBreaker.
 \* Run: node bin/run-breaker-tlc.cjs MCbreaker
@@ -218,12 +218,12 @@ CHECK_DEADLOCK FALSE
 Note: No CONSTANTS block needed — this spec has no parameterized sets like `Agents`.
   </action>
   <verify>
-    grep -n "MODULE QGSDCircuitBreaker" /Users/jonathanborduas/code/QGSD/formal/tla/QGSDCircuitBreaker.tla
-    grep -n "DisabledExcludesActive" /Users/jonathanborduas/code/QGSD/formal/tla/QGSDCircuitBreaker.tla
-    grep -n "MonitoringReachable" /Users/jonathanborduas/code/QGSD/formal/tla/QGSDCircuitBreaker.tla
-    grep -n "SPECIFICATION Spec" /Users/jonathanborduas/code/QGSD/formal/tla/MCbreaker.cfg
-    grep -n "INVARIANT DisabledExcludesActive" /Users/jonathanborduas/code/QGSD/formal/tla/MCbreaker.cfg
-    grep -n "PROPERTY MonitoringReachable" /Users/jonathanborduas/code/QGSD/formal/tla/MCbreaker.cfg
+    grep -n "MODULE QGSDCircuitBreaker" /Users/jonathanborduas/code/QGSD/.formal/tla/QGSDCircuitBreaker.tla
+    grep -n "DisabledExcludesActive" /Users/jonathanborduas/code/QGSD/.formal/tla/QGSDCircuitBreaker.tla
+    grep -n "MonitoringReachable" /Users/jonathanborduas/code/QGSD/.formal/tla/QGSDCircuitBreaker.tla
+    grep -n "SPECIFICATION Spec" /Users/jonathanborduas/code/QGSD/.formal/tla/MCbreaker.cfg
+    grep -n "INVARIANT DisabledExcludesActive" /Users/jonathanborduas/code/QGSD/.formal/tla/MCbreaker.cfg
+    grep -n "PROPERTY MonitoringReachable" /Users/jonathanborduas/code/QGSD/.formal/tla/MCbreaker.cfg
   </verify>
   <done>
     - `QGSDCircuitBreaker.tla` exists with MODULE header, VARIABLES active+disabled, Init (both FALSE), all 4 actions (OscillationDetected/ResetBreaker/DisableBreaker/EnableBreaker), DisabledExcludesActive invariant, MonitoringReachable liveness, Spec with WF fairness, and ==== terminator
@@ -234,17 +234,17 @@ Note: No CONSTANTS block needed — this spec has no parameterized sets like `Ag
 <task type="auto">
   <name>Task 2: Create Alloy install-scope spec, runner, and error-path test</name>
   <files>
-    formal/alloy/install-scope.als
+    .formal/alloy/install-scope.als
     bin/run-breaker-tlc.cjs
     bin/run-breaker-tlc.test.cjs
   </files>
   <action>
-**1. Create `formal/alloy/install-scope.als`**
+**1. Create `.formal/alloy/install-scope.als`**
 
-Follow the format of `formal/alloy/quorum-votes.als` (Alloy 6). Use the same header comment format but WITHOUT "GENERATED" — add "Handwritten — not generated from XState. Source: bin/install.js".
+Follow the format of `.formal/alloy/quorum-votes.als` (Alloy 6). Use the same header comment format but WITHOUT "GENERATED" — add "Handwritten — not generated from XState. Source: bin/install.js".
 
 ```alloy
--- formal/alloy/install-scope.als
+-- .formal/alloy/install-scope.als
 -- Handwritten — not generated from XState.
 -- Source: bin/install.js
 --
@@ -345,14 +345,14 @@ The 4 test cases remain:
 4. exits non-zero and lists valid configs (MCbreaker) in error output for invalid config
   </action>
   <verify>
-    grep -n "module install_scope" /Users/jonathanborduas/code/QGSD/formal/alloy/install-scope.als
-    grep -n "NoConflict\|AllEquivalence\|InstallIdempotent" /Users/jonathanborduas/code/QGSD/formal/alloy/install-scope.als
+    grep -n "module install_scope" /Users/jonathanborduas/code/QGSD/.formal/alloy/install-scope.als
+    grep -n "NoConflict\|AllEquivalence\|InstallIdempotent" /Users/jonathanborduas/code/QGSD/.formal/alloy/install-scope.als
     grep -n "QGSDCircuitBreaker" /Users/jonathanborduas/code/QGSD/bin/run-breaker-tlc.cjs
     grep -n "MCbreaker" /Users/jonathanborduas/code/QGSD/bin/run-breaker-tlc.cjs
     node /Users/jonathanborduas/code/QGSD/bin/run-breaker-tlc.test.cjs 2>&1
   </verify>
   <done>
-    - `formal/alloy/install-scope.als` exists with `module install_scope`, sig Runtime with three one sigs, sig InstallState, NoConflictingScope predicate, and three `check` commands
+    - `.formal/alloy/install-scope.als` exists with `module install_scope`, sig Runtime with three one sigs, sig InstallState, NoConflictingScope predicate, and three `check` commands
     - `bin/run-breaker-tlc.cjs` exists with VALID_CONFIGS=['MCbreaker'], points to QGSDCircuitBreaker.tla, uses [run-breaker-tlc] log prefix
     - `bin/run-breaker-tlc.test.cjs` passes: `node bin/run-breaker-tlc.test.cjs` exits 0 with all 4 tests passing (or gracefully skipped for the JAR test if no Java)
   </done>
@@ -363,20 +363,20 @@ The 4 test cases remain:
 <verification>
 After both tasks complete:
 
-1. `grep -c "MODULE QGSDCircuitBreaker" formal/tla/QGSDCircuitBreaker.tla` — returns 1
-2. `grep -c "DisabledExcludesActive" formal/tla/QGSDCircuitBreaker.tla` — returns 2 or more (definition + MCbreaker.cfg reference)
-3. `grep -c "SPECIFICATION Spec" formal/tla/MCbreaker.cfg` — returns 1
-4. `grep -c "module install_scope" formal/alloy/install-scope.als` — returns 1
-5. `grep -c "check NoConflict" formal/alloy/install-scope.als` — returns 1
+1. `grep -c "MODULE QGSDCircuitBreaker" .formal/tla/QGSDCircuitBreaker.tla` — returns 1
+2. `grep -c "DisabledExcludesActive" .formal/tla/QGSDCircuitBreaker.tla` — returns 2 or more (definition + MCbreaker.cfg reference)
+3. `grep -c "SPECIFICATION Spec" .formal/tla/MCbreaker.cfg` — returns 1
+4. `grep -c "module install_scope" .formal/alloy/install-scope.als` — returns 1
+5. `grep -c "check NoConflict" .formal/alloy/install-scope.als` — returns 1
 6. `node bin/run-breaker-tlc.test.cjs` — exits 0, all tests pass
 7. `node bin/run-breaker-tlc.cjs --config=bogus` — exits 1 with "MCbreaker" in stderr
 8. All 5 files are new (not modifying existing specs)
 </verification>
 
 <success_criteria>
-- `formal/tla/QGSDCircuitBreaker.tla` is a syntactically correct TLA+ module with 4 transitions, TypeOK, DisabledExcludesActive, MonitoringReachable, and Spec with WF fairness
-- `formal/tla/MCbreaker.cfg` references Spec and checks DisabledExcludesActive + MonitoringReachable
-- `formal/alloy/install-scope.als` models the 3-runtime x 3-scope matrix and checks NoConflict, AllEquivalence, InstallIdempotent
+- `.formal/tla/QGSDCircuitBreaker.tla` is a syntactically correct TLA+ module with 4 transitions, TypeOK, DisabledExcludesActive, MonitoringReachable, and Spec with WF fairness
+- `.formal/tla/MCbreaker.cfg` references Spec and checks DisabledExcludesActive + MonitoringReachable
+- `.formal/alloy/install-scope.als` models the 3-runtime x 3-scope matrix and checks NoConflict, AllEquivalence, InstallIdempotent
 - `bin/run-breaker-tlc.cjs` mirrors run-tlc.cjs error handling but targets QGSDCircuitBreaker.tla
 - `node bin/run-breaker-tlc.test.cjs` passes (exits 0) with 4 error-path tests
 - No existing files modified

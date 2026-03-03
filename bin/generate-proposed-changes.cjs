@@ -2,7 +2,7 @@
 'use strict';
 // bin/generate-proposed-changes.cjs
 // PLAN-01: Reads must_haves: truths: from a single PLAN.md file and generates
-// a proposed-changes.tla scratch spec with INVARIANT/PROPERTY stubs in {phaseDir}/formal/.
+// a proposed-changes.tla scratch spec with INVARIANT/PROPERTY stubs in {phaseDir}/.formal/.
 // Also generates MCProposedChanges.cfg for TLC invocation.
 //
 // Reuses parsePlanFrontmatter and classifyTruth from generate-phase-spec.cjs.
@@ -10,7 +10,7 @@
 // Usage:
 //   node bin/generate-proposed-changes.cjs <path-to-PLAN.md> [--dry-run]
 //
-// Output: {phaseDir}/formal/proposed-changes.tla + MCProposedChanges.cfg
+// Output: {phaseDir}/.formal/proposed-changes.tla + MCProposedChanges.cfg
 
 const fs   = require('fs');
 const path = require('path');
@@ -80,9 +80,9 @@ Spec == Init /\\ [][Next]_<<state>>
 
   spec += `====`;
 
-  // Determine output directory: phaseDir/formal/
+  // Determine output directory: phaseDir/.formal/
   const phaseDir = path.dirname(planFilePath);
-  const formalDir = path.join(phaseDir, 'formal');
+  const formalDir = path.join(phaseDir, '.formal');
   fs.mkdirSync(formalDir, { recursive: true });
 
   const specPath = path.join(formalDir, 'ProposedChanges.tla');
@@ -144,7 +144,7 @@ if (require.main === module) {
 
   if (args.length === 0) {
     process.stderr.write('[generate-proposed-changes] Usage: node bin/generate-proposed-changes.cjs <path-to-PLAN.md> [--dry-run]\n');
-    process.stderr.write('[generate-proposed-changes] Generates proposed-changes.tla + MCProposedChanges.cfg in {phaseDir}/formal/\n');
+    process.stderr.write('[generate-proposed-changes] Generates proposed-changes.tla + MCProposedChanges.cfg in {phaseDir}/.formal/\n');
     process.exit(1);
   }
 

@@ -38,7 +38,7 @@ test('checkSchemaDrift([README.md, bin/run-tlc.cjs]) => pass, no-schema-change',
 
 test('checkSchemaDrift with schema + validator + emitter => pass, schema-change-atomic', () => {
   const result = checkSchemaDrift([
-    'formal/trace/trace.schema.json',
+    '.formal/trace/trace.schema.json',
     'bin/validate-traces.cjs',
     'hooks/qgsd-stop.js',
   ]);
@@ -48,7 +48,7 @@ test('checkSchemaDrift with schema + validator + emitter => pass, schema-change-
 });
 
 test('checkSchemaDrift with schema only => fail, schema-drift-detected (validator_updated=false, emitter_updated=false)', () => {
-  const result = checkSchemaDrift(['formal/trace/trace.schema.json']);
+  const result = checkSchemaDrift(['.formal/trace/trace.schema.json']);
   assert.strictEqual(result.status, 'fail');
   assert.strictEqual(result.reason, 'schema-drift-detected');
   assert.strictEqual(result.validator_updated, false);
@@ -56,7 +56,7 @@ test('checkSchemaDrift with schema only => fail, schema-drift-detected (validato
 });
 
 test('checkSchemaDrift with schema + validator only => fail, schema-drift-detected (emitter_updated=false)', () => {
-  const result = checkSchemaDrift(['formal/trace/trace.schema.json', 'bin/validate-traces.cjs']);
+  const result = checkSchemaDrift(['.formal/trace/trace.schema.json', 'bin/validate-traces.cjs']);
   assert.strictEqual(result.status, 'fail');
   assert.strictEqual(result.reason, 'schema-drift-detected');
   assert.strictEqual(result.validator_updated, true);
@@ -64,7 +64,7 @@ test('checkSchemaDrift with schema + validator only => fail, schema-drift-detect
 });
 
 test('checkSchemaDrift with schema + emitter only => fail, schema-drift-detected (validator_updated=false)', () => {
-  const result = checkSchemaDrift(['formal/trace/trace.schema.json', 'hooks/qgsd-stop.js']);
+  const result = checkSchemaDrift(['.formal/trace/trace.schema.json', 'hooks/qgsd-stop.js']);
   assert.strictEqual(result.status, 'fail');
   assert.strictEqual(result.reason, 'schema-drift-detected');
   assert.strictEqual(result.validator_updated, false);

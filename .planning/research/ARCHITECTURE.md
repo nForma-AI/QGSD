@@ -778,7 +778,7 @@ node bin/install.js --claude --global
 | `hooks/qgsd-prompt.js` | Token/envelope/fan-out are runtime quorum.md concerns; prompt injection is pre-response |
 | `bin/update-scoreboard.cjs` (schema) | Scoreboard tracks per-model performance; token estimates are a separate concern in token-usage.jsonl |
 | `bin/check-provider-health.cjs` | Provider health is about reachability, not tier or token cost |
-| `formal/tla/QGSDQuorum.tla` | Formal spec does not model token budgets |
+| `.formal/tla/QGSDQuorum.tla` | Formal spec does not model token budgets |
 
 ---
 

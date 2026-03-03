@@ -84,14 +84,14 @@ via fs.createWriteStream. Reject on non-200 after redirects.
   but continue (soft warning only, do NOT exit)
 
 **TLA+ install:**
-- dest = path.join(process.cwd(), 'formal/tla/tla2tools.jar')
+- dest = path.join(process.cwd(), '.formal/tla/tla2tools.jar')
 - URL = 'https://github.com/tlaplus/tlaplus/releases/latest/download/tla2tools.jar'
 - If fs.existsSync(dest): skip('TLA+ tla2tools.jar already present — skipping')
 - Else: download, ok('TLA+ tla2tools.jar downloaded')
 - Track result: { name: 'TLA+', status: 'ok'|'skip'|'fail' }
 
 **Alloy install:**
-- dest = path.join(process.cwd(), 'formal/alloy/org.alloytools.alloy.dist.jar')
+- dest = path.join(process.cwd(), '.formal/alloy/org.alloytools.alloy.dist.jar')
 - URL = 'https://github.com/AlloyTools/org.alloytools.alloy/releases/latest/download/org.alloytools.alloy.dist.jar'
 - Same skip/download pattern as TLA+
 - Track result: { name: 'Alloy', status: 'ok'|'skip'|'fail' }
@@ -156,7 +156,7 @@ Wrap the entire main logic in an async IIFE:
 node bin/install-formal-tools.cjs
 # First run: downloads jars, prints ✓ lines, exits 0
 # Verify files exist:
-ls formal/tla/tla2tools.jar formal/alloy/org.alloytools.alloy.dist.jar
+ls .formal/tla/tla2tools.jar .formal/alloy/org.alloytools.alloy.dist.jar
 
 # Second run (idempotent):
 node bin/install-formal-tools.cjs
@@ -164,7 +164,7 @@ node bin/install-formal-tools.cjs
 echo "Exit: $?"
   </verify>
   <done>
-tla2tools.jar and org.alloytools.alloy.dist.jar present under formal/. Second run prints
+tla2tools.jar and org.alloytools.alloy.dist.jar present under .formal/. Second run prints
 skip arrows and exits 0. Script exits 0 when TLA+ and Alloy succeed regardless of PRISM
 outcome.
   </done>
@@ -218,8 +218,8 @@ node bin/install.js --formal
 
 This script:
 - Checks for Java 17+ (required by TLA+, Alloy, PRISM) and warns if missing
-- Downloads `tla2tools.jar` into `formal/tla/`
-- Downloads `org.alloytools.alloy.dist.jar` into `formal/alloy/`
+- Downloads `tla2tools.jar` into `.formal/tla/`
+- Downloads `org.alloytools.alloy.dist.jar` into `.formal/alloy/`
 - Downloads and installs PRISM for your platform, prints `PRISM_BIN` export
 - Notes that Petri nets require no install (bundled via npm)
 
@@ -254,8 +254,8 @@ Quick summary:
 
 | Tool | Requires | One-time setup |
 |------|----------|----------------|
-| TLA+ | Java 17+ | Auto-downloaded to `formal/tla/` by install script |
-| Alloy 6 | Java 17+ | Auto-downloaded to `formal/alloy/` by install script |
+| TLA+ | Java 17+ | Auto-downloaded to `.formal/tla/` by install script |
+| Alloy 6 | Java 17+ | Auto-downloaded to `.formal/alloy/` by install script |
 | PRISM | Java 17+ | Downloaded + installed by script; set `PRISM_BIN` as instructed |
 | Petri nets | — | Nothing — bundled via `@hpcc-js/wasm-graphviz` |
 ```

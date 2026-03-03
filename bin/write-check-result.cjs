@@ -11,10 +11,10 @@ const VALID_FORMALISMS = ['tla', 'alloy', 'prism', 'trace', 'redaction', 'uppaal
  * Use CHECK_RESULTS_PATH env var to redirect in tests (avoids polluting real output).
  */
 const NDJSON_PATH = process.env.CHECK_RESULTS_PATH ||
-  path.join(__dirname, '..', 'formal', 'check-results.ndjson');
+  path.join(__dirname, '..', '.formal', 'check-results.ndjson');
 
 /**
- * Append one normalized check result line to formal/check-results.ndjson.
+ * Append one normalized check result line to .formal/check-results.ndjson.
  *
  * @param {Object} entry
  * @param {string} entry.tool       - Name of the tool/runner (e.g. 'run-tlc')

@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    name: Build and publish @langblaze.ai/qgsd
+    name: Build and publish @nforma.ai/qgsd
     runs-on: ubuntu-latest
     environment: npm-publish
 
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          scope: '@langblaze.ai'
+          scope: '@nforma.ai'
 
       # npm >=11.5 is required for OIDC trusted publishing.
       - name: Update npm
@@ -46,7 +46,7 @@ jobs:
         # The package must exist on npm before trusted publishing can be configured.
         # For the very first publish, temporarily add NPM_TOKEN to the npm-publish
         # environment secrets, then after the package exists:
-        #   1. Go to https://www.npmjs.com/package/@langblaze.ai/qgsd → Settings → Trusted Publishers
+        #   1. Go to https://www.npmjs.com/package/@nforma.ai/qgsd → Settings → Trusted Publishers
         #   2. Add GitHub Actions: owner=<org>, repo=QGSD, workflow=publish.yml
         #   3. Remove NPM_TOKEN from the environment secrets — OIDC takes over.
         run: npm publish --access public --provenance

@@ -5,8 +5,8 @@
  * install-formal-tools.cjs
  *
  * Cross-platform installer for QGSD formal verification tools:
- *   TLA+    — downloads tla2tools.jar into formal/tla/
- *   Alloy   — downloads org.alloytools.alloy.dist.jar into formal/alloy/
+ *   TLA+    — downloads tla2tools.jar into .formal/tla/
+ *   Alloy   — downloads org.alloytools.alloy.dist.jar into .formal/alloy/
  *   PRISM   — downloads and installs platform-specific binary
  *   Petri   — no install needed (bundled via npm)
  *
@@ -129,7 +129,7 @@ function checkJava() {
 
   // ── TLA+ ──────────────────────────────────────────────────────────────
 
-  const tlaDest = path.join(process.cwd(), 'formal', 'tla', 'tla2tools.jar');
+  const tlaDest = path.join(process.cwd(), '.formal', 'tla', 'tla2tools.jar');
   const tlaUrl = 'https://github.com/tlaplus/tlaplus/releases/latest/download/tla2tools.jar';
 
   if (fs.existsSync(tlaDest)) {
@@ -150,7 +150,7 @@ function checkJava() {
 
   // ── Alloy ─────────────────────────────────────────────────────────────
 
-  const alloyDest = path.join(process.cwd(), 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  const alloyDest = path.join(process.cwd(), '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
   const alloyUrl = 'https://github.com/AlloyTools/org.alloytools.alloy/releases/latest/download/org.alloytools.alloy.dist.jar';
 
   if (fs.existsSync(alloyDest)) {

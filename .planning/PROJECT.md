@@ -14,7 +14,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 **Target features:**
 - Schema foundation — `requirement_ids[]` in model-registry and check-result schema; runners emit requirement attribution
-- Traceability matrix — `bin/generate-traceability-matrix.cjs` produces `formal/traceability-matrix.json` with property-level links and coverage stats
+- Traceability matrix — `bin/generate-traceability-matrix.cjs` produces `.formal/traceability-matrix.json` with property-level links and coverage stats
 - Property annotations — `@requirement` tags in all 22 model source files (TLA+, Alloy, PRISM); automated extraction parser
 - Coverage & decomposition — coverage dashboard with orphan detection; state-space threshold alerts; CI guards on coverage regressions
 
@@ -39,13 +39,13 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ## Previous Milestone: v0.22 Requirements Envelope (in progress)
 
-**Goal:** Promote milestone requirements from a working document (`.planning/REQUIREMENTS.md`) into a validated, immutable formal artifact (`formal/requirements.json`) that constrains what formal specs must prove — a Haiku validation pass catches duplicates, conflicts, and ambiguity before freezing, and modifications require explicit user consent.
+**Goal:** Promote milestone requirements from a working document (`.planning/REQUIREMENTS.md`) into a validated, immutable formal artifact (`.formal/requirements.json`) that constrains what formal specs must prove — a Haiku validation pass catches duplicates, conflicts, and ambiguity before freezing, and modifications require explicit user consent.
 
 **Target features:**
-- Requirements aggregation — `new-milestone` compiles all phase requirements into `formal/requirements.json` (structured, machine-readable) after roadmap creation
+- Requirements aggregation — `new-milestone` compiles all phase requirements into `.formal/requirements.json` (structured, machine-readable) after roadmap creation
 - Haiku validation gate — lightweight model reviews the full set for semantic duplicates, contradictions, and ambiguity; results presented to user for resolution before freezing
 - Formal constraint binding — `generate-phase-spec.cjs` reads the envelope as source of truth for PROPERTY generation; specs that contradict frozen requirements are flagged as violations
-- Immutability contract — hook/pre-commit guard blocks automated modifications to `formal/requirements.json`; amendment workflow requires user approval + re-validation
+- Immutability contract — hook/pre-commit guard blocks automated modifications to `.formal/requirements.json`; amendment workflow requires user approval + re-validation
 - Drift detection — checker warns when `.planning/REQUIREMENTS.md` diverges from the frozen envelope; legitimate changes route through the amendment workflow
 
 ## Just Shipped: v0.21 FV Closed Loop (2026-03-01)
@@ -55,7 +55,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 **Shipped:** 18/21 requirements satisfied (ARCH-01–03, LOOP-01–04, SPEC-01–04, PLAN-01–03, SIG-01–04). 3 procedural gaps (DIAG-01–03: implemented and tested but VERIFICATION.md missing). 6 phases, 24 plans, 86 commits, 131 files, +18.5k lines.
 
 **Target features:**
-- Central model registry — `formal/model-registry.json` as single source of truth; all update flows (generate, debug, plan-promote, manual) write to `formal/` directly; `promote-model.cjs` path for per-phase proposals → canonical specs; debug-discovered invariants write directly to `formal/tla/` specs with session provenance
+- Central model registry — `.formal/model-registry.json` as single source of truth; all update flows (generate, debug, plan-promote, manual) write to `.formal/` directly; `promote-model.cjs` path for per-phase proposals → canonical specs; debug-discovered invariants write directly to `.formal/tla/` specs with session provenance
 - Feedback loops — PRISM auto-calibration (export-prism-constants as pre-step in run-prism), XState auto-regeneration hook (PostToolUse → auto-regen all TLA+/Alloy specs), sensitivity sweep → PRISM recalibration, post-debug spec synthesis (new invariants → TLA+ candidates → accepted into central registry)
 - Spec completeness — Stop hook TLA+ spec (HasPlanningCommand ∧ ¬HasQuorumEvidence ⟹ BLOCK), run-collapse spec-to-code drift audit + fix, quorum composition Alloy model (composition selection rules beyond vote counting), requirements as LTL formulas (truths: blocks → TLA+ PROPERTY checks)
 - Diagnostic infrastructure — conformance trace divergence fix (diagnose and fix the 69% failure rate), counterexample-to-root-cause tool (attribute-trace-divergence.cjs), post-debug pivot decision support
@@ -69,7 +69,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 **Shipped:** 20/20 requirements satisfied (SCHEMA-01–03, LIVE-01/02, PLAN-01–03, VERIFY-01/02, EVID-01/02, TRIAGE-01/02, UPPAAL-01–03, SENS-01–03). 9 phases, 28 plans.
 
 **Target features:**
-- Enriched check-result schema — `formal/check-result.schema.json` extended to v2.1 (adds `check_id`, `surface`, `property`, `runtime_ms`, `summary`, `triage_tags`, `observation_window`); `write-check-result.cjs` and all 23 callers updated
+- Enriched check-result schema — `.formal/check-result.schema.json` extended to v2.1 (adds `check_id`, `surface`, `property`, `runtime_ms`, `summary`, `triage_tags`, `observation_window`); `write-check-result.cjs` and all 23 callers updated
 - Liveness fairness CI lint — checker emits `result=inconclusive` when a liveness property lacks an explicit fairness declaration in `invariants.md`; enforced as a CI gate
 - Planning gate — `run-formal-verify --only=tla` wired into `plan-phase.md` pre-quorum; TLC violations surface as hypotheses passed to the planner for the plan to address
 - Verification gate — `run-formal-verify` wired into `qgsd-verifier`; `check-results.ndjson` digest included in `VERIFICATION.md`
@@ -288,7 +288,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ### Validated
 
-- ✓ plan-phase formal scope scan — Step 4.5 keyword-matches `formal/spec/` modules against phase description; populates `$FORMAL_SPEC_CONTEXT`; injects matching `invariants.md` files into planner `<files_to_read>` and `<formal_context>` block; fail-open (missing `formal/spec/` = zero overhead) (WFI-01, ENF-03) — v0.23 (Phase v0.23-01)
+- ✓ plan-phase formal scope scan — Step 4.5 keyword-matches `.formal/spec/` modules against phase description; populates `$FORMAL_SPEC_CONTEXT`; injects matching `invariants.md` files into planner `<files_to_read>` and `<formal_context>` block; fail-open (missing `.formal/spec/` = zero overhead) (WFI-01, ENF-03) — v0.23 (Phase v0.23-01)
 - ✓ plan-phase checker formal_artifacts enforcement — Step 10 `<check_dimensions>` block flags missing `formal_artifacts:` frontmatter field as BLOCKER; validates path specificity; `<formal_context>` block conditionally verifies declaration or requires `formal_artifacts: none`; installed to `~/.claude` (WFI-02, ENF-03) — v0.23 (Phase v0.23-01)
 - ✓ Liveness fairness lint — centralized check-liveness-fairness.cjs CI step with dynamic MC*.cfg discovery; emits result=inconclusive for liveness configs lacking fairness declarations; ci:liveness-fairness-lint as 26th STEPS entry in run-formal-verify.cjs (LIVE-01..02) — v0.20 (Phase v0.20-02)
 - ✓ Planning gate — plan-phase.md step 8.3 runs `run-formal-verify.cjs --only=tla` pre-quorum; result=fail NDJSON entries surfaced as FV_HYPOTHESES in quorum review_context; fail-open (|| FV_EXIT=$?) so TLC failures never block plan creation (PLAN-01..03) — v0.20 (Phase v0.20-03)
@@ -298,7 +298,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - ✓ UPPAAL timed race modeling — quorum-races.xml timed automaton with empirical runtime_ms clock guards; run-uppaal.cjs + uppaal:quorum-races STEPS entry; TCTL queries annotate minimum inter-slot gap + maximum consensus timeout (UPPAAL-01..03) — v0.20 (Phase v0.20-07)
 - ✓ Sensitivity sweep — run-sensitivity-sweep.cjs sweeps MaxSize [1,2,3] and tp_rate [0.5,0.75,0.95]; sensitivity-report.ndjson + human-readable sensitivity-report.md; SENSITIVITY_CONTEXT injected into plan-phase quorum review_context (SENS-01..03) — v0.20 (Phase v0.20-08)
 - ✓ Unified verdict format: all 13 FV checkers emit normalized NDJSON to check-results.ndjson; check-results-exit.cjs CI gate exits non-zero on any result=fail (UNIF-01..04) — v0.19 (Phases v0.19-01, v0.19-11)
-- ✓ Calibration governance: formal/policy.yaml cold-start thresholds + read-policy.cjs; conservative_priors.tp_rate/unavail wired directly to run-prism.cjs fallback constants; 18/18 tests (CALIB-01..04) — v0.19 (Phases v0.19-02, v0.19-10)
+- ✓ Calibration governance: .formal/policy.yaml cold-start thresholds + read-policy.cjs; conservative_priors.tp_rate/unavail wired directly to run-prism.cjs fallback constants; 18/18 tests (CALIB-01..04) — v0.19 (Phases v0.19-02, v0.19-10)
 - ✓ Liveness fairness: invariants.md fairness declarations for all 8 surfaces; detectLivenessProperties() wired to all 5 TLC runners — emits result=inconclusive on missing declaration (LIVE-01..02) — v0.19 (Phases v0.19-03, v0.19-07)
 - ✓ Enforcement layer: check-trace-redaction.cjs, never_observed confidence metadata in validate-traces.cjs, check-trace-schema-drift.cjs; all CI-wired via run-formal-verify.cjs STEPS (REDACT-01..03, EVID-01..02, DRIFT-01..02) — v0.19 (Phase v0.19-04)
 - ✓ MCP environment model: QGSDMCPEnv.tla formal fault-tolerance proof; MCMCPEnv in SURFACE_MAP + VALID_CONFIGS; invariants.md EventualDecision fairness; mcp-availability.pm composite-key filter + module.exports fix; all CI-wired (MCPENV-01..04) — v0.19 (Phases v0.19-05, v0.19-08)
@@ -503,7 +503,7 @@ QGSD v0.20 FV as Active Planning Gate shipped 2026-03-01 (9 phases, 28 plans, 20
 | _xstate suffix (Option A) for BROKEN-01 | Generated spec writes to QGSDQuorum_xstate.tla — hand-authored QGSDQuorum.tla (phase var, AgentSymmetry, MinQuorumMet invariants) remains canonical; quorum-approved in v0.14 gap planning | Phase v0.14-02 — BROKEN-01 |
 | esbuild inline bundling (not external:['xstate']) in check-spec-sync.cjs | external flag causes MODULE_NOT_FOUND in /tmp bundle (no node_modules); same inline bundling pattern as xstate-to-tla.cjs | Phase v0.14-02-02 |
 | TLA+ orphan phases promoted from warn() to fail() | DRFT-03 requirement says "states or guards" must be hard failures for TLA+ (Alloy orphans remain warn — Alloy may legitimately use different state space) | Phase v0.14-02-03 |
-| Guard drift enforcement uses formal/tla/guards/qgsd-workflow.json as cross-reference source | Bidirectional: xstateGuardNames vs JSON keys; JSON keys vs machine; camelCase XState → PascalCase TLA+ mapping documented inline | Phase v0.14-02-03 — Check 5 |
+| Guard drift enforcement uses .formal/tla/guards/qgsd-workflow.json as cross-reference source | Bidirectional: xstateGuardNames vs JSON keys; JSON keys vs machine; camelCase XState → PascalCase TLA+ mapping documented inline | Phase v0.14-02-03 — Check 5 |
 | STEPS[0] split into generate:tla-from-xstate + generate:alloy-prism-specs (total 20→21) | xstate-to-tla.cjs generates TLA+/cfg only; generate-formal-specs.cjs retained as separate step for Alloy/PRISM — preserves full pipeline coverage | Phase v0.14-01 — INTG-04 |
 | node --check for syntax smoke in run-formal-verify.test.cjs | Script has top-level async IIFE that spawns child processes immediately on require(); node --check validates syntax without triggering execution | Phase v0.14-01-02 — testing pattern |
 | VALID_CONFIGS guard in run-account-manager-tlc.cjs evaluated before Java check | --config=invalid test reliable without Java installed; guard order confirmed by reading source before writing tests | Phase v0.14-01-02 — testing pattern |

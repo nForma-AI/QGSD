@@ -12,11 +12,11 @@ requirements: [QUICK-FULL-FORMAL]
 
 must_haves:
   truths:
-    - "quick --full mode scans formal/spec/ and stores $FORMAL_SPEC_CONTEXT before spawning the planner"
+    - "quick --full mode scans .formal/spec/ and stores $FORMAL_SPEC_CONTEXT before spawning the planner"
     - "Planner receives relevant invariants.md paths in <files_to_read> when formal modules match task keywords"
     - "Plan frontmatter can declare formal_artifacts: (none | update: [...] | create: [...])"
     - "Plan checker step 5.5 validates formal_artifacts targets and invariant compliance"
-    - "Executor step 6 includes formal/ files in atomic commits when plan declares formal_artifacts"
+    - "Executor step 6 includes .formal/ files in atomic commits when plan declares formal_artifacts"
     - "Verifier step 6.5 checks invariant compliance and formal artifact syntax"
     - "After verifier returns passed, quorum reviews VERIFICATION.md and can downgrade to Needs Review"
     - "commands/qgsd/quick.md <objective> describes the formal integration capabilities of --full"
@@ -27,7 +27,7 @@ must_haves:
       contains: "FORMAL_SPEC_CONTEXT"
     - path: "commands/qgsd/quick.md"
       provides: "Updated command description reflecting --full formal capabilities"
-      contains: "formal/ integration"
+      contains: ".formal/ integration"
   key_links:
     - from: "Step 4.5 (formal scope scan)"
       to: "Step 5 planner injection"
@@ -40,11 +40,11 @@ must_haves:
 ---
 
 <objective>
-Upgrade --full mode in the quick workflow to integrate with formal/ specs:
+Upgrade --full mode in the quick workflow to integrate with .formal/ specs:
 - Formal scope scan (step 4.5) discovers relevant invariants.md files
 - Planner receives invariant context and must declare formal_artifacts in plan frontmatter
 - Plan checker validates formal artifact targets and invariant compliance
-- Executor commits formal/ files when plan declares formal_artifacts
+- Executor commits .formal/ files when plan declares formal_artifacts
 - Verifier checks invariant compliance and formal artifact syntax
 - Quorum reviews VERIFICATION.md after verifier passes (can downgrade to Needs Review)
 - commands/qgsd/quick.md objective updated to reflect new --full capabilities
@@ -87,17 +87,17 @@ Skip this step entirely if NOT `$FULL_MODE`.
 FORMAL_SPEC_CONTEXT=[]
 ```
 
-List subdirectories under `formal/spec/` (if the directory exists):
+List subdirectories under `.formal/spec/` (if the directory exists):
 ```bash
-ls formal/spec/ 2>/dev/null
+ls .formal/spec/ 2>/dev/null
 ```
 
-For each subdirectory found, check if `formal/spec/{module}/invariants.md` exists:
+For each subdirectory found, check if `.formal/spec/{module}/invariants.md` exists:
 ```bash
-ls formal/spec/{module}/invariants.md 2>/dev/null
+ls .formal/spec/{module}/invariants.md 2>/dev/null
 ```
 
-If it exists, record the module name and path: `formal/spec/{module}/invariants.md`.
+If it exists, record the module name and path: `.formal/spec/{module}/invariants.md`.
 
 **Relevance heuristic:** Match $DESCRIPTION keywords (lowercased, split on spaces/hyphens) against module names. A module is relevant if any keyword appears as a substring of the module name, or the module name appears as a substring of any keyword.
 
@@ -135,9 +135,9 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ?
 Constraints:
 - Read the injected invariants.md files and identify which invariants apply to this task
 - Declare \`formal_artifacts:\` in plan frontmatter (required field when FORMAL_SPEC_CONTEXT is non-empty):
-  - \`none\` — task does not create or modify formal/ files
-  - \`update: [list of formal/ file paths]\` — task modifies existing formal/ files
-  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new formal/ files
+  - \`none\` — task does not create or modify .formal/ files
+  - \`update: [list of .formal/ file paths]\` — task modifies existing .formal/ files
+  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new .formal/ files
 - Plan tasks MUST NOT violate the identified invariants` :
 `No formal modules matched this task. Declare \`formal_artifacts: none\` in plan frontmatter.`}
 </formal_context>
@@ -169,7 +169,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTE
 In the executor Task prompt `<constraints>` block, add after the "Commit each task atomically" line:
 
 ```markdown
-- If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the formal/ files in the atomic commit for that task (alongside the implementation files)
+- If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
 ```
 
@@ -188,7 +188,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ?
 
 Additional verification checks:
 - Did executor respect the identified invariants? Check implementation files against invariant conditions.
-- If plan declared formal_artifacts update or create: are the modified/created formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)` :
+- If plan declared formal_artifacts update or create: are the modified/created .formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)` :
 'No formal modules matched. Skip formal invariant checks.'}
 </formal_context>
 ```
@@ -232,7 +232,7 @@ Route on quorum result:
 - [ ] (--full) Formal scope scan runs before planner (step 4.5), $FORMAL_SPEC_CONTEXT populated
 - [ ] (--full) Planner receives relevant invariants.md in files_to_read
 - [ ] (--full) Plan declares formal_artifacts field in frontmatter
-- [ ] (--full) Executor includes formal/ files in atomic commits when formal_artifacts non-empty
+- [ ] (--full) Executor includes .formal/ files in atomic commits when formal_artifacts non-empty
 - [ ] (--full) Verifier checks invariant compliance and formal artifact syntax
 - [ ] (--full) Quorum reviews VERIFICATION.md after passed status (step 6.5.1)
 ```
@@ -274,9 +274,9 @@ Replace with:
 ```
 **`--full` flag:** Single-phase rigor tier. Enables:
 - Plan-checking (max 2 iterations) and post-execution verification
-- Formal scope scan: discovers relevant `formal/spec/*/invariants.md` and injects invariant context into the planner
-- Plan frontmatter must declare `formal_artifacts:` (none | update | create) with formal/ file targets
-- Executor commits formal/ files atomically when `formal_artifacts` is non-empty
+- Formal scope scan: discovers relevant `.formal/spec/*/invariants.md` and injects invariant context into the planner
+- Plan frontmatter must declare `formal_artifacts:` (none | update | create) with .formal/ file targets
+- Executor commits .formal/ files atomically when `formal_artifacts` is non-empty
 - Verifier checks invariant compliance and formal artifact syntax
 - Quorum reviews VERIFICATION.md after passing (can downgrade to "Needs Review")
 
@@ -284,7 +284,7 @@ Use when you want quality guarantees with formal correctness properties, without
 ```
   </action>
   <verify>
-    Read commands/qgsd/quick.md and confirm the <objective> section contains "formal/spec/*/invariants.md" and "formal_artifacts" and "Single-phase rigor tier".
+    Read commands/qgsd/quick.md and confirm the <objective> section contains ".formal/spec/*/invariants.md" and "formal_artifacts" and "Single-phase rigor tier".
     Use: grep -n "formal\|Single-phase\|formal_artifacts" commands/qgsd/quick.md
   </verify>
   <done>
@@ -324,7 +324,7 @@ This copies:
 
 <verification>
 1. grep -n "Step 4.5\|FORMAL_SPEC_CONTEXT\|formal_artifacts\|Step 6.5.1" /Users/jonathanborduas/code/QGSD/qgsd-core/workflows/quick.md | wc -l → expect 10+ matches
-2. grep -n "Single-phase rigor tier\|formal_artifacts\|formal/spec" /Users/jonathanborduas/code/QGSD/commands/qgsd/quick.md → expect 3+ matches
+2. grep -n "Single-phase rigor tier\|formal_artifacts\|.formal/spec" /Users/jonathanborduas/code/QGSD/commands/qgsd/quick.md → expect 3+ matches
 3. grep "FORMAL_SPEC_CONTEXT" ~/.claude/qgsd/workflows/quick.md → exists (install succeeded)
 4. grep "Single-phase" ~/.claude/commands/qgsd/quick.md → exists (install succeeded)
 </verification>

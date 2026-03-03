@@ -10,7 +10,7 @@
 
 This research focused on common mistakes when adding the following features to QGSD's existing formal verification infrastructure:
 
-1. **Formal requirements artifacts** — promotion of `.planning/REQUIREMENTS.md` (working document) to `formal/requirements.json` (frozen envelope)
+1. **Formal requirements artifacts** — promotion of `.planning/REQUIREMENTS.md` (working document) to `.formal/requirements.json` (frozen envelope)
 2. **LLM-based validation** — Haiku validation pass checking requirements for duplicates, conflicts, and ambiguity
 3. **Immutability enforcement** — pre-commit hooks blocking unauthorized modifications to frozen envelope
 4. **Drift detection** — monitoring for divergence between working requirements document and frozen envelope
@@ -77,7 +77,7 @@ Design decisions made in Phase 1 lock in place. Extensibility must be explicit b
 - Core constraint types (preconditions, postconditions, invariants) are locked
 - Extension metadata (priority, risk level, sunset date) goes into extensible object
 - v1.0 → v1.1 migration path is documented (not attempted; just documented)
-- Schema lives in `formal/requirements.schema.json`, not embedded in code
+- Schema lives in `.formal/requirements.schema.json`, not embedded in code
 
 ---
 
@@ -105,7 +105,7 @@ Design decisions made in Phase 1 lock in place. Extensibility must be explicit b
 
 **Prevention checklist:**
 - Amendment classes (A/B/C) defined before hook implementation
-- Staging files (`formal/requirements.AMENDMENT-<timestamp>.json`) separate from envelope
+- Staging files (`.formal/requirements.AMENDMENT-<timestamp>.json`) separate from envelope
 - Hook allows Class A amendments to auto-approve; Class B/C route to explicit user approval
 - Metadata separated (`requirements.json` immutable, `requirements.metadata.json` mutable)
 - Hook tested against merge resolution, spec regeneration, metadata update workflows

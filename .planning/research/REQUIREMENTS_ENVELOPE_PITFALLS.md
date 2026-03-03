@@ -23,7 +23,7 @@ JSON Schema has a well-documented history of breaking changes across versions (D
 2. **Design for planned evolution** — use `additionalProperties: false` to catch unknown fields (fail-fast on schema drift), but keep `"requirements_metadata"` as an extensible object that can absorb new types
 3. **Accept breaking changes in advance** — plan now for v1.0 → v1.1 migration tooling; don't try to make schema permanent
 4. **Establish vocabulary boundaries** — define which constraint types are "core immutable" (preconditions, postconditions, invariants) vs. "extension metadata" (priority, risk level, sunset date)
-5. **Validate against a separate "canonical schema"** stored in `formal/requirements.schema.json`, not embedded in tooling code
+5. **Validate against a separate "canonical schema"** stored in `.formal/requirements.schema.json`, not embedded in tooling code
 
 **Warning signs:**
 - Schema has more than 10 optional fields (sign of over-design)
@@ -69,7 +69,7 @@ Phase 2 (Haiku Validation Gate) — establish rubric and determinism tests. Incl
 ### Pitfall 3: Immutability Enforcement Lacks Clear Amendment Workflow
 
 **What goes wrong:**
-Pre-commit hook blocks writes to `formal/requirements.json`. But there's no clear path for legitimate changes (typo fix, spec discovery of missing requirement, scope change). User tries to modify frozen envelope, hits block, has no guidance. Do they open a PR? Ask permission somewhere? Hack the hook? Team ends up maintaining a shadow document outside the formal system or skipping the immutability guard entirely.
+Pre-commit hook blocks writes to `.formal/requirements.json`. But there's no clear path for legitimate changes (typo fix, spec discovery of missing requirement, scope change). User tries to modify frozen envelope, hits block, has no guidance. Do they open a PR? Ask permission somewhere? Hack the hook? Team ends up maintaining a shadow document outside the formal system or skipping the immutability guard entirely.
 
 **Why it happens:**
 Immutability is easy to enforce (`chattr +i` on Unix, hook rejects Write tool calls). Immutability with escape hatches is hard. QGSD's existing infrastructure has quorum gates (for planning decisions) and user approval workflows, but those are wired into hook structures that expect narrative approvals. Formal requirements amendment is different — it needs bounded decision scope (which requirements changed, why) and possibly formal re-validation.
@@ -79,8 +79,8 @@ Immutability is easy to enforce (`chattr +i` on Unix, hook rejects Write tool ca
    - **Class A (no re-validation)**: Typos, non-semantic fixes (adding clarifying words, grammar), priority/metadata-only changes
    - **Class B (re-validation required)**: Requirement scope change, precondition relaxation, postcondition strengthening
    - **Class C (roadmap impact)**: Adding/removing requirements, changing requirement category
-2. **Amendment request format** — User cannot directly edit `formal/requirements.json`. Instead:
-   - Create `formal/requirements.AMENDMENT-<timestamp>.json` with before/after + amendment class + rationale
+2. **Amendment request format** — User cannot directly edit `.formal/requirements.json`. Instead:
+   - Create `.formal/requirements.AMENDMENT-<timestamp>.json` with before/after + amendment class + rationale
    - Hook allows Amendment files, blocks direct envelope edits
    - Amendment validator checks amendment class and auto-approves Class A, gates Class B/C to explicit user approval
 3. **Audit trail** — Amendment files never deleted; envelope retains `"amendment_history"` list (pointers to applied amendments)
@@ -103,7 +103,7 @@ Phase 3 (Immutability Contract) — implement amendment workflow and hook guard.
 ### Pitfall 4: Drift Detection False Positives Overwhelm Signal
 
 **What goes wrong:**
-Drift detector compares `.planning/REQUIREMENTS.md` (working document) against `formal/requirements.json` (frozen). Tool reports drift on any difference — formatting changes, reordering, adding examples, clarifying language. Team spends hours daily triaging "false positive" drifts. Tool output is ignored or disabled. Real drift (actual requirement change) goes unnoticed.
+Drift detector compares `.planning/REQUIREMENTS.md` (working document) against `.formal/requirements.json` (frozen). Tool reports drift on any difference — formatting changes, reordering, adding examples, clarifying language. Team spends hours daily triaging "false positive" drifts. Tool output is ignored or disabled. Real drift (actual requirement change) goes unnoticed.
 
 **Why it happens:**
 Drift detection research (infrastructure drift, data drift, model drift all documented) shows that naive diff-based detection floods users with false positives. String-level diffs catch noise (whitespace, comment changes). Semantic drift detection (does the meaning change?) is hard without LLM assistance. But LLM drift detection has its own false positive rate. Balance is critical.
@@ -174,7 +174,7 @@ Phase 2 (Haiku Validation) should include pre-Haiku formal compatibility dry-run
 ### Pitfall 6: Immutability Enforcement Prevents Normal Development Workflows
 
 **What goes wrong:**
-Pre-commit hook blocks modifications to `formal/requirements.json`. But legitimate workflows need to touch the file:
+Pre-commit hook blocks modifications to `.formal/requirements.json`. But legitimate workflows need to touch the file:
 - Developer runs `generate-phase-spec.cjs` (supposed to write updated specs), which fails because it tries to update derived data stored with the requirements
 - Git merge conflicts on the frozen file require manual resolution but hook prevents all writes
 - Automated tooling (e.g., spec regenerator from Phase v0.21) can't write to frozen file
@@ -186,11 +186,11 @@ Pre-commit hooks intercept file writes at git level, but QGSD's workflows involv
 
 **How to avoid:**
 1. **Separate immutable envelope from operational metadata**:
-   - `formal/requirements.json` contains only authoritatively frozen requirements (r/o from QGSD tools)
-   - `formal/requirements.metadata.json` contains mutable operational data (last_validated_timestamp, last_validated_by, amendment_history, fingerprints)
+   - `.formal/requirements.json` contains only authoritatively frozen requirements (r/o from QGSD tools)
+   - `.formal/requirements.metadata.json` contains mutable operational data (last_validated_timestamp, last_validated_by, amendment_history, fingerprints)
    - Only the core envelope is immutable; metadata can be written by tooling
 2. **Explicit amendment path for tooling**:
-   - Tools that discover new requirements write to a staging file: `formal/requirements.STAGE-<tool-name>.json`
+   - Tools that discover new requirements write to a staging file: `.formal/requirements.STAGE-<tool-name>.json`
    - Staging files are NOT immutable; they accumulate until user reviews and merges into envelope via amendment workflow
    - Cleaner than fighting the immutability guard
 3. **Hook allows specific writes**:
@@ -205,7 +205,7 @@ Pre-commit hooks intercept file writes at git level, but QGSD's workflows involv
 
 **Warning signs:**
 - Tooling that should auto-update specs can't because envelope is immutable
-- Merge conflicts on `formal/requirements.json` hang the phase (can't resolve due to hook)
+- Merge conflicts on `.formal/requirements.json` hang the phase (can't resolve due to hook)
 - Team creates workaround files (e.g., `requirements-working.json`) outside formal system
 - Hook error message is confusing or suggests workarounds the team shouldn't use
 
@@ -236,12 +236,12 @@ QGSD's hook installation pattern (source in `hooks/`, compiled to `hooks/dist/`,
    - Document that requirements-guard.js must be installed globally for enforcement to be effective
    - Add README section: "Immutability requires: `node bin/install.js --claude --global`"
 4. **CI enforcement as backstop**:
-   - Keep an independent, separate CI gate that rejects direct writes to `formal/requirements.json` without amendment
+   - Keep an independent, separate CI gate that rejects direct writes to `.formal/requirements.json` without amendment
    - Client-side hook + CI gate = defense in depth
    - If client hook isn't installed, CI gate still protects
 
 **Warning signs:**
-- Developer successfully commits change to `formal/requirements.json` that should have been blocked
+- Developer successfully commits change to `.formal/requirements.json` that should have been blocked
 - Hook behavior differs between developers
 - Hook changes are made but don't take effect (developer re-runs same commit, still allowed)
 - Team member asks "why does the hook enforce for me but not for you?"
@@ -268,7 +268,7 @@ Requirements and formal specs live in different languages and tools. Requirement
      ```
    - Spec generator enforces this: any property without a REQ- reference is flagged as "untraced" and requires explicit approval
 2. **Generate traceability report**:
-   - After spec generation, emit `formal/traceability.json` mapping requirements → properties → check results
+   - After spec generation, emit `.formal/traceability.json` mapping requirements → properties → check results
    - Example:
      ```json
      {
@@ -281,7 +281,7 @@ Requirements and formal specs live in different languages and tools. Requirement
      }
      ```
 3. **Coverage check as phase gate**:
-   - Before phase transitions, run: `check-requirement-coverage --requirements formal/requirements.json --properties formal/tla/*.tla`
+   - Before phase transitions, run: `check-requirement-coverage --requirements .formal/requirements.json --properties .formal/tla/*.tla`
    - Report any requirements without verified properties → flag for amendment or spec addition
    - Report any properties without requirements → flag as implementation details (acceptable but documented)
 4. **Amendment impact analysis**:
@@ -317,7 +317,7 @@ QGSD's memory context documents that "Codex frequently UNAVAILABLE (usage limits
    - Phase can proceed (assuming envelope from previous phase is still valid)
 2. **Cache previous validation result**:
    - If envelope hasn't changed since last successful validation, reuse cached result
-   - Store validation timestamp + envelope hash in `formal/requirements.validation.json`
+   - Store validation timestamp + envelope hash in `.formal/requirements.validation.json`
    - Skip Haiku call if: `last_validation_hash == current_envelope_hash && last_validation_time < 1 day ago`
 3. **Graceful degradation to syntax-only validation**:
    - If Haiku unavailable, fall back to schema-level validation only (does JSON parse? Does it match schema?)
@@ -381,7 +381,7 @@ Phase 2 (Haiku Validation) — implement health check and cache before attemptin
 |---------|------|----------|
 | Immutability hook allows user override via environment variable (e.g., `SKIP_IMMUTABILITY=1`) | Requirements can be silently modified without audit trail | Never allow env-var overrides to immutability gate; require explicit CLI flag + audit logging |
 | Amendment approval is implicit ("I'll just commit it") | No accountability for requirement changes; scope creep invisible | Amendment approval must route through explicit workflow with user intent + rationale logged |
-| Frozen envelope contains secrets or sensitive data | Secrets committed to formal/ directory, immutable forever | Redact sensitive data before freezing; similar to redaction enforcement in v0.19. Audit for secrets at validation time. |
+| Frozen envelope contains secrets or sensitive data | Secrets committed to .formal/ directory, immutable forever | Redact sensitive data before freezing; similar to redaction enforcement in v0.19. Audit for secrets at validation time. |
 | Drift detection compares against a user-modifiable `.driftignore` file | User can silence drift warnings for any requirement without oversight | `.driftignore` changes require explicit commit + code review; drift exemptions are tracked separately and reported |
 
 ---

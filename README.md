@@ -8,7 +8,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/qgsd)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/servers/1474810068636663886)
 [![X (Twitter)](https://img.shields.io/badge/X-@JonathanBorduas-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/JonathanBorduas)
-[![GitHub stars](https://img.shields.io/github/stars/LangBlaze-AI/QGSD?style=for-the-badge&logo=github&color=181717)](https://github.com/LangBlaze-AI/QGSD)
+[![GitHub stars](https://img.shields.io/github/stars/nForma-AI/QGSD?style=for-the-badge&logo=github&color=181717)](https://github.com/nForma-AI/QGSD)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br>
@@ -169,10 +169,10 @@ A full-featured keyboard-navigable terminal interface for managing your quorum a
 
 ```bash
 # Requires a local clone
-git clone https://github.com/LangBlaze-AI/QGSD.git
+git clone https://github.com/nForma-AI/QGSD.git
 cd QGSD && npm install
 
-node bin/qgsd-manage.cjs
+node bin/qgsd.cjs
 ```
 
 The TUI opens as a split-pane screen: left panel is the menu, right panel shows your agent roster or context for the selected action.
@@ -242,7 +242,7 @@ Use `--claude`, `--opencode`, `--gemini`, or `--all` to skip the runtime prompt.
 Clone the repository and run the installer locally:
 
 ```bash
-git clone https://github.com/LangBlaze-AI/QGSD.git
+git clone https://github.com/nForma-AI/QGSD.git
 cd QGSD
 node bin/install.js --claude --local
 ```
@@ -695,7 +695,7 @@ QGSD ships executable formal models of its core protocols — not documentation,
 
 ### What's Modeled
 
-The `formal/` directory contains 25+ specs across five verification tools:
+The `.formal/` directory contains 25+ specs across five verification tools:
 
 | Tool | Specs | What they model |
 |------|-------|-----------------|
@@ -707,10 +707,10 @@ The `formal/` directory contains 25+ specs across five verification tools:
 
 ### Spec Sources
 
-Each protocol has a human-readable spec in `formal/spec/` that defines the invariants, then one or more tool-specific models that check them:
+Each protocol has a human-readable spec in `.formal/spec/` that defines the invariants, then one or more tool-specific models that check them:
 
 ```
-formal/
+.formal/
 ├── spec/           # Human-readable protocol specs (invariants.md per protocol)
 ├── tla/            # TLA+ models + config files (MCsafety.cfg, MCliveness.cfg, etc.)
 ├── alloy/          # Alloy 6 models (.als)
@@ -740,8 +740,8 @@ Full per-tool documentation: **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**
 
 | Tool | Requires | One-time setup |
 |------|----------|----------------|
-| TLA+ | Java 17+ | Auto-downloaded to `formal/tla/` by install script |
-| Alloy 6 | Java 17+ | Auto-downloaded to `formal/alloy/` by install script |
+| TLA+ | Java 17+ | Auto-downloaded to `.formal/tla/` by install script |
+| Alloy 6 | Java 17+ | Auto-downloaded to `.formal/alloy/` by install script |
 | PRISM | Java 17+ | Downloaded + installed by script; set `PRISM_BIN` as instructed |
 | Petri nets | — | Nothing — bundled via `@hpcc-js/wasm-graphviz` |
 | UPPAAL | Java 17+ | Manual install — [uppaal.org](https://uppaal.org) |
@@ -806,7 +806,7 @@ Each verification run produces machine-readable outputs:
 | Command | What it does |
 |---------|--------------|
 | `/qgsd:map-codebase` | Analyze existing codebase before new-project |
-| `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `formal/requirements.json` |
+| `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `.formal/requirements.json` |
 | `/qgsd:add-requirement [--id=PREFIX-NN] [--text="..."]` | Add a single requirement with duplicate/conflict checks |
 
 ### Phase Management
@@ -1020,11 +1020,11 @@ This removes all QGSD commands, agents, hooks, and settings while preserving you
 
 ## Star History
 
-<a href="https://star-history.com/#LangBlaze-AI/QGSD&Date">
+<a href="https://star-history.com/#nForma-AI/QGSD&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=LangBlaze-AI/QGSD&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=LangBlaze-AI/QGSD&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=LangBlaze-AI/QGSD&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date" />
  </picture>
 </a>
 

@@ -7,12 +7,12 @@ depends_on: []
 files_modified:
   - src/machines/qgsd-workflow.machine.ts
   - bin/generate-formal-specs.cjs
-  - formal/tla/QGSDQuorum.tla
-  - formal/tla/MCsafety.cfg
-  - formal/tla/MCliveness.cfg
-  - formal/alloy/quorum-votes.als
-  - formal/prism/quorum.pm
-  - formal/prism/quorum.props
+  - .formal/tla/QGSDQuorum.tla
+  - .formal/tla/MCsafety.cfg
+  - .formal/tla/MCliveness.cfg
+  - .formal/alloy/quorum-votes.als
+  - .formal/prism/quorum.pm
+  - .formal/prism/quorum.props
 autonomous: true
 requirements: [QUICK-116]
 
@@ -31,13 +31,13 @@ must_haves:
     - path: "bin/generate-formal-specs.cjs"
       provides: "Formal spec generator — fully automatic, no hardcoded guard formulas"
       contains: "GUARD_REGISTRY"
-    - path: "formal/tla/QGSDQuorum.tla"
+    - path: ".formal/tla/QGSDQuorum.tla"
       provides: "TLA+ spec — generated, matches current hand-extended semantics (unanimity, MaxSize, polledCount)"
       contains: "MaxSize"
-    - path: "formal/alloy/quorum-votes.als"
+    - path: ".formal/alloy/quorum-votes.als"
       provides: "Alloy model — uses unanimity predicate derived from guard registry"
       contains: "UnanimityReached"
-    - path: "formal/prism/quorum.pm"
+    - path: ".formal/prism/quorum.pm"
       provides: "PRISM DTMC — updated to reference unanimity semantics"
       contains: "unanimityMet"
   key_links:
@@ -46,11 +46,11 @@ must_haves:
       via: "regex extraction of context fields and guard bodies"
       pattern: "maxSize:\\s*(\\d+)"
     - from: "bin/generate-formal-specs.cjs"
-      to: "formal/tla/QGSDQuorum.tla"
+      to: ".formal/tla/QGSDQuorum.tla"
       via: "GUARD_REGISTRY.unanimityMet.tla template"
       pattern: "GUARD_REGISTRY"
     - from: "bin/generate-formal-specs.cjs"
-      to: "formal/alloy/quorum-votes.als"
+      to: ".formal/alloy/quorum-votes.als"
       via: "GUARD_REGISTRY.unanimityMet.alloy template"
       pattern: "GUARD_REGISTRY"
 ---
@@ -72,9 +72,9 @@ Output: Updated machine, updated generator with GUARD_REGISTRY, regenerated form
 @.planning/STATE.md
 
 Key prior art to match exactly:
-@formal/tla/QGSDQuorum.tla
-@formal/tla/MCsafety.cfg
-@formal/tla/MCliveness.cfg
+@.formal/tla/QGSDQuorum.tla
+@.formal/tla/MCsafety.cfg
+@.formal/tla/MCliveness.cfg
 @src/machines/qgsd-workflow.machine.ts
 @bin/generate-formal-specs.cjs
 </context>
@@ -237,7 +237,7 @@ Replace the current `tlaSpec` array (lines ~83-216) with a version that:
 node bin/generate-formal-specs.cjs
 ```
 
-The generated QGSDQuorum.tla MUST structurally match the hand-extended version in formal/tla/QGSDQuorum.tla (the one currently on disk). The generator now owns the file — remove the "Hand-extended" warning from the header and restore "GENERATED — do not edit by hand."
+The generated QGSDQuorum.tla MUST structurally match the hand-extended version in .formal/tla/QGSDQuorum.tla (the one currently on disk). The generator now owns the file — remove the "Hand-extended" warning from the header and restore "GENERATED — do not edit by hand."
   </action>
   <verify>
 ```bash
@@ -245,13 +245,13 @@ The generated QGSDQuorum.tla MUST structurally match the hand-extended version i
 node bin/generate-formal-specs.cjs
 
 # 2. MaxSize present in all generated files
-grep -l "MaxSize" formal/tla/QGSDQuorum.tla formal/tla/MCsafety.cfg formal/tla/MCliveness.cfg
+grep -l "MaxSize" .formal/tla/QGSDQuorum.tla .formal/tla/MCsafety.cfg .formal/tla/MCliveness.cfg
 
 # 3. UnanimityMet in TLA+ (not MinQuorumMet)
-grep "UnanimityMet\|QuorumCeilingMet" formal/tla/QGSDQuorum.tla formal/tla/MCsafety.cfg
+grep "UnanimityMet\|QuorumCeilingMet" .formal/tla/QGSDQuorum.tla .formal/tla/MCsafety.cfg
 
 # 4. polledCount in TLA+ variables
-grep "polledCount" formal/tla/QGSDQuorum.tla
+grep "polledCount" .formal/tla/QGSDQuorum.tla
 
 # 5. GUARD_REGISTRY in generator
 grep "GUARD_REGISTRY" bin/generate-formal-specs.cjs
@@ -260,10 +260,10 @@ grep "GUARD_REGISTRY" bin/generate-formal-specs.cjs
 grep "maxSizeMatch\|maxSize" bin/generate-formal-specs.cjs | head -5
 
 # 7. Alloy uses unanimity predicate
-grep "UnanimityReached\|unanimity" formal/alloy/quorum-votes.als
+grep "UnanimityReached\|unanimity" .formal/alloy/quorum-votes.als
 
 # 8. Header restored to GENERATED (not Hand-extended)
-grep "GENERATED\|Hand-extended" formal/tla/QGSDQuorum.tla
+grep "GENERATED\|Hand-extended" .formal/tla/QGSDQuorum.tla
 
 # 9. Existing hook tests still pass
 node --test hooks/qgsd-stop.test.js 2>&1 | tail -5
@@ -274,10 +274,10 @@ node --test hooks/qgsd-prompt.test.js 2>&1 | tail -5
 - `bin/generate-formal-specs.cjs` has a `GUARD_REGISTRY` constant with `unanimityMet`, `minQuorumMet`, `noInfiniteDeliberation` entries
 - Generator extracts `maxSize` from machine source via regex
 - Running `node bin/generate-formal-specs.cjs` exits 0 and writes all 6 files
-- `formal/tla/QGSDQuorum.tla` contains `MaxSize`, `polledCount`, `UnanimityMet`, `QuorumCeilingMet` and header says "GENERATED — do not edit by hand"
-- `formal/tla/MCsafety.cfg` has `MaxSize`, `INVARIANT UnanimityMet`, `INVARIANT QuorumCeilingMet`
-- `formal/tla/MCliveness.cfg` has `MaxSize`
-- `formal/alloy/quorum-votes.als` uses unanimity predicate
+- `.formal/tla/QGSDQuorum.tla` contains `MaxSize`, `polledCount`, `UnanimityMet`, `QuorumCeilingMet` and header says "GENERATED — do not edit by hand"
+- `.formal/tla/MCsafety.cfg` has `MaxSize`, `INVARIANT UnanimityMet`, `INVARIANT QuorumCeilingMet`
+- `.formal/tla/MCliveness.cfg` has `MaxSize`
+- `.formal/alloy/quorum-votes.als` uses unanimity predicate
 - Hook tests: 32/32 stop, 16/16 prompt
   </done>
 </task>
@@ -289,8 +289,8 @@ After both tasks complete:
 
 1. Generator is idempotent — running it twice produces identical output:
    ```bash
-   node bin/generate-formal-specs.cjs && md5sum formal/tla/QGSDQuorum.tla > /tmp/h1
-   node bin/generate-formal-specs.cjs && md5sum formal/tla/QGSDQuorum.tla > /tmp/h2
+   node bin/generate-formal-specs.cjs && md5sum .formal/tla/QGSDQuorum.tla > /tmp/h1
+   node bin/generate-formal-specs.cjs && md5sum .formal/tla/QGSDQuorum.tla > /tmp/h2
    diff /tmp/h1 /tmp/h2  # must be empty
    ```
 

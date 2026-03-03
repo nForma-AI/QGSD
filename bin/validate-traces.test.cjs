@@ -244,7 +244,7 @@ test('validate-traces ignores MCP metadata fields for non-mcp_call actions', () 
 function runValidatorKeepTmp(ndjsonLines) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-evid-test-'));
   const planningDir = path.join(tmpDir, '.planning');
-  const formalDir   = path.join(tmpDir, 'formal');
+  const formalDir   = path.join(tmpDir, '.formal');
   fs.mkdirSync(planningDir, { recursive: true });
   fs.mkdirSync(formalDir,   { recursive: true });
   if (ndjsonLines !== null) {
@@ -266,7 +266,7 @@ function runValidatorKeepTmp(ndjsonLines) {
 
 // Helper: read last NDJSON record written by validate-traces.cjs
 function getLastNDJSON(tmpDir) {
-  const ndjsonPath = path.join(tmpDir, 'formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(tmpDir, '.formal', 'check-results.ndjson');
   if (!fs.existsSync(ndjsonPath)) return null;
   const lines = fs.readFileSync(ndjsonPath, 'utf8').split('\n').filter(l => l.trim().length > 0);
   if (lines.length === 0) return null;
@@ -333,7 +333,7 @@ test('observation_window.window_days is 0 without scoreboard', () => {
 test('observation_window.window_days matches multi-day scoreboard span', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-evid-sb-test-'));
   const planningDir = path.join(tmpDir, '.planning');
-  const formalDir   = path.join(tmpDir, 'formal');
+  const formalDir   = path.join(tmpDir, '.formal');
   fs.mkdirSync(planningDir, { recursive: true });
   fs.mkdirSync(formalDir,   { recursive: true });
   // Write conformance event log

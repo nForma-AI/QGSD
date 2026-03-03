@@ -14,13 +14,13 @@ const os = require('os');
 // Path to the tool under test
 const TOOL_PATH = path.join(__dirname, 'initialize-model-registry.cjs');
 
-// Helper to create temporary test directory with formal/ structure
+// Helper to create temporary test directory with .formal/ structure
 function createTempFormalDir(files = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'model-registry-test-'));
-  fs.mkdirSync(path.join(tmpDir, 'formal'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
 
   for (const [subdir, subfiles] of Object.entries(files)) {
-    const dirPath = path.join(tmpDir, 'formal', subdir);
+    const dirPath = path.join(tmpDir, '.formal', subdir);
     fs.mkdirSync(dirPath, { recursive: true });
     for (const [filename, content] of Object.entries(subfiles)) {
       fs.writeFileSync(path.join(dirPath, filename), content, 'utf8');
@@ -59,7 +59,7 @@ test('idempotent: exits silently if registry exists', async () => {
   };
 
   fs.writeFileSync(
-    path.join(tmpDir, 'formal', 'model-registry.json'),
+    path.join(tmpDir, '.formal', 'model-registry.json'),
     JSON.stringify(dummyRegistry, null, 2),
     'utf8'
   );
@@ -72,7 +72,7 @@ test('idempotent: exits silently if registry exists', async () => {
   assert.strictEqual(result.status, 0, 'initialize-model-registry.cjs must exit 0: ' + result.stderr);
 });
 
-test('empty formal/ produces registry with correct update_source', async () => {
+test('empty .formal/ produces registry with correct update_source', async () => {
   const tmpDir = createTempFormalDir({
     tla: {
       'Test.tla': '---- MODULE Test ----\nEXTENDS Integers\n====',

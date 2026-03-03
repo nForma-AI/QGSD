@@ -42,8 +42,8 @@ Created a lightweight per-module formal checker at `/Users/jonathanborduas/code/
 - Hardcoded module-to-check mapping covering 10 modules:
   - quorum, tui-nav, breaker, deliberation, oscillation, convergence, prefilter, recruiting, account-manager, mcp-calls
 - Per-module checks:
-  - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC (180s timeout)
-  - Alloy: java -jar formal/alloy/org.alloytools.alloy.dist.jar (180s timeout)
+  - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC (180s timeout)
+  - Alloy: java -jar .formal/alloy/org.alloytools.alloy.dist.jar (180s timeout)
   - PRISM: invoked if PRISM_BIN env var set (180s timeout)
 
 **Fail-open semantics:**

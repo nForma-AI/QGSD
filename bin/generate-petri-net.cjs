@@ -8,8 +8,8 @@
 //   node bin/generate-petri-net.cjs
 //
 // Output:
-//   formal/petri/quorum-petri-net.dot  — Graphviz DOT source
-//   formal/petri/quorum-petri-net.svg  — Rendered SVG (via @hpcc-js/wasm-graphviz)
+//   .formal/petri/quorum-petri-net.dot  — Graphviz DOT source
+//   .formal/petri/quorum-petri-net.svg  — Rendered SVG (via @hpcc-js/wasm-graphviz)
 //
 // No system Graphviz install required — uses @hpcc-js/wasm-graphviz WASM build.
 
@@ -332,7 +332,7 @@ if (require.main === module) {
     const dotContent = buildRoadmapDot(phases);
     const criticalPath = computeCriticalPath(phases);
 
-    const outDir  = path.join(process.cwd(), 'formal', 'petri');
+    const outDir  = path.join(process.cwd(), '.formal', 'petri');
     const dotPath = path.join(outDir, 'roadmap-petri-net.dot');
     const svgPath = path.join(outDir, 'roadmap-petri-net.svg');
 
@@ -364,7 +364,7 @@ if (require.main === module) {
   } else {
     // ── Quorum Petri Net mode (existing) ────────────────────────────────────
     const dotContent = buildDot(QUORUM_SLOTS, effectiveMinQuorum);
-    const outDir     = path.join(process.cwd(), 'formal', 'petri');
+    const outDir     = path.join(process.cwd(), '.formal', 'petri');
     const dotPath    = path.join(outDir, 'quorum-petri-net.dot');
     const svgPath    = path.join(outDir, 'quorum-petri-net.svg');
 

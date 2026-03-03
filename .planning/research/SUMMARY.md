@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-The Requirements Envelope system (v0.22) adds a formal correctness boundary to QGSD's verification pipeline. Requirements are aggregated from planning documents into a frozen JSON artifact (`formal/requirements.json`), validated by Haiku for duplicates and conflicts, then used as the authoritative source for formal spec generation. The system includes immutability enforcement (via git hooks) and drift detection to catch working copy divergence. This is a critical foundational layer for formal verification: specifications cannot be correct if requirements are ambiguous or incomplete.
+The Requirements Envelope system (v0.22) adds a formal correctness boundary to QGSD's verification pipeline. Requirements are aggregated from planning documents into a frozen JSON artifact (`.formal/requirements.json`), validated by Haiku for duplicates and conflicts, then used as the authoritative source for formal spec generation. The system includes immutability enforcement (via git hooks) and drift detection to catch working copy divergence. This is a critical foundational layer for formal verification: specifications cannot be correct if requirements are ambiguous or incomplete.
 
 The recommended approach uses a lightweight, proven stack: **ajv** for schema validation, **@anthropic-ai/sdk** for Haiku semantic checks, **husky** for git hook management, and **diff** for drift detection. All technologies are standard Node.js patterns with no external services required. The architecture integrates seamlessly with existing QGSD formal verification systems (model registry, TLA+ generation, quorum context injection).
 
@@ -35,7 +35,7 @@ The requirements envelope requires five core tools, all mature and standard in N
 The Requirements Envelope system implements a carefully scoped feature set based on dependency analysis and formal verification standards.
 
 **Must have (table stakes — v0.22 launch):**
-- **Requirements Aggregation** — Consolidate all phase requirements into `formal/requirements.json`; REQ-ID, text, category, phase, provenance fields.
+- **Requirements Aggregation** — Consolidate all phase requirements into `.formal/requirements.json`; REQ-ID, text, category, phase, provenance fields.
 - **Machine-Readable Format** — JSON structure with schema (type checking); prerequisite for formal tools to read requirements programmatically.
 - **Duplication Detection** — Haiku validation identifies semantic duplicates; user resolves before freezing.
 - **Conflict Detection** — Haiku validation identifies contradictions (requirement A says X, requirement B says not X).
@@ -60,7 +60,7 @@ The Requirements Envelope system implements a carefully scoped feature set based
 
 The requirements envelope integrates at four critical touchpoints in QGSD's existing formal verification system:
 
-1. **Data generation (ENV-01):** During `/qgsd:new-milestone`, `bin/aggregate-requirements.cjs` compiles `.planning/REQUIREMENTS.md` → `formal/requirements.json` (unvalidated, `frozen_at: null`).
+1. **Data generation (ENV-01):** During `/qgsd:new-milestone`, `bin/aggregate-requirements.cjs` compiles `.planning/REQUIREMENTS.md` → `.formal/requirements.json` (unvalidated, `frozen_at: null`).
 
 2. **Validation gate (ENV-02):** Immediately after aggregation, `bin/validate-requirements-haiku.cjs` invokes Haiku validator (via Task subagent) to detect duplicates/conflicts. Haiku returns structured findings; user resolves or accepts. Upon approval, `frozen_at` is set to current timestamp, envelope becomes immutable.
 
@@ -80,7 +80,7 @@ The requirements envelope integrates at four critical touchpoints in QGSD's exis
 - `bin/generate-phase-spec.cjs` — Read frozen envelope (if exists), check `frozen_at` before using, merge properties with phase truths.
 - `bin/run-formal-verify.cjs` — Add envelope validation step (optional for backward compat), analyze ENV property results separately in summary.
 - `hooks/qgsd-prompt.js` — Call drift detector early in UserPromptSubmit, inject drift report into context (non-blocking).
-- `hooks/qgsd-stop.js` — Detect direct modifications to `formal/requirements.json`, block unless amendment approval marker present.
+- `hooks/qgsd-stop.js` — Detect direct modifications to `.formal/requirements.json`, block unless amendment approval marker present.
 
 ### Critical Pitfalls
 
@@ -96,7 +96,7 @@ Naive string diffs flag formatting changes, whitespace, reordering as drift. Tea
 
 **3. Immutability Enforcement Lacks Amendment Path** (HIGH impact)
 Hook blocks envelope modifications but provides no clear workflow for legitimate changes (typos, spec discovery of missing requirement). User hits block, has no guidance, either hacks hook or maintains shadow document.
-- **Mitigation:** Define amendment classes upfront: Class A (typos, non-semantic fixes, auto-approves), Class B (scope changes, need re-validation), Class C (add/remove requirements, roadmap impact). Amendment request format: `formal/requirements.AMENDMENT-<timestamp>.json` with before/after + class + rationale. Amendment validator gates B/C to explicit approval; Phase-specific amendment windows (only during plan-phase, not execute-phase).
+- **Mitigation:** Define amendment classes upfront: Class A (typos, non-semantic fixes, auto-approves), Class B (scope changes, need re-validation), Class C (add/remove requirements, roadmap impact). Amendment request format: `.formal/requirements.AMENDMENT-<timestamp>.json` with before/after + class + rationale. Amendment validator gates B/C to explicit approval; Phase-specific amendment windows (only during plan-phase, not execute-phase).
 - **Phase to address:** Phase 3 (Immutability) — implement amendment workflow before hook installation. Test against real workflows (merge resolution, metadata update).
 
 **4. Formal Spec Generation Discovers Requirements Incomplete** (MEDIUM impact)
@@ -122,10 +122,10 @@ Based on research, the requirements envelope requires a carefully sequenced five
 **Rationale:** Aggregation and validation are prerequisites for all downstream work. No specs can be correct without a validated requirements source. Foundation phase establishes the artifact format and validation pattern.
 
 **Delivers:**
-- `bin/aggregate-requirements.cjs` — Compile REQUIREMENTS.md → `formal/requirements.json` (schema validated, unvalidated semantically)
+- `bin/aggregate-requirements.cjs` — Compile REQUIREMENTS.md → `.formal/requirements.json` (schema validated, unvalidated semantically)
 - `bin/validate-requirements-haiku.cjs` — Haiku validator with explicit rubric, determinism testing, structured issue output
 - `agents/qgsd-haiku-validator.md` — Lightweight validator agent
-- `formal/schemas/requirements.schema.json` — JSON Schema Draft-07 with versioning + extensible metadata
+- `.formal/schemas/requirements.schema.json` — JSON Schema Draft-07 with versioning + extensible metadata
 - Full roundtrip test: REQUIREMENTS.md → aggregation → validation → frozen envelope
 
 **Addresses:** Table stakes features (Aggregation, Machine-Readable Format, Duplication/Conflict Detection)
@@ -258,13 +258,13 @@ The requirements envelope is a well-researched, standard-in-the-industry feature
 ## Sources
 
 ### Primary (HIGH confidence)
-- **QGSD Project Documentation:** `.planning/PROJECT.md` (v0.22 envelope requirements overview), `.planning/REQUIREMENTS.md` (detailed ENV-01..05 specs), `formal/model-registry.json` (central artifact index)
+- **QGSD Project Documentation:** `.planning/PROJECT.md` (v0.22 envelope requirements overview), `.planning/REQUIREMENTS.md` (detailed ENV-01..05 specs), `.formal/model-registry.json` (central artifact index)
 - **Official Package Docs:**
   - [Ajv JSON Schema validator](https://ajv.js.org/) — Performance benchmarks, code generation, Draft-07 support
   - [npm: @anthropic-ai/sdk](https://www.npmjs.com/package/@anthropic-ai/sdk) — Official SDK, Claude Haiku 4.5 pricing
   - [Husky](https://typicode.github.io/husky/) — Git hook patterns, Node.js standard
   - [GitHub - kpdecker/jsdiff](https://github.com/kpdecker/jsdiff) — Text differencing for drift detection
-- **QGSD Formal Verification:** `bin/run-formal-verify.cjs`, `bin/generate-phase-spec.cjs`, `formal/tla/` specs — existing infrastructure patterns
+- **QGSD Formal Verification:** `bin/run-formal-verify.cjs`, `bin/generate-phase-spec.cjs`, `.formal/tla/` specs — existing infrastructure patterns
 - **Hook System:** `hooks/qgsd-prompt.js`, `hooks/qgsd-stop.js` — integration patterns
 
 ### Secondary (MEDIUM confidence)

@@ -27,7 +27,7 @@ const DEFAULT_IMPACT = 5;
  * @returns {Array<{ check_id: string, result: string, summary: string, timestamp: string, metadata: object }>}
  */
 function readPrismResults(ndjsonPath) {
-  const p = ndjsonPath || path.join(process.cwd(), 'formal', 'check-results.ndjson');
+  const p = ndjsonPath || path.join(process.cwd(), '.formal', 'check-results.ndjson');
   try {
     if (!fs.existsSync(p)) return [];
     const raw = fs.readFileSync(p, 'utf8');

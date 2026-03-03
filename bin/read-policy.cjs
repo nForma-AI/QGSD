@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/read-policy.cjs
-// Reads and validates formal/policy.yaml using lightweight regex extraction.
+// Reads and validates .formal/policy.yaml using lightweight regex extraction.
 // No external YAML parser required — policy.yaml uses flat key: value structure.
 // Requirements: CALIB-01, CALIB-04
 
@@ -9,7 +9,7 @@ const fs   = require('fs');
 const path = require('path');
 
 /**
- * Read and validate formal/policy.yaml.
+ * Read and validate .formal/policy.yaml.
  * Throws Error with descriptive message on missing file or missing required fields.
  *
  * @param {string} policyPath  Absolute path to policy.yaml

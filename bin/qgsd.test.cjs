@@ -1,8 +1,8 @@
 'use strict';
-// Test suite for bin/qgsd-manage.cjs
+// Test suite for bin/qgsd.cjs
 // Strategy: inject mock modules into require.cache before requiring the source,
 // so blessed never creates a real terminal. Pure functions are tested directly.
-// node --test bin/qgsd-manage.test.cjs
+// node --test bin/qgsd.test.cjs
 
 const { test, before, after } = require('node:test');
 const assert  = require('node:assert/strict');
@@ -63,7 +63,7 @@ const MOCK_UPDATE_AGENTS = {
 const BLESSED_PATH       = require.resolve('blessed');
 const CORE_PATH          = require.resolve('./manage-agents-core.cjs');
 const UPDATE_AGENTS_PATH = require.resolve('./update-agents.cjs');
-const SUBJECT_PATH       = require.resolve('./qgsd-manage.cjs');
+const SUBJECT_PATH       = require.resolve('./qgsd.cjs');
 
 let _pure;
 
@@ -84,7 +84,7 @@ before(() => {
     exports: MOCK_UPDATE_AGENTS,
   };
   // Now require the subject — require.main !== module, so startup code is skipped
-  _pure = require('./qgsd-manage.cjs')._pure;
+  _pure = require('./qgsd.cjs')._pure;
 });
 
 after(() => {
@@ -1003,11 +1003,11 @@ test('buildScoreboardLines: roster filter applies to dormant section too', () =>
 // ─────────────────────────────────────────────────────────────────────────────
 // 13. Circuit breaker CLI (merged from qgsd.cjs)
 // ─────────────────────────────────────────────────────────────────────────────
-// Spawns qgsd-manage.cjs as a subprocess with cwd set to a non-git temp dir
+// Spawns qgsd.cjs as a subprocess with cwd set to a non-git temp dir
 // so getBreakerProjectRoot() falls back to process.cwd(), making state isolated.
 
 const { spawnSync } = require('child_process');
-const BREAKER_CLI = path.join(__dirname, 'qgsd-manage.cjs');
+const BREAKER_CLI = path.join(__dirname, 'qgsd.cjs');
 
 function runBreaker(args, cwd) {
   const result = spawnSync(process.execPath, [BREAKER_CLI, ...args], {

@@ -156,7 +156,7 @@ phase: v0.15-01
 
     it('should append new phase entry to index', () => {
       // Create formal dir
-      fs.mkdirSync(path.join(tempDir, 'formal'), { recursive: true });
+      fs.mkdirSync(path.join(tempDir, '.formal'), { recursive: true });
 
       // Create a mock verification file
       const verPath = path.join(tempDir, 'test-ver.md');
@@ -173,9 +173,9 @@ UNIF-01 and ENV-01 are requirements.`;
       appendPhaseEntry(tempDir, verPath);
 
       // Verify index was created
-      assert(fs.existsSync(path.join(tempDir, 'formal/phase-index.json')));
+      assert(fs.existsSync(path.join(tempDir, '.formal/phase-index.json')));
 
-      const index = JSON.parse(fs.readFileSync(path.join(tempDir, 'formal/phase-index.json'), 'utf-8'));
+      const index = JSON.parse(fs.readFileSync(path.join(tempDir, '.formal/phase-index.json'), 'utf-8'));
       assert.strictEqual(index.phases.length, 1);
       assert.strictEqual(index.phases[0].phase_id, 'v0.99-01');
       assert(index.phases[0].requirement_ids.includes('UNIF-01'));
@@ -183,7 +183,7 @@ UNIF-01 and ENV-01 are requirements.`;
 
     it('should handle idempotent upsert (no duplicates)', () => {
       // Reset: create fresh formal dir
-      const formalDir = path.join(tempDir, 'formal');
+      const formalDir = path.join(tempDir, '.formal');
       if (fs.existsSync(formalDir)) {
         fs.rmSync(formalDir, { recursive: true });
       }
@@ -202,7 +202,7 @@ status: passed
       appendPhaseEntry(tempDir, verPath);
       appendPhaseEntry(tempDir, verPath);
 
-      const index = JSON.parse(fs.readFileSync(path.join(tempDir, 'formal/phase-index.json'), 'utf-8'));
+      const index = JSON.parse(fs.readFileSync(path.join(tempDir, '.formal/phase-index.json'), 'utf-8'));
       const matching = index.phases.filter(p => p.phase_id === 'v0.99-02');
       assert.strictEqual(matching.length, 1, 'Should have exactly 1 entry for v0.99-02');
     });
@@ -217,7 +217,7 @@ status: passed
       const tempBase = fs.mkdtempSync(path.join('/tmp', 'phase-index-int-'));
       tempPhasesDir = path.join(tempBase, '.planning', 'phases');
       fs.mkdirSync(tempPhasesDir, { recursive: true });
-      fs.mkdirSync(path.join(tempBase, 'formal'), { recursive: true });
+      fs.mkdirSync(path.join(tempBase, '.formal'), { recursive: true });
       process.chdir(tempBase);
     });
 
@@ -281,10 +281,10 @@ Just content.`
       assert(olderEntry.keywords.length > 0, 'Older entry should have keywords');
 
       // Verify file was written
-      assert(fs.existsSync('formal/phase-index.json'));
+      assert(fs.existsSync('.formal/phase-index.json'));
 
       // Verify compact format
-      const lines = fs.readFileSync('formal/phase-index.json', 'utf-8').split('\n');
+      const lines = fs.readFileSync('.formal/phase-index.json', 'utf-8').split('\n');
       assert(lines.length < 50, 'Index should stay compact (< 50 lines for 2 entries)');
     });
   });

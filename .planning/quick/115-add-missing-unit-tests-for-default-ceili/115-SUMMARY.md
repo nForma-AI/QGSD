@@ -6,7 +6,7 @@ tags: [tests, tla+, stop-hook, prompt-hook, quorum]
 dependency_graph:
   requires: []
   provides: [TC-DEFAULT-CEIL-BLOCK-fixed, TC-PROMPT-N-CAP, TC-PROMPT-SOLO, TC-PROMPT-PREFER-SUB-DEFAULT, TLA-MaxSize]
-  affects: [hooks/qgsd-stop.test.js, hooks/qgsd-prompt.test.js, formal/tla/QGSDQuorum.tla, formal/tla/MCsafety.cfg, formal/tla/MCliveness.cfg]
+  affects: [hooks/qgsd-stop.test.js, hooks/qgsd-prompt.test.js, .formal/tla/QGSDQuorum.tla, .formal/tla/MCsafety.cfg, .formal/tla/MCliveness.cfg]
 tech_stack:
   added: []
   patterns: [node:test, TLA+ CONSTANTS, TLC INVARIANT]
@@ -15,9 +15,9 @@ key_files:
   modified:
     - hooks/qgsd-stop.test.js
     - hooks/qgsd-prompt.test.js
-    - formal/tla/QGSDQuorum.tla
-    - formal/tla/MCsafety.cfg
-    - formal/tla/MCliveness.cfg
+    - .formal/tla/QGSDQuorum.tla
+    - .formal/tla/MCsafety.cfg
+    - .formal/tla/MCliveness.cfg
 decisions:
   - "Used numbered step regex (\\d+\\. Task\\() instead of bare Task\\( to avoid matching header prose in TC-PROMPT-N-CAP count assertion"
   - "Fixed pre-existing TC-CEIL-2/3 failures (minSize->maxSize config key) as Rule 1 auto-fix since target was 32/32 pass"
@@ -122,9 +122,9 @@ MaxSize occurrences:
 All files verified present:
 - hooks/qgsd-stop.test.js: FOUND
 - hooks/qgsd-prompt.test.js: FOUND
-- formal/tla/QGSDQuorum.tla: FOUND
-- formal/tla/MCsafety.cfg: FOUND
-- formal/tla/MCliveness.cfg: FOUND
+- .formal/tla/QGSDQuorum.tla: FOUND
+- .formal/tla/MCsafety.cfg: FOUND
+- .formal/tla/MCliveness.cfg: FOUND
 
 All commits verified:
 - ed3938a: FOUND

@@ -63,8 +63,8 @@ test('exits 0 and writes rates.const when scoreboard has >= 30 rounds per slot',
       path.join(planningDir, 'quorum-scoreboard.json'),
       JSON.stringify(scoreboard, null, 2)
     );
-    // Create formal/prism/ output dir
-    fs.mkdirSync(path.join(tmpDir, 'formal', 'prism'), { recursive: true });
+    // Create .formal/prism/ output dir
+    fs.mkdirSync(path.join(tmpDir, '.formal', 'prism'), { recursive: true });
     const result = spawnSync(process.execPath, [EXPORT_PRISM], {
       encoding: 'utf8',
       cwd: tmpDir,
@@ -111,7 +111,7 @@ test('emits WARNING to stderr when any slot has < 30 rounds', () => {
       path.join(planningDir, 'quorum-scoreboard.json'),
       JSON.stringify(scoreboard, null, 2)
     );
-    fs.mkdirSync(path.join(tmpDir, 'formal', 'prism'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.formal', 'prism'), { recursive: true });
     const result = spawnSync(process.execPath, [EXPORT_PRISM], {
       encoding: 'utf8',
       cwd: tmpDir,
@@ -150,7 +150,7 @@ test('uses conservative priors (0.85) for slots with < 30 rounds', () => {
       path.join(planningDir, 'quorum-scoreboard.json'),
       JSON.stringify(scoreboard, null, 2)
     );
-    const prismDir = path.join(tmpDir, 'formal', 'prism');
+    const prismDir = path.join(tmpDir, '.formal', 'prism');
     fs.mkdirSync(prismDir, { recursive: true });
     const result = spawnSync(process.execPath, [EXPORT_PRISM], {
       encoding: 'utf8',

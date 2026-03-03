@@ -89,17 +89,17 @@ Skip this step entirely if NOT `$FULL_MODE`.
 FORMAL_SPEC_CONTEXT=[]
 ```
 
-List subdirectories under `formal/spec/` (if the directory exists):
+List subdirectories under `.formal/spec/` (if the directory exists):
 ```bash
-ls formal/spec/ 2>/dev/null
+ls .formal/spec/ 2>/dev/null
 ```
 
-For each subdirectory found, check if `formal/spec/{module}/invariants.md` exists:
+For each subdirectory found, check if `.formal/spec/{module}/invariants.md` exists:
 ```bash
-ls formal/spec/{module}/invariants.md 2>/dev/null
+ls .formal/spec/{module}/invariants.md 2>/dev/null
 ```
 
-If it exists, record the module name and path: `formal/spec/{module}/invariants.md`.
+If it exists, record the module name and path: `.formal/spec/{module}/invariants.md`.
 
 **Relevance heuristic:** Match `$DESCRIPTION` keywords (lowercased, split on spaces/hyphens) against module names. A module is relevant if any keyword appears as a substring of the module name, or the module name appears as a substring of any keyword.
 
@@ -155,9 +155,9 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ?
 Constraints:
 - Read the injected invariants.md files and identify which invariants apply to this task
 - Declare \`formal_artifacts:\` in plan frontmatter (required field when FORMAL_SPEC_CONTEXT is non-empty):
-  - \`none\` — task does not create or modify formal/ files
-  - \`update: [list of formal/ file paths]\` — task modifies existing formal/ files
-  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new formal/ files
+  - \`none\` — task does not create or modify .formal/ files
+  - \`update: [list of .formal/ file paths]\` — task modifies existing .formal/ files
+  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new .formal/ files
 - Plan tasks MUST NOT violate the identified invariants` :
 `No formal modules matched this task. Declare \`formal_artifacts: none\` in plan frontmatter.`}
 </formal_context>
@@ -433,7 +433,7 @@ Execute quick task ${next_num}.
 <constraints>
 - Execute all tasks in the plan
 - Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
-- If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the formal/ files in the atomic commit for that task (alongside the implementation files)
+- If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
 - Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
 - Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
@@ -564,7 +564,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ?
 
 Additional verification checks:
 - Did executor respect the identified invariants? Check implementation files against invariant conditions.
-- If plan declared formal_artifacts update or create: are the modified/created formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)
+- If plan declared formal_artifacts update or create: are the modified/created .formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)
 
 Formal check result from Step 6.3: ${FORMAL_CHECK_RESULT !== null ? JSON.stringify(FORMAL_CHECK_RESULT) : 'skipped (tool unavailable)'}
 If failed > 0 in formal check result: treat as a HARD FAILURE in your verification — must_haves cannot pass if a counterexample was found.` :
@@ -685,7 +685,7 @@ You are drafting a formal requirement from a completed quick task.
 - Summary: Read ${QUICK_DIR}/${next_num}-SUMMARY.md
 
 ## Existing requirements
-Read formal/requirements.json. Note all existing ID prefixes and their counts.
+Read .formal/requirements.json. Note all existing ID prefixes and their counts.
 
 ## Your task
 
@@ -736,7 +736,7 @@ Ask the user:
 ```
 AskUserQuestion(
   header: "Elevate?",
-  question: "Add this requirement to formal/requirements.json?",
+  question: "Add this requirement to .formal/requirements.json?",
   options: [
     { label: "Yes, add it", description: "Add the requirement as drafted" },
     { label: "Edit first", description: "I'll modify the ID, text, or category before adding" },
@@ -760,7 +760,7 @@ Execute the add-requirement workflow inline (same checks as `/qgsd:add-requireme
 
 2. **Semantic conflict check** (MANDATORY — always runs): Spawn Haiku with the conflict-detection prompt from `add-requirement.md` workflow (step `check_semantic_conflicts`) against the ENTIRE envelope, not just same-prefix. If `CONFLICT` returned, show it to user and ask how to proceed.
 
-3. **Unfreeze** `formal/requirements.json` if `frozen_at` is not null.
+3. **Unfreeze** `.formal/requirements.json` if `frozen_at` is not null.
 
 4. **Append** `$DRAFT_REQ` to the requirements array with provenance:
    ```json
@@ -779,12 +779,12 @@ Execute the add-requirement workflow inline (same checks as `/qgsd:add-requireme
 8. **Commit**:
    ```bash
    node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
-     --files formal/requirements.json
+     --files .formal/requirements.json
    ```
 
 9. Display:
    ```
-   ◆ Requirement ${DRAFT_REQ.id} added to formal/requirements.json
+   ◆ Requirement ${DRAFT_REQ.id} added to .formal/requirements.json
      Total requirements: ${new_count}
    ```
 
@@ -801,7 +801,7 @@ Quick Task ${next_num}: ${DESCRIPTION}
 
 Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
-${DRAFT_REQ ? 'Requirement: ' + DRAFT_REQ.id + ' (elevated to formal/requirements.json)' : ''}
+${DRAFT_REQ ? 'Requirement: ' + DRAFT_REQ.id + ' (elevated to .formal/requirements.json)' : ''}
 Commit: ${commit_hash}
 
 ---
@@ -826,7 +826,7 @@ Ready for next task: /qgsd:quick
 - [ ] Quorum ran (step 5.7) with `request_improvements: true`
 - [ ] R3.6 loop ran: if improvements proposed, planner revision spawned; if none or planner failed, loop exited; `<!-- GSD_DECISION -->` present in response
 - [ ] `${next_num}-SUMMARY.md` created by executor
-- [ ] (--full) Executor includes formal/ files in atomic commits when formal_artifacts non-empty
+- [ ] (--full) Executor includes .formal/ files in atomic commits when formal_artifacts non-empty
 - [ ] (--full) `${next_num}-VERIFICATION.md` created by verifier
 - [ ] (--full) Verifier checks invariant compliance and formal artifact syntax
 - [ ] (--full) Step 6.3 formal check ran when FORMAL_SPEC_CONTEXT non-empty; FORMAL_CHECK_RESULT passed to verifier
@@ -836,7 +836,7 @@ Ready for next task: /qgsd:quick
 - [ ] (--full) Requirement elevation runs when VERIFICATION_STATUS is "Verified" (step 6.7)
 - [ ] (--full) Haiku drafts requirement from task context (description + plan + summary)
 - [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
-- [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to formal/requirements.json with unfreeze/re-freeze lifecycle
+- [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to .formal/requirements.json with unfreeze/re-freeze lifecycle
 - [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
 </success_criteria>
 

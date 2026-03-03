@@ -30,7 +30,7 @@ must_haves:
 <objective>
 Audit the --full mode workflow claims stated in `commands/qgsd/quick.md` against the actual implementation in `qgsd-core/workflows/quick.md` and the installed copy at `~/.claude/qgsd/workflows/quick.md`.
 
-Purpose: Quick-128 added formal/ integration to --full mode but its verification status is "Pending". This audit produces a definitive pass/fail verdict for each documented claim so the status can be updated to "Verified" or flagged for gap closure.
+Purpose: Quick-128 added .formal/ integration to --full mode but its verification status is "Pending". This audit produces a definitive pass/fail verdict for each documented claim so the status can be updated to "Verified" or flagged for gap closure.
 
 Output: 129-SUMMARY.md with per-claim audit results, grep evidence, and overall verdict.
 </objective>
@@ -58,13 +58,13 @@ Perform a grep-based audit of the --full mode claims. The claims are stated in `
 1. Plan-checking (max 2 iterations): Step 5.5 must exist with an iteration cap of 2.
    - Grep: `grep -n "max 2\|iteration_count\|Max iterations" qgsd-core/workflows/quick.md`
 
-2. Formal scope scan (step 4.5): Discovers `formal/spec/*/invariants.md` before planner spawns.
-   - Grep: `grep -n "Step 4.5\|formal/spec\|FORMAL_SPEC_CONTEXT" qgsd-core/workflows/quick.md`
+2. Formal scope scan (step 4.5): Discovers `.formal/spec/*/invariants.md` before planner spawns.
+   - Grep: `grep -n "Step 4.5\|.formal/spec\|FORMAL_SPEC_CONTEXT" qgsd-core/workflows/quick.md`
 
 3. Plan frontmatter must declare `formal_artifacts:`: Planner prompt includes this requirement.
    - Grep: `grep -n "formal_artifacts" qgsd-core/workflows/quick.md`
 
-4. Executor commits formal/ files atomically when `formal_artifacts` non-empty:
+4. Executor commits .formal/ files atomically when `formal_artifacts` non-empty:
    - Grep: `grep -n "formal_artifacts.*update\|formal_artifacts.*create\|Formal.*files.*commit\|include.*formal" qgsd-core/workflows/quick.md`
 
 5. Verifier checks invariant compliance and formal artifact syntax:

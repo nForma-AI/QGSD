@@ -16,7 +16,7 @@ Connect human requirements to formal models with bidirectional, queryable tracea
 
 ### Traceability Matrix -- TRACE
 
-- [ ] **TRACE-01**: `bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `formal/traceability-matrix.json` with property-level links between requirements and formal properties
+- [ ] **TRACE-01**: `bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.formal/traceability-matrix.json` with property-level links between requirements and formal properties
 - [ ] **TRACE-02**: The traceability matrix includes a `coverage_summary` section: total requirements, covered count, coverage percentage, list of uncovered requirements, list of orphan properties (properties with no requirement mapping)
 - [ ] **TRACE-03**: The traceability matrix is generated as a step in `run-formal-verify.cjs` after all checks complete
 - [ ] **TRACE-04**: Bidirectional validation detects asymmetric links (model claims requirement X but requirement X does not claim that model) and emits warnings

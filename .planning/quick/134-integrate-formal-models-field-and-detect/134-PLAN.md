@@ -35,15 +35,15 @@ must_haves:
       contains: "req-gaps"
   key_links:
     - from: "bin/requirements-core.cjs:computeCoverage"
-      to: "formal/requirements.json"
+      to: ".formal/requirements.json"
       via: "r.formal_models field read"
       pattern: "r\\.formal_models"
     - from: "bin/requirements-core.cjs:buildTraceability"
-      to: "formal/requirements.json"
+      to: ".formal/requirements.json"
       via: "requirement.formal_models field read"
       pattern: "requirement\\.formal_models"
     - from: "bin/agents.cjs:renderReqList"
-      to: "formal/requirements.json"
+      to: ".formal/requirements.json"
       via: "r.formal_models check for FM badge"
       pattern: "r\\.formal_models"
     - from: "bin/agents.cjs:reqCoverageGapsFlow"
@@ -72,7 +72,7 @@ Output: Updated requirements-core.cjs and agents.cjs with tests.
 @bin/agents.cjs
 @bin/agents.test.cjs
 @bin/detect-coverage-gaps.cjs
-@formal/requirements.json
+@.formal/requirements.json
 </context>
 
 <tasks>
@@ -126,17 +126,17 @@ Deduplication is by `path` -- if model-registry already found the model, don't a
 
 Add a new section "8. formal_models integration" after section 7 with these tests:
 
-a. `computeCoverage: formal_models field adds to withFormalModels count` -- Create requirements where one has `formal_models: ["formal/tla/Foo.tla"]` but NO registry entry. Verify `withFormalModels` counts it.
+a. `computeCoverage: formal_models field adds to withFormalModels count` -- Create requirements where one has `formal_models: [".formal/tla/Foo.tla"]` but NO registry entry. Verify `withFormalModels` counts it.
 
-b. `computeCoverage: formal_models + registry union is deduplicated` -- Create a requirement with `formal_models: ["formal/tla/Foo.tla"]` AND a registry entry listing that requirement. Verify `withFormalModels` is 1, not 2 (Set deduplicates).
+b. `computeCoverage: formal_models + registry union is deduplicated` -- Create a requirement with `formal_models: [".formal/tla/Foo.tla"]` AND a registry entry listing that requirement. Verify `withFormalModels` is 1, not 2 (Set deduplicates).
 
-c. `buildTraceability: includes models from requirement formal_models field` -- Create a requirement with `formal_models: ["formal/alloy/bar.als"]` but NO registry entry for that path. Verify `trace.formalModels` has length 1 with the correct path.
+c. `buildTraceability: includes models from requirement formal_models field` -- Create a requirement with `formal_models: [".formal/alloy/bar.als"]` but NO registry entry for that path. Verify `trace.formalModels` has length 1 with the correct path.
 
-d. `buildTraceability: deduplicates models from formal_models and registry` -- Create a requirement with `formal_models: ["formal/tla/X.tla"]` AND a registry entry `formal/tla/X.tla` listing that requirement. Verify `trace.formalModels` has length 1 (not 2), and the entry has the registry's description (richer data wins).
+d. `buildTraceability: deduplicates models from formal_models and registry` -- Create a requirement with `formal_models: [".formal/tla/X.tla"]` AND a registry entry `.formal/tla/X.tla` listing that requirement. Verify `trace.formalModels` has length 1 (not 2), and the entry has the registry's description (richer data wins).
 
-e. `buildTraceability: formal_models enriches with registry metadata when available` -- Create a requirement with `formal_models: ["formal/tla/Y.tla"]` AND a registry entry for `formal/tla/Y.tla` that has `description: "Y model"` but does NOT list the requirement in its `requirements` array. Verify `trace.formalModels` has length 1, path is `formal/tla/Y.tla`, and description is `"Y model"` (pulled from registry metadata even though registry didn't link to this req).
+e. `buildTraceability: formal_models enriches with registry metadata when available` -- Create a requirement with `formal_models: [".formal/tla/Y.tla"]` AND a registry entry for `.formal/tla/Y.tla` that has `description: "Y model"` but does NOT list the requirement in its `requirements` array. Verify `trace.formalModels` has length 1, path is `.formal/tla/Y.tla`, and description is `"Y model"` (pulled from registry metadata even though registry didn't link to this req).
 
-Use the existing `makeReq` helper with override: `makeReq('FM-01', { formal_models: ['formal/tla/Foo.tla'] })`.
+Use the existing `makeReq` helper with override: `makeReq('FM-01', { formal_models: ['.formal/tla/Foo.tla'] })`.
   </action>
   <verify>
 Run: `node --test bin/requirements-core.test.cjs` -- all tests pass (existing + 5 new).

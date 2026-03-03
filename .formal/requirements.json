@@ -185,7 +185,7 @@
     },
     {
       "id": "ARCH-01",
-      "text": "All formal models declared in `formal/model-registry.json` as single source of truth with provenance tracking",
+      "text": "All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking",
       "category": "Quorum & Dispatch",
       "phase": "v0.21-01",
       "status": "Complete",
@@ -245,7 +245,7 @@
     },
     {
       "id": "CALIB-01",
-      "text": "`formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
+      "text": "`.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-02",
       "status": "Complete",
@@ -254,7 +254,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/alloy/availability-parsing.als"
+        ".formal/alloy/availability-parsing.als"
       ],
       "category_raw": "Calibration Governance"
     },
@@ -269,7 +269,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/alloy/availability-parsing.als"
+        ".formal/alloy/availability-parsing.als"
       ],
       "category_raw": "Calibration Governance"
     },
@@ -284,13 +284,13 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/alloy/availability-parsing.als"
+        ".formal/alloy/availability-parsing.als"
       ],
       "category_raw": "Calibration Governance"
     },
     {
       "id": "CALIB-04",
-      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
+      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-10",
       "status": "Complete",
@@ -335,7 +335,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/quorum-composition.als"
+        ".formal/alloy/quorum-composition.als"
       ],
       "category_raw": "Composition Config"
     },
@@ -494,7 +494,7 @@
         "milestone": "v0.10"
       },
       "formal_models": [
-        "formal/tla/QGSDAccountManager.tla"
+        ".formal/tla/QGSDAccountManager.tla"
       ],
       "category_raw": "Credentials"
     },
@@ -509,7 +509,7 @@
         "milestone": "v0.10"
       },
       "formal_models": [
-        "formal/tla/QGSDAccountManager.tla"
+        ".formal/tla/QGSDAccountManager.tla"
       ],
       "category_raw": "Credentials"
     },
@@ -608,7 +608,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDCircuitBreaker.tla"
+        ".formal/tla/QGSDCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -623,7 +623,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDCircuitBreaker.tla"
+        ".formal/tla/QGSDCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -638,7 +638,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDCircuitBreaker.tla"
+        ".formal/tla/QGSDCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -653,7 +653,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDOscillation.tla"
+        ".formal/tla/QGSDOscillation.tla"
       ],
       "category_raw": "Detection"
     },
@@ -668,7 +668,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDOscillation.tla"
+        ".formal/tla/QGSDOscillation.tla"
       ],
       "category_raw": "Detection"
     },
@@ -698,7 +698,7 @@
     },
     {
       "id": "DIAG-03",
-      "text": "Pivot decision surfaced in `formal/diff-report.md` with complete attribution (DELIVERED; VERIFICATION.md missing)",
+      "text": "Pivot decision surfaced in `.formal/diff-report.md` with complete attribution (DELIVERED; VERIFICATION.md missing)",
       "category": "Observability & Diagnostics",
       "phase": "unknown",
       "status": "Pending",
@@ -863,7 +863,7 @@
         "milestone": "v0.24"
       },
       "formal_models": [
-        "formal/prism/mcp-availability.pm"
+        ".formal/prism/mcp-availability.pm"
       ],
       "category_raw": "Failover & Recovery"
     },
@@ -950,7 +950,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/tla/QGSDDeliberation.tla"
+        ".formal/tla/QGSDDeliberation.tla"
       ],
       "category_raw": "R3.6 Improvement Iteration"
     },
@@ -1001,7 +1001,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/install-scope.als"
+        ".formal/alloy/install-scope.als"
       ],
       "category_raw": "Install Integration"
     },
@@ -1016,7 +1016,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/install-scope.als"
+        ".formal/alloy/install-scope.als"
       ],
       "category_raw": "Installer"
     },
@@ -1031,7 +1031,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/install-scope.als"
+        ".formal/alloy/install-scope.als"
       ],
       "category_raw": "Installer"
     },
@@ -1046,7 +1046,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/install-scope.als"
+        ".formal/alloy/install-scope.als"
       ],
       "category_raw": "Installer"
     },
@@ -1061,7 +1061,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/install-scope.als"
+        ".formal/alloy/install-scope.als"
       ],
       "category_raw": "Installer"
     },
@@ -1208,8 +1208,8 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla",
-        "formal/prism/quorum.pm"
+        ".formal/tla/QGSDQuorum.tla",
+        ".formal/prism/quorum.pm"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -1224,7 +1224,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDDeliberation.tla"
+        ".formal/tla/QGSDDeliberation.tla"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -1239,7 +1239,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDPreFilter.tla"
+        ".formal/tla/QGSDPreFilter.tla"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -1329,7 +1329,7 @@
     },
     {
       "id": "MCPENV-01",
-      "text": "`formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
+      "text": "`.formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
       "category": "MCP & Agents",
       "phase": "v0.19-05",
       "status": "Complete",
@@ -1338,7 +1338,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/tla/QGSDMCPEnv.tla"
+        ".formal/tla/QGSDMCPEnv.tla"
       ],
       "category_raw": "MCP Environment Model"
     },
@@ -1353,7 +1353,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/tla/QGSDMCPEnv.tla"
+        ".formal/tla/QGSDMCPEnv.tla"
       ],
       "category_raw": "MCP Environment Model"
     },
@@ -1368,7 +1368,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/tla/QGSDMCPEnv.tla"
+        ".formal/tla/QGSDMCPEnv.tla"
       ],
       "category_raw": "MCP Environment Model"
     },
@@ -1383,7 +1383,7 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        "formal/prism/mcp-availability.pm"
+        ".formal/prism/mcp-availability.pm"
       ],
       "category_raw": "MCP Environment Model"
     },
@@ -1518,7 +1518,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDConvergence.tla"
+        ".formal/tla/QGSDConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -1533,7 +1533,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDConvergence.tla"
+        ".formal/tla/QGSDConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -1548,7 +1548,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDConvergence.tla"
+        ".formal/tla/QGSDConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -1563,7 +1563,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDConvergence.tla"
+        ".formal/tla/QGSDConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -1578,7 +1578,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDConvergence.tla"
+        ".formal/tla/QGSDConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -1593,7 +1593,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDDeliberation.tla"
+        ".formal/tla/QGSDDeliberation.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -1608,7 +1608,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDDeliberation.tla"
+        ".formal/tla/QGSDDeliberation.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -1623,7 +1623,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDPreFilter.tla"
+        ".formal/tla/QGSDPreFilter.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -1770,7 +1770,7 @@
         "milestone": "v0.13"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla"
+        ".formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Quorum Gates"
     },
@@ -1785,8 +1785,8 @@
         "milestone": "v0.13"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla",
-        "formal/alloy/quorum-votes.als"
+        ".formal/tla/QGSDQuorum.tla",
+        ".formal/alloy/quorum-votes.als"
       ],
       "category_raw": "Quorum Gates"
     },
@@ -1801,7 +1801,7 @@
         "milestone": "v0.13"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla"
+        ".formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Quorum Gates"
     },
@@ -1816,7 +1816,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla"
+        ".formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Recovery"
     },
@@ -1963,8 +1963,8 @@
         "milestone": "v0.15"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla",
-        "formal/alloy/quorum-votes.als"
+        ".formal/tla/QGSDQuorum.tla",
+        ".formal/alloy/quorum-votes.als"
       ],
       "category_raw": "Repair Safety"
     },
@@ -1979,7 +1979,7 @@
         "milestone": "v0.15"
       },
       "formal_models": [
-        "formal/tla/QGSDQuorum.tla"
+        ".formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Repair Safety"
     },
@@ -1994,7 +1994,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/scoreboard-recompute.als"
+        ".formal/alloy/scoreboard-recompute.als"
       ],
       "category_raw": "Scoreboard Slot Tracking"
     },
@@ -2009,7 +2009,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/scoreboard-recompute.als"
+        ".formal/alloy/scoreboard-recompute.als"
       ],
       "category_raw": "Scoreboard Slot Tracking"
     },
@@ -2024,7 +2024,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/scoreboard-recompute.als"
+        ".formal/alloy/scoreboard-recompute.als"
       ],
       "category_raw": "Scoreboard Slot Tracking"
     },
@@ -2078,7 +2078,7 @@
     },
     {
       "id": "SENS-01",
-      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
+      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2102,7 +2102,7 @@
     },
     {
       "id": "SENS-03",
-      "text": "`bin/sensitivity-report.cjs` generates `formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
+      "text": "`bin/sensitivity-report.cjs` generates `.formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2114,7 +2114,7 @@
     },
     {
       "id": "SIG-01",
-      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `formal/coverage-gaps.md`",
+      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.formal/coverage-gaps.md`",
       "category": "Observability & Diagnostics",
       "phase": "v0.21-06",
       "status": "Complete",
@@ -2183,7 +2183,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDRecruiting.tla"
+        ".formal/tla/QGSDRecruiting.tla"
       ],
       "category_raw": "Slot-based Naming"
     },
@@ -2198,7 +2198,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDRecruiting.tla"
+        ".formal/tla/QGSDRecruiting.tla"
       ],
       "category_raw": "Slot-based Naming"
     },
@@ -2213,7 +2213,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDRecruiting.tla"
+        ".formal/tla/QGSDRecruiting.tla"
       ],
       "category_raw": "Slot-based Naming"
     },
@@ -2228,7 +2228,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Spec Completeness"
     },
@@ -2255,7 +2255,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/quorum-composition.als"
+        ".formal/alloy/quorum-composition.als"
       ],
       "category_raw": "Spec Completeness"
     },
@@ -2354,7 +2354,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2369,7 +2369,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2384,7 +2384,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2399,7 +2399,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2414,7 +2414,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2429,7 +2429,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2444,7 +2444,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/tla/QGSDStopHook.tla"
+        ".formal/tla/QGSDStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2459,7 +2459,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/transcript-scan.als"
+        ".formal/alloy/transcript-scan.als"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2474,7 +2474,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        "formal/alloy/transcript-scan.als"
+        ".formal/alloy/transcript-scan.als"
       ],
       "category_raw": "Stop Hook"
     },
@@ -2528,7 +2528,7 @@
     },
     {
       "id": "TRACE-01",
-      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `formal/traceability-matrix.json` with property-level links between requirements and formal properties",
+      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.formal/traceability-matrix.json` with property-level links between requirements and formal properties",
       "category": "Formal Verification",
       "phase": "v0.25-03",
       "status": "Pending",
@@ -2588,7 +2588,7 @@
     },
     {
       "id": "TRIAGE-01",
-      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `formal/diff-report.md` (per-check delta from last run) and `formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
+      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.formal/diff-report.md` (per-check delta from last run) and `.formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
       "phase": "v0.20-06",
       "status": "Complete",
@@ -2660,7 +2660,7 @@
     },
     {
       "id": "UPPAAL-01",
-      "text": "A UPPAAL timed automaton model (`formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
+      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
       "category": "Formal Verification",
       "phase": "v0.20-07",
       "status": "Complete",

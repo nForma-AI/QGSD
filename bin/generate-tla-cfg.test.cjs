@@ -4,7 +4,7 @@
 // Comprehensive tests for bin/generate-tla-cfg.cjs
 //
 // The CLI is not invoked with cwd isolation for write tests because ROOT is
-// always path.join(__dirname, '..') — it writes to the real repo's formal/tla/.
+// always path.join(__dirname, '..') — it writes to the real repo's .formal/tla/.
 // Content and error-path tests use --dry (safe) or a synthetic repo layout
 // built under a tmpDir that is then referenced via symlink tricks are NOT used.
 // Instead: write tests invoke the real CLI (which writes to the real repo) and
@@ -23,15 +23,15 @@ const os   = require('os');
 const CLI      = path.join(__dirname, 'generate-tla-cfg.cjs');
 const REPO_ROOT = path.join(__dirname, '..');
 const MACHINE_FILE = path.join(REPO_ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
-const SAFETY_PATH   = path.join(REPO_ROOT, 'formal', 'tla', 'MCsafety.cfg');
-const LIVENESS_PATH = path.join(REPO_ROOT, 'formal', 'tla', 'MCliveness.cfg');
+const SAFETY_PATH   = path.join(REPO_ROOT, '.formal', 'tla', 'MCsafety.cfg');
+const LIVENESS_PATH = path.join(REPO_ROOT, '.formal', 'tla', 'MCliveness.cfg');
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
  * Build a minimal synthetic repo tree under tmpDir with:
  *   src/machines/qgsd-workflow.machine.ts  (custom content)
- *   formal/tla/                            (empty dir)
+ *   .formal/tla/                            (empty dir)
  *
  * Returns an object with helpers to spawn the CLI pointing at that tree.
  * Because ROOT = path.join(__dirname, '..'), we cannot redirect the CLI to
@@ -73,7 +73,7 @@ function makeSyntheticCLI(tmpDir, machineContent) {
 
   // Create the directory structure the CLI expects
   fs.mkdirSync(path.join(tmpDir, 'src', 'machines'), { recursive: true });
-  fs.mkdirSync(path.join(tmpDir, 'formal', 'tla'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.formal', 'tla'), { recursive: true });
 
   if (machineContent !== undefined) {
     fs.writeFileSync(
@@ -99,7 +99,7 @@ function run(cli, args, opts) {
 test('exits 1 when XState machine file does not exist', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tla-cfg-test-'));
   try {
-    // Provide NO machine file — only the formal/tla dir
+    // Provide NO machine file — only the .formal/tla dir
     const patchedCLI = makeSyntheticCLI(tmpDir, undefined);
     // Remove the machine file that was not written anyway
     const result = run(patchedCLI);
@@ -209,26 +209,26 @@ test('stdout reports SafetyAgents=5 and LivenessAgents=3 in summary line', () =>
   }
 });
 
-test('writes MCsafety.cfg to formal/tla/ in non-dry mode', () => {
+test('writes MCsafety.cfg to .formal/tla/ in non-dry mode', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tla-cfg-test-'));
   try {
     const patchedCLI = makeSyntheticCLI(tmpDir, '  maxDeliberation:    7,\n');
     const result = run(patchedCLI);
     assert.equal(result.status, 0);
-    const outPath = path.join(tmpDir, 'formal', 'tla', 'MCsafety.cfg');
+    const outPath = path.join(tmpDir, '.formal', 'tla', 'MCsafety.cfg');
     assert.ok(fs.existsSync(outPath), 'MCsafety.cfg should be written');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
 
-test('writes MCliveness.cfg to formal/tla/ in non-dry mode', () => {
+test('writes MCliveness.cfg to .formal/tla/ in non-dry mode', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tla-cfg-test-'));
   try {
     const patchedCLI = makeSyntheticCLI(tmpDir, '  maxDeliberation:    7,\n');
     const result = run(patchedCLI);
     assert.equal(result.status, 0);
-    const outPath = path.join(tmpDir, 'formal', 'tla', 'MCliveness.cfg');
+    const outPath = path.join(tmpDir, '.formal', 'tla', 'MCliveness.cfg');
     assert.ok(fs.existsSync(outPath), 'MCliveness.cfg should be written');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -443,7 +443,7 @@ test('written MCsafety.cfg content matches --dry stdout section', () => {
     const writeResult = run(patchedCLI, []);
     assert.equal(writeResult.status, 0);
 
-    const written = fs.readFileSync(path.join(tmpDir, 'formal', 'tla', 'MCsafety.cfg'), 'utf8');
+    const written = fs.readFileSync(path.join(tmpDir, '.formal', 'tla', 'MCsafety.cfg'), 'utf8');
 
     // Dry output section is between "--- MCsafety.cfg ---\n" and "--- MCliveness.cfg ---\n"
     const drySection = dryResult.stdout
@@ -468,7 +468,7 @@ test('written MCliveness.cfg content matches --dry stdout section', () => {
     const writeResult = run(patchedCLI, []);
     assert.equal(writeResult.status, 0);
 
-    const written = fs.readFileSync(path.join(tmpDir, 'formal', 'tla', 'MCliveness.cfg'), 'utf8');
+    const written = fs.readFileSync(path.join(tmpDir, '.formal', 'tla', 'MCliveness.cfg'), 'utf8');
 
     // Dry output section is everything after "--- MCliveness.cfg ---\n".
     // Strip trailing summary lines (prefixed with "[generate-tla-cfg]") that

@@ -32,9 +32,9 @@ re_verification: false
 |----------|----------|--------|---------|
 | `hooks/qgsd-stop.test.js` | TC-DEFAULT-CEIL-BLOCK fixed; PLAN.md renamed to quick-115-PLAN.md | VERIFIED | Lines 1185, 1229 use `quick-115-PLAN.md`; TC-DEFAULT-CEIL-PASS and TC-DEFAULT-CEIL-BLOCK both present; also TC-SOLO-STOP, TC-N-OVERRIDE-PASS, TC-N-OVERRIDE-BLOCK added |
 | `hooks/qgsd-prompt.test.js` | TC-PROMPT-N-CAP, TC-PROMPT-SOLO, TC-PROMPT-PREFER-SUB-DEFAULT tests added | VERIFIED | Lines 289, 313, 336 confirm all 3 new tests present with substantive assertions |
-| `formal/tla/QGSDQuorum.tla` | MaxSize CONSTANT declared; ASSUME MaxSize \in 1..N; QuorumCeilingMet invariant | VERIFIED | Lines 19, 26, 100-103 confirm all three additions |
-| `formal/tla/MCsafety.cfg` | MaxSize = 5 constant assignment added; INVARIANT QuorumCeilingMet | VERIFIED | Lines 18 and 23 confirm both additions |
-| `formal/tla/MCliveness.cfg` | MaxSize = 3 constant assignment added | VERIFIED | Line 16 confirms addition; correctly no INVARIANT (liveness uses PROPERTY only) |
+| `.formal/tla/QGSDQuorum.tla` | MaxSize CONSTANT declared; ASSUME MaxSize \in 1..N; QuorumCeilingMet invariant | VERIFIED | Lines 19, 26, 100-103 confirm all three additions |
+| `.formal/tla/MCsafety.cfg` | MaxSize = 5 constant assignment added; INVARIANT QuorumCeilingMet | VERIFIED | Lines 18 and 23 confirm both additions |
+| `.formal/tla/MCliveness.cfg` | MaxSize = 3 constant assignment added | VERIFIED | Line 16 confirms addition; correctly no INVARIANT (liveness uses PROPERTY only) |
 
 ### Key Link Verification
 

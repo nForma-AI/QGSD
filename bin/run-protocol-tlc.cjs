@@ -11,7 +11,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - formal/tla/tla2tools.jar (see formal/tla/README.md for download command)
+//   - .formal/tla/tla2tools.jar (see .formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -106,13 +106,13 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(__dirname, '..', 'formal', 'tla', 'tla2tools.jar');
+const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-protocol-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
     '[run-protocol-tlc] Download v1.8.0:\n' +
     '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-    '       -o formal/tla/tla2tools.jar\n'
+    '       -o .formal/tla/tla2tools.jar\n'
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
@@ -124,8 +124,8 @@ if (!fs.existsSync(jarPath)) {
 const specFileName = configName === 'MCdeliberation'
   ? 'QGSDDeliberation.tla'
   : 'QGSDPreFilter.tla';
-const specPath = path.join(__dirname, '..', 'formal', 'tla', specFileName);
-const cfgPath  = path.join(__dirname, '..', 'formal', 'tla', configName + '.cfg');
+const specPath = path.join(__dirname, '..', '.formal', 'tla', specFileName);
+const cfgPath  = path.join(__dirname, '..', '.formal', 'tla', configName + '.cfg');
 
 // Both MCdeliberation and MCprefilter have PROPERTY (liveness) — always use -workers 1.
 // This avoids the TLC multi-worker liveness checking bug for both specs.

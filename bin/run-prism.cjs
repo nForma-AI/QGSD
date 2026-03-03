@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-prism.cjs
-// Invokes PRISM model checker against formal/prism/quorum.pm.
+// Invokes PRISM model checker against .formal/prism/quorum.pm.
 // Requirements: PRM-01
 //
 // Usage:
@@ -59,7 +59,7 @@ if (prismBin !== 'prism' && !fs.existsSync(prismBin)) {
 }
 
 // ── Locate model file ────────────────────────────────────────────────────────
-const modelPath = path.join(__dirname, '..', 'formal', 'prism', 'quorum.pm');
+const modelPath = path.join(__dirname, '..', '.formal', 'prism', 'quorum.pm');
 if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-prism] Model file not found: ' + modelPath + '\n'
@@ -129,7 +129,7 @@ let liveUnavail   = null;
 const scoreboardPath = path.join(process.cwd(), '.planning', 'quorum-scoreboard.json');
 
 // ── Load calibration policy ───────────────────────────────────────────────
-const policyPath = path.join(__dirname, '..', 'formal', 'policy.yaml');
+const policyPath = path.join(__dirname, '..', '.formal', 'policy.yaml');
 let policy;
 try {
   policy = readPolicy(policyPath);
@@ -253,7 +253,7 @@ function computeColdStartState(pol, sbPath, crPath) {
   return { inColdStart, ciRunCount, quorumRoundCount, daysSinceFirst, firstRunTimestamp };
 }
 
-const checkResultsPath = path.join(process.cwd(), 'formal', 'check-results.ndjson');
+const checkResultsPath = path.join(process.cwd(), '.formal', 'check-results.ndjson');
 const coldStartState = computeColdStartState(policy, scoreboardPath, checkResultsPath);
 if (coldStartState.inColdStart) {
   process.stderr.write(
@@ -266,7 +266,7 @@ if (coldStartState.inColdStart) {
 
 // ── Build argument list ──────────────────────────────────────────────────────
 // Extra args passed to this script are forwarded to PRISM after the model path.
-// If formal/prism/quorum.props exists, pass it as the properties file (runs all 4 properties).
+// If .formal/prism/quorum.props exists, pass it as the properties file (runs all 4 properties).
 // Otherwise fall back to: -pf "P=? [ F s=1 ]"
 const extraArgs = process.argv.slice(2);
 
@@ -286,7 +286,7 @@ let activeModelPath = modelPath; // default: quorum.pm
 let activeMcpRates = null;       // per-slot rates if mcp-availability model
 
 if (useMCPAvailabilityModel) {
-  const mcpModelPath = path.join(__dirname, '..', 'formal', 'prism', 'mcp-availability.pm');
+  const mcpModelPath = path.join(__dirname, '..', '.formal', 'prism', 'mcp-availability.pm');
   if (!fs.existsSync(mcpModelPath)) {
     process.stderr.write('[run-prism] mcp-availability.pm not found at: ' + mcpModelPath + '\n');
     process.exit(1);
@@ -302,7 +302,7 @@ if (useMCPAvailabilityModel) {
 }
 
 const hasPf    = filteredExtraArgs.some(a => a === '-pf' || a === '-prop');
-const propsFile = path.join(__dirname, '..', 'formal', 'prism', useMCPAvailabilityModel ? 'mcp-availability.props' : 'quorum.props');
+const propsFile = path.join(__dirname, '..', '.formal', 'prism', useMCPAvailabilityModel ? 'mcp-availability.props' : 'quorum.props');
 const hasProps  = !hasPf && fs.existsSync(propsFile);
 
 // Determine if caller already overrides tp_rate or unavail

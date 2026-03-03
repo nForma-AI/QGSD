@@ -59,12 +59,12 @@ Stop hook tests: 32/32 pass
 |------|--------|---------|
 | `src/machines/qgsd-workflow.machine.ts` | Updated | maxSize, polledCount, unanimityMet guard |
 | `bin/generate-formal-specs.cjs` | Updated | GUARD_REGISTRY, maxSize extraction |
-| `formal/tla/QGSDQuorum.tla` | Regenerated | MaxSize, polledCount, UnanimityMet, QuorumCeilingMet |
-| `formal/tla/MCsafety.cfg` | Regenerated | MaxSize, UnanimityMet, QuorumCeilingMet |
-| `formal/tla/MCliveness.cfg` | Regenerated | MaxSize |
-| `formal/alloy/quorum-votes.als` | Regenerated | UnanimityReached, polled field |
-| `formal/prism/quorum.pm` | Regenerated | unanimityMet comment reference |
-| `formal/prism/quorum.props` | Regenerated | Updated comments |
+| `.formal/tla/QGSDQuorum.tla` | Regenerated | MaxSize, polledCount, UnanimityMet, QuorumCeilingMet |
+| `.formal/tla/MCsafety.cfg` | Regenerated | MaxSize, UnanimityMet, QuorumCeilingMet |
+| `.formal/tla/MCliveness.cfg` | Regenerated | MaxSize |
+| `.formal/alloy/quorum-votes.als` | Regenerated | UnanimityReached, polled field |
+| `.formal/prism/quorum.pm` | Regenerated | unanimityMet comment reference |
+| `.formal/prism/quorum.props` | Regenerated | Updated comments |
 
 ## Key Decision
 

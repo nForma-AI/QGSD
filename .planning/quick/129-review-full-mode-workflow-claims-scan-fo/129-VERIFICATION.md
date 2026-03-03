@@ -22,7 +22,7 @@ verification_type: initial
 Quick task 129 executed an audit of six --full mode workflow claims stated in `commands/qgsd/quick.md` against the actual implementations in `qgsd-core/workflows/quick.md` (source) and `~/.claude/qgsd/workflows/quick.md` (installed).
 
 **All 6 claims are VERIFIED PRESENT and properly implemented.** The audit found:
-- Complete formal scope scanning (Step 4.5) discovering `formal/spec/*/invariants.md` files
+- Complete formal scope scanning (Step 4.5) discovering `.formal/spec/*/invariants.md` files
 - Formal context injection into planner, checker, executor, and verifier
 - Mandatory `formal_artifacts:` declaration requirement in plan frontmatter
 - Atomic formal file commits coupled to implementation files
@@ -138,7 +138,7 @@ All links verified as WIRED — claims reference specific steps/lines that exist
 
 **Formal invariant:** EventualConsensus == `<>(phase = "DECIDED")`
 
-**Source:** `formal/spec/quorum/invariants.md`, `formal/tla/QGSDQuorum.tla`
+**Source:** `.formal/spec/quorum/invariants.md`, `.formal/tla/QGSDQuorum.tla`
 
 **Verification against workflow:**
 - Liveness property requires eventual DECIDED state

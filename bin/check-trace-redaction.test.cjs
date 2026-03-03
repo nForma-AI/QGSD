@@ -11,7 +11,7 @@ const os = require('os');
 const { spawnSync } = require('child_process');
 
 const { parseRedactionPolicy, validateTraceEvent } = require('../bin/check-trace-redaction.cjs');
-const POLICY_PATH = path.join(__dirname, '..', 'formal', 'trace', 'redaction.yaml');
+const POLICY_PATH = path.join(__dirname, '..', '.formal', 'trace', 'redaction.yaml');
 
 // ── Unit tests ────────────────────────────────────────────────────────────────
 

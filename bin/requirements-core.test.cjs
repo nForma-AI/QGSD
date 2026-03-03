@@ -13,7 +13,7 @@ const rc = require('./requirements-core.cjs');
 // ─── Temp dir helpers ─────────────────────────────────────────────────────────
 function makeTmp() {
   const dir = path.join(os.tmpdir(), 'qgsd-reqcore-' + Date.now() + '-' + Math.random().toString(36).slice(2));
-  fs.mkdirSync(path.join(dir, 'formal'), { recursive: true });
+  fs.mkdirSync(path.join(dir, '.formal'), { recursive: true });
   return dir;
 }
 function rmTmp(dir) {
@@ -56,7 +56,7 @@ test('readRequirementsJson: returns fallback when file missing', () => {
 test('readRequirementsJson: parses envelope and requirements', () => {
   const dir = makeTmp();
   const data = makeRequirements([makeReq('REQ-01'), makeReq('REQ-02')]);
-  writeFixture(dir, 'formal/requirements.json', data);
+  writeFixture(dir, '.formal/requirements.json', data);
   try {
     const result = rc.readRequirementsJson(dir);
     assert.strictEqual(result.requirements.length, 2);
@@ -68,7 +68,7 @@ test('readRequirementsJson: parses envelope and requirements', () => {
 
 test('readRequirementsJson: returns fallback on malformed JSON', () => {
   const dir = makeTmp();
-  writeFixture(dir, 'formal/requirements.json', 'NOT_JSON');
+  writeFixture(dir, '.formal/requirements.json', 'NOT_JSON');
   try {
     const result = rc.readRequirementsJson(dir);
     assert.deepStrictEqual(result, { envelope: null, requirements: [] });
@@ -89,18 +89,18 @@ test('readModelRegistry: returns fallback when file missing', () => {
 
 test('readModelRegistry: parses models correctly', () => {
   const dir = makeTmp();
-  writeFixture(dir, 'formal/model-registry.json', {
+  writeFixture(dir, '.formal/model-registry.json', {
     version: '1.0',
     last_sync: '2026-03-03T00:00:00Z',
     models: {
-      'formal/tla/Foo.tla': { version: 1, requirements: ['REQ-01'] },
+      '.formal/tla/Foo.tla': { version: 1, requirements: ['REQ-01'] },
     },
   });
   try {
     const result = rc.readModelRegistry(dir);
     assert.strictEqual(result.version, '1.0');
-    assert.ok(result.models['formal/tla/Foo.tla']);
-    assert.deepStrictEqual(result.models['formal/tla/Foo.tla'].requirements, ['REQ-01']);
+    assert.ok(result.models['.formal/tla/Foo.tla']);
+    assert.deepStrictEqual(result.models['.formal/tla/Foo.tla'].requirements, ['REQ-01']);
   } finally { rmTmp(dir); }
 });
 
@@ -121,7 +121,7 @@ test('readCheckResults: parses NDJSON lines', () => {
     JSON.stringify({ check_id: 'tla:foo', result: 'pass', runtime_ms: 10 }),
     JSON.stringify({ check_id: 'ci:bar', result: 'fail', runtime_ms: 50 }),
   ].join('\n') + '\n';
-  writeFixture(dir, 'formal/check-results.ndjson', lines);
+  writeFixture(dir, '.formal/check-results.ndjson', lines);
   try {
     const results = rc.readCheckResults(dir);
     assert.strictEqual(results.length, 2);
@@ -137,7 +137,7 @@ test('readCheckResults: skips malformed lines gracefully', () => {
     'NOT_JSON',
     JSON.stringify({ check_id: 'ok2', result: 'fail' }),
   ].join('\n') + '\n';
-  writeFixture(dir, 'formal/check-results.ndjson', lines);
+  writeFixture(dir, '.formal/check-results.ndjson', lines);
   try {
     const results = rc.readCheckResults(dir);
     assert.strictEqual(results.length, 2);
@@ -210,7 +210,7 @@ test('buildTraceability: returns null for unknown reqId', () => {
 test('buildTraceability: joins all three sources correctly', () => {
   const reqs = [makeReq('CALIB-01', { category: 'Calibration' })];
   const registry = { models: {
-    'formal/alloy/availability-parsing.als': {
+    '.formal/alloy/availability-parsing.als': {
       description: 'Availability model',
       version: 1,
       requirements: ['CALIB-01', 'CALIB-02'],
@@ -224,7 +224,7 @@ test('buildTraceability: joins all three sources correctly', () => {
   assert.ok(trace);
   assert.strictEqual(trace.requirement.id, 'CALIB-01');
   assert.strictEqual(trace.formalModels.length, 1);
-  assert.strictEqual(trace.formalModels[0].path, 'formal/alloy/availability-parsing.als');
+  assert.strictEqual(trace.formalModels[0].path, '.formal/alloy/availability-parsing.als');
   assert.strictEqual(trace.checkResults.length, 1);
   assert.strictEqual(trace.checkResults[0].result, 'pass');
 });
@@ -331,7 +331,7 @@ test('getUniqueCategories: empty input returns empty array', () => {
 
 test('computeCoverage: formal_models field adds to withFormalModels count', () => {
   const reqs = [
-    makeReq('FM-01', { formal_models: ['formal/tla/Foo.tla'], status: 'Complete' }),
+    makeReq('FM-01', { formal_models: ['.formal/tla/Foo.tla'], status: 'Complete' }),
     makeReq('FM-02', { status: 'Complete' }),
   ];
   // No registry entry for FM-01, only the direct formal_models field
@@ -342,11 +342,11 @@ test('computeCoverage: formal_models field adds to withFormalModels count', () =
 
 test('computeCoverage: formal_models + registry union is deduplicated', () => {
   const reqs = [
-    makeReq('FM-03', { formal_models: ['formal/tla/Foo.tla'], status: 'Complete' }),
+    makeReq('FM-03', { formal_models: ['.formal/tla/Foo.tla'], status: 'Complete' }),
   ];
   // Registry also lists FM-03 as having models
   const registry = { models: {
-    'formal/tla/Foo.tla': { requirements: ['FM-03'] },
+    '.formal/tla/Foo.tla': { requirements: ['FM-03'] },
   }};
   const cov = rc.computeCoverage(reqs, registry, []);
   // Set deduplicates, so FM-03 appears once
@@ -354,20 +354,20 @@ test('computeCoverage: formal_models + registry union is deduplicated', () => {
 });
 
 test('buildTraceability: includes models from requirement formal_models field', () => {
-  const reqs = [makeReq('FM-04', { formal_models: ['formal/alloy/bar.als'] })];
+  const reqs = [makeReq('FM-04', { formal_models: ['.formal/alloy/bar.als'] })];
   // No registry entry for this model
   const trace = rc.buildTraceability('FM-04', reqs, { models: {} }, []);
   assert.ok(trace);
   assert.strictEqual(trace.formalModels.length, 1);
-  assert.strictEqual(trace.formalModels[0].path, 'formal/alloy/bar.als');
+  assert.strictEqual(trace.formalModels[0].path, '.formal/alloy/bar.als');
   assert.strictEqual(trace.formalModels[0].description, '');
   assert.strictEqual(trace.formalModels[0].version, null);
 });
 
 test('buildTraceability: deduplicates models from formal_models and registry', () => {
-  const reqs = [makeReq('FM-05', { formal_models: ['formal/tla/X.tla'] })];
+  const reqs = [makeReq('FM-05', { formal_models: ['.formal/tla/X.tla'] })];
   const registry = { models: {
-    'formal/tla/X.tla': {
+    '.formal/tla/X.tla': {
       description: 'X model',
       version: 2,
       requirements: ['FM-05'],
@@ -377,16 +377,16 @@ test('buildTraceability: deduplicates models from formal_models and registry', (
   assert.ok(trace);
   // Registry found it first, so dedup avoids adding duplicate
   assert.strictEqual(trace.formalModels.length, 1);
-  assert.strictEqual(trace.formalModels[0].path, 'formal/tla/X.tla');
+  assert.strictEqual(trace.formalModels[0].path, '.formal/tla/X.tla');
   assert.strictEqual(trace.formalModels[0].description, 'X model');
   assert.strictEqual(trace.formalModels[0].version, 2);
 });
 
 test('buildTraceability: formal_models enriches with registry metadata when available', () => {
-  const reqs = [makeReq('FM-06', { formal_models: ['formal/tla/Y.tla'] })];
+  const reqs = [makeReq('FM-06', { formal_models: ['.formal/tla/Y.tla'] })];
   // Registry has metadata for Y.tla but does NOT list FM-06 in requirements
   const registry = { models: {
-    'formal/tla/Y.tla': {
+    '.formal/tla/Y.tla': {
       description: 'Y model',
       version: 3,
       requirements: [], // Does not list FM-06
@@ -396,7 +396,7 @@ test('buildTraceability: formal_models enriches with registry metadata when avai
   assert.ok(trace);
   // Should add from formal_models field and pull metadata from registry
   assert.strictEqual(trace.formalModels.length, 1);
-  assert.strictEqual(trace.formalModels[0].path, 'formal/tla/Y.tla');
+  assert.strictEqual(trace.formalModels[0].path, '.formal/tla/Y.tla');
   assert.strictEqual(trace.formalModels[0].description, 'Y model');
   assert.strictEqual(trace.formalModels[0].version, 3);
 });

@@ -2200,7 +2200,7 @@ async function reqAggregateFlow() {
     const { aggregateRequirements } = require('./aggregate-requirements.cjs');
     const result = aggregateRequirements();
     const count  = result && result.count != null ? result.count : '?';
-    const output = result && result.outputPath ? result.outputPath : 'formal/requirements.json';
+    const output = result && result.outputPath ? result.outputPath : '.formal/requirements.json';
     toast(`Aggregated ${count} requirements → ${output}`);
   } catch (err) {
     const hint = err.message && err.message.includes('frozen')

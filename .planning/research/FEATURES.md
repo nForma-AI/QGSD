@@ -104,11 +104,11 @@ Features that seem good but create problems. QGSD should explicitly avoid these.
 
 Minimum viable product for requirements envelope integration into QGSD v0.22.
 
-- [x] **Requirements Aggregation** — Consolidate all phase requirements into `formal/requirements.json` during `new-milestone`; REQ-ID, text, category, phase, provenance fields
+- [x] **Requirements Aggregation** — Consolidate all phase requirements into `.formal/requirements.json` during `new-milestone`; REQ-ID, text, category, phase, provenance fields
 - [x] **Machine-Readable Format** — JSON structure with schema (type checking for fields)
 - [x] **Duplication Detection** — Haiku validation pass detects semantic duplicates; user resolves before freezing
 - [x] **Conflict Detection** — Haiku validation identifies contradictions (requirement A says X, requirement B says not X)
-- [x] **Immutability Enforcement** — Hook or pre-commit guard prevents `formal/requirements.json` modifications outside amendment workflow
+- [x] **Immutability Enforcement** — Hook or pre-commit guard prevents `.formal/requirements.json` modifications outside amendment workflow
 - [x] **Formal Constraint Validation** — `generate-phase-spec.cjs` reads requirements and ensures generated TLA+ PROPERTY checks respect the envelope
 - [x] **Amendment Workflow** — User initiates amendment, Haiku re-validates, quorum approves, envelope re-locked
 
@@ -197,14 +197,14 @@ Features to defer until broader ecosystem matures.
 ### QGSD Integration Points
 
 **Existing Infrastructure:**
-- `formal/model-registry.json` already tracks model provenance (who last updated, when, source)
+- `.formal/model-registry.json` already tracks model provenance (who last updated, when, source)
 - `generate-phase-spec.cjs` translates plan truths to TLA+ properties; requirements envelope becomes the input source
 - Quorum context injection already exists in slot-worker prompts; requirements can be added as formal evidence
 - Haiku integration precedent exists (circuit breaker oscillation detection uses Haiku classification)
 
 **Validation Pipeline (v0.22):**
 1. `new-milestone` → collect all phase requirements
-2. `formal/requirements.json` ← aggregate + assign REQ-IDs
+2. `.formal/requirements.json` ← aggregate + assign REQ-IDs
 3. Call Haiku validator → detect duplicates/conflicts
 4. User resolves ambiguities
 5. Freeze envelope → immutable state
@@ -213,7 +213,7 @@ Features to defer until broader ecosystem matures.
 8. If changes needed, amendment workflow re-validates + re-freezes
 
 **Hooks Required:**
-- Pre-commit guard on `formal/requirements.json` (prevent direct edits)
+- Pre-commit guard on `.formal/requirements.json` (prevent direct edits)
 - Or PostToolUse on requirements.json writes (propose amendment, block direct writes)
 
 ## Sources

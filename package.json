@@ -1,5 +1,5 @@
 {
-  "name": "@langblaze.ai/qgsd",
+  "name": "@nforma.ai/qgsd",
   "version": "0.2.0",
   "description": "QGSD: Quorum Gets Shit Done — multi-model quorum enforcement for GSD planning commands via Claude Code hooks.",
   "bin": {
@@ -32,11 +32,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LangBlaze-AI/QGSD.git"
+    "url": "git+https://github.com/nForma-AI/QGSD.git"
   },
-  "homepage": "https://github.com/LangBlaze-AI/QGSD",
+  "homepage": "https://github.com/nForma-AI/QGSD",
   "bugs": {
-    "url": "https://github.com/LangBlaze-AI/QGSD/issues"
+    "url": "https://github.com/nForma-AI/QGSD/issues"
   },
   "engines": {
     "node": ">=16.7.0"

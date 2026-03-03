@@ -17,7 +17,7 @@ const path = require('path');
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
-const REGISTRY_PATH = path.resolve(__dirname, '..', 'formal', 'model-registry.json');
+const REGISTRY_PATH = path.resolve(__dirname, '..', '.formal', 'model-registry.json');
 
 // ── Parsing Logic ────────────────────────────────────────────────────────────
 

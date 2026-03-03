@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-uppaal.cjs
-// Invokes UPPAAL verifyta model checker against formal/uppaal/quorum-races.xml.
+// Invokes UPPAAL verifyta model checker against .formal/uppaal/quorum-races.xml.
 // Requirements: UPPAAL-01, UPPAAL-02, UPPAAL-03
 //
 // Usage:
@@ -41,7 +41,7 @@ const DEFAULT_MIN_GAP_MS  = 10;
  */
 function readTimingBounds() {
   const ndjsonPath = process.env.CHECK_RESULTS_PATH ||
-    path.join(__dirname, '..', 'formal', 'check-results.ndjson');
+    path.join(__dirname, '..', '.formal', 'check-results.ndjson');
   const records = parseNDJSON(ndjsonPath);
   const slotRuntimes = records
     .filter(r => r.check_id && r.check_id.startsWith('tla:') && typeof r.runtime_ms === 'number' && r.runtime_ms > 0)
@@ -88,8 +88,8 @@ function locateVerifyta() {
 
 function main() {
   const startMs = Date.now();
-  const modelPath = path.join(__dirname, '..', 'formal', 'uppaal', 'quorum-races.xml');
-  const queryPath = path.join(__dirname, '..', 'formal', 'uppaal', 'quorum-races.q');
+  const modelPath = path.join(__dirname, '..', '.formal', 'uppaal', 'quorum-races.xml');
+  const queryPath = path.join(__dirname, '..', '.formal', 'uppaal', 'quorum-races.q');
 
   // Check model files exist
   if (!fs.existsSync(modelPath) || !fs.existsSync(queryPath)) {

@@ -12,7 +12,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
+//   - .formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -86,20 +86,20 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(__dirname, '..', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(__dirname, '..', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-transcript-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
     '[run-transcript-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '       -o .formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
   try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', check_id: 'alloy:transcript', surface: 'alloy', property: 'Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement', runtime_ms: 0, summary: 'fail: alloy:transcript (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:transcript'), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
 // ── 4. Locate .als file ───────────────────────────────────────────────────────
-const alsPath = path.join(__dirname, '..', 'formal', 'alloy', specName + '.als');
+const alsPath = path.join(__dirname, '..', '.formal', 'alloy', specName + '.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-transcript-alloy] ' + specName + '.als not found at: ' + alsPath + '\n' +
@@ -145,7 +145,7 @@ if (stderr) { process.stderr.write(stderr); }
 if (/Counterexample/i.test(stdout)) {
   process.stderr.write(
     '[run-transcript-alloy] WARNING: Counterexample found in ' + specName + '.als assertion.\n' +
-    '[run-transcript-alloy] This indicates a spec violation — review formal/alloy/' + specName + '.als.\n'
+    '[run-transcript-alloy] This indicates a spec violation — review .formal/alloy/' + specName + '.als.\n'
   );
   const _runtimeMs = Date.now() - _startMs;
   try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'fail', check_id: 'alloy:transcript', surface: 'alloy', property: 'Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement', runtime_ms: _runtimeMs, summary: 'fail: alloy:transcript in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds('alloy:transcript'), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }

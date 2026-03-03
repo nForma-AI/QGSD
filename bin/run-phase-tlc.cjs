@@ -10,7 +10,7 @@
 // Usage:
 //   node bin/run-phase-tlc.cjs <path-to-PLAN.md>
 //
-// Requires: Java >=17, formal/tla/tla2tools.jar
+// Requires: Java >=17, .formal/tla/tla2tools.jar
 //
 // NOTE: Uses spawnSync (no shell) for safe subprocess invocation -- no exec().
 
@@ -33,11 +33,11 @@ function runPhaseTlc(specPath, cfgPath, options) {
   options = options || {};
 
   // Check tla2tools.jar existence
-  const tla2toolsPath = options.jarOverride || path.join(__dirname, '..', 'formal', 'tla', 'tla2tools.jar');
+  const tla2toolsPath = options.jarOverride || path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
   if (!fs.existsSync(tla2toolsPath)) {
     return {
       passed: false,
-      violations: ['tla2tools.jar not found at ' + tla2toolsPath + ' -- run: curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -o formal/tla/tla2tools.jar'],
+      violations: ['tla2tools.jar not found at ' + tla2toolsPath + ' -- run: curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -o .formal/tla/tla2tools.jar'],
       output: '',
       runtimeMs: 0,
     };

@@ -268,7 +268,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requ
 
 FORMAL_SPEC_CONTEXT=()
 
-if [ -d "formal/spec" ]; then
+if [ -d ".formal/spec" ]; then
   echo "◆ Formal scope scan (pre-roadmapper)..."
   # Use milestone goal description as keyword source.
   # Extract from PROJECT.md ## Current Milestone section (written by Step 4).
@@ -279,9 +279,9 @@ if [ -d "formal/spec" ]; then
   fi
   MILESTONE_DESC_LOWER=$(echo "${MILESTONE_GOAL}" | tr '[:upper:]' '[:lower:]')
 
-  for MODULE_DIR in formal/spec/*/; do
+  for MODULE_DIR in .formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE="formal/spec/${MODULE}/invariants.md"
+    INVARIANTS_FILE=".formal/spec/${MODULE}/invariants.md"
     if [ -f "$INVARIANTS_FILE" ]; then
       MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
       MATCHED=0

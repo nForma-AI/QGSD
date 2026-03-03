@@ -97,7 +97,7 @@ QGSD CONTINUATION CONTEXT (auto-injected at compaction)
 ## Current Position
 Phase: v0.19-04 (Enforcement Layer) — COMPLETE (all 3 plans done)
 Plan: v0.19-04-01 — DONE; v0.19-04-02 — DONE; v0.19-04-03 — DONE
-Status: formal/trace/redaction.yaml + check-trace-redaction.cjs + check-trace-schema-drift.cjs...
+Status: .formal/trace/redaction.yaml + check-trace-redaction.cjs + check-trace-schema-drift.cjs...
 ```
 
 **Fail-open test (missing STATE.md):**

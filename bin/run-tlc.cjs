@@ -11,7 +11,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - formal/tla/tla2tools.jar (see formal/tla/README.md for download command)
+//   - .formal/tla/tla2tools.jar (see .formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -52,11 +52,11 @@ const SURFACE_MAP = {
  * Returns [] if no PROPERTY/PROPERTIES lines found (not a liveness config).
  * @param {string} configName - Config name (e.g., 'MCliveness')
  * @param {string} cfgPath    - Absolute path to the .cfg file
- * @param {string} [specDir]  - Override for formal/spec directory (test injection)
+ * @param {string} [specDir]  - Override for .formal/spec directory (test injection)
  * @returns {string[]} Property names with no fairness declaration
  */
 function detectLivenessProperties(configName, cfgPath, specDir) {
-  const defaultSpecDir = path.join(__dirname, '..', 'formal', 'spec');
+  const defaultSpecDir = path.join(__dirname, '..', '.formal', 'spec');
   const resolvedSpecDir = specDir || defaultSpecDir;
 
   let cfgContent;
@@ -253,13 +253,13 @@ if (require.main === module) {
   }
 
   // ── 3. Locate tla2tools.jar ────────────────────────────────────────────────
-  const jarPath = path.join(__dirname, '..', 'formal', 'tla', 'tla2tools.jar');
+  const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
   if (!fs.existsSync(jarPath)) {
     process.stderr.write(
       '[run-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
       '[run-tlc] Download v1.8.0:\n' +
       '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-      '       -o formal/tla/tla2tools.jar\n'
+      '       -o .formal/tla/tla2tools.jar\n'
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
@@ -283,8 +283,8 @@ if (require.main === module) {
   }
 
   // ── 4. Invoke TLC ──────────────────────────────────────────────────────────
-  const specPath = path.join(__dirname, '..', 'formal', 'tla', 'QGSDQuorum.tla');
-  const cfgPath  = path.join(__dirname, '..', 'formal', 'tla', configName + '.cfg');
+  const specPath = path.join(__dirname, '..', '.formal', 'tla', 'QGSDQuorum.tla');
+  const cfgPath  = path.join(__dirname, '..', '.formal', 'tla', configName + '.cfg');
   // Use -workers 1 for liveness (defensive — avoids known multi-worker liveness bugs in older TLC)
   const workers  = configName === 'MCliveness' ? '1' : 'auto';
 

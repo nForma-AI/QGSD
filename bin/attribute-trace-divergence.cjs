@@ -1,14 +1,14 @@
 'use strict';
 // bin/attribute-trace-divergence.cjs
 // Root-cause attribution tool for XState conformance divergences.
-// Reads TTrace records from formal/.divergences.json (produced by validate-traces.cjs).
+// Reads TTrace records from .formal/.divergences.json (produced by validate-traces.cjs).
 // Classifies each divergence as spec-bug or impl-bug with confidence scores.
 // DIAG-02: outputs "fix XState guard X" or "fix hook implementation Y at line Z".
 //
 // CLI usage:
 //   node bin/attribute-trace-divergence.cjs [--input <path>] [--batch-size <N>] [--output-json]
 //
-// --input       path to TTrace JSON file (default: formal/.divergences.json)
+// --input       path to TTrace JSON file (default: .formal/.divergences.json)
 // --batch-size  analyze first N divergences (default: 10)
 // --output-json emit structured JSON to stdout in addition to plain text summary
 
@@ -103,12 +103,12 @@ if (require.main === module) {
   const outputJson = args.includes('--output-json');
   const inputPath  = inputIdx >= 0
     ? args[inputIdx + 1]
-    : path.join(process.cwd(), 'formal', '.divergences.json');
+    : path.join(process.cwd(), '.formal', '.divergences.json');
   const batchSize  = batchIdx >= 0 ? (parseInt(args[batchIdx + 1], 10) || 10) : 10;
 
   if (!fs.existsSync(inputPath)) {
     process.stderr.write('[attribute-trace-divergence] No divergences file at: ' + inputPath + '\n');
-    process.stderr.write('  Run: node bin/validate-traces.cjs to generate formal/.divergences.json\n');
+    process.stderr.write('  Run: node bin/validate-traces.cjs to generate .formal/.divergences.json\n');
     process.exit(0);
   }
 

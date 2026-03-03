@@ -24,7 +24,7 @@ describe('TLA+ annotation parsing', () => {
   test('single @requirement before a property', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const breaker = data['formal/tla/QGSDCircuitBreaker.tla'];
+    const breaker = data['.formal/tla/QGSDCircuitBreaker.tla'];
     assert.ok(breaker, 'QGSDCircuitBreaker.tla should be in output');
 
     const typeOK = breaker.find(p => p.property === 'TypeOK');
@@ -35,7 +35,7 @@ describe('TLA+ annotation parsing', () => {
   test('multiple @requirement lines before a single property', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const stopHook = data['formal/tla/QGSDStopHook.tla'];
+    const stopHook = data['.formal/tla/QGSDStopHook.tla'];
     assert.ok(stopHook, 'QGSDStopHook.tla should be in output');
 
     const safety1 = stopHook.find(p => p.property === 'SafetyInvariant1');
@@ -48,7 +48,7 @@ describe('TLA+ annotation parsing', () => {
     const data = JSON.parse(result.stdout);
 
     // Every TLA+ file should have TypeOK (or TypeInvariantHolds for MCPEnv)
-    const quorum = data['formal/tla/QGSDQuorum.tla'];
+    const quorum = data['.formal/tla/QGSDQuorum.tla'];
     assert.ok(quorum, 'QGSDQuorum.tla should be in output');
     const typeOK = quorum.find(p => p.property === 'TypeOK');
     assert.ok(typeOK, 'TypeOK should be found in QGSDQuorum.tla');
@@ -58,7 +58,7 @@ describe('TLA+ annotation parsing', () => {
   test('property with existing (* ... *) comment block above it', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const stopHook = data['formal/tla/QGSDStopHook.tla'];
+    const stopHook = data['.formal/tla/QGSDStopHook.tla'];
 
     // SafetyInvariant2 has a (* ... *) comment block above it
     const safety2 = stopHook.find(p => p.property === 'SafetyInvariant2');
@@ -69,7 +69,7 @@ describe('TLA+ annotation parsing', () => {
   test('QGSDStopHook.tla returns 7 properties', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const stopHook = data['formal/tla/QGSDStopHook.tla'];
+    const stopHook = data['.formal/tla/QGSDStopHook.tla'];
     assert.ok(stopHook, 'QGSDStopHook.tla should be in output');
     assert.strictEqual(stopHook.length, 7, 'Should have 7 properties');
   });
@@ -81,7 +81,7 @@ describe('Alloy annotation parsing', () => {
   test('single @requirement before an assert', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const install = data['formal/alloy/install-scope.als'];
+    const install = data['.formal/alloy/install-scope.als'];
     assert.ok(install, 'install-scope.als should be in output');
 
     const noConflict = install.find(p => p.property === 'NoConflict');
@@ -92,7 +92,7 @@ describe('Alloy annotation parsing', () => {
   test('multiple @requirement lines before an assert', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const votes = data['formal/alloy/quorum-votes.als'];
+    const votes = data['.formal/alloy/quorum-votes.als'];
     assert.ok(votes, 'quorum-votes.als should be in output');
 
     const threshold = votes.find(p => p.property === 'ThresholdPasses');
@@ -103,7 +103,7 @@ describe('Alloy annotation parsing', () => {
   test('install-scope.als returns 5 assertions', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const install = data['formal/alloy/install-scope.als'];
+    const install = data['.formal/alloy/install-scope.als'];
     assert.ok(install, 'install-scope.als should be in output');
     assert.strictEqual(install.length, 5, 'Should have 5 assertions');
   });
@@ -115,7 +115,7 @@ describe('PRISM annotation parsing', () => {
   test('P=? property detection', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const quorum = data['formal/prism/quorum.props'];
+    const quorum = data['.formal/prism/quorum.props'];
     assert.ok(quorum, 'quorum.props should be in output');
 
     const p1 = quorum.find(p => p.property.startsWith('P=? [ F s=1 ]'));
@@ -127,7 +127,7 @@ describe('PRISM annotation parsing', () => {
   test('R{...}=? property detection', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const quorum = data['formal/prism/quorum.props'];
+    const quorum = data['.formal/prism/quorum.props'];
 
     const r = quorum.find(p => p.property.startsWith('R{"rounds"}'));
     assert.ok(r, 'R{"rounds"}=? property should be found');
@@ -137,7 +137,7 @@ describe('PRISM annotation parsing', () => {
   test('S=? property detection', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const mcp = data['formal/prism/mcp-availability.props'];
+    const mcp = data['.formal/prism/mcp-availability.props'];
     assert.ok(mcp, 'mcp-availability.props should be in output');
 
     const s1 = mcp.find(p => p.property.includes('min_quorum_available'));
@@ -148,7 +148,7 @@ describe('PRISM annotation parsing', () => {
   test('descriptive comment lines NOT treated as properties', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const quorum = data['formal/prism/quorum.props'];
+    const quorum = data['.formal/prism/quorum.props'];
     assert.ok(quorum, 'quorum.props should be in output');
 
     // Descriptive comments like "// P1: Eventual convergence" should not be properties
@@ -160,7 +160,7 @@ describe('PRISM annotation parsing', () => {
   test('quorum.props returns 4 properties', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const quorum = data['formal/prism/quorum.props'];
+    const quorum = data['.formal/prism/quorum.props'];
     assert.ok(quorum, 'quorum.props should be in output');
     assert.strictEqual(quorum.length, 4, 'Should have 4 properties');
   });
@@ -201,7 +201,7 @@ describe('integration', () => {
   test('QGSDStopHook.tla has correct requirement IDs', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const stopHook = data['formal/tla/QGSDStopHook.tla'];
+    const stopHook = data['.formal/tla/QGSDStopHook.tla'];
     assert.ok(stopHook);
     assert.strictEqual(stopHook.length, 7);
 
@@ -225,7 +225,7 @@ describe('integration', () => {
   test('install-scope.als has correct requirement IDs', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const install = data['formal/alloy/install-scope.als'];
+    const install = data['.formal/alloy/install-scope.als'];
     assert.ok(install);
     assert.strictEqual(install.length, 5);
 
@@ -247,7 +247,7 @@ describe('integration', () => {
   test('quorum.props has correct requirement IDs', () => {
     const result = run('--pretty');
     const data = JSON.parse(result.stdout);
-    const quorum = data['formal/prism/quorum.props'];
+    const quorum = data['.formal/prism/quorum.props'];
     assert.ok(quorum);
     assert.strictEqual(quorum.length, 4);
 

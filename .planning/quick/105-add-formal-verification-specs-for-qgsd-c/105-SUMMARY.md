@@ -6,14 +6,14 @@ tags: [tla+, alloy, circuit-breaker, install-scope, formal-verification]
 dependency_graph:
   requires: []
   provides:
-    - formal/tla/QGSDCircuitBreaker.tla
-    - formal/tla/MCbreaker.cfg
-    - formal/alloy/install-scope.als
+    - .formal/tla/QGSDCircuitBreaker.tla
+    - .formal/tla/MCbreaker.cfg
+    - .formal/alloy/install-scope.als
     - bin/run-breaker-tlc.cjs
     - bin/run-breaker-tlc.test.cjs
   affects:
-    - formal/tla/ (adds standalone handwritten spec alongside generated specs)
-    - formal/alloy/ (adds install scope spec)
+    - .formal/tla/ (adds standalone handwritten spec alongside generated specs)
+    - .formal/alloy/ (adds install scope spec)
     - bin/ (adds TLC runner for circuit breaker)
 tech_stack:
   added: []
@@ -24,9 +24,9 @@ tech_stack:
     - node:test error-path test suite with skip guards
 key_files:
   created:
-    - formal/tla/QGSDCircuitBreaker.tla
-    - formal/tla/MCbreaker.cfg
-    - formal/alloy/install-scope.als
+    - .formal/tla/QGSDCircuitBreaker.tla
+    - .formal/tla/MCbreaker.cfg
+    - .formal/alloy/install-scope.als
     - bin/run-breaker-tlc.cjs
     - bin/run-breaker-tlc.test.cjs
   modified: []
@@ -50,7 +50,7 @@ metrics:
 
 ### Task 1: TLA+ Circuit Breaker Spec and MCbreaker.cfg
 
-Created `formal/tla/QGSDCircuitBreaker.tla` — a standalone, handwritten TLA+ module modeling the circuit breaker FSM from `hooks/qgsd-circuit-breaker.js` and `bin/qgsd.cjs`.
+Created `.formal/tla/QGSDCircuitBreaker.tla` — a standalone, handwritten TLA+ module modeling the circuit breaker FSM from `hooks/qgsd-circuit-breaker.js` and `bin/qgsd.cjs`.
 
 **State encoding (boolean encoding of 3 states):**
 - MONITORING = `active=FALSE /\ disabled=FALSE`
@@ -69,11 +69,11 @@ Created `formal/tla/QGSDCircuitBreaker.tla` — a standalone, handwritten TLA+ m
 
 **Spec:** Full specification with `WF_vars` fairness on all 4 transitions.
 
-Created `formal/tla/MCbreaker.cfg` with `SPECIFICATION Spec`, `INVARIANT TypeOK`, `INVARIANT DisabledExcludesActive`, `PROPERTY MonitoringReachable`, `CHECK_DEADLOCK FALSE`.
+Created `.formal/tla/MCbreaker.cfg` with `SPECIFICATION Spec`, `INVARIANT TypeOK`, `INVARIANT DisabledExcludesActive`, `PROPERTY MonitoringReachable`, `CHECK_DEADLOCK FALSE`.
 
 ### Task 2: Alloy Install-Scope Spec, TLC Runner, and Test Harness
 
-Created `formal/alloy/install-scope.als` — Alloy 6 module for the installer runtime × scope matrix from `bin/install.js`:
+Created `.formal/alloy/install-scope.als` — Alloy 6 module for the installer runtime × scope matrix from `bin/install.js`:
 - 3 runtimes: `Claude`, `OpenCode`, `Gemini`
 - 3 scope values: `Uninstalled`, `Local`, `Global`
 - `NoConflict` assertion: no runtime can have conflicting scope (trivially holds with `Runtime -> one Scope`, made explicit)
@@ -106,7 +106,7 @@ All plan verification checks pass:
 
 **1. [Rule 1 - Bug] Added JAR-presence skip guard to test 2**
 - **Found during:** Task 2 verification
-- **Issue:** Test 2 ("exits non-zero and prints download URL when tla2tools.jar is not found") failed because `formal/tla/tla2tools.jar` is present on disk (gitignored but downloaded). The test was designed for clean-repo/CI environments where the JAR is absent. With the JAR present, the runner proceeds past the JAR check and invokes TLC, which exits 0 on success.
+- **Issue:** Test 2 ("exits non-zero and prints download URL when tla2tools.jar is not found") failed because `.formal/tla/tla2tools.jar` is present on disk (gitignored but downloaded). The test was designed for clean-repo/CI environments where the JAR is absent. With the JAR present, the runner proceeds past the JAR check and invokes TLC, which exits 0 on success.
 - **Fix:** Added a skip guard `if (fs.existsSync(jarPath)) { return; }` — exactly mirroring the existing `if (!javaHome) { return; }` skip pattern for missing Java. Same behavior as the pre-existing issue in `bin/run-tlc.test.cjs`.
 - **Files modified:** `bin/run-breaker-tlc.test.cjs`
 - **Commit:** f3c3618
@@ -120,9 +120,9 @@ All plan verification checks pass:
 
 ## Self-Check: PASSED
 
-- formal/tla/QGSDCircuitBreaker.tla: FOUND
-- formal/tla/MCbreaker.cfg: FOUND
-- formal/alloy/install-scope.als: FOUND
+- .formal/tla/QGSDCircuitBreaker.tla: FOUND
+- .formal/tla/MCbreaker.cfg: FOUND
+- .formal/alloy/install-scope.als: FOUND
 - bin/run-breaker-tlc.cjs: FOUND
 - bin/run-breaker-tlc.test.cjs: FOUND
 - Commit f05373a: FOUND

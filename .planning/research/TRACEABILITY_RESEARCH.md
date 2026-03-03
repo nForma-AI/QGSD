@@ -14,7 +14,7 @@ The QGSD project has accumulated a substantial formal verification corpus (30 ve
 
 ## 2. Current State Analysis
 
-### 2.1 Requirements (`formal/requirements.json`)
+### 2.1 Requirements (`.formal/requirements.json`)
 
 - **210 requirements** across 58 ID prefixes (ACT, AGENT, ARCH, BLD, CALIB, CL, COMP, CONF, CRED, DASH, DETECT, DIAG, DISP, DRIFT, ENFC, EVID, FAIL, HEAL, HLTH, IMPR, INST, KEY, LIVE, LOOP, MCP, MCPENV, META, MULTI, OBS, ORES, PLAN, PLCY, PORT, PROV, PRST, QUORUM, RECV, REDACT, REN, RLS, SAFE, SCBD, SCHEMA, SENS, SIG, SLOT, SPEC, STATE, STD, STOP, SYNC, TRIAGE, UNIF, UPPAAL, UPS, VERIFY, VIS, WIZ)
 - **142 Pending, 68 Complete**
@@ -22,7 +22,7 @@ The QGSD project has accumulated a substantial formal verification corpus (30 ve
 - **No field for formal spec linkage** — no `verified_by`, `formal_properties`, or `model_references` field exists
 - Content hash and frozen timestamp present for integrity tracking
 
-### 2.2 Model Registry (`formal/model-registry.json`)
+### 2.2 Model Registry (`.formal/model-registry.json`)
 
 - **22 model entries** (11 TLA+, 8 Alloy, 3 PRISM, plus 1 test path)
 - Schema per model: `{ version, last_updated, update_source, source_id, session_id, description }`
@@ -30,7 +30,7 @@ The QGSD project has accumulated a substantial formal verification corpus (30 ve
 - **No structured requirement linkage field** — no `requirements`, `properties`, or `traces_to` array
 - Version tracking exists (some models at v343 from auto-generation)
 
-### 2.3 Check Result Schema (`formal/check-result.schema.json`)
+### 2.3 Check Result Schema (`.formal/check-result.schema.json`)
 
 - Fields: `tool, formalism, result, timestamp, metadata, check_id, surface, property, runtime_ms, summary, triage_tags, observation_window`
 - **The `property` field exists** but is free-text (e.g., "Trace redaction -- no forbidden keys...")
@@ -45,7 +45,7 @@ The QGSD project has accumulated a substantial formal verification corpus (30 ve
 - Some step labels include requirement refs in comments (e.g., "MCPENV-02", "SPEC-01", "UPPAAL-01/02/03", "LIVE-01/LIVE-02", "EVID-01/EVID-02") but these are free-text, not structured
 - Produces `check-results.ndjson` which is truncated and rebuilt each run
 
-### 2.5 Check Results (`formal/check-results.ndjson`)
+### 2.5 Check Results (`.formal/check-results.ndjson`)
 
 - Actual output contains 4 entries from a CI enforcement run
 - Each line is a JSON object conforming to the schema
@@ -53,7 +53,7 @@ The QGSD project has accumulated a substantial formal verification corpus (30 ve
 - `property` field contains human-readable property descriptions
 - **No requirement attribution** in the actual output
 
-### 2.6 Invariants Documentation (`formal/spec/*/invariants.md`)
+### 2.6 Invariants Documentation (`.formal/spec/*/invariants.md`)
 
 - **10 invariant specification files** covering: quorum, deliberation, prefilter, recruiting, breaker, convergence, oscillation, account-manager, mcp-calls, tui-nav
 - Each documents: property formula, config line, fairness assumption, realism rationale, source location
@@ -329,7 +329,7 @@ Many requirement ID prefixes have no corresponding formal model at all:
 **model-registry.json extension:**
 ```json
 {
-  "formal/tla/QGSDStopHook.tla": {
+  ".formal/tla/QGSDStopHook.tla": {
     "version": 1,
     "description": "SPEC-01: Stop hook decision logic",
     "requirements": ["SPEC-01", "STOP-02", "STOP-03", "STOP-04"],
@@ -348,7 +348,7 @@ Many requirement ID prefixes have no corresponding formal model at all:
   "id": "SPEC-01",
   "text": "...",
   "formal_coverage": {
-    "models": ["formal/tla/QGSDStopHook.tla"],
+    "models": [".formal/tla/QGSDStopHook.tla"],
     "properties": ["SafetyInvariant1", "SafetyInvariant2", "SafetyInvariant3"],
     "check_ids": ["tla:stop-hook"]
   }
@@ -379,7 +379,7 @@ Many requirement ID prefixes have no corresponding formal model at all:
 
 ### 6.2 Option B: Standalone Traceability Matrix
 
-**`formal/traceability-matrix.json`:**
+**`.formal/traceability-matrix.json`:**
 ```json
 {
   "version": "1.0",
@@ -387,10 +387,10 @@ Many requirement ID prefixes have no corresponding formal model at all:
   "links": [
     {
       "requirement_id": "SPEC-01",
-      "model": "formal/tla/QGSDStopHook.tla",
+      "model": ".formal/tla/QGSDStopHook.tla",
       "property": "SafetyInvariant1",
       "property_type": "invariant",
-      "config": "formal/tla/MCStopHook.cfg",
+      "config": ".formal/tla/MCStopHook.cfg",
       "check_id": "tla:stop-hook",
       "last_result": "pass",
       "last_checked": "2026-03-03T06:50:58Z",
@@ -428,7 +428,7 @@ Combine lightweight inline annotations with a derived standalone matrix:
 1. **model-registry.json**: Add a `requirements` array (model-level, coarse) -- just the requirement IDs this model covers
 2. **requirements.json**: Add `formal_models` array (requirement-level, coarse) -- just the model paths
 3. **check-result.schema.json**: Add `requirement_ids` array -- emitted by individual runners
-4. **`formal/traceability-matrix.json`**: Generated artifact combining all of the above at property-level granularity, enriched with check results. Produced by a new script (e.g., `bin/generate-traceability-matrix.cjs`) that:
+4. **`.formal/traceability-matrix.json`**: Generated artifact combining all of the above at property-level granularity, enriched with check results. Produced by a new script (e.g., `bin/generate-traceability-matrix.cjs`) that:
    - Reads model-registry for model->requirement links
    - Reads requirements for requirement->model links
    - Reads check-results.ndjson for latest pass/fail
@@ -567,7 +567,7 @@ When splitting a monolithic model M into sub-models M1, M2:
    - Parses requirement refs from model file comments (automated extraction)
    - Reads model-registry for model->requirement links
    - Reads check-results.ndjson for latest results per check_id
-   - Produces `formal/traceability-matrix.json` with property-level links and coverage stats
+   - Produces `.formal/traceability-matrix.json` with property-level links and coverage stats
 2. **Add traceability generation** as a step in `run-formal-verify.cjs` (after all checks complete)
 3. **Add CI guard**: warn (not fail) when coverage drops below a threshold
 

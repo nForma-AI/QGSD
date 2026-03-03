@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-03T12:11:01.583Z",
+  "last_sync": "2026-03-03T12:45:54.021Z",
   "models": {
-    "formal/alloy/account-pool-structure.als": {
+    ".formal/alloy/account-pool-structure.als": {
       "version": 1,
       "last_updated": "2026-02-25T19:08:10.839Z",
       "update_source": "manual",
@@ -17,7 +17,7 @@
         "CRED-11"
       ]
     },
-    "formal/alloy/availability-parsing.als": {
+    ".formal/alloy/availability-parsing.als": {
       "version": 1,
       "last_updated": "2026-02-25T13:49:28.571Z",
       "update_source": "manual",
@@ -30,7 +30,7 @@
         "CALIB-03"
       ]
     },
-    "formal/alloy/install-scope.als": {
+    ".formal/alloy/install-scope.als": {
       "version": 1,
       "last_updated": "2026-02-25T17:28:46.994Z",
       "update_source": "manual",
@@ -45,7 +45,7 @@
         "INST-05"
       ]
     },
-    "formal/alloy/quorum-composition.als": {
+    ".formal/alloy/quorum-composition.als": {
       "version": 1,
       "last_updated": "2026-03-01T18:10:00.000Z",
       "update_source": "manual",
@@ -57,15 +57,15 @@
         "COMP-01"
       ]
     },
-    "formal/alloy/quorum-votes.als": {
-      "version": 358,
-      "last_updated": "2026-03-03T12:11:01.583Z",
+    ".formal/alloy/quorum-votes.als": {
+      "version": 377,
+      "last_updated": "2026-03-03T12:45:54.020Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
-    "formal/alloy/scoreboard-recompute.als": {
+    ".formal/alloy/scoreboard-recompute.als": {
       "version": 1,
       "last_updated": "2026-02-25T13:48:48.722Z",
       "update_source": "manual",
@@ -79,7 +79,7 @@
         "SCBD-04"
       ]
     },
-    "formal/alloy/taxonomy-safety.als": {
+    ".formal/alloy/taxonomy-safety.als": {
       "version": 1,
       "last_updated": "2026-02-25T17:29:10.918Z",
       "update_source": "manual",
@@ -92,7 +92,7 @@
         "SCBD-07"
       ]
     },
-    "formal/alloy/transcript-scan.als": {
+    ".formal/alloy/transcript-scan.als": {
       "version": 1,
       "last_updated": "2026-02-25T16:42:09.508Z",
       "update_source": "manual",
@@ -106,7 +106,7 @@
         "STOP-11"
       ]
     },
-    "formal/prism/mcp-availability.pm": {
+    ".formal/prism/mcp-availability.pm": {
       "version": 1,
       "last_updated": "2026-02-27T18:59:44.707Z",
       "update_source": "manual",
@@ -118,7 +118,7 @@
         "FAIL-01"
       ]
     },
-    "formal/prism/oauth-rotation.pm": {
+    ".formal/prism/oauth-rotation.pm": {
       "version": 1,
       "last_updated": "2026-02-25T19:08:26.903Z",
       "update_source": "manual",
@@ -130,15 +130,15 @@
         "CRED-12"
       ]
     },
-    "formal/prism/quorum.pm": {
-      "version": 358,
-      "last_updated": "2026-03-03T12:11:01.583Z",
+    ".formal/prism/quorum.pm": {
+      "version": 377,
+      "last_updated": "2026-03-03T12:45:54.021Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
-    "formal/tla/QGSDAccountManager.tla": {
+    ".formal/tla/QGSDAccountManager.tla": {
       "version": 1,
       "last_updated": "2026-02-25T18:34:04.349Z",
       "update_source": "manual",
@@ -154,7 +154,7 @@
         "CRED-06"
       ]
     },
-    "formal/tla/QGSDCircuitBreaker.tla": {
+    ".formal/tla/QGSDCircuitBreaker.tla": {
       "version": 1,
       "last_updated": "2026-02-25T09:43:12.088Z",
       "update_source": "manual",
@@ -167,7 +167,7 @@
         "DETECT-03"
       ]
     },
-    "formal/tla/QGSDConvergence.tla": {
+    ".formal/tla/QGSDConvergence.tla": {
       "version": 1,
       "last_updated": "2026-02-25T11:17:02.645Z",
       "update_source": "manual",
@@ -182,7 +182,7 @@
         "ORES-05"
       ]
     },
-    "formal/tla/QGSDDeliberation.tla": {
+    ".formal/tla/QGSDDeliberation.tla": {
       "version": 1,
       "last_updated": "2026-02-25T13:15:55.648Z",
       "update_source": "manual",
@@ -197,7 +197,7 @@
         "LOOP-02"
       ]
     },
-    "formal/tla/QGSDMCPEnv.tla": {
+    ".formal/tla/QGSDMCPEnv.tla": {
       "version": 1,
       "last_updated": "2026-02-27T18:56:34.006Z",
       "update_source": "manual",
@@ -210,7 +210,7 @@
         "MCPENV-03"
       ]
     },
-    "formal/tla/QGSDOscillation.tla": {
+    ".formal/tla/QGSDOscillation.tla": {
       "version": 1,
       "last_updated": "2026-02-25T11:16:21.745Z",
       "update_source": "manual",
@@ -223,7 +223,7 @@
         "DETECT-06"
       ]
     },
-    "formal/tla/QGSDPreFilter.tla": {
+    ".formal/tla/QGSDPreFilter.tla": {
       "version": 1,
       "last_updated": "2026-02-25T13:16:37.722Z",
       "update_source": "manual",
@@ -238,15 +238,15 @@
         "LOOP-03"
       ]
     },
-    "formal/tla/QGSDQuorum.tla": {
-      "version": 358,
-      "last_updated": "2026-03-03T12:11:01.582Z",
+    ".formal/tla/QGSDQuorum.tla": {
+      "version": 377,
+      "last_updated": "2026-03-03T12:45:54.019Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
-    "formal/tla/QGSDQuorum_xstate.tla": {
+    ".formal/tla/QGSDQuorum_xstate.tla": {
       "version": 1,
       "last_updated": "2026-03-01T09:11:22.592Z",
       "update_source": "generate",
@@ -255,7 +255,7 @@
       "description": "",
       "requirements": []
     },
-    "formal/tla/QGSDRecruiting.tla": {
+    ".formal/tla/QGSDRecruiting.tla": {
       "version": 1,
       "last_updated": "2026-02-27T09:33:27.083Z",
       "update_source": "manual",
@@ -269,7 +269,7 @@
         "SLOT-05"
       ]
     },
-    "formal/tla/QGSDStopHook.tla": {
+    ".formal/tla/QGSDStopHook.tla": {
       "version": 1,
       "last_updated": "2026-03-01T18:00:00.000Z",
       "update_source": "manual",
@@ -287,7 +287,7 @@
         "SPEC-01"
       ]
     },
-    "formal/tla/TUINavigation.tla": {
+    ".formal/tla/TUINavigation.tla": {
       "version": 1,
       "last_updated": "2026-02-28T21:21:26.037Z",
       "update_source": "manual",
@@ -296,7 +296,7 @@
       "description": "",
       "requirements": []
     },
-    "../../../../tmp/promote-test/formal/tla/QGSDQuorum.tla": {
+    "../../../../tmp/promote-test/.formal/tla/QGSDQuorum.tla": {
       "version": 1,
       "last_updated": "2026-03-01T10:54:22.160Z",
       "update_source": "plan-promote",

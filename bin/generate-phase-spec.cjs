@@ -12,13 +12,13 @@
 //   node bin/generate-phase-spec.cjs .planning/phases/v0.21-04-spec-completeness/v0.21-04-01-PLAN.md
 //   node bin/generate-phase-spec.cjs <phase-dir-or-plan-file> --dry-run
 //
-// Output: formal/tla/scratch/<phase>-<timestamp>.tla
+// Output: .formal/tla/scratch/<phase>-<timestamp>.tla
 
 const fs   = require('fs');
 const path = require('path');
 
 const ROOT       = path.join(__dirname, '..');
-const SCRATCH_DIR = path.join(ROOT, 'formal', 'tla', 'scratch');
+const SCRATCH_DIR = path.join(ROOT, '.formal', 'tla', 'scratch');
 
 /**
  * Parse YAML frontmatter from a PLAN.md file.

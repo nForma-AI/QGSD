@@ -120,9 +120,9 @@ After the `### Phase v0.12-03: Static Analysis Suite` details block (at the end 
 **Depends on**: Phase v0.12-03
 **Requirements**: GAP-1, GAP-5
 **Success Criteria** (what must be TRUE):
-  1. `formal/tla/QGSDOscillation.tla` exists with state vars `commits`, `runs`, `flagCount`; invariant `OscillationFlaggedCorrectly` (flag iff ≥3 alternating groups with net-negative diff); liveness property `AlgorithmTerminates`
+  1. `.formal/tla/QGSDOscillation.tla` exists with state vars `commits`, `runs`, `flagCount`; invariant `OscillationFlaggedCorrectly` (flag iff ≥3 alternating groups with net-negative diff); liveness property `AlgorithmTerminates`
   2. TLC verifies `MCoscillation.cfg` with INVARIANT + PROPERTY — no violations
-  3. `formal/tla/QGSDConvergence.tla` exists with `resolvedAt` write-once invariant; log-write-before-state-delete ordering; Haiku unavailability cannot corrupt state
+  3. `.formal/tla/QGSDConvergence.tla` exists with `resolvedAt` write-once invariant; log-write-before-state-delete ordering; Haiku unavailability cannot corrupt state
   4. `bin/run-oscillation-tlc.cjs` exists, is gated on JAVA_HOME, and `npm test` passes without Java installed; 4 error-path tests in `bin/run-oscillation-tlc.test.cjs` are GREEN
 **Plans**: TBD
 
@@ -136,9 +136,9 @@ Plans:
 **Depends on**: Phase v0.12-04
 **Requirements**: GAP-2, GAP-6
 **Success Criteria** (what must be TRUE):
-  1. `formal/tla/QGSDDeliberation.tla` exists with vars `deliberationRound`, `improvementIteration`, `voteState`; invariant `TotalRoundsBounded` (deliberationRound + improvementIteration ≤ 20); liveness `ProtocolTerminates` (<>(phase = "ESCALATED" \/ phase = "CONSENSUS")); regression rule: APPROVE→BLOCK transition treated as new blocker
+  1. `.formal/tla/QGSDDeliberation.tla` exists with vars `deliberationRound`, `improvementIteration`, `voteState`; invariant `TotalRoundsBounded` (deliberationRound + improvementIteration ≤ 20); liveness `ProtocolTerminates` (<>(phase = "ESCALATED" \/ phase = "CONSENSUS")); regression rule: APPROVE→BLOCK transition treated as new blocker
   2. TLC verifies `MCdeliberation.cfg` — no violations
-  3. `formal/tla/QGSDPreFilter.tla` exists with invariant `AutoResolutionSound` (auto-resolved iff all models agree + same answer) and liveness `PreFilterTerminates` (≤3 rounds)
+  3. `.formal/tla/QGSDPreFilter.tla` exists with invariant `AutoResolutionSound` (auto-resolved iff all models agree + same answer) and liveness `PreFilterTerminates` (≤3 rounds)
   4. `bin/run-protocol-tlc.cjs` exists, gated on JAVA_HOME; `npm test` passes without Java; `bin/run-protocol-tlc.test.cjs` has error-path tests GREEN
 **Plans**: TBD
 
@@ -152,8 +152,8 @@ Plans:
 **Depends on**: Phase v0.12-03
 **Requirements**: GAP-3, GAP-9
 **Success Criteria** (what must be TRUE):
-  1. `formal/alloy/scoreboard-recompute.als` exists with assertions `RecomputeIdempotent` (applying recompute twice = once), `NoVoteLoss` (every vote in rounds appears in final score), `NoDoubleCounting` (no vote counted twice); uses Alloy integer arithmetic for delta accumulation
-  2. `formal/alloy/availability-parsing.als` exists with assertions `ParseCorrect` (parsed timestamp ≥ now), `YearRolloverHandled` (Dec→Jan crossing), `FallbackIsNull` (unrecognized format → null, not crash)
+  1. `.formal/alloy/scoreboard-recompute.als` exists with assertions `RecomputeIdempotent` (applying recompute twice = once), `NoVoteLoss` (every vote in rounds appears in final score), `NoDoubleCounting` (no vote counted twice); uses Alloy integer arithmetic for delta accumulation
+  2. `.formal/alloy/availability-parsing.als` exists with assertions `ParseCorrect` (parsed timestamp ≥ now), `YearRolloverHandled` (Dec→Jan crossing), `FallbackIsNull` (unrecognized format → null, not crash)
   3. `bin/run-audit-alloy.cjs` targets both .als files, is gated on JAVA_HOME; `npm test` passes without Java; `bin/run-audit-alloy.test.cjs` has error-path tests GREEN
 **Plans**: TBD
 
@@ -167,14 +167,14 @@ Plans:
 **Depends on**: Phase v0.12-06
 **Requirements**: GAP-4
 **Success Criteria** (what must be TRUE):
-  1. `formal/alloy/transcript-scan.als` exists with sigs `Entry`, `ToolUse extends Entry`, `ToolResult extends Entry`, `HumanMessage extends Entry` modeling JSONL transcript as ordered sequence; predicates `BoundaryCorrect`, `PairingUnique`, `NoDuplicateCounting`, `CeilingEnforced`
+  1. `.formal/alloy/transcript-scan.als` exists with sigs `Entry`, `ToolUse extends Entry`, `ToolResult extends Entry`, `HumanMessage extends Entry` modeling JSONL transcript as ordered sequence; predicates `BoundaryCorrect`, `PairingUnique`, `NoDuplicateCounting`, `CeilingEnforced`
   2. All 4 predicates are asserted as checks — Alloy Analyzer finds no counterexamples
   3. `bin/run-transcript-alloy.cjs` exists, gated on JAVA_HOME; `npm test` passes without Java; `bin/run-transcript-alloy.test.cjs` has error-path tests GREEN
 **Plans**: TBD
 
 Plans:
 - [ ] v0.12-07-01-PLAN.md — Wave 0 RED stubs for run-transcript-alloy.test.cjs (GAP-4)
-- [ ] v0.12-07-02-PLAN.md — Author formal/alloy/transcript-scan.als (GAP-4)
+- [ ] v0.12-07-02-PLAN.md — Author .formal/alloy/transcript-scan.als (GAP-4)
 - [ ] v0.12-07-03-PLAN.md — Implement bin/run-transcript-alloy.cjs + GREEN tests (GAP-4)
 
 ### Phase v0.12-08: Installer and Taxonomy Extensions
@@ -182,8 +182,8 @@ Plans:
 **Depends on**: Phase v0.12-07
 **Requirements**: GAP-7, GAP-8
 **Success Criteria** (what must be TRUE):
-  1. `formal/alloy/install-scope.als` is extended with pred `RollbackSound` (uninstall restores previous state) and pred `ConfigSyncComplete` (after install, hooks/dist/ and ~/.claude/hooks/ are identical)
-  2. `formal/alloy/taxonomy-safety.als` exists with sigs `TaskDescription`, `Category`, `Subcategory`; asserts `NoInjection` (taskDescription content cannot alter category structure), `TaxonomyClosed` (is_new=false implies category already in sig), `NewCategoryConsistent` (is_new=true implies category not previously in sig)
+  1. `.formal/alloy/install-scope.als` is extended with pred `RollbackSound` (uninstall restores previous state) and pred `ConfigSyncComplete` (after install, hooks/dist/ and ~/.claude/hooks/ are identical)
+  2. `.formal/alloy/taxonomy-safety.als` exists with sigs `TaskDescription`, `Category`, `Subcategory`; asserts `NoInjection` (taskDescription content cannot alter category structure), `TaxonomyClosed` (is_new=false implies category already in sig), `NewCategoryConsistent` (is_new=true implies category not previously in sig)
   3. `bin/run-installer-alloy.cjs` exists, targets both install-scope.als and taxonomy-safety.als, is gated on JAVA_HOME; `npm test` passes without Java; `bin/run-installer-alloy.test.cjs` has error-path tests GREEN
 **Plans**: TBD
 

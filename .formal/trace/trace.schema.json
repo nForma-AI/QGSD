@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "formal/trace/trace.schema.json",
+  "$id": ".formal/trace/trace.schema.json",
   "title": "QGSD Conformance Event",
   "description": "Schema for events in .planning/conformance-events.jsonl. MCPENV-03: extended with MCP interaction metadata fields.",
   "type": "object",

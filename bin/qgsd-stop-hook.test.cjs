@@ -5,7 +5,7 @@
 //
 // Test 1: QGSDStopHook.tla and MCStopHook.cfg exist on disk
 // Test 2: TLC verifies Stop hook — no safety or liveness violations (skips if Java unavailable)
-// Test 3: model-registry.json has entry for formal/tla/QGSDStopHook.tla with update_source=manual
+// Test 3: model-registry.json has entry for .formal/tla/QGSDStopHook.tla with update_source=manual
 
 const { test } = require('node:test');
 const assert   = require('node:assert');
@@ -14,15 +14,15 @@ const path = require('path');
 const fs   = require('fs');
 
 const ROOT       = path.join(__dirname, '..');
-const TLA_FILE   = path.join(ROOT, 'formal', 'tla', 'QGSDStopHook.tla');
-const CFG_FILE   = path.join(ROOT, 'formal', 'tla', 'MCStopHook.cfg');
+const TLA_FILE   = path.join(ROOT, '.formal', 'tla', 'QGSDStopHook.tla');
+const CFG_FILE   = path.join(ROOT, '.formal', 'tla', 'MCStopHook.cfg');
 const RUNNER     = path.join(__dirname, 'run-stop-hook-tlc.cjs');
-const REGISTRY   = path.join(ROOT, 'formal', 'model-registry.json');
-const JAR_PATH   = path.join(ROOT, 'formal', 'tla', 'tla2tools.jar');
+const REGISTRY   = path.join(ROOT, '.formal', 'model-registry.json');
+const JAR_PATH   = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
 
 test('QGSDStopHook.tla and MCStopHook.cfg exist on disk', () => {
-  assert.ok(fs.existsSync(TLA_FILE), 'formal/tla/QGSDStopHook.tla must exist');
-  assert.ok(fs.existsSync(CFG_FILE), 'formal/tla/MCStopHook.cfg must exist');
+  assert.ok(fs.existsSync(TLA_FILE), '.formal/tla/QGSDStopHook.tla must exist');
+  assert.ok(fs.existsSync(CFG_FILE), '.formal/tla/MCStopHook.cfg must exist');
 });
 
 test('QGSDStopHook.tla contains all 6 required properties', () => {
@@ -78,11 +78,11 @@ test('TLC verifies Stop hook: no safety or liveness violations', (t) => {
   );
 });
 
-test('model-registry.json has entry for formal/tla/QGSDStopHook.tla with update_source=manual', () => {
-  assert.ok(fs.existsSync(REGISTRY), 'formal/model-registry.json must exist');
+test('model-registry.json has entry for .formal/tla/QGSDStopHook.tla with update_source=manual', () => {
+  assert.ok(fs.existsSync(REGISTRY), '.formal/model-registry.json must exist');
   const registry = JSON.parse(fs.readFileSync(REGISTRY, 'utf8'));
-  const entry = (registry.models || {})['formal/tla/QGSDStopHook.tla'];
-  assert.ok(entry, 'model-registry.json must have an entry for formal/tla/QGSDStopHook.tla');
+  const entry = (registry.models || {})['.formal/tla/QGSDStopHook.tla'];
+  assert.ok(entry, 'model-registry.json must have an entry for .formal/tla/QGSDStopHook.tla');
   assert.strictEqual(entry.update_source, 'manual', 'update_source must be "manual"');
   assert.ok(entry.description && entry.description.includes('SPEC-01'), 'description must reference SPEC-01');
 });

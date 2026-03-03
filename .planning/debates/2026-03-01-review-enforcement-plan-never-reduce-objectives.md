@@ -7,7 +7,7 @@ Rounds: 1
 ## Round 1
 | Model | Position | Citations |
 |---|---|---|
-| Claude | Right scope. B is still LLM-semantic, not truly structural code. Missing generate-phase-spec.cjs coverage (formal/spec/ mentioned in todo but not in plan). | plan-phase.md:249-251, verify-phase.md:76-85 |
+| Claude | Right scope. B is still LLM-semantic, not truly structural code. Missing generate-phase-spec.cjs coverage (.formal/spec/ mentioned in todo but not in plan). | plan-phase.md:249-251, verify-phase.md:76-85 |
 | codex-1 (primary) | UNAVAIL (timeout) | -- |
 | opencode-1 (T1 fallback for codex-1) | Approach appropriate. Redundant enforcement across agents. Gap: needs explicit criteria for what "weakening objectives" means to avoid interpretive ambiguity. | plan-phase.md:249-251 (phase_req_ids immutability), verify-phase.md:76-85 (must_haves derivation) |
 | gemini-1 (primary) | UNAVAIL (timeout) | -- |

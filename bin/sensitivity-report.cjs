@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 // bin/sensitivity-report.cjs
-// Reads formal/sensitivity-report.ndjson, ranks parameters by outcome-flip count,
-// and generates formal/sensitivity-report.md with annotated code paths, test cases,
+// Reads .formal/sensitivity-report.ndjson, ranks parameters by outcome-flip count,
+// and generates .formal/sensitivity-report.md with annotated code paths, test cases,
 // and monitoring metrics.
 // Requirements: SENS-03
 
@@ -12,17 +12,17 @@ const path = require('path');
 const TAG = '[sensitivity-report]';
 
 const REPORT_NDJSON_PATH = process.env.SENSITIVITY_REPORT_PATH ||
-  path.join(__dirname, '..', 'formal', 'sensitivity-report.ndjson');
+  path.join(__dirname, '..', '.formal', 'sensitivity-report.ndjson');
 
 const REPORT_MD_PATH = process.env.SENSITIVITY_MD_PATH ||
-  path.join(__dirname, '..', 'formal', 'sensitivity-report.md');
+  path.join(__dirname, '..', '.formal', 'sensitivity-report.md');
 
 // ── Hardcoded annotations (code paths known from codebase analysis) ──────────
 // Maps parameter name → { codePath, testCases[], monitoring[] }
 
 const PARAM_ANNOTATIONS = {
   MaxSize: {
-    codePath: 'hooks/qgsd-prompt.js FAN_OUT_COUNT; formal/tla/MCsafety.cfg MaxSize',
+    codePath: 'hooks/qgsd-prompt.js FAN_OUT_COUNT; .formal/tla/MCsafety.cfg MaxSize',
     testCases: [
       'Test quorum at N=2 boundary: set FAN_OUT_COUNT=2 in providers.json and run quorum round',
       'Test quorum at N=1 (no quorum): verify workflow rejects insufficient available slots',
@@ -33,7 +33,7 @@ const PARAM_ANNOTATIONS = {
     ],
   },
   tp_rate: {
-    codePath: 'bin/export-prism-constants.cjs TP_PRIOR=0.85; formal/prism/quorum.pm tp_rate const',
+    codePath: 'bin/export-prism-constants.cjs TP_PRIOR=0.85; .formal/prism/quorum.pm tp_rate const',
     testCases: [
       'Test quorum with 2/4 slots returning APPROVE (tp_rate≈0.5) — verify inconclusive behavior',
       'Test quorum with all slots UNAVAILABLE — verify graceful degradation exits 0',
@@ -44,7 +44,7 @@ const PARAM_ANNOTATIONS = {
     ],
   },
   MaxDeliberation: {
-    codePath: 'formal/tla/MCsafety.cfg MaxDeliberation=7; src/machines/qgsd-workflow.machine.ts MaxDeliberation guard',
+    codePath: '.formal/tla/MCsafety.cfg MaxDeliberation=7; src/machines/qgsd-workflow.machine.ts MaxDeliberation guard',
     testCases: [
       'Test quorum workflow with max deliberation rounds reached — verify DECIDED fallback',
       'Test rapid-fire slot responses (all within 1 deliberation round)',
@@ -55,7 +55,7 @@ const PARAM_ANNOTATIONS = {
     ],
   },
   unavail: {
-    codePath: 'bin/export-prism-constants.cjs UNAVAIL_PRIOR=0.15; formal/prism/quorum.pm unavail const',
+    codePath: 'bin/export-prism-constants.cjs UNAVAIL_PRIOR=0.15; .formal/prism/quorum.pm unavail const',
     testCases: [
       'Test quorum with 2/4 slots UNAVAILABLE — verify 2-of-2 quorum still reaches DECIDED',
       'Test quorum with 3/4 slots UNAVAILABLE — verify graceful INCONCLUSIVE result',
@@ -92,7 +92,7 @@ function generateReport(records) {
     '# Sensitivity Report — QGSD v0.20',
     '',
     'Generated: ' + now,
-    'Source: formal/sensitivity-report.ndjson (' + records.length + ' records)',
+    'Source: .formal/sensitivity-report.ndjson (' + records.length + ' records)',
     '',
   ];
 

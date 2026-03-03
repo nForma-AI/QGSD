@@ -9,7 +9,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
+//   - .formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -68,20 +68,20 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(__dirname, '..', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(__dirname, '..', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-quorum-composition-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
     '[run-quorum-composition-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '       -o .formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
   try { writeCheckResult({ tool: 'run-quorum-composition-alloy', formalism: 'alloy', result: 'fail', check_id: CHECK_ID, surface: 'alloy', property: PROPERTY, runtime_ms: 0, summary: 'fail: ' + CHECK_ID + ' (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID), metadata: {} }); } catch (e) { process.stderr.write('[run-quorum-composition-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
-// ── 4. Locate formal/alloy/quorum-composition.als ────────────────────────────
-const alsPath = path.join(__dirname, '..', 'formal', 'alloy', 'quorum-composition.als');
+// ── 4. Locate .formal/alloy/quorum-composition.als ────────────────────────────
+const alsPath = path.join(__dirname, '..', '.formal', 'alloy', 'quorum-composition.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-quorum-composition-alloy] quorum-composition.als not found at: ' + alsPath + '\n' +

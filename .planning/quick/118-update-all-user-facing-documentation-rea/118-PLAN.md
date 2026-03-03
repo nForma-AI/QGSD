@@ -60,13 +60,13 @@ Output: Updated README.md with a new "Agent Manager TUI" subsection under Gettin
 # PROVIDER_KEY_NAMES: AKASHML_API_KEY, TOGETHER_API_KEY, FIREWORKS_API_KEY
 #
 # Formal verification:
-# - TLA+: formal/tla/*.tla, tla2tools.jar (~50MB, gitignored), requires Java 17+
+# - TLA+: .formal/tla/*.tla, tla2tools.jar (~50MB, gitignored), requires Java 17+
 #   - run-tlc.cjs MCsafety / MCliveness / MCoscillation / MCconvergence / MCbreaker / MCdeliberation / MCprefilter / MCaccount-manager
-# - Alloy: formal/alloy/*.als, org.alloytools.alloy.dist.jar (gitignored)
+# - Alloy: .formal/alloy/*.als, org.alloytools.alloy.dist.jar (gitignored)
 #   - run-alloy.cjs quorum-votes / scoreboard-recompute / availability-parsing / transcript-scan / install-scope / taxonomy-safety / account-pool-structure
-# - PRISM: formal/prism/*.pm, requires PRISM CLI
+# - PRISM: .formal/prism/*.pm, requires PRISM CLI
 #   - run-prism.cjs quorum / oauth-rotation / mcp-availability
-# - Petri nets: formal/petri/*.dot -> *.svg via @hpcc-js/wasm-graphviz (included as devDep)
+# - Petri nets: .formal/petri/*.dot -> *.svg via @hpcc-js/wasm-graphviz (included as devDep)
 #   - generate-petri-net.cjs
 # - Master runner: node bin/run-formal-verify.cjs [--only=tla|alloy|prism|petri|generate]
 #   - 21 steps total: 2 generate, 2 petri, 8 TLA+, 7 Alloy, 2 PRISM
@@ -153,10 +153,10 @@ These aren't documentation. They're executable specs that check safety, liveness
 # Install Java 17: https://adoptium.net/
 # Then download tla2tools.jar (~50MB, gitignored):
 curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \
-     -o formal/tla/tla2tools.jar
+     -o .formal/tla/tla2tools.jar
 ```
 
-**Alloy (relational logic):** Download from [alloytools.org](https://alloytools.org/download.html). Place the `org.alloytools.alloy.dist.jar` in `formal/alloy/`. Java 17+ required.
+**Alloy (relational logic):** Download from [alloytools.org](https://alloytools.org/download.html). Place the `org.alloytools.alloy.dist.jar` in `.formal/alloy/`. Java 17+ required.
 
 **PRISM (probabilistic model checker):** Install from [prismmodelchecker.org](https://www.prismmodelchecker.org/). Ensure `prism` is on your PATH.
 
@@ -187,7 +187,7 @@ Exit code 0 = all checks pass. Exit code 1 = at least one violation or configura
 | PRISM | Quorum consensus, OAuth rotation, MCP availability | Probabilistic reachability (convergence probability, expected rounds to consensus) |
 | Petri nets | Quorum flow, account manager lifecycle | Visual concurrency model (token flow, place/transition reachability) |
 
-Individual runners are in `bin/run-tlc.cjs`, `bin/run-alloy.cjs`, `bin/run-prism.cjs`, and `bin/generate-petri-net.cjs`. Spec source files are in `formal/tla/`, `formal/alloy/`, `formal/prism/`, and `formal/petri/`.
+Individual runners are in `bin/run-tlc.cjs`, `bin/run-alloy.cjs`, `bin/run-prism.cjs`, and `bin/generate-petri-net.cjs`. Spec source files are in `.formal/tla/`, `.formal/alloy/`, `.formal/prism/`, and `.formal/petri/`.
 ```
   </action>
   <verify>

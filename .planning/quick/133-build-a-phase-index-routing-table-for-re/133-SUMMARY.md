@@ -39,7 +39,7 @@ commit_hashes: []
   - `appendPhaseEntry`: Append new entries, idempotent upsert behavior (no duplicates on re-append)
   - `buildPhaseIndex` integration: Multi-file scanning, malformed file skipping, correct field population, compact format validation
 
-### 3. formal/phase-index.json (Index Artifact)
+### 3. .formal/phase-index.json (Index Artifact)
 - **Lines:** 46
 - **Entries:** 41 phases indexed (3 skipped due to malformed frontmatter)
 - **Format:**
@@ -60,17 +60,17 @@ commit_hashes: []
 - **New section:** "Phase-Index Historical Context Scan" (after formal spec scan, before research)
 - **Algorithm:**
   - Reads phase description keywords (lowercase, filtered for stopwords)
-  - Searches `formal/phase-index.json` keywords array for matches
+  - Searches `.formal/phase-index.json` keywords array for matches
   - Deduplicates and stores in `$PHASE_INDEX_MATCHES` array
   - Fails open if index file missing or parse errors
 - **Planner integration:** Injects matched VERIFICATION paths into `<files_to_read>` block with label "(Historical verification — keyword match from phase-index)"
 - **Display line:** Shows count of matched historical phases
 
 ### 5. execute-phase.md Update (update_roadmap step)
-- **New post-verification logic:** After `phase complete` call, calls `appendPhaseEntry` to auto-update `formal/phase-index.json`
+- **New post-verification logic:** After `phase complete` call, calls `appendPhaseEntry` to auto-update `.formal/phase-index.json`
 - **Selection logic:** Finds primary VERIFICATION.md file (without plan suffix) using `grep -v -E '\-[0-9]+-VERIFICATION'`
 - **Fail-open guard:** `|| true` prevents phase completion from blocking if index update fails
-- **Commit update:** Added `formal/phase-index.json` to commit files list (alongside ROADMAP.md, STATE.md, REQUIREMENTS.md, *-VERIFICATION.md)
+- **Commit update:** Added `.formal/phase-index.json` to commit files list (alongside ROADMAP.md, STATE.md, REQUIREMENTS.md, *-VERIFICATION.md)
 
 ## Execution Summary
 
@@ -82,7 +82,7 @@ commit_hashes: []
 
 ### Task 2: Initial index generation
 - Ran `node bin/build-phase-index.cjs` against existing phases
-- Generated `formal/phase-index.json` with 41 phases indexed (3 skipped with warnings)
+- Generated `.formal/phase-index.json` with 41 phases indexed (3 skipped with warnings)
 - Verified file size: 46 lines (under 150 limit)
 - Verified phase counts: 41 indexed, 39 with REQ IDs
 
@@ -95,7 +95,7 @@ commit_hashes: []
 ### Task 4: Wire appendPhaseEntry into execute-phase
 - Added post-verification append logic in update_roadmap step
 - Implemented idempotent upsert with deduplication
-- Added formal/phase-index.json to phase completion commit
+- Added .formal/phase-index.json to phase completion commit
 - Execute-phase.md now has 5+ phase-index references
 
 ## Verification Results
@@ -127,7 +127,7 @@ commit_hashes: []
 ## Deviations from Plan
 
 None — plan executed exactly as written. All must_haves satisfied:
-- `buildPhaseIndex` scans phases and writes formal/phase-index.json
+- `buildPhaseIndex` scans phases and writes .formal/phase-index.json
 - Newer phases extract requirement IDs, older phases infer keywords
 - Malformed files skipped with warnings
 - Index stays compact (46 lines for 41 phases)

@@ -31,8 +31,8 @@ must_haves:
       via: "node bin/run-formal-check.cjs --modules=<module-list>"
       pattern: "run-formal-check"
     - from: "bin/run-formal-check.cjs"
-      to: "formal/tla/tla2tools.jar"
-      via: "java -jar formal/tla/tla2tools.jar tlc2.TLC"
+      to: ".formal/tla/tla2tools.jar"
+      via: "java -jar .formal/tla/tla2tools.jar tlc2.TLC"
       pattern: "tla2tools"
     - from: "Step 6.3 result"
       to: "Step 6.5 verifier"
@@ -61,7 +61,7 @@ Output:
 <context>
 @.planning/STATE.md
 @qgsd-core/workflows/quick.md
-@formal/spec/quorum/invariants.md
+@.formal/spec/quorum/invariants.md
 @bin/run-tlc.cjs
 @bin/run-alloy.cjs
 @bin/run-prism.cjs
@@ -75,7 +75,7 @@ Output:
   <action>
 Create a new Node.js CJS script at bin/run-formal-check.cjs. This is a LIGHTWEIGHT per-module
 runner — NOT a replacement for bin/run-formal-verify.cjs (the full suite runner). It accepts a
-list of module names matching formal/spec/ subdirectory names and runs only the checks relevant
+list of module names matching .formal/spec/ subdirectory names and runs only the checks relevant
 to those modules.
 
 CLI interface:
@@ -84,36 +84,36 @@ CLI interface:
 The module-to-check mapping (hardcoded — do not auto-discover from file system):
 
   quorum:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCliveness.cfg formal/tla/QGSDQuorum.tla -workers 1
-    - Alloy: java -jar formal/alloy/org.alloytools.alloy.dist.jar exec --output - --type text --quiet formal/alloy/quorum-votes.als
-    - PRISM: $PRISM_BIN formal/prism/quorum.pm formal/prism/quorum.props (if PRISM_BIN set)
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCliveness.cfg .formal/tla/QGSDQuorum.tla -workers 1
+    - Alloy: java -jar .formal/alloy/org.alloytools.alloy.dist.jar exec --output - --type text --quiet .formal/alloy/quorum-votes.als
+    - PRISM: $PRISM_BIN .formal/prism/quorum.pm .formal/prism/quorum.props (if PRISM_BIN set)
 
   tui-nav:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCTUINavigation.cfg formal/tla/TUINavigation.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCTUINavigation.cfg .formal/tla/TUINavigation.tla -workers 1
 
   breaker:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCbreaker.cfg formal/tla/QGSDCircuitBreaker.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCbreaker.cfg .formal/tla/QGSDCircuitBreaker.tla -workers 1
 
   deliberation:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCdeliberation.cfg formal/tla/QGSDDeliberation.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCdeliberation.cfg .formal/tla/QGSDDeliberation.tla -workers 1
 
   oscillation:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCoscillation.cfg formal/tla/QGSDOscillation.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCoscillation.cfg .formal/tla/QGSDOscillation.tla -workers 1
 
   convergence:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCconvergence.cfg formal/tla/QGSDConvergence.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCconvergence.cfg .formal/tla/QGSDConvergence.tla -workers 1
 
   prefilter:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCprefilter.cfg formal/tla/QGSDPreFilter.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCprefilter.cfg .formal/tla/QGSDPreFilter.tla -workers 1
 
   recruiting:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCrecruiting-safety.cfg formal/tla/QGSDRecruiting.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCrecruiting-safety.cfg .formal/tla/QGSDRecruiting.tla -workers 1
 
   account-manager:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCaccount-manager.cfg formal/tla/QGSDAccountManager.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCaccount-manager.cfg .formal/tla/QGSDAccountManager.tla -workers 1
 
   mcp-calls:
-    - TLC: java -jar formal/tla/tla2tools.jar tlc2.TLC -config formal/tla/MCMCPEnv.cfg formal/tla/QGSDMCPEnv.tla -workers 1
+    - TLC: java -jar .formal/tla/tla2tools.jar tlc2.TLC -config .formal/tla/MCMCPEnv.cfg .formal/tla/QGSDMCPEnv.tla -workers 1
 
 Execution logic for each check:
 1. Detect Java: spawnSync('java', ['--version']). If not found or error → log "[run-formal-check] WARNING: java not found — skipping {module} TLC/Alloy check" and mark as skipped (not failed).
@@ -273,7 +273,7 @@ identical to source (diff exits 0).
 3. node bin/run-formal-check.cjs --modules=unknown-module exits 0 with a warning (fail-open)
 4. grep "Step 6.3" qgsd-core/workflows/quick.md shows step header, skip guard, and success criteria (3+ lines)
 5. diff between source and installed quick.md produces no output
-6. The EventualConsensus invariant (from formal/spec/quorum/invariants.md) is not violated: Step 6.3 is fail-open (tool missing = continue, not block), so quorum eventually reaches DECIDED even when formal tools unavailable
+6. The EventualConsensus invariant (from .formal/spec/quorum/invariants.md) is not violated: Step 6.3 is fail-open (tool missing = continue, not block), so quorum eventually reaches DECIDED even when formal tools unavailable
 </verification>
 
 <success_criteria>

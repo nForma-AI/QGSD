@@ -48,7 +48,7 @@ qgsd-core/workflows/quick.md:302 → "Display: `Max iterations reached. ${N} iss
 
 ### Claim 2: Formal scope scan (Step 4.5)
 
-**Claim:** "Formal scope scan: discovers `formal/spec/*/invariants.md` before planner spawns" — Step 4.5 must exist to scan formal/spec/ for invariants.md files.
+**Claim:** "Formal scope scan: discovers `.formal/spec/*/invariants.md` before planner spawns" — Step 4.5 must exist to scan .formal/spec/ for invariants.md files.
 
 **Status:** PASS
 
@@ -56,13 +56,13 @@ qgsd-core/workflows/quick.md:302 → "Display: `Max iterations reached. ${N} iss
 ```
 qgsd-core/workflows/quick.md:84 → "**Step 4.5: Formal scope scan (only when `$FULL_MODE`)**"
 qgsd-core/workflows/quick.md:89 → "FORMAL_SPEC_CONTEXT=[]"
-qgsd-core/workflows/quick.md:92-94 → "List subdirectories under `formal/spec/` (if the directory exists): ls formal/spec/ 2>/dev/null"
-qgsd-core/workflows/quick.md:97-99 → "For each subdirectory found, check if `formal/spec/{module}/invariants.md` exists: ls formal/spec/{module}/invariants.md 2>/dev/null"
-qgsd-core/workflows/quick.md:102 → "If it exists, record the module name and path: `formal/spec/{module}/invariants.md`."
+qgsd-core/workflows/quick.md:92-94 → "List subdirectories under `.formal/spec/` (if the directory exists): ls .formal/spec/ 2>/dev/null"
+qgsd-core/workflows/quick.md:97-99 → "For each subdirectory found, check if `.formal/spec/{module}/invariants.md` exists: ls .formal/spec/{module}/invariants.md 2>/dev/null"
+qgsd-core/workflows/quick.md:102 → "If it exists, record the module name and path: `.formal/spec/{module}/invariants.md`."
 qgsd-core/workflows/quick.md:119 → "Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5."
 ```
 
-**Verification:** Step 4.5 placed between task directory creation (Step 4) and planner spawn (Step 5), with explicit conditions "only when `$FULL_MODE`". Scans formal/spec/, finds invariants.md, populates $FORMAL_SPEC_CONTEXT. Matches claim exactly.
+**Verification:** Step 4.5 placed between task directory creation (Step 4) and planner spawn (Step 5), with explicit conditions "only when `$FULL_MODE`". Scans .formal/spec/, finds invariants.md, populates $FORMAL_SPEC_CONTEXT. Matches claim exactly.
 
 ---
 
@@ -84,20 +84,20 @@ qgsd-core/workflows/quick.md:230 → "- Formal artifacts (--full only): If \`for
 
 ---
 
-### Claim 4: Executor commits formal/ files atomically
+### Claim 4: Executor commits .formal/ files atomically
 
-**Claim:** "Executor commits formal/ files atomically when `formal_artifacts` non-empty" — Executor includes formal/ files in atomic commits alongside implementation files.
+**Claim:** "Executor commits .formal/ files atomically when `formal_artifacts` non-empty" — Executor includes .formal/ files in atomic commits alongside implementation files.
 
 **Status:** PASS
 
 **Evidence:**
 ```
-qgsd-core/workflows/quick.md:436 → "- If the plan declares \`formal_artifacts: update\` or \`formal_artifacts: create\`, execute those formal file changes and include the formal/ files in the atomic commit for that task (alongside the implementation files)"
+qgsd-core/workflows/quick.md:436 → "- If the plan declares \`formal_artifacts: update\` or \`formal_artifacts: create\`, execute those formal file changes and include the .formal/ files in the atomic commit for that task (alongside the implementation files)"
 qgsd-core/workflows/quick.md:437 → "- Formal/ files must never be committed separately — always include in the task's atomic commit"
-qgsd-core/workflows/quick.md:639 → "- [ ] (--full) Executor includes formal/ files in atomic commits when formal_artifacts non-empty"
+qgsd-core/workflows/quick.md:639 → "- [ ] (--full) Executor includes .formal/ files in atomic commits when formal_artifacts non-empty"
 ```
 
-**Verification:** Executor constraints (lines 436-437) explicitly require formal/ file inclusion in atomic commits and prohibit separate commits. Success criterion (line 639) confirms this requirement. Matches claim exactly.
+**Verification:** Executor constraints (lines 436-437) explicitly require .formal/ file inclusion in atomic commits and prohibit separate commits. Success criterion (line 639) confirms this requirement. Matches claim exactly.
 
 ---
 
@@ -110,7 +110,7 @@ qgsd-core/workflows/quick.md:639 → "- [ ] (--full) Executor includes formal/ f
 **Evidence:**
 ```
 qgsd-core/workflows/quick.md:518 → "- Did executor respect the identified invariants? Check implementation files against invariant conditions."
-qgsd-core/workflows/quick.md:519 → "- If plan declared formal_artifacts update or create: are the modified/created formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)"
+qgsd-core/workflows/quick.md:519 → "- If plan declared formal_artifacts update or create: are the modified/created .formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)? (Basic structure check, not model checking.)"
 qgsd-core/workflows/quick.md:641 → "- [ ] (--full) Verifier checks invariant compliance and formal artifact syntax"
 ```
 
@@ -190,7 +190,7 @@ Quick-128 (the prior implementation task) required all formal integration additi
 1. ✓ Formal scope scan (Step 4.5) discovers invariants.md files
 2. ✓ Planner receives formal context block with formal_artifacts requirement
 3. ✓ Checker validates formal_artifacts paths are well-specified
-4. ✓ Executor includes formal/ files in atomic commits
+4. ✓ Executor includes .formal/ files in atomic commits
 5. ✓ Verifier checks invariant compliance and formal syntax
 6. ✓ Quorum reviews VERIFICATION.md with downgrade capability
 

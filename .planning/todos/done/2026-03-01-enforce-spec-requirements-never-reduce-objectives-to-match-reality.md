@@ -4,7 +4,7 @@ title: Enforce spec requirements — never reduce objectives to match reality
 area: planning
 files:
   - CLAUDE.md
-  - formal/spec/
+  - .formal/spec/
 ---
 
 ## Problem

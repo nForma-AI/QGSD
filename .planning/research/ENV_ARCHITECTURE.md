@@ -9,9 +9,9 @@
 
 ## Executive Summary
 
-The requirements envelope (ENV-01..05) adds a new canonical artifact (`formal/requirements.json`) to QGSD's formal verification system. It integrates at four critical touchpoints:
+The requirements envelope (ENV-01..05) adds a new canonical artifact (`.formal/requirements.json`) to QGSD's formal verification system. It integrates at four critical touchpoints:
 
-1. **Data generation** (ENV-01): `new-milestone` → `formal/requirements.json` aggregation
+1. **Data generation** (ENV-01): `new-milestone` → `.formal/requirements.json` aggregation
 2. **Validation gate** (ENV-02): Haiku pre-freeze review for duplicates/conflicts
 3. **Spec constraint binding** (ENV-03): `generate-phase-spec.cjs` reads envelope as PROPERTY source
 4. **Immutability + drift** (ENV-04, ENV-05): Hook-based protection + drift checking
@@ -38,10 +38,10 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
                  │
 ┌─────────────────┴────────────────────────────────────────────────┐
 │              Formal Verification Layer                           │
-│  formal/model-registry.json (central artifact index)            │
-│  formal/tla/ (TLA+ specs)                                        │
-│  formal/alloy/ (Alloy models)                                    │
-│  formal/prism/ (Probabilistic models)                            │
+│  .formal/model-registry.json (central artifact index)            │
+│  .formal/tla/ (TLA+ specs)                                        │
+│  .formal/alloy/ (Alloy models)                                    │
+│  .formal/prism/ (Probabilistic models)                            │
 │  bin/run-formal-verify.cjs (orchestrator)                        │
 │  bin/generate-phase-spec.cjs (phase → PROPERTY)                 │
 │  bin/promote-model.cjs (plan → formal)                          │
@@ -61,17 +61,17 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 |----------|-------|-----------|---------|
 | `.planning/REQUIREMENTS.md` | User (working copy) | `/qgsd:new-milestone` discovery | Phase requirements reference document |
 | `.planning/phases/*/task-envelope.json` | Planning system | `/qgsd:plan-phase` | Execution context + must_haves truths |
-| `formal/model-registry.json` | Formal verification | v0.21 (ARCH-01) | Central registry of all living models + versions |
-| `formal/tla/QGSDQuorum.tla` | Formal verification | `xstate-to-tla.cjs` | XState machine → TLA+ spec |
-| `formal/tla/scratch/<phase>.tla` | Planning system | `generate-phase-spec.cjs` | Phase truths → TLA+ PROPERTY stubs |
+| `.formal/model-registry.json` | Formal verification | v0.21 (ARCH-01) | Central registry of all living models + versions |
+| `.formal/tla/QGSDQuorum.tla` | Formal verification | `xstate-to-tla.cjs` | XState machine → TLA+ spec |
+| `.formal/tla/scratch/<phase>.tla` | Planning system | `generate-phase-spec.cjs` | Phase truths → TLA+ PROPERTY stubs |
 
 ---
 
 ## Proposed: Requirements Envelope Layer
 
-### New Artifact: `formal/requirements.json`
+### New Artifact: `.formal/requirements.json`
 
-**Location:** `formal/requirements.json` (owned by formal verification, not planning)
+**Location:** `.formal/requirements.json` (owned by formal verification, not planning)
 **Lifecycle:** Write-once after validation, read-many for spec generation + drift checking
 **Ownership:** Formal verification system (immutable after frozen_at is set)
 
@@ -90,7 +90,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
     {
       "id": "ENV-01",
       "category": "Requirements Envelope",
-      "text": "Requirements are aggregated into `formal/requirements.json` during `new-milestone`...",
+      "text": "Requirements are aggregated into `.formal/requirements.json` during `new-milestone`...",
       "phase": "v0.22-00-envelope",
       "status": "active",
       "provenance": {
@@ -120,7 +120,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 │          REQUIREMENTS ENVELOPE LAYER (NEW — v0.22)               │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  formal/requirements.json ← (frozen after ENV-02, immutable)    │
+│  .formal/requirements.json ← (frozen after ENV-02, immutable)    │
 │         ↓                                                        │
 │  [generate-phase-spec] reads envelope as PROPERTY source        │
 │  [run-formal-verify] includes ENV requirements in TLC checks    │
@@ -146,11 +146,11 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 │          FORMAL VERIFICATION LAYER (ENHANCED BY ENV)             │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  formal/tla/QGSDQuorum.tla (XState → machine spec)             │
-│  formal/tla/scratch/<phase>.tla (phase truths + ENVELOPE       │
+│  .formal/tla/QGSDQuorum.tla (XState → machine spec)             │
+│  .formal/tla/scratch/<phase>.tla (phase truths + ENVELOPE       │
 │                                   PROPERTYs)                   │
-│  formal/alloy/*.als (composition, account-pool, etc.)          │
-│  formal/prism/*.pm (MCP availability, quorum probability)      │
+│  .formal/alloy/*.als (composition, account-pool, etc.)          │
+│  .formal/prism/*.pm (MCP availability, quorum probability)      │
 │                                                                  │
 │  [run-formal-verify.cjs] now:                                  │
 │    1. Validates requirements envelope (ENV-02)                 │
@@ -158,7 +158,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 │    3. Reports formal violations separately                     │
 │                                                                  │
 │  [generate-phase-spec.cjs] now:                                │
-│    - Reads formal/requirements.json (frozen envelope)          │
+│    - Reads .formal/requirements.json (frozen envelope)          │
 │    - Reads phase task-envelope.json (truths)                  │
 │    - Merges: envelope PROPERTYs take precedence               │
 │                                                                  │
@@ -171,7 +171,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 
 ### 1. `bin/aggregate-requirements.cjs` (ENV-01)
 
-**Responsibility:** Compile `.planning/REQUIREMENTS.md` → `formal/requirements.json` (unvalidated)
+**Responsibility:** Compile `.planning/REQUIREMENTS.md` → `.formal/requirements.json` (unvalidated)
 
 **Inputs:**
 - `.planning/REQUIREMENTS.md` (working document with YAML frontmatter + requirement blocks)
@@ -183,7 +183,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 3. Parse each: id, category, text, phase assignment, status
 4. Record provenance: source file + line number
 5. Validate: no duplicate IDs, all phase assignments exist in ROADMAP
-6. Output: `formal/requirements.json` with `frozen_at: null` (not yet validated)
+6. Output: `.formal/requirements.json` with `frozen_at: null` (not yet validated)
 
 **Exit codes:**
 - 0: JSON written successfully
@@ -200,7 +200,7 @@ This architecture preserves existing data flow (`.planning/REQUIREMENTS.md` → 
 **Responsibility:** Invoke Haiku validation gate, present results, freeze envelope if approved
 
 **Inputs:**
-- `formal/requirements.json` (aggregated, `frozen_at: null`)
+- `.formal/requirements.json` (aggregated, `frozen_at: null`)
 
 **Algorithm:**
 1. Read requirements JSON
@@ -244,11 +244,11 @@ Response from Haiku (expected):
 
 ### 3. `bin/detect-requirements-drift.cjs` (ENV-05)
 
-**Responsibility:** Compare `.planning/REQUIREMENTS.md` vs `formal/requirements.json`, warn if diverged
+**Responsibility:** Compare `.planning/REQUIREMENTS.md` vs `.formal/requirements.json`, warn if diverged
 
 **Inputs:**
 - `.planning/REQUIREMENTS.md` (current working copy)
-- `formal/requirements.json` (frozen envelope)
+- `.formal/requirements.json` (frozen envelope)
 
 **Algorithm:**
 1. Parse both documents for requirement blocks (id, text)
@@ -258,7 +258,7 @@ Response from Haiku (expected):
    - **Deleted from working:** ID in envelope but not in working copy (user removed)
    - **Text changed:** ID in both but text differs by > 10% (semantic change)
    - **Minor text change:** ID in both but text differs by < 10% (formatting, grammar)
-4. Write `formal/drift-report.md`:
+4. Write `.formal/drift-report.md`:
    - Summary: N deletions, M additions, K modifications
    - Detail table: ID, type, old text (first 50 chars), new text (first 50 chars)
    - Guidance: "Use amendment workflow (ENV-04) to modify the frozen envelope"
@@ -278,12 +278,12 @@ Response from Haiku (expected):
 **Responsibility:** Formal workflow to modify frozen envelope: approve amendments → re-validate → re-freeze
 
 **Inputs:**
-- Current `formal/requirements.json` (frozen)
+- Current `.formal/requirements.json` (frozen)
 - Amendments: new REQ IDs, deleted IDs, modified text
 
 **Algorithm:**
 1. Accept amendment input (JSON via stdin or interactive prompts)
-2. Create temporary `formal/requirements.json.pending`
+2. Create temporary `.formal/requirements.json.pending`
 3. Apply amendments (add/delete/modify in .pending copy)
 4. Invoke `validate-requirements-haiku.cjs` on .pending copy
 5. If validation passes:
@@ -310,7 +310,7 @@ Response from Haiku (expected):
 **Responsibility:** Transform envelope requirements → TLA+ PROPERTY statements for phase specs
 
 **Inputs:**
-- `formal/requirements.json` (frozen)
+- `.formal/requirements.json` (frozen)
 - Phase number (from context or CLI arg)
 
 **Algorithm:**
@@ -352,7 +352,7 @@ Response from Haiku (expected):
 const truths = parsePlanFrontmatter(planContent);
 // Generate PROPERTY statements from truths
 const properties = truths.map(t => `PROPERTY: ${t}`);
-// Output: formal/tla/scratch/<phase>.tla
+// Output: .formal/tla/scratch/<phase>.tla
 ```
 
 **After (proposed):**
@@ -434,14 +434,14 @@ if (isGSDPlanningCommand(prompt)) {
     const driftWarning = `
 [⚠️  REQUIREMENTS DRIFT DETECTED]
 
-Working copy (.planning/REQUIREMENTS.md) diverges from frozen envelope (formal/requirements.json).
+Working copy (.planning/REQUIREMENTS.md) diverges from frozen envelope (.formal/requirements.json).
 
 ${driftReport}
 
 To update the frozen envelope formally, use:
   /qgsd:amend-requirements
 
-Proceed with planning. Drift will be tracked in formal/drift-report.md.
+Proceed with planning. Drift will be tracked in .formal/drift-report.md.
 `;
     hookSpecificOutput.additionalContext = driftWarning + (existingContext || '');
   }
@@ -457,12 +457,12 @@ Proceed with planning. Drift will be tracked in formal/drift-report.md.
 
 ### 3. `hooks/qgsd-stop.js` (MODIFIED — ENV-04)
 
-**Change:** Add immutability enforcement for `formal/requirements.json`
+**Change:** Add immutability enforcement for `.formal/requirements.json`
 
 **New logic** (in transcript scan section, after quorum evidence check):
 ```javascript
 // Immutability enforcement (ENV-04)
-if (hasDirectFileModification(transcript, 'formal/requirements.json')) {
+if (hasDirectFileModification(transcript, '.formal/requirements.json')) {
   // Check if user explicitly approved amendment via quorum or formal workflow
   const hasAmendmentApproval = transcript.includes('<!-- AMENDMENT_APPROVED -->')
     || transcript.includes('amend-requirements');
@@ -470,7 +470,7 @@ if (hasDirectFileModification(transcript, 'formal/requirements.json')) {
   if (!hasAmendmentApproval) {
     decision = 'BLOCK';
     blockReasons.push(
-      'formal/requirements.json cannot be modified without explicit amendment approval. ' +
+      '.formal/requirements.json cannot be modified without explicit amendment approval. ' +
       'Run `/qgsd:amend-requirements` to update the frozen envelope.'
     );
   }
@@ -478,7 +478,7 @@ if (hasDirectFileModification(transcript, 'formal/requirements.json')) {
 ```
 
 **Behavior:**
-- Prevents accidental direct edits to `formal/requirements.json`
+- Prevents accidental direct edits to `.formal/requirements.json`
 - Routes modifications through formal amendment workflow (`amend-requirements.cjs`)
 - Comment marker `<!-- AMENDMENT_APPROVED -->` acts as user consent signal
 
@@ -530,8 +530,8 @@ if (envPropertyResults.length > 0) {
 Add to top of file (after title):
 ```markdown
 > **Note:** This is the working copy of requirements.
-> The formal envelope is `formal/requirements.json` (frozen after v0.22 validation).
-> Working copy changes are tracked via drift detection (see `formal/drift-report.md`).
+> The formal envelope is `.formal/requirements.json` (frozen after v0.22 validation).
+> Working copy changes are tracked via drift detection (see `.formal/drift-report.md`).
 > To modify the formal envelope, use `/qgsd:amend-requirements` (amendment workflow).
 ```
 
@@ -548,7 +548,7 @@ Add to top of file (after title):
          ↓
 [aggregate-requirements.cjs invoked by planner]
          ↓
-formal/requirements.json (unvalidated, frozen_at = null)
+.formal/requirements.json (unvalidated, frozen_at = null)
          ↓
 ready for validation gate (ENV-02)
 ```
@@ -562,7 +562,7 @@ ready for validation gate (ENV-02)
 ### ENV-02: Validation Gate Flow
 
 ```
-formal/requirements.json (unvalidated)
+.formal/requirements.json (unvalidated)
          ↓
 [validate-requirements-haiku.cjs spawned by planner]
          ├→ invoke Task(subagent_type="qgsd-haiku-validator")
@@ -573,7 +573,7 @@ User decision: accept / resolve manually / abort
          ├→ accept: update validation.passed_at, frozen_at = now()
          └→ abort: exit 1 (envelope stays unvalidated, user re-edits REQUIREMENTS.md)
          ↓
-formal/requirements.json (validated + frozen, frozen_at timestamp set)
+.formal/requirements.json (validated + frozen, frozen_at timestamp set)
 ```
 
 **Timing:** `/qgsd:new-milestone` step 4.5, immediately after aggregation
@@ -585,14 +585,14 @@ formal/requirements.json (validated + frozen, frozen_at timestamp set)
 ### ENV-03: Spec Constraint Binding Flow
 
 ```
-formal/requirements.json (frozen, frozen_at set)
+.formal/requirements.json (frozen, frozen_at set)
          ↓
 [During plan-phase formal verification — step 8.2]
          ├→ extract-requirements-properties.cjs filters by phase
          ├→ converts envelope requirements to TLA+ PROPERTY templates
          └→ merges with phase truths (from task-envelope.json)
          ↓
-formal/tla/scratch/<phase>.tla (now includes ENV-* PROPERTY statements)
+.formal/tla/scratch/<phase>.tla (now includes ENV-* PROPERTY statements)
          ↓
 [run-formal-verify.cjs] runs TLC
          ├→ verifies PROPERTY statements
@@ -610,7 +610,7 @@ check-results.ndjson (includes ENV-* pass/fail results)
 ### ENV-04: Immutability Contract Flow
 
 ```
-User attempts: direct edit to formal/requirements.json
+User attempts: direct edit to .formal/requirements.json
          ↓
 [qgsd-stop.js] detects Write to frozen envelope during transcript scan
          ├→ check: was edit approved by amendment workflow?
@@ -626,7 +626,7 @@ User runs: /qgsd:amend-requirements (or batch script)
          ├→ invoke validate-requirements-haiku.cjs (ENV-02)
          └→ if validation passes: move .pending → live, frozen_at refreshed
          ↓
-formal/requirements.json (updated + re-validated)
+.formal/requirements.json (updated + re-validated)
 ```
 
 **Timing:** Anytime user attempts direct modification
@@ -647,7 +647,7 @@ formal/requirements.json (updated + re-validated)
          ├→ parse diff: working vs frozen envelope
          └→ classify: missing/deleted/modified requirements
          ↓
-formal/drift-report.md (generated with diff table + guidance)
+.formal/drift-report.md (generated with diff table + guidance)
          ↓
 [qgsd-prompt.js] injects drift report into additionalContext
          ↓
@@ -671,7 +671,7 @@ Claude sees: "[⚠️  REQUIREMENTS DRIFT DETECTED]" warning + report in context
 │  Step 4: Roadmap created                                    │
 │    ↓                                                         │
 │  [aggregate-requirements.cjs]                               │
-│    → formal/requirements.json (unvalidated)                 │
+│    → .formal/requirements.json (unvalidated)                 │
 │    ↓                                                         │
 │  Step 4.5: Validation gate                                  │
 │    ↓                                                         │
@@ -680,7 +680,7 @@ Claude sees: "[⚠️  REQUIREMENTS DRIFT DETECTED]" warning + report in context
 │    ↓                                                         │
 │  If issues: AskUserQuestion                                 │
 │    ↓                                                         │
-│  formal/requirements.json (validated + frozen)              │
+│  .formal/requirements.json (validated + frozen)              │
 │    → (ready for phase planning)                             │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
@@ -693,12 +693,12 @@ Claude sees: "[⚠️  REQUIREMENTS DRIFT DETECTED]" warning + report in context
 │  Step 8.2: Formal verification                              │
 │    ↓                                                         │
 │  [generate-phase-spec.cjs] (MODIFIED)                       │
-│    ├→ reads formal/requirements.json (frozen)               │
+│    ├→ reads .formal/requirements.json (frozen)               │
 │    ├→ filter by phase number                                │
 │    ├→ [extract-requirements-properties.cjs]                 │
 │    │   → convert to TLA+ PROPERTY statements                │
 │    ├→ merge with phase truths (from task-envelope.json)     │
-│    └→ formal/tla/scratch/<phase>.tla (incl. ENV-* props)    │
+│    └→ .formal/tla/scratch/<phase>.tla (incl. ENV-* props)    │
 │    ↓                                                         │
 │  [run-formal-verify.cjs]                                    │
 │    ├→ run TLC on phase spec (ENV properties included)       │
@@ -713,7 +713,7 @@ Claude sees: "[⚠️  REQUIREMENTS DRIFT DETECTED]" warning + report in context
 │                                                              │
 │  [qgsd-prompt.js] UserPromptSubmit hook                      │
 │    ├→ [detect-requirements-drift.cjs] runs                  │
-│    ├→ if drift found: formal/drift-report.md generated      │
+│    ├→ if drift found: .formal/drift-report.md generated      │
 │    └→ drift report injected into context                    │
 │    ↓                                                         │
 │  User sees: drift warning in prompt context                 │
@@ -722,7 +722,7 @@ Claude sees: "[⚠️  REQUIREMENTS DRIFT DETECTED]" warning + report in context
 │    → /qgsd:amend-requirements invoked                       │
 │    → [amend-requirements.cjs]                               │
 │    → [validate-requirements-haiku.cjs] (re-validate)        │
-│    → formal/requirements.json (updated, re-frozen)          │
+│    → .formal/requirements.json (updated, re-frozen)          │
 │                                                              │
 │  [qgsd-stop.js] transcript scan                             │
 │    ├→ check for direct modifications to envelope            │
@@ -875,7 +875,7 @@ ENV-05 (drift) ← depends on frozen envelope existing
 
 ### Constraint 4: Backward Compatibility with Projects Without Envelope
 
-**Problem:** Existing projects run without formal/requirements.json; new code must not break them.
+**Problem:** Existing projects run without .formal/requirements.json; new code must not break them.
 
 **Mitigation:**
 - All ENV-01..05 features are optional (graceful fallback)
@@ -942,7 +942,7 @@ ENV-05 (drift) ← depends on frozen envelope existing
 
 ### No Changes Required
 
-- `formal/model-registry.json` — structure already supports all update_source types
+- `.formal/model-registry.json` — structure already supports all update_source types
 - `plan-phase.md` workflow — envelope generation is automatic in planner
 - `.planning/phases/*/task-envelope.json` — unchanged, read alongside envelope
 
@@ -950,7 +950,7 @@ ENV-05 (drift) ← depends on frozen envelope existing
 
 ## Success Criteria
 
-**ENV-01 Success:** `.planning/REQUIREMENTS.md` → `formal/requirements.json` without manual intervention
+**ENV-01 Success:** `.planning/REQUIREMENTS.md` → `.formal/requirements.json` without manual intervention
 
 **ENV-02 Success:** Haiku validates envelope before freezing; issues presented to user for resolution
 
@@ -971,7 +971,7 @@ ENV-05 (drift) ← depends on frozen envelope existing
 - `/Users/jonathanborduas/code/QGSD/.planning/REQUIREMENTS.md` — detailed ENV-01..05 specs
 
 **Formal Verification:**
-- `/Users/jonathanborduas/code/QGSD/formal/model-registry.json` — central artifact index
+- `/Users/jonathanborduas/code/QGSD/.formal/model-registry.json` — central artifact index
 - `/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs` — 30-step orchestrator
 - `/Users/jonathanborduas/code/QGSD/bin/generate-phase-spec.cjs` — truths → properties
 

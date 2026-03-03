@@ -1,6 +1,6 @@
 ---- MODULE QGSDQuorum ----
 (*
- * formal/tla/QGSDQuorum.tla
+ * .formal/tla/QGSDQuorum.tla
  * GENERATED — do not edit by hand.
  * Source of truth: src/machines/qgsd-workflow.machine.ts
  * Regenerate:      node bin/generate-formal-specs.cjs

@@ -326,7 +326,7 @@ function buildPhaseIndex() {
   };
 
   // Write compact JSON (one entry per line for readability)
-  const outputPath = 'formal/phase-index.json';
+  const outputPath = '.formal/phase-index.json';
   const jsonLines = [
     '{',
     `  "version": "${index.version}",`,
@@ -358,7 +358,7 @@ function buildPhaseIndex() {
  */
 function appendPhaseEntry(phaseDir, verificationPath) {
   // Read or create base index
-  const indexPath = 'formal/phase-index.json';
+  const indexPath = '.formal/phase-index.json';
   let index = {
     version: '1.0',
     generated_at: new Date().toISOString(),

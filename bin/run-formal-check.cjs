@@ -15,8 +15,8 @@
 //
 // Prerequisites:
 //   - Java >=17 (for TLC and Alloy)
-//   - formal/tla/tla2tools.jar
-//   - formal/alloy/org.alloytools.alloy.dist.jar
+//   - .formal/tla/tla2tools.jar
+//   - .formal/alloy/org.alloytools.alloy.dist.jar
 //   - PRISM_BIN env var (optional; skipped if not set)
 
 const { spawnSync } = require('child_process');
@@ -29,34 +29,34 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCliveness.cfg',
-        'formal/tla/QGSDQuorum.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCliveness.cfg',
+        '.formal/tla/QGSDQuorum.tla',
         '-workers', '1'
       ]
     },
     {
       tool: 'alloy',
       cmd: [
-        'java', '-jar', 'formal/alloy/org.alloytools.alloy.dist.jar', 'exec',
+        'java', '-jar', '.formal/alloy/org.alloytools.alloy.dist.jar', 'exec',
         '--output', '-', '--type', 'text', '--quiet',
-        'formal/alloy/quorum-votes.als'
+        '.formal/alloy/quorum-votes.als'
       ]
     },
     {
       tool: 'prism',
       cmd: null, // Set dynamically if PRISM_BIN is set
-      prismModel: 'formal/prism/quorum.pm',
-      prismProps: 'formal/prism/quorum.props'
+      prismModel: '.formal/prism/quorum.pm',
+      prismProps: '.formal/prism/quorum.props'
     }
   ],
   'tui-nav': [
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCTUINavigation.cfg',
-        'formal/tla/TUINavigation.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCTUINavigation.cfg',
+        '.formal/tla/TUINavigation.tla',
         '-workers', '1'
       ]
     }
@@ -65,9 +65,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCbreaker.cfg',
-        'formal/tla/QGSDCircuitBreaker.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCbreaker.cfg',
+        '.formal/tla/QGSDCircuitBreaker.tla',
         '-workers', '1'
       ]
     }
@@ -76,9 +76,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCdeliberation.cfg',
-        'formal/tla/QGSDDeliberation.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCdeliberation.cfg',
+        '.formal/tla/QGSDDeliberation.tla',
         '-workers', '1'
       ]
     }
@@ -87,9 +87,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCoscillation.cfg',
-        'formal/tla/QGSDOscillation.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCoscillation.cfg',
+        '.formal/tla/QGSDOscillation.tla',
         '-workers', '1'
       ]
     }
@@ -98,9 +98,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCconvergence.cfg',
-        'formal/tla/QGSDConvergence.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCconvergence.cfg',
+        '.formal/tla/QGSDConvergence.tla',
         '-workers', '1'
       ]
     }
@@ -109,9 +109,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCprefilter.cfg',
-        'formal/tla/QGSDPreFilter.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCprefilter.cfg',
+        '.formal/tla/QGSDPreFilter.tla',
         '-workers', '1'
       ]
     }
@@ -120,9 +120,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCrecruiting-safety.cfg',
-        'formal/tla/QGSDRecruiting.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCrecruiting-safety.cfg',
+        '.formal/tla/QGSDRecruiting.tla',
         '-workers', '1'
       ]
     }
@@ -131,9 +131,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCaccount-manager.cfg',
-        'formal/tla/QGSDAccountManager.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCaccount-manager.cfg',
+        '.formal/tla/QGSDAccountManager.tla',
         '-workers', '1'
       ]
     }
@@ -142,9 +142,9 @@ const MODULE_CHECKS = {
     {
       tool: 'tlc',
       cmd: [
-        'java', '-cp', 'formal/tla/tla2tools.jar', 'tlc2.TLC',
-        '-config', 'formal/tla/MCMCPEnv.cfg',
-        'formal/tla/QGSDMCPEnv.tla',
+        'java', '-cp', '.formal/tla/tla2tools.jar', 'tlc2.TLC',
+        '-config', '.formal/tla/MCMCPEnv.cfg',
+        '.formal/tla/QGSDMCPEnv.tla',
         '-workers', '1'
       ]
     }
@@ -327,8 +327,8 @@ if (require.main === module) {
   }
 
   // Check jar files (fail-open on missing)
-  const tlcJarPath = path.join(cwd, 'formal', 'tla', 'tla2tools.jar');
-  const alloyJarPath = path.join(cwd, 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  const tlcJarPath = path.join(cwd, '.formal', 'tla', 'tla2tools.jar');
+  const alloyJarPath = path.join(cwd, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 
   const tlcJarExists = checkJarExists(tlcJarPath);
   const alloyJarExists = checkJarExists(alloyJarPath);

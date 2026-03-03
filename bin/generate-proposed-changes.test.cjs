@@ -71,9 +71,9 @@ must_haves:
   assert.ok(specContent.includes('MODULE ProposedChanges'), 'should contain MODULE ProposedChanges');
 });
 
-// ── Test 3: generateProposedChanges writes to phaseDir/formal/ subdirectory
+// ── Test 3: generateProposedChanges writes to phaseDir/.formal/ subdirectory
 
-test('generateProposedChanges writes to phaseDir/formal/ subdirectory', () => {
+test('generateProposedChanges writes to phaseDir/.formal/ subdirectory', () => {
   const phaseDir = path.join(tmpDir, '.planning', 'phases', 'v0.21-05-test');
   fs.mkdirSync(phaseDir, { recursive: true });
   const planPath = path.join(phaseDir, 'v0.21-05-01-PLAN.md');
@@ -91,8 +91,8 @@ must_haves:
   const result = generateProposedChanges(planPath);
   assert.strictEqual(result.generated, true);
 
-  const expectedPath = path.join(phaseDir, 'formal', 'ProposedChanges.tla');
-  assert.ok(fs.existsSync(expectedPath), 'ProposedChanges.tla should exist in phaseDir/formal/');
+  const expectedPath = path.join(phaseDir, '.formal', 'ProposedChanges.tla');
+  assert.ok(fs.existsSync(expectedPath), 'ProposedChanges.tla should exist in phaseDir/.formal/');
   assert.strictEqual(result.specPath, expectedPath);
 });
 
@@ -148,8 +148,8 @@ must_haves:
 
   assert.ok(result.stdout.includes('DRY-RUN'), 'stdout should contain DRY-RUN');
 
-  const formalDir = path.join(tmpDir, 'formal');
-  assert.ok(!fs.existsSync(formalDir), 'formal/ directory should NOT be created in dry-run mode');
+  const formalDir = path.join(tmpDir, '.formal');
+  assert.ok(!fs.existsSync(formalDir), '.formal/ directory should NOT be created in dry-run mode');
 });
 
 // ── Test 6: each truth appears as a comment in the generated TLA+ spec
@@ -201,9 +201,9 @@ must_haves:
   assert.ok(specContent.includes('Req03 -> Truth[2]: "threshold is always positive"'), 'should map Req03 to Truth[2]');
 });
 
-// ── Test 8: formal/ subdirectory is auto-created via mkdir -p when it does not exist
+// ── Test 8: .formal/ subdirectory is auto-created via mkdir -p when it does not exist
 
-test('formal/ subdirectory is auto-created via mkdir -p when it does not exist', () => {
+test('.formal/ subdirectory is auto-created via mkdir -p when it does not exist', () => {
   const deepDir = path.join(tmpDir, 'a', 'b', 'c');
   fs.mkdirSync(deepDir, { recursive: true });
   const planPath = path.join(deepDir, 'v0.21-05-01-PLAN.md');
@@ -221,6 +221,6 @@ must_haves:
   const result = generateProposedChanges(planPath);
   assert.strictEqual(result.generated, true);
 
-  const expectedPath = path.join(deepDir, 'formal', 'ProposedChanges.tla');
-  assert.ok(fs.existsSync(expectedPath), 'ProposedChanges.tla should exist in deeply nested formal/ dir');
+  const expectedPath = path.join(deepDir, '.formal', 'ProposedChanges.tla');
+  assert.ok(fs.existsSync(expectedPath), 'ProposedChanges.tla should exist in deeply nested .formal/ dir');
 });

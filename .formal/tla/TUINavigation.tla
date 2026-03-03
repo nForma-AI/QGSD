@@ -2,7 +2,7 @@
 (*
  * formal/tla/TUINavigation.tla
  *
- * Abstract model of the qgsd-manage.cjs TUI navigation stack.
+ * Abstract model of the qgsd.cjs TUI navigation stack.
  * Verifies four key properties of the fixed navigation flows:
  *
  *   TypeOK            — depth always in bounds; can only exit from root
@@ -12,7 +12,7 @@
  *   EventuallyExits   — under fair ESC actions, app eventually exits
  *   MainMenuReachable — from any active non-root state, root is reachable
  *
- * Navigation hierarchy (from qgsd-manage.cjs flow audit):
+ * Navigation hierarchy (from qgsd.cjs flow audit):
  *   Depth 0: MainMenu            — ESC exits app
  *   Depth 1: top-level pickers   — ESC → return  (to main menu)
  *   Depth 2: field/key pickers   — ESC → break   (back to depth-1 loop)

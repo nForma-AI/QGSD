@@ -1,5 +1,5 @@
 <purpose>
-Run the requirements aggregation pipeline. Merges current `.planning/REQUIREMENTS.md` with all archived milestone requirements (`.planning/milestones/v*-REQUIREMENTS.md`) into `formal/requirements.json`. Writes by default — if the envelope is frozen, automatically unfreezes, aggregates, validates with Haiku subagent, and re-freezes.
+Run the requirements aggregation pipeline. Merges current `.planning/REQUIREMENTS.md` with all archived milestone requirements (`.planning/milestones/v*-REQUIREMENTS.md`) into `.formal/requirements.json`. Writes by default — if the envelope is frozen, automatically unfreezes, aggregates, validates with Haiku subagent, and re-freezes.
 </purpose>
 
 <process>
@@ -27,7 +27,7 @@ fi
 **Handle frozen envelope (write mode only):**
 
 If NOT dry-run:
-1. Read `formal/requirements.json` and check `frozen_at`
+1. Read `.formal/requirements.json` and check `frozen_at`
 2. If frozen, temporarily set `frozen_at` to `null` and write back
 3. Continue to aggregation step
 </step>
@@ -58,7 +58,7 @@ You are reviewing a requirements envelope for quality issues. Your job is to fin
 
 ## Step 1: Read the envelope
 
-Read `formal/requirements.json`. Note each requirement's `id`, `text`, `category`, and `provenance.source_file`.
+Read `.formal/requirements.json`. Note each requirement's `id`, `text`, `category`, and `provenance.source_file`.
 
 ## Step 2: Identify candidates
 
@@ -103,7 +103,7 @@ Display the Haiku agent's findings to the user. If high-severity findings exist,
 <step name="refreeze">
 **Re-freeze the envelope (write mode only):**
 
-After validation, re-freeze by reading `formal/requirements.json`, setting `frozen_at` to current ISO timestamp, and writing back.
+After validation, re-freeze by reading `.formal/requirements.json`, setting `frozen_at` to current ISO timestamp, and writing back.
 </step>
 
 <step name="summarize">

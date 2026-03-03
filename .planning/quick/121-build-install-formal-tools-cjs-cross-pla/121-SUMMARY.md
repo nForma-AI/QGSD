@@ -49,8 +49,8 @@ metrics:
 A 276-line CommonJS script using only Node.js built-ins that:
 
 - **Java check (soft warning):** Calls `java -version`, parses major version from stderr, warns if < 17 or not found — never blocks.
-- **TLA+ install:** Downloads `tla2tools.jar` from the TLA+ GitHub releases page to `formal/tla/`. Skips with an arrow if already present.
-- **Alloy install:** Downloads `org.alloytools.alloy.dist.jar` from the Alloy GitHub releases page to `formal/alloy/`. Skips with an arrow if already present.
+- **TLA+ install:** Downloads `tla2tools.jar` from the TLA+ GitHub releases page to `.formal/tla/`. Skips with an arrow if already present.
+- **Alloy install:** Downloads `org.alloytools.alloy.dist.jar` from the Alloy GitHub releases page to `.formal/alloy/`. Skips with an arrow if already present.
 - **PRISM install (non-blocking):** Skips if `PRISM_BIN` env is set and file exists. Otherwise downloads platform-specific tarball/installer (darwin/linux/win32), extracts, runs `install.sh`, removes quarantine attribute on macOS, prints `PRISM_BIN` export suggestion.
 - **Petri nets:** Prints skip message (bundled via npm).
 - **Summary table:** Prints results with color-coded status (installed / skipped / failed).

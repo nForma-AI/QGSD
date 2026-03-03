@@ -32,14 +32,14 @@ function getFormalStatus(result) {
 }
 
 test('extractModules: single entry returns module name', () => {
-  const input = ['{"module":"quorum","path":"formal/spec/quorum/invariants.md"}'];
+  const input = ['{"module":"quorum","path":".formal/spec/quorum/invariants.md"}'];
   assert.strictEqual(extractModules(input), 'quorum');
 });
 
 test('extractModules: two entries returns comma-separated names', () => {
   const input = [
-    '{"module":"quorum","path":"formal/spec/quorum/invariants.md"}',
-    '{"module":"breaker","path":"formal/spec/breaker/invariants.md"}',
+    '{"module":"quorum","path":".formal/spec/quorum/invariants.md"}',
+    '{"module":"breaker","path":".formal/spec/breaker/invariants.md"}',
   ];
   assert.strictEqual(extractModules(input), 'quorum,breaker');
 });

@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The v0.22 requirements envelope adds formal validation and immutability enforcement to QGSD's requirement-to-specification pipeline. Rather than treating `.planning/REQUIREMENTS.md` as the authoritative source, v0.22 promotes it to a formal artifact (`formal/requirements.json`) that is:
+The v0.22 requirements envelope adds formal validation and immutability enforcement to QGSD's requirement-to-specification pipeline. Rather than treating `.planning/REQUIREMENTS.md` as the authoritative source, v0.22 promotes it to a formal artifact (`.formal/requirements.json`) that is:
 
 1. **Validated by Haiku** (ENV-02) before freezing — detects duplicates, contradictions, ambiguity
 2. **Immutable by default** (ENV-04) — hook-enforced, amendments require explicit workflow
@@ -28,13 +28,13 @@ This transforms requirements from a planning document into a **formal correctnes
 
 ```
 Planning Layer              Formal Verification Layer
-├─ REQUIREMENTS.md ────┬──→ formal/requirements.json ─────────┐
+├─ REQUIREMENTS.md ────┬──→ .formal/requirements.json ─────────┐
 │  (working copy)      │    (frozen, immutable)              │
 │                      │                                      ↓
 ├─ task-envelope.json  │    [ENV-03] generate-phase-spec.cjs │
 │  (phase truths)      └──→ (reads envelope, merges props)   │
 │                            ↓                               │
-├─ PLAN.md             ┌──→ formal/tla/scratch/<phase>.tla   │
+├─ PLAN.md             ┌──→ .formal/tla/scratch/<phase>.tla   │
 │  (must_haves)        │    (incl. ENV-* PROPERTY stmts)     │
 │                      │                                      ↓
 └─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─┘    [run-formal-verify.cjs]
@@ -51,10 +51,10 @@ Five new CJS scripts + one new agent role:
 
 | Component | Purpose | Input | Output | ENV |
 |-----------|---------|-------|--------|-----|
-| `aggregate-requirements.cjs` | Compile REQUIREMENTS.md → JSON | REQUIREMENTS.md + ROADMAP.md | formal/requirements.json (unvalidated) | ENV-01 |
+| `aggregate-requirements.cjs` | Compile REQUIREMENTS.md → JSON | REQUIREMENTS.md + ROADMAP.md | .formal/requirements.json (unvalidated) | ENV-01 |
 | `validate-requirements-haiku.cjs` | Haiku validation gate | requirements.json | requirements.json (frozen) | ENV-02 |
 | `extract-requirements-properties.cjs` | Envelope → TLA+ properties | requirements.json + phase# | TLA+ PROPERTY array | ENV-03 |
-| `detect-requirements-drift.cjs` | Working copy divergence check | REQUIREMENTS.md + requirements.json | formal/drift-report.md | ENV-05 |
+| `detect-requirements-drift.cjs` | Working copy divergence check | REQUIREMENTS.md + requirements.json | .formal/drift-report.md | ENV-05 |
 | `amend-requirements.cjs` | Formal amendment workflow | amendments + requirements.json | requirements.json (re-frozen) | ENV-04 |
 | `qgsd-haiku-validator.md` | Haiku validation agent | requirements array | issues + summary JSON | ENV-02 |
 
@@ -86,7 +86,7 @@ requirements.json → [validate-requirements-haiku.cjs] → Haiku validator → 
 
 **Spec Binding (ENV-03):** During `plan-phase` formal verification step
 ```
-requirements.json (frozen) → [extract-requirements-properties.cjs] → ENV-* PROPERTY statements → formal/tla/scratch/<phase>.tla
+requirements.json (frozen) → [extract-requirements-properties.cjs] → ENV-* PROPERTY statements → .formal/tla/scratch/<phase>.tla
 ```
 
 **Immutability (ENV-04):** Enforced by Stop hook, routed through amendment workflow
@@ -96,7 +96,7 @@ User edit attempt → [qgsd-stop.js] detects → BLOCK → user runs `/qgsd:amen
 
 **Drift Detection (ENV-05):** On every planning command via UserPromptSubmit hook
 ```
-REQUIREMENTS.md changes → [detect-requirements-drift.cjs] → formal/drift-report.md → injected into context
+REQUIREMENTS.md changes → [detect-requirements-drift.cjs] → .formal/drift-report.md → injected into context
 ```
 
 ---
@@ -125,7 +125,7 @@ REQUIREMENTS.md changes → [detect-requirements-drift.cjs] → formal/drift-rep
 
 ### 3. Immutability Enforcement (ENV-04)
 
-**When:** Anytime user attempts direct modification to `formal/requirements.json`
+**When:** Anytime user attempts direct modification to `.formal/requirements.json`
 **Mechanism:** Stop hook detects Write to frozen file, checks transcript for approval
 **Enforcement:** BLOCK until user runs amendment workflow
 
@@ -344,7 +344,7 @@ v0.22 Requirements Envelope
 ## Key Design Decisions
 
 ### Decision 1: Separate Artifact vs In-Document Annotation
-**Chosen:** Separate `formal/requirements.json` artifact in `formal/` directory
+**Chosen:** Separate `.formal/requirements.json` artifact in `.formal/` directory
 **Rationale:** Formal verification ownership; clear immutability boundary; enables schema versioning
 **Alternative rejected:** Embed frozen requirements in REQUIREMENTS.md frontmatter (harder to enforce immutability, no version tracking)
 
@@ -372,7 +372,7 @@ v0.22 Requirements Envelope
 - `/Users/jonathanborduas/code/QGSD/.planning/REQUIREMENTS.md` — detailed ENV-01..05 specifications (lines 59-70)
 
 **Formal Verification Infrastructure:**
-- `/Users/jonathanborduas/code/QGSD/formal/model-registry.json` — central artifact index
+- `/Users/jonathanborduas/code/QGSD/.formal/model-registry.json` — central artifact index
 - `/Users/jonathanborduas/code/QGSD/bin/run-formal-verify.cjs` — 30-step orchestrator
 - `/Users/jonathanborduas/code/QGSD/bin/generate-phase-spec.cjs` — phase truths → TLA+ properties
 - `/Users/jonathanborduas/code/QGSD/bin/promote-model.cjs` — model promotion pipeline

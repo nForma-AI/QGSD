@@ -39,9 +39,9 @@ score: 5/5 must-haves verified
 
 | From | To | Via | Status | Details |
 |------|----|----|--------|---------|
-| bin/requirements-core.cjs:computeCoverage | formal/requirements.json | r.formal_models field read | ✓ WIRED | Lines 100-104: Loop iterates requirements array, checks `Array.isArray(r.formal_models) && r.formal_models.length > 0`, adds r.id to Set. Pattern match: `r\.formal_models` at line 101. |
-| bin/requirements-core.cjs:buildTraceability | formal/requirements.json | requirement.formal_models field read | ✓ WIRED | Lines 157-169: Checks `Array.isArray(requirement.formal_models)`, loops modelPath array, deduplicates by path, creates formalModels entries. Pattern match: `requirement\.formal_models` at line 157. |
-| bin/agents.cjs:renderReqList | formal/requirements.json | r.formal_models check for FM badge | ✓ WIRED | Lines 2034-2039: Loop through reqs, checks `Array.isArray(r.formal_models) && r.formal_models.length > 0`, adds to reqsWithModels Set used for FM badge. Pattern match: `r\.formal_models` at line 2036. |
+| bin/requirements-core.cjs:computeCoverage | .formal/requirements.json | r.formal_models field read | ✓ WIRED | Lines 100-104: Loop iterates requirements array, checks `Array.isArray(r.formal_models) && r.formal_models.length > 0`, adds r.id to Set. Pattern match: `r\.formal_models` at line 101. |
+| bin/requirements-core.cjs:buildTraceability | .formal/requirements.json | requirement.formal_models field read | ✓ WIRED | Lines 157-169: Checks `Array.isArray(requirement.formal_models)`, loops modelPath array, deduplicates by path, creates formalModels entries. Pattern match: `requirement\.formal_models` at line 157. |
+| bin/agents.cjs:renderReqList | .formal/requirements.json | r.formal_models check for FM badge | ✓ WIRED | Lines 2034-2039: Loop through reqs, checks `Array.isArray(r.formal_models) && r.formal_models.length > 0`, adds to reqsWithModels Set used for FM badge. Pattern match: `r\.formal_models` at line 2036. |
 | bin/agents.cjs:reqCoverageGapsFlow | bin/detect-coverage-gaps.cjs | require and call detectCoverageGaps | ✓ WIRED | Line 2152: `const { detectCoverageGaps } = require('./detect-coverage-gaps.cjs');`. Line 2221: `const result = detectCoverageGaps({ specName });`. Multiple calls for 3 specs with results processed. Pattern match: `detectCoverageGaps` function called with return value used. |
 
 ### Test Results Summary

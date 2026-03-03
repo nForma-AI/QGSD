@@ -4,7 +4,7 @@
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please open a [GitHub Security Advisory](https://github.com/LangBlaze-AI/QGSD/security/advisories/new).
+Instead, please open a [GitHub Security Advisory](https://github.com/nForma-AI/QGSD/security/advisories/new).
 
 Include:
 - Description of the vulnerability

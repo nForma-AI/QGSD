@@ -7,9 +7,9 @@ depends_on: []
 files_modified:
   - hooks/qgsd-stop.test.js
   - hooks/qgsd-prompt.test.js
-  - formal/tla/QGSDQuorum.tla
-  - formal/tla/MCsafety.cfg
-  - formal/tla/MCliveness.cfg
+  - .formal/tla/QGSDQuorum.tla
+  - .formal/tla/MCsafety.cfg
+  - .formal/tla/MCliveness.cfg
 autonomous: true
 requirements:
   - QUICK-115
@@ -25,11 +25,11 @@ must_haves:
       provides: "TC-DEFAULT-CEIL-BLOCK fixed — PLAN.md artifact renamed to quick-115-PLAN.md so -PLAN.md pattern matches"
     - path: "hooks/qgsd-prompt.test.js"
       provides: "TC-PROMPT-N-CAP, TC-PROMPT-SOLO, TC-PROMPT-PREFER-SUB-DEFAULT tests added"
-    - path: "formal/tla/QGSDQuorum.tla"
+    - path: ".formal/tla/QGSDQuorum.tla"
       provides: "MaxSize CONSTANT declared; quorum threshold uses MaxSize not ceil(N/2)"
-    - path: "formal/tla/MCsafety.cfg"
+    - path: ".formal/tla/MCsafety.cfg"
       provides: "MaxSize = 5 constant assignment added"
-    - path: "formal/tla/MCliveness.cfg"
+    - path: ".formal/tla/MCliveness.cfg"
       provides: "MaxSize = 3 constant assignment added"
   key_links:
     - from: "TC-DEFAULT-CEIL-BLOCK"
@@ -233,11 +233,11 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub s
 
 <task type="auto">
   <name>Task 2: Add MaxSize constant to QGSDQuorum.tla and both MC configs</name>
-  <files>formal/tla/QGSDQuorum.tla</files>
-  <files>formal/tla/MCsafety.cfg</files>
-  <files>formal/tla/MCliveness.cfg</files>
+  <files>.formal/tla/QGSDQuorum.tla</files>
+  <files>.formal/tla/MCsafety.cfg</files>
+  <files>.formal/tla/MCliveness.cfg</files>
   <action>
-**formal/tla/QGSDQuorum.tla**
+**.formal/tla/QGSDQuorum.tla**
 
 1. Update the header comment block — change:
    `* GENERATED — do not edit by hand.`
@@ -271,7 +271,7 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub s
    Keep the existing `MinQuorumMet` invariant unchanged — it models the majority-based
    ceiling. `QuorumCeilingMet` models the explicit --n N ceiling.
 
-**formal/tla/MCsafety.cfg**
+**.formal/tla/MCsafety.cfg**
 
 Add `MaxSize = 5` to the CONSTANTS block (after `MaxDeliberation = 7`):
 ```
@@ -296,7 +296,7 @@ Update the header comment:
 \* Hand-extended: MaxSize constant added (quick-115). Regenerate with caution.
 ```
 
-**formal/tla/MCliveness.cfg**
+**.formal/tla/MCliveness.cfg**
 
 Add `MaxSize = 3` to the CONSTANTS block (after `MaxDeliberation = 7`):
 ```
@@ -320,7 +320,7 @@ Liveness config does not check INVARIANT (only PROPERTY EventualConsensus) — d
   <verify>
     node bin/run-tlc.cjs MCsafety 2>&1 | tail -20
     # If TLC is not installed, verify the file structure is correct by parsing:
-    grep -n "MaxSize" formal/tla/QGSDQuorum.tla formal/tla/MCsafety.cfg formal/tla/MCliveness.cfg
+    grep -n "MaxSize" .formal/tla/QGSDQuorum.tla .formal/tla/MCsafety.cfg .formal/tla/MCliveness.cfg
   </verify>
   <done>
     QGSDQuorum.tla has MaxSize in CONSTANTS with ASSUME MaxSize \in 1..N and QuorumCeilingMet invariant.
@@ -336,7 +336,7 @@ Liveness config does not check INVARIANT (only PROPERTY EventualConsensus) — d
 <verification>
 node --test hooks/qgsd-stop.test.js 2>&1 | grep -E "^ℹ (tests|pass|fail)"
 node --test hooks/qgsd-prompt.test.js 2>&1 | grep -E "^ℹ (tests|pass|fail)"
-grep -c "MaxSize" formal/tla/QGSDQuorum.tla formal/tla/MCsafety.cfg formal/tla/MCliveness.cfg
+grep -c "MaxSize" .formal/tla/QGSDQuorum.tla .formal/tla/MCsafety.cfg .formal/tla/MCliveness.cfg
 </verification>
 
 <success_criteria>

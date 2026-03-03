@@ -18,8 +18,8 @@ const path = require('path');
 const TAG = '[check-coverage-guard]';
 const ROOT = path.resolve(__dirname, '..');
 
-const MATRIX_PATH   = process.env.COVERAGE_GUARD_MATRIX_PATH || path.join(ROOT, 'formal', 'traceability-matrix.json');
-const BASELINE_PATH = process.env.COVERAGE_GUARD_BASELINE_PATH || path.join(ROOT, 'formal', 'traceability-matrix.baseline.json');
+const MATRIX_PATH   = process.env.COVERAGE_GUARD_MATRIX_PATH || path.join(ROOT, '.formal', 'traceability-matrix.json');
+const BASELINE_PATH = process.env.COVERAGE_GUARD_BASELINE_PATH || path.join(ROOT, '.formal', 'traceability-matrix.baseline.json');
 
 // ── CLI flags ───────────────────────────────────────────────────────────────
 

@@ -243,7 +243,7 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 **Delivered:** Closed the feedback loop between QGSD's formal verification pipeline and itself — specs auto-regenerate from code, debug sessions capture new invariants, sensitivity results recalibrate PRISM, and every plan is TLC-verified before quorum sees it.
 
 **Key accomplishments:**
-- Central model registry: `formal/model-registry.json` as single source of truth with provenance tracking; `promote-model.cjs` for atomic promotion; `accept-debug-invariant.cjs` for debug-discovered invariants (ARCH-01–03)
+- Central model registry: `.formal/model-registry.json` as single source of truth with provenance tracking; `promote-model.cjs` for atomic promotion; `accept-debug-invariant.cjs` for debug-discovered invariants (ARCH-01–03)
 - Conformance crisis resolved: reduced 69% trace divergence to 0% on mapped events via fresh-actor methodology fix in `expectedState()`; `xstate-trace-walker.cjs` + `attribute-trace-divergence.cjs` for root-cause attribution (DIAG-01–03)
 - Self-calibrating feedback loops: PRISM auto-calibrates from scoreboard via `export-prism-constants` pre-step; `qgsd-spec-regen.js` PostToolUse hook regenerates specs on XState changes; `propose-debug-invariants.cjs` mines TLA+ candidates from debug sessions (LOOP-01–04)
 - Critical subsystems formally specified: `QGSDStopHook.tla` (TLA+), `QGSDOscillation.tla` audit (no drift), `quorum-composition.als` (Alloy, 3 rules hold), `generate-phase-spec.cjs` auto-generates per-phase TLA+ specs (SPEC-01–04)
@@ -254,7 +254,7 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 - **DIAG-01**: Conformance trace divergence reduced to 0% — implemented and tested (49/49 GREEN) but VERIFICATION.md artifact never generated for v0.21-02
 - **DIAG-02**: `attribute-trace-divergence.cjs` root-cause attribution tool — implemented and tested but VERIFICATION.md missing
-- **DIAG-03**: `formal/diff-report.md` complete attribution — delivered but VERIFICATION.md missing
+- **DIAG-03**: `.formal/diff-report.md` complete attribution — delivered but VERIFICATION.md missing
 
 **Tech debt incurred:**
 - 3983 unmappable_action divergences (circuit_break: 2988, no-action: 995) — correctly excluded from state_mismatch rate
@@ -279,7 +279,7 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 **Delivered:** Made TLC/Alloy/PRISM actual enforcing gates in every major QGSD workflow step — plan-phase discovers and injects formal invariants, execute-phase runs model checkers and hard-blocks on counterexamples, the roadmapper reads invariants when designing phases, and a 22-test integration suite proves the entire chain fires end-to-end with real tool output.
 
 **Key accomplishments:**
-- plan-phase formal integration: Step 4.5 scope scan populates `$FORMAL_SPEC_CONTEXT` from `formal/spec/*/invariants.md`; Step 10 checker enforces `formal_artifacts:` frontmatter as BLOCKER when specs match; fail-open when tooling absent (WFI-01, WFI-02, ENF-03, v0.23-01)
+- plan-phase formal integration: Step 4.5 scope scan populates `$FORMAL_SPEC_CONTEXT` from `.formal/spec/*/invariants.md`; Step 10 checker enforces `formal_artifacts:` frontmatter as BLOCKER when specs match; fail-open when tooling absent (WFI-01, WFI-02, ENF-03, v0.23-01)
 - execute-phase + verifier formal integration: executor fires `run-formal-check.cjs` after wave completion; verifier receives real TLC/Alloy/PRISM stdout as ground truth; counterexample causes hard block with user-override audit trail; TDD scaffold with 4 plans (WFI-03, WFI-04, ENF-01, ENF-02, v0.23-02)
 - Roadmapper formal integration: fixed keyword-match algorithm inconsistency between plan-phase and execute-phase (ISSUE-1); fixed gsd-tools goal regex at 3 occurrences (ISSUE-2); new-milestone scans formal specs and injects into roadmapper prompt; fail-open preserved (WFI-05, ENF-03, v0.23-03)
 - Integration validation suite: 22-test integration script (`bin/test-formal-integration.test.cjs`) with zero mocking — all tests use real subprocess invocation via `spawnSync`; IVL-01 smoke/structural (5 tests), ENF-03 fail-open (2 tests), IVL-03 all-specs regression for 10 TLA+ modules (11 tests), IVL-02 full chain plan→execute→verify (4 tests) (IVL-01–03, v0.23-04)

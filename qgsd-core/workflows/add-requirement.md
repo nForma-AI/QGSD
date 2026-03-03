@@ -1,5 +1,5 @@
 <purpose>
-Add a single requirement to the `formal/requirements.json` envelope. Validates the new requirement against the existing envelope for duplicate IDs and semantic conflicts. If a conflict is detected, elevates to the user before proceeding.
+Add a single requirement to the `.formal/requirements.json` envelope. Validates the new requirement against the existing envelope for duplicate IDs and semantic conflicts. If a conflict is detected, elevates to the user before proceeding.
 </purpose>
 
 <process>
@@ -32,7 +32,7 @@ If required fields (id, text, category, phase) are missing, prompt the user inte
 <step name="read_envelope">
 **Read existing envelope:**
 
-1. Read `formal/requirements.json`
+1. Read `.formal/requirements.json`
 2. If file doesn't exist, error: "No requirements envelope found. Run /qgsd:map-requirements first."
 3. Parse the envelope and extract the requirements array
 4. Note the `frozen_at` state for later re-freeze
@@ -78,7 +78,7 @@ You are checking whether a NEW requirement conflicts with ANY existing requireme
 
 ## Existing requirements
 
-Read `formal/requirements.json` and scan ALL requirements (not just same-prefix).
+Read `.formal/requirements.json` and scan ALL requirements (not just same-prefix).
 
 ## Your task
 
@@ -112,7 +112,7 @@ Display: `◆ Semantic conflict check: CLEAR (scanned {N} existing requirements)
 **Unfreeze envelope if frozen:**
 
 If `frozen_at` is not null:
-1. Read `formal/requirements.json`
+1. Read `.formal/requirements.json`
 2. Set `frozen_at` to `null`
 3. Write back atomically
 </step>
@@ -120,7 +120,7 @@ If `frozen_at` is not null:
 <step name="append_requirement">
 **Append the new requirement:**
 
-1. Read `formal/requirements.json` (fresh read after unfreeze)
+1. Read `.formal/requirements.json` (fresh read after unfreeze)
 2. Build the new requirement object:
    ```json
    {
@@ -147,7 +147,7 @@ If `frozen_at` is not null:
 <step name="refreeze">
 **Re-freeze the envelope:**
 
-1. Read `formal/requirements.json`
+1. Read `.formal/requirements.json`
 2. Set `frozen_at` to current ISO timestamp
 3. Write back atomically
 </step>

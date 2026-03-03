@@ -31,7 +31,7 @@ test('exits non-zero and prints download URL when tla2tools.jar is not found', (
     null;
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
-  const jarPath = path.join(__dirname, '..', 'formal', 'tla', 'tla2tools.jar');
+  const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
   if (fs.existsSync(jarPath)) { return; }  // skip — can't test absent-JAR path when JAR is present
   const result = spawnSync(process.execPath, [RUN_TLC], {
     encoding: 'utf8',
@@ -61,14 +61,14 @@ test('exits non-zero and lists valid configs in error output for invalid config'
 test('detectLivenessProperties returns [] for config with no PROPERTY lines (safety config)', () => {
   const { detectLivenessProperties } = require('./run-tlc.cjs');
   // MCsafety.cfg has PROPERTY lines but is not in SURFACE_MAP — returns [] for unknown surface
-  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCsafety.cfg');
+  const cfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCsafety.cfg');
   const result = detectLivenessProperties('MCsafety', cfgPath);
   assert.deepStrictEqual(result, []);
 });
 
 test('detectLivenessProperties returns missing property names when invariants.md does not exist', () => {
   const { detectLivenessProperties } = require('./run-tlc.cjs');
-  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
+  const cfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCliveness.cfg');
   // Use a non-existent specDir to simulate missing invariants.md
   const missingSpecDir = path.join(os.tmpdir(), 'no-such-dir-' + Date.now());
   const result = detectLivenessProperties('MCliveness', cfgPath, missingSpecDir);
@@ -77,16 +77,16 @@ test('detectLivenessProperties returns missing property names when invariants.md
 
 test('detectLivenessProperties returns [] when invariants.md has matching ## header', () => {
   const { detectLivenessProperties } = require('./run-tlc.cjs');
-  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
-  // Use the actual formal/spec/quorum/invariants.md created in Plan 01
-  const specDir = path.join(__dirname, '..', 'formal', 'spec');
+  const cfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCliveness.cfg');
+  // Use the actual .formal/spec/quorum/invariants.md created in Plan 01
+  const specDir = path.join(__dirname, '..', '.formal', 'spec');
   const result = detectLivenessProperties('MCliveness', cfgPath, specDir);
   assert.deepStrictEqual(result, [], 'Expected no missing declarations when invariants.md is present with correct header');
 });
 
 test('detectLivenessProperties returns property name when invariants.md exists but header is missing', () => {
   const { detectLivenessProperties } = require('./run-tlc.cjs');
-  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCliveness.cfg');
+  const cfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCliveness.cfg');
   // Create a tmp invariants.md with wrong/no header
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tlc-test-'));
   const quorumDir = path.join(tmpDir, 'quorum');
@@ -100,8 +100,8 @@ test('detectLivenessProperties returns property name when invariants.md exists b
 
 test('detectLivenessProperties returns [] for MCMCPEnv when invariants.md has ## EventualDecision header', () => {
   const { detectLivenessProperties } = require('./run-tlc.cjs');
-  const cfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCMCPEnv.cfg');
-  const specDir = path.join(__dirname, '..', 'formal', 'spec');
+  const cfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCMCPEnv.cfg');
+  const specDir = path.join(__dirname, '..', '.formal', 'spec');
   // MCMCPEnv.cfg should exist (created in v0.19-05); invariants.md with EventualDecision created in this plan
   if (!fs.existsSync(cfgPath)) { return; } // skip if .cfg not present
   // Three-part assertion: SURFACE_MAP resolves the path, the file exists with the section,
@@ -109,7 +109,7 @@ test('detectLivenessProperties returns [] for MCMCPEnv when invariants.md has ##
   const src = fs.readFileSync(path.join(__dirname, 'run-tlc.cjs'), 'utf8');
   assert.match(src, /'MCMCPEnv'.*'mcp-calls'/, 'SURFACE_MAP must have MCMCPEnv -> mcp-calls before testing return value');
   const invPath = path.join(specDir, 'mcp-calls', 'invariants.md');
-  assert.ok(fs.existsSync(invPath), 'formal/spec/mcp-calls/invariants.md must exist at the SURFACE_MAP-resolved path');
+  assert.ok(fs.existsSync(invPath), '.formal/spec/mcp-calls/invariants.md must exist at the SURFACE_MAP-resolved path');
   const content = fs.readFileSync(invPath, 'utf8');
   assert.ok(content.includes('## EventualDecision'), 'invariants.md must contain ## EventualDecision — absence causes false [] return');
   const result = detectLivenessProperties('MCMCPEnv', cfgPath, specDir);

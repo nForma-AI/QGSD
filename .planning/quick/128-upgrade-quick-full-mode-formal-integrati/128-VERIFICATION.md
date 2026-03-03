@@ -7,7 +7,7 @@ score: 9/9 must-haves verified
 
 # Quick Task 128: Formal Integration in Quick --Full Mode Verification Report
 
-**Task Goal:** Upgrade quick `--full` mode: formal/ integration (scope scan, invariant injection, artifact creation/update), quorum on verification, promote `--full` to single-phase rigor tier in qgsd-core/workflows/quick.md and commands/qgsd/quick.md
+**Task Goal:** Upgrade quick `--full` mode: .formal/ integration (scope scan, invariant injection, artifact creation/update), quorum on verification, promote `--full` to single-phase rigor tier in qgsd-core/workflows/quick.md and commands/qgsd/quick.md
 
 **Verified:** 2026-03-02
 **Status:** PASSED — All must-haves verified and wired
@@ -16,11 +16,11 @@ score: 9/9 must-haves verified
 
 | # | Truth | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | quick --full mode scans formal/spec/ and stores $FORMAL_SPEC_CONTEXT before spawning planner | ✓ VERIFIED | Step 4.5 present in workflow (line 84); FORMAL_SPEC_CONTEXT initialization (line 89); relevance heuristic documented (lines 104-110); storage instruction (line 119) |
+| 1 | quick --full mode scans .formal/spec/ and stores $FORMAL_SPEC_CONTEXT before spawning planner | ✓ VERIFIED | Step 4.5 present in workflow (line 84); FORMAL_SPEC_CONTEXT initialization (line 89); relevance heuristic documented (lines 104-110); storage instruction (line 119) |
 | 2 | Planner receives relevant invariants.md paths in <files_to_read> when formal modules match task keywords | ✓ VERIFIED | Planner <files_to_read> injects FORMAL_SPEC_CONTEXT entries (line 146); <formal_context> block instructs planner to read injected files (lines 151-163) |
 | 3 | Plan frontmatter can declare formal_artifacts: (none \| update: [...] \| create: [...]) | ✓ VERIFIED | Planner <formal_context> requires formal_artifacts field (line 157); three modes documented (lines 158-160) |
 | 4 | Plan checker step 5.5 validates formal_artifacts targets and invariant compliance | ✓ VERIFIED | Checker <check_dimensions> includes "Formal artifacts" check (line 230) and "Invariant compliance" check (line 231); formal context injected (lines 236-238) |
-| 5 | Executor step 6 includes formal/ files in atomic commits when plan declares formal_artifacts | ✓ VERIFIED | Executor <constraints> includes formal file handling rule (lines 436-437); requirement to include in atomic commit explicitly stated |
+| 5 | Executor step 6 includes .formal/ files in atomic commits when plan declares formal_artifacts | ✓ VERIFIED | Executor <constraints> includes formal file handling rule (lines 436-437); requirement to include in atomic commit explicitly stated |
 | 6 | Verifier step 6.5 checks invariant compliance and formal artifact syntax | ✓ VERIFIED | Verifier <formal_context> block instructs checks (lines 514-520); includes invariant respect verification and syntax validation for TLA+/Alloy/PRISM |
 | 7 | After verifier returns passed, quorum reviews VERIFICATION.md and can downgrade to Needs Review | ✓ VERIFIED | Step 6.5.1 present (line 543); quorum dispatch configured (lines 556-562); BLOCKED verdict routes to "Needs Review" (line 570) |
 | 8 | commands/qgsd/quick.md <objective> describes formal integration capabilities of --full | ✓ VERIFIED | Objective updated (lines 25-33); "Single-phase rigor tier" terminology (line 25); lists formal scope scan, formal_artifacts, executor atomicity, verifier checks, quorum review |
@@ -80,10 +80,10 @@ grep -n "Needs Review" qgsd-core/workflows/quick.md | wc -l
 
 **5. Single-phase rigor and formal_artifacts in commands:**
 ```bash
-grep -n "Single-phase rigor tier\|formal_artifacts\|formal/spec" commands/qgsd/quick.md
+grep -n "Single-phase rigor tier\|formal_artifacts\|.formal/spec" commands/qgsd/quick.md
 → Line 25: "**`--full` flag:** Single-phase rigor tier."
 → Line 28: "- Plan frontmatter must declare `formal_artifacts:`"
-→ Line 27: "- Formal scope scan: discovers relevant `formal/spec/*/invariants.md`"
+→ Line 27: "- Formal scope scan: discovers relevant `.formal/spec/*/invariants.md`"
 → 3+ matches ✓
 ```
 
@@ -105,7 +105,7 @@ grep "Single-phase" ~/.claude/commands/qgsd/quick.md
 
 **Expected behavior:**
 - Only runs when `$FULL_MODE` is true
-- Scans `formal/spec/` directory for subdirectories
+- Scans `.formal/spec/` directory for subdirectories
 - For each subdirectory, checks for `invariants.md`
 - Matches task description keywords (lowercased, case-insensitive substring) against module names
 - Populates `$FORMAL_SPEC_CONTEXT` as array of `{ module, path }` objects
@@ -160,7 +160,7 @@ grep "Single-phase" ~/.claude/commands/qgsd/quick.md
 - Formal files always bundled with implementation files in same commit
 
 **Implementation verified:**
-- Executor `<constraints>` includes explicit rule (lines 436-437): "If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the formal/ files in the atomic commit for that task"
+- Executor `<constraints>` includes explicit rule (lines 436-437): "If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .formal/ files in the atomic commit for that task"
 - Second sentence emphasizes: "Formal/ files must never be committed separately — always include in the task's atomic commit" (line 437)
 
 **Status:** ✓ Functionally complete
@@ -177,7 +177,7 @@ grep "Single-phase" ~/.claude/commands/qgsd/quick.md
 - Verifier receives FORMAL_SPEC_CONTEXT in `<files_to_read>` (line 510)
 - Verifier `<formal_context>` block injected (lines 513-521)
 - Checks include: "Did executor respect the identified invariants?" (line 518)
-- Checks include: "If plan declared formal_artifacts update or create: are the modified/created formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)?" (line 519)
+- Checks include: "If plan declared formal_artifacts update or create: are the modified/created .formal/ files syntactically reasonable for their type (TLA+/Alloy/PRISM)?" (line 519)
 - Conditional: if FORMAL_SPEC_CONTEXT empty, skip formal invariant checks (line 520)
 
 **Status:** ✓ Functionally complete
@@ -222,7 +222,7 @@ grep "Single-phase" ~/.claude/commands/qgsd/quick.md
   1. Plan-checking and verification
   2. Formal scope scan discovering invariants.md
   3. Plan declares formal_artifacts
-  4. Executor commits formal/ files atomically
+  4. Executor commits .formal/ files atomically
   5. Verifier checks invariant compliance and syntax
   6. Quorum reviews VERIFICATION.md
 - Line 33: "Use when you want quality guarantees with formal correctness properties, without full milestone ceremony."
@@ -264,7 +264,7 @@ grep "Single-phase" ~/.claude/commands/qgsd/quick.md
 | Planner receives invariant context in <files_to_read> | ✓ SATISFIED | Line 146 injects FORMAL_SPEC_CONTEXT into planner <files_to_read> |
 | Plan declares formal_artifacts in frontmatter | ✓ SATISFIED | Planner <formal_context> requires formal_artifacts field (line 157) |
 | Plan checker validates formal artifacts and invariants | ✓ SATISFIED | Step 5.5 includes formal dimension checks (lines 230-231) |
-| Executor commits formal files atomically with task | ✓ SATISFIED | Executor constraint: include formal/ files in atomic commit (line 436-437) |
+| Executor commits formal files atomically with task | ✓ SATISFIED | Executor constraint: include .formal/ files in atomic commit (line 436-437) |
 | Verifier checks invariant compliance and syntax | ✓ SATISFIED | Step 6.5 <formal_context> instructs verification checks (lines 514-520) |
 | Quorum reviews VERIFICATION.md and can downgrade | ✓ SATISFIED | Step 6.5.1 implemented with BLOCKED → "Needs Review" routing (line 570) |
 | commands/qgsd/quick.md objective updated | ✓ SATISFIED | <objective> completely rewritten to describe formal integration (lines 25-33) |

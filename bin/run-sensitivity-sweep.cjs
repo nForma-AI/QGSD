@@ -8,7 +8,7 @@
 //   node bin/run-sensitivity-sweep.cjs
 //   SENSITIVITY_REPORT_PATH=/path/to/file.ndjson node bin/run-sensitivity-sweep.cjs
 //
-// Outputs to formal/sensitivity-report.ndjson (separate from check-results.ndjson).
+// Outputs to .formal/sensitivity-report.ndjson (separate from check-results.ndjson).
 // Graceful degradation: if TLC/PRISM not found, records inconclusive results.
 // Always exits 0.
 
@@ -20,12 +20,12 @@ const os   = require('os');
 const TAG = '[run-sensitivity-sweep]';
 
 const REPORT_PATH = process.env.SENSITIVITY_REPORT_PATH ||
-  path.join(__dirname, '..', 'formal', 'sensitivity-report.ndjson');
+  path.join(__dirname, '..', '.formal', 'sensitivity-report.ndjson');
 
 // ── Tool location helpers ────────────────────────────────────────────────────
 
 function locateTLC() {
-  const jar = path.join(__dirname, '..', 'formal', 'tla', 'tla2tools.jar');
+  const jar = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
   return fs.existsSync(jar) ? jar : null;
 }
 
@@ -51,7 +51,7 @@ function runTLCSweep(maxSize) {
   }
 
   // Write temp cfg with MaxSize override
-  const baseCfgPath = path.join(__dirname, '..', 'formal', 'tla', 'MCsafety.cfg');
+  const baseCfgPath = path.join(__dirname, '..', '.formal', 'tla', 'MCsafety.cfg');
   if (!fs.existsSync(baseCfgPath)) {
     return {
       result: 'inconclusive',
@@ -66,7 +66,7 @@ function runTLCSweep(maxSize) {
   const overrideCfg = baseCfg.replace(/MaxSize\s*=\s*\d+/, 'MaxSize = ' + maxSize);
   fs.writeFileSync(tmpCfg, overrideCfg, 'utf8');
 
-  const tlaFile = path.join(__dirname, '..', 'formal', 'tla', 'QGSDQuorum.tla');
+  const tlaFile = path.join(__dirname, '..', '.formal', 'tla', 'QGSDQuorum.tla');
   const javaResult = spawnSync('java', [
     '-jar', tlcJar,
     '-config', tmpCfg,
@@ -107,12 +107,12 @@ function runPRISMSweep(tpRate) {
     };
   }
 
-  const modelPath = path.join(__dirname, '..', 'formal', 'prism', 'quorum.pm');
+  const modelPath = path.join(__dirname, '..', '.formal', 'prism', 'quorum.pm');
   if (!fs.existsSync(modelPath)) {
     return {
       result: 'inconclusive',
       runtime_ms: Date.now() - startMs,
-      summary: 'inconclusive: formal/prism/quorum.pm not found',
+      summary: 'inconclusive: .formal/prism/quorum.pm not found',
       triage_tags: ['missing-model'],
     };
   }

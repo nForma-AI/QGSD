@@ -20,13 +20,13 @@ commits:
     files: [commands/qgsd/quick.md]
 ---
 
-# Quick Task 128: Upgrade quick --full mode: formal/ integration Summary
+# Quick Task 128: Upgrade quick --full mode: .formal/ integration Summary
 
 ## Objective
-Upgrade the quick workflow (`--full` mode) to integrate with formal/ specification modules, enabling automatic discovery of relevant invariants and formal artifact tracking through the planning, checking, execution, and verification pipeline.
+Upgrade the quick workflow (`--full` mode) to integrate with .formal/ specification modules, enabling automatic discovery of relevant invariants and formal artifact tracking through the planning, checking, execution, and verification pipeline.
 
 ## One-Liner
-Formal scope scanning in quick --full mode now discovers relevant `formal/spec/*/invariants.md` files and injects them into planner, checker, executor, and verifier for provably safe quick task execution against system invariants.
+Formal scope scanning in quick --full mode now discovers relevant `.formal/spec/*/invariants.md` files and injects them into planner, checker, executor, and verifier for provably safe quick task execution against system invariants.
 
 ## What Was Built
 
@@ -35,7 +35,7 @@ Formal scope scanning in quick --full mode now discovers relevant `formal/spec/*
 **Completed additions:**
 
 1. **Step 4.5 (Formal scope scan)** — Only when `$FULL_MODE`:
-   - Scans `formal/spec/` directory for subdirectories
+   - Scans `.formal/spec/` directory for subdirectories
    - Checks for `invariants.md` in each module
    - Matches `$DESCRIPTION` keywords against module names (case-insensitive substring matching)
    - Populates `$FORMAL_SPEC_CONTEXT` as array of `{ module, path }` objects
@@ -57,8 +57,8 @@ Formal scope scanning in quick --full mode now discovers relevant `formal/spec/*
 
 4. **Step 6 (Executor constraint)** — Formal file handling:
    - If plan declares `formal_artifacts: update` or `formal_artifacts: create`:
-     - Executor must execute the formal/ file changes
-     - Include formal/ files in the atomic commit alongside implementation files
+     - Executor must execute the .formal/ file changes
+     - Include .formal/ files in the atomic commit alongside implementation files
    - Formal/ files never committed separately — always bundled with task commit
 
 5. **Step 6.5 (Verifier context)** — Formal verification added:
@@ -82,7 +82,7 @@ Formal scope scanning in quick --full mode now discovers relevant `formal/spec/*
    - Formal scope scan runs before planner (step 4.5), $FORMAL_SPEC_CONTEXT populated
    - Planner receives relevant invariants.md in files_to_read
    - Plan declares formal_artifacts field in frontmatter
-   - Executor includes formal/ files in atomic commits when formal_artifacts non-empty
+   - Executor includes .formal/ files in atomic commits when formal_artifacts non-empty
    - Verifier checks invariant compliance and formal artifact syntax
    - Quorum reviews VERIFICATION.md after passed status (step 6.5.1)
 
@@ -99,9 +99,9 @@ Updated the `<objective>` section to describe `--full` flag as:
 ```
 **`--full` flag:** Single-phase rigor tier. Enables:
 - Plan-checking (max 2 iterations) and post-execution verification
-- Formal scope scan: discovers relevant `formal/spec/*/invariants.md` and injects invariant context into the planner
-- Plan frontmatter must declare `formal_artifacts:` (none | update | create) with formal/ file targets
-- Executor commits formal/ files atomically when `formal_artifacts` is non-empty
+- Formal scope scan: discovers relevant `.formal/spec/*/invariants.md` and injects invariant context into the planner
+- Plan frontmatter must declare `formal_artifacts:` (none | update | create) with .formal/ file targets
+- Executor commits .formal/ files atomically when `formal_artifacts` is non-empty
 - Verifier checks invariant compliance and formal artifact syntax
 - Quorum reviews VERIFICATION.md after passing (can downgrade to "Needs Review")
 
@@ -131,9 +131,9 @@ Verified installed copies contain:
 2. **Fail-open quorum:** Step 6.5.1 quorum review doesn't block execution if all slots are unavailable — verification status remains "Verified" with a note.
 
 3. **Formal artifacts in plan frontmatter:** Required field when FORMAL_SPEC_CONTEXT is non-empty. Three modes:
-   - `none` — task doesn't touch formal/ files
-   - `update: [list of paths]` — task modifies existing formal/ files
-   - `create: [list of {path, type, description}]` — task creates new formal/ files
+   - `none` — task doesn't touch .formal/ files
+   - `update: [list of paths]` — task modifies existing .formal/ files
+   - `create: [list of {path, type, description}]` — task creates new .formal/ files
 
 4. **Atomic formal commits:** Formal/ files never committed separately. Always included in the task's atomic commit alongside implementation files. Ensures tight version coupling.
 
@@ -157,7 +157,7 @@ grep -n "Step 4.5\|FORMAL_SPEC_CONTEXT\|formal_artifacts\|Step 6.5.1" qgsd-core/
 grep -n "Quorum review of VERIFICATION.md\|Needs Review" qgsd-core/workflows/quick.md
 → Multiple matches ✓
 
-grep -n "Single-phase rigor tier\|formal_artifacts\|formal/spec" commands/qgsd/quick.md
+grep -n "Single-phase rigor tier\|formal_artifacts\|.formal/spec" commands/qgsd/quick.md
 → 3+ matches ✓
 ```
 
@@ -179,4 +179,4 @@ Quick tasks using `--full` mode can now:
 3. Include formal artifact modifications in atomic commits
 4. Have their verification results reviewed by quorum for additional confidence
 
-The groundwork is now in place for quick tasks to leverage the formal/ specification system as a built-in rigor tier, positioning them between default quick execution and full multi-phase milestone ceremonies.
+The groundwork is now in place for quick tasks to leverage the .formal/ specification system as a built-in rigor tier, positioning them between default quick execution and full multi-phase milestone ceremonies.
