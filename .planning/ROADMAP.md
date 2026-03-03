@@ -1312,7 +1312,10 @@ Plans:
   4. User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent instead of typing a URL
   5. User can clone an existing slot — copies provider URL and model config, prompts for new slot name
   6. Zero `get-shit-done/` hardcoded path strings remain in bin/gsd-tools.cjs, workflow files, agent files, or template files
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] v0.26-03-01-PLAN.md -- Pure function tests + clone metadata fix (PORT-01, PORT-02, PORT-03, PRST-01, PRST-02)
+- [ ] v0.26-03-02-PLAN.md -- REN-03 hardcoded path removal + install sync (REN-03)
 
 ### Phase v0.26-04: Health Dashboard
 **Goal**: Users can observe live slot health from a terminal dashboard
