@@ -68,7 +68,7 @@ None yet.
 | 138 | Add formal coverage section to progress and resume-work workflows | 2026-03-03 | pending | Pending | [138-add-formal-coverage-section-to-progress-](./quick/138-add-formal-coverage-section-to-progress-/) |
 | 139 | Implement /qgsd:formal-test-sync command | 2026-03-03 | 753e0870 | Verified | [139-implement-qgsd-formal-test-sync-command-](./quick/139-implement-qgsd-formal-test-sync-command-/) |
 | 140 | Implement /qgsd:solve consistency solver command | 2026-03-03 | fa9debb2 | Verified | [140-implement-qgsd-solve-consistency-solver-](./quick/140-implement-qgsd-solve-consistency-solver-/) |
-| 141 | Fix solver loop bugs: parseAlloyDefaults parsing, stale cache invalidation | 2026-03-03 | ed8df4cf | Complete | [141-fix-solver-loop-bugs-parsealloydefaults-](./quick/141-fix-solver-loop-bugs-parsealloydefaults-/) |
+| 141 | Fix solver loop bugs: parseAlloyDefaults parsing, stale cache invalidation | 2026-03-03 | ed8df4cf | Verified | [141-fix-solver-loop-bugs-parsealloydefaults-](./quick/141-fix-solver-loop-bugs-parsealloydefaults-/) |
 
 ## Session Continuity
 
