@@ -8,6 +8,25 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.26 Operational Completeness
+
+**Goal:** Close the remaining operational gaps — portable installer, credential management, policy configuration, dashboard UI, architecture constraints, and cross-model decomposition analysis — bringing all 205 requirements to implemented status.
+
+**Target features:**
+- Portable installer & CLI — cross-platform install (PORT-01..03), persistent config across updates (PRST-01..02), no hardcoded absolute paths (REN-03)
+- Credential management — secure API key storage and rotation (CRED-01..02)
+- Policy configuration — user-editable policy.yaml driving PRISM parameters and quorum behavior (PLCY-01..03)
+- Dashboard & observability — interactive terminal dashboard with real-time quorum status (DASH-01..03)
+- Architecture enforcement — no LLM SDK bundling constraint (ARCH-10)
+- Cross-model decomposition — state-space merge/split analysis with 5-minute TLC budget (DECOMP-05)
+
+**Pending requirements (16):**
+- Installer & CLI: PORT-01, PORT-02, PORT-03, PRST-01, PRST-02, REN-03
+- Configuration: CRED-01, CRED-02, PLCY-01, PLCY-02, PLCY-03
+- Observability & Diagnostics: DASH-01, DASH-02, DASH-03
+- Architecture: ARCH-10
+- Planning & Tracking: DECOMP-05
+
 ## Shipped: v0.25 Formal Traceability & Coverage (2026-03-03)
 
 **Goal:** Connect human requirements to formal models with bidirectional, queryable traceability — answer "which specs verify requirement X?" and "which requirements broke?" when a check fails.
