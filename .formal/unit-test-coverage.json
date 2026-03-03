@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-03T19:42:57.056Z",
+  "generated_at": "2026-03-03T22:25:54.044Z",
   "requirements": {
     "DETECT-05": {
       "covered": true,
@@ -115,16 +115,47 @@
       "test_cases": []
     },
     "DASH-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines renders header with QGSD Live Health Dashboard title" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines shows slot name, provider hostname, model name, and health status for each slot" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines shows subprocess label for non-HTTP slots" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: empty slots array returns header + empty body + timestamp line" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with healthy=true probe shows green checkmark in output" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with healthy=false probe shows red DOWN in output" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with error=subprocess shows subprocess label in output" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: null healthMap entry shows em-dash or blank for that slot" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: UP status row contains green ANSI code and checkmark glyph" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: DOWN status row contains red ANSI code and cross glyph" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: per-slot data isolation -- two-slot output has each slot in its own row" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: output contains header title and footer keybinding hint" }
+      ]
     },
     "DASH-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: formatTimestamp renders HH:MM:SS format for valid timestamp" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: formatTimestamp renders em-dash for null (never refreshed state)" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines shows footer with [space/r] refresh and [q/Esc] exit keybinding hints" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines shows yellow [stale] warning when lastUpdated exceeds 60-second threshold" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines does NOT show [stale] warning when lastUpdated is within 60 seconds" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: null returns em-dash string" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: Date.now() returns HH:MM:SS format (8 chars)" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: known epoch ms returns correct HH:MM:SS" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: 0 (epoch) is treated as falsy and returns em-dash" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated=null shows Last updated em-dash" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated more than 60s ago shows stale warning in output" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated less than 60s ago does NOT show stale" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: stale boundary -- 60001ms ago shows stale, 59999ms ago does NOT" }
+      ]
     },
     "DASH-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-03: liveDashboard non-TTY fallback resolves without throwing (clean exit path)" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-03: liveDashboard is an async function returning a Promise (exit contract)" },
+        { "test_file": "bin/manage-agents.test.cjs", "test_name": "liveDashboard smoke: non-TTY path resolves without throwing" }
+      ]
     },
     "DECOMP-02": {
       "covered": false,
@@ -802,6 +833,14 @@
       "covered": false,
       "test_cases": []
     },
+    "SOLVE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SOLVE-02": {
+      "covered": false,
+      "test_cases": []
+    },
     "SYNC-03": {
       "covered": false,
       "test_cases": []
@@ -811,6 +850,10 @@
       "test_cases": []
     },
     "TRACE-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-06": {
       "covered": false,
       "test_cases": []
     },
