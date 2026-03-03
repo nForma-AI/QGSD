@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-03-03 after v0.25 roadmap creation)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following -- a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.25 Formal Traceability & Coverage -- Phase v0.25-02 complete (all 3 plans done), ready for v0.25-03
+**Current focus:** v0.25 Formal Traceability & Coverage -- Phase v0.25-04 complete (both plans done), ready for v0.25-05
 **Last shipped:** v0.24 -- Quorum Reliability Hardening (2026-03-03, 5 phases, 17 plans, 12/12 requirements)
 
 ## Current Position
 
-Phase: v0.25-02 of 5 (Property Annotations) -- COMPLETE
-Plan: 3 of 3 in current phase (3 plans in 2 waves) -- COMPLETE
-Status: Phase v0.25-02 done -- all 3 plans complete, ready for v0.25-03 (Traceability Matrix)
-Last activity: 2026-03-03 -- v0.25-02-03 complete: extract-annotations.cjs parser covering 23 files, 93 properties, 104 requirement links (ANNOT-04)
+Phase: v0.25-04 of 5 (Bidirectional Validation) -- COMPLETE
+Plan: 2 of 2 in current phase (2 plans in 2 waves) -- COMPLETE
+Status: Phase v0.25-04 done -- both plans complete, ready for v0.25-05 (Decomposition Awareness)
+Last activity: 2026-03-03 -- v0.25-04-02 complete: CI coverage guard + wired into run-formal-verify.cjs (TRACE-05)
 
-Progress: [########            ] 40% v0.25 (2/5 phases done)
+Progress: [################    ] 80% v0.25 (4/5 phases done)
 
 ## Performance Metrics
 
@@ -83,6 +83,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Last activity: 2026-03-03 -- Phase v0.25-02 complete: @requirement annotations on all 23 model files + extraction parser (ANNOT-01..04)
+Last activity: 2026-03-03 -- Phase v0.25-04 complete: bidirectional validation (TRACE-04) + CI coverage guard (TRACE-05)
 Stopped at: None
 Resume file: None

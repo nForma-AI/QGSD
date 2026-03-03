@@ -1243,7 +1243,7 @@ Plans:
 - [x] **Phase v0.25-01: Schema Foundation** - Extend model-registry, check-result schema, runners, and requirements.json with requirement linkage fields (completed 2026-03-03)
 - [x] **Phase v0.25-02: Property Annotations** - Add structured @requirement comments to all TLA+, Alloy, and PRISM model files and build the extraction parser (completed 2026-03-03)
 - [x] **Phase v0.25-03: Traceability Matrix** - Generate a property-level traceability matrix with coverage statistics from registry, annotations, and check results (completed 2026-03-03)
-- [ ] **Phase v0.25-04: Bidirectional Validation** - Detect asymmetric links between models and requirements; CI guard on coverage regression
+- [x] **Phase v0.25-04: Bidirectional Validation** - Detect asymmetric links between models and requirements; CI guard on coverage regression (completed 2026-03-03)
 - [ ] **Phase v0.25-05: Decomposition Awareness** - Analyze model state-space size, flag unbounded domains, and validate coverage preservation during model splits
 
 ## Phase Details
@@ -1294,7 +1294,9 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Running the traceability matrix generator on a codebase where model A claims requirement X but requirement X does not list model A produces a warning identifying the asymmetric link with both sides of the mismatch
   2. Running the CI coverage guard after removing a model-to-requirement link produces a warning when formal coverage percentage drops below the configured threshold (default 15%) compared to the previous matrix snapshot
-**Plans**: TBD
+**Plans**: 2 plans, 2 waves — complete
+- Plan 01 (Wave 1): Bidirectional validation in matrix generator (TRACE-04)
+- Plan 02 (Wave 2): CI coverage guard (TRACE-05)
 
 ### Phase v0.25-05: Decomposition Awareness
 **Goal**: Model state-space risk is quantified and visible, unbounded domains are flagged, and splitting a model cannot silently drop requirement coverage
@@ -1310,5 +1312,5 @@ Plans:
 | v0.25-01. Schema Foundation | 3/3 | Complete    | 2026-03-03 |  |
 | v0.25-02. Property Annotations | 3/3 | Complete | 2026-03-03 |  |
 | v0.25-03. Traceability Matrix | 1/2 | Complete    | 2026-03-03 | - |
-| v0.25-04. Bidirectional Validation | v0.25 | 0/TBD | Not started | - |
+| v0.25-04. Bidirectional Validation | 2/2 | Complete    | 2026-03-03 | - |
 | v0.25-05. Decomposition Awareness | v0.25 | 0/TBD | Not started | - |
