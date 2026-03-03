@@ -62,28 +62,28 @@ Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PORT-01 | — | Pending |
-| PORT-02 | — | Pending |
-| PORT-03 | — | Pending |
-| PRST-01 | — | Pending |
-| PRST-02 | — | Pending |
-| REN-03 | — | Pending |
-| CRED-01 | — | Pending |
-| CRED-02 | — | Pending |
-| PLCY-01 | — | Pending |
-| PLCY-02 | — | Pending |
-| PLCY-03 | — | Pending |
-| DASH-01 | — | Pending |
-| DASH-02 | — | Pending |
-| DASH-03 | — | Pending |
-| ARCH-10 | — | Pending |
-| DECOMP-05 | — | Pending |
+| PLCY-01 | v0.26-01 | Pending |
+| PLCY-02 | v0.26-01 | Pending |
+| PLCY-03 | v0.26-01 | Pending |
+| CRED-01 | v0.26-02 | Pending |
+| CRED-02 | v0.26-02 | Pending |
+| PORT-01 | v0.26-03 | Pending |
+| PORT-02 | v0.26-03 | Pending |
+| PORT-03 | v0.26-03 | Pending |
+| PRST-01 | v0.26-03 | Pending |
+| PRST-02 | v0.26-03 | Pending |
+| REN-03 | v0.26-03 | Pending |
+| DASH-01 | v0.26-04 | Pending |
+| DASH-02 | v0.26-04 | Pending |
+| DASH-03 | v0.26-04 | Pending |
+| ARCH-10 | v0.26-05 | Pending |
+| DECOMP-05 | v0.26-06 | Pending |
 
 **Coverage:**
 - v0.26 requirements: 16 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 16
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-03*
-*Last updated: 2026-03-03 after initial definition*
+*Last updated: 2026-03-03 after roadmap creation — all 16 requirements mapped to phases*
