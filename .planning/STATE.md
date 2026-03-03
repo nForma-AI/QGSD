@@ -5,15 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-03-03 after v0.25 roadmap creation)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following -- a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** v0.25 Formal Traceability & Coverage -- Phase v0.25-01 executing (plan 02/03 complete)
+**Current focus:** v0.25 Formal Traceability & Coverage -- Phase v0.25-01 executing (plans 01+02/03 complete)
 **Last shipped:** v0.24 -- Quorum Reliability Hardening (2026-03-03, 5 phases, 17 plans, 12/12 requirements)
 
 ## Current Position
 
 Phase: v0.25-01 of 5 (Schema Foundation)
 Plan: 2 of 3 in current phase (3 plans in 2 waves)
-Status: Executing -- plan 02 complete, plan 03 (runner wiring) remaining
-Last activity: 2026-03-03 -- v0.25-01-02 complete: check-result schema + writer extended with requirement_ids field
+Status: Executing -- plans 01+02 complete, plan 03 (runner wiring) remaining
+Last activity: 2026-03-03 -- v0.25-01-01 complete: model-registry.json + requirements.json seeded with bidirectional requirement-model traceability (SCHEMA-01, SCHEMA-04)
 
 Progress: [                    ] 0% v0.25
 
@@ -38,6 +38,7 @@ Progress: [                    ] 0% v0.25
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase v0.25-01 P01 | 4 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -51,6 +52,8 @@ Recent decisions affecting current work:
 - [v0.25 roadmap]: ANNOT-05 (annotations as primary data source for matrix) assigned to v0.25-03 (not v0.25-02) because it specifies how the matrix consumes annotations, not how annotations are created.
 - [v0.25 research]: Property-to-requirement map in TRACEABILITY_RESEARCH.md Section 5 should seed SCHEMA-01 model-registry entries and inform ANNOT-01..03 annotation work (22 models, ~80 properties mapped).
 - [Phase v0.25-01]: requirement_ids is optional in check-result schema for backward compat; writer validates at runtime; uppaal added to formalism enum to align schema with VALID_FORMALISMS
+- [Phase v0.25-01-01]: 26 requirement IDs in seed map missing from requirements.json -- formal_models skipped for those, model-registry carries them as forward references
+- [Phase v0.25-01-01]: Aggregator uses pre-aggregation capture + merge-back for formal_models (enrichment data not milestone-sourced)
 
 ### Pending Todos
 
@@ -67,5 +70,5 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed v0.25-01-02-PLAN.md -- check-result schema + writer requirement_ids extension
+Stopped at: Completed v0.25-01-01-PLAN.md -- model-registry + requirements.json requirement traceability seeding
 Resume file: None
