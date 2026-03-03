@@ -7,8 +7,8 @@ const fs = require('fs');
 const { spawnSync } = require('child_process');
 
 const SCRIPT = path.join(__dirname, '..', 'bin', 'generate-traceability-matrix.cjs');
-const MATRIX_PATH = path.join(__dirname, '..', 'formal', 'traceability-matrix.json');
-const REQUIREMENTS_PATH = path.join(__dirname, '..', 'formal', 'requirements.json');
+const MATRIX_PATH = path.join(__dirname, '..', '.formal', 'traceability-matrix.json');
+const REQUIREMENTS_PATH = path.join(__dirname, '..', '.formal', 'requirements.json');
 const ANNOTATIONS_SCRIPT = path.join(__dirname, '..', 'bin', 'extract-annotations.cjs');
 
 /**
@@ -51,7 +51,7 @@ describe('basic execution', () => {
     assert.strictEqual(result.status, 0, 'Expected exit code 0, got ' + result.status);
   });
 
-  test('produces formal/traceability-matrix.json', () => {
+  test('produces .formal/traceability-matrix.json', () => {
     run();
     assert.ok(fs.existsSync(MATRIX_PATH), 'traceability-matrix.json should exist after generation');
   });
@@ -59,7 +59,7 @@ describe('basic execution', () => {
   test('prints summary to stdout', () => {
     const result = run();
     assert.ok(result.stdout.includes('[generate-traceability-matrix]'), 'stdout should contain TAG prefix');
-    assert.ok(result.stdout.includes('Generated formal/traceability-matrix.json'), 'stdout should confirm file generation');
+    assert.ok(result.stdout.includes('Generated .formal/traceability-matrix.json'), 'stdout should confirm file generation');
     assert.ok(result.stdout.includes('Requirements:'), 'stdout should include requirements count');
     assert.ok(result.stdout.includes('Properties:'), 'stdout should include properties count');
   });
@@ -110,18 +110,18 @@ describe('metadata', () => {
 describe('annotation-sourced properties', () => {
   test('QGSDStopHook TypeOK has source annotation and STOP-01', () => {
     const matrix = getMatrix();
-    const key = 'formal/tla/QGSDStopHook.tla::TypeOK';
+    const key = '.formal/tla/QGSDStopHook.tla::TypeOK';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist in properties');
     assert.strictEqual(prop.source, 'annotation');
     assert.deepStrictEqual(prop.requirement_ids, ['STOP-01']);
-    assert.strictEqual(prop.model_file, 'formal/tla/QGSDStopHook.tla');
+    assert.strictEqual(prop.model_file, '.formal/tla/QGSDStopHook.tla');
     assert.strictEqual(prop.property_name, 'TypeOK');
   });
 
   test('known multi-requirement property has all IDs', () => {
     const matrix = getMatrix();
-    const key = 'formal/alloy/quorum-composition.als::AllRulesHold';
+    const key = '.formal/alloy/quorum-composition.als::AllRulesHold';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist');
     assert.ok(prop.requirement_ids.includes('SPEC-03'), 'should include SPEC-03');
@@ -137,10 +137,10 @@ describe('annotation-sourced properties', () => {
     assert.ok(comp01, 'COMP-01 should exist in requirements index');
 
     const spec03HasProp = spec03.properties.some(p =>
-      p.model_file === 'formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
+      p.model_file === '.formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
     const comp01HasProp = comp01.properties.some(p =>
-      p.model_file === 'formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
+      p.model_file === '.formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
     assert.ok(spec03HasProp, 'SPEC-03 should list AllRulesHold');
     assert.ok(comp01HasProp, 'COMP-01 should list AllRulesHold');
@@ -365,5 +365,117 @@ describe('fallback detection', () => {
     }
     // Verify the fallback count matches metadata
     assert.strictEqual(matrix.metadata.data_sources.model_registry.used_as_fallback, fallbackProps.length);
+  });
+});
+
+// ── Coverage Preservation (DECOMP-03) ───────────────────────────────────────
+
+describe('coverage preservation', () => {
+  test('coverage_preservation section exists with required keys', () => {
+    const matrix = getMatrix();
+    const cp = matrix.coverage_preservation;
+    assert.ok(cp, 'matrix should have coverage_preservation');
+    assert.ok(typeof cp.baseline_found === 'boolean', 'should have boolean baseline_found');
+    assert.ok(Array.isArray(cp.regressions), 'should have regressions array');
+    assert.ok(cp.summary, 'should have summary object');
+  });
+
+  test('summary has required fields', () => {
+    const matrix = getMatrix();
+    const summary = matrix.coverage_preservation.summary;
+    assert.strictEqual(typeof summary.total_regressions, 'number', 'total_regressions should be a number');
+    assert.strictEqual(typeof summary.affected_requirements, 'number', 'affected_requirements should be a number');
+    assert.strictEqual(typeof summary.clean, 'boolean', 'clean should be a boolean');
+  });
+
+  test('baseline detection — previous matrix exists', () => {
+    // Since we just ran getMatrix() above, the file exists on disk
+    const matrix = getMatrix();
+    const cp = matrix.coverage_preservation;
+    assert.strictEqual(cp.baseline_found, true, 'baseline should be found when previous matrix exists');
+    if (cp.baseline_date) {
+      const d = new Date(cp.baseline_date);
+      assert.ok(!isNaN(d.getTime()), 'baseline_date should be valid ISO timestamp');
+    }
+  });
+
+  test('regressions array entries have required fields (if any)', () => {
+    const matrix = getMatrix();
+    for (const reg of matrix.coverage_preservation.regressions) {
+      assert.strictEqual(typeof reg.requirement_id, 'string', 'regression should have string requirement_id');
+      assert.strictEqual(typeof reg.baseline_property_count, 'number', 'should have number baseline_property_count');
+      assert.strictEqual(typeof reg.current_property_count, 'number', 'should have number current_property_count');
+      assert.ok(reg.lost_count > 0, 'lost_count should be positive');
+      assert.strictEqual(typeof reg.detail, 'string', 'should have string detail');
+    }
+  });
+
+  test('clean flag consistency', () => {
+    const matrix = getMatrix();
+    const cp = matrix.coverage_preservation;
+    assert.strictEqual(cp.summary.clean, cp.summary.total_regressions === 0,
+      'clean should be true when total_regressions is 0');
+  });
+
+  test('total_regressions matches regressions array length', () => {
+    const matrix = getMatrix();
+    const cp = matrix.coverage_preservation;
+    assert.strictEqual(cp.summary.total_regressions, cp.regressions.length,
+      'total_regressions should equal regressions.length');
+  });
+
+  test('no false positives on stable codebase (run twice)', () => {
+    // First run generates baseline
+    run();
+    // Second run compares against that baseline — nothing changed
+    const result = run('--json');
+    assert.strictEqual(result.status, 0);
+    const data = JSON.parse(result.stdout);
+    const cp = data.coverage_preservation;
+    assert.strictEqual(cp.regressions.length, 0,
+      'Running twice with no changes should produce 0 regressions');
+    assert.strictEqual(cp.summary.clean, true);
+  });
+
+  test('--json mode includes coverage_preservation', () => {
+    const result = run('--json');
+    const data = JSON.parse(result.stdout);
+    assert.ok(data.coverage_preservation, '--json output should have coverage_preservation');
+    assert.ok(data.coverage_preservation.summary, '--json output should have summary');
+  });
+
+  test('first-run behavior — no baseline', () => {
+    const backupPath = MATRIX_PATH + '.test-backup';
+    let restored = false;
+    try {
+      // Temporarily move baseline away
+      if (fs.existsSync(MATRIX_PATH)) {
+        fs.renameSync(MATRIX_PATH, backupPath);
+      }
+      const result = run('--json');
+      assert.strictEqual(result.status, 0);
+      const data = JSON.parse(result.stdout);
+      const cp = data.coverage_preservation;
+      assert.strictEqual(cp.baseline_found, false, 'Should report no baseline when file is missing');
+      assert.strictEqual(cp.regressions.length, 0, 'No regressions when no baseline');
+      assert.strictEqual(cp.summary.clean, true, 'Should be clean when no baseline');
+    } finally {
+      // Restore baseline
+      if (fs.existsSync(backupPath)) {
+        // If the run created a new file, remove it first
+        if (fs.existsSync(MATRIX_PATH)) {
+          fs.unlinkSync(MATRIX_PATH);
+        }
+        fs.renameSync(backupPath, MATRIX_PATH);
+        restored = true;
+      }
+    }
+    assert.ok(restored || !fs.existsSync(backupPath), 'Backup should be restored');
+  });
+
+  test('summary output includes coverage preservation line', () => {
+    const result = run();
+    assert.ok(result.stdout.includes('Coverage preservation:'),
+      'stdout should include coverage preservation line');
   });
 });
