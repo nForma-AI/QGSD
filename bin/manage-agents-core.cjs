@@ -508,6 +508,36 @@ function buildPolicyChoices(currentPolicy) {
   }));
 }
 
+function validateTimeout(value) {
+  // Blank/empty/null/undefined means "keep current" — valid state, return ms: null
+  if (value === '' || value === null || value === undefined) {
+    return { valid: true, ms: null };
+  }
+
+  const parsed = parseInt(value, 10);
+
+  // Check if parsing failed (NaN) or result is non-positive
+  if (isNaN(parsed) || parsed <= 0) {
+    return { valid: false, error: `Timeout must be a positive number (got: ${value})` };
+  }
+
+  return { valid: true, ms: parsed };
+}
+
+function validateUpdatePolicy(policy) {
+  // Valid policies derived from POLICY_MENU_CHOICES
+  const validPolicies = POLICY_MENU_CHOICES.map((c) => c.value);
+
+  if (validPolicies.includes(policy)) {
+    return { valid: true, policy };
+  }
+
+  return {
+    valid: false,
+    error: `Unknown update policy '${policy}'. Valid values: ${validPolicies.join(', ')}`
+  };
+}
+
 function buildUpdateLogEntry(slotName, status, detail) {
   return JSON.stringify({
     ts: new Date().toISOString(),
@@ -742,6 +772,8 @@ module.exports._pure = {
   buildTimeoutChoices,
   applyTimeoutUpdate,
   buildPolicyChoices,
+  validateTimeout,
+  validateUpdatePolicy,
   buildUpdateLogEntry,
   parseUpdateLogErrors,
   probeAllSlots,
