@@ -1276,12 +1276,15 @@ Plans:
   1. After each deliberation round, the system computes P(consensus | remaining rounds) and, when P drops below 10%, escalation fires immediately -- observable by the escalation message appearing before the final deliberation round
   2. When `verify-quorum-health` detects that P(consensus) has been below 95% across recent runs, it recommends a specific maxDeliberation adjustment and auto-applies it to `qgsd.json` after user approval
   3. Quorum reaches a DECIDED state on every run where at least one slot responds with a valid vote -- the EventualConsensus property holds even when early escalation fires (escalation produces a decision, not a hang)
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] v0.24-04-01-PLAN.md — TDD RED test scaffolding for HEAL-01 and HEAL-02
+- [ ] v0.24-04-02-PLAN.md — HEAL-01 early escalation (computeEarlyEscalation + prompt injection)
+- [ ] v0.24-04-03-PLAN.md — HEAL-02 auto-adjust maxDeliberation (suggestMaxDeliberation + applyMaxDeliberationUpdate)
 
 | v0.24-01. Provider Infrastructure and Failover | v0.24 | 4/4 | Complete   | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | Complete    | 2026-03-03 | - |
 | v0.24-03. Quorum Observability | v0.24 | Complete    | 2026-03-03 | 2026-03-03 |
-| v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
+| v0.24-04. Self-Healing Consensus | v0.24 | 0/3 | Not started | - |
 
 ### Phase v0.24-05: Slot Worker Thin Passthrough
 **Goal**: Move prompt construction (Mode A/B, Round 1/2+, conditional sections) and output parsing (verdict/reasoning/citations/improvements extraction) from the Haiku slot-worker agent into quorum-slot-dispatch.cjs wrapper script, reducing worker token usage from 22-25k to under 12k per slot dispatch by eliminating LLM-driven string manipulation (revised from 5k target after discovering ~10k fixed platform overhead in Claude Code Task infrastructure)
