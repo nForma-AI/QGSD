@@ -2,20 +2,20 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-03 after v0.24 milestone completion)
+See: .planning/PROJECT.md (updated 2026-03-03 after v0.25 milestone start)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following -- a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
-**Current focus:** Planning next milestone
+**Current focus:** v0.25 Formal Traceability & Coverage
 **Last shipped:** v0.24 -- Quorum Reliability Hardening (2026-03-03, 5 phases, 17 plans, 12/12 requirements)
 
 ## Current Position
 
-Phase: Milestone v0.24 complete — all 5 phases shipped
-Plan: All 17 plans complete
-Status: v0.24 SHIPPED — Quorum Reliability Hardening milestone archived. 12/12 requirements satisfied, 240 tests GREEN, 24/24 formal properties passed.
-Last activity: 2026-03-03 - Completed v0.24 milestone: provider infrastructure, dispatch reliability, observability, self-healing, slot worker thin passthrough all shipped and verified.
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v0.25 Formal Traceability & Coverage
+Last activity: 2026-03-03 — Milestone v0.25 started
 
-Progress: [####################] 100% v0.24 COMPLETE — milestone archived
+Progress: [                    ] 0% v0.25 DEFINING REQUIREMENTS
 
 ## Performance Metrics
 

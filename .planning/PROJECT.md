@@ -8,6 +8,16 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.25 Formal Traceability & Coverage
+
+**Goal:** Connect human requirements to formal models with bidirectional, queryable traceability — so you can answer "which specs verify requirement X?" and "which requirements broke?" when a check fails, with coverage dashboards and decomposition awareness.
+
+**Target features:**
+- Schema foundation — `requirement_ids[]` in model-registry and check-result schema; runners emit requirement attribution
+- Traceability matrix — `bin/generate-traceability-matrix.cjs` produces `formal/traceability-matrix.json` with property-level links and coverage stats
+- Property annotations — `@requirement` tags in all 22 model source files (TLA+, Alloy, PRISM); automated extraction parser
+- Coverage & decomposition — coverage dashboard with orphan detection; state-space threshold alerts; CI guards on coverage regressions
+
 ## Shipped: v0.24 Quorum Reliability Hardening (2026-03-03)
 
 **Goal:** Make quorum dispatch reliable end-to-end — every quorum call reliably delivers 3 votes by detecting dead slots pre-dispatch, self-healing around mid-session failures without user action, and providing observability into slot health, success rates, and flakiness.
