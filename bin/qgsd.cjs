@@ -67,6 +67,7 @@ const {
   buildExportData, validateImportSchema, buildBackupPath,
   buildTimeoutChoices, applyTimeoutUpdate,
   buildPolicyChoices,
+  validateTimeout, validateUpdatePolicy,
   runAutoUpdateCheck,
 } = pure;
 
@@ -1827,10 +1828,17 @@ async function tuneTimeoutsFlow() {
       });
     } catch (_) { continue; }                                   // ESC → skip slot, move to next
     const trimmed = (val || '').trim();
-    if (trimmed && parseInt(trimmed, 10) !== currentMs) {
-      const updated = applyTimeoutUpdate(providersData, providerSlot, parseInt(trimmed, 10));
-      Object.assign(providersData, updated);
-      changed = true;
+    if (trimmed) {
+      const result = validateTimeout(trimmed);
+      if (!result.valid) {
+        toast(result.error, true);
+        continue;
+      }
+      if (result.ms !== null && result.ms !== currentMs) {
+        const updated = applyTimeoutUpdate(providersData, providerSlot, result.ms);
+        Object.assign(providersData, updated);
+        changed = true;
+      }
     }
   }
 
