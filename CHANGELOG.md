@@ -6,6 +6,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-03-03
+
+### Fixed
+- **Update checker scope** — `qgsd-check-update` hook was still querying `@langblaze.ai/qgsd`; now correctly queries `@nforma.ai/qgsd`
+
+### Added
+- **Memory staleness check** — Session-start hook warns about outdated MEMORY.md entries via `bin/validate-memory.cjs`
+- **Invariant validator** — `bin/validate-invariant.cjs` classifies requirements as invariant/non-invariant
+- **Close formal gaps command** — `/qgsd:close-formal-gaps` analyzes and closes formal model coverage gaps
+- **Workflow improvements** — Invariant gate in `add-requirement`, `--strict` flag for `map-requirements`
+- **20 new formal verification models** — 8 Alloy (architecture-registry, config-two-layer, mcp-detection, multi-slot, quorum-policy, schema-extensions, traceability-annotations, unified-check), 2 PRISM (deliberation-healing, observability-delivery), 10 TLA+ (activity tracking, agent provisioning, breaker state, config portability, dispatch pipeline, enforcement, installer idempotency, key management, prompt hook, setup wizard)
+- **Publish script** — `scripts/publish.sh` reads NPM_TOKEN from `.env` for local publishing
+- **CI/CD publishing** — GitHub Actions `publish.yml` triggers on release with OIDC provenance support
+
+### Changed
+- **Package size reduced 25%** — 606.7 kB → 453.0 kB via expanded `.npmignore` and `files` negation patterns
+- **Package files reduced 35%** — 258 → 169 files; all 87 test files and 4 dev-only scripts excluded from tarball
+- **Author updated** — `TÂCHES` → `nForma AI`
+- **Stale peerDependency removed** — `get-shit-done-cc` no longer required (bundled in `qgsd-core/`)
+- **package-lock.json scope** — Cleared all `@langblaze.ai` references to `@nforma.ai`
+- **Git remote** — Updated from `LangBlaze-AI/QGSD` to `nForma-AI/QGSD`
+
 ## [0.2.0] - 2026-02-21
 
 ### Added
@@ -1400,6 +1422,7 @@ and `templates/qgsd.json`. Then cut a QGSD patch release.
 - Interactive mode with checkpoints
 
 [Unreleased]: https://github.com/nForma-AI/QGSD/compare/v0.2.0...HEAD
+[0.2.1]: https://github.com/nForma-AI/QGSD/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/nForma-AI/QGSD/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/nForma-AI/QGSD/releases/tag/v0.1.0
 [1.20.5]: https://github.com/glittercowboy/get-shit-done/releases/tag/v1.20.5
