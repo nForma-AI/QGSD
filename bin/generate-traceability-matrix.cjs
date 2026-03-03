@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 // bin/generate-traceability-matrix.cjs
-// Generates formal/traceability-matrix.json — a bidirectional index linking
+// Generates .formal/traceability-matrix.json — a bidirectional index linking
 // requirements to formal properties and vice versa, with coverage statistics.
 //
 // Data sources:
 //   1. extract-annotations.cjs output (primary — property-level)
-//   2. formal/model-registry.json (fallback — model-level)
-//   3. formal/check-results.ndjson (verification status)
-//   4. formal/requirements.json (total requirement inventory)
+//   2. .formal/model-registry.json (fallback — model-level)
+//   3. .formal/check-results.ndjson (verification status)
+//   4. .formal/requirements.json (total requirement inventory)
 //
 // Usage:
-//   node bin/generate-traceability-matrix.cjs            # write to formal/traceability-matrix.json
+//   node bin/generate-traceability-matrix.cjs            # write to .formal/traceability-matrix.json
 //   node bin/generate-traceability-matrix.cjs --json     # print JSON to stdout
 //   node bin/generate-traceability-matrix.cjs --quiet    # suppress summary output
 //
@@ -25,10 +25,10 @@ const TAG = '[generate-traceability-matrix]';
 const ROOT = path.resolve(__dirname, '..');
 
 const ANNOTATIONS_SCRIPT = path.join(__dirname, 'extract-annotations.cjs');
-const REGISTRY_PATH      = path.join(ROOT, 'formal', 'model-registry.json');
-const NDJSON_PATH        = path.join(ROOT, 'formal', 'check-results.ndjson');
-const REQUIREMENTS_PATH  = path.join(ROOT, 'formal', 'requirements.json');
-const OUTPUT_PATH        = path.join(ROOT, 'formal', 'traceability-matrix.json');
+const REGISTRY_PATH      = path.join(ROOT, '.formal', 'model-registry.json');
+const NDJSON_PATH        = path.join(ROOT, '.formal', 'check-results.ndjson');
+const REQUIREMENTS_PATH  = path.join(ROOT, '.formal', 'requirements.json');
+const OUTPUT_PATH        = path.join(ROOT, '.formal', 'traceability-matrix.json');
 
 // ── CLI flags ───────────────────────────────────────────────────────────────
 
@@ -460,10 +460,101 @@ function buildMatrix() {
   return matrix;
 }
 
+// ── Coverage Preservation (DECOMP-03) ───────────────────────────────────────
+
+/**
+ * Compare the newly generated matrix against the previous traceability-matrix.json
+ * on disk to detect per-requirement coverage regressions.
+ *
+ * Must be called BEFORE the new matrix is written to disk so the baseline file
+ * is still the old version.
+ *
+ * @param {Object} newMatrix — the newly built matrix object
+ * @returns {{ baseline_found, baseline_date, requirements_checked, regressions, summary }}
+ */
+function validateCoveragePreservation(newMatrix) {
+  // Attempt to load baseline (current file on disk)
+  let baseline = null;
+  try {
+    if (fs.existsSync(OUTPUT_PATH)) {
+      baseline = JSON.parse(fs.readFileSync(OUTPUT_PATH, 'utf8'));
+    }
+  } catch (err) {
+    process.stderr.write(TAG + ' warn: could not parse previous traceability-matrix.json — treating as no baseline: ' + err.message + '\n');
+  }
+
+  if (!baseline || !baseline.requirements) {
+    process.stderr.write(TAG + ' info: no previous traceability-matrix.json found — coverage preservation check skipped\n');
+    return {
+      baseline_found: false,
+      baseline_date: null,
+      requirements_checked: 0,
+      regressions: [],
+      summary: {
+        total_regressions: 0,
+        affected_requirements: 0,
+        clean: true,
+      },
+    };
+  }
+
+  const baselineDate = (baseline.metadata && baseline.metadata.generated_at) || null;
+  const regressions = [];
+  let requirementsChecked = 0;
+
+  // Compare per-requirement property counts
+  for (const reqId of Object.keys(baseline.requirements)) {
+    // Only check requirements that exist in both baseline and new matrix
+    if (!newMatrix.requirements || !newMatrix.requirements[reqId]) continue;
+
+    requirementsChecked++;
+
+    const baselineProps = baseline.requirements[reqId].properties || [];
+    const currentProps = newMatrix.requirements[reqId].properties || [];
+    const baselineCount = baselineProps.length;
+    const currentCount = currentProps.length;
+
+    if (currentCount < baselineCount) {
+      const lostCount = baselineCount - currentCount;
+      const baselineModels = [...new Set(baselineProps.map(function(p) { return p.model_file; }))];
+      const currentModels = [...new Set(currentProps.map(function(p) { return p.model_file; }))];
+
+      const regression = {
+        requirement_id: reqId,
+        baseline_property_count: baselineCount,
+        current_property_count: currentCount,
+        lost_count: lostCount,
+        baseline_models: baselineModels,
+        current_models: currentModels,
+        detail: reqId + ' coverage decreased from ' + baselineCount + ' properties to ' + currentCount + ' (lost ' + lostCount + ') — possible model split dropped coverage',
+      };
+      regressions.push(regression);
+      process.stderr.write(TAG + ' warn: coverage regression — ' + reqId + ' had ' + baselineCount + ' properties, now has ' + currentCount + ' (lost ' + lostCount + ') — check if model split dropped coverage\n');
+    }
+  }
+
+  return {
+    baseline_found: true,
+    baseline_date: baselineDate,
+    requirements_checked: requirementsChecked,
+    regressions: regressions,
+    summary: {
+      total_regressions: regressions.length,
+      affected_requirements: regressions.length,
+      clean: regressions.length === 0,
+    },
+  };
+}
+
 // ── Output ──────────────────────────────────────────────────────────────────
 
 function main() {
   const matrix = buildMatrix();
+
+  // Coverage preservation — compare against baseline BEFORE overwriting file
+  const coveragePreservation = validateCoveragePreservation(matrix);
+  matrix.coverage_preservation = coveragePreservation;
+
   const jsonStr = JSON.stringify(matrix, null, 2);
 
   if (jsonMode) {
@@ -471,7 +562,7 @@ function main() {
     return;
   }
 
-  // Write to file
+  // Write to file (overwrites previous baseline)
   fs.writeFileSync(OUTPUT_PATH, jsonStr + '\n', 'utf8');
 
   if (!quietMode) {
@@ -483,13 +574,19 @@ function main() {
     }
 
     const bv = matrix.bidirectional_validation.summary;
+    const cp = matrix.coverage_preservation;
 
-    process.stdout.write(TAG + ' Generated formal/traceability-matrix.json\n');
+    process.stdout.write(TAG + ' Generated .formal/traceability-matrix.json\n');
     process.stdout.write(TAG + '   Requirements: ' + cs.covered_count + ' covered / ' + cs.total_requirements + ' total (' + cs.coverage_percentage + '%)\n');
     process.stdout.write(TAG + '   Properties: ' + ds.annotations.property_count + ' (' + ds.annotations.file_count + ' files)\n');
     process.stdout.write(TAG + '   Orphan properties: ' + cs.orphan_properties.length + '\n');
     process.stdout.write(TAG + '   Check results matched: ' + matchedChecks.size + '\n');
     process.stdout.write(TAG + '   Bidirectional validation: ' + bv.asymmetric_count + ' asymmetric, ' + bv.stale_count + ' stale (' + bv.total_checked + ' pairs checked)\n');
+    if (cp.baseline_found) {
+      process.stdout.write(TAG + '   Coverage preservation: ' + cp.summary.total_regressions + ' regressions (' + cp.requirements_checked + ' requirements checked vs baseline)\n');
+    } else {
+      process.stdout.write(TAG + '   Coverage preservation: no baseline (first run)\n');
+    }
   }
 }
 
