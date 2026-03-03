@@ -86,9 +86,9 @@ describe('metadata', () => {
     assert.ok(!isNaN(ts.getTime()), 'generated_at should be a valid ISO-8601 date');
   });
 
-  test('generator_version is 1.0', () => {
+  test('generator_version is 1.1', () => {
     const matrix = getMatrix();
-    assert.strictEqual(matrix.metadata.generator_version, '1.0');
+    assert.strictEqual(matrix.metadata.generator_version, '1.1');
   });
 
   test('data_sources has expected sections', () => {
@@ -121,29 +121,29 @@ describe('annotation-sourced properties', () => {
 
   test('known multi-requirement property has all IDs', () => {
     const matrix = getMatrix();
-    const key = 'formal/tla/QGSDQuorum.tla::UnanimityMet';
+    const key = 'formal/alloy/quorum-composition.als::AllRulesHold';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist');
-    assert.ok(prop.requirement_ids.includes('QUORUM-02'), 'should include QUORUM-02');
-    assert.ok(prop.requirement_ids.includes('SAFE-01'), 'should include SAFE-01');
+    assert.ok(prop.requirement_ids.includes('SPEC-03'), 'should include SPEC-03');
+    assert.ok(prop.requirement_ids.includes('COMP-01'), 'should include COMP-01');
     assert.strictEqual(prop.source, 'annotation');
   });
 
   test('multi-requirement property appears in both requirement entries', () => {
     const matrix = getMatrix();
-    const q02 = matrix.requirements['QUORUM-02'];
-    const s01 = matrix.requirements['SAFE-01'];
-    assert.ok(q02, 'QUORUM-02 should exist in requirements index');
-    assert.ok(s01, 'SAFE-01 should exist in requirements index');
+    const spec03 = matrix.requirements['SPEC-03'];
+    const comp01 = matrix.requirements['COMP-01'];
+    assert.ok(spec03, 'SPEC-03 should exist in requirements index');
+    assert.ok(comp01, 'COMP-01 should exist in requirements index');
 
-    const q02HasProp = q02.properties.some(p =>
-      p.model_file === 'formal/tla/QGSDQuorum.tla' && p.property_name === 'UnanimityMet'
+    const spec03HasProp = spec03.properties.some(p =>
+      p.model_file === 'formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
-    const s01HasProp = s01.properties.some(p =>
-      p.model_file === 'formal/tla/QGSDQuorum.tla' && p.property_name === 'UnanimityMet'
+    const comp01HasProp = comp01.properties.some(p =>
+      p.model_file === 'formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
-    assert.ok(q02HasProp, 'QUORUM-02 should list UnanimityMet');
-    assert.ok(s01HasProp, 'SAFE-01 should list UnanimityMet');
+    assert.ok(spec03HasProp, 'SPEC-03 should list AllRulesHold');
+    assert.ok(comp01HasProp, 'COMP-01 should list AllRulesHold');
   });
 });
 
@@ -257,6 +257,96 @@ describe('property counts', () => {
     const annotations = getAnnotations();
     assert.strictEqual(matrix.metadata.data_sources.annotations.file_count, Object.keys(annotations).length,
       'annotations.file_count should match extract-annotations file count');
+  });
+});
+
+// ── Bidirectional Validation (TRACE-04) ──────────────────────────────────────
+
+describe('bidirectional validation', () => {
+  test('bidirectional_validation section exists', () => {
+    const matrix = getMatrix();
+    assert.ok(matrix.bidirectional_validation, 'matrix should have bidirectional_validation');
+    assert.ok(Array.isArray(matrix.bidirectional_validation.asymmetric_links), 'should have asymmetric_links array');
+    assert.ok(Array.isArray(matrix.bidirectional_validation.stale_links), 'should have stale_links array');
+    assert.ok(matrix.bidirectional_validation.summary, 'should have summary object');
+  });
+
+  test('summary has expected fields', () => {
+    const matrix = getMatrix();
+    const summary = matrix.bidirectional_validation.summary;
+    assert.ok(typeof summary.total_checked === 'number', 'total_checked should be a number');
+    assert.ok(typeof summary.asymmetric_count === 'number', 'asymmetric_count should be a number');
+    assert.ok(typeof summary.stale_count === 'number', 'stale_count should be a number');
+    assert.ok(typeof summary.clean === 'boolean', 'clean should be a boolean');
+  });
+
+  test('asymmetric_count matches array length', () => {
+    const matrix = getMatrix();
+    const bv = matrix.bidirectional_validation;
+    assert.strictEqual(bv.summary.asymmetric_count, bv.asymmetric_links.length,
+      'asymmetric_count should equal asymmetric_links.length');
+  });
+
+  test('stale_count matches array length', () => {
+    const matrix = getMatrix();
+    const bv = matrix.bidirectional_validation;
+    assert.strictEqual(bv.summary.stale_count, bv.stale_links.length,
+      'stale_count should equal stale_links.length');
+  });
+
+  test('asymmetric link entries have required fields', () => {
+    const matrix = getMatrix();
+    for (const link of matrix.bidirectional_validation.asymmetric_links) {
+      assert.ok(typeof link.model_file === 'string', 'model_file should be a string');
+      assert.ok(typeof link.requirement_id === 'string', 'requirement_id should be a string');
+      assert.ok(
+        link.direction === 'model_claims_requirement' || link.direction === 'requirement_claims_model',
+        'direction should be one of the expected values, got: ' + link.direction
+      );
+      assert.ok(typeof link.detail === 'string', 'detail should be a string');
+      assert.ok(link.detail.includes(link.model_file), 'detail should mention model file');
+      assert.ok(link.detail.includes(link.requirement_id), 'detail should mention requirement ID');
+    }
+  });
+
+  test('stale link entries have required fields', () => {
+    const matrix = getMatrix();
+    for (const link of matrix.bidirectional_validation.stale_links) {
+      assert.ok(typeof link.type === 'string', 'type should be a string');
+      assert.ok(typeof link.reference === 'string', 'reference should be a string');
+      assert.ok(typeof link.referenced_by === 'string', 'referenced_by should be a string');
+    }
+  });
+
+  test('clean flag is consistent with counts', () => {
+    const matrix = getMatrix();
+    const s = matrix.bidirectional_validation.summary;
+    assert.strictEqual(s.clean, s.asymmetric_count === 0 && s.stale_count === 0,
+      'clean should be true only when both counts are 0');
+  });
+
+  test('--json mode includes bidirectional validation', () => {
+    const result = run('--json');
+    const data = JSON.parse(result.stdout);
+    assert.ok(data.bidirectional_validation, '--json output should have bidirectional_validation');
+    assert.ok(data.bidirectional_validation.summary, '--json output should have summary');
+  });
+
+  test('stderr contains asymmetric/stale warnings when issues found', () => {
+    const result = run();
+    const bv = getMatrix().bidirectional_validation;
+    if (bv.summary.asymmetric_count > 0) {
+      assert.ok(result.stderr.includes('asymmetric link'), 'stderr should contain asymmetric link warnings');
+    }
+    if (bv.summary.stale_count > 0) {
+      assert.ok(result.stderr.includes('stale link'), 'stderr should contain stale link warnings');
+    }
+  });
+
+  test('summary output includes bidirectional validation line', () => {
+    const result = run();
+    assert.ok(result.stdout.includes('Bidirectional validation:'), 'stdout should include bidirectional validation summary');
+    assert.ok(result.stdout.includes('pairs checked'), 'stdout should show pairs checked');
   });
 });
 
