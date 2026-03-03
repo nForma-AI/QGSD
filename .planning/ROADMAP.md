@@ -1240,7 +1240,7 @@ Plans:
 
 **Milestone Goal:** Connect human requirements to formal models with bidirectional, queryable traceability -- answer "which specs verify requirement X?" and "which requirements broke?" when a check fails, with coverage dashboards and decomposition awareness.
 
-- [ ] **Phase v0.25-01: Schema Foundation** - Extend model-registry, check-result schema, runners, and requirements.json with requirement linkage fields
+- [x] **Phase v0.25-01: Schema Foundation** - Extend model-registry, check-result schema, runners, and requirements.json with requirement linkage fields (completed 2026-03-03)
 - [ ] **Phase v0.25-02: Property Annotations** - Add structured @requirement comments to all TLA+, Alloy, and PRISM model files and build the extraction parser
 - [ ] **Phase v0.25-03: Traceability Matrix** - Generate a property-level traceability matrix with coverage statistics from registry, annotations, and check results
 - [ ] **Phase v0.25-04: Bidirectional Validation** - Detect asymmetric links between models and requirements; CI guard on coverage regression
@@ -1304,7 +1304,7 @@ Plans:
   4. The traceability matrix output includes a `state_space` section per model showing the risk classification, estimated state count, and any unbounded domain warnings
 **Plans**: TBD
 
-| v0.25-01. Schema Foundation | v0.25 | 2/3 | In Progress|  |
+| v0.25-01. Schema Foundation | 3/3 | Complete   | 2026-03-03 |  |
 | v0.25-02. Property Annotations | v0.25 | 0/TBD | Not started | - |
 | v0.25-03. Traceability Matrix | v0.25 | 0/TBD | Not started | - |
 | v0.25-04. Bidirectional Validation | v0.25 | 0/TBD | Not started | - |
