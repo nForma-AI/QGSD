@@ -1281,7 +1281,7 @@ Plans:
 - [ ] v0.24-04-02-PLAN.md — HEAL-01 early escalation (computeEarlyEscalation + prompt injection)
 - [ ] v0.24-04-03-PLAN.md — HEAL-02 auto-adjust maxDeliberation (suggestMaxDeliberation + applyMaxDeliberationUpdate)
 
-| v0.24-01. Provider Infrastructure and Failover | v0.24 | 4/4 | Complete   | 2026-03-02 |
+| v0.24-01. Provider Infrastructure and Failover | v0.24 | Complete    | 2026-03-03 | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | Complete    | 2026-03-03 | - |
 | v0.24-03. Quorum Observability | v0.24 | Complete    | 2026-03-03 | 2026-03-03 |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/3 | Not started | - |
