@@ -1,0 +1,830 @@
+{
+  "generated_at": "2026-03-03T19:42:57.056Z",
+  "requirements": {
+    "DETECT-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/qgsd-circuit-breaker.test.js",
+          "test_name": "CB-TC1: No git repo in cwd exits 0 with no output"
+        },
+        {
+          "test_file": "bin/run-oscillation-tlc.test.cjs",
+          "test_name": "exits non-zero and prints clear error when JAVA_HOME points to nonexistent path"
+        }
+      ]
+    },
+    "ACT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ACT-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "AGENT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "AGENT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ARCH-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ARCH-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ARCH-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CALIB-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CALIB-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CALIB-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CALIB-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "COMP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "COMP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "COMP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "COMP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CRED-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CRED-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DASH-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DASH-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DASH-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DECOMP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DECOMP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DECOMP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DETECT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DETECT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DETECT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DETECT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DISP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DISP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DISP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DISP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DISP-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DRIFT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DRIFT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ENFC-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ENFC-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ENFC-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "EVID-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FAIL-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FAIL-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "HEAL-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "HEAL-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "HLTH-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "HLTH-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "KEY-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "KEY-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "KEY-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "KEY-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LIVE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LIVE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LOOP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LOOP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LOOP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LOOP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCPENV-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCPENV-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCPENV-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "META-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MULTI-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "OBS-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "OBS-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "OBS-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "OBS-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORES-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORES-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORES-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORES-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORES-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLAN-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLAN-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLAN-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PORT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PORT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PORT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PROV-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "QUORUM-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "QUORUM-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "QUORUM-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RECV-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REDACT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REDACT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REDACT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REN-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SAFE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCBD-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCBD-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCBD-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCHEMA-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCHEMA-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCHEMA-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SENS-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SENS-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SENS-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SIG-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SIG-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SIG-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SLOT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SLOT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SLOT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SPEC-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SPEC-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SPEC-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STATE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STATE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STATE-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STATE-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STD-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STOP-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SYNC-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SYNC-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SYNC-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRIAGE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UNIF-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UNIF-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UNIF-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPS-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPS-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPS-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPS-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPS-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERIFY-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERIFY-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VIS-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "WIZ-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "AGENT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ANNOT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ANNOT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ANNOT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ANNOT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ANNOT-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ARCH-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CONF-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DECOMP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DECOMP-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "EVID-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "HLTH-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCP-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "META-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "META-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MULTI-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MULTI-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLCY-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLCY-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PLCY-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PROV-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PROV-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PRST-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PRST-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SIG-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SYNC-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRACE-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TRIAGE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UNIF-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-02": {
+      "covered": false,
+      "test_cases": []
+    }
+  }
+}

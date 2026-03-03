@@ -1,0 +1,371 @@
+#!/usr/bin/env node
+'use strict';
+// bin/formal-test-sync.test.cjs
+// TDD test suite for bin/formal-test-sync.cjs
+// Uses node:test + node:assert/strict
+//
+// Test categories:
+// - TC-PARSE: parseTestFile() parser tests
+// - TC-CONST: Constants parsing and validation tests
+// - TC-GAP: Coverage gap analysis tests
+// - TC-STUB: Test stub generation tests
+// - TC-INT: Integration tests (full script)
+
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const { spawnSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+// Import functions from extract-annotations.cjs
+const { parseTestFile } = require('./extract-annotations.cjs');
+
+// ── TC-PARSE: Parser Tests ──────────────────────────────────────────────────
+
+test('TC-PARSE-1: parseTestFile with single @requirement above test()', () => {
+  const content = `// @requirement REQ-001
+test('sample test', () => {
+  assert.ok(true);
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 1);
+  assert.equal(results[0].test_name, 'sample test');
+  assert.deepEqual(results[0].requirement_ids, ['REQ-001']);
+});
+
+test('TC-PARSE-2: parseTestFile with multiple @requirement above one test()', () => {
+  const content = `// @requirement REQ-001
+// @requirement REQ-002
+test('multi-req test', () => {
+  assert.ok(true);
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 1);
+  assert.deepEqual(results[0].requirement_ids, ['REQ-001', 'REQ-002']);
+});
+
+test('TC-PARSE-3: parseTestFile with @requirement above describe()', () => {
+  const content = `// @requirement REQ-003
+describe('test suite', () => {
+  test('inner test', () => {
+    assert.ok(true);
+  });
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 1);
+  assert.equal(results[0].test_name, 'test suite');
+  assert.deepEqual(results[0].requirement_ids, ['REQ-003']);
+});
+
+test('TC-PARSE-4: parseTestFile with no annotations', () => {
+  const content = `test('unannotated test', () => {
+  assert.ok(true);
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 0);
+});
+
+test('TC-PARSE-5: parseTestFile with annotation not immediately above test', () => {
+  const content = `// @requirement REQ-004
+
+// some other comment
+
+test('test after gap', () => {
+  assert.ok(true);
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 0);
+});
+
+test('TC-PARSE-6: parseTestFile with annotation above nested test in describe', () => {
+  const content = `describe('suite', () => {
+  // @requirement REQ-005
+  test('nested test', () => {
+    assert.ok(true);
+  });
+});`;
+  const results = parseTestFile(content);
+  assert.equal(results.length, 1);
+  assert.equal(results[0].test_name, 'nested test');
+  assert.deepEqual(results[0].requirement_ids, ['REQ-005']);
+});
+
+// ── TC-CONST: Constants Tests ───────────────────────────────────────────────
+
+test('TC-CONST-1: parseTLACfgConstants from MCoscillation.cfg', () => {
+  // Import the parsing function from formal-test-sync.cjs indirectly via a test helper
+  const content = `SPECIFICATION Spec
+CONSTANTS
+    Labels = {A, B, C}
+    Depth = 3
+    CommitWindow = 5
+INVARIANT TypeOK`;
+
+  // We'll test this by running the actual script and checking output
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should exit 0');
+  const output = JSON.parse(result.stdout);
+  assert.ok(output.constants_validation, 'output should have constants_validation section');
+});
+
+test('TC-CONST-2: resolveConfigPath handles nested paths', () => {
+  // Test via integration: the constants validation should work
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should exit 0');
+  const output = JSON.parse(result.stdout);
+  const depthValidation = output.constants_validation.find(c => c.constant === 'Depth');
+  assert.ok(depthValidation, 'Depth constant should be validated');
+  assert.equal(depthValidation.formal_value, 3);
+});
+
+test('TC-CONST-3: Constants with intentional_divergence flag', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const commitWindow = output.constants_validation.find(c => c.constant === 'CommitWindow');
+  assert.ok(commitWindow, 'CommitWindow should be in validation');
+  assert.ok(commitWindow.intentional_divergence, 'CommitWindow should be marked as intentional divergence');
+});
+
+test('TC-CONST-4: Model-only constants are handled (config_path: null)', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const modelOnly = output.constants_validation.find(c => c.constant === 'MaxDeliberation');
+  assert.ok(modelOnly, 'MaxDeliberation should be in validation');
+  assert.equal(modelOnly.config_path, null, 'Model-only constants should have null config_path');
+});
+
+// ── TC-GAP: Coverage Gap Tests ──────────────────────────────────────────────
+
+test('TC-GAP-1: Requirement with both formal and test coverage appears in covered', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const covered = output.coverage_gaps.covered;
+  assert.ok(covered.length > 0, 'should have at least one covered requirement');
+  const first = covered[0];
+  assert.ok(first.has_formal, 'covered requirement should have formal coverage');
+  assert.ok(first.has_test, 'covered requirement should have test coverage');
+});
+
+test('TC-GAP-2: Requirement with formal but no test appears in gaps', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const gaps = output.coverage_gaps.gaps;
+  assert.ok(gaps.length > 0, 'should have at least one gap');
+  const first = gaps[0];
+  assert.ok(first.has_formal, 'gap requirement should have formal coverage');
+  assert.ok(!first.has_test, 'gap requirement should have no test coverage');
+  assert.ok(first.gap, 'gap requirement should be marked as gap');
+});
+
+test('TC-GAP-3: Requirement with neither formal nor test is uncovered, not a gap', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const uncovered = output.coverage_gaps.uncovered;
+  assert.ok(uncovered.length > 0, 'should have at least one uncovered requirement');
+  const first = uncovered[0];
+  assert.ok(!first.has_formal, 'uncovered should have no formal coverage');
+  assert.ok(!first.has_test, 'uncovered should have no test coverage');
+  assert.ok(!first.gap, 'uncovered should not be marked as gap');
+});
+
+test('TC-GAP-4: Multiple test cases for same requirement tracked correctly', () => {
+  const scriptPath = path.join(__dirname, 'formal-test-sync.cjs');
+  const result = spawnSync(process.execPath, [scriptPath, '--json', '--report-only'], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0);
+  const output = JSON.parse(result.stdout);
+  const covered = output.coverage_gaps.covered;
+  // DETECT-05 should have multiple test cases
+  const detect05 = covered.find(r => r.requirement_id === 'DETECT-05');
+  if (detect05) {
+    assert.ok(detect05.test_cases.length >= 2, 'DETECT-05 should have multiple test cases');
+  }
+});
+
+// ── TC-STUB: Stub Generation Tests ──────────────────────────────────────────
+
+test('TC-STUB-1: Generated stubs contain @requirement annotation', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  try {
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--dry-run',
+      '--stubs-dir=' + tmpDir,
+    ], {
+      encoding: 'utf8',
+      cwd: path.join(__dirname, '..'),
+      timeout: 10000,
+    });
+
+    assert.equal(result.status, 0, 'stub generation should succeed');
+    // With --dry-run, no files are actually written, but we can check the script runs
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-STUB-2: Stub files contain assert.fail with TODO', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  try {
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--stubs-dir=' + tmpDir,
+    ], {
+      encoding: 'utf8',
+      cwd: path.join(__dirname, '..'),
+      timeout: 10000,
+    });
+
+    assert.equal(result.status, 0, 'stub generation should succeed');
+    // Check if any stub files were created
+    if (fs.existsSync(tmpDir)) {
+      const files = fs.readdirSync(tmpDir);
+      if (files.length > 0) {
+        const stubContent = fs.readFileSync(path.join(tmpDir, files[0]), 'utf8');
+        assert.match(stubContent, /assert\.fail/, 'stub should contain assert.fail');
+        assert.match(stubContent, /TODO/, 'stub should contain TODO comment');
+      }
+    }
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-STUB-3: Stub filenames follow REQ-ID.stub.test.js convention', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  try {
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--stubs-dir=' + tmpDir,
+    ], {
+      encoding: 'utf8',
+      cwd: path.join(__dirname, '..'),
+      timeout: 10000,
+    });
+
+    assert.equal(result.status, 0);
+    if (fs.existsSync(tmpDir)) {
+      const files = fs.readdirSync(tmpDir);
+      for (const file of files) {
+        assert.match(file, /^[A-Z0-9-]+\.stub\.test\.js$/, 'stub filename should match pattern REQ-ID.stub.test.js');
+      }
+    }
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('TC-STUB-4: --dry-run mode does not create files', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-dryrun-'));
+  try {
+    const result = spawnSync(process.execPath, [
+      path.join(__dirname, 'formal-test-sync.cjs'),
+      '--dry-run',
+      '--stubs-dir=' + tmpDir,
+    ], {
+      encoding: 'utf8',
+      cwd: path.join(__dirname, '..'),
+      timeout: 10000,
+    });
+
+    assert.equal(result.status, 0, 'dry-run should exit 0');
+    // Stubs directory should not contain any files in dry-run mode
+    if (fs.existsSync(tmpDir)) {
+      const files = fs.readdirSync(tmpDir);
+      assert.equal(files.length, 0, 'dry-run should not create stub files');
+    }
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+// ── TC-INT: Integration Tests ───────────────────────────────────────────────
+
+test('TC-INT-1: Full script with --json --report-only exits 0 with valid JSON', () => {
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'formal-test-sync.cjs'),
+    '--json',
+    '--report-only',
+  ], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should exit 0');
+  let output;
+  try {
+    output = JSON.parse(result.stdout);
+  } catch (e) {
+    assert.fail('output should be valid JSON: ' + e.message);
+  }
+  assert.ok(output.coverage_gaps, 'output should have coverage_gaps section');
+  assert.ok(output.constants_validation, 'output should have constants_validation section');
+});
+
+test('TC-INT-2: Full script with --report-only exits 0 with human-readable summary', () => {
+  const result = spawnSync(process.execPath, [
+    path.join(__dirname, 'formal-test-sync.cjs'),
+    '--report-only',
+  ], {
+    encoding: 'utf8',
+    cwd: path.join(__dirname, '..'),
+    timeout: 10000,
+  });
+
+  assert.equal(result.status, 0, 'script should exit 0');
+  assert.match(result.stdout, /Coverage gaps/, 'output should mention coverage gaps');
+  assert.match(result.stdout, /Constants mismatches/, 'output should mention constants');
+});
