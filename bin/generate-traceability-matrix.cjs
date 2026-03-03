@@ -271,6 +271,35 @@ function validateBidirectionalLinks(registry, requirements) {
   };
 }
 
+// ── State-Space Analysis (DECOMP-04) ────────────────────────────────────────
+
+/**
+ * Load state-space analysis by spawning bin/analyze-state-space.cjs.
+ * Returns the full report object, or {} on failure (fail-open).
+ */
+function loadStateSpaceAnalysis() {
+  const analyzerPath = path.join(__dirname, 'analyze-state-space.cjs');
+  if (!fs.existsSync(analyzerPath)) {
+    process.stderr.write(TAG + ' warn: analyze-state-space.cjs not found — state_space section will be empty\n');
+    return {};
+  }
+  try {
+    const result = spawnSync(process.execPath, [analyzerPath, '--json'], {
+      encoding: 'utf8',
+      cwd: ROOT,
+      timeout: 30000,
+    });
+    if (result.status !== 0) {
+      process.stderr.write(TAG + ' warn: analyze-state-space.cjs exited ' + result.status + '\n');
+      return {};
+    }
+    return JSON.parse(result.stdout);
+  } catch (err) {
+    process.stderr.write(TAG + ' warn: analyze-state-space.cjs failed: ' + err.message + '\n');
+    return {};
+  }
+}
+
 // ── Matrix Construction ─────────────────────────────────────────────────────
 
 function buildMatrix() {
@@ -425,6 +454,25 @@ function buildMatrix() {
 
   const bidirectionalValidation = validateBidirectionalLinks(registry, requirements);
 
+  // ── State-space analysis (DECOMP-04) ──
+
+  const stateSpaceReport = loadStateSpaceAnalysis();
+  const stateSpaceSection = {};
+
+  if (stateSpaceReport.models) {
+    for (const [modelFile, analysis] of Object.entries(stateSpaceReport.models)) {
+      stateSpaceSection[modelFile] = {
+        risk_level: analysis.risk_level,
+        estimated_states: analysis.estimated_states,
+        has_unbounded: analysis.has_unbounded,
+        unbounded_domains: analysis.unbounded_domains || [],
+        risk_reason: analysis.risk_reason || null,
+        variable_count: (analysis.variables || []).length,
+        constant_count: (analysis.constants || []).length,
+      };
+    }
+  }
+
   // ── Build matrix ──
 
   const matrix = {
@@ -455,6 +503,7 @@ function buildMatrix() {
       orphan_properties: orphanProperties,
     },
     bidirectional_validation: bidirectionalValidation,
+    state_space: stateSpaceSection,
   };
 
   return matrix;
@@ -586,6 +635,19 @@ function main() {
       process.stdout.write(TAG + '   Coverage preservation: ' + cp.summary.total_regressions + ' regressions (' + cp.requirements_checked + ' requirements checked vs baseline)\n');
     } else {
       process.stdout.write(TAG + '   Coverage preservation: no baseline (first run)\n');
+    }
+
+    // State-space summary
+    const ssKeys = Object.keys(matrix.state_space || {});
+    if (ssKeys.length > 0) {
+      const counts = { HIGH: 0, MODERATE: 0, LOW: 0, MINIMAL: 0 };
+      for (const k of ssKeys) {
+        const level = matrix.state_space[k].risk_level;
+        if (counts[level] !== undefined) counts[level]++;
+      }
+      process.stdout.write(TAG + '   State-space: ' + ssKeys.length + ' models analyzed (' + counts.HIGH + ' HIGH, ' + counts.MODERATE + ' MODERATE, ' + counts.LOW + ' LOW, ' + counts.MINIMAL + ' MINIMAL)\n');
+    } else {
+      process.stdout.write(TAG + '   State-space: not available (analyze-state-space.cjs missing or failed)\n');
     }
   }
 }

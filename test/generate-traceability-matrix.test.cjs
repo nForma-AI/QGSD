@@ -479,3 +479,52 @@ describe('coverage preservation', () => {
       'stdout should include coverage preservation line');
   });
 });
+
+// ── State-Space Integration (DECOMP-04) ─────────────────────────────────────
+
+describe('state_space integration', () => {
+  test('state_space section exists and is an object', () => {
+    const matrix = getMatrix();
+    assert.ok(matrix.state_space, 'matrix should have state_space');
+    assert.strictEqual(typeof matrix.state_space, 'object');
+  });
+
+  test('state_space has model entries', () => {
+    const matrix = getMatrix();
+    const keys = Object.keys(matrix.state_space);
+    assert.ok(keys.length > 0, 'state_space should have at least one model entry');
+  });
+
+  test('each entry has required fields', () => {
+    const matrix = getMatrix();
+    const validRisks = ['MINIMAL', 'LOW', 'MODERATE', 'HIGH'];
+    for (const [file, entry] of Object.entries(matrix.state_space)) {
+      assert.ok(validRisks.includes(entry.risk_level),
+        file + ' should have valid risk_level, got: ' + entry.risk_level);
+      assert.strictEqual(typeof entry.has_unbounded, 'boolean',
+        file + ' should have boolean has_unbounded');
+      assert.ok(Array.isArray(entry.unbounded_domains),
+        file + ' should have array unbounded_domains');
+      assert.ok(
+        entry.estimated_states === null || typeof entry.estimated_states === 'number',
+        file + ' estimated_states should be null or number'
+      );
+    }
+  });
+
+  test('QGSDQuorum_xstate is HIGH risk in matrix', () => {
+    const matrix = getMatrix();
+    const xstate = matrix.state_space['.formal/tla/QGSDQuorum_xstate.tla'];
+    assert.ok(xstate, 'QGSDQuorum_xstate.tla should be in state_space');
+    assert.strictEqual(xstate.risk_level, 'HIGH');
+    assert.strictEqual(xstate.has_unbounded, true);
+  });
+
+  test('--json mode includes state_space', () => {
+    const result = run('--json');
+    assert.strictEqual(result.status, 0);
+    const data = JSON.parse(result.stdout);
+    assert.ok(data.state_space, '--json output should have state_space');
+    assert.ok(Object.keys(data.state_space).length > 0, 'state_space should not be empty');
+  });
+});
