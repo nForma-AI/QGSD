@@ -69,6 +69,7 @@ const {
   buildPolicyChoices,
   validateTimeout, validateUpdatePolicy,
   runAutoUpdateCheck,
+  probeAndPersistKey,
 } = pure;
 
 const { updateAgents, getUpdateStatuses } = require('./update-agents.cjs');
@@ -1218,6 +1219,36 @@ async function providerKeysFlow() {
   }
 }
 
+// ─── Post-Rotation Validation (CRED-01: fire-and-forget, non-blocking) ───────
+/**
+ * Fire-and-forget post-rotation validation.
+ * Probes each rotated slot and persists key_status to qgsd.json.
+ * Does NOT block the caller -- called with .catch(() => {}).
+ * Uses sequential for...of to avoid keychain concurrency (same pattern as rotation loop).
+ * Reuses probeAndPersistKey from manage-agents-core.cjs (DRY -- do not duplicate probe/classify/write logic).
+ */
+async function validateRotatedKeys(rotatedSlots) {
+  const data = readClaudeJson();
+  const servers = getGlobalMcpServers(data);
+  const secretsLib = loadSecrets();
+  for (const slotName of rotatedSlots) {
+    const cfg = servers[slotName] || {};
+    const env = cfg.env || {};
+    if (!env.ANTHROPIC_BASE_URL) continue;
+    let apiKey = env.ANTHROPIC_API_KEY || '';
+    // If keytar is available, try to read the key from secure storage
+    // Follow the SAME pattern as probeAllSlots (manage-agents-core.cjs line 620-627)
+    if (secretsLib) {
+      try {
+        const account = deriveKeytarAccount(slotName);
+        const k = await secretsLib.get('qgsd', account);
+        if (k) apiKey = k;
+      } catch (_) {}
+    }
+    await probeAndPersistKey(slotName, env.ANTHROPIC_BASE_URL, apiKey);
+  }
+}
+
 // ─── Batch Rotate Keys ────────────────────────────────────────────────────────
 async function batchRotateFlow() {
   const data    = readClaudeJson();
@@ -1271,6 +1302,8 @@ async function batchRotateFlow() {
   if (rotated.length) {
     if (!secrets) writeClaudeJson(data);
     toast(`✓ ${rotated.length} slot(s) rotated`);
+    // Fire-and-forget validation (CRED-01: does not block quorum dispatch)
+    validateRotatedKeys(rotated).catch(() => {});
   } else {
     toast('No keys rotated');
   }

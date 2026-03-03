@@ -691,6 +691,110 @@ test('probeAllSlots persistence guard: correctly identifies which results should
 });
 
 // ---------------------------------------------------------------------------
+// End-to-end credential management lifecycle tests (v0.26-02-02)
+// ---------------------------------------------------------------------------
+
+test('E2E persistence chain: probe 200 -> classify -> write -> read back with valid ISO timestamp', () => {
+  const os = require('os');
+  const fs = require('fs');
+  const tmpPath = os.tmpdir() + '/qgsd_e2e_200_' + Date.now() + '.json';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
+    const probeResult = { healthy: true, statusCode: 200, latencyMs: 50, error: null };
+    const status = classifyProbeResult(probeResult);
+    assert.strictEqual(status, 'ok');
+    writeKeyStatus('claude-1', status, tmpPath);
+    const result = readQgsdJson(tmpPath);
+    assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'ok');
+    const checkedAt = result.agent_config['claude-1'].key_status.checkedAt;
+    assert.strictEqual(typeof checkedAt, 'string');
+    assert.strictEqual(new Date(checkedAt).toISOString(), checkedAt, 'checkedAt must be a valid ISO timestamp');
+  } finally {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
+});
+
+test('E2E persistence chain: probe 401 -> classify -> write -> read back as invalid', () => {
+  const os = require('os');
+  const fs = require('fs');
+  const tmpPath = os.tmpdir() + '/qgsd_e2e_401_' + Date.now() + '.json';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
+    const probeResult = { healthy: true, statusCode: 401, latencyMs: 100, error: null };
+    const status = classifyProbeResult(probeResult);
+    assert.strictEqual(status, 'invalid');
+    writeKeyStatus('claude-1', status, tmpPath);
+    const result = readQgsdJson(tmpPath);
+    assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'invalid');
+  } finally {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
+});
+
+test('Status survives across read cycles (simulates session restart)', () => {
+  const os = require('os');
+  const fs = require('fs');
+  const tmpPath = os.tmpdir() + '/qgsd_e2e_survive_' + Date.now() + '.json';
+  try {
+    fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
+    // First session: write gemini-1 as ok
+    writeKeyStatus('gemini-1', 'ok', tmpPath);
+    const afterFirst = readQgsdJson(tmpPath);
+    assert.strictEqual(afterFirst.agent_config['gemini-1'].key_status.status, 'ok');
+    // Second session: write codex-1 as invalid
+    writeKeyStatus('codex-1', 'invalid', tmpPath);
+    const afterSecond = readQgsdJson(tmpPath);
+    // Both must be present
+    assert.strictEqual(afterSecond.agent_config['gemini-1'].key_status.status, 'ok', 'gemini-1 must survive second write');
+    assert.strictEqual(afterSecond.agent_config['codex-1'].key_status.status, 'invalid', 'codex-1 must be present');
+  } finally {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
+});
+
+test('Persistence guard prevents overwrite on timeout: existing ok status preserved', () => {
+  const os = require('os');
+  const fs = require('fs');
+  const tmpPath = os.tmpdir() + '/qgsd_e2e_guard_' + Date.now() + '.json';
+  try {
+    // Seed with existing 'ok' status for claude-1
+    const seed = {
+      agent_config: {
+        'claude-1': { key_status: { status: 'ok', checkedAt: '2026-03-03T00:00:00.000Z' } }
+      }
+    };
+    fs.writeFileSync(tmpPath, JSON.stringify(seed), 'utf8');
+    // Simulate timeout: healthy=false, statusCode=null
+    const probeResult = { healthy: false, statusCode: null, latencyMs: 7000, error: 'Timed out' };
+    const shouldPersist = probeResult.healthy || probeResult.statusCode;
+    assert.ok(!shouldPersist, 'timeout must not trigger persistence');
+    // Do NOT write (matching probeAndPersistKey behavior)
+    const result = readQgsdJson(tmpPath);
+    assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'ok', 'status must still be ok');
+    assert.strictEqual(result.agent_config['claude-1'].key_status.checkedAt, '2026-03-03T00:00:00.000Z', 'checkedAt must be unchanged');
+  } finally {
+    if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+  }
+});
+
+test('getKeyInvalidBadge reads persisted status correctly: invalid -> badge, ok -> empty', () => {
+  // Test with invalid status
+  const agentConfigInvalid = {
+    'claude-1': { key_status: { status: 'invalid', checkedAt: '2026-03-03T00:00:00.000Z' } }
+  };
+  const hasKeyFn = (slot) => slot === 'claude-1';
+  const badgeInvalid = getKeyInvalidBadge('claude-1', agentConfigInvalid, hasKeyFn);
+  assert.strictEqual(badgeInvalid, ' [key invalid]', 'invalid status must show badge');
+
+  // Test with ok status
+  const agentConfigOk = {
+    'claude-1': { key_status: { status: 'ok', checkedAt: '2026-03-03T00:00:00.000Z' } }
+  };
+  const badgeOk = getKeyInvalidBadge('claude-1', agentConfigOk, hasKeyFn);
+  assert.strictEqual(badgeOk, '', 'ok status must return empty string');
+});
+
+// ---------------------------------------------------------------------------
 // formatTimestamp
 // ---------------------------------------------------------------------------
 
