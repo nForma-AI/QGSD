@@ -1936,15 +1936,27 @@ function renderReqCoverage() {
     }
     lines.push('');
 
-    // Category breakdown
+    // Category group breakdown with "Includes" column
     lines.push('{bold}By Category{/bold}');
     const cats = Object.entries(cov.byCategory).sort((a, b) => b[1].total - a[1].total);
+
+    // Build "Includes" column: collect category_raw values per group
+    const groupRaws = {};
+    for (const r of requirements) {
+      const grp = r.category || 'Uncategorized';
+      const raw = r.category_raw || grp;
+      if (groupRaws[grp] === undefined) groupRaws[grp] = new Set();
+      if (raw !== grp) groupRaws[grp].add(raw);
+    }
+
     const catW = Math.max(...cats.map(([c]) => c.length), 12);
-    lines.push(`  ${pad('Category', catW)}  Total  Complete`);
-    lines.push('  ' + '─'.repeat(catW + 18));
+    lines.push(`  ${pad('Group', catW)}  Reqs  Complete  Includes`);
+    lines.push('  ' + '─'.repeat(catW + 50));
     for (const [cat, info] of cats) {
       const pct = info.total ? (info.complete / info.total * 100).toFixed(0) : '0';
-      lines.push(`  ${pad(cat, catW)}  ${pad(String(info.total), 5)}  ${info.complete} (${pct}%)`);
+      const raws = groupRaws[cat];
+      const includes = raws && raws.size > 0 ? [...raws].sort().slice(0, 5).join(', ') + (raws.size > 5 ? '...' : '') : '';
+      lines.push(`  ${pad(cat, catW)}  ${pad(String(info.total), 4)}  ${pad(info.complete + ' (' + pct + '%)', 8)}  {#666666-fg}${includes}{/}`);
     }
     lines.push('');
 
@@ -2018,11 +2030,14 @@ function renderReqList(reqs, filters) {
   if (filters.search)   filterDesc.push(`search="${filters.search}"`);
   const subtitle = filterDesc.length ? ` (${filterDesc.join(', ')})` : '';
 
-  lines.push(`{bold}Requirements (${reqs.length})${subtitle}{/bold}`);
-  lines.push('─'.repeat(70));
+  // Dynamic text width: fill remaining space in contentBox
+  const innerW = (screen.width || 120) - 26 - 2; // contentBox: left=26, borders=2
 
-  const W = { id: 12, status: 3, cat: 16, text: 36 };
-  lines.push(`  ${pad('ID', W.id)}  St  ${pad('Category', W.cat)}  Text`);
+  lines.push(`{bold}Requirements (${reqs.length})${subtitle}{/bold}`);
+  lines.push('─'.repeat(Math.max(70, innerW)));
+  const fixed  = 2 + 12 + 2 + 6 + 2 + 16 + 2; // indent + ID + gap + Status + gap + Category + gap
+  const W = { id: 12, status: 6, cat: 16, text: Math.max(20, innerW - fixed - 1) }; // -1 safety margin
+  lines.push(`  ${pad('ID', W.id)}  ${pad('Status', W.status)}  ${pad('Category', W.cat)}  Text`);
   lines.push('  ' + '─'.repeat(W.id + 2 + W.status + 2 + W.cat + 2 + W.text));
 
   // Check model-registry AND requirement.formal_models for FM badge
@@ -2040,9 +2055,11 @@ function renderReqList(reqs, filters) {
 
   for (const r of reqs) {
     const icon = r.status === 'Complete' ? '{green-fg}✓{/}' : '{yellow-fg}○{/}';
-    const fm   = reqsWithModels.has(r.id) ? ' {cyan-fg}[FM]{/}' : '';
+    const hasFm = reqsWithModels.has(r.id);
+    const textW = hasFm ? W.text - 5 : W.text; // reserve 5 visual chars for " [FM]"
+    const fm    = hasFm ? ' {cyan-fg}[FM]{/}' : '';
     lines.push(
-      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}   ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, W.text)}${fm}`
+      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}${' '.repeat(W.status - 1)}  ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, textW)}${fm}`
     );
   }
 

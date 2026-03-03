@@ -20,10 +20,13 @@ function parseRequirements(content) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Match category headers: ### Category — PREFIX or ### Category -- PREFIX
-    const categoryMatch = line.match(/^###\s+(.+?)\s+[—–-]{1,2}\s*([A-Z]+)$/);
-    if (categoryMatch) {
-      currentCategory = categoryMatch[1].trim();
+    // Match category headers: ### Category — PREFIX, ### Category (PREFIX), ### Category — Multi Word, ### Category
+    const headerMatch = line.match(/^###\s+(.+)$/);
+    if (headerMatch) {
+      let cat = headerMatch[1].trim();
+      cat = cat.replace(/\s+[—–-]{1,2}\s+.+$/, '');  // "Foo — Bar" → "Foo"
+      cat = cat.replace(/\s*\([^)]+\)\s*$/, '');       // "Foo (BAR)" → "Foo"
+      currentCategory = cat.trim() || null;
       continue;
     }
 
@@ -172,6 +175,10 @@ function validateEnvelope(obj) {
       errors.push('requirements[' + idx + '].background must be a string if present');
     }
 
+    if (req.category_raw !== undefined && typeof req.category_raw !== 'string') {
+      errors.push('requirements[' + idx + '].category_raw must be a string if present');
+    }
+
     if (!req.provenance || typeof req.provenance !== 'object') {
       errors.push('requirements[' + idx + '].provenance must be an object');
     } else {
@@ -213,7 +220,8 @@ function mergeFileIntoMap(reqMap, filePath) {
   const milestone = extractMilestone(content);
 
   requirements.forEach(function(req) {
-    const trace = traceability[req.id] || { phase: 'unknown', status: 'Pending' };
+    // Use traceability table when available; fall back to checkbox state [x] = Complete
+    const trace = traceability[req.id] || { phase: 'unknown', status: req.completed ? 'Complete' : 'Pending' };
     reqMap.set(req.id, {
       id: req.id,
       text: req.text,
@@ -284,6 +292,31 @@ function aggregateRequirements(options) {
     }
   });
 
+  // Apply category group consolidation from formal/category-groups.json
+  const groupsPath = path.join(path.dirname(outputPath), 'category-groups.json');
+  let categoryGroups = null;
+  const unmappedCategories = [];
+  if (fs.existsSync(groupsPath)) {
+    try {
+      categoryGroups = JSON.parse(fs.readFileSync(groupsPath, 'utf8'));
+    } catch (_) { /* ignore parse errors, skip grouping */ }
+  }
+  if (categoryGroups) {
+    const seen = new Set();
+    merged.forEach(function(req) {
+      const group = categoryGroups[req.category];
+      if (group) {
+        req.category_raw = req.category;
+        req.category = group;
+      } else if (req.category !== 'Uncategorized') {
+        if (!seen.has(req.category)) {
+          unmappedCategories.push(req.category);
+          seen.add(req.category);
+        }
+      }
+    });
+  }
+
   // Compute content hash from the requirements array (before envelope wrapping)
   const contentHash = computeContentHash(merged);
 
@@ -328,7 +361,8 @@ function aggregateRequirements(options) {
   return {
     valid: true,
     requirementCount: merged.length,
-    outputPath: outputPath
+    outputPath: outputPath,
+    unmappedCategories: unmappedCategories
   };
 }
 
@@ -381,6 +415,22 @@ if (require.main === module) {
 
       const merged = Array.from(reqMap.values());
       merged.sort(function(a, b) { return a.id.localeCompare(b.id); });
+
+      // Apply category group consolidation (same as write path)
+      const groupsPath = path.join('formal', 'category-groups.json');
+      if (fs.existsSync(groupsPath)) {
+        try {
+          const categoryGroups = JSON.parse(fs.readFileSync(groupsPath, 'utf8'));
+          merged.forEach(function(req) {
+            const group = categoryGroups[req.category];
+            if (group) {
+              req.category_raw = req.category;
+              req.category = group;
+            }
+          });
+        } catch (_) { /* ignore */ }
+      }
+
       const contentHash = computeContentHash(merged);
       const now = deterministic
         ? '2026-03-01T20:32:24.000Z'
