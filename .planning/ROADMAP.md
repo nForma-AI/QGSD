@@ -1222,7 +1222,7 @@ Plans:
 
 - [x] **Phase v0.24-01: Provider Infrastructure and Failover** - Explicit provider-to-slot mapping in providers.json and retry-with-backoff in call-quorum-slot.cjs (4/4 plans complete, FAIL-01+FAIL-02 verified)
 - [x] **Phase v0.24-02: Dispatch Reliability** - Pre-dispatch health probes, scoreboard availability windows, and success-rate-ordered dispatch list (completed 2026-03-03)
-- 🚧 **Phase v0.24-03: Quorum Observability** - Structured per-round telemetry, delivery rate tracking in scoreboard, and per-slot flakiness scoring (in progress: 1/3 plans complete)
+- [x] **Phase v0.24-03: Quorum Observability** - Structured per-round telemetry, delivery rate tracking in scoreboard, and per-slot flakiness scoring (completed 2026-03-03: 3/3 plans complete, OBS-01+OBS-02+OBS-03 verified)
 - [ ] **Phase v0.24-04: Self-Healing Consensus** - Early escalation when P(consensus) drops below threshold and auto-adjustment of maxDeliberation
 
 ### Phase v0.24-01: Provider Infrastructure and Failover
@@ -1265,8 +1265,8 @@ Plans:
   4. High-flakiness slots are deprioritized in dispatch ordering -- observable by comparing dispatch position before and after a slot accumulates failures
 **Plans**: 3 plans
 - [x] **Plan 01: TDD Test Scaffolding** — 15 GREEN unit tests (telemetry record shape, session ID resolution, delivery stats calculation, flakiness scoring, dispatch ordering) and 19 RED structural tests for Plans 02-03 (completed 2026-03-03)
-- [ ] v0.24-03-02-PLAN.md -- Per-slot telemetry logging in call-quorum-slot.cjs (OBS-01)
-- [ ] v0.24-03-03-PLAN.md -- Scoreboard delivery stats, flakiness scoring, and flakiness-aware dispatch ordering (OBS-02, OBS-03)
+- [x] **Plan 02: Per-slot Telemetry Logging** — recordTelemetry function with JSONL logging to .planning/quorum-rounds-SESSION.jsonl, session ID fallback, fail-open error handling (OBS-01 complete, 2026-03-03)
+- [x] **Plan 03: Scoreboard Delivery Stats & Flakiness Scoring** — computeDeliveryStats and computeFlakiness functions, flakiness-aware dispatch ordering in qgsd-prompt.js (OBS-02+OBS-03 complete, 2026-03-03)
 
 ### Phase v0.24-04: Self-Healing Consensus
 **Goal**: The quorum system detects when consensus is unlikely and acts early rather than wasting rounds -- escalation fires before maxDeliberation is exhausted, and the system recommends configuration changes when persistent degradation is detected
@@ -1280,7 +1280,7 @@ Plans:
 
 | v0.24-01. Provider Infrastructure and Failover | v0.24 | 4/4 | Complete   | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | Complete    | 2026-03-03 | - |
-| v0.24-03. Quorum Observability | v0.24 | 0/3 | Planned | - |
+| v0.24-03. Quorum Observability | v0.24 | 3/3 | Complete | 2026-03-03 |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
 
 ### Phase v0.24-05: Slot Worker Thin Passthrough
