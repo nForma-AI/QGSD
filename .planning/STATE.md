@@ -80,10 +80,11 @@ Recent decisions affecting current work:
 |---|---|---|---|---|---|
 | 134 | Integrate formal_models field and detect-coverage-gaps into requirements TUI | 2026-03-03 | c1d5bf18 | Verified | [134-integrate-formal-models-field-and-detect](./quick/134-integrate-formal-models-field-and-detect/) |
 | 135 | Rename formal/ to .formal/ and update all references | 2026-03-03 | 5fe49c8c | Complete | [135-rename-formal-to-formal-and-update-all-r](./quick/135-rename-formal-to-formal-and-update-all-r/) |
+| 137 | Fix empty roster handling — add validation and graceful degradation when no agents are configured in providers.json | 2026-03-03 | 2f9058c5 | Pending | [137-fix-empty-roster-handling-add-validation](./quick/137-fix-empty-roster-handling-add-validation/) |
 
 ## Session Continuity
 
 Last session: 2026-03-03
-Last activity: 2026-03-03 -- Phase v0.25-06 complete: annotation regression fix (ANNOT-01, ANNOT-02, ANNOT-03 closed)
-Stopped at: Phase v0.25-06 complete, ready for v0.25-07 (Retroactive Verification & Bookkeeping)
+Last activity: 2026-03-03 -- Completed quick task 137: Fix empty roster handling — add validation and graceful degradation when no agents are configured in providers.json
+Stopped at: Quick task 137 complete (2f9058c5), ready for next phase or task
 Resume file: None
