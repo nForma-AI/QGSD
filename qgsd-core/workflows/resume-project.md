@@ -132,6 +132,11 @@ fi
 <step name="present_status">
 Present complete project status to user:
 
+```bash
+# Get formal coverage summary
+FORMAL=$(node ~/.claude/qgsd/bin/gsd-tools.cjs formal-summary 2>/dev/null)
+```
+
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  PROJECT STATUS                                               ║
@@ -141,9 +146,16 @@ Present complete project status to user:
 ║  Phase: [X] of [Y] - [Phase name]                            ║
 ║  Plan:  [A] of [B] - [Status]                                ║
 ║  Progress: [██████░░░░] XX%                                  ║
+║  Formal: {complete_count}/{total} reqs complete, {coverage_pct}% model coverage  ║
 ║                                                               ║
 ║  Last activity: [date] - [what happened]                     ║
 ╚══════════════════════════════════════════════════════════════╝
+
+[If FORMAL.available is true AND (uncovered_count > 0 OR pending_count > 0):]
+Formal gaps:
+    - {uncovered_count} requirements without formal model coverage
+    - {pending_count} requirements still pending
+    Actions: /qgsd:close-formal-gaps | /qgsd:new-milestone
 
 [If HAS_ACTIVITY is true:]
 

@@ -89,6 +89,9 @@ Use this instead of manually reading/parsing ROADMAP.md.
 ```bash
 # Get formatted progress bar
 PROGRESS_BAR=$(node ~/.claude/qgsd/bin/gsd-tools.cjs progress bar --raw)
+
+# Get formal coverage summary
+FORMAL=$(node ~/.claude/qgsd/bin/gsd-tools.cjs formal-summary 2>/dev/null)
 ```
 
 Present:
@@ -122,6 +125,13 @@ CONTEXT: [✓ if has_context | - if not]
 ## Active Debug Sessions
 - [count] active — /qgsd:debug to continue
 (Only show this section if count > 0)
+
+## Formal Coverage
+(Only show this section if FORMAL.available is true)
+Requirements: {complete_count} Complete / {pending_count} Pending (of {total})
+Model coverage: {coverage_pct}% ({covered_by_model}/{total} requirements linked to formal models)
+(If uncovered_count > 0:) {uncovered_count} uncovered — /qgsd:close-formal-gaps to address
+(If pending_count > 0:) {pending_count} pending — /qgsd:new-milestone to plan future work
 
 ## What's Next
 [Next phase/plan objective from roadmap analyze]

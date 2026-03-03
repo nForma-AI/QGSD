@@ -2160,6 +2160,102 @@ function cmdSummaryExtract(cwd, summaryPath, fields, raw) {
   output(fullResult, raw);
 }
 
+// ─── Formal Summary ───────────────────────────────────────────────────────────
+
+function cmdFormalSummary(cwd, raw) {
+  const requirementsPath = path.join(cwd, '.formal', 'requirements.json');
+  const modelRegistryPath = path.join(cwd, '.formal', 'model-registry.json');
+
+  // Default response for missing files
+  const defaultResponse = {
+    available: false,
+    total: 0,
+    complete_count: 0,
+    pending_count: 0,
+    covered_by_model: 0,
+    coverage_pct: 0,
+    uncovered_count: 0,
+    uncovered_ids: [],
+    pending_ids: [],
+  };
+
+  // Read requirements.json
+  let requirements = [];
+  if (fs.existsSync(requirementsPath)) {
+    try {
+      const content = fs.readFileSync(requirementsPath, 'utf-8');
+      const data = JSON.parse(content);
+      requirements = Array.isArray(data.requirements) ? data.requirements : [];
+    } catch (e) {
+      console.error(`Warning: Failed to parse requirements.json: ${e.message}`);
+      output(defaultResponse, raw, JSON.stringify(defaultResponse));
+      return;
+    }
+  } else {
+    output(defaultResponse, raw, JSON.stringify(defaultResponse));
+    return;
+  }
+
+  // Count requirements by status
+  const completeCount = requirements.filter(r => r.status === 'Complete').length;
+  const pendingCount = requirements.filter(r => r.status === 'Pending').length;
+  const total = requirements.length;
+
+  // Collect pending IDs
+  const pendingIds = requirements
+    .filter(r => r.status === 'Pending')
+    .map(r => r.id);
+
+  // Read model-registry.json to get covered requirements
+  let coveredByModel = 0;
+  const modelCoverageSet = new Set();
+
+  if (fs.existsSync(modelRegistryPath)) {
+    try {
+      const content = fs.readFileSync(modelRegistryPath, 'utf-8');
+      const data = JSON.parse(content);
+      const models = data.models || {};
+
+      // Flatten and deduplicate all requirement IDs from model requirements arrays
+      for (const modelKey in models) {
+        const model = models[modelKey];
+        if (model.requirements && Array.isArray(model.requirements)) {
+          for (const reqId of model.requirements) {
+            modelCoverageSet.add(reqId);
+          }
+        }
+      }
+
+      coveredByModel = modelCoverageSet.size;
+    } catch (e) {
+      console.error(`Warning: Failed to parse model-registry.json: ${e.message}`);
+      // Continue with empty coverage
+    }
+  }
+
+  // Compute uncovered IDs (IDs in requirements.json but not in model-registry)
+  const allReqIds = requirements.map(r => r.id);
+  const uncoveredIds = allReqIds.filter(id => !modelCoverageSet.has(id));
+  const uncoveredCount = uncoveredIds.length;
+
+  // Compute coverage percentage
+  const coveragePct = total > 0 ? Math.round((coveredByModel / total) * 100) : 0;
+
+  const result = {
+    available: true,
+    total,
+    complete_count: completeCount,
+    pending_count: pendingCount,
+    covered_by_model: coveredByModel,
+    coverage_pct: coveragePct,
+    uncovered_count: uncoveredCount,
+    uncovered_ids: uncoveredIds,
+    pending_ids: pendingIds,
+  };
+
+  output(result, raw, JSON.stringify(result));
+}
+
 // ─── Web Search (Brave API) ──────────────────────────────────────────────────
 
 async function cmdWebsearch(query, options, raw) {
@@ -5505,6 +5601,11 @@ async function main() {
 
     case 'activity-get': {
       cmdActivityGet(cwd, raw);
+      break;
+    }
+
+    case 'formal-summary': {
+      cmdFormalSummary(cwd, raw);
       break;
     }
 
