@@ -661,7 +661,7 @@ function usage(prefix = 'node bin/account-manager.cjs') {
   ].join('\n'));
 }
 
-// ─── Exported entry point (called by qgsd.cjs) ────────────────────────────────
+// ─── Exported entry point (called by qgsd-manage.cjs) ─────────────────────────
 
 async function run(argv, usagePrefix) {
   const getArg  = (f) => { const i = argv.indexOf(f); return i !== -1 && argv[i + 1] ? argv[i + 1] : null; };

@@ -652,6 +652,144 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): update ve
   --files .planning/STATE.md ${QUICK_DIR}/${next_num}-VERIFICATION.md
 ```
 
+---
+
+**Step 6.7: Requirement elevation (only when `$FULL_MODE` AND `$VERIFICATION_STATUS = "Verified"`)**
+
+Skip this step if NOT `$FULL_MODE` or `$VERIFICATION_STATUS` is not `"Verified"`.
+
+Display banner:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► REQUIREMENT ELEVATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+◆ Drafting requirement from verified quick task...
+```
+
+**6.7.1: Draft requirement via Haiku**
+
+Spawn a Haiku subagent to draft a formal requirement from the completed task:
+
+```
+Task(
+  subagent_type="general-purpose",
+  model="haiku",
+  description="Draft requirement from quick task",
+  prompt="
+You are drafting a formal requirement from a completed quick task.
+
+## Task context
+- Description: ${DESCRIPTION}
+- Plan: Read ${QUICK_DIR}/${next_num}-PLAN.md
+- Summary: Read ${QUICK_DIR}/${next_num}-SUMMARY.md
+
+## Existing requirements
+Read formal/requirements.json. Note all existing ID prefixes and their counts.
+
+## Your task
+
+Draft a single requirement that captures what this quick task delivered. Follow these rules:
+
+1. **ID**: Pick the most semantically appropriate existing prefix. If no prefix fits, propose a new one (2-6 uppercase letters). Append the next available number for that prefix (e.g., if STOP-09 exists, use STOP-10).
+
+2. **Text**: One sentence describing the deliverable — what the system now does, not what the task was. Use present tense, imperative style matching existing requirements.
+
+3. **Category**: Match an existing category from the same prefix group, or propose a new one.
+
+4. **Phase**: Use 'unknown' (quick tasks are not phase-tracked).
+
+5. **Background**: 1-2 sentences explaining why this requirement exists and what problem it solves.
+
+## Response format
+
+Respond with EXACTLY this JSON (no markdown fencing, no extra text):
+{
+  \"id\": \"PREFIX-NN\",
+  \"text\": \"...\",
+  \"category\": \"...\",
+  \"phase\": \"unknown\",
+  \"status\": \"Complete\",
+  \"background\": \"...\"
+}
+"
+)
+```
+
+Parse the Haiku response as JSON. Store as `$DRAFT_REQ`.
+
+**6.7.2: Present to user for approval**
+
+Display the drafted requirement:
+
+```
+◆ Proposed requirement from quick task ${next_num}:
+
+  ID:         ${DRAFT_REQ.id}
+  Text:       ${DRAFT_REQ.text}
+  Category:   ${DRAFT_REQ.category}
+  Background: ${DRAFT_REQ.background}
+```
+
+Ask the user:
+
+```
+AskUserQuestion(
+  header: "Elevate?",
+  question: "Add this requirement to formal/requirements.json?",
+  options: [
+    { label: "Yes, add it", description: "Add the requirement as drafted" },
+    { label: "Edit first", description: "I'll modify the ID, text, or category before adding" },
+    { label: "Skip", description: "Don't add a requirement for this task" }
+  ],
+  multiSelect: false
+)
+```
+
+**Route on user response:**
+
+- **"Yes, add it"** → Proceed to 6.7.3.
+- **"Edit first"** → Ask follow-up questions for each field the user wants to change (id, text, category, background). Update `$DRAFT_REQ` with user edits. Then proceed to 6.7.3.
+- **"Skip"** → Display: `◆ Requirement elevation skipped.` Proceed to completion banner.
+
+**6.7.3: Write requirement with conflict checks**
+
+Execute the add-requirement workflow inline (same checks as `/qgsd:add-requirement`):
+
+1. **Duplicate ID check**: Search existing requirements for exact ID match on `$DRAFT_REQ.id`. If found, show conflict and ask user for a different ID.
+
+2. **Semantic conflict check** (MANDATORY — always runs): Spawn Haiku with the conflict-detection prompt from `add-requirement.md` workflow (step `check_semantic_conflicts`) against the ENTIRE envelope, not just same-prefix. If `CONFLICT` returned, show it to user and ask how to proceed.
+
+3. **Unfreeze** `formal/requirements.json` if `frozen_at` is not null.
+
+4. **Append** `$DRAFT_REQ` to the requirements array with provenance:
+   ```json
+   {
+     "source_file": "${QUICK_DIR}/${next_num}-PLAN.md",
+     "milestone": "quick-${next_num}"
+   }
+   ```
+
+5. **Sort** array by ID, **recompute** `content_hash`, update `aggregated_at`.
+
+6. **Write** atomically (temp + rename).
+
+7. **Re-freeze** the envelope.
+
+8. **Commit**:
+   ```bash
+   node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
+     --files formal/requirements.json
+   ```
+
+9. Display:
+   ```
+   ◆ Requirement ${DRAFT_REQ.id} added to formal/requirements.json
+     Total requirements: ${new_count}
+   ```
+
+---
+
 Display final completion banner:
 
 ```
@@ -663,6 +801,7 @@ Quick Task ${next_num}: ${DESCRIPTION}
 
 Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
+${DRAFT_REQ ? 'Requirement: ' + DRAFT_REQ.id + ' (elevated to formal/requirements.json)' : ''}
 Commit: ${commit_hash}
 
 ---
@@ -694,6 +833,11 @@ Ready for next task: /qgsd:quick
 - [ ] (--full) Quorum reviews VERIFICATION.md after passed status (step 6.5.1)
 - [ ] Executor commits PLAN.md + SUMMARY.md + STATE.md atomically
 - [ ] (--full) Orchestrator updates STATE.md Status cell after verification
+- [ ] (--full) Requirement elevation runs when VERIFICATION_STATUS is "Verified" (step 6.7)
+- [ ] (--full) Haiku drafts requirement from task context (description + plan + summary)
+- [ ] (--full) User is asked to approve, edit, or skip the drafted requirement
+- [ ] (--full) If approved: duplicate ID check, semantic conflict check (Haiku), then write to formal/requirements.json with unfreeze/re-freeze lifecycle
+- [ ] (--full) Elevated requirement uses provenance { source_file: quick plan path, milestone: "quick-NNN" }
 </success_criteria>
 
 <anti_patterns>

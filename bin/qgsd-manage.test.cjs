@@ -1,8 +1,8 @@
 'use strict';
-// Test suite for bin/agents.cjs
+// Test suite for bin/qgsd-manage.cjs
 // Strategy: inject mock modules into require.cache before requiring the source,
 // so blessed never creates a real terminal. Pure functions are tested directly.
-// node --test bin/agents.test.cjs
+// node --test bin/qgsd-manage.test.cjs
 
 const { test, before, after } = require('node:test');
 const assert  = require('node:assert/strict');
@@ -63,7 +63,7 @@ const MOCK_UPDATE_AGENTS = {
 const BLESSED_PATH       = require.resolve('blessed');
 const CORE_PATH          = require.resolve('./manage-agents-core.cjs');
 const UPDATE_AGENTS_PATH = require.resolve('./update-agents.cjs');
-const SUBJECT_PATH       = require.resolve('./agents.cjs');
+const SUBJECT_PATH       = require.resolve('./qgsd-manage.cjs');
 
 let _pure;
 
@@ -84,7 +84,7 @@ before(() => {
     exports: MOCK_UPDATE_AGENTS,
   };
   // Now require the subject — require.main !== module, so startup code is skipped
-  _pure = require('./agents.cjs')._pure;
+  _pure = require('./qgsd-manage.cjs')._pure;
 });
 
 after(() => {
@@ -998,4 +998,180 @@ test('buildScoreboardLines: roster filter applies to dormant section too', () =>
     assert.ok(text.includes('codex-1'), 'roster dormant member codex-1 should appear');
     assert.ok(!text.includes('claude-kimi'), 'non-roster dormant claude-kimi should be filtered');
   }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 13. Circuit breaker CLI (merged from qgsd.cjs)
+// ─────────────────────────────────────────────────────────────────────────────
+// Spawns qgsd-manage.cjs as a subprocess with cwd set to a non-git temp dir
+// so getBreakerProjectRoot() falls back to process.cwd(), making state isolated.
+
+const { spawnSync } = require('child_process');
+const BREAKER_CLI = path.join(__dirname, 'qgsd-manage.cjs');
+
+function runBreaker(args, cwd) {
+  const result = spawnSync(process.execPath, [BREAKER_CLI, ...args], {
+    encoding: 'utf8',
+    cwd: cwd || os.tmpdir(),
+    timeout: 8000,
+  });
+  return {
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    exitCode: result.status,
+  };
+}
+
+function breakerStateFile(dir) {
+  return path.join(dir, '.claude', 'circuit-breaker-state.json');
+}
+
+function readBreakerState(dir) {
+  return JSON.parse(fs.readFileSync(breakerStateFile(dir), 'utf8'));
+}
+
+// ─── --disable-breaker ────────────────────────────────────────────────────────
+
+test('--disable-breaker: exits 0', () => {
+  const tmpDir = makeTmp();
+  try {
+    const { exitCode } = runBreaker(['--disable-breaker'], tmpDir);
+    assert.equal(exitCode, 0);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--disable-breaker: creates state file with disabled=true, active=false', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    const state = readBreakerState(tmpDir);
+    assert.equal(state.disabled, true);
+    assert.equal(state.active, false);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--disable-breaker: prints confirmation message', () => {
+  const tmpDir = makeTmp();
+  try {
+    const { stdout } = runBreaker(['--disable-breaker'], tmpDir);
+    assert.ok(stdout.includes('disabled'));
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--disable-breaker: preserves existing fields in state file', () => {
+  const tmpDir = makeTmp();
+  try {
+    const claudeDir = path.join(tmpDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(path.join(claudeDir, 'circuit-breaker-state.json'),
+      JSON.stringify({ active: true, oscillation_count: 3 }), 'utf8');
+    runBreaker(['--disable-breaker'], tmpDir);
+    const state = readBreakerState(tmpDir);
+    assert.equal(state.disabled, true);
+    assert.equal(state.active, false);
+    assert.equal(state.oscillation_count, 3, 'Existing fields should be preserved');
+  } finally { rmTmp(tmpDir); }
+});
+
+// ─── --enable-breaker ─────────────────────────────────────────────────────────
+
+test('--enable-breaker: exits 0', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    const { exitCode } = runBreaker(['--enable-breaker'], tmpDir);
+    assert.equal(exitCode, 0);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--enable-breaker: sets disabled=false, active=false', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    runBreaker(['--enable-breaker'], tmpDir);
+    const state = readBreakerState(tmpDir);
+    assert.equal(state.disabled, false);
+    assert.equal(state.active, false);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--enable-breaker: prints confirmation message', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    const { stdout } = runBreaker(['--enable-breaker'], tmpDir);
+    assert.ok(stdout.includes('enabled'));
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--enable-breaker: no-op when state file does not exist', () => {
+  const tmpDir = makeTmp();
+  try {
+    const { exitCode } = runBreaker(['--enable-breaker'], tmpDir);
+    assert.equal(exitCode, 0);
+    assert.equal(fs.existsSync(breakerStateFile(tmpDir)), false, 'Should not create state file');
+  } finally { rmTmp(tmpDir); }
+});
+
+// ─── --reset-breaker ──────────────────────────────────────────────────────────
+
+test('--reset-breaker: exits 0 when state file exists', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    const { exitCode } = runBreaker(['--reset-breaker'], tmpDir);
+    assert.equal(exitCode, 0);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--reset-breaker: deletes state file', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    assert.ok(fs.existsSync(breakerStateFile(tmpDir)), 'State file should exist before reset');
+    runBreaker(['--reset-breaker'], tmpDir);
+    assert.equal(fs.existsSync(breakerStateFile(tmpDir)), false, 'State file should be deleted after reset');
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--reset-breaker: exits 0 when no state file exists', () => {
+  const tmpDir = makeTmp();
+  try {
+    const { exitCode, stdout } = runBreaker(['--reset-breaker'], tmpDir);
+    assert.equal(exitCode, 0);
+    assert.ok(stdout.includes('No active'), 'Should report no state found');
+  } finally { rmTmp(tmpDir); }
+});
+
+test('--reset-breaker: prints confirmation when file was deleted', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    const { stdout } = runBreaker(['--reset-breaker'], tmpDir);
+    assert.ok(stdout.toLowerCase().includes('clear') || stdout.includes('breaker'));
+  } finally { rmTmp(tmpDir); }
+});
+
+// ─── Round-trip tests ─────────────────────────────────────────────────────────
+
+test('breaker: disable → enable → disable round-trip preserves state structure', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    runBreaker(['--enable-breaker'], tmpDir);
+    runBreaker(['--disable-breaker'], tmpDir);
+    const state = readBreakerState(tmpDir);
+    assert.equal(state.disabled, true);
+  } finally { rmTmp(tmpDir); }
+});
+
+test('breaker: disable → reset removes file; enable after reset is no-op', () => {
+  const tmpDir = makeTmp();
+  try {
+    runBreaker(['--disable-breaker'], tmpDir);
+    runBreaker(['--reset-breaker'], tmpDir);
+    assert.equal(fs.existsSync(breakerStateFile(tmpDir)), false);
+    runBreaker(['--enable-breaker'], tmpDir);
+    assert.equal(fs.existsSync(breakerStateFile(tmpDir)), false);
+  } finally { rmTmp(tmpDir); }
 });

@@ -2,10 +2,10 @@
 (*
  * formal/tla/QGSDCircuitBreaker.tla
  * Handwritten — not generated from XState.
- * Source: hooks/qgsd-circuit-breaker.js + bin/qgsd.cjs
+ * Source: hooks/qgsd-circuit-breaker.js + bin/qgsd-manage.cjs
  *
  * Models the circuit breaker CLI state machine.
- * State encoding (from bin/qgsd.cjs):
+ * State encoding (from bin/qgsd-manage.cjs):
  *   MONITORING = active=FALSE /\ disabled=FALSE
  *   TRIGGERED  = active=TRUE  /\ disabled=FALSE
  *   DISABLED   = disabled=TRUE (active forced FALSE by DisableBreaker)

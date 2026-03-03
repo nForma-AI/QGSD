@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "generated_at": "2026-03-03T11:48:30.529Z",
-    "generator_version": "1.0",
+    "generated_at": "2026-03-03T12:13:36.735Z",
+    "generator_version": "1.1",
     "data_sources": {
       "annotations": {
-        "file_count": 23,
-        "property_count": 93
+        "file_count": 19,
+        "property_count": 78
       },
       "model_registry": {
         "file_count": 24,
@@ -191,70 +191,6 @@
         {
           "model_file": "formal/alloy/quorum-composition.als",
           "property_name": "AllRulesHold",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "QUORUM-02": {
-      "id": "QUORUM-02",
-      "properties": [
-        {
-          "model_file": "formal/alloy/quorum-votes.als",
-          "property_name": "ThresholdPasses",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/alloy/quorum-votes.als",
-          "property_name": "BelowThresholdFails",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "UnanimityMet",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "SAFE-01": {
-      "id": "SAFE-01",
-      "properties": [
-        {
-          "model_file": "formal/alloy/quorum-votes.als",
-          "property_name": "ThresholdPasses",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/alloy/quorum-votes.als",
-          "property_name": "BelowThresholdFails",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "UnanimityMet",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "SAFE-04": {
-      "id": "SAFE-04",
-      "properties": [
-        {
-          "model_file": "formal/alloy/quorum-votes.als",
-          "property_name": "ZeroApprovalsFail",
           "source": "annotation",
           "latest_result": null,
           "check_id": null
@@ -594,13 +530,6 @@
           "source": "annotation",
           "latest_result": null,
           "check_id": null
-        },
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "DeliberationMonotone",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
         }
       ]
     },
@@ -754,111 +683,6 @@
         {
           "model_file": "formal/tla/QGSDPreFilter.tla",
           "property_name": "PreFilterTerminates",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "QUORUM-01": {
-      "id": "QUORUM-01",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "TypeOK",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/tla/QGSDQuorum_xstate.tla",
-          "property_name": "TypeOK",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "QUORUM-03": {
-      "id": "QUORUM-03",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "QuorumCeilingMet",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "SLOT-01": {
-      "id": "SLOT-01",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "QuorumCeilingMet",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "SAFE-02": {
-      "id": "SAFE-02",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "AllTransitionsValid",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "LOOP-01": {
-      "id": "LOOP-01",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "DeliberationBounded",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "P=? [ F<=9 s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "QUORUM-04": {
-      "id": "QUORUM-04",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "EventualConsensus",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "P=? [ F s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
-    },
-    "RECV-01": {
-      "id": "RECV-01",
-      "properties": [
-        {
-          "model_file": "formal/tla/QGSDQuorum.tla",
-          "property_name": "EventualConsensus",
           "source": "annotation",
           "latest_result": null,
           "check_id": null
@@ -1184,39 +1008,6 @@
           "check_id": null
         }
       ]
-    },
-    "PRM-01": {
-      "id": "PRM-01",
-      "properties": [
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "P=? [ F s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "R{\"rounds\"}=? [ F s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "P=? [ F<=9 s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        },
-        {
-          "model_file": "formal/prism/quorum.props",
-          "property_name": "P=? [ F<=10 s=1 ]",
-          "source": "annotation",
-          "latest_result": null,
-          "check_id": null
-        }
-      ]
     }
   },
   "properties": {
@@ -1356,38 +1147,6 @@
       "requirement_ids": [
         "SPEC-03",
         "COMP-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/alloy/quorum-votes.als::ThresholdPasses": {
-      "model_file": "formal/alloy/quorum-votes.als",
-      "property_name": "ThresholdPasses",
-      "requirement_ids": [
-        "QUORUM-02",
-        "SAFE-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/alloy/quorum-votes.als::BelowThresholdFails": {
-      "model_file": "formal/alloy/quorum-votes.als",
-      "property_name": "BelowThresholdFails",
-      "requirement_ids": [
-        "QUORUM-02",
-        "SAFE-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
-      "model_file": "formal/alloy/quorum-votes.als",
-      "property_name": "ZeroApprovalsFail",
-      "requirement_ids": [
-        "SAFE-04"
       ],
       "source": "annotation",
       "latest_result": null,
@@ -1803,89 +1562,6 @@
       "latest_result": null,
       "check_id": null
     },
-    "formal/tla/QGSDQuorum.tla::TypeOK": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "TypeOK",
-      "requirement_ids": [
-        "QUORUM-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::UnanimityMet": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "UnanimityMet",
-      "requirement_ids": [
-        "QUORUM-02",
-        "SAFE-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "QuorumCeilingMet",
-      "requirement_ids": [
-        "QUORUM-03",
-        "SLOT-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::AllTransitionsValid": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "AllTransitionsValid",
-      "requirement_ids": [
-        "SAFE-02"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::DeliberationBounded": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "DeliberationBounded",
-      "requirement_ids": [
-        "LOOP-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::DeliberationMonotone": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "DeliberationMonotone",
-      "requirement_ids": [
-        "SAFE-03"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum.tla::EventualConsensus": {
-      "model_file": "formal/tla/QGSDQuorum.tla",
-      "property_name": "EventualConsensus",
-      "requirement_ids": [
-        "QUORUM-04",
-        "RECV-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/tla/QGSDQuorum_xstate.tla::TypeOK": {
-      "model_file": "formal/tla/QGSDQuorum_xstate.tla",
-      "property_name": "TypeOK",
-      "requirement_ids": [
-        "QUORUM-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
     "formal/tla/QGSDRecruiting.tla::TypeOK": {
       "model_file": "formal/tla/QGSDRecruiting.tla",
       "property_name": "TypeOK",
@@ -2119,48 +1795,6 @@
       "latest_result": null,
       "check_id": null
     },
-    "formal/prism/quorum.props::P=? [ F s=1 ]": {
-      "model_file": "formal/prism/quorum.props",
-      "property_name": "P=? [ F s=1 ]",
-      "requirement_ids": [
-        "PRM-01",
-        "QUORUM-04"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/prism/quorum.props::R{\"rounds\"}=? [ F s=1 ]": {
-      "model_file": "formal/prism/quorum.props",
-      "property_name": "R{\"rounds\"}=? [ F s=1 ]",
-      "requirement_ids": [
-        "PRM-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/prism/quorum.props::P=? [ F<=9 s=1 ]": {
-      "model_file": "formal/prism/quorum.props",
-      "property_name": "P=? [ F<=9 s=1 ]",
-      "requirement_ids": [
-        "PRM-01",
-        "LOOP-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
-    "formal/prism/quorum.props::P=? [ F<=10 s=1 ]": {
-      "model_file": "formal/prism/quorum.props",
-      "property_name": "P=? [ F<=10 s=1 ]",
-      "requirement_ids": [
-        "PRM-01"
-      ],
-      "source": "annotation",
-      "latest_result": null,
-      "check_id": null
-    },
     "formal/prism/mcp-availability.pm::(model-level)": {
       "model_file": "formal/prism/mcp-availability.pm",
       "property_name": "(model-level)",
@@ -2185,9 +1819,9 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 210,
-    "covered_count": 57,
-    "coverage_percentage": 27.1,
+    "total_requirements": 226,
+    "covered_count": 49,
+    "coverage_percentage": 21.7,
     "uncovered_requirements": [
       "ACT-01",
       "ACT-02",
@@ -2199,6 +1833,11 @@
       "AGENT-01",
       "AGENT-02",
       "AGENT-03",
+      "ANNOT-01",
+      "ANNOT-02",
+      "ANNOT-03",
+      "ANNOT-04",
+      "ANNOT-05",
       "ARCH-01",
       "ARCH-02",
       "ARCH-03",
@@ -2222,6 +1861,10 @@
       "DASH-01",
       "DASH-02",
       "DASH-03",
+      "DECOMP-01",
+      "DECOMP-02",
+      "DECOMP-03",
+      "DECOMP-04",
       "DIAG-01",
       "DIAG-02",
       "DIAG-03",
@@ -2232,6 +1875,7 @@
       "DISP-05",
       "DRIFT-01",
       "DRIFT-02",
+      "ENFC-01",
       "ENFC-02",
       "ENFC-03",
       "EVID-01",
@@ -2256,6 +1900,7 @@
       "KEY-04",
       "LIVE-01",
       "LIVE-02",
+      "LOOP-01",
       "LOOP-04",
       "MCP-01",
       "MCP-02",
@@ -2284,6 +1929,10 @@
       "PROV-03",
       "PRST-01",
       "PRST-02",
+      "QUORUM-01",
+      "QUORUM-02",
+      "QUORUM-03",
+      "RECV-01",
       "REDACT-01",
       "REDACT-02",
       "REDACT-03",
@@ -2295,9 +1944,12 @@
       "RLS-02",
       "RLS-03",
       "RLS-04",
+      "SAFE-01",
+      "SAFE-02",
       "SCHEMA-01",
       "SCHEMA-02",
       "SCHEMA-03",
+      "SCHEMA-04",
       "SENS-01",
       "SENS-02",
       "SENS-03",
@@ -2305,6 +1957,7 @@
       "SIG-02",
       "SIG-03",
       "SIG-04",
+      "SLOT-01",
       "SPEC-02",
       "SPEC-04",
       "STATE-01",
@@ -2317,6 +1970,11 @@
       "SYNC-02",
       "SYNC-03",
       "SYNC-04",
+      "TRACE-01",
+      "TRACE-02",
+      "TRACE-03",
+      "TRACE-04",
+      "TRACE-05",
       "TRIAGE-01",
       "TRIAGE-02",
       "UNIF-01",
@@ -2344,5 +2002,192 @@
       "WIZ-10"
     ],
     "orphan_properties": []
+  },
+  "bidirectional_validation": {
+    "asymmetric_links": [
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "LOOP-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json LOOP-01 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list LOOP-01 in requirements"
+      },
+      {
+        "model_file": "formal/prism/quorum.pm",
+        "requirement_id": "LOOP-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json LOOP-01 lists formal/prism/quorum.pm in formal_models but model-registry formal/prism/quorum.pm does not list LOOP-01 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "QUORUM-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json QUORUM-01 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list QUORUM-01 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "QUORUM-02",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json QUORUM-02 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list QUORUM-02 in requirements"
+      },
+      {
+        "model_file": "formal/alloy/quorum-votes.als",
+        "requirement_id": "QUORUM-02",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json QUORUM-02 lists formal/alloy/quorum-votes.als in formal_models but model-registry formal/alloy/quorum-votes.als does not list QUORUM-02 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "QUORUM-03",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json QUORUM-03 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list QUORUM-03 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "RECV-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json RECV-01 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list RECV-01 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "SAFE-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json SAFE-01 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list SAFE-01 in requirements"
+      },
+      {
+        "model_file": "formal/alloy/quorum-votes.als",
+        "requirement_id": "SAFE-01",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json SAFE-01 lists formal/alloy/quorum-votes.als in formal_models but model-registry formal/alloy/quorum-votes.als does not list SAFE-01 in requirements"
+      },
+      {
+        "model_file": "formal/tla/QGSDQuorum.tla",
+        "requirement_id": "SAFE-02",
+        "direction": "requirement_claims_model",
+        "detail": "requirements.json SAFE-02 lists formal/tla/QGSDQuorum.tla in formal_models but model-registry formal/tla/QGSDQuorum.tla does not list SAFE-02 in requirements"
+      }
+    ],
+    "stale_links": [
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-07",
+        "referenced_by": "model-registry formal/alloy/account-pool-structure.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-08",
+        "referenced_by": "model-registry formal/alloy/account-pool-structure.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-09",
+        "referenced_by": "model-registry formal/alloy/account-pool-structure.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-10",
+        "referenced_by": "model-registry formal/alloy/account-pool-structure.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-11",
+        "referenced_by": "model-registry formal/alloy/account-pool-structure.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SCBD-04",
+        "referenced_by": "model-registry formal/alloy/scoreboard-recompute.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SCBD-05",
+        "referenced_by": "model-registry formal/alloy/taxonomy-safety.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SCBD-06",
+        "referenced_by": "model-registry formal/alloy/taxonomy-safety.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SCBD-07",
+        "referenced_by": "model-registry formal/alloy/taxonomy-safety.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "STOP-10",
+        "referenced_by": "model-registry formal/alloy/transcript-scan.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "STOP-11",
+        "referenced_by": "model-registry formal/alloy/transcript-scan.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "PRM-AM-01",
+        "referenced_by": "model-registry formal/prism/oauth-rotation.pm requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-12",
+        "referenced_by": "model-registry formal/prism/oauth-rotation.pm requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-03",
+        "referenced_by": "model-registry formal/tla/QGSDAccountManager.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-04",
+        "referenced_by": "model-registry formal/tla/QGSDAccountManager.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-05",
+        "referenced_by": "model-registry formal/tla/QGSDAccountManager.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "CRED-06",
+        "referenced_by": "model-registry formal/tla/QGSDAccountManager.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SAFE-03",
+        "referenced_by": "model-registry formal/tla/QGSDDeliberation.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "DETECT-06",
+        "referenced_by": "model-registry formal/tla/QGSDOscillation.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "PLAN-04",
+        "referenced_by": "model-registry formal/tla/QGSDPreFilter.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "PLAN-05",
+        "referenced_by": "model-registry formal/tla/QGSDPreFilter.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "PLAN-06",
+        "referenced_by": "model-registry formal/tla/QGSDPreFilter.tla requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "SLOT-05",
+        "referenced_by": "model-registry formal/tla/QGSDRecruiting.tla requirements"
+      }
+    ],
+    "summary": {
+      "total_checked": 82,
+      "asymmetric_count": 10,
+      "stale_count": 23,
+      "clean": false
+    }
   }
 }

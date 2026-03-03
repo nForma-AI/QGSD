@@ -1,11 +1,59 @@
 #!/usr/bin/env node
 'use strict';
 
-const blessed    = require('blessed');
 const fs         = require('fs');
 const path       = require('path');
 const os         = require('os');
 const { spawnSync } = require('child_process');
+
+// ─── Circuit breaker CLI (non-interactive, exits before TUI loads) ───────────
+const cliArgs = process.argv.slice(2);
+
+function getBreakerProjectRoot() {
+  const git = spawnSync('git', ['rev-parse', '--show-toplevel'], {
+    cwd: process.cwd(), encoding: 'utf8', timeout: 5000,
+  });
+  return (git.status === 0 && !git.error) ? git.stdout.trim() : process.cwd();
+}
+
+function getBreakerStateFile() {
+  return path.join(getBreakerProjectRoot(), '.claude', 'circuit-breaker-state.json');
+}
+
+if (cliArgs.includes('--disable-breaker')) {
+  const stateFile = getBreakerStateFile();
+  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+  const existing = fs.existsSync(stateFile)
+    ? JSON.parse(fs.readFileSync(stateFile, 'utf8'))
+    : {};
+  fs.writeFileSync(stateFile, JSON.stringify({ ...existing, disabled: true, active: false }, null, 2), 'utf8');
+  console.log('  \u2298 Circuit breaker disabled. Detection and enforcement paused.');
+  process.exit(0);
+}
+
+if (cliArgs.includes('--enable-breaker')) {
+  const stateFile = getBreakerStateFile();
+  if (fs.existsSync(stateFile)) {
+    const existing = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+    fs.writeFileSync(stateFile, JSON.stringify({ ...existing, disabled: false, active: false }, null, 2), 'utf8');
+  }
+  console.log('  \u2713 Circuit breaker enabled. Oscillation detection resumed.');
+  process.exit(0);
+}
+
+if (cliArgs.includes('--reset-breaker')) {
+  const stateFile = getBreakerStateFile();
+  if (fs.existsSync(stateFile)) {
+    fs.rmSync(stateFile);
+    console.log('  \u2713 Circuit breaker state cleared. Claude can resume Bash execution.');
+  } else {
+    console.log('  No active circuit breaker state found.');
+  }
+  process.exit(0);
+}
+
+// ─── TUI (interactive mode — no CLI flags matched) ───────────────────────────
+const blessed    = require('blessed');
 
 // ─── Reuse logic layer from manage-agents-core.cjs ───────────────────────────
 const core = require('./manage-agents-core.cjs');
@@ -2033,33 +2081,32 @@ function renderReqList(reqs, filters) {
   // Dynamic text width: fill remaining space in contentBox
   const innerW = (screen.width || 120) - 26 - 2; // contentBox: left=26, borders=2
 
-  lines.push(`{bold}Requirements (${reqs.length})${subtitle}{/bold}`);
-  lines.push('─'.repeat(Math.max(70, innerW)));
-  const fixed  = 2 + 12 + 2 + 6 + 2 + 16 + 2; // indent + ID + gap + Status + gap + Category + gap
-  const W = { id: 12, status: 6, cat: 16, text: Math.max(20, innerW - fixed - 1) }; // -1 safety margin
-  lines.push(`  ${pad('ID', W.id)}  ${pad('Status', W.status)}  ${pad('Category', W.cat)}  Text`);
-  lines.push('  ' + '─'.repeat(W.id + 2 + W.status + 2 + W.cat + 2 + W.text));
-
-  // Check model-registry AND requirement.formal_models for FM badge
+  // Check model-registry AND requirement.formal_models for Formal column
   const registry = reqCore.readModelRegistry();
   const reqsWithModels = new Set();
   for (const entry of Object.values(registry.models || {})) {
     for (const rid of (entry.requirements || [])) reqsWithModels.add(rid);
   }
-  // Also check direct formal_models field (SCHEMA-04)
   for (const r of reqs) {
     if (Array.isArray(r.formal_models) && r.formal_models.length > 0) {
       reqsWithModels.add(r.id);
     }
   }
 
+  lines.push(`{bold}Requirements (${reqs.length})${subtitle}{/bold}`);
+  lines.push('─'.repeat(Math.max(70, innerW)));
+  // indent + ID + gap + Status + gap + Formal + gap + Category + gap
+  const fixed  = 2 + 12 + 2 + 3 + 2 + 8 + 2 + 16 + 2;
+  const W = { id: 12, status: 3, formal: 8, cat: 16, text: Math.max(20, innerW - fixed - 1) };
+  lines.push(`  ${pad('ID', W.id)}  ${pad('St', W.status)}  ${pad('Formal', W.formal)}  ${pad('Category', W.cat)}  Text`);
+  lines.push('  ' + '─'.repeat(W.id + 2 + W.status + 2 + W.formal + 2 + W.cat + 2 + W.text));
+
   for (const r of reqs) {
     const icon = r.status === 'Complete' ? '{green-fg}✓{/}' : '{yellow-fg}○{/}';
     const hasFm = reqsWithModels.has(r.id);
-    const textW = hasFm ? W.text - 5 : W.text; // reserve 5 visual chars for " [FM]"
-    const fm    = hasFm ? ' {cyan-fg}[FM]{/}' : '';
+    const formal = hasFm ? '{cyan-fg}[✓]{/}     ' : '{#555555-fg}[ ]{/}     ';
     lines.push(
-      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}${' '.repeat(W.status - 1)}  ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, textW)}${fm}`
+      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}${' '.repeat(W.status - 1)}  ${formal}  ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, W.text)}`
     );
   }
 

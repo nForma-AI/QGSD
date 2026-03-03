@@ -6,7 +6,7 @@
  * Accounts live in the macOS/system keychain managed by gh.
  * There is no credential file to copy — all operations delegate to gh.
  * This is the single source of truth for gh auth status parsing,
- * replacing duplicated regex in agents.cjs and gh-account-rotate.cjs.
+ * replacing duplicated regex in qgsd-manage.cjs and gh-account-rotate.cjs.
  *
  * Applies to: copilot-1
  *

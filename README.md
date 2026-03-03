@@ -172,7 +172,7 @@ A full-featured keyboard-navigable terminal interface for managing your quorum a
 git clone https://github.com/LangBlaze-AI/QGSD.git
 cd QGSD && npm install
 
-node bin/agents.cjs
+node bin/qgsd-manage.cjs
 ```
 
 The TUI opens as a split-pane screen: left panel is the menu, right panel shows your agent roster or context for the selected action.
@@ -806,6 +806,8 @@ Each verification run produces machine-readable outputs:
 | Command | What it does |
 |---------|--------------|
 | `/qgsd:map-codebase` | Analyze existing codebase before new-project |
+| `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `formal/requirements.json` |
+| `/qgsd:add-requirement [--id=PREFIX-NN] [--text="..."]` | Add a single requirement with duplicate/conflict checks |
 
 ### Phase Management
 
@@ -857,7 +859,6 @@ Each verification run produces machine-readable outputs:
 | `/qgsd:triage [--source github\|sentry\|bash] [--since 24h\|7d] [--limit N]` | Fetch and prioritize issues from GitHub, Sentry, or custom sources; route selected issue to QGSD workflow |
 | `/qgsd:queue <command>` | Queue a command to auto-invoke after the next /clear — survives context compaction |
 | `/qgsd:reapply-patches` | Restore local modifications after an update |
-| `/qgsd:aggregate-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `formal/requirements.json` |
 | `/qgsd:health [--repair]` | Validate `.planning/` directory integrity, auto-repair with `--repair` |
 
 ---
