@@ -1,0 +1,30 @@
+// .formal/prism/observability-delivery.props
+// Property checks for observability-delivery.pm
+//
+// Run with:
+//   prism .formal/prism/observability-delivery.pm .formal/prism/observability-delivery.props
+//     -const slot1_reliability=0.90 -const slot2_reliability=0.85 -const slot3_reliability=0.80
+
+// @requirement OBS-02
+// P1: Steady-state probability of full delivery (all 3 slots)
+// With defaults (0.90, 0.85, 0.80): 0.90 * 0.85 * 0.80 ≈ 0.612
+S=? [ "full_delivery" ]
+
+// @requirement OBS-02
+// P2: Steady-state probability of degraded delivery (2 of 3)
+S=? [ "degraded_delivery" ]
+
+// @requirement OBS-01
+// P3: Probability that at least one slot delivers (any telemetry available)
+S=? [ "any_delivery" ]
+
+// @requirement OBS-01
+// P4: Probability of total failure (no telemetry at all)
+S=? [ "total_failure" ]
+
+// @requirement OBS-03
+// @requirement OBS-04
+// P5-P7: Per-slot unavailability rates (used for flakiness scoring)
+S=? [ "slot1_unavail" ]
+S=? [ "slot2_unavail" ]
+S=? [ "slot3_unavail" ]

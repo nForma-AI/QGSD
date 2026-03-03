@@ -1,0 +1,25 @@
+// .formal/prism/deliberation-healing.props
+// Property checks for deliberation-healing.pm
+//
+// Run with:
+//   prism .formal/prism/deliberation-healing.pm .formal/prism/deliberation-healing.props
+//     -const p_converge=0.60 -const escalation_threshold=0.10
+
+// @requirement HEAL-01
+// P1: Probability of reaching consensus within MAX_ROUNDS
+// With p_converge=0.60, MAX_ROUNDS=3: 1 - (0.40)^3 ≈ 0.936
+P=? [ F "consensus" ]
+
+// @requirement HEAL-01
+// P2: Probability of escalation (no consensus after all rounds)
+// With p_converge=0.60, MAX_ROUNDS=3: (0.40)^3 ≈ 0.064
+P=? [ F "escalated" ]
+
+// @requirement HEAL-02
+// P3: Probability of reaching low-confidence state (round >= 2, still undecided)
+// Triggers maxDeliberation auto-adjustment recommendation
+P=? [ F "low_confidence" ]
+
+// @requirement HEAL-01
+// P4: Expected number of rounds before termination (consensus or escalation)
+R{"round"}=? [ F (outcome=1 | outcome=2) ]
