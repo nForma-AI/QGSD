@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-03-02 after v0.23 milestone completion)
 
 ## Current Position
 
-Phase: v0.24-05 of 5 (Slot Worker Thin Passthrough) — COMPLETE (all 4 plans)
-Plan: 04/04 complete (Human Verification — approved with revised token target)
-Status: v0.24 milestone COMPLETE — all 5 phases done, all 7 requirements (FAIL-01, FAIL-02, DISP-01–DISP-05) implemented
-Last activity: 2026-03-02 - Completed v0.24-05-04: Human verification approved. Real quorum dispatch shows 11-12k tokens/worker (revised SC4 from 5k to 12k — ~10k fixed Task platform overhead)
+Phase: v0.24-03 of 5 (Quorum Observability) — IN PROGRESS (1 of 3 plans complete)
+Plan: 01/03 complete (TDD Test Scaffolding — OBS-01, OBS-02, OBS-03)
+Status: v0.24 milestone CONTINUING — OBS requirements phase active (OBS-01, OBS-02, OBS-03)
+Last activity: 2026-03-03 - Completed v0.24-03-01: TDD test scaffolding with 15 GREEN unit tests and 19 RED structural tests. Next: implement telemetry logging (Plan 02) and scoreboard observability (Plan 03)
 
-Progress: [##############] 100% v0.24 (8 of 8 plans complete: 4/4 in v0.24-01, 4/4 in v0.24-05)
+Progress: [########........] 20% v0.24-03 (1 of 3 plans complete in observability phase; 9 of 12 total v0.24 plans complete)
 
 ## Performance Metrics
 
@@ -37,6 +37,7 @@ Progress: [##############] 100% v0.24 (8 of 8 plans complete: 4/4 in v0.24-01, 4
 - Trend: stable
 
 *Updated after each plan completion*
+| Phase v0.24-03 P01 | 1 | 0 tasks | 2 files |
 | Phase v0.24-05 P02 | 7 | 2 tasks | 2 files |
 | Phase v0.24-05 P03 | 23 | 2 tasks | 1 file |
 
@@ -47,6 +48,10 @@ Progress: [##############] 100% v0.24 (8 of 8 plans complete: 4/4 in v0.24-01, 4
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.24-03-01]: TDD test scaffolding for observability: 15 GREEN unit tests (pure functions) and 19 RED structural tests (waiting for Plans 02/03 implementation)
+- [v0.24-03-01]: Session ID fallback: CLAUDE_SESSION_ID from environment OR 'session-' + Date.now()
+- [v0.24-03-01]: Flakiness window: exactly 10 rounds, trailing (last 10 verdicts), not first 10
+- [v0.24-03-01]: Dispatch ordering: flakiness ascending (primary), success rate descending (tiebreaker)
 - [v0.24-01-03]: Provider field placement: after "name" field for readability in providers.json
 - [v0.24-01-03]: Hostname normalization: strip "api." prefix and TLDs (.com, .ai, .xyz, .io) to create match keys for cache-to-provider mapping
 - [v0.24-01-03]: Provider matching strategy: substring containment (provider field includes or is-included-by hostname) for flexibility across provider configurations
