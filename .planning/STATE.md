@@ -56,8 +56,14 @@ None yet.
 - Research flag: Phase v0.26-04 (Dashboard) needs blessed TUI state sync testing
 - Research flag: Phase v0.26-06 (Decomposition) needs TLC budget validation
 
+## Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|---|---|---|---|---|
+| 138 | Add formal coverage section to progress and resume-work workflows | 2026-03-03 | pending | Pending | [138-add-formal-coverage-section-to-progress-](./quick/138-add-formal-coverage-section-to-progress-/) |
+
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Roadmap created for v0.26 Operational Completeness
+Stopped at: Completed quick task 138: Add formal coverage section to progress and resume-work workflows
 Resume file: None
