@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-03T17:47:07.388Z",
-  "content_hash": "ead9ae06c41c6511143862793040947ecf6255eaac4ae61b4cf437e761ca4f21",
-  "frozen_at": "2026-03-03T17:50:27.071Z",
+  "aggregated_at": "2026-03-03T18:37:29.304Z",
+  "content_hash": "bf3f949ee666f0f1b4aef3b5b42815cd44f54b517436620ac0a29aef525726f2",
+  "frozen_at": "2026-03-03T18:37:29.304Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -445,6 +445,18 @@
         "milestone": "unknown"
       },
       "category_raw": "Config Extensions"
+    },
+    {
+      "id": "CONF-10",
+      "text": "Configuration layer validates and gracefully degrades when providers.json contains zero providers, falling back to solo quorum mode with clear diagnostic messages",
+      "category": "Configuration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Empty roster (no MCP providers configured) previously caused undefined property access crashes in quorum dispatch, TUI scoreboard rendering, and probe tooling. This requirement ensures the system detects empty provider arrays at multiple entry points and provides safe fallback behavior with actionable error messages, making misconfiguration scenarios debuggable and enabling graceful single-agent operation.",
+      "provenance": {
+        "source_file": ".planning/quick/137-fix-empty-roster-handling-add-validation/137-PLAN.md",
+        "milestone": "quick-137"
+      }
     },
     {
       "id": "CRED-01",
