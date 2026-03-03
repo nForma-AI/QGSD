@@ -119,9 +119,11 @@ EscapeProgress == [][EscapeUp => depth' < depth]_vars
 \* ─── Liveness properties ───────────────────────────────────────────────────────
 
 \* Under fair ESC actions, the application eventually exits.
+\* @requirement TUI-05
 EventuallyExits == <>(exited = TRUE)
 
 \* From any active non-root state, depth 0 (MainMenu) is eventually reached.
+\* @requirement TUI-06
 MainMenuReachable == (~exited /\ depth > 0) ~> (depth = 0 \/ exited)
 
 ====
