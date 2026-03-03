@@ -8,7 +8,7 @@ const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, app
         classifyProbeResult, writeKeyStatus,
         buildDashboardLines, formatTimestamp,
         buildTimeoutChoices, applyTimeoutUpdate,
-        buildPolicyChoices,
+        buildPolicyChoices, validateTimeout, validateUpdatePolicy,
         buildUpdateLogEntry, parseUpdateLogErrors,
         buildBackupPath, buildRedactedEnv, buildExportData, validateImportSchema } = _pure;
 
@@ -862,6 +862,104 @@ test('buildPolicyChoices: null currentPolicy annotates no choice with current ma
 });
 
 // ---------------------------------------------------------------------------
+// validateTimeout
+// ---------------------------------------------------------------------------
+
+test('validateTimeout: valid positive integer "30000" returns { valid: true, ms: 30000 }', () => {
+  const result = validateTimeout('30000');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.ms, 30000);
+});
+
+test('validateTimeout: valid positive integer "1" returns { valid: true, ms: 1 }', () => {
+  const result = validateTimeout('1');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.ms, 1);
+});
+
+test('validateTimeout: empty string returns { valid: true, ms: null }', () => {
+  const result = validateTimeout('');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.ms, null);
+});
+
+test('validateTimeout: null returns { valid: true, ms: null }', () => {
+  const result = validateTimeout(null);
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.ms, null);
+});
+
+test('validateTimeout: undefined returns { valid: true, ms: null }', () => {
+  const result = validateTimeout(undefined);
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.ms, null);
+});
+
+test('validateTimeout: negative value "-1" returns error with "positive" in message', () => {
+  const result = validateTimeout('-1');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error.includes('positive'), 'error must mention positive');
+});
+
+test('validateTimeout: zero "0" returns error with "positive" in message', () => {
+  const result = validateTimeout('0');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error.includes('positive'), 'error must mention positive');
+});
+
+test('validateTimeout: non-numeric "abc" returns error with "positive" in message', () => {
+  const result = validateTimeout('abc');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error.includes('positive'), 'error must mention positive');
+});
+
+test('validateTimeout: negative value "-500" returns error containing "-500"', () => {
+  const result = validateTimeout('-500');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error.includes('-500'), 'error must contain the invalid value');
+});
+
+// ---------------------------------------------------------------------------
+// validateUpdatePolicy
+// ---------------------------------------------------------------------------
+
+test('validateUpdatePolicy: "auto" returns { valid: true, policy: "auto" }', () => {
+  const result = validateUpdatePolicy('auto');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.policy, 'auto');
+});
+
+test('validateUpdatePolicy: "prompt" returns { valid: true, policy: "prompt" }', () => {
+  const result = validateUpdatePolicy('prompt');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.policy, 'prompt');
+});
+
+test('validateUpdatePolicy: "skip" returns { valid: true, policy: "skip" }', () => {
+  const result = validateUpdatePolicy('skip');
+  assert.strictEqual(result.valid, true);
+  assert.strictEqual(result.policy, 'skip');
+});
+
+test('validateUpdatePolicy: "always" returns error with "always" in message', () => {
+  const result = validateUpdatePolicy('always');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error.includes('always'), 'error must mention the invalid value');
+});
+
+test('validateUpdatePolicy: empty string returns error', () => {
+  const result = validateUpdatePolicy('');
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error, 'error must be present');
+});
+
+test('validateUpdatePolicy: null returns error', () => {
+  const result = validateUpdatePolicy(null);
+  assert.strictEqual(result.valid, false);
+  assert.ok(result.error, 'error must be present');
+});
+
+// ---------------------------------------------------------------------------
 // buildUpdateLogEntry
 // ---------------------------------------------------------------------------
 
@@ -1015,6 +1113,60 @@ test('REGRESSION PLCY-03: runAutoUpdateCheck logs UPDATE_AVAILABLE not SKIP for 
   const { runAutoUpdateCheck } = require('./manage-agents-core.cjs')._pure;
   // runAutoUpdateCheck is not currently in _pure — this line throws, keeping the test RED.
   assert.ok(typeof runAutoUpdateCheck === 'function', 'runAutoUpdateCheck must be exported via _pure');
+});
+
+test('PLCY-03 Integration: runAutoUpdateCheck with auto-policy slot logs UPDATE_AVAILABLE', async () => {
+  // Integration test validating PLCY-03 startup contract:
+  // - Create temporary qgsd.json with a slot having update_policy=auto
+  // - Call runAutoUpdateCheck() with injected getStatusesFn returning update-available status
+  // - Verify UPDATE_AVAILABLE is written to log
+  const fs = require('fs');
+  const path = require('path');
+  const os = require('os');
+  const { runAutoUpdateCheck } = require('./manage-agents-core.cjs')._pure;
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'plcy-03-test-'));
+  const tmpQgsdJsonPath = path.join(tmpDir, 'qgsd.json');
+
+  try {
+    // Setup: Create qgsd.json with auto-policy slot
+    const qgsdConfig = {
+      agent_config: {
+        'codex-1': { update_policy: 'auto' },
+        'claude-1': { update_policy: 'manual' }
+      }
+    };
+    fs.writeFileSync(tmpQgsdJsonPath, JSON.stringify(qgsdConfig, null, 2));
+
+    // Mock getStatusesFn returning update-available for codex
+    const mockGetStatuses = async () => {
+      return new Map([
+        ['codex', { current: '1.0', latest: '2.0', status: 'update-available' }]
+      ]);
+    };
+
+    // Capture log entries via fs.appendFileSync mock
+    const logEntries = [];
+    const originalAppendFileSync = fs.appendFileSync;
+    fs.appendFileSync = (filePath, content) => {
+      logEntries.push(content);
+    };
+
+    try {
+      await runAutoUpdateCheck(mockGetStatuses);
+    } finally {
+      fs.appendFileSync = originalAppendFileSync;
+    }
+
+    // Verify: log contains UPDATE_AVAILABLE entry for codex-1
+    const logContent = logEntries.join('');
+    assert.ok(logContent.includes('codex-1'), 'Log must mention codex-1 slot');
+    assert.ok(logContent.includes('UPDATE_AVAILABLE'), 'Log must contain UPDATE_AVAILABLE status (not SKIP)');
+  } finally {
+    // Cleanup
+    try { fs.unlinkSync(tmpQgsdJsonPath); } catch (_) {}
+    try { fs.rmdirSync(tmpDir); } catch (_) {}
+  }
 });
 
 // ---------------------------------------------------------------------------
