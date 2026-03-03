@@ -138,15 +138,99 @@ function checkConsensusGate(options = {}) {
   }
 }
 
+/**
+ * readEarlyEscalationThreshold(configPaths) — reads workflow.early_escalation_threshold from config.
+ *
+ * Tries each config path in order. Returns 0.10 (default) if:
+ * - No paths provided or none exist
+ * - JSON parse fails (fail-open)
+ * - Value is missing, non-numeric, or outside [0, 1.0] range
+ *
+ * @param {string[]} configPaths - ordered list of config file paths to try
+ * @returns {number} threshold (0.0 to 1.0), or 0.10 default
+ */
+function readEarlyEscalationThreshold(configPaths) {
+  const DEFAULT = 0.10;
+  const paths = configPaths || [
+    path.join(process.cwd(), '.planning', 'config.json'),
+    path.join(process.cwd(), '.planning', 'qgsd.json'),
+  ];
+  for (const cfgPath of paths) {
+    try {
+      if (fs.existsSync(cfgPath)) {
+        const config = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+        const val = config.workflow?.early_escalation_threshold;
+        if (typeof val === 'number' && val > 0 && val <= 1.0) return val;
+      }
+    } catch (_) {
+      // Fail-open: JSON parse error, continue to next path
+    }
+  }
+  return DEFAULT;
+}
+
+/**
+ * computeEarlyEscalation(slotRates, minQuorum, remainingRounds, threshold)
+ *
+ * Computes P(consensus within remainingRounds) and checks early escalation:
+ * - P(at least minQuorum succeed in 1 round) using poissonBinomialCDF
+ * - P(consensus within k rounds) = 1 - (1 - pPerRound)^k
+ * - If P(consensus | remaining) < threshold, shouldEscalate = true
+ *
+ * @param {Object} slotRates - { slot_name: availability_rate }
+ * @param {number} minQuorum - minimum successful slots needed
+ * @param {number} remainingRounds - rounds left in deliberation loop
+ * @param {number} threshold - escalation threshold (optional, defaults to 0.10)
+ * @returns {{ shouldEscalate: boolean, probability: number, threshold: number, remainingRounds: number, pPerRound: number }}
+ */
+function computeEarlyEscalation(slotRates, minQuorum, remainingRounds, threshold) {
+  if (typeof threshold !== 'number') threshold = readEarlyEscalationThreshold();
+  if (remainingRounds <= 0) {
+    return { shouldEscalate: true, probability: 0, threshold, remainingRounds, pPerRound: 0 };
+  }
+  const rates = Object.values(slotRates);
+  const pPerRound = poissonBinomialCDF(rates, minQuorum);
+  const probability = 1 - Math.pow(1 - pPerRound, remainingRounds);
+  const rounded = Math.round(probability * 1e6) / 1e6;
+  return {
+    shouldEscalate: rounded < threshold,
+    probability: rounded,
+    threshold,
+    remainingRounds,
+    pPerRound: Math.round(pPerRound * 1e6) / 1e6,
+  };
+}
+
 // ── CLI entrypoint ───────────────────────────────────────────────────────────
 if (require.main === module) {
   const args = process.argv.slice(2);
   const minQuorumArg = args.find(a => a.startsWith('--min-quorum='));
   const minQuorum = minQuorumArg ? parseInt(minQuorumArg.split('=')[1], 10) : undefined;
 
-  const result = checkConsensusGate({ minQuorum });
-  process.stdout.write(JSON.stringify(result, null, 2) + '\n');
-  process.exit(result.action === 'proceed' ? 0 : 1);
+  const remainingRoundsArg = args.find(a => a.startsWith('--remaining-rounds='));
+
+  if (remainingRoundsArg) {
+    // HEAL-01: Early escalation mode -- compute P(consensus | remaining rounds)
+    const remainingRounds = parseInt(remainingRoundsArg.split('=')[1], 10);
+    const scoreboardPath = path.join(process.cwd(), '.planning', 'quorum-scoreboard.json');
+    let slotRates = null;
+    try {
+      const { readMCPAvailabilityRates } = require('./run-prism.cjs');
+      slotRates = readMCPAvailabilityRates(scoreboardPath);
+    } catch (_) {}
+    if (!slotRates || Object.keys(slotRates).length === 0) {
+      slotRates = { 'slot-1': 0.85, 'slot-2': 0.85, 'slot-3': 0.85, 'slot-4': 0.85 };
+    }
+    const result = computeEarlyEscalation(slotRates, minQuorum || 2, remainingRounds);
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+    // Exit 1 = should escalate (stop deliberating), Exit 0 = continue deliberating
+    process.exit(result.shouldEscalate ? 1 : 0);
+  } else {
+    // Original behavior: unconditional consensus gate check
+    const result = checkConsensusGate({ minQuorum });
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+    process.exit(result.action === 'proceed' ? 0 : 1);
+  }
 }
 
-module.exports = { checkConsensusGate, computeConsensusProbability, poissonBinomialCDF };
+module.exports = { checkConsensusGate, computeConsensusProbability, poissonBinomialCDF, computeEarlyEscalation, readEarlyEscalationThreshold };
