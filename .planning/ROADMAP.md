@@ -1334,7 +1334,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. No LLM SDK packages (openai, anthropic, @google/generative-ai, etc.) appear in QGSD's package.json dependencies
   2. All Haiku/Sonnet/Opus calls in QGSD source use the Agent tool's model parameter, never direct SDK imports
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.26-05-01-PLAN.md — Refactor SDK imports to raw HTTPS in update-scoreboard.cjs and validate-requirements-haiku.cjs
+- [ ] v0.26-05-02-PLAN.md — Create check-bundled-sdks.cjs architecture linter and test suite
 
 ### Phase v0.26-06: Cross-Model Decomposition
 **Goal**: analyze-state-space.cjs identifies merge candidates and interface contract needs across TLA+ models
@@ -1357,5 +1360,5 @@ Phases execute in order: v0.26-01 -> v0.26-02 -> v0.26-03 -> v0.26-04 (parallel)
 | v0.26-02. Credential Management | v0.26 | Complete    | 2026-03-03 | - |
 | v0.26-03. Portable Installer & Presets | 2/2 | Complete    | 2026-03-03 | - |
 | v0.26-04. Health Dashboard | 1/1 | Complete    | 2026-03-03 | - |
-| v0.26-05. Architecture Enforcement | v0.26 | 0/TBD | Not started | - |
+| v0.26-05. Architecture Enforcement | v0.26 | 0/2 | Planned | - |
 | v0.26-06. Cross-Model Decomposition | v0.26 | 0/TBD | Not started | - |
