@@ -8,7 +8,7 @@
     },
     "formalism": {
       "type": "string",
-      "enum": ["tla", "alloy", "prism", "trace", "redaction"]
+      "enum": ["tla", "alloy", "prism", "trace", "redaction", "uppaal"]
     },
     "result": {
       "type": "string",
@@ -45,6 +45,14 @@
     },
     "observation_window": {
       "type": "object"
+    },
+    "requirement_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]"
+      },
+      "default": []
     }
   },
   "additionalProperties": false
