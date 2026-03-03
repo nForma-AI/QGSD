@@ -48,14 +48,14 @@ Proceed to install step (treat as version 0.0.0 for comparison).
 Check npm for latest version:
 
 ```bash
-npm view get-shit-done-cc version 2>/dev/null
+node bin/install.js --version 2>/dev/null
 ```
 
 **If npm check fails:**
 ```
-Couldn't check for updates (offline or npm unavailable).
+Couldn't check for updates (version check failed).
 
-To update manually: `npx get-shit-done-cc --global`
+To update manually: `node bin/install.js --claude --global`
 ```
 
 Exit.
@@ -147,12 +147,12 @@ Run the update using the install type detected in step 1:
 
 **If LOCAL install:**
 ```bash
-npx get-shit-done-cc --local
+node bin/install.js --claude --local
 ```
 
 **If GLOBAL install (or unknown):**
 ```bash
-npx get-shit-done-cc --global
+node bin/install.js --claude --global
 ```
 
 Capture output. If install fails, show error and exit.
@@ -181,7 +181,7 @@ Format completion message (changelog was already shown in confirmation step):
 
 ⚠️  Restart Claude Code to pick up the new commands.
 
-[View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
+[View full changelog](CHANGELOG.md)
 ```
 </step>
 

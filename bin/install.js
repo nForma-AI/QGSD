@@ -143,7 +143,7 @@ const banner = '\n' +
   salmon + '  ╚══▀▀═╝ ' + cyan + ' ╚═════╝ ╚══════╝╚═════╝' + reset + '\n' +
   '\n' +
   '  Quorum Gets Shit Done ' + dim + 'v' + pkg.version + reset + '\n' +
-  '  Built on get-shit-done-cc by TÂCHES.\n' +
+  '  Built on GSD-CC by TÂCHES.\n' +
   '  Full automation through quorum of coding agents. By Jonathan Borduas.\n' +
   '\n' +
   cyan + '  The task of leadership is to create an alignment of strengths\n' +
@@ -1023,6 +1023,7 @@ function uninstall(isGlobal, runtime = 'claude') {
   }
 
   // 2b. Migration: warn about old get-shit-done/ and commands/gsd/ paths from pre-v0.2 QGSD installs
+  // REN-03: intentional legacy path reference for migration detection
   const oldGsdDir = path.join(targetDir, 'get-shit-done');
   const oldCommandsGsdDir = path.join(targetDir, 'commands', 'gsd');
   if (fs.existsSync(oldGsdDir) || fs.existsSync(oldCommandsGsdDir)) {
