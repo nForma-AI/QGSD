@@ -73,7 +73,7 @@ Recent decisions affecting current work:
 
 | # | Description | Date | Commit | Status | Directory |
 |---|---|---|---|---|---|
-| 134 | Integrate formal_models field and detect-coverage-gaps into requirements TUI | 2026-03-03 | cb764f6f | Complete | [134-integrate-formal-models-field-and-detect](./quick/134-integrate-formal-models-field-and-detect/) |
+| 134 | Integrate formal_models field and detect-coverage-gaps into requirements TUI | 2026-03-03 | c1d5bf18 | Verified | [134-integrate-formal-models-field-and-detect](./quick/134-integrate-formal-models-field-and-detect/) |
 
 ## Session Continuity
 
