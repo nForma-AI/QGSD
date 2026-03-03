@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-03)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.26 Operational Completeness — Phase v0.26-01 Policy Configuration
+**Current focus:** v0.26 Operational Completeness — Phase v0.26-02 Credential Management (complete)
 
 ## Current Position
 
-Phase: v0.26-01 of 6 (Policy Configuration)
-Plan: 3 of 3 in current phase (01-Policy-Validation, 02-Auto-Check-Wiring, 03-TUI-Integration)
-Status: Complete — 3 of 3 plans complete
-Last activity: 2026-03-03 — Completed v0.26-01-03 (TUI Integration - Input Validation Wiring)
+Phase: v0.26-02 of 6 (Credential Management)
+Plan: 2 of 2 in current phase (01-Probe-Persist-Key, 02-Post-Rotation-Validation)
+Status: Complete — 2 of 2 plans complete
+Last activity: 2026-03-03 — Completed v0.26-02 (Credential Management)
 
 Progress: [████████████] 100%
 
@@ -48,6 +48,8 @@ Recent decisions affecting current work:
 - [v0.26 roadmap]: DECOMP-05 (cross-model decomposition) is last phase; deferrable to v0.27 if needed
 - [v0.26-01-02]: Non-blocking startup pattern - auto-update check fires asynchronously, TUI renders immediately
 - [v0.26-01-02]: runAutoUpdateCheck dependency-injected via getStatusesFn parameter for testability
+- [v0.26-02-01]: probeAndPersistKey encapsulates probe-classify-write chain; timeout guard prevents stale persistence
+- [v0.26-02-02]: validateRotatedKeys is fire-and-forget with .catch(() => {}) to avoid blocking quorum dispatch
 
 ### Pending Todos
 
@@ -70,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-03
-Stopped at: Completed quick task 140: Implement /qgsd:solve consistency solver command
+Stopped at: Phase v0.26-02 complete, ready to plan Phase v0.26-03
 Resume file: None
