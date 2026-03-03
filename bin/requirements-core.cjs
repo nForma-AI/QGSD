@@ -1,0 +1,247 @@
+'use strict';
+
+/**
+ * Pure data functions for requirements management.
+ * No blessed dependency — all functions are testable in isolation.
+ * Consumers: bin/agents.cjs (blessed TUI)
+ *
+ * Data sources (project-relative paths via process.cwd()):
+ *   formal/requirements.json    — 210 requirements in frozen envelope
+ *   formal/model-registry.json  — formal models with requirement links
+ *   formal/check-results.ndjson — check results (NDJSON)
+ */
+
+const fs   = require('fs');
+const path = require('path');
+const { getRequirementIds } = require('./requirement-map.cjs');
+
+// ---------------------------------------------------------------------------
+// Data loaders
+// ---------------------------------------------------------------------------
+
+function readRequirementsJson(basePath) {
+  const p = path.join(basePath || process.cwd(), 'formal', 'requirements.json');
+  if (!fs.existsSync(p)) return { envelope: null, requirements: [] };
+  try {
+    const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
+    const reqs = raw.requirements || [];
+    const envelope = {
+      aggregated_at: raw.aggregated_at || null,
+      content_hash:  raw.content_hash  || null,
+      frozen_at:     raw.frozen_at     || null,
+    };
+    return { envelope, requirements: reqs };
+  } catch (_) {
+    return { envelope: null, requirements: [] };
+  }
+}
+
+function readModelRegistry(basePath) {
+  const p = path.join(basePath || process.cwd(), 'formal', 'model-registry.json');
+  if (!fs.existsSync(p)) return { version: null, last_sync: null, models: {} };
+  try {
+    const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
+    return {
+      version:   raw.version   || null,
+      last_sync: raw.last_sync || null,
+      models:    raw.models    || {},
+    };
+  } catch (_) {
+    return { version: null, last_sync: null, models: {} };
+  }
+}
+
+function readCheckResults(basePath) {
+  const p = path.join(basePath || process.cwd(), 'formal', 'check-results.ndjson');
+  if (!fs.existsSync(p)) return [];
+  try {
+    return fs.readFileSync(p, 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .map(line => { try { return JSON.parse(line); } catch (_) { return null; } })
+      .filter(Boolean);
+  } catch (_) {
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Computation
+// ---------------------------------------------------------------------------
+
+function computeCoverage(requirements, registry, checkResults) {
+  const total = requirements.length;
+
+  // By status
+  const byStatus = {};
+  for (const r of requirements) {
+    const s = r.status || 'Unknown';
+    byStatus[s] = (byStatus[s] || 0) + 1;
+  }
+
+  // By category
+  const byCategory = {};
+  for (const r of requirements) {
+    const c = r.category || 'Uncategorized';
+    if (!byCategory[c]) byCategory[c] = { total: 0, complete: 0 };
+    byCategory[c].total++;
+    if (r.status === 'Complete') byCategory[c].complete++;
+  }
+
+  // Formal model coverage: which requirements have at least one formal model?
+  const reqsWithModels = new Set();
+  const models = (registry && registry.models) || {};
+  for (const entry of Object.values(models)) {
+    for (const reqId of (entry.requirements || [])) {
+      reqsWithModels.add(reqId);
+    }
+  }
+  // Also include requirements with direct formal_models field (SCHEMA-04)
+  for (const r of requirements) {
+    if (Array.isArray(r.formal_models) && r.formal_models.length > 0) {
+      reqsWithModels.add(r.id);
+    }
+  }
+  const withFormalModels = requirements.filter(r => reqsWithModels.has(r.id)).length;
+  const totalModels = Object.keys(models).length;
+
+  // Check results summary
+  const checksByResult = {};
+  for (const cr of (checkResults || [])) {
+    const res = cr.result || 'unknown';
+    checksByResult[res] = (checksByResult[res] || 0) + 1;
+  }
+
+  // Requirements with at least one check result (via requirement_ids or requirement-map)
+  const reqsWithChecks = new Set();
+  for (const cr of (checkResults || [])) {
+    // Direct requirement_ids on the check result
+    if (Array.isArray(cr.requirement_ids)) {
+      for (const rid of cr.requirement_ids) reqsWithChecks.add(rid);
+    }
+    // Reverse lookup via requirement-map
+    if (cr.check_id) {
+      for (const rid of getRequirementIds(cr.check_id)) reqsWithChecks.add(rid);
+    }
+  }
+  const withCheckResults = requirements.filter(r => reqsWithChecks.has(r.id)).length;
+
+  return {
+    total,
+    byStatus,
+    byCategory,
+    withFormalModels,
+    withCheckResults,
+    totalModels,
+    checksByResult,
+  };
+}
+
+function buildTraceability(reqId, requirements, registry, checkResults) {
+  const requirement = requirements.find(r => r.id === reqId);
+  if (!requirement) return null;
+
+  // Forward: find formal models that list this requirement
+  const formalModels = [];
+  const models = (registry && registry.models) || {};
+  for (const [modelPath, entry] of Object.entries(models)) {
+    if ((entry.requirements || []).includes(reqId)) {
+      formalModels.push({
+        path:        modelPath,
+        description: entry.description || '',
+        version:     entry.version || null,
+      });
+    }
+  }
+  // Also include models listed in requirement's own formal_models field (SCHEMA-04)
+  if (Array.isArray(requirement.formal_models)) {
+    for (const modelPath of requirement.formal_models) {
+      // Deduplicate: skip if already found via registry
+      if (!formalModels.some(fm => fm.path === modelPath)) {
+        // Try to get description from registry if available
+        const registryEntry = models[modelPath];
+        formalModels.push({
+          path:        modelPath,
+          description: (registryEntry && registryEntry.description) || '',
+          version:     (registryEntry && registryEntry.version) || null,
+        });
+      }
+    }
+  }
+
+  // Reverse: find check results linked to this requirement
+  const matchingChecks = [];
+  const unmappedCheckIds = [];
+  for (const cr of (checkResults || [])) {
+    // Direct match via requirement_ids field
+    const directIds = Array.isArray(cr.requirement_ids) ? cr.requirement_ids : [];
+    // Reverse lookup via requirement-map
+    const mapIds = cr.check_id ? getRequirementIds(cr.check_id) : [];
+    const allIds = new Set([...directIds, ...mapIds]);
+
+    if (allIds.has(reqId)) {
+      matchingChecks.push(cr);
+    }
+  }
+
+  // Find check_ids from requirement-map that link to this req but have no results
+  const { CHECK_ID_TO_REQUIREMENTS } = require('./requirement-map.cjs');
+  for (const [checkId, reqIds] of Object.entries(CHECK_ID_TO_REQUIREMENTS)) {
+    if (reqIds.includes(reqId)) {
+      const hasResult = (checkResults || []).some(cr => cr.check_id === checkId);
+      if (!hasResult) unmappedCheckIds.push(checkId);
+    }
+  }
+
+  return {
+    requirement,
+    formalModels,
+    checkResults: matchingChecks,
+    unmappedCheckIds,
+  };
+}
+
+function filterRequirements(requirements, filters) {
+  filters = filters || {};
+  let result = requirements;
+
+  if (filters.category) {
+    result = result.filter(r => (r.category || 'Uncategorized') === filters.category);
+  }
+  if (filters.status) {
+    result = result.filter(r => (r.status || 'Unknown') === filters.status);
+  }
+  if (filters.search) {
+    const s = filters.search.toLowerCase();
+    result = result.filter(r =>
+      (r.id || '').toLowerCase().includes(s) ||
+      (r.text || '').toLowerCase().includes(s)
+    );
+  }
+
+  return result;
+}
+
+function getUniqueCategories(requirements) {
+  const cats = new Set();
+  for (const r of requirements) {
+    cats.add(r.category || 'Uncategorized');
+  }
+  return [...cats].sort();
+}
+
+// ---------------------------------------------------------------------------
+// Exports
+// ---------------------------------------------------------------------------
+
+module.exports = {
+  readRequirementsJson,
+  readModelRegistry,
+  readCheckResults,
+  computeCoverage,
+  buildTraceability,
+  filterRequirements,
+  getUniqueCategories,
+};
+
+module.exports._pure = module.exports;
