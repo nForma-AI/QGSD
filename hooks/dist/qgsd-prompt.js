@@ -35,7 +35,10 @@ Run the full R3 quorum protocol inline (dispatch_pattern from commands/qgsd/quor
    Task(subagent_type="qgsd-quorum-slot-worker", prompt="slot: <slot>\\nround: 1\\n...")
 4. Synthesize results inline. Deliberate up to 10 rounds per R3.3 if no consensus.
 5. Update scoreboard: node ~/.claude/qgsd-bin/update-scoreboard.cjs merge-wave ...
-6. Include the token <!-- GSD_DECISION --> in your FINAL output (only when delivering
+6. [HEAL-01] After each deliberation round's merge-wave, check early escalation:
+   node ~/.claude/qgsd-bin/quorum-consensus-gate.cjs --min-quorum=2 --remaining-rounds=R
+   (R = maxDeliberation - currentRound). Exit code 1 = stop deliberating, proceed to decision (early escalation — P(consensus|remaining) below threshold).
+7. Include the token <!-- GSD_DECISION --> in your FINAL output (only when delivering
    the completed plan, research, verification report, or filtered question list)
 
 Fail-open: if a model is UNAVAILABLE (quota/error), note it and proceed with available models.
@@ -203,7 +206,7 @@ function getAvailableSlots(slots, cwd) {
   } catch (_) { return slots; } // fail-open: any error → return all slots
 }
 
-// Sorts slots by descending success rate from scoreboard slot stats.
+// Sorts slots by flakiness (primary) then success rate (secondary) from scoreboard slot stats.
 // Reads .planning/quorum-scoreboard.json slots section.
 // Scoreboard keys are composite: "slotName:modelId" (e.g., "claude-1:deepseek-ai/DeepSeek-V3.2").
 // Extract slot name: const slotName = key.split(':')[0];
@@ -219,7 +222,17 @@ function sortBySuccessRate(slots, cwd) {
     const scoreboard = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
     if (!scoreboard || !scoreboard.slots) return [...slots];
 
-    // Aggregate tp/fn across all model entries for a given slot name.
+    // Read flakiness score for a slot — primary sort key
+    const getFlakiness = (slotName) => {
+      // Look up flakiness_score from scoreboard slots entries for this slot name
+      const entries = Object.entries(scoreboard.slots)
+        .filter(([k]) => k === slotName || k.startsWith(slotName + ':'));
+      if (entries.length === 0) return 0; // fail-open: unknown = reliable
+      // Use the max flakiness across any model for this slot
+      return Math.max(...entries.map(([_, v]) => v.flakiness_score ?? 0));
+    };
+
+    // Aggregate tp/fn across all model entries for a given slot name — secondary sort key
     const getRate = (slotName) => {
       const entries = Object.entries(scoreboard.slots)
         .filter(([k]) => k.split(':')[0] === slotName)
@@ -228,12 +241,18 @@ function sortBySuccessRate(slots, cwd) {
       const totalTp = entries.reduce((sum, e) => sum + (e.tp || 0), 0);
       const totalFn = entries.reduce((sum, e) => sum + (e.fn || 0), 0);
       const rate = (totalTp + totalFn) === 0 ? 0.5 : totalTp / (totalTp + totalFn);
-      console.error(`[qgsd-dispatch] SUCCESS RATE: ${slotName} = ${rate.toFixed(3)} (tp=${totalTp}, fn=${totalFn}, models=${entries.length})`);
       return rate;
     };
 
-    const sorted = [...slots].sort((a, b) => getRate(b.slot) - getRate(a.slot));
-    console.error(`[qgsd-dispatch] DISPATCH ORDER: [${sorted.map(s => s.slot).join(', ')}]`);
+    // Sort by flakiness ascending (lower = more reliable = first), then success rate descending
+    const sorted = [...slots].sort((a, b) => {
+      const flakDiff = getFlakiness(a.slot) - getFlakiness(b.slot);
+      if (flakDiff !== 0) return flakDiff;
+      return getRate(b.slot) - getRate(a.slot);
+    });
+
+    console.error('[qgsd-dispatch] DISPATCH ORDER (flakiness,rate): [' +
+      sorted.map(s => `${s.slot}(f=${getFlakiness(s.slot).toFixed(2)},r=${getRate(s.slot).toFixed(3)})`).join(', ') + ']');
     return sorted;
   } catch (_) { return [...slots]; } // fail-open: any error → return original order
 }
@@ -540,7 +559,12 @@ process.stdin.on('end', () => {
         `After quorum:\n` +
         `  ${afterSteps}. Synthesize results inline. Deliberate up to 10 rounds per R3.3 if no consensus.\n` +
         `  ${afterSteps + 1}. Update scoreboard: node ~/.claude/qgsd-bin/update-scoreboard.cjs merge-wave ...\n` +
-        `  ${afterSteps + 2}. Include the token <!-- GSD_DECISION --> in your FINAL output\n\n` +
+        `  ${afterSteps + 2}. [HEAL-01] After EACH deliberation round's merge-wave, check early escalation:\n` +
+        `       node ~/.claude/qgsd-bin/quorum-consensus-gate.cjs --min-quorum=2 --remaining-rounds=R\n` +
+        `       where R = (maxDeliberation - currentRound). For example, on round 2 of 7 max: --remaining-rounds=5.\n` +
+        `       If exit code 1 (shouldEscalate=true, P(consensus|remaining) below 10% threshold), stop deliberating and proceed to decision immediately.\n` +
+        `       This prevents wasting rounds when consensus is mathematically unlikely.\n` +
+        `  ${afterSteps + 3}. Include the token <!-- GSD_DECISION --> in your FINAL output\n\n` +
         `Fail-open: if a model is UNAVAILABLE (quota/error), note it and proceed with available models.\n` +
         `The Stop hook reads the transcript — skipping quorum will block your response.`;
     } else {
