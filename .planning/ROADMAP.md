@@ -1271,7 +1271,10 @@ Plans:
   2. Every Alloy assertion and check in all 8 Alloy model files has a `-- @requirement REQ-ID` comment -- verified by running the extraction parser and confirming zero unannotated assertions
   3. Every PRISM property in all 3 .props files has a `// @requirement REQ-ID` comment -- verified by the extraction parser
   4. Running `node bin/extract-annotations.cjs` produces a JSON map of `{ model_file: [{ property, requirement_ids }] }` covering all annotated properties across all three formalisms
-**Plans**: TBD
+**Plans**: 3 plans in 2 waves
+  - [ ] v0.25-02-01-PLAN.md -- Annotate all 11 TLA+ model files with @requirement comments (ANNOT-01)
+  - [ ] v0.25-02-02-PLAN.md -- Annotate all 8 Alloy and 3 PRISM files with @requirement comments (ANNOT-02, ANNOT-03)
+  - [ ] v0.25-02-03-PLAN.md -- Build extraction parser and validate all annotations (ANNOT-04)
 
 ### Phase v0.25-03: Traceability Matrix
 **Goal**: A single generated artifact links every requirement to every formal property that verifies it, with coverage statistics, produced automatically after each verification run
@@ -1305,7 +1308,7 @@ Plans:
 **Plans**: TBD
 
 | v0.25-01. Schema Foundation | 3/3 | Complete    | 2026-03-03 |  |
-| v0.25-02. Property Annotations | v0.25 | 0/TBD | Not started | - |
+| v0.25-02. Property Annotations | v0.25 | 0/3 | Planned | - |
 | v0.25-03. Traceability Matrix | v0.25 | 0/TBD | Not started | - |
 | v0.25-04. Bidirectional Validation | v0.25 | 0/TBD | Not started | - |
 | v0.25-05. Decomposition Awareness | v0.25 | 0/TBD | Not started | - |
