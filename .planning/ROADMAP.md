@@ -1338,7 +1338,10 @@ Plans:
   2. All 18 v0.25 requirements in REQUIREMENTS.md have status Complete with [x] checkboxes
   3. SUMMARY frontmatter for v0.25-02-01 and v0.25-02-02 includes requirements-completed field
   4. Coverage baseline updated to reflect restored annotation coverage
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.25-07-01-PLAN.md — Create retroactive VERIFICATION.md for v0.25-02, v0.25-04, v0.25-05
+- [ ] v0.25-07-02-PLAN.md — Update REQUIREMENTS.md checkboxes, SUMMARY frontmatter, coverage baseline
 
 | v0.25-01. Schema Foundation | 3/3 | Complete    | 2026-03-03 |  |
 | v0.25-02. Property Annotations | 3/3 | Complete | 2026-03-03 |  |
@@ -1346,4 +1349,4 @@ Plans:
 | v0.25-04. Bidirectional Validation | 2/2 | Complete    | 2026-03-03 | - |
 | v0.25-05. Decomposition Awareness | 3/3 | Complete | 2026-03-03 | - |
 | v0.25-06. Annotation Regression Fix | 2/2 | Complete | 2026-03-03 | Gap Closure |
-| v0.25-07. Retroactive Verification & Bookkeeping | 0/0 | Pending | - | Gap Closure |
+| v0.25-07. Retroactive Verification & Bookkeeping | 0/2 | Pending | - | Gap Closure |
