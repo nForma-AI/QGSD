@@ -55,7 +55,9 @@ const CHECK_ID_TO_REQUIREMENTS = {
  * @returns {string[]} Array of requirement IDs
  */
 function getRequirementIds(checkId) {
-  return CHECK_ID_TO_REQUIREMENTS[checkId] || [];
+  // Return a copy to prevent callers from mutating the shared source-of-truth array.
+  const found = CHECK_ID_TO_REQUIREMENTS[checkId];
+  return found ? found.slice() : [];
 }
 
 module.exports = { CHECK_ID_TO_REQUIREMENTS, getRequirementIds };
