@@ -1223,7 +1223,7 @@ Plans:
 - [x] **Phase v0.24-01: Provider Infrastructure and Failover** - Explicit provider-to-slot mapping in providers.json and retry-with-backoff in call-quorum-slot.cjs (4/4 plans complete, FAIL-01+FAIL-02 verified)
 - [x] **Phase v0.24-02: Dispatch Reliability** - Pre-dispatch health probes, scoreboard availability windows, and success-rate-ordered dispatch list (completed 2026-03-03)
 - [x] **Phase v0.24-03: Quorum Observability** - Structured per-round telemetry, delivery rate tracking in scoreboard, and per-slot flakiness scoring (completed 2026-03-03: 3/3 plans complete, OBS-01+OBS-02+OBS-03 verified)
-- [ ] **Phase v0.24-04: Self-Healing Consensus** - Early escalation when P(consensus) drops below threshold and auto-adjustment of maxDeliberation
+- [x] **Phase v0.24-04: Self-Healing Consensus** - Early escalation when P(consensus) drops below threshold and auto-adjustment of maxDeliberation (completed 2026-03-03)
 
 ### Phase v0.24-01: Provider Infrastructure and Failover
 **Goal**: Every slot has a known provider mapping, and failed slot calls are retried with backoff before being recorded as unavailable -- so transient provider glitches do not immediately degrade quorum
@@ -1284,7 +1284,7 @@ Plans:
 | v0.24-01. Provider Infrastructure and Failover | v0.24 | Complete    | 2026-03-03 | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | Complete    | 2026-03-03 | - |
 | v0.24-03. Quorum Observability | v0.24 | Complete    | 2026-03-03 | 2026-03-03 |
-| v0.24-04. Self-Healing Consensus | v0.24 | 0/3 | Not started | - |
+| v0.24-04. Self-Healing Consensus | v0.24 | Complete    | 2026-03-03 | - |
 
 ### Phase v0.24-05: Slot Worker Thin Passthrough
 **Goal**: Move prompt construction (Mode A/B, Round 1/2+, conditional sections) and output parsing (verdict/reasoning/citations/improvements extraction) from the Haiku slot-worker agent into quorum-slot-dispatch.cjs wrapper script, reducing worker token usage from 22-25k to under 12k per slot dispatch by eliminating LLM-driven string manipulation (revised from 5k target after discovering ~10k fixed platform overhead in Claude Code Task infrastructure)
