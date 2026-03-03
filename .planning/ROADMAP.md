@@ -1355,7 +1355,7 @@ Phases execute in order: v0.26-01 -> v0.26-02 -> v0.26-03 -> v0.26-04 (parallel)
 |-------|-----------|----------------|--------|-----------|
 | v0.26-01. Policy Configuration | v0.26 | Complete    | 2026-03-03 | 2026-03-03 |
 | v0.26-02. Credential Management | v0.26 | Complete    | 2026-03-03 | - |
-| v0.26-03. Portable Installer & Presets | 2/2 | Complete   | 2026-03-03 | - |
+| v0.26-03. Portable Installer & Presets | 2/2 | Complete    | 2026-03-03 | - |
 | v0.26-04. Health Dashboard | v0.26 | 0/TBD | Not started | - |
 | v0.26-05. Architecture Enforcement | v0.26 | 0/TBD | Not started | - |
 | v0.26-06. Cross-Model Decomposition | v0.26 | 0/TBD | Not started | - |
