@@ -318,3 +318,26 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.25 Formal Traceability & Coverage (Shipped: 2026-03-03)
+
+**Phases completed:** 7 phases, 17 plans
+**Requirements:** 18/18 satisfied (SCHEMA-01..04, TRACE-01..05, ANNOT-01..05, DECOMP-01..04)
+**Audit:** tech_debt (all requirements met, bookkeeping debt accepted)
+**Timeline:** 2026-03-03 (single day)
+**Commits:** 70
+
+**Key accomplishments:**
+- Bidirectional requirement-model traceability — model-registry.json and requirements.json cross-linked (56 requirements, 24 models)
+- Property-level @requirement annotations on all 43 formal model files (TLA+, Alloy, PRISM) with 207 requirement links
+- Traceability matrix generator (generate-traceability-matrix.cjs) with property-level links and 63.8% coverage
+- CI coverage guard (check-coverage-guard.cjs) detecting formal coverage regression against saved baseline
+- State-space risk analysis (analyze-state-space.cjs) classifying 22 TLA+ models with unbounded domain flagging
+- Annotation-resilient generators surviving spec-regen cycles (v0.25-06 gap closure)
+
+**Known tech debt (accepted):**
+- v0.25-06 missing VERIFICATION.md (requirements verified by v0.25-02/07)
+- 10 SUMMARYs missing requirements-completed frontmatter field
+
+---
+
