@@ -1263,7 +1263,10 @@ Plans:
   2. The scoreboard tracks quorum delivery rate -- after N quorum rounds, running `/qgsd:health` shows the percentage of rounds that achieved the target vote count (e.g., "3/3: 87%, 2/3: 13%")
   3. Each slot has a flakiness score computed from recent UNAVAIL/timeout frequency -- a slot with 3 timeouts in the last 10 rounds has a visibly higher flakiness score than one with 0 timeouts
   4. High-flakiness slots are deprioritized in dispatch ordering -- observable by comparing dispatch position before and after a slot accumulates failures
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] v0.24-03-01-PLAN.md -- TDD test scaffolding for telemetry, delivery stats, and flakiness scoring
+- [ ] v0.24-03-02-PLAN.md -- Per-slot telemetry logging in call-quorum-slot.cjs (OBS-01)
+- [ ] v0.24-03-03-PLAN.md -- Scoreboard delivery stats, flakiness scoring, and flakiness-aware dispatch ordering (OBS-02, OBS-03)
 
 ### Phase v0.24-04: Self-Healing Consensus
 **Goal**: The quorum system detects when consensus is unlikely and acts early rather than wasting rounds -- escalation fires before maxDeliberation is exhausted, and the system recommends configuration changes when persistent degradation is detected
@@ -1277,7 +1280,7 @@ Plans:
 
 | v0.24-01. Provider Infrastructure and Failover | v0.24 | 4/4 | Complete   | 2026-03-02 |
 | v0.24-02. Dispatch Reliability | v0.24 | Complete    | 2026-03-03 | - |
-| v0.24-03. Quorum Observability | v0.24 | 0/TBD | Not started | - |
+| v0.24-03. Quorum Observability | v0.24 | 0/3 | Planned | - |
 | v0.24-04. Self-Healing Consensus | v0.24 | 0/TBD | Not started | - |
 
 ### Phase v0.24-05: Slot Worker Thin Passthrough
