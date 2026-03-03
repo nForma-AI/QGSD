@@ -18,10 +18,11 @@
 //                     validate-traces.cjs
 //   UPPAAL     (1)  — run-uppaal.cjs (quorum-races.xml, empirical timing bounds)
 //   Triage     (1)  — generate-triage-bundle.cjs (diff-report.md + suspects.md)
-//   Traceability (2) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
+//   Traceability (3) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //                      check-coverage-guard.cjs (coverage regression guard vs baseline)
+//                      analyze-state-space.cjs (state-space risk classification per TLA+ model)
 //   ─────────────────────────────────────────────────────────────
-//   Total:    33 steps
+//   Total:    34 steps
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
@@ -52,7 +53,7 @@ const SEP = '─'.repeat(64);
 // ── Step registry ─────────────────────────────────────────────────────────────
 //
 // type: 'node'     — run  node bin/<script> <args...>
-// type: 'wasm-dot' — render formal/petri/<dot> → formal/petri/<svg>
+// type: 'wasm-dot' — render .formal/petri/<dot> → .formal/petri/<svg>
 //                    via @hpcc-js/wasm-graphviz (async)
 //
 const STEPS = [
@@ -61,7 +62,7 @@ const STEPS = [
     tool: 'generate', id: 'generate:tla-from-xstate',
     label: 'Generate TLA+ spec (QGSDQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
     type: 'node', script: 'xstate-to-tla.cjs',
-    args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=formal/tla/guards/qgsd-workflow.json'],
+    args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=.formal/tla/guards/qgsd-workflow.json'],
   },
   {
     tool: 'generate', id: 'generate:alloy-prism-specs',
@@ -249,6 +250,13 @@ const STEPS = [
     // Non-critical: coverage guard is informational, does not block exit code
     nonCritical: true,
   },
+  {
+    tool: 'traceability', id: 'traceability:state-space',
+    label: 'State-space analysis (risk classification per TLA+ model)',
+    type: 'node', script: 'analyze-state-space.cjs', args: [],
+    // Non-critical: state-space analysis is informational
+    nonCritical: true,
+  },
 ];
 
 // ── CLI filter ────────────────────────────────────────────────────────────────
@@ -294,7 +302,7 @@ function runNodeStep(step) {
 }
 
 async function runWasmDotStep(step) {
-  const petriDir = path.join(__dirname, '..', 'formal', 'petri');
+  const petriDir = path.join(__dirname, '..', '.formal', 'petri');
   const dotPath  = path.join(petriDir, step.dot);
   const svgPath  = path.join(petriDir, step.svg);
 
@@ -355,7 +363,7 @@ async function runOnce() {
   // Reset results array so watch-mode re-runs start clean
   results.length = 0;
   // Truncate NDJSON file — fresh run (UNIF-02)
-  const ndjsonPath = path.join(__dirname, '..', 'formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(__dirname, '..', '.formal', 'check-results.ndjson');
   fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');
