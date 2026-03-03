@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-03T18:37:29.304Z",
-  "content_hash": "bf3f949ee666f0f1b4aef3b5b42815cd44f54b517436620ac0a29aef525726f2",
-  "frozen_at": "2026-03-03T18:37:29.304Z",
+  "aggregated_at": "2026-03-03T19:49:52.779Z",
+  "content_hash": "21f559c441dfb722ff3251a8d385c9ded1c8e974fc0cc4f363f421f3d2ffc77f",
+  "frozen_at": "2026-03-03T19:49:52.779Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -571,6 +571,18 @@
         "milestone": "v0.25"
       },
       "category_raw": "Decomposition Awareness"
+    },
+    {
+      "id": "DECOMP-05",
+      "text": "`analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge when combined TLC runtime < 5 minutes — or flags the interface contract needed when merge would exceed the time budget",
+      "category": "Planning & Tracking",
+      "phase": "v0.26-01",
+      "status": "Pending",
+      "background": "If a bug or instability can cross the boundary of two models, those models should be merged — unless the merged model would be computationally infeasible (>5 min TLC budget). When merge is infeasible, explicit assume-guarantee interface contracts are required between the models.",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "DETECT-01",
@@ -2308,6 +2320,19 @@
         "milestone": "v0.25"
       },
       "category_raw": "Traceability Matrix"
+    },
+    {
+      "id": "TRACE-06",
+      "text": "The /qgsd:formal-test-sync command cross-references formal model invariants with unit test coverage, validates formal constants against runtime config defaults, reports coverage gaps, generates test stubs, and integrates unit test coverage into the traceability matrix",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/139-implement-qgsd-formal-test-sync-command-/139-PLAN.md",
+        "milestone": "quick-139"
+      },
+      "category_raw": "Formal Verification",
+      "formal_models": []
     },
     {
       "id": "TRIAGE-01",
