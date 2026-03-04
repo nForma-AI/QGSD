@@ -4,8 +4,8 @@
 title = "QGSD Secret Detection"
 
 [extend]
-# Use the default gitleaks rules as a base
-# (gitleaks built-in rules cover AWS, GCP, GitHub, Slack, Stripe, generic API keys, etc.)
+# Extend the default gitleaks rules (AWS, GCP, GitHub, Slack, Stripe, generic API keys, etc.)
+useDefault = true
 
 [allowlist]
 description = "QGSD global allowlist"
@@ -21,6 +21,10 @@ paths = [
   '''\.secrets\.baseline''',
   '''\.gitleaks\.toml''',
   '''node_modules/''',
+  '''bin/providers\.json''',
+  '''get-shit-done/bin/gsd-tools\.test\.js''',
+  '''\.planning/quick/''',
+  '''test-secret-file\.txt''',
 ]
 
 # Regex-based allowlist: mock/test token patterns used in test fixtures

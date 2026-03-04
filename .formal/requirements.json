@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-04T09:35:12.646Z",
-  "content_hash": "710fad893b860533",
-  "frozen_at": "2026-03-04T09:35:12.647Z",
+  "aggregated_at": "2026-03-04T09:45:57.092Z",
+  "content_hash": "28b12ab9d3310f96",
+  "frozen_at": "2026-03-04T09:45:57.092Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -149,6 +149,18 @@
         "milestone": "unknown"
       },
       "category_raw": "Agent Roster"
+    },
+    {
+      "id": "AGT-01",
+      "text": "Subagents spawned by QGSD skills MUST loop autonomously until a terminal condition is reached. Valid terminal conditions: (1) success — the goal is verifiably met, (2) iteration cap exhausted (default max 5), (3) unrecoverable — all available paths are low-confidence or unavailable. Returning a message instructing the user to \"run again\" or \"re-invoke\" instead of looping is a violation.",
+      "category": "Agent Behavior",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "unknown"
+      },
+      "category_raw": "Agent Behavior"
     },
     {
       "id": "ANNOT-01",
@@ -1045,6 +1057,19 @@
         "milestone": "v0.15"
       },
       "category_raw": "Health Checker"
+    },
+    {
+      "id": "INIT-01",
+      "text": "Load and filter baseline requirements by project profile (web/mobile/desktop/api/cli/library), present profile-filtered defaults during new-project and new-milestone workflows with opt-out controls, allowing users to deselect baseline requirements that don't apply",
+      "category": "Planning & Tracking",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/151-wire-baseline-requirements-into-new-proj/151-PLAN.md",
+        "milestone": "quick-151"
+      },
+      "category_raw": "Project Initialization",
+      "formal_models": []
     },
     {
       "id": "INST-01",

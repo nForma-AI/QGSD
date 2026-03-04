@@ -1,1 +1,1 @@
-npx lint-staged
+gitleaks protect --staged --config .gitleaks.toml --redact --verbose

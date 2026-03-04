@@ -57,9 +57,7 @@
     "typescript": "^5.9.3",
     "xstate": "^5.28.0"
   },
-  "lint-staged": {
-    "*": "gitleaks detect --no-banner --no-git --redact --verbose --config .gitleaks.toml"
-  },
+  "lint-staged": {},
   "scripts": {
     "build:hooks": "node scripts/build-hooks.js",
     "build:machines": "npx tsup src/machines/qgsd-workflow.machine.ts --format cjs --out-dir dist/machines --no-splitting --tsconfig tsconfig.formal.json",
