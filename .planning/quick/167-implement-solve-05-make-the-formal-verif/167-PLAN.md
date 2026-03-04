@@ -89,6 +89,7 @@ Output: All 16+ runner scripts honor --project-root for path resolution; master 
 <task type="auto">
   <name>Task 1: Add --project-root support to all child runners and write-check-result.cjs</name>
   <files>
+    bin/run-formal-verify.cjs
     bin/run-tlc.cjs
     bin/run-alloy.cjs
     bin/run-audit-alloy.cjs
