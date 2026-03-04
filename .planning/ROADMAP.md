@@ -33,7 +33,7 @@
 **Milestone Goal:** Close the gap between QGSD's formal verification pipeline and production reality by adding a unified observe skill that pulls production signals, a fingerprint-deduplicating debt ledger, and a P->F residual layer in solve that compares formal model thresholds against observed production metrics.
 
 - [x] **Phase v0.27-01: Debt Schema & Fingerprinting Foundation** - Debt ledger schema, state machine, retention policy, and fingerprinting algorithms (✅ 2026-03-04)
-- [ ] **Phase v0.27-02: Observe Skill Core** - Pluggable observe command replacing triage with parallel source fetching and debt write-through
+- [x] **Phase v0.27-02: Observe Skill Core** - Pluggable observe command replacing triage with parallel source fetching and debt write-through (completed 2026-03-04)
 - [ ] **Phase v0.27-03: Cross-Source Deduplication** - Fingerprint matching, near-duplicate merging, and formal parameter linkage
 - [ ] **Phase v0.27-04: Production Source Types** - Prometheus, Grafana, and Logstash source handlers (framework-ready)
 - [ ] **Phase v0.27-05: Solve P->F Integration** - Production-to-Formal residual layer closing the feedback loop
@@ -125,7 +125,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.27-01. Debt Schema & Fingerprinting Foundation | 3/3 | Complete    | 2026-03-04 |
-| v0.27-02. Observe Skill Core | 0/3 | Planned | - |
+| v0.27-02. Observe Skill Core | 0/3 | Complete    | 2026-03-04 |
 | v0.27-03. Cross-Source Deduplication | 0/TBD | Not started | - |
 | v0.27-04. Production Source Types | 0/TBD | Not started | - |
 | v0.27-05. Solve P->F Integration | 0/TBD | Not started | - |

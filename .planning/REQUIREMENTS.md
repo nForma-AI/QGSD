@@ -59,13 +59,13 @@
 - [ ] **FP-03**: Cross-source deduplication uses fingerprint matching first, then Levenshtein similarity (configurable threshold, default 0.85) on titles for near-duplicates from different sources
 - [ ] **FP-04**: When two debt entries are merged by fingerprint, source_entries[] from both are preserved and the entry with higher occurrence count is kept as primary
 
-### Solve P→F Integration
+### Solve P->F Integration
 
-- [ ] **PF-01**: `bin/qgsd-solve.cjs` includes a P→F (Production → Formal) residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds
-- [ ] **PF-02**: The P→F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values
+- [ ] **PF-01**: `bin/qgsd-solve.cjs` includes a P->F (Production -> Formal) residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds
+- [ ] **PF-02**: The P->F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values
 - [ ] **PF-03**: Solve operates only on debt entries with status `acknowledged` — `open` entries are ignored until a human triages them
 - [ ] **PF-04**: During a solve cycle, observations are frozen — new observe runs do not modify debt entries that are in `resolving` status
-- [ ] **PF-05**: P→F remediation dispatches `/qgsd:quick` tasks to update formal model parameters when production reality has legitimately changed, or flags investigation when production has regressed
+- [ ] **PF-05**: P->F remediation dispatches `/qgsd:quick` tasks to update formal model parameters when production reality has legitimately changed, or flags investigation when production has regressed
 
 ## Future Requirements
 
@@ -90,35 +90,35 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OBS-01 | — | Pending |
-| OBS-02 | — | Pending |
-| OBS-03 | — | Pending |
-| OBS-04 | — | Pending |
-| OBS-05 | — | Pending |
-| OBS-06 | — | Pending |
-| OBS-07 | — | Pending |
-| OBS-08 | — | Pending |
-| DEBT-01 | — | Pending |
-| DEBT-02 | — | Pending |
-| DEBT-03 | — | Pending |
-| DEBT-04 | — | Pending |
-| DEBT-05 | — | Pending |
-| DEBT-06 | — | Pending |
-| FP-01 | — | Pending |
-| FP-02 | — | Pending |
-| FP-03 | — | Pending |
-| FP-04 | — | Pending |
-| PF-01 | — | Pending |
-| PF-02 | — | Pending |
-| PF-03 | — | Pending |
-| PF-04 | — | Pending |
-| PF-05 | — | Pending |
+| OBS-01 | v0.27-02 | Pending |
+| OBS-02 | v0.27-02 | Pending |
+| OBS-03 | v0.27-04 | Pending |
+| OBS-04 | v0.27-04 | Pending |
+| OBS-05 | v0.27-04 | Pending |
+| OBS-06 | v0.27-02 | Pending |
+| OBS-07 | v0.27-02 | Pending |
+| OBS-08 | v0.27-02 | Pending |
+| DEBT-01 | v0.27-01 | Pending |
+| DEBT-02 | v0.27-03 | Pending |
+| DEBT-03 | v0.27-01 | Pending |
+| DEBT-04 | v0.27-01 | Pending |
+| DEBT-05 | v0.27-03 | Pending |
+| DEBT-06 | v0.27-02 | Pending |
+| FP-01 | v0.27-01 | Pending |
+| FP-02 | v0.27-01 | Pending |
+| FP-03 | v0.27-03 | Pending |
+| FP-04 | v0.27-03 | Pending |
+| PF-01 | v0.27-05 | Pending |
+| PF-02 | v0.27-05 | Pending |
+| PF-03 | v0.27-05 | Pending |
+| PF-04 | v0.27-05 | Pending |
+| PF-05 | v0.27-05 | Pending |
 
 **Coverage:**
 - v0.27 requirements: 23 total
-- Mapped to phases: 0
-- Unmapped: 23 ⚠️
+- Mapped to phases: 23/23
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-04*
-*Last updated: 2026-03-04 after initial definition*
+*Last updated: 2026-03-04 after roadmap creation*
