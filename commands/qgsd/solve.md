@@ -100,31 +100,66 @@ Log: `"Dispatching R->F remediation: close-formal-gaps for {N} uncovered require
 
 Wait for the skill to complete. If it fails, log the failure and continue to the next gap type.
 
+**IMPORTANT — Verify generated models:** After close-formal-gaps completes, run the model checkers on every newly created model:
+- **TLA+**: `java -cp <tla2tools.jar> tlc2.TLC -config <MC*.cfg> <*.tla> -workers 1` in `.formal/tla/`
+- **Alloy**: `java -jar <alloy.jar> exec --output - --type text --quiet <*.als>` in `.formal/alloy/`
+
+If a model fails verification (syntax error, counterexample, scope error), fix it immediately and re-run. Up to 3 fix attempts per model. Models that pass are confirmed; models that fail after 3 attempts are logged as needing manual review.
+
+Find tool JARs at: `.formal/tla/tla2tools.jar` (or `~/.claude/.formal/tla/tla2tools.jar`) and `.formal/alloy/org.alloytools.alloy.dist.jar` (or `~/.claude/.formal/alloy/org.alloytools.alloy.dist.jar`).
+
 ### 3b. F->T Gaps (residual_vector.f_to_t.residual > 0)
 
-Run the formal-test-sync script directly using absolute paths:
+**Phase 1 — Generate stubs:** Run the formal-test-sync script to generate test stubs and update traceability sidecars:
 ```bash
 node ~/.claude/qgsd-bin/formal-test-sync.cjs --project-root=$(pwd)
 ```
 
 If ~/.claude/qgsd-bin/formal-test-sync.cjs does not exist, fall back to bin/formal-test-sync.cjs (CWD-relative).
 
-This will generate test stubs for all uncovered invariants and update traceability sidecars.
+Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
 
-Log: `"Dispatching F->T remediation: formal-test-sync for {N} uncovered invariants"`
+**Phase 2 — Implement stubs via /qgsd:quick batches:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver MUST dispatch `/qgsd:quick` to implement real test logic.
 
-If the script fails (exit code non-zero), log the failure and continue.
+1. List all `.stub.test.js` files in the stubs directory (default: `hooks/generated-stubs/`)
+2. Read each stub to get the requirement ID and invariant name
+3. Group stubs by category prefix (e.g., all `ACT-*`, all `CONF-*`) into batches of 10-15
+4. For each batch, dispatch:
+```
+/qgsd:quick Implement test stubs for {IDS}: read each stub in hooks/generated-stubs/, read the corresponding formal model and requirement text, then replace the assert.fail('TODO') with real test logic that verifies the invariant. Use node:test and node:assert/strict. Each test should import the actual source module and test the requirement's behavior.
+```
+
+5. After all batches complete, run the test suite to verify:
+```bash
+node --test hooks/generated-stubs/*.test.js
+```
+
+6. If tests fail, log failures and let the T→C remediation (Step 3c) handle them in the next iteration.
+
+Log: `"F->T phase 2: dispatched {N} quick tasks to implement {M} test stubs"`
+
+**Batching strategy:** Process highest-value stubs first. Priority order:
+1. Stubs for requirements that the current solve run created formal models for (the cascade)
+2. Stubs for core categories (Hooks, Quorum, Configuration)
+3. Remaining stubs alphabetically
+
+If more than 50 stubs exist, cap at 50 per iteration to avoid unbounded work. The iteration loop will handle the remainder.
 
 ### 3c. T->C Gaps (residual_vector.t_to_c.residual > 0)
+
+The T->C residual counts both failures and skipped tests. Extract detail:
+- `detail.failed` — tests that ran and failed
+- `detail.skipped` — tests marked skip (still count as unresolved gaps)
+- `detail.todo` — tests marked todo (informational, do not inflate residual)
 
 Dispatch the fix-tests skill:
 ```
 /qgsd:fix-tests
 ```
 
-This will discover and autonomously fix failing tests.
+This will discover and autonomously fix failing AND skipped tests. Skipped tests often indicate incomplete implementations or platform-specific guards that need resolution.
 
-Log: `"Dispatching T->C remediation: fix-tests for {N} failing tests"`
+Log: `"Dispatching T->C remediation: fix-tests for {failed} failing + {skipped} skipped tests"`
 
 If it fails, log the failure and continue.
 
@@ -235,8 +270,11 @@ Compare the baseline total residual against the post-remediation total:
 
 If `--max-iterations=N` was passed and N > 1:
 - Increment iteration counter
-- If iterations < max_iterations AND residual decreased AND residual > 0: loop back to Step 3 (re-dispatch remediation)
-- If iterations >= max_iterations OR residual unchanged OR residual == 0: proceed to Step 6
+- Compute `automatable_residual` = r_to_f + f_to_t + c_to_f + t_to_c + f_to_c (exclude r_to_d and d_to_c which are manual-only)
+- If iterations < max_iterations AND automatable_residual > 0 AND at least one automatable layer changed: loop back to Step 3
+- If iterations >= max_iterations OR automatable_residual == 0 OR no automatable layer changed: proceed to Step 6
+
+**IMPORTANT — Cascade-aware convergence:** Do NOT use total residual for the loop condition. Fixing R→F creates F→T gaps (total goes UP), but the system is making progress. Use per-layer change detection instead: if ANY automatable layer's residual changed (up or down) since the previous iteration, there is still work to do. Only stop when all automatable layers are stable (unchanged between iterations) or at zero.
 
 Default behavior (no `--max-iterations` flag): max iterations = 5.
 
@@ -262,7 +300,7 @@ Total                      {N}    {M}    {delta}
 
 - **R→F**: List all uncovered requirement IDs
 - **F→T**: Count of formal properties without test backing
-- **T→C**: List failing test names and error summaries
+- **T→C**: Show counts with symbols (fail, skip, todo) and list failing test names with error summaries. Format: `N failed, N skipped, N todo (of M total)`
 - **C→F**: Table of each constant mismatch (name, formal value, config value)
 - **F→C**: For each failing check: check_id, summary (including counts like "7086 divergences"), affected requirement IDs. Also list inconclusive checks separately.
 - **R→D**: List all undocumented requirement IDs
@@ -273,6 +311,12 @@ Example F→C expansion:
 F → C Detail:
   ✗ ci:conformance-traces — 7086 divergence(s) in 20199 traces
   ⚠ ci:liveness-fairness-lint — fairness declarations missing for 10 properties
+```
+
+Example T→C expansion:
+```
+T -> C Detail:
+  Tests: 2 failed, 3 skipped, 1 todo (of 42 total)
 ```
 
 If any gaps remain after convergence, append a summary of what couldn't be auto-fixed and why.
@@ -332,9 +376,9 @@ This table is mandatory even when the solver layer residuals are all zero — be
 
 4. **Ordering** — remediation order is strict because R→F must precede F→T (new formal specs create new invariants needing test backing). T→C fixes must happen before F→C verification (tests must pass before checking formal properties against code).
 
-5. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
-   - **close-formal-gaps --batch** for missing formal models (R→F)
-   - **formal-test-sync** for missing test backing (F→T)
+5. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "stubs generated" or "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
+   - **close-formal-gaps --batch** for missing formal models (R→F), then **run model checkers** to verify them
+   - **formal-test-sync** to generate stubs (F→T phase 1), then **quick** in batches to implement real test logic (F→T phase 2)
    - **fix-tests** for failing tests (T→C)
    - **quick** for constant mismatches (C→F), syntax/scope errors, conformance divergences, and verification counterexamples in formal models (F→C)
 
