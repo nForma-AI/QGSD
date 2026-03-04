@@ -11,23 +11,23 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 Phase: v0.27-01 of 5 (Debt Schema & Fingerprinting Foundation)
 Plan: 02 of 03 (Deterministic Fingerprinting)
-Status: In Progress (2/3 tasks complete)
-Last activity: 2026-03-04 — Completed v0.27-01-02 (Issue & Drift Fingerprinting)
+Status: In Progress (2/3 tasks complete in plan 01; plan 02 complete; awaiting plan 03)
+Last activity: 2026-03-04 — Completed v0.27-01-01 (Debt Schema & Validation)
 
-Progress: [████░░░░░░░░] 33%
+Progress: [████░░░░░░░░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
+- Total plans completed: 2
 - Average duration: 12 minutes
-- Total execution time: 0.2 hours
+- Total execution time: 0.4 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| v0.27-01 | 1/3 | 2/5 | 12 min |
+| v0.27-01 | 2/3 | 4/5 | 12 min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -60,12 +60,19 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed v0.27-01-02 (Fingerprinting algorithms)
+Stopped at: Completed v0.27-01-01 (Debt Schema & Validation)
 Resume file: None
 
 ## Recent Accomplishments
 
-- **v0.27-01-02 (Deterministic Fingerprinting)** [2026-03-04]
+- **v0.27-01-01 (Debt Schema & Validation)** [2026-03-04]
+  - JSON Schema draft-07 definition with all required fields
+  - Runtime validation module (validateDebtEntry, validateDebtLedger)
+  - State machine enforcement (canTransition, transitionDebtEntry)
+  - 70 tests (36 validation + 34 state machine), all passing
+  - Requirements DEBT-01 and DEBT-03 completed
+
+- **v0.27-01-02 (Deterministic Fingerprinting)** [2026-03-04 — prior session]
   - Issue fingerprinting: hierarchical (exception_type → function_name → message hash)
   - Drift fingerprinting: formal parameter key hash
   - 38 tests (20 issue + 18 drift), all passing

@@ -44,16 +44,16 @@
 **Goal**: A validated debt ledger exists with correct schema, state machine enforcement, retention policy, and deterministic fingerprinting algorithms for both issues and drifts
 **Depends on**: Nothing (first phase)
 **Requirements**: DEBT-01, DEBT-03, DEBT-04, FP-01, FP-02
-**Status**: 1/3 plans complete (33%)
+**Status**: 2/3 plans complete (67%)
 **Success Criteria** (what must be TRUE):
-  1. `.formal/debt.json` exists with validated schema (id, fingerprint, title, occurrences, first_seen, last_seen, environments, status, formal_ref, source_entries) and ajv validation passes
-  2. Debt status transitions enforce the state machine (open -> acknowledged -> resolving -> resolved) and reject invalid transitions (e.g., resolved -> open)
-  3. Resolved entries older than max_age are archived to `.formal/debt-archive.jsonl` when retention runs
-  4. Issues produce stable fingerprints via the hierarchical strategy (exception type -> function name -> message pattern hash) — same input always yields same fingerprint
-  5. Drifts produce stable fingerprints by formal parameter key — identical parameter keys always map to the same fingerprint
+  1. ✓ Debt schema defined with all required fields (id, fingerprint, title, occurrences, first_seen, last_seen, environments, status, formal_ref, source_entries) with runtime validation
+  2. ✓ Debt status transitions enforce state machine (open -> acknowledged -> resolving -> resolved) and reject invalid transitions (e.g., resolved -> open)
+  3. ✓ Issues produce stable fingerprints via hierarchical strategy (exception type -> function name -> message pattern hash) — same input always yields same fingerprint
+  4. ✓ Drifts produce stable fingerprints by formal parameter key — identical parameter keys always map to same fingerprint
+  5. — Resolved entries older than max_age archived to `.formal/debt-archive.jsonl` when retention runs (Plan 03)
 **Plans**: 3 plans
 Plans:
-- [ ] v0.27-01-01-PLAN.md — Schema definition, validation, and state machine (DEBT-01, DEBT-03)
+- [x] v0.27-01-01-PLAN.md — Schema definition, validation, and state machine (DEBT-01, DEBT-03) ✅ (2026-03-04, 7min, 70 tests)
 - [x] v0.27-01-02-PLAN.md — Issue and drift fingerprinting algorithms (FP-01, FP-02) ✅ (2026-03-04, 12min, 38 tests)
 - [ ] v0.27-01-03-PLAN.md — Ledger I/O, retention policy, and integration test (DEBT-04)
 
