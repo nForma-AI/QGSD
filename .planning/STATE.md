@@ -83,7 +83,7 @@ None. All v0.26 phases complete.
 | 150 | Set up 3-tool 2-layer secret detection: Gitleaks + detect-secrets pre-commit via Husky, TruffleHog CI pipeline | 2026-03-04 | 65f40a08 | Verified | [150-set-up-3-tool-2-layer-secret-detection-g](./quick/150-set-up-3-tool-2-layer-secret-detection-g/) |
 | 151 | Wire baseline requirements into new-project and new-milestone workflows | 2026-03-04 | 133d8a72 | Verified | [151-wire-baseline-requirements-into-new-proj](./quick/151-wire-baseline-requirements-into-new-proj/) |
 | 152 | Expand /qgsd:settings into guided project manager hub | 2026-03-04 | 64e7b315 | Pending | [152-expand-qgsd-settings-into-guided-project](./quick/152-expand-qgsd-settings-into-guided-project/) |
-| 153 | Create bin/sync-baseline-requirements.cjs — idempotent merge of baseline requirements into existing .formal/requirements.json, matching on text description | 2026-03-04 | 7a70a337 | Pending | [153-create-bin-sync-baseline-requirements-cj](./quick/153-create-bin-sync-baseline-requirements-cj/) |
+| 153 | Create bin/sync-baseline-requirements.cjs — idempotent merge of baseline requirements into existing .formal/requirements.json, matching on text description | 2026-03-04 | 7a70a337 | Verified | [153-create-bin-sync-baseline-requirements-cj](./quick/153-create-bin-sync-baseline-requirements-cj/) |
 
 ## Session Continuity
 
