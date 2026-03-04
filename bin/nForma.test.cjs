@@ -1,8 +1,8 @@
 'use strict';
-// Test suite for bin/qgsd.cjs
+// Test suite for bin/nForma.cjs
 // Strategy: inject mock modules into require.cache before requiring the source,
 // so blessed never creates a real terminal. Pure functions are tested directly.
-// node --test bin/qgsd.test.cjs
+// node --test bin/nForma.test.cjs
 
 const { test, before, after } = require('node:test');
 const assert  = require('node:assert/strict');
@@ -59,11 +59,20 @@ const MOCK_UPDATE_AGENTS = {
   ]),
 };
 
+// ─── Mock blessed-xterm ──────────────────────────────────────────────────────
+// Returns a constructor that produces a no-op terminal widget (no real PTY).
+function MockXTerm() {
+  return makeWidget({
+    terminate: () => {}, hide: () => {}, show: () => {},
+  });
+}
+
 // ─── Inject mocks and require subject ────────────────────────────────────────
 const BLESSED_PATH       = require.resolve('blessed');
+const XTERM_PATH         = require.resolve('blessed-xterm');
 const CORE_PATH          = require.resolve('./manage-agents-core.cjs');
 const UPDATE_AGENTS_PATH = require.resolve('./update-agents.cjs');
-const SUBJECT_PATH       = require.resolve('./qgsd.cjs');
+const SUBJECT_PATH       = require.resolve('./nForma.cjs');
 
 let _pure;
 
@@ -72,6 +81,11 @@ before(() => {
   require.cache[BLESSED_PATH] = {
     id: BLESSED_PATH, filename: BLESSED_PATH, loaded: true,
     exports: MOCK_BLESSED,
+  };
+  // Inject blessed-xterm mock (no real PTY)
+  require.cache[XTERM_PATH] = {
+    id: XTERM_PATH, filename: XTERM_PATH, loaded: true,
+    exports: MockXTerm,
   };
   // Inject default core mock
   require.cache[CORE_PATH] = {
@@ -84,12 +98,13 @@ before(() => {
     exports: MOCK_UPDATE_AGENTS,
   };
   // Now require the subject — require.main !== module, so startup code is skipped
-  _pure = require('./qgsd.cjs')._pure;
+  _pure = require('./nForma.cjs')._pure;
 });
 
 after(() => {
   // Clean up injected mocks so they don't bleed into other suites
   delete require.cache[BLESSED_PATH];
+  delete require.cache[XTERM_PATH];
   delete require.cache[CORE_PATH];
   delete require.cache[UPDATE_AGENTS_PATH];
   delete require.cache[SUBJECT_PATH];
@@ -389,17 +404,20 @@ test('MENU_ITEMS: contains all expected actions', () => {
   }
 });
 
-test('MENU_ITEMS: exit is the last non-sep item', () => {
-  const nonSep = _pure.MENU_ITEMS.filter(m => m.action !== 'sep');
-  assert.strictEqual(nonSep[nonSep.length - 1].action, 'exit');
+test('MENU_ITEMS: exit is present in Config module section', () => {
+  const configItems = _pure.MODULES[2].items.filter(m => m.action !== 'sep');
+  assert.strictEqual(configItems[configItems.length - 1].action, 'exit',
+    'exit must be the last non-sep item in the Config module');
+  assert.ok(_pure.MENU_ITEMS.some(m => m.action === 'exit'),
+    'exit must exist somewhere in flat MENU_ITEMS');
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 6.5. MODULES — structural contract (activity bar)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test('MODULES: exactly 3 modules defined', () => {
-  assert.strictEqual(_pure.MODULES.length, 3);
+test('MODULES: exactly 4 modules defined', () => {
+  assert.strictEqual(_pure.MODULES.length, 4);
 });
 
 test('MODULES: each module has name, icon, key, and items array', () => {
@@ -412,14 +430,14 @@ test('MODULES: each module has name, icon, key, and items array', () => {
   });
 });
 
-test('MODULES: module names are Agents, Reqs, Config', () => {
+test('MODULES: module names are Agents, Reqs, Config, Sessions', () => {
   const names = _pure.MODULES.map(m => m.name);
-  assert.deepStrictEqual(names, ['Agents', 'Reqs', 'Config']);
+  assert.deepStrictEqual(names, ['Agents', 'Reqs', 'Config', 'Sessions']);
 });
 
-test('MODULES: hotkeys are f1, f2, f3', () => {
+test('MODULES: hotkeys are f1, f2, f3, f4', () => {
   const keys = _pure.MODULES.map(m => m.key);
-  assert.deepStrictEqual(keys, ['f1', 'f2', 'f3']);
+  assert.deepStrictEqual(keys, ['f1', 'f2', 'f3', 'f4']);
 });
 
 test('MODULES: Agents module contains agent management actions', () => {
@@ -471,6 +489,47 @@ test('MODULES: MENU_ITEMS is the flat union of all module items', () => {
   flat.forEach((item, i) => {
     assert.strictEqual(_pure.MENU_ITEMS[i].action, item.action, `mismatch at index ${i}`);
   });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6.6. Sessions module — structural contract
+// ─────────────────────────────────────────────────────────────────────────────
+
+test('Sessions: module is at index 3 with correct name and key', () => {
+  const sessions = _pure.MODULES[3];
+  assert.strictEqual(sessions.name, 'Sessions');
+  assert.strictEqual(sessions.key, 'f4');
+});
+
+test('Sessions: has icon and 3-line pixel art', () => {
+  const sessions = _pure.MODULES[3];
+  assert.strictEqual(typeof sessions.icon, 'string');
+  assert.ok(sessions.icon.length > 0, 'icon must be non-empty');
+  assert.ok(Array.isArray(sessions.art), 'art must be an array');
+  assert.strictEqual(sessions.art.length, 3, 'pixel art must have 3 lines');
+});
+
+test('Sessions: items array contains session-new action', () => {
+  const actions = _pure.MODULES[3].items.map(m => m.action);
+  assert.ok(actions.includes('session-new'), 'Sessions module must have session-new action');
+});
+
+test('Sessions: MENU_ITEMS includes session-new', () => {
+  assert.ok(_pure.MENU_ITEMS.some(m => m.action === 'session-new'),
+    'MENU_ITEMS must include session-new action from Sessions module');
+});
+
+test('Sessions: tab cycling covers all 4 modules (0→1→2→3→0)', () => {
+  const len = _pure.MODULES.length;
+  assert.strictEqual(len, 4);
+  // Simulate tab cycling: each step is (current + 1) % length
+  const sequence = [];
+  let idx = 0;
+  for (let i = 0; i < len + 1; i++) {
+    sequence.push(idx);
+    idx = (idx + 1) % len;
+  }
+  assert.deepStrictEqual(sequence, [0, 1, 2, 3, 0]);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1135,13 +1194,13 @@ test('buildScoreboardLines: roster filter applies to dormant section too', () =>
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 13. Circuit breaker CLI (merged from qgsd.cjs)
+// 13. Circuit breaker CLI (merged from nForma.cjs)
 // ─────────────────────────────────────────────────────────────────────────────
-// Spawns qgsd.cjs as a subprocess with cwd set to a non-git temp dir
+// Spawns nForma.cjs as a subprocess with cwd set to a non-git temp dir
 // so getBreakerProjectRoot() falls back to process.cwd(), making state isolated.
 
 const { spawnSync } = require('child_process');
-const BREAKER_CLI = path.join(__dirname, 'qgsd.cjs');
+const BREAKER_CLI = path.join(__dirname, 'nForma.cjs');
 
 function runBreaker(args, cwd) {
   const result = spawnSync(process.execPath, [BREAKER_CLI, ...args], {
