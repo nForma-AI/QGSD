@@ -84,9 +84,9 @@ Plans:
   4. Each debt entry can link to a formal reference (model file, parameter key, requirement ID) via the formal_ref field
 **Plans**: 3 plans
 Plans:
-- [ ] v0.27-01-01-PLAN.md — Schema definition, validation, and state machine (DEBT-01, DEBT-03)
-- [ ] v0.27-01-02-PLAN.md — Issue and drift fingerprinting algorithms (FP-01, FP-02)
-- [ ] v0.27-01-03-PLAN.md — Ledger I/O, retention policy, and integration test (DEBT-04)
+- [ ] v0.27-03-01-PLAN.md — Levenshtein similarity and schema extension for formal_ref_source (FP-03, DEBT-02)
+- [ ] v0.27-03-02-PLAN.md — Dedup engine and formal reference auto-linker (FP-03, FP-04, DEBT-02, DEBT-05)
+- [ ] v0.27-03-03-PLAN.md — Integration into observe-debt-writer and end-to-end test (FP-03, FP-04, DEBT-02, DEBT-05)
 
 ### Phase v0.27-04: Production Source Types
 **Goal**: Observe supports Prometheus, Grafana, and Logstash as pluggable source types with framework-ready handlers
