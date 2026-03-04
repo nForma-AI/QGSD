@@ -1,6 +1,7 @@
 /**
  * Debt ledger write-through for /qgsd:observe
  * Upserts observations to .formal/debt.json by fingerprint using v0.27-01 functions
+ * Then runs dedup engine and formal reference linker (v0.27-03)
  *
  * CRITICAL: Never compute fingerprints inline — always use imported v0.27-01 functions
  */
@@ -11,16 +12,23 @@ const { readDebtLedger, writeDebtLedger } = require('./debt-ledger.cjs');
 const { fingerprintIssue } = require('./fingerprint-issue.cjs');
 const { fingerprintDrift } = require('./fingerprint-drift.cjs');
 const { validateDebtEntry } = require('./validate-debt-entry.cjs');
+const { deduplicateEntries } = require('./debt-dedup.cjs');
+const { linkFormalRefs } = require('./formal-ref-linker.cjs');
 
 /**
- * Write observations from observe command to debt ledger
- * Upserts by fingerprint: new entries are created, existing entries get occurrences++ and last_seen updated
+ * Write observations from observe command to debt ledger, then dedup and link formal refs.
+ * Pipeline: write/upsert -> dedup (fingerprint + Levenshtein) -> formal-ref link -> save
  *
  * @param {object[]} observations - Array of issue/drift objects from handlers (standard schema)
  * @param {string} [ledgerPath] - Path to debt.json (default: .formal/debt.json)
- * @returns {object} { written: number, updated: number, errors: number }
+ * @param {object} [options] - Options for dedup and linking
+ * @param {number} [options.threshold=0.85] - Levenshtein similarity threshold
+ * @param {boolean} [options.verbose=false] - Include detailed merge/link logs
+ * @param {string} [options.requirementsPath] - Custom requirements.json path
+ * @param {string} [options.specDir] - Custom spec directory path
+ * @returns {object} { written, updated, errors, merged, linked, mergeLog?, linkLog? }
  */
-function writeObservationsToDebt(observations, ledgerPath) {
+function writeObservationsToDebt(observations, ledgerPath, options = {}) {
   const resolvedPath = ledgerPath || path.resolve(process.cwd(), '.formal/debt.json');
   const ledger = readDebtLedger(resolvedPath);
   const now = new Date().toISOString();
@@ -95,12 +103,38 @@ function writeObservationsToDebt(observations, ledgerPath) {
     }
   }
 
-  // Write updated ledger
-  if (written > 0 || updated > 0) {
+  // Phase 2: Dedup (fingerprint exact-match + Levenshtein near-duplicate)
+  const dedupResult = deduplicateEntries(ledger.debt_entries, {
+    threshold: options.threshold ?? 0.85
+  });
+  ledger.debt_entries = dedupResult.entries;
+
+  // Phase 3: Formal reference linking
+  const linkResult = linkFormalRefs(ledger.debt_entries, {
+    requirementsPath: options.requirementsPath,
+    specDir: options.specDir
+  });
+  ledger.debt_entries = linkResult.entries;
+
+  // Write updated ledger only if changes occurred
+  if (written > 0 || updated > 0 || dedupResult.mergeCount > 0 || linkResult.linkedCount > 0) {
     writeDebtLedger(resolvedPath, ledger);
   }
 
-  return { written, updated, errors };
+  const result = {
+    written,
+    updated,
+    errors,
+    merged: dedupResult.mergeCount,
+    linked: linkResult.linkedCount
+  };
+
+  if (options.verbose) {
+    result.mergeLog = dedupResult.mergeLog;
+    result.linkLog = linkResult.linkLog;
+  }
+
+  return result;
 }
 
 module.exports = { writeObservationsToDebt };

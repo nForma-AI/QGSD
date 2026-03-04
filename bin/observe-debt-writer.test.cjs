@@ -139,8 +139,8 @@ describe('writeObservationsToDebt', () => {
 
   it('written ledger is readable and valid', () => {
     const obs = [
-      { id: 'gh-1', title: 'Issue A', source_type: 'github', issue_type: 'issue', created_at: new Date().toISOString() },
-      { id: 'gh-2', title: 'Issue B', source_type: 'sentry', issue_type: 'issue', created_at: new Date().toISOString() }
+      { id: 'gh-1', title: 'TypeError in authentication handler', source_type: 'github', issue_type: 'issue', created_at: new Date().toISOString() },
+      { id: 'gh-2', title: 'SyntaxError in configuration parser module', source_type: 'sentry', issue_type: 'issue', created_at: new Date().toISOString() }
     ];
 
     writeObservationsToDebt(obs, ledgerPath);
@@ -198,5 +198,136 @@ describe('writeObservationsToDebt', () => {
 
     const ledger = readDebtLedger(ledgerPath);
     assert.ok(ledger.debt_entries[0].title.length <= 256);
+  });
+
+  // ── v0.27-03 dedup + formal-ref integration tests ──────────────────────
+
+  it('returns merged and linked counts in result', () => {
+    const obs = [{
+      id: 'gh-1',
+      title: 'Test issue',
+      source_type: 'github',
+      issue_type: 'issue',
+      created_at: new Date().toISOString()
+    }];
+
+    const result = writeObservationsToDebt(obs, ledgerPath);
+    assert.strictEqual(typeof result.merged, 'number');
+    assert.strictEqual(typeof result.linked, 'number');
+  });
+
+  it('two observations with different sources but similar titles get Levenshtein-merged', () => {
+    // Write two observations with different fingerprints but similar titles
+    // They need different exception_type/function_name to get different fingerprints
+    const obs = [
+      {
+        id: 'gh-1',
+        title: 'TypeError in authentication handler module',
+        source_type: 'github',
+        issue_type: 'issue',
+        exception_type: 'TypeError',
+        function_name: 'authHandlerModule',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'sn-1',
+        title: 'TypeError in authentication handler service',
+        source_type: 'sentry',
+        issue_type: 'issue',
+        exception_type: 'TypeError',
+        function_name: 'authHandlerService',
+        created_at: new Date().toISOString()
+      }
+    ];
+
+    const result = writeObservationsToDebt(obs, ledgerPath);
+    const ledger = readDebtLedger(ledgerPath);
+
+    // Should merge by Levenshtein near-duplicate
+    assert.strictEqual(ledger.debt_entries.length, 1);
+    assert.strictEqual(result.merged, 1);
+  });
+
+  it('observation with title matching requirement gets formal_ref auto-detected', () => {
+    // Create mock requirements file
+    const reqDir = path.join(tmpDir, 'mock-formal');
+    fs.mkdirSync(reqDir, { recursive: true });
+    const reqPath = path.join(reqDir, 'requirements.json');
+    fs.writeFileSync(reqPath, JSON.stringify([
+      { id: 'DEBT-01', text: 'Schema validation for debt entries' }
+    ]));
+
+    const obs = [{
+      id: 'gh-1',
+      title: 'Schema validation fails on empty entries',
+      source_type: 'github',
+      issue_type: 'issue',
+      created_at: new Date().toISOString()
+    }];
+
+    const result = writeObservationsToDebt(obs, ledgerPath, { requirementsPath: reqPath });
+    const ledger = readDebtLedger(ledgerPath);
+
+    assert.strictEqual(result.linked, 1);
+    assert.strictEqual(ledger.debt_entries[0].formal_ref, 'requirement:DEBT-01');
+    assert.strictEqual(ledger.debt_entries[0].formal_ref_source, 'auto-detect');
+  });
+
+  it('options.threshold configures dedup sensitivity', () => {
+    const obs = [
+      {
+        id: 'gh-1',
+        title: 'TypeError in authentication handler module',
+        source_type: 'github',
+        issue_type: 'issue',
+        exception_type: 'TypeError',
+        function_name: 'authHandlerModule',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'sn-1',
+        title: 'TypeError in authentication handler service',
+        source_type: 'sentry',
+        issue_type: 'issue',
+        exception_type: 'TypeError',
+        function_name: 'authHandlerService',
+        created_at: new Date().toISOString()
+      }
+    ];
+
+    // With high threshold, should NOT merge
+    const result = writeObservationsToDebt(obs, ledgerPath, { threshold: 0.99 });
+    const ledger = readDebtLedger(ledgerPath);
+    assert.strictEqual(ledger.debt_entries.length, 2);
+    assert.strictEqual(result.merged, 0);
+  });
+
+  it('verbose option includes mergeLog and linkLog', () => {
+    const obs = [{
+      id: 'gh-1',
+      title: 'Test issue',
+      source_type: 'github',
+      issue_type: 'issue',
+      created_at: new Date().toISOString()
+    }];
+
+    const result = writeObservationsToDebt(obs, ledgerPath, { verbose: true });
+    assert.ok(Array.isArray(result.mergeLog));
+    assert.ok(Array.isArray(result.linkLog));
+  });
+
+  it('existing tests: return value still has written, updated, errors', () => {
+    const obs = [{
+      id: 'gh-1',
+      title: 'Test issue',
+      source_type: 'github',
+      issue_type: 'issue',
+      created_at: new Date().toISOString()
+    }];
+
+    const result = writeObservationsToDebt(obs, ledgerPath);
+    assert.strictEqual(typeof result.written, 'number');
+    assert.strictEqual(typeof result.updated, 'number');
+    assert.strictEqual(typeof result.errors, 'number');
   });
 });
