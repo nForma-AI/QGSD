@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.27-02",
+  "created_at": "2026-03-04T17:25:13.546Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "This phase transforms the existing `/qgsd:triage` command into `/qgsd:observe` — a production feedback system that fetches from configured sources (GitHub, Sentry, bash) in parallel, deduplicates usin",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.27-02-observe-skill-core/v0.27-02-01-PLAN.md",
+    "key_decisions": []
+  }
+}
