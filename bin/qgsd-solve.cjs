@@ -151,34 +151,93 @@ function walkDir(dir, maxDepth, currentDepth) {
 }
 
 /**
+ * Detect uninitialized git submodules that overlap with doc paths.
+ * Returns array of { submodule, docKey } warnings.
+ */
+function detectUninitializedSubmodules(docPaths) {
+  const gitmodulesPath = path.join(ROOT, '.gitmodules');
+  if (!fs.existsSync(gitmodulesPath)) return [];
+
+  const warnings = [];
+  try {
+    const content = fs.readFileSync(gitmodulesPath, 'utf8');
+    const submodules = [];
+    const re = /\[submodule\s+"([^"]+)"\][\s\S]*?path\s*=\s*(.+)/g;
+    let m;
+    while ((m = re.exec(content)) !== null) {
+      submodules.push({ name: m[1].trim(), path: m[2].trim() });
+    }
+
+    for (const sub of submodules) {
+      const subAbsPath = path.join(ROOT, sub.path);
+      const isInitialized = fs.existsSync(subAbsPath) &&
+        fs.readdirSync(subAbsPath).length > 0;
+
+      for (const [docKey, docPath] of Object.entries(docPaths)) {
+        const docNorm = docPath.replace(/\/$/, '');
+        if (sub.path === docNorm || sub.path.startsWith(docNorm + '/') || docNorm.startsWith(sub.path + '/')) {
+          if (!isInitialized) {
+            warnings.push({ submodule: sub.path, docKey, name: sub.name });
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // .gitmodules parse error — fail-open
+  }
+  return warnings;
+}
+
+/**
  * Discover documentation files based on:
  *   1. .planning/polyrepo.json docs field (preferred — knows user vs developer vs examples)
  *   2. .planning/config.json docs_paths (legacy)
- *   3. Fallback patterns: README.md, docs/**/*.md
- * Returns array of absolute paths.
+ *   3. Fallback patterns: README.md, docs/ (recursive .md)
+ * Returns array of { absPath, category } where category is 'user'|'developer'|'examples'|'unknown'.
  */
 function discoverDocFiles() {
-  let docPatterns = ['README.md', 'docs/**/*.md'];
+  let docPatterns = [
+    { pattern: 'README.md', category: 'user' },
+    { pattern: 'docs/**/*.md', category: 'unknown' },
+  ];
+  let markerDocs = null;
 
   // Prefer polyrepo marker docs field
   const markerPath = path.join(ROOT, '.planning', 'polyrepo.json');
   try {
     const marker = JSON.parse(fs.readFileSync(markerPath, 'utf8'));
     if (marker.docs && typeof marker.docs === 'object') {
+      markerDocs = marker.docs;
       const patterns = [];
-      for (const [, docPath] of Object.entries(marker.docs)) {
+      for (const [key, docPath] of Object.entries(marker.docs)) {
         if (typeof docPath !== 'string') continue;
-        // If it ends with / treat as directory glob, otherwise treat as literal file
         if (docPath.endsWith('/')) {
-          patterns.push(docPath + '**/*.md');
+          patterns.push({ pattern: docPath + '**/*.md', category: key });
         } else {
-          patterns.push(docPath);
+          patterns.push({ pattern: docPath, category: key });
         }
       }
       if (patterns.length > 0) {
-        // Always include README.md at root
-        patterns.unshift('README.md');
+        patterns.unshift({ pattern: 'README.md', category: 'user' });
+        // Sort: exact paths first, then deeper globs before shallower ones
+        patterns.sort((a, b) => {
+          const aGlob = a.pattern.includes('*') ? 1 : 0;
+          const bGlob = b.pattern.includes('*') ? 1 : 0;
+          if (aGlob !== bGlob) return aGlob - bGlob; // exact paths first
+          const aDepth = a.pattern.split('/').length;
+          const bDepth = b.pattern.split('/').length;
+          return bDepth - aDepth; // deeper globs first
+        });
         docPatterns = patterns;
+      }
+
+      // Check for uninitialized submodules overlapping doc paths
+      const subWarnings = detectUninitializedSubmodules(marker.docs);
+      for (const w of subWarnings) {
+        console.error(
+          `[qgsd-solve] WARNING: docs.${w.docKey} overlaps submodule "${w.name}" ` +
+          `(${w.submodule}) which is not initialized. Run: git submodule update --init ${w.submodule}`
+        );
       }
     }
   } catch (e) {
@@ -186,21 +245,21 @@ function discoverDocFiles() {
   }
 
   // Fall back to config.json docs_paths if marker didn't provide patterns
-  if (docPatterns[0] === 'README.md' && docPatterns.length === 2 && docPatterns[1] === 'docs/**/*.md') {
+  if (!markerDocs) {
     const configPath = path.join(ROOT, '.planning', 'config.json');
     try {
       const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
       if (Array.isArray(configData.docs_paths) && configData.docs_paths.length > 0) {
-        docPatterns = configData.docs_paths;
+        docPatterns = configData.docs_paths.map(p => ({ pattern: p, category: 'unknown' }));
       }
     } catch (e) {
       // Use defaults
     }
   }
 
-  const found = new Set();
+  const found = new Map();
 
-  for (const pattern of docPatterns) {
+  for (const { pattern, category } of docPatterns) {
     if (pattern.includes('*')) {
       const parts = pattern.replace(/\\/g, '/').split('/');
       let baseDir = ROOT;
@@ -214,18 +273,18 @@ function discoverDocFiles() {
       for (const f of allFiles) {
         const relative = path.relative(ROOT, f).replace(/\\/g, '/');
         if (matchWildcard(pattern, relative)) {
-          found.add(f);
+          if (!found.has(f)) found.set(f, category);
         }
       }
     } else {
       const fullPath = path.join(ROOT, pattern);
       if (fs.existsSync(fullPath)) {
-        found.add(fullPath);
+        if (!found.has(fullPath)) found.set(fullPath, category);
       }
     }
   }
 
-  return Array.from(found);
+  return Array.from(found.entries()).map(([absPath, category]) => ({ absPath, category }));
 }
 
 // ── Keyword extraction ──────────────────────────────────────────────────────
@@ -724,9 +783,9 @@ function sweepRtoD() {
 
   // Concatenate all doc content
   let allDocContent = '';
-  for (const docFile of docFiles) {
+  for (const { absPath } of docFiles) {
     try {
-      allDocContent += fs.readFileSync(docFile, 'utf8') + '\n';
+      allDocContent += fs.readFileSync(absPath, 'utf8') + '\n';
     } catch (e) {
       // skip unreadable files
     }
@@ -816,18 +875,21 @@ function sweepDtoC() {
     // No package.json — skip dependency checks
   }
 
+  // Severity weights: user-facing broken claims count more
+  const CATEGORY_WEIGHT = { user: 2, examples: 1.5, developer: 1, unknown: 1 };
+
   const brokenClaims = [];
   let totalClaimsChecked = 0;
 
-  for (const docFile of docFiles) {
+  for (const { absPath, category } of docFiles) {
     let content;
     try {
-      content = fs.readFileSync(docFile, 'utf8');
+      content = fs.readFileSync(absPath, 'utf8');
     } catch (e) {
       continue;
     }
 
-    const relativePath = path.relative(ROOT, docFile).replace(/\\/g, '/');
+    const relativePath = path.relative(ROOT, absPath).replace(/\\/g, '/');
     const claims = extractStructuralClaims(content, relativePath);
 
     for (const claim of claims) {
@@ -838,8 +900,8 @@ function sweepDtoC() {
 
       if (claim.type === 'file_path') {
         // Verify file exists
-        const absPath = path.join(ROOT, claim.value);
-        if (!fs.existsSync(absPath)) {
+        const claimAbsPath = path.join(ROOT, claim.value);
+        if (!fs.existsSync(claimAbsPath)) {
           isBroken = true;
           reason = 'file not found';
         }
@@ -868,17 +930,30 @@ function sweepDtoC() {
           type: claim.type,
           value: claim.value,
           reason: reason,
+          category: category,
         });
       }
     }
   }
 
+  // Weighted residual: user-facing broken claims count more
+  let weightedResidual = 0;
+  const categoryBreakdown = {};
+  for (const bc of brokenClaims) {
+    const w = CATEGORY_WEIGHT[bc.category] || 1;
+    weightedResidual += w;
+    categoryBreakdown[bc.category] = (categoryBreakdown[bc.category] || 0) + 1;
+  }
+
   return {
-    residual: brokenClaims.length,
+    residual: Math.ceil(weightedResidual),
     detail: {
       broken_claims: brokenClaims,
       total_claims_checked: totalClaimsChecked,
       doc_files_scanned: docFiles.length,
+      raw_broken_count: brokenClaims.length,
+      weighted_residual: weightedResidual,
+      category_breakdown: categoryBreakdown,
     },
   };
 }
