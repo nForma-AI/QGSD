@@ -30,6 +30,7 @@ const {
   extractStructuralClaims,
   sweepRtoD,
   sweepDtoC,
+  sweepTtoC,
 } = require('./qgsd-solve.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -91,7 +92,7 @@ test('TC-FORMAT-2: formatReport with converged=false, total=5', () => {
         r_to_f: { residual: 2, detail: { uncovered_requirements: ['REQ-001', 'REQ-002'] } },
         f_to_t: { residual: 1, detail: { gaps: ['REQ-003'] } },
         c_to_f: { residual: 1, detail: { mismatches: [] } },
-        t_to_c: { residual: 1, detail: { failed: 1, total_tests: 10 } },
+        t_to_c: { residual: 1, detail: { failed: 1, skipped: 0, todo: 0, total_tests: 10 } },
         f_to_c: { residual: 0, detail: {} },
         r_to_d: { residual: 0, detail: {} },
         d_to_c: { residual: 0, detail: {} },
@@ -361,6 +362,54 @@ test('TC-SWEEP-DC-1: sweepDtoC returns valid structure', () => {
   if (result.detail.skipped) {
     assert.equal(result.residual, 0);
   }
+});
+
+// ── TC-TAP-PARSE: TAP Format Parsing Tests ──────────────────────────────────
+
+test('TC-TAP-PARSE-1: dual-format regex matches i prefix (Node v25)', () => {
+  const output = 'ℹ tests 42\nℹ pass 40\nℹ fail 1\nℹ skipped 1\nℹ todo 0\nℹ duration_ms 123';
+  const testsMatch = output.match(/^[ℹ#]\s+tests\s+(\d+)/m);
+  const failMatch = output.match(/^[ℹ#]\s+fail\s+(\d+)/m);
+  const skipMatch = output.match(/^[ℹ#]\s+skipped\s+(\d+)/m);
+  assert.ok(testsMatch, 'should match ℹ prefix for tests');
+  assert.equal(testsMatch[1], '42');
+  assert.ok(failMatch, 'should match ℹ prefix for fail');
+  assert.equal(failMatch[1], '1');
+  assert.ok(skipMatch, 'should match ℹ prefix for skipped');
+  assert.equal(skipMatch[1], '1');
+});
+
+test('TC-TAP-PARSE-2: dual-format regex matches # prefix (Node <= v24)', () => {
+  const output = '# tests 10\n# pass 8\n# fail 2\n# skipped 0\n# todo 0';
+  const testsMatch = output.match(/^[ℹ#]\s+tests\s+(\d+)/m);
+  const failMatch = output.match(/^[ℹ#]\s+fail\s+(\d+)/m);
+  assert.ok(testsMatch);
+  assert.equal(testsMatch[1], '10');
+  assert.ok(failMatch);
+  assert.equal(failMatch[1], '2');
+});
+
+test('TC-TAP-PARSE-3: skip and todo counts extracted', () => {
+  const output = 'ℹ tests 20\nℹ fail 1\nℹ skipped 3\nℹ todo 2';
+  const skipMatch = output.match(/^[ℹ#]\s+skipped\s+(\d+)/m);
+  const todoMatch = output.match(/^[ℹ#]\s+todo\s+(\d+)/m);
+  assert.ok(skipMatch);
+  assert.equal(parseInt(skipMatch[1], 10), 3);
+  assert.ok(todoMatch);
+  assert.equal(parseInt(todoMatch[1], 10), 2);
+});
+
+test('TC-RESIDUAL-SKIP-1: sweepTtoC residual includes skipped count', () => {
+  // Integration test: run actual tests and verify detail shape
+  const result = sweepTtoC();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(typeof result.detail === 'object');
+  assert.ok('skipped' in result.detail, 'detail must include skipped field');
+  assert.ok('todo' in result.detail, 'detail must include todo field');
+  assert.ok('failed' in result.detail, 'detail must include failed field');
+  // residual should equal failed + skipped
+  assert.equal(result.residual, result.detail.failed + result.detail.skipped);
 });
 
 // ── TC-INT: Integration Tests ────────────────────────────────────────────────
