@@ -24,6 +24,12 @@ const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
 // ── 1. Locate Java ───────────────────────────────────────────────────────────
 const JAVA_HOME = process.env.JAVA_HOME;
 let javaExe;
@@ -71,7 +77,7 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(__dirname, '..', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(ROOT, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-account-pool-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
@@ -84,7 +90,7 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Locate .formal/alloy/account-pool-structure.als ────────────────────────
-const alsPath = path.join(__dirname, '..', '.formal', 'alloy', 'account-pool-structure.als');
+const alsPath = path.join(ROOT, '.formal', 'alloy', 'account-pool-structure.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-account-pool-alloy] account-pool-structure.als not found at: ' + alsPath + '\n' +

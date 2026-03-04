@@ -308,6 +308,7 @@ function runNodeStep(step) {
     stdio: 'inherit',
     encoding: 'utf8',
     cwd: ROOT,
+    env: { ...process.env, CHECK_RESULTS_ROOT: ROOT },
   });
   if (result.error) {
     process.stderr.write(TAG + ' Launch error: ' + result.error.message + '\n');
@@ -378,7 +379,7 @@ async function runOnce() {
   // Reset results array so watch-mode re-runs start clean
   results.length = 0;
   // Truncate NDJSON file — fresh run (UNIF-02)
-  const ndjsonPath = path.join(__dirname, '..', '.formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(ROOT, '.formal', 'check-results.ndjson');
   fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');

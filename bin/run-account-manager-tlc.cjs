@@ -29,6 +29,12 @@ const { writeCheckResult } = require('./write-check-result.cjs');
 const { detectLivenessProperties } = require('./run-tlc.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
 // ── Parse --config argument ──────────────────────────────────────────────────
 const args       = process.argv.slice(2);
 const configArg  = args.find(a => a.startsWith('--config=')) || null;
@@ -103,7 +109,7 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
+const jarPath = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-account-manager-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
@@ -118,8 +124,8 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Invoke TLC ────────────────────────────────────────────────────────────
-const specPath = path.join(__dirname, '..', '.formal', 'tla', 'QGSDAccountManager.tla');
-const cfgPath  = path.join(__dirname, '..', '.formal', 'tla', configName + '.cfg');
+const specPath = path.join(ROOT, '.formal', 'tla', 'QGSDAccountManager.tla');
+const cfgPath  = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
 // Use workers=1 for liveness (IdleReachable) — avoids multi-worker liveness bugs in TLC
 const workers  = '1';
 

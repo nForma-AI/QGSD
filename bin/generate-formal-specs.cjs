@@ -25,7 +25,10 @@
 const fs   = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
 const DRY  = process.argv.includes('--dry');
 
 // ── Model registry update helper ──────────────────────────────────────────────
@@ -67,8 +70,8 @@ function updateModelRegistry(absPath) {
 // ── Parse XState machine ──────────────────────────────────────────────────────
 const machineFile = path.join(ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
 if (!fs.existsSync(machineFile)) {
-  process.stderr.write('[generate-formal-specs] XState machine not found: ' + machineFile + '\n');
-  process.exit(1);
+  process.stderr.write('[generate-formal-specs] XState machine not found at ' + machineFile + ' — skipping (not required for external projects)\n');
+  process.exit(0);
 }
 const src = fs.readFileSync(machineFile, 'utf8');
 
@@ -485,8 +488,8 @@ const prismSpec = [
   '// Slot aggregate rates (conservative priors — override with empirical data)',
   '// tp_rate = P(a slot votes APPROVE | it is AVAILABLE) — unanimityMet criterion',
   '// unavail = P(slot is UNAVAILABLE in a given round)',
-  'const double tp_rate = 0.85;   // conservative prior (see bin/export-prism-constants.cjs)',
-  'const double unavail = 0.15;   // conservative prior (see bin/export-prism-constants.cjs)',
+  'const double tp_rate;   // injected by run-prism.cjs from scoreboard (see bin/export-prism-constants.cjs)',
+  'const double unavail;   // injected by run-prism.cjs from scoreboard (see bin/export-prism-constants.cjs)',
   '',
   'module quorum_convergence',
   '    s : [0..2] init 0;',

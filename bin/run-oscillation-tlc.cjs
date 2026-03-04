@@ -20,6 +20,12 @@ const { writeCheckResult } = require('./write-check-result.cjs');
 const { detectLivenessProperties } = require('./run-tlc.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
 const CHECK_ID_MAP = {
   'MCoscillation': 'tla:oscillation',
   'MCconvergence': 'tla:convergence',
@@ -106,7 +112,7 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
+const jarPath = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-oscillation-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
@@ -124,8 +130,8 @@ if (!fs.existsSync(jarPath)) {
 const specFileName = configName === 'MCoscillation'
   ? 'QGSDOscillation.tla'
   : 'QGSDConvergence.tla';
-const specPath = path.join(__dirname, '..', '.formal', 'tla', specFileName);
-const cfgPath  = path.join(__dirname, '..', '.formal', 'tla', configName + '.cfg');
+const specPath = path.join(ROOT, '.formal', 'tla', specFileName);
+const cfgPath  = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
 
 // Both MCoscillation and MCconvergence declare PROPERTY (liveness) clauses in their .cfg files.
 // TLC has a known multi-worker liveness checking bug (v1.8.0) — always use -workers 1.

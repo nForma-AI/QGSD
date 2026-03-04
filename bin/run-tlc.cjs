@@ -19,7 +19,11 @@ const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
-const VALID_CONFIGS = ['MCsafety', 'MCliveness', 'MCMCPEnv'];
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
 
 const CHECK_ID_MAP = {
   'MCsafety':   'tla:quorum-safety',
@@ -36,6 +40,7 @@ const PROPERTY_MAP = {
 // ── Surface map for liveness detection ──────────────────────────────────────
 const SURFACE_MAP = {
   'MCliveness':            'quorum',
+  'MCsafety':              'safety',
   'MCdeliberation':        'deliberation',
   'MCprefilter':           'prefilter',
   'MCrecruiting-liveness': 'recruiting',
@@ -44,6 +49,11 @@ const SURFACE_MAP = {
   'MCoscillation':         'oscillation',
   'MCaccount-manager':     'account-manager',
   'MCMCPEnv':              'mcp-calls',  // MCPENV-02
+  'MCStopHook':            'stop-hook',
+  'MCAgentLoop':           'agent-loop',
+  'MCTUINavigation':       'tui-nav',
+  'MCinstaller':           'installer',
+  'MCDeliberationRevision': 'deliberation-revision',
 };
 
 /**
@@ -56,7 +66,7 @@ const SURFACE_MAP = {
  * @returns {string[]} Property names with no fairness declaration
  */
 function detectLivenessProperties(configName, cfgPath, specDir) {
-  const defaultSpecDir = path.join(__dirname, '..', '.formal', 'spec');
+  const defaultSpecDir = path.join(ROOT, '.formal', 'spec');
   const resolvedSpecDir = specDir || defaultSpecDir;
 
   let cfgContent;
@@ -110,10 +120,11 @@ if (require.main === module) {
     ? configArg.split('=')[1]
     : (args.find(a => !a.startsWith('-')) || 'MCsafety');
 
-  if (!VALID_CONFIGS.includes(configName)) {
+  // Validate config: accept any configName as long as .cfg file exists
+  const _cfgCheckPath = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
+  if (!fs.existsSync(_cfgCheckPath)) {
     process.stderr.write(
-      '[run-tlc] Unknown config: ' + configName +
-      '. Valid: ' + VALID_CONFIGS.join(', ') + '\n'
+      '[run-tlc] Config file not found: ' + _cfgCheckPath + '\n'
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
@@ -122,12 +133,12 @@ if (require.main === module) {
         tool: 'run-tlc',
         formalism: 'tla',
         result: 'fail',
-        check_id: 'tla:unknown',
+        check_id: 'tla:' + configName.toLowerCase(),
         surface: 'tla',
-        property: 'Unknown config: ' + configName,
+        property: 'Config not found: ' + configName,
         runtime_ms: _runtimeMs,
-        summary: 'fail: unknown config in ' + _runtimeMs + 'ms',
-        requirement_ids: getRequirementIds('tla:unknown'),
+        summary: 'fail: config file not found in ' + _runtimeMs + 'ms',
+        requirement_ids: getRequirementIds('tla:' + configName.toLowerCase()),
         metadata: { config: configName }
       });
     } catch (e) {
@@ -253,7 +264,7 @@ if (require.main === module) {
   }
 
   // ── 3. Locate tla2tools.jar ────────────────────────────────────────────────
-  const jarPath = path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
+  const jarPath = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
   if (!fs.existsSync(jarPath)) {
     process.stderr.write(
       '[run-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
@@ -283,8 +294,13 @@ if (require.main === module) {
   }
 
   // ── 4. Invoke TLC ──────────────────────────────────────────────────────────
-  const specPath = path.join(__dirname, '..', '.formal', 'tla', 'QGSDQuorum.tla');
-  const cfgPath  = path.join(__dirname, '..', '.formal', 'tla', configName + '.cfg');
+  // Map config names to their corresponding spec files
+  const SPEC_MAP = {
+    'MCMCPEnv': 'QGSDMCPEnv.tla',
+  };
+  const specFile = SPEC_MAP[configName] || 'QGSDQuorum.tla';
+  const specPath = path.join(ROOT, '.formal', 'tla', specFile);
+  const cfgPath  = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
   // Use -workers 1 for liveness (defensive — avoids known multi-worker liveness bugs in older TLC)
   const workers  = configName === 'MCliveness' ? '1' : 'auto';
 

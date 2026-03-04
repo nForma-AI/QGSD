@@ -21,6 +21,12 @@ const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
 // ── 0. Parse --spec argument ──────────────────────────────────────────────────
 const VALID_SPECS = ['scoreboard-recompute', 'availability-parsing'];
 const CHECK_ID_MAP = {
@@ -100,7 +106,7 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(__dirname, '..', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(ROOT, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-audit-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
@@ -113,7 +119,7 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Locate .als file ───────────────────────────────────────────────────────
-const alsPath = path.join(__dirname, '..', '.formal', 'alloy', specName + '.als');
+const alsPath = path.join(ROOT, '.formal', 'alloy', specName + '.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-audit-alloy] ' + specName + '.als not found at: ' + alsPath + '\n' +

@@ -22,6 +22,12 @@ const { writeCheckResult } = require('./write-check-result.cjs');
 const { parseNDJSON } = require('./verify-formal-results.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
+// ── Resolve project root (--project-root= overrides __dirname-relative) ─────
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
 const CHECK_ID  = 'uppaal:quorum-races';
 const SURFACE   = 'uppaal';
 const PROPERTY  = 'Quorum timed race model — minimum inter-slot gap and maximum timeout for consensus';
@@ -41,7 +47,7 @@ const DEFAULT_MIN_GAP_MS  = 10;
  */
 function readTimingBounds() {
   const ndjsonPath = process.env.CHECK_RESULTS_PATH ||
-    path.join(__dirname, '..', '.formal', 'check-results.ndjson');
+    path.join(ROOT, '.formal', 'check-results.ndjson');
   const records = parseNDJSON(ndjsonPath);
   const slotRuntimes = records
     .filter(r => r.check_id && r.check_id.startsWith('tla:') && typeof r.runtime_ms === 'number' && r.runtime_ms > 0)
@@ -79,7 +85,7 @@ function locateVerifyta() {
     return fs.existsSync(envBin) ? envBin : null;
   }
   // Check local install from install-formal-tools.cjs
-  const localPath = path.join(__dirname, '..', '.formal', 'uppaal', 'bin', 'verifyta');
+  const localPath = path.join(ROOT, '.formal', 'uppaal', 'bin', 'verifyta');
   if (fs.existsSync(localPath)) {
     process.stderr.write(TAG + ' Using local verifyta: ' + localPath + '\n');
     return localPath;
@@ -94,8 +100,8 @@ function locateVerifyta() {
 
 function main() {
   const startMs = Date.now();
-  const modelPath = path.join(__dirname, '..', '.formal', 'uppaal', 'quorum-races.xml');
-  const queryPath = path.join(__dirname, '..', '.formal', 'uppaal', 'quorum-races.q');
+  const modelPath = path.join(ROOT, '.formal', 'uppaal', 'quorum-races.xml');
+  const queryPath = path.join(ROOT, '.formal', 'uppaal', 'quorum-races.q');
 
   // Check model files exist
   if (!fs.existsSync(modelPath) || !fs.existsSync(queryPath)) {

@@ -8,10 +8,14 @@ const VALID_FORMALISMS = ['tla', 'alloy', 'prism', 'trace', 'redaction', 'uppaal
 
 /**
  * Path to the NDJSON output file.
+ * Priority: CHECK_RESULTS_PATH (exact path) > CHECK_RESULTS_ROOT (root-relative) > __dirname fallback.
  * Use CHECK_RESULTS_PATH env var to redirect in tests (avoids polluting real output).
+ * Use CHECK_RESULTS_ROOT env var when --project-root is set (writes to ROOT/.formal/).
  */
 const NDJSON_PATH = process.env.CHECK_RESULTS_PATH ||
-  path.join(__dirname, '..', '.formal', 'check-results.ndjson');
+  (process.env.CHECK_RESULTS_ROOT
+    ? path.join(process.env.CHECK_RESULTS_ROOT, '.formal', 'check-results.ndjson')
+    : path.join(__dirname, '..', '.formal', 'check-results.ndjson'));
 
 /**
  * Append one normalized check result line to .formal/check-results.ndjson.
