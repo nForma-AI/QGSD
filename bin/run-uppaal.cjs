@@ -78,6 +78,12 @@ function locateVerifyta() {
   if (envBin) {
     return fs.existsSync(envBin) ? envBin : null;
   }
+  // Check local install from install-formal-tools.cjs
+  const localPath = path.join(__dirname, '..', '.formal', 'uppaal', 'bin', 'verifyta');
+  if (fs.existsSync(localPath)) {
+    process.stderr.write(TAG + ' Using local verifyta: ' + localPath + '\n');
+    return localPath;
+  }
   // Try 'verifyta' on PATH via which
   const which = spawnSync('which', ['verifyta'], { encoding: 'utf8' });
   if (which.status === 0 && which.stdout.trim()) {
