@@ -871,6 +871,9 @@ function main() {
     if (!m.cfg_file) modelsWithoutCfg++;
   }
 
+  // Cross-model decomposition analysis (DECOMP-05)
+  const crossModel = analyzeCrossModel(registry, models);
+
   const report = {
     metadata: {
       generated_at: new Date().toISOString(),
@@ -885,6 +888,7 @@ function main() {
       unbounded_count: unboundedCount,
       models_without_cfg: modelsWithoutCfg,
     },
+    cross_model: crossModel,
   };
 
   const jsonStr = JSON.stringify(report, null, 2);
@@ -902,6 +906,7 @@ function main() {
     process.stdout.write(TAG + '   MINIMAL: ' + byRisk.MINIMAL + '  LOW: ' + byRisk.LOW + '  MODERATE: ' + byRisk.MODERATE + '  HIGH: ' + byRisk.HIGH + '\n');
     process.stdout.write(TAG + '   Unbounded domains: ' + unboundedCount + ' model(s)\n');
     process.stdout.write(TAG + '   Models without .cfg: ' + modelsWithoutCfg + '\n');
+    process.stdout.write(TAG + '   Cross-model pairs: ' + crossModel.summary.total_pairs_analyzed + ' (merge: ' + crossModel.summary.merge_recommended + ', interface-contract: ' + crossModel.summary.interface_contract_needed + ')\n');
     process.stdout.write(TAG + ' Report: .formal/state-space-report.json\n');
   }
 }
