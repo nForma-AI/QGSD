@@ -41,6 +41,15 @@ const DEFAULT_THRESHOLDS = {
   // > 10,000,000 or unbounded = HIGH
 };
 
+// ── Cross-model merge budget (configurable) ─────────────────────────────────
+// 5 minutes at ~10,000 states/second = 3,000,000 states threshold
+
+const MERGE_BUDGET = {
+  max_tlc_seconds: 300,
+  throughput_states_per_sec: 10000,
+  max_merged_states: 300 * 10000, // 3,000,000
+};
+
 // ── CFG → TLA module mapping ────────────────────────────────────────────────
 // Reverse map: cfg base name (without .cfg) → TLA module name
 // Needed because cfg naming is inconsistent (MCbreaker vs MCQGSDQuorum etc.)
@@ -490,6 +499,167 @@ function resolveCardinality(expr, constMap) {
   if (trimmed === 'BOOLEAN' || trimmed === '{TRUE, FALSE}') return 2;
 
   return null;
+}
+
+// ── Cross-Model Decomposition (DECOMP-05) ───────────────────────────────────
+
+/**
+ * Extract requirement ID prefixes from a requirements array.
+ * E.g., ['DETECT-01', 'DETECT-02', 'CRED-03'] → Set {'DETECT', 'CRED'}
+ * @param {string[]|undefined|null} requirements
+ * @returns {Set<string>}
+ */
+function extractRequirementPrefixes(requirements) {
+  if (!requirements || !Array.isArray(requirements) || requirements.length === 0) {
+    return new Set();
+  }
+  const prefixes = new Set();
+  for (const reqId of requirements) {
+    if (typeof reqId !== 'string') continue;
+    const parts = reqId.split('-');
+    if (parts.length >= 2) {
+      // Take all parts except the last (numeric suffix)
+      prefixes.add(parts.slice(0, -1).join('-'));
+    }
+  }
+  return prefixes;
+}
+
+/**
+ * Find candidate model pairs that share source files or requirement prefixes.
+ * @param {Object} registry — parsed model-registry.json
+ * @param {Object} modelAnalyses — analyzed models keyed by path
+ * @returns {Array<{model_a: string, model_b: string, shared_source_files: string[], shared_requirement_prefixes: string[], shared_requirements: string[]}>}
+ */
+function findCandidatePairs(registry, modelAnalyses) {
+  const modelKeys = Object.keys(modelAnalyses).sort();
+  const pairs = [];
+
+  for (let i = 0; i < modelKeys.length; i++) {
+    for (let j = i + 1; j < modelKeys.length; j++) {
+      const a = modelKeys[i];
+      const b = modelKeys[j];
+
+      const regA = (registry.models || {})[a] || {};
+      const regB = (registry.models || {})[b] || {};
+
+      const sourceFilesA = regA.source_files || [];
+      const sourceFilesB = regB.source_files || [];
+      const reqsA = regA.requirements || [];
+      const reqsB = regB.requirements || [];
+
+      // Shared source files
+      const sharedSourceFiles = sourceFilesA.filter(function(f) {
+        return sourceFilesB.includes(f);
+      });
+
+      // Shared requirement prefixes
+      const prefixesA = extractRequirementPrefixes(reqsA);
+      const prefixesB = extractRequirementPrefixes(reqsB);
+      const sharedPrefixes = [];
+      for (const p of prefixesA) {
+        if (prefixesB.has(p)) sharedPrefixes.push(p);
+      }
+
+      // Shared exact requirements
+      const sharedRequirements = reqsA.filter(function(r) {
+        return reqsB.includes(r);
+      });
+
+      if (sharedSourceFiles.length > 0 || sharedPrefixes.length > 0) {
+        pairs.push({
+          model_a: a,
+          model_b: b,
+          shared_source_files: sharedSourceFiles,
+          shared_requirement_prefixes: sharedPrefixes.sort(),
+          shared_requirements: sharedRequirements.sort(),
+        });
+      }
+    }
+  }
+
+  return pairs;
+}
+
+/**
+ * Estimate merged state-space for two models.
+ * @param {Object} analysisA — model analysis from analyzeModel
+ * @param {Object} analysisB — model analysis from analyzeModel
+ * @returns {number|null} — merged state-space estimate, or null if either is unbounded/unresolvable
+ */
+function estimateMergedStateSpace(analysisA, analysisB) {
+  if (analysisA.estimated_states !== null && analysisB.estimated_states !== null) {
+    return analysisA.estimated_states * analysisB.estimated_states;
+  }
+  return null;
+}
+
+/**
+ * Classify a candidate pair: recommend merge or flag interface-contract.
+ * @param {Object} pair — from findCandidatePairs
+ * @param {number|null} mergedStates — from estimateMergedStateSpace
+ * @param {Object} budget — { max_merged_states }
+ * @returns {Object} — extended pair with model_a_states, model_b_states, estimated_merged_states, recommendation, rationale
+ */
+function classifyPair(pair, mergedStates, budget) {
+  let recommendation;
+  let rationale;
+
+  if (mergedStates !== null && mergedStates <= budget.max_merged_states) {
+    recommendation = 'merge';
+    rationale = 'Combined state-space (' + mergedStates + ') is within 5-minute TLC budget (' + budget.max_merged_states + ')';
+  } else if (mergedStates !== null) {
+    recommendation = 'interface-contract';
+    rationale = 'Combined state-space (' + mergedStates + ') exceeds 5-minute TLC budget (' + budget.max_merged_states + ')';
+  } else {
+    recommendation = 'interface-contract';
+    rationale = 'One or both models have unbounded state-space; interface contract required';
+  }
+
+  return Object.assign({}, pair, {
+    estimated_merged_states: mergedStates,
+    recommendation: recommendation,
+    rationale: rationale,
+  });
+}
+
+/**
+ * Analyze cross-model relationships: detect pairs, estimate merged state-space,
+ * and recommend merge or interface-contract.
+ * @param {Object} registry — parsed model-registry.json
+ * @param {Object} models — analyzed models (from analyzeModel)
+ * @returns {{ budget: Object, pairs: Object[], summary: Object }}
+ */
+function analyzeCrossModel(registry, models) {
+  const pairs = findCandidatePairs(registry, models);
+
+  const classifiedPairs = pairs.map(function(pair) {
+    var analysisA = models[pair.model_a];
+    var analysisB = models[pair.model_b];
+    var mergedStates = estimateMergedStateSpace(analysisA, analysisB);
+    return classifyPair(pair, mergedStates, MERGE_BUDGET);
+  });
+
+  var mergeRecommended = 0;
+  var interfaceContractNeeded = 0;
+  for (var k = 0; k < classifiedPairs.length; k++) {
+    if (classifiedPairs[k].recommendation === 'merge') mergeRecommended++;
+    else interfaceContractNeeded++;
+  }
+
+  return {
+    budget: {
+      max_tlc_seconds: MERGE_BUDGET.max_tlc_seconds,
+      throughput_states_per_sec: MERGE_BUDGET.throughput_states_per_sec,
+      max_merged_states: MERGE_BUDGET.max_merged_states,
+    },
+    pairs: classifiedPairs,
+    summary: {
+      total_pairs_analyzed: classifiedPairs.length,
+      merge_recommended: mergeRecommended,
+      interface_contract_needed: interfaceContractNeeded,
+    },
+  };
 }
 
 // ── Model Analysis ──────────────────────────────────────────────────────────
