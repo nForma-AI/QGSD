@@ -5,9 +5,9 @@ on:
     branches: [main]
     paths:
       - 'src/machines/qgsd-workflow.machine.ts'
-      - 'formal/tla/**'
-      - 'formal/alloy/**'
-      - 'formal/prism/**'
+      - '.formal/tla/**'
+      - '.formal/alloy/**'
+      - '.formal/prism/**'
       - 'bin/run-tlc.cjs'
       - 'bin/run-alloy.cjs'
       - 'bin/run-prism.cjs'
@@ -23,13 +23,13 @@ on:
       - 'bin/check-results-exit.cjs'
       - 'bin/check-trace-redaction.cjs'
       - 'bin/check-trace-schema-drift.cjs'
-      - 'formal/trace/**'
+      - '.formal/trace/**'
   pull_request:
     paths:
       - 'src/machines/qgsd-workflow.machine.ts'
-      - 'formal/tla/**'
-      - 'formal/alloy/**'
-      - 'formal/prism/**'
+      - '.formal/tla/**'
+      - '.formal/alloy/**'
+      - '.formal/prism/**'
       - 'bin/run-tlc.cjs'
       - 'bin/run-alloy.cjs'
       - 'bin/run-prism.cjs'
@@ -45,13 +45,14 @@ on:
       - 'bin/check-results-exit.cjs'
       - 'bin/check-trace-redaction.cjs'
       - 'bin/check-trace-schema-drift.cjs'
-      - 'formal/trace/**'
+      - '.formal/trace/**'
   workflow_dispatch:  # manual trigger
 
 jobs:
   verify:
     name: TLC + Alloy + PRISM model checks
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -75,7 +76,7 @@ jobs:
         id: cache-tla
         uses: actions/cache@v4
         with:
-          path: formal/tla/tla2tools.jar
+          path: .formal/tla/tla2tools.jar
           key: tla2tools-v1.8.0
 
       - name: Download tla2tools.jar
@@ -83,13 +84,13 @@ jobs:
         run: |
           curl -fsSL \
             https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \
-            -o formal/tla/tla2tools.jar
+            -o .formal/tla/tla2tools.jar
 
       - name: Cache Alloy JAR
         id: cache-alloy
         uses: actions/cache@v4
         with:
-          path: formal/alloy/org.alloytools.alloy.dist.jar
+          path: .formal/alloy/org.alloytools.alloy.dist.jar
           key: alloy-v6.2.0
 
       - name: Download Alloy 6.2.0 JAR
@@ -97,7 +98,7 @@ jobs:
         run: |
           curl -fsSL \
             https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \
-            -o formal/alloy/org.alloytools.alloy.dist.jar
+            -o .formal/alloy/org.alloytools.alloy.dist.jar
 
       - name: Generate all formal specs from XState machine (source of truth)
         run: node bin/generate-formal-specs.cjs
@@ -115,7 +116,7 @@ jobs:
         run: node bin/run-tlc.cjs MCMCPEnv
 
       - name: Alloy — majority threshold assertions (ThresholdPasses, BelowThresholdFails, ZeroApprovalsFail)
-        run: node bin/run-alloy.cjs formal/alloy/quorum-votes.als
+        run: node bin/run-alloy.cjs .formal/alloy/quorum-votes.als
 
       - name: Cache PRISM binary
         id: cache-prism

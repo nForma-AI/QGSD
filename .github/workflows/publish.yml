@@ -9,6 +9,7 @@ jobs:
     name: Build and publish @nforma.ai/qgsd
     runs-on: ubuntu-latest
     environment: npm-publish
+    timeout-minutes: 10
 
     permissions:
       contents: read
@@ -32,11 +33,24 @@ jobs:
       - name: Install dev dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
+      - name: Run CI tests
+        run: npm run test:ci
 
       - name: Build hooks
         run: npm run build:hooks
+
+      - name: Verify package contents
+        run: |
+          echo "=== Package dry-run ==="
+          npm pack --dry-run 2>&1 | grep -E 'total files|package size|📦'
+          echo ""
+          echo "=== Checking for test files ==="
+          count=$(npm pack --dry-run 2>&1 | grep -c '\.test\.' || true)
+          if [ "$count" -gt 0 ]; then
+            echo "ERROR: $count test files found in package"
+            exit 1
+          fi
+          echo "OK: 0 test files in package"
 
       - name: Publish to npm
         # npm CLI auto-detects the OIDC token from GitHub Actions and uses it
