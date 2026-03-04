@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: v0.27-01 of 5 (Debt Schema & Fingerprinting Foundation)
 Plan: 03 of 03 (Ledger I/O and Retention Policy)
 Status: Complete (All 3 plans done for v0.27-01; ready for v0.27-02)
-Last activity: 2026-03-04 — Completed quick task 162: Make sync-baselines always use detect mode by default
+Last activity: 2026-03-04 - Completed quick task 161: Replace blessed-xterm/node-pty with pure-JS terminal widget using @xterm/headless
 
 Progress: [██████░░░░░░] 100%
 
@@ -60,7 +60,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed quick task 162 (Make sync-baselines always use detect mode by default)
+Stopped at: Completed quick task 161 (Replace blessed-xterm/node-pty with pure-JS terminal widget using @xterm/headless)
 Resume file: None
 
 ## Quick Tasks Completed
@@ -68,6 +68,7 @@ Resume file: None
 | # | Task | Date | Commit | Status | Link |
 |---|------|------|--------|--------|------|
 | 146 | TAP regex fix for Node v25 and skip/todo tracking in sweepTtoC | 2026-03-04 | 54d7f780 | Completed | [146-track-skip-todo-in-t-c-sweep-fix-broken-](./quick/146-track-skip-todo-in-t-c-sweep-fix-broken-/) |
+| 161 | Replace blessed-xterm/node-pty with pure-JS terminal widget using @xterm/headless | 2026-03-04 | Pending | Pending | [161-replace-blessed-xterm-node-pty-with-pure](./quick/161-replace-blessed-xterm-node-pty-with-pure/) |
 | 162 | Make sync-baselines always use detect mode by default | 2026-03-04 | 39fc61e9 | Completed | [162-make-sync-baselines-always-use-detect-mo](./quick/162-make-sync-baselines-always-use-detect-mo/) |
 
 ## Recent Accomplishments

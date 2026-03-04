@@ -70,7 +70,7 @@ No formal artifacts need creation or modification.
   <name>Task 1: Create BlessedTerminal widget (blessed-terminal.cjs)</name>
   <files>bin/blessed-terminal.cjs, package.json</files>
   <action>
-1. Add `@xterm/headless` (latest v6.x) to package.json dependencies. Remove `blessed-xterm` from dependencies. Run `npm install`.
+1. Add `@xterm/headless` to package.json dependencies — pin to `^5.5.0` (v5.x supports CJS `require()` out of the box). Do NOT use v6.x unless confirmed CJS-compatible. Remove `blessed-xterm` from dependencies. Run `npm install`.
 
 2. Create `bin/blessed-terminal.cjs` — a drop-in replacement for blessed-xterm's XTerm widget. This module exports a class `BlessedTerminal` that extends `blessed.Box` and provides the EXACT same API surface used by nforma.cjs:
 
@@ -104,7 +104,7 @@ d) **render() override** — Override `render()` to bridge @xterm/headless buffe
      - For palette colors (0-255): use directly as blessed color index
      - For RGB colors: find nearest 256-color index (simple mapping: use the 6x6x6 cube + grayscale ramp formula)
      - Get attributes: `cell.isBold()` → flags bit 0, `cell.isUnderline()` → flags bit 1, `cell.isBlink()` → flags bit 2, `cell.isInverse()` → flags bit 3
-     - Write to blessed: `this.screen.lines[screenY][screenX] = [blessed.helpers.sattr({bold, underline, blink, inverse}, fg, bg), cell.getChars() || ' ']` — BUT the actual format is `((flags << 18) | (fg << 9) | bg)` as a numeric sattr value. Use `blessed.Element.sattr()` if available, or compute directly.
+     - Write to blessed: `this.screen.lines[screenY][screenX] = [sattr, cell.getChars() || ' ']` where sattr is the numeric attribute. Compute it as: `const sattr = (flags << 18) | (fg << 9) | bg` where flags is a bitmask: bit 0 = bold (1), bit 1 = underline (2), bit 2 = blink (4), bit 3 = inverse (8), e.g. bold+underline = `(1|2) << 18 = 0xC0000`. fg and bg are 9-bit color indices (0-255 for palette, 256=default bg, 257=default fg). Example: default white-on-black = `(0 << 18) | (257 << 9) | 256`. Use `blessed.Element.sattr()` if available as a convenience wrapper, but the direct formula is the canonical implementation.
    - Mark screen lines dirty: `this.screen.lines[screenY].dirty = true`
 
 e) **Resize handling** — On blessed `'resize'` event, update `this._term.resize(newCols, newRows)`. If using a real PTY this would need SIGWINCH, but with piped stdio, just resize the xterm terminal (the child process may not respond to column changes, which is acceptable for Claude CLI output).
@@ -112,7 +112,10 @@ e) **Resize handling** — On blessed `'resize'` event, update `this._term.resiz
 f) **Cleanup** — On widget `'destroy'` event, kill child process, dispose xterm terminal, remove input listener.
 
 IMPORTANT NOTES:
-- @xterm/headless v6 uses `import()` — but we need CommonJS. Check if `require('@xterm/headless')` works. If not, use dynamic `import()` wrapped in an async init. The constructor can defer spawn until the terminal is ready. OR check if v5.x supports CJS require (v5.5.0 has CJS). Use whichever version supports `require()` — test this during npm install.
+- **CJS compatibility:** @xterm/headless `^5.5.0` supports `require()` natively (CJS). This is the pinned version. If for any reason v5.x is unavailable or broken, use the following fallback chain:
+  1. **Fallback A — async dynamic import:** Wrap v6.x ESM in `async init()`: `const { Terminal } = await import('@xterm/headless')`. The constructor defers spawn until init resolves. Callers must `await widget.ready` before interacting.
+  2. **Fallback B — alternative library:** If neither CJS require nor dynamic import produces a working headless terminal, replace @xterm/headless with `node-ansi-parser` (pure JS ANSI parser) + a custom character buffer. This is a last resort but keeps the zero-native-addon guarantee.
+  Document whichever path is taken in the SUMMARY.
 - blessed screen.lines format: each line is an array of `[attr, char]` pairs where attr is the numeric sattr. Confirm by inspecting `this.screen.lines[0][0]` at runtime.
 - The CellData API requires `allowProposedApi: true` in Terminal options.
   </action>
