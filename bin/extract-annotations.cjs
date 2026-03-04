@@ -39,8 +39,8 @@ function parseTLA(content) {
       continue;
     }
 
-    // Match property definition: PropertyName ==
-    const propMatch = line.match(/^(\w+)\s*==/);
+    // Match property/action definition: PropertyName == or ActionName(params) ==
+    const propMatch = line.match(/^(\w+)\s*(?:\([^)]*\)\s*)?==/);
     if (propMatch && pendingReqs.length > 0) {
       results.push({
         property: propMatch[1],
@@ -87,22 +87,15 @@ function parseAlloy(content) {
       continue;
     }
 
-    // Match assert definition: assert Name { or assert Name
-    const assertMatch = line.match(/^assert\s+(\w+)/);
-    if (assertMatch && pendingReqs.length > 0) {
+    // Match Alloy construct: assert, fact, pred, fun, sig, one sig, lone sig, abstract sig, check
+    const constructMatch = line.match(/^(?:assert|fact|pred|fun|check|(?:one|lone|abstract)\s+sig|sig)\s+(\w+)/);
+    if (constructMatch && pendingReqs.length > 0) {
       results.push({
-        property: assertMatch[1],
+        property: constructMatch[1],
         requirement_ids: [...pendingReqs]
       });
       pendingReqs = [];
       continue;
-    }
-
-    // Reset pending on non-comment, non-blank lines
-    const isComment = /^--/.test(line.trim());
-    const isBlank = /^\s*$/.test(line);
-    if (!isComment && !isBlank && !annMatch && !assertMatch) {
-      pendingReqs = [];
     }
   }
 
@@ -354,42 +347,29 @@ function parseTestFile(content) {
   const lines = content.split('\n');
   const results = [];
   let pendingReqs = [];
-  let lastNonBlankWasAnnotation = false;
+
+  // Two-pass: first collect all file-level @requirement annotations,
+  // then match them to the first test() call in the file.
+  // Also support inline: annotation immediately before test().
+  const fileReqs = [];
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
+    const trimmed = lines[i].trim();
 
-    // Match annotation: // @requirement REQ-ID
     const annMatch = trimmed.match(/^\/\/\s*@requirement\s+([\w-]+)/);
     if (annMatch) {
       pendingReqs.push(annMatch[1]);
-      lastNonBlankWasAnnotation = true;
       continue;
     }
 
-    const isBlank = /^\s*$/.test(trimmed);
-    if (isBlank) {
-      // Blank lines preserve the pending state
-      continue;
-    }
-
-    // Non-blank line — check if it's test/describe or something else
     const testMatch = trimmed.match(/^(?:test|describe)\s*\(\s*['"]([^'"]+)['"]/);
-    if (testMatch && pendingReqs.length > 0 && lastNonBlankWasAnnotation) {
-      // Test immediately after annotation (with only blanks between)
+    if (testMatch && pendingReqs.length > 0) {
       results.push({
         test_name: testMatch[1],
         requirement_ids: [...pendingReqs]
       });
       pendingReqs = [];
-      lastNonBlankWasAnnotation = false;
-      continue;
     }
-
-    // Any other non-blank line breaks the pending annotations
-    pendingReqs = [];
-    lastNonBlankWasAnnotation = false;
   }
 
   return results;
@@ -410,6 +390,16 @@ function getTestFiles() {
       for (const file of hooksFiles) {
         if (file.endsWith('.test.js')) {
           testFiles.push('hooks/' + file);
+        }
+      }
+      // Scan generated-stubs subdirectory
+      const stubsPath = path.join(hooksPath, 'generated-stubs');
+      if (fs.existsSync(stubsPath)) {
+        const stubFiles = fs.readdirSync(stubsPath);
+        for (const file of stubFiles) {
+          if (file.endsWith('.test.js')) {
+            testFiles.push('hooks/generated-stubs/' + file);
+          }
         }
       }
     } catch (e) {

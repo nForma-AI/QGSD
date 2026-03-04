@@ -1,6 +1,465 @@
 {
-  "generated_at": "2026-03-03T22:25:54.044Z",
+  "generated_at": "2026-03-04T00:29:56.435Z",
   "requirements": {
+    "ACT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-01.stub.test.js",
+          "test_name": "TODO: implement test for ACT-01 — ActivityValid"
+        }
+      ]
+    },
+    "ACT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-02.stub.test.js",
+          "test_name": "TODO: implement test for ACT-02 — TypeOK"
+        }
+      ]
+    },
+    "ACT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-03.stub.test.js",
+          "test_name": "TODO: implement test for ACT-03 — ActivityClear"
+        }
+      ]
+    },
+    "ACT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-04.stub.test.js",
+          "test_name": "TODO: implement test for ACT-04 — ResumeWork"
+        }
+      ]
+    },
+    "ACT-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-05.stub.test.js",
+          "test_name": "TODO: implement test for ACT-05 — StageTransition"
+        }
+      ]
+    },
+    "ACT-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-06.stub.test.js",
+          "test_name": "TODO: implement test for ACT-06 — StageTransition"
+        }
+      ]
+    },
+    "ACT-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ACT-07.stub.test.js",
+          "test_name": "TODO: implement test for ACT-07 — ClearActivity"
+        }
+      ]
+    },
+    "AGENT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/AGENT-01.stub.test.js",
+          "test_name": "TODO: implement test for AGENT-01 — VerifiedInRoster"
+        }
+      ]
+    },
+    "AGENT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/AGENT-02.stub.test.js",
+          "test_name": "TODO: implement test for AGENT-02 — RemoveClears"
+        }
+      ]
+    },
+    "AGENT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/AGENT-03.stub.test.js",
+          "test_name": "TODO: implement test for AGENT-03 — VerifyAgent"
+        }
+      ]
+    },
+    "ANNOT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ANNOT-01.stub.test.js",
+          "test_name": "TODO: implement test for ANNOT-01 — ModelType"
+        }
+      ]
+    },
+    "ANNOT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ANNOT-02.stub.test.js",
+          "test_name": "TODO: implement test for ANNOT-02 — ModelType"
+        }
+      ]
+    },
+    "ANNOT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ANNOT-03.stub.test.js",
+          "test_name": "TODO: implement test for ANNOT-03 — ModelType"
+        }
+      ]
+    },
+    "ANNOT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ANNOT-04.stub.test.js",
+          "test_name": "TODO: implement test for ANNOT-04 — ModelType"
+        }
+      ]
+    },
+    "ANNOT-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ANNOT-05.stub.test.js",
+          "test_name": "TODO: implement test for ANNOT-05 — ModelType"
+        }
+      ]
+    },
+    "ARCH-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ARCH-01.stub.test.js",
+          "test_name": "TODO: implement test for ARCH-01 — AllInRegistry"
+        }
+      ]
+    },
+    "ARCH-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ARCH-02.stub.test.js",
+          "test_name": "TODO: implement test for ARCH-02 — PromotionNoDuplicates"
+        }
+      ]
+    },
+    "ARCH-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ARCH-03.stub.test.js",
+          "test_name": "TODO: implement test for ARCH-03 — Requirement"
+        }
+      ]
+    },
+    "ARCH-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ARCH-10.stub.test.js",
+          "test_name": "TODO: implement test for ARCH-10 — NoLLMSDKs"
+        }
+      ]
+    },
+    "CALIB-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CALIB-01.stub.test.js",
+          "test_name": "TODO: implement test for CALIB-01 — ParseCorrect"
+        }
+      ]
+    },
+    "CALIB-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CALIB-02.stub.test.js",
+          "test_name": "TODO: implement test for CALIB-02 — YearRolloverHandled"
+        }
+      ]
+    },
+    "CALIB-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CALIB-03.stub.test.js",
+          "test_name": "TODO: implement test for CALIB-03 — FallbackIsNull"
+        }
+      ]
+    },
+    "CALIB-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CALIB-04.stub.test.js",
+          "test_name": "TODO: implement test for CALIB-04 — PolicyWired"
+        }
+      ]
+    },
+    "COMP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/COMP-01.stub.test.js",
+          "test_name": "TODO: implement test for COMP-01 — AllRulesHold"
+        }
+      ]
+    },
+    "COMP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/COMP-02.stub.test.js",
+          "test_name": "TODO: implement test for COMP-02 — ActiveFromConfig"
+        }
+      ]
+    },
+    "COMP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/COMP-03.stub.test.js",
+          "test_name": "TODO: implement test for COMP-03 — ToolsConsistent"
+        }
+      ]
+    },
+    "COMP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/COMP-04.stub.test.js",
+          "test_name": "TODO: implement test for COMP-04 — DiscoveredIsActive"
+        }
+      ]
+    },
+    "CONF-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/config-loader.test.js",
+          "test_name": "TC1: no project config → returns valid config (from global or DEFAULT_CONFIG)"
+        }
+      ]
+    },
+    "CONF-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-02.stub.test.js",
+          "test_name": "TODO: implement test for CONF-02 — ConfigLayer"
+        }
+      ]
+    },
+    "CONF-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-03.stub.test.js",
+          "test_name": "TODO: implement test for CONF-03 — ConfigLayer"
+        }
+      ]
+    },
+    "CONF-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-04.stub.test.js",
+          "test_name": "TODO: implement test for CONF-04 — ConfigLayer"
+        }
+      ]
+    },
+    "CONF-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-05.stub.test.js",
+          "test_name": "TODO: implement test for CONF-05 — ConfigLayer"
+        }
+      ]
+    },
+    "CONF-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-06.stub.test.js",
+          "test_name": "TODO: implement test for CONF-06 — CircuitBreakerBounded"
+        }
+      ]
+    },
+    "CONF-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-07.stub.test.js",
+          "test_name": "TODO: implement test for CONF-07 — CircuitBreakerBounded"
+        }
+      ]
+    },
+    "CONF-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-08.stub.test.js",
+          "test_name": "TODO: implement test for CONF-08 — ConfigLayer"
+        }
+      ]
+    },
+    "CONF-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-09.stub.test.js",
+          "test_name": "TODO: implement test for CONF-09 — MergedAlwaysValid"
+        }
+      ]
+    },
+    "CONF-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CONF-10.stub.test.js",
+          "test_name": "TODO: implement test for CONF-10 — Bool"
+        }
+      ]
+    },
+    "CRED-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CRED-01.stub.test.js",
+          "test_name": "TODO: implement test for CRED-01 — TypeOK"
+        }
+      ]
+    },
+    "CRED-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/CRED-02.stub.test.js",
+          "test_name": "TODO: implement test for CRED-02 — ActiveIsPoolMember"
+        }
+      ]
+    },
+    "DASH-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DASH-01.stub.test.js",
+          "test_name": "TODO: implement test for DASH-01 — OpenDashboard"
+        }
+      ]
+    },
+    "DASH-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DASH-02.stub.test.js",
+          "test_name": "TODO: implement test for DASH-02 — RefreshDashboard"
+        }
+      ]
+    },
+    "DASH-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DASH-03.stub.test.js",
+          "test_name": "TODO: implement test for DASH-03 — ExitDashboard"
+        }
+      ]
+    },
+    "DECOMP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DECOMP-01.stub.test.js",
+          "test_name": "TODO: implement test for DECOMP-01 — RiskLevel"
+        }
+      ]
+    },
+    "DECOMP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DECOMP-02.stub.test.js",
+          "test_name": "TODO: implement test for DECOMP-02 — UnboundedAlwaysHigh"
+        }
+      ]
+    },
+    "DECOMP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DECOMP-03.stub.test.js",
+          "test_name": "TODO: implement test for DECOMP-03 — SplitNeverLosesReqs"
+        }
+      ]
+    },
+    "DECOMP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DECOMP-04.stub.test.js",
+          "test_name": "TODO: implement test for DECOMP-04 — AllModelsInMatrix"
+        }
+      ]
+    },
+    "DECOMP-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DECOMP-05.stub.test.js",
+          "test_name": "TODO: implement test for DECOMP-05 — Bool"
+        }
+      ]
+    },
+    "DETECT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DETECT-01.stub.test.js",
+          "test_name": "TODO: implement test for DETECT-01 — TypeOK"
+        }
+      ]
+    },
+    "DETECT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DETECT-02.stub.test.js",
+          "test_name": "TODO: implement test for DETECT-02 — DisabledExcludesActive"
+        }
+      ]
+    },
+    "DETECT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DETECT-03.stub.test.js",
+          "test_name": "TODO: implement test for DETECT-03 — MonitoringReachable"
+        }
+      ]
+    },
+    "DETECT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DETECT-04.stub.test.js",
+          "test_name": "TODO: implement test for DETECT-04 — TypeOK"
+        }
+      ]
+    },
     "DETECT-05": {
       "covered": true,
       "test_cases": [
@@ -14,860 +473,1409 @@
         }
       ]
     },
-    "ACT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ACT-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "AGENT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "AGENT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ARCH-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ARCH-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ARCH-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CALIB-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CALIB-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CALIB-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CALIB-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "COMP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "COMP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "COMP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "COMP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CRED-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CRED-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DASH-01": {
-      "covered": true,
-      "test_cases": [
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines renders header with QGSD Live Health Dashboard title" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines shows slot name, provider hostname, model name, and health status for each slot" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-01: buildDashboardLines shows subprocess label for non-HTTP slots" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: empty slots array returns header + empty body + timestamp line" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with healthy=true probe shows green checkmark in output" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with healthy=false probe shows red DOWN in output" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: slot with error=subprocess shows subprocess label in output" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: null healthMap entry shows em-dash or blank for that slot" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: UP status row contains green ANSI code and checkmark glyph" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: DOWN status row contains red ANSI code and cross glyph" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: per-slot data isolation -- two-slot output has each slot in its own row" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: output contains header title and footer keybinding hint" }
-      ]
-    },
-    "DASH-02": {
-      "covered": true,
-      "test_cases": [
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: formatTimestamp renders HH:MM:SS format for valid timestamp" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: formatTimestamp renders em-dash for null (never refreshed state)" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines shows footer with [space/r] refresh and [q/Esc] exit keybinding hints" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines shows yellow [stale] warning when lastUpdated exceeds 60-second threshold" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-02: buildDashboardLines does NOT show [stale] warning when lastUpdated is within 60 seconds" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: null returns em-dash string" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: Date.now() returns HH:MM:SS format (8 chars)" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: known epoch ms returns correct HH:MM:SS" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "formatTimestamp: 0 (epoch) is treated as falsy and returns em-dash" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated=null shows Last updated em-dash" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated more than 60s ago shows stale warning in output" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: lastUpdated less than 60s ago does NOT show stale" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "buildDashboardLines: stale boundary -- 60001ms ago shows stale, 59999ms ago does NOT" }
-      ]
-    },
-    "DASH-03": {
-      "covered": true,
-      "test_cases": [
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-03: liveDashboard non-TTY fallback resolves without throwing (clean exit path)" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "DASH-03: liveDashboard is an async function returning a Promise (exit contract)" },
-        { "test_file": "bin/manage-agents.test.cjs", "test_name": "liveDashboard smoke: non-TTY path resolves without throwing" }
-      ]
-    },
-    "DECOMP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DECOMP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DECOMP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DETECT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DETECT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DETECT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DETECT-04": {
-      "covered": false,
-      "test_cases": []
-    },
     "DISP-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DISP-01.stub.test.js",
+          "test_name": "TODO: implement test for DISP-01 — HealthProbe"
+        }
+      ]
     },
     "DISP-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DISP-02.stub.test.js",
+          "test_name": "TODO: implement test for DISP-02 — AvailabilityFilter"
+        }
+      ]
     },
     "DISP-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DISP-03.stub.test.js",
+          "test_name": "TODO: implement test for DISP-03 — SuccessRateSort"
+        }
+      ]
     },
     "DISP-04": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DISP-04.stub.test.js",
+          "test_name": "TODO: implement test for DISP-04 — PromptBuild"
+        }
+      ]
     },
     "DISP-05": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DISP-05.stub.test.js",
+          "test_name": "TODO: implement test for DISP-05 — ParseOutput"
+        }
+      ]
     },
     "DRIFT-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DRIFT-01.stub.test.js",
+          "test_name": "TODO: implement test for DRIFT-01 — CompleteDrift"
+        }
+      ]
     },
     "DRIFT-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/DRIFT-02.stub.test.js",
+          "test_name": "TODO: implement test for DRIFT-02 — CompleteDrift"
+        }
+      ]
     },
     "ENFC-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ENFC-01.stub.test.js",
+          "test_name": "TODO: implement test for ENFC-01 — BlockDecision"
+        }
+      ]
     },
     "ENFC-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ENFC-02.stub.test.js",
+          "test_name": "TODO: implement test for ENFC-02 — BuildBlockMessage"
+        }
+      ]
     },
     "ENFC-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ENFC-03.stub.test.js",
+          "test_name": "TODO: implement test for ENFC-03 — BuildBlockMessage"
+        }
+      ]
     },
     "EVID-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FAIL-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FAIL-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "HEAL-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "HEAL-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "HLTH-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "HLTH-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "KEY-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "KEY-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "KEY-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "KEY-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LIVE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LIVE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LOOP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LOOP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LOOP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LOOP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCP-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCPENV-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCPENV-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCPENV-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "META-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MULTI-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "OBS-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "OBS-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "OBS-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "OBS-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORES-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORES-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORES-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORES-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORES-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PLAN-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PLAN-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PLAN-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PORT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PORT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PORT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PROV-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "QUORUM-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "QUORUM-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "QUORUM-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RECV-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REDACT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REDACT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REDACT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REN-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SAFE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCBD-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCBD-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCBD-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCHEMA-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCHEMA-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCHEMA-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SENS-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SENS-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SENS-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SIG-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SIG-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SIG-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SLOT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SLOT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SLOT-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SPEC-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SPEC-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SPEC-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STATE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STATE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STATE-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STATE-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STD-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STOP-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SYNC-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SYNC-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SYNC-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TRACE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TRACE-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TRACE-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TRIAGE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UNIF-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UNIF-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UNIF-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPPAAL-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPPAAL-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPS-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPS-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPS-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPS-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "UPS-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERIFY-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERIFY-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VIS-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "WIZ-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "AGENT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ANNOT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ANNOT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ANNOT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ANNOT-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ANNOT-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ARCH-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CONF-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DECOMP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DECOMP-05": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/EVID-01.stub.test.js",
+          "test_name": "TODO: implement test for EVID-01 — LowVolumeIsLowConfidence"
+        }
+      ]
     },
     "EVID-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/EVID-02.stub.test.js",
+          "test_name": "TODO: implement test for EVID-02 — Confidence"
+        }
+      ]
+    },
+    "FAIL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/FAIL-01.stub.test.js",
+          "test_name": "TODO: implement test for FAIL-01 — S=? [ "
+        }
+      ]
+    },
+    "FAIL-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/FAIL-02.stub.test.js",
+          "test_name": "TODO: implement test for FAIL-02 — DownSkipsAll"
+        }
+      ]
+    },
+    "HEAL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/HEAL-01.stub.test.js",
+          "test_name": "TODO: implement test for HEAL-01 — P=? [ F "
+        }
+      ]
+    },
+    "HEAL-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/HEAL-02.stub.test.js",
+          "test_name": "TODO: implement test for HEAL-02 — P=? [ F "
+        }
+      ]
+    },
+    "HLTH-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/HLTH-01.stub.test.js",
+          "test_name": "TODO: implement test for HLTH-01 — ZeroW005OnVersioned"
+        }
+      ]
+    },
+    "HLTH-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/HLTH-02.stub.test.js",
+          "test_name": "TODO: implement test for HLTH-02 — ZeroW007OnVersioned"
+        }
+      ]
     },
     "HLTH-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/HLTH-03.stub.test.js",
+          "test_name": "TODO: implement test for HLTH-03 — Bool"
+        }
+      ]
+    },
+    "INST-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-01.stub.test.js",
+          "test_name": "TODO: implement test for INST-01 — NoConflict"
+        }
+      ]
+    },
+    "INST-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-02.stub.test.js",
+          "test_name": "TODO: implement test for INST-02 — AllEquivalence"
+        }
+      ]
+    },
+    "INST-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-03.stub.test.js",
+          "test_name": "TODO: implement test for INST-03 — InstallIdempotent"
+        }
+      ]
+    },
+    "INST-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-04.stub.test.js",
+          "test_name": "TODO: implement test for INST-04 — RollbackSoundCheck"
+        }
+      ]
+    },
+    "INST-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-05.stub.test.js",
+          "test_name": "TODO: implement test for INST-05 — ConfigSyncCompleteCheck"
+        }
+      ]
+    },
+    "INST-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-06.stub.test.js",
+          "test_name": "TODO: implement test for INST-06 — Install"
+        }
+      ]
+    },
+    "INST-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-07.stub.test.js",
+          "test_name": "TODO: implement test for INST-07 — OverridesPreserved"
+        }
+      ]
+    },
+    "INST-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-08.stub.test.js",
+          "test_name": "TODO: implement test for INST-08 — BreakerAlwaysRegistered"
+        }
+      ]
+    },
+    "INST-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-09.stub.test.js",
+          "test_name": "TODO: implement test for INST-09 — DefaultConfigPresent"
+        }
+      ]
+    },
+    "INST-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/INST-10.stub.test.js",
+          "test_name": "TODO: implement test for INST-10 — OverridesPreserved"
+        }
+      ]
+    },
+    "KEY-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/KEY-01.stub.test.js",
+          "test_name": "TODO: implement test for KEY-01 — InputKey"
+        }
+      ]
+    },
+    "KEY-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/KEY-02.stub.test.js",
+          "test_name": "TODO: implement test for KEY-02 — StoreInKeytar"
+        }
+      ]
+    },
+    "KEY-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/KEY-03.stub.test.js",
+          "test_name": "TODO: implement test for KEY-03 — WriteToEnvBlock"
+        }
+      ]
+    },
+    "KEY-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/KEY-04.stub.test.js",
+          "test_name": "TODO: implement test for KEY-04 — RestartAgent"
+        }
+      ]
+    },
+    "LIVE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LIVE-01.stub.test.js",
+          "test_name": "TODO: implement test for LIVE-01 — CompleteLiveness"
+        }
+      ]
+    },
+    "LIVE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LIVE-02.stub.test.js",
+          "test_name": "TODO: implement test for LIVE-02 — CompleteLiveness"
+        }
+      ]
+    },
+    "LOOP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LOOP-01.stub.test.js",
+          "test_name": "TODO: implement test for LOOP-01 — DeliberationBounded"
+        }
+      ]
+    },
+    "LOOP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LOOP-02.stub.test.js",
+          "test_name": "TODO: implement test for LOOP-02 — TotalRoundsBounded"
+        }
+      ]
+    },
+    "LOOP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LOOP-03.stub.test.js",
+          "test_name": "TODO: implement test for LOOP-03 — FilterRoundsBounded"
+        }
+      ]
+    },
+    "LOOP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/LOOP-04.stub.test.js",
+          "test_name": "TODO: implement test for LOOP-04 — StartDebugMine"
+        }
+      ]
     },
     "MCP-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-01.stub.test.js",
+          "test_name": "TODO: implement test for MCP-01 — MCPServer"
+        }
+      ]
     },
     "MCP-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-02.stub.test.js",
+          "test_name": "TODO: implement test for MCP-02 — MCPServer"
+        }
+      ]
     },
     "MCP-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-03.stub.test.js",
+          "test_name": "TODO: implement test for MCP-03 — MCPServer"
+        }
+      ]
+    },
+    "MCP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-04.stub.test.js",
+          "test_name": "TODO: implement test for MCP-04 — FallbackHasDefaults"
+        }
+      ]
     },
     "MCP-05": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-05.stub.test.js",
+          "test_name": "TODO: implement test for MCP-05 — MCPServer"
+        }
+      ]
+    },
+    "MCP-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCP-06.stub.test.js",
+          "test_name": "TODO: implement test for MCP-06 — PrefixMatchConsistent"
+        }
+      ]
+    },
+    "MCPENV-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCPENV-01.stub.test.js",
+          "test_name": "TODO: implement test for MCPENV-01 — TypeInvariantHolds"
+        }
+      ]
+    },
+    "MCPENV-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCPENV-03.stub.test.js",
+          "test_name": "TODO: implement test for MCPENV-03 — EventualDecision"
+        }
+      ]
+    },
+    "MCPENV-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MCPENV-04.stub.test.js",
+          "test_name": "TODO: implement test for MCPENV-04 — S=? [ "
+        }
+      ]
     },
     "META-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/META-01.stub.test.js",
+          "test_name": "TODO: implement test for META-01 — Requirement"
+        }
+      ]
+    },
+    "META-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/META-02.stub.test.js",
+          "test_name": "TODO: implement test for META-02 — EscalationOnlyOnFail"
+        }
+      ]
     },
     "META-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/META-03.stub.test.js",
+          "test_name": "TODO: implement test for META-03 — Requirement"
+        }
+      ]
     },
     "MULTI-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MULTI-01.stub.test.js",
+          "test_name": "TODO: implement test for MULTI-01 — AgentFamily"
+        }
+      ]
+    },
+    "MULTI-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MULTI-02.stub.test.js",
+          "test_name": "TODO: implement test for MULTI-02 — NoFamilyNameCollision"
+        }
+      ]
     },
     "MULTI-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/MULTI-03.stub.test.js",
+          "test_name": "TODO: implement test for MULTI-03 — AgentFamily"
+        }
+      ]
+    },
+    "OBS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/OBS-01.stub.test.js",
+          "test_name": "TODO: implement test for OBS-01 — S=? [ "
+        }
+      ]
+    },
+    "OBS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/OBS-02.stub.test.js",
+          "test_name": "TODO: implement test for OBS-02 — S=? [ "
+        }
+      ]
+    },
+    "OBS-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/OBS-03.stub.test.js",
+          "test_name": "TODO: implement test for OBS-03 — S=? [ "
+        }
+      ]
+    },
+    "OBS-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/OBS-04.stub.test.js",
+          "test_name": "TODO: implement test for OBS-04 — S=? [ "
+        }
+      ]
+    },
+    "ORES-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ORES-01.stub.test.js",
+          "test_name": "TODO: implement test for ORES-01 — TypeOK"
+        }
+      ]
+    },
+    "ORES-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ORES-02.stub.test.js",
+          "test_name": "TODO: implement test for ORES-02 — LogBeforeDelete"
+        }
+      ]
+    },
+    "ORES-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ORES-03.stub.test.js",
+          "test_name": "TODO: implement test for ORES-03 — ResolvedAtWriteOnce"
+        }
+      ]
+    },
+    "ORES-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ORES-04.stub.test.js",
+          "test_name": "TODO: implement test for ORES-04 — HaikuUnavailableNoCorruption"
+        }
+      ]
+    },
+    "ORES-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/ORES-05.stub.test.js",
+          "test_name": "TODO: implement test for ORES-05 — ConvergenceEventuallyResolves"
+        }
+      ]
+    },
+    "PLAN-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLAN-01.stub.test.js",
+          "test_name": "TODO: implement test for PLAN-01 — TypeOK"
+        }
+      ]
+    },
+    "PLAN-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLAN-02.stub.test.js",
+          "test_name": "TODO: implement test for PLAN-02 — ProtocolTerminates"
+        }
+      ]
+    },
+    "PLAN-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLAN-03.stub.test.js",
+          "test_name": "TODO: implement test for PLAN-03 — TypeOK"
+        }
+      ]
     },
     "PLCY-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLCY-01.stub.test.js",
+          "test_name": "TODO: implement test for PLCY-01 — UpdatePolicy"
+        }
+      ]
     },
     "PLCY-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLCY-02.stub.test.js",
+          "test_name": "TODO: implement test for PLCY-02 — UpdatePolicy"
+        }
+      ]
     },
     "PLCY-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PLCY-03.stub.test.js",
+          "test_name": "TODO: implement test for PLCY-03 — UpdatePolicy"
+        }
+      ]
+    },
+    "PORT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PORT-01.stub.test.js",
+          "test_name": "TODO: implement test for PORT-01 — ExportConfig"
+        }
+      ]
+    },
+    "PORT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PORT-02.stub.test.js",
+          "test_name": "TODO: implement test for PORT-02 — StartImport"
+        }
+      ]
+    },
+    "PORT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PORT-03.stub.test.js",
+          "test_name": "TODO: implement test for PORT-03 — CreateBackup"
+        }
+      ]
+    },
+    "PROV-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PROV-01.stub.test.js",
+          "test_name": "TODO: implement test for PROV-01 — ProviderChangeInvalidates"
+        }
+      ]
     },
     "PROV-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PROV-02.stub.test.js",
+          "test_name": "TODO: implement test for PROV-02 — AddAgent"
+        }
+      ]
     },
     "PROV-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PROV-03.stub.test.js",
+          "test_name": "TODO: implement test for PROV-03 — ChangeProvider"
+        }
+      ]
     },
     "PRST-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PRST-01.stub.test.js",
+          "test_name": "TODO: implement test for PRST-01 — AddAgent"
+        }
+      ]
     },
     "PRST-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/PRST-02.stub.test.js",
+          "test_name": "TODO: implement test for PRST-02 — CloneSlot"
+        }
+      ]
+    },
+    "QUORUM-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/QUORUM-01.stub.test.js",
+          "test_name": "TODO: implement test for QUORUM-01 — TypeOK"
+        }
+      ]
+    },
+    "QUORUM-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/QUORUM-02.stub.test.js",
+          "test_name": "TODO: implement test for QUORUM-02 — ThresholdPasses"
+        }
+      ]
+    },
+    "QUORUM-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/QUORUM-03.stub.test.js",
+          "test_name": "TODO: implement test for QUORUM-03 — QuorumCeilingMet"
+        }
+      ]
+    },
+    "RECV-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/RECV-01.stub.test.js",
+          "test_name": "TODO: implement test for RECV-01 — EventualConsensus"
+        }
+      ]
+    },
+    "REDACT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/REDACT-01.stub.test.js",
+          "test_name": "TODO: implement test for REDACT-01 — CompleteRedaction"
+        }
+      ]
+    },
+    "REDACT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/REDACT-02.stub.test.js",
+          "test_name": "TODO: implement test for REDACT-02 — CompleteRedaction"
+        }
+      ]
+    },
+    "REDACT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/REDACT-03.stub.test.js",
+          "test_name": "TODO: implement test for REDACT-03 — CompleteRedaction"
+        }
+      ]
+    },
+    "REN-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/REN-03.stub.test.js",
+          "test_name": "TODO: implement test for REN-03 — NoHardcodedGSDPaths"
+        }
+      ]
+    },
+    "SAFE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SAFE-01.stub.test.js",
+          "test_name": "TODO: implement test for SAFE-01 — ThresholdPasses"
+        }
+      ]
+    },
+    "SCBD-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCBD-01.stub.test.js",
+          "test_name": "TODO: implement test for SCBD-01 — RecomputeIdempotent"
+        }
+      ]
+    },
+    "SCBD-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCBD-02.stub.test.js",
+          "test_name": "TODO: implement test for SCBD-02 — NoVoteLoss"
+        }
+      ]
+    },
+    "SCBD-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCBD-03.stub.test.js",
+          "test_name": "TODO: implement test for SCBD-03 — NoDoubleCounting"
+        }
+      ]
+    },
+    "SCHEMA-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCHEMA-01.stub.test.js",
+          "test_name": "TODO: implement test for SCHEMA-01 — RegistryNonEmpty"
+        }
+      ]
+    },
+    "SCHEMA-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCHEMA-03.stub.test.js",
+          "test_name": "TODO: implement test for SCHEMA-03 — CheckResultsMatchRegistry"
+        }
+      ]
+    },
+    "SCHEMA-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SCHEMA-04.stub.test.js",
+          "test_name": "TODO: implement test for SCHEMA-04 — BidirectionalConsistency"
+        }
+      ]
+    },
+    "SENS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SENS-01.stub.test.js",
+          "test_name": "TODO: implement test for SENS-01 — StartSweep"
+        }
+      ]
+    },
+    "SENS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SENS-02.stub.test.js",
+          "test_name": "TODO: implement test for SENS-02 — InjectContext"
+        }
+      ]
+    },
+    "SENS-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SENS-03.stub.test.js",
+          "test_name": "TODO: implement test for SENS-03 — GenerateReport"
+        }
+      ]
+    },
+    "SIG-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SIG-01.stub.test.js",
+          "test_name": "TODO: implement test for SIG-01 — GapDetectorDiffsBoth"
+        }
+      ]
+    },
+    "SIG-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SIG-02.stub.test.js",
+          "test_name": "TODO: implement test for SIG-02 — PetriHasCriticalPath"
+        }
+      ]
     },
     "SIG-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SIG-03.stub.test.js",
+          "test_name": "TODO: implement test for SIG-03 — Bool"
+        }
+      ]
+    },
+    "SIG-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SIG-04.stub.test.js",
+          "test_name": "TODO: implement test for SIG-04 — ConsensusUsesPoisson"
+        }
+      ]
+    },
+    "SLOT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SLOT-01.stub.test.js",
+          "test_name": "TODO: implement test for SLOT-01 — QuorumCeilingMet"
+        }
+      ]
+    },
+    "SLOT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SLOT-02.stub.test.js",
+          "test_name": "TODO: implement test for SLOT-02 — TypeOK"
+        }
+      ]
+    },
+    "SLOT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SLOT-04.stub.test.js",
+          "test_name": "TODO: implement test for SLOT-04 — SubslotsFirst"
+        }
+      ]
     },
     "SOLVE-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SOLVE-01.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-01 — Bool"
+        }
+      ]
     },
     "SOLVE-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SOLVE-02.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-02 — Bool"
+        }
+      ]
+    },
+    "SPEC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SPEC-01.stub.test.js",
+          "test_name": "TODO: implement test for SPEC-01 — SafetyInvariant1"
+        }
+      ]
+    },
+    "SPEC-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SPEC-03.stub.test.js",
+          "test_name": "TODO: implement test for SPEC-03 — AllRulesHold"
+        }
+      ]
+    },
+    "SPEC-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SPEC-04.stub.test.js",
+          "test_name": "TODO: implement test for SPEC-04 — StartPhaseSpec"
+        }
+      ]
+    },
+    "STATE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STATE-01.stub.test.js",
+          "test_name": "TODO: implement test for STATE-01 — UpdateState"
+        }
+      ]
+    },
+    "STATE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STATE-02.stub.test.js",
+          "test_name": "TODO: implement test for STATE-02 — TypeOK"
+        }
+      ]
+    },
+    "STATE-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STATE-03.stub.test.js",
+          "test_name": "TODO: implement test for STATE-03 — HookReadsState"
+        }
+      ]
+    },
+    "STATE-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STATE-04.stub.test.js",
+          "test_name": "TODO: implement test for STATE-04 — CreateSilently"
+        }
+      ]
+    },
+    "STD-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STD-10.stub.test.js",
+          "test_name": "TODO: implement test for STD-10 — GeminiUnscoped"
+        }
+      ]
+    },
+    "STOP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-01.stub.test.js",
+          "test_name": "TODO: implement test for STOP-01 — TypeOK"
+        }
+      ]
+    },
+    "STOP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-02.stub.test.js",
+          "test_name": "TODO: implement test for STOP-02 — SafetyInvariant1"
+        }
+      ]
+    },
+    "STOP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-03.stub.test.js",
+          "test_name": "TODO: implement test for STOP-03 — SafetyInvariant2"
+        }
+      ]
+    },
+    "STOP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-04.stub.test.js",
+          "test_name": "TODO: implement test for STOP-04 — SafetyInvariant3"
+        }
+      ]
+    },
+    "STOP-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-05.stub.test.js",
+          "test_name": "TODO: implement test for STOP-05 — LivenessProperty1"
+        }
+      ]
+    },
+    "STOP-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-06.stub.test.js",
+          "test_name": "TODO: implement test for STOP-06 — LivenessProperty2"
+        }
+      ]
+    },
+    "STOP-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-07.stub.test.js",
+          "test_name": "TODO: implement test for STOP-07 — LivenessProperty3"
+        }
+      ]
+    },
+    "STOP-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-08.stub.test.js",
+          "test_name": "TODO: implement test for STOP-08 — BoundaryCorrectCheck"
+        }
+      ]
+    },
+    "STOP-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/STOP-09.stub.test.js",
+          "test_name": "TODO: implement test for STOP-09 — PairingUniqueCheck"
+        }
+      ]
+    },
+    "SYNC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SYNC-01.stub.test.js",
+          "test_name": "TODO: implement test for SYNC-01 — QGSDWrapsGSD"
+        }
+      ]
+    },
+    "SYNC-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SYNC-02.stub.test.js",
+          "test_name": "TODO: implement test for SYNC-02 — AllGSDCommandsInQuorum"
+        }
+      ]
     },
     "SYNC-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SYNC-03.stub.test.js",
+          "test_name": "TODO: implement test for SYNC-03 — Bool"
+        }
+      ]
+    },
+    "SYNC-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/SYNC-04.stub.test.js",
+          "test_name": "TODO: implement test for SYNC-04 — GSDFilesUntouched"
+        }
+      ]
     },
     "TRACE-01": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-01.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-01 — ModelType"
+        }
+      ]
+    },
+    "TRACE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-02.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-02 — CoverageComplete"
+        }
+      ]
     },
     "TRACE-03": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-03.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-03 — ModelType"
+        }
+      ]
+    },
+    "TRACE-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-04.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-04 — BidirectionalConsistent"
+        }
+      ]
+    },
+    "TRACE-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-05.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-05 — CIGuardCheck"
+        }
+      ]
     },
     "TRACE-06": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRACE-06.stub.test.js",
+          "test_name": "TODO: implement test for TRACE-06 — Bool"
+        }
+      ]
+    },
+    "TRIAGE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRIAGE-01.stub.test.js",
+          "test_name": "TODO: implement test for TRIAGE-01 — SuspectsAreFailOrTagged"
+        }
+      ]
     },
     "TRIAGE-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/TRIAGE-02.stub.test.js",
+          "test_name": "TODO: implement test for TRIAGE-02 — Confidence"
+        }
+      ]
+    },
+    "UNIF-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UNIF-01.stub.test.js",
+          "test_name": "TODO: implement test for UNIF-01 — AllEntriesNormalized"
+        }
+      ]
     },
     "UNIF-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UNIF-02.stub.test.js",
+          "test_name": "TODO: implement test for UNIF-02 — FVTool"
+        }
+      ]
+    },
+    "UNIF-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UNIF-03.stub.test.js",
+          "test_name": "TODO: implement test for UNIF-03 — TriageFromNDJSONOnly"
+        }
+      ]
+    },
+    "UNIF-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UNIF-04.stub.test.js",
+          "test_name": "TODO: implement test for UNIF-04 — CIFailsOnFailure"
+        }
+      ]
+    },
+    "UPPAAL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPPAAL-01.stub.test.js",
+          "test_name": "TODO: implement test for UPPAAL-01 — AllConstraintsEmpirical"
+        }
+      ]
     },
     "UPPAAL-02": {
-      "covered": false,
-      "test_cases": []
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPPAAL-02.stub.test.js",
+          "test_name": "TODO: implement test for UPPAAL-02 — Bool"
+        }
+      ]
+    },
+    "UPPAAL-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPPAAL-03.stub.test.js",
+          "test_name": "TODO: implement test for UPPAAL-03 — BothMeasurementsPresent"
+        }
+      ]
+    },
+    "UPS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPS-01.stub.test.js",
+          "test_name": "TODO: implement test for UPS-01 — TypeOK"
+        }
+      ]
+    },
+    "UPS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPS-02.stub.test.js",
+          "test_name": "TODO: implement test for UPS-02 — PlanningFromAllowlist"
+        }
+      ]
+    },
+    "UPS-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPS-03.stub.test.js",
+          "test_name": "TODO: implement test for UPS-03 — InjectQuorum"
+        }
+      ]
+    },
+    "UPS-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPS-04.stub.test.js",
+          "test_name": "TODO: implement test for UPS-04 — InjectQuorum"
+        }
+      ]
+    },
+    "UPS-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/UPS-05.stub.test.js",
+          "test_name": "TODO: implement test for UPS-05 — NonPlanningNeverInjected"
+        }
+      ]
+    },
+    "VERIFY-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/VERIFY-01.stub.test.js",
+          "test_name": "TODO: implement test for VERIFY-01 — VerifierRunsFV"
+        }
+      ]
+    },
+    "VERIFY-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/VERIFY-02.stub.test.js",
+          "test_name": "TODO: implement test for VERIFY-02 — AllFormalismsHaveCounts"
+        }
+      ]
+    },
+    "VIS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/VIS-01.stub.test.js",
+          "test_name": "TODO: implement test for VIS-01 — W008SurfacedForFailures"
+        }
+      ]
+    },
+    "WIZ-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-01.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-01 — WizardStartsCorrectly"
+        }
+      ]
+    },
+    "WIZ-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-02.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-02 — EnterFirstRun"
+        }
+      ]
+    },
+    "WIZ-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-03.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-03 — EnterMenu"
+        }
+      ]
+    },
+    "WIZ-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-04.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-04 — SelectAgent"
+        }
+      ]
+    },
+    "WIZ-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-05.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-05 — ConfirmChanges"
+        }
+      ]
+    },
+    "WIZ-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-08.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-08 — EditComposition"
+        }
+      ]
+    },
+    "WIZ-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-09.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-09 — EditComposition"
+        }
+      ]
+    },
+    "WIZ-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "hooks/generated-stubs/WIZ-10.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-10 — AddSlot"
+        }
+      ]
     }
   }
 }

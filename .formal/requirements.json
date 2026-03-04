@@ -13,7 +13,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-02",
@@ -25,7 +28,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-03",
@@ -37,7 +43,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-04",
@@ -49,7 +58,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-05",
@@ -61,7 +73,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-06",
@@ -73,7 +88,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "ACT-07",
@@ -85,7 +103,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking"
+      "category_raw": "Activity Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDActivityTracking.tla"
+      ]
     },
     {
       "id": "AGENT-01",
@@ -97,7 +118,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Agent Roster"
+      "category_raw": "Agent Roster",
+      "formal_models": [
+        ".formal/tla/QGSDAgentProvisioning.tla"
+      ]
     },
     {
       "id": "AGENT-02",
@@ -109,7 +133,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Agent Roster"
+      "category_raw": "Agent Roster",
+      "formal_models": [
+        ".formal/tla/QGSDAgentProvisioning.tla"
+      ]
     },
     {
       "id": "AGENT-03",
@@ -193,7 +220,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Architecture"
+      "category_raw": "Architecture",
+      "formal_models": [
+        ".formal/alloy/architecture-registry.als"
+      ]
     },
     {
       "id": "ARCH-02",
@@ -205,7 +235,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Architecture"
+      "category_raw": "Architecture",
+      "formal_models": [
+        ".formal/alloy/architecture-registry.als"
+      ]
     },
     {
       "id": "ARCH-03",
@@ -228,7 +261,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.26"
-      }
+      },
+      "formal_models": [
+        ".formal/alloy/codebase-arch-constraints.als"
+      ]
     },
     {
       "id": "CALIB-01",
@@ -285,7 +321,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Calibration Governance"
+      "category_raw": "Calibration Governance",
+      "formal_models": [
+        ".formal/alloy/provider-failure.als"
+      ]
     },
     {
       "id": "COMP-01",
@@ -312,7 +351,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config"
+      "category_raw": "Composition Config",
+      "formal_models": [
+        ".formal/alloy/quorum-policy.als"
+      ]
     },
     {
       "id": "COMP-03",
@@ -324,7 +366,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config"
+      "category_raw": "Composition Config",
+      "formal_models": [
+        ".formal/alloy/quorum-policy.als"
+      ]
     },
     {
       "id": "COMP-04",
@@ -336,7 +381,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config"
+      "category_raw": "Composition Config",
+      "formal_models": [
+        ".formal/alloy/quorum-policy.als"
+      ]
     },
     {
       "id": "CONF-01",
@@ -408,7 +456,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions"
+      "category_raw": "Config Extensions",
+      "formal_models": [
+        ".formal/alloy/config-two-layer.als"
+      ]
     },
     {
       "id": "CONF-07",
@@ -420,7 +471,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions"
+      "category_raw": "Config Extensions",
+      "formal_models": [
+        ".formal/alloy/config-two-layer.als"
+      ]
     },
     {
       "id": "CONF-08",
@@ -444,7 +498,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions"
+      "category_raw": "Config Extensions",
+      "formal_models": [
+        ".formal/alloy/config-two-layer.als"
+      ]
     },
     {
       "id": "CONF-10",
@@ -456,7 +513,10 @@
       "provenance": {
         "source_file": ".planning/quick/137-fix-empty-roster-handling-add-validation/137-PLAN.md",
         "milestone": "quick-137"
-      }
+      },
+      "formal_models": [
+        ".formal/alloy/config-zero-providers.als"
+      ]
     },
     {
       "id": "CRED-01",
@@ -498,7 +558,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Dashboard"
+      "category_raw": "Dashboard",
+      "formal_models": [
+        ".formal/tla/QGSDDashboard.tla"
+      ]
     },
     {
       "id": "DASH-02",
@@ -510,7 +573,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Dashboard"
+      "category_raw": "Dashboard",
+      "formal_models": [
+        ".formal/tla/QGSDDashboard.tla"
+      ]
     },
     {
       "id": "DASH-03",
@@ -522,7 +588,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Dashboard"
+      "category_raw": "Dashboard",
+      "formal_models": [
+        ".formal/tla/QGSDDashboard.tla"
+      ]
     },
     {
       "id": "DECOMP-01",
@@ -546,7 +615,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness"
+      "category_raw": "Decomposition Awareness",
+      "formal_models": [
+        ".formal/alloy/state-space-analysis.als"
+      ]
     },
     {
       "id": "DECOMP-03",
@@ -558,7 +630,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness"
+      "category_raw": "Decomposition Awareness",
+      "formal_models": [
+        ".formal/alloy/state-space-analysis.als"
+      ]
     },
     {
       "id": "DECOMP-04",
@@ -570,7 +645,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness"
+      "category_raw": "Decomposition Awareness",
+      "formal_models": [
+        ".formal/alloy/state-space-analysis.als"
+      ]
     },
     {
       "id": "DECOMP-05",
@@ -582,7 +660,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.26"
-      }
+      },
+      "formal_models": [
+        ".formal/alloy/decomp-cross-model.als"
+      ]
     },
     {
       "id": "DETECT-01",
@@ -669,7 +750,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability"
+      "category_raw": "Dispatch Reliability",
+      "formal_models": [
+        ".formal/tla/QGSDDispatchPipeline.tla"
+      ]
     },
     {
       "id": "DISP-02",
@@ -681,7 +765,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability"
+      "category_raw": "Dispatch Reliability",
+      "formal_models": [
+        ".formal/tla/QGSDDispatchPipeline.tla"
+      ]
     },
     {
       "id": "DISP-03",
@@ -693,7 +780,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability"
+      "category_raw": "Dispatch Reliability",
+      "formal_models": [
+        ".formal/tla/QGSDDispatchPipeline.tla"
+      ]
     },
     {
       "id": "DISP-04",
@@ -705,7 +795,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability"
+      "category_raw": "Dispatch Reliability",
+      "formal_models": [
+        ".formal/tla/QGSDDispatchPipeline.tla"
+      ]
     },
     {
       "id": "DISP-05",
@@ -717,7 +810,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability"
+      "category_raw": "Dispatch Reliability",
+      "formal_models": [
+        ".formal/tla/QGSDDispatchPipeline.tla"
+      ]
     },
     {
       "id": "DRIFT-01",
@@ -729,7 +825,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer"
+      "category_raw": "Enforcement Layer",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "DRIFT-02",
@@ -741,7 +840,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer"
+      "category_raw": "Enforcement Layer",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "ENFC-01",
@@ -753,7 +855,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement"
+      "category_raw": "Enforcement",
+      "formal_models": [
+        ".formal/tla/QGSDEnforcement.tla"
+      ]
     },
     {
       "id": "ENFC-02",
@@ -765,7 +870,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement"
+      "category_raw": "Enforcement",
+      "formal_models": [
+        ".formal/tla/QGSDEnforcement.tla"
+      ]
     },
     {
       "id": "ENFC-03",
@@ -777,7 +885,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement"
+      "category_raw": "Enforcement",
+      "formal_models": [
+        ".formal/tla/QGSDEnforcement.tla"
+      ]
     },
     {
       "id": "EVID-01",
@@ -789,7 +900,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Evidence Confidence"
+      "category_raw": "Evidence Confidence",
+      "formal_models": [
+        ".formal/alloy/evidence-triage.als"
+      ]
     },
     {
       "id": "EVID-02",
@@ -814,7 +928,8 @@
         "milestone": "v0.24"
       },
       "formal_models": [
-        ".formal/prism/mcp-availability.pm"
+        ".formal/prism/mcp-availability.pm",
+        ".formal/prism/mcp-availability.props"
       ],
       "category_raw": "Failover & Recovery"
     },
@@ -828,7 +943,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Failover & Recovery"
+      "category_raw": "Failover & Recovery",
+      "formal_models": [
+        ".formal/alloy/provider-failure.als"
+      ]
     },
     {
       "id": "HEAL-01",
@@ -840,7 +958,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Self-Healing"
+      "category_raw": "Self-Healing",
+      "formal_models": [
+        ".formal/prism/deliberation-healing.props"
+      ]
     },
     {
       "id": "HEAL-02",
@@ -852,7 +973,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Self-Healing"
+      "category_raw": "Self-Healing",
+      "formal_models": [
+        ".formal/prism/deliberation-healing.props"
+      ]
     },
     {
       "id": "HLTH-01",
@@ -864,7 +988,10 @@
         "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
         "milestone": "v0.15"
       },
-      "category_raw": "Health Checker"
+      "category_raw": "Health Checker",
+      "formal_models": [
+        ".formal/alloy/health-validation.als"
+      ]
     },
     {
       "id": "HLTH-02",
@@ -876,7 +1003,10 @@
         "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
         "milestone": "v0.15"
       },
-      "category_raw": "Health Checker"
+      "category_raw": "Health Checker",
+      "formal_models": [
+        ".formal/alloy/health-validation.als"
+      ]
     },
     {
       "id": "HLTH-03",
@@ -975,7 +1105,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer"
+      "category_raw": "Installer",
+      "formal_models": [
+        ".formal/tla/QGSDInstallerIdempotency.tla"
+      ]
     },
     {
       "id": "INST-07",
@@ -987,7 +1120,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer"
+      "category_raw": "Installer",
+      "formal_models": [
+        ".formal/tla/QGSDInstallerIdempotency.tla"
+      ]
     },
     {
       "id": "INST-08",
@@ -999,7 +1135,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions"
+      "category_raw": "Installer Extensions",
+      "formal_models": [
+        ".formal/tla/QGSDInstallerIdempotency.tla"
+      ]
     },
     {
       "id": "INST-09",
@@ -1011,7 +1150,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions"
+      "category_raw": "Installer Extensions",
+      "formal_models": [
+        ".formal/tla/QGSDInstallerIdempotency.tla"
+      ]
     },
     {
       "id": "INST-10",
@@ -1023,7 +1165,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions"
+      "category_raw": "Installer Extensions",
+      "formal_models": [
+        ".formal/tla/QGSDInstallerIdempotency.tla"
+      ]
     },
     {
       "id": "KEY-01",
@@ -1035,7 +1180,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management"
+      "category_raw": "API Key Management",
+      "formal_models": [
+        ".formal/tla/QGSDKeyManagement.tla"
+      ]
     },
     {
       "id": "KEY-02",
@@ -1047,7 +1195,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management"
+      "category_raw": "API Key Management",
+      "formal_models": [
+        ".formal/tla/QGSDKeyManagement.tla"
+      ]
     },
     {
       "id": "KEY-03",
@@ -1059,7 +1210,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management"
+      "category_raw": "API Key Management",
+      "formal_models": [
+        ".formal/tla/QGSDKeyManagement.tla"
+      ]
     },
     {
       "id": "KEY-04",
@@ -1071,7 +1225,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management"
+      "category_raw": "API Key Management",
+      "formal_models": [
+        ".formal/tla/QGSDKeyManagement.tla"
+      ]
     },
     {
       "id": "LIVE-01",
@@ -1083,7 +1240,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Liveness Lint"
+      "category_raw": "Liveness Lint",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "LIVE-02",
@@ -1095,7 +1255,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Liveness Lint"
+      "category_raw": "Liveness Lint",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "LOOP-01",
@@ -1108,8 +1271,9 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".formal/tla/QGSDQuorum.tla",
-        ".formal/prism/quorum.pm"
+        ".formal/prism/quorum.pm",
+        ".formal/prism/quorum.props",
+        ".formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -1153,7 +1317,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Feedback Loops"
+      "category_raw": "Feedback Loops",
+      "formal_models": [
+        ".formal/tla/QGSDSpecGeneration.tla"
+      ]
     },
     {
       "id": "MCP-01",
@@ -1201,7 +1368,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "MCP Server Detection"
+      "category_raw": "MCP Server Detection",
+      "formal_models": [
+        ".formal/alloy/mcp-detection.als"
+      ]
     },
     {
       "id": "MCP-05",
@@ -1225,7 +1395,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "MCP Server Detection"
+      "category_raw": "MCP Server Detection",
+      "formal_models": [
+        ".formal/alloy/mcp-detection.als"
+      ]
     },
     {
       "id": "MCPENV-01",
@@ -1268,7 +1441,8 @@
         "milestone": "v0.19"
       },
       "formal_models": [
-        ".formal/prism/mcp-availability.pm"
+        ".formal/prism/mcp-availability.pm",
+        ".formal/prism/mcp-availability.props"
       ],
       "category_raw": "MCP Environment Model"
     },
@@ -1294,7 +1468,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Quorum-First Behavior (Meta"
+      "category_raw": "Quorum-First Behavior (Meta",
+      "formal_models": [
+        ".formal/alloy/architecture-registry.als"
+      ]
     },
     {
       "id": "META-03",
@@ -1330,7 +1507,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Multiple Slots"
+      "category_raw": "Multiple Slots",
+      "formal_models": [
+        ".formal/alloy/multi-slot-structure.als"
+      ]
     },
     {
       "id": "MULTI-03",
@@ -1354,7 +1534,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Observability"
+      "category_raw": "Observability",
+      "formal_models": [
+        ".formal/prism/observability-delivery.props"
+      ]
     },
     {
       "id": "OBS-02",
@@ -1366,7 +1549,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Observability"
+      "category_raw": "Observability",
+      "formal_models": [
+        ".formal/prism/observability-delivery.props"
+      ]
     },
     {
       "id": "OBS-03",
@@ -1378,7 +1564,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Observability"
+      "category_raw": "Observability",
+      "formal_models": [
+        ".formal/prism/observability-delivery.props"
+      ]
     },
     {
       "id": "OBS-04",
@@ -1390,7 +1579,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Observability"
+      "category_raw": "Observability",
+      "formal_models": [
+        ".formal/prism/observability-delivery.props"
+      ]
     },
     {
       "id": "ORES-01",
@@ -1558,7 +1750,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Portability"
+      "category_raw": "Portability",
+      "formal_models": [
+        ".formal/tla/QGSDConfigPortability.tla"
+      ]
     },
     {
       "id": "PORT-02",
@@ -1570,7 +1765,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Portability"
+      "category_raw": "Portability",
+      "formal_models": [
+        ".formal/tla/QGSDConfigPortability.tla"
+      ]
     },
     {
       "id": "PORT-03",
@@ -1582,7 +1780,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Portability"
+      "category_raw": "Portability",
+      "formal_models": [
+        ".formal/tla/QGSDConfigPortability.tla"
+      ]
     },
     {
       "id": "PROV-01",
@@ -1594,7 +1795,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Provider Swap"
+      "category_raw": "Provider Swap",
+      "formal_models": [
+        ".formal/tla/QGSDAgentProvisioning.tla"
+      ]
     },
     {
       "id": "PROV-02",
@@ -1655,7 +1859,8 @@
         "milestone": "v0.13"
       },
       "formal_models": [
-        ".formal/tla/QGSDQuorum.tla"
+        ".formal/tla/QGSDQuorum.tla",
+        ".formal/tla/QGSDQuorum_xstate.tla"
       ],
       "category_raw": "Quorum Gates"
     },
@@ -1715,7 +1920,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer"
+      "category_raw": "Enforcement Layer",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "REDACT-02",
@@ -1727,7 +1935,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer"
+      "category_raw": "Enforcement Layer",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "REDACT-03",
@@ -1739,7 +1950,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer"
+      "category_raw": "Enforcement Layer",
+      "formal_models": [
+        ".formal/tla/QGSDCIChecks.tla"
+      ]
     },
     {
       "id": "REN-03",
@@ -1751,7 +1965,10 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Portability"
+      "category_raw": "Portability",
+      "formal_models": [
+        ".formal/alloy/codebase-arch-constraints.als"
+      ]
     },
     {
       "id": "SAFE-01",
@@ -1824,7 +2041,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation"
+      "category_raw": "Schema Foundation",
+      "formal_models": [
+        ".formal/alloy/schema-extensions.als"
+      ]
     },
     {
       "id": "SCHEMA-03",
@@ -1836,7 +2056,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation"
+      "category_raw": "Schema Foundation",
+      "formal_models": [
+        ".formal/alloy/schema-extensions.als"
+      ]
     },
     {
       "id": "SCHEMA-04",
@@ -1848,7 +2071,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation"
+      "category_raw": "Schema Foundation",
+      "formal_models": [
+        ".formal/alloy/schema-extensions.als"
+      ]
     },
     {
       "id": "SENS-01",
@@ -1860,7 +2086,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis"
+      "category_raw": "Sensitivity Analysis",
+      "formal_models": [
+        ".formal/tla/QGSDSensitivity.tla"
+      ]
     },
     {
       "id": "SENS-02",
@@ -1872,7 +2101,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis"
+      "category_raw": "Sensitivity Analysis",
+      "formal_models": [
+        ".formal/tla/QGSDSensitivity.tla"
+      ]
     },
     {
       "id": "SENS-03",
@@ -1884,7 +2116,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis"
+      "category_raw": "Sensitivity Analysis",
+      "formal_models": [
+        ".formal/tla/QGSDSensitivity.tla"
+      ]
     },
     {
       "id": "SIG-01",
@@ -1896,7 +2131,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals"
+      "category_raw": "Operational Signals",
+      "formal_models": [
+        ".formal/alloy/signal-analysis-tools.als"
+      ]
     },
     {
       "id": "SIG-02",
@@ -1908,7 +2146,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals"
+      "category_raw": "Operational Signals",
+      "formal_models": [
+        ".formal/alloy/signal-analysis-tools.als"
+      ]
     },
     {
       "id": "SIG-03",
@@ -1932,7 +2173,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals"
+      "category_raw": "Operational Signals",
+      "formal_models": [
+        ".formal/alloy/signal-analysis-tools.als"
+      ]
     },
     {
       "id": "SLOT-01",
@@ -1944,7 +2188,11 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Slot-based Naming"
+      "category_raw": "Slot-based Naming",
+      "formal_models": [
+        ".formal/alloy/multi-slot-structure.als",
+        ".formal/tla/QGSDQuorum.tla"
+      ]
     },
     {
       "id": "SLOT-02",
@@ -1986,7 +2234,10 @@
       "provenance": {
         "source_file": ".planning/quick/140-implement-qgsd-solve-consistency-solver-/140-PLAN.md",
         "milestone": "quick-140"
-      }
+      },
+      "formal_models": [
+        ".formal/alloy/solve-consistency.als"
+      ]
     },
     {
       "id": "SOLVE-02",
@@ -1998,7 +2249,10 @@
       "provenance": {
         "source_file": ".planning/quick/141-fix-solver-loop-bugs-parsealloydefaults-/141-PLAN.md",
         "milestone": "quick-141"
-      }
+      },
+      "formal_models": [
+        ".formal/alloy/solve-consistency.als"
+      ]
     },
     {
       "id": "SPEC-01",
@@ -2040,7 +2294,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Spec Completeness"
+      "category_raw": "Spec Completeness",
+      "formal_models": [
+        ".formal/tla/QGSDSpecGeneration.tla"
+      ]
     },
     {
       "id": "STATE-01",
@@ -2052,7 +2309,10 @@
         "source_file": ".planning/milestones/v0.13-REQUIREMENTS.md",
         "milestone": "v0.13"
       },
-      "category_raw": "State Tracking"
+      "category_raw": "State Tracking",
+      "formal_models": [
+        ".formal/tla/QGSDBreakerState.tla"
+      ]
     },
     {
       "id": "STATE-02",
@@ -2064,7 +2324,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management"
+      "category_raw": "State Management",
+      "formal_models": [
+        ".formal/tla/QGSDBreakerState.tla"
+      ]
     },
     {
       "id": "STATE-03",
@@ -2076,7 +2339,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management"
+      "category_raw": "State Management",
+      "formal_models": [
+        ".formal/tla/QGSDBreakerState.tla"
+      ]
     },
     {
       "id": "STATE-04",
@@ -2088,7 +2354,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management"
+      "category_raw": "State Management",
+      "formal_models": [
+        ".formal/tla/QGSDBreakerState.tla"
+      ]
     },
     {
       "id": "STD-10",
@@ -2100,7 +2369,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Standardization"
+      "category_raw": "Standardization",
+      "formal_models": [
+        ".formal/alloy/codebase-arch-constraints.als"
+      ]
     },
     {
       "id": "STOP-01",
@@ -2247,7 +2519,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy"
+      "category_raw": "GSD Sync Strategy",
+      "formal_models": [
+        ".formal/alloy/gsd-sync-invariants.als"
+      ]
     },
     {
       "id": "SYNC-02",
@@ -2259,7 +2534,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy"
+      "category_raw": "GSD Sync Strategy",
+      "formal_models": [
+        ".formal/alloy/gsd-sync-invariants.als"
+      ]
     },
     {
       "id": "SYNC-03",
@@ -2283,7 +2561,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy"
+      "category_raw": "GSD Sync Strategy",
+      "formal_models": [
+        ".formal/alloy/gsd-sync-invariants.als"
+      ]
     },
     {
       "id": "TRACE-01",
@@ -2307,7 +2588,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix"
+      "category_raw": "Traceability Matrix",
+      "formal_models": [
+        ".formal/alloy/traceability-annotations.als"
+      ]
     },
     {
       "id": "TRACE-03",
@@ -2331,7 +2615,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix"
+      "category_raw": "Traceability Matrix",
+      "formal_models": [
+        ".formal/alloy/traceability-annotations.als"
+      ]
     },
     {
       "id": "TRACE-05",
@@ -2343,7 +2630,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix"
+      "category_raw": "Traceability Matrix",
+      "formal_models": [
+        ".formal/alloy/traceability-annotations.als"
+      ]
     },
     {
       "id": "TRACE-06",
@@ -2356,7 +2646,9 @@
         "milestone": "quick-139"
       },
       "category_raw": "Formal Verification",
-      "formal_models": []
+      "formal_models": [
+        ".formal/alloy/formal-test-trace.als"
+      ]
     },
     {
       "id": "TRIAGE-01",
@@ -2368,7 +2660,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Triage Bundle"
+      "category_raw": "Triage Bundle",
+      "formal_models": [
+        ".formal/alloy/evidence-triage.als"
+      ]
     },
     {
       "id": "TRIAGE-02",
@@ -2392,7 +2687,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format"
+      "category_raw": "Unified Verdict Format",
+      "formal_models": [
+        ".formal/alloy/unified-check-results.als"
+      ]
     },
     {
       "id": "UNIF-02",
@@ -2416,7 +2714,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format"
+      "category_raw": "Unified Verdict Format",
+      "formal_models": [
+        ".formal/alloy/unified-check-results.als"
+      ]
     },
     {
       "id": "UNIF-04",
@@ -2428,7 +2729,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format"
+      "category_raw": "Unified Verdict Format",
+      "formal_models": [
+        ".formal/alloy/unified-check-results.als"
+      ]
     },
     {
       "id": "UPPAAL-01",
@@ -2440,7 +2744,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "UPPAAL Timed Race Modeling"
+      "category_raw": "UPPAAL Timed Race Modeling",
+      "formal_models": [
+        ".formal/alloy/uppaal-model-reqs.als"
+      ]
     },
     {
       "id": "UPPAAL-02",
@@ -2464,7 +2771,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "UPPAAL Timed Race Modeling"
+      "category_raw": "UPPAAL Timed Race Modeling",
+      "formal_models": [
+        ".formal/alloy/uppaal-model-reqs.als"
+      ]
     },
     {
       "id": "UPS-01",
@@ -2476,7 +2786,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook"
+      "category_raw": "UserPromptSubmit Hook",
+      "formal_models": [
+        ".formal/tla/QGSDPromptHook.tla"
+      ]
     },
     {
       "id": "UPS-02",
@@ -2488,7 +2801,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook"
+      "category_raw": "UserPromptSubmit Hook",
+      "formal_models": [
+        ".formal/tla/QGSDPromptHook.tla"
+      ]
     },
     {
       "id": "UPS-03",
@@ -2500,7 +2816,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook"
+      "category_raw": "UserPromptSubmit Hook",
+      "formal_models": [
+        ".formal/tla/QGSDPromptHook.tla"
+      ]
     },
     {
       "id": "UPS-04",
@@ -2512,7 +2831,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook"
+      "category_raw": "UserPromptSubmit Hook",
+      "formal_models": [
+        ".formal/tla/QGSDPromptHook.tla"
+      ]
     },
     {
       "id": "UPS-05",
@@ -2524,7 +2846,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook"
+      "category_raw": "UserPromptSubmit Hook",
+      "formal_models": [
+        ".formal/tla/QGSDPromptHook.tla"
+      ]
     },
     {
       "id": "VERIFY-01",
@@ -2536,7 +2861,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Verification Gate"
+      "category_raw": "Verification Gate",
+      "formal_models": [
+        ".formal/alloy/verification-integration.als"
+      ]
     },
     {
       "id": "VERIFY-02",
@@ -2548,7 +2876,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Verification Gate"
+      "category_raw": "Verification Gate",
+      "formal_models": [
+        ".formal/alloy/verification-integration.als"
+      ]
     },
     {
       "id": "VIS-01",
@@ -2560,7 +2891,10 @@
         "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
         "milestone": "v0.15"
       },
-      "category_raw": "Visibility"
+      "category_raw": "Visibility",
+      "formal_models": [
+        ".formal/alloy/health-validation.als"
+      ]
     },
     {
       "id": "WIZ-01",
@@ -2572,7 +2906,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX"
+      "category_raw": "Wizard UX",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-02",
@@ -2584,7 +2921,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX"
+      "category_raw": "Wizard UX",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-03",
@@ -2596,7 +2936,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX"
+      "category_raw": "Wizard UX",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-04",
@@ -2608,7 +2951,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX"
+      "category_raw": "Wizard UX",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-05",
@@ -2620,7 +2966,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX"
+      "category_raw": "Wizard UX",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-08",
@@ -2632,7 +2981,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen"
+      "category_raw": "Wizard Composition Screen",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-09",
@@ -2644,7 +2996,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen"
+      "category_raw": "Wizard Composition Screen",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     },
     {
       "id": "WIZ-10",
@@ -2656,7 +3011,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen"
+      "category_raw": "Wizard Composition Screen",
+      "formal_models": [
+        ".formal/tla/QGSDSetupWizard.tla"
+      ]
     }
   ],
   "schema_version": "1",
