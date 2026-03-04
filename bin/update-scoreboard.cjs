@@ -25,6 +25,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const os = require('os');
+const https = require('https');
 
 // ---------------------------------------------------------------------------
 // Score delta lookup
@@ -448,14 +449,8 @@ function todayMMDD() {
  * Returns { category, subcategory, is_new } or null on any failure (fail-open).
  */
 async function classifyWithHaiku(taskDescription, categories) {
-  // SDK availability guard
-  let Anthropic;
-  try {
-    require.resolve('@anthropic-ai/sdk');
-    Anthropic = require('@anthropic-ai/sdk');
-  } catch (_) {
-    return null; // SDK not installed — skip silently
-  }
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return null; // No API key — skip silently (fail-open)
 
   try {
     // Build formatted taxonomy list for prompt
@@ -479,14 +474,43 @@ If the topic does not match any existing category or subcategory well, propose n
 
 Choose the single best match. Return nothing except the JSON object.`;
 
-    const client = new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const message = await client.messages.create({
+    const body = JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 128,
       messages: [{ role: 'user', content: prompt }],
     });
 
-    const text = message.content[0].text.trim();
+    const text = await new Promise((resolve, reject) => {
+      const req = https.request({
+        hostname: 'api.anthropic.com',
+        path: '/v1/messages',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'Content-Length': Buffer.byteLength(body),
+        },
+        timeout: 15000,
+      }, (res) => {
+        let data = '';
+        res.on('data', chunk => { data += chunk; });
+        res.on('end', () => {
+          try {
+            const parsed = JSON.parse(data);
+            const content = ((parsed.content || [])[0] || {}).text || '';
+            resolve(content.trim());
+          } catch { resolve(null); }
+        });
+      });
+      req.on('error', () => resolve(null));
+      req.on('timeout', () => { req.destroy(); resolve(null); });
+      req.write(body);
+      req.end();
+    });
+
+    if (!text) return null;
+
     const result = JSON.parse(text);
     if (typeof result.category !== 'string' || typeof result.subcategory !== 'string') {
       return null;

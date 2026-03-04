@@ -20,16 +20,47 @@
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Haiku SDK guard (fail-open pattern)
+// Raw HTTPS Haiku API helper (replaces SDK dependency)
 // ─────────────────────────────────────────────────────────────────────────────
 
-let Anthropic = null;
-try {
-  Anthropic = require('@anthropic-ai/sdk');
-} catch (e) {
-  // SDK not available — will return skipped status
+function callHaikuAPI(apiKey, prompt, maxTokens) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body),
+      },
+      timeout: 30000,
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          const text = ((parsed.content || [])[0] || {}).text || '';
+          resolve(text);
+        } catch (e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    req.write(body);
+    req.end();
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -203,11 +234,6 @@ async function validateRequirements(options = {}) {
     return { status: 'already-frozen', frozen_at: envelope.frozen_at };
   }
 
-  // Check if SDK is available
-  if (!Anthropic && !mockCall) {
-    return { status: 'skipped', reason: 'SDK unavailable' };
-  }
-
   // Check if API key is available (skip check if using mockCall)
   if (!apiKey && !mockCall) {
     return { status: 'skipped', reason: 'ANTHROPIC_API_KEY not set' };
@@ -224,13 +250,8 @@ async function validateRequirements(options = {}) {
 
   // Run Haiku passes
   const rawPasses = [];
-  let client;
 
   try {
-    if (!mockCall) {
-      client = new Anthropic.default({ apiKey });
-    }
-
     for (let i = 0; i < passes; i++) {
       let responseText;
 
@@ -238,19 +259,8 @@ async function validateRequirements(options = {}) {
         // For testing
         responseText = mockCall();
       } else {
-        // Real Haiku call
-        const response = await client.messages.create({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 4096,
-          messages: [
-            {
-              role: 'user',
-              content: prompt,
-            },
-          ],
-        });
-
-        responseText = response.content[0]?.type === 'text' ? response.content[0].text : '';
+        // Real Haiku call via raw HTTPS
+        responseText = await callHaikuAPI(apiKey, prompt, 4096);
       }
 
       const parsed = parseHaikuResponse(responseText);
