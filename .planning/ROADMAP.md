@@ -1347,7 +1347,9 @@ Plans:
   1. analyze-state-space.cjs identifies model pairs that share source files or requirement prefixes
   2. For each candidate pair, the tool estimates merged state space and recommends merge when combined TLC runtime < 5 minutes
   3. When merge would exceed the time budget, the tool flags the interface contract needed between the models
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.26-06-01-PLAN.md — Extend analyze-state-space.cjs with cross-model pair detection, merged state-space estimation, and merge/interface-contract recommendations
 
 ## Progress — v0.26
 
@@ -1361,4 +1363,4 @@ Phases execute in order: v0.26-01 -> v0.26-02 -> v0.26-03 -> v0.26-04 (parallel)
 | v0.26-03. Portable Installer & Presets | 2/2 | Complete    | 2026-03-03 | - |
 | v0.26-04. Health Dashboard | 1/1 | Complete    | 2026-03-03 | - |
 | v0.26-05. Architecture Enforcement | v0.26 | 2/2 | Complete | 2026-03-04 |
-| v0.26-06. Cross-Model Decomposition | v0.26 | 0/TBD | Not started | - |
+| v0.26-06. Cross-Model Decomposition | v0.26 | 0/1 | Planned | - |
