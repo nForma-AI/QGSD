@@ -1,5 +1,5 @@
 <purpose>
-Interactive configuration of GSD workflow agents (research, plan_check, verifier) and model profile selection via multi-question prompt. Updates .planning/config.json with user preferences. Optionally saves settings as global defaults (~/.gsd/defaults.json) for future projects.
+Guided project manager hub: displays project dashboard, provides categorized menu for all QGSD capabilities, and routes to appropriate actions. Backward compatible: --config flag skips hub and goes directly to workflow settings.
 </purpose>
 
 <required_reading>
@@ -8,7 +8,478 @@ Read all files referenced by the invoking prompt's execution_context before star
 
 <process>
 
-<step name="ensure_and_load_config">
+<step name="flag_check">
+Check if `--config` flag is present in the user's input.
+
+If `--config` is present: skip directly to the `config_flow` step (the original 6-question settings). This preserves backward compatibility for users who want to jump straight to configuration.
+</step>
+
+<step name="init_hub">
+Load project state using the same gsd-tools calls as `progress.md`:
+
+```bash
+INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init progress)
+```
+
+Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
+
+If `project_exists` is false: go to the `no_project` step.
+
+Also load:
+
+```bash
+ROADMAP=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap analyze)
+STATE=$(node ~/.claude/qgsd/bin/gsd-tools.cjs state-snapshot)
+PROGRESS_BAR=$(node ~/.claude/qgsd/bin/gsd-tools.cjs progress bar --raw)
+CONFIG=$(cat .planning/config.json)
+```
+
+Extract from CONFIG:
+- `model_profile` (default: "balanced")
+- `workflow.research` (default: true)
+- `workflow.plan_check` (default: true)
+- `workflow.verifier` (default: true)
+- `workflow.auto_advance` (default: false)
+- `git.branching_strategy` (default: "none")
+
+Extract from STATE snapshot:
+- Pending todo count
+- Active debug session count (from `ls .planning/debug/*.md 2>/dev/null | grep -v resolved | wc -l`)
+- Quick task count (from STATE.md quick tasks table row count)
+
+Extract from ROADMAP analysis:
+- Current phase number, name, and status
+- Total phase count
+- Milestone version and name
+</step>
+
+<step name="dashboard">
+Display the project dashboard. Format EXACTLY as:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► PROJECT HUB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Project: {name from PROJECT.md or INIT}
+Milestone: {version} — {name}
+Progress: {PROGRESS_BAR}
+Profile: {model_profile from config} | Mode: {yolo/interactive from config}
+
+◆ Status
+  Phase {N}/{total}: {phase-name} [{status: planned/in-progress/complete}]
+  Quick tasks: {count from STATE.md quick tasks table}
+  Pending todos: {count from state-snapshot}
+  Active debug: {count from ls .planning/debug/*.md minus resolved}
+
+◆ Configuration
+  Research: {On/Off} | Plan Check: {On/Off} | Verifier: {On/Off}
+  Auto-advance: {On/Off} | Branching: {none/phase/milestone}
+  Project profile: {web/mobile/api/...} | Baselines: {count} active
+```
+
+Then proceed to the `main_menu` step.
+</step>
+
+<step name="no_project">
+If `project_exists` is false, display:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► PROJECT HUB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No project found. Run /qgsd:new-project to get started.
+```
+
+Exit. Do not proceed to the main menu.
+</step>
+
+<step name="main_menu">
+Present via AskUserQuestion (single-select):
+
+```
+AskUserQuestion([
+  {
+    question: "What would you like to do?",
+    header: "Hub",
+    multiSelect: false,
+    options: [
+      { label: "Continue Working", description: "Route to next action based on project state" },
+      { label: "Project Management", description: "Milestones, phases, todos, debug sessions" },
+      { label: "Configuration", description: "Workflow settings, project profile, baselines" },
+      { label: "Quick Task", description: "Run a quick ad-hoc task (/qgsd:quick)" }
+    ]
+  }
+])
+```
+
+Route based on selection:
+- "Continue Working" -> go to step `continue_working`
+- "Project Management" -> go to step `project_management`
+- "Configuration" -> go to step `configuration`
+- "Quick Task" -> go to step `quick_task`
+</step>
+
+<step name="continue_working">
+Apply the SAME routing logic as `/qgsd:progress` step "route". This is a restatement of the routing algorithm (not a delegation to the progress command, since we are already in a workflow).
+
+**Step 1: Count plans, summaries, and UAT files in the current phase directory:**
+
+```bash
+ls -1 .planning/phases/[current-phase-dir]/*-PLAN.md 2>/dev/null | wc -l
+ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
+```
+
+**Step 2: Check for diagnosed UAT gaps:**
+
+```bash
+grep -l "status: diagnosed" .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev/null
+```
+
+**Step 3: Route based on counts:**
+
+| Condition | Route |
+|-----------|-------|
+| uat_with_gaps > 0 | Show: UAT gaps found, recommend `/qgsd:plan-phase {phase} --gaps` |
+| summaries < plans | Show: Unexecuted plan exists, recommend `/qgsd:execute-phase {phase}` |
+| summaries = plans AND plans > 0 | Phase complete. Check if more phases remain -> recommend next phase. If all complete -> recommend `/qgsd:complete-milestone` |
+| plans = 0 | Phase not planned. Check for CONTEXT.md -> recommend `/qgsd:plan-phase` or `/qgsd:discuss-phase` |
+| No ROADMAP.md but PROJECT.md exists | Between milestones -> recommend `/qgsd:new-milestone` |
+
+**Display format for recommendations:**
+
+For unexecuted plans (summaries < plans):
+```
+---
+
+## Next Up
+
+**{phase}-{plan}: [Plan Name]** -- [objective summary from PLAN.md]
+
+`/qgsd:execute-phase {phase}`
+
+<sub>/clear first -- fresh context window</sub>
+
+---
+```
+
+For UAT gaps:
+```
+---
+
+## UAT Gaps Found
+
+**{phase_num}-UAT.md** has {N} gaps requiring fixes.
+
+`/qgsd:plan-phase {phase} --gaps`
+
+<sub>/clear first -- fresh context window</sub>
+
+---
+```
+
+For phase not planned (CONTEXT.md exists):
+```
+---
+
+## Next Up
+
+**Phase {N}: {Name}** -- {Goal from ROADMAP.md}
+Context gathered, ready to plan
+
+`/qgsd:plan-phase {phase-number}`
+
+<sub>/clear first -- fresh context window</sub>
+
+---
+```
+
+For phase not planned (no CONTEXT.md):
+```
+---
+
+## Next Up
+
+**Phase {N}: {Name}** -- {Goal from ROADMAP.md}
+
+`/qgsd:discuss-phase {phase}` -- gather context and clarify approach
+
+<sub>/clear first -- fresh context window</sub>
+
+**Also available:**
+- `/qgsd:plan-phase {phase}` -- skip discussion, plan directly
+- `/qgsd:list-phase-assumptions {phase}` -- see Claude's assumptions
+
+---
+```
+
+For phase complete, more phases remain:
+```
+---
+
+## Phase {Z} Complete
+
+## Next Up
+
+**Phase {Z+1}: {Name}** -- {Goal from ROADMAP.md}
+
+`/qgsd:discuss-phase {Z+1}` -- gather context and clarify approach
+
+<sub>/clear first -- fresh context window</sub>
+
+**Also available:**
+- `/qgsd:plan-phase {Z+1}` -- skip discussion, plan directly
+- `/qgsd:verify-work {Z}` -- user acceptance test before continuing
+
+---
+```
+
+For milestone complete:
+```
+---
+
+## Milestone Complete
+
+All {N} phases finished!
+
+## Next Up
+
+**Complete Milestone** -- archive and prepare for next
+
+`/qgsd:complete-milestone`
+
+<sub>/clear first -- fresh context window</sub>
+
+**Also available:**
+- `/qgsd:verify-work` -- user acceptance test before completing milestone
+
+---
+```
+
+For between milestones (no ROADMAP.md):
+```
+---
+
+## Milestone Complete
+
+Ready to plan the next milestone.
+
+## Next Up
+
+**Start Next Milestone** -- questioning, research, requirements, roadmap
+
+`/qgsd:new-milestone`
+
+<sub>/clear first -- fresh context window</sub>
+
+---
+```
+</step>
+
+<step name="project_management">
+Second-level menu via AskUserQuestion:
+
+```
+AskUserQuestion([
+  {
+    question: "Project management:",
+    header: "Manage",
+    multiSelect: false,
+    options: [
+      { label: "Phase Planning", description: "Discuss, plan, or execute a phase" },
+      { label: "Milestone", description: "New milestone, complete, audit" },
+      { label: "Todos & Debug", description: "Check todos, active debug sessions" },
+      { label: "Roadmap", description: "Add, insert, or remove phases" }
+    ]
+  }
+])
+```
+
+For each sub-option, display the relevant commands with brief descriptions:
+
+**Phase Planning:**
+
+Show current phase info from dashboard data. List available commands:
+
+```
+Phase {N}/{total}: {phase-name} [{status}]
+
+Available commands:
+- `/qgsd:discuss-phase {N}` -- gather context and clarify approach
+- `/qgsd:plan-phase {N}` -- create detailed execution plan
+- `/qgsd:execute-phase {N}` -- execute all plans in phase
+- `/qgsd:list-phase-assumptions {N}` -- see Claude's intended approach
+```
+
+**Milestone:**
+
+List available commands:
+
+```
+Available commands:
+- `/qgsd:new-milestone` -- start new milestone cycle
+- `/qgsd:complete-milestone` -- archive and prepare for next
+- `/qgsd:audit-milestone` -- audit completion against intent
+```
+
+**Todos & Debug:**
+
+List available commands:
+
+```
+Pending todos: {count} | Active debug: {count}
+
+Available commands:
+- `/qgsd:check-todos` -- review and work on pending todos
+- `/qgsd:add-todo` -- capture idea or task from conversation
+- `/qgsd:debug` -- start or resume a debug session
+```
+
+**Roadmap:**
+
+List available commands:
+
+```
+Available commands:
+- `/qgsd:add-phase "description"` -- add phase to end
+- `/qgsd:insert-phase N "description"` -- insert urgent work
+- `/qgsd:remove-phase N` -- remove unstarted phase
+```
+</step>
+
+<step name="configuration">
+Second-level menu via AskUserQuestion:
+
+```
+AskUserQuestion([
+  {
+    question: "Configuration:",
+    header: "Config",
+    multiSelect: false,
+    options: [
+      { label: "Workflow Settings", description: "Model profile, research, plan check, verifier, auto-advance, branching" },
+      { label: "Project Profile & Baselines", description: "Change project type, manage baseline requirements" },
+      { label: "Quorum Agents", description: "MCP agent status and configuration" }
+    ]
+  }
+])
+```
+
+Route based on selection:
+- "Workflow Settings" -> go to step `config_flow`
+- "Project Profile & Baselines" -> go to step `profile_baselines`
+- "Quorum Agents" -> display:
+
+```
+Quorum agent management:
+- `/qgsd:mcp-status` -- check agent health and availability
+- `/qgsd:mcp-setup` -- configure MCP agent connections
+```
+</step>
+
+<step name="profile_baselines">
+This step manages the project profile and baseline requirements.
+
+**1. Read current profile from `.planning/PROJECT.md`:**
+
+```bash
+grep -i 'Profile:' .planning/PROJECT.md 2>/dev/null || echo "Profile: unknown"
+```
+
+If not found, default to "unknown".
+
+**2. Read baseline requirements status from `.planning/REQUIREMENTS.md`:**
+
+```bash
+grep -c '^\- \[x\]' .planning/REQUIREMENTS.md 2>/dev/null || echo "0"
+grep -c '^\- \[ \] ~~' .planning/REQUIREMENTS.md 2>/dev/null || echo "0"
+```
+
+**3. Display current state:**
+
+```
+Current profile: {profile} ({N} baseline requirements active, {M} deselected)
+```
+
+**4. Present options via AskUserQuestion:**
+
+```
+AskUserQuestion([
+  {
+    question: "What would you like to change?",
+    header: "Baselines",
+    multiSelect: false,
+    options: [
+      { label: "Change project profile", description: "Switch between web/mobile/desktop/api/cli/library" },
+      { label: "Manage baseline requirements", description: "Toggle individual baselines on/off" },
+      { label: "Back to hub", description: "Return to main menu" }
+    ]
+  }
+])
+```
+
+**5. If "Change project profile":**
+
+Show profile picker via AskUserQuestion:
+
+```
+AskUserQuestion([
+  {
+    question: "Select project profile:",
+    header: "Profile",
+    multiSelect: false,
+    options: [
+      { label: "Web Application", description: "Browser-based app (React, Vue, Angular, etc.)" },
+      { label: "Mobile Application", description: "iOS/Android app (React Native, Flutter, Swift, Kotlin)" },
+      { label: "Desktop Application", description: "Native desktop app (Electron, Tauri, Qt)" },
+      { label: "API Service", description: "Backend API (REST, GraphQL, gRPC)" },
+      { label: "CLI Tool", description: "Command-line interface tool" },
+      { label: "Library / Package", description: "Reusable library or npm/pip/crate package" }
+    ]
+  }
+])
+```
+
+Map selection to key:
+- "Web Application" -> "web"
+- "Mobile Application" -> "mobile"
+- "Desktop Application" -> "desktop"
+- "API Service" -> "api"
+- "CLI Tool" -> "cli"
+- "Library / Package" -> "library"
+
+Run: `node bin/load-baseline-requirements.cjs --profile <new-key>`
+
+Display how many baselines the new profile includes vs current.
+
+Update PROJECT.md with `Profile: <key>` line (replace existing line or add if missing).
+
+Inform user: "Run `/qgsd:new-milestone` to regenerate REQUIREMENTS.md with new baselines."
+
+**6. If "Manage baseline requirements":**
+
+Load all baselines for current profile:
+```bash
+node bin/load-baseline-requirements.cjs --profile <current>
+```
+
+For each category, present a multiSelect AskUserQuestion with current selections pre-checked.
+
+Update the `## Baseline Requirements` section in `.planning/REQUIREMENTS.md` based on selections:
+- Checked = `- [x] requirement text`
+- Unchecked = `- [ ] ~~requirement text~~`
+
+Display summary of changes (how many toggled on/off).
+
+**7. If "Back to hub":** go to step `main_menu`.
+</step>
+
+<step name="config_flow">
+This is the PRESERVED original 6-question settings form. Reached via `--config` flag or "Configuration" -> "Workflow Settings" menu.
+
+**ensure_and_load_config:**
+
 Ensure config exists and load current state:
 
 ```bash
@@ -17,9 +488,9 @@ INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs state load)
 ```
 
 Creates `.planning/config.json` with defaults if missing and loads current config values.
-</step>
 
-<step name="read_current">
+**read_current:**
+
 ```bash
 cat .planning/config.json
 ```
@@ -30,9 +501,9 @@ Parse current values (default to `true` if not present):
 - `workflow.verifier` — spawn verifier during execute-phase
 - `model_profile` — which model each agent uses (default: `balanced`)
 - `git.branching_strategy` — branching approach (default: `"none"`)
-</step>
 
-<step name="present_settings">
+**present_settings:**
+
 Use AskUserQuestion with current values pre-selected:
 
 ```
@@ -95,9 +566,9 @@ AskUserQuestion([
   }
 ])
 ```
-</step>
 
-<step name="update_config">
+**update_config:**
+
 Merge new settings into existing config.json:
 
 ```json
@@ -117,9 +588,9 @@ Merge new settings into existing config.json:
 ```
 
 Write updated config to `.planning/config.json`.
-</step>
 
-<step name="save_as_defaults">
+**save_as_defaults:**
+
 Ask whether to save these settings as global defaults for future projects:
 
 ```
@@ -159,9 +630,9 @@ Write `~/.gsd/defaults.json` with:
   }
 }
 ```
-</step>
 
-<step name="confirm">
+**confirm:**
+
 Display:
 
 ```
@@ -189,12 +660,28 @@ Quick commands:
 ```
 </step>
 
+<step name="quick_task">
+Display:
+
+```
+To run a quick task, use:
+
+/qgsd:quick <task description>
+
+Example: /qgsd:quick "Add rate limiting to the API endpoint"
+```
+</step>
+
 </process>
 
 <success_criteria>
-- [ ] Current config read
-- [ ] User presented with 6 settings (profile + 4 workflow toggles + git branching)
-- [ ] Config updated with model_profile, workflow, and git sections
-- [ ] User offered to save as global defaults (~/.gsd/defaults.json)
-- [ ] Changes confirmed to user
+- [ ] Dashboard displays project name, milestone, progress bar, phase status, config summary
+- [ ] Main menu presents 4 categories (Continue Working, Project Management, Configuration, Quick Task)
+- [ ] Continue Working applies same routing logic as /qgsd:progress
+- [ ] Project Management sub-menu routes to phase, milestone, todo, debug, and roadmap commands
+- [ ] Configuration sub-menu offers Workflow Settings, Project Profile & Baselines, Quorum Agents
+- [ ] Workflow Settings runs original 6-question config flow
+- [ ] Project Profile & Baselines shows current profile, offers change and baseline management
+- [ ] --config flag skips hub and goes directly to 6-question config flow
+- [ ] No-project state routes to /qgsd:new-project
 </success_criteria>
