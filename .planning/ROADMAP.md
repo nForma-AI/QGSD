@@ -99,9 +99,9 @@ Plans:
   3. `/qgsd:observe` with a `logstash` source runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue schema
 **Plans**: 3 plans
 Plans:
-- [ ] v0.27-01-01-PLAN.md — Schema definition, validation, and state machine (DEBT-01, DEBT-03)
-- [ ] v0.27-01-02-PLAN.md — Issue and drift fingerprinting algorithms (FP-01, FP-02)
-- [ ] v0.27-01-03-PLAN.md — Ledger I/O, retention policy, and integration test (DEBT-04)
+- [ ] v0.27-04-01-PLAN.md — Prometheus handler with alerts and PromQL support (OBS-03)
+- [ ] v0.27-04-02-PLAN.md — Grafana handler with alert state mapping (OBS-04)
+- [ ] v0.27-04-03-PLAN.md — Logstash handler, registration, and config samples (OBS-05)
 
 ### Phase v0.27-05: Solve P->F Integration
 **Goal**: The solve command includes a Production-to-Formal residual layer that reads acknowledged debt, compares against formal thresholds, and dispatches remediation — closing the feedback loop
