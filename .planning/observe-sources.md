@@ -44,14 +44,48 @@ sources:
   #   command: "grep -r 'TODO.*FIXME' src/ || echo 'none'"
   #   parser: lines
 
-  # Prometheus Query (v0.27-04)
+  # Prometheus Alerts
+  # - type: prometheus
+  #   label: "Prometheus Alerts"
+  #   issue_type: drift
+  #   endpoint: http://prometheus:9090
+  #   auth_env: PROMETHEUS_TOKEN
+  #   timeout: 15
+  #   fail_open: true
+
+  # Prometheus PromQL Query
   # - type: prometheus
   #   label: "Prometheus: Max Deliberation Time"
   #   issue_type: drift
-  #   endpoint: http://prom:9090
-  #   query: "max_deliberation_ms_actual"
-  #   formal_parameter_key: "MCsafety.cfg:MaxDeliberation"
-  #   threshold: 5
+  #   endpoint: http://prometheus:9090
+  #   auth_env: PROMETHEUS_TOKEN
+  #   query: "max_deliberation_ms_actual > 5000"
+  #   threshold: 5000
+  #   timeout: 15
+
+  # Grafana Alerts
+  # - type: grafana
+  #   label: "Grafana Alerts"
+  #   issue_type: drift
+  #   endpoint: https://grafana.example.com
+  #   auth_env: GRAFANA_TOKEN
+  #   timeout: 15
+  #   fail_open: true
+
+  # Logstash / Elasticsearch
+  # - type: logstash
+  #   label: "Production Errors"
+  #   issue_type: issue
+  #   endpoint: https://elasticsearch.example.com:9200
+  #   index: logstash-*
+  #   auth_env: ES_API_KEY
+  #   auth_type: ApiKey
+  #   timeout: 15
+  #   fail_open: true
+  #   filter:
+  #     since: 24h
+  #     levels: [error, warn]
+  #     limit: 50
 
 ---
 
@@ -67,9 +101,9 @@ Configuration for `/qgsd:observe` — the project's production feedback system.
 | `sentry` | issue | Sentry error events |
 | `sentry-feedback` | issue | Sentry user feedback reports |
 | `bash` | issue | Custom shell command output |
-| `prometheus` | drift | Prometheus metric queries (v0.27-04) |
-| `grafana` | drift | Grafana dashboard alerts (v0.27-04) |
-| `logstash` | drift | Logstash log pattern queries (v0.27-04) |
+| `prometheus` | drift | Prometheus alerts and PromQL metric queries |
+| `grafana` | drift | Grafana unified alerting dashboard alerts |
+| `logstash` | issue | Elasticsearch/Logstash log entry queries |
 
 ### Config Fields
 

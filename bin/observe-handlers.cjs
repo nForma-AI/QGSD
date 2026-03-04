@@ -407,6 +407,11 @@ function handleBash(sourceConfig, options) {
   }
 }
 
+// Production source handlers (v0.27-04)
+const { handlePrometheus } = require('./observe-handler-prometheus.cjs');
+const { handleGrafana } = require('./observe-handler-grafana.cjs');
+const { handleLogstash } = require('./observe-handler-logstash.cjs');
+
 module.exports = {
   handleGitHub,
   handleSentry,
@@ -414,6 +419,10 @@ module.exports = {
   handleBash,
   mapSentryIssuesToSchema,
   mapSentryFeedbackToSchema,
+  // Production handlers (v0.27-04)
+  handlePrometheus,
+  handleGrafana,
+  handleLogstash,
   // Exported for testing
   parseDuration,
   formatAge,
