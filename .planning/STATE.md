@@ -75,7 +75,7 @@ None. All v0.26 phases complete.
 | 141 | Fix solver loop bugs: parseAlloyDefaults parsing, stale cache invalidation | 2026-03-03 | ed8df4cf | Verified | [141-fix-solver-loop-bugs-parsealloydefaults-](./quick/141-fix-solver-loop-bugs-parsealloydefaults-/) |
 | 142 | Enhance /qgsd:solve to orchestrate remediation skills for auto-closing gaps | 2026-03-03 | ca591d87 | Verified | [142-enhance-qgsd-solve-to-orchestrate-remedi](./quick/142-enhance-qgsd-solve-to-orchestrate-remedi/) |
 | 143 | Add R-to-D and D-to-C layer transitions to qgsd-solve consistency solver | 2026-03-04 | 6a1fac44 | Verified | [143-add-r-to-d-and-d-to-c-layer-transitions-](./quick/143-add-r-to-d-and-d-to-c-layer-transitions-/) |
-| 144 | Make /qgsd:solve fully autonomous — add --project-root to diagnostic scripts, rewrite solve.md for autonomy, add --batch to close-formal-gaps | 2026-03-04 | 40282191 | Pending | [144-make-qgsd-solve-fully-autonomous-add-pro](./quick/144-make-qgsd-solve-fully-autonomous-add-pro/) |
+| 144 | Make /qgsd:solve fully autonomous — add --project-root to diagnostic scripts, rewrite solve.md for autonomy, add --batch to close-formal-gaps | 2026-03-04 | 40282191 | Verified | [144-make-qgsd-solve-fully-autonomous-add-pro](./quick/144-make-qgsd-solve-fully-autonomous-add-pro/) |
 
 ## Session Continuity
 
