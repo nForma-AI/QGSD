@@ -8,6 +8,17 @@ QGSD is a Claude Code plugin extension that moves multi-model quorum enforcement
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.27 Production Feedback Loop
+
+**Goal:** Close the loop between formal models and production reality — a unified observe skill surfaces issues and metric drifts from production tools, a debt ledger deduplicates and aggregates them with human triage, and solve gains a P→F residual layer that remediates acknowledged debt as part of its convergence cycle.
+
+**Target features:**
+- Unified observe skill — replaces triage with pluggable production sources (Sentry, Prometheus, Grafana, Logstash, GitHub, bash) and parallel fetch
+- Debt ledger — `.formal/debt.json` with fingerprint-based dedup, occurrence aggregation, state tracking (open → acknowledged → resolving → resolved), and formal parameter linkage
+- Solve P→F integration — new Production→Formal residual layer comparing formal model thresholds against production measurements, operating only on human-acknowledged debt
+- Fingerprinting engine — hierarchical grouping (exception type → function → message pattern for issues; formal parameter key for drifts) with configurable similarity thresholds
+- Source framework — pluggable source type architecture with config-driven wiring, ready for real Prometheus/Grafana/ELK when available
+
 ## Shipped: v0.26 Operational Completeness (2026-03-04)
 
 **Goal:** Close the remaining operational gaps — portable installer, credential management, policy configuration, dashboard UI, architecture constraints, and cross-model decomposition analysis.

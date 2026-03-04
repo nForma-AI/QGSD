@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 
 ## Current Position
 
-Phase: —
+Phase: Not started (defining requirements)
 Plan: —
-Status: v0.26 archived, ready for next milestone
-Last activity: 2026-03-04 - Completed quick task 156: Add Sessions module to nForma with blessed-xterm
+Status: Defining requirements
+Last activity: 2026-03-04 — Milestone v0.27 started
 
-Progress: [████████████] 100%
+Progress: [░░░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
