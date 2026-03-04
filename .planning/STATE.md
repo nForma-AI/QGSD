@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 ## Current Position
 
 Phase: v0.27-01 of 5 (Debt Schema & Fingerprinting Foundation)
-Plan: 02 of 03 (Deterministic Fingerprinting)
-Status: In Progress (2/3 tasks complete in plan 01; plan 02 complete; awaiting plan 03)
-Last activity: 2026-03-04 — Completed v0.27-01-01 (Debt Schema & Validation)
+Plan: 03 of 03 (Ledger I/O and Retention Policy)
+Status: Complete (All 3 plans done for v0.27-01; ready for v0.27-02)
+Last activity: 2026-03-04 — Completed v0.27-01-03 (Ledger I/O and Retention Policy)
 
-Progress: [████░░░░░░░░] 67%
+Progress: [██████░░░░░░] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 12 minutes
+- Total plans completed: 3
+- Average duration: 8 minutes
 - Total execution time: 0.4 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| v0.27-01 | 2/3 | 4/5 | 12 min |
+| v0.27-01 | 3/3 | 5/5 | 8 min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -72,8 +72,16 @@ Resume file: None
   - 70 tests (36 validation + 34 state machine), all passing
   - Requirements DEBT-01 and DEBT-03 completed
 
-- **v0.27-01-02 (Deterministic Fingerprinting)** [2026-03-04 — prior session]
+- **v0.27-01-02 (Deterministic Fingerprinting)** [2026-03-04]
   - Issue fingerprinting: hierarchical (exception_type → function_name → message hash)
   - Drift fingerprinting: formal parameter key hash
   - 38 tests (20 issue + 18 drift), all passing
   - Requirements FP-01 and FP-02 completed
+
+- **v0.27-01-03 (Ledger I/O and Retention Policy)** [2026-03-04]
+  - Atomic read/write operations with fail-open behavior (readDebtLedger, writeDebtLedger)
+  - Retention policy for archival of resolved entries > max_age (applyRetentionPolicy, writeArchive)
+  - Seed .formal/debt.json with empty ledger structure
+  - 27 tests (19 ledger/retention + 8 integration), all passing
+  - Requirement DEBT-04 completed
+  - Complete v0.27-01 phase foundation: schema + validation + state machine + fingerprinting + ledger + retention
