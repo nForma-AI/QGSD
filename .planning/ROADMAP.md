@@ -24,7 +24,7 @@
 - ✅ **v0.23 — Formal Gates** — Phases v0.23-01..v0.23-04 (shipped 2026-03-02)
 - ✅ **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-05 (shipped 2026-03-03)
 - ✅ **v0.25 — Formal Traceability & Coverage** — Phases v0.25-01..v0.25-07 (shipped 2026-03-03)
-- 🚧 **v0.26 — Operational Completeness** — Phases v0.26-01..v0.26-06 (in progress)
+- 🚧 **v0.26 — Operational Completeness** — Phases v0.26-01..v0.26-06 (all phases complete, pending milestone audit)
 
 ## Phases
 
@@ -1269,7 +1269,7 @@ Archive: .planning/milestones/v0.25-ROADMAP.md
 - [x] **Phase v0.26-03: Portable Installer & Presets** - Users can export/import roster configs portably, use provider presets, clone slots, and all hardcoded GSD paths are removed (completed 2026-03-03)
 - [x] **Phase v0.26-04: Health Dashboard** - Users can view live slot health from a terminal dashboard with refresh and clean exit (completed 2026-03-03)
 - [x] **Phase v0.26-05: Architecture Enforcement** - QGSD never bundles LLM SDKs; all Haiku/Sonnet/Opus calls use the Agent tool (completed 2026-03-04)
-- [ ] **Phase v0.26-06: Cross-Model Decomposition** - analyze-state-space.cjs recommends model merges or flags interface contracts based on shared files and requirement prefixes
+- [x] **Phase v0.26-06: Cross-Model Decomposition** - analyze-state-space.cjs recommends model merges or flags interface contracts based on shared files and requirement prefixes (completed 2026-03-04)
 
 ## Phase Details — v0.26
 
@@ -1349,7 +1349,7 @@ Plans:
   3. When merge would exceed the time budget, the tool flags the interface contract needed between the models
 **Plans**: 1 plan
 Plans:
-- [ ] v0.26-06-01-PLAN.md — Extend analyze-state-space.cjs with cross-model pair detection, merged state-space estimation, and merge/interface-contract recommendations
+- [x] v0.26-06-01-PLAN.md — Extend analyze-state-space.cjs with cross-model pair detection, merged state-space estimation, and merge/interface-contract recommendations
 
 ## Progress — v0.26
 
@@ -1363,4 +1363,4 @@ Phases execute in order: v0.26-01 -> v0.26-02 -> v0.26-03 -> v0.26-04 (parallel)
 | v0.26-03. Portable Installer & Presets | 2/2 | Complete    | 2026-03-03 | - |
 | v0.26-04. Health Dashboard | 1/1 | Complete    | 2026-03-03 | - |
 | v0.26-05. Architecture Enforcement | v0.26 | 2/2 | Complete | 2026-03-04 |
-| v0.26-06. Cross-Model Decomposition | v0.26 | 0/1 | Planned | - |
+| v0.26-06. Cross-Model Decomposition | v0.26 | 1/1 | Complete | 2026-03-04 |
