@@ -95,40 +95,88 @@ const PROVIDER_PRESETS = [
   { label: 'None (subprocess only)',                        value: ''                                      },
 ];
 
-const MENU_ITEMS = [
-  { label: '  List Agents',              action: 'list'          },
-  { label: '  Add Agent',               action: 'add'           },
-  { label: '  Clone Slot',              action: 'clone'         },
-  { label: '  Edit Agent',              action: 'edit'          },
-  { label: '  Remove Agent',            action: 'remove'        },
-  { label: '  Reorder Agents',          action: 'reorder'       },
-  { label: '  Check Agent Health',      action: 'health-single' },
-  { label: '  Login / Auth',            action: 'login'         },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Provider Keys',           action: 'provider-keys' },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Batch Rotate Keys',       action: 'batch-rotate'  },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Live Health',             action: 'health'        },
-  { label: '  Scoreboard',              action: 'scoreboard'    },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Update Agents',           action: 'update-agents' },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Settings',                action: 'settings'      },
-  { label: '  Tune Timeouts',           action: 'tune-timeouts' },
-  { label: '  Set Update Policy',       action: 'update-policy' },
-  { label: ' ── Requirements ───',       action: 'sep'              },
-  { label: '  Browse Reqs',             action: 'req-browse'      },
-  { label: '  Coverage',                action: 'req-coverage'    },
-  { label: '  Traceability',            action: 'req-traceability'},
-  { label: '  Aggregate',               action: 'req-aggregate'  },
-  { label: '  Coverage Gaps',           action: 'req-gaps'       },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Export Roster',           action: 'export'        },
-  { label: '  Import Roster',           action: 'import'        },
-  { label: ' ─────────────────',        action: 'sep'           },
-  { label: '  Exit',                    action: 'exit'          },
+const MODULES = [
+  {
+    name: 'Agents',
+    icon: '⚡',
+    key: 'f1',
+    items: [
+      { label: '  List Agents',              action: 'list'          },
+      { label: '  Add Agent',               action: 'add'           },
+      { label: '  Clone Slot',              action: 'clone'         },
+      { label: '  Edit Agent',              action: 'edit'          },
+      { label: '  Remove Agent',            action: 'remove'        },
+      { label: '  Reorder Agents',          action: 'reorder'       },
+      { label: '  Check Agent Health',      action: 'health-single' },
+      { label: '  Login / Auth',            action: 'login'         },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Provider Keys',           action: 'provider-keys' },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Batch Rotate Keys',       action: 'batch-rotate'  },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Live Health',             action: 'health'        },
+      { label: '  Scoreboard',              action: 'scoreboard'    },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Update Agents',           action: 'update-agents' },
+    ],
+  },
+  {
+    name: 'Reqs',
+    icon: '◆',
+    key: 'f2',
+    items: [
+      { label: '  Browse Reqs',             action: 'req-browse'       },
+      { label: '  Coverage',                action: 'req-coverage'     },
+      { label: '  Traceability',            action: 'req-traceability' },
+      { label: '  Aggregate',               action: 'req-aggregate'    },
+      { label: '  Coverage Gaps',           action: 'req-gaps'         },
+    ],
+  },
+  {
+    name: 'Config',
+    icon: '⚙',
+    key: 'f3',
+    items: [
+      { label: '  Settings',                action: 'settings'      },
+      { label: '  Tune Timeouts',           action: 'tune-timeouts' },
+      { label: '  Set Update Policy',       action: 'update-policy' },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Export Roster',           action: 'export'        },
+      { label: '  Import Roster',           action: 'import'        },
+      { label: ' ─────────────────',        action: 'sep'           },
+      { label: '  Exit',                    action: 'exit'          },
+    ],
+  },
 ];
+
+// Backward compat: flat array of all items across modules (tests + exports rely on this)
+const MENU_ITEMS = MODULES.flatMap(m => m.items);
+
+// ─── Module switching (activity bar) ──────────────────────────────────────────
+let activeModuleIdx = 0;
+
+function switchModule(idx) {
+  activeModuleIdx = idx;
+  const mod = MODULES[idx];
+
+  // Update activity bar icons — highlight active module
+  const barLines = MODULES.map((m, i) => {
+    const active = (i === idx);
+    const icon = active
+      ? `{#4a9090-fg}${m.icon}{/}`
+      : `{#555555-fg}${m.icon}{/}`;
+    return ` ${icon} `;
+  });
+  activityBar.setContent(barLines.join('\n'));
+
+  // Swap menu items
+  menuList.clearItems();
+  menuList.setItems(mod.items.map(m => m.label));
+  menuList.setLabel(` {#666666-fg}${mod.name}{/} `);
+  menuList.select(0);
+  menuList.focus();
+  screen.render();
+}
 
 // ─── Providers.json helpers ───────────────────────────────────────────────────
 function readProvidersJson() {
@@ -346,9 +394,16 @@ const header = blessed.box({
 
 function renderHeader() { screen.render(); }
 
+const activityBar = blessed.box({
+  top: 8, left: 0, width: 6, bottom: 2,
+  tags: true,
+  border: { type: 'line' },
+  style: { bg: '#111111', fg: '#888888', border: { fg: '#333333' } },
+});
+
 const menuList = blessed.list({
-  top: 8, left: 0, width: 26, bottom: 2,
-  label: ' {#666666-fg}Menu{/} ', tags: true,
+  top: 8, left: 6, width: 26, bottom: 2,
+  label: ' {#666666-fg}Agents{/} ', tags: true,
   border: { type: 'line' },
   style: {
     bg: '#111111',
@@ -357,11 +412,11 @@ const menuList = blessed.list({
     item: { fg: '#888888' },
   },
   keys: true, vi: true, mouse: true, tags: true,
-  items: MENU_ITEMS.map(m => m.label),
+  items: MODULES[0].items.map(m => m.label),
 });
 
 const contentBox = blessed.box({
-  top: 8, left: 26, right: 0, bottom: 2,
+  top: 8, left: 32, right: 0, bottom: 2,
   label: ' {#666666-fg}Content{/} ', tags: true,
   border: { type: 'line' },
   scrollable: true, alwaysScroll: true, mouse: true,
@@ -369,7 +424,7 @@ const contentBox = blessed.box({
   style: { bg: '#111111', fg: '#aaaaaa', border: { fg: '#333333' } },
 });
 
-const STATUS_DEFAULT = ' {#4a9090-fg}[↑↓]{/} Navigate   {#4a9090-fg}[Enter]{/} Select   {#4a9090-fg}[r]{/} Refresh   {#4a9090-fg}[u]{/} Updates   {#4a9090-fg}[q]{/} Quit';
+const STATUS_DEFAULT = ' {#4a9090-fg}[F1]{/} Agents  {#4a9090-fg}[F2]{/} Reqs  {#4a9090-fg}[F3]{/} Config   {#4a9090-fg}[↑↓]{/} Navigate  {#4a9090-fg}[Enter]{/} Select  {#4a9090-fg}[r]{/} Refresh  {#4a9090-fg}[q]{/} Quit';
 
 const statusBar = blessed.box({
   bottom: 0, left: 0, width: '100%', height: 3,
@@ -435,6 +490,7 @@ function refreshSettingsPane() {
 }
 
 screen.append(header);
+screen.append(activityBar);
 screen.append(menuList);
 screen.append(contentBox);
 screen.append(settingsPane);
@@ -2148,7 +2204,7 @@ function renderReqList(reqs, filters) {
   const subtitle = filterDesc.length ? ` (${filterDesc.join(', ')})` : '';
 
   // Dynamic text width: fill remaining space in contentBox
-  const innerW = (screen.width || 120) - 26 - 2; // contentBox: left=26, borders=2
+  const innerW = (screen.width || 120) - 32 - 2; // contentBox: left=32, borders=2
 
   // Check model-registry AND requirement.formal_models for Formal column
   const registry = reqCore.readModelRegistry();
@@ -2330,32 +2386,37 @@ function reqCoverageGapsFlow() {
 
 // ─── Key bindings ─────────────────────────────────────────────────────────────
 screen.key(['q', 'C-c'], () => { screen.destroy(); process.exit(0); });
+screen.key(['f1'], () => switchModule(0));
+screen.key(['f2'], () => switchModule(1));
+screen.key(['f3'], () => switchModule(2));
+screen.key(['tab'], () => switchModule((activeModuleIdx + 1) % MODULES.length));
+screen.key(['S-tab'], () => switchModule((activeModuleIdx - 1 + MODULES.length) % MODULES.length));
 screen.key(['r'], () => {
-  const item = MENU_ITEMS[menuList.selected];
+  const item = MODULES[activeModuleIdx].items[menuList.selected];
   if (item) dispatch(item.action);
 });
 screen.key(['u'], () => dispatch('update-agents'));
 menuList.on('select', (_, idx) => {
-  const item = MENU_ITEMS[idx];
+  const item = MODULES[activeModuleIdx].items[idx];
   if (item) dispatch(item.action);
 });
 
 // ─── Background update notice ─────────────────────────────────────────────────
-const UPDATE_AGENTS_IDX = MENU_ITEMS.findIndex(m => m.action === 'update-agents');
+const UPDATE_AGENTS_IDX = MODULES[0].items.findIndex(m => m.action === 'update-agents');
 
 function applyUpdateBadge(outdatedCount) {
   // Status bar notice
   if (outdatedCount > 0) {
     const n = outdatedCount;
     statusBar.setContent(
-      ` {#4a9090-fg}[↑↓]{/} Navigate   {#4a9090-fg}[Enter]{/} Select   {#4a9090-fg}[r]{/} Refresh   {#4a9090-fg}[q]{/} Quit` +
+      ` {#4a9090-fg}[F1]{/} Agents  {#4a9090-fg}[F2]{/} Reqs  {#4a9090-fg}[F3]{/} Config   {#4a9090-fg}[↑↓]{/} Navigate  {#4a9090-fg}[Enter]{/} Select  {#4a9090-fg}[r]{/} Refresh  {#4a9090-fg}[q]{/} Quit` +
       `   {#888800-fg}⚑ ${n} update${n > 1 ? 's' : ''} available — press [u]{/}`
     );
   } else {
     statusBar.setContent(STATUS_DEFAULT);
   }
-  // Menu item badge
-  if (UPDATE_AGENTS_IDX >= 0) {
+  // Menu item badge (only when Agents module is active)
+  if (activeModuleIdx === 0 && UPDATE_AGENTS_IDX >= 0) {
     const base = '  Update Agents';
     menuList.setItem(UPDATE_AGENTS_IDX, outdatedCount > 0
       ? `${base}  {yellow-fg}(${outdatedCount}↑){/}`
@@ -2379,8 +2440,7 @@ function applyUpdateBadge(outdatedCount) {
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 if (require.main === module) {
-  menuList.focus();
-  menuList.select(0);
+  switchModule(0);
   renderList();
   refreshSettingsPane();
   screen.render();
@@ -2397,4 +2457,5 @@ module.exports._pure = {
   PROVIDER_KEY_NAMES,
   PROVIDER_PRESETS,
   MENU_ITEMS,
+  MODULES,
 };

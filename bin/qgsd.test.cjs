@@ -395,6 +395,85 @@ test('MENU_ITEMS: exit is the last non-sep item', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 6.5. MODULES — structural contract (activity bar)
+// ─────────────────────────────────────────────────────────────────────────────
+
+test('MODULES: exactly 3 modules defined', () => {
+  assert.strictEqual(_pure.MODULES.length, 3);
+});
+
+test('MODULES: each module has name, icon, key, and items array', () => {
+  _pure.MODULES.forEach((mod, i) => {
+    assert.strictEqual(typeof mod.name, 'string', `module[${i}].name`);
+    assert.strictEqual(typeof mod.icon, 'string', `module[${i}].icon`);
+    assert.strictEqual(typeof mod.key, 'string', `module[${i}].key`);
+    assert.ok(Array.isArray(mod.items), `module[${i}].items is array`);
+    assert.ok(mod.items.length > 0, `module[${i}].items is non-empty`);
+  });
+});
+
+test('MODULES: module names are Agents, Reqs, Config', () => {
+  const names = _pure.MODULES.map(m => m.name);
+  assert.deepStrictEqual(names, ['Agents', 'Reqs', 'Config']);
+});
+
+test('MODULES: hotkeys are f1, f2, f3', () => {
+  const keys = _pure.MODULES.map(m => m.key);
+  assert.deepStrictEqual(keys, ['f1', 'f2', 'f3']);
+});
+
+test('MODULES: Agents module contains agent management actions', () => {
+  const actions = new Set(_pure.MODULES[0].items.map(m => m.action));
+  for (const expected of ['list', 'add', 'clone', 'edit', 'remove', 'reorder',
+    'health-single', 'login', 'provider-keys', 'batch-rotate',
+    'health', 'scoreboard', 'update-agents']) {
+    assert.ok(actions.has(expected), `Agents module missing "${expected}"`);
+  }
+});
+
+test('MODULES: Reqs module contains requirements actions', () => {
+  const actions = new Set(_pure.MODULES[1].items.map(m => m.action));
+  for (const expected of ['req-browse', 'req-coverage', 'req-traceability',
+    'req-aggregate', 'req-gaps']) {
+    assert.ok(actions.has(expected), `Reqs module missing "${expected}"`);
+  }
+});
+
+test('MODULES: Config module contains config + exit actions', () => {
+  const actions = new Set(_pure.MODULES[2].items.map(m => m.action));
+  for (const expected of ['settings', 'tune-timeouts', 'update-policy',
+    'export', 'import', 'exit']) {
+    assert.ok(actions.has(expected), `Config module missing "${expected}"`);
+  }
+});
+
+test('MODULES: no action appears in multiple modules (except sep)', () => {
+  const seen = new Map();
+  _pure.MODULES.forEach((mod, mi) => {
+    mod.items.forEach(item => {
+      if (item.action === 'sep') return;
+      assert.ok(!seen.has(item.action),
+        `action "${item.action}" in module ${mi} already in module ${seen.get(item.action)}`);
+      seen.set(item.action, mi);
+    });
+  });
+});
+
+test('MODULES: exit is in Config module and is last non-sep item', () => {
+  const configItems = _pure.MODULES[2].items;
+  const nonSep = configItems.filter(m => m.action !== 'sep');
+  assert.strictEqual(nonSep[nonSep.length - 1].action, 'exit');
+});
+
+test('MODULES: MENU_ITEMS is the flat union of all module items', () => {
+  const flat = _pure.MODULES.flatMap(m => m.items);
+  assert.strictEqual(_pure.MENU_ITEMS.length, flat.length);
+  flat.forEach((item, i) => {
+    assert.strictEqual(_pure.MENU_ITEMS[i].action, item.action, `mismatch at index ${i}`);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 6.1. PLCY-01: Tune Timeouts menu action
 // ─────────────────────────────────────────────────────────────────────────────
 
