@@ -8,6 +8,7 @@
  *   TLA+    — downloads tla2tools.jar into .formal/tla/
  *   Alloy   — downloads org.alloytools.alloy.dist.jar into .formal/alloy/
  *   PRISM   — downloads and installs platform-specific binary
+ *   UPPAAL  — downloads verifyta binary into .formal/uppaal/bin/
  *   Petri   — no install needed (bundled via npm)
  *
  * Usage:
@@ -239,6 +240,119 @@ function checkJava() {
       fail(`PRISM install failed — see https://prismmodelchecker.org/download.php`);
       info(`Error: ${err.message}`);
       results.push({ name: 'PRISM', status: 'fail' });
+    }
+  }
+
+  // ── UPPAAL ──────────────────────────────────────────────────────────
+
+  const uppaalDest = path.join(process.cwd(), '.formal', 'uppaal', 'bin', 'verifyta');
+
+  if (fs.existsSync(uppaalDest)) {
+    skip('UPPAAL verifyta already present — skipping');
+    results.push({ name: 'UPPAAL', status: 'skip' });
+  } else {
+    const platform = process.platform;
+    const tmpDir = os.tmpdir();
+
+    try {
+      let zipUrl;
+      if (platform === 'darwin') {
+        zipUrl = 'https://download.uppaal.org/uppaal-5.0/uppaal-5.0.0/UPPAAL-5.0.0-app.zip';
+      } else if (platform === 'linux') {
+        zipUrl = 'https://download.uppaal.org/uppaal-5.0/uppaal-5.0.0/uppaal-5.0.0-linux64.zip';
+      } else if (platform === 'win32') {
+        zipUrl = 'https://download.uppaal.org/uppaal-5.0/uppaal-5.0.0/uppaal-5.0.0-win64.zip';
+      } else {
+        fail(`UPPAAL install — unsupported platform: ${platform}`);
+        info('Download manually from https://uppaal.org/downloads/');
+        results.push({ name: 'UPPAAL', status: 'fail' });
+        // skip to Petri nets
+      }
+
+      if (zipUrl) {
+        const zipPath = path.join(tmpDir, `uppaal-${platform}.zip`);
+        process.stdout.write(`  Downloading UPPAAL verifyta for ${platform}…\n`);
+        await downloadFile(zipUrl, zipPath);
+
+        process.stdout.write('  Extracting UPPAAL…\n');
+        const uppaalTmpDir = path.join(tmpDir, 'uppaal-extract');
+        fs.mkdirSync(uppaalTmpDir, { recursive: true });
+        const extract = spawnSync('unzip', ['-o', zipPath, '-d', uppaalTmpDir], { stdio: 'pipe' });
+        if (extract.status !== 0) throw new Error('unzip extraction failed');
+
+        // Locate verifyta binary inside extracted directory
+        let verifytaSrc = null;
+        if (platform === 'linux') {
+          // Linux: look in bin/ or bin-Linux/
+          const candidates = [
+            path.join(uppaalTmpDir, 'uppaal-5.0.0', 'bin', 'verifyta'),
+            path.join(uppaalTmpDir, 'uppaal-5.0.0', 'bin-Linux', 'verifyta'),
+          ];
+          verifytaSrc = candidates.find(c => fs.existsSync(c)) || null;
+        } else if (platform === 'win32') {
+          verifytaSrc = path.join(uppaalTmpDir, 'uppaal-5.0.0', 'bin-Windows', 'verifyta.exe');
+          if (!fs.existsSync(verifytaSrc)) verifytaSrc = null;
+        }
+
+        // Fallback: use find to locate verifyta recursively (works for macOS .app bundle and any layout)
+        if (!verifytaSrc) {
+          const findResult = spawnSync('find', [uppaalTmpDir, '-name', 'verifyta', '-type', 'f'], { encoding: 'utf8' });
+          if (findResult.status === 0 && findResult.stdout.trim()) {
+            verifytaSrc = findResult.stdout.trim().split('\n')[0];
+          }
+        }
+
+        if (!verifytaSrc) throw new Error('Could not locate verifyta binary in extracted archive');
+
+        // Determine the bin directory containing verifyta (to copy sibling libs)
+        const srcBinDir = path.dirname(verifytaSrc);
+        const destBinDir = path.join(process.cwd(), '.formal', 'uppaal', 'bin');
+        fs.mkdirSync(destBinDir, { recursive: true });
+
+        // Copy verifyta binary
+        fs.copyFileSync(verifytaSrc, uppaalDest);
+
+        // Copy sibling shared libraries (.so, .dylib)
+        try {
+          const siblings = fs.readdirSync(srcBinDir);
+          for (const sib of siblings) {
+            if (sib === path.basename(verifytaSrc)) continue;
+            if (sib.endsWith('.so') || sib.endsWith('.dylib') || sib.includes('.so.')) {
+              fs.copyFileSync(path.join(srcBinDir, sib), path.join(destBinDir, sib));
+            }
+          }
+        } catch (_) { /* non-critical */ }
+
+        // chmod +x (non-Windows)
+        if (platform !== 'win32') {
+          fs.chmodSync(uppaalDest, 0o755);
+        }
+
+        // macOS Gatekeeper handling
+        if (platform === 'darwin') {
+          // Step a: remove quarantine attribute
+          spawnSync('xattr', ['-dr', 'com.apple.quarantine', destBinDir], { stdio: 'pipe' });
+
+          // Step b: verify binary runs; if blocked, try codesign removal
+          const verifyRun = spawnSync(uppaalDest, ['--version'], { stdio: 'pipe', timeout: 5000 });
+          if (verifyRun.status !== 0 || verifyRun.signal) {
+            spawnSync('codesign', ['--remove-signature', uppaalDest], { stdio: 'pipe' });
+            // Step c: advisory warning if still blocked
+            const retryRun = spawnSync(uppaalDest, ['--version'], { stdio: 'pipe', timeout: 5000 });
+            if (retryRun.status !== 0 || retryRun.signal) {
+              info('If macOS Gatekeeper blocks verifyta, run: sudo spctl --master-disable  (re-enable after with --master-enable)');
+            }
+          }
+        }
+
+        ok('UPPAAL verifyta installed');
+        info(`Path: ${uppaalDest}`);
+        results.push({ name: 'UPPAAL', status: 'ok' });
+      }
+    } catch (err) {
+      fail(`UPPAAL install failed — see https://uppaal.org/downloads/`);
+      info(`Error: ${err.message}`);
+      results.push({ name: 'UPPAAL', status: 'fail' });
     }
   }
 
