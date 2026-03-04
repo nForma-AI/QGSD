@@ -1,0 +1,166 @@
+CROSS-PHASE WIRING DIAGRAM: v0.26
+
+Legend:
+  ──→ exports to
+  ←── imports from
+  ══→ depends on
+  [✓] verified connected
+  [→] tested only
+  [∅] standalone
+
+=== PHASE DEPENDENCIES ===
+
+v0.26-01 (Policy Configuration)
+  exports: validateTimeout, validateUpdatePolicy, runAutoUpdateCheck
+  ──→ v0.26-02 (via agent_config.update_policy)
+  ──→ bin/qgsd.cjs (tuneTimeoutsFlow, startup)
+  [✓] All exports wired or tested
+
+v0.26-02 (Credential Management)
+  exports: probeAndPersistKey, classifyProbeResult, writeKeyStatus
+  ──→ v0.26-03 (agent_config.key_status)
+  ──→ v0.26-04 (probeAllSlots → buildDashboardLines)
+  ──→ bin/qgsd.cjs (validateRotatedKeys)
+  [✓] All exports wired
+
+v0.26-03 (Portable Installer & Presets)
+  exports: buildExportData, validateImportSchema, buildBackupPath, 
+           findPresetForUrl, buildCloneEntry
+  ←── v0.26-02 (reads/writes agent_config, deletes key_status)
+  ──→ bin/qgsd.cjs (exportFlow, importFlow, cloneSlotFlow)
+  [✓] 3/5 wired, 2/5 tested (utilities)
+
+v0.26-04 (Health Dashboard)
+  exports: buildDashboardLines, liveDashboard, formatTimestamp
+  ←── v0.26-02 (probeAllSlots → probeAndPersistKey)
+  ──→ bin/qgsd.cjs (renderHealth)
+  [✓] All exports wired or tested
+
+v0.26-05 (Architecture Enforcement)
+  [∅] Standalone CLI
+  bin/check-bundled-sdks.cjs
+  No cross-phase dependencies
+
+v0.26-06 (Cross-Model Decomposition)
+  [∅] Standalone CLI
+  bin/analyze-state-space.cjs
+  Reads .formal/ artifacts (not cross-phase)
+
+=== DATA FLOW DIAGRAM ===
+
+USER ACTIONS
+  │
+  ├─→ "Tune Timeouts" ──→ tuneTimeoutsFlow()
+  │                        ├─ buildTimeoutChoices() [v0.26-01] ✓
+  │                        ├─ validateTimeout() [v0.26-01] ✓
+  │                        └─ applyTimeoutUpdate() [v0.26-01] ✓
+  │                           └─ write to providers.json
+  │
+  ├─→ "Set Update Policy" ──→ updatePolicyFlow()
+  │                            ├─ readQgsdJson() [v0.26-02 schema]
+  │                            ├─ buildPolicyChoices() [v0.26-01] ✓
+  │                            └─ writeUpdatePolicy() ✓
+  │
+  ├─→ "Batch Rotate Keys" ──→ batchRotateFlow()
+  │                            ├─ secretsLib.set() [keytar]
+  │                            └─ validateRotatedKeys()
+  │                               └─ probeAndPersistKey() [v0.26-02] ✓
+  │                                  ├─ probeProviderUrl()
+  │                                  ├─ classifyProbeResult() [v0.26-02]
+  │                                  └─ writeKeyStatus() [v0.26-02]
+  │                                     └─ write to qgsd.json agent_config
+  │
+  ├─→ "Live Health" ──→ renderHealth()
+  │                       ├─ probeAllSlots() [v0.26-02/04] ✓
+  │                       │  ├─ probeAndPersistKey() [v0.26-02] ✓
+  │                       │  └─ write key_status to qgsd.json
+  │                       └─ buildDashboardLines() [v0.26-04] ✓
+  │                          ├─ formatTimestamp() [v0.26-04] ✓
+  │                          └─ display with HH:MM:SS + [stale] ✓
+  │
+  ├─→ "Clone Slot" ──→ cloneSlotFlow()
+  │                     ├─ deep-clone agent_config [v0.26-02 schema]
+  │                     ├─ delete key_status (fresh probe)
+  │                     └─ write to ~/.claude.json + qgsd.json
+  │
+  ├─→ "Export Roster" ──→ exportFlow()
+  │                        └─ buildExportData() [v0.26-03] ✓
+  │                           └─ redact KEY, SECRET, TOKEN, PASSWORD
+  │                              └─ write JSON file
+  │
+  └─→ "Import Roster" ──→ importFlow()
+                          ├─ validateImportSchema() [v0.26-03] ✓
+                          ├─ buildBackupPath() [v0.26-03] ✓
+                          ├─ backup .claude.json
+                          └─ write to ~/.claude.json + keytar
+
+STARTUP ACTIONS
+  │
+  └─→ runAutoUpdateCheck() [v0.26-01] ✓
+     ├─ read qgsd.json agent_config [v0.26-02 schema]
+     ├─ filter slots with update_policy='auto'
+     └─ write to .claude/qgsd-update.log
+
+CLI TOOLS
+  │
+  ├─→ node bin/check-bundled-sdks.cjs [v0.26-05] ∅
+  │
+  └─→ node bin/analyze-state-space.cjs [v0.26-06] ∅
+
+=== FILE PERSISTENCE LAYER ===
+
+~/.claude.json
+  └─ mcpServers
+     ├─ [slot].env.ANTHROPIC_API_KEY (encrypted in keytar)
+     ├─ [slot].env.CLAUDE_DEFAULT_MODEL
+     ├─ [slot].env.CLAUDE_MCP_TIMEOUT_MS
+     └─ [slot].env.ANTHROPIC_BASE_URL
+
+~/.claude/qgsd.json
+  └─ agent_config [v0.26-02 schema] ◄─ source of truth
+     ├─ [slot].update_policy [set by: updatePolicyFlow, PLCY-02]
+     ├─ [slot].key_status [written by: probeAndPersistKey, CRED-02]
+     │  ├─ status: 'ok' | 'invalid' | 'unreachable'
+     │  └─ checkedAt: ISO timestamp
+     ├─ [slot].auth_type [unused in v0.26]
+     └─ [slot].timeout_ms [set by: tuneTimeoutsFlow, PLCY-01]
+
+bin/providers.json
+  └─ providers[].quorum_timeout_ms [set by: applyTimeoutUpdate, PLCY-01]
+
+~/.claude/qgsd-update.log
+  └─ JSONL log entries [written by: runAutoUpdateCheck, PLCY-03]
+     ├─ ts: ISO timestamp
+     ├─ slot: slot name
+     ├─ status: OK | UPDATE_AVAILABLE | ERROR | SKIP
+     └─ detail: version number or error message
+
+=== SCHEMA DEPENDENCIES ===
+
+qgsd.json agent_config structure:
+  Created by: v0.26-02 (writeKeyStatus)
+  Updated by: v0.26-01 (writeUpdatePolicy)
+  Read by: v0.26-01 (runAutoUpdateCheck)
+  Read by: v0.26-03 (cloneSlotFlow)
+  Displayed by: v0.26-04 (buildDashboardLines via probeAllSlots)
+
+=== SUMMARY TABLE ===
+
+Phase       | Exports | Wired | Tested | Cross-Phase Deps   | Status
+────────────┼─────────┼───────┼────────┼────────────────────┼─────────
+v0.26-01    |    3    |   2   |   3    | → v0.26-02         | WIRED ✓
+v0.26-02    |    3    |   3   |   3    | ↔ v0.26-03, v0.26-04 | WIRED ✓
+v0.26-03    |    5    |   3   |   5    | ← v0.26-02         | WIRED ✓
+v0.26-04    |    3    |   2   |   3    | ← v0.26-02         | WIRED ✓
+v0.26-05    |    0    |   0   |   0    | STANDALONE         | ∅
+v0.26-06    |    0    |   0   |   8    | STANDALONE (.formal) | ∅
+
+TOTALS:
+  Phases: 6
+  Exports: 14 (from phases 01-04)
+  Wired: 10
+  Tested: 14
+  Standalone: 2
+  Cross-Phase Dependencies: 4
+  Test Cases: 191 (all passing)
+
