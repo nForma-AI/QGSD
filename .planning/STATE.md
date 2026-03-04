@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: v0.27-01 of 5 (Debt Schema & Fingerprinting Foundation)
 Plan: 03 of 03 (Ledger I/O and Retention Policy)
 Status: Complete (All 3 plans done for v0.27-01; ready for v0.27-02)
-Last activity: 2026-03-04 — Completed quick task 146: TAP regex fix for Node v25 and skip/todo tracking in sweepTtoC
+Last activity: 2026-03-04 — Completed quick task 162: Make sync-baselines always use detect mode by default
 
 Progress: [██████░░░░░░] 100%
 
@@ -60,7 +60,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Completed quick task 146 (TAP regex fix for Node v25 and skip/todo tracking)
+Stopped at: Completed quick task 162 (Make sync-baselines always use detect mode by default)
 Resume file: None
 
 ## Quick Tasks Completed
@@ -68,6 +68,7 @@ Resume file: None
 | # | Task | Date | Commit | Status | Link |
 |---|------|------|--------|--------|------|
 | 146 | TAP regex fix for Node v25 and skip/todo tracking in sweepTtoC | 2026-03-04 | 54d7f780 | Completed | [146-track-skip-todo-in-t-c-sweep-fix-broken-](./quick/146-track-skip-todo-in-t-c-sweep-fix-broken-/) |
+| 162 | Make sync-baselines always use detect mode by default | 2026-03-04 | 39fc61e9 | Completed | [162-make-sync-baselines-always-use-detect-mo](./quick/162-make-sync-baselines-always-use-detect-mo/) |
 
 ## Recent Accomplishments
 
