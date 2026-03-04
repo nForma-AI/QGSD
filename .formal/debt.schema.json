@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Debt Entry Schema",
+  "description": "JSON Schema for production debt entries in the QGSD debt ledger",
+  "required": [
+    "id",
+    "fingerprint",
+    "title",
+    "occurrences",
+    "first_seen",
+    "last_seen",
+    "environments",
+    "status",
+    "source_entries"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$",
+      "description": "UUID v4 or deterministic hash-based ID"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{16,64}$",
+      "description": "Deterministic hash: issue=sha256(type+func+msgHash), drift=sha256(paramKey)"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "description": "Human-readable debt title"
+    },
+    "occurrences": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of times this debt has been observed"
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp when debt was first observed"
+    },
+    "last_seen": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp when debt was last observed"
+    },
+    "environments": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["production", "staging", "development", "test", "local"]
+      },
+      "minItems": 1,
+      "description": "List of environments where debt has been observed"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["open", "acknowledged", "resolving", "resolved"],
+      "description": "Current status in the state machine"
+    },
+    "formal_ref": {
+      "type": ["string", "null"],
+      "description": "Optional link to formal model: 'MCsafety.cfg:MaxDeliberation' or 'requirement:DEBT-01' or null"
+    },
+    "source_entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_type", "source_id", "observed_at"],
+        "additionalProperties": false,
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "enum": ["github", "sentry", "sentry-feedback", "prometheus", "grafana", "logstash", "bash"]
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identifier within source system (e.g., gh-123, sentry-abc)"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 timestamp when source observation occurred"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Array of source observations that triggered this debt entry"
+    },
+    "resolved_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Optional ISO8601 timestamp when debt was marked as resolved"
+    }
+  }
+}
