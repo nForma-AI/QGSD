@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: v0.26 archived, ready for next milestone
-Last activity: 2026-03-04 - Completed quick task 153: Create bin/sync-baseline-requirements.cjs
+Last activity: 2026-03-04 - Completed quick task 154: Wire sync-baseline-requirements
 
 Progress: [████████████] 100%
 
@@ -84,9 +84,10 @@ None. All v0.26 phases complete.
 | 151 | Wire baseline requirements into new-project and new-milestone workflows | 2026-03-04 | 133d8a72 | Verified | [151-wire-baseline-requirements-into-new-proj](./quick/151-wire-baseline-requirements-into-new-proj/) |
 | 152 | Expand /qgsd:settings into guided project manager hub | 2026-03-04 | 3ee90a59 | Verified | [152-expand-qgsd-settings-into-guided-project](./quick/152-expand-qgsd-settings-into-guided-project/) |
 | 153 | Create bin/sync-baseline-requirements.cjs — idempotent merge of baseline requirements into existing .formal/requirements.json, matching on text description | 2026-03-04 | 7a70a337 | Verified | [153-create-bin-sync-baseline-requirements-cj](./quick/153-create-bin-sync-baseline-requirements-cj/) |
+| 154 | Wire sync-baseline-requirements into QGSD: create /qgsd:sync-baselines skill, add sync call to new-milestone and new-project workflows | 2026-03-04 | 8232d7b5 | Pending | [154-wire-sync-baseline-requirements-into-qgs](./quick/154-wire-sync-baseline-requirements-into-qgs/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-04 - Completed quick task 153: Create bin/sync-baseline-requirements.cjs
-Stopped at: Completed quick-153
-Resume file: .planning/quick/153-create-bin-sync-baseline-requirements-cj/153-SUMMARY.md
+Last activity: 2026-03-04 - Completed quick task 154: Wire sync-baseline-requirements
+Stopped at: Completed quick-154
+Resume file: .planning/quick/154-wire-sync-baseline-requirements-into-qgs/154-SUMMARY.md
