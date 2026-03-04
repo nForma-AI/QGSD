@@ -1,0 +1,91 @@
+{
+  "category": "Infrastructure as Code",
+  "description": "Baseline Infrastructure as Code requirements ensuring all infrastructure is defined, versioned, linted, and deployed consistently through code-based definitions.",
+  "profiles": ["web", "api", "cli", "desktop"],
+  "requirements": [
+    {
+      "id_template": "IAC-{N}",
+      "text": "IaC definitions exist for all deployed infrastructure (servers, databases, networking, storage, etc.)",
+      "intent": "All infrastructure must be reproducible from code",
+      "verifiable_by": "List all deployed resources; confirm each has corresponding IaC code",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Single deploy entrypoint (make/script) documented in README explaining how to bootstrap and deploy infrastructure",
+      "intent": "Deployment must be automatable and not require manual steps",
+      "verifiable_by": "Follow the documented entrypoint; confirm infrastructure deploys successfully",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "IaC files pass formatting checks (terraform fmt / equivalent) enforced via pre-commit or CI",
+      "intent": "Code must be consistently formatted for readability",
+      "verifiable_by": "Run formatting check tool; confirm all IaC files conform",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "IaC linter runs in CI (tflint / equivalent) and blocks deployment on errors",
+      "intent": "IaC must be validated for correctness and best practices",
+      "verifiable_by": "Introduce intentional linter error in IaC; confirm CI blocks the deployment",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "CI validates IaC on every PR (plan/preview, not just apply) and shows diff to reviewers",
+      "intent": "Infrastructure changes must be reviewed before deployment",
+      "verifiable_by": "Open PR with IaC change; confirm CI shows plan output and diff in comments",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "No plaintext secrets in IaC — all secrets use secret manager references (AWS Secrets Manager, HashiCorp Vault, etc.)",
+      "intent": "Credentials must never appear in code or state files",
+      "verifiable_by": "Scan IaC code and state files for plaintext secrets; confirm none found",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Environment separation (dev/staging/prod) implemented via workspaces or separate IaC configurations with different variables",
+      "intent": "Environments must be isolated to prevent cross-contamination",
+      "verifiable_by": "Deploy to dev environment; confirm prod resources are not affected",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Remote state backend configured with locking (S3 with DynamoDB, Terraform Cloud, etc.) to prevent concurrent modifications",
+      "intent": "State must be safely shared and protected from concurrent writes",
+      "verifiable_by": "Attempt concurrent apply operations; confirm locking prevents corruption",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Reusable modules for repeated patterns (networking, compute, databases) to reduce duplication and improve maintainability",
+      "intent": "Infrastructure patterns must be DRY and composable",
+      "verifiable_by": "Identify repeated infrastructure patterns; confirm they use shared modules",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Infrastructure changes require pull request review and approval before apply",
+      "intent": "All infrastructure modifications must be reviewed for safety and correctness",
+      "verifiable_by": "Attempt to apply IaC change without PR review; confirm it is blocked",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "Provider and module versions are pinned to exact version or minor version range (e.g., ~> 1.2.0) to ensure reproducibility",
+      "intent": "Version constraints must prevent breaking provider/module updates",
+      "verifiable_by": "Check IaC code for version constraints; confirm they are specified",
+      "profiles": ["web", "api", "cli", "desktop"]
+    },
+    {
+      "id_template": "IAC-{N}",
+      "text": "IaC README documents architecture, input variables, outputs, and step-by-step bootstrap process",
+      "intent": "Infrastructure must be understandable and reproducible by team members",
+      "verifiable_by": "Follow the README steps on a fresh machine; confirm infrastructure deploys successfully",
+      "profiles": ["web", "api", "cli", "desktop"]
+    }
+  ]
+}

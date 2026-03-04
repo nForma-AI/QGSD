@@ -1,0 +1,77 @@
+{
+  "version": "1.0.0",
+  "description": "Baseline requirements automatically seeded into every QGSD project. Users can remove any requirement during the scoping step.",
+  "profiles": {
+    "web": {
+      "label": "Web Application",
+      "description": "Browser-based app with UI, APIs, and user sessions",
+      "includes_all": true
+    },
+    "mobile": {
+      "label": "Mobile Application",
+      "description": "Native or hybrid mobile app",
+      "includes_all": true
+    },
+    "desktop": {
+      "label": "Desktop Application",
+      "description": "Native desktop app (Electron, Tauri, etc.)",
+      "excludes": ["observability/health-check"]
+    },
+    "api": {
+      "label": "API Service",
+      "description": "Backend API without a user-facing UI",
+      "excludes": ["ux-heuristics/target-size", "ux-heuristics/keyboard-nav", "ux-heuristics/orientation", "ux-heuristics/discoverable-labels", "ux-heuristics/input-constraints"]
+    },
+    "cli": {
+      "label": "CLI Tool",
+      "description": "Command-line interface tool or script",
+      "excludes": ["ux-heuristics/target-size", "ux-heuristics/keyboard-nav", "ux-heuristics/orientation", "ux-heuristics/discoverable-labels", "ux-heuristics/input-constraints", "ux-heuristics/exit-paths", "reliability/retry-backoff"]
+    },
+    "library": {
+      "label": "Library / Package",
+      "description": "Reusable library consumed by other projects",
+      "includes_only": ["security", "ci-cd"]
+    }
+  },
+  "categories": [
+    { "file": "ux-heuristics.json", "count": 11 },
+    { "file": "security.json", "count": 6 },
+    { "file": "reliability.json", "count": 4 },
+    { "file": "observability.json", "count": 4 },
+    { "file": "ci-cd.json", "count": 4 },
+    { "file": "performance.json", "count": 5 }
+  ],
+  "packs": {
+    "security": {
+      "file": "security.json",
+      "activation": "always"
+    },
+    "reliability": {
+      "file": "reliability.json",
+      "activation": "always"
+    },
+    "observability": {
+      "file": "observability.json",
+      "activation": "always"
+    },
+    "ci-cd": {
+      "file": "ci-cd.json",
+      "activation": "always"
+    },
+    "ux-heuristics": {
+      "file": "ux-heuristics.json",
+      "activation": "always"
+    },
+    "performance": {
+      "file": "performance.json",
+      "activation": "always"
+    },
+    "iac": {
+      "file": "iac.json",
+      "activation": "conditional",
+      "intent_key": "iac",
+      "intent_value": true
+    }
+  },
+  "total_requirements": 46
+}
