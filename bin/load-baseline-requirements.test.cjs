@@ -2,7 +2,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { loadBaselineRequirements } = require('./load-baseline-requirements.cjs');
+const { loadBaselineRequirements, loadBaselineRequirementsFromIntent } = require('./load-baseline-requirements.cjs');
 
 // Test 1: web profile includes all 34 requirements
 test('loadBaselineRequirements("web") returns all 34 requirements', () => {
@@ -195,4 +195,83 @@ test('API profile includes only error-messages from UX category', () => {
 test('Desktop profile has 20 requirements based on per-requirement profiles', () => {
   const result = loadBaselineRequirements('desktop');
   assert.equal(result.total, 20);
+});
+
+// Test 21: loadBaselineRequirementsFromIntent with web profile returns 34 reqs
+test('loadBaselineRequirementsFromIntent({base_profile:"web"}) returns 34 requirements', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'web' });
+  assert.equal(result.total, 34);
+  assert.equal(result.profile, 'web');
+});
+
+// Test 22: loadBaselineRequirementsFromIntent with cli profile returns 13 reqs
+test('loadBaselineRequirementsFromIntent({base_profile:"cli"}) returns 13 requirements', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'cli' });
+  assert.equal(result.total, 13);
+  assert.equal(result.profile, 'cli');
+});
+
+// Test 23: loadBaselineRequirementsFromIntent with web+iac returns 46 reqs
+test('loadBaselineRequirementsFromIntent({base_profile:"web", iac:true}) returns 46 requirements', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'web', iac: true });
+  assert.equal(result.total, 46);
+});
+
+// Test 24: loadBaselineRequirementsFromIntent with library+iac returns 6 (no IaC for library)
+test('loadBaselineRequirementsFromIntent({base_profile:"library", iac:true}) returns 6 requirements', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'library', iac: true });
+  assert.equal(result.total, 6);
+  // library only has security and ci-cd, so IaC should not be included since library is not in IaC profiles
+});
+
+// Test 25: web+iac intent packs_applied contains all 7 pack names
+test('web+iac intent packs_applied contains all expected packs', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'web', iac: true });
+  assert.ok(Array.isArray(result.packs_applied));
+  assert.deepEqual(result.packs_applied.sort(), [
+    'ci-cd',
+    'iac',
+    'observability',
+    'performance',
+    'reliability',
+    'security',
+    'ux-heuristics',
+  ].sort());
+});
+
+// Test 26: cli intent packs_applied does not include conditional iac pack
+test('cli intent packs_applied contains always packs, excludes conditional iac', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'cli' });
+  assert.ok(Array.isArray(result.packs_applied));
+  // CLI should have: security, reliability, observability, ci-cd, ux-heuristics
+  // (performance is filtered out by per-requirement profiles array)
+  assert.equal(result.packs_applied.length, 5);
+  assert(!result.packs_applied.includes('iac'));
+});
+
+// Test 27: Missing base_profile throws error
+test('loadBaselineRequirementsFromIntent missing base_profile throws error', () => {
+  assert.throws(() => {
+    loadBaselineRequirementsFromIntent({ iac: true });
+  }, /base_profile is required/);
+});
+
+// Test 28: Minimal intent {base_profile:"api"} works with defaults applied
+test('loadBaselineRequirementsFromIntent({base_profile:"api"}) returns 18 requirements', () => {
+  const result = loadBaselineRequirementsFromIntent({ base_profile: 'api' });
+  assert.equal(result.total, 18);
+  assert.equal(result.profile, 'api');
+});
+
+// Test 29: Intent result has enriched intent field with has_ui derived
+test('Intent result has enriched intent field with has_ui derived correctly', () => {
+  const webResult = loadBaselineRequirementsFromIntent({ base_profile: 'web' });
+  assert.ok(webResult.intent);
+  assert.equal(webResult.intent.has_ui, true);
+  assert.equal(webResult.intent.iac, false);
+
+  const cliResult = loadBaselineRequirementsFromIntent({ base_profile: 'cli' });
+  assert.ok(cliResult.intent);
+  assert.equal(cliResult.intent.has_ui, false);
+  assert.equal(cliResult.intent.base_profile, 'cli');
 });

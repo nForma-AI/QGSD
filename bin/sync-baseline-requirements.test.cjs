@@ -10,7 +10,7 @@ const os = require('os');
 // The sync module requires load-baseline-requirements.cjs internally,
 // so we test by setting up temp projects and calling the function directly.
 
-const { syncBaselineRequirements } = require('./sync-baseline-requirements.cjs');
+const { syncBaselineRequirements, syncBaselineRequirementsFromIntent } = require('./sync-baseline-requirements.cjs');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -297,5 +297,78 @@ describe('syncBaselineRequirements', () => {
       // Should be UX-100, not UX-00 or crash
       assert.equal(firstUx.id, 'UX-100', `Expected UX-100 but got ${firstUx.id}`);
     }
+  });
+
+  it('13. syncBaselineRequirementsFromIntent on empty project adds baseline', () => {
+    tmpDir = createTempProject([]);
+    const result = syncBaselineRequirementsFromIntent({ base_profile: 'cli' }, tmpDir);
+
+    assert.equal(result.total_before, 0);
+    // CLI profile should add 13 requirements
+    assert.equal(result.added.length, 13);
+    assert.equal(result.total_after, 13);
+  });
+
+  it('14. syncBaselineRequirementsFromIntent idempotency: second run adds nothing', () => {
+    tmpDir = createTempProject([]);
+
+    const first = syncBaselineRequirementsFromIntent({ base_profile: 'cli' }, tmpDir);
+    assert.ok(first.added.length > 0, 'First run should add requirements');
+
+    const second = syncBaselineRequirementsFromIntent({ base_profile: 'cli' }, tmpDir);
+    assert.equal(second.added.length, 0, 'Second run should add nothing');
+    assert.equal(second.skipped.length, 13, 'Second run should skip all');
+  });
+
+  it('15. IAC prefix gets independent counter after existing reqs', () => {
+    tmpDir = createTempProject([
+      { id: 'IAC-05', text: 'Pre-existing IAC req', category: 'Infrastructure', status: 'Pending' },
+    ]);
+
+    const result = syncBaselineRequirementsFromIntent({ base_profile: 'web', iac: true }, tmpDir);
+    const iacAdded = result.added.filter(a => a.id.startsWith('IAC-'));
+
+    if (iacAdded.length > 0) {
+      const firstIac = iacAdded[0];
+      const num = parseInt(firstIac.id.split('-')[1], 10);
+      assert.ok(num >= 6, `IAC IDs should start at 06+, got ${firstIac.id}`);
+    }
+  });
+
+  it('16. Backwards compat: syncBaselineRequirements still works after refactor', () => {
+    tmpDir = createTempProject([]);
+
+    const result = syncBaselineRequirements('cli', tmpDir);
+    assert.equal(result.total_before, 0);
+    assert.equal(result.added.length, 13);
+    assert.equal(result.total_after, 13);
+  });
+
+  it('17. Sequential sync: profile then intent adds only new packs', () => {
+    tmpDir = createTempProject([]);
+
+    // First sync with profile
+    const firstResult = syncBaselineRequirements('cli', tmpDir);
+    assert.equal(firstResult.added.length, 13);
+
+    // Second sync with intent that includes iac
+    const secondResult = syncBaselineRequirementsFromIntent({ base_profile: 'cli', iac: true }, tmpDir);
+
+    // Should only add IAC requirements (12) since CLI base is already there
+    assert.equal(secondResult.added.length, 12);
+    const iacAdded = secondResult.added.filter(a => a.id.startsWith('IAC-'));
+    assert.equal(iacAdded.length, 12, 'Should add all 12 IaC requirements');
+  });
+
+  it('18. Return shape of syncBaselineRequirementsFromIntent', () => {
+    tmpDir = createTempProject([]);
+
+    const result = syncBaselineRequirementsFromIntent({ base_profile: 'web' }, tmpDir);
+
+    assert.ok(Array.isArray(result.added), 'added should be array');
+    assert.ok(Array.isArray(result.skipped), 'skipped should be array');
+    assert.equal(typeof result.total_before, 'number');
+    assert.equal(typeof result.total_after, 'number');
+    assert.equal(result.total_after, result.total_before + result.added.length);
   });
 });
