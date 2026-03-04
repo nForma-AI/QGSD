@@ -5,29 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.27 Production Feedback Loop — Phase v0.27-01
+**Current focus:** v0.27 Production Feedback Loop — COMPLETE
 
 ## Current Position
 
-Phase: v0.27-01 of 5 (Debt Schema & Fingerprinting Foundation)
-Plan: 03 of 03 (Ledger I/O and Retention Policy)
-Status: Complete (All 3 plans done for v0.27-01; ready for v0.27-02)
-Last activity: 2026-03-04 - Completed quick task 163: Add developer doc auto-generation to qgsd solve skill
+Phase: v0.27-05 of 5 (Solve P->F Integration)
+Plan: 03 of 03 (Integration into qgsd-solve.cjs + end-to-end test)
+Status: Complete (All 5 phases done for v0.27; milestone shipped)
+Last activity: 2026-03-04 - Completed v0.27-05: Solve P->F Integration (56 tests, 8-layer solve)
 
-Progress: [██████░░░░░░] 100%
+Progress: [████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 8 minutes
-- Total execution time: 0.4 hours
+- Total plans completed: 6
+- Average duration: 5 minutes
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | v0.27-01 | 3/3 | 5/5 | 8 min |
+| v0.27-05 | 3/3 | 56/56 | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: -
@@ -75,6 +76,16 @@ Resume file: None
 | 165 | Fix solver F→C diagnostic to read all 26+ formal checks instead of 4 CI-only | 2026-03-04 | 6ff105da | Completed | [165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-](./quick/165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-/) |
 
 ## Recent Accomplishments
+
+- **v0.27-05 (Solve P->F Integration)** [2026-03-04]
+  - P->F residual sweep: sweepPtoF reads acknowledged debt, compares against formal thresholds
+  - Helpers: compareDrift, extractFormalExpected (cfg + json), isNumericThreshold, parseFormalRef
+  - autoClosePtoF: two-track dispatch (parameter updates via /qgsd:quick, investigation flags)
+  - Freeze semantics: entries in resolving status immune to concurrent observe overwrites
+  - 8-layer solve pipeline: P->F integrated into computeResidual, autoClose, formatReport, formatJSON
+  - 56 tests (40 unit + 11 autoClose + 5 integration), all passing
+  - Requirements PF-01 through PF-05 completed
+  - v0.27 milestone shipped: production feedback loop fully closed
 
 - **v0.27-01-01 (Debt Schema & Validation)** [2026-03-04]
   - JSON Schema draft-07 definition with all required fields

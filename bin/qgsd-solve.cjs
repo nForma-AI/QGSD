@@ -4,7 +4,7 @@
 // Consistency solver orchestrator: sweeps Requirements->Formal->Tests->Code->Docs,
 // computes a residual vector per layer transition, and auto-closes gaps.
 //
-// Layer transitions (7):
+// Layer transitions (8):
 //   R->F: Requirements without formal model coverage
 //   F->T: Formal invariants without test backing
 //   C->F: Code constants diverging from formal specs
@@ -12,6 +12,7 @@
 //   F->C: Failing formal verification checks
 //   R->D: Requirements not documented in developer docs
 //   D->C: Stale structural claims in docs (dead file paths, missing CLI commands, absent dependencies)
+//   P->F: Acknowledged production debt entries diverging from formal model thresholds
 //
 // Usage:
 //   node bin/qgsd-solve.cjs                  # full sync, up to 3 iterations
@@ -97,6 +98,11 @@ function spawnTool(script, args, opts = {}) {
     };
   }
 }
+
+// ── P->F layer imports ──────────────────────────────────────────────────────
+
+const { sweepPtoF } = require('./sweepPtoF.cjs');
+const { autoClosePtoF } = require('./autoClosePtoF.cjs');
 
 // ── Doc discovery helpers ────────────────────────────────────────────────────
 
@@ -934,6 +940,7 @@ function computeResidual() {
   const f_to_c = sweepFtoC();
   const r_to_d = sweepRtoD();
   const d_to_c = sweepDtoC();
+  const p_to_f = sweepPtoF({ root: ROOT });
 
   const total =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -942,7 +949,8 @@ function computeResidual() {
     (t_to_c.residual >= 0 ? t_to_c.residual : 0) +
     (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
     (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
-    (d_to_c.residual >= 0 ? d_to_c.residual : 0);
+    (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
+    (p_to_f.residual >= 0 ? p_to_f.residual : 0);
 
   return {
     r_to_f,
@@ -952,6 +960,7 @@ function computeResidual() {
     f_to_c,
     r_to_d,
     d_to_c,
+    p_to_f,
     total,
     timestamp: new Date().toISOString(),
   };
@@ -1032,6 +1041,16 @@ function autoClose(residual) {
     );
   }
 
+  // P->F divergence: dispatch parameter updates or flag investigations
+  if (residual.p_to_f && residual.p_to_f.residual > 0) {
+    const result = autoClosePtoF(residual.p_to_f, {
+      spawnTool: spawnTool,
+    });
+    for (const action of result.actions_taken) {
+      actions.push(action);
+    }
+  }
+
   return {
     actions_taken: actions,
     stubs_generated: residual.f_to_t.residual > 0 ? 1 : 0,
@@ -1103,6 +1122,10 @@ function formatReport(iterations, finalResidual, converged) {
     {
       label: 'D -> C (Docs->Code)',
       residual: finalResidual.d_to_c.residual,
+    },
+    {
+      label: 'P -> F (Prod->Formal)',
+      residual: finalResidual.p_to_f ? finalResidual.p_to_f.residual : -1,
     },
   ];
 
@@ -1243,6 +1266,24 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  if (finalResidual.p_to_f && finalResidual.p_to_f.residual > 0) {
+    lines.push('## P -> F (Production -> Formal)');
+    const detail = finalResidual.p_to_f.detail;
+    if (detail.divergent_entries && detail.divergent_entries.length > 0) {
+      lines.push('Divergent entries:');
+      for (const ent of detail.divergent_entries.slice(0, 20)) {
+        lines.push('  - ' + ent.id + ': ' + ent.formal_ref + ' (measured: ' + ent.measured + ', expected: ' + ent.expected + ')');
+      }
+      if (detail.divergent_entries.length > 20) {
+        lines.push('  ... and ' + (detail.divergent_entries.length - 20) + ' more');
+      }
+    }
+    if (detail.skipped_unlinked > 0) {
+      lines.push('Skipped (waiting for formal link): ' + detail.skipped_unlinked);
+    }
+    lines.push('');
+  }
+
   return lines.join('\n');
 }
 
@@ -1279,8 +1320,8 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c']) {
-    const res = finalResidual[key].residual;
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f']) {
+    const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
 

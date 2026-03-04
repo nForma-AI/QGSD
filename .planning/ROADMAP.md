@@ -22,7 +22,7 @@
 - ✅ **v0.24 — Quorum Reliability Hardening** — Phases v0.24-01..v0.24-05 (shipped 2026-03-03)
 - ✅ **v0.25 — Formal Traceability & Coverage** — Phases v0.25-01..v0.25-07 (shipped 2026-03-03)
 - ✅ **v0.26 — Operational Completeness** — Phases v0.26-01..v0.26-06 (shipped 2026-03-04)
-- 📋 **v0.27 — Production Feedback Loop** — Phases v0.27-01..v0.27-05 (planned)
+- ✅ **v0.27 — Production Feedback Loop** — Phases v0.27-01..v0.27-05 (shipped 2026-03-04)
 
 ## Phases
 
@@ -36,7 +36,7 @@
 - [x] **Phase v0.27-02: Observe Skill Core** - Pluggable observe command replacing triage with parallel source fetching and debt write-through (completed 2026-03-04)
 - [x] **Phase v0.27-03: Cross-Source Deduplication** - Fingerprint matching, near-duplicate merging, and formal parameter linkage (✅ 2026-03-04)
 - [x] **Phase v0.27-04: Production Source Types** - Prometheus, Grafana, and Logstash source handlers (completed 2026-03-04)
-- [ ] **Phase v0.27-05: Solve P->F Integration** - Production-to-Formal residual layer closing the feedback loop
+- [x] **Phase v0.27-05: Solve P->F Integration** - Production-to-Formal residual layer closing the feedback loop (completed 2026-03-04)
 
 ## Phase Details
 
@@ -104,21 +104,22 @@ Plans:
 - [x] v0.27-04-02-PLAN.md — Grafana handler with alert state mapping (OBS-04) ✅ (2026-03-04, 17 tests)
 - [x] v0.27-04-03-PLAN.md — Logstash handler, registration, and config samples (OBS-05) ✅ (2026-03-04, 20 tests)
 
-### Phase v0.27-05: Solve P->F Integration
+### Phase v0.27-05: Solve P->F Integration ✅
 **Goal**: The solve command includes a Production-to-Formal residual layer that reads acknowledged debt, compares against formal thresholds, and dispatches remediation — closing the feedback loop
 **Depends on**: Phase v0.27-01, Phase v0.27-03
 **Requirements**: PF-01, PF-02, PF-03, PF-04, PF-05
+**Status**: 3/3 plans complete (100%) — Phase complete ✅
 **Success Criteria** (what must be TRUE):
-  1. `bin/qgsd-solve.cjs` includes a P->F residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds
-  2. The P->F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values
-  3. Solve operates only on debt entries with status `acknowledged` — `open` entries are ignored until a human triages them
-  4. New observe runs do not modify debt entries in `resolving` status — observations are frozen during a solve cycle
-  5. P->F remediation dispatches `/qgsd:quick` tasks to update formal model parameters or flags investigation when production has regressed
+  1. ✓ `bin/qgsd-solve.cjs` includes a P->F residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds
+  2. ✓ The P->F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values
+  3. ✓ Solve operates only on debt entries with status `acknowledged` — `open` entries are ignored until a human triages them
+  4. ✓ New observe runs do not modify debt entries in `resolving` status — observations are frozen during a solve cycle
+  5. ✓ P->F remediation dispatches `/qgsd:quick` tasks to update formal model parameters or flags investigation when production has regressed
 **Plans**: 3 plans
 Plans:
-- [ ] v0.27-05-01-PLAN.md — sweepPtoF core sweep + helpers (compareDrift, extractFormalExpected, isNumericThreshold) (PF-01, PF-02, PF-03)
-- [ ] v0.27-05-02-PLAN.md — autoClosePtoF remediation dispatch with freeze semantics (PF-04, PF-05)
-- [ ] v0.27-05-03-PLAN.md — Integration into qgsd-solve.cjs + end-to-end test (PF-01..PF-05)
+- [x] v0.27-05-01-PLAN.md — sweepPtoF core sweep + helpers (compareDrift, extractFormalExpected, isNumericThreshold) (PF-01, PF-02, PF-03) completed 2026-03-04, 40 tests
+- [x] v0.27-05-02-PLAN.md — autoClosePtoF remediation dispatch with freeze semantics (PF-04, PF-05) completed 2026-03-04, 11 tests
+- [x] v0.27-05-03-PLAN.md — Integration into qgsd-solve.cjs + end-to-end test (PF-01..PF-05) completed 2026-03-04, 5 tests
 
 ## Progress
 
@@ -130,4 +131,4 @@ Plans:
 | v0.27-02. Observe Skill Core | 0/3 | Complete    | 2026-03-04 |
 | v0.27-03. Cross-Source Deduplication | 3/3 | Complete    | 2026-03-04 |
 | v0.27-04. Production Source Types | 3/3 | Complete    | 2026-03-04 |
-| v0.27-05. Solve P->F Integration | 0/TBD | Not started | - |
+| v0.27-05. Solve P->F Integration | 3/3 | Complete    | 2026-03-04 |
