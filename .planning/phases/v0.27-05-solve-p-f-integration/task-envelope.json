@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.27-05",
+  "created_at": "2026-03-04T19:17:44.033Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "The solve command needs a new residual layer that reads debt entries from `.formal/debt.json`, compares production measurements against formal model thresholds, and dispatches remediation workflows. T",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.27-05-solve-p-f-integration/v0.27-05-01-PLAN.md",
+    "key_decisions": []
+  }
+}
