@@ -284,3 +284,145 @@ test('emitResultBlock — produces correct YAML format with required fields', ()
   assert.ok(result.includes('verdict: APPROVE'),
     'Expected "verdict: APPROVE" in emitResultBlock output');
 });
+
+// ── NEW TESTS FOR REQUIREMENTS MATCHING ──────────────────────────────────────
+
+test('loadRequirements smoke test: loads 237+ requirements from .formal/requirements.json', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  assert.ok(Array.isArray(reqs), 'loadRequirements must return an array');
+  assert.ok(reqs.length > 200, `Expected > 200 requirements, got ${reqs.length}`);
+  for (const req of reqs.slice(0, 5)) {
+    assert.ok(req.id, `Requirement ${JSON.stringify(req)} missing id field`);
+    assert.ok(req.text, `Requirement ${req.id} missing text field`);
+    assert.ok(req.category, `Requirement ${req.id} missing category field`);
+  }
+});
+
+test('loadRequirements fail-open: returns empty array on nonexistent path', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements('/nonexistent/path/that/does/not/exist');
+  assert.ok(Array.isArray(reqs), 'loadRequirements must return an array');
+  assert.strictEqual(reqs.length, 0, 'Expected empty array for nonexistent path');
+});
+
+test('matchRequirementsByKeywords — quorum keywords: returns DISP/QUORUM requirements', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  const matched = mod.matchRequirementsByKeywords(reqs, 'quorum dispatch timeout slot', null);
+  assert.ok(matched.length > 0, 'Expected at least one match for "quorum dispatch"');
+  assert.ok(matched.length <= 20, `Expected <= 20 matches, got ${matched.length}`);
+  const hasDispOrQuorum = matched.some(r =>
+    r.id.startsWith('DISP') || r.id.startsWith('QUORUM') || r.category.includes('Quorum')
+  );
+  assert.ok(hasDispOrQuorum, 'Expected at least one DISP or QUORUM requirement in matches');
+});
+
+test('matchRequirementsByKeywords — hook keywords: returns Hooks & Enforcement requirements', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  const matched = mod.matchRequirementsByKeywords(reqs, 'stop hook enforcement oscillation', null);
+  assert.ok(matched.length > 0, 'Expected at least one match for "stop hook enforcement"');
+  const hasHookOrEnforcement = matched.some(r =>
+    r.category.includes('Hooks') || r.category.includes('Enforcement')
+  );
+  assert.ok(hasHookOrEnforcement, 'Expected at least one hook/enforcement requirement in matches');
+});
+
+test('matchRequirementsByKeywords — artifact path matching: maps artifact path to category', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  const matched = mod.matchRequirementsByKeywords(reqs, 'review this', 'hooks/qgsd-stop.js');
+  assert.ok(matched.length > 0, 'Expected matches when artifact path contains "hook"');
+  const hasHookOrEnforcement = matched.some(r =>
+    r.category.includes('Hooks') || r.category.includes('Enforcement')
+  );
+  assert.ok(hasHookOrEnforcement, 'Expected hook/enforcement requirements from artifact path');
+});
+
+test('matchRequirementsByKeywords — gibberish query returns empty array', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  const matched = mod.matchRequirementsByKeywords(reqs, 'xyzzy flurble 12345', null);
+  assert.ok(Array.isArray(matched), 'matchRequirementsByKeywords must return an array');
+  assert.strictEqual(matched.length, 0, 'Expected zero matches for gibberish query');
+});
+
+test('matchRequirementsByKeywords — broad query capped at 20 results', () => {
+  assert.ok(mod, 'Module not available yet');
+  const reqs = mod.loadRequirements(process.cwd());
+  const matched = mod.matchRequirementsByKeywords(
+    reqs,
+    'quorum hook install config test formal plan observe',
+    null
+  );
+  assert.ok(matched.length <= 20, `Expected <= 20 matches, got ${matched.length}`);
+});
+
+test('formatRequirementsSection — formats correctly with requirement data', () => {
+  assert.ok(mod, 'Module not available yet');
+  const mockReqs = [
+    { id: 'TEST-01', text: 'test text', category: 'Testing' },
+    { id: 'TEST-02', text: 'another test', category: 'Testing' }
+  ];
+  const result = mod.formatRequirementsSection(mockReqs);
+  assert.ok(result, 'formatRequirementsSection must not return null for non-empty array');
+  assert.ok(result.includes('APPLICABLE REQUIREMENTS'), 'Expected header in formatted section');
+  assert.ok(result.includes('[TEST-01]'), 'Expected [TEST-01] requirement ID in output');
+  assert.ok(result.includes('[TEST-02]'), 'Expected [TEST-02] requirement ID in output');
+  assert.ok(result.includes('test text'), 'Expected requirement text in output');
+  assert.ok(result.includes('Testing'), 'Expected category in output');
+});
+
+test('formatRequirementsSection — returns null for empty array', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.formatRequirementsSection([]);
+  assert.strictEqual(result, null, 'formatRequirementsSection must return null for empty array');
+});
+
+test('buildModeAPrompt includes requirements section when provided', () => {
+  assert.ok(mod, 'Module not available yet');
+  const mockReqs = [
+    { id: 'R-01', text: 'must validate', category: 'Testing' }
+  ];
+  const result = mod.buildModeAPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Is this good?',
+    requirements: mockReqs
+  });
+  assert.ok(result.includes('APPLICABLE REQUIREMENTS'),
+    'Expected "APPLICABLE REQUIREMENTS" in Mode A prompt with requirements');
+  assert.ok(result.includes('[R-01]'),
+    'Expected requirement ID in Mode A prompt');
+});
+
+test('buildModeAPrompt omits requirements section when empty array', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.buildModeAPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Is this good?',
+    requirements: []
+  });
+  assert.ok(!result.includes('APPLICABLE REQUIREMENTS'),
+    'Expected NO "APPLICABLE REQUIREMENTS" section when requirements array is empty');
+});
+
+test('buildModeBPrompt includes requirements section when provided', () => {
+  assert.ok(mod, 'Module not available yet');
+  const mockReqs = [
+    { id: 'R-01', text: 'must validate', category: 'Testing' }
+  ];
+  const result = mod.buildModeBPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Does it pass?',
+    traces: '=== test output ===',
+    requirements: mockReqs
+  });
+  assert.ok(result.includes('APPLICABLE REQUIREMENTS'),
+    'Expected "APPLICABLE REQUIREMENTS" in Mode B prompt with requirements');
+  assert.ok(result.includes('[R-01]'),
+    'Expected requirement ID in Mode B prompt');
+});

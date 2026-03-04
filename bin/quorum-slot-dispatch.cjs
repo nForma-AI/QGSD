@@ -39,6 +39,241 @@ const getArg = (f) => {
 };
 const hasFlag = (f) => argv.includes(f);
 
+// ─── Requirements loading and matching functions ──────────────────────────────
+
+/**
+ * Cache for loaded requirements, keyed by projectRoot to avoid re-reading disk.
+ * @type {Map<string, Array>}
+ */
+const requirementsCache = new Map();
+
+/**
+ * loadRequirements — reads `.formal/requirements.json` from projectRoot.
+ * Fail-open: returns [] if file missing, malformed, or any error occurs.
+ * Caches result keyed by projectRoot to avoid re-reading disk.
+ *
+ * @param {string} projectRoot
+ * @returns {Array} — array of requirement objects, or [] if load failed
+ */
+function loadRequirements(projectRoot) {
+  if (requirementsCache.has(projectRoot)) {
+    return requirementsCache.get(projectRoot);
+  }
+
+  try {
+    const filePath = path.join(projectRoot, '.formal', 'requirements.json');
+    const content = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(content);
+    const reqs = Array.isArray(data.requirements) ? data.requirements : [];
+    requirementsCache.set(projectRoot, reqs);
+    return reqs;
+  } catch (e) {
+    // Fail-open: return empty array on any error (missing file, malformed JSON, etc.)
+    requirementsCache.set(projectRoot, []);
+    return [];
+  }
+}
+
+/**
+ * List of English stopwords to filter out during keyword extraction.
+ * @type {Set<string>}
+ */
+const STOPWORDS = new Set([
+  'the', 'a', 'is', 'it', 'to', 'of', 'and', 'or', 'in', 'for', 'this', 'that',
+  'with', 'from', 'be', 'are', 'was', 'has', 'have', 'do', 'does', 'not', 'but',
+  'an', 'on', 'at', 'by', 'we', 'should', 'would', 'could', 'will', 'can',
+  'what', 'how', 'why', 'when', 'which', 'these', 'those', 'as', 'if', 'then',
+  'there', 'their', 'they', 'them', 'its', 'so', 'some', 'any', 'all', 'each',
+  'every', 'both', 'other', 'very', 'just', 'only', 'more', 'most', 'less', 'too'
+]);
+
+/**
+ * Map artifact path segments to category groups for stronger matching.
+ * @type {Map<string, string>}
+ */
+const PATH_CATEGORY_MAP = new Map([
+  ['hook', 'Hooks & Enforcement'],
+  ['quorum', 'Quorum & Dispatch'],
+  ['dispatch', 'Quorum & Dispatch'],
+  ['install', 'Installer & CLI'],
+  ['mcp', 'MCP & Agents'],
+  ['agent', 'MCP & Agents'],
+  ['slot', 'MCP & Agents'],
+  ['formal', 'Formal Verification'],
+  ['alloy', 'Formal Verification'],
+  ['tla', 'Formal Verification'],
+  ['prism', 'Formal Verification'],
+  ['config', 'Configuration'],
+  ['plan', 'Planning & Tracking'],
+  ['state', 'Planning & Tracking'],
+  ['test', 'Testing & Quality'],
+  ['observe', 'Observability & Diagnostics'],
+  ['telemetry', 'Observability & Diagnostics'],
+  ['scoreboard', 'Observability & Diagnostics']
+]);
+
+/**
+ * matchRequirementsByKeywords — filters requirements based on keywords from question and artifact path.
+ * Returns max 20 matching requirements, sorted by relevance score (descending).
+ *
+ * @param {Array} requirements — full requirements array
+ * @param {string} question — the question text
+ * @param {string|null} artifactPath — optional artifact path (e.g. "hooks/qgsd-stop.js")
+ * @returns {Array} — filtered requirements (max 20), sorted by score descending
+ */
+function matchRequirementsByKeywords(requirements, question, artifactPath) {
+  if (!requirements || requirements.length === 0) {
+    return [];
+  }
+
+  // Extract keywords from question
+  const questionKeywords = extractKeywords(question);
+
+  // Extract keywords from artifact path
+  const pathKeywords = artifactPath ? extractPathKeywords(artifactPath) : new Set();
+  const pathCategories = artifactPath ? extractPathCategories(artifactPath) : [];
+
+  // Score each requirement
+  const scored = requirements.map(req => {
+    let score = 0;
+
+    // Match on id prefix (e.g. "DISP" from "DISP-01")
+    const idPrefix = req.id ? req.id.split('-')[0].toLowerCase() : '';
+    if (idPrefix && (questionKeywords.has(idPrefix) || pathKeywords.has(idPrefix))) {
+      score += 2;
+    }
+
+    // Match on category_raw
+    if (req.category_raw) {
+      const catRaw = req.category_raw.toLowerCase();
+      for (const kw of questionKeywords) {
+        if (catRaw.includes(kw)) score += 1;
+      }
+    }
+
+    // Match on category (group)
+    if (req.category) {
+      const cat = req.category.toLowerCase();
+      for (const kw of questionKeywords) {
+        if (cat.includes(kw)) score += 1;
+      }
+      // Boost if category matches path-derived categories
+      for (const pathCat of pathCategories) {
+        if (cat === pathCat.toLowerCase()) {
+          score += 3; // Strong signal from artifact path
+        }
+      }
+    }
+
+    // Match on text
+    if (req.text) {
+      const text = req.text.toLowerCase();
+      for (const kw of questionKeywords) {
+        if (text.includes(kw)) score += 1;
+      }
+      for (const kw of pathKeywords) {
+        if (text.includes(kw)) score += 1;
+      }
+    }
+
+    return { req, score };
+  });
+
+  // Sort by score descending, filter out zero-score entries, cap at 20
+  return scored
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 20)
+    .map(({ req }) => req);
+}
+
+/**
+ * extractKeywords — splits text into tokens and filters out stopwords.
+ * Splits on spaces, slashes, hyphens, dots, underscores.
+ *
+ * @param {string} text
+ * @returns {Set<string>} — set of meaningful lowercase tokens
+ */
+function extractKeywords(text) {
+  if (!text) return new Set();
+
+  // Split on common delimiters: space, /, -, ., _
+  const tokens = text.toLowerCase()
+    .split(/[\s\/\-\._]+/)
+    .filter(t => t.length > 0 && !STOPWORDS.has(t));
+
+  return new Set(tokens);
+}
+
+/**
+ * extractPathKeywords — extracts tokens from artifact path (just filename parts).
+ *
+ * @param {string} artifactPath
+ * @returns {Set<string>} — meaningful tokens from path
+ */
+function extractPathKeywords(artifactPath) {
+  if (!artifactPath) return new Set();
+
+  // Extract just the filename part
+  const filename = path.basename(artifactPath);
+  const tokens = filename.toLowerCase()
+    .split(/[\s\/\-\._]+/)
+    .filter(t => t.length > 0 && !STOPWORDS.has(t));
+
+  return new Set(tokens);
+}
+
+/**
+ * extractPathCategories — maps artifact path segments to category groups.
+ * Checks each segment of the path against PATH_CATEGORY_MAP.
+ *
+ * @param {string} artifactPath
+ * @returns {Array<string>} — matching category groups
+ */
+function extractPathCategories(artifactPath) {
+  if (!artifactPath) return [];
+
+  const categories = new Set();
+  const segments = artifactPath.toLowerCase().split(/[\s\/\-\._]+/);
+
+  for (const segment of segments) {
+    if (PATH_CATEGORY_MAP.has(segment)) {
+      categories.add(PATH_CATEGORY_MAP.get(segment));
+    }
+  }
+
+  return Array.from(categories);
+}
+
+/**
+ * formatRequirementsSection — formats an array of requirements into a text block.
+ * Returns null if the array is empty (no section should be injected).
+ *
+ * @param {Array} requirements — array of requirement objects
+ * @returns {string|null} — formatted section or null
+ */
+function formatRequirementsSection(requirements) {
+  if (!requirements || requirements.length === 0) {
+    return null;
+  }
+
+  const lines = [];
+  lines.push('=== APPLICABLE REQUIREMENTS ===');
+  lines.push('The following project requirements are relevant to this review.');
+  lines.push('Consider whether the proposed change satisfies or violates these:');
+  lines.push('');
+
+  for (const req of requirements) {
+    const category = req.category || 'Unknown';
+    lines.push(`- [${req.id}] ${req.text} (${category})`);
+  }
+
+  lines.push('');
+  lines.push('================================');
+
+  return lines.join('\n');
+}
+
 // ─── Pure prompt-construction functions ──────────────────────────────────────
 
 /**
@@ -54,9 +289,10 @@ const hasFlag = (f) => argv.includes(f);
  * @param {string} [opts.reviewContext]
  * @param {string} [opts.priorPositions]   - Round 2+ cross-pollination
  * @param {boolean}[opts.requestImprovements]
+ * @param {Array}  [opts.requirements]     - array of requirement objects to inject
  * @returns {string}
  */
-function buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, requestImprovements }) {
+function buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, requestImprovements, requirements }) {
   const lines = [];
 
   // Header
@@ -75,6 +311,15 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContex
     lines.push(`Path: ${artifactPath}`);
     lines.push('(Read this file to obtain its full content before evaluating.)');
     lines.push('================');
+  }
+
+  // Requirements section (conditional — injected right after question/artifact, before review context)
+  if (requirements && requirements.length > 0) {
+    const reqSection = formatRequirementsSection(requirements);
+    if (reqSection) {
+      lines.push('');
+      lines.push(reqSection);
+    }
   }
 
   // Review context (conditional — first occurrence)
@@ -170,9 +415,10 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContex
  * @param {string} [opts.artifactPath]
  * @param {string} [opts.reviewContext]
  * @param {string} [opts.priorPositions]   - Round 2+
+ * @param {Array}  [opts.requirements]     - array of requirement objects to inject
  * @returns {string}
  */
-function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, reviewContext, priorPositions }) {
+function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, reviewContext, priorPositions, requirements }) {
   const lines = [];
 
   // Header
@@ -191,6 +437,15 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, revi
     lines.push(`Path: ${artifactPath}`);
     lines.push('(Read this file to obtain its full content before evaluating.)');
     lines.push('================');
+  }
+
+  // Requirements section (conditional — injected right after question/artifact, before review context)
+  if (requirements && requirements.length > 0) {
+    const reqSection = formatRequirementsSection(requirements);
+    if (reqSection) {
+      lines.push('');
+      lines.push(reqSection);
+    }
   }
 
   // Review context (conditional — first occurrence)
@@ -521,11 +776,16 @@ async function main() {
 
   // Build prompt
   const repoDir = cwd;
+
+  // Load and match requirements (fail-open: if loading fails, requirements will be empty)
+  const allRequirements = loadRequirements(repoDir);
+  const matchedRequirements = matchRequirementsByKeywords(allRequirements, question, artifactPath);
+
   let prompt;
   if (mode === 'B') {
-    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, traces: traces || '' });
+    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements });
   } else {
-    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, requestImprovements });
+    prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements });
   }
 
   // Locate call-quorum-slot.cjs relative to this script
@@ -614,6 +874,9 @@ if (typeof module !== 'undefined') {
     parseImprovements,
     emitResultBlock,
     stripQuotes,
+    loadRequirements,
+    matchRequirementsByKeywords,
+    formatRequirementsSection,
   };
 }
 
