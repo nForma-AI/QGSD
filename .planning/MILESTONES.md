@@ -373,3 +373,33 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.27 — Production Feedback Loop (Shipped: 2026-03-04)
+
+**Phases:** v0.27-01..v0.27-05 (5 phases, 15 plans)
+**Requirements:** 22/22 (DEBT-01–06, FP-01–04, OBS-01–08, PF-01–05)
+**Git range:** cc81d679..6d309f87 (54 commits, 42 source files, 8,294 LOC)
+**Timeline:** 2026-03-04 (single day)
+
+**Delivered:** Closed the gap between QGSD's formal verification pipeline and production reality — a unified observe skill pulls production signals from GitHub, Sentry, Prometheus, Grafana, and Logstash; a fingerprint-deduplicating debt ledger tracks issues and drifts; and a P->F residual layer in solve compares formal model thresholds against observed production metrics with automatic remediation dispatch.
+
+**Key accomplishments:**
+- Debt ledger with JSON Schema validation, state machine enforcement (open→acknowledged→resolving→resolved), and retention policy archiving resolved entries older than max_age (DEBT-01, DEBT-03, DEBT-04, v0.27-01)
+- Deterministic fingerprinting: hierarchical strategy for issues (exception type→function name→message hash), parameter key for drifts; both produce stable crypto hashes (FP-01, FP-02, v0.27-01)
+- Pluggable observe skill: parallel source fetch with configurable timeout and fail-open behavior; dual-table output (Issues + Drifts); config in `.planning/observe-sources.md` YAML frontmatter (OBS-01, OBS-02, OBS-06–08, v0.27-02)
+- Cross-source deduplication: fingerprint exact-match (O(n)) then Levenshtein near-duplicate (threshold 0.85); merge preserves source_entries and higher occurrence count; formal reference auto-linker (FP-03, FP-04, DEBT-02, DEBT-05, v0.27-03)
+- Production source handlers: Prometheus (PromQL + alerts), Grafana (alert state mapping), Logstash (Elasticsearch query) — framework-ready stubs with full test coverage (OBS-03–05, v0.27-04)
+- 8-layer solve pipeline: P->F residual reads acknowledged debt, compares against formal thresholds; two-track remediation — parameter updates via /qgsd:quick, investigation flags for regressions; freeze semantics prevent observe overwrites during solve (PF-01–05, v0.27-05)
+
+**Tests:** 436+ tests GREEN, 0 regressions
+**Formal:** 24/24 integration connections verified, 5/5 E2E flows complete
+
+**Tech debt incurred:**
+- v0.27-03/04/05 missing VERIFICATION.md (phases executed during auto-advance; code+tests verified manually)
+- REQUIREMENTS.md traceability checkboxes never bulk-updated to [x] (cosmetic — all 22 reqs satisfied)
+
+**Audit:** TECH_DEBT — 22/22 requirements satisfied, process documentation gaps accepted
+**Archive:** `.planning/milestones/v0.27-MILESTONE-AUDIT.md`
+
+---
+

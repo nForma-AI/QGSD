@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.27 Production Feedback Loop — COMPLETE
+**Current focus:** v0.27 archived — planning next milestone
 
 ## Current Position
 
-Phase: v0.27-05 of 5 (Solve P->F Integration)
-Plan: 03 of 03 (Integration into qgsd-solve.cjs + end-to-end test)
-Status: Complete (All 5 phases done for v0.27; milestone shipped)
-Last activity: 2026-03-04 - Completed quick task 166: Autonomous milestone completion loop via audit-milestone --auto
+Phase: —
+Plan: —
+Status: Milestone v0.27 archived. Ready for next milestone.
+Last activity: 2026-03-04 - Archived milestone v0.27 Production Feedback Loop
 
-Progress: [████████████] 100%
+Progress: Ready for /qgsd:new-milestone
 
 ## Performance Metrics
 
