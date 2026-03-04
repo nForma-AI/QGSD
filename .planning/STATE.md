@@ -77,5 +77,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-04
-Stopped at: Phase v0.26-05 completed, v0.26-06 ready to discuss
-Resume file: .planning/phases/v0.26-06-cross-model-decomposition/
+Stopped at: Phase v0.26-06 context gathered
+Resume file: .planning/phases/v0.26-06-cross-model-decomposition/v0.26-06-CONTEXT.md
