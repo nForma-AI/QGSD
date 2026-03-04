@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-04T10:57:41.231Z",
-  "content_hash": "0e2271bd43a6fed4",
-  "frozen_at": "2026-03-04T10:57:41.231Z",
+  "aggregated_at": "2026-03-04T13:06:37.485Z",
+  "content_hash": "552ce06982e6236e",
+  "frozen_at": "2026-03-04T13:06:37.485Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -1643,6 +1643,18 @@
       "provenance": {
         "source_file": ".planning/quick/149-add-vs-code-style-activity-bar-to-tui-wi/149-PLAN.md",
         "milestone": "quick-149"
+      }
+    },
+    {
+      "id": "NAV-02",
+      "text": "Sessions module (F4) in nForma TUI embeds interactive Claude Code terminal sessions via blessed-xterm, supporting creation, connection, and termination of multiple PTY-backed sessions with full focus management and module switching.",
+      "category": "TUI Navigation",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Multi-session Claude Code management from within nForma requires an interactive terminal widget embedded in the TUI. blessed-xterm provides PTY-backed terminal embedding compatible with blessed widget system, enabling users to run multiple concurrent Claude Code sessions without leaving the TUI.",
+      "provenance": {
+        "source_file": ".planning/quick/156-add-sessions-module-to-nforma-with-bless/156-PLAN.md",
+        "milestone": "quick-156"
       }
     },
     {
