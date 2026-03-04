@@ -32,7 +32,7 @@
 
 **Milestone Goal:** Close the gap between QGSD's formal verification pipeline and production reality by adding a unified observe skill that pulls production signals, a fingerprint-deduplicating debt ledger, and a P->F residual layer in solve that compares formal model thresholds against observed production metrics.
 
-- [ ] **Phase v0.27-01: Debt Schema & Fingerprinting Foundation** - Debt ledger schema, state machine, retention policy, and fingerprinting algorithms
+- [x] **Phase v0.27-01: Debt Schema & Fingerprinting Foundation** - Debt ledger schema, state machine, retention policy, and fingerprinting algorithms (✅ 2026-03-04)
 - [ ] **Phase v0.27-02: Observe Skill Core** - Pluggable observe command replacing triage with parallel source fetching and debt write-through
 - [ ] **Phase v0.27-03: Cross-Source Deduplication** - Fingerprint matching, near-duplicate merging, and formal parameter linkage
 - [ ] **Phase v0.27-04: Production Source Types** - Prometheus, Grafana, and Logstash source handlers (framework-ready)
@@ -40,22 +40,22 @@
 
 ## Phase Details
 
-### Phase v0.27-01: Debt Schema & Fingerprinting Foundation
+### Phase v0.27-01: Debt Schema & Fingerprinting Foundation ✅
 **Goal**: A validated debt ledger exists with correct schema, state machine enforcement, retention policy, and deterministic fingerprinting algorithms for both issues and drifts
 **Depends on**: Nothing (first phase)
 **Requirements**: DEBT-01, DEBT-03, DEBT-04, FP-01, FP-02
-**Status**: 2/3 plans complete (67%)
+**Status**: 3/3 plans complete (100%) — Phase complete ✅
 **Success Criteria** (what must be TRUE):
   1. ✓ Debt schema defined with all required fields (id, fingerprint, title, occurrences, first_seen, last_seen, environments, status, formal_ref, source_entries) with runtime validation
   2. ✓ Debt status transitions enforce state machine (open -> acknowledged -> resolving -> resolved) and reject invalid transitions (e.g., resolved -> open)
   3. ✓ Issues produce stable fingerprints via hierarchical strategy (exception type -> function name -> message pattern hash) — same input always yields same fingerprint
   4. ✓ Drifts produce stable fingerprints by formal parameter key — identical parameter keys always map to same fingerprint
-  5. — Resolved entries older than max_age archived to `.formal/debt-archive.jsonl` when retention runs (Plan 03)
+  5. ✓ Resolved entries older than max_age archived to `.formal/debt-archive.jsonl` when retention runs
 **Plans**: 3 plans
 Plans:
 - [x] v0.27-01-01-PLAN.md — Schema definition, validation, and state machine (DEBT-01, DEBT-03) ✅ (2026-03-04, 7min, 70 tests)
 - [x] v0.27-01-02-PLAN.md — Issue and drift fingerprinting algorithms (FP-01, FP-02) ✅ (2026-03-04, 12min, 38 tests)
-- [ ] v0.27-01-03-PLAN.md — Ledger I/O, retention policy, and integration test (DEBT-04)
+- [x] v0.27-01-03-PLAN.md — Ledger I/O, retention policy, and integration test (DEBT-04) ✅ (2026-03-04, 4min, 27 tests)
 
 ### Phase v0.27-02: Observe Skill Core
 **Goal**: Users can run `/qgsd:observe` to fetch issues from all configured sources in parallel, see severity-sorted output split into Issues and Drifts tables, and have results written to the debt ledger
