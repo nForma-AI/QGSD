@@ -633,10 +633,12 @@ function sweepFtoC() {
     timeout: 300000,
   });
 
-  if (!result.ok) {
+  // Non-zero exit is expected when checks fail — still parse check-results.ndjson.
+  // Only bail on spawn errors (result.stderr without any ndjson output).
+  if (!result.ok && result.stderr && !fs.existsSync(path.join(ROOT, '.formal', 'check-results.ndjson'))) {
     return {
       residual: -1,
-      detail: { error: result.stderr || 'run-formal-verify.cjs failed' },
+      detail: { error: result.stderr.slice(0, 500) || 'run-formal-verify.cjs failed' },
     };
   }
 
