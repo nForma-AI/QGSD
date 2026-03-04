@@ -35,7 +35,7 @@
 - [x] **Phase v0.27-01: Debt Schema & Fingerprinting Foundation** - Debt ledger schema, state machine, retention policy, and fingerprinting algorithms (✅ 2026-03-04)
 - [x] **Phase v0.27-02: Observe Skill Core** - Pluggable observe command replacing triage with parallel source fetching and debt write-through (completed 2026-03-04)
 - [x] **Phase v0.27-03: Cross-Source Deduplication** - Fingerprint matching, near-duplicate merging, and formal parameter linkage (✅ 2026-03-04)
-- [ ] **Phase v0.27-04: Production Source Types** - Prometheus, Grafana, and Logstash source handlers (framework-ready)
+- [x] **Phase v0.27-04: Production Source Types** - Prometheus, Grafana, and Logstash source handlers (completed 2026-03-04)
 - [ ] **Phase v0.27-05: Solve P->F Integration** - Production-to-Formal residual layer closing the feedback loop
 
 ## Phase Details
@@ -89,19 +89,20 @@ Plans:
 - [x] v0.27-03-02-PLAN.md — Dedup engine and formal reference auto-linker (FP-03, FP-04, DEBT-02, DEBT-05) ✅ (2026-03-04, 5min, 41 tests)
 - [x] v0.27-03-03-PLAN.md — Integration into observe-debt-writer and end-to-end test (FP-03, FP-04, DEBT-02, DEBT-05) ✅ (2026-03-04, 4min, 24 tests)
 
-### Phase v0.27-04: Production Source Types
+### Phase v0.27-04: Production Source Types ✅
 **Goal**: Observe supports Prometheus, Grafana, and Logstash as pluggable source types with framework-ready handlers
 **Depends on**: Phase v0.27-02
 **Requirements**: OBS-03, OBS-04, OBS-05
+**Status**: 3/3 plans complete (100%) — Phase complete ✅
 **Success Criteria** (what must be TRUE):
-  1. `/qgsd:observe` with a `prometheus` source executes a PromQL query against a configured endpoint and maps results to the standard issue schema
-  2. `/qgsd:observe` with a `grafana` source fetches active alerts from a configured Grafana instance and maps them to the standard issue schema
-  3. `/qgsd:observe` with a `logstash` source runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue schema
+  1. ✓ `/qgsd:observe` with a `prometheus` source executes a PromQL query against a configured endpoint and maps results to the standard issue schema
+  2. ✓ `/qgsd:observe` with a `grafana` source fetches active alerts from a configured Grafana instance and maps them to the standard issue schema
+  3. ✓ `/qgsd:observe` with a `logstash` source runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue schema
 **Plans**: 3 plans
 Plans:
-- [ ] v0.27-04-01-PLAN.md — Prometheus handler with alerts and PromQL support (OBS-03)
-- [ ] v0.27-04-02-PLAN.md — Grafana handler with alert state mapping (OBS-04)
-- [ ] v0.27-04-03-PLAN.md — Logstash handler, registration, and config samples (OBS-05)
+- [x] v0.27-04-01-PLAN.md — Prometheus handler with alerts and PromQL support (OBS-03) ✅ (2026-03-04, 13 tests)
+- [x] v0.27-04-02-PLAN.md — Grafana handler with alert state mapping (OBS-04) ✅ (2026-03-04, 17 tests)
+- [x] v0.27-04-03-PLAN.md — Logstash handler, registration, and config samples (OBS-05) ✅ (2026-03-04, 20 tests)
 
 ### Phase v0.27-05: Solve P->F Integration
 **Goal**: The solve command includes a Production-to-Formal residual layer that reads acknowledged debt, compares against formal thresholds, and dispatches remediation — closing the feedback loop
@@ -128,5 +129,5 @@ Plans:
 | v0.27-01. Debt Schema & Fingerprinting Foundation | 3/3 | Complete    | 2026-03-04 |
 | v0.27-02. Observe Skill Core | 0/3 | Complete    | 2026-03-04 |
 | v0.27-03. Cross-Source Deduplication | 3/3 | Complete    | 2026-03-04 |
-| v0.27-04. Production Source Types | 0/TBD | Not started | - |
+| v0.27-04. Production Source Types | 3/3 | Complete    | 2026-03-04 |
 | v0.27-05. Solve P->F Integration | 0/TBD | Not started | - |
