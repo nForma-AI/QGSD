@@ -54,6 +54,7 @@ if (cliArgs.includes('--reset-breaker')) {
 
 // ─── TUI (interactive mode — no CLI flags matched) ───────────────────────────
 const blessed    = require('blessed');
+const XTerm      = require('blessed-xterm');
 
 // ─── Reuse logic layer from manage-agents-core.cjs ───────────────────────────
 const core = require('./manage-agents-core.cjs');
@@ -99,6 +100,7 @@ const MODULES = [
   {
     name: 'Agents',
     icon: '⚡',
+    art: ['▄█▄', '█ █', '█▀█'],
     key: 'f1',
     items: [
       { label: '  List Agents',              action: 'list'          },
@@ -123,6 +125,7 @@ const MODULES = [
   {
     name: 'Reqs',
     icon: '◆',
+    art: ['█▀█', '██▀', '█ █'],
     key: 'f2',
     items: [
       { label: '  Browse Reqs',             action: 'req-browse'       },
@@ -135,6 +138,7 @@ const MODULES = [
   {
     name: 'Config',
     icon: '⚙',
+    art: ['▄▀▀', '█  ', '▀▄▄'],
     key: 'f3',
     items: [
       { label: '  Settings',                action: 'settings'      },
@@ -147,35 +151,196 @@ const MODULES = [
       { label: '  Exit',                    action: 'exit'          },
     ],
   },
+  {
+    name: 'Sessions',
+    icon: '\u25b6',
+    art: ['\u2584\u2580\u2584', '\u2588\u2580\u2580', '\u2580\u2584\u2584'],
+    key: 'f4',
+    items: [
+      { label: '  New Session',    action: 'session-new' },
+    ],
+  },
 ];
 
 // Backward compat: flat array of all items across modules (tests + exports rely on this)
 const MENU_ITEMS = MODULES.flatMap(m => m.items);
 
+// ─── Session state ───────────────────────────────────────────────────────────
+const sessions = [];        // { id, name, cwd, term (XTerm widget), alive }
+let activeSessionIdx = -1;  // -1 = no terminal shown
+let sessionIdCounter = 0;
+
 // ─── Module switching (activity bar) ──────────────────────────────────────────
 let activeModuleIdx = 0;
 
 function switchModule(idx) {
+  // Hide active terminal when leaving Sessions module
+  if (activeModuleIdx === 3 && activeSessionIdx >= 0 && activeSessionIdx < sessions.length) {
+    sessions[activeSessionIdx].term.hide();
+    contentBox.show();
+  }
   activeModuleIdx = idx;
   const mod = MODULES[idx];
 
-  // Update activity bar icons — highlight active module
-  const barLines = MODULES.map((m, i) => {
+  // Update activity bar icons — 3-line pixel art per module
+  const blocks = MODULES.map((m, i) => {
     const active = (i === idx);
-    const icon = active
-      ? `{#4a9090-fg}${m.icon}{/}`
-      : `{#555555-fg}${m.icon}{/}`;
-    return ` ${icon} `;
+    const C = active ? '{#4a9090-fg}' : '{#666666-fg}';
+    const E = '{/}';
+    const fk = m.key.toUpperCase();
+    const lines = [
+      '',
+      ...m.art.map(row => ` ${C}${row}${E}`),
+      `  ${C}${fk}${E}`,
+    ];
+    if (i < MODULES.length - 1) lines.push(` {#444444-fg}─────{/}`);
+    return lines.join('\n');
   });
-  activityBar.setContent(barLines.join('\n'));
+  activityBar.setContent(blocks.join('\n'));
 
   // Swap menu items
   menuList.clearItems();
   menuList.setItems(mod.items.map(m => m.label));
-  menuList.setLabel(` {#666666-fg}${mod.name}{/} `);
+  menuList.setLabel(` {#888888-fg}${mod.name}{/} `);
   menuList.select(0);
   menuList.focus();
   screen.render();
+
+  // If switching TO Sessions with an active session, reconnect terminal
+  if (idx === 3 && activeSessionIdx >= 0 && activeSessionIdx < sessions.length) {
+    connectSession(activeSessionIdx);
+    return;
+  }
+
+  // Auto-show first item's content (skip separators, use view-only for interactive actions)
+  const first = mod.items[0];
+  if (first && first.action !== 'sep') {
+    const viewAction = first.action === 'settings' ? 'settings-view' : first.action;
+    dispatch(viewAction);
+  }
+}
+
+// ─── Session lifecycle ───────────────────────────────────────────────────────
+
+function refreshSessionMenu() {
+  const mod = MODULES[3]; // Sessions
+  const items = [{ label: '  New Session', action: 'session-new' }];
+  if (sessions.length > 0) {
+    items.push({ label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' });
+    sessions.forEach((s, i) => {
+      const status = s.alive ? '{green-fg}\u25cf{/}' : '{red-fg}\u25cb{/}';
+      const active = (i === activeSessionIdx) ? '{#4a9090-fg}\u25b8{/} ' : '  ';
+      items.push({
+        label: `${active}${status} [${s.id}] ${s.name}`,
+        action: `session-connect-${i}`,
+      });
+    });
+    items.push({ label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' });
+    items.push({ label: '  Kill Session', action: 'session-kill' });
+  }
+  mod.items = items;
+  // If Sessions module is active, refresh the visible menu
+  if (activeModuleIdx === 3) {
+    menuList.clearItems();
+    menuList.setItems(mod.items.map(m => m.label));
+    screen.render();
+  }
+}
+
+function createSession(name, cwd) {
+  const id = ++sessionIdCounter;
+  const term = new XTerm({
+    shell: 'claude',
+    args: [],
+    cwd: cwd || process.cwd(),
+    cursorType: 'block',
+    scrollback: 1000,
+    top: 3, left: 35, right: 0, bottom: 2,
+    border: { type: 'line' },
+    style: {
+      bg: S.mid,
+      border: { fg: S.bdr },
+      focus: { border: { fg: '#4a9090' } },
+    },
+    label: ` {#4a9090-fg}${name}{/} `,
+    tags: true,
+    ignoreKeys: ['f1', 'f2', 'f3', 'f4', 'C-\\\\'],
+  });
+  screen.append(term);
+  term.hide();
+
+  const session = { id, name, cwd: cwd || process.cwd(), term, alive: true };
+  sessions.push(session);
+
+  term.on('exit', () => {
+    session.alive = false;
+    refreshSessionMenu();
+    if (activeSessionIdx === sessions.indexOf(session)) {
+      toast(`Session "${name}" exited`);
+    }
+    screen.render();
+  });
+
+  refreshSessionMenu();
+  connectSession(sessions.length - 1);
+  return session;
+}
+
+function connectSession(idx) {
+  if (idx < 0 || idx >= sessions.length) return;
+  // Hide contentBox
+  contentBox.hide();
+  // Hide previous active terminal
+  if (activeSessionIdx >= 0 && activeSessionIdx < sessions.length) {
+    sessions[activeSessionIdx].term.hide();
+  }
+  // Show and focus new terminal
+  activeSessionIdx = idx;
+  sessions[idx].term.show();
+  sessions[idx].term.focus();
+  screen.render();
+}
+
+function disconnectSession() {
+  if (activeSessionIdx >= 0 && activeSessionIdx < sessions.length) {
+    sessions[activeSessionIdx].term.hide();
+  }
+  activeSessionIdx = -1;
+  contentBox.show();
+  menuList.focus();
+  screen.render();
+}
+
+function killSession(idx) {
+  if (idx < 0 || idx >= sessions.length) return;
+  const session = sessions[idx];
+  try { session.term.terminate(); } catch (_) {}
+  screen.remove(session.term);
+  sessions.splice(idx, 1);
+  // Adjust activeSessionIdx
+  if (activeSessionIdx === idx) {
+    disconnectSession();
+  } else if (activeSessionIdx > idx) {
+    activeSessionIdx--;
+  }
+  refreshSessionMenu();
+}
+
+async function newSessionFlow() {
+  const name = await promptInput({ title: 'New Session', prompt: 'Session name:' });
+  if (!name) return;
+  const cwd = await promptInput({ title: 'New Session', prompt: 'Working directory:', default: process.cwd() });
+  createSession(name, cwd || process.cwd());
+}
+
+async function killSessionFlow() {
+  if (sessions.length === 0) { toast('No sessions to kill'); return; }
+  const items = sessions.map((s, i) => ({
+    label: `[${s.id}] ${s.name} (${s.alive ? 'alive' : 'dead'})`,
+    value: i,
+  }));
+  const choice = await promptList({ title: 'Kill Session', items });
+  killSession(choice.value);
 }
 
 // ─── Providers.json helpers ───────────────────────────────────────────────────
@@ -368,74 +533,97 @@ function buildHeaderInfo() {
 }
 
 // ─── Screen setup ─────────────────────────────────────────────────────────────
-const screen = blessed.screen({ smartCSR: true, title: 'QGSD Agent Manager' });
+const screen = blessed.screen({ smartCSR: true, title: 'nForma' });
 
-// Raw ANSI codes — identical to install.js, bypasses blessed's hex→ANSI conversion
-const _S = '\x1b[38;5;209m'; // salmon  (ANSI 256-color 209, same as install.js)
-const _C = '\x1b[36m';       // cyan    (ANSI standard 6)
-const _D = '\x1b[38;5;240m'; // dim gray for tagline
-const _R = '\x1b[0m';        // reset
-
-const HEADER_CONTENT =
-  `${_S}  ██████╗ ${_R}${_C} ██████╗ ███████╗██████╗${_R}\n` +
-  `${_S} ██╔═══██╗${_R}${_C}██╔════╝ ██╔════╝██╔══██╗${_R}\n` +
-  `${_S} ██║   ██║${_R}${_C}██║  ███╗███████╗██║  ██║${_R}\n` +
-  `${_S} ██║▄▄ ██║${_R}${_C}██║   ██║╚════██║██║  ██║${_R}\n` +
-  `${_S} ╚██████╔╝${_R}${_C}╚██████╔╝███████║██████╔╝${_R}\n` +
-  `${_S}  ╚══▀▀═╝ ${_R}${_C} ╚═════╝ ╚══════╝╚═════╝${_R}\n` +
-  `${_D}  Quorum Gets Shit Done  ·  Agent Manager${_R}`;
+// ─── Surface palette ─────────────────────────────────────────────────────────
+// Layered surfaces for depth (dark → light = recessed → raised):
+//   base  #1a1a1a  — screen fill, activity bar
+//   mid   #1e1e1e  — main panels (menu, content)
+//   top   #222222  — header, status bar (raised chrome)
+//   bdr   #3a3a3a  — borders
+//   sel   #1e3a3a  — selection highlight (teal tint)
+const S = { base: '#1a1a1a', mid: '#1e1e1e', top: '#222222', bdr: '#3a3a3a', sel: '#1e3a3a' };
 
 const header = blessed.box({
-  top: 0, left: 0, width: 46, height: 8,
-  content: HEADER_CONTENT,
-  tags: false,
-  style: { bg: '#111111' },
-});
-
-function renderHeader() { screen.render(); }
-
-const activityBar = blessed.box({
-  top: 8, left: 0, width: 6, bottom: 2,
+  top: 0, left: 0, width: '100%', height: 3,
   tags: true,
   border: { type: 'line' },
-  style: { bg: '#111111', fg: '#888888', border: { fg: '#333333' } },
+  style: { bg: S.top, border: { fg: S.bdr } },
+});
+
+function renderHeader() {
+  const logo = ` {#e07850-fg}{bold}nForma AI{/bold}{/} {#777777-fg}· agent manager{/}`;
+  const keys = `{#4a9090-fg}[F1]{/} A  {#4a9090-fg}[F2]{/} R  {#4a9090-fg}[F3]{/} C  {#4a9090-fg}[F4]{/} S   {#4a9090-fg}[Tab]{/} cycle  {#4a9090-fg}[C-\\]{/} menu  {#4a9090-fg}[q]{/} quit `;
+  const w = screen.width || 120;
+  const gap = Math.max(2, w - 25 - 74);
+  header.setContent(logo + ' '.repeat(gap) + keys);
+  screen.render();
+}
+
+const activityBar = blessed.box({
+  top: 3, left: 0, width: 9, bottom: 2,
+  tags: true,
+  border: { type: 'line' },
+  style: { bg: S.base, fg: '#888888', border: { fg: S.bdr } },
 });
 
 const menuList = blessed.list({
-  top: 8, left: 6, width: 26, bottom: 2,
+  top: 3, left: 9, width: 26, bottom: 2,
   label: ' {#666666-fg}Agents{/} ', tags: true,
   border: { type: 'line' },
   style: {
-    bg: '#111111',
-    border: { fg: '#333333' },
-    selected: { bg: '#1e3a3a', fg: '#cccccc', bold: true },
-    item: { fg: '#888888' },
+    bg: S.mid,
+    border: { fg: S.bdr },
+    selected: { bg: S.sel, fg: '#cccccc', bold: true },
+    item: { fg: '#999999' },
   },
   keys: true, vi: true, mouse: true, tags: true,
   items: MODULES[0].items.map(m => m.label),
 });
 
 const contentBox = blessed.box({
-  top: 8, left: 32, right: 0, bottom: 2,
+  top: 3, left: 35, right: 0, bottom: 2,
   label: ' {#666666-fg}Content{/} ', tags: true,
   border: { type: 'line' },
   scrollable: true, alwaysScroll: true, mouse: true,
-  scrollbar: { ch: ' ', style: { bg: '#333333' } },
-  style: { bg: '#111111', fg: '#aaaaaa', border: { fg: '#333333' } },
+  scrollbar: { ch: ' ', style: { bg: '#444444' } },
+  style: { bg: S.mid, fg: '#aaaaaa', border: { fg: S.bdr } },
 });
-
-const STATUS_DEFAULT = ' {#4a9090-fg}[F1]{/} Agents  {#4a9090-fg}[F2]{/} Reqs  {#4a9090-fg}[F3]{/} Config   {#4a9090-fg}[↑↓]{/} Navigate  {#4a9090-fg}[Enter]{/} Select  {#4a9090-fg}[r]{/} Refresh  {#4a9090-fg}[q]{/} Quit';
 
 const statusBar = blessed.box({
   bottom: 0, left: 0, width: '100%', height: 3,
-  content: STATUS_DEFAULT,
   tags: true,
   border: { type: 'line' },
-  style: { fg: '#888888', bg: '#111111', border: { fg: '#333333' } },
+  style: { fg: '#999999', bg: S.top, border: { fg: S.bdr } },
 });
 
-// ─── Settings pane (two-column display, always visible) ───────────────────────
-// Padding is computed from plain text widths so blessed tags don't skew alignment.
+function refreshStatusBar(extra) {
+  try {
+    const { requirements } = reqCore.readRequirementsJson();
+    const registry     = reqCore.readModelRegistry();
+    const checkResults = reqCore.readCheckResults();
+    const cov          = reqCore.computeCoverage(requirements, registry, checkResults);
+    const complete     = cov.byStatus.Complete || 0;
+    const pending      = cov.byStatus.Pending  || 0;
+    const pct          = cov.total ? Math.round(complete / cov.total * 100) : 0;
+    const fmPct        = cov.total ? Math.round(cov.withFormalModels / cov.total * 100) : 0;
+
+    const D = '{#777777-fg}', V = '{#aaaaaa-fg}', A = '{#4a9090-fg}', G = '{green-fg}', Y = '{yellow-fg}', E = '{/}';
+    let line = ` ${D}Reqs${E} ${A}${cov.total}${E}` +
+               `  ${G}${complete}${E}${D}✓${E}` +
+               `  ${Y}${pending}${E}${D}…${E}` +
+               `  ${D}(${V}${pct}%${E}${D})${E}` +
+               `   ${D}Formal${E} ${V}${fmPct}%${E}`;
+
+    if (extra) line += `   ${extra}`;
+    statusBar.setContent(line);
+  } catch (_) {
+    statusBar.setContent(extra ? ` ${extra}` : '');
+  }
+  screen.render();
+}
+
+// ─── Settings content (rendered in contentBox when Settings action selected) ──
 function buildSettingsPaneContent() {
   const cfg     = readProjectConfig();
   const qgsd    = readQgsdJson();
@@ -447,53 +635,48 @@ function buildSettingsPaneContent() {
   const nStr    = String(effN) + (byProf[profile] != null ? '*' : '');
   const failStr = qgsd.fail_mode || '—';
 
-  const D = '{#444444-fg}', V = '{#888888-fg}', A = '{#4a9090-fg}', Z = '{/}';
-  const DIV = ' {#282828-fg}│{/} ';
-
-  // mTag: colored model value; mPlain: plain version for width calculation
-  const mPlain = k => ov[k] ? `${ov[k]}*` : (AGENT_TIERS[k]?.[profile] || '—');
-  const mTag   = k => ov[k] ? `${A}${ov[k]}${Z}{#555555-fg}*${Z}` : `${V}${AGENT_TIERS[k]?.[profile] || '—'}${Z}`;
-
-  // Build a row: left cell padded to COL_W visible chars, then divider, then right cell
-  const COL_W = 27;
-  function row(lPlain, lTagged, rTagged = '') {
-    const pad = ' '.repeat(Math.max(0, COL_W - lPlain.length));
-    return lTagged + pad + DIV + rTagged;
-  }
+  const D = '{#777777-fg}', V = '{#aaaaaa-fg}', A = '{#4a9090-fg}', Z = '{/}';
+  const mTag = k => ov[k] ? `${A}${ov[k]}${Z}{#888888-fg}*${Z}` : `${V}${AGENT_TIERS[k]?.[profile] || '—'}${Z}`;
 
   const agents = ['qgsd-planner', 'qgsd-executor', 'qgsd-phase-researcher', 'qgsd-verifier', 'qgsd-codebase-mapper'];
-  const rLabels = ['Planner ', 'Executor', 'Research', 'Verifier', 'Mapper  '];
+  const labels = ['Planner', 'Executor', 'Researcher', 'Verifier', 'Mapper'];
 
-  const left = [
-    [`  Profile   ${profile}`, `  ${D}Profile  ${Z} ${V}${profile}${Z}`],
-    [`  Quorum n  ${nStr}`,    `  ${D}Quorum n ${Z} ${V}${nStr}${Z}`],
-    [`  Fail mode ${failStr}`, `  ${D}Fail mode${Z} ${V}${failStr}${Z}`],
-    [``, ``], [``, ``],
+  const lines = [
+    `{bold}Project Settings{/bold}`,
+    `${'─'.repeat(40)}`,
+    ``,
+    `  ${D}Profile   ${Z} ${V}${profile}${Z}`,
+    `  ${D}Quorum n  ${Z} ${V}${nStr}${Z}`,
+    `  ${D}Fail mode ${Z} ${V}${failStr}${Z}`,
+    ``,
+    `{bold}Model Tiers{/bold}  {#888888-fg}(${profile} profile)${Z}`,
+    `${'─'.repeat(40)}`,
+    ``,
   ];
 
-  return agents.map((key, i) => {
-    const [lp, lt] = left[i] || ['', ''];
-    return row(lp, lt, `  ${D}${rLabels[i]}${Z} ${mTag(key)}`);
-  }).join('\n');
-}
+  for (let i = 0; i < agents.length; i++) {
+    lines.push(`  ${D}${pad(labels[i], 12)}${Z} ${mTag(agents[i])}`);
+  }
 
-const settingsPane = blessed.box({
-  top: 0, left: 46, right: 0, height: 8,
-  label: ' {#666666-fg}Settings{/} ', tags: true,
-  border: { type: 'line' },
-  style: { bg: '#111111', fg: '#666666', border: { fg: '#333333' } },
-});
+  lines.push('');
+  lines.push(`{#888888-fg}  * = override active${Z}`);
+
+  return lines.join('\n');
+}
 
 function refreshSettingsPane() {
-  settingsPane.setContent(buildSettingsPaneContent());
-  screen.render();
+  // Settings now render in contentBox when Config module's Settings action is triggered
+  // Only refresh if we're currently showing settings in the content area
+  if (activeModuleIdx === 2 && _showingSettings) {
+    setContent('Settings', buildSettingsPaneContent());
+  }
 }
+let _showingSettings = false;
 
 screen.append(header);
 screen.append(activityBar);
 screen.append(menuList);
 screen.append(contentBox);
-screen.append(settingsPane);
 screen.append(statusBar);
 
 // ─── Content helpers ─────────────────────────────────────────────────────────
@@ -511,11 +694,11 @@ function promptInput(opts) {
       top: 'center', left: 'center', width: 64, height: 10,
       label: ` {#888888-fg}${opts.title}{/} `, tags: true,
       border: { type: 'line' },
-      style: { bg: '#1a1a1a', border: { fg: '#444444' } },
+      style: { bg: '#222222', border: { fg: '#444444' } },
       shadow: true,
     });
     blessed.text({ parent: box, top: 1, left: 2, content: opts.prompt || '', tags: true,
-      style: { fg: '#aaaaaa', bg: '#1a1a1a' } });
+      style: { fg: '#aaaaaa', bg: '#222222' } });
     const input = blessed.textbox({
       parent: box, top: 3, left: 2, right: 2, height: 1,
       inputOnFocus: true, censor: !!opts.isPassword,
@@ -523,8 +706,8 @@ function promptInput(opts) {
     });
     if (opts.default) input.setValue(opts.default);
     blessed.text({ parent: box, top: 6, left: 2,
-      content: '{#555555-fg}[Enter]{/} confirm   [Esc] cancel', tags: true,
-      style: { bg: '#1a1a1a' } });
+      content: '{#777777-fg}[Enter]{/} confirm   [Esc] cancel', tags: true,
+      style: { bg: '#222222' } });
     screen.append(box);
     input.focus();
     screen.render();
@@ -547,7 +730,7 @@ function promptList(opts) {
       label: ` {#888888-fg}${opts.title}{/} `, tags: true,
       border: { type: 'line' },
       style: {
-        bg: '#1a1a1a',
+        bg: '#222222',
         border: { fg: '#444444' },
         selected: { bg: '#1e3a3a', fg: '#cccccc', bold: true },
         item: { fg: '#888888' },
@@ -585,7 +768,7 @@ function promptCheckbox(opts) {
       label: ` {#888888-fg}${opts.title}{/} `, tags: true,
       border: { type: 'line' },
       style: {
-        bg: '#1a1a1a',
+        bg: '#222222',
         border: { fg: '#444444' },
         selected: { bg: '#1e3a3a', fg: '#cccccc' },
         item: { fg: '#888888' },
@@ -664,7 +847,7 @@ function promptLoginExternal(title, loginCmd, credentialFile = null) {
       top: 'center', left: 'center', width: 70, height: 12,
       label: ` {#888888-fg}${title}{/} `, tags: true,
       border: { type: 'line' },
-      style: { bg: '#1a1a1a', border: { fg: '#444444' } },
+      style: { bg: '#222222', border: { fg: '#444444' } },
       shadow: true,
       keys: true, mouse: true,
     });
@@ -2067,7 +2250,16 @@ async function dispatch(action) {
     }
     else if (action === 'scoreboard')     renderScoreboard();
     else if (action === 'update-agents') await updateAgentsFlow();
-    else if (action === 'settings')      await settingsFlow();
+    else if (action === 'settings-view') {
+      _showingSettings = true;
+      setContent('Settings', buildSettingsPaneContent());
+    }
+    else if (action === 'settings') {
+      _showingSettings = true;
+      setContent('Settings', buildSettingsPaneContent());
+      await settingsFlow();
+      _showingSettings = false;
+    }
     else if (action === 'tune-timeouts') await tuneTimeoutsFlow();
     else if (action === 'update-policy') await updatePolicyFlow();
     else if (action === 'export')        await exportFlow();
@@ -2077,6 +2269,11 @@ async function dispatch(action) {
     else if (action === 'req-traceability') await reqTraceabilityFlow();
     else if (action === 'req-aggregate')    await reqAggregateFlow();
     else if (action === 'req-gaps')         reqCoverageGapsFlow();
+    else if (action === 'session-new')  await newSessionFlow();
+    else if (action === 'session-kill') await killSessionFlow();
+    else if (action.startsWith('session-connect-')) {
+      connectSession(parseInt(action.replace('session-connect-', ''), 10));
+    }
   } catch (err) {
     if (err.message !== 'cancelled') toast(err.message, true);
     menuList.focus();
@@ -2168,31 +2365,7 @@ function renderReqCoverage() {
 async function reqBrowseFlow() {
   const { requirements } = reqCore.readRequirementsJson();
   if (!requirements.length) { setContent('Browse Reqs', 'No requirements found.'); return; }
-
-  const categories = reqCore.getUniqueCategories(requirements);
-  const statuses   = [...new Set(requirements.map(r => r.status || 'Unknown'))].sort();
-
-  const filterChoice = await promptList({ title: 'Browse — Filter', items: [
-    { label: 'All',         value: 'all'      },
-    { label: 'By Category', value: 'category' },
-    { label: 'By Status',   value: 'status'   },
-    { label: 'Search',      value: 'search'   },
-  ] });
-
-  let filters = {};
-  if (filterChoice.value === 'category') {
-    const catChoice = await promptList({ title: 'Category', items: categories.map(c => ({ label: c, value: c })) });
-    filters.category = catChoice.value;
-  } else if (filterChoice.value === 'status') {
-    const statusChoice = await promptList({ title: 'Status', items: statuses.map(s => ({ label: s, value: s })) });
-    filters.status = statusChoice.value;
-  } else if (filterChoice.value === 'search') {
-    const term = await promptInput({ title: 'Search', prompt: 'Search text (id or description):' });
-    if (term) filters.search = term;
-  }
-
-  const filtered = reqCore.filterRequirements(requirements, filters);
-  renderReqList(filtered, filters);
+  renderReqList(requirements, {});
 }
 
 function renderReqList(reqs, filters) {
@@ -2204,34 +2377,20 @@ function renderReqList(reqs, filters) {
   const subtitle = filterDesc.length ? ` (${filterDesc.join(', ')})` : '';
 
   // Dynamic text width: fill remaining space in contentBox
-  const innerW = (screen.width || 120) - 32 - 2; // contentBox: left=32, borders=2
-
-  // Check model-registry AND requirement.formal_models for Formal column
-  const registry = reqCore.readModelRegistry();
-  const reqsWithModels = new Set();
-  for (const entry of Object.values(registry.models || {})) {
-    for (const rid of (entry.requirements || [])) reqsWithModels.add(rid);
-  }
-  for (const r of reqs) {
-    if (Array.isArray(r.formal_models) && r.formal_models.length > 0) {
-      reqsWithModels.add(r.id);
-    }
-  }
+  const innerW = (screen.width || 120) - 35 - 2; // contentBox: left=35, borders=2
 
   lines.push(`{bold}Requirements (${reqs.length})${subtitle}{/bold}`);
   lines.push('─'.repeat(Math.max(70, innerW)));
-  // indent + ID + gap + Status + gap + Formal + gap + Category + gap
-  const fixed  = 2 + 12 + 2 + 3 + 2 + 8 + 2 + 16 + 2;
-  const W = { id: 12, status: 3, formal: 8, cat: 16, text: Math.max(20, innerW - fixed - 1) };
-  lines.push(`  ${pad('ID', W.id)}  ${pad('St', W.status)}  ${pad('Formal', W.formal)}  ${pad('Category', W.cat)}  Text`);
-  lines.push('  ' + '─'.repeat(W.id + 2 + W.status + 2 + W.formal + 2 + W.cat + 2 + W.text));
+  // indent + ID + gap + Status + gap + Category + gap
+  const fixed  = 2 + 12 + 2 + 3 + 2 + 16 + 2;
+  const W = { id: 12, status: 3, cat: 16, text: Math.max(20, innerW - fixed - 1) };
+  lines.push(`  ${pad('ID', W.id)}  ${pad('St', W.status)}  ${pad('Category', W.cat)}  Text`);
+  lines.push('  ' + '─'.repeat(W.id + 2 + W.status + 2 + W.cat + 2 + W.text));
 
   for (const r of reqs) {
     const icon = r.status === 'Complete' ? '{green-fg}✓{/}' : '{yellow-fg}○{/}';
-    const hasFm = reqsWithModels.has(r.id);
-    const formal = hasFm ? '{cyan-fg}[✓]{/}     ' : '{#555555-fg}[ ]{/}     ';
     lines.push(
-      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}${' '.repeat(W.status - 1)}  ${formal}  ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, W.text)}`
+      `  {#4a9090-fg}${pad(r.id, W.id)}{/}  ${icon}${' '.repeat(W.status - 1)}  ${pad(r.category || 'Uncategorized', W.cat)}  ${pad(r.text, W.text)}`
     );
   }
 
@@ -2389,6 +2548,12 @@ screen.key(['q', 'C-c'], () => { screen.destroy(); process.exit(0); });
 screen.key(['f1'], () => switchModule(0));
 screen.key(['f2'], () => switchModule(1));
 screen.key(['f3'], () => switchModule(2));
+screen.key(['f4'], () => switchModule(3));
+screen.key(['C-\\'], () => {
+  if (activeModuleIdx === 3 && activeSessionIdx >= 0) {
+    menuList.focus();
+  }
+});
 screen.key(['tab'], () => switchModule((activeModuleIdx + 1) % MODULES.length));
 screen.key(['S-tab'], () => switchModule((activeModuleIdx - 1 + MODULES.length) % MODULES.length));
 screen.key(['r'], () => {
@@ -2396,6 +2561,36 @@ screen.key(['r'], () => {
   if (item) dispatch(item.action);
 });
 screen.key(['u'], () => dispatch('update-agents'));
+screen.key(['/'], async () => {
+  // Filter shortcut: only active in Reqs module when browsing
+  if (activeModuleIdx !== 1) return;
+  const { requirements } = reqCore.readRequirementsJson();
+  if (!requirements.length) return;
+  const categories = reqCore.getUniqueCategories(requirements);
+  const statuses   = [...new Set(requirements.map(r => r.status || 'Unknown'))].sort();
+  try {
+    const filterChoice = await promptList({ title: 'Filter', items: [
+      { label: 'All',         value: 'all'      },
+      { label: 'By Category', value: 'category' },
+      { label: 'By Status',   value: 'status'   },
+      { label: 'Search',      value: 'search'   },
+    ] });
+    let filters = {};
+    if (filterChoice.value === 'category') {
+      const catChoice = await promptList({ title: 'Category', items: categories.map(c => ({ label: c, value: c })) });
+      filters.category = catChoice.value;
+    } else if (filterChoice.value === 'status') {
+      const statusChoice = await promptList({ title: 'Status', items: statuses.map(s => ({ label: s, value: s })) });
+      filters.status = statusChoice.value;
+    } else if (filterChoice.value === 'search') {
+      const term = await promptInput({ title: 'Search', prompt: 'Search text (id or description):' });
+      if (term) filters.search = term;
+    }
+    const filtered = reqCore.filterRequirements(requirements, filters);
+    renderReqList(filtered, filters);
+  } catch (_) { /* cancelled */ }
+  menuList.focus();
+});
 menuList.on('select', (_, idx) => {
   const item = MODULES[activeModuleIdx].items[idx];
   if (item) dispatch(item.action);
@@ -2405,15 +2600,12 @@ menuList.on('select', (_, idx) => {
 const UPDATE_AGENTS_IDX = MODULES[0].items.findIndex(m => m.action === 'update-agents');
 
 function applyUpdateBadge(outdatedCount) {
-  // Status bar notice
+  // Status bar: show stats + optional update notice
   if (outdatedCount > 0) {
     const n = outdatedCount;
-    statusBar.setContent(
-      ` {#4a9090-fg}[F1]{/} Agents  {#4a9090-fg}[F2]{/} Reqs  {#4a9090-fg}[F3]{/} Config   {#4a9090-fg}[↑↓]{/} Navigate  {#4a9090-fg}[Enter]{/} Select  {#4a9090-fg}[r]{/} Refresh  {#4a9090-fg}[q]{/} Quit` +
-      `   {#888800-fg}⚑ ${n} update${n > 1 ? 's' : ''} available — press [u]{/}`
-    );
+    refreshStatusBar(`{#888800-fg}⚑ ${n} update${n > 1 ? 's' : ''} available — press [u]{/}`);
   } else {
-    statusBar.setContent(STATUS_DEFAULT);
+    refreshStatusBar();
   }
   // Menu item badge (only when Agents module is active)
   if (activeModuleIdx === 0 && UPDATE_AGENTS_IDX >= 0) {
@@ -2440,9 +2632,10 @@ function applyUpdateBadge(outdatedCount) {
 
 // ─── Start ────────────────────────────────────────────────────────────────────
 if (require.main === module) {
+  renderHeader();
   switchModule(0);
+  refreshStatusBar();
   renderList();
-  refreshSettingsPane();
   screen.render();
 }
 
