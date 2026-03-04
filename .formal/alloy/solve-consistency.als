@@ -14,7 +14,7 @@ one sig True, False extends Bool {}
 abstract sig LayerTransition {
   hasResidual: one Bool
 }
-one sig RtoF, FtoT, CtoF, TtoC, FtoC extends LayerTransition {}
+one sig RtoF, FtoT, CtoF, TtoC, FtoC, RtoD, DtoC extends LayerTransition {}
 
 -- Solver iteration state
 sig SolverIteration {
@@ -24,11 +24,11 @@ sig SolverIteration {
   formalTestCacheCleared: one Bool
 }
 
--- SOLVE-01: Solver sweeps all 5 layer transitions
+-- SOLVE-01: Solver sweeps all 7 layer transitions
 -- @requirement SOLVE-01
 fact AllLayersSwept {
-  #LayerTransition = 5
-  RtoF + FtoT + CtoF + TtoC + FtoC = LayerTransition
+  #LayerTransition = 7
+  RtoF + FtoT + CtoF + TtoC + FtoC + RtoD + DtoC = LayerTransition
 }
 
 -- SOLVE-02: Cache cleared at each iteration
@@ -52,7 +52,7 @@ fact AutoCloseAfterSweep {
 
 -- Assertions
 assert SweepCoversAllLayers {
-  #LayerTransition = 5
+  #LayerTransition = 7
 }
 
 assert CacheAlwaysCleared {
@@ -60,5 +60,5 @@ assert CacheAlwaysCleared {
     it.sweepComplete = True implies it.formalTestCacheCleared = True
 }
 
-check SweepCoversAllLayers for 5
-check CacheAlwaysCleared for 5
+check SweepCoversAllLayers for 7
+check CacheAlwaysCleared for 7

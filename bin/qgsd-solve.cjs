@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 // bin/qgsd-solve.cjs
-// Consistency solver orchestrator: sweeps Requirements->Formal->Tests->Code,
+// Consistency solver orchestrator: sweeps Requirements->Formal->Tests->Code->Docs,
 // computes a residual vector per layer transition, and auto-closes gaps.
 //
-// Layer transitions:
+// Layer transitions (7):
 //   R->F: Requirements without formal model coverage
 //   F->T: Formal invariants without test backing
 //   C->F: Code constants diverging from formal specs
 //   T->C: Failing unit tests
 //   F->C: Failing formal verification checks
+//   R->D: Requirements not documented in developer docs
+//   D->C: Stale structural claims in docs (dead file paths, missing CLI commands, absent dependencies)
 //
 // Usage:
 //   node bin/qgsd-solve.cjs                  # full sync, up to 3 iterations
@@ -81,6 +83,220 @@ function spawnTool(script, args, opts = {}) {
       stderr: err.message,
     };
   }
+}
+
+// ── Doc discovery helpers ────────────────────────────────────────────────────
+
+/**
+ * Simple wildcard matcher for patterns like "**\/*.md" and "README.md".
+ * Supports: ** (any path segment), * (any filename segment), literal match.
+ */
+function matchWildcard(pattern, filePath) {
+  const normPath = filePath.replace(/\\/g, '/');
+  const normPattern = pattern.replace(/\\/g, '/');
+
+  if (!normPattern.includes('*')) {
+    return normPath === normPattern || normPath.endsWith('/' + normPattern);
+  }
+
+  let regex = normPattern
+    .replace(/\./g, '\\.')
+    .replace(/\*\*\//g, '(.+/)?')
+    .replace(/\*/g, '[^/]*');
+  regex = '^(' + regex + ')$';
+
+  return new RegExp(regex).test(normPath);
+}
+
+/**
+ * Recursively walk a directory, returning files up to maxDepth levels.
+ */
+function walkDir(dir, maxDepth, currentDepth) {
+  if (currentDepth === undefined) currentDepth = 0;
+  if (maxDepth === undefined) maxDepth = 10;
+  if (currentDepth > maxDepth) return [];
+
+  const results = [];
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch (e) {
+    return results;
+  }
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      const sub = walkDir(fullPath, maxDepth, currentDepth + 1);
+      for (const s of sub) results.push(s);
+    } else if (entry.isFile()) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+/**
+ * Discover documentation files based on .planning/config.json docs_paths
+ * or fallback patterns. Returns array of absolute paths.
+ */
+function discoverDocFiles() {
+  let docPatterns = ['README.md', 'docs/**/*.md'];
+  const configPath = path.join(ROOT, '.planning', 'config.json');
+  try {
+    const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    if (Array.isArray(configData.docs_paths) && configData.docs_paths.length > 0) {
+      docPatterns = configData.docs_paths;
+    }
+  } catch (e) {
+    // Use defaults
+  }
+
+  const found = new Set();
+
+  for (const pattern of docPatterns) {
+    if (pattern.includes('*')) {
+      const parts = pattern.replace(/\\/g, '/').split('/');
+      let baseDir = ROOT;
+      for (const part of parts) {
+        if (part.includes('*')) break;
+        baseDir = path.join(baseDir, part);
+      }
+      if (!fs.existsSync(baseDir)) continue;
+
+      const allFiles = walkDir(baseDir, 10, 0);
+      for (const f of allFiles) {
+        const relative = path.relative(ROOT, f).replace(/\\/g, '/');
+        if (matchWildcard(pattern, relative)) {
+          found.add(f);
+        }
+      }
+    } else {
+      const fullPath = path.join(ROOT, pattern);
+      if (fs.existsSync(fullPath)) {
+        found.add(fullPath);
+      }
+    }
+  }
+
+  return Array.from(found);
+}
+
+// ── Keyword extraction ──────────────────────────────────────────────────────
+
+const STOPWORDS = new Set([
+  'the', 'this', 'that', 'with', 'from', 'into', 'each', 'when',
+  'must', 'should', 'will', 'have', 'been', 'does', 'also', 'used',
+  'using', 'only', 'such', 'both', 'than', 'some', 'more', 'most',
+  'very', 'other', 'about', 'which', 'their', 'would', 'could',
+  'there', 'where', 'these', 'those', 'after', 'before', 'being',
+  'through', 'during', 'between', 'without', 'within', 'against',
+  'under', 'above', 'below',
+]);
+
+/**
+ * Extract keywords from text for fuzzy matching.
+ * Strips backtick-wrapped fragments, stopwords, and short tokens.
+ * Returns unique lowercase tokens.
+ */
+function extractKeywords(text) {
+  let cleaned = text.replace(/`[^`]*`/g, ' ');
+  const tokens = cleaned.split(/[\s,;:.()\[\]{}<>!?"']+/);
+
+  const seen = new Set();
+  const result = [];
+
+  for (const raw of tokens) {
+    const token = raw.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (token.length < 4) continue;
+    if (STOPWORDS.has(token)) continue;
+    if (seen.has(token)) continue;
+    seen.add(token);
+    result.push(token);
+  }
+
+  return result;
+}
+
+// ── Structural claims extraction ─────────────────────────────────────────────
+
+/**
+ * Extract structural claims (file paths, CLI commands, dependencies) from doc content.
+ * Skips fenced code blocks, Example/Template headings, template variables,
+ * home directory paths, and code expressions.
+ * Returns array of { line, type, value, doc_file }.
+ */
+function extractStructuralClaims(docContent, filePath) {
+  const lines = docContent.split('\n');
+  const claims = [];
+  let inFencedBlock = false;
+  let skipSection = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Track fenced code blocks
+    if (line.trimStart().startsWith('```')) {
+      inFencedBlock = !inFencedBlock;
+      continue;
+    }
+    if (inFencedBlock) continue;
+
+    // Track headings - skip Example/Template sections
+    const headingMatch = line.match(/^#{1,6}\s+(.+)/);
+    if (headingMatch) {
+      const headingText = headingMatch[1].toLowerCase();
+      skipSection = headingText.includes('example') || headingText.includes('template');
+      continue;
+    }
+    if (skipSection) continue;
+
+    // Find backtick-wrapped values
+    const backtickPattern = /`([^`]+)`/g;
+    let match;
+    while ((match = backtickPattern.exec(line)) !== null) {
+      const value = match[1].trim();
+      if (value.length < 4) continue;
+
+      // Filter: template variables
+      if (value.includes('{') || value.includes('}')) continue;
+
+      // Filter: home directory paths
+      if (value.startsWith('~/')) continue;
+
+      // Filter: code expressions (operators)
+      if (/[+=>]|&&|\|\|/.test(value)) continue;
+
+      // Classify the claim
+      let type = null;
+
+      // CLI command: starts with node, npx, npm
+      if (/^(node|npx|npm)\s+/.test(value)) {
+        type = 'cli_command';
+      }
+      // File path: contains / with extension, or starts with .
+      else if ((value.includes('/') && /\.\w+$/.test(value)) || (value.startsWith('.') && /\.\w+$/.test(value))) {
+        if (value.startsWith('/')) continue;
+        type = 'file_path';
+      }
+      // Dependency: npm-style package name (lowercase, optional @scope/)
+      else if (/^(@[a-z0-9-]+\/)?[a-z0-9][a-z0-9._-]*$/.test(value) && !value.includes('/')) {
+        type = 'dependency';
+      }
+
+      if (type) {
+        claims.push({
+          line: i + 1,
+          type: type,
+          value: value,
+          doc_file: filePath,
+        });
+      }
+    }
+  }
+
+  return claims;
 }
 
 // ── Layer transition sweeps ──────────────────────────────────────────────────
@@ -427,11 +643,206 @@ function sweepFtoC() {
   }
 }
 
+/**
+ * R->D: Requirements to Documentation.
+ * Detects requirements not mentioned in developer docs (by ID or keyword match).
+ * Returns { residual: N, detail: {...} }
+ */
+function sweepRtoD() {
+  // Load requirements.json
+  const reqPath = path.join(ROOT, '.formal', 'requirements.json');
+  if (!fs.existsSync(reqPath)) {
+    return {
+      residual: 0,
+      detail: { skipped: true, reason: 'requirements.json not found' },
+    };
+  }
+
+  let reqData;
+  try {
+    reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+  } catch (e) {
+    return {
+      residual: 0,
+      detail: { skipped: true, reason: 'requirements.json parse error: ' + e.message },
+    };
+  }
+
+  // Discover doc files
+  const docFiles = discoverDocFiles();
+  if (docFiles.length === 0) {
+    return {
+      residual: 0,
+      detail: { skipped: true, reason: 'no doc files found' },
+    };
+  }
+
+  // Concatenate all doc content
+  let allDocContent = '';
+  for (const docFile of docFiles) {
+    try {
+      allDocContent += fs.readFileSync(docFile, 'utf8') + '\n';
+    } catch (e) {
+      // skip unreadable files
+    }
+  }
+  const allDocContentLower = allDocContent.toLowerCase();
+
+  // Get requirements array - handle both flat array and envelope format
+  let requirements = [];
+  if (Array.isArray(reqData)) {
+    requirements = reqData;
+  } else if (reqData.requirements && Array.isArray(reqData.requirements)) {
+    requirements = reqData.requirements;
+  } else if (reqData.groups && Array.isArray(reqData.groups)) {
+    // Envelope format with groups
+    for (const group of reqData.groups) {
+      if (group.requirements && Array.isArray(group.requirements)) {
+        for (const r of group.requirements) requirements.push(r);
+      }
+    }
+  }
+
+  const undocumented = [];
+  let documented = 0;
+
+  for (const req of requirements) {
+    const id = req.id || req.requirement_id || '';
+    const text = req.text || req.description || '';
+    if (!id) continue;
+
+    // Primary: literal ID match (case-sensitive)
+    if (allDocContent.includes(id)) {
+      documented++;
+      continue;
+    }
+
+    // Secondary: keyword match (case-insensitive, 3+ keywords)
+    const keywords = extractKeywords(text);
+    if (keywords.length > 0) {
+      let matchCount = 0;
+      for (const kw of keywords) {
+        if (allDocContentLower.includes(kw)) {
+          matchCount++;
+        }
+      }
+      if (matchCount >= 3) {
+        documented++;
+        continue;
+      }
+    }
+
+    undocumented.push(id);
+  }
+
+  return {
+    residual: undocumented.length,
+    detail: {
+      undocumented_requirements: undocumented,
+      total_requirements: requirements.length,
+      documented: documented,
+      doc_files_scanned: docFiles.length,
+    },
+  };
+}
+
+/**
+ * D->C: Documentation to Code.
+ * Detects stale structural claims in docs (dead file paths, missing CLI commands, absent dependencies).
+ * Returns { residual: N, detail: {...} }
+ */
+function sweepDtoC() {
+  const docFiles = discoverDocFiles();
+  if (docFiles.length === 0) {
+    return {
+      residual: 0,
+      detail: { skipped: true, reason: 'no doc files found' },
+    };
+  }
+
+  // Load package.json for dependency verification
+  let pkgDeps = {};
+  let pkgDevDeps = {};
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+    pkgDeps = pkg.dependencies || {};
+    pkgDevDeps = pkg.devDependencies || {};
+  } catch (e) {
+    // No package.json — skip dependency checks
+  }
+
+  const brokenClaims = [];
+  let totalClaimsChecked = 0;
+
+  for (const docFile of docFiles) {
+    let content;
+    try {
+      content = fs.readFileSync(docFile, 'utf8');
+    } catch (e) {
+      continue;
+    }
+
+    const relativePath = path.relative(ROOT, docFile).replace(/\\/g, '/');
+    const claims = extractStructuralClaims(content, relativePath);
+
+    for (const claim of claims) {
+      totalClaimsChecked++;
+
+      let isBroken = false;
+      let reason = '';
+
+      if (claim.type === 'file_path') {
+        // Verify file exists
+        const absPath = path.join(ROOT, claim.value);
+        if (!fs.existsSync(absPath)) {
+          isBroken = true;
+          reason = 'file not found';
+        }
+      } else if (claim.type === 'cli_command') {
+        // Extract script path from command (e.g., "node bin/foo.cjs" -> "bin/foo.cjs")
+        const cmdParts = claim.value.split(/\s+/);
+        if (cmdParts.length >= 2 && cmdParts[0] === 'node') {
+          const scriptPath = cmdParts[1];
+          if (!fs.existsSync(path.join(ROOT, scriptPath))) {
+            isBroken = true;
+            reason = 'script not found';
+          }
+        }
+      } else if (claim.type === 'dependency') {
+        // Verify in package.json
+        if (!(claim.value in pkgDeps) && !(claim.value in pkgDevDeps)) {
+          isBroken = true;
+          reason = 'not in package.json';
+        }
+      }
+
+      if (isBroken) {
+        brokenClaims.push({
+          doc_file: claim.doc_file,
+          line: claim.line,
+          type: claim.type,
+          value: claim.value,
+          reason: reason,
+        });
+      }
+    }
+  }
+
+  return {
+    residual: brokenClaims.length,
+    detail: {
+      broken_claims: brokenClaims,
+      total_claims_checked: totalClaimsChecked,
+      doc_files_scanned: docFiles.length,
+    },
+  };
+}
+
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
- * Computes residual vector for all 5 layer transitions.
- * Returns residual object with r_to_f, f_to_t, c_to_f, t_to_c, f_to_c.
+ * Computes residual vector for all 7 layer transitions.
+ * Returns residual object with r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, d_to_c.
  */
 function computeResidual() {
   const r_to_f = sweepRtoF();
@@ -439,13 +850,17 @@ function computeResidual() {
   const c_to_f = sweepCtoF();
   const t_to_c = sweepTtoC();
   const f_to_c = sweepFtoC();
+  const r_to_d = sweepRtoD();
+  const d_to_c = sweepDtoC();
 
   const total =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
     (f_to_t.residual >= 0 ? f_to_t.residual : 0) +
     (c_to_f.residual >= 0 ? c_to_f.residual : 0) +
     (t_to_c.residual >= 0 ? t_to_c.residual : 0) +
-    (f_to_c.residual >= 0 ? f_to_c.residual : 0);
+    (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
+    (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
+    (d_to_c.residual >= 0 ? d_to_c.residual : 0);
 
   return {
     r_to_f,
@@ -453,6 +868,8 @@ function computeResidual() {
     c_to_f,
     t_to_c,
     f_to_c,
+    r_to_d,
+    d_to_c,
     total,
     timestamp: new Date().toISOString(),
   };
@@ -514,6 +931,22 @@ function autoClose(residual) {
     actions.push(
       residual.f_to_c.residual +
         ' formal verification failure(s) — manual fix required'
+    );
+  }
+
+  // R->D gaps: log but do not auto-fix (manual review)
+  if (residual.r_to_d.residual > 0) {
+    actions.push(
+      residual.r_to_d.residual +
+        ' requirement(s) undocumented in developer docs — manual review required'
+    );
+  }
+
+  // D->C stale claims: log but do not auto-fix (manual review)
+  if (residual.d_to_c.residual > 0) {
+    actions.push(
+      residual.d_to_c.residual +
+        ' stale structural claim(s) in docs — manual review required'
     );
   }
 
@@ -580,6 +1013,14 @@ function formatReport(iterations, finalResidual, converged) {
     {
       label: 'F -> C (Formal->Code)',
       residual: finalResidual.f_to_c.residual,
+    },
+    {
+      label: 'R -> D (Req->Docs)',
+      residual: finalResidual.r_to_d.residual,
+    },
+    {
+      label: 'D -> C (Docs->Code)',
+      residual: finalResidual.d_to_c.residual,
     },
   ];
 
@@ -691,6 +1132,36 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  if (finalResidual.r_to_d.residual > 0) {
+    lines.push('## R -> D (Requirements -> Docs)');
+    const detail = finalResidual.r_to_d.detail;
+    if (detail.undocumented_requirements && detail.undocumented_requirements.length > 0) {
+      lines.push('Undocumented requirements:');
+      for (const req of detail.undocumented_requirements.slice(0, 20)) {
+        lines.push('  - ' + req);
+      }
+      if (detail.undocumented_requirements.length > 20) {
+        lines.push('  ... and ' + (detail.undocumented_requirements.length - 20) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
+  if (finalResidual.d_to_c.residual > 0) {
+    lines.push('## D -> C (Docs -> Code)');
+    const detail = finalResidual.d_to_c.detail;
+    if (detail.broken_claims && detail.broken_claims.length > 0) {
+      lines.push('Broken structural claims:');
+      for (const claim of detail.broken_claims.slice(0, 20)) {
+        lines.push('  - ' + claim.doc_file + ':' + claim.line + ' [' + claim.type + '] `' + claim.value + '` — ' + claim.reason);
+      }
+      if (detail.broken_claims.length > 20) {
+        lines.push('  ... and ' + (detail.broken_claims.length - 20) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
   return lines.join('\n');
 }
 
@@ -699,13 +1170,13 @@ function formatReport(iterations, finalResidual, converged) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c']) {
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c']) {
     const res = finalResidual[key].residual;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
 
   return {
-    solver_version: '1.0',
+    solver_version: '1.1',
     generated_at: new Date().toISOString(),
     iteration_count: iterations.length,
     max_iterations: maxIterations,
@@ -793,6 +1264,11 @@ module.exports = {
   formatReport,
   formatJSON,
   healthIndicator,
+  discoverDocFiles,
+  extractKeywords,
+  extractStructuralClaims,
+  sweepRtoD,
+  sweepDtoC,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
