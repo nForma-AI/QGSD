@@ -22,7 +22,14 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const TAG = '[generate-traceability-matrix]';
-const ROOT = path.resolve(__dirname, '..');
+let ROOT = process.cwd();
+
+// Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
+for (const arg of process.argv.slice(2)) {
+  if (arg.startsWith('--project-root=')) {
+    ROOT = path.resolve(arg.slice('--project-root='.length));
+  }
+}
 
 const ANNOTATIONS_SCRIPT = path.join(__dirname, 'extract-annotations.cjs');
 const REGISTRY_PATH      = path.join(ROOT, '.formal', 'model-registry.json');
@@ -44,7 +51,7 @@ const quietMode = args.includes('--quiet');
  */
 function loadAnnotations() {
   try {
-    const result = spawnSync(process.execPath, [ANNOTATIONS_SCRIPT], {
+    const result = spawnSync(process.execPath, [ANNOTATIONS_SCRIPT, '--project-root=' + ROOT], {
       encoding: 'utf8',
       cwd: ROOT,
       timeout: 30000,
@@ -299,7 +306,7 @@ function loadStateSpaceAnalysis() {
     return {};
   }
   try {
-    const result = spawnSync(process.execPath, [analyzerPath, '--json'], {
+    const result = spawnSync(process.execPath, [analyzerPath, '--json', '--project-root=' + ROOT], {
       encoding: 'utf8',
       cwd: ROOT,
       timeout: 30000,

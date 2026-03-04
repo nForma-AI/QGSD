@@ -1,6 +1,7 @@
 ---
 name: close-formal-gaps
 description: Analyze and close formal model coverage gaps — clusters uncovered requirements, selects formalism (TLA+/Alloy/PRISM/Petri), generates specs, runs checkers, and updates the model registry
+argument-hint: [--batch] [--category="Category Name"] [--ids=REQ-01,REQ-02] [--all] [--formalism=tla|alloy|prism|petri] [--dry-run]
 allowed_tools:
   - Read
   - Write
@@ -9,7 +10,6 @@ allowed_tools:
   - Glob
   - Grep
   - Agent
-  - AskUserQuestion
 execution_context: workflow
 ---
 
@@ -24,6 +24,7 @@ Close formal model coverage gaps by generating new formal specifications for unc
 <process>
 Execute the close-formal-gaps workflow from @/Users/jonathanborduas/.claude/qgsd/workflows/close-formal-gaps.md end-to-end.
 Pass through all --flags from arguments:
+  --batch                     Fully autonomous mode — skip all user prompts, auto-approve clusters
   --category="Category Name"  Focus on a specific category
   --ids=REQ-01,REQ-02         Focus on specific requirement IDs
   --all                       Process all uncovered requirements

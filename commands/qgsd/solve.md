@@ -11,7 +11,6 @@ allowed-tools:
   - Grep
   - Agent
   - Skill
-  - AskUserQuestion
 ---
 
 <objective>
@@ -19,6 +18,11 @@ Run the QGSD consistency solver as a full orchestrator. Sweeps 7 layer transitio
 </objective>
 
 <execution_context>
+AUTONOMY REQUIREMENT: This skill runs FULLY AUTONOMOUSLY. Do NOT ask the user
+any questions. Do NOT stop for human input. If a sub-skill fails, log the
+failure and continue to the next gap. The only valid reason to stop is:
+all iterations exhausted, or total residual is zero.
+
 This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/qgsd-solve.cjs) and orchestrates higher-level remediation via sub-skills and scripts. No external quorum dispatch is needed — quorum enforcement, if required, is the responsibility of the sub-skills being called.
 </execution_context>
 
@@ -26,11 +30,14 @@ This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/
 
 ## Step 1: Initial Diagnostic Sweep
 
-Run `node bin/qgsd-solve.cjs --json --report-only` to get a baseline diagnostic:
+Run the diagnostic solver using absolute paths (or fall back to CWD-relative):
 
 ```bash
-BASELINE=$(node bin/qgsd-solve.cjs --json --report-only)
+BASELINE=$(node ~/.claude/qgsd-bin/qgsd-solve.cjs --json --report-only --project-root=$(pwd))
 ```
+
+If ~/.claude/qgsd-bin/qgsd-solve.cjs does not exist, fall back to bin/qgsd-solve.cjs (CWD-relative).
+If neither exists, error with: "QGSD solve scripts not installed. Run `node bin/install.js --claude --global` from the QGSD repo."
 
 Parse the JSON output to extract the `residual_vector` object. Key fields:
 - `residual_vector.r_to_f.residual` — count of requirements lacking formal coverage
@@ -81,12 +88,12 @@ Extract the list of uncovered requirement IDs from `residual_vector.r_to_f.detai
 
 If the list has 10 or fewer IDs, dispatch:
 ```
-/qgsd:close-formal-gaps --ids=REQ-01,REQ-02,...
+/qgsd:close-formal-gaps --batch --ids=REQ-01,REQ-02,...
 ```
 
 If the list has more than 10 IDs, dispatch:
 ```
-/qgsd:close-formal-gaps --all
+/qgsd:close-formal-gaps --batch --all
 ```
 
 Log: `"Dispatching R->F remediation: close-formal-gaps for {N} uncovered requirements"`
@@ -95,10 +102,12 @@ Wait for the skill to complete. If it fails, log the failure and continue to the
 
 ### 3b. F->T Gaps (residual_vector.f_to_t.residual > 0)
 
-Run the formal-test-sync script directly (do NOT dispatch /qgsd:formal-test-sync as a skill — the Node.js script is sufficient):
+Run the formal-test-sync script directly using absolute paths:
 ```bash
-node bin/formal-test-sync.cjs
+node ~/.claude/qgsd-bin/formal-test-sync.cjs --project-root=$(pwd)
 ```
+
+If ~/.claude/qgsd-bin/formal-test-sync.cjs does not exist, fall back to bin/formal-test-sync.cjs (CWD-relative).
 
 This will generate test stubs for all uncovered invariants and update traceability sidecars.
 
@@ -143,10 +152,12 @@ If the mismatch has `intentional_divergence: true`, skip it and log as intention
 
 ### 3e. F->C Gaps (residual_vector.f_to_c.residual > 0)
 
-First, run the formal verification to get fresh failure data:
+First, run the formal verification using absolute paths to get fresh failure data:
 ```bash
-node bin/run-formal-verify.cjs
+node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
 ```
+
+If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
 Then parse `.formal/check-results.ndjson` and classify each failure:
 
@@ -154,8 +165,8 @@ Then parse `.formal/check-results.ndjson` and classify each failure:
 |---------------|----------|----------|
 | **Syntax error** | Summary contains "Syntax error", "parse error" | `/qgsd:quick Fix Alloy/TLA+ syntax error in {model_file}: {error_detail}` |
 | **Scope error** | Summary contains "scope", "sig" | `/qgsd:quick Fix scope declaration in {model_file}: {error_detail}` |
-| **Conformance divergence** | check_id contains "conformance" | `/qgsd:debug Investigate conformance trace divergences: {N} divergences in {model}` |
-| **Verification failure** | Counterexample found | `/qgsd:debug Investigate formal verification counterexample in {check_id}: {summary}` |
+| **Conformance divergence** | check_id contains "conformance" | `/qgsd:quick Fix conformance trace divergences in {model_file}: {error_detail}` |
+| **Verification failure** | Counterexample found | `/qgsd:quick Fix formal verification counterexample in {check_id}: {summary}` |
 | **Missing tool** | "not found", "not installed" | Log as infrastructure gap, skip |
 | **Inconclusive** | result = "inconclusive" | Skip — not a failure |
 
@@ -203,10 +214,12 @@ Do NOT dispatch any skill — this is informational only.
 
 ## Step 4: Re-Diagnostic Sweep
 
-After all remediations in Step 3 complete, run the diagnostic again:
+After all remediations in Step 3 complete, run the diagnostic again using absolute paths:
 ```bash
-POST=$(node bin/qgsd-solve.cjs --json --report-only)
+POST=$(node ~/.claude/qgsd-bin/qgsd-solve.cjs --json --report-only --project-root=$(pwd))
 ```
+
+If ~/.claude/qgsd-bin/qgsd-solve.cjs does not exist, fall back to bin/qgsd-solve.cjs (CWD-relative).
 
 Parse the result as `post_residual`.
 
@@ -270,10 +283,12 @@ Note: R->D and D->C gaps require manual review. R->D gaps mean shipped requireme
 
 **ALWAYS display this table** — it shows every individual check from `run-formal-verify.cjs`, not just the solver-tracked layer residuals. The solver layer table (Step 6) can show all-green while real formal model failures hide underneath.
 
-After the before/after table, run the full formal verification if not already run during Step 3e:
+After the before/after table, run the full formal verification using absolute paths if not already run during Step 3e:
 ```bash
-node bin/run-formal-verify.cjs
+node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
 ```
+
+If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
 Parse `.formal/check-results.ndjson` and display **every check** grouped by result:
 
@@ -301,7 +316,7 @@ Display checks in this order: PASS first (alphabetical), then FAIL (alphabetical
 After the table, if there are any FAIL or INCONCLUSIVE checks, add a brief actionability note:
 ```
 {fail_count} check(s) failing, {inconc_count} inconclusive.
-Failing checks need investigation — use /qgsd:debug for counterexamples or /qgsd:quick for syntax fixes.
+Failing checks need investigation — use /qgsd:quick to dispatch fixes for syntax/scope errors or conformance divergences.
 Inconclusive checks are not failures but indicate incomplete verification (usually missing fairness declarations or tools).
 ```
 
@@ -318,11 +333,10 @@ This table is mandatory even when the solver layer residuals are all zero — be
 4. **Ordering** — remediation order is strict because R→F must precede F→T (new formal specs create new invariants needing test backing). T→C fixes must happen before F→C verification (tests must pass before checking formal properties against code).
 
 5. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
-   - **close-formal-gaps** for missing formal models (R→F)
+   - **close-formal-gaps --batch** for missing formal models (R→F)
    - **formal-test-sync** for missing test backing (F→T)
    - **fix-tests** for failing tests (T→C)
-   - **quick** for constant mismatches (C→F) and syntax/scope errors in formal models (F→C)
-   - **debug** for conformance divergences and verification counterexamples (F→C)
+   - **quick** for constant mismatches (C→F), syntax/scope errors, conformance divergences, and verification counterexamples in formal models (F→C)
 
 6. **Cascade awareness** — fixing one layer often creates gaps in the next (e.g., new formal models → new F→T gaps → new stubs → new T→C gaps). The iteration loop handles this naturally. Expect the total to fluctuate between iterations before converging.
 

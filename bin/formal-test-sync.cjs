@@ -18,7 +18,14 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const TAG = '[formal-test-sync]';
-const ROOT = path.resolve(__dirname, '..');
+let ROOT = process.cwd();
+
+// Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
+for (const arg of process.argv.slice(2)) {
+  if (arg.startsWith('--project-root=')) {
+    ROOT = path.resolve(arg.slice('--project-root='.length));
+  }
+}
 
 const EXTRACT_ANNOTATIONS_SCRIPT = path.join(__dirname, 'extract-annotations.cjs');
 const CONSTANTS_MAPPING_PATH = path.join(ROOT, '.formal', 'constants-mapping.json');
@@ -49,7 +56,7 @@ for (const arg of args) {
  */
 function loadFormalAnnotations() {
   try {
-    const result = spawnSync(process.execPath, [EXTRACT_ANNOTATIONS_SCRIPT], {
+    const result = spawnSync(process.execPath, [EXTRACT_ANNOTATIONS_SCRIPT, '--project-root=' + ROOT], {
       encoding: 'utf8',
       cwd: ROOT,
       timeout: 30000,
@@ -72,7 +79,7 @@ function loadFormalAnnotations() {
  */
 function loadTestAnnotations() {
   try {
-    const result = spawnSync(process.execPath, [EXTRACT_ANNOTATIONS_SCRIPT, '--include-tests'], {
+    const result = spawnSync(process.execPath, [EXTRACT_ANNOTATIONS_SCRIPT, '--include-tests', '--project-root=' + ROOT], {
       encoding: 'utf8',
       cwd: ROOT,
       timeout: 30000,

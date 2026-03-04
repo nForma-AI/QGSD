@@ -513,3 +513,22 @@ test('TC-CONV-2: --max-iterations limits iterations', () => {
     assert.fail('Failed to parse JSON: ' + err.message);
   }
 });
+
+// ── TC-INT: Integration Tests ─────────────────────────────────────────────────
+
+test('TC-INT: --project-root overrides CWD for diagnostic sweep', () => {
+  const result = spawnSync(process.execPath, [
+    path.join(ROOT, 'bin', 'qgsd-solve.cjs'),
+    '--json',
+    '--report-only',
+    '--project-root=' + ROOT,
+  ], {
+    encoding: 'utf8',
+    cwd: '/tmp',
+    timeout: 120000,
+    maxBuffer: 1024 * 1024,
+  });
+  const parsed = JSON.parse(result.stdout);
+  assert.ok(parsed.residual_vector, 'Should have residual_vector');
+  assert.equal(typeof parsed.residual_vector.total, 'number');
+});

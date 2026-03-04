@@ -27,7 +27,8 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const TAG = '[qgsd-solve]';
-const ROOT = path.resolve(__dirname, '..');
+let ROOT = process.cwd();
+const SCRIPT_DIR = __dirname;
 const DEFAULT_MAX_ITERATIONS = 3;
 
 // ── CLI flags ────────────────────────────────────────────────────────────────
@@ -36,6 +37,13 @@ const args = process.argv.slice(2);
 const reportOnly = args.includes('--report-only');
 const jsonMode = args.includes('--json');
 const verboseMode = args.includes('--verbose');
+
+// Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
+for (const arg of args) {
+  if (arg.startsWith('--project-root=')) {
+    ROOT = path.resolve(arg.slice('--project-root='.length));
+  }
+}
 
 let maxIterations = DEFAULT_MAX_ITERATIONS;
 for (const arg of args) {
@@ -54,7 +62,12 @@ for (const arg of args) {
  * Returns { ok: boolean, stdout: string, stderr: string }.
  */
 function spawnTool(script, args, opts = {}) {
-  const scriptPath = path.join(ROOT, script);
+  const scriptPath = path.join(SCRIPT_DIR, path.basename(script));
+  // Auto-forward --project-root to child script
+  const childArgs = [...args];
+  if (!childArgs.some(a => a.startsWith('--project-root='))) {
+    childArgs.push('--project-root=' + ROOT);
+  }
   const spawnOpts = {
     encoding: 'utf8',
     cwd: ROOT,
@@ -63,7 +76,7 @@ function spawnTool(script, args, opts = {}) {
   };
 
   try {
-    const result = spawnSync(process.execPath, [scriptPath, ...args], spawnOpts);
+    const result = spawnSync(process.execPath, [scriptPath, ...childArgs], spawnOpts);
     if (result.error) {
       return {
         ok: false,
@@ -499,7 +512,7 @@ function sweepTtoC() {
  * Returns { residual: N, detail: {...} }
  */
 function sweepFtoC() {
-  const verifyScript = path.join(ROOT, 'bin', 'run-formal-verify.cjs');
+  const verifyScript = path.join(SCRIPT_DIR, 'run-formal-verify.cjs');
 
   if (!fs.existsSync(verifyScript)) {
     return {

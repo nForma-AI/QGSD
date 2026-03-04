@@ -17,7 +17,16 @@ const path = require('path');
 
 // ── Configuration ────────────────────────────────────────────────────────────
 
-const REGISTRY_PATH = path.resolve(__dirname, '..', '.formal', 'model-registry.json');
+let ROOT = process.cwd();
+
+// Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
+for (const arg of process.argv.slice(2)) {
+  if (arg.startsWith('--project-root=')) {
+    ROOT = path.resolve(arg.slice('--project-root='.length));
+  }
+}
+
+const REGISTRY_PATH = path.join(ROOT, '.formal', 'model-registry.json');
 
 // ── Parsing Logic ────────────────────────────────────────────────────────────
 
@@ -381,8 +390,8 @@ function parseTestFile(content) {
  */
 function getTestFiles() {
   const testFiles = [];
-  const hooksPath = path.resolve(__dirname, '..', 'hooks');
-  const binPath = path.resolve(__dirname, '..', 'bin');
+  const hooksPath = path.join(ROOT, 'hooks');
+  const binPath = path.join(ROOT, 'bin');
 
   if (fs.existsSync(hooksPath)) {
     try {
@@ -463,7 +472,7 @@ function getModelFiles() {
     if (modelPath.startsWith('..') || modelPath.startsWith('/')) return false;
 
     // Check file exists on disk
-    const absPath = path.resolve(__dirname, '..', modelPath);
+    const absPath = path.join(ROOT, modelPath);
     return fs.existsSync(absPath);
   });
 }
@@ -477,7 +486,7 @@ function getPropsFiles() {
   for (const modelPath of models) {
     if (modelPath.endsWith('.pm') && !modelPath.startsWith('..') && !modelPath.startsWith('/')) {
       const propsPath = modelPath.replace(/\.pm$/, '.props');
-      const absPropsPath = path.resolve(__dirname, '..', propsPath);
+      const absPropsPath = path.join(ROOT, propsPath);
       if (fs.existsSync(absPropsPath)) {
         propsFiles.push(propsPath);
       }
@@ -494,7 +503,7 @@ function extractAnnotations() {
   const result = {};
 
   for (const filePath of allFiles) {
-    const absPath = path.resolve(__dirname, '..', filePath);
+    const absPath = path.join(ROOT, filePath);
     const content = fs.readFileSync(absPath, 'utf8');
     const ext = path.extname(filePath);
 
@@ -528,7 +537,7 @@ function validate() {
   const unannotated = [];
 
   for (const filePath of allFiles) {
-    const absPath = path.resolve(__dirname, '..', filePath);
+    const absPath = path.join(ROOT, filePath);
     if (!fs.existsSync(absPath)) continue;
 
     const content = fs.readFileSync(absPath, 'utf8');

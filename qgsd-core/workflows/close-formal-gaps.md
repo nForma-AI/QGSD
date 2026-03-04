@@ -27,10 +27,18 @@ Installer & CLI                33        5    28
 TOTAL                         226       79   147
 ```
 
+If `--batch` is provided:
+- Treat as `--all` if no `--ids`/`--category` is specified
+- Skip ALL AskUserQuestion calls throughout the workflow
+- Auto-approve proposed clusters in Step 2 without user confirmation
+- Log decisions instead of asking for input
+
+When `--batch` is active, do NOT use AskUserQuestion at any point in this workflow.
+
 If `--category` is provided, filter to that category only.
 If `--ids` is provided (comma-separated), filter to those specific IDs.
 If `--all` is provided, process all uncovered requirements.
-Otherwise, present the categories via AskUserQuestion and let the user pick one.
+Otherwise, present the categories via AskUserQuestion and let the user pick one (unless --batch).
 </step>
 
 <step name="cluster_requirements">
@@ -61,7 +69,10 @@ Cluster 1: "Dispatch Pipeline" (5 reqs)
 Cluster 2: ...
 ```
 
-Wait for user approval. User may merge, split, skip, or reorder clusters.
+If `--batch` is active, auto-approve the proposed clusters as-is. Log:
+"[batch] Auto-approving {N} clusters with {M} total requirements"
+
+Otherwise, wait for user approval. User may merge, split, skip, or reorder clusters.
 </step>
 
 <step name="select_formalism">

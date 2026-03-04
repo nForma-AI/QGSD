@@ -50,6 +50,15 @@ const TAG = '[run-formal-verify]';
 const HR  = '═'.repeat(64);
 const SEP = '─'.repeat(64);
 
+let ROOT = process.cwd();
+
+// Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
+for (const arg of process.argv.slice(2)) {
+  if (arg.startsWith('--project-root=')) {
+    ROOT = path.resolve(arg.slice('--project-root='.length));
+  }
+}
+
 // ── Step registry ─────────────────────────────────────────────────────────────
 //
 // type: 'node'     — run  node bin/<script> <args...>
@@ -290,9 +299,15 @@ function runNodeStep(step) {
     process.stderr.write(TAG + ' Script not found: ' + scriptPath + '\n');
     return false;
   }
-  const result = spawnSync(process.execPath, [scriptPath, ...step.args], {
+  // Auto-forward --project-root to child scripts
+  const childArgs = [...step.args];
+  if (!childArgs.some(a => a.startsWith('--project-root='))) {
+    childArgs.push('--project-root=' + ROOT);
+  }
+  const result = spawnSync(process.execPath, [scriptPath, ...childArgs], {
     stdio: 'inherit',
     encoding: 'utf8',
+    cwd: ROOT,
   });
   if (result.error) {
     process.stderr.write(TAG + ' Launch error: ' + result.error.message + '\n');
@@ -302,7 +317,7 @@ function runNodeStep(step) {
 }
 
 async function runWasmDotStep(step) {
-  const petriDir = path.join(__dirname, '..', '.formal', 'petri');
+  const petriDir = path.join(ROOT, '.formal', 'petri');
   const dotPath  = path.join(petriDir, step.dot);
   const svgPath  = path.join(petriDir, step.svg);
 
