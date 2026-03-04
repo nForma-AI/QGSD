@@ -9,34 +9,34 @@ Requirements for milestone v0.26. Each maps to roadmap phases.
 
 ### Installer & CLI
 
-- [ ] **PORT-01**: User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholders
-- [ ] **PORT-02**: User can import roster config from JSON file — validates schema, prompts to re-enter any redacted key, confirms before applying
-- [ ] **PORT-03**: Import creates a timestamped backup of `~/.claude.json` before applying any changes
-- [ ] **PRST-01**: User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of manually typing a URL
-- [ ] **PRST-02**: User can clone an existing slot — copies provider URL and model config, prompts for new slot name
-- [ ] **REN-03**: All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files
+- [x] **PORT-01**: User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholders
+- [x] **PORT-02**: User can import roster config from JSON file — validates schema, prompts to re-enter any redacted key, confirms before applying
+- [x] **PORT-03**: Import creates a timestamped backup of `~/.claude.json` before applying any changes
+- [x] **PRST-01**: User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of manually typing a URL
+- [x] **PRST-02**: User can clone an existing slot — copies provider URL and model config, prompts for new slot name
+- [x] **REN-03**: All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files
 
 ### Configuration
 
-- [ ] **CRED-01**: User can rotate API keys across multiple slots in a single batch flow from the main menu
-- [ ] **CRED-02**: Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)
+- [x] **CRED-01**: User can rotate API keys across multiple slots in a single batch flow from the main menu
+- [x] **CRED-02**: Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)
 - [x] **PLCY-01**: User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent
 - [x] **PLCY-02**: User can configure update policy per slot: auto / prompt / skip
 - [x] **PLCY-03**: Auto-update policy check runs on manage-agents startup for slots configured as `auto`
 
 ### Observability & Diagnostics
 
-- [ ] **DASH-01**: User can open a live health dashboard from main menu showing all slots' provider, model, and health status
-- [ ] **DASH-02**: Dashboard refreshes on keypress (space / r) with a visible "last updated" timestamp shown at bottom
-- [ ] **DASH-03**: Dashboard exits cleanly on Q or Escape, returning to main menu with stdin fully restored (no character-swallowing)
+- [x] **DASH-01**: User can open a live health dashboard from main menu showing all slots' provider, model, and health status
+- [x] **DASH-02**: Dashboard refreshes on keypress (space / r) with a visible "last updated" timestamp shown at bottom
+- [x] **DASH-03**: Dashboard exits cleanly on Q or Escape, returning to main menu with stdin fully restored (no character-swallowing)
 
 ### Architecture
 
-- [ ] **ARCH-10**: QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter
+- [x] **ARCH-10**: QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter
 
 ### Planning & Tracking
 
-- [ ] **DECOMP-05**: `analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge when combined TLC runtime < 5 minutes — or flags the interface contract needed when merge would exceed the time budget
+- [x] **DECOMP-05**: `analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge when combined TLC runtime < 5 minutes — or flags the interface contract needed when merge would exceed the time budget
 
 ## Future Requirements
 
@@ -65,19 +65,19 @@ Updated during roadmap creation.
 | PLCY-01 | v0.26-01 | Complete |
 | PLCY-02 | v0.26-01 | Complete |
 | PLCY-03 | v0.26-01 | Complete |
-| CRED-01 | v0.26-02 | Pending |
-| CRED-02 | v0.26-02 | Pending |
-| PORT-01 | v0.26-03 | Pending |
-| PORT-02 | v0.26-03 | Pending |
-| PORT-03 | v0.26-03 | Pending |
-| PRST-01 | v0.26-03 | Pending |
-| PRST-02 | v0.26-03 | Pending |
-| REN-03 | v0.26-03 | Pending |
-| DASH-01 | v0.26-04 | Pending |
-| DASH-02 | v0.26-04 | Pending |
-| DASH-03 | v0.26-04 | Pending |
-| ARCH-10 | v0.26-05 | Pending |
-| DECOMP-05 | v0.26-06 | Pending |
+| CRED-01 | v0.26-02 | Complete |
+| CRED-02 | v0.26-02 | Complete |
+| PORT-01 | v0.26-03 | Complete |
+| PORT-02 | v0.26-03 | Complete |
+| PORT-03 | v0.26-03 | Complete |
+| PRST-01 | v0.26-03 | Complete |
+| PRST-02 | v0.26-03 | Complete |
+| REN-03 | v0.26-03 | Complete |
+| DASH-01 | v0.26-04 | Complete |
+| DASH-02 | v0.26-04 | Complete |
+| DASH-03 | v0.26-04 | Complete |
+| ARCH-10 | v0.26-05 | Complete |
+| DECOMP-05 | v0.26-06 | Complete |
 
 **Coverage:**
 - v0.26 requirements: 16 total
