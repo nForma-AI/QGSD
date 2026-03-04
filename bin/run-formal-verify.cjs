@@ -59,13 +59,156 @@ for (const arg of process.argv.slice(2)) {
   }
 }
 
+// ── Runner picker maps ─────────────────────────────────────────────────────────
+// Maps known QGSD model names to their specialized runners. Unknown models
+// fall back to generic runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs).
+
+const TLA_RUNNER_MAP = {
+  'MCoscillation':     { script: 'run-oscillation-tlc.cjs',      args: (c) => [c] },
+  'MCconvergence':     { script: 'run-oscillation-tlc.cjs',      args: (c) => [c] },
+  'MCbreaker':         { script: 'run-breaker-tlc.cjs',          args: (c) => [c] },
+  'MCdeliberation':    { script: 'run-protocol-tlc.cjs',         args: (c) => [c] },
+  'MCprefilter':       { script: 'run-protocol-tlc.cjs',         args: (c) => [c] },
+  'MCaccount-manager': { script: 'run-account-manager-tlc.cjs',  args: () => [] },
+  'MCStopHook':        { script: 'run-stop-hook-tlc.cjs',        args: (c) => [c] },
+};
+function pickTLARunner(configName) {
+  return TLA_RUNNER_MAP[configName] || { script: 'run-tlc.cjs', args: (c) => [c] };
+}
+
+const ALLOY_RUNNER_MAP = {
+  'quorum-votes':           { script: 'run-alloy.cjs',                    args: [] },
+  'scoreboard-recompute':   { script: 'run-audit-alloy.cjs',              args: ['--spec=scoreboard-recompute'] },
+  'availability-parsing':   { script: 'run-audit-alloy.cjs',              args: ['--spec=availability-parsing'] },
+  'transcript-scan':        { script: 'run-transcript-alloy.cjs',         args: ['--spec=transcript-scan'] },
+  'install-scope':          { script: 'run-installer-alloy.cjs',          args: ['--spec=install-scope'] },
+  'taxonomy-safety':        { script: 'run-installer-alloy.cjs',          args: ['--spec=taxonomy-safety'] },
+  'account-pool-structure': { script: 'run-account-pool-alloy.cjs',       args: [] },
+  'quorum-composition':     { script: 'run-quorum-composition-alloy.cjs', args: [] },
+};
+function pickAlloyRunner(specName) {
+  return (ALLOY_RUNNER_MAP[specName] || { script: 'run-alloy.cjs', args: ['--spec=' + specName] }).script;
+}
+function pickAlloyArgs(specName) {
+  return (ALLOY_RUNNER_MAP[specName] || { script: 'run-alloy.cjs', args: ['--spec=' + specName] }).args;
+}
+
+const PRISM_RUNNER_MAP = {
+  'quorum':           { script: 'run-prism.cjs',                args: [] },
+  'oauth-rotation':   { script: 'run-oauth-rotation-prism.cjs', args: [] },
+  'mcp-availability': { script: 'run-prism.cjs',                args: ['--model=mcp-availability'] },
+};
+function pickPrismRunner(modelName) {
+  return (PRISM_RUNNER_MAP[modelName] || { script: 'run-prism.cjs', args: ['--model=' + modelName] }).script;
+}
+function pickPrismArgs(modelName) {
+  return (PRISM_RUNNER_MAP[modelName] || { script: 'run-prism.cjs', args: ['--model=' + modelName] }).args;
+}
+
+// ── Dynamic model discovery ───────────────────────────────────────────────────
+// Scans ROOT/.formal/{tla,alloy,prism,petri,uppaal}/ and builds step entries.
+function discoverModels(root) {
+  const discovered = [];
+  const formalDir = path.join(root, '.formal');
+
+  // TLA+: scan for *.cfg files in .formal/tla/
+  const tlaDir = path.join(formalDir, 'tla');
+  if (fs.existsSync(tlaDir)) {
+    const cfgFiles = fs.readdirSync(tlaDir).filter(f => f.endsWith('.cfg'));
+    for (const cfg of cfgFiles) {
+      const configName = cfg.replace('.cfg', '');
+      const runner = pickTLARunner(configName);
+      discovered.push({
+        tool: 'tla',
+        id: 'tla:' + configName.toLowerCase(),
+        label: 'TLA+ — ' + configName,
+        type: 'node',
+        script: runner.script,
+        args: runner.args(configName),
+      });
+    }
+  }
+
+  // Alloy: scan for *.als files in .formal/alloy/ (exclude subdirectories, JARs)
+  const alloyDir = path.join(formalDir, 'alloy');
+  if (fs.existsSync(alloyDir)) {
+    const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
+    for (const als of alsFiles) {
+      const specName = als.replace('.als', '');
+      discovered.push({
+        tool: 'alloy',
+        id: 'alloy:' + specName,
+        label: 'Alloy ' + specName,
+        type: 'node',
+        script: pickAlloyRunner(specName),
+        args: pickAlloyArgs(specName),
+      });
+    }
+  }
+
+  // PRISM: scan for *.pm files in .formal/prism/
+  const prismDir = path.join(formalDir, 'prism');
+  if (fs.existsSync(prismDir)) {
+    const pmFiles = fs.readdirSync(prismDir).filter(f => f.endsWith('.pm'));
+    for (const pm of pmFiles) {
+      const modelName = pm.replace('.pm', '');
+      discovered.push({
+        tool: 'prism',
+        id: 'prism:' + modelName,
+        label: 'PRISM ' + modelName,
+        type: 'node',
+        script: pickPrismRunner(modelName),
+        args: pickPrismArgs(modelName),
+      });
+    }
+  }
+
+  // Petri: scan for *.dot files in .formal/petri/
+  const petriDir = path.join(formalDir, 'petri');
+  if (fs.existsSync(petriDir)) {
+    const dotFiles = fs.readdirSync(petriDir).filter(f => f.endsWith('.dot'));
+    for (const dot of dotFiles) {
+      const name = dot.replace('.dot', '');
+      discovered.push({
+        tool: 'petri',
+        id: 'petri:' + name,
+        label: 'Petri ' + name + ' — render DOT -> SVG',
+        type: 'wasm-dot',
+        dot: dot,
+        svg: dot.replace('.dot', '.svg'),
+      });
+    }
+  }
+
+  // UPPAAL: scan for *.xml files in .formal/uppaal/
+  const uppaalDir = path.join(formalDir, 'uppaal');
+  if (fs.existsSync(uppaalDir)) {
+    const xmlFiles = fs.readdirSync(uppaalDir).filter(f => f.endsWith('.xml'));
+    for (const xml of xmlFiles) {
+      discovered.push({
+        tool: 'uppaal',
+        id: 'uppaal:' + xml.replace('.xml', ''),
+        label: 'UPPAAL ' + xml.replace('.xml', ''),
+        type: 'node',
+        script: 'run-uppaal.cjs',
+        args: [],
+        nonCritical: true,
+      });
+    }
+  }
+
+  return discovered;
+}
+
 // ── Step registry ─────────────────────────────────────────────────────────────
 //
 // type: 'node'     — run  node bin/<script> <args...>
 // type: 'wasm-dot' — render .formal/petri/<dot> → .formal/petri/<svg>
 //                    via @hpcc-js/wasm-graphviz (async)
 //
-const STEPS = [
+// STATIC_STEPS: always run (generate, CI enforcement, triage, traceability).
+// Dynamic steps are discovered from ROOT/.formal/{tla,alloy,prism,petri,uppaal}/.
+const STATIC_STEPS = [
   // ─ Source extraction — must run first so generated specs are fresh ──────────
   {
     tool: 'generate', id: 'generate:tla-from-xstate',
@@ -79,129 +222,11 @@ const STEPS = [
     type: 'node', script: 'generate-formal-specs.cjs', args: [],
   },
 
-  // ─ Petri net ───────────────────────────────────────────────────────────────
+  // ─ Petri net generator (produces DOT files — discovery handles rendering) ──
   {
     tool: 'petri', id: 'petri:quorum',
     label: 'Petri quorum — generate DOT + render SVG',
     type: 'node', script: 'generate-petri-net.cjs', args: [],
-  },
-  {
-    tool: 'petri', id: 'petri:account-manager',
-    label: 'Petri account-manager — render DOT → SVG',
-    type: 'wasm-dot',
-    dot: 'account-manager-petri-net.dot',
-    svg: 'account-manager-petri-net.svg',
-  },
-
-  // ─ TLA+ model checking ─────────────────────────────────────────────────────
-  {
-    tool: 'tla', id: 'tla:quorum-safety',
-    label: 'TLA+ QGSDQuorum — MCsafety',
-    type: 'node', script: 'run-tlc.cjs', args: ['MCsafety'],
-  },
-  {
-    tool: 'tla', id: 'tla:quorum-liveness',
-    label: 'TLA+ QGSDQuorum — MCliveness',
-    type: 'node', script: 'run-tlc.cjs', args: ['MCliveness'],
-  },
-  {
-    tool: 'tla', id: 'tla:oscillation',
-    label: 'TLA+ QGSDOscillation — MCoscillation',
-    type: 'node', script: 'run-oscillation-tlc.cjs', args: ['MCoscillation'],
-  },
-  {
-    tool: 'tla', id: 'tla:convergence',
-    label: 'TLA+ QGSDConvergence — MCconvergence',
-    type: 'node', script: 'run-oscillation-tlc.cjs', args: ['MCconvergence'],
-  },
-  {
-    tool: 'tla', id: 'tla:breaker',
-    label: 'TLA+ QGSDCircuitBreaker — MCbreaker',
-    type: 'node', script: 'run-breaker-tlc.cjs', args: ['MCbreaker'],
-  },
-  {
-    tool: 'tla', id: 'tla:deliberation',
-    label: 'TLA+ QGSDDeliberation — MCdeliberation',
-    type: 'node', script: 'run-protocol-tlc.cjs', args: ['MCdeliberation'],
-  },
-  {
-    tool: 'tla', id: 'tla:prefilter',
-    label: 'TLA+ QGSDPreFilter — MCprefilter',
-    type: 'node', script: 'run-protocol-tlc.cjs', args: ['MCprefilter'],
-  },
-  {
-    tool: 'tla', id: 'tla:account-manager',
-    label: 'TLA+ QGSDAccountManager — MCaccount-manager',
-    type: 'node', script: 'run-account-manager-tlc.cjs', args: [],
-  },
-  {
-    tool: 'tla', id: 'tla:mcp-environment',
-    label: 'TLA+ QGSDMCPEnv — MCMCPEnv (MCPENV-02)',
-    type: 'node', script: 'run-tlc.cjs', args: ['MCMCPEnv'],
-  },
-  {
-    tool: 'tla', id: 'tla:stop-hook',
-    label: 'TLA+ QGSDStopHook — MCStopHook (SPEC-01)',
-    type: 'node', script: 'run-stop-hook-tlc.cjs', args: ['MCStopHook'],
-  },
-
-  // ─ Alloy structural verification ───────────────────────────────────────────
-  {
-    tool: 'alloy', id: 'alloy:quorum-votes',
-    label: 'Alloy quorum-votes',
-    type: 'node', script: 'run-alloy.cjs', args: [],
-  },
-  {
-    tool: 'alloy', id: 'alloy:scoreboard',
-    label: 'Alloy scoreboard-recompute',
-    type: 'node', script: 'run-audit-alloy.cjs', args: ['--spec=scoreboard-recompute'],
-  },
-  {
-    tool: 'alloy', id: 'alloy:availability',
-    label: 'Alloy availability-parsing',
-    type: 'node', script: 'run-audit-alloy.cjs', args: ['--spec=availability-parsing'],
-  },
-  {
-    tool: 'alloy', id: 'alloy:transcript',
-    label: 'Alloy transcript-scan',
-    type: 'node', script: 'run-transcript-alloy.cjs', args: ['--spec=transcript-scan'],
-  },
-  {
-    tool: 'alloy', id: 'alloy:install-scope',
-    label: 'Alloy install-scope',
-    type: 'node', script: 'run-installer-alloy.cjs', args: ['--spec=install-scope'],
-  },
-  {
-    tool: 'alloy', id: 'alloy:taxonomy-safety',
-    label: 'Alloy taxonomy-safety',
-    type: 'node', script: 'run-installer-alloy.cjs', args: ['--spec=taxonomy-safety'],
-  },
-  {
-    tool: 'alloy', id: 'alloy:account-pool',
-    label: 'Alloy account-pool-structure',
-    type: 'node', script: 'run-account-pool-alloy.cjs', args: [],
-  },
-  {
-    tool: 'alloy', id: 'alloy:quorum-composition',
-    label: 'Alloy quorum-composition — 3 composition rules (SPEC-03)',
-    type: 'node', script: 'run-quorum-composition-alloy.cjs', args: [],
-  },
-
-  // ─ PRISM probabilistic verification ────────────────────────────────────────
-  {
-    tool: 'prism', id: 'prism:quorum',
-    label: 'PRISM quorum rotation probability',
-    type: 'node', script: 'run-prism.cjs', args: [],
-  },
-  {
-    tool: 'prism', id: 'prism:oauth-rotation',
-    label: 'PRISM oauth-rotation probability',
-    type: 'node', script: 'run-oauth-rotation-prism.cjs', args: [],
-  },
-  {
-    tool: 'prism', id: 'prism:mcp-availability',
-    label: 'PRISM mcp-availability — per-slot MCP availability rates (MCPENV-04)',
-    type: 'node', script: 'run-prism.cjs', args: ['--model=mcp-availability'],
   },
 
   // ─ CI enforcement — redaction + schema drift ──────────────────────────────
@@ -226,21 +251,11 @@ const STEPS = [
     type: 'node', script: 'validate-traces.cjs', args: [],
   },
 
-  // ─ UPPAAL timed race modeling ────────────────────────────────────────────
-  {
-    tool: 'uppaal', id: 'uppaal:quorum-races',
-    label: 'UPPAAL quorum-races — timed race detection with empirical timing bounds (UPPAAL-01, UPPAAL-02, UPPAAL-03)',
-    type: 'node', script: 'run-uppaal.cjs', args: [],
-    // Non-critical: verifyta usually not installed; timed race analysis is informational
-    nonCritical: true,
-  },
-
   // ─ Triage bundle ─────────────────────────────────────────────────────────
   {
     tool: 'ci', id: 'ci:triage-bundle',
     label: 'Generate triage bundle — diff-report.md + suspects.md (generate-triage-bundle)',
     type: 'node', script: 'generate-triage-bundle.cjs', args: [],
-    // Non-critical: failure does not block exit code; triage is informational
     nonCritical: true,
   },
 
@@ -249,24 +264,33 @@ const STEPS = [
     tool: 'traceability', id: 'traceability:matrix',
     label: 'Generate traceability matrix (requirements <-> formal properties)',
     type: 'node', script: 'generate-traceability-matrix.cjs', args: ['--quiet'],
-    // Non-critical: matrix generation is informational, does not block exit code
     nonCritical: true,
   },
   {
     tool: 'traceability', id: 'traceability:coverage-guard',
     label: 'Check formal coverage regression against baseline',
     type: 'node', script: 'check-coverage-guard.cjs', args: ['--quiet'],
-    // Non-critical: coverage guard is informational, does not block exit code
     nonCritical: true,
   },
   {
     tool: 'traceability', id: 'traceability:state-space',
     label: 'State-space analysis (risk classification per TLA+ model)',
     type: 'node', script: 'analyze-state-space.cjs', args: [],
-    // Non-critical: state-space analysis is informational
     nonCritical: true,
   },
 ];
+
+// Discover dynamic model steps from ROOT/.formal/
+const dynamicSteps = discoverModels(ROOT);
+
+// Deduplicate: if a dynamic step has the same id as a static step, skip it
+const staticIds = new Set(STATIC_STEPS.map(s => s.id));
+const uniqueDynamicSteps = dynamicSteps.filter(s => !staticIds.has(s.id));
+
+const STEPS = [...STATIC_STEPS, ...uniqueDynamicSteps];
+
+process.stdout.write(TAG + ' Static steps: ' + STATIC_STEPS.length + '\n');
+process.stdout.write(TAG + ' Discovered models: ' + uniqueDynamicSteps.length + '\n');
 
 // ── CLI filter ────────────────────────────────────────────────────────────────
 const argv    = process.argv.slice(2);
