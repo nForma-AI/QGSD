@@ -1,0 +1,9 @@
+{
+  "name": "qgsd",
+  "role": "monorepo",
+  "docs": {
+    "user": "docs/",
+    "developer": "docs/dev/",
+    "examples": "docs/triage-sources.example.md"
+  }
+}
