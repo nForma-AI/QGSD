@@ -994,6 +994,22 @@ If "adjust": Return to scoping.
 node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
 ```
 
+**Sync baselines into formal envelope:**
+
+After REQUIREMENTS.md is committed, sync baseline requirements into `.formal/requirements.json`:
+
+```bash
+node bin/sync-baseline-requirements.cjs --profile "$PROJECT_PROFILE"
+```
+
+This merges baseline requirements into the formal envelope with idempotent text matching. Display the sync summary.
+
+If any requirements were added, commit:
+
+```bash
+node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .formal/requirements.json
+```
+
 ## 8. Create Roadmap
 
 Display stage banner:

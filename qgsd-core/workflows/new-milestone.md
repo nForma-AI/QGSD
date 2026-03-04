@@ -273,6 +273,18 @@ BASELINE=$(node bin/load-baseline-requirements.cjs --profile "$PROJECT_PROFILE")
 
 Present for opt-out with multiSelect per category.
 
+## 8.7. Sync Baselines into Formal Envelope
+
+After baseline requirements are loaded/confirmed in Step 8.6, sync them into `.formal/requirements.json`:
+
+```bash
+node bin/sync-baseline-requirements.cjs --profile "$PROJECT_PROFILE"
+```
+
+This is idempotent -- if baselines were already synced in a previous milestone, they will be skipped. Display the sync summary (added/skipped counts).
+
+If any requirements were added, include `.formal/requirements.json` in the next commit (Step 9 requirements commit or Step 6 cleanup commit, whichever comes next).
+
 ## 9. Define Requirements
 
 ```
