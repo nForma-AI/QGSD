@@ -298,7 +298,30 @@ AskUserQuestion(
 
 If "Abort" → halt with current state summary and manual next steps.
 
-**Gap closure — Pre-routing check:**
+**Gap closure — Step 1: Run /qgsd:solve to close consistency gaps**
+
+Before planning new phases, run `/qgsd:solve` to auto-remediate consistency-level gaps
+(F→C, T→C, R→D, D→C, P→F, etc.). Many audit gaps stem from stale formal models,
+missing test coverage, or requirement drift — solve handles these without new phases.
+
+Display: `◆ Running /qgsd:solve to close consistency gaps before planning...`
+
+```
+Task(
+  prompt="Run /qgsd:solve
+
+  Context: Milestone {version} audit found gaps. Run the full 8-layer solve pipeline
+  to auto-remediate consistency gaps before we plan structural gap-closure phases.
+
+  Follow @~/.claude/qgsd/workflows/solve.md end-to-end.",
+  subagent_type="general-purpose",
+  description="Auto-complete: solve consistency gaps (iteration {current_iteration})"
+)
+```
+
+After solve completes, display: `◆ Solve complete. Proceeding to gap classification...`
+
+**Gap closure — Step 2: Pre-routing check:**
 
 Check gap classification from Step 2b:
 
