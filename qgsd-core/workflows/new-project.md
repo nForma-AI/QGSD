@@ -743,7 +743,87 @@ Display research complete banner and key findings:
 Files: `.planning/research/`
 ```
 
-**If "Skip research":** Continue to Step 7.
+**If "Skip research":** Continue to Step 6.5.
+
+## 6.5. Project Profile Selection
+
+Present a profile picker to determine which baseline requirements apply:
+
+```
+AskUserQuestion([
+  {
+    header: "Profile",
+    question: "What type of project is this?",
+    multiSelect: false,
+    options: [
+      { label: "Web Application", description: "Browser-based app with UI, APIs, and user sessions" },
+      { label: "Mobile Application", description: "Native or hybrid mobile app" },
+      { label: "Desktop Application", description: "Native desktop app (Electron, Tauri, etc.)" },
+      { label: "API Service", description: "Backend API without a user-facing UI" },
+      { label: "CLI Tool", description: "Command-line interface tool or script" },
+      { label: "Library / Package", description: "Reusable library consumed by other projects" }
+    ]
+  }
+])
+```
+
+Map selection to profile key:
+- "Web Application" -> `web`
+- "Mobile Application" -> `mobile`
+- "Desktop Application" -> `desktop`
+- "API Service" -> `api`
+- "CLI Tool" -> `cli`
+- "Library / Package" -> `library`
+
+Store `PROJECT_PROFILE` variable for next step.
+
+**If auto mode:** Default to `web` profile (most common). Can be overridden with `--profile <key>` flag if provided in arguments.
+
+## 6.6. Load Baseline Requirements
+
+Load baseline requirements filtered by the selected profile:
+
+```bash
+BASELINE=$(node bin/load-baseline-requirements.cjs --profile "$PROJECT_PROFILE")
+```
+
+Parse the JSON output to get categories and requirements.
+
+Present baseline requirements for opt-out:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ QGSD ► BASELINE REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Profile: [label] | [N] baseline requirements across [M] categories
+
+These are industry-standard requirements for [profile label] projects.
+All are included by default. Deselect any that don't apply.
+```
+
+For each category, use AskUserQuestion with multiSelect:
+
+```
+AskUserQuestion([
+  {
+    header: "[Category]",
+    question: "Keep these [category] baseline requirements?",
+    multiSelect: true,
+    options: [
+      // All pre-selected (default: included)
+      { label: "[REQ-ID]: [text]", description: "[intent]", selected: true },
+      ...
+    ]
+  }
+])
+```
+
+Track kept vs removed baseline requirements. Kept baselines will be included in REQUIREMENTS.md under a `### Baseline` section per category.
+
+**If auto mode:** Keep all baseline requirements (no opt-out step). Include all in REQUIREMENTS.md.
+
+Store `BASELINE_KEPT` and `BASELINE_REMOVED` for use in Step 7.
 
 ## 7. Define Requirements
 
@@ -840,10 +920,34 @@ Cross-check requirements against Core Value from PROJECT.md. If gaps detected, s
 **Generate REQUIREMENTS.md:**
 
 Create `.planning/REQUIREMENTS.md` with:
+- Baseline Requirements section (filtered by profile, user opt-outs applied)
 - v1 Requirements grouped by category (checkboxes, REQ-IDs)
 - v2 Requirements (deferred)
 - Out of Scope (explicit exclusions with reasoning)
 - Traceability section (empty, filled by roadmap)
+
+**Include baseline requirements in REQUIREMENTS.md:**
+
+Add a `## Baseline Requirements` section BEFORE the project-specific `## v1 Requirements` section:
+
+```markdown
+## Baseline Requirements
+
+*Included from QGSD baseline defaults (profile: [profile]). These are non-functional quality requirements.*
+
+### [Category 1]
+- [x] **UX-01**: [text]
+- [x] **UX-02**: [text]
+- [ ] ~~**UX-03**: [text]~~ *(removed during scoping)*
+
+### [Category 2]
+- [x] **SEC-01**: [text]
+...
+```
+
+Baseline requirements use their own ID namespace (UX-XX, SEC-XX, REL-XX, OBS-XX, CI-XX, PERF-XX) separate from project-specific REQ-IDs. They are tracked but not mapped to roadmap phases — they are cross-cutting quality gates verified during phase verification.
+
+Removed baselines are shown struck through for traceability (the user consciously chose to exclude them).
 
 **REQ-ID format:** `[CATEGORY]-[NUMBER]` (AUTH-01, CONTENT-02)
 
@@ -1143,9 +1247,13 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 - [ ] PROJECT.md captures full context → **committed**
 - [ ] config.json has workflow mode, depth, parallelization → **committed**
 - [ ] Research completed (if selected) — 4 parallel agents spawned → **committed**
+- [ ] Project profile selected (web/mobile/desktop/api/cli/library)
+- [ ] Baseline requirements loaded and filtered by profile
+- [ ] User opted out of unwanted baselines
 - [ ] Requirements gathered (from research or conversation)
 - [ ] User scoped each category (v1/v2/out of scope)
-- [ ] REQUIREMENTS.md created with REQ-IDs → **committed**
+- [ ] REQUIREMENTS.md includes Baseline Requirements section with kept/removed tracking → **committed**
+- [ ] REQUIREMENTS.md includes project-specific requirements with REQ-IDs → **committed**
 - [ ] qgsd-roadmapper spawned with context
 - [ ] Roadmap files written immediately (not draft)
 - [ ] User feedback incorporated (if any)

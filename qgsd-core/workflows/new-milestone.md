@@ -188,7 +188,90 @@ Display key findings from SUMMARY.md:
 **Watch Out For:** [from SUMMARY.md]
 ```
 
-**If "Skip research":** Continue to Step 9.
+**If "Skip research":** Continue to Step 8.5.
+
+## 8.5. Project Profile Selection
+
+**Check for existing profile in PROJECT.md:**
+
+```bash
+EXISTING_PROFILE=$(grep -oP 'Profile:\s*\K\w+' .planning/PROJECT.md 2>/dev/null || echo "")
+```
+
+**If profile exists:** Present it for confirmation:
+
+```
+AskUserQuestion([
+  {
+    header: "Profile",
+    question: "Continue with existing project profile?",
+    multiSelect: false,
+    options: [
+      { label: "Keep: [existing profile label]", description: "Same project type as previous milestone" },
+      { label: "Change profile", description: "Project type has changed" }
+    ]
+  }
+])
+```
+
+If "Keep" -> use existing profile. If "Change" -> show full picker (same as new-project Step 6.5).
+
+**If no profile exists:** Show full picker:
+
+```
+AskUserQuestion([
+  {
+    header: "Profile",
+    question: "What type of project is this?",
+    multiSelect: false,
+    options: [
+      { label: "Web Application", description: "Browser-based app with UI, APIs, and user sessions" },
+      { label: "Mobile Application", description: "Native or hybrid mobile app" },
+      { label: "Desktop Application", description: "Native desktop app (Electron, Tauri, etc.)" },
+      { label: "API Service", description: "Backend API without a user-facing UI" },
+      { label: "CLI Tool", description: "Command-line interface tool or script" },
+      { label: "Library / Package", description: "Reusable library consumed by other projects" }
+    ]
+  }
+])
+```
+
+Map selection to profile key (same mapping as new-project).
+
+Store `PROJECT_PROFILE` variable. Update PROJECT.md with `Profile: [key]` if not already present.
+
+## 8.6. Load Baseline Requirements
+
+**Check for existing baseline requirements in REQUIREMENTS.md:**
+
+```bash
+HAS_BASELINE=$(grep -c '## Baseline Requirements' .planning/REQUIREMENTS.md 2>/dev/null || echo "0")
+```
+
+**If baselines already exist (HAS_BASELINE > 0):**
+
+Baseline requirements carry forward from previous milestone. Present a summary:
+
+```
+Baseline requirements from previous milestone carry forward.
+
+[N] baseline requirements active across [M] categories.
+
+Review baselines? (yes/no)
+```
+
+If "yes" -> present the same opt-out flow as new-project Step 6.6.
+If "no" -> carry forward as-is.
+
+**If no baselines exist (HAS_BASELINE = 0):**
+
+Load and present baselines (same flow as new-project Step 6.6):
+
+```bash
+BASELINE=$(node bin/load-baseline-requirements.cjs --profile "$PROJECT_PROFILE")
+```
+
+Present for opt-out with multiSelect per category.
 
 ## 9. Define Requirements
 
@@ -224,10 +307,27 @@ Track: Selected → this milestone. Unselected table stakes → future. Unselect
 - "Yes, let me add some" — Capture additions
 
 **Generate REQUIREMENTS.md:**
-- v1 Requirements grouped by category (checkboxes, REQ-IDs)
+- Baseline Requirements section (if new to this milestone)
+- Milestone v[X.Y] Requirements grouped by category (checkboxes, REQ-IDs)
 - Future Requirements (deferred)
 - Out of Scope (explicit exclusions with reasoning)
 - Traceability section (empty, filled by roadmap)
+
+**Include baseline requirements in REQUIREMENTS.md:**
+
+If this is the first milestone with baselines, add a `## Baseline Requirements` section before `## Milestone v[X.Y] Requirements`:
+
+```markdown
+## Baseline Requirements
+
+*Included from QGSD baseline defaults (profile: [profile]). Cross-cutting quality gates.*
+
+### [Category]
+- [x] **UX-01**: [text]
+...
+```
+
+If baselines carried forward from a previous milestone, preserve the existing `## Baseline Requirements` section (with any user modifications from Step 8.6).
 
 **REQ-ID format:** `[CATEGORY]-[NUMBER]` (AUTH-01, NOTIF-02). Continue numbering from existing.
 
@@ -520,8 +620,11 @@ Show existing "Next Up" prompt (already in the Done banner — no change needed 
 - [ ] PROJECT.md updated with Current Milestone section
 - [ ] STATE.md reset for new milestone
 - [ ] MILESTONE-CONTEXT.md consumed and deleted (if existed)
+- [ ] Project profile confirmed or selected
+- [ ] Baseline requirements loaded (new) or carried forward (existing)
 - [ ] Research completed (if selected) — 4 parallel agents, milestone-aware
 - [ ] Requirements gathered and scoped per category
+- [ ] REQUIREMENTS.md includes Baseline Requirements section
 - [ ] REQUIREMENTS.md created with REQ-IDs
 - [ ] qgsd-roadmapper spawned with phase numbering context
 - [ ] Roadmap files written immediately (not draft)
