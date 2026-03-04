@@ -10,6 +10,10 @@
 // - TC-JSON: formatJSON() tests
 // - TC-INT: Integration tests (full script)
 // - TC-CONV: Convergence logic tests
+// - TC-KEYWORD: extractKeywords() tests
+// - TC-CLAIMS: extractStructuralClaims() tests
+// - TC-SWEEP-RD: sweepRtoD() tests
+// - TC-SWEEP-DC: sweepDtoC() tests
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -21,6 +25,11 @@ const {
   healthIndicator,
   formatReport,
   formatJSON,
+  discoverDocFiles,
+  extractKeywords,
+  extractStructuralClaims,
+  sweepRtoD,
+  sweepDtoC,
 } = require('./qgsd-solve.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -59,6 +68,8 @@ test('TC-FORMAT-1: formatReport with converged=true, total=0', () => {
         c_to_f: { residual: 0, detail: {} },
         t_to_c: { residual: 0, detail: {} },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 0,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -82,6 +93,8 @@ test('TC-FORMAT-2: formatReport with converged=false, total=5', () => {
         c_to_f: { residual: 1, detail: { mismatches: [] } },
         t_to_c: { residual: 1, detail: { failed: 1, total_tests: 10 } },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 5,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -104,6 +117,8 @@ test('TC-FORMAT-3: formatReport includes layer transition table', () => {
         c_to_f: { residual: 0, detail: {} },
         t_to_c: { residual: 0, detail: {} },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 0,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -121,6 +136,31 @@ test('TC-FORMAT-3: formatReport includes layer transition table', () => {
   assert.ok(result.includes('F -> C'));
 });
 
+test('TC-FORMAT-4: formatReport includes R -> D and D -> C labels', () => {
+  const iterations = [
+    {
+      iteration: 1,
+      residual: {
+        r_to_f: { residual: 0, detail: {} },
+        f_to_t: { residual: 0, detail: {} },
+        c_to_f: { residual: 0, detail: {} },
+        t_to_c: { residual: 0, detail: {} },
+        f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
+        total: 0,
+        timestamp: '2026-03-03T00:00:00Z',
+      },
+      actions: [],
+    },
+  ];
+  const finalResidual = iterations[0].residual;
+  const result = formatReport(iterations, finalResidual, true);
+
+  assert.ok(result.includes('R -> D'));
+  assert.ok(result.includes('D -> C'));
+});
+
 // ── TC-JSON: JSON Formatting Tests ───────────────────────────────────────────
 
 test('TC-JSON-1: formatJSON returns object with required keys', () => {
@@ -133,6 +173,8 @@ test('TC-JSON-1: formatJSON returns object with required keys', () => {
         c_to_f: { residual: 0, detail: {} },
         t_to_c: { residual: 0, detail: {} },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 0,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -161,6 +203,8 @@ test('TC-JSON-2: formatJSON with all zero residuals has GREEN health', () => {
         c_to_f: { residual: 0, detail: {} },
         t_to_c: { residual: 0, detail: {} },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 0,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -176,6 +220,8 @@ test('TC-JSON-2: formatJSON with all zero residuals has GREEN health', () => {
   assert.equal(result.health.c_to_f, 'GREEN');
   assert.equal(result.health.t_to_c, 'GREEN');
   assert.equal(result.health.f_to_c, 'GREEN');
+  assert.equal(result.health.r_to_d, 'GREEN');
+  assert.equal(result.health.d_to_c, 'GREEN');
 });
 
 test('TC-JSON-3: formatJSON includes iterations array', () => {
@@ -188,6 +234,8 @@ test('TC-JSON-3: formatJSON includes iterations array', () => {
         c_to_f: { residual: 0, detail: {} },
         t_to_c: { residual: 0, detail: {} },
         f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
         total: 0,
         timestamp: '2026-03-03T00:00:00Z',
       },
@@ -203,6 +251,118 @@ test('TC-JSON-3: formatJSON includes iterations array', () => {
   assert.ok(Array.isArray(result.iterations[0].actions));
 });
 
+test('TC-JSON-4: formatJSON includes r_to_d and d_to_c health keys', () => {
+  const iterations = [
+    {
+      iteration: 1,
+      residual: {
+        r_to_f: { residual: 0, detail: {} },
+        f_to_t: { residual: 0, detail: {} },
+        c_to_f: { residual: 0, detail: {} },
+        t_to_c: { residual: 0, detail: {} },
+        f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
+        total: 0,
+        timestamp: '2026-03-03T00:00:00Z',
+      },
+      actions: [],
+    },
+  ];
+  const finalResidual = iterations[0].residual;
+  const result = formatJSON(iterations, finalResidual, true);
+
+  assert.ok(result.health.r_to_d !== undefined, 'health should have r_to_d key');
+  assert.ok(result.health.d_to_c !== undefined, 'health should have d_to_c key');
+  assert.equal(result.solver_version, '1.1');
+});
+
+// ── TC-KEYWORD: Keyword Extraction Tests ─────────────────────────────────────
+
+test('TC-KEYWORD-1: extractKeywords strips stopwords and short tokens', () => {
+  const result = extractKeywords('the quick brown fox jumps over this lazy dog');
+  assert.ok(!result.includes('the'));  // stopword
+  assert.ok(!result.includes('fox'));  // < 4 chars
+  assert.ok(!result.includes('dog'));  // < 4 chars
+  assert.ok(result.includes('quick'));
+  assert.ok(result.includes('brown'));
+  assert.ok(result.includes('jumps'));
+  assert.ok(result.includes('lazy'));
+});
+
+test('TC-KEYWORD-2: extractKeywords ignores backtick-wrapped fragments', () => {
+  const result = extractKeywords('uses `spawnSync` for spawning child processes');
+  assert.ok(!result.includes('spawnsync'));
+  assert.ok(result.includes('spawning'));
+  assert.ok(result.includes('child'));
+  assert.ok(result.includes('processes'));
+});
+
+// ── TC-CLAIMS: Structural Claims Tests ───────────────────────────────────────
+
+test('TC-CLAIMS-1: extractStructuralClaims finds file paths in backticks', () => {
+  const doc = 'See `bin/qgsd-solve.cjs` for details.';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(claims.some(c => c.type === 'file_path' && c.value === 'bin/qgsd-solve.cjs'));
+});
+
+test('TC-CLAIMS-2: extractStructuralClaims skips fenced code blocks', () => {
+  const doc = 'text\n```\n`bin/fake-file.cjs`\n```\nmore text';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(!claims.some(c => c.value === 'bin/fake-file.cjs'));
+});
+
+test('TC-CLAIMS-3: extractStructuralClaims skips template variables', () => {
+  const doc = 'Path: `.planning/phases/{phase}/{plan}-PLAN.md`';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(!claims.some(c => c.value.includes('{phase}')));
+});
+
+test('TC-CLAIMS-4: extractStructuralClaims skips paths under Example headings', () => {
+  const doc = '## Example Usage\n\nSee `bin/imaginary.cjs` for reference.\n\n## Real Section\n\nSee `bin/qgsd-solve.cjs` here.';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(!claims.some(c => c.value === 'bin/imaginary.cjs'));
+  // Real section claims should still be collected
+  assert.ok(claims.some(c => c.value === 'bin/qgsd-solve.cjs'));
+});
+
+test('TC-CLAIMS-5: extractStructuralClaims identifies CLI commands', () => {
+  const doc = 'Run `node bin/qgsd-solve.cjs --report-only` to check.';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(claims.some(c => c.type === 'cli_command'));
+});
+
+test('TC-CLAIMS-6: extractStructuralClaims skips home directory paths', () => {
+  const doc = 'Installed at `~/.claude/hooks/` by default.';
+  const claims = extractStructuralClaims(doc, 'test.md');
+  assert.ok(!claims.some(c => c.value.includes('~/')));
+});
+
+// ── TC-SWEEP-RD: sweepRtoD Tests ────────────────────────────────────────────
+
+test('TC-SWEEP-RD-1: sweepRtoD returns valid structure', () => {
+  const result = sweepRtoD();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(typeof result.detail === 'object');
+  // If skipped, should still be residual: 0
+  if (result.detail.skipped) {
+    assert.equal(result.residual, 0);
+  }
+});
+
+// ── TC-SWEEP-DC: sweepDtoC Tests ────────────────────────────────────────────
+
+test('TC-SWEEP-DC-1: sweepDtoC returns valid structure', () => {
+  const result = sweepDtoC();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(typeof result.detail === 'object');
+  if (result.detail.skipped) {
+    assert.equal(result.residual, 0);
+  }
+});
+
 // ── TC-INT: Integration Tests ────────────────────────────────────────────────
 
 test('TC-INT-1: node bin/qgsd-solve.cjs --json --report-only exits with valid JSON', () => {
@@ -214,6 +374,7 @@ test('TC-INT-1: node bin/qgsd-solve.cjs --json --report-only exits with valid JS
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   // Either exit 0 or 1 is acceptable (depends on project state)
@@ -243,6 +404,7 @@ test('TC-INT-2: node bin/qgsd-solve.cjs --report-only produces human-readable ou
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   // Either exit 0 or 1 is acceptable
@@ -267,6 +429,7 @@ test('TC-INT-3: node bin/qgsd-solve.cjs --report-only --max-iterations=1 iterati
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   assert.ok(result.status === 0 || result.status === 1);
@@ -289,6 +452,7 @@ test('TC-INT-4: node bin/qgsd-solve.cjs --json --report-only --verbose exits wit
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   // Should not crash
@@ -313,6 +477,7 @@ test('TC-CONV-1: --report-only mode does single iteration (iteration_count === 1
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   assert.ok(result.status === 0 || result.status === 1);
@@ -335,6 +500,7 @@ test('TC-CONV-2: --max-iterations limits iterations', () => {
     encoding: 'utf8',
     cwd: ROOT,
     timeout: 60000,
+    maxBuffer: 1024 * 1024,
   });
 
   assert.ok(result.status === 0 || result.status === 1);

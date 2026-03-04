@@ -1166,6 +1166,34 @@ function formatReport(iterations, finalResidual, converged) {
 }
 
 /**
+ * Truncate detail arrays in a residual object to keep JSON output within pipe buffer limits.
+ * Returns a shallow copy with truncated arrays and a `truncated` flag if applicable.
+ */
+function truncateResidualDetail(residual) {
+  const MAX_DETAIL_ITEMS = 30;
+  const copy = {};
+  for (const key of Object.keys(residual)) {
+    const val = residual[key];
+    if (val && typeof val === 'object' && val.detail && typeof val.detail === 'object') {
+      const detailCopy = Object.assign({}, val.detail);
+      // Truncate large arrays in detail
+      for (const dk of Object.keys(detailCopy)) {
+        if (Array.isArray(detailCopy[dk]) && detailCopy[dk].length > MAX_DETAIL_ITEMS) {
+          const totalCount = detailCopy[dk].length;
+          detailCopy[dk] = detailCopy[dk].slice(0, MAX_DETAIL_ITEMS);
+          detailCopy[dk + '_truncated'] = true;
+          detailCopy[dk + '_total'] = totalCount;
+        }
+      }
+      copy[key] = { residual: val.residual, detail: detailCopy };
+    } else {
+      copy[key] = val;
+    }
+  }
+  return copy;
+}
+
+/**
  * Formats JSON output.
  */
 function formatJSON(iterations, finalResidual, converged) {
@@ -1175,16 +1203,18 @@ function formatJSON(iterations, finalResidual, converged) {
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
 
+  const truncatedResidual = truncateResidualDetail(finalResidual);
+
   return {
     solver_version: '1.1',
     generated_at: new Date().toISOString(),
     iteration_count: iterations.length,
     max_iterations: maxIterations,
     converged: converged,
-    residual_vector: finalResidual,
+    residual_vector: truncatedResidual,
     iterations: iterations.map((it) => ({
       iteration: it.iteration,
-      residual: it.residual,
+      residual: truncateResidualDetail(it.residual),
       actions: it.actions || [],
     })),
     health: health,

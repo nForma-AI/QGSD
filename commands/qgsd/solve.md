@@ -15,7 +15,7 @@ allowed-tools:
 ---
 
 <objective>
-Run the QGSD consistency solver as a full orchestrator. Sweeps 5 layer transitions (R->F, F->T, C->F, T->C, F->C), computes a residual vector showing gaps at each boundary, and automatically dispatches to the correct remediation skill/script for each gap type. Re-diagnoses after each remediation round and iterates until convergence or max iterations reached. Returns before/after residual comparison.
+Run the QGSD consistency solver as a full orchestrator. Sweeps 7 layer transitions (R->F, F->T, C->F, T->C, F->C, R->D, D->C), computes a residual vector showing gaps at each boundary, and automatically dispatches to the correct remediation skill/script for each gap type. Re-diagnoses after each remediation round and iterates until convergence or max iterations reached. Returns before/after residual comparison.
 </objective>
 
 <execution_context>
@@ -38,6 +38,8 @@ Parse the JSON output to extract the `residual_vector` object. Key fields:
 - `residual_vector.c_to_f.residual` — count of constant mismatches (Code vs Formal)
 - `residual_vector.t_to_c.residual` — count of failing unit tests
 - `residual_vector.f_to_c.residual` — count of failing formal checks
+- `residual_vector.r_to_d.residual` — count of requirements not documented in developer docs
+- `residual_vector.d_to_c.residual` — count of stale structural claims in docs
 - `residual_vector.total` — total residual across all layers
 
 Store the parsed baseline residual as `baseline_residual` for the before/after comparison at the end.
@@ -51,6 +53,8 @@ F -> T (Formal->Test)       N      [status]
 C -> F (Code->Formal)       N      [status]
 T -> C (Test->Code)         N      [status]
 F -> C (Formal->Code)       N      [status]
+R -> D (Req->Docs)          N      [status]
+D -> C (Docs->Code)         N      [status]
 Total                       N
 ```
 
@@ -161,6 +165,42 @@ Log: `"F->C: {total} checks, {pass} pass, {fail} fail — dispatching {syntax_co
 
 Each dispatch is independent — if one fails, continue to the next.
 
+### 3f. R->D Gaps (residual_vector.r_to_d.residual > 0)
+
+Requirements that shipped but are not mentioned in developer docs. This is a manual-review-only gap — there is no automated remediation because documentation must be authored by humans.
+
+Display the undocumented requirement IDs from `residual_vector.r_to_d.detail.undocumented_requirements`:
+
+```
+R->D: {N} requirement(s) undocumented in developer docs:
+  - REQ-01
+  - REQ-02
+  ...
+```
+
+Log: `"R->D: {N} requirement(s) undocumented in developer docs — manual review required"`
+
+Do NOT dispatch any skill — this is informational only.
+
+### 3g. D->C Gaps (residual_vector.d_to_c.residual > 0)
+
+Stale structural claims in documentation — file paths, CLI commands, or dependencies referenced in docs that no longer exist in the codebase. This is a manual-review-only gap.
+
+Display the broken claims table from `residual_vector.d_to_c.detail.broken_claims`:
+
+```
+D->C: {N} stale structural claim(s) in docs:
+  Doc File              Line  Type         Value                    Reason
+  ──────────────────────────────────────────────────────────────────────────
+  README.md             42    file_path    bin/old-script.cjs       file not found
+  docs/setup.md         15    cli_command  node bin/missing.cjs     script not found
+  docs/deps.md          8     dependency   old-package              not in package.json
+```
+
+Log: `"D->C: {N} stale structural claim(s) in docs — manual review required"`
+
+Do NOT dispatch any skill — this is informational only.
+
 ## Step 4: Re-Diagnostic Sweep
 
 After all remediations in Step 3 complete, run the diagnostic again:
@@ -199,6 +239,8 @@ F -> T (Formal→Test)       {N}    {M}    {delta}   [GREEN|YELLOW|RED]
 C -> F (Code→Formal)       {N}    {M}    {delta}   [GREEN|YELLOW|RED]
 T -> C (Test→Code)         {N}    {M}    {delta}   [GREEN|YELLOW|RED]
 F -> C (Formal→Code)       {N}    {M}    {delta}   [GREEN|YELLOW|RED]
+R -> D (Req→Docs)          {N}    {M}    {delta}   [MANUAL]
+D -> C (Docs→Code)         {N}    {M}    {delta}   [MANUAL]
 ──────────────────────────────────────────────────────────
 Total                      {N}    {M}    {delta}
 ```
@@ -210,6 +252,8 @@ Total                      {N}    {M}    {delta}
 - **T→C**: List failing test names and error summaries
 - **C→F**: Table of each constant mismatch (name, formal value, config value)
 - **F→C**: For each failing check: check_id, summary (including counts like "7086 divergences"), affected requirement IDs. Also list inconclusive checks separately.
+- **R→D**: List all undocumented requirement IDs
+- **D→C**: Table of each broken claim (doc_file, line, type, value, reason)
 
 Example F→C expansion:
 ```
@@ -219,6 +263,49 @@ F → C Detail:
 ```
 
 If any gaps remain after convergence, append a summary of what couldn't be auto-fixed and why.
+
+Note: R->D and D->C gaps require manual review. R->D gaps mean shipped requirements are undiscoverable in docs. D->C gaps mean docs reference files, commands, or dependencies that no longer exist.
+
+## Step 7: Full Formal Verification Detail Table
+
+**ALWAYS display this table** — it shows every individual check from `run-formal-verify.cjs`, not just the solver-tracked layer residuals. The solver layer table (Step 6) can show all-green while real formal model failures hide underneath.
+
+After the before/after table, run the full formal verification if not already run during Step 3e:
+```bash
+node bin/run-formal-verify.cjs
+```
+
+Parse `.formal/check-results.ndjson` and display **every check** grouped by result:
+
+```
+Formal Verification Detail ({pass}/{total} passed):
+─────────────────────────────────────────────────────────
+CHECK                          RESULT     DETAIL
+─────────────────────────────────────────────────────────
+✓ check_id                     PASS       (optional note)
+...
+✗ check_id                     FAIL       summary of failure
+...
+⚠ check_id                     INCONC     reason for inconclusive
+...
+─────────────────────────────────────────────────────────
+```
+
+Rules for the detail column:
+- **PASS**: Leave blank unless there's a notable caveat (e.g., "low-confidence — 0 traces", "empirical timing only")
+- **FAIL**: Show the full summary from the check result (e.g., "7271 divergence(s) in 20651 traces", "MCMCPEnv model check failed", "tp_rate=0.49, unavail=0.45")
+- **INCONCLUSIVE**: Show the reason (e.g., "fairness missing: PropertyName1, PropertyName2", "verifyta not installed")
+
+Display checks in this order: PASS first (alphabetical), then FAIL (alphabetical), then INCONCLUSIVE (alphabetical). This puts failures and inconclusives at the bottom where they're visually prominent.
+
+After the table, if there are any FAIL or INCONCLUSIVE checks, add a brief actionability note:
+```
+{fail_count} check(s) failing, {inconc_count} inconclusive.
+Failing checks need investigation — use /qgsd:debug for counterexamples or /qgsd:quick for syntax fixes.
+Inconclusive checks are not failures but indicate incomplete verification (usually missing fairness declarations or tools).
+```
+
+This table is mandatory even when the solver layer residuals are all zero — because formal model failures (Alloy, TLA+, PRISM) may exist outside the solver's tracked CI checks.
 
 ## Important Constraints
 
