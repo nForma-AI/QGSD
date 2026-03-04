@@ -8,5 +8,9 @@
     "constraints": "",
     "target_files": [],
     "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": "/Users/jonathanborduas/code/QGSD/.planning/phases/v0.27-04-production-source-types/v0.27-04-01-PLAN.md",
+    "key_decisions": []
   }
 }

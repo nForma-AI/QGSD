@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.27-03",
+  "created_at": "2026-03-04T18:10:43.880Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Cross-source deduplication: fingerprint matching, Levenshtein near-duplicate merging, and formal reference linking",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.27-03-cross-source-deduplication/v0.27-03-01-PLAN.md",
+    "key_decisions": []
+  }
+}
