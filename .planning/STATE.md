@@ -76,9 +76,12 @@ None. All v0.26 phases complete.
 | 142 | Enhance /qgsd:solve to orchestrate remediation skills for auto-closing gaps | 2026-03-03 | ca591d87 | Verified | [142-enhance-qgsd-solve-to-orchestrate-remedi](./quick/142-enhance-qgsd-solve-to-orchestrate-remedi/) |
 | 143 | Add R-to-D and D-to-C layer transitions to qgsd-solve consistency solver | 2026-03-04 | 6a1fac44 | Verified | [143-add-r-to-d-and-d-to-c-layer-transitions-](./quick/143-add-r-to-d-and-d-to-c-layer-transitions-/) |
 | 144 | Make /qgsd:solve fully autonomous — add --project-root to diagnostic scripts, rewrite solve.md for autonomy, add --batch to close-formal-gaps | 2026-03-04 | 40282191 | Verified | [144-make-qgsd-solve-fully-autonomous-add-pro](./quick/144-make-qgsd-solve-fully-autonomous-add-pro/) |
+| 145 | T->C TAP regex fix + skip/todo tracking | 2026-03-04 | pending | Pending | [145-create-plan-for-t-c-tap-regex-fix-skip](./quick/145-create-plan-for-t-c-tap-regex-fix-skip/) |
+| 146 | Create plan for T->C TAP regex fix + skip/todo tracking | 2026-03-04 | 3e5cc7b2 | Verified | [146-create-plan-for-t-c-tap-regex-fix-skip](./quick/146-create-plan-for-t-c-tap-regex-fix-skip/) |
+| 147 | Add polyrepo config support | 2026-03-04 | pending | Pending | [147-add-polyrepo-config-support-global-confi](./quick/147-add-polyrepo-config-support-global-confi/) |
 
 ## Session Continuity
 
-Last activity: 2026-03-04 - Completed quick task 144: Make /qgsd:solve fully autonomous
-Stopped at: Completed quick-144
+Last activity: 2026-03-04 - Completed quick task 147: Add polyrepo config support
+Stopped at: Completed quick-147
 Resume file: .planning/quick/144-make-qgsd-solve-fully-autonomous-add-pro/144-SUMMARY.md

@@ -83,6 +83,26 @@ const POLYREPOS_DIR = path.join(os.homedir(), '.claude', 'polyrepos');
 const MARKER_FILE = 'polyrepo.json';  // relative to .planning/ in each repo
 ```
 
+**Schema reference — global group config (`~/.claude/polyrepos/<name>.json`):**
+```json
+{
+  "name": "my-product",
+  "repos": [
+    { "role": "frontend", "path": "/Users/jb/code/app-web", "planning": true },
+    { "role": "backend", "path": "/Users/jb/code/app-api", "planning": true },
+    { "role": "infra", "path": "/Users/jb/code/app-infra", "planning": false }
+  ]
+}
+```
+
+**Schema reference — per-repo marker (`.planning/polyrepo.json`):**
+```json
+{
+  "name": "my-product",
+  "role": "frontend"
+}
+```
+
 **Core functions (all exported for testability):**
 
 1. `ensurePolyreposDir()` — creates `~/.claude/polyrepos/` if it does not exist. Uses `fs.mkdirSync(POLYREPOS_DIR, { recursive: true })`.
@@ -96,6 +116,8 @@ const MARKER_FILE = 'polyrepo.json';  // relative to .planning/ in each repo
 5. `removeMarker(repoPath)` — deletes `<repoPath>/.planning/polyrepo.json` if it exists. Fail-open: if file does not exist, do nothing (no error).
 
 6. `createGroup(name, repos)` — validates name (alphanumeric + hyphens, 1-50 chars), validates repos array (each must have `role` string, `path` string that exists as a directory, and `planning` boolean). Creates the group config file. For each repo with `planning: true`, writes the per-repo marker. Returns `{ ok: true, group }` or `{ ok: false, error: string }`.
+
+   **Empty-repos case:** `createGroup(name, [])` is valid and creates a group config with an empty `repos` array. This is the path used by the CLI `create` subcommand. The interactive skill flow (`/qgsd:polyrepo create`) calls `createGroup(name, [])` first, then calls `addRepo` in a loop for each repo the user provides.
 
    Validation rules:
    - Name must match `/^[a-z0-9][a-z0-9-]*$/` (lowercase, start with alphanumeric)
@@ -122,7 +144,7 @@ const MARKER_FILE = 'polyrepo.json';  // relative to .planning/ in each repo
 Parse `process.argv.slice(2)` for subcommands:
 
 - `create` — runs in non-interactive mode: `node bin/polyrepo.cjs create <name>`. Creates an empty group. Prints confirmation.
-- `add <group> <path> [role] [--no-planning]` — adds repo to group. Role defaults to basename of path. `--no-planning` sets `planning: false`.
+- `add <group> <path> [role] [--no-planning]` — adds repo to group. Role defaults to `path.basename(repoPath)` if omitted (e.g., `add my-product /Users/jb/code/app-web` sets role to `"app-web"`). `--no-planning` sets `planning: false`.
 - `remove <group> <path>` — removes repo from group.
 - `list [group]` — if group name provided, lists repos in that group; otherwise lists all groups.
 - `info` — reads `.planning/polyrepo.json` in cwd (if exists) and prints which group this repo belongs to.
@@ -321,10 +343,10 @@ Parse $ARGUMENTS for subcommand:
 **If no arguments or `create`:**
 Interactive flow using AskUserQuestion:
 1. Ask for group name (lowercase, alphanumeric + hyphens)
-2. Ask for repos to include (one at a time: path, role, planning yes/no)
-3. Ask "Add another repo?" until user says no
-4. Run `node bin/polyrepo.cjs create <name>` to create the empty group
-5. For each repo, run `node bin/polyrepo.cjs add <name> <path> <role> [--no-planning]`
+2. Run `node bin/polyrepo.cjs create <name>` to create an empty group (calls `createGroup(name, [])`)
+3. Ask for repos to include (one at a time: path, role, planning yes/no)
+4. For each repo, run `node bin/polyrepo.cjs add <name> <path> <role> [--no-planning]` (calls `addRepo` per repo)
+5. Ask "Add another repo?" until user says no
 6. Display summary of created group
 
 **If `add <group> <path> [role]`:**
