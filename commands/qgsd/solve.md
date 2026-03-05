@@ -146,8 +146,8 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    wave: 1
    depends_on: []
    files_modified:
-     - hooks/generated-stubs/{ID1}.stub.test.js
-     - hooks/generated-stubs/{ID2}.stub.test.js
+     - .formal/generated-stubs/{ID1}.stub.test.js
+     - .formal/generated-stubs/{ID2}.stub.test.js
    autonomous: true
    requirements: [{ID1}, {ID2}]
    formal_artifacts: none
@@ -167,7 +167,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    <tasks>
    <task type="auto">
      <name>Implement stubs: {ID1}, {ID2}, ... {IDn}</name>
-     <files>hooks/generated-stubs/{ID1}.stub.test.js, ...</files>
+     <files>.formal/generated-stubs/{ID1}.stub.test.js, ...</files>
      <action>
    For each stub:
    1. Read the stub file
@@ -178,7 +178,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    5. For behavioral reqs that can't be unit-tested directly, test the
       structural constraint (function exists, constants match, exports present)
      </action>
-     <verify>node --test hooks/generated-stubs/{ID1}.stub.test.js</verify>
+     <verify>node --test .formal/generated-stubs/{ID1}.stub.test.js</verify>
      <done>No assert.fail('TODO') remains. Each stub has real test logic.</done>
    </task>
    </tasks>
@@ -190,7 +190,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    ```
    Wait for ALL to complete.
 
-5. **Run tests once:** `node --test hooks/generated-stubs/*.stub.test.js`. Log pass/fail counts. Failed stubs are handled by T->C in the next iteration.
+5. **Run tests once:** `node --test .formal/generated-stubs/*.stub.test.js`. Log pass/fail counts. Failed stubs are handled by T->C in the next iteration.
 
 6. Log: `"F->T phase 2: spawned {N} parallel executors for {M} stubs (no quorum overhead)"`
 

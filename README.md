@@ -149,7 +149,7 @@ node bin/qgsd.cjs
 
 The TUI opens as a split-pane screen: left panel is the menu, right panel shows your agent roster or context for the selected action.
 
-![Agent Manager TUI](roster.png)
+![Agent Manager TUI](docs/assets/roster.png)
 
 **Capabilities:**
 
@@ -176,7 +176,7 @@ The TUI opens as a split-pane screen: left panel is the menu, right panel shows 
 
 The TUI also includes a **requirements management** section — browse, filter, check coverage, and view traceability for all requirements in `.formal/requirements.json`.
 
-![Requirements Management](requirements.png)
+![Requirements Management](docs/assets/requirements.png)
 
 **Navigation:** arrow keys to move, Enter to select, Escape or `q` to go back or exit.
 

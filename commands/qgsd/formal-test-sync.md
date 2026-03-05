@@ -28,5 +28,5 @@ Use `--json` for machine-readable output.
 
 Use `--dry-run` to show what stubs would be generated without writing them.
 
-Use `--stubs-dir=<path>` to override the default stub output directory (hooks/generated-stubs/).
+Use `--stubs-dir=<path>` to override the default stub output directory (.formal/generated-stubs/).
 </process>

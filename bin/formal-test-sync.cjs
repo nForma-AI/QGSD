@@ -40,7 +40,7 @@ const args = process.argv.slice(2);
 const reportOnly = args.includes('--report-only');
 const dryRun = args.includes('--dry-run');
 const jsonMode = args.includes('--json');
-let stubsDir = path.join(ROOT, 'hooks', 'generated-stubs');
+let stubsDir = path.join(ROOT, '.formal', 'generated-stubs');
 
 for (const arg of args) {
   if (arg.startsWith('--stubs-dir=')) {

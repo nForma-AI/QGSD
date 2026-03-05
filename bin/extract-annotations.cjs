@@ -401,13 +401,13 @@ function getTestFiles() {
           testFiles.push('hooks/' + file);
         }
       }
-      // Scan generated-stubs subdirectory
-      const stubsPath = path.join(hooksPath, 'generated-stubs');
+      // Scan generated-stubs in .formal/
+      const stubsPath = path.join(ROOT, '.formal', 'generated-stubs');
       if (fs.existsSync(stubsPath)) {
         const stubFiles = fs.readdirSync(stubsPath);
         for (const file of stubFiles) {
           if (file.endsWith('.test.js')) {
-            testFiles.push('hooks/generated-stubs/' + file);
+            testFiles.push('.formal/generated-stubs/' + file);
           }
         }
       }
