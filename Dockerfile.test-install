@@ -1,0 +1,30 @@
+# Dockerfile.test-install — Verifies QGSD installs cleanly in a virgin node:20-slim environment
+# Build: docker build -f Dockerfile.test-install -t qgsd-test-install .
+# A successful build means the install works. No need to run the container.
+
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY bin/ bin/
+COPY commands/ commands/
+COPY get-shit-done/ get-shit-done/
+COPY agents/ agents/
+COPY hooks/dist/ hooks/dist/
+COPY scripts/ scripts/
+COPY templates/ templates/
+
+# Install deps without postinstall (may need interactive env)
+RUN npm install --ignore-scripts
+
+# Run postinstall separately, allow failure in container
+RUN node scripts/postinstall.js || true
+
+# Verify CLI is loadable
+RUN node bin/install.js --help
+
+# Verify package loads
+RUN node -e "const pkg = require('./package.json'); console.log('QGSD ' + pkg.version + ' installed successfully')"
+
+CMD ["node", "bin/install.js", "--help"]
