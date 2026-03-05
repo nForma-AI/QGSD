@@ -21,8 +21,9 @@
 //   Traceability (3) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //                      check-coverage-guard.cjs (coverage regression guard vs baseline)
 //                      analyze-state-space.cjs (state-space risk classification per TLA+ model)
+//   Registry  (N)  — custom check commands from model-registry.json
 //   ─────────────────────────────────────────────────────────────
-//   Total:    34 steps
+//   Total:    34+ steps (dynamic — registry can add more)
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
@@ -107,6 +108,9 @@ function pickPrismArgs(modelName) {
 
 // ── Dynamic model discovery ───────────────────────────────────────────────────
 // Scans ROOT/.formal/{tla,alloy,prism,petri,uppaal}/ and builds step entries.
+// Also reads ROOT/.formal/model-registry.json for:
+//   - search_dirs: additional directories to scan for formal model files
+//   - models[].check.command: custom shell commands producing type:shell steps
 function discoverModels(root) {
   const discovered = [];
   const formalDir = path.join(root, '.formal');
@@ -194,6 +198,116 @@ function discoverModels(root) {
         args: [],
         nonCritical: true,
       });
+    }
+  }
+
+  // ── Registry-driven discovery ────────────────────────────────────────────
+  // Read model-registry.json for search_dirs and check.command entries.
+  // Fail-open: if missing or malformed, log warning and continue.
+  let registry = null;
+  const registryPath = path.join(root, '.formal', 'model-registry.json');
+  try {
+    const raw = fs.readFileSync(registryPath, 'utf8');
+    registry = JSON.parse(raw);
+  } catch (err) {
+    process.stderr.write(TAG + ' Warning: could not read model-registry.json: ' + err.message + '\n');
+  }
+
+  if (registry && Array.isArray(registry.search_dirs)) {
+    for (const dir of registry.search_dirs) {
+      const resolvedDir = path.resolve(root, dir);
+      if (!fs.existsSync(resolvedDir)) continue;
+
+      const files = fs.readdirSync(resolvedDir);
+
+      // TLA+: *.cfg
+      for (const f of files.filter(f => f.endsWith('.cfg'))) {
+        const configName = f.replace('.cfg', '');
+        const runner = pickTLARunner(configName);
+        const stepId = ('tla:' + path.join(dir, configName).replace(/\\/g, '/')).toLowerCase();
+        discovered.push({
+          tool: 'tla',
+          id: stepId,
+          label: 'TLA+ — ' + dir + '/' + configName,
+          type: 'node',
+          script: runner.script,
+          args: runner.args(configName),
+        });
+      }
+
+      // Alloy: *.als
+      for (const f of files.filter(f => f.endsWith('.als'))) {
+        const specName = f.replace('.als', '');
+        const stepId = ('alloy:' + path.join(dir, specName).replace(/\\/g, '/')).toLowerCase();
+        discovered.push({
+          tool: 'alloy',
+          id: stepId,
+          label: 'Alloy ' + dir + '/' + specName,
+          type: 'node',
+          script: pickAlloyRunner(specName),
+          args: pickAlloyArgs(specName),
+        });
+      }
+
+      // PRISM: *.pm
+      for (const f of files.filter(f => f.endsWith('.pm'))) {
+        const modelName = f.replace('.pm', '');
+        const stepId = ('prism:' + path.join(dir, modelName).replace(/\\/g, '/')).toLowerCase();
+        discovered.push({
+          tool: 'prism',
+          id: stepId,
+          label: 'PRISM ' + dir + '/' + modelName,
+          type: 'node',
+          script: pickPrismRunner(modelName),
+          args: pickPrismArgs(modelName),
+        });
+      }
+
+      // Petri: *.dot
+      for (const f of files.filter(f => f.endsWith('.dot'))) {
+        const name = f.replace('.dot', '');
+        const stepId = ('petri:' + path.join(dir, name).replace(/\\/g, '/')).toLowerCase();
+        discovered.push({
+          tool: 'petri',
+          id: stepId,
+          label: 'Petri ' + dir + '/' + name + ' — render DOT -> SVG',
+          type: 'wasm-dot',
+          dot: f,
+          svg: f.replace('.dot', '.svg'),
+        });
+      }
+
+      // UPPAAL: *.xml
+      for (const f of files.filter(f => f.endsWith('.xml'))) {
+        const stepId = ('uppaal:' + path.join(dir, f.replace('.xml', '')).replace(/\\/g, '/')).toLowerCase();
+        discovered.push({
+          tool: 'uppaal',
+          id: stepId,
+          label: 'UPPAAL ' + dir + '/' + f.replace('.xml', ''),
+          type: 'node',
+          script: 'run-uppaal.cjs',
+          args: [],
+          nonCritical: true,
+        });
+      }
+    }
+  }
+
+  // Registry check.command entries → type:shell steps
+  if (registry && registry.models && typeof registry.models === 'object') {
+    for (const [modelPath, entry] of Object.entries(registry.models)) {
+      if (entry && entry.check && typeof entry.check.command === 'string') {
+        discovered.push({
+          tool: 'registry',
+          id: 'registry:' + modelPath,
+          label: 'Registry check — ' + modelPath,
+          type: 'shell',
+          command: entry.check.command,
+          config: entry.check.config || null,
+          cwd: root,
+          nonCritical: entry.check.nonCritical || false,
+        });
+      }
     }
   }
 
@@ -304,7 +418,7 @@ const steps = only
 if (only && steps.length === 0) {
   process.stderr.write(
     TAG + ' Unknown --only value: ' + only + '\n' +
-    TAG + ' Valid values: tla, alloy, prism, petri, or a step id\n'
+    TAG + ' Valid values: tla, alloy, prism, petri, generate, ci, uppaal, registry, or a step id\n'
   );
   process.exit(1);
 }
