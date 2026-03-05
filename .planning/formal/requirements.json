@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-05T16:24:34.531Z",
-  "content_hash": "db2750dc42f480ca",
-  "frozen_at": "2026-03-05T16:24:34.534Z",
+  "aggregated_at": "2026-03-05T17:09:46.131Z",
+  "content_hash": "d014aa05f5e2f2c5",
+  "frozen_at": "2026-03-05T17:09:46.132Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -2708,6 +2708,18 @@
       "formal_models": [
         ".planning/formal/alloy/solver-portability.als"
       ]
+    },
+    {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
     },
     {
       "id": "SPEC-01",
