@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 177: Add VERIFY-03 tests and clean install Dockerfile
+Last activity: 2026-03-05 - Completed quick task 181: Cap JVM memory in formal model runners
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -85,6 +85,7 @@ Resume file: None
 | 175 | Add priority tiering and actionable filtering to analyze-assumptions | 2026-03-05 | ecf297f4 | Verified | [175-add-priority-tiering-and-actionable-filt](./quick/175-add-priority-tiering-and-actionable-filt/) |
 | 176 | Add reverse traceability discovery (C→R, T→R, D→R) | 2026-03-05 | b9b65c8d | Verified | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
 | 177 | Add VERIFY-03 tests (static + dynamic) and clean install Dockerfile | 2026-03-05 | bea9431a | Verified | [177-add-both-test-approaches-for-verify-03-s](./quick/177-add-both-test-approaches-for-verify-03-s/) |
+| 181 | Cap JVM memory in formal model runners and add sequential execution to prevent RAM exhaustion | 2026-03-05 | f336091d | Pending | [181-cap-jvm-memory-in-formal-model-runners-a](./quick/181-cap-jvm-memory-in-formal-model-runners-a/) |
 
 ## Recent Accomplishments
 
