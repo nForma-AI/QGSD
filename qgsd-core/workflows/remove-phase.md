@@ -11,15 +11,15 @@ Read all files referenced by the invoking prompt's execution_context before star
 <step name="parse_arguments">
 Parse the command arguments:
 - Argument is the phase number to remove (integer or decimal)
-- Example: `/qgsd:remove-phase 17` → phase = 17
-- Example: `/qgsd:remove-phase 16.1` → phase = 16.1
+- Example: `/nf:remove-phase 17` → phase = 17
+- Example: `/nf:remove-phase 16.1` → phase = 16.1
 
 If no argument provided:
 
 ```
 ERROR: Phase number required
-Usage: /qgsd:remove-phase <phase-number>
-Example: /qgsd:remove-phase 17
+Usage: /nf:remove-phase <phase-number>
+Example: /nf:remove-phase 17
 ```
 
 Exit.
@@ -52,7 +52,7 @@ Only future phases can be removed:
 - Current phase: {current}
 - Phase {target} is current or completed
 
-To abandon current work, use /qgsd:pause-work instead.
+To abandon current work, use /nf:pause-work instead.
 ```
 
 Exit.
@@ -125,7 +125,7 @@ Changes:
 ## What's Next
 
 Would you like to:
-- `/qgsd:progress` — see updated roadmap status
+- `/nf:progress` — see updated roadmap status
 - Continue with current phase
 - Review roadmap
 

@@ -11,15 +11,15 @@ Read all files referenced by the invoking prompt's execution_context before star
 <step name="parse_arguments">
 Parse the command arguments:
 - All arguments become the phase description
-- Example: `/qgsd:add-phase Add authentication` → description = "Add authentication"
-- Example: `/qgsd:add-phase Fix critical performance issues` → description = "Fix critical performance issues"
+- Example: `/nf:add-phase Add authentication` → description = "Add authentication"
+- Example: `/nf:add-phase Fix critical performance issues` → description = "Fix critical performance issues"
 
 If no arguments provided:
 
 ```
 ERROR: Phase description required
-Usage: /qgsd:add-phase <description>
-Example: /qgsd:add-phase Add authentication system
+Usage: /nf:add-phase <description>
+Example: /nf:add-phase Add authentication system
 ```
 
 Exit.
@@ -35,7 +35,7 @@ INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init phase-op "0")
 Check `roadmap_exists` from init JSON. If false:
 ```
 ERROR: No roadmap found (.planning/ROADMAP.md)
-Run /qgsd:new-project to initialize.
+Run /nf:new-project to initialize.
 ```
 Exit.
 </step>
@@ -86,14 +86,14 @@ Roadmap updated: .planning/ROADMAP.md
 
 **Phase {N}: {description}**
 
-`/qgsd:plan-phase {N}`
+`/nf:plan-phase {N}`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:add-phase <description>` — add another phase
+- `/nf:add-phase <description>` — add another phase
 - Review roadmap
 
 ---

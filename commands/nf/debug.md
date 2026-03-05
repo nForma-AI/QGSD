@@ -1,6 +1,6 @@
 ---
 name: qgsd:debug
-description: Debug loop with quorum consensus on next step. Feed failure context to 4 quorum workers — each identifies the single most likely root cause and next debugging step. Renders a NEXT STEP table. Call repeatedly: run test → fail → /qgsd:debug → apply step → run test again.
+description: Debug loop with quorum consensus on next step. Feed failure context to 4 quorum workers — each identifies the single most likely root cause and next debugging step. Renders a NEXT STEP table. Call repeatedly: run test → fail → /nf:debug → apply step → run test again.
 argument-hint: "[failure context: test output, error trace, or symptom description]"
 allowed-tools:
   - Task
@@ -50,7 +50,7 @@ If test files exist, run them:
 Store as $TEST_OUTPUT and $EXIT_CODE. If exit code is 0 and ARGUMENTS is empty, stop and return:
 
   QUORUM-DEBUG: No failure detected — tests pass (exit 0).
-  If you have a symptom not captured by tests, run: /qgsd:debug [describe the symptom]
+  If you have a symptom not captured by tests, run: /nf:debug [describe the symptom]
 
 ### Step B: Assemble bundle
 
@@ -146,14 +146,14 @@ IF consensus was reached:
   Report what was done.
   Then return:
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Consensus step executed. Run /qgsd:debug again to continue.
+    Consensus step executed. Run /nf:debug again to continue.
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 IF no consensus:
   Return:
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     No consensus — review recommendations above and apply the most relevant step.
-    Then run /qgsd:debug again with updated output.
+    Then run /nf:debug again with updated output.
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 )

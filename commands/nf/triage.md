@@ -208,15 +208,15 @@ Enter issue # to work on, "all" for full details, or press Enter to skip:
 **If user enters a number:**
 - Load the full issue details (title, URL, meta) for that index.
 - Determine routing:
-  - `severity: error` or `severity: bug` → suggest `/qgsd:debug`
-  - `severity: warning` or `severity: info` → suggest `/qgsd:quick`
+  - `severity: error` or `severity: bug` → suggest `/nf:debug`
+  - `severity: warning` or `severity: info` → suggest `/nf:quick`
 - Display:
   ```
   ◆ Issue: <title>
     URL: <url>
     Meta: <meta>
 
-  Suggested action: /qgsd:debug "<title> — <meta>"
+  Suggested action: /nf:debug "<title> — <meta>"
   Run it? [Y/n]
   ```
 - If confirmed, invoke the suggested skill with the issue as context.
@@ -227,7 +227,7 @@ Enter issue # to work on, "all" for full details, or press Enter to skip:
 
 **If user presses Enter (blank):**
 ```
-Triage skipped. Run /qgsd:triage again when ready.
+Triage skipped. Run /nf:triage again when ready.
 ```
 
 </process>

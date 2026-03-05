@@ -78,7 +78,7 @@ test('above warn threshold (used = 80%): emits WARNING message', () => {
   const ctx = parsed.hookSpecificOutput.additionalContext;
   assert.ok(ctx.includes('WARNING'), 'Should be WARNING not CRITICAL at 80%');
   assert.ok(!ctx.includes('CRITICAL'), 'Should not be CRITICAL at 80%');
-  assert.ok(ctx.includes('/qgsd:pause-work'), 'Should mention pause-work');
+  assert.ok(ctx.includes('/nf:pause-work'), 'Should mention pause-work');
 });
 
 // ─── Critical threshold tests ─────────────────────────────────────────────────

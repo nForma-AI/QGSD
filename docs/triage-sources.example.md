@@ -1,5 +1,5 @@
 ---
-# Triage source configuration for /qgsd:triage
+# Triage source configuration for /nf:triage
 # Copy this file to .planning/triage-sources.md and edit for your project.
 #
 # Supported source types: github | sentry | bash
@@ -59,19 +59,19 @@ sources:
 
 # Triage Sources
 
-Configuration for `/qgsd:triage` — the project's issue aggregation command.
+Configuration for `/nf:triage` — the project's issue aggregation command.
 
 ## How to use
 
 ```
-/qgsd:triage                    # Fetch from all configured sources
-/qgsd:triage --source github    # Fetch from GitHub only
-/qgsd:triage --since 24h        # Override time window for all sources
-/qgsd:triage --limit 5          # Max 5 issues per source
+/nf:triage                    # Fetch from all configured sources
+/nf:triage --source github    # Fetch from GitHub only
+/nf:triage --since 24h        # Override time window for all sources
+/nf:triage --limit 5          # Max 5 issues per source
 ```
 
 After fetching, triage presents a prioritized table and routes the selected
-issue to `/qgsd:debug` (errors/bugs) or `/qgsd:quick` (warnings/tasks).
+issue to `/nf:debug` (errors/bugs) or `/nf:quick` (warnings/tasks).
 
 Sentry sources (`sentry`, `sentry-feedback`) use the Sentry MCP server — no
 `sentry-cli` installation required. The project slug is auto-detected if omitted.

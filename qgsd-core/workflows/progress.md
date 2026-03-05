@@ -22,18 +22,18 @@ If `project_exists` is false (no `.planning/` directory):
 ```
 No planning structure found.
 
-Run /qgsd:new-project to start a new project.
+Run /nf:new-project to start a new project.
 ```
 
 Exit.
 
-If missing STATE.md: suggest `/qgsd:new-project`.
+If missing STATE.md: suggest `/nf:new-project`.
 
 **If ROADMAP.md missing but PROJECT.md exists:**
 
 This means a milestone was completed and archived. Go to **Route F** (between milestones).
 
-If missing both ROADMAP.md and PROJECT.md: suggest `/qgsd:new-project`.
+If missing both ROADMAP.md and PROJECT.md: suggest `/nf:new-project`.
 </step>
 
 <step name="load">
@@ -120,18 +120,18 @@ CONTEXT: [✓ if has_context | - if not]
 - [e.g. jq -r '.blockers[].text' from state-snapshot]
 
 ## Pending Todos
-- [count] pending — /qgsd:check-todos to review
+- [count] pending — /nf:check-todos to review
 
 ## Active Debug Sessions
-- [count] active — /qgsd:debug to continue
+- [count] active — /nf:debug to continue
 (Only show this section if count > 0)
 
 ## Formal Coverage
 (Only show this section if FORMAL.available is true)
 Requirements: {complete_count} Complete / {pending_count} Pending (of {total})
 Model coverage: {coverage_pct}% ({covered_by_model}/{total} requirements linked to formal models)
-(If uncovered_count > 0:) {uncovered_count} uncovered — /qgsd:close-formal-gaps to address
-(If pending_count > 0:) {pending_count} pending — /qgsd:new-milestone to plan future work
+(If uncovered_count > 0:) {uncovered_count} uncovered — /nf:close-formal-gaps to address
+(If pending_count > 0:) {pending_count} pending — /nf:new-milestone to plan future work
 
 ## What's Next
 [Next phase/plan objective from roadmap analyze]
@@ -189,7 +189,7 @@ Read its `<objective>` section.
 
 **{phase}-{plan}: [Plan Name]** — [objective summary from PLAN.md]
 
-`/qgsd:execute-phase {phase}`
+`/nf:execute-phase {phase}`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -212,7 +212,7 @@ Check if `{phase_num}-CONTEXT.md` exists in phase directory.
 **Phase {N}: {Name}** — {Goal from ROADMAP.md}
 <sub>✓ Context gathered, ready to plan</sub>
 
-`/qgsd:plan-phase {phase-number}`
+`/nf:plan-phase {phase-number}`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -228,15 +228,15 @@ Check if `{phase_num}-CONTEXT.md` exists in phase directory.
 
 **Phase {N}: {Name}** — {Goal from ROADMAP.md}
 
-`/qgsd:discuss-phase {phase}` — gather context and clarify approach
+`/nf:discuss-phase {phase}` — gather context and clarify approach
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:plan-phase {phase}` — skip discussion, plan directly
-- `/qgsd:list-phase-assumptions {phase}` — see Claude's assumptions
+- `/nf:plan-phase {phase}` — skip discussion, plan directly
+- `/nf:list-phase-assumptions {phase}` — see Claude's assumptions
 
 ---
 ```
@@ -254,15 +254,15 @@ UAT.md exists with gaps (diagnosed issues). User needs to plan fixes.
 
 **{phase_num}-UAT.md** has {N} gaps requiring fixes.
 
-`/qgsd:plan-phase {phase} --gaps`
+`/nf:plan-phase {phase} --gaps`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:execute-phase {phase}` — execute phase plans
-- `/qgsd:verify-work {phase}` — run more UAT testing
+- `/nf:execute-phase {phase}` — execute phase plans
+- `/nf:verify-work {phase}` — run more UAT testing
 
 ---
 ```
@@ -301,15 +301,15 @@ Read ROADMAP.md to get the next phase's name and goal.
 
 **Phase {Z+1}: {Name}** — {Goal from ROADMAP.md}
 
-`/qgsd:discuss-phase {Z+1}` — gather context and clarify approach
+`/nf:discuss-phase {Z+1}` — gather context and clarify approach
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:plan-phase {Z+1}` — skip discussion, plan directly
-- `/qgsd:verify-work {Z}` — user acceptance test before continuing
+- `/nf:plan-phase {Z+1}` — skip discussion, plan directly
+- `/nf:verify-work {Z}` — user acceptance test before continuing
 
 ---
 ```
@@ -329,14 +329,14 @@ All {N} phases finished!
 
 **Complete Milestone** — archive and prepare for next
 
-`/qgsd:complete-milestone`
+`/nf:complete-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:verify-work` — user acceptance test before completing milestone
+- `/nf:verify-work` — user acceptance test before completing milestone
 
 ---
 ```
@@ -360,7 +360,7 @@ Ready to plan the next milestone.
 
 **Start Next Milestone** — questioning → research → requirements → roadmap
 
-`/qgsd:new-milestone`
+`/nf:new-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -372,10 +372,10 @@ Ready to plan the next milestone.
 <step name="edge_cases">
 **Handle edge cases:**
 
-- Phase complete but next phase not planned → offer `/qgsd:plan-phase [next]`
+- Phase complete but next phase not planned → offer `/nf:plan-phase [next]`
 - All work complete → offer milestone completion
 - Blockers present → highlight before offering to continue
-- Handoff file exists → mention it, offer `/qgsd:resume-work`
+- Handoff file exists → mention it, offer `/nf:resume-work`
   </step>
 
 </process>
@@ -385,7 +385,7 @@ Ready to plan the next milestone.
 - [ ] Rich context provided (recent work, decisions, issues)
 - [ ] Current position clear with visual progress
 - [ ] What's next clearly explained
-- [ ] Smart routing: /qgsd:execute-phase if plans exist, /qgsd:plan-phase if not
+- [ ] Smart routing: /nf:execute-phase if plans exist, /nf:plan-phase if not
 - [ ] User confirms before any action
 - [ ] Seamless handoff to appropriate gsd command
       </success_criteria>

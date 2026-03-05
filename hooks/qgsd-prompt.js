@@ -27,7 +27,7 @@ const { schema_version } = require('./conformance-schema.cjs');
 
 const DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK = `QUORUM REQUIRED (structural enforcement — Stop hook will verify)
 
-Run the full R3 quorum protocol inline (dispatch_pattern from commands/qgsd/quorum.md):
+Run the full R3 quorum protocol inline (dispatch_pattern from commands/nf/quorum.md):
 
 1. State Claude's own position (vote) first — APPROVE or BLOCK with 1-2 sentence rationale
 2. Run provider pre-flight: node ~/.claude/qgsd-bin/check-provider-health.cjs --json
@@ -358,7 +358,7 @@ process.stdin.on('end', () => {
       process.stdout.write(JSON.stringify({
         hookSpecificOutput: {
           hookEventName: 'UserPromptSubmit',
-          additionalContext: `PENDING QUEUED TASK — Execute this immediately before anything else:\n\n${pendingTask}\n\n(This task was queued via /qgsd:queue before the previous /clear.)`,
+          additionalContext: `PENDING QUEUED TASK — Execute this immediately before anything else:\n\n${pendingTask}\n\n(This task was queued via /nf:queue before the previous /clear.)`,
         }
       }));
       process.exit(0);
@@ -428,7 +428,7 @@ process.stdin.on('end', () => {
       if (orderedSlots.length === 0) {
         // Fail-open to solo mode: Claude is the only quorum participant
         console.error('[qgsd-dispatch] WARNING: no external agents in roster — falling back to solo quorum');
-        instructions = `<!-- QGSD_SOLO_MODE -->\nSOLO MODE ACTIVE (empty roster): No external agents configured in providers.json or quorum_active. Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output. The Stop hook is informed.\n\nTo add agents, run /qgsd:mcp-setup or edit ~/.claude/qgsd.json quorum_active.\n`;
+        instructions = `<!-- QGSD_SOLO_MODE -->\nSOLO MODE ACTIVE (empty roster): No external agents configured in providers.json or quorum_active. Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output. The Stop hook is informed.\n\nTo add agents, run /nf:mcp-setup or edit ~/.claude/qgsd.json quorum_active.\n`;
       } else {
         if (preferSub) {
           orderedSlots.sort((a, b) => {
@@ -559,7 +559,7 @@ process.stdin.on('end', () => {
       }
 
       instructions = `QUORUM REQUIRED${minNote} (structural enforcement — Stop hook will verify)\n\n` +
-        `Run the full R3 quorum protocol inline (dispatch_pattern from commands/qgsd/quorum.md):\n` +
+        `Run the full R3 quorum protocol inline (dispatch_pattern from commands/nf/quorum.md):\n` +
         `Dispatch ALL active slots as parallel sibling qgsd-quorum-slot-worker Tasks in ONE message turn.\n` +
         `NEVER call mcp__*__* tools directly — use Task(subagent_type="qgsd-quorum-slot-worker") ONLY:\n` +
         (hasMixed ? '  [Subscription agents — preferred, flat-fee]\n' : '') +
@@ -612,8 +612,8 @@ process.stdin.on('end', () => {
         lines;
     }
 
-    // Anchored allowlist — requires /gsd: or /qgsd: prefix and word boundary after command name.
-    const cmdPattern = new RegExp('^\\s*\\/q?gsd:(' + commands.join('|') + ')(\\s|$)');
+    // Anchored allowlist — requires /nf:, /gsd:, or /qgsd: prefix and word boundary after command name.
+    const cmdPattern = new RegExp('^\\s*\\/(nf|q?gsd):(' + commands.join('|') + ')(\\s|$)');
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
     }

@@ -1,6 +1,6 @@
 ---
 name: qgsd:observe
-description: Fetch issues and drifts from configured sources, render dual-table output, and write to debt ledger. Replaces /qgsd:triage.
+description: Fetch issues and drifts from configured sources, render dual-table output, and write to debt ledger. Replaces /nf:triage.
 argument-hint: "[--source github|sentry|sentry-feedback|bash|internal] [--since 24h|7d] [--limit N]"
 allowed-tools:
   - Read
@@ -13,7 +13,7 @@ allowed-tools:
 <objective>
 Aggregate issues and drifts from all configured sources, deduplicate, render a prioritized dual-table output (Issues + Drifts), write observations to the debt ledger, and route the selected issue to the right QGSD workflow.
 
-This command is the project's unified "what's broken right now?" entry point. It replaces `/qgsd:triage` with debt-aware persistence and dual-table rendering.
+This command is the project's unified "what's broken right now?" entry point. It replaces `/nf:triage` with debt-aware persistence and dual-table rendering.
 </objective>
 
 <process>
@@ -224,25 +224,25 @@ Enter issue # to work on, "ack N" to acknowledge, "solve" for all internal issue
 **If user enters a number:**
 - Load the full issue details (title, URL, meta) for that index.
 - Determine routing:
-  - If the issue has `source_type: 'internal'` and `_route` metadata: use the `_route` value as the suggested action (example: unfinished quick task suggests `/qgsd:quick "original-slug"`, debug session suggests `/qgsd:debug --resume`)
+  - If the issue has `source_type: 'internal'` and `_route` metadata: use the `_route` value as the suggested action (example: unfinished quick task suggests `/nf:quick "original-slug"`, debug session suggests `/nf:debug --resume`)
   - Otherwise, routing by severity:
-    - `severity: error` or `severity: bug` → suggest `/qgsd:debug`
-    - `severity: warning` or `severity: info` → suggest `/qgsd:quick`
+    - `severity: error` or `severity: bug` → suggest `/nf:debug`
+    - `severity: warning` or `severity: info` → suggest `/nf:quick`
 - Display:
   ```
   ◆ Issue: <title>
     URL: <url>
     Meta: <meta>
 
-  Suggested action: /qgsd:debug "<title> — <meta>"
+  Suggested action: /nf:debug "<title> — <meta>"
   Run it? [Y/n]
   ```
 - If confirmed, invoke the suggested skill with the issue as context.
 
 **If user enters "solve":**
 - Collect all issues with `source_type: 'internal'`
-- Display: `Routing all internal issues to /qgsd:solve...`
-- Invoke `/qgsd:solve` to address all internal consistency issues at once
+- Display: `Routing all internal issues to /nf:solve...`
+- Invoke `/nf:solve` to address all internal consistency issues at once
 
 **If user enters "ack N":**
 - Acknowledge the debt entry for issue #N (transition status from "open" to "acknowledged" via the debt state machine).
@@ -254,7 +254,7 @@ Enter issue # to work on, "ack N" to acknowledge, "solve" for all internal issue
 
 **If user presses Enter (blank):**
 ```
-Observe complete. Run /qgsd:observe again when ready.
+Observe complete. Run /nf:observe again when ready.
 ```
 
 </process>

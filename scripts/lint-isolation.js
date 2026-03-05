@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const SCAN_DIRS = ['commands/qgsd'];
+const SCAN_DIRS = ['commands/nf'];
 
 // Matches /get-shit-done/ as a directory segment in a path
 const INTERFERENCE_RE = /\/get-shit-done\//g;

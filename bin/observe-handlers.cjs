@@ -1,5 +1,5 @@
 /**
- * Source handler implementations for /qgsd:observe
+ * Source handler implementations for /nf:observe
  * GitHub, Sentry, sentry-feedback, and bash handlers
  *
  * ALL handlers return the SAME schema:

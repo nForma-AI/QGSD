@@ -110,8 +110,8 @@ test('TC6: malformed JSON input exits 0 with empty stdout (silent fail)', () => 
   assert.strictEqual(stdout, '', 'stdout must be empty on malformed JSON input');
 });
 
-// TC7: Update available — output includes '/qgsd:update'
-test('TC7: update available banner shows /qgsd:update in output', () => {
+// TC7: Update available — output includes '/nf:update'
+test('TC7: update available banner shows /nf:update in output', () => {
   const tempHome = makeTempDir('tc7');
   const cacheDir = path.join(tempHome, '.claude', 'cache');
   fs.mkdirSync(cacheDir, { recursive: true });
@@ -124,7 +124,7 @@ test('TC7: update available banner shows /qgsd:update in output', () => {
       { HOME: tempHome }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
-    assert.ok(stdout.includes('/qgsd:update'), 'stdout must include /qgsd:update when update is available');
+    assert.ok(stdout.includes('/nf:update'), 'stdout must include /nf:update when update is available');
   } finally {
     fs.rmSync(tempHome, { recursive: true, force: true });
   }

@@ -34,7 +34,7 @@ Parse ACTIVITY JSON: if the result is `{}` or empty, set `HAS_ACTIVITY=false`. O
 
 **If `state_exists` is true:** Proceed to load_state
 **If `state_exists` is false but `roadmap_exists` or `project_exists` is true:** Offer to reconstruct STATE.md
-**If `planning_exists` is false:** This is a new project - route to /qgsd:new-project
+**If `planning_exists` is false:** This is a new project - route to /nf:new-project
 </step>
 
 <step name="load_state">
@@ -120,13 +120,13 @@ fi
 
 - A quick task was planned and execution started but no SUMMARY was written
 - Flag: "Found incomplete quick task"
-- Recovery: `/qgsd:quick` — the quick command will pick up the existing PLAN
+- Recovery: `/nf:quick` — the quick command will pick up the existing PLAN
 
 **If incomplete debug session found:**
 
-- /qgsd:debug ran and reached consensus, but no fix was applied before the session ended
+- /nf:debug ran and reached consensus, but no fix was applied before the session ended
 - Flag: "Found incomplete debug session"
-- Recovery: Read `.planning/quick/quorum-debug-latest.md` for the consensus next step, then apply it, or re-run `/qgsd:debug` to get a fresh analysis
+- Recovery: Read `.planning/quick/quorum-debug-latest.md` for the consensus next step, then apply it, or re-run `/nf:debug` to get a fresh analysis
   </step>
 
 <step name="present_status">
@@ -155,7 +155,7 @@ FORMAL=$(node ~/.claude/qgsd/bin/gsd-tools.cjs formal-summary 2>/dev/null)
 Formal gaps:
     - {uncovered_count} requirements without formal model coverage
     - {pending_count} requirements still pending
-    Actions: /qgsd:close-formal-gaps | /qgsd:new-milestone
+    Actions: /nf:close-formal-gaps | /nf:new-milestone
 
 [If HAS_ACTIVITY is true:]
 
@@ -183,16 +183,16 @@ Formal gaps:
 [If incomplete quick task found:]
 ⚠️  Incomplete quick task:
     - [path to PLAN.md]
-    Recovery: /qgsd:quick
+    Recovery: /nf:quick
 
 [If incomplete debug session found:]
 ⚠️  Incomplete debug session:
     - Consensus found but fix not applied
     - File: .planning/quick/quorum-debug-latest.md
-    Recovery: apply consensus step or re-run /qgsd:debug
+    Recovery: apply consensus step or re-run /nf:debug
 
 [If pending todos exist:]
-📋 [N] pending todos — /qgsd:check-todos to review
+📋 [N] pending todos — /nf:check-todos to review
 
 [If blockers exist:]
 ⚠️  Carried concerns:
@@ -213,27 +213,27 @@ Route based on `activity` + `sub_activity`:
 
 | sub_activity | Recovery |
 |---|---|
-| executing_plan | `/qgsd:execute-phase {phase}` — executor will skip completed plans and resume from the interrupted plan |
-| checkpoint_verify | `/qgsd:execute-phase {phase}` — re-enter checkpoint:verify for plan {plan} |
-| debug_loop | `/qgsd:execute-phase {phase}` — re-enter debug loop (was on round {debug_round}) |
-| awaiting_human_verify | `/qgsd:execute-phase {phase}` — checkpoint is waiting for human approval |
-| verifying_phase | `/qgsd:execute-phase {phase}` — verifier was running, re-trigger phase verification |
-| researching (activity=plan_phase) | `/qgsd:plan-phase {phase}` — researcher was running, re-trigger with --research flag |
-| planning (activity=plan_phase) | `/qgsd:plan-phase {phase}` — planner was running, re-trigger plan-phase |
-| checking_plan | `/qgsd:plan-phase {phase}` — checker was running, re-trigger plan-phase |
-| quorum | `/qgsd:plan-phase {phase}` — QUORUM was in progress (round {quorum_round}), re-trigger plan-phase |
-| researching (activity=new_milestone) | `/qgsd:new-milestone` — milestone research was running |
-| creating_roadmap | `/qgsd:new-milestone` — roadmapper was spawning |
-| oscillation_diagnosis | `/qgsd:execute-phase {phase}` — oscillation resolution quorum was running |
-| awaiting_approval | `/qgsd:execute-phase {phase}` — unified solution is ready, user approval is needed |
-| executing | `/qgsd:quick` — quick task execution was in progress |
-| planning (activity=quick) | `/qgsd:quick` — quick task planning was in progress |
-| discovering_tests (activity=maintain_tests) | `/qgsd:fix-tests` — re-trigger discovery; no state file means fresh run |
-| running_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state file, re-run batch {batch} of {batch_total} |
-| categorizing_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, batch results on disk, re-enter categorization for batch {batch} |
-| actioning_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, dispatch quick tasks for batch {batch} failures |
-| verifying_batch (activity=maintain_tests) | `/qgsd:fix-tests` — load state, re-run verification for actioned tests in batch {batch} |
-| complete (activity=maintain_tests) | `/qgsd:fix-tests` — session already complete; print summary and clear activity state |
+| executing_plan | `/nf:execute-phase {phase}` — executor will skip completed plans and resume from the interrupted plan |
+| checkpoint_verify | `/nf:execute-phase {phase}` — re-enter checkpoint:verify for plan {plan} |
+| debug_loop | `/nf:execute-phase {phase}` — re-enter debug loop (was on round {debug_round}) |
+| awaiting_human_verify | `/nf:execute-phase {phase}` — checkpoint is waiting for human approval |
+| verifying_phase | `/nf:execute-phase {phase}` — verifier was running, re-trigger phase verification |
+| researching (activity=plan_phase) | `/nf:plan-phase {phase}` — researcher was running, re-trigger with --research flag |
+| planning (activity=plan_phase) | `/nf:plan-phase {phase}` — planner was running, re-trigger plan-phase |
+| checking_plan | `/nf:plan-phase {phase}` — checker was running, re-trigger plan-phase |
+| quorum | `/nf:plan-phase {phase}` — QUORUM was in progress (round {quorum_round}), re-trigger plan-phase |
+| researching (activity=new_milestone) | `/nf:new-milestone` — milestone research was running |
+| creating_roadmap | `/nf:new-milestone` — roadmapper was spawning |
+| oscillation_diagnosis | `/nf:execute-phase {phase}` — oscillation resolution quorum was running |
+| awaiting_approval | `/nf:execute-phase {phase}` — unified solution is ready, user approval is needed |
+| executing | `/nf:quick` — quick task execution was in progress |
+| planning (activity=quick) | `/nf:quick` — quick task planning was in progress |
+| discovering_tests (activity=maintain_tests) | `/nf:fix-tests` — re-trigger discovery; no state file means fresh run |
+| running_batch (activity=maintain_tests) | `/nf:fix-tests` — load state file, re-run batch {batch} of {batch_total} |
+| categorizing_batch (activity=maintain_tests) | `/nf:fix-tests` — load state, batch results on disk, re-enter categorization for batch {batch} |
+| actioning_batch (activity=maintain_tests) | `/nf:fix-tests` — load state, dispatch quick tasks for batch {batch} failures |
+| verifying_batch (activity=maintain_tests) | `/nf:fix-tests` — load state, re-run verification for actioned tests in batch {batch} |
+| complete (activity=maintain_tests) | `/nf:fix-tests` — session already complete; print summary and clear activity state |
 
 Present the matched recovery option to the user as the PRIMARY action.
 
@@ -250,12 +250,12 @@ Present the matched recovery option to the user as the PRIMARY action.
 → Option: Abandon and move on
 
 **If incomplete quick task (quick PLAN without SUMMARY):**
-→ Primary: Complete the quick task (`/qgsd:quick`)
+→ Primary: Complete the quick task (`/nf:quick`)
 → Option: Abandon (delete the PLAN.md)
 
 **If incomplete debug session:**
 → Primary: Read quorum-debug-latest.md, apply consensus step
-→ Option: Re-run `/qgsd:debug` for fresh analysis
+→ Option: Re-run `/nf:debug` for fresh analysis
 → Option: Dismiss (delete quorum-debug-latest.md if stale)
 
 **If phase in progress, all plans complete:**
@@ -290,11 +290,11 @@ What would you like to do?
 [Primary action based on state - e.g.:]
 1. Resume interrupted agent [if interrupted agent found]
    OR
-1. Execute phase (/qgsd:execute-phase {phase})
+1. Execute phase (/nf:execute-phase {phase})
    OR
-1. Discuss Phase 3 context (/qgsd:discuss-phase 3) [if CONTEXT.md missing]
+1. Discuss Phase 3 context (/nf:discuss-phase 3) [if CONTEXT.md missing]
    OR
-1. Plan Phase 3 (/qgsd:plan-phase 3) [if CONTEXT.md exists or discuss option declined]
+1. Plan Phase 3 (/nf:plan-phase 3) [if CONTEXT.md exists or discuss option declined]
 
 [Secondary options:]
 2. Review current phase status
@@ -325,7 +325,7 @@ Based on user selection, route to appropriate workflow:
 
   **{phase}-{plan}: [Plan Name]** — [objective from PLAN.md]
 
-  `/qgsd:execute-phase {phase}`
+  `/nf:execute-phase {phase}`
 
   <sub>`/clear` first → fresh context window</sub>
 
@@ -339,15 +339,15 @@ Based on user selection, route to appropriate workflow:
 
   **Phase [N]: [Name]** — [Goal from ROADMAP.md]
 
-  `/qgsd:plan-phase [phase-number]`
+  `/nf:plan-phase [phase-number]`
 
   <sub>`/clear` first → fresh context window</sub>
 
   ---
 
   **Also available:**
-  - `/qgsd:discuss-phase [N]` — gather context first
-  - `/qgsd:research-phase [N]` — investigate unknowns
+  - `/nf:discuss-phase [N]` — gather context first
+  - `/nf:research-phase [N]` — investigate unknowns
 
   ---
   ```

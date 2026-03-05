@@ -83,12 +83,12 @@ Use AskUserQuestion:
   - "3 — claude-3 (Together.xyz, Qwen3-Coder-480B)"
   - "4 — claude-5 (Together.xyz, Llama-4-M)"
   - "5 — claude-4 (Fireworks, kimi)"
-  - "Skip — configure later via /qgsd:mcp-setup"
+  - "Skip — configure later via /nf:mcp-setup"
 
 If "Skip" is chosen, display:
 
 ```
-⚠ No agents configured. Run /qgsd:mcp-setup when ready.
+⚠ No agents configured. Run /nf:mcp-setup when ready.
 ```
 
 Stop.
@@ -177,7 +177,7 @@ If "Finish setup": continue to Step 3.
 If pending batch is empty (all skipped):
 
 ```
-⚠ No agents configured. Run /qgsd:mcp-setup when ready.
+⚠ No agents configured. Run /nf:mcp-setup when ready.
 ```
 
 Stop.
@@ -196,7 +196,7 @@ Agents to add to ~/.claude.json:
   [repeat for each pending agent]
 
 Skipped:
-  ○ {agent-name} — run /qgsd:mcp-setup to configure later
+  ○ {agent-name} — run /nf:mcp-setup to configure later
 ```
 
 Use AskUserQuestion:
@@ -309,13 +309,13 @@ syncToClaudeJson(SERVICE)
 
 For each agent in the pending batch:
 
-Invoke `/qgsd:mcp-restart {agent-name}`.
+Invoke `/nf:mcp-restart {agent-name}`.
 
 If restart fails or times out, leave config in written state and display:
 
 ```
 ⚠ {agent-name}: restart failed. Config was written — agent will reload on next Claude Code restart.
-  Manual retry: /qgsd:mcp-restart {agent-name}
+  Manual retry: /nf:mcp-restart {agent-name}
 ```
 
 ### Step 3f: Closing summary
@@ -330,10 +330,10 @@ Changes applied and agents restarted.
   ✓ {agent-name} — restarted
   [repeat for each successfully restarted agent]
 
-  ○ {agent-name} — skipped (run /qgsd:mcp-setup to configure later)
+  ○ {agent-name} — skipped (run /nf:mcp-setup to configure later)
   [repeat for each skipped agent]
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 ---
@@ -631,7 +631,7 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 "
 ```
 
-5. Invoke `/qgsd:mcp-restart {agent-name}` to start the new agent process.
+5. Invoke `/nf:mcp-restart {agent-name}` to start the new agent process.
 
 **Step D — Identity ping (AGENT-03)**
 
@@ -648,7 +648,7 @@ If identity responds:
     Version: {identity.version}
     Model:   {identity.model}
 
-Run /qgsd:mcp-status to see full agent roster.
+Run /nf:mcp-status to see full agent roster.
 ```
 
 If identity times out or errors:
@@ -657,7 +657,7 @@ If identity times out or errors:
 
   ◆ {agent-name} — added, restarted (identity ping timed out — agent may need a moment to start)
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 **Return path:** If this add-slot flow was entered from the Composition Screen (via "Add new slot"), return to Composition Screen after identity ping. Otherwise, return to roster display (re-read roster to show new agent).
@@ -737,7 +737,7 @@ if (!active.includes(newSlot)) {
 " NEW_SLOT="{new-slot-name}"
 ```
 
-4. Invoke `/qgsd:mcp-restart {new-slot-name}` to start the new agent process.
+4. Invoke `/nf:mcp-restart {new-slot-name}` to start the new agent process.
 
 **Step D — Identity ping** (same as claude-mcp-server path):
 
@@ -754,7 +754,7 @@ If identity responds:
     Version: {identity.version}
     Model:   {identity.model}
 
-Run /qgsd:mcp-status to see full agent roster.
+Run /nf:mcp-status to see full agent roster.
 ```
 
 If identity times out or errors:
@@ -763,7 +763,7 @@ If identity times out or errors:
 
   ◆ {new-slot-name} — added, restarted (identity ping timed out — agent may need a moment to start)
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 **Return path:** If this add-slot flow was entered from the Composition Screen (via "Add new slot"), return to Composition Screen after identity ping. Otherwise, return to roster display (re-read roster to show new agent).
@@ -1080,10 +1080,10 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 "
 ```
 
-4. Invoke `/qgsd:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
+4. Invoke `/nf:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
 ```
 ⚠ {agent-name}: restart failed. Config applied — reload on next Claude Code restart.
-  Manual retry: /qgsd:mcp-restart {agent-name}
+  Manual retry: /nf:mcp-restart {agent-name}
 ```
 
 5. Display:
@@ -1092,7 +1092,7 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 
   ✓ {agent-name} — key updated, restarted
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 Return to Agent Sub-Menu (user can make further changes or go Back).
@@ -1209,10 +1209,10 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 "
 ```
 
-4. Invoke `/qgsd:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
+4. Invoke `/nf:mcp-restart {agent-name}` (sequential). If restart fails, leave config written and display:
 ```
 ⚠ {agent-name}: restart failed. Config applied — reload on next Claude Code restart.
-  Manual retry: /qgsd:mcp-restart {agent-name}
+  Manual retry: /nf:mcp-restart {agent-name}
 ```
 
 5. Display:
@@ -1221,7 +1221,7 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 
   ✓ {agent-name} — provider changed to {NEW_PROVIDER_NAME}, restarted
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 Return to Agent Sub-Menu (user can make further changes or go Back).
@@ -1285,7 +1285,7 @@ process.stdout.write(JSON.stringify({ removed: true, agent: agentName }) + '\n')
   ✓ {agent-name} — removed from ~/.claude.json
     The agent will be deregistered on next Claude Code restart.
 
-Run /qgsd:mcp-status to verify the updated agent roster.
+Run /nf:mcp-status to verify the updated agent roster.
 ```
 
 Return to roster display (re-read roster — removed agent no longer appears).
@@ -1334,7 +1334,7 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 "
 ```
 
-4. For each affected agent (sequential, one at a time): invoke `/qgsd:mcp-restart {agent-name}`.
+4. For each affected agent (sequential, one at a time): invoke `/nf:mcp-restart {agent-name}`.
 
 5. Display:
 ```
@@ -1342,13 +1342,13 @@ syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e =
 
   ✓ {agent-name} — restarted
 
-Run /qgsd:mcp-status to verify agent health.
+Run /nf:mcp-status to verify agent health.
 ```
 
 If a restart fails, leave config written and display:
 ```
 ⚠ {agent-name}: restart failed. Config applied — reload on next Claude Code restart.
-  Manual retry: /qgsd:mcp-restart {agent-name}
+  Manual retry: /nf:mcp-restart {agent-name}
 ```
 
 </process>

@@ -1,5 +1,5 @@
 /**
- * Dual-table renderer for /qgsd:observe
+ * Dual-table renderer for /nf:observe
  * Renders Issues table and Drifts table with error section
  */
 

@@ -14,12 +14,12 @@ allowed-tools:
 Guided project manager hub with state-aware dashboard and categorized action menu.
 
 Shows project status (milestone, phase, progress, config) then routes to:
-- Continue Working — smart routing based on project state (same as /qgsd:progress)
+- Continue Working — smart routing based on project state (same as /nf:progress)
 - Project Management — phases, milestones, todos, debug, roadmap
 - Configuration — workflow settings, project profile, baselines, quorum agents
-- Quick Task — ad-hoc tasks via /qgsd:quick
+- Quick Task — ad-hoc tasks via /nf:quick
 
-Backward compatible: /qgsd:settings --config goes directly to workflow settings (original 6-question config form).
+Backward compatible: /nf:settings --config goes directly to workflow settings (original 6-question config form).
 </objective>
 
 <execution_context>

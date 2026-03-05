@@ -1,5 +1,5 @@
 <purpose>
-Create all phases necessary to close gaps identified by `/qgsd:audit-milestone`. Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase. One command creates all fix phases — no manual `/qgsd:add-phase` per gap.
+Create all phases necessary to close gaps identified by `/nf:audit-milestone`. Reads MILESTONE-AUDIT.md, groups gaps into logical phases, creates phase entries in ROADMAP.md, and offers to plan each phase. One command creates all fix phases — no manual `/nf:add-phase` per gap.
 </purpose>
 
 <required_reading>
@@ -23,7 +23,7 @@ Parse YAML frontmatter to extract structured gaps:
 
 If no audit file exists or has no gaps, error:
 ```
-No audit gaps found. Run `/qgsd:audit-milestone` first.
+No audit gaps found. Run `/nf:audit-milestone` first.
 ```
 
 ## 2. Prioritize Gaps
@@ -146,7 +146,7 @@ Route on quorum_result:
   ### Resolution
   {Proposed resolution path from blocking model(s)}
 
-  Resolve the objection and re-run `/qgsd:plan-milestone-gaps` to retry quorum approval.
+  Resolve the objection and re-run `/nf:plan-milestone-gaps` to retry quorum approval.
   ROADMAP.md has NOT been updated.
   ```
   Halt. Do not proceed to Step 6.
@@ -216,7 +216,7 @@ Spawn plan-phase Task for the first gap closure phase:
 
 ```
 Task(
-  prompt="Run /qgsd:plan-phase {FIRST_GAP_PHASE} --auto
+  prompt="Run /nf:plan-phase {FIRST_GAP_PHASE} --auto
 
 Gap closure phase goal: {goal from ROADMAP.md for FIRST_GAP_PHASE}
 Phase directory: .planning/phases/{phase-dir}/",
@@ -226,15 +226,15 @@ Phase directory: .planning/phases/{phase-dir}/",
 ```
 
 **Also available (if auto-spawn is not desired):**
-- `/qgsd:execute-phase {N}` — if plans already exist
+- `/nf:execute-phase {N}` — if plans already exist
 - `cat .planning/ROADMAP.md` — see updated roadmap
 
 ---
 
 **After all gap phases complete:**
 
-`/qgsd:audit-milestone` — re-audit to verify gaps closed
-`/qgsd:complete-milestone {version}` — archive when audit passes
+`/nf:audit-milestone` — re-audit to verify gaps closed
+`/nf:complete-milestone {version}` — archive when audit passes
 
 </process>
 
@@ -324,5 +324,5 @@ becomes:
 - [ ] Coverage count updated in REQUIREMENTS.md
 - [ ] Phase directories created
 - [ ] Changes committed (includes REQUIREMENTS.md)
-- [ ] User knows to run `/qgsd:plan-phase` next
+- [ ] User knows to run `/nf:plan-phase` next
 </success_criteria>

@@ -33,7 +33,7 @@ If required fields (id, text, category, phase) are missing, prompt the user inte
 **Read existing envelope:**
 
 1. Read `.planning/formal/requirements.json`
-2. If file doesn't exist, error: "No requirements envelope found. Run /qgsd:map-requirements first."
+2. If file doesn't exist, error: "No requirements envelope found. Run /nf:map-requirements first."
 3. Parse the envelope and extract the requirements array
 4. Note the `frozen_at` state for later re-freeze
 </step>
@@ -106,6 +106,66 @@ If Haiku returns `CONFLICT`:
 
 If Haiku returns `CLEAR`:
 Display: `◆ Semantic conflict check: CLEAR (scanned {N} existing requirements)`
+</step>
+
+<step name="check_specificity">
+**Specificity gate:**
+
+Check if the new requirement is overly specific — targeting a single instance when a generalized requirement would cover the same constraint more broadly.
+
+**Quick pattern check first:**
+1. Does the requirement text reference a specific file path (e.g., `bin/account-manager.cjs`)?
+2. Does the constraint verb (SHALL, MUST, SHOULD) apply universally (annotations, response times, error handling)?
+3. If both: flag as potentially too specific
+
+**Skip this check if:**
+- The requirement contains measurable thresholds (numbers, percentages, time units)
+- The requirement references a unique system component ("the installer", "the circuit breaker")
+- The requirement already uses generalizing language ("all", "every", "each")
+
+If the pattern check flags the requirement, spawn a Haiku sub-agent to confirm:
+
+Use the **Agent tool** with:
+- `subagent_type`: `"general-purpose"`
+- `model`: `"haiku"`
+- `description`: `"Check specificity"`
+- `prompt`:
+
+```
+Is this requirement TOO SPECIFIC? A requirement is too specific when it targets
+one instance but the constraint should apply to all instances of that type.
+
+Requirement: {id}: {text}
+
+Respond with EXACTLY one of:
+- SPECIFIC: <suggested generalized form>
+- OK: <one-line reason why this scope is appropriate>
+
+Examples of TOO SPECIFIC:
+- "bin/account-manager.cjs SHALL have @requirement annotations" → SPECIFIC: "All bin/ utility modules SHALL include @requirement annotations"
+- "The /dashboard page MUST respond under 1s" → SPECIFIC: "All pages MUST respond under 1s"
+
+Examples of OK:
+- "The installer SHALL display the ASCII banner" → OK: unique component
+- "Response time SHALL be under 500ms at p95" → OK: measurable threshold
+- "All bin/ modules SHALL include @requirement annotations" → OK: already generalized
+```
+
+If Haiku returns `SPECIFIC`:
+1. Display: `⚠ This requirement may be too specific.`
+2. Show the suggested generalized form
+3. Ask the user via AskUserQuestion:
+   - header: "Specificity"
+   - question: "This requirement targets a single instance. Would you like to generalize it?"
+   - options:
+     - "Generalize" — Use the suggested generalized form
+     - "Keep specific" — Proceed with the original text
+     - "Edit" — Provide a custom generalized form
+4. If "Generalize": update the requirement text to the generalized form
+5. If "Edit": prompt for custom text and update
+
+If Haiku returns `OK`:
+Display: `◆ Specificity check: OK`
 </step>
 
 <step name="check_invariant">

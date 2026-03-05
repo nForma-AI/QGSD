@@ -378,7 +378,7 @@ Next: Phase [X+1] — [Name]
 ⚡ Auto-continuing: Plan Phase [X+1] in detail
 ```
 
-Exit skill and invoke SlashCommand("/qgsd:plan-phase [X+1] --auto")
+Exit skill and invoke SlashCommand("/nf:plan-phase [X+1] --auto")
 
 **If CONTEXT.md does NOT exist:**
 
@@ -390,7 +390,7 @@ Next: Phase [X+1] — [Name]
 ⚡ Auto-continuing: Plan Phase [X+1] directly (no context, --auto mode)
 ```
 
-Exit skill and invoke SlashCommand("/qgsd:plan-phase [X+1] --auto")
+Exit skill and invoke SlashCommand("/nf:plan-phase [X+1] --auto")
 
 </if>
 
@@ -407,15 +407,15 @@ Exit skill and invoke SlashCommand("/qgsd:plan-phase [X+1] --auto")
 
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 
-`/qgsd:discuss-phase [X+1]` — gather context and clarify approach
+`/nf:discuss-phase [X+1]` — gather context and clarify approach
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:plan-phase [X+1]` — skip discussion, plan directly
-- `/qgsd:research-phase [X+1]` — investigate unknowns
+- `/nf:plan-phase [X+1]` — skip discussion, plan directly
+- `/nf:research-phase [X+1]` — investigate unknowns
 
 ---
 ```
@@ -432,15 +432,15 @@ Exit skill and invoke SlashCommand("/qgsd:plan-phase [X+1] --auto")
 **Phase [X+1]: [Name]** — [Goal from ROADMAP.md]
 <sub>✓ Context gathered, ready to plan</sub>
 
-`/qgsd:plan-phase [X+1]`
+`/nf:plan-phase [X+1]`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:discuss-phase [X+1]` — revisit context
-- `/qgsd:research-phase [X+1]` — investigate unknowns
+- `/nf:discuss-phase [X+1]` — revisit context
+- `/nf:research-phase [X+1]` — investigate unknowns
 
 ---
 ```
@@ -472,7 +472,7 @@ Phase {X} marked complete.
 ⚡ Auto-continuing: Re-run milestone audit to verify gaps are closed
 ```
 
-Exit skill and invoke SlashCommand("/qgsd:audit-milestone {version} --auto")
+Exit skill and invoke SlashCommand("/nf:audit-milestone {version} --auto")
 
 </if>
 
@@ -489,7 +489,7 @@ Gap closure phase finished.
 
 **Re-audit Milestone {version}** — verify gap closure succeeded
 
-`/qgsd:audit-milestone {version}`
+`/nf:audit-milestone {version}`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -510,7 +510,7 @@ Phase {X} marked complete.
 ⚡ Auto-continuing: Run milestone audit before completing
 ```
 
-Exit skill and invoke SlashCommand("/qgsd:audit-milestone {version} --auto")
+Exit skill and invoke SlashCommand("/nf:audit-milestone {version} --auto")
 
 </if>
 
@@ -527,7 +527,7 @@ Exit skill and invoke SlashCommand("/qgsd:audit-milestone {version} --auto")
 
 **Audit Milestone {version}** — verify requirements before completing
 
-`/qgsd:audit-milestone {version}`
+`/nf:audit-milestone {version}`
 
 <sub>`/clear` first → fresh context window</sub>
 

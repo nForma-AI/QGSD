@@ -1,7 +1,7 @@
 <purpose>
 Research how to implement a phase. Spawns qgsd-phase-researcher with phase context.
 
-Standalone research command. For most workflows, use `/qgsd:plan-phase` which integrates research automatically.
+Standalone research command. For most workflows, use `/nf:plan-phase` which integrates research automatically.
 </purpose>
 
 <process>
@@ -47,7 +47,7 @@ Research implementation approach for Phase {phase}: {name}
 </objective>
 
 <files_to_read>
-- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
+- {context_path} (USER DECISIONS from /nf:discuss-phase)
 - {requirements_path} (Project requirements)
 - {state_path} (Project decisions and history)
 </files_to_read>

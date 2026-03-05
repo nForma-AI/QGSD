@@ -1,5 +1,5 @@
 /**
- * Grafana source handler for /qgsd:observe
+ * Grafana source handler for /nf:observe
  * Fetches alert rules from Grafana unified alerting API
  * Returns standard issue schema for the observe registry
  */

@@ -245,7 +245,7 @@ Fail-open: if the Task itself errors (all models unavailable per R6.6), note red
 Options:
 1. Edit the affected documents now, then re-run quorum
 2. Accept as-is and proceed to commit (issues noted)
-3. Abort and re-run /qgsd:map-codebase
+3. Abort and re-run /nf:map-codebase
 ```
 
 Wait for user response before continuing.
@@ -325,14 +325,14 @@ Created .planning/codebase/:
 
 **Initialize project** — use codebase context for planning
 
-`/qgsd:new-project`
+`/nf:new-project`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- Re-run mapping: `/qgsd:map-codebase`
+- Re-run mapping: `/nf:map-codebase`
 - Review specific file: `cat .planning/codebase/STACK.md`
 - Edit any document before proceeding
 

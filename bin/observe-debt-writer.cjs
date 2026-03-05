@@ -1,5 +1,5 @@
 /**
- * Debt ledger write-through for /qgsd:observe
+ * Debt ledger write-through for /nf:observe
  * Upserts observations to .planning/formal/debt.json by fingerprint using v0.27-01 functions
  * Then runs dedup engine and formal reference linker (v0.27-03)
  *

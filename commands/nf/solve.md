@@ -27,7 +27,7 @@ This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/
 
 BULK REMEDIATION: For F->T and R->D gaps, the solve skill writes PLAN.md files
 directly and dispatches qgsd-executor agents — it does NOT invoke
-/qgsd:quick for bulk remediation. This avoids per-batch quorum overhead while
+/nf:quick for bulk remediation. This avoids per-batch quorum overhead while
 maintaining quality through the convergence loop's before/after verification.
 The solve skill IS the planner for these mechanical remediation tasks.
 
@@ -118,12 +118,12 @@ Extract the list of uncovered requirement IDs from `residual_vector.r_to_f.detai
 
 If the list has 10 or fewer IDs, dispatch:
 ```
-/qgsd:close-formal-gaps --batch --ids=REQ-01,REQ-02,...
+/nf:close-formal-gaps --batch --ids=REQ-01,REQ-02,...
 ```
 
 If the list has more than 10 IDs, dispatch:
 ```
-/qgsd:close-formal-gaps --batch --all
+/nf:close-formal-gaps --batch --all
 ```
 
 Log: `"Dispatching R->F remediation: close-formal-gaps for {N} uncovered requirements"`
@@ -164,7 +164,7 @@ console.log('[solve] Recipes: ' + recipes.length + ' total, ' + incomplete.lengt
 ```
 Incomplete recipes (missing source_files or definition) produce lower-quality tests but do NOT block dispatch.
 
-**Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `qgsd-executor` agents directly to implement real test logic — it does NOT use `/qgsd:quick` for bulk stub implementation.
+**Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `qgsd-executor` agents directly to implement real test logic — it does NOT use `/nf:quick` for bulk stub implementation.
 
 1. **Load context:** Parse `.planning/formal/formal-test-sync-report.json` for each stub's `requirement_id`, `formal_properties[].model_file`, `formal_properties[].property`. Also verify recipe files exist at `.planning/formal/generated-stubs/{ID}.stub.recipe.json` — these contain pre-resolved context (requirement text, property definition, source files, import hints, test strategy).
 
@@ -250,7 +250,7 @@ The T->C residual counts both failures and skipped tests. Extract detail:
 
 Dispatch the fix-tests skill:
 ```
-/qgsd:fix-tests
+/nf:fix-tests
 ```
 
 This will discover and autonomously fix failing AND skipped tests. Skipped tests often indicate incomplete implementations or platform-specific guards that need resolution.
@@ -261,7 +261,7 @@ If it fails, log the failure and continue.
 
 ### 3d. C->F Gaps (residual_vector.c_to_f.residual > 0)
 
-Constant mismatches between code and formal specs. Display the mismatch table, then dispatch `/qgsd:quick` to align them:
+Constant mismatches between code and formal specs. Display the mismatch table, then dispatch `/nf:quick` to align them:
 
 ```
 C->F: {N} constant mismatch(es) — dispatching quick task to align
@@ -276,7 +276,7 @@ constant_name   formal_spec_file  formal_val      config_val
 
 Dispatch:
 ```
-/qgsd:quick Fix C->F constant mismatches: update formal specs OR code config to align these values: {mismatch_summary}
+/nf:quick Fix C->F constant mismatches: update formal specs OR code config to align these values: {mismatch_summary}
 ```
 
 If the mismatch has `intentional_divergence: true`, skip it and log as intentional.
@@ -294,10 +294,10 @@ Then parse `.planning/formal/check-results.ndjson` and classify each failure:
 
 | Classification | Criteria | Dispatch |
 |---------------|----------|----------|
-| **Syntax error** | Summary contains "Syntax error", "parse error" | `/qgsd:quick Fix Alloy/TLA+ syntax error in {model_file}: {error_detail}` |
-| **Scope error** | Summary contains "scope", "sig" | `/qgsd:quick Fix scope declaration in {model_file}: {error_detail}` |
-| **Conformance divergence** | check_id contains "conformance" | `/qgsd:quick Fix conformance trace divergences in {model_file}: {error_detail}` |
-| **Verification failure** | Counterexample found | `/qgsd:quick Fix formal verification counterexample in {check_id}: {summary}` |
+| **Syntax error** | Summary contains "Syntax error", "parse error" | `/nf:quick Fix Alloy/TLA+ syntax error in {model_file}: {error_detail}` |
+| **Scope error** | Summary contains "scope", "sig" | `/nf:quick Fix scope declaration in {model_file}: {error_detail}` |
+| **Conformance divergence** | check_id contains "conformance" | `/nf:quick Fix conformance trace divergences in {model_file}: {error_detail}` |
+| **Verification failure** | Counterexample found | `/nf:quick Fix formal verification counterexample in {check_id}: {summary}` |
 | **Missing tool** | "not found", "not installed" | Log as infrastructure gap, skip |
 | **Inconclusive** | result = "inconclusive" | Skip — not a failure |
 
@@ -321,7 +321,7 @@ R->D: {N} requirement(s) undocumented in developer docs:
   ...
 ```
 
-Then auto-remediate by dispatching a single `qgsd-executor` agent directly — it does NOT use `/qgsd:quick` for bulk doc generation.
+Then auto-remediate by dispatching a single `qgsd-executor` agent directly — it does NOT use `/nf:quick` for bulk doc generation.
 
 1. Read `.planning/formal/requirements.json` to get the text/description for each undocumented requirement ID.
 2. For each undocumented ID, identify the most relevant source file(s) by grepping the codebase for the requirement ID and its key terms (use Grep tool).
@@ -406,7 +406,7 @@ Accept: [a]ll / [n]one / comma-separated numbers (e.g. 1,3,5) / [s]kip this cycl
 
 Wait for user input via AskUserQuestion. Route based on response:
 
-- **Numbers or "all"**: For each accepted candidate, dispatch `/qgsd:add-requirement` with the candidate evidence as context. The add-requirement skill handles ID assignment, duplicate checks, and semantic conflict detection. Approved candidates enter the forward flow (R→F→T→C) in the next iteration.
+- **Numbers or "all"**: For each accepted candidate, dispatch `/nf:add-requirement` with the candidate evidence as context. The add-requirement skill handles ID assignment, duplicate checks, and semantic conflict detection. Approved candidates enter the forward flow (R→F→T→C) in the next iteration.
 
 - **"none"**: Write ALL candidates to `.planning/formal/acknowledged-not-required.json` so they are not resurfaced in future runs. Each entry:
   ```json
@@ -535,7 +535,7 @@ Display checks in this order: PASS first (alphabetical), then FAIL (alphabetical
 After the table, if there are any FAIL or INCONCLUSIVE checks, add a brief actionability note:
 ```
 {fail_count} check(s) failing, {inconc_count} inconclusive.
-Failing checks need investigation — use /qgsd:quick to dispatch fixes for syntax/scope errors or conformance divergences.
+Failing checks need investigation — use /nf:quick to dispatch fixes for syntax/scope errors or conformance divergences.
 Inconclusive checks are not failures but indicate incomplete verification (usually missing fairness declarations or tools).
 ```
 

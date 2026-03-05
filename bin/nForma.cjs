@@ -1671,7 +1671,7 @@ function buildScoreboardLines(data, opts) {
     const lines = [];
     lines.push('{bold}  Quorum Scoreboard{/bold}');
     lines.push('  {gray-fg}No agents configured in providers.json.{/}');
-    lines.push('  {gray-fg}Run /qgsd:mcp-setup to add agents.{/}');
+    lines.push('  {gray-fg}Run /nf:mcp-setup to add agents.{/}');
     lines.push('');
     return lines;
   }

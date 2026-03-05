@@ -1,5 +1,5 @@
 /**
- * Internal work detection handler for /qgsd:observe
+ * Internal work detection handler for /nf:observe
  * Scans local project state for:
  * 1. Unfinished quick tasks (PLAN.md without SUMMARY.md)
  * 2. Stale debug sessions (quorum-debug-latest.md)
@@ -77,7 +77,7 @@ function handleInternal(sourceConfig, options) {
               meta: 'PLAN exists, no SUMMARY',
               source_type: 'internal',
               issue_type: 'issue',
-              _route: `/qgsd:quick "${slug}"`
+              _route: `/nf:quick "${slug}"`
             });
           }
         }
@@ -113,7 +113,7 @@ function handleInternal(sourceConfig, options) {
               meta: 'Debug session may need resolution',
               source_type: 'internal',
               issue_type: 'issue',
-              _route: '/qgsd:debug --resume'
+              _route: '/nf:debug --resume'
             });
           }
         }
@@ -222,7 +222,7 @@ function handleInternal(sourceConfig, options) {
               issue_type: 'issue',
               exception_type: tag,
               function_name: relPath,
-              _route: `/qgsd:quick "Resolve ${tag} at ${relPath}:${lineNum}"`
+              _route: `/nf:quick "Resolve ${tag} at ${relPath}:${lineNum}"`
             });
             count++;
           }
@@ -268,7 +268,7 @@ function handleInternal(sourceConfig, options) {
                     meta: 'Phase active in STATE.md but no VERIFICATION.md found',
                     source_type: 'internal',
                     issue_type: 'issue',
-                    _route: '/qgsd:solve'
+                    _route: '/nf:solve'
                   });
                 }
               }

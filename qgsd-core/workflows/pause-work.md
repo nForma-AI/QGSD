@@ -107,7 +107,7 @@ Current state:
 - Status: [in_progress/blocked]
 - Committed as WIP
 
-To resume: /qgsd:resume-work
+To resume: /nf:resume-work
 
 ```
 </step>

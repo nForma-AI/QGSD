@@ -39,12 +39,12 @@ process.stdin.on('end', () => {
       message =
         `CONTEXT MONITOR CRITICAL: Context window ${usedPct}% used (${Math.round(remaining)}% remaining). ` +
         'STOP new work immediately. Save state and inform the user that context is nearly exhausted. ' +
-        'If using QGSD, run /qgsd:pause-work to save execution state.';
+        'Run /nf:pause-work to save execution state.';
     } else if (usedPct >= warnPct) {
       message =
         `CONTEXT MONITOR WARNING: Context window ${usedPct}% used (${Math.round(remaining)}% remaining). ` +
         'Begin wrapping up current task. Do not start new complex work. ' +
-        'If using QGSD, consider /qgsd:pause-work to save state.';
+        'Consider /nf:pause-work to save state.';
     } else {
       process.exit(0); // Below warning threshold — no injection needed
     }

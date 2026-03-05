@@ -34,10 +34,10 @@ function appendConformanceEvent(event) {
   }
 }
 
-// Builds the regex that matches /gsd:<quorum-command> or /qgsd:<quorum-command> in any text.
+// Builds the regex that matches /nf:<cmd>, /gsd:<cmd>, or /qgsd:<cmd> in any text.
 function buildCommandPattern(quorumCommands) {
   const escaped = quorumCommands.map(c => c.replace(/-/g, '\\-'));
-  return new RegExp('\\/q?gsd:(' + escaped.join('|') + ')');
+  return new RegExp('\\/(nf|q?gsd):(' + escaped.join('|') + ')');
 }
 
 // Returns true if a parsed JSONL user entry is a human text message.
@@ -119,9 +119,9 @@ function hasQuorumCommand(currentTurnLines, cmdPattern) {
   return false;
 }
 
-// Extracts the matched /gsd:<command> or /qgsd:<command> text from the first matching user line.
+// Extracts the matched /nf:<cmd>, /gsd:<cmd>, or /qgsd:<cmd> text from the first matching user line.
 // Uses XML-tag-first strategy: prefers the <command-name> tag for accurate command identification.
-// Falls back to first 300 chars of message text, then to '/qgsd:plan-phase' as ultimate fallback.
+// Falls back to first 300 chars of message text, then to '/nf:plan-phase' as ultimate fallback.
 function extractCommand(currentTurnLines, cmdPattern) {
   for (const line of currentTurnLines) {
     try {
@@ -148,7 +148,7 @@ function extractCommand(currentTurnLines, cmdPattern) {
       // Skip malformed lines
     }
   }
-  return '/qgsd:plan-phase';
+  return '/nf:plan-phase';
 }
 
 // Returns true if any assistant turn used Task(subagent_type=qgsd-quorum-slot-worker).

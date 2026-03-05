@@ -1,5 +1,5 @@
 /**
- * Prometheus source handler for /qgsd:observe
+ * Prometheus source handler for /nf:observe
  * Supports: /api/v1/alerts (active alerts) and /api/v1/query (PromQL)
  * Returns standard issue schema for the observe registry
  */

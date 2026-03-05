@@ -48,7 +48,7 @@ INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init quick "$DESCRIPTION")
 
 Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
 
-**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/qgsd:new-project` first.
+**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/nf:new-project` first.
 
 Quick tasks can run mid-phase - validation only checks ROADMAP.md exists, not phase status.
 
@@ -307,7 +307,7 @@ Offer: 1) Force proceed, 2) Abort
 
 **Step 5.7: Quorum review of plan with R3.6 (required by R3.1 + R3.6)**
 
-This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/qgsd:quick`. R3.6 wraps this in an improvement-iteration loop (up to 10 iterations).
+This step is MANDATORY regardless of `--full` mode. R3.1 requires quorum for any planning output from `/nf:quick`. R3.6 wraps this in an improvement-iteration loop (up to 10 iterations).
 
 Initialize: `improvement_iteration = 0`
 
@@ -481,7 +481,7 @@ Commit: ${commit_hash}
 
 ---
 
-Ready for next task: /qgsd:quick
+Ready for next task: /nf:quick
 ```
 
 ---
@@ -754,7 +754,7 @@ AskUserQuestion(
 
 **6.7.3: Write requirement with conflict checks**
 
-Execute the add-requirement workflow inline (same checks as `/qgsd:add-requirement`):
+Execute the add-requirement workflow inline (same checks as `/nf:add-requirement`):
 
 1. **Duplicate ID check**: Search existing requirements for exact ID match on `$DRAFT_REQ.id`. If found, show conflict and ask user for a different ID.
 
@@ -806,7 +806,7 @@ Commit: ${commit_hash}
 
 ---
 
-Ready for next task: /qgsd:quick
+Ready for next task: /nf:quick
 ```
 
 </process>

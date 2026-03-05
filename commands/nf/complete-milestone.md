@@ -42,19 +42,19 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 0. **Check for audit:**
 
    - Look for `.planning/milestones/v{{version}}-MILESTONE-AUDIT.md` (or legacy `.planning/v{{version}}-MILESTONE-AUDIT.md`)
-   - If missing or stale: recommend `/qgsd:audit-milestone` first
-   - If audit status is `gaps_found`: recommend `/qgsd:plan-milestone-gaps` first
+   - If missing or stale: recommend `/nf:audit-milestone` first
+   - If audit status is `gaps_found`: recommend `/nf:plan-milestone-gaps` first
    - If audit status is `passed`: proceed to step 1
 
    ```markdown
    ## Pre-flight Check
 
    {If no v{{version}}-MILESTONE-AUDIT.md in milestones/ or root:}
-   ⚠ No milestone audit found. Run `/qgsd:audit-milestone` first to verify
+   ⚠ No milestone audit found. Run `/nf:audit-milestone` first to verify
    requirements coverage, cross-phase integration, and E2E flows.
 
    {If audit has gaps:}
-   ⚠ Milestone audit found gaps. Run `/qgsd:plan-milestone-gaps` to create
+   ⚠ Milestone audit found gaps. Run `/nf:plan-milestone-gaps` to create
    phases that close the gaps, or proceed anyway to accept as tech debt.
 
    {If audit passed:}
@@ -108,7 +108,7 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
    - Ask about pushing tag
 
 8. **Offer next steps:**
-   - `/qgsd:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
+   - `/nf:new-milestone` — start next milestone (questioning → research → requirements → roadmap)
 
 </process>
 
@@ -132,5 +132,5 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 - **Archive before deleting:** Always create archive files before updating/deleting originals
 - **One-line summary:** Collapsed milestone in ROADMAP.md should be single line with link
 - **Context efficiency:** Archive keeps ROADMAP.md and REQUIREMENTS.md constant size per milestone
-- **Fresh requirements:** Next milestone starts with `/qgsd:new-milestone` which includes requirements definition
+- **Fresh requirements:** Next milestone starts with `/nf:new-milestone` which includes requirements definition
   </critical_rules>

@@ -17,7 +17,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 - Read PROJECT.md (existing project, validated requirements, decisions)
 - Read MILESTONES.md (what shipped previously)
 - Read STATE.md (pending todos, blockers)
-- Check for MILESTONE-CONTEXT.md (from /qgsd:discuss-milestone)
+- Check for MILESTONE-CONTEXT.md (from /nf:discuss-milestone)
 
 ## 2. Gather Milestone Goals
 
@@ -88,7 +88,7 @@ AskUserQuestion: "Research the domain ecosystem for new features before defining
 - "Research first (Recommended)" — Discover patterns, features, architecture for NEW capabilities
 - "Skip research" — Go straight to requirements
 
-**Persist choice to config** (so future `/qgsd:plan-phase` honors it):
+**Persist choice to config** (so future `/nf:plan-phase` honors it):
 
 ```bash
 # If "Research first": persist true
@@ -553,11 +553,11 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] road
 
 **Phase [N]: [Phase Name]** — [Goal]
 
-`/qgsd:discuss-phase [N]` — gather context and clarify approach
+`/nf:discuss-phase [N]` — gather context and clarify approach
 
 <sub>`/clear` first → fresh context window</sub>
 
-Also: `/qgsd:plan-phase [N]` — skip discussion, plan directly
+Also: `/nf:plan-phase [N]` — skip discussion, plan directly
 ```
 
 ```bash
@@ -593,7 +593,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
 ```
 Task(
-  prompt="Run /qgsd:plan-phase ${FIRST_PHASE}",
+  prompt="Run /nf:plan-phase ${FIRST_PHASE}",
   subagent_type="general-purpose",
   description="Plan Phase ${FIRST_PHASE}"
 )
@@ -608,14 +608,14 @@ Task(
 
   Auto-advance pipeline finished.
 
-  Next: /qgsd:execute-phase ${FIRST_PHASE}
+  Next: /nf:execute-phase ${FIRST_PHASE}
   ```
 - **Other / error** → Display result, stop chain:
   ```
   Auto-advance stopped: Planning needs review.
 
   Continue manually:
-  /qgsd:plan-phase ${FIRST_PHASE}
+  /nf:plan-phase ${FIRST_PHASE}
   ```
 
 ```bash
@@ -643,7 +643,7 @@ Show existing "Next Up" prompt (already in the Done banner — no change needed 
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md phases continue from previous milestone
 - [ ] All commits made (if planning docs committed)
-- [ ] Auto-advance spawns plan-phase task when AUTO_CFG is true; otherwise user sees `/qgsd:discuss-phase [N]`
+- [ ] Auto-advance spawns plan-phase task when AUTO_CFG is true; otherwise user sees `/nf:discuss-phase [N]`
 
 **Atomic commits:** Each phase commits its artifacts immediately.
 </success_criteria>

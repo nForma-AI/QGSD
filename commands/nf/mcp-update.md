@@ -7,7 +7,7 @@ allowed-tools:
 ---
 
 <objective>
-Update a named quorum agent (or all agents) to their latest version. The install method is detected from `~/.claude.json` mcpServers config: `npx`-based agents update via `npm install -g <package>`; `node`-based local repo agents update via `git pull && npm run build` in their repo directory. The running process is NOT killed — run `/qgsd:mcp-restart <agent>` after updating to load the new binary.
+Update a named quorum agent (or all agents) to their latest version. The install method is detected from `~/.claude.json` mcpServers config: `npx`-based agents update via `npm install -g <package>`; `node`-based local repo agents update via `git pull && npm run build` in their repo directory. The running process is NOT killed — run `/nf:mcp-restart <agent>` after updating to load the new binary.
 </objective>
 
 <process>
@@ -18,7 +18,7 @@ Parse `$ARGUMENTS` as one token: `$TARGET`.
 
 If `$TARGET` is missing, print usage and stop:
 ```
-Usage: /qgsd:mcp-update <agent|all>
+Usage: /nf:mcp-update <agent|all>
 
 Valid agents:
   codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
@@ -143,7 +143,7 @@ Updated $TARGET
   Result: <last line of npm/git output>
 
 Note: The running agent process is still using the old version.
-Run: /qgsd:mcp-restart $TARGET   to load the new binary.
+Run: /nf:mcp-restart $TARGET   to load the new binary.
 ```
 
 ## Step 6 — All-agent mode (if $TARGET = "all")
@@ -229,9 +229,9 @@ Update results:
   claude-6      (shared repo)                        ⚡ SKIPPED
 
 To load new binaries, restart updated agents:
-  /qgsd:mcp-restart codex-cli-1
-  /qgsd:mcp-restart gemini-cli-1
-  /qgsd:mcp-restart opencode-1
+  /nf:mcp-restart codex-cli-1
+  /nf:mcp-restart gemini-cli-1
+  /nf:mcp-restart opencode-1
   (etc. — list only agents that were UPDATED, not SKIPPED)
 ```
 

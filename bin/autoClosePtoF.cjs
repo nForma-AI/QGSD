@@ -1,6 +1,6 @@
 /**
  * P->F auto-close remediation dispatch
- * Dispatches parameter updates via /qgsd:quick for drift entries,
+ * Dispatches parameter updates via /nf:quick for drift entries,
  * flags investigation for issue/invariant entries.
  *
  * Requirements: PF-04, PF-05
@@ -63,7 +63,7 @@ function autoClosePtoF(residual, options = {}) {
     const isParameter = entry.issue_type === 'drift' && isNumericFn(entry.formal_ref, { specDir });
 
     if (isParameter) {
-      // Parameter update track: dispatch /qgsd:quick
+      // Parameter update track: dispatch /nf:quick
       let dispatchOk = false;
 
       if (spawnFn) {

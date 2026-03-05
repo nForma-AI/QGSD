@@ -4,7 +4,7 @@
 // Debug invariant write path (ARCH-03): writes a PROPERTY definition directly
 // to a canonical .planning/formal/tla/ spec with full provenance tracking.
 //
-// When /qgsd:debug accepts a new invariant candidate, this script writes it to
+// When /nf:debug accepts a new invariant candidate, this script writes it to
 // the canonical spec and records update_source=debug + session_id in model-registry.json.
 //
 // Usage:

@@ -96,7 +96,7 @@ Fix gaps identified in verification.
 
 **4. After fix executor returns, run quorum-test to verify gaps are closed:**
 
-Determine test scope from VERIFICATION.md artifacts. If test files exist (`*.test.js`, `*.test.ts`, etc.), call `/qgsd:quorum-test` with those files. If no test files are present (non-testable gaps), skip quorum-test and proceed directly to step 5 treating the result as PASS.
+Determine test scope from VERIFICATION.md artifacts. If test files exist (`*.test.js`, `*.test.ts`, etc.), call `/nf:quorum-test` with those files. If no test files are present (non-testable gaps), skip quorum-test and proceed directly to step 5 treating the result as PASS.
 
 Evaluate quorum-test consensus:
 

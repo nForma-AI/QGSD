@@ -423,9 +423,9 @@ ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 
 | Condition | Route | Action |
 |-----------|-------|--------|
-| summaries < plans | **A: More plans** | Find next PLAN without SUMMARY. Yolo: auto-continue. Interactive: show next plan, suggest `/qgsd:execute-phase {phase}` + `/qgsd:verify-work`. STOP here. |
-| summaries = plans, current < highest phase | **B: Phase done** | Show completion, suggest `/qgsd:plan-phase {Z+1}` + `/qgsd:verify-work {Z}` + `/qgsd:discuss-phase {Z+1}` |
-| summaries = plans, current = highest phase | **C: Milestone done** | Show banner, suggest `/qgsd:complete-milestone` + `/qgsd:verify-work` + `/qgsd:add-phase` |
+| summaries < plans | **A: More plans** | Find next PLAN without SUMMARY. Yolo: auto-continue. Interactive: show next plan, suggest `/nf:execute-phase {phase}` + `/nf:verify-work`. STOP here. |
+| summaries = plans, current < highest phase | **B: Phase done** | Show completion, suggest `/nf:plan-phase {Z+1}` + `/nf:verify-work {Z}` + `/nf:discuss-phase {Z+1}` |
+| summaries = plans, current = highest phase | **C: Milestone done** | Show banner, suggest `/nf:complete-milestone` + `/nf:verify-work` + `/nf:add-phase` |
 
 All routes: `/clear` first for fresh context.
 </step>

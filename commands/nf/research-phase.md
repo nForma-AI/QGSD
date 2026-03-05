@@ -1,6 +1,6 @@
 ---
 name: qgsd:research-phase
-description: Research how to implement a phase (standalone - usually use /qgsd:plan-phase instead)
+description: Research how to implement a phase (standalone - usually use /nf:plan-phase instead)
 argument-hint: "[phase]"
 allowed-tools:
   - Read
@@ -11,7 +11,7 @@ allowed-tools:
 <objective>
 Research how to implement a phase. Spawns qgsd-phase-researcher agent with phase context.
 
-**Note:** This is a standalone research command. For most workflows, use `/qgsd:plan-phase` which integrates research automatically.
+**Note:** This is a standalone research command. For most workflows, use `/nf:plan-phase` which integrates research automatically.
 
 **Use this command when:**
 - You want to research without planning yet
@@ -109,7 +109,7 @@ Mode: ecosystem
 </additional_context>
 
 <downstream_consumer>
-Your RESEARCH.md will be loaded by `/qgsd:plan-phase` which uses specific sections:
+Your RESEARCH.md will be loaded by `/nf:plan-phase` which uses specific sections:
 - `## Standard Stack` → Plans use these libraries
 - `## Architecture Patterns` → Task structure follows these
 - `## Don't Hand-Roll` → Tasks NEVER build custom solutions for listed problems

@@ -28,7 +28,7 @@ Parse `$ARGUMENTS` as two tokens: `$AGENT` and `$MODEL`.
 
 If either token is missing, print usage and stop:
 ```
-Usage: /qgsd:mcp-set-model <agent> <model>
+Usage: /nf:mcp-set-model <agent> <model>
 
 Valid agents:
   codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
@@ -81,7 +81,7 @@ Error: Model "$MODEL" is not in $AGENT's available_models list.
 Available models for $AGENT:
   <list each model on its own line>
 
-Run /qgsd:mcp-set-model $AGENT <model> with one of the above models.
+Run /nf:mcp-set-model $AGENT <model> with one of the above models.
 ```
 
 ## Step 5 — Write model preference to qgsd.json

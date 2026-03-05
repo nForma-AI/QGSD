@@ -15,7 +15,7 @@ allowed-tools:
 ---
 
 <objective>
-Execute all plans in a phase. Delegates to the gsd:execute-phase workflow for wave-based plan execution. Extends the workflow with automated verification gates: when a plan step has type checkpoint:verify, the executor runs /qgsd:quorum-test instead of waiting for human input. Escalates to checkpoint:human-verify only on failure.
+Execute all plans in a phase. Delegates to the gsd:execute-phase workflow for wave-based plan execution. Extends the workflow with automated verification gates: when a plan step has type checkpoint:verify, the executor runs /nf:quorum-test instead of waiting for human input. Escalates to checkpoint:human-verify only on failure.
 </objective>
 
 <execution_context>
@@ -56,7 +56,7 @@ When the executor reads a plan step whose type is `checkpoint:verify`, it MUST:
 
 a. NOT pause for human input.
 b. Identify the test scope from the step's verify section (test file paths or test command).
-c. Call `/qgsd:quorum-test` with that scope.
+c. Call `/nf:quorum-test` with that scope.
 d. Evaluate the consensus verdict:
    - **PASS:** log `checkpoint:verify PASSED — quorum consensus` and continue execution.
    - **BLOCK or REVIEW-NEEDED:** enter the debug loop (see Rule 3).
@@ -72,13 +72,13 @@ When the executor reads a plan step whose type is `checkpoint:human-verify`, it 
 
 ### Rule 3 — Debug loop (3 rounds max)
 
-Triggered when `/qgsd:quorum-test` returns BLOCK or REVIEW-NEEDED on a `checkpoint:verify` step.
+Triggered when `/nf:quorum-test` returns BLOCK or REVIEW-NEEDED on a `checkpoint:verify` step.
 
 Round N (N = 1, 2, 3):
 
-1. Call `/qgsd:debug` with the quorum-test failure context as `$ARGUMENTS`.
-2. Apply the consensus next step from `/qgsd:debug` (code fix, test correction, or config update as directed by the consensus).
-3. Re-run `/qgsd:quorum-test` with the same scope.
+1. Call `/nf:debug` with the quorum-test failure context as `$ARGUMENTS`.
+2. Apply the consensus next step from `/nf:debug` (code fix, test correction, or config update as directed by the consensus).
+3. Re-run `/nf:quorum-test` with the same scope.
 4. If result is PASS: log `checkpoint:verify PASSED after N debug round(s)` and continue.
 5. If result is still BLOCK/REVIEW-NEEDED and N < 3: increment round, repeat.
 
@@ -90,7 +90,7 @@ After 3 rounds with no PASS: escalate to `checkpoint:human-verify` (Rule 4).
 
 Display a failure summary:
 - The `checkpoint:verify` step that failed
-- Number of `/qgsd:debug` rounds attempted
+- Number of `/nf:debug` rounds attempted
 - Final quorum-test verdict and concerns from each model
 
 Then pause: request human review and corrective action before resuming.
@@ -111,7 +111,7 @@ Then pause: request human review and corrective action before resuming.
 After all plans in the phase complete, display:
 
 ```
-All plans complete. Run /qgsd:verify-work to confirm goal achievement.
+All plans complete. Run /nf:verify-work to confirm goal achievement.
 ```
 
 </process>

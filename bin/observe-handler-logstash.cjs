@@ -1,5 +1,5 @@
 /**
- * Logstash/Elasticsearch source handler for /qgsd:observe
+ * Logstash/Elasticsearch source handler for /nf:observe
  * Queries Elasticsearch indices for log entries matching severity filters
  * Returns standard issue schema for the observe registry
  */

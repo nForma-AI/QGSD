@@ -22,7 +22,7 @@ Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_
 
 **File paths (for <files_to_read> blocks):** `state_path`, `roadmap_path`, `requirements_path`, `context_path`, `research_path`, `verification_path`, `uat_path`. These are null if files don't exist.
 
-**If `planning_exists` is false:** Error — run `/qgsd:new-project` first.
+**If `planning_exists` is false:** Error — run `/nf:new-project` first.
 
 ## 2. Parse and Normalize Arguments
 
@@ -63,7 +63,7 @@ If `context_path` is not null, display: `Using phase context from: ${context_pat
   - "Run discuss-phase first" — Capture design decisions before planning
 
 If "Continue without context": Proceed to step 5.
-If "Run discuss-phase first": Display `/qgsd:discuss-phase {X}` and exit workflow.
+If "Run discuss-phase first": Display `/nf:discuss-phase {X}` and exit workflow.
 
 ## 4.5. Formal Scope Scan
 
@@ -142,7 +142,7 @@ Answer: "What do I need to know to PLAN this phase well?"
 </objective>
 
 <files_to_read>
-- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
+- {context_path} (USER DECISIONS from /nf:discuss-phase)
 - {requirements_path} (Project requirements)
 - {state_path} (Project decisions and history)
 </files_to_read>
@@ -281,7 +281,7 @@ Planner prompt:
 - {state_path} (Project State)
 - {roadmap_path} (Roadmap)
 - {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
+- {context_path} (USER DECISIONS from /nf:discuss-phase)
 - {research_path} (Technical Research)
 - {verification_path} (Verification Gaps - if --gaps)
 - {uat_path} (UAT Gaps - if --gaps)
@@ -323,7 +323,7 @@ Any truth that relaxes a ROADMAP success criterion is a plan defect, not an opti
 </binding_rule>
 
 <downstream_consumer>
-Output consumed by /qgsd:execute-phase. Plans need:
+Output consumed by /nf:execute-phase. Plans need:
 - Frontmatter (wave, depends_on, files_modified, autonomous)
 - Tasks in XML format
 - Verification criteria
@@ -529,7 +529,7 @@ Checker prompt:
 - {PHASE_DIR}/*-PLAN.md (Plans to verify)
 - {roadmap_path} (Roadmap)
 - {requirements_path} (Requirements)
-- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
+- {context_path} (USER DECISIONS from /nf:discuss-phase)
 </files_to_read>
 
 **Phase requirement IDs (MUST ALL be covered):** {phase_req_ids}
@@ -627,7 +627,7 @@ After plan-checker passes, the orchestrator populates VALIDATION.md with real da
 
    **Validation Sign-Off:** Check each box that is satisfied by the plan data. Set `nyquist_compliant: true` in frontmatter if all boxes pass.
 
-   **Execution Tracking:** Leave as template — this is filled during `/qgsd:execute-phase`.
+   **Execution Tracking:** Leave as template — this is filled during `/nf:execute-phase`.
 
 4. **Update frontmatter:**
    ```yaml
@@ -659,7 +659,7 @@ Revision prompt:
 
 <files_to_read>
 - {PHASE_DIR}/*-PLAN.md (Existing plans)
-- {context_path} (USER DECISIONS from /qgsd:discuss-phase)
+- {context_path} (USER DECISIONS from /nf:discuss-phase)
 </files_to_read>
 
 **Checker issues:** {structured_issues_from_checker}
@@ -728,7 +728,7 @@ Spawn execute-phase as Task:
 
 ```
 Task(
-  prompt="Run /qgsd:execute-phase ${PHASE} --auto",
+  prompt="Run /nf:execute-phase ${PHASE} --auto",
   subagent_type="general-purpose",
   description="Execute Phase ${PHASE}"
 )
@@ -752,20 +752,20 @@ Task(
 
      Auto-advance pipeline finished.
 
-     Next: /qgsd:discuss-phase ${NEXT_PHASE} --auto
+     Next: /nf:discuss-phase ${NEXT_PHASE} --auto
      ```
-     (If CONTEXT.md exists, show `Next: /qgsd:plan-phase ${NEXT_PHASE} --auto` instead)
+     (If CONTEXT.md exists, show `Next: /nf:plan-phase ${NEXT_PHASE} --auto` instead)
 
   4. Invoke SlashCommand:
-     - If `$NEXT_CONTEXT` is non-empty (CONTEXT.md exists): `SlashCommand("/qgsd:plan-phase ${NEXT_PHASE} --auto")`
-     - Otherwise: `SlashCommand("/qgsd:discuss-phase ${NEXT_PHASE} --auto")`
+     - If `$NEXT_CONTEXT` is non-empty (CONTEXT.md exists): `SlashCommand("/nf:plan-phase ${NEXT_PHASE} --auto")`
+     - Otherwise: `SlashCommand("/nf:discuss-phase ${NEXT_PHASE} --auto")`
 
 - **GAPS FOUND / VERIFICATION FAILED** → Display result, stop chain (unchanged):
   ```
   Auto-advance stopped: Execution needs review.
 
   Review the output above and continue manually:
-  /qgsd:execute-phase ${PHASE}
+  /nf:execute-phase ${PHASE}
   ```
 
 **If neither `--auto` nor config enabled:**
@@ -796,7 +796,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Execute Phase {X}** — run all {N} plans
 
-/qgsd:execute-phase {X}
+/nf:execute-phase {X}
 
 <sub>/clear first → fresh context window</sub>
 
@@ -804,7 +804,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Also available:**
 - cat .planning/phases/{phase-dir}/*-PLAN.md — review plans
-- /qgsd:plan-phase {X} --research — re-research first
+- /nf:plan-phase {X} --research — re-research first
 
 ───────────────────────────────────────────────────────────────
 </offer_next>

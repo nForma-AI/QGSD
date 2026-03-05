@@ -201,7 +201,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
    After executor completes, update STATE.md quick tasks table and commit (same as quick.md Steps 7-8).
 
    **Post-fix verification (cap: 1 retry):**
-   1. Re-run `/qgsd:quorum-test` on the same plan to confirm CI now passes.
+   1. Re-run `/nf:quorum-test` on the same plan to confirm CI now passes.
    2. If quorum-test PASS → mark plan complete, continue to next wave/phase normally.
    3. If quorum-test BLOCK again → do NOT auto-spawn another quick task. Ask user: "CI still failing after fix. Review and retry manually?"
 
@@ -213,7 +213,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 <step name="checkpoint_handling">
 Plans with `autonomous: false` require user interaction.
 
-When an executor agent returns a `checkpoint:verify` result, run this Bash command before spawning `/qgsd:quorum-test`, substituting `${PHASE_NUMBER}` and the current plan filename:
+When an executor agent returns a `checkpoint:verify` result, run this Bash command before spawning `/nf:quorum-test`, substituting `${PHASE_NUMBER}` and the current plan filename:
 ```bash
 # Track checkpoint:verify activity
 node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
@@ -232,7 +232,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 - **decision** → Auto-spawn continuation agent with `{user_response}` = first option from checkpoint details. Log `⚡ Auto-selected: [option]`.
 - **human-action** → Present to user (existing behavior below). Auth gates cannot be automated.
 
-If quorum-test returns BLOCK or REVIEW-NEEDED and you enter a `/qgsd:debug` loop, run this Bash command before each debug round, substituting `${PHASE_NUMBER}`, the current plan filename, and the debug round counter (1, 2, or 3):
+If quorum-test returns BLOCK or REVIEW-NEEDED and you enter a `/nf:debug` loop, run this Bash command before each debug round, substituting `${PHASE_NUMBER}`, the current plan filename, and the debug round counter (1, 2, or 3):
 ```bash
 # Track debug loop activity
 node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
@@ -461,7 +461,7 @@ grep "^status:" "$PHASE_DIR"/*-VERIFICATION.md | cut -d: -f2 | tr -d ' '
 |--------|--------|
 | `passed` | → update_roadmap |
 | `human_needed` | Present items for human testing, get approval or feedback |
-| `gaps_found` | Present gap summary, offer `/qgsd:plan-phase {phase} --gaps` |
+| `gaps_found` | Present gap summary, offer `/nf:plan-phase {phase} --gaps` |
 | `counterexample_found` | → override prompt (see below) |
 
 **If human_needed:**
@@ -524,7 +524,7 @@ Route on quorum_result:
 - **APPROVED**: Auto-spawn plan-phase --gaps Task:
   ```
   Task(
-    prompt="Run /qgsd:plan-phase {PHASE_NUMBER} --gaps --auto",
+    prompt="Run /nf:plan-phase {PHASE_NUMBER} --gaps --auto",
     subagent_type="general-purpose",
     description="Plan gap closure for phase {PHASE_NUMBER}"
   )
@@ -548,15 +548,15 @@ Route on quorum_result:
   ---
   ## ▶ Next Up
 
-  `/qgsd:plan-phase {X} --gaps`
+  `/nf:plan-phase {X} --gaps`
 
   <sub>`/clear` first → fresh context window</sub>
 
   Also: `cat {phase_dir}/{phase_num}-VERIFICATION.md` — full report
-  Also: `/qgsd:verify-work {X}` — manual testing first
+  Also: `/nf:verify-work {X}` — manual testing first
   ```
 
-Gap closure cycle: `/qgsd:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/qgsd:execute-phase {X} --gaps-only` → verifier re-runs.
+Gap closure cycle: `/nf:plan-phase {X} --gaps` reads VERIFICATION.md → creates gap plans with `gap_closure: true` → user runs `/nf:execute-phase {X} --gaps-only` → verifier re-runs.
 
 **If counterexample_found:**
 
@@ -676,7 +676,7 @@ Read and follow `~/.claude/qgsd/workflows/transition.md`, passing through the `-
 
 **If neither `--auto` nor `AUTO_CFG` is true:**
 
-The workflow ends. The user runs `/qgsd:progress` or invokes the transition workflow manually.
+The workflow ends. The user runs `/nf:progress` or invokes the transition workflow manually.
 </step>
 
 </process>
@@ -695,7 +695,7 @@ Orchestrator: ~10-15% context. Subagents: fresh 200k each. No polling (Task bloc
 </failure_handling>
 
 <resumption>
-Re-run `/qgsd:execute-phase {phase}` → discover_plans finds completed SUMMARYs → skips them → resumes from first incomplete plan → continues wave execution.
+Re-run `/nf:execute-phase {phase}` → discover_plans finds completed SUMMARYs → skips them → resumes from first incomplete plan → continues wave execution.
 
 STATE.md tracks: last completed plan, current wave, pending checkpoints.
 </resumption>

@@ -27,7 +27,7 @@ Note existing areas from the todos array for consistency in infer_area step.
 
 <step name="extract_content">
 **With arguments:** Use as the title/focus.
-- `/qgsd:add-todo Add auth token refresh` → title = "Add auth token refresh"
+- `/nf:add-todo Add auth token refresh` → title = "Add auth token refresh"
 
 **Without arguments:** Analyze recent conversation to extract:
 - The specific problem, idea, or task discussed
@@ -140,7 +140,7 @@ Would you like to:
 
 1. Continue with current work
 2. Add another todo
-3. View all todos (/qgsd:check-todos)
+3. View all todos (/nf:check-todos)
 ```
 </step>
 

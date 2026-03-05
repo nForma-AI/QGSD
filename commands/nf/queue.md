@@ -1,7 +1,7 @@
 ---
 name: qgsd:queue
 description: Queue a skill or command to auto-invoke after the next /clear
-argument-hint: <command to queue, e.g. "/qgsd:quick --full">
+argument-hint: <command to queue, e.g. "/nf:quick --full">
 allowed-tools:
   - Bash
   - Write

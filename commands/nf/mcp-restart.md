@@ -28,7 +28,7 @@ Parse `$ARGUMENTS` as one token: `$AGENT`.
 
 If `$AGENT` is missing, print usage and stop:
 ```
-Usage: /qgsd:mcp-restart <agent>
+Usage: /nf:mcp-restart <agent>
 
 Valid agents:
   codex-cli-1, gemini-cli-1, opencode-1, copilot-1,
@@ -170,7 +170,7 @@ Agent $AGENT restarted and responding
 Print:
 ```
 Processes killed. Claude Code is reconnecting to $AGENT.
-Check status in a few seconds: /qgsd:mcp-status
+Check status in a few seconds: /nf:mcp-status
 ```
 
 </process>

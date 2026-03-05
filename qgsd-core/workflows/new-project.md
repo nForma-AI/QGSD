@@ -23,7 +23,7 @@ Check if `--auto` flag is present in $ARGUMENTS.
 
 **Document requirement:**
 Auto mode requires an idea document — either:
-- File reference: `/qgsd:new-project --auto @prd.md`
+- File reference: `/nf:new-project --auto @prd.md`
 - Pasted/written text in the prompt
 
 If no document content provided, error:
@@ -32,8 +32,8 @@ If no document content provided, error:
 Error: --auto requires an idea document.
 
 Usage:
-  /qgsd:new-project --auto @your-idea.md
-  /qgsd:new-project --auto [paste or write your idea here]
+  /nf:new-project --auto @your-idea.md
+  /nf:new-project --auto [paste or write your idea here]
 
 The document should describe what you want to build.
 ```
@@ -51,7 +51,7 @@ INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init new-project)
 
 Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`.
 
-**If `project_exists` is true:** Error — project already initialized. Use `/qgsd:progress`.
+**If `project_exists` is true:** Error — project already initialized. Use `/nf:progress`.
 
 **If `has_git` is false:** Initialize git:
 ```bash
@@ -68,12 +68,12 @@ Use AskUserQuestion:
 - header: "Codebase"
 - question: "I detected existing code in this directory. Would you like to map the codebase first?"
 - options:
-  - "Map codebase first" — Run /qgsd:map-codebase to understand existing architecture (Recommended)
+  - "Map codebase first" — Run /nf:map-codebase to understand existing architecture (Recommended)
   - "Skip mapping" — Proceed with project initialization
 
 **If "Map codebase first":**
 ```
-Run `/qgsd:map-codebase` first, then return to `/qgsd:new-project`
+Run `/nf:map-codebase` first, then return to `/nf:new-project`
 ```
 Exit command.
 
@@ -493,7 +493,7 @@ Create `.planning/config.json` with all settings:
 node ~/.claude/qgsd/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
 ```
 
-**Note:** Run `/qgsd:settings` anytime to update these preferences.
+**Note:** Run `/nf:settings` anytime to update these preferences.
 
 ## 5.5. Resolve Model Profile
 
@@ -1187,7 +1187,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
 ```
 Task(
-  prompt="Run /qgsd:plan-phase 1",
+  prompt="Run /nf:plan-phase 1",
   subagent_type="general-purpose",
   description="Plan Phase 1"
 )
@@ -1202,14 +1202,14 @@ Task(
 
   Auto-advance pipeline finished.
 
-  Next: /qgsd:execute-phase 1
+  Next: /nf:execute-phase 1
   ```
 - **Other / error** → Display result, stop chain:
   ```
   Auto-advance stopped: Planning needs review.
 
   Continue manually:
-  /qgsd:plan-phase 1
+  /nf:plan-phase 1
   ```
 
 ```bash
@@ -1224,14 +1224,14 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 
 **Phase 1: [Phase Name]** — [Goal from ROADMAP.md]
 
-/qgsd:discuss-phase 1 — gather context and clarify approach
+/nf:discuss-phase 1 — gather context and clarify approach
 
 <sub>/clear first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- /qgsd:plan-phase 1 — skip discussion, plan directly
+- /nf:plan-phase 1 — skip discussion, plan directly
 
 ───────────────────────────────────────────────────────────────
 ```
@@ -1276,7 +1276,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 - [ ] ROADMAP.md created with phases, requirement mappings, success criteria
 - [ ] STATE.md initialized
 - [ ] REQUIREMENTS.md traceability updated
-- [ ] User knows next step is `/qgsd:discuss-phase 1`
+- [ ] User knows next step is `/nf:discuss-phase 1`
 
 **Atomic commits:** Each phase commits its artifacts immediately. If context is lost, artifacts persist.
 

@@ -30,8 +30,8 @@ Focus area: $ARGUMENTS (optional - if provided, tells agents to focus on specifi
 Check for .planning/STATE.md - loads context if project already initialized
 
 **This command can run:**
-- Before /qgsd:new-project (brownfield codebases) - creates codebase map first
-- After /qgsd:new-project (greenfield codebases) - updates codebase map as code evolves
+- Before /nf:new-project (brownfield codebases) - creates codebase map first
+- After /nf:new-project (greenfield codebases) - updates codebase map as code evolves
 - Anytime to refresh codebase understanding
 </context>
 
@@ -59,7 +59,7 @@ Check for .planning/STATE.md - loads context if project already initialized
 4. Wait for agents to complete, collect confirmations (NOT document contents)
 5. Verify all 7 documents exist with line counts
 6. Commit codebase map
-7. Offer next steps (typically: /qgsd:new-project or /qgsd:plan-phase)
+7. Offer next steps (typically: /nf:new-project or /nf:plan-phase)
 </process>
 
 <success_criteria>

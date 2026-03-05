@@ -77,7 +77,7 @@ if (circuitBreaker.active === true) {
     id:          'circuit-breaker-active',
     priority:    90,
     description: 'Circuit breaker is currently active — oscillation was detected and execution is paused.',
-    action:      'Run /qgsd:debug to diagnose the oscillation root cause, then run `npx qgsd --reset-breaker`.',
+    action:      'Run /nf:debug to diagnose the oscillation root cause, then run `npx qgsd --reset-breaker`.',
     surfaced:    false,
     detectedAt:  now,
   });
@@ -131,7 +131,7 @@ if (!circuitBreaker.active && (circuitBreaker.triggerCount || 0) > 3) {
     id:          'circuit-breaker-repeated-triggers',
     priority:    50,
     description: `Circuit breaker has triggered ${circuitBreaker.triggerCount} times — recurring oscillation pattern detected.`,
-    action:      'Run /qgsd:discuss-phase to review recent commit patterns; consider adding explicit done-criteria to plans.',
+    action:      'Run /nf:discuss-phase to review recent commit patterns; consider adding explicit done-criteria to plans.',
     surfaced:    false,
     detectedAt:  now,
   });

@@ -1,5 +1,5 @@
 <purpose>
-Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into /qgsd:plan-phase --gaps.
+Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into /nf:plan-phase --gaps.
 
 User tests, Claude records. One test at a time. Plain text responses.
 </purpose>
@@ -69,7 +69,7 @@ If no, continue to `create_uat_file`.
 ```
 No active UAT sessions.
 
-Provide a phase number to start testing (e.g., /qgsd:verify-work 4)
+Provide a phase number to start testing (e.g., /nf:verify-work 4)
 ```
 
 **If no active sessions AND $ARGUMENTS provided:**
@@ -317,8 +317,8 @@ Present summary:
 ```
 All tests passed. Ready to continue.
 
-- `/qgsd:plan-phase {next}` — Plan next phase
-- `/qgsd:execute-phase {next}` — Execute next phase
+- `/nf:plan-phase {next}` — Plan next phase
+- `/nf:execute-phase {next}` — Execute next phase
 ```
 </step>
 
@@ -374,7 +374,7 @@ Task(
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /qgsd:execute-phase
+Output consumed by /nf:execute-phase
 Plans must be executable prompts.
 </downstream_consumer>
 """,
@@ -483,7 +483,7 @@ Display: `Max iterations reached. {N} issues remain.`
 Offer options:
 1. Force proceed (execute despite issues)
 2. Provide guidance (user gives direction, retry)
-3. Abandon (exit, user runs /qgsd:plan-phase manually)
+3. Abandon (exit, user runs /nf:plan-phase manually)
 
 Wait for user response.
 </step>
@@ -511,7 +511,7 @@ Plans verified and ready for execution.
 
 **Execute fixes** — run fix plans
 
-`/clear` then `/qgsd:execute-phase {phase} --gaps-only`
+`/clear` then `/nf:execute-phase {phase} --gaps-only`
 
 ───────────────────────────────────────────────────────────────
 ```
@@ -535,7 +535,7 @@ Two sub-cases based on gap result:
 
 Gap fix plans ready. Spawning execute-phase --gaps-only...
 ```
-Invoke: `SlashCommand("/qgsd:execute-phase ${PHASE} --gaps-only --auto")`
+Invoke: `SlashCommand("/nf:execute-phase ${PHASE} --gaps-only --auto")`
 
 **Sub-case B — All tests pass (no gaps found):**
 ```
@@ -545,7 +545,7 @@ Invoke: `SlashCommand("/qgsd:execute-phase ${PHASE} --gaps-only --auto")`
 
 All tests pass. Advancing to next phase...
 ```
-Invoke: `SlashCommand("/qgsd:discuss-phase ${NEXT_PHASE} --auto")`
+Invoke: `SlashCommand("/nf:discuss-phase ${NEXT_PHASE} --auto")`
 
 (NEXT_PHASE = the phase number immediately after the current phase, read from ROADMAP.md or `gsd-tools.cjs roadmap get-phase` next field)
 
@@ -601,5 +601,5 @@ Default to **major** if unclear. User can correct if needed.
 - [ ] If issues: qgsd-planner creates fix plans (gap_closure mode)
 - [ ] If issues: qgsd-plan-checker verifies fix plans
 - [ ] If issues: revision loop until plans pass (max 3 iterations)
-- [ ] Ready for `/qgsd:execute-phase --gaps-only` when complete
+- [ ] Ready for `/nf:execute-phase --gaps-only` when complete
 </success_criteria>

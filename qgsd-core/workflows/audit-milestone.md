@@ -240,7 +240,7 @@ Display: `◆ Audit passed — auto-completing milestone {version}...`
 
 ```
 Task(
-  prompt="Run /qgsd:complete-milestone {version}
+  prompt="Run /nf:complete-milestone {version}
   Follow @~/.claude/qgsd/workflows/complete-milestone.md end-to-end.",
   subagent_type="general-purpose",
   description="Auto-complete: milestone {version}"
@@ -276,8 +276,8 @@ If `current_iteration > MAX_ITERATIONS` (3):
 
 Investigate manually:
   cat .planning/milestones/v{version}-MILESTONE-AUDIT.md
-  /qgsd:plan-milestone-gaps
-  /qgsd:complete-milestone {version}  (accept current state)
+  /nf:plan-milestone-gaps
+  /nf:complete-milestone {version}  (accept current state)
 ```
 
 HALT. Do NOT continue looping.
@@ -300,17 +300,17 @@ AskUserQuestion(
 
 If "Abort" → halt with current state summary and manual next steps.
 
-**Gap closure — Step 1: Run /qgsd:solve to close consistency gaps**
+**Gap closure — Step 1: Run /nf:solve to close consistency gaps**
 
-Before planning new phases, run `/qgsd:solve` to auto-remediate consistency-level gaps
+Before planning new phases, run `/nf:solve` to auto-remediate consistency-level gaps
 (F→C, T→C, R→D, D→C, P→F, etc.). Many audit gaps stem from stale formal models,
 missing test coverage, or requirement drift — solve handles these without new phases.
 
-Display: `◆ Running /qgsd:solve to close consistency gaps before planning...`
+Display: `◆ Running /nf:solve to close consistency gaps before planning...`
 
 ```
 Task(
-  prompt="Run /qgsd:solve
+  prompt="Run /nf:solve
 
   Context: Milestone {version} audit found gaps. Run the full 8-layer solve pipeline
   to auto-remediate consistency gaps before we plan structural gap-closure phases.
@@ -332,14 +332,14 @@ Check gap classification from Step 2b:
   → Auto-execute each phase (lowest first):
   ```
   Task(
-    prompt="Run /qgsd:execute-phase {phase} --auto",
+    prompt="Run /nf:execute-phase {phase} --auto",
     subagent_type="general-purpose",
     description="Auto-complete: execute gap phase {phase} (iteration {current_iteration})"
   )
   ```
   → After all execute, re-audit by invoking:
   ```
-  SlashCommand("/qgsd:audit-milestone {version} --auto --iteration {current_iteration}")
+  SlashCommand("/nf:audit-milestone {version} --auto --iteration {current_iteration}")
   ```
 
 - If ANY phase is `missing_no_plan`:
@@ -347,7 +347,7 @@ Check gap classification from Step 2b:
   → Spawn plan-milestone-gaps:
   ```
   Task(
-    prompt="Run /qgsd:plan-milestone-gaps --auto
+    prompt="Run /nf:plan-milestone-gaps --auto
 
   Audit file: .planning/milestones/v{version}-MILESTONE-AUDIT.md
   Milestone: {version}
@@ -363,7 +363,7 @@ Check gap classification from Step 2b:
   → After plan-milestone-gaps completes (which triggers plan-phase → execute → transition chain):
   → Re-audit by invoking:
   ```
-  SlashCommand("/qgsd:audit-milestone {version} --auto --iteration {current_iteration}")
+  SlashCommand("/nf:audit-milestone {version} --auto --iteration {current_iteration}")
   ```
 
 ---
@@ -378,7 +378,7 @@ Output this markdown directly (not as a code block). Route based on status:
   → Present the audit summary (gaps, cross-phase issues, broken flows)
   → Then **auto-execute**: follow `@~/.claude/qgsd/workflows/execute-phase.md` for each missing phase in sequence (lowest phase number first)
   → After all executions complete, re-run the audit check and present the final result
-  → Do NOT show the `/qgsd:plan-milestone-gaps` suggestion
+  → Do NOT show the `/nf:plan-milestone-gaps` suggestion
 
 - If ANY phase is `missing_no_plan`: use standard gaps_found routing below
 
@@ -399,7 +399,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 **Complete milestone** — archive and tag
 
-/qgsd:complete-milestone {version}
+/nf:complete-milestone {version}
 
 <sub>/clear first → fresh context window</sub>
 
@@ -438,7 +438,7 @@ All requirements covered. Cross-phase integration verified. E2E flows complete.
 
 ```
 Task(
-  prompt="Run /qgsd:plan-milestone-gaps workflow.
+  prompt="Run /nf:plan-milestone-gaps workflow.
 
 Audit file: .planning/v{version}-MILESTONE-AUDIT.md
 Milestone: {version}
@@ -454,7 +454,7 @@ Follow @~/.claude/qgsd/workflows/plan-milestone-gaps.md to create gap closure ph
 
 **Also available:**
 - cat .planning/v{version}-MILESTONE-AUDIT.md — see full report
-- /qgsd:complete-milestone {version} — proceed anyway (accept tech debt)
+- /nf:complete-milestone {version} — proceed anyway (accept tech debt)
 
 ───────────────────────────────────────────────────────────────
 
@@ -484,11 +484,11 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 
 **A. Complete milestone** — accept debt, track in backlog
 
-/qgsd:complete-milestone {version}
+/nf:complete-milestone {version}
 
 **B. Plan cleanup phase** — address debt before completing
 
-/qgsd:plan-milestone-gaps
+/nf:plan-milestone-gaps
 
 <sub>/clear first → fresh context window</sub>
 

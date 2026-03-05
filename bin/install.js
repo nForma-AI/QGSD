@@ -269,7 +269,7 @@ function warnMissingMcpServers() {
 }
 
 // INST-01: Detects whether any claude-mcp-server quorum agents are configured.
-// Used in finishInstall() to nudge new users to run /qgsd:mcp-setup.
+// Used in finishInstall() to nudge new users to run /nf:mcp-setup.
 // Fail-open: returns false on read errors (never blocks install).
 function hasClaudeMcpAgents() {
   const claudeJsonPath = path.join(os.homedir(), '.claude.json');
@@ -624,8 +624,8 @@ function convertClaudeToOpencodeFrontmatter(content) {
   convertedContent = convertedContent.replace(/\bAskUserQuestion\b/g, 'question');
   convertedContent = convertedContent.replace(/\bSlashCommand\b/g, 'skill');
   convertedContent = convertedContent.replace(/\bTodoWrite\b/g, 'todowrite');
-  // Replace /qgsd:command with /qgsd-command for opencode (flat command structure)
-  convertedContent = convertedContent.replace(/\/qgsd:/g, '/qgsd-');
+  // Replace /nf:command with /qgsd-command for opencode (flat command structure)
+  convertedContent = convertedContent.replace(/\/nf:/g, '/qgsd-');
   // Replace ~/.claude with ~/.config/opencode (OpenCode's correct config location)
   convertedContent = convertedContent.replace(/~\/\.claude\b/g, '~/.config/opencode');
   // Replace general-purpose subagent type with OpenCode's equivalent "general"
@@ -767,12 +767,12 @@ function convertClaudeToGeminiToml(content) {
 
 /**
  * Copy commands to a flat structure for OpenCode
- * OpenCode expects: command/qgsd-help.md (invoked as /qgsd-help)
- * Source structure: commands/qgsd/help.md
+ * OpenCode expects: command/nf-help.md (invoked as /nf-help)
+ * Source structure: commands/nf/help.md
  *
- * @param {string} srcDir - Source directory (e.g., commands/qgsd/)
+ * @param {string} srcDir - Source directory (e.g., commands/nf/)
  * @param {string} destDir - Destination directory (e.g., command/)
- * @param {string} prefix - Prefix for filenames (e.g., 'qgsd')
+ * @param {string} prefix - Prefix for filenames (e.g., 'nf')
  * @param {string} pathPrefix - Path prefix for file references
  * @param {string} runtime - Target runtime ('claude' or 'opencode')
  */
@@ -781,7 +781,7 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
     return;
   }
   
-  // Remove old qgsd-*.md files before copying new ones
+  // Remove old nf-*.md files before copying new ones
   if (fs.existsSync(destDir)) {
     for (const file of fs.readdirSync(destDir)) {
       if (file.startsWith(`${prefix}-`) && file.endsWith('.md')) {
@@ -799,10 +799,10 @@ function copyFlattenedCommands(srcDir, destDir, prefix, pathPrefix, runtime) {
     
     if (entry.isDirectory()) {
       // Recurse into subdirectories, adding to prefix
-      // e.g., commands/qgsd/debug/start.md -> command/qgsd-debug-start.md
+      // e.g., commands/nf/debug/start.md -> command/nf-debug-start.md
       copyFlattenedCommands(srcPath, destDir, `${prefix}-${entry.name}`, pathPrefix, runtime);
     } else if (entry.name.endsWith('.md')) {
-      // Flatten: help.md -> qgsd-help.md
+      // Flatten: help.md -> nf-help.md
       const baseName = entry.name.replace('.md', '');
       const destName = `${prefix}-${baseName}.md`;
       const destPath = path.join(destDir, destName);
@@ -1005,12 +1005,12 @@ function uninstall(isGlobal, runtime = 'claude') {
       console.log(`  ${green}✓${reset} Removed GSD commands from command/`);
     }
   } else {
-    // Claude Code & Gemini: remove commands/qgsd/ directory
-    const gsdCommandsDir = path.join(targetDir, 'commands', 'qgsd');
+    // Claude Code & Gemini: remove commands/nf/ directory
+    const gsdCommandsDir = path.join(targetDir, 'commands', 'nf');
     if (fs.existsSync(gsdCommandsDir)) {
       fs.rmSync(gsdCommandsDir, { recursive: true });
       removedCount++;
-      console.log(`  ${green}✓${reset} Removed commands/qgsd/`);
+      console.log(`  ${green}✓${reset} Removed commands/nf/`);
     }
   }
 
@@ -1483,7 +1483,7 @@ function generateManifest(dir, baseDir) {
  */
 function writeManifest(configDir) {
   const gsdDir = path.join(configDir, 'qgsd');
-  const commandsDir = path.join(configDir, 'commands', 'qgsd');
+  const commandsDir = path.join(configDir, 'commands', 'nf');
   const agentsDir = path.join(configDir, 'agents');
   const manifest = { version: pkg.version, timestamp: new Date().toISOString(), files: {} };
 
@@ -1494,7 +1494,7 @@ function writeManifest(configDir) {
   if (fs.existsSync(commandsDir)) {
     const cmdHashes = generateManifest(commandsDir);
     for (const [rel, hash] of Object.entries(cmdHashes)) {
-      manifest.files['commands/qgsd/' + rel] = hash;
+      manifest.files['commands/nf/' + rel] = hash;
     }
   }
   if (fs.existsSync(agentsDir)) {
@@ -1569,7 +1569,7 @@ function reportLocalPatches(configDir) {
     }
     console.log('');
     console.log('  Your modifications are saved in ' + cyan + PATCHES_DIR_NAME + '/' + reset);
-    console.log('  Run ' + cyan + '/qgsd:reapply-patches' + reset + ' to merge them into the new version.');
+    console.log('  Run ' + cyan + '/nf:reapply-patches' + reset + ' to merge them into the new version.');
     console.log('  Or manually compare and merge the files.');
     console.log('');
   }
@@ -1620,27 +1620,27 @@ function install(isGlobal, runtime = 'claude') {
     const commandDir = path.join(targetDir, 'command');
     fs.mkdirSync(commandDir, { recursive: true });
     
-    // Copy commands/qgsd/*.md as command/qgsd-*.md (flatten structure)
-    const gsdSrc = path.join(src, 'commands', 'qgsd');
-    copyFlattenedCommands(gsdSrc, commandDir, 'qgsd', pathPrefix, runtime);
-    if (verifyInstalled(commandDir, 'command/qgsd-*')) {
-      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('qgsd-')).length;
+    // Copy commands/nf/*.md as command/nf-*.md (flatten structure)
+    const gsdSrc = path.join(src, 'commands', 'nf');
+    copyFlattenedCommands(gsdSrc, commandDir, 'nf', pathPrefix, runtime);
+    if (verifyInstalled(commandDir, 'command/nf-*')) {
+      const count = fs.readdirSync(commandDir).filter(f => f.startsWith('nf-')).length;
       console.log(`  ${green}✓${reset} Installed ${count} commands to command/`);
     } else {
-      failures.push('command/qgsd-*');
+      failures.push('command/nf-*');
     }
   } else {
     // Claude Code & Gemini: nested structure in commands/ directory
     const commandsDir = path.join(targetDir, 'commands');
     fs.mkdirSync(commandsDir, { recursive: true });
     
-    const gsdSrc = path.join(src, 'commands', 'qgsd');
-    const gsdDest = path.join(commandsDir, 'qgsd');
+    const gsdSrc = path.join(src, 'commands', 'nf');
+    const gsdDest = path.join(commandsDir, 'nf');
     copyWithPathReplacement(gsdSrc, gsdDest, pathPrefix, runtime);
-    if (verifyInstalled(gsdDest, 'commands/qgsd')) {
-      console.log(`  ${green}✓${reset} Installed commands/qgsd`);
+    if (verifyInstalled(gsdDest, 'commands/nf')) {
+      console.log(`  ${green}✓${reset} Installed commands/nf`);
     } else {
-      failures.push('commands/qgsd');
+      failures.push('commands/nf');
     }
   }
 
@@ -1660,7 +1660,7 @@ function install(isGlobal, runtime = 'claude') {
     const agentsDest = path.join(targetDir, 'agents');
     fs.mkdirSync(agentsDest, { recursive: true });
 
-    // Remove old qgsd-*.md files before copying new ones
+    // Remove old nf-*.md files before copying new ones
     if (fs.existsSync(agentsDest)) {
       for (const file of fs.readdirSync(agentsDest)) {
         if (file.startsWith('qgsd-') && file.endsWith('.md')) {
@@ -2067,11 +2067,11 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   if (runtime === 'opencode') program = 'OpenCode';
   if (runtime === 'gemini') program = 'Gemini';
 
-  const command = isOpencode ? '/qgsd-help' : '/qgsd:help';
+  const command = isOpencode ? '/qgsd-help' : '/nf:help';
 
   let nudge = '';
   if (runtime === 'claude' && !hasClaudeMcpAgents()) {
-    nudge = `\n  ${yellow}⚠${reset} No quorum agents configured.\n    Run ${cyan}/qgsd:mcp-setup${reset} in Claude Code to set up your agents.\n`;
+    nudge = `\n  ${yellow}⚠${reset} No quorum agents configured.\n    Run ${cyan}/nf:mcp-setup${reset} in Claude Code to set up your agents.\n`;
   }
 
   console.log(`

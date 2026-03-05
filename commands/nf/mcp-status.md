@@ -244,7 +244,7 @@ Scoreboard: 156 rounds recorded | Last update: 2026-02-23T14:23:52.301Z
 
 If scoreboard file was absent, show instead:
 ```
-Scoreboard: no data yet (run /qgsd:quorum first to populate)
+Scoreboard: no data yet (run /nf:quorum first to populate)
 ```
 
 Health legend:

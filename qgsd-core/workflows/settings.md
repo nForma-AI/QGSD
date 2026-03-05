@@ -89,7 +89,7 @@ If `project_exists` is false, display:
  QGSD ► PROJECT HUB
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-No project found. Run /qgsd:new-project to get started.
+No project found. Run /nf:new-project to get started.
 ```
 
 Exit. Do not proceed to the main menu.
@@ -108,7 +108,7 @@ AskUserQuestion([
       { label: "Continue Working", description: "Route to next action based on project state" },
       { label: "Project Management", description: "Milestones, phases, todos, debug sessions" },
       { label: "Configuration", description: "Workflow settings, project profile, baselines" },
-      { label: "Quick Task", description: "Run a quick ad-hoc task (/qgsd:quick)" }
+      { label: "Quick Task", description: "Run a quick ad-hoc task (/nf:quick)" }
     ]
   }
 ])
@@ -122,7 +122,7 @@ Route based on selection:
 </step>
 
 <step name="continue_working">
-Apply the SAME routing logic as `/qgsd:progress` step "route". This is a restatement of the routing algorithm (not a delegation to the progress command, since we are already in a workflow).
+Apply the SAME routing logic as `/nf:progress` step "route". This is a restatement of the routing algorithm (not a delegation to the progress command, since we are already in a workflow).
 
 **Step 1: Count plans, summaries, and UAT files in the current phase directory:**
 
@@ -141,11 +141,11 @@ grep -l "status: diagnosed" .planning/phases/[current-phase-dir]/*-UAT.md 2>/dev
 
 | Condition | Route |
 |-----------|-------|
-| uat_with_gaps > 0 | Show: UAT gaps found, recommend `/qgsd:plan-phase {phase} --gaps` |
-| summaries < plans | Show: Unexecuted plan exists, recommend `/qgsd:execute-phase {phase}` |
-| summaries = plans AND plans > 0 | Phase complete. Check if more phases remain -> recommend next phase. If all complete -> recommend `/qgsd:complete-milestone` |
-| plans = 0 | Phase not planned. Check for CONTEXT.md -> recommend `/qgsd:plan-phase` or `/qgsd:discuss-phase` |
-| No ROADMAP.md but PROJECT.md exists | Between milestones -> recommend `/qgsd:new-milestone` |
+| uat_with_gaps > 0 | Show: UAT gaps found, recommend `/nf:plan-phase {phase} --gaps` |
+| summaries < plans | Show: Unexecuted plan exists, recommend `/nf:execute-phase {phase}` |
+| summaries = plans AND plans > 0 | Phase complete. Check if more phases remain -> recommend next phase. If all complete -> recommend `/nf:complete-milestone` |
+| plans = 0 | Phase not planned. Check for CONTEXT.md -> recommend `/nf:plan-phase` or `/nf:discuss-phase` |
+| No ROADMAP.md but PROJECT.md exists | Between milestones -> recommend `/nf:new-milestone` |
 
 **Display format for recommendations:**
 
@@ -157,7 +157,7 @@ For unexecuted plans (summaries < plans):
 
 **{phase}-{plan}: [Plan Name]** -- [objective summary from PLAN.md]
 
-`/qgsd:execute-phase {phase}`
+`/nf:execute-phase {phase}`
 
 <sub>/clear first -- fresh context window</sub>
 
@@ -172,7 +172,7 @@ For UAT gaps:
 
 **{phase_num}-UAT.md** has {N} gaps requiring fixes.
 
-`/qgsd:plan-phase {phase} --gaps`
+`/nf:plan-phase {phase} --gaps`
 
 <sub>/clear first -- fresh context window</sub>
 
@@ -188,7 +188,7 @@ For phase not planned (CONTEXT.md exists):
 **Phase {N}: {Name}** -- {Goal from ROADMAP.md}
 Context gathered, ready to plan
 
-`/qgsd:plan-phase {phase-number}`
+`/nf:plan-phase {phase-number}`
 
 <sub>/clear first -- fresh context window</sub>
 
@@ -203,13 +203,13 @@ For phase not planned (no CONTEXT.md):
 
 **Phase {N}: {Name}** -- {Goal from ROADMAP.md}
 
-`/qgsd:discuss-phase {phase}` -- gather context and clarify approach
+`/nf:discuss-phase {phase}` -- gather context and clarify approach
 
 <sub>/clear first -- fresh context window</sub>
 
 **Also available:**
-- `/qgsd:plan-phase {phase}` -- skip discussion, plan directly
-- `/qgsd:list-phase-assumptions {phase}` -- see Claude's assumptions
+- `/nf:plan-phase {phase}` -- skip discussion, plan directly
+- `/nf:list-phase-assumptions {phase}` -- see Claude's assumptions
 
 ---
 ```
@@ -224,13 +224,13 @@ For phase complete, more phases remain:
 
 **Phase {Z+1}: {Name}** -- {Goal from ROADMAP.md}
 
-`/qgsd:discuss-phase {Z+1}` -- gather context and clarify approach
+`/nf:discuss-phase {Z+1}` -- gather context and clarify approach
 
 <sub>/clear first -- fresh context window</sub>
 
 **Also available:**
-- `/qgsd:plan-phase {Z+1}` -- skip discussion, plan directly
-- `/qgsd:verify-work {Z}` -- user acceptance test before continuing
+- `/nf:plan-phase {Z+1}` -- skip discussion, plan directly
+- `/nf:verify-work {Z}` -- user acceptance test before continuing
 
 ---
 ```
@@ -247,12 +247,12 @@ All {N} phases finished!
 
 **Complete Milestone** -- archive and prepare for next
 
-`/qgsd:complete-milestone`
+`/nf:complete-milestone`
 
 <sub>/clear first -- fresh context window</sub>
 
 **Also available:**
-- `/qgsd:verify-work` -- user acceptance test before completing milestone
+- `/nf:verify-work` -- user acceptance test before completing milestone
 
 ---
 ```
@@ -269,7 +269,7 @@ Ready to plan the next milestone.
 
 **Start Next Milestone** -- questioning, research, requirements, roadmap
 
-`/qgsd:new-milestone`
+`/nf:new-milestone`
 
 <sub>/clear first -- fresh context window</sub>
 
@@ -306,10 +306,10 @@ Show current phase info from dashboard data. List available commands:
 Phase {N}/{total}: {phase-name} [{status}]
 
 Available commands:
-- `/qgsd:discuss-phase {N}` -- gather context and clarify approach
-- `/qgsd:plan-phase {N}` -- create detailed execution plan
-- `/qgsd:execute-phase {N}` -- execute all plans in phase
-- `/qgsd:list-phase-assumptions {N}` -- see Claude's intended approach
+- `/nf:discuss-phase {N}` -- gather context and clarify approach
+- `/nf:plan-phase {N}` -- create detailed execution plan
+- `/nf:execute-phase {N}` -- execute all plans in phase
+- `/nf:list-phase-assumptions {N}` -- see Claude's intended approach
 ```
 
 **Milestone:**
@@ -318,9 +318,9 @@ List available commands:
 
 ```
 Available commands:
-- `/qgsd:new-milestone` -- start new milestone cycle
-- `/qgsd:complete-milestone` -- archive and prepare for next
-- `/qgsd:audit-milestone` -- audit completion against intent
+- `/nf:new-milestone` -- start new milestone cycle
+- `/nf:complete-milestone` -- archive and prepare for next
+- `/nf:audit-milestone` -- audit completion against intent
 ```
 
 **Todos & Debug:**
@@ -331,9 +331,9 @@ List available commands:
 Pending todos: {count} | Active debug: {count}
 
 Available commands:
-- `/qgsd:check-todos` -- review and work on pending todos
-- `/qgsd:add-todo` -- capture idea or task from conversation
-- `/qgsd:debug` -- start or resume a debug session
+- `/nf:check-todos` -- review and work on pending todos
+- `/nf:add-todo` -- capture idea or task from conversation
+- `/nf:debug` -- start or resume a debug session
 ```
 
 **Roadmap:**
@@ -342,9 +342,9 @@ List available commands:
 
 ```
 Available commands:
-- `/qgsd:add-phase "description"` -- add phase to end
-- `/qgsd:insert-phase N "description"` -- insert urgent work
-- `/qgsd:remove-phase N` -- remove unstarted phase
+- `/nf:add-phase "description"` -- add phase to end
+- `/nf:insert-phase N "description"` -- insert urgent work
+- `/nf:remove-phase N` -- remove unstarted phase
 ```
 </step>
 
@@ -373,8 +373,8 @@ Route based on selection:
 
 ```
 Quorum agent management:
-- `/qgsd:mcp-status` -- check agent health and availability
-- `/qgsd:mcp-setup` -- configure MCP agent connections
+- `/nf:mcp-status` -- check agent health and availability
+- `/nf:mcp-setup` -- configure MCP agent connections
 ```
 </step>
 
@@ -455,7 +455,7 @@ Display how many baselines the new profile includes vs current.
 
 Update PROJECT.md with `Profile: <key>` line (replace existing line or add if missing).
 
-Inform user: "Run `/qgsd:new-milestone` to regenerate REQUIREMENTS.md with new baselines."
+Inform user: "Run `/nf:new-milestone` to regenerate REQUIREMENTS.md with new baselines."
 
 **6. If "Manage baseline requirements":**
 
@@ -650,13 +650,13 @@ Display:
 | Git Branching        | {None/Per Phase/Per Milestone} |
 | Saved as Defaults    | {Yes/No} |
 
-These settings apply to future /qgsd:plan-phase and /qgsd:execute-phase runs.
+These settings apply to future /nf:plan-phase and /nf:execute-phase runs.
 
 Quick commands:
-- /qgsd:set-profile <profile> — switch model profile
-- /qgsd:plan-phase --research — force research
-- /qgsd:plan-phase --skip-research — skip research
-- /qgsd:plan-phase --skip-verify — skip plan check
+- /nf:set-profile <profile> — switch model profile
+- /nf:plan-phase --research — force research
+- /nf:plan-phase --skip-research — skip research
+- /nf:plan-phase --skip-verify — skip plan check
 ```
 </step>
 
@@ -666,9 +666,9 @@ Display:
 ```
 To run a quick task, use:
 
-/qgsd:quick <task description>
+/nf:quick <task description>
 
-Example: /qgsd:quick "Add rate limiting to the API endpoint"
+Example: /nf:quick "Add rate limiting to the API endpoint"
 ```
 </step>
 
@@ -677,11 +677,11 @@ Example: /qgsd:quick "Add rate limiting to the API endpoint"
 <success_criteria>
 - [ ] Dashboard displays project name, milestone, progress bar, phase status, config summary
 - [ ] Main menu presents 4 categories (Continue Working, Project Management, Configuration, Quick Task)
-- [ ] Continue Working applies same routing logic as /qgsd:progress
+- [ ] Continue Working applies same routing logic as /nf:progress
 - [ ] Project Management sub-menu routes to phase, milestone, todo, debug, and roadmap commands
 - [ ] Configuration sub-menu offers Workflow Settings, Project Profile & Baselines, Quorum Agents
 - [ ] Workflow Settings runs original 6-question config flow
 - [ ] Project Profile & Baselines shows current profile, offers change and baseline management
 - [ ] --config flag skips hub and goes directly to 6-question config flow
-- [ ] No-project state routes to /qgsd:new-project
+- [ ] No-project state routes to /nf:new-project
 </success_criteria>

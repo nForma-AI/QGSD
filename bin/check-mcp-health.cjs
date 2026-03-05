@@ -12,7 +12,7 @@
  * Usage:
  *   node bin/check-mcp-health.cjs [--timeout-ms N] [--json]
  *
- * Designed to be called at the start of /qgsd:quorum to skip
+ * Designed to be called at the start of /nf:quorum to skip
  * unresponsive servers before making full inference calls.
  */
 

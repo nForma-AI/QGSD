@@ -31,7 +31,7 @@ Resolve the question to pass:
    - **Priority 1** — Most recent message containing `?` without a substantive answer yet.
    - **Priority 2** — Most recent message describing a choice/trade-off (keywords: "should we", "which approach", "option A vs", "do we", "whether to").
    - **Priority 3** — Most recent open concern or blocker ("not sure", "concern", "blocker", "unclear", "wondering").
-   - If none found: stop with `"No open question found. Provide one explicitly: /qgsd:quorum <question>"`
+   - If none found: stop with `"No open question found. Provide one explicitly: /nf:quorum <question>"`
 
 When question is inferred, display before dispatching:
 ```
@@ -267,7 +267,7 @@ Priority 2 - Pending decision: Find the most recent message that describes a cho
 Priority 3 - Open concern or blocker: Find the most recent message that raises a concern, flags a risk, or states something is unclear (keywords: "not sure", "concern", "blocker", "question:", "unclear", "wondering"). Restate it as a question.
 
 If none of the above applies: stop with:
-"No open question found. Looked for: explicit '?' question, pending decision, or open concern in recent conversation. Provide a question explicitly: /qgsd:quorum <question>"
+"No open question found. Looked for: explicit '?' question, pending decision, or open concern in recent conversation. Provide a question explicitly: /nf:quorum <question>"
 
 When a question is inferred via any priority, Claude MUST display before proceeding:
 "Using conversation context as question (Priority N - [type]):
