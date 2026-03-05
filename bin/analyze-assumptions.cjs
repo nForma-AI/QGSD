@@ -48,17 +48,23 @@ function extractTlaAssumptions(filePath) {
 
     // Extract CONSTANTS declarations
     // e.g., CONSTANTS\n    Agents,\n    MaxDeliberation,\n    MaxSize
-    const constantsRe = /^CONSTANTS?\s*\n((?:\s+.*\n)*)/gm;
+    // Only grab indented continuation lines (lines starting with whitespace)
+    const constantsRe = /^CONSTANTS?\s*\n((?:\s{2,}\S.*\n)*)/gm;
     while ((m = constantsRe.exec(content)) !== null) {
       const block = m[1];
-      // Split by comma or newline, extract identifiers
-      const names = block.match(/(\w+)/g) || [];
-      for (const cname of names) {
-        // Skip TLA+ keywords and comment fragments
-        if (['Set', 'of', 'quorum', 'model', 'slots', 'default', 'e', 'g'].includes(cname)) continue;
-        results.push({
-          source: 'tla', file: relFile, name: cname, type: 'constant', value: null, rawText: `CONSTANTS ... ${cname}`
-        });
+      // Extract identifiers from the block, filtering out comment text
+      // Each line typically looks like: "    MaxDeliberation, \* comment"
+      const lines = block.split('\n').filter(l => l.trim());
+      for (const line of lines) {
+        // Remove TLA+ comments (\* ...)
+        const noComment = line.split('\\*')[0].trim();
+        // Extract identifiers (comma-separated)
+        const ids = noComment.split(/[,\s]+/).filter(id => /^[A-Z]\w*$/.test(id));
+        for (const cname of ids) {
+          results.push({
+            source: 'tla', file: relFile, name: cname, type: 'constant', value: null, rawText: `CONSTANTS ... ${cname}`
+          });
+        }
       }
     }
 
