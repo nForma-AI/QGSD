@@ -1,4 +1,4 @@
--- .formal/alloy/ci-pipeline-gates.als
+-- .planning/formal/alloy/ci-pipeline-gates.als
 -- Models CI/CD pipeline gate structure: tests, lint, typecheck must pass before merge.
 -- Source: .github/workflows/
 --

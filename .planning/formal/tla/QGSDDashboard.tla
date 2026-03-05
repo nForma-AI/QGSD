@@ -1,6 +1,6 @@
 ---- MODULE QGSDDashboard ----
 (*
- * .formal/tla/QGSDDashboard.tla
+ * .planning/formal/tla/QGSDDashboard.tla
  * Handwritten — models the live health dashboard state machine.
  * Source: bin/mcp-setup-tui.cjs (dashboard screen)
  *

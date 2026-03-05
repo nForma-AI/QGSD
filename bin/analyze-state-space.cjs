@@ -5,12 +5,12 @@
 // classifies risk (MINIMAL/LOW/MODERATE/HIGH), and flags unbounded domains.
 //
 // Data sources:
-//   1. .formal/model-registry.json (model file inventory)
-//   2. .formal/tla/*.cfg (TLC model-checking constants)
-//   3. .formal/tla/*.tla (VARIABLES + TypeOK domain declarations)
+//   1. .planning/formal/model-registry.json (model file inventory)
+//   2. .planning/formal/tla/*.cfg (TLC model-checking constants)
+//   3. .planning/formal/tla/*.tla (VARIABLES + TypeOK domain declarations)
 //
 // Usage:
-//   node bin/analyze-state-space.cjs            # write to .formal/state-space-report.json + summary
+//   node bin/analyze-state-space.cjs            # write to .planning/formal/state-space-report.json + summary
 //   node bin/analyze-state-space.cjs --json     # print JSON to stdout
 //   node bin/analyze-state-space.cjs --quiet    # suppress summary output
 //
@@ -29,9 +29,9 @@ for (const arg of process.argv.slice(2)) {
   }
 }
 
-const REGISTRY_PATH = path.join(ROOT, '.formal', 'model-registry.json');
-const TLA_DIR       = path.join(ROOT, '.formal', 'tla');
-const OUTPUT_PATH   = path.join(ROOT, '.formal', 'state-space-report.json');
+const REGISTRY_PATH = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+const TLA_DIR       = path.join(ROOT, '.planning', 'formal', 'tla');
+const OUTPUT_PATH   = path.join(ROOT, '.planning', 'formal', 'state-space-report.json');
 
 // ── CLI flags ───────────────────────────────────────────────────────────────
 
@@ -837,7 +837,7 @@ function main() {
   const tlaModels = Object.keys(registry.models || {}).filter(key => {
     return key.endsWith('.tla')
       && !key.includes('_TTrace_')
-      && key.startsWith('.formal/tla/')
+      && key.startsWith('.planning/formal/tla/')
       && !key.startsWith('../../../../');  // skip test paths
   });
 
@@ -914,7 +914,7 @@ function main() {
     process.stdout.write(TAG + '   Unbounded domains: ' + unboundedCount + ' model(s)\n');
     process.stdout.write(TAG + '   Models without .cfg: ' + modelsWithoutCfg + '\n');
     process.stdout.write(TAG + '   Cross-model pairs: ' + crossModel.summary.total_pairs_analyzed + ' (merge: ' + crossModel.summary.merge_recommended + ', interface-contract: ' + crossModel.summary.interface_contract_needed + ')\n');
-    process.stdout.write(TAG + ' Report: .formal/state-space-report.json\n');
+    process.stdout.write(TAG + ' Report: .planning/formal/state-space-report.json\n');
   }
 }
 

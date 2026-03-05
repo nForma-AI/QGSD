@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/check-trace-schema-drift.cjs
-// Detects when .formal/trace/trace.schema.json is modified without co-modifying
+// Detects when .planning/formal/trace/trace.schema.json is modified without co-modifying
 // bin/validate-traces.cjs and at least one trace emitter file in the same commit.
 //
 // Exit code 0: no schema change, or schema changed atomically
@@ -11,7 +11,7 @@ const { execFileSync } = require('child_process');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
-const SCHEMA_FILE = '.formal/trace/trace.schema.json';
+const SCHEMA_FILE = '.planning/formal/trace/trace.schema.json';
 const VALIDATOR_FILE = 'bin/validate-traces.cjs';
 
 const KNOWN_EMITTERS = [

@@ -62,7 +62,7 @@ function agentsSet(n) {
 
 // ── Build MCsafety.cfg ────────────────────────────────────────────────────────
 const safetyCfg = [
-  '\\* .formal/tla/MCsafety.cfg',
+  '\\* .planning/formal/tla/MCsafety.cfg',
   '\\* GENERATED — do not edit by hand.',
   '\\* Source of truth: src/machines/qgsd-workflow.machine.ts',
   '\\* Regenerate: node bin/generate-tla-cfg.cjs',
@@ -85,7 +85,7 @@ const safetyCfg = [
 
 // ── Build MCliveness.cfg ──────────────────────────────────────────────────────
 const livenessCfg = [
-  '\\* .formal/tla/MCliveness.cfg',
+  '\\* .planning/formal/tla/MCliveness.cfg',
   '\\* GENERATED — do not edit by hand.',
   '\\* Source of truth: src/machines/qgsd-workflow.machine.ts',
   '\\* Regenerate: node bin/generate-tla-cfg.cjs',
@@ -105,8 +105,8 @@ const livenessCfg = [
 ].join('\n');
 
 // ── Write or print ────────────────────────────────────────────────────────────
-const safetyPath   = path.join(ROOT, '.formal', 'tla', 'MCsafety.cfg');
-const livenessPath = path.join(ROOT, '.formal', 'tla', 'MCliveness.cfg');
+const safetyPath   = path.join(ROOT, '.planning', 'formal', 'tla', 'MCsafety.cfg');
+const livenessPath = path.join(ROOT, '.planning', 'formal', 'tla', 'MCliveness.cfg');
 
 if (DRY) {
   process.stdout.write('\n--- MCsafety.cfg ---\n' + safetyCfg);
@@ -114,8 +114,8 @@ if (DRY) {
 } else {
   fs.writeFileSync(safetyPath,   safetyCfg,   'utf8');
   fs.writeFileSync(livenessPath, livenessCfg, 'utf8');
-  process.stdout.write('[generate-tla-cfg] Written: .formal/tla/MCsafety.cfg\n');
-  process.stdout.write('[generate-tla-cfg] Written: .formal/tla/MCliveness.cfg\n');
+  process.stdout.write('[generate-tla-cfg] Written: .planning/formal/tla/MCsafety.cfg\n');
+  process.stdout.write('[generate-tla-cfg] Written: .planning/formal/tla/MCliveness.cfg\n');
 }
 
 process.stdout.write('[generate-tla-cfg] MaxDeliberation=' + maxDeliberation +

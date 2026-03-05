@@ -1,4 +1,4 @@
--- .formal/alloy/evidence-triage.als
+-- .planning/formal/alloy/evidence-triage.als
 -- Models the evidence confidence and triage bundle structure.
 -- Source: bin/validate-traces.cjs, bin/generate-triage-bundle.cjs
 --

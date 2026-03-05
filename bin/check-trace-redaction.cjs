@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/check-trace-redaction.cjs
-// Validates trace event files against .formal/trace/redaction.yaml policy.
+// Validates trace event files against .planning/formal/trace/redaction.yaml policy.
 // Prevents secrets and PII from persisting in trace event artifacts.
 //
 // Exit code 0: no violations (or no trace directory/files)
@@ -12,7 +12,7 @@ const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
-const DEFAULT_POLICY_PATH = path.join(__dirname, '..', '.formal', 'trace', 'redaction.yaml');
+const DEFAULT_POLICY_PATH = path.join(__dirname, '..', '.planning', 'formal', 'trace', 'redaction.yaml');
 
 /**
  * Parse redaction.yaml using line-by-line regex (no external YAML parser).
@@ -151,7 +151,7 @@ function validateTraceEvent(event, policy) {
 
 if (require.main === module) {
   // Parse CLI args: optional --trace-dir <path>
-  let traceDir = path.join(process.cwd(), '.formal', 'trace');
+  let traceDir = path.join(process.cwd(), '.planning', 'formal', 'trace');
   const args = process.argv.slice(2);
   const traceDirIdx = args.indexOf('--trace-dir');
   if (traceDirIdx !== -1 && args[traceDirIdx + 1]) {

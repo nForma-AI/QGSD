@@ -1,4 +1,4 @@
--- .formal/alloy/baseline-merge-idempotent.als
+-- .planning/formal/alloy/baseline-merge-idempotent.als
 -- Models idempotent merge of baseline requirements into requirements.json.
 -- Source: bin/requirements-core.cjs, bin/sync-baseline-requirements.cjs
 --

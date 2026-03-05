@@ -996,7 +996,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define v1 requirements" --fi
 
 **Sync baselines into formal envelope:**
 
-After REQUIREMENTS.md is committed, sync baseline requirements into `.formal/requirements.json`:
+After REQUIREMENTS.md is committed, sync baseline requirements into `.planning/formal/requirements.json`:
 
 ```bash
 node bin/sync-baseline-requirements.cjs --profile "$PROJECT_PROFILE"
@@ -1007,7 +1007,7 @@ This merges baseline requirements into the formal envelope with idempotent text 
 If any requirements were added, commit:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .formal/requirements.json
+node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .planning/formal/requirements.json
 ```
 
 ## 8. Create Roadmap

@@ -35,7 +35,7 @@ function makeScoreboard(nRounds, votesFn) {
 
 test('conservative priors used and logged when no scoreboard exists', () => {
   const { readPolicy } = require('./read-policy.cjs');
-  const policy = readPolicy(path.join(__dirname, '..', '.formal', 'policy.yaml'));
+  const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   const priorTP      = String(policy.conservative_priors.tp_rate);
   const priorUnavail = String(policy.conservative_priors.unavail);
 
@@ -157,7 +157,7 @@ test('caller -const tp_rate override wins over scoreboard value', () => {
 });
 
 // ── CALIB-02 / CALIB-03 cold-start and observation_window tests ─────────────
-// Note: run-prism.cjs reads policy.yaml from path.join(__dirname, '..', '.formal', 'policy.yaml')
+// Note: run-prism.cjs reads policy.yaml from path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml')
 // (the real repo file) regardless of cwd. Cold-start is driven by real policy thresholds
 // (min_ci_runs:5, min_quorum_rounds:10, min_days:1). Tests control scoreboard and
 // check-results.ndjson in tmpDir cwd to exercise threshold logic.
@@ -201,7 +201,7 @@ test('cold-start: min_ci_runs threshold — below threshold stays in cold-start'
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
-    const formalDir   = path.join(tmpDir, '.formal');
+    const formalDir   = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(planningDir, { recursive: true });
     fs.mkdirSync(formalDir,   { recursive: true });
     fs.writeFileSync(
@@ -223,7 +223,7 @@ test('cold-start: min_quorum_rounds threshold — below threshold stays in cold-
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
-    const formalDir   = path.join(tmpDir, '.formal');
+    const formalDir   = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(planningDir, { recursive: true });
     fs.mkdirSync(formalDir,   { recursive: true });
     // 9 rounds < 10
@@ -246,7 +246,7 @@ test('cold-start: all thresholds met → no cold-start message in stderr', () =>
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
   try {
     const planningDir = path.join(tmpDir, '.planning');
-    const formalDir   = path.join(tmpDir, '.formal');
+    const formalDir   = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(planningDir, { recursive: true });
     fs.mkdirSync(formalDir,   { recursive: true });
     // 10 rounds (>= min_quorum_rounds:10), timestamp 2 days ago (>= min_days:1)
@@ -286,12 +286,12 @@ test('cold-start: result=warn suppression logged in stderr when PRISM fails in c
 test('observation_window: metadata included in NDJSON entry when written', () => {
   // All thresholds met → no cold-start; run-prism exits after PRISM attempt; NDJSON written
   // We use CHECK_RESULTS_PATH env var to redirect NDJSON writes if write-check-result.cjs supports it.
-  // If not supported, we check the default .formal/check-results.ndjson in tmpDir.
+  // If not supported, we check the default .planning/formal/check-results.ndjson in tmpDir.
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
-  const ndjsonPath = path.join(tmpDir, '.formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson');
   try {
     const planningDir = path.join(tmpDir, '.planning');
-    const formalDir   = path.join(tmpDir, '.formal');
+    const formalDir   = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(planningDir, { recursive: true });
     fs.mkdirSync(formalDir,   { recursive: true });
     fs.writeFileSync(
@@ -305,7 +305,7 @@ test('observation_window: metadata included in NDJSON entry when written', () =>
       encoding: 'utf8', cwd: tmpDir, env: { ...process.env, PRISM_BIN: 'prism' }
     });
 
-    // Check if NDJSON was appended (run-prism writes to .formal/check-results.ndjson in cwd)
+    // Check if NDJSON was appended (run-prism writes to .planning/formal/check-results.ndjson in cwd)
     if (fs.existsSync(ndjsonPath)) {
       const lines = fs.readFileSync(ndjsonPath, 'utf8').trim().split('\n').filter(l => l);
       const lastLine = lines[lines.length - 1];
@@ -328,10 +328,10 @@ test('observation_window: metadata included in NDJSON entry when written', () =>
 
 test('observation_window: timestamps are ISO 8601 format when present in NDJSON', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-calib-'));
-  const ndjsonPath = path.join(tmpDir, '.formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson');
   try {
     const planningDir = path.join(tmpDir, '.planning');
-    const formalDir   = path.join(tmpDir, '.formal');
+    const formalDir   = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(planningDir, { recursive: true });
     fs.mkdirSync(formalDir,   { recursive: true });
     fs.writeFileSync(
@@ -533,7 +533,7 @@ test('run-prism --model mcp-availability: composite-key filter runs before const
 
 test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', async (t) => {
   // This test verifies that running run-prism.cjs causes export-prism-constants.cjs
-  // to execute as a pre-step, writing rates.const to the .formal/prism/ directory.
+  // to execute as a pre-step, writing rates.const to the .planning/formal/prism/ directory.
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'run-prism-loop01-'));
   try {
@@ -554,8 +554,8 @@ test('LOOP-01: run-prism pre-step writes rates.const before PRISM is invoked', a
       'utf8'
     );
 
-    // Create .formal/prism/ directory structure for rates.const
-    const prismDir = path.join(tmpDir, '.formal', 'prism');
+    // Create .planning/formal/prism/ directory structure for rates.const
+    const prismDir = path.join(tmpDir, '.planning', 'formal', 'prism');
     fs.mkdirSync(prismDir, { recursive: true });
 
     // Run run-prism.cjs with tmpDir as cwd.
@@ -594,7 +594,7 @@ test('policy.yaml conservative_priors values are used as PRISM constants when no
 
   // Value assertion (b): Args line must contain values that match policy.yaml at test time
   const { readPolicy } = require('./read-policy.cjs');
-  const policy = readPolicy(path.join(__dirname, '..', '.formal', 'policy.yaml'));
+  const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   const expectedTP      = String(policy.conservative_priors.tp_rate);
   const expectedUnavail = String(policy.conservative_priors.unavail);
 

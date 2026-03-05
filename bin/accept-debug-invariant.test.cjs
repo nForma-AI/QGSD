@@ -14,13 +14,13 @@ const os = require('os');
 // Path to the tool under test
 const TOOL_PATH = path.join(__dirname, 'accept-debug-invariant.cjs');
 
-// Helper to create temporary test directory with .formal/ structure
+// Helper to create temporary test directory with .planning/formal/ structure
 function createTempFormalDir(files = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'debug-invariant-test-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
 
   for (const [subdir, subfiles] of Object.entries(files)) {
-    const dirPath = path.join(tmpDir, '.formal', subdir);
+    const dirPath = path.join(tmpDir, '.planning', 'formal', subdir);
     fs.mkdirSync(dirPath, { recursive: true });
     for (const [filename, content] of Object.entries(subfiles)) {
       fs.writeFileSync(path.join(dirPath, filename), content, 'utf8');
@@ -59,7 +59,7 @@ test('writes PROPERTY to spec that previously had none', async () => {
 
   const result = runAcceptDebugTool(
     tmpDir,
-    '.formal/tla/empty.tla',
+    '.planning/formal/tla/empty.tla',
     'DebugInv1',
     'x > 0',
     'debug-sess-1234567890-abc12345'
@@ -83,7 +83,7 @@ test('rejects write if property name already exists in spec', async () => {
 
   const result = runAcceptDebugTool(
     tmpDir,
-    '.formal/tla/existing.tla',
+    '.planning/formal/tla/existing.tla',
     'DebugInv1', // Same name as existing
     'x > 0',
     'debug-sess-1234567890-abc12345'
@@ -105,14 +105,14 @@ test('tmp file removed after atomic rename', async () => {
 
   const result = runAcceptDebugTool(
     tmpDir,
-    '.formal/tla/test.tla',
+    '.planning/formal/tla/test.tla',
     'DebugInv2',
     'y < 10',
     'debug-sess-1234567890-abc12345'
   );
 
   // When implemented, we would:
-  // 1. List files in .formal/tla/
+  // 1. List files in .planning/formal/tla/
   // 2. Assert no *.tmp.* files remain
 
   console.log(`Test ran, exit code: ${result.status}`);
@@ -142,7 +142,7 @@ test('session_id recorded in registry', async () => {
   };
 
   fs.writeFileSync(
-    path.join(tmpDir, '.formal', 'model-registry.json'),
+    path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
     JSON.stringify(initialRegistry, null, 2),
     'utf8'
   );
@@ -150,7 +150,7 @@ test('session_id recorded in registry', async () => {
   const testSessionId = 'debug-sess-1234567890-abc12345';
   const result = runAcceptDebugTool(
     tmpDir,
-    '.formal/tla/test.tla',
+    '.planning/formal/tla/test.tla',
     'DebugInv3',
     'z = 5',
     testSessionId
@@ -187,14 +187,14 @@ test('update_source is debug in registry', async () => {
   };
 
   fs.writeFileSync(
-    path.join(tmpDir, '.formal', 'model-registry.json'),
+    path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
     JSON.stringify(initialRegistry, null, 2),
     'utf8'
   );
 
   const result = runAcceptDebugTool(
     tmpDir,
-    '.formal/tla/test.tla',
+    '.planning/formal/tla/test.tla',
     'DebugInv4',
     'a \\in {1, 2, 3}',
     'debug-sess-1234567890-abc12345'

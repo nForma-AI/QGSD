@@ -1,4 +1,4 @@
--- .formal/alloy/terminal-emulation-purity.als
+-- .planning/formal/alloy/terminal-emulation-purity.als
 -- Models the structural constraint that the Sessions terminal widget
 -- uses pure-JavaScript terminal emulation without native addon dependencies.
 -- Source: bin/blessed-terminal.cjs

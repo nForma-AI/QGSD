@@ -1,7 +1,7 @@
--- .formal/alloy/schema-extensions.als
+-- .planning/formal/alloy/schema-extensions.als
 -- Models schema extensions: model-registry requirements array,
 -- check-result requirement_ids, SCHEMA-03 runner emission, SCHEMA-04 formal_models.
--- Source: .formal/model-registry.json, check-result.schema.json, requirements.json
+-- Source: .planning/formal/model-registry.json, check-result.schema.json, requirements.json
 --
 -- @requirement SCHEMA-01
 -- @requirement SCHEMA-02

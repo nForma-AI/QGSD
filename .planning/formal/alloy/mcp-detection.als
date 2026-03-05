@@ -1,4 +1,4 @@
--- .formal/alloy/mcp-detection.als
+-- .planning/formal/alloy/mcp-detection.als
 -- Models MCP server auto-detection from ~/.claude.json
 -- Source: bin/install.js (MCP detection logic)
 --

@@ -1,4 +1,4 @@
--- .formal/alloy/decomp-cross-model.als
+-- .planning/formal/alloy/decomp-cross-model.als
 -- Models cross-model decomposition analysis for state-space reduction.
 -- Source: bin/analyze-state-space.cjs
 --

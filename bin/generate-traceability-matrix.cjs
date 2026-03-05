@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 // bin/generate-traceability-matrix.cjs
-// Generates .formal/traceability-matrix.json — a bidirectional index linking
+// Generates .planning/formal/traceability-matrix.json — a bidirectional index linking
 // requirements to formal properties and vice versa, with coverage statistics.
 //
 // Data sources:
 //   1. extract-annotations.cjs output (primary — property-level)
-//   2. .formal/model-registry.json (fallback — model-level)
-//   3. .formal/check-results.ndjson (verification status)
-//   4. .formal/requirements.json (total requirement inventory)
+//   2. .planning/formal/model-registry.json (fallback — model-level)
+//   3. .planning/formal/check-results.ndjson (verification status)
+//   4. .planning/formal/requirements.json (total requirement inventory)
 //
 // Usage:
-//   node bin/generate-traceability-matrix.cjs            # write to .formal/traceability-matrix.json
+//   node bin/generate-traceability-matrix.cjs            # write to .planning/formal/traceability-matrix.json
 //   node bin/generate-traceability-matrix.cjs --json     # print JSON to stdout
 //   node bin/generate-traceability-matrix.cjs --quiet    # suppress summary output
 //
@@ -32,10 +32,10 @@ for (const arg of process.argv.slice(2)) {
 }
 
 const ANNOTATIONS_SCRIPT = path.join(__dirname, 'extract-annotations.cjs');
-const REGISTRY_PATH      = path.join(ROOT, '.formal', 'model-registry.json');
-const NDJSON_PATH        = path.join(ROOT, '.formal', 'check-results.ndjson');
-const REQUIREMENTS_PATH  = path.join(ROOT, '.formal', 'requirements.json');
-const OUTPUT_PATH        = path.join(ROOT, '.formal', 'traceability-matrix.json');
+const REGISTRY_PATH      = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+const NDJSON_PATH        = path.join(ROOT, '.planning', 'formal', 'check-results.ndjson');
+const REQUIREMENTS_PATH  = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+const OUTPUT_PATH        = path.join(ROOT, '.planning', 'formal', 'traceability-matrix.json');
 
 // ── CLI flags ───────────────────────────────────────────────────────────────
 
@@ -123,7 +123,7 @@ function loadRequirements() {
  * Returns the sidecar object or null if missing/unparseable.
  */
 function loadUnitTestCoverage() {
-  const UNIT_TEST_COVERAGE_PATH = path.join(ROOT, '.formal', 'unit-test-coverage.json');
+  const UNIT_TEST_COVERAGE_PATH = path.join(ROOT, '.planning', 'formal', 'unit-test-coverage.json');
   if (!fs.existsSync(UNIT_TEST_COVERAGE_PATH)) return null;
   try {
     return JSON.parse(fs.readFileSync(UNIT_TEST_COVERAGE_PATH, 'utf8'));
@@ -668,7 +668,7 @@ function main() {
     const cp = matrix.coverage_preservation;
     const utc = ds.unit_test_coverage;
 
-    process.stdout.write(TAG + ' Generated .formal/traceability-matrix.json\n');
+    process.stdout.write(TAG + ' Generated .planning/formal/traceability-matrix.json\n');
     process.stdout.write(TAG + '   Requirements: ' + cs.covered_count + ' covered / ' + cs.total_requirements + ' total (' + cs.coverage_percentage + '%)\n');
     process.stdout.write(TAG + '   Properties: ' + ds.annotations.property_count + ' (' + ds.annotations.file_count + ' files)\n');
     process.stdout.write(TAG + '   Orphan properties: ' + cs.orphan_properties.length + '\n');

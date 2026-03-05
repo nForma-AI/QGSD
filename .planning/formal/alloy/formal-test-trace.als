@@ -1,4 +1,4 @@
--- .formal/alloy/formal-test-trace.als
+-- .planning/formal/alloy/formal-test-trace.als
 -- Models the formal-test-sync cross-referencing structure.
 -- Source: bin/formal-test-sync.cjs, commands/qgsd/formal-test-sync.md
 --

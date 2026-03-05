@@ -313,11 +313,11 @@ function extractPrismAssumptions(filePath) {
  */
 function scanAllFormalModels(root) {
   const baseDir = root || process.cwd();
-  const formalDir = path.join(baseDir, '.formal');
+  const formalDir = path.join(baseDir, '.planning', 'formal');
 
-  // Check if .formal/ directory exists
+  // Check if .planning/formal/ directory exists
   if (!fs.existsSync(formalDir) || !fs.statSync(formalDir).isDirectory()) {
-    process.stderr.write(`[warn] .formal/ directory not found at ${baseDir} — returning empty results\n`);
+    process.stderr.write(`[warn] .planning/formal/ directory not found at ${baseDir} — returning empty results\n`);
     return [];
   }
 
@@ -430,7 +430,7 @@ function crossReference(assumptions, options = {}) {
   // Load debt ledger
   let debtEntries = [];
   try {
-    const ledgerPath = path.join(root, '.formal', 'debt.json');
+    const ledgerPath = path.join(root, '.planning', 'formal', 'debt.json');
     const { readDebtLedger } = require('./debt-ledger.cjs');
     const ledger = readDebtLedger(ledgerPath);
     debtEntries = ledger.debt_entries || [];
@@ -724,7 +724,7 @@ if (require.main === module) {
     // Write markdown report
     const mdPath = outputArg
       ? outputArg.split('=')[1]
-      : path.join(root, '.formal', 'assumption-gaps.md');
+      : path.join(root, '.planning', 'formal', 'assumption-gaps.md');
 
     const mdContent = formatMarkdownReport(report);
     const mdDir = path.dirname(mdPath);

@@ -47,7 +47,7 @@ function makeMockBaseline() {
 
 function createTempProject(existingReqs = [], extraEnvelope = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sync-baseline-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
   const envelope = {
     aggregated_at: '2026-03-01T00:00:00.000Z',
     content_hash: 'sha256:' + 'a'.repeat(64),
@@ -57,7 +57,7 @@ function createTempProject(existingReqs = [], extraEnvelope = {}) {
     ...extraEnvelope,
   };
   fs.writeFileSync(
-    path.join(tmpDir, '.formal', 'requirements.json'),
+    path.join(tmpDir, '.planning', 'formal', 'requirements.json'),
     JSON.stringify(envelope, null, 2)
   );
   return tmpDir;
@@ -65,7 +65,7 @@ function createTempProject(existingReqs = [], extraEnvelope = {}) {
 
 function readResult(tmpDir) {
   return JSON.parse(fs.readFileSync(
-    path.join(tmpDir, '.formal', 'requirements.json'), 'utf8'
+    path.join(tmpDir, '.planning', 'formal', 'requirements.json'), 'utf8'
   ));
 }
 
@@ -238,7 +238,7 @@ describe('syncBaselineRequirements', () => {
     const firstTimestamp = afterFirst.aggregated_at;
 
     // Wait a tiny bit to ensure timestamp would differ
-    const mtimeBefore = fs.statSync(path.join(tmpDir, '.formal', 'requirements.json')).mtimeMs;
+    const mtimeBefore = fs.statSync(path.join(tmpDir, '.planning', 'formal', 'requirements.json')).mtimeMs;
 
     // Second sync - should not write
     const result = syncBaselineRequirements('cli', tmpDir);
@@ -270,7 +270,7 @@ describe('syncBaselineRequirements', () => {
     assert.match(written.content_hash, /^sha256:[a-f0-9]{64}$/);
   });
 
-  it('11. Handles missing .formal/requirements.json gracefully', () => {
+  it('11. Handles missing .planning/formal/requirements.json gracefully', () => {
     if (!realBaseline) return;
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sync-baseline-'));
     // No .formal directory at all
@@ -280,7 +280,7 @@ describe('syncBaselineRequirements', () => {
     assert.equal(result.added.length, realBaseline.total);
 
     // File should now exist
-    assert.ok(fs.existsSync(path.join(tmpDir, '.formal', 'requirements.json')));
+    assert.ok(fs.existsSync(path.join(tmpDir, '.planning', 'formal', 'requirements.json')));
   });
 
   it('12. ID padding when counter exceeds 99 (e.g., UX-99 -> UX-100)', () => {

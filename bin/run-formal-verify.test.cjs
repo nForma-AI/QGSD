@@ -331,8 +331,8 @@ test('UPPAAL-02: STEPS includes uppaal:quorum-races entry', () => {
 test('registry search_dirs discovery: scan additional directories for models', { timeout: 30000 }, () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rfv-searchdirs-'));
   try {
-    // Create minimal .formal/ so script does not error
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'tla'), { recursive: true });
+    // Create minimal .planning/formal/ so script does not error
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'tla'), { recursive: true });
     // Create search_dirs target with a cfg file
     const specsDir = path.join(tmpDir, 'specs');
     fs.mkdirSync(specsDir, { recursive: true });
@@ -345,11 +345,11 @@ test('registry search_dirs discovery: scan additional directories for models', {
       models: {},
     };
     fs.writeFileSync(
-      path.join(tmpDir, '.formal', 'model-registry.json'),
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
       JSON.stringify(registry, null, 2)
     );
     // Also need check-results.ndjson to exist
-    fs.writeFileSync(path.join(tmpDir, '.formal', 'check-results.ndjson'), '');
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson'), '');
 
     const result = spawnSync(process.execPath, [RUN_FV, '--project-root=' + tmpDir, '--only=tla'], {
       encoding: 'utf8',
@@ -369,13 +369,13 @@ test('registry search_dirs discovery: scan additional directories for models', {
 test('registry check.command discovery: creates type:shell steps', { timeout: 30000 }, () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rfv-checkcmd-'));
   try {
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'tla'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'tla'), { recursive: true });
     const registry = {
       version: '1.0',
       last_sync: '2026-01-01T00:00:00Z',
       search_dirs: [],
       models: {
-        '.formal/alloy/test-model.als': {
+        '.planning/formal/alloy/test-model.als': {
           version: 1,
           last_updated: '2026-01-01T00:00:00Z',
           update_source: 'manual',
@@ -388,10 +388,10 @@ test('registry check.command discovery: creates type:shell steps', { timeout: 30
       },
     };
     fs.writeFileSync(
-      path.join(tmpDir, '.formal', 'model-registry.json'),
+      path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
       JSON.stringify(registry, null, 2)
     );
-    fs.writeFileSync(path.join(tmpDir, '.formal', 'check-results.ndjson'), '');
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson'), '');
 
     const result = spawnSync(process.execPath, [RUN_FV, '--project-root=' + tmpDir, '--only=registry'], {
       encoding: 'utf8',
@@ -420,9 +420,9 @@ test('shell step type handled: source contains type === shell branch', () => {
 test('fail-open: missing registry does not crash', { timeout: 30000 }, () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rfv-noreg-'));
   try {
-    // Create .formal/tla/ but NO model-registry.json
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'tla'), { recursive: true });
-    fs.writeFileSync(path.join(tmpDir, '.formal', 'check-results.ndjson'), '');
+    // Create .planning/formal/tla/ but NO model-registry.json
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'tla'), { recursive: true });
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson'), '');
 
     const result = spawnSync(process.execPath, [RUN_FV, '--project-root=' + tmpDir, '--only=tla'], {
       encoding: 'utf8',

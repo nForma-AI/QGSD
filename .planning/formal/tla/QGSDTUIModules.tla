@@ -1,6 +1,6 @@
 ---- MODULE QGSDTUIModules ----
 (*
- * .formal/tla/QGSDTUIModules.tla
+ * .planning/formal/tla/QGSDTUIModules.tla
  * Models the TUI activity bar module navigation.
  * Source: src/tui/ components
  *

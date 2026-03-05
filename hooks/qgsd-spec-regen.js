@@ -53,7 +53,7 @@ process.stdin.on('end', () => {
     // Also regenerate QGSDQuorum_xstate.tla (xstate-to-tla.cjs)
     const xstateScript = path.join(cwd, 'bin', 'xstate-to-tla.cjs');
     const machineFile = path.join(cwd, 'src', 'machines', 'qgsd-workflow.machine.ts');
-    const guardsConfig = path.join(cwd, '.formal', 'tla', 'guards', 'qgsd-workflow.json');
+    const guardsConfig = path.join(cwd, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
 
     if (fs.existsSync(xstateScript) && fs.existsSync(guardsConfig)) {
       const xstateResult = spawnSync(process.execPath, [

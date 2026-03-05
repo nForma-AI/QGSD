@@ -17,13 +17,13 @@ const GENERATE_PETRI = path.join(__dirname, 'generate-petri-net.cjs');
 test('exits 0 and writes quorum-petri-net.dot on success', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'petri-test-'));
   try {
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'petri'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'petri'), { recursive: true });
     const result = spawnSync(process.execPath, [GENERATE_PETRI], {
       encoding: 'utf8',
       cwd: tmpDir,
     });
     assert.strictEqual(result.status, 0);
-    const dotPath = path.join(tmpDir, '.formal', 'petri', 'quorum-petri-net.dot');
+    const dotPath = path.join(tmpDir, '.planning', 'formal', 'petri', 'quorum-petri-net.dot');
     assert.ok(fs.existsSync(dotPath), 'quorum-petri-net.dot should exist');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -33,13 +33,13 @@ test('exits 0 and writes quorum-petri-net.dot on success', () => {
 test('DOT output contains place nodes (circle shape) and transition nodes (rect shape)', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'petri-test-'));
   try {
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'petri'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'petri'), { recursive: true });
     const result = spawnSync(process.execPath, [GENERATE_PETRI], {
       encoding: 'utf8',
       cwd: tmpDir,
     });
     assert.strictEqual(result.status, 0);
-    const dotPath = path.join(tmpDir, '.formal', 'petri', 'quorum-petri-net.dot');
+    const dotPath = path.join(tmpDir, '.planning', 'formal', 'petri', 'quorum-petri-net.dot');
     const dotContent = fs.readFileSync(dotPath, 'utf8');
     assert.match(dotContent, /shape=circle/);
     assert.match(dotContent, /shape=rect/);
@@ -51,7 +51,7 @@ test('DOT output contains place nodes (circle shape) and transition nodes (rect 
 test('exits 0 and writes quorum-petri-net.svg when @hpcc-js/wasm-graphviz is installed', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'petri-test-'));
   try {
-    fs.mkdirSync(path.join(tmpDir, '.formal', 'petri'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal', 'petri'), { recursive: true });
     const result = spawnSync(process.execPath, [GENERATE_PETRI], {
       encoding: 'utf8',
       cwd: tmpDir,
@@ -59,11 +59,11 @@ test('exits 0 and writes quorum-petri-net.svg when @hpcc-js/wasm-graphviz is ins
     // If @hpcc-js/wasm-graphviz is not installed the script exits 1 with an install message.
     // If installed, exits 0 and SVG is written.
     if (result.status === 0) {
-      const svgPath = path.join(tmpDir, '.formal', 'petri', 'quorum-petri-net.svg');
+      const svgPath = path.join(tmpDir, '.planning', 'formal', 'petri', 'quorum-petri-net.svg');
       assert.ok(fs.existsSync(svgPath), 'quorum-petri-net.svg should exist when WASM is installed');
     } else {
       // @hpcc-js/wasm-graphviz not installed — acceptable in CI; verify DOT was still written
-      const dotPath = path.join(tmpDir, '.formal', 'petri', 'quorum-petri-net.dot');
+      const dotPath = path.join(tmpDir, '.planning', 'formal', 'petri', 'quorum-petri-net.dot');
       assert.ok(fs.existsSync(dotPath), 'quorum-petri-net.dot should still be written even when WASM fails');
     }
   } finally {

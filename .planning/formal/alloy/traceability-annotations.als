@@ -1,4 +1,4 @@
--- .formal/alloy/traceability-annotations.als
+-- .planning/formal/alloy/traceability-annotations.als
 -- Models the traceability matrix and @requirement annotation system.
 -- Source: bin/generate-traceability-matrix.cjs, bin/extract-annotations.cjs
 --

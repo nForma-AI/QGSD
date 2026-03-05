@@ -1,4 +1,4 @@
--- .formal/alloy/health-validation.als
+-- .planning/formal/alloy/health-validation.als
 -- Models the health validation patterns and false positive elimination.
 -- Source: bin/gsd-tools.cjs (validate health), qgsd-core/skills/health.md
 --

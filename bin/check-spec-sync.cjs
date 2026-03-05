@@ -11,14 +11,14 @@
 //   2. MaxDeliberation in MCsafety.cfg and MCliveness.cfg matches the XState context default
 //   3. Initial state in QGSDQuorum.tla Init matches the XState initial state
 //   4. Alloy .als files do not reference state names or guard names not in XState machine
-//   5. Guard names in XState machine match keys in .formal/tla/guards/qgsd-workflow.json (bidirectional)
+//   5. Guard names in XState machine match keys in .planning/formal/tla/guards/qgsd-workflow.json (bidirectional)
 //
 // Exit 0 = in sync; Exit 1 = drift detected.
 // Usage: node bin/check-spec-sync.cjs [--tla-path=<path>] [--guards-path=<path>]
 //
 // CLI overrides (for fixture-based tests):
-//   --tla-path=<abs-path>    Override path to QGSDQuorum.tla (default: .formal/tla/QGSDQuorum.tla)
-//   --guards-path=<abs-path> Override path to guards JSON (default: .formal/tla/guards/qgsd-workflow.json)
+//   --tla-path=<abs-path>    Override path to QGSDQuorum.tla (default: .planning/formal/tla/QGSDQuorum.tla)
+//   --guards-path=<abs-path> Override path to guards JSON (default: .planning/formal/tla/guards/qgsd-workflow.json)
 
 const { buildSync } = require('esbuild');
 const fs   = require('fs');
@@ -35,11 +35,11 @@ const guardsPathOverride = process.argv.find(a => a.startsWith('--guards-path=')
 // Resolved paths (absolute)
 const TLA_ABS_PATH = tlaPathOverride
   ? tlaPathOverride.slice('--tla-path='.length)
-  : path.join(ROOT, '.formal', 'tla', 'QGSDQuorum.tla');
+  : path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
 
 const GUARDS_ABS_PATH = guardsPathOverride
   ? guardsPathOverride.slice('--guards-path='.length)
-  : path.join(ROOT, '.formal', 'tla', 'guards', 'qgsd-workflow.json');
+  : path.join(ROOT, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
 
 // ── Load files ───────────────────────────────────────────────────────────────
 function load(rel) {
@@ -60,8 +60,8 @@ function loadAbs(abs) {
 }
 
 const tlaSrc      = loadAbs(TLA_ABS_PATH);
-const safetyCfg   = load('.formal/tla/MCsafety.cfg');
-const livenessCfg = load('.formal/tla/MCliveness.cfg');
+const safetyCfg   = load('.planning/formal/tla/MCsafety.cfg');
+const livenessCfg = load('.planning/formal/tla/MCliveness.cfg');
 
 // ── 1. Extract XState facts using esbuild+require() ────────────────────────────
 // Compile the TypeScript machine to a temporary CJS bundle, then require() it.
@@ -245,7 +245,7 @@ if (xstateInitial === null) {
 // Note: Alloy orphan detection uses warn() not fail() because Alloy models are intentional
 // abstractions — they may use different predicate names (e.g., MajorityReached instead of
 // minQuorumMet). The authoritative guard mapping check is in Check 5 (guards/qgsd-workflow.json).
-const alloyDir = path.join(ROOT, '.formal', 'alloy');
+const alloyDir = path.join(ROOT, '.planning', 'formal', 'alloy');
 if (fs.existsSync(alloyDir)) {
   const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
   for (const alsFile of alsFiles) {
@@ -282,7 +282,7 @@ if (fs.existsSync(alloyDir)) {
 // Mapping context:
 //   XState uses camelCase guard names (minQuorumMet, noInfiniteDeliberation, phaseMonotonicallyAdvances).
 //   TLA+ uses PascalCase predicates (MinQuorumMet, DeliberationBounded) — different names, same semantics.
-//   The bridge is .formal/tla/guards/qgsd-workflow.json, which maps XState guard names to TLA+ expressions.
+//   The bridge is .planning/formal/tla/guards/qgsd-workflow.json, which maps XState guard names to TLA+ expressions.
 //
 //   If a guard is renamed in the XState machine, it must also be updated in guards/qgsd-workflow.json.
 //   If a mapping entry is removed from guards/qgsd-workflow.json without removing the guard from
@@ -292,7 +292,7 @@ if (fs.existsSync(alloyDir)) {
 // occurrences (they appear in the header comment block as documentation of guard translations).
 if (xstateGuardNames.length > 0) {
   if (!fs.existsSync(GUARDS_ABS_PATH)) {
-    fail('.formal/tla/guards/qgsd-workflow.json not found — cannot verify guard name sync');
+    fail('.planning/formal/tla/guards/qgsd-workflow.json not found — cannot verify guard name sync');
   } else {
     let guardsJson = null;
     try {
@@ -311,7 +311,7 @@ if (xstateGuardNames.length > 0) {
       if (missingFromMapping.length > 0) {
         fail(
           'XState guards not found in guards/qgsd-workflow.json: ' + missingFromMapping.join(', ') +
-          '\n         (Update .formal/tla/guards/qgsd-workflow.json to map these guard names to their TLA+ predicates)'
+          '\n         (Update .planning/formal/tla/guards/qgsd-workflow.json to map these guard names to their TLA+ predicates)'
         );
       }
 

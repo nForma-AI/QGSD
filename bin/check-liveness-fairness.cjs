@@ -15,8 +15,8 @@ const { getRequirementIds }        = require('./requirement-map.cjs');
 const TAG = '[check-liveness-fairness]';
 
 // Allow env var overrides for testing (injected by test scaffold)
-const FORMAL_TLA_DIR  = process.env.FORMAL_TLA_DIR  || path.join(__dirname, '..', '.formal', 'tla');
-const FORMAL_SPEC_DIR = process.env.FORMAL_SPEC_DIR || path.join(__dirname, '..', '.formal', 'spec');
+const FORMAL_TLA_DIR  = process.env.FORMAL_TLA_DIR  || path.join(__dirname, '..', '.planning', 'formal', 'tla');
+const FORMAL_SPEC_DIR = process.env.FORMAL_SPEC_DIR || path.join(__dirname, '..', '.planning', 'formal', 'spec');
 
 const startMs = Date.now();
 
@@ -27,7 +27,7 @@ try {
     .filter(f => /^MC.*\.cfg$/.test(f))
     .map(f => ({ name: f.replace(/\.cfg$/, ''), path: path.join(FORMAL_TLA_DIR, f) }));
 } catch (e) {
-  process.stderr.write(TAG + ' Warning: cannot read .formal/tla dir: ' + e.message + '\n');
+  process.stderr.write(TAG + ' Warning: cannot read .planning/formal/tla dir: ' + e.message + '\n');
   cfgFiles = [];
 }
 
@@ -86,7 +86,7 @@ if (hasMissing) {
   for (const { config, properties } of allMissing) {
     process.stdout.write('  ' + config + ': ' + properties.join(', ') + '\n');
   }
-  process.stdout.write(TAG + ' Add ## <PropertyName> sections to the matching .formal/spec/<spec>/invariants.md\n');
+  process.stdout.write(TAG + ' Add ## <PropertyName> sections to the matching .planning/formal/spec/<spec>/invariants.md\n');
 } else {
   process.stdout.write(TAG + ' All ' + configsChecked + ' configs have fairness declarations.\n');
 }

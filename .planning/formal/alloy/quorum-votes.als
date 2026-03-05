@@ -1,4 +1,4 @@
--- .formal/alloy/quorum-votes.als
+-- .planning/formal/alloy/quorum-votes.als
 -- GENERATED — do not edit by hand.
 -- Source of truth: src/machines/qgsd-workflow.machine.ts
 -- Regenerate:      node bin/generate-formal-specs.cjs

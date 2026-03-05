@@ -1,4 +1,4 @@
--- .formal/alloy/config-two-layer.als
+-- .planning/formal/alloy/config-two-layer.als
 -- Models the two-layer config merge: global ~/.claude/qgsd.json + per-project .claude/qgsd.json
 -- Source: hooks/config-loader.js
 --

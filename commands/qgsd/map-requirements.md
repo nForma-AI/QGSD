@@ -1,13 +1,13 @@
 ---
 name: qgsd:map-requirements
-description: Map current and archived milestone requirements into .formal/requirements.json
+description: Map current and archived milestone requirements into .planning/formal/requirements.json
 argument-hint: [--dry-run] [--skip-archive] [--skip-validate]
 allowed-tools:
   - Read
   - Bash
 ---
 <objective>
-Run the requirements mapping pipeline — merges current `.planning/REQUIREMENTS.md` with archived milestone requirements into `.formal/requirements.json`. Shows a summary of requirement counts by source.
+Run the requirements mapping pipeline — merges current `.planning/REQUIREMENTS.md` with archived milestone requirements into `.planning/formal/requirements.json`. Shows a summary of requirement counts by source.
 </objective>
 
 <execution_context>

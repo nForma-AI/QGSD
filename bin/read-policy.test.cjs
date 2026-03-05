@@ -41,7 +41,7 @@ test('readPolicy: throws on missing required field min_ci_runs', () => {
 
 test('readPolicy: parses all required fields from valid policy.yaml', () => {
   const { readPolicy } = require(READ_POLICY);
-  const policy = readPolicy(path.join(__dirname, '..', '.formal', 'policy.yaml'));
+  const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   assert.strictEqual(typeof policy.cold_start.min_ci_runs, 'number');
   assert.strictEqual(typeof policy.cold_start.min_quorum_rounds, 'number');
   assert.strictEqual(typeof policy.cold_start.min_days, 'number');
@@ -50,7 +50,7 @@ test('readPolicy: parses all required fields from valid policy.yaml', () => {
 
 test('readPolicy: min_ci_runs is integer >= 1', () => {
   const { readPolicy } = require(READ_POLICY);
-  const policy = readPolicy(path.join(__dirname, '..', '.formal', 'policy.yaml'));
+  const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   assert.ok(Number.isInteger(policy.cold_start.min_ci_runs));
   assert.ok(policy.cold_start.min_ci_runs >= 1);
 });
@@ -70,7 +70,7 @@ test('readPolicy: min_days parses as float (allows fractional days)', () => {
 
 test('readPolicy: returns conservative_priors tp_rate and unavail', () => {
   const { readPolicy } = require(READ_POLICY);
-  const policy = readPolicy(path.join(__dirname, '..', '.formal', 'policy.yaml'));
+  const policy = readPolicy(path.join(__dirname, '..', '.planning', 'formal', 'policy.yaml'));
   assert.strictEqual(typeof policy.conservative_priors.tp_rate, 'number');
   assert.strictEqual(typeof policy.conservative_priors.unavail, 'number');
 });

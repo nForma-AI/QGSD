@@ -13,7 +13,7 @@ const { fingerprintIssue } = require('./fingerprint-issue.cjs');
 
 function makeTmpEnv(seedEntries = [], requirements = []) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dedup-int-'));
-  const formalDir = path.join(tmpDir, '.formal');
+  const formalDir = path.join(tmpDir, '.planning', 'formal');
   fs.mkdirSync(formalDir, { recursive: true });
 
   // Seed ledger

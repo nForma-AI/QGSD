@@ -53,7 +53,7 @@ function checkStaleCounts(memoryContent, cwd) {
   const reqCountMatch = memoryContent.match(/(\d+)\s+reqs?/i);
   if (reqCountMatch) {
     const claimedCount = parseInt(reqCountMatch[1], 10);
-    const envelopePath = path.join(cwd, '.formal', 'requirements.json');
+    const envelopePath = path.join(cwd, '.planning', 'formal', 'requirements.json');
     if (fs.existsSync(envelopePath)) {
       try {
         const envelope = JSON.parse(fs.readFileSync(envelopePath, 'utf8'));
@@ -75,7 +75,7 @@ function checkStaleCounts(memoryContent, cwd) {
   const catCountMatch = memoryContent.match(/(\d+)\s+category\s+groups?/i);
   if (catCountMatch) {
     const claimedCats = parseInt(catCountMatch[1], 10);
-    const catPath = path.join(cwd, '.formal', 'category-groups.json');
+    const catPath = path.join(cwd, '.planning', 'formal', 'category-groups.json');
     if (fs.existsSync(catPath)) {
       try {
         const cats = JSON.parse(fs.readFileSync(catPath, 'utf8'));
@@ -102,7 +102,7 @@ function checkStaleCounts(memoryContent, cwd) {
   if (mappingMatch) {
     const claimedFrom = parseInt(mappingMatch[1], 10);
     const claimedTo = parseInt(mappingMatch[2], 10);
-    const catPath = path.join(cwd, '.formal', 'category-groups.json');
+    const catPath = path.join(cwd, '.planning', 'formal', 'category-groups.json');
     if (fs.existsSync(catPath)) {
       try {
         const cats = JSON.parse(fs.readFileSync(catPath, 'utf8'));
@@ -230,7 +230,7 @@ function checkTemporalMarkers(memoryContent) {
 function checkContradictions(memoryContent, cwd) {
   const findings = [];
 
-  const envelopePath = path.join(cwd, '.formal', 'requirements.json');
+  const envelopePath = path.join(cwd, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(envelopePath)) return findings;
 
   let envelope;

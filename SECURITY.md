@@ -69,5 +69,5 @@ Test fixtures and planning data are allowlisted to prevent false positives:
 
 - `bin/secrets.test.cjs`, `bin/ccr-secure-config.test.cjs`, `bin/set-secret.test.cjs`
 - `.planning/*.jsonl`
-- `.formal/` (formal verification fixtures)
-- `.formal/generated-stubs/`
+- `.planning/formal/` (formal verification fixtures)
+- `.planning/formal/generated-stubs/`

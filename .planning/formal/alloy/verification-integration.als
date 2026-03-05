@@ -1,4 +1,4 @@
--- .formal/alloy/verification-integration.als
+-- .planning/formal/alloy/verification-integration.als
 -- Models the verification integration requirements.
 -- Source: qgsd-core/agents/qgsd-verifier.md, VERIFICATION.md template
 --

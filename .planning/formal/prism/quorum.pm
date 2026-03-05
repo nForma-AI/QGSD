@@ -1,4 +1,4 @@
-// .formal/prism/quorum.pm
+// .planning/formal/prism/quorum.pm
 // GENERATED — do not edit by hand.
 // Source of truth: src/machines/qgsd-workflow.machine.ts
 // Regenerate:      node bin/generate-formal-specs.cjs
@@ -24,10 +24,10 @@
 //   node bin/export-prism-constants.cjs
 //
 // To run (requires PRISM_BIN env var):
-//   $PRISM_BIN .formal/prism/quorum.pm -pf "P=? [ F s=1 ]"
+//   $PRISM_BIN .planning/formal/prism/quorum.pm -pf "P=? [ F s=1 ]"
 //
 // To override rates from empirical scoreboard data (no file-include in PRISM):
-//   $PRISM_BIN .formal/prism/quorum.pm -pf "P=? [ F s=1 ]" -const tp_rate=0.72 -const unavail=0.28
+//   $PRISM_BIN .planning/formal/prism/quorum.pm -pf "P=? [ F s=1 ]" -const tp_rate=0.72 -const unavail=0.28
 
 dtmc
 
@@ -62,7 +62,7 @@ rewards "rounds"
     s=2 : 1;  // cost of one DELIBERATING step
 endrewards
 
-// Properties checked in .formal/prism/quorum.props (run with quorum.props file):
+// Properties checked in .planning/formal/prism/quorum.props (run with quorum.props file):
 // P1: Eventual convergence — P=? [ F s=1 ]   (should be 1.0)
 // P2: Expected rounds     — R{"rounds"}=? [ F s=1 ]   (should be ~1/p where p=tp_rate*(1-unavail))
 // P3: Decide within 9 rounds — P=? [ F<=9 s=1 ]

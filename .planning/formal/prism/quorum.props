@@ -1,11 +1,11 @@
-// .formal/prism/quorum.props
+// .planning/formal/prism/quorum.props
 // GENERATED — do not edit by hand.
 // Source of truth: src/machines/qgsd-workflow.machine.ts
 // Regenerate:      node bin/generate-formal-specs.cjs
 // Generated:       2026-03-05
 //
 // Run all properties:
-//   $PRISM_BIN .formal/prism/quorum.pm .formal/prism/quorum.props
+//   $PRISM_BIN .planning/formal/prism/quorum.pm .planning/formal/prism/quorum.props
 
 // P1: Eventual convergence — must be exactly 1.0 (certain termination)
 // @requirement PRM-01

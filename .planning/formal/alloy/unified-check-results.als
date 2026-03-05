@@ -1,4 +1,4 @@
--- .formal/alloy/unified-check-results.als
+-- .planning/formal/alloy/unified-check-results.als
 -- Models unified check result pipeline: checkers → NDJSON → triage → CI
 -- Source: bin/run-formal-verify.cjs, check-results.ndjson
 --

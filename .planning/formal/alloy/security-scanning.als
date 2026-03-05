@@ -1,4 +1,4 @@
--- .formal/alloy/security-scanning.als
+-- .planning/formal/alloy/security-scanning.als
 -- Models security scanning pipeline: pre-commit + CI secret scanning,
 -- input validation, and dependency vulnerability checks.
 -- Source: .github/workflows/, .pre-commit-config.yaml

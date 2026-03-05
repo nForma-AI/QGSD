@@ -11,7 +11,7 @@ describe('sweepPtoF', () => {
   let tmpDir;
 
   function seedLedger(entries) {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(formalDir, { recursive: true });
     fs.writeFileSync(path.join(formalDir, 'debt.json'), JSON.stringify({
       schema_version: '1',
@@ -22,7 +22,7 @@ describe('sweepPtoF', () => {
   }
 
   function seedSpec(relPath, content) {
-    const specDir = path.join(tmpDir, '.formal', 'spec');
+    const specDir = path.join(tmpDir, '.planning', 'formal', 'spec');
     const filePath = path.join(specDir, relPath);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, content);

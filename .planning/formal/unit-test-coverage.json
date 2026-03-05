@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-03-05T08:15:27.115Z",
+  "generated_at": "2026-03-05T12:12:18.022Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-01.stub.test.js",
           "test_name": "TODO: implement test for ACT-01 — WriteActivity"
         }
       ]
@@ -14,7 +14,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-02.stub.test.js",
           "test_name": "TODO: implement test for ACT-02 — TypeOK"
         }
       ]
@@ -23,7 +23,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-03.stub.test.js",
           "test_name": "TODO: implement test for ACT-03 — ActivityClear"
         }
       ]
@@ -32,7 +32,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-04.stub.test.js",
           "test_name": "TODO: implement test for ACT-04 — ResumeWork"
         }
       ]
@@ -41,7 +41,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-05.stub.test.js",
           "test_name": "TODO: implement test for ACT-05 — StageTransition"
         }
       ]
@@ -50,7 +50,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-06.stub.test.js",
           "test_name": "TODO: implement test for ACT-06 — StageTransition"
         }
       ]
@@ -59,7 +59,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ACT-07.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ACT-07.stub.test.js",
           "test_name": "TODO: implement test for ACT-07 — ClearActivity"
         }
       ]
@@ -68,7 +68,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/AGENT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/AGENT-01.stub.test.js",
           "test_name": "TODO: implement test for AGENT-01 — AddAgent"
         }
       ]
@@ -77,7 +77,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/AGENT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/AGENT-02.stub.test.js",
           "test_name": "TODO: implement test for AGENT-02 — RemoveAgent"
         }
       ]
@@ -86,8 +86,17 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/AGENT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/AGENT-03.stub.test.js",
           "test_name": "TODO: implement test for AGENT-03 — VerifyAgent"
+        }
+      ]
+    },
+    "AGT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/AGT-01.stub.test.js",
+          "test_name": "TODO: implement test for AGT-01 — TypeOK"
         }
       ]
     },
@@ -95,7 +104,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ANNOT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ANNOT-01.stub.test.js",
           "test_name": "TODO: implement test for ANNOT-01 — ModelType"
         }
       ]
@@ -104,7 +113,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ANNOT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ANNOT-02.stub.test.js",
           "test_name": "TODO: implement test for ANNOT-02 — ModelType"
         }
       ]
@@ -113,7 +122,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ANNOT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ANNOT-03.stub.test.js",
           "test_name": "TODO: implement test for ANNOT-03 — ModelType"
         }
       ]
@@ -122,7 +131,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ANNOT-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ANNOT-04.stub.test.js",
           "test_name": "TODO: implement test for ANNOT-04 — ModelType"
         }
       ]
@@ -131,7 +140,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ANNOT-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ANNOT-05.stub.test.js",
           "test_name": "TODO: implement test for ANNOT-05 — ModelType"
         }
       ]
@@ -140,7 +149,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ARCH-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ARCH-01.stub.test.js",
           "test_name": "TODO: implement test for ARCH-01 — Requirement"
         }
       ]
@@ -149,7 +158,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ARCH-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ARCH-02.stub.test.js",
           "test_name": "TODO: implement test for ARCH-02 — Requirement"
         }
       ]
@@ -158,7 +167,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ARCH-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ARCH-03.stub.test.js",
           "test_name": "TODO: implement test for ARCH-03 — Requirement"
         }
       ]
@@ -167,7 +176,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ARCH-10.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ARCH-10.stub.test.js",
           "test_name": "TODO: implement test for ARCH-10 — Bool"
         }
       ]
@@ -176,7 +185,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CALIB-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CALIB-01.stub.test.js",
           "test_name": "TODO: implement test for CALIB-01 — ParseCorrect"
         }
       ]
@@ -185,7 +194,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CALIB-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CALIB-02.stub.test.js",
           "test_name": "TODO: implement test for CALIB-02 — YearRolloverHandled"
         }
       ]
@@ -194,7 +203,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CALIB-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CALIB-03.stub.test.js",
           "test_name": "TODO: implement test for CALIB-03 — FallbackIsNull"
         }
       ]
@@ -203,8 +212,44 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CALIB-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CALIB-04.stub.test.js",
           "test_name": "TODO: implement test for CALIB-04 — Bool"
+        }
+      ]
+    },
+    "CI-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-01.stub.test.js",
+          "test_name": "TODO: implement test for CI-01 — GateStatus"
+        }
+      ]
+    },
+    "CI-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-02.stub.test.js",
+          "test_name": "TODO: implement test for CI-02 — GateStatus"
+        }
+      ]
+    },
+    "CI-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-03.stub.test.js",
+          "test_name": "TODO: implement test for CI-03 — GateStatus"
+        }
+      ]
+    },
+    "CI-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-04.stub.test.js",
+          "test_name": "TODO: implement test for CI-04 — Bool"
         }
       ]
     },
@@ -212,7 +257,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/COMP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/COMP-01.stub.test.js",
           "test_name": "TODO: implement test for COMP-01 — AllRulesHold"
         }
       ]
@@ -221,7 +266,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/COMP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/COMP-02.stub.test.js",
           "test_name": "TODO: implement test for COMP-02 — UpdatePolicy"
         }
       ]
@@ -230,7 +275,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/COMP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/COMP-03.stub.test.js",
           "test_name": "TODO: implement test for COMP-03 — UpdatePolicy"
         }
       ]
@@ -239,7 +284,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/COMP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/COMP-04.stub.test.js",
           "test_name": "TODO: implement test for COMP-04 — UpdatePolicy"
         }
       ]
@@ -252,7 +297,7 @@
           "test_name": "TC1: no project config → returns valid config (from global or DEFAULT_CONFIG)"
         },
         {
-          "test_file": ".formal/generated-stubs/CONF-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-01.stub.test.js",
           "test_name": "TODO: implement test for CONF-01 — ConfigLayer"
         }
       ]
@@ -261,7 +306,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-02.stub.test.js",
           "test_name": "TODO: implement test for CONF-02 — ConfigLayer"
         }
       ]
@@ -270,7 +315,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-03.stub.test.js",
           "test_name": "TODO: implement test for CONF-03 — ConfigLayer"
         }
       ]
@@ -279,7 +324,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-04.stub.test.js",
           "test_name": "TODO: implement test for CONF-04 — ConfigLayer"
         }
       ]
@@ -288,7 +333,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-05.stub.test.js",
           "test_name": "TODO: implement test for CONF-05 — ConfigLayer"
         }
       ]
@@ -297,7 +342,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-06.stub.test.js",
           "test_name": "TODO: implement test for CONF-06 — ConfigLayer"
         }
       ]
@@ -306,7 +351,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-07.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-07.stub.test.js",
           "test_name": "TODO: implement test for CONF-07 — ConfigLayer"
         }
       ]
@@ -315,7 +360,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-08.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-08.stub.test.js",
           "test_name": "TODO: implement test for CONF-08 — ConfigLayer"
         }
       ]
@@ -324,7 +369,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-09.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-09.stub.test.js",
           "test_name": "TODO: implement test for CONF-09 — ConfigLayer"
         }
       ]
@@ -333,8 +378,26 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CONF-10.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CONF-10.stub.test.js",
           "test_name": "TODO: implement test for CONF-10 — Bool"
+        }
+      ]
+    },
+    "CONF-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONF-11.stub.test.js",
+          "test_name": "TODO: implement test for CONF-11 — PolyrepoGroup"
+        }
+      ]
+    },
+    "CONF-12": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONF-12.stub.test.js",
+          "test_name": "TODO: implement test for CONF-12 — PolyrepoGroup"
         }
       ]
     },
@@ -342,7 +405,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CRED-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CRED-01.stub.test.js",
           "test_name": "TODO: implement test for CRED-01 — TypeOK"
         }
       ]
@@ -351,7 +414,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/CRED-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/CRED-02.stub.test.js",
           "test_name": "TODO: implement test for CRED-02 — ActiveIsPoolMember"
         }
       ]
@@ -360,7 +423,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DASH-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DASH-01.stub.test.js",
           "test_name": "TODO: implement test for DASH-01 — OpenDashboard"
         }
       ]
@@ -369,7 +432,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DASH-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DASH-02.stub.test.js",
           "test_name": "TODO: implement test for DASH-02 — RefreshDashboard"
         }
       ]
@@ -378,7 +441,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DASH-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DASH-03.stub.test.js",
           "test_name": "TODO: implement test for DASH-03 — ExitDashboard"
         }
       ]
@@ -387,7 +450,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DECOMP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DECOMP-01.stub.test.js",
           "test_name": "TODO: implement test for DECOMP-01 — RiskLevel"
         }
       ]
@@ -396,7 +459,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DECOMP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DECOMP-02.stub.test.js",
           "test_name": "TODO: implement test for DECOMP-02 — RiskLevel"
         }
       ]
@@ -405,7 +468,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DECOMP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DECOMP-03.stub.test.js",
           "test_name": "TODO: implement test for DECOMP-03 — RiskLevel"
         }
       ]
@@ -414,7 +477,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DECOMP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DECOMP-04.stub.test.js",
           "test_name": "TODO: implement test for DECOMP-04 — RiskLevel"
         }
       ]
@@ -423,7 +486,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DECOMP-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DECOMP-05.stub.test.js",
           "test_name": "TODO: implement test for DECOMP-05 — Bool"
         }
       ]
@@ -432,7 +495,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DETECT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DETECT-01.stub.test.js",
           "test_name": "TODO: implement test for DETECT-01 — TypeOK"
         }
       ]
@@ -441,7 +504,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DETECT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DETECT-02.stub.test.js",
           "test_name": "TODO: implement test for DETECT-02 — DisabledExcludesActive"
         }
       ]
@@ -450,7 +513,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DETECT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DETECT-03.stub.test.js",
           "test_name": "TODO: implement test for DETECT-03 — MonitoringReachable"
         }
       ]
@@ -459,7 +522,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DETECT-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DETECT-04.stub.test.js",
           "test_name": "TODO: implement test for DETECT-04 — TypeOK"
         }
       ]
@@ -472,7 +535,7 @@
           "test_name": "CB-TC1: No git repo in cwd exits 0 with no output"
         },
         {
-          "test_file": ".formal/generated-stubs/DETECT-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DETECT-05.stub.test.js",
           "test_name": "TODO: implement test for DETECT-05 — OscillationFlaggedCorrectly"
         },
         {
@@ -485,7 +548,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DISP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DISP-01.stub.test.js",
           "test_name": "TODO: implement test for DISP-01 — HealthProbe"
         }
       ]
@@ -494,7 +557,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DISP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DISP-02.stub.test.js",
           "test_name": "TODO: implement test for DISP-02 — AvailabilityFilter"
         }
       ]
@@ -503,7 +566,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DISP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DISP-03.stub.test.js",
           "test_name": "TODO: implement test for DISP-03 — SuccessRateSort"
         }
       ]
@@ -512,7 +575,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DISP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DISP-04.stub.test.js",
           "test_name": "TODO: implement test for DISP-04 — PromptBuild"
         }
       ]
@@ -521,8 +584,17 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DISP-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DISP-05.stub.test.js",
           "test_name": "TODO: implement test for DISP-05 — ParseOutput"
+        }
+      ]
+    },
+    "DISP-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
+          "test_name": "TODO: implement test for DISP-06 — Bool"
         }
       ]
     },
@@ -530,7 +602,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DRIFT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DRIFT-01.stub.test.js",
           "test_name": "TODO: implement test for DRIFT-01 — CompleteDrift"
         }
       ]
@@ -539,7 +611,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/DRIFT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/DRIFT-02.stub.test.js",
           "test_name": "TODO: implement test for DRIFT-02 — CompleteDrift"
         }
       ]
@@ -548,7 +620,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ENFC-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ENFC-01.stub.test.js",
           "test_name": "TODO: implement test for ENFC-01 — BlockDecision"
         }
       ]
@@ -557,7 +629,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ENFC-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ENFC-02.stub.test.js",
           "test_name": "TODO: implement test for ENFC-02 — BuildBlockMessage"
         }
       ]
@@ -566,7 +638,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ENFC-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ENFC-03.stub.test.js",
           "test_name": "TODO: implement test for ENFC-03 — BuildBlockMessage"
         }
       ]
@@ -575,7 +647,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/EVID-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/EVID-01.stub.test.js",
           "test_name": "TODO: implement test for EVID-01 — Confidence"
         }
       ]
@@ -584,7 +656,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/EVID-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/EVID-02.stub.test.js",
           "test_name": "TODO: implement test for EVID-02 — Confidence"
         }
       ]
@@ -593,7 +665,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/FAIL-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/FAIL-01.stub.test.js",
           "test_name": "TODO: implement test for FAIL-01 — S=? [ "
         }
       ]
@@ -602,7 +674,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/FAIL-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/FAIL-02.stub.test.js",
           "test_name": "TODO: implement test for FAIL-02 — Bool"
         }
       ]
@@ -611,7 +683,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/HEAL-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/HEAL-01.stub.test.js",
           "test_name": "TODO: implement test for HEAL-01 — P=? [ F "
         }
       ]
@@ -620,7 +692,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/HEAL-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/HEAL-02.stub.test.js",
           "test_name": "TODO: implement test for HEAL-02 — P=? [ F "
         }
       ]
@@ -629,7 +701,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/HLTH-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/HLTH-01.stub.test.js",
           "test_name": "TODO: implement test for HLTH-01 — Bool"
         }
       ]
@@ -638,7 +710,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/HLTH-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/HLTH-02.stub.test.js",
           "test_name": "TODO: implement test for HLTH-02 — Bool"
         }
       ]
@@ -647,8 +719,17 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/HLTH-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/HLTH-03.stub.test.js",
           "test_name": "TODO: implement test for HLTH-03 — Bool"
+        }
+      ]
+    },
+    "INIT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INIT-01.stub.test.js",
+          "test_name": "TODO: implement test for INIT-01 — Profile"
         }
       ]
     },
@@ -656,7 +737,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-01.stub.test.js",
           "test_name": "TODO: implement test for INST-01 — NoConflict"
         }
       ]
@@ -665,7 +746,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-02.stub.test.js",
           "test_name": "TODO: implement test for INST-02 — AllEquivalence"
         }
       ]
@@ -674,7 +755,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-03.stub.test.js",
           "test_name": "TODO: implement test for INST-03 — InstallIdempotent"
         }
       ]
@@ -683,7 +764,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-04.stub.test.js",
           "test_name": "TODO: implement test for INST-04 — RollbackSoundCheck"
         }
       ]
@@ -692,7 +773,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-05.stub.test.js",
           "test_name": "TODO: implement test for INST-05 — ConfigSyncCompleteCheck"
         }
       ]
@@ -701,7 +782,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-06.stub.test.js",
           "test_name": "TODO: implement test for INST-06 — Install"
         }
       ]
@@ -710,7 +791,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-07.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-07.stub.test.js",
           "test_name": "TODO: implement test for INST-07 — OverridesPreserved"
         }
       ]
@@ -719,7 +800,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-08.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-08.stub.test.js",
           "test_name": "TODO: implement test for INST-08 — BreakerAlwaysRegistered"
         }
       ]
@@ -728,7 +809,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-09.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-09.stub.test.js",
           "test_name": "TODO: implement test for INST-09 — DefaultConfigPresent"
         }
       ]
@@ -737,8 +818,26 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/INST-10.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/INST-10.stub.test.js",
           "test_name": "TODO: implement test for INST-10 — OverridesPreserved"
+        }
+      ]
+    },
+    "INST-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
+          "test_name": "TODO: implement test for INST-11 — Dir"
+        }
+      ]
+    },
+    "INST-12": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INST-12.stub.test.js",
+          "test_name": "TODO: implement test for INST-12 — ReqText"
         }
       ]
     },
@@ -746,7 +845,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/KEY-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/KEY-01.stub.test.js",
           "test_name": "TODO: implement test for KEY-01 — InputKey"
         }
       ]
@@ -755,7 +854,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/KEY-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/KEY-02.stub.test.js",
           "test_name": "TODO: implement test for KEY-02 — StoreInKeytar"
         }
       ]
@@ -764,7 +863,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/KEY-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/KEY-03.stub.test.js",
           "test_name": "TODO: implement test for KEY-03 — WriteToEnvBlock"
         }
       ]
@@ -773,7 +872,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/KEY-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/KEY-04.stub.test.js",
           "test_name": "TODO: implement test for KEY-04 — RestartAgent"
         }
       ]
@@ -782,7 +881,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LIVE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LIVE-01.stub.test.js",
           "test_name": "TODO: implement test for LIVE-01 — CompleteLiveness"
         }
       ]
@@ -791,7 +890,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LIVE-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LIVE-02.stub.test.js",
           "test_name": "TODO: implement test for LIVE-02 — CompleteLiveness"
         }
       ]
@@ -800,7 +899,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LOOP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LOOP-01.stub.test.js",
           "test_name": "TODO: implement test for LOOP-01 — DeliberationBounded"
         }
       ]
@@ -809,7 +908,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LOOP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LOOP-02.stub.test.js",
           "test_name": "TODO: implement test for LOOP-02 — TotalRoundsBounded"
         }
       ]
@@ -818,7 +917,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LOOP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LOOP-03.stub.test.js",
           "test_name": "TODO: implement test for LOOP-03 — FilterRoundsBounded"
         }
       ]
@@ -827,7 +926,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/LOOP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/LOOP-04.stub.test.js",
           "test_name": "TODO: implement test for LOOP-04 — StartDebugMine"
         }
       ]
@@ -836,7 +935,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-01.stub.test.js",
           "test_name": "TODO: implement test for MCP-01 — MCPServer"
         }
       ]
@@ -845,7 +944,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-02.stub.test.js",
           "test_name": "TODO: implement test for MCP-02 — MCPServer"
         }
       ]
@@ -854,7 +953,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-03.stub.test.js",
           "test_name": "TODO: implement test for MCP-03 — MCPServer"
         }
       ]
@@ -863,7 +962,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-04.stub.test.js",
           "test_name": "TODO: implement test for MCP-04 — MCPServer"
         }
       ]
@@ -872,7 +971,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-05.stub.test.js",
           "test_name": "TODO: implement test for MCP-05 — MCPServer"
         }
       ]
@@ -881,7 +980,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCP-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCP-06.stub.test.js",
           "test_name": "TODO: implement test for MCP-06 — MCPServer"
         }
       ]
@@ -890,7 +989,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCPENV-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCPENV-01.stub.test.js",
           "test_name": "TODO: implement test for MCPENV-01 — TypeInvariantHolds"
         }
       ]
@@ -899,7 +998,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCPENV-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCPENV-03.stub.test.js",
           "test_name": "TODO: implement test for MCPENV-03 — EventualDecision"
         }
       ]
@@ -908,7 +1007,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MCPENV-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MCPENV-04.stub.test.js",
           "test_name": "TODO: implement test for MCPENV-04 — S=? [ "
         }
       ]
@@ -917,7 +1016,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/META-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/META-01.stub.test.js",
           "test_name": "TODO: implement test for META-01 — Requirement"
         }
       ]
@@ -926,7 +1025,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/META-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/META-02.stub.test.js",
           "test_name": "TODO: implement test for META-02 — Requirement"
         }
       ]
@@ -935,7 +1034,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/META-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/META-03.stub.test.js",
           "test_name": "TODO: implement test for META-03 — Requirement"
         }
       ]
@@ -944,7 +1043,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MULTI-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MULTI-01.stub.test.js",
           "test_name": "TODO: implement test for MULTI-01 — AgentFamily"
         }
       ]
@@ -953,7 +1052,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MULTI-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MULTI-02.stub.test.js",
           "test_name": "TODO: implement test for MULTI-02 — AgentFamily"
         }
       ]
@@ -962,8 +1061,35 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/MULTI-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/MULTI-03.stub.test.js",
           "test_name": "TODO: implement test for MULTI-03 — AgentFamily"
+        }
+      ]
+    },
+    "NAV-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAV-01.stub.test.js",
+          "test_name": "TODO: implement test for NAV-01 — TypeOK"
+        }
+      ]
+    },
+    "NAV-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAV-02.stub.test.js",
+          "test_name": "TODO: implement test for NAV-02 — TypeOK"
+        }
+      ]
+    },
+    "NAV-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAV-03.stub.test.js",
+          "test_name": "TODO: implement test for NAV-03 — DependencyType"
         }
       ]
     },
@@ -971,7 +1097,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/OBS-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/OBS-01.stub.test.js",
           "test_name": "TODO: implement test for OBS-01 — S=? [ "
         }
       ]
@@ -980,7 +1106,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/OBS-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/OBS-02.stub.test.js",
           "test_name": "TODO: implement test for OBS-02 — S=? [ "
         }
       ]
@@ -989,7 +1115,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/OBS-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/OBS-03.stub.test.js",
           "test_name": "TODO: implement test for OBS-03 — S=? [ "
         }
       ]
@@ -998,8 +1124,44 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/OBS-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/OBS-04.stub.test.js",
           "test_name": "TODO: implement test for OBS-04 — S=? [ "
+        }
+      ]
+    },
+    "OBS-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-05.stub.test.js",
+          "test_name": "TODO: implement test for OBS-05 — ExitCode"
+        }
+      ]
+    },
+    "OBS-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-06.stub.test.js",
+          "test_name": "TODO: implement test for OBS-06 — Bool"
+        }
+      ]
+    },
+    "OBS-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-07.stub.test.js",
+          "test_name": "TODO: implement test for OBS-07 — Bool"
+        }
+      ]
+    },
+    "OBS-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-08.stub.test.js",
+          "test_name": "TODO: implement test for OBS-08 — Bool"
         }
       ]
     },
@@ -1007,7 +1169,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ORES-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ORES-01.stub.test.js",
           "test_name": "TODO: implement test for ORES-01 — TypeOK"
         }
       ]
@@ -1016,7 +1178,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ORES-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ORES-02.stub.test.js",
           "test_name": "TODO: implement test for ORES-02 — LogBeforeDelete"
         }
       ]
@@ -1025,7 +1187,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ORES-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ORES-03.stub.test.js",
           "test_name": "TODO: implement test for ORES-03 — ResolvedAtWriteOnce"
         }
       ]
@@ -1034,7 +1196,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ORES-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ORES-04.stub.test.js",
           "test_name": "TODO: implement test for ORES-04 — HaikuUnavailableNoCorruption"
         }
       ]
@@ -1043,7 +1205,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/ORES-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/ORES-05.stub.test.js",
           "test_name": "TODO: implement test for ORES-05 — ConvergenceEventuallyResolves"
         }
       ]
@@ -1052,7 +1214,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLAN-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLAN-01.stub.test.js",
           "test_name": "TODO: implement test for PLAN-01 — TypeOK"
         }
       ]
@@ -1061,7 +1223,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLAN-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLAN-02.stub.test.js",
           "test_name": "TODO: implement test for PLAN-02 — ProtocolTerminates"
         }
       ]
@@ -1070,8 +1232,17 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLAN-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLAN-03.stub.test.js",
           "test_name": "TODO: implement test for PLAN-03 — TypeOK"
+        }
+      ]
+    },
+    "PLAT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PLAT-01.stub.test.js",
+          "test_name": "TODO: implement test for PLAT-01 — Platform"
         }
       ]
     },
@@ -1079,7 +1250,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLCY-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLCY-01.stub.test.js",
           "test_name": "TODO: implement test for PLCY-01 — UpdatePolicy"
         }
       ]
@@ -1088,7 +1259,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLCY-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLCY-02.stub.test.js",
           "test_name": "TODO: implement test for PLCY-02 — UpdatePolicy"
         }
       ]
@@ -1097,7 +1268,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PLCY-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PLCY-03.stub.test.js",
           "test_name": "TODO: implement test for PLCY-03 — UpdatePolicy"
         }
       ]
@@ -1106,7 +1277,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PORT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PORT-01.stub.test.js",
           "test_name": "TODO: implement test for PORT-01 — ExportConfig"
         }
       ]
@@ -1115,7 +1286,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PORT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PORT-02.stub.test.js",
           "test_name": "TODO: implement test for PORT-02 — StartImport"
         }
       ]
@@ -1124,7 +1295,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PORT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PORT-03.stub.test.js",
           "test_name": "TODO: implement test for PORT-03 — CreateBackup"
         }
       ]
@@ -1133,7 +1304,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PROV-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PROV-01.stub.test.js",
           "test_name": "TODO: implement test for PROV-01 — ChangeProvider"
         }
       ]
@@ -1142,7 +1313,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PROV-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PROV-02.stub.test.js",
           "test_name": "TODO: implement test for PROV-02 — AddAgent"
         }
       ]
@@ -1151,7 +1322,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PROV-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PROV-03.stub.test.js",
           "test_name": "TODO: implement test for PROV-03 — ChangeProvider"
         }
       ]
@@ -1160,7 +1331,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PRST-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PRST-01.stub.test.js",
           "test_name": "TODO: implement test for PRST-01 — AddAgent"
         }
       ]
@@ -1169,7 +1340,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/PRST-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/PRST-02.stub.test.js",
           "test_name": "TODO: implement test for PRST-02 — CloneSlot"
         }
       ]
@@ -1178,7 +1349,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/QUORUM-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/QUORUM-01.stub.test.js",
           "test_name": "TODO: implement test for QUORUM-01 — TypeOK"
         }
       ]
@@ -1187,7 +1358,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/QUORUM-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/QUORUM-02.stub.test.js",
           "test_name": "TODO: implement test for QUORUM-02 — ThresholdPasses"
         }
       ]
@@ -1196,7 +1367,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/QUORUM-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/QUORUM-03.stub.test.js",
           "test_name": "TODO: implement test for QUORUM-03 — QuorumCeilingMet"
         }
       ]
@@ -1205,8 +1376,17 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/QUORUM-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/QUORUM-04.stub.test.js",
           "test_name": "TODO: implement test for QUORUM-04 — EventualConsensus"
+        }
+      ]
+    },
+    "QUORUM-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/QUORUM-05.stub.test.js",
+          "test_name": "TODO: implement test for QUORUM-05 — RevisePosition"
         }
       ]
     },
@@ -1214,7 +1394,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/RECV-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/RECV-01.stub.test.js",
           "test_name": "TODO: implement test for RECV-01 — EventualConsensus"
         }
       ]
@@ -1223,7 +1403,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/REDACT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/REDACT-01.stub.test.js",
           "test_name": "TODO: implement test for REDACT-01 — CompleteRedaction"
         }
       ]
@@ -1232,7 +1412,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/REDACT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/REDACT-02.stub.test.js",
           "test_name": "TODO: implement test for REDACT-02 — CompleteRedaction"
         }
       ]
@@ -1241,8 +1421,26 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/REDACT-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/REDACT-03.stub.test.js",
           "test_name": "TODO: implement test for REDACT-03 — CompleteRedaction"
+        }
+      ]
+    },
+    "REL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REL-01.stub.test.js",
+          "test_name": "TODO: implement test for REL-01 — ExternalService"
+        }
+      ]
+    },
+    "REL-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REL-02.stub.test.js",
+          "test_name": "TODO: implement test for REL-02 — ExternalService"
         }
       ]
     },
@@ -1250,7 +1448,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/REN-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/REN-03.stub.test.js",
           "test_name": "TODO: implement test for REN-03 — Bool"
         }
       ]
@@ -1259,7 +1457,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SAFE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SAFE-01.stub.test.js",
           "test_name": "TODO: implement test for SAFE-01 — ThresholdPasses"
         }
       ]
@@ -1268,7 +1466,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCBD-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCBD-01.stub.test.js",
           "test_name": "TODO: implement test for SCBD-01 — RecomputeIdempotent"
         }
       ]
@@ -1277,7 +1475,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCBD-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCBD-02.stub.test.js",
           "test_name": "TODO: implement test for SCBD-02 — NoVoteLoss"
         }
       ]
@@ -1286,7 +1484,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCBD-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCBD-03.stub.test.js",
           "test_name": "TODO: implement test for SCBD-03 — NoDoubleCounting"
         }
       ]
@@ -1295,7 +1493,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCHEMA-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCHEMA-01.stub.test.js",
           "test_name": "TODO: implement test for SCHEMA-01 — Requirement"
         }
       ]
@@ -1304,7 +1502,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCHEMA-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCHEMA-03.stub.test.js",
           "test_name": "TODO: implement test for SCHEMA-03 — Requirement"
         }
       ]
@@ -1313,8 +1511,44 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SCHEMA-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SCHEMA-04.stub.test.js",
           "test_name": "TODO: implement test for SCHEMA-04 — Requirement"
+        }
+      ]
+    },
+    "SEC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-01.stub.test.js",
+          "test_name": "TODO: implement test for SEC-01 — ScanResult"
+        }
+      ]
+    },
+    "SEC-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-02.stub.test.js",
+          "test_name": "TODO: implement test for SEC-02 — ScanResult"
+        }
+      ]
+    },
+    "SEC-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-03.stub.test.js",
+          "test_name": "TODO: implement test for SEC-03 — ScanResult"
+        }
+      ]
+    },
+    "SEC-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-04.stub.test.js",
+          "test_name": "TODO: implement test for SEC-04 — ScanResult"
         }
       ]
     },
@@ -1322,7 +1556,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SENS-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SENS-01.stub.test.js",
           "test_name": "TODO: implement test for SENS-01 — StartSweep"
         }
       ]
@@ -1331,7 +1565,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SENS-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SENS-02.stub.test.js",
           "test_name": "TODO: implement test for SENS-02 — InjectContext"
         }
       ]
@@ -1340,7 +1574,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SENS-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SENS-03.stub.test.js",
           "test_name": "TODO: implement test for SENS-03 — GenerateReport"
         }
       ]
@@ -1349,7 +1583,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SIG-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SIG-01.stub.test.js",
           "test_name": "TODO: implement test for SIG-01 — Bool"
         }
       ]
@@ -1358,7 +1592,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SIG-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SIG-02.stub.test.js",
           "test_name": "TODO: implement test for SIG-02 — Bool"
         }
       ]
@@ -1367,7 +1601,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SIG-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SIG-03.stub.test.js",
           "test_name": "TODO: implement test for SIG-03 — Bool"
         }
       ]
@@ -1376,7 +1610,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SIG-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SIG-04.stub.test.js",
           "test_name": "TODO: implement test for SIG-04 — Bool"
         }
       ]
@@ -1385,7 +1619,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SLOT-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SLOT-01.stub.test.js",
           "test_name": "TODO: implement test for SLOT-01 — QuorumCeilingMet"
         }
       ]
@@ -1394,7 +1628,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SLOT-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SLOT-02.stub.test.js",
           "test_name": "TODO: implement test for SLOT-02 — TypeOK"
         }
       ]
@@ -1403,7 +1637,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SLOT-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SLOT-04.stub.test.js",
           "test_name": "TODO: implement test for SLOT-04 — SubslotsFirst"
         }
       ]
@@ -1412,7 +1646,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SOLVE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
           "test_name": "TODO: implement test for SOLVE-01 — Bool"
         }
       ]
@@ -1421,8 +1655,44 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SOLVE-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SOLVE-02.stub.test.js",
           "test_name": "TODO: implement test for SOLVE-02 — Bool"
+        }
+      ]
+    },
+    "SOLVE-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-03.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-03 — Requirement"
+        }
+      ]
+    },
+    "SOLVE-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-04.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-04 — Requirement"
+        }
+      ]
+    },
+    "SOLVE-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-05.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-05 — Bool"
+        }
+      ]
+    },
+    "SOLVE-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-06.stub.test.js",
+          "test_name": "TODO: implement test for SOLVE-06 — Bool"
         }
       ]
     },
@@ -1430,7 +1700,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SPEC-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SPEC-01.stub.test.js",
           "test_name": "TODO: implement test for SPEC-01 — SafetyInvariant1"
         }
       ]
@@ -1439,7 +1709,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SPEC-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SPEC-03.stub.test.js",
           "test_name": "TODO: implement test for SPEC-03 — AllRulesHold"
         }
       ]
@@ -1448,7 +1718,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SPEC-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SPEC-04.stub.test.js",
           "test_name": "TODO: implement test for SPEC-04 — StartPhaseSpec"
         }
       ]
@@ -1457,7 +1727,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STATE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STATE-01.stub.test.js",
           "test_name": "TODO: implement test for STATE-01 — UpdateState"
         }
       ]
@@ -1466,7 +1736,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STATE-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STATE-02.stub.test.js",
           "test_name": "TODO: implement test for STATE-02 — TypeOK"
         }
       ]
@@ -1475,7 +1745,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STATE-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STATE-03.stub.test.js",
           "test_name": "TODO: implement test for STATE-03 — HookReadsState"
         }
       ]
@@ -1484,7 +1754,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STATE-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STATE-04.stub.test.js",
           "test_name": "TODO: implement test for STATE-04 — CreateSilently"
         }
       ]
@@ -1493,7 +1763,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STD-10.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STD-10.stub.test.js",
           "test_name": "TODO: implement test for STD-10 — Bool"
         }
       ]
@@ -1502,7 +1772,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-01.stub.test.js",
           "test_name": "TODO: implement test for STOP-01 — TypeOK"
         }
       ]
@@ -1511,7 +1781,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-02.stub.test.js",
           "test_name": "TODO: implement test for STOP-02 — SafetyInvariant1"
         }
       ]
@@ -1520,7 +1790,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-03.stub.test.js",
           "test_name": "TODO: implement test for STOP-03 — SafetyInvariant2"
         }
       ]
@@ -1529,7 +1799,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-04.stub.test.js",
           "test_name": "TODO: implement test for STOP-04 — SafetyInvariant3"
         }
       ]
@@ -1538,7 +1808,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-05.stub.test.js",
           "test_name": "TODO: implement test for STOP-05 — LivenessProperty1"
         }
       ]
@@ -1547,7 +1817,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-06.stub.test.js",
           "test_name": "TODO: implement test for STOP-06 — LivenessProperty2"
         }
       ]
@@ -1556,7 +1826,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-07.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-07.stub.test.js",
           "test_name": "TODO: implement test for STOP-07 — LivenessProperty3"
         }
       ]
@@ -1565,7 +1835,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-08.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-08.stub.test.js",
           "test_name": "TODO: implement test for STOP-08 — BoundaryCorrectCheck"
         }
       ]
@@ -1574,7 +1844,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/STOP-09.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/STOP-09.stub.test.js",
           "test_name": "TODO: implement test for STOP-09 — PairingUniqueCheck"
         }
       ]
@@ -1583,7 +1853,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SYNC-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SYNC-01.stub.test.js",
           "test_name": "TODO: implement test for SYNC-01 — Bool"
         }
       ]
@@ -1592,7 +1862,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SYNC-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SYNC-02.stub.test.js",
           "test_name": "TODO: implement test for SYNC-02 — Bool"
         }
       ]
@@ -1601,7 +1871,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SYNC-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SYNC-03.stub.test.js",
           "test_name": "TODO: implement test for SYNC-03 — Bool"
         }
       ]
@@ -1610,7 +1880,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/SYNC-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/SYNC-04.stub.test.js",
           "test_name": "TODO: implement test for SYNC-04 — Bool"
         }
       ]
@@ -1619,7 +1889,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-01.stub.test.js",
           "test_name": "TODO: implement test for TRACE-01 — ModelType"
         }
       ]
@@ -1628,7 +1898,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-02.stub.test.js",
           "test_name": "TODO: implement test for TRACE-02 — ModelType"
         }
       ]
@@ -1637,7 +1907,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-03.stub.test.js",
           "test_name": "TODO: implement test for TRACE-03 — ModelType"
         }
       ]
@@ -1646,7 +1916,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-04.stub.test.js",
           "test_name": "TODO: implement test for TRACE-04 — ModelType"
         }
       ]
@@ -1655,7 +1925,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-05.stub.test.js",
           "test_name": "TODO: implement test for TRACE-05 — ModelType"
         }
       ]
@@ -1664,7 +1934,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRACE-06.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
           "test_name": "TODO: implement test for TRACE-06 — Bool"
         }
       ]
@@ -1673,7 +1943,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRIAGE-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRIAGE-01.stub.test.js",
           "test_name": "TODO: implement test for TRIAGE-01 — Confidence"
         }
       ]
@@ -1682,7 +1952,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/TRIAGE-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/TRIAGE-02.stub.test.js",
           "test_name": "TODO: implement test for TRIAGE-02 — Confidence"
         }
       ]
@@ -1691,7 +1961,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UNIF-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UNIF-01.stub.test.js",
           "test_name": "TODO: implement test for UNIF-01 — FVTool"
         }
       ]
@@ -1700,7 +1970,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UNIF-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UNIF-02.stub.test.js",
           "test_name": "TODO: implement test for UNIF-02 — FVTool"
         }
       ]
@@ -1709,7 +1979,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UNIF-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UNIF-03.stub.test.js",
           "test_name": "TODO: implement test for UNIF-03 — FVTool"
         }
       ]
@@ -1718,7 +1988,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UNIF-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UNIF-04.stub.test.js",
           "test_name": "TODO: implement test for UNIF-04 — FVTool"
         }
       ]
@@ -1727,7 +1997,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPPAAL-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
           "test_name": "TODO: implement test for UPPAAL-01 — Bool"
         }
       ]
@@ -1736,7 +2006,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPPAAL-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
           "test_name": "TODO: implement test for UPPAAL-02 — Bool"
         }
       ]
@@ -1745,7 +2015,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPPAAL-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
           "test_name": "TODO: implement test for UPPAAL-03 — Bool"
         }
       ]
@@ -1754,7 +2024,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPS-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPS-01.stub.test.js",
           "test_name": "TODO: implement test for UPS-01 — TypeOK"
         }
       ]
@@ -1763,7 +2033,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPS-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPS-02.stub.test.js",
           "test_name": "TODO: implement test for UPS-02 — PlanningFromAllowlist"
         }
       ]
@@ -1772,7 +2042,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPS-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPS-03.stub.test.js",
           "test_name": "TODO: implement test for UPS-03 — InjectQuorum"
         }
       ]
@@ -1781,7 +2051,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPS-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPS-04.stub.test.js",
           "test_name": "TODO: implement test for UPS-04 — InjectQuorum"
         }
       ]
@@ -1790,8 +2060,35 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/UPS-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/UPS-05.stub.test.js",
           "test_name": "TODO: implement test for UPS-05 — DetectNonPlanningCommand"
+        }
+      ]
+    },
+    "UX-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-01.stub.test.js",
+          "test_name": "TODO: implement test for UX-01 — Bool"
+        }
+      ]
+    },
+    "UX-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-02.stub.test.js",
+          "test_name": "TODO: implement test for UX-02 — Bool"
+        }
+      ]
+    },
+    "UX-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-03.stub.test.js",
+          "test_name": "TODO: implement test for UX-03 — Bool"
         }
       ]
     },
@@ -1799,7 +2096,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/VERIFY-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/VERIFY-01.stub.test.js",
           "test_name": "TODO: implement test for VERIFY-01 — Bool"
         }
       ]
@@ -1808,7 +2105,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/VERIFY-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/VERIFY-02.stub.test.js",
           "test_name": "TODO: implement test for VERIFY-02 — Bool"
         }
       ]
@@ -1817,7 +2114,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/VIS-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/VIS-01.stub.test.js",
           "test_name": "TODO: implement test for VIS-01 — Bool"
         }
       ]
@@ -1826,7 +2123,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-01.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-01.stub.test.js",
           "test_name": "TODO: implement test for WIZ-01 — WizardStartsCorrectly"
         }
       ]
@@ -1835,7 +2132,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-02.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-02.stub.test.js",
           "test_name": "TODO: implement test for WIZ-02 — EnterFirstRun"
         }
       ]
@@ -1844,7 +2141,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-03.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-03.stub.test.js",
           "test_name": "TODO: implement test for WIZ-03 — EnterMenu"
         }
       ]
@@ -1853,7 +2150,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-04.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-04.stub.test.js",
           "test_name": "TODO: implement test for WIZ-04 — SelectAgent"
         }
       ]
@@ -1862,7 +2159,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-05.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-05.stub.test.js",
           "test_name": "TODO: implement test for WIZ-05 — ConfirmChanges"
         }
       ]
@@ -1871,7 +2168,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-08.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-08.stub.test.js",
           "test_name": "TODO: implement test for WIZ-08 — EditComposition"
         }
       ]
@@ -1880,7 +2177,7 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-09.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-09.stub.test.js",
           "test_name": "TODO: implement test for WIZ-09 — EditComposition"
         }
       ]
@@ -1889,22 +2186,19 @@
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".formal/generated-stubs/WIZ-10.stub.test.js",
+          "test_file": ".planning/formal/generated-stubs/WIZ-10.stub.test.js",
           "test_name": "TODO: implement test for WIZ-10 — AddSlot"
         }
       ]
     },
-    "DISP-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "OBS-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SOLVE-05": {
-      "covered": false,
-      "test_cases": []
+    "WIZ-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/WIZ-11.stub.test.js",
+          "test_name": "TODO: implement test for WIZ-11 — Bool"
+        }
+      ]
     }
   }
 }

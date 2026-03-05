@@ -370,11 +370,11 @@ Run the keyword-match scan and formal check before spawning the verifier. The sc
 ```bash
 # Formal scope scan — identical algorithm to plan-phase Step 4.5
 FORMAL_SPEC_CONTEXT=()
-if [ -d ".formal/spec" ]; then
+if [ -d ".planning/formal/spec" ]; then
   PHASE_DESC=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
-  for MODULE_DIR in .formal/spec/*/; do
+  for MODULE_DIR in .planning/formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".formal/spec/${MODULE}/invariants.md"
+    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
     if [ -f "$INVARIANTS_FILE" ]; then
       DESC_LOWER=$(echo "$PHASE_DESC" | tr '[:upper:]' '[:lower:]')
       MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
@@ -418,7 +418,7 @@ if [ -n "$MODULES" ]; then
 else
   FORMAL_CHECK_RESULT=null
   FORMAL_CHECK_EXIT=0
-  echo "◆ Formal check: SKIPPED (no keyword-matched modules in .formal/spec/)"
+  echo "◆ Formal check: SKIPPED (no keyword-matched modules in .planning/formal/spec/)"
 fi
 ```
 

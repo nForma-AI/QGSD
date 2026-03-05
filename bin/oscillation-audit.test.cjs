@@ -15,13 +15,13 @@ const fs       = require('fs');
 const path     = require('path');
 
 const ROOT   = path.join(__dirname, '..');
-const TLA_FILE = path.join(ROOT, '.formal', 'tla', 'QGSDOscillation.tla');
-const CFG_FILE = path.join(ROOT, '.formal', 'tla', 'MCoscillation.cfg');
+const TLA_FILE = path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDOscillation.tla');
+const CFG_FILE = path.join(ROOT, '.planning', 'formal', 'tla', 'MCoscillation.cfg');
 
 // ── Test 1: QGSDOscillation.tla exists and contains OscillationFlaggedCorrectly ──
 
 test('QGSDOscillation.tla exists and contains OscillationFlaggedCorrectly invariant', () => {
-  assert.ok(fs.existsSync(TLA_FILE), '.formal/tla/QGSDOscillation.tla must exist');
+  assert.ok(fs.existsSync(TLA_FILE), '.planning/formal/tla/QGSDOscillation.tla must exist');
   const content = fs.readFileSync(TLA_FILE, 'utf8');
   assert.ok(
     content.includes('OscillationFlaggedCorrectly'),
@@ -68,7 +68,7 @@ test.todo(
 // ── Test 4: MCoscillation.cfg constants match expected values ─────────────────
 
 test('MCoscillation.cfg constants match expected values: Depth=3, CommitWindow=5', () => {
-  assert.ok(fs.existsSync(CFG_FILE), '.formal/tla/MCoscillation.cfg must exist');
+  assert.ok(fs.existsSync(CFG_FILE), '.planning/formal/tla/MCoscillation.cfg must exist');
   const content = fs.readFileSync(CFG_FILE, 'utf8');
   assert.ok(
     content.includes('Depth = 3'),
@@ -82,13 +82,13 @@ test('MCoscillation.cfg constants match expected values: Depth=3, CommitWindow=5
 
 // ── Test 5: suspects.md contains SPEC-02 audit findings ──────────────────────
 
-test('.formal/suspects.md contains SPEC-02 Oscillation Audit section', () => {
-  const suspectsPath = path.join(ROOT, '.formal', 'suspects.md');
-  assert.ok(fs.existsSync(suspectsPath), '.formal/suspects.md must exist');
+test('.planning/formal/suspects.md contains SPEC-02 Oscillation Audit section', () => {
+  const suspectsPath = path.join(ROOT, '.planning', 'formal', 'suspects.md');
+  assert.ok(fs.existsSync(suspectsPath), '.planning/formal/suspects.md must exist');
   const content = fs.readFileSync(suspectsPath, 'utf8');
   assert.ok(
     content.includes('SPEC-02 Oscillation Audit'),
-    '.formal/suspects.md must contain SPEC-02 Oscillation Audit section'
+    '.planning/formal/suspects.md must contain SPEC-02 Oscillation Audit section'
   );
   // Verify all 4 comparison points are documented
   assert.ok(content.includes('Run-collapse algorithm'), 'suspects.md must document run-collapse comparison');

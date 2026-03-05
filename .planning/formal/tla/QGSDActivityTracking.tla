@@ -1,6 +1,6 @@
 ---- MODULE QGSDActivityTracking ----
 (*
- * .formal/tla/QGSDActivityTracking.tla
+ * .planning/formal/tla/QGSDActivityTracking.tla
  * Handwritten — models the current-activity.json lifecycle.
  * Source: qgsd-core/workflows/execute-phase.md, resume-work.md, plan-phase.md
  *

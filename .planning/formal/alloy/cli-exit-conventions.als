@@ -1,4 +1,4 @@
--- .formal/alloy/cli-exit-conventions.als
+-- .planning/formal/alloy/cli-exit-conventions.als
 -- Models CLI exit code conventions and stderr/stdout separation.
 -- Source: bin/*.cjs
 --

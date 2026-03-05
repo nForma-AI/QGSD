@@ -6,7 +6,7 @@
  *
  * Manages multiple OAuth credentials for providers with oauth_rotation config.
  * The implementation is a state machine that directly mirrors
- * .formal/tla/QGSDAccountManager.tla — each TLA+ action is one FSM event.
+ * .planning/formal/tla/QGSDAccountManager.tla — each TLA+ action is one FSM event.
  *
  * Usage:
  *   node bin/account-manager.cjs add --login [--name alias] [--provider gemini-1]
@@ -657,7 +657,7 @@ function usage(prefix = 'node bin/account-manager.cjs') {
     '  --login             Spawn auth login inline; auto-detect email from id_token',
     '  --name <email>      Account name/email (overrides auto-detection)',
     '',
-    'Formal spec: .formal/tla/QGSDAccountManager.tla',
+    'Formal spec: .planning/formal/tla/QGSDAccountManager.tla',
   ].join('\n'));
 }
 

@@ -287,7 +287,7 @@ test('emitResultBlock — produces correct YAML format with required fields', ()
 
 // ── NEW TESTS FOR REQUIREMENTS MATCHING ──────────────────────────────────────
 
-test('loadRequirements smoke test: loads 237+ requirements from .formal/requirements.json', () => {
+test('loadRequirements smoke test: loads 237+ requirements from .planning/formal/requirements.json', () => {
   assert.ok(mod, 'Module not available yet');
   const reqs = mod.loadRequirements(process.cwd());
   assert.ok(Array.isArray(reqs), 'loadRequirements must return an array');

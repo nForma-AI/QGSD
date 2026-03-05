@@ -5,10 +5,10 @@
  * install-formal-tools.cjs
  *
  * Cross-platform installer for QGSD formal verification tools:
- *   TLA+    — downloads tla2tools.jar into .formal/tla/
- *   Alloy   — downloads org.alloytools.alloy.dist.jar into .formal/alloy/
+ *   TLA+    — downloads tla2tools.jar into .planning/formal/tla/
+ *   Alloy   — downloads org.alloytools.alloy.dist.jar into .planning/formal/alloy/
  *   PRISM   — downloads and installs platform-specific binary
- *   UPPAAL  — downloads verifyta binary into .formal/uppaal/bin/
+ *   UPPAAL  — downloads verifyta binary into .planning/formal/uppaal/bin/
  *   Petri   — no install needed (bundled via npm)
  *
  * Usage:
@@ -130,7 +130,7 @@ function checkJava() {
 
   // ── TLA+ ──────────────────────────────────────────────────────────────
 
-  const tlaDest = path.join(process.cwd(), '.formal', 'tla', 'tla2tools.jar');
+  const tlaDest = path.join(process.cwd(), '.planning', 'formal', 'tla', 'tla2tools.jar');
   const tlaUrl = 'https://github.com/tlaplus/tlaplus/releases/latest/download/tla2tools.jar';
 
   if (fs.existsSync(tlaDest)) {
@@ -151,7 +151,7 @@ function checkJava() {
 
   // ── Alloy ─────────────────────────────────────────────────────────────
 
-  const alloyDest = path.join(process.cwd(), '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  const alloyDest = path.join(process.cwd(), '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
   const alloyUrl = 'https://github.com/AlloyTools/org.alloytools.alloy/releases/latest/download/org.alloytools.alloy.dist.jar';
 
   if (fs.existsSync(alloyDest)) {
@@ -245,7 +245,7 @@ function checkJava() {
 
   // ── UPPAAL ──────────────────────────────────────────────────────────
 
-  const uppaalDest = path.join(process.cwd(), '.formal', 'uppaal', 'bin', 'verifyta');
+  const uppaalDest = path.join(process.cwd(), '.planning', 'formal', 'uppaal', 'bin', 'verifyta');
 
   if (fs.existsSync(uppaalDest)) {
     skip('UPPAAL verifyta already present — skipping');
@@ -306,7 +306,7 @@ function checkJava() {
 
         // Determine the bin directory containing verifyta (to copy sibling libs)
         const srcBinDir = path.dirname(verifytaSrc);
-        const destBinDir = path.join(process.cwd(), '.formal', 'uppaal', 'bin');
+        const destBinDir = path.join(process.cwd(), '.planning', 'formal', 'uppaal', 'bin');
         fs.mkdirSync(destBinDir, { recursive: true });
 
         // Copy verifyta binary

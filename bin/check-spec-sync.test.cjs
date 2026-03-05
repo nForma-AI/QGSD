@@ -28,7 +28,7 @@ test('exits 1 when TLA+ TypeOK contains a state not in XState machine (fixture-b
   // Fixture-based drift injection test (replaces no-op placeholder).
   // Creates a temp TLA+ file with a phantom state injected into the TypeOK block,
   // then passes it via --tla-path to check-spec-sync.cjs and asserts exit code 1.
-  const tlaPath = path.join(REPO_ROOT, '.formal', 'tla', 'QGSDQuorum.tla');
+  const tlaPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
   if (!fs.existsSync(tlaPath)) {
     return; // Skip if TLA+ spec not present (CI without formal specs)
   }
@@ -76,7 +76,7 @@ test('exits 1 when guards/qgsd-workflow.json references a guard not in XState ma
   // Fixture-based guard drift injection test (Copilot improvement: test guard drift scenario).
   // Creates a temp guards JSON with a phantom guard injected, passes it via --guards-path,
   // and asserts check-spec-sync.cjs exits 1 with a mention of the phantom guard name.
-  const guardsPath = path.join(REPO_ROOT, '.formal', 'tla', 'guards', 'qgsd-workflow.json');
+  const guardsPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
   if (!fs.existsSync(guardsPath)) {
     return; // Skip if guards JSON not present
   }

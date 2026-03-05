@@ -1,6 +1,6 @@
 ---- MODULE QGSDAgentProvisioning ----
 (*
- * .formal/tla/QGSDAgentProvisioning.tla
+ * .planning/formal/tla/QGSDAgentProvisioning.tla
  * Handwritten — models agent lifecycle: add, remove, provision, presets, clone.
  * Source: bin/qgsd.cjs (wizard), bin/account-manager.cjs
  *

@@ -134,9 +134,9 @@ test('generatePhaseSpec — current phase *-PLAN.md frontmatter produces parseab
   assert.strictEqual(truthCount, fm.truths.length, 'truthCount must match extracted truths');
 });
 
-// ── Test 8: CLI on phase directory creates .formal/tla/scratch/ ────────────────
+// ── Test 8: CLI on phase directory creates .planning/formal/tla/scratch/ ────────────────
 
-test('.formal/tla/scratch/ directory exists after running CLI on phase directory', () => {
+test('.planning/formal/tla/scratch/ directory exists after running CLI on phase directory', () => {
   const phaseDir = path.join(ROOT, '.planning', 'phases', 'v0.21-04-spec-completeness');
 
   if (!fs.existsSync(phaseDir)) {
@@ -154,7 +154,7 @@ test('.formal/tla/scratch/ directory exists after running CLI on phase directory
     'CLI must exit 0. stderr: ' + (result.stderr || '') + ' stdout: ' + (result.stdout || '')
   );
   assert.ok(
-    fs.existsSync(path.join(ROOT, '.formal', 'tla', 'scratch')),
-    '.formal/tla/scratch/ directory must exist after CLI run'
+    fs.existsSync(path.join(ROOT, '.planning', 'formal', 'tla', 'scratch')),
+    '.planning/formal/tla/scratch/ directory must exist after CLI run'
   );
 });

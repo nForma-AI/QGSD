@@ -10,7 +10,7 @@ const { fingerprintDrift } = require('./fingerprint-drift.cjs');
 
 function makeTmpLedger() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'observe-debt-test-'));
-  const formalDir = path.join(tmpDir, '.formal');
+  const formalDir = path.join(tmpDir, '.planning', 'formal');
   fs.mkdirSync(formalDir, { recursive: true });
   const ledgerPath = path.join(formalDir, 'debt.json');
   // Seed with empty ledger

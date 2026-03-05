@@ -1,6 +1,6 @@
 ---- MODULE QGSDDispatchPipeline ----
 (*
- * .formal/tla/QGSDDispatchPipeline.tla
+ * .planning/formal/tla/QGSDDispatchPipeline.tla
  * Handwritten — models the quorum dispatch pipeline in qgsd-prompt.js.
  * Source: hooks/qgsd-prompt.js (dispatch logic)
  *

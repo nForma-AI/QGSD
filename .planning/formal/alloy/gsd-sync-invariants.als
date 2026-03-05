@@ -1,4 +1,4 @@
--- .formal/alloy/gsd-sync-invariants.als
+-- .planning/formal/alloy/gsd-sync-invariants.als
 -- Models the GSD/QGSD package relationship invariants.
 -- Source: package.json, hooks/qgsd-stop.js, hooks/qgsd-prompt.js
 --

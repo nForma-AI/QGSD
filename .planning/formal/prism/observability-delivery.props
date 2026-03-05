@@ -1,8 +1,8 @@
-// .formal/prism/observability-delivery.props
+// .planning/formal/prism/observability-delivery.props
 // Property checks for observability-delivery.pm
 //
 // Run with:
-//   prism .formal/prism/observability-delivery.pm .formal/prism/observability-delivery.props
+//   prism .planning/formal/prism/observability-delivery.pm .planning/formal/prism/observability-delivery.props
 //     -const slot1_reliability=0.90 -const slot2_reliability=0.85 -const slot3_reliability=0.80
 
 // @requirement OBS-02

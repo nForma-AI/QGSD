@@ -1,4 +1,4 @@
--- .formal/alloy/state-space-analysis.als
+-- .planning/formal/alloy/state-space-analysis.als
 -- Models the state-space analysis tool constraints.
 -- Source: bin/analyze-state-space.cjs
 --

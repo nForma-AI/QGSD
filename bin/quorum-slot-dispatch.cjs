@@ -48,7 +48,7 @@ const hasFlag = (f) => argv.includes(f);
 const requirementsCache = new Map();
 
 /**
- * loadRequirements — reads `.formal/requirements.json` from projectRoot.
+ * loadRequirements — reads `.planning/formal/requirements.json` from projectRoot.
  * Fail-open: returns [] if file missing, malformed, or any error occurs.
  * Caches result keyed by projectRoot to avoid re-reading disk.
  *
@@ -61,7 +61,7 @@ function loadRequirements(projectRoot) {
   }
 
   try {
-    const filePath = path.join(projectRoot, '.formal', 'requirements.json');
+    const filePath = path.join(projectRoot, '.planning', 'formal', 'requirements.json');
     const content = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(content);
     const reqs = Array.isArray(data.requirements) ? data.requirements : [];

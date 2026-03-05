@@ -1,6 +1,6 @@
 ---- MODULE QGSDCIChecks ----
 (*
- * .formal/tla/QGSDCIChecks.tla
+ * .planning/formal/tla/QGSDCIChecks.tla
  * Handwritten — models the CI verification checks pipeline.
  * Source: bin/run-formal-verify.cjs, bin/check-trace-schema-drift.cjs,
  *         bin/check-trace-redaction.cjs

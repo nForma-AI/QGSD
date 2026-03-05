@@ -174,7 +174,7 @@ The TUI opens as a split-pane screen: left panel is the menu, right panel shows 
 | Export Roster | Save the full agent configuration to a portable JSON file |
 | Import Roster | Load agent configuration from a previously exported file |
 
-The TUI also includes a **requirements management** section — browse, filter, check coverage, and view traceability for all requirements in `.formal/requirements.json`.
+The TUI also includes a **requirements management** section — browse, filter, check coverage, and view traceability for all requirements in `.planning/formal/requirements.json`.
 
 ![Requirements Management](docs/assets/requirements.png)
 
@@ -673,7 +673,7 @@ QGSD ships executable formal models of its core protocols — not documentation,
 
 ### What's Modeled
 
-The `.formal/` directory contains 25+ specs across five verification tools:
+The `.planning/formal/` directory contains 25+ specs across five verification tools:
 
 | Tool | Specs | What they model |
 |------|-------|-----------------|
@@ -685,10 +685,10 @@ The `.formal/` directory contains 25+ specs across five verification tools:
 
 ### Spec Sources
 
-Each protocol has a human-readable spec in `.formal/spec/` that defines the invariants, then one or more tool-specific models that check them:
+Each protocol has a human-readable spec in `.planning/formal/spec/` that defines the invariants, then one or more tool-specific models that check them:
 
 ```
-.formal/
+.planning/formal/
 ├── spec/           # Human-readable protocol specs (invariants.md per protocol)
 ├── tla/            # TLA+ models + config files (MCsafety.cfg, MCliveness.cfg, etc.)
 ├── alloy/          # Alloy 6 models (.als)
@@ -718,8 +718,8 @@ Full per-tool documentation: **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**
 
 | Tool | Requires | One-time setup |
 |------|----------|----------------|
-| TLA+ | Java 17+ | Auto-downloaded to `.formal/tla/` by install script |
-| Alloy 6 | Java 17+ | Auto-downloaded to `.formal/alloy/` by install script |
+| TLA+ | Java 17+ | Auto-downloaded to `.planning/formal/tla/` by install script |
+| Alloy 6 | Java 17+ | Auto-downloaded to `.planning/formal/alloy/` by install script |
 | PRISM | Java 17+ | Downloaded + installed by script; set `PRISM_BIN` as instructed |
 | Petri nets | — | Nothing — bundled via `@hpcc-js/wasm-graphviz` |
 | UPPAAL | Java 17+ | Manual install — [uppaal.org](https://uppaal.org) |
@@ -784,7 +784,7 @@ Each verification run produces machine-readable outputs:
 | Command | What it does |
 |---------|--------------|
 | `/qgsd:map-codebase` | Analyze existing codebase before new-project |
-| `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `.formal/requirements.json` |
+| `/qgsd:map-requirements [--dry-run] [--skip-archive] [--skip-validate]` | Merge current + archived milestone requirements into `.planning/formal/requirements.json` |
 | `/qgsd:add-requirement [--id=PREFIX-NN] [--text="..."]` | Add a single requirement with duplicate/conflict checks |
 | `/qgsd:close-formal-gaps [--category="..."] [--ids=...] [--all]` | Generate formal models for uncovered requirements |
 

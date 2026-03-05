@@ -23,8 +23,8 @@ const PLAN_PHASE_PATH = path.join(
  */
 function runSweep(extraEnv) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sens-test-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
-  const ndjsonOut = path.join(tmpDir, '.formal', 'sensitivity-report.ndjson');
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+  const ndjsonOut = path.join(tmpDir, '.planning', 'formal', 'sensitivity-report.ndjson');
   const result = spawnSync(process.execPath, [TOOL_PATH], {
     cwd: tmpDir,
     encoding: 'utf8',
@@ -130,14 +130,14 @@ test('run-sensitivity-sweep.cjs records include metadata.parameter and metadata.
   );
 });
 
-// Test 6: sensitivity-report.cjs generates .formal/sensitivity-report.md
-test('sensitivity-report.cjs generates .formal/sensitivity-report.md (SENS-03)', () => {
+// Test 6: sensitivity-report.cjs generates .planning/formal/sensitivity-report.md
+test('sensitivity-report.cjs generates .planning/formal/sensitivity-report.md (SENS-03)', () => {
   // Create a sample sensitivity-report.ndjson to feed to the report generator
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sens-report-test-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
 
-  const sampleNdjsonPath = path.join(tmpDir, '.formal', 'sensitivity-report.ndjson');
-  const sampleMdPath = path.join(tmpDir, '.formal', 'sensitivity-report.md');
+  const sampleNdjsonPath = path.join(tmpDir, '.planning', 'formal', 'sensitivity-report.ndjson');
+  const sampleMdPath = path.join(tmpDir, '.planning', 'formal', 'sensitivity-report.md');
 
   const sampleRecord = JSON.stringify({
     tool: 'run-sensitivity-sweep',
@@ -170,7 +170,7 @@ test('sensitivity-report.cjs generates .formal/sensitivity-report.md (SENS-03)',
 
   assert.ok(
     mdExists,
-    'sensitivity-report.cjs must generate .formal/sensitivity-report.md (file not found): exit=' +
+    'sensitivity-report.cjs must generate .planning/formal/sensitivity-report.md (file not found): exit=' +
     result.status + ' stderr=' + (result.stderr || '') + ' error=' + (result.error || '')
   );
 });

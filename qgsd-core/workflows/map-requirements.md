@@ -1,5 +1,5 @@
 <purpose>
-Run the requirements aggregation pipeline. Merges current `.planning/REQUIREMENTS.md` with all archived milestone requirements (`.planning/milestones/v*-REQUIREMENTS.md`) into `.formal/requirements.json`. Writes by default — if the envelope is frozen, automatically unfreezes, aggregates, validates with Haiku subagent, and re-freezes.
+Run the requirements aggregation pipeline. Merges current `.planning/REQUIREMENTS.md` with all archived milestone requirements (`.planning/milestones/v*-REQUIREMENTS.md`) into `.planning/formal/requirements.json`. Writes by default — if the envelope is frozen, automatically unfreezes, aggregates, validates with Haiku subagent, and re-freezes.
 </purpose>
 
 <process>
@@ -31,7 +31,7 @@ fi
 **Handle frozen envelope (write mode only):**
 
 If NOT dry-run:
-1. Read `.formal/requirements.json` and check `frozen_at`
+1. Read `.planning/formal/requirements.json` and check `frozen_at`
 2. If frozen, temporarily set `frozen_at` to `null` and write back
 3. Continue to aggregation step
 </step>
@@ -52,10 +52,10 @@ Note: Run from the QGSD project root directory.
 After aggregation, run the invariant gate on the full envelope:
 
 ```bash
-node bin/validate-invariant.cjs --batch --envelope=.formal/requirements.json
+node bin/validate-invariant.cjs --batch --envelope=.planning/formal/requirements.json
 ```
 
-If `--strict` flag was passed to this workflow, also pass `--strict` to the invariant gate — this will automatically move regex-caught non-invariant entries to `.formal/archived-non-invariants.json`.
+If `--strict` flag was passed to this workflow, also pass `--strict` to the invariant gate — this will automatically move regex-caught non-invariant entries to `.planning/formal/archived-non-invariants.json`.
 
 The script outputs three verdicts per requirement:
 - `NON_INVARIANT` — caught by regex, removed in strict mode
@@ -106,7 +106,7 @@ You are reviewing a requirements envelope for quality issues. Your job is to fin
 
 ## Step 1: Read the envelope
 
-Read `.formal/requirements.json`. Note each requirement's `id`, `text`, `category`, and `provenance.source_file`.
+Read `.planning/formal/requirements.json`. Note each requirement's `id`, `text`, `category`, and `provenance.source_file`.
 
 ## Step 2: Identify candidates
 
@@ -151,7 +151,7 @@ Display the Haiku agent's findings to the user. If high-severity findings exist,
 <step name="refreeze">
 **Re-freeze the envelope (write mode only):**
 
-After validation, re-freeze by reading `.formal/requirements.json`, setting `frozen_at` to current ISO timestamp, and writing back.
+After validation, re-freeze by reading `.planning/formal/requirements.json`, setting `frozen_at` to current ISO timestamp, and writing back.
 </step>
 
 <step name="check_memory">

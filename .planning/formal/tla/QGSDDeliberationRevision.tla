@@ -1,6 +1,6 @@
 ---- MODULE QGSDDeliberationRevision ----
 (*
- * .formal/tla/QGSDDeliberationRevision.tla
+ * .planning/formal/tla/QGSDDeliberationRevision.tla
  * Handwritten — not generated from XState.
  * Source: commands/qgsd/quorum.md, src/machines/qgsd-workflow.machine.ts
  *

@@ -14,8 +14,8 @@
  *
  * Usage:
  *   node bin/validate-invariant.cjs --id=BLD-01 --text="hooks/dist/ rebuilt from current source"
- *   node bin/validate-invariant.cjs --batch --envelope=.formal/requirements.json
- *   node bin/validate-invariant.cjs --batch --strict --envelope=.formal/requirements.json
+ *   node bin/validate-invariant.cjs --batch --envelope=.planning/formal/requirements.json
+ *   node bin/validate-invariant.cjs --batch --strict --envelope=.planning/formal/requirements.json
  *   node bin/validate-invariant.cjs --test
  *
  * Verdicts:
@@ -182,9 +182,9 @@ function validateInvariantBatch(requirements) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function runTests() {
-  const archivePath = path.join(__dirname, '..', '.formal', 'archived-non-invariants.json');
+  const archivePath = path.join(__dirname, '..', '.planning', 'formal', 'archived-non-invariants.json');
   if (!fs.existsSync(archivePath)) {
-    console.error('Test data not found: .formal/archived-non-invariants.json');
+    console.error('Test data not found: .planning/formal/archived-non-invariants.json');
     process.exit(1);
   }
 
@@ -299,7 +299,7 @@ function main() {
 
   // --batch: validate entire envelope
   if (args.batch) {
-    const envelopePath = args.envelope || '.formal/requirements.json';
+    const envelopePath = args.envelope || '.planning/formal/requirements.json';
     if (!fs.existsSync(envelopePath)) {
       console.error(`Envelope not found: ${envelopePath}`);
       process.exit(1);
@@ -336,7 +336,7 @@ function main() {
 
     // --strict: archive non-invariants and remove from envelope
     if (args.strict && nonInvariants.length > 0) {
-      const archivePath = args['archive-path'] || '.formal/archived-non-invariants.json';
+      const archivePath = args['archive-path'] || '.planning/formal/archived-non-invariants.json';
       let archive = { archived_at: null, reason: '', entries: [] };
       if (fs.existsSync(archivePath)) {
         archive = JSON.parse(fs.readFileSync(archivePath, 'utf8'));

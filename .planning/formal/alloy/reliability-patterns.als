@@ -1,4 +1,4 @@
--- .formal/alloy/reliability-patterns.als
+-- .planning/formal/alloy/reliability-patterns.als
 -- Models reliability patterns: graceful degradation on external failures
 -- and progress indication for long-running operations.
 -- Source: qgsd-baseline requirements

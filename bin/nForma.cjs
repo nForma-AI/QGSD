@@ -54,7 +54,32 @@ if (cliArgs.includes('--reset-breaker')) {
 
 // ─── TUI (interactive mode — no CLI flags matched) ───────────────────────────
 const blessed    = require('blessed');
-const XTerm      = require('blessed-xterm');
+let XTerm;
+let _xtermError = null;
+try {
+  XTerm = require('blessed-xterm');
+} catch (e) {
+  _xtermError = e.message;
+  // Auto-rebuild node-pty native addon when missing or compiled for wrong Node ABI
+  const needsRebuild = (e.code === 'MODULE_NOT_FOUND' && e.message.includes('pty.node'))
+    || e.code === 'ERR_DLOPEN_FAILED';
+  if (needsRebuild) {
+    try {
+      const { spawnSync } = require('child_process');
+      const projRoot = path.join(__dirname, '..');
+      // npm rebuild exits 1 even on success — ignore exit code, check file after
+      spawnSync('npm', ['rebuild', 'node-pty'], { cwd: projRoot, stdio: 'ignore', timeout: 60000 });
+      // Clear all cached blessed-xterm/node-pty modules before retry
+      Object.keys(require.cache).forEach(k => {
+        if (k.includes('blessed-xterm') || k.includes('node-pty')) delete require.cache[k];
+      });
+      XTerm = require('blessed-xterm');
+      _xtermError = null;
+    } catch (rebuildErr) {
+      _xtermError = `blessed-xterm native rebuild failed: ${rebuildErr.message}`;
+    }
+  }
+}
 
 // ─── Reuse logic layer from manage-agents-core.cjs ───────────────────────────
 const core = require('./manage-agents-core.cjs');
@@ -165,6 +190,18 @@ const MODULES = [
 // Backward compat: flat array of all items across modules (tests + exports rely on this)
 const MENU_ITEMS = MODULES.flatMap(m => m.items);
 
+// ─── Event log ──────────────────────────────────────────────────────────────
+const _logEntries = [];   // { ts, level, msg }
+const LOG_MAX = 200;
+
+function logEvent(level, msg) {
+  const ts = new Date().toISOString().replace('T', ' ').slice(0, 19);
+  _logEntries.push({ ts, level, msg });
+  if (_logEntries.length > LOG_MAX) _logEntries.shift();
+}
+
+if (_xtermError) logEvent('warn', `blessed-xterm unavailable: ${_xtermError}`);
+
 // ─── Session state ───────────────────────────────────────────────────────────
 const sessions = [];        // { id, name, cwd, term (XTerm widget), alive }
 let activeSessionIdx = -1;  // -1 = no terminal shown
@@ -248,8 +285,14 @@ function refreshSessionMenu() {
 }
 
 function createSession(name, cwd) {
+  if (!XTerm) {
+    toast('Sessions require blessed-xterm (native rebuild needed). Run: npm rebuild', true);
+    return null;
+  }
   const id = ++sessionIdCounter;
   const term = new XTerm({
+    screen,
+    parent: screen,
     shell: 'claude',
     args: [],
     cwd: cwd || process.cwd(),
@@ -266,7 +309,6 @@ function createSession(name, cwd) {
     tags: true,
     ignoreKeys: ['f1', 'f2', 'f3', 'f4', 'C-\\\\'],
   });
-  screen.append(term);
   term.hide();
 
   const session = { id, name, cwd: cwd || process.cwd(), term, alive: true };
@@ -687,6 +729,17 @@ function setContent(label, text) {
   screen.render();
 }
 
+// ─── Event log viewer ───────────────────────────────────────────────────────
+function showEventLog() {
+  if (!_logEntries.length) { setContent('Event Log', '{#777777-fg}No events logged.{/}'); return; }
+  const levelColor = { warn: '{yellow-fg}', error: '{red-fg}', info: '{#4a9090-fg}' };
+  const lines = _logEntries.map(e => {
+    const c = levelColor[e.level] || '{#aaaaaa-fg}';
+    return `{#555555-fg}${e.ts}{/}  ${c}${e.level.toUpperCase().padEnd(5)}{/}  ${e.msg}`;
+  });
+  setContent('Event Log', lines.join('\n'));
+}
+
 // ─── Promisified overlay helpers ─────────────────────────────────────────────
 function promptInput(opts) {
   return new Promise((resolve, reject) => {
@@ -892,6 +945,7 @@ function promptLoginExternal(title, loginCmd, credentialFile = null) {
 
 // ─── Toast notification ───────────────────────────────────────────────────────
 function toast(msg, isError = false) {
+  logEvent(isError ? 'error' : 'info', msg.replace(/\{[^}]*\}/g, ''));
   const box = blessed.message({
     top: 'center', left: 'center', width: 54, height: 5,
     border: { type: 'line' },
@@ -2484,7 +2538,7 @@ async function reqAggregateFlow() {
     const { aggregateRequirements } = require('./aggregate-requirements.cjs');
     const result = aggregateRequirements();
     const count  = result && result.count != null ? result.count : '?';
-    const output = result && result.outputPath ? result.outputPath : '.formal/requirements.json';
+    const output = result && result.outputPath ? result.outputPath : '.planning/formal/requirements.json';
     toast(`Aggregated ${count} requirements → ${output}`);
   } catch (err) {
     const hint = err.message && err.message.includes('frozen')
@@ -2545,6 +2599,7 @@ function reqCoverageGapsFlow() {
 
 // ─── Key bindings ─────────────────────────────────────────────────────────────
 screen.key(['q', 'C-c'], () => { screen.destroy(); process.exit(0); });
+screen.key(['C-l'], () => showEventLog());
 screen.key(['f1'], () => switchModule(0));
 screen.key(['f2'], () => switchModule(1));
 screen.key(['f3'], () => switchModule(2));
@@ -2634,7 +2689,12 @@ function applyUpdateBadge(outdatedCount) {
 if (require.main === module) {
   renderHeader();
   switchModule(0);
-  refreshStatusBar();
+  const warns = _logEntries.filter(e => e.level === 'warn' || e.level === 'error');
+  if (warns.length) {
+    refreshStatusBar(`{yellow-fg}⚠ ${warns.length} warning${warns.length > 1 ? 's' : ''} — [C-l] event log{/}`);
+  } else {
+    refreshStatusBar();
+  }
   renderList();
   screen.render();
 }
@@ -2651,4 +2711,6 @@ module.exports._pure = {
   PROVIDER_PRESETS,
   MENU_ITEMS,
   MODULES,
+  logEvent,
+  _logEntries,
 };

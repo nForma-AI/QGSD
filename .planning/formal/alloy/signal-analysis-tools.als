@@ -1,4 +1,4 @@
--- .formal/alloy/signal-analysis-tools.als
+-- .planning/formal/alloy/signal-analysis-tools.als
 -- Models the structural constraints of formal signal analysis tools.
 -- Source: bin/detect-coverage-gaps.cjs, bin/generate-petri-net.cjs,
 --         bin/prism-priority.cjs, bin/quorum-consensus-gate.cjs

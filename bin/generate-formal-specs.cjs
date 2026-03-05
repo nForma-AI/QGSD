@@ -7,12 +7,12 @@
 // All formal specs are generated artifacts — do not edit them by hand.
 //
 // Generates:
-//   .formal/tla/QGSDQuorum.tla   — TLA+ spec (states, transitions, invariants)
-//   .formal/tla/MCsafety.cfg     — TLC safety model config (N=5, symmetry)
-//   .formal/tla/MCliveness.cfg   — TLC liveness model config (N=3)
-//   .formal/alloy/quorum-votes.als — Alloy vote-counting model
-//   .formal/prism/quorum.pm      — PRISM DTMC convergence model
-//   .formal/prism/quorum.props   — PRISM property file
+//   .planning/formal/tla/QGSDQuorum.tla   — TLA+ spec (states, transitions, invariants)
+//   .planning/formal/tla/MCsafety.cfg     — TLC safety model config (N=5, symmetry)
+//   .planning/formal/tla/MCliveness.cfg   — TLC liveness model config (N=3)
+//   .planning/formal/alloy/quorum-votes.als — Alloy vote-counting model
+//   .planning/formal/prism/quorum.pm      — PRISM DTMC convergence model
+//   .planning/formal/prism/quorum.props   — PRISM property file
 //
 // Usage:
 //   node bin/generate-formal-specs.cjs        # write all specs
@@ -32,13 +32,13 @@ for (const arg of process.argv) {
 const DRY  = process.argv.includes('--dry');
 
 // ── Model registry update helper ──────────────────────────────────────────────
-// Updates .formal/model-registry.json after each spec write (ARCH-01 wiring).
+// Updates .planning/formal/model-registry.json after each spec write (ARCH-01 wiring).
 // Fail-open: if registry does not exist (not yet initialized), warns and skips.
 function updateModelRegistry(absPath) {
   if (DRY) return; // dry-run: skip registry update
-  const registryPath = path.join(ROOT, '.formal', 'model-registry.json');
+  const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
   if (!fs.existsSync(registryPath)) {
-    process.stderr.write('[update-model-registry] Skipping registry update: .formal/model-registry.json not yet initialized\n');
+    process.stderr.write('[update-model-registry] Skipping registry update: .planning/formal/model-registry.json not yet initialized\n');
     return;
   }
   let registry;
@@ -157,7 +157,7 @@ const phaseSet = stateNames.map(s => '"' + s + '"').join(', ');
 const tlaSpec = [
   '---- MODULE QGSDQuorum ----',
   '(*',
-  GENERATED_HEADER(' *', '.formal/tla/QGSDQuorum.tla'),
+  GENERATED_HEADER(' *', '.planning/formal/tla/QGSDQuorum.tla'),
   ' * Models the quorum workflow defined in src/machines/qgsd-workflow.machine.ts.',
   ' * Guard translations (from GUARD_REGISTRY in bin/generate-formal-specs.cjs):',
   ' *   unanimityMet (' + GUARD_REGISTRY.unanimityMet.ts + '):   ' + GUARD_REGISTRY.unanimityMet.tla,
@@ -340,10 +340,10 @@ const tlaCfgHeader = (file, desc) => [
   '\\* Generated:       ' + ts,
   '\\*',
   '\\* ' + desc,
-  '\\* Run: node bin/run-tlc.cjs ' + file.replace('.formal/tla/', '').replace('.cfg', ''),
+  '\\* Run: node bin/run-tlc.cjs ' + file.replace('.planning/formal/tla/', '').replace('.cfg', ''),
 ].join('\n');
 
-const safetyCfg = tlaCfgHeader('.formal/tla/MCsafety.cfg',
+const safetyCfg = tlaCfgHeader('.planning/formal/tla/MCsafety.cfg',
   'TLC safety model: N=' + SAFETY_AGENTS + ' agents, symmetry reduction, no liveness.') + '\n' + [
   'SPECIFICATION Spec',
   'CONSTANTS',
@@ -362,7 +362,7 @@ const safetyCfg = tlaCfgHeader('.formal/tla/MCsafety.cfg',
   '',
 ].join('\n');
 
-const livenessCfg = tlaCfgHeader('.formal/tla/MCliveness.cfg',
+const livenessCfg = tlaCfgHeader('.planning/formal/tla/MCliveness.cfg',
   'TLC liveness model: N=' + LIVENESS_AGENTS + ' agents, no symmetry (incompatible with liveness).') + '\n' + [
   'SPECIFICATION Spec',
   'CONSTANTS',
@@ -378,7 +378,7 @@ const livenessCfg = tlaCfgHeader('.formal/tla/MCliveness.cfg',
 // ── 3. quorum-votes.als ───────────────────────────────────────────────────────
 // Alloy vote-counting model — derived from unanimityMet guard in XState machine
 const alloySpec = [
-  GENERATED_HEADER('--', '.formal/alloy/quorum-votes.als'),
+  GENERATED_HEADER('--', '.planning/formal/alloy/quorum-votes.als'),
   '-- QGSD Quorum Vote-Counting Model (Alloy 6)',
   '-- Requirements: ALY-01',
   '--',
@@ -457,7 +457,7 @@ const alloySpec = [
 // PRISM DTMC — 3-state model derived from machine states (collecting, deliberating, decided)
 // State numbering: 0=collecting, 1=decided, 2=deliberating (absorbing at 1)
 const prismSpec = [
-  GENERATED_HEADER('//', '.formal/prism/quorum.pm'),
+  GENERATED_HEADER('//', '.planning/formal/prism/quorum.pm'),
   '// QGSD Quorum Convergence — DTMC Model',
   '// Requirements: PRM-01',
   '//',
@@ -478,10 +478,10 @@ const prismSpec = [
   '//   node bin/export-prism-constants.cjs',
   '//',
   '// To run (requires PRISM_BIN env var):',
-  '//   $PRISM_BIN .formal/prism/quorum.pm -pf "P=? [ F s=1 ]"',
+  '//   $PRISM_BIN .planning/formal/prism/quorum.pm -pf "P=? [ F s=1 ]"',
   '//',
   '// To override rates from empirical scoreboard data (no file-include in PRISM):',
-  '//   $PRISM_BIN .formal/prism/quorum.pm -pf "P=? [ F s=1 ]" -const tp_rate=0.72 -const unavail=0.28',
+  '//   $PRISM_BIN .planning/formal/prism/quorum.pm -pf "P=? [ F s=1 ]" -const tp_rate=0.72 -const unavail=0.28',
   '',
   'dtmc',
   '',
@@ -516,7 +516,7 @@ const prismSpec = [
   '    s=2 : 1;  // cost of one ' + deliberatingState + ' step',
   'endrewards',
   '',
-  '// Properties checked in .formal/prism/quorum.props (run with quorum.props file):',
+  '// Properties checked in .planning/formal/prism/quorum.props (run with quorum.props file):',
   '// P1: Eventual convergence — P=? [ F s=1 ]   (should be 1.0)',
   '// P2: Expected rounds     — R{"rounds"}=? [ F s=1 ]   (should be ~1/' + 'p where p=tp_rate*(1-unavail))',
   '// P3: Decide within ' + maxDelib + ' rounds — P=? [ F<=' + maxDelib + ' s=1 ]',
@@ -526,14 +526,14 @@ const prismSpec = [
 
 // ── 4b. quorum.props ─────────────────────────────────────────────────────────
 const prismProps = [
-  '// .formal/prism/quorum.props',
+  '// .planning/formal/prism/quorum.props',
   '// GENERATED — do not edit by hand.',
   '// Source of truth: src/machines/qgsd-workflow.machine.ts',
   '// Regenerate:      node bin/generate-formal-specs.cjs',
   '// Generated:       ' + ts,
   '//',
   '// Run all properties:',
-  '//   $PRISM_BIN .formal/prism/quorum.pm .formal/prism/quorum.props',
+  '//   $PRISM_BIN .planning/formal/prism/quorum.pm .planning/formal/prism/quorum.props',
   '',
   '// P1: Eventual convergence — must be exactly 1.0 (certain termination)',
   '// @requirement PRM-01',
@@ -558,12 +558,12 @@ const prismProps = [
 
 // ── Write or print ────────────────────────────────────────────────────────────
 const outputs = [
-  { rel: '.formal/tla/QGSDQuorum.tla',              content: tlaSpec      },
-  { rel: '.formal/tla/MCsafety.cfg',                content: safetyCfg    },
-  { rel: '.formal/tla/MCliveness.cfg',              content: livenessCfg  },
-  { rel: '.formal/alloy/quorum-votes.als',           content: alloySpec    },
-  { rel: '.formal/prism/quorum.pm',                  content: prismSpec    },
-  { rel: '.formal/prism/quorum.props',               content: prismProps   },
+  { rel: '.planning/formal/tla/QGSDQuorum.tla',              content: tlaSpec      },
+  { rel: '.planning/formal/tla/MCsafety.cfg',                content: safetyCfg    },
+  { rel: '.planning/formal/tla/MCliveness.cfg',              content: livenessCfg  },
+  { rel: '.planning/formal/alloy/quorum-votes.als',           content: alloySpec    },
+  { rel: '.planning/formal/prism/quorum.pm',                  content: prismSpec    },
+  { rel: '.planning/formal/prism/quorum.props',               content: prismProps   },
 ];
 
 const REGISTRY_EXTS = new Set(['.tla', '.als', '.pm']);

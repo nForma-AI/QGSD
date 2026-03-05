@@ -8,7 +8,7 @@
 //   node bin/detect-coverage-gaps.cjs [--spec=QGSDQuorum] [--log=path]
 //
 // Output:
-//   .formal/coverage-gaps.md — structured test backlog when gaps exist
+//   .planning/formal/coverage-gaps.md — structured test backlog when gaps exist
 //
 // Computes: TLC-reachable states minus trace-observed states = coverage gaps.
 
@@ -103,7 +103,7 @@ function parseTraceStates(logPath) {
 function detectCoverageGaps(options = {}) {
   const specName   = options.specName || 'QGSDQuorum';
   const logPath    = options.logPath || path.join(process.cwd(), '.planning', 'conformance-events.jsonl');
-  const outputPath = options.outputPath || path.join(process.cwd(), '.formal', 'coverage-gaps.md');
+  const outputPath = options.outputPath || path.join(process.cwd(), '.planning', 'formal', 'coverage-gaps.md');
 
   const tlcResult = parseTlcStates(specName);
   if (!tlcResult) {

@@ -2,7 +2,7 @@
 'use strict';
 // bin/run-account-manager-tlc.cjs
 // Invokes TLC model checker for the QGSD account manager TLA+ specification.
-// Source spec: .formal/tla/QGSDAccountManager.tla
+// Source spec: .planning/formal/tla/QGSDAccountManager.tla
 // Source impl: bin/account-manager.cjs
 //
 // Checks:
@@ -20,7 +20,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - .formal/tla/tla2tools.jar (see .formal/tla/README.md for download command)
+//   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -109,13 +109,13 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
+const jarPath = path.join(ROOT, '.planning', 'formal', 'tla', 'tla2tools.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-account-manager-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
     '[run-account-manager-tlc] Download v1.8.0:\n' +
     '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-    '       -o .formal/tla/tla2tools.jar\n'
+    '       -o .planning/formal/tla/tla2tools.jar\n'
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
@@ -124,8 +124,8 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Invoke TLC ────────────────────────────────────────────────────────────
-const specPath = path.join(ROOT, '.formal', 'tla', 'QGSDAccountManager.tla');
-const cfgPath  = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
+const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDAccountManager.tla');
+const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
 // Use workers=1 for liveness (IdleReachable) — avoids multi-worker liveness bugs in TLC
 const workers  = '1';
 

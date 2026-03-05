@@ -1,6 +1,6 @@
 ---- MODULE QGSDKeyManagement ----
 (*
- * .formal/tla/QGSDKeyManagement.tla
+ * .planning/formal/tla/QGSDKeyManagement.tla
  * Handwritten — models the API key management lifecycle through the wizard.
  * Source: bin/qgsd.cjs (wizard screens), bin/secrets.cjs (keytar)
  *

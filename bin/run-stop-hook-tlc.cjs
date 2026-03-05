@@ -10,7 +10,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - .formal/tla/tla2tools.jar (see .formal/tla/README.md for download command)
+//   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -103,13 +103,13 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(ROOT, '.formal', 'tla', 'tla2tools.jar');
+const jarPath = path.join(ROOT, '.planning', 'formal', 'tla', 'tla2tools.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-stop-hook-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
     '[run-stop-hook-tlc] Download v1.8.0:\n' +
     '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-    '       -o .formal/tla/tla2tools.jar\n'
+    '       -o .planning/formal/tla/tla2tools.jar\n'
   );
   const _runtimeMs = 0;
   try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
@@ -117,8 +117,8 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Resolve spec and config paths ─────────────────────────────────────────
-const specPath = path.join(ROOT, '.formal', 'tla', 'QGSDStopHook.tla');
-const cfgPath  = path.join(ROOT, '.formal', 'tla', configName + '.cfg');
+const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDStopHook.tla');
+const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
 
 // LivenessProperty1/2/3 requires -workers 1 (TLC multi-worker liveness bug in v1.8.0)
 const workers = '1';

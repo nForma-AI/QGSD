@@ -13,7 +13,7 @@ test('LOOP-03: sensitivity-sweep-feedback.cjs exits 0 when all sweep records are
   // Set up tmpDir with a sensitivity-report.ndjson containing only inconclusive records
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sweep-feedback-test-'));
   try {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(formalDir, { recursive: true });
     const record = JSON.stringify({
       tool: 'run-sensitivity-sweep',
@@ -38,7 +38,7 @@ test('LOOP-03: sensitivity-sweep-feedback.cjs exits 0 when all sweep records are
 test('LOOP-03: sensitivity-sweep-feedback.cjs exits 0 when empirical rate is within sweep range', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sweep-feedback-test2-'));
   try {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     const prismDir = path.join(formalDir, 'prism');
     fs.mkdirSync(prismDir, { recursive: true });
 
@@ -68,7 +68,7 @@ test('LOOP-03: sensitivity-sweep-feedback.cjs exits 0 when empirical rate is wit
 test('LOOP-03: sensitivity-sweep-feedback.cjs exits non-zero when new threshold violation detected', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sweep-feedback-test3-'));
   try {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     const prismDir = path.join(formalDir, 'prism');
     fs.mkdirSync(prismDir, { recursive: true });
 

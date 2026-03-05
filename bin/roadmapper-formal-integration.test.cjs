@@ -60,8 +60,8 @@ test('fail-open: empty FORMAL_SPEC_CONTEXT array produces 0 matches (no error)',
   // No error thrown — roadmapper proceeds normally
 });
 
-test('fail-open: missing .formal/spec/ directory → FORMAL_SPEC_CONTEXT stays empty array', () => {
-  // Simulated: if dir absent, the guard `if [ -d ".formal/spec" ]` is false → FORMAL_SPEC_CONTEXT=()
+test('fail-open: missing .planning/formal/spec/ directory → FORMAL_SPEC_CONTEXT stays empty array', () => {
+  // Simulated: if dir absent, the guard `if [ -d ".planning/formal/spec" ]` is false → FORMAL_SPEC_CONTEXT=()
   const formalSpecPath = '/tmp/__nonexistent_formal_spec_dir__';
   const dirExists = fs.existsSync(formalSpecPath);
   assert.strictEqual(dirExists, false);
@@ -168,10 +168,10 @@ try {
   newMilestoneContent = '';
 }
 
-test('new-milestone.md: contains .formal/spec scan block (directory check exists)', () => {
+test('new-milestone.md: contains .planning/formal/spec scan block (directory check exists)', () => {
   assert.ok(
-    newMilestoneContent.includes('.formal/spec'),
-    'Pattern not found: expected ".formal/spec" in qgsd-core/workflows/new-milestone.md — add formal scope scan step'
+    newMilestoneContent.includes('.planning/formal/spec'),
+    'Pattern not found: expected ".planning/formal/spec" in qgsd-core/workflows/new-milestone.md — add formal scope scan step'
   );
 });
 

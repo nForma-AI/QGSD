@@ -275,7 +275,7 @@ Present for opt-out with multiSelect per category.
 
 ## 8.7. Sync Baselines into Formal Envelope
 
-After baseline requirements are loaded/confirmed in Step 8.6, sync them into `.formal/requirements.json`:
+After baseline requirements are loaded/confirmed in Step 8.6, sync them into `.planning/formal/requirements.json`:
 
 ```bash
 node bin/sync-baseline-requirements.cjs --profile "$PROJECT_PROFILE"
@@ -283,7 +283,7 @@ node bin/sync-baseline-requirements.cjs --profile "$PROJECT_PROFILE"
 
 This is idempotent -- if baselines were already synced in a previous milestone, they will be skipped. Display the sync summary (added/skipped counts).
 
-If any requirements were added, include `.formal/requirements.json` in the next commit (Step 9 requirements commit or Step 6 cleanup commit, whichever comes next).
+If any requirements were added, include `.planning/formal/requirements.json` in the next commit (Step 9 requirements commit or Step 6 cleanup commit, whichever comes next).
 
 ## 9. Define Requirements
 
@@ -380,7 +380,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requ
 
 FORMAL_SPEC_CONTEXT=()
 
-if [ -d ".formal/spec" ]; then
+if [ -d ".planning/formal/spec" ]; then
   echo "◆ Formal scope scan (pre-roadmapper)..."
   # Use milestone goal description as keyword source.
   # Extract from PROJECT.md ## Current Milestone section (written by Step 4).
@@ -391,9 +391,9 @@ if [ -d ".formal/spec" ]; then
   fi
   MILESTONE_DESC_LOWER=$(echo "${MILESTONE_GOAL}" | tr '[:upper:]' '[:lower:]')
 
-  for MODULE_DIR in .formal/spec/*/; do
+  for MODULE_DIR in .planning/formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".formal/spec/${MODULE}/invariants.md"
+    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
     if [ -f "$INVARIANTS_FILE" ]; then
       MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
       MATCHED=0

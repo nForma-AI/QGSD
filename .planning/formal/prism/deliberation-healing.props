@@ -1,8 +1,8 @@
-// .formal/prism/deliberation-healing.props
+// .planning/formal/prism/deliberation-healing.props
 // Property checks for deliberation-healing.pm
 //
 // Run with:
-//   prism .formal/prism/deliberation-healing.pm .formal/prism/deliberation-healing.props
+//   prism .planning/formal/prism/deliberation-healing.pm .planning/formal/prism/deliberation-healing.props
 //     -const p_converge=0.60 -const escalation_threshold=0.10
 
 // @requirement HEAL-01

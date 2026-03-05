@@ -1,6 +1,6 @@
 ---
 name: qgsd:add-requirement
-description: Add a single requirement to .formal/requirements.json with duplicate and conflict checks
+description: Add a single requirement to .planning/formal/requirements.json with duplicate and conflict checks
 argument-hint: [--id=PREFIX-NN] [--text="..."] [--category="..."] [--phase=vX.XX-NN] [--dry-run]
 allowed-tools:
   - Read
@@ -11,7 +11,7 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Add a single requirement to the formal requirements envelope (`.formal/requirements.json`). Validates the ID format, checks for duplicate IDs, runs Haiku semantic conflict detection against same-prefix requirements, and elevates conflicts to the user before writing. Handles envelope freeze/unfreeze lifecycle automatically.
+Add a single requirement to the formal requirements envelope (`.planning/formal/requirements.json`). Validates the ID format, checks for duplicate IDs, runs Haiku semantic conflict detection against same-prefix requirements, and elevates conflicts to the user before writing. Handles envelope freeze/unfreeze lifecycle automatically.
 </objective>
 
 <execution_context>

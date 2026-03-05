@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // bin/aggregate-requirements.cjs
-// Requirements aggregation pipeline: parse .planning/REQUIREMENTS.md into .formal/requirements.json
+// Requirements aggregation pipeline: parse .planning/REQUIREMENTS.md into .planning/formal/requirements.json
 // Provides: parseRequirements, parseTraceability, validateEnvelope, aggregateRequirements
 
 'use strict';
@@ -240,7 +240,7 @@ function mergeFileIntoMap(reqMap, filePath) {
 function aggregateRequirements(options) {
   options = options || {};
   const requirementsPath = options.requirementsPath || '.planning/REQUIREMENTS.md';
-  const outputPath = options.outputPath || '.formal/requirements.json';
+  const outputPath = options.outputPath || '.planning/formal/requirements.json';
   const deterministic = options.deterministic || false;
   const skipArchive = options.skipArchive || false;
   const archiveDir = options.archiveDir || '.planning/milestones';
@@ -292,7 +292,7 @@ function aggregateRequirements(options) {
     }
   });
 
-  // Apply category group consolidation from .formal/category-groups.json
+  // Apply category group consolidation from .planning/formal/category-groups.json
   const groupsPath = path.join(path.dirname(outputPath), 'category-groups.json');
   let categoryGroups = null;
   const unmappedCategories = [];
@@ -417,7 +417,7 @@ if (require.main === module) {
       merged.sort(function(a, b) { return a.id.localeCompare(b.id); });
 
       // Apply category group consolidation (same as write path)
-      const groupsPath = path.join('.formal', 'category-groups.json');
+      const groupsPath = path.join('.planning', 'formal', 'category-groups.json');
       if (fs.existsSync(groupsPath)) {
         try {
           const categoryGroups = JSON.parse(fs.readFileSync(groupsPath, 'utf8'));

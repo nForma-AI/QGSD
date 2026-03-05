@@ -7,8 +7,8 @@ const fs = require('fs');
 const { spawnSync } = require('child_process');
 
 const SCRIPT = path.join(__dirname, '..', 'bin', 'generate-traceability-matrix.cjs');
-const MATRIX_PATH = path.join(__dirname, '..', '.formal', 'traceability-matrix.json');
-const REQUIREMENTS_PATH = path.join(__dirname, '..', '.formal', 'requirements.json');
+const MATRIX_PATH = path.join(__dirname, '..', '.planning', 'formal', 'traceability-matrix.json');
+const REQUIREMENTS_PATH = path.join(__dirname, '..', '.planning', 'formal', 'requirements.json');
 const ANNOTATIONS_SCRIPT = path.join(__dirname, '..', 'bin', 'extract-annotations.cjs');
 
 /**
@@ -51,7 +51,7 @@ describe('basic execution', () => {
     assert.strictEqual(result.status, 0, 'Expected exit code 0, got ' + result.status);
   });
 
-  test('produces .formal/traceability-matrix.json', () => {
+  test('produces .planning/formal/traceability-matrix.json', () => {
     run();
     assert.ok(fs.existsSync(MATRIX_PATH), 'traceability-matrix.json should exist after generation');
   });
@@ -59,7 +59,7 @@ describe('basic execution', () => {
   test('prints summary to stdout', () => {
     const result = run();
     assert.ok(result.stdout.includes('[generate-traceability-matrix]'), 'stdout should contain TAG prefix');
-    assert.ok(result.stdout.includes('Generated .formal/traceability-matrix.json'), 'stdout should confirm file generation');
+    assert.ok(result.stdout.includes('Generated .planning/formal/traceability-matrix.json'), 'stdout should confirm file generation');
     assert.ok(result.stdout.includes('Requirements:'), 'stdout should include requirements count');
     assert.ok(result.stdout.includes('Properties:'), 'stdout should include properties count');
   });
@@ -110,18 +110,18 @@ describe('metadata', () => {
 describe('annotation-sourced properties', () => {
   test('QGSDStopHook TypeOK has source annotation and STOP-01', () => {
     const matrix = getMatrix();
-    const key = '.formal/tla/QGSDStopHook.tla::TypeOK';
+    const key = '.planning/formal/tla/QGSDStopHook.tla::TypeOK';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist in properties');
     assert.strictEqual(prop.source, 'annotation');
     assert.deepStrictEqual(prop.requirement_ids, ['STOP-01']);
-    assert.strictEqual(prop.model_file, '.formal/tla/QGSDStopHook.tla');
+    assert.strictEqual(prop.model_file, '.planning/formal/tla/QGSDStopHook.tla');
     assert.strictEqual(prop.property_name, 'TypeOK');
   });
 
   test('known multi-requirement property has all IDs', () => {
     const matrix = getMatrix();
-    const key = '.formal/alloy/quorum-composition.als::AllRulesHold';
+    const key = '.planning/formal/alloy/quorum-composition.als::AllRulesHold';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist');
     assert.ok(prop.requirement_ids.includes('SPEC-03'), 'should include SPEC-03');
@@ -137,10 +137,10 @@ describe('annotation-sourced properties', () => {
     assert.ok(comp01, 'COMP-01 should exist in requirements index');
 
     const spec03HasProp = spec03.properties.some(p =>
-      p.model_file === '.formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
+      p.model_file === '.planning/formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
     const comp01HasProp = comp01.properties.some(p =>
-      p.model_file === '.formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
+      p.model_file === '.planning/formal/alloy/quorum-composition.als' && p.property_name === 'AllRulesHold'
     );
     assert.ok(spec03HasProp, 'SPEC-03 should list AllRulesHold');
     assert.ok(comp01HasProp, 'COMP-01 should list AllRulesHold');
@@ -514,7 +514,7 @@ describe('state_space integration', () => {
 
   test('QGSDQuorum_xstate is HIGH risk in matrix', () => {
     const matrix = getMatrix();
-    const xstate = matrix.state_space['.formal/tla/QGSDQuorum_xstate.tla'];
+    const xstate = matrix.state_space['.planning/formal/tla/QGSDQuorum_xstate.tla'];
     assert.ok(xstate, 'QGSDQuorum_xstate.tla should be in state_space');
     assert.strictEqual(xstate.risk_level, 'HIGH');
     assert.strictEqual(xstate.has_unbounded, true);

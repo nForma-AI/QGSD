@@ -13,7 +13,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - .formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
+//   - .planning/formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -106,20 +106,20 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(ROOT, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-audit-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
     '[run-audit-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o .formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
   try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'fail: ' + check_id + ' (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
 // ── 4. Locate .als file ───────────────────────────────────────────────────────
-const alsPath = path.join(ROOT, '.formal', 'alloy', specName + '.als');
+const alsPath = path.join(ROOT, '.planning', 'formal', 'alloy', specName + '.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-audit-alloy] ' + specName + '.als not found at: ' + alsPath + '\n' +
@@ -165,7 +165,7 @@ if (stderr) { process.stderr.write(stderr); }
 if (/Counterexample/i.test(stdout)) {
   process.stderr.write(
     '[run-audit-alloy] WARNING: Counterexample found in ' + specName + '.als assertion.\n' +
-    '[run-audit-alloy] This indicates a spec violation — review .formal/alloy/' + specName + '.als.\n'
+    '[run-audit-alloy] This indicates a spec violation — review .planning/formal/alloy/' + specName + '.als.\n'
   );
   const _runtimeMs = Date.now() - _startMs;
   try { writeCheckResult({ tool: 'run-audit-alloy', formalism: 'alloy', result: 'fail', check_id: check_id, surface: 'alloy', property: property, runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-audit-alloy] Warning: failed to write check result: ' + e.message + '\n'); }

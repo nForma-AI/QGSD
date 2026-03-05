@@ -1,6 +1,6 @@
 ---- MODULE QGSDPromptHook ----
 (*
- * .formal/tla/QGSDPromptHook.tla
+ * .planning/formal/tla/QGSDPromptHook.tla
  * Handwritten — models the UserPromptSubmit hook pipeline.
  * Source: hooks/qgsd-prompt.js
  *

@@ -1,6 +1,6 @@
 ---- MODULE QGSDBreakerState ----
 (*
- * .formal/tla/QGSDBreakerState.tla
+ * .planning/formal/tla/QGSDBreakerState.tla
  * Handwritten — models the circuit-breaker-state.json file lifecycle.
  * Source: hooks/qgsd-circuit-breaker.js, bin/qgsd.cjs
  *

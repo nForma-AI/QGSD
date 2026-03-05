@@ -181,7 +181,7 @@ const allObservations = results
   .filter(r => r.status === 'ok')
   .flatMap(r => r.issues || []);
 
-const { written, updated, errors } = writeObservationsToDebt(allObservations, '.formal/debt.json');
+const { written, updated, errors } = writeObservationsToDebt(allObservations, '.planning/formal/debt.json');
 ```
 
 Display:
@@ -197,7 +197,7 @@ Read the debt ledger and display status counts:
 
 ```javascript
 const { readDebtLedger } = require('./bin/debt-ledger.cjs');
-const ledger = readDebtLedger('.formal/debt.json');
+const ledger = readDebtLedger('.planning/formal/debt.json');
 const entries = ledger.debt_entries || [];
 
 const counts = {

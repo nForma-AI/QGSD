@@ -210,7 +210,7 @@ function aggregateFindings(passResults) {
  */
 async function validateRequirements(options = {}) {
   const {
-    envelopePath = '.formal/requirements.json',
+    envelopePath = '.planning/formal/requirements.json',
     passes = 3,
     apiKey = process.env.ANTHROPIC_API_KEY,
     mockCall = null, // For testing: mock Haiku response
@@ -344,7 +344,7 @@ async function main() {
     }
   }
 
-  const envelopePath = args.envelope || '.formal/requirements.json';
+  const envelopePath = args.envelope || '.planning/formal/requirements.json';
   const passes = parseInt(args.passes || '3', 10);
   const shouldFreeze = args.freeze === true || args.freeze === '';
 

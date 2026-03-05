@@ -217,20 +217,20 @@ describe('scanAllFormalModels', () => {
     assert.deepStrictEqual(results, []);
   });
 
-  it('returns empty array for directory without .formal/ subdir', () => {
+  it('returns empty array for directory without .planning/formal/ subdir', () => {
     const results = scanAllFormalModels(tmpDir);
     assert.deepStrictEqual(results, []);
   });
 
-  it('returns empty array for .formal/ with no model subdirs', () => {
-    fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
+  it('returns empty array for .planning/formal/ with no model subdirs', () => {
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
     const results = scanAllFormalModels(tmpDir);
     assert.deepStrictEqual(results, []);
   });
 
-  it('scans real .formal/ directory and finds assumptions', () => {
+  it('scans real .planning/formal/ directory and finds assumptions', () => {
     const results = scanAllFormalModels(process.cwd());
-    assert.ok(results.length > 0, `Expected > 0 assumptions from real .formal/, got ${results.length}`);
+    assert.ok(results.length > 0, `Expected > 0 assumptions from real .planning/formal/, got ${results.length}`);
   });
 });
 
@@ -239,7 +239,7 @@ describe('scanAllFormalModels', () => {
 describe('crossReference', () => {
   it('marks assumption as covered when debt entry has matching formal_ref', () => {
     // Set up mock debt ledger
-    const debtDir = path.join(tmpDir, '.formal');
+    const debtDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(debtDir, { recursive: true });
     fs.writeFileSync(path.join(debtDir, 'debt.json'), JSON.stringify({
       schema_version: '1',
@@ -269,7 +269,7 @@ describe('crossReference', () => {
   });
 
   it('marks assumption as covered via fuzzy match when formal_ref is null', () => {
-    const debtDir = path.join(tmpDir, '.formal');
+    const debtDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(debtDir, { recursive: true });
     fs.writeFileSync(path.join(debtDir, 'debt.json'), JSON.stringify({
       schema_version: '1',
@@ -299,7 +299,7 @@ describe('crossReference', () => {
   });
 
   it('marks assumption as uncovered with empty debt ledger and no handlers', () => {
-    const debtDir = path.join(tmpDir, '.formal');
+    const debtDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(debtDir, { recursive: true });
     fs.writeFileSync(path.join(debtDir, 'debt.json'), JSON.stringify({
       schema_version: '1',
@@ -322,7 +322,7 @@ describe('crossReference', () => {
       { source: 'tla', file: 'sample.tla', name: 'MaxRetries', type: 'assume', value: 0 }
     ];
 
-    // Use tmpDir which has no .formal/debt.json
+    // Use tmpDir which has no .planning/formal/debt.json
     const results = crossReference(assumptions, { root: tmpDir });
     assert.strictEqual(results.length, 1);
     assert.strictEqual(results[0].coverage, 'uncovered');
@@ -438,7 +438,7 @@ describe('formatMarkdownReport', () => {
 // ── Integration test ────────────────────────────────────────────────────────
 
 describe('integration', () => {
-  it('full scan of real .formal/ directory produces non-zero results', () => {
+  it('full scan of real .planning/formal/ directory produces non-zero results', () => {
     const assumptions = scanAllFormalModels(process.cwd());
     assert.ok(assumptions.length > 0, `Expected > 0 assumptions, got ${assumptions.length}`);
 

@@ -59,7 +59,7 @@ function extractFormalExpected(formalRef, options = {}) {
   // Spec without param key — invariant reference, no extractable value
   if (parsed.type === 'spec' && !parsed.param) return null;
 
-  const specDir = options.specDir || path.resolve(process.cwd(), '.formal/spec');
+  const specDir = options.specDir || path.resolve(process.cwd(), '.planning/formal/spec');
   const filePath = path.join(specDir, parsed.path);
 
   try {

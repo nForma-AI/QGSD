@@ -1,33 +1,33 @@
 #!/usr/bin/env node
 'use strict';
 // bin/initialize-model-registry.cjs
-// One-time idempotent initialization of .formal/model-registry.json.
+// One-time idempotent initialization of .planning/formal/model-registry.json.
 //
-// Scans .formal/tla/, .formal/alloy/, and .formal/prism/ for canonical model files
+// Scans .planning/formal/tla/, .planning/formal/alloy/, and .planning/formal/prism/ for canonical model files
 // and creates model-registry.json with provenance metadata for each.
 //
 // Usage:
 //   node bin/initialize-model-registry.cjs
 //
-// Idempotent: if .formal/model-registry.json already exists, exits 0 silently.
+// Idempotent: if .planning/formal/model-registry.json already exists, exits 0 silently.
 // Run this once after cloning the repo, before any generate/promote/debug operations.
 
 const fs   = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const REGISTRY_PATH = path.join(ROOT, '.formal', 'model-registry.json');
+const REGISTRY_PATH = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
 
 // ── Idempotent guard ──────────────────────────────────────────────────────────
 if (fs.existsSync(REGISTRY_PATH)) {
   process.exit(0);
 }
 
-// ── Scan .formal/ subdirectories ───────────────────────────────────────────────
+// ── Scan .planning/formal/ subdirectories ───────────────────────────────────────────────
 const SCAN_DIRS = [
-  { dir: path.join(ROOT, '.formal', 'tla'),   exts: ['.tla'] },
-  { dir: path.join(ROOT, '.formal', 'alloy'), exts: ['.als'] },
-  { dir: path.join(ROOT, '.formal', 'prism'), exts: ['.pm']  },
+  { dir: path.join(ROOT, '.planning', 'formal', 'tla'),   exts: ['.tla'] },
+  { dir: path.join(ROOT, '.planning', 'formal', 'alloy'), exts: ['.als'] },
+  { dir: path.join(ROOT, '.planning', 'formal', 'prism'), exts: ['.pm']  },
 ];
 
 // Files to skip — not canonical specs
@@ -102,4 +102,4 @@ fs.mkdirSync(path.dirname(REGISTRY_PATH), { recursive: true });
 fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2), 'utf8');
 
 const count = Object.keys(sortedModels).length;
-process.stdout.write('[initialize-model-registry] Created .formal/model-registry.json with ' + count + ' entries\n');
+process.stdout.write('[initialize-model-registry] Created .planning/formal/model-registry.json with ' + count + ' entries\n');

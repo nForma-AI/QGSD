@@ -7,7 +7,7 @@
 // Usage:
 //   node bin/run-account-pool-alloy.cjs
 //
-// Checks (defined in .formal/alloy/account-pool-structure.als):
+// Checks (defined in .planning/formal/alloy/account-pool-structure.als):
 //   AddPreservesValidity    — adding to a valid state yields a valid state
 //   SwitchPreservesValidity — switching in a valid state yields a valid state
 //   RemovePreservesValidity — removing from a valid state yields a valid state
@@ -16,7 +16,7 @@
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
-//   - .formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
+//   - .planning/formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
 const fs   = require('fs');
@@ -77,20 +77,20 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(ROOT, '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+const jarPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 if (!fs.existsSync(jarPath)) {
   process.stderr.write(
     '[run-account-pool-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
     '[run-account-pool-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o .formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
   try { writeCheckResult({ tool: 'run-account-pool-alloy', formalism: 'alloy', result: 'fail', check_id: 'alloy:account-pool', surface: 'alloy', property: 'Account pool state machine — slot assignment and release invariants', runtime_ms: 0, summary: 'fail: alloy:account-pool (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:account-pool'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-pool-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
-// ── 4. Locate .formal/alloy/account-pool-structure.als ────────────────────────
-const alsPath = path.join(ROOT, '.formal', 'alloy', 'account-pool-structure.als');
+// ── 4. Locate .planning/formal/alloy/account-pool-structure.als ────────────────────────
+const alsPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'account-pool-structure.als');
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
     '[run-account-pool-alloy] account-pool-structure.als not found at: ' + alsPath + '\n' +
@@ -134,7 +134,7 @@ if (stderr) { process.stderr.write(stderr); }
 if (/Counterexample/i.test(stdout)) {
   process.stderr.write(
     '[run-account-pool-alloy] WARNING: Counterexample found in account-pool-structure.als assertion.\n' +
-    '[run-account-pool-alloy] This indicates a structural invariant violation — review .formal/alloy/account-pool-structure.als.\n' +
+    '[run-account-pool-alloy] This indicates a structural invariant violation — review .planning/formal/alloy/account-pool-structure.als.\n' +
     '[run-account-pool-alloy] Assertions checked: AddPreservesValidity, SwitchPreservesValidity,\n' +
     '[run-account-pool-alloy]   RemovePreservesValidity, SwitchPreservesPool, RemoveShrinksPool\n'
   );

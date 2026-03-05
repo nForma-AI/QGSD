@@ -1,6 +1,6 @@
 ---- MODULE QGSDSetupWizard ----
 (*
- * .formal/tla/QGSDSetupWizard.tla
+ * .planning/formal/tla/QGSDSetupWizard.tla
  * Handwritten — models the /qgsd:mcp-setup wizard flow.
  * Source: qgsd-core/workflows/mcp-setup.md, bin/qgsd.cjs
  *

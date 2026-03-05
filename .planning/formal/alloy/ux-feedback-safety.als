@@ -1,4 +1,4 @@
--- .formal/alloy/ux-feedback-safety.als
+-- .planning/formal/alloy/ux-feedback-safety.als
 -- Models UX heuristics: immediate feedback, destructive action confirmation,
 -- and human-readable error messages with recovery guidance.
 -- Source: qgsd-baseline requirements

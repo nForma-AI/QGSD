@@ -7,7 +7,7 @@ const fs = require('fs');
 const { spawnSync } = require('child_process');
 
 const SCRIPT = path.join(__dirname, '..', 'bin', 'analyze-state-space.cjs');
-const REPORT_PATH = path.join(__dirname, '..', '.formal', 'state-space-report.json');
+const REPORT_PATH = path.join(__dirname, '..', '.planning', 'formal', 'state-space-report.json');
 
 /**
  * Run analyze-state-space.cjs with given args and return { stdout, stderr, status }.
@@ -87,7 +87,7 @@ describe('report structure', () => {
 describe('risk classification', () => {
   test('QGSDQuorum_xstate.tla is HIGH risk', () => {
     const models = getReport().models;
-    const xstate = models['.formal/tla/QGSDQuorum_xstate.tla'];
+    const xstate = models['.planning/formal/tla/QGSDQuorum_xstate.tla'];
     assert.ok(xstate, 'QGSDQuorum_xstate.tla should be in models');
     assert.strictEqual(xstate.risk_level, 'HIGH', 'xstate should be HIGH risk');
     assert.strictEqual(xstate.has_unbounded, true, 'xstate should have unbounded domains');
@@ -139,7 +139,7 @@ describe('constant parsing', () => {
   test('model with .cfg CONSTANTS has parsed constants', () => {
     const models = getReport().models;
     // QGSDQuorum.tla uses MCsafety.cfg which has MaxDeliberation=9, MaxSize=3
-    const quorum = models['.formal/tla/QGSDQuorum.tla'];
+    const quorum = models['.planning/formal/tla/QGSDQuorum.tla'];
     if (quorum && quorum.constants && quorum.constants.length > 0) {
       // At least one constant should have a numeric value
       const hasNumeric = quorum.constants.some(function(c) { return typeof c.value === 'number'; });
@@ -150,7 +150,7 @@ describe('constant parsing', () => {
   test('models with bounded ranges have finite estimated_states', () => {
     const models = getReport().models;
     // QGSDCircuitBreaker has 2 BOOLEAN vars = 4 states
-    const breaker = models['.formal/tla/QGSDCircuitBreaker.tla'];
+    const breaker = models['.planning/formal/tla/QGSDCircuitBreaker.tla'];
     if (breaker) {
       assert.strictEqual(breaker.risk_level, 'MINIMAL', 'QGSDCircuitBreaker should be MINIMAL risk');
       assert.ok(breaker.estimated_states !== null && breaker.estimated_states > 0,

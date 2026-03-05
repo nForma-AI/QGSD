@@ -1,4 +1,4 @@
--- .formal/alloy/bin-path-resolution.als
+-- .planning/formal/alloy/bin-path-resolution.als
 -- Models the bin script ROOT path resolution invariant.
 -- Source: bin/*.cjs scripts
 --

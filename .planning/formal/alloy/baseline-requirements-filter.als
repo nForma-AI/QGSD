@@ -1,4 +1,4 @@
--- .formal/alloy/baseline-requirements-filter.als
+-- .planning/formal/alloy/baseline-requirements-filter.als
 -- Models the baseline requirements filtering by project profile with opt-out.
 -- Source: bin/requirements-core.cjs
 --

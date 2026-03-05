@@ -67,20 +67,20 @@ If "Run discuss-phase first": Display `/qgsd:discuss-phase {X}` and exit workflo
 
 ## 4.5. Formal Scope Scan
 
-Before spawning the researcher, scan `.formal/spec/` for modules whose names keyword-match the phase description. This populates `$FORMAL_SPEC_CONTEXT` for use in Step 8 (planner) and Step 10 (checker).
+Before spawning the researcher, scan `.planning/formal/spec/` for modules whose names keyword-match the phase description. This populates `$FORMAL_SPEC_CONTEXT` for use in Step 8 (planner) and Step 10 (checker).
 
 ```bash
 FORMAL_SPEC_CONTEXT=[]
 ```
 
-**Fail-open:** If `.formal/spec/` does not exist, skip entirely (set FORMAL_SPEC_CONTEXT=[] and proceed).
+**Fail-open:** If `.planning/formal/spec/` does not exist, skip entirely (set FORMAL_SPEC_CONTEXT=[] and proceed).
 
 ```bash
-if [ -d ".formal/spec" ]; then
+if [ -d ".planning/formal/spec" ]; then
   PHASE_DESC_LOWER=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name' | tr '[:upper:]' '[:lower:]')
-  for MODULE_DIR in .formal/spec/*/; do
+  for MODULE_DIR in .planning/formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".formal/spec/${MODULE}/invariants.md"
+    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
     if [ -f "$INVARIANTS_FILE" ]; then
       MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
       # Keyword-match: any word in phase description is substring of module name, or module name is substring of any word
@@ -300,9 +300,9 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ?
 Constraints:
 - Read the injected invariants.md files and identify which invariants apply to this task
 - MUST declare \`formal_artifacts:\` in EVERY plan frontmatter (required field when FORMAL_SPEC_CONTEXT is non-empty):
-  - \`none\` — task does not create or modify .formal/ files
-  - \`update: [list of .formal/ file paths]\` — task modifies existing .formal/ files
-  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new .formal/ files
+  - \`none\` — task does not create or modify .planning/formal/ files
+  - \`update: [list of .planning/formal/ file paths]\` — task modifies existing .planning/formal/ files
+  - \`create: [list of {path, type (tla|alloy|prism), description}]\` — task creates new .planning/formal/ files
 - Plan tasks MUST NOT violate the identified invariants` :
 `No formal modules matched this task. Declare \`formal_artifacts: none\` in plan frontmatter.`}
 </formal_context>

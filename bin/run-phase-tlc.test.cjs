@@ -33,7 +33,7 @@ function isJavaAvailable() {
 
 // Helper: check if tla2tools.jar exists
 function isTla2toolsAvailable() {
-  return fs.existsSync(path.join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar'));
+  return fs.existsSync(path.join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar'));
 }
 
 // ── Test 1: iterativeVerify returns skipped for plan with no truths
@@ -175,7 +175,7 @@ must_haves:
 
   const result = iterativeVerify(planPath);
   // Regardless of pass/fail (Java may not be available), spec files should be generated
-  const formalDir = path.join(tmpDir, '.formal');
+  const formalDir = path.join(tmpDir, '.planning', 'formal');
   assert.ok(fs.existsSync(path.join(formalDir, 'ProposedChanges.tla')), 'ProposedChanges.tla should exist');
   assert.ok(fs.existsSync(path.join(formalDir, 'MCProposedChanges.cfg')), 'MCProposedChanges.cfg should exist');
 });

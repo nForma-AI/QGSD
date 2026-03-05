@@ -17,15 +17,15 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 
-// ── Find .formal/ root from target path ───────────────────────────────────────
-// Walks up from a given path until finding a directory named '.formal', then
-// returns the parent of that directory as the project root.
-// Falls back to ROOT (the QGSD project root) if no '.formal' ancestor is found.
+// ── Find .planning/formal/ root from target path ───────────────────────────────────────
+// Walks up from a given path until finding .planning/formal/, then
+// returns the grandparent of that directory as the project root.
+// Falls back to ROOT (the QGSD project root) if no .planning/formal/ ancestor is found.
 function findProjectRoot(startPath) {
   let current = path.dirname(startPath);
   while (true) {
-    if (path.basename(current) === '.formal') {
-      return path.dirname(current);
+    if (path.basename(current) === 'formal' && path.basename(path.dirname(current)) === '.planning') {
+      return path.dirname(path.dirname(current));
     }
     const parent = path.dirname(current);
     if (parent === current) break; // filesystem root
@@ -176,13 +176,13 @@ fs.writeFileSync(tmpSpec, mergedContent, 'utf8');
 fs.renameSync(tmpSpec, resolvedTarget);
 
 // ── Update model-registry.json ─────────────────────────────────────────────
-// Find registry relative to the target file's .formal/ ancestor
+// Find registry relative to the target file's .planning/formal/ ancestor
 const projectRoot  = findProjectRoot(resolvedTarget);
-const registryPath = path.join(projectRoot, '.formal', 'model-registry.json');
+const registryPath = path.join(projectRoot, '.planning', 'formal', 'model-registry.json');
 let newVersion = null;
 
 if (!fs.existsSync(registryPath)) {
-  process.stderr.write('[promote-model] Warning: .formal/model-registry.json not found — skipping registry update\n');
+  process.stderr.write('[promote-model] Warning: .planning/formal/model-registry.json not found — skipping registry update\n');
 } else {
   let registry;
   try {

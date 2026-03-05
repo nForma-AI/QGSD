@@ -1,4 +1,4 @@
-// .formal/prism/deliberation-healing.pm
+// .planning/formal/prism/deliberation-healing.pm
 // Models deliberation convergence probability and early escalation.
 // Source: quorum dispatch pipeline, maxDeliberation config
 //
@@ -10,7 +10,7 @@
 // If probability drops below threshold, escalation fires early.
 //
 // Usage:
-//   prism .formal/prism/deliberation-healing.pm .formal/prism/deliberation-healing.props
+//   prism .planning/formal/prism/deliberation-healing.pm .planning/formal/prism/deliberation-healing.props
 //     -const p_converge=0.60 -const escalation_threshold=0.10
 
 dtmc

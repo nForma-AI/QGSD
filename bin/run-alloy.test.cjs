@@ -31,7 +31,7 @@ test('exits non-zero and prints Alloy JAR download URL when JAR not found', () =
   // If no Java available, skip this test — it cannot reach JAR check without Java.
   if (!javaHome) { return; }  // test is skipped, not failed
 
-  const jarPath = path.join(__dirname, '..', '.formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  const jarPath = path.join(__dirname, '..', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
   if (fs.existsSync(jarPath)) { return; }  // skip — can't test absent-JAR path when JAR is present
 
   const result = spawnSync(process.execPath, [RUN_ALLOY], {

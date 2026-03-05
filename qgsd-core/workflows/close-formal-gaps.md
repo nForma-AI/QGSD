@@ -11,7 +11,7 @@ or targeted mode (specific requirement IDs).
 <step name="detect_gaps">
 ## Step 1 — Detect Coverage Gaps
 
-Read `.formal/requirements.json` and `.formal/model-registry.json`.
+Read `.planning/formal/requirements.json` and `.planning/formal/model-registry.json`.
 Build the set of covered requirement IDs (from both registry `requirements` arrays
 and requirement-level `formal_models` fields).
 
@@ -100,10 +100,10 @@ For each cluster, also determine:
 
 Before generating, read 1–2 existing models of the same formalism to learn the project's conventions:
 
-- **TLA+**: Read a `.tla` file from `.formal/tla/` and its corresponding `MC*.cfg`
-- **Alloy**: Read a `.als` file from `.formal/alloy/`
-- **PRISM**: Read a `.pm` + `.props` pair from `.formal/prism/`
-- **Petri**: Read a `.dot` file from `.formal/petri/`
+- **TLA+**: Read a `.tla` file from `.planning/formal/tla/` and its corresponding `MC*.cfg`
+- **Alloy**: Read a `.als` file from `.planning/formal/alloy/`
+- **PRISM**: Read a `.pm` + `.props` pair from `.planning/formal/prism/`
+- **Petri**: Read a `.dot` file from `.planning/formal/petri/`
 
 Note the header format, variable naming, comment style, and property naming conventions.
 Follow these conventions exactly in the generated model.
@@ -154,8 +154,8 @@ linking back to the requirement IDs it covers. Format: `\* @requirement REQ-ID`
 Run the appropriate verification tool:
 
 - **TLA+**: `node bin/run-tlc.cjs MC<ModelName>` — must report `Model checking completed. No error has been found.`
-- **Alloy**: `java -jar .formal/alloy/org.alloytools.alloy.dist.jar -c <file.als>` — all assertions must hold
-- **PRISM**: `prism .formal/prism/<file.pm> .formal/prism/<file.props>` — all properties verified
+- **Alloy**: `java -jar .planning/formal/alloy/org.alloytools.alloy.dist.jar -c <file.als>` — all assertions must hold
+- **PRISM**: `prism .planning/formal/prism/<file.pm> .planning/formal/prism/<file.props>` — all properties verified
 - **Petri**: Validate DOT syntax via `dot -Tsvg` (structural check only)
 
 If verification fails:
@@ -173,9 +173,9 @@ and proceed to registration with a note that verification is pending.
 
 For each successfully generated (and ideally verified) model:
 
-1. **Add entry to `.formal/model-registry.json`**:
+1. **Add entry to `.planning/formal/model-registry.json`**:
    ```json
-   ".formal/<formalism>/<filename>": {
+   ".planning/formal/<formalism>/<filename>": {
      "version": 1,
      "last_updated": "<ISO timestamp>",
      "update_source": "generate",
@@ -204,9 +204,9 @@ Requirements covered: 12
 Verification:       2 passed, 1 pending
 
 New models:
-  .formal/tla/QGSDDispatch.tla        → DISP-01..05  ✓ verified
-  .formal/alloy/config-validation.als → CONF-01..04  ✓ verified
-  .formal/prism/mcp-health.pm         → HLTH-01..03  ⏳ pending
+  .planning/formal/tla/QGSDDispatch.tla        → DISP-01..05  ✓ verified
+  .planning/formal/alloy/config-validation.als → CONF-01..04  ✓ verified
+  .planning/formal/prism/mcp-health.pm         → HLTH-01..03  ⏳ pending
 
 Coverage: 79/226 → 91/226 (35.0% → 40.3%)
 ```
@@ -220,7 +220,7 @@ If `--all` was used and more categories remain, loop back to Step 2 for the next
 - NEVER modify existing formal models — only create new ones
 - NEVER remove requirements from the registry — only add linkages
 - Each model must be self-contained and runnable independently
-- Follow existing naming conventions strictly (check `.formal/` directory structure)
+- Follow existing naming conventions strictly (check `.planning/formal/` directory structure)
 - Small model bounds for TLC (state explosion): MaxSlots ≤ 4, MaxDepth ≤ 3, etc.
 - If a requirement is purely procedural (e.g., "run this command") and has no formalizable behavior, skip it and note why
 - The `@requirement` annotation in model comments is MANDATORY for traceability

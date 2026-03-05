@@ -1,4 +1,4 @@
--- .formal/alloy/config-zero-providers.als
+-- .planning/formal/alloy/config-zero-providers.als
 -- Models graceful degradation when providers.json has zero providers.
 -- Source: hooks/config-loader.js, bin/providers.json
 --

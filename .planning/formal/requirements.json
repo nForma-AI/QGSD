@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-05T11:06:49.182Z",
-  "content_hash": "a821b464107b27d0",
+  "aggregated_at": "2026-03-05T11:23:13.640Z",
+  "content_hash": "a13eb51d591c7fd2",
   "frozen_at": "2026-03-05T11:06:49.183Z",
   "schema_version": "1",
   "requirements": [
@@ -161,7 +161,10 @@
         "source_file": "manual",
         "milestone": "unknown"
       },
-      "category_raw": "Agent Behavior"
+      "category_raw": "Agent Behavior",
+      "formal_models": [
+        ".planning/formal/tla/QGSDAgentLoop.tla"
+      ]
     },
     {
       "id": "ANNOT-01",
@@ -225,7 +228,7 @@
     },
     {
       "id": "ARCH-01",
-      "text": "All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking",
+      "text": "All formal models declared in `.planning/formal/model-registry.json` as single source of truth with provenance tracking",
       "category": "Quorum & Dispatch",
       "phase": "v0.21-01",
       "status": "Complete",
@@ -281,7 +284,7 @@
     },
     {
       "id": "CALIB-01",
-      "text": "`.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
+      "text": "`.planning/formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-02",
       "status": "Complete",
@@ -326,7 +329,7 @@
     },
     {
       "id": "CALIB-04",
-      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
+      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.planning/formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-10",
       "status": "Complete",
@@ -348,7 +351,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ci-pipeline-gates.als"
+      ]
     },
     {
       "id": "CI-02",
@@ -359,7 +365,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ci-pipeline-gates.als"
+      ]
     },
     {
       "id": "CI-03",
@@ -370,7 +379,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ci-pipeline-gates.als"
+      ]
     },
     {
       "id": "CI-04",
@@ -382,7 +394,10 @@
       "provenance": {
         "source_file": ".planning/quick/174-harden-test-runner-against-glob-failures/174-PLAN.md",
         "milestone": "quick-174"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ci-test-fallback.als"
+      ]
     },
     {
       "id": "COMP-01",
@@ -587,7 +602,9 @@
         "milestone": "quick-147"
       },
       "category_raw": "Configuration",
-      "formal_models": []
+      "formal_models": [
+        ".planning/formal/alloy/polyrepo-config.als"
+      ]
     },
     {
       "id": "CONF-12",
@@ -600,7 +617,9 @@
         "milestone": "quick-147"
       },
       "category_raw": "Configuration",
-      "formal_models": []
+      "formal_models": [
+        ".planning/formal/alloy/polyrepo-config.als"
+      ]
     },
     {
       "id": "CRED-01",
@@ -901,7 +920,7 @@
     },
     {
       "id": "DISP-06",
-      "text": "Quorum dispatch prompts inject a matched subset of formal requirements (from .formal/requirements.json) based on keywords extracted from the question and artifact path, enabling agents to evaluate changes against concrete acceptance criteria.",
+      "text": "Quorum dispatch prompts inject a matched subset of formal requirements (from .planning/formal/requirements.json) based on keywords extracted from the question and artifact path, enabling agents to evaluate changes against concrete acceptance criteria.",
       "category": "Quorum & Dispatch",
       "phase": "unknown",
       "status": "Complete",
@@ -909,7 +928,10 @@
       "provenance": {
         "source_file": ".planning/quick/170-inject-relevant-requirements-subset-into/170-PLAN.md",
         "milestone": "quick-170"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/dispatch-formal-context.als"
+      ]
     },
     {
       "id": "DRIFT-01",
@@ -1127,7 +1149,9 @@
         "milestone": "quick-151"
       },
       "category_raw": "Project Initialization",
-      "formal_models": []
+      "formal_models": [
+        ".planning/formal/alloy/baseline-requirements-filter.als"
+      ]
     },
     {
       "id": "INST-01",
@@ -1281,7 +1305,7 @@
     },
     {
       "id": "INST-11",
-      "text": "Bin scripts resolve ROOT from process.cwd() (the invoking project directory) rather than __dirname (the script install location). __dirname resolves to ~/.claude/ when installed, breaking all .formal/ and .planning/ path lookups. The --project-root= flag provides an explicit override but the default must be process.cwd().",
+      "text": "Bin scripts resolve ROOT from process.cwd() (the invoking project directory) rather than __dirname (the script install location). __dirname resolves to ~/.claude/ when installed, breaking all .planning/formal/ and .planning/ path lookups. The --project-root= flag provides an explicit override but the default must be process.cwd().",
       "category": "Installation & Toolchain",
       "phase": "v0.26-quick",
       "status": "Complete",
@@ -1289,11 +1313,14 @@
         "source_file": "manual",
         "milestone": "v0.26"
       },
-      "background": "When scripts are installed to ~/.claude/bin/, __dirname becomes ~/.claude/bin/ and path.resolve(__dirname, ..) gives ~/.claude/ — not the users project directory. This caused R->F, F->T, and C->F layer transitions to report UNKNOWN in cross-repo usage."
+      "background": "When scripts are installed to ~/.claude/bin/, __dirname becomes ~/.claude/bin/ and path.resolve(__dirname, ..) gives ~/.claude/ — not the users project directory. This caused R->F, F->T, and C->F layer transitions to report UNKNOWN in cross-repo usage.",
+      "formal_models": [
+        ".planning/formal/alloy/bin-path-resolution.als"
+      ]
     },
     {
       "id": "INST-12",
-      "text": "Baseline requirements are merged into .formal/requirements.json using an idempotent CLI tool that matches on text field to prevent duplicates and assigns next-available IDs per prefix namespace.",
+      "text": "Baseline requirements are merged into .planning/formal/requirements.json using an idempotent CLI tool that matches on text field to prevent duplicates and assigns next-available IDs per prefix namespace.",
       "category": "Installation & Toolchain",
       "phase": "unknown",
       "status": "Complete",
@@ -1301,7 +1328,10 @@
         "source_file": ".planning/quick/153-create-bin-sync-baseline-requirements-cj/153-PLAN.md",
         "milestone": "quick-153"
       },
-      "background": "After baseline requirements are defined per project profile, the system needs a way to sync them into the formal requirements envelope without manual copy-paste and without creating duplicate entries on re-run."
+      "background": "After baseline requirements are defined per project profile, the system needs a way to sync them into the formal requirements envelope without manual copy-paste and without creating duplicate entries on re-run.",
+      "formal_models": [
+        ".planning/formal/alloy/baseline-merge-idempotent.als"
+      ]
     },
     {
       "id": "KEY-01",
@@ -1535,7 +1565,7 @@
     },
     {
       "id": "MCPENV-01",
-      "text": "`.formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
+      "text": "`.planning/formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
       "category": "MCP & Agents",
       "phase": "v0.19-05",
       "status": "Complete",
@@ -1667,7 +1697,10 @@
       "provenance": {
         "source_file": ".planning/quick/149-add-vs-code-style-activity-bar-to-tui-wi/149-PLAN.md",
         "milestone": "quick-149"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/QGSDTUIModules.tla"
+      ]
     },
     {
       "id": "NAV-02",
@@ -1679,7 +1712,10 @@
       "provenance": {
         "source_file": ".planning/quick/156-add-sessions-module-to-nforma-with-bless/156-PLAN.md",
         "milestone": "quick-156"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/QGSDTUISessions.tla"
+      ]
     },
     {
       "id": "NAV-03",
@@ -1691,7 +1727,10 @@
       "provenance": {
         "source_file": ".planning/quick/161-replace-blessed-xterm-node-pty-with-pure/161-PLAN.md",
         "milestone": "quick-161"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/terminal-emulation-purity.als"
+      ]
     },
     {
       "id": "OBS-01",
@@ -1762,7 +1801,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/cli-exit-conventions.als"
+      ]
     },
     {
       "id": "OBS-06",
@@ -1774,7 +1816,10 @@
       "provenance": {
         "source_file": ".planning/quick/168-add-internal-work-detection-handler-to-o/168-PLAN.md",
         "milestone": "quick-168"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/observability-analysis.als"
+      ]
     },
     {
       "id": "OBS-07",
@@ -1786,7 +1831,10 @@
       "provenance": {
         "source_file": ".planning/quick/172-build-assumption-to-instrumentation-anal/172-PLAN.md",
         "milestone": "quick-172"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/observability-analysis.als"
+      ]
     },
     {
       "id": "OBS-08",
@@ -1798,7 +1846,10 @@
       "provenance": {
         "source_file": ".planning/quick/175-add-priority-tiering-and-actionable-filt/175-PLAN.md",
         "milestone": "quick-175"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/observability-analysis.als"
+      ]
     },
     {
       "id": "ORES-01",
@@ -1929,7 +1980,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.28"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/platform-install-compat.als"
+      ]
     },
     {
       "id": "PLCY-01",
@@ -2131,7 +2185,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.27"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/QGSDQuorum.tla"
+      ]
     },
     {
       "id": "QUORUM-05",
@@ -2143,7 +2200,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.27"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/tla/QGSDDeliberationRevision.tla"
+      ]
     },
     {
       "id": "RECV-01",
@@ -2214,7 +2274,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/reliability-patterns.als"
+      ]
     },
     {
       "id": "REL-02",
@@ -2225,7 +2288,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/reliability-patterns.als"
+      ]
     },
     {
       "id": "REN-03",
@@ -2357,7 +2423,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/security-scanning.als"
+      ]
     },
     {
       "id": "SEC-02",
@@ -2368,7 +2437,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/security-scanning.als"
+      ]
     },
     {
       "id": "SEC-03",
@@ -2379,7 +2451,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/security-scanning.als"
+      ]
     },
     {
       "id": "SEC-04",
@@ -2390,11 +2465,14 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/security-scanning.als"
+      ]
     },
     {
       "id": "SENS-01",
-      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
+      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.planning/formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2424,7 +2502,7 @@
     },
     {
       "id": "SENS-03",
-      "text": "`bin/sensitivity-report.cjs` generates `.formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
+      "text": "`bin/sensitivity-report.cjs` generates `.planning/formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2439,7 +2517,7 @@
     },
     {
       "id": "SIG-01",
-      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.formal/coverage-gaps.md`",
+      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.planning/formal/coverage-gaps.md`",
       "category": "Observability & Diagnostics",
       "phase": "v0.21-06",
       "status": "Complete",
@@ -2582,7 +2660,8 @@
         "milestone": "quick-143"
       },
       "formal_models": [
-        ".planning/formal/alloy/solve-consistency.als"
+        ".planning/formal/alloy/solve-consistency.als",
+        ".planning/formal/alloy/solver-doc-layers.als"
       ]
     },
     {
@@ -2595,19 +2674,25 @@
       "provenance": {
         "source_file": ".planning/quick/163-add-developer-doc-auto-generation-to-qgs/163-PLAN.md",
         "milestone": "quick-163"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solver-doc-layers.als"
+      ]
     },
     {
       "id": "SOLVE-05",
-      "text": "When qgsd:solve runs in another project, run-formal-verify.cjs discovers and verifies that project's formal models (from ROOT/.formal/{tla,alloy,prism,petri}/) rather than hardcoding QGSD-internal model names. All child runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, and variants) must honor --project-root for spec file resolution, JAR/tool lookup, and NDJSON output. QGSD-specific checks (XState machine extraction, provider roster constants) are gracefully skipped when their prerequisites do not exist in the target project.",
+      "text": "When qgsd:solve runs in another project, run-formal-verify.cjs discovers and verifies that project's formal models (from ROOT/.planning/formal/{tla,alloy,prism,petri}/) rather than hardcoding QGSD-internal model names. All child runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, and variants) must honor --project-root for spec file resolution, JAR/tool lookup, and NDJSON output. QGSD-specific checks (XState machine extraction, provider roster constants) are gracefully skipped when their prerequisites do not exist in the target project.",
       "category": "Formal Verification",
       "phase": "unknown",
       "status": "Complete",
-      "background": "The formal verification harness is hardcoded to QGSD's own models. When /qgsd:solve runs in another repo, it tries to verify QGSD-internal TLA+, Alloy, and PRISM models that don't exist there, producing 21+ false failures. The harness should be project-agnostic — discovering models from the target project's .formal/ directory.",
+      "background": "The formal verification harness is hardcoded to QGSD's own models. When /qgsd:solve runs in another repo, it tries to verify QGSD-internal TLA+, Alloy, and PRISM models that don't exist there, producing 21+ false failures. The harness should be project-agnostic — discovering models from the target project's .planning/formal/ directory.",
       "provenance": {
         "source_file": ".planning/quick/167-implement-solve-05-make-the-formal-verif/167-PLAN.md",
         "milestone": "quick-167"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solver-portability.als"
+      ]
     },
     {
       "id": "SOLVE-06",
@@ -2619,7 +2704,10 @@
       "provenance": {
         "source_file": ".planning/quick/176-add-reverse-traceability-discovery-c-r-t/176-PLAN.md",
         "milestone": "quick-176"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solver-portability.als"
+      ]
     },
     {
       "id": "SPEC-01",
@@ -2935,7 +3023,7 @@
     },
     {
       "id": "TRACE-01",
-      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.formal/traceability-matrix.json` with property-level links between requirements and formal properties",
+      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.planning/formal/traceability-matrix.json` with property-level links between requirements and formal properties",
       "category": "Formal Verification",
       "phase": "v0.25-03",
       "status": "Complete",
@@ -3019,7 +3107,7 @@
     },
     {
       "id": "TRIAGE-01",
-      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.formal/diff-report.md` (per-check delta from last run) and `.formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
+      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.planning/formal/diff-report.md` (per-check delta from last run) and `.planning/formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
       "phase": "v0.20-06",
       "status": "Complete",
@@ -3103,7 +3191,7 @@
     },
     {
       "id": "UPPAAL-01",
-      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
+      "text": "A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
       "category": "Formal Verification",
       "phase": "v0.20-07",
       "status": "Complete",
@@ -3227,7 +3315,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ux-feedback-safety.als"
+      ]
     },
     {
       "id": "UX-02",
@@ -3238,7 +3329,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ux-feedback-safety.als"
+      ]
     },
     {
       "id": "UX-03",
@@ -3249,7 +3343,10 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/ux-feedback-safety.als"
+      ]
     },
     {
       "id": "VERIFY-01",
@@ -3428,7 +3525,9 @@
         "milestone": "quick-152"
       },
       "category_raw": "Installer & CLI",
-      "formal_models": []
+      "formal_models": [
+        ".planning/formal/alloy/settings-hub.als"
+      ]
     }
   ]
 }

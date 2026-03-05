@@ -1,4 +1,4 @@
--- .formal/alloy/quorum-policy.als
+-- .planning/formal/alloy/quorum-policy.als
 -- Models quorum policy settings and active composition from config.
 -- Source: hooks/config-loader.js, bin/qgsd.cjs (policy screens)
 --

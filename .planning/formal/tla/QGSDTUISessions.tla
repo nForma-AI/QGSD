@@ -1,6 +1,6 @@
 ---- MODULE QGSDTUISessions ----
 (*
- * .formal/tla/QGSDTUISessions.tla
+ * .planning/formal/tla/QGSDTUISessions.tla
  * Handwritten — models the TUI Sessions module lifecycle.
  * Sessions can be created, connected, and terminated with full focus management.
  * Source: .planning/quick/156-add-sessions-module-to-nforma-with-bless/156-PLAN.md

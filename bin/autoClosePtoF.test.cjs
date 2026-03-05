@@ -19,7 +19,7 @@ describe('autoClosePtoF', () => {
   }
 
   function seedLedger(entries) {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(formalDir, { recursive: true });
     const ledgerPath = path.join(formalDir, 'debt.json');
     fs.writeFileSync(ledgerPath, JSON.stringify({
@@ -32,7 +32,7 @@ describe('autoClosePtoF', () => {
   }
 
   function seedSpec(relPath, content) {
-    const specDir = path.join(tmpDir, '.formal', 'spec');
+    const specDir = path.join(tmpDir, '.planning', 'formal', 'spec');
     const filePath = path.join(specDir, relPath);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, content);

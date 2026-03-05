@@ -1,6 +1,6 @@
 ---- MODULE QGSDSpecGeneration ----
 (*
- * .formal/tla/QGSDSpecGeneration.tla
+ * .planning/formal/tla/QGSDSpecGeneration.tla
  * Handwritten — models formal spec generation from plans and debug sessions.
  * Source: bin/generate-phase-spec.cjs, bin/propose-debug-invariants.cjs
  *

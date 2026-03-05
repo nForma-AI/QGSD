@@ -1,6 +1,6 @@
 ---
 name: qgsd:sync-baselines
-description: Sync baseline requirements into .formal/requirements.json (auto-detects project intent by default)
+description: Sync baseline requirements into .planning/formal/requirements.json (auto-detects project intent by default)
 argument-hint: [--profile <web|mobile|desktop|api|cli|library>]
 allowed-tools:
   - Read
@@ -9,7 +9,7 @@ allowed-tools:
 ---
 
 <objective>
-Sync baseline requirements from the QGSD defaults into `.formal/requirements.json`. Auto-detects project intent by default by scanning the repo for framework, deployment, and configuration signals. Supports explicit `--profile` override. Runs `node bin/sync-baseline-requirements.cjs`, displays results, and commits if requirements were added.
+Sync baseline requirements from the QGSD defaults into `.planning/formal/requirements.json`. Auto-detects project intent by default by scanning the repo for framework, deployment, and configuration signals. Supports explicit `--profile` override. Runs `node bin/sync-baseline-requirements.cjs`, displays results, and commits if requirements were added.
 </objective>
 
 <process>
@@ -97,7 +97,7 @@ fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
 If `added.length > 0`:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync N baseline requirements" --files .formal/requirements.json
+node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync N baseline requirements" --files .planning/formal/requirements.json
 ```
 
 Also commit config if intent was stored:
@@ -108,12 +108,12 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "chore(baseline): store detected pr
 
 Where N is the count of added requirements.
 
-If `added.length === 0`: display "No new requirements to sync -- .formal/requirements.json is up to date."
+If `added.length === 0`: display "No new requirements to sync -- .planning/formal/requirements.json is up to date."
 
 </process>
 
 <success_criteria>
 - [ ] sync-baseline-requirements.cjs ran without error
 - [ ] Results displayed with added/skipped counts
-- [ ] .formal/requirements.json committed if changed
+- [ ] .planning/formal/requirements.json committed if changed
 </success_criteria>

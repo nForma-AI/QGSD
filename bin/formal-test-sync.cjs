@@ -28,11 +28,11 @@ for (const arg of process.argv.slice(2)) {
 }
 
 const EXTRACT_ANNOTATIONS_SCRIPT = path.join(__dirname, 'extract-annotations.cjs');
-const CONSTANTS_MAPPING_PATH = path.join(ROOT, '.formal', 'constants-mapping.json');
-const REQUIREMENTS_PATH = path.join(ROOT, '.formal', 'requirements.json');
+const CONSTANTS_MAPPING_PATH = path.join(ROOT, '.planning', 'formal', 'constants-mapping.json');
+const REQUIREMENTS_PATH = path.join(ROOT, '.planning', 'formal', 'requirements.json');
 const CONFIG_LOADER_PATH = path.join(ROOT, 'hooks', 'config-loader.js');
-const REPORT_OUTPUT_PATH = path.join(ROOT, '.formal', 'formal-test-sync-report.json');
-const SIDECAR_OUTPUT_PATH = path.join(ROOT, '.formal', 'unit-test-coverage.json');
+const REPORT_OUTPUT_PATH = path.join(ROOT, '.planning', 'formal', 'formal-test-sync-report.json');
+const SIDECAR_OUTPUT_PATH = path.join(ROOT, '.planning', 'formal', 'unit-test-coverage.json');
 
 // ── CLI flags ────────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ const args = process.argv.slice(2);
 const reportOnly = args.includes('--report-only');
 const dryRun = args.includes('--dry-run');
 const jsonMode = args.includes('--json');
-let stubsDir = path.join(ROOT, '.formal', 'generated-stubs');
+let stubsDir = path.join(ROOT, '.planning', 'formal', 'generated-stubs');
 
 for (const arg of args) {
   if (arg.startsWith('--stubs-dir=')) {
@@ -103,7 +103,7 @@ function loadTestAnnotations() {
 }
 
 /**
- * Load requirements from .formal/requirements.json.
+ * Load requirements from .planning/formal/requirements.json.
  * Returns array of { id, ... } or [] on failure (fail-open).
  */
 function loadRequirements() {
@@ -121,7 +121,7 @@ function loadRequirements() {
 }
 
 /**
- * Load constants mapping from .formal/constants-mapping.json.
+ * Load constants mapping from .planning/formal/constants-mapping.json.
  * Returns array of { constant, source, config_path, formal_value, ... } or [] on failure.
  */
 function loadConstantsMapping() {
@@ -485,7 +485,7 @@ test('TODO: implement test for ${requirement_id} — ${property}', () => {
 // ── Output Writers ───────────────────────────────────────────────────────────
 
 /**
- * Write formal-test-sync report to .formal/formal-test-sync-report.json.
+ * Write formal-test-sync report to .planning/formal/formal-test-sync-report.json.
  */
 function writeReport(coverageReport, constantsValidation) {
   const report = {
@@ -498,7 +498,7 @@ function writeReport(coverageReport, constantsValidation) {
 }
 
 /**
- * Write unit-test-coverage sidecar to .formal/unit-test-coverage.json.
+ * Write unit-test-coverage sidecar to .planning/formal/unit-test-coverage.json.
  * Consumed by traceability matrix generator.
  */
 function writeSidecar(coverageReport) {

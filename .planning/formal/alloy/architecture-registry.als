@@ -1,7 +1,7 @@
--- .formal/alloy/architecture-registry.als
+-- .planning/formal/alloy/architecture-registry.als
 -- Models formal verification architecture: registry as source of truth,
 -- promotion, debug invariant acceptance, and meta-decisioning.
--- Source: .formal/model-registry.json, bin/promote-model.cjs, bin/accept-debug-invariant.cjs
+-- Source: .planning/formal/model-registry.json, bin/promote-model.cjs, bin/accept-debug-invariant.cjs
 --
 -- @requirement ARCH-01
 -- @requirement ARCH-02

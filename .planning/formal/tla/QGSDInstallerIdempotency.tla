@@ -1,6 +1,6 @@
 ---- MODULE QGSDInstallerIdempotency ----
 (*
- * .formal/tla/QGSDInstallerIdempotency.tla
+ * .planning/formal/tla/QGSDInstallerIdempotency.tla
  * Handwritten — models installer idempotency and config preservation.
  * Source: bin/install.js
  *

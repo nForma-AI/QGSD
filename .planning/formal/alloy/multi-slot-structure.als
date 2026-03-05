@@ -1,4 +1,4 @@
--- .formal/alloy/multi-slot-structure.als
+-- .planning/formal/alloy/multi-slot-structure.als
 -- Models multi-slot agent structure: families, naming, wizard support.
 -- Source: bin/qgsd.cjs wizard, ~/.claude.json mcpServers
 --

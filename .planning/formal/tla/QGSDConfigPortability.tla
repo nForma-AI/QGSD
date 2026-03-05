@@ -1,6 +1,6 @@
 ---- MODULE QGSDConfigPortability ----
 (*
- * .formal/tla/QGSDConfigPortability.tla
+ * .planning/formal/tla/QGSDConfigPortability.tla
  * Handwritten — models config export/import with backup and redaction.
  * Source: bin/qgsd.cjs (export/import wizard screens)
  *

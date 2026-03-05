@@ -6,9 +6,9 @@
  * Consumers: bin/qgsd.cjs (blessed TUI)
  *
  * Data sources (project-relative paths via process.cwd()):
- *   .formal/requirements.json    — 210 requirements in frozen envelope
- *   .formal/model-registry.json  — formal models with requirement links
- *   .formal/check-results.ndjson — check results (NDJSON)
+ *   .planning/formal/requirements.json    — 210 requirements in frozen envelope
+ *   .planning/formal/model-registry.json  — formal models with requirement links
+ *   .planning/formal/check-results.ndjson — check results (NDJSON)
  */
 
 const fs   = require('fs');
@@ -20,7 +20,7 @@ const { getRequirementIds } = require('./requirement-map.cjs');
 // ---------------------------------------------------------------------------
 
 function readRequirementsJson(basePath) {
-  const p = path.join(basePath || process.cwd(), '.formal', 'requirements.json');
+  const p = path.join(basePath || process.cwd(), '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(p)) return { envelope: null, requirements: [] };
   try {
     const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -37,7 +37,7 @@ function readRequirementsJson(basePath) {
 }
 
 function readModelRegistry(basePath) {
-  const p = path.join(basePath || process.cwd(), '.formal', 'model-registry.json');
+  const p = path.join(basePath || process.cwd(), '.planning', 'formal', 'model-registry.json');
   if (!fs.existsSync(p)) return { version: null, last_sync: null, models: {} };
   try {
     const raw = JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -52,7 +52,7 @@ function readModelRegistry(basePath) {
 }
 
 function readCheckResults(basePath) {
-  const p = path.join(basePath || process.cwd(), '.formal', 'check-results.ndjson');
+  const p = path.join(basePath || process.cwd(), '.planning', 'formal', 'check-results.ndjson');
   if (!fs.existsSync(p)) return [];
   try {
     return fs.readFileSync(p, 'utf8')

@@ -1,6 +1,6 @@
 ---- MODULE QGSDAgentLoop ----
 (*
- * .formal/tla/QGSDAgentLoop.tla
+ * .planning/formal/tla/QGSDAgentLoop.tla
  * Models the autonomous looping behavior required of QGSD subagents.
  * Source: qgsd-core/ skill agents
  *

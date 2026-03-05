@@ -53,13 +53,13 @@ test('parseRequirements extracts REQ-ID, text, and category from markdown bullet
 test('parseRequirements handles backticks and formatting in requirement text', function() {
   const markdown = `### Requirements Envelope — ENV
 
-- [ ] **ENV-01**: Requirements are aggregated into \`.formal/requirements.json\` with \`claude-haiku-4-5\` validation
+- [ ] **ENV-01**: Requirements are aggregated into \`.planning/formal/requirements.json\` with \`claude-haiku-4-5\` validation
 `;
 
   const result = parseRequirements(markdown);
 
   assert.strictEqual(result.length, 1, 'Should extract 1 requirement');
-  assert.ok(result[0].text.includes('.formal/requirements.json'), 'Should preserve backticks in text');
+  assert.ok(result[0].text.includes('.planning/formal/requirements.json'), 'Should preserve backticks in text');
   assert.ok(result[0].text.includes('claude-haiku-4-5'), 'Should preserve formatting in text');
 });
 

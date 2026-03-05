@@ -1,4 +1,4 @@
--- .formal/alloy/polyrepo-config.als
+-- .planning/formal/alloy/polyrepo-config.als
 -- Models the polyrepo configuration structure: global registry + per-repo markers.
 -- Source: bin/polyrepo.cjs
 --

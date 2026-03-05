@@ -1,6 +1,6 @@
 /**
  * Debt ledger write-through for /qgsd:observe
- * Upserts observations to .formal/debt.json by fingerprint using v0.27-01 functions
+ * Upserts observations to .planning/formal/debt.json by fingerprint using v0.27-01 functions
  * Then runs dedup engine and formal reference linker (v0.27-03)
  *
  * CRITICAL: Never compute fingerprints inline — always use imported v0.27-01 functions
@@ -20,7 +20,7 @@ const { linkFormalRefs } = require('./formal-ref-linker.cjs');
  * Pipeline: write/upsert -> dedup (fingerprint + Levenshtein) -> formal-ref link -> save
  *
  * @param {object[]} observations - Array of issue/drift objects from handlers (standard schema)
- * @param {string} [ledgerPath] - Path to debt.json (default: .formal/debt.json)
+ * @param {string} [ledgerPath] - Path to debt.json (default: .planning/formal/debt.json)
  * @param {object} [options] - Options for dedup and linking
  * @param {number} [options.threshold=0.85] - Levenshtein similarity threshold
  * @param {boolean} [options.verbose=false] - Include detailed merge/link logs
@@ -29,7 +29,7 @@ const { linkFormalRefs } = require('./formal-ref-linker.cjs');
  * @returns {object} { written, updated, errors, merged, linked, mergeLog?, linkLog? }
  */
 function writeObservationsToDebt(observations, ledgerPath, options = {}) {
-  const resolvedPath = ledgerPath || path.resolve(process.cwd(), '.formal/debt.json');
+  const resolvedPath = ledgerPath || path.resolve(process.cwd(), '.planning/formal/debt.json');
   const ledger = readDebtLedger(resolvedPath);
   const now = new Date().toISOString();
 

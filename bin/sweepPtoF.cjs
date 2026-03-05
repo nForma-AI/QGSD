@@ -22,8 +22,8 @@ const { extractFormalExpected } = require('./extractFormalExpected.cjs');
  */
 function sweepPtoF(options = {}) {
   const ROOT = options.root || process.cwd();
-  const ledgerPath = options.ledgerPath || path.join(ROOT, '.formal/debt.json');
-  const specDir = options.specDir || path.join(ROOT, '.formal/spec');
+  const ledgerPath = options.ledgerPath || path.join(ROOT, '.planning/formal/debt.json');
+  const specDir = options.specDir || path.join(ROOT, '.planning/formal/spec');
 
   // 1. Read ledger (fail-open: empty on error)
   const ledger = readDebtLedger(ledgerPath);

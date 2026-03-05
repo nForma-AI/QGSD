@@ -2163,8 +2163,8 @@ function cmdSummaryExtract(cwd, summaryPath, fields, raw) {
 // ─── Formal Summary ───────────────────────────────────────────────────────────
 
 function cmdFormalSummary(cwd, raw) {
-  const requirementsPath = path.join(cwd, '.formal', 'requirements.json');
-  const modelRegistryPath = path.join(cwd, '.formal', 'model-registry.json');
+  const requirementsPath = path.join(cwd, '.planning', 'formal', 'requirements.json');
+  const modelRegistryPath = path.join(cwd, '.planning', 'formal', 'model-registry.json');
 
   // Default response for missing files
   const defaultResponse = {

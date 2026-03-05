@@ -2,7 +2,7 @@
 'use strict';
 // bin/accept-debug-invariant.cjs
 // Debug invariant write path (ARCH-03): writes a PROPERTY definition directly
-// to a canonical .formal/tla/ spec with full provenance tracking.
+// to a canonical .planning/formal/tla/ spec with full provenance tracking.
 //
 // When /qgsd:debug accepts a new invariant candidate, this script writes it to
 // the canonical spec and records update_source=debug + session_id in model-registry.json.
@@ -20,12 +20,12 @@
 const fs   = require('fs');
 const path = require('path');
 
-// ── Find project root from target path (walk up to .formal/ ancestor) ─────────
+// ── Find project root from target path (walk up to .planning/formal/ ancestor) ─────────
 function findProjectRoot(startPath) {
   let current = path.dirname(startPath);
   while (true) {
-    if (path.basename(current) === '.formal') {
-      return path.dirname(current);
+    if (path.basename(current) === 'formal' && path.basename(path.dirname(current)) === '.planning') {
+      return path.dirname(path.dirname(current));
     }
     const parent = path.dirname(current);
     if (parent === current) break; // filesystem root
@@ -118,11 +118,11 @@ fs.renameSync(tmpSpec, resolvedTarget);
 
 // ── Update model-registry.json ─────────────────────────────────────────────
 const projectRoot  = findProjectRoot(resolvedTarget);
-const registryPath = path.join(projectRoot, '.formal', 'model-registry.json');
+const registryPath = path.join(projectRoot, '.planning', 'formal', 'model-registry.json');
 let newVersion = null;
 
 if (!fs.existsSync(registryPath)) {
-  process.stderr.write('[accept-debug-invariant] Warning: .formal/model-registry.json not found — skipping registry update\n');
+  process.stderr.write('[accept-debug-invariant] Warning: .planning/formal/model-registry.json not found — skipping registry update\n');
 } else {
   let registry;
   try {

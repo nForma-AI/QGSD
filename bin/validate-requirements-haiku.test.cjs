@@ -393,7 +393,7 @@ test('buildValidationPrompt preserves markdown in requirement text', () => {
   const reqs = [
     {
       id: 'ENV-01',
-      text: 'Must validate `.formal/requirements.json` with **strong** emphasis and [links](http://example.com)',
+      text: 'Must validate `.planning/formal/requirements.json` with **strong** emphasis and [links](http://example.com)',
       category: 'cat',
       phase: 'v0.22-01',
     },
@@ -401,6 +401,6 @@ test('buildValidationPrompt preserves markdown in requirement text', () => {
 
   const prompt = buildValidationPrompt(reqs);
 
-  assert.ok(prompt.includes('`.formal/requirements.json`'), 'Should preserve backticks');
+  assert.ok(prompt.includes('`.planning/formal/requirements.json`'), 'Should preserve backticks');
   assert.ok(prompt.includes('**strong**'), 'Should preserve bold');
 });

@@ -131,7 +131,7 @@ describe('formatPrioritySignal', () => {
 
 test('CLI prints signal to stdout', () => {
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
-  const formalDir  = path.join(tmpDir, '.formal');
+  const formalDir  = path.join(tmpDir, '.planning', 'formal');
   fs.mkdirSync(formalDir, { recursive: true });
   const realNdjsonPath = path.join(formalDir, 'check-results.ndjson');
 

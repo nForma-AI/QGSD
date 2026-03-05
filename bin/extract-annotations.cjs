@@ -26,7 +26,7 @@ for (const arg of process.argv.slice(2)) {
   }
 }
 
-const REGISTRY_PATH = path.join(ROOT, '.formal', 'model-registry.json');
+const REGISTRY_PATH = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
 
 // ── Parsing Logic ────────────────────────────────────────────────────────────
 
@@ -401,13 +401,13 @@ function getTestFiles() {
           testFiles.push('hooks/' + file);
         }
       }
-      // Scan generated-stubs in .formal/
-      const stubsPath = path.join(ROOT, '.formal', 'generated-stubs');
+      // Scan generated-stubs in .planning/formal/
+      const stubsPath = path.join(ROOT, '.planning', 'formal', 'generated-stubs');
       if (fs.existsSync(stubsPath)) {
         const stubFiles = fs.readdirSync(stubsPath);
         for (const file of stubFiles) {
           if (file.endsWith('.test.js')) {
-            testFiles.push('.formal/generated-stubs/' + file);
+            testFiles.push('.planning/formal/generated-stubs/' + file);
           }
         }
       }

@@ -1,6 +1,6 @@
 ---- MODULE QGSDSensitivity ----
 (*
- * .formal/tla/QGSDSensitivity.tla
+ * .planning/formal/tla/QGSDSensitivity.tla
  * Handwritten — models the sensitivity sweep pipeline.
  * Source: bin/run-sensitivity-sweep.cjs, bin/sensitivity-report.cjs,
  *         qgsd-core/workflows/plan-phase.md (step 8.3)

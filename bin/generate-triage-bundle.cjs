@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/generate-triage-bundle.cjs
-// Reads .formal/check-results.ndjson, writes .formal/diff-report.md and .formal/suspects.md.
+// Reads .planning/formal/check-results.ndjson, writes .planning/formal/diff-report.md and .planning/formal/suspects.md.
 // Requirements: TRIAGE-01
 
 const fs   = require('fs');
@@ -9,12 +9,12 @@ const path = require('path');
 const { parseNDJSON, groupByFormalism } = require('./verify-formal-results.cjs');
 
 /**
- * Parse .formal/check-results.ndjson relative to cwd.
+ * Parse .planning/formal/check-results.ndjson relative to cwd.
  * Uses parseNDJSON from verify-formal-results.cjs (fail-open, skips malformed lines).
  * @returns {object[]} — parsed result records (may be empty)
  */
 function parseCurrentNDJSON() {
-  const ndjsonPath = path.join(process.cwd(), '.formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(process.cwd(), '.planning', 'formal', 'check-results.ndjson');
   return parseNDJSON(ndjsonPath);
 }
 
@@ -47,7 +47,7 @@ function generateSuspects(results) {
  * @returns {Object.<string, string>} — map of check_id to result string
  */
 function loadPreviousSnapshot() {
-  const diffPath = path.join(process.cwd(), '.formal', 'diff-report.md');
+  const diffPath = path.join(process.cwd(), '.planning', 'formal', 'diff-report.md');
   let content;
   try {
     content = fs.readFileSync(diffPath, 'utf8');
@@ -268,8 +268,8 @@ function writeFileSafe(filePath, content) {
 
 /**
  * Main CLI entry point.
- * Reads .formal/check-results.ndjson relative to process.cwd().
- * Writes .formal/diff-report.md and .formal/suspects.md.
+ * Reads .planning/formal/check-results.ndjson relative to process.cwd().
+ * Writes .planning/formal/diff-report.md and .planning/formal/suspects.md.
  */
 function main() {
   const currentResults   = parseCurrentNDJSON();
@@ -278,7 +278,7 @@ function main() {
   const deltas           = computeDeltas(currentResults, previousSnapshot);
   const suspects         = generateSuspects(currentResults);
 
-  const formalDir = path.join(process.cwd(), '.formal');
+  const formalDir = path.join(process.cwd(), '.planning', 'formal');
   writeFileSafe(path.join(formalDir, 'diff-report.md'), formatDiffReport(currentResults, deltas, isFirstRun));
   writeFileSafe(path.join(formalDir, 'suspects.md'),    formatSuspectsReport(suspects));
 }

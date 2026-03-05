@@ -8,7 +8,7 @@
 const fs = require('fs');
 
 /**
- * Parse .formal/check-results.ndjson line-by-line.
+ * Parse .planning/formal/check-results.ndjson line-by-line.
  * Skips empty lines and malformed JSON (fail-open per PLAN-03 pattern).
  * @param {string} ndjsonPath — absolute or relative path to NDJSON file
  * @returns {object[]} — array of parsed result objects (may be empty)

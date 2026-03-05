@@ -1,6 +1,6 @@
--- .formal/alloy/provider-failure.als
+-- .planning/formal/alloy/provider-failure.als
 -- Models provider failure handling and calibration wiring.
--- Source: bin/providers.json, bin/run-prism.cjs, .formal/policy.yaml
+-- Source: bin/providers.json, bin/run-prism.cjs, .planning/formal/policy.yaml
 --
 -- @requirement FAIL-02
 -- @requirement CALIB-04

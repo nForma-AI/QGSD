@@ -14,14 +14,14 @@ const os = require('os');
 // Path to the tool under test
 const TOOL_PATH = path.join(__dirname, 'generate-triage-bundle.cjs');
 
-// Creates a temp dir, writes .formal/check-results.ndjson, optionally seeds diff-report.md with a previous snapshot,
+// Creates a temp dir, writes .planning/formal/check-results.ndjson, optionally seeds diff-report.md with a previous snapshot,
 // runs generate-triage-bundle.cjs with cwd=tmpDir, returns { tmpDir, result }
 function runTriage(ndjsonContent, prevDiffReportContent) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'triage-test-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
-  fs.writeFileSync(path.join(tmpDir, '.formal', 'check-results.ndjson'), ndjsonContent, 'utf8');
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
+  fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'check-results.ndjson'), ndjsonContent, 'utf8');
   if (prevDiffReportContent !== undefined) {
-    fs.writeFileSync(path.join(tmpDir, '.formal', 'diff-report.md'), prevDiffReportContent, 'utf8');
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'diff-report.md'), prevDiffReportContent, 'utf8');
   }
   const result = spawnSync(process.execPath, [TOOL_PATH], {
     cwd: tmpDir,
@@ -31,9 +31,9 @@ function runTriage(ndjsonContent, prevDiffReportContent) {
   return { tmpDir, result };
 }
 
-// Reads an output file from .formal/ in tmpDir; returns null if missing
+// Reads an output file from .planning/formal/ in tmpDir; returns null if missing
 function readOutput(tmpDir, filename) {
-  const p = path.join(tmpDir, '.formal', filename);
+  const p = path.join(tmpDir, '.planning', 'formal', filename);
   return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
 }
 

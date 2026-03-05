@@ -14,13 +14,13 @@ const os = require('os');
 // Path to the tool under test
 const TOOL_PATH = path.join(__dirname, 'promote-model.cjs');
 
-// Helper to create temporary test directory with .formal/ structure
+// Helper to create temporary test directory with .planning/formal/ structure
 function createTempFormalDir(files = {}) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'promote-test-'));
-  fs.mkdirSync(path.join(tmpDir, '.formal'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, '.planning', 'formal'), { recursive: true });
 
   for (const [subdir, subfiles] of Object.entries(files)) {
-    const dirPath = path.join(tmpDir, '.formal', subdir);
+    const dirPath = path.join(tmpDir, '.planning', 'formal', subdir);
     fs.mkdirSync(dirPath, { recursive: true });
     for (const [filename, content] of Object.entries(subfiles)) {
       fs.writeFileSync(path.join(dirPath, filename), content, 'utf8');
@@ -54,8 +54,8 @@ test('merges single PROPERTY into target spec', async () => {
 
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     'v0.21-01-test'
   );
 
@@ -82,8 +82,8 @@ PROPERTY NewInvariant3 == 1 = 1
 
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     'v0.21-01-test'
   );
 
@@ -100,8 +100,8 @@ test('rejects duplicate PROPERTY name', async () => {
 
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     'v0.21-01-test'
   );
 
@@ -122,13 +122,13 @@ test('target spec is atomically renamed (tmp file removed)', async () => {
 
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     'v0.21-01-test'
   );
 
   // When implemented, we would:
-  // 1. List files in .formal/tla/
+  // 1. List files in .planning/formal/tla/
   // 2. Assert no *.tmp.* files remain
 
   console.log(`Test ran, exit code: ${result.status}`);
@@ -159,15 +159,15 @@ test('registry version increments after promotion', async () => {
   };
 
   fs.writeFileSync(
-    path.join(tmpDir, '.formal', 'model-registry.json'),
+    path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
     JSON.stringify(initialRegistry, null, 2),
     'utf8'
   );
 
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     'v0.21-01-test'
   );
 
@@ -203,7 +203,7 @@ test('source_id is recorded in registry', async () => {
   };
 
   fs.writeFileSync(
-    path.join(tmpDir, '.formal', 'model-registry.json'),
+    path.join(tmpDir, '.planning', 'formal', 'model-registry.json'),
     JSON.stringify(initialRegistry, null, 2),
     'utf8'
   );
@@ -211,8 +211,8 @@ test('source_id is recorded in registry', async () => {
   const testSourceId = 'v0.21-01-promote-test';
   const result = runPromoteTool(
     tmpDir,
-    '.formal/tla/proposed-changes.tla',
-    '.formal/tla/target.tla',
+    '.planning/formal/tla/proposed-changes.tla',
+    '.planning/formal/tla/target.tla',
     testSourceId
   );
 

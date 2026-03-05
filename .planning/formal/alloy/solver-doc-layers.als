@@ -1,4 +1,4 @@
--- .formal/alloy/solver-doc-layers.als
+-- .planning/formal/alloy/solver-doc-layers.als
 -- Models the solver's documentation layer checks (R->D and D->C).
 -- Source: bin/qgsd-solve.cjs
 --

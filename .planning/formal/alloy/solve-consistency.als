@@ -1,4 +1,4 @@
--- .formal/alloy/solve-consistency.als
+-- .planning/formal/alloy/solve-consistency.als
 -- Models the consistency solver's layer transition sweep structure.
 -- Source: bin/qgsd-solve.cjs, commands/qgsd/solve.md
 --

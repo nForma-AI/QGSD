@@ -76,7 +76,7 @@ test("result is 'pass' when all configs have fairness declarations", () => {
       'PROPERTY EventualConsensus\n'
     );
 
-    // Create .formal/spec/test/invariants.md with matching ## EventualConsensus
+    // Create .planning/formal/spec/test/invariants.md with matching ## EventualConsensus
     const specSubdir = path.join(formalSpecDir, 'test');
     fs.mkdirSync(specSubdir, { recursive: true });
     fs.writeFileSync(
@@ -125,7 +125,7 @@ test("result is 'inconclusive' when any config lacks fairness declaration", () =
       'PROPERTY EventualConsensus\n'
     );
 
-    // Create .formal/spec/test/invariants.md WITHOUT EventualConsensus
+    // Create .planning/formal/spec/test/invariants.md WITHOUT EventualConsensus
     const specSubdir = path.join(formalSpecDir, 'test');
     fs.mkdirSync(specSubdir, { recursive: true });
     fs.writeFileSync(
@@ -186,7 +186,7 @@ test('dynamically discovers MC*.cfg files (rejects hardcoded list)', () => {
       'INIT Init\n'  // No PROPERTY line
     );
 
-    // Create .formal/spec dir without invariants.md files
+    // Create .planning/formal/spec dir without invariants.md files
     fs.mkdirSync(formalSpecDir, { recursive: true });
 
     const result = spawnSync(process.execPath, [SCRIPT], {

@@ -1,4 +1,4 @@
--- .formal/alloy/codebase-arch-constraints.als
+-- .planning/formal/alloy/codebase-arch-constraints.als
 -- Models codebase architecture constraints.
 -- Source: package.json, bin/gsd-tools.cjs, ~/.claude.json
 --

@@ -58,8 +58,8 @@ function isInScope(filePath) {
   // Exclude test files
   if (/\.test\.(js|cjs|mjs)$/.test(normalized)) return false;
 
-  // Exclude node_modules, docs, examples, .formal
-  if (/node_modules|\/docs\/|\/examples\/|\.formal/.test(normalized)) return false;
+  // Exclude node_modules, docs, examples, .planning/formal
+  if (/node_modules|\/docs\/|\/examples\/|\.planning\/formal/.test(normalized)) return false;
 
   return true;
 }

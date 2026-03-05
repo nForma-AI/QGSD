@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-oauth-rotation-prism.cjs
-// Invokes PRISM model checker against .formal/prism/oauth-rotation.pm.
+// Invokes PRISM model checker against .planning/formal/prism/oauth-rotation.pm.
 // Requirements: PRM-AM-01
 //
 // Usage:
@@ -10,7 +10,7 @@
 //   node bin/run-oauth-rotation-prism.cjs -const p_fail=0.15        # override failure rate
 //   node bin/run-oauth-rotation-prism.cjs -const p_fail=0.15 -const max_retries=5
 //
-// Properties (.formal/prism/oauth-rotation.props):
+// Properties (.planning/formal/prism/oauth-rotation.props):
 //   P=? [ F s=1 ]              — probability of eventual success within max_retries
 //   P=? [ F s=0 ]              — probability all attempts fail (complement)
 //   R{"rotations"}=? [ F s<=1] — expected number of rotation attempts before outcome
@@ -44,7 +44,7 @@ if (prismBin !== 'prism' && !fs.existsSync(prismBin)) {
 }
 
 // ── Locate model file ────────────────────────────────────────────────────────
-const modelPath = path.join(__dirname, '..', '.formal', 'prism', 'oauth-rotation.pm');
+const modelPath = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.pm');
 if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-oauth-rotation-prism] Model file not found: ' + modelPath + '\n'
@@ -77,11 +77,11 @@ if (fs.existsSync(providersPath)) {
 
 // ── Build argument list ──────────────────────────────────────────────────────
 // Extra args passed to this script are forwarded to PRISM after the model path.
-// If .formal/prism/oauth-rotation.props exists, pass it as the properties file.
+// If .planning/formal/prism/oauth-rotation.props exists, pass it as the properties file.
 // Otherwise fall back to a single inline property.
 const extraArgs  = process.argv.slice(2);
 const hasPf      = extraArgs.some(a => a === '-pf' || a === '-prop');
-const propsFile  = path.join(__dirname, '..', '.formal', 'prism', 'oauth-rotation.props');
+const propsFile  = path.join(__dirname, '..', '.planning', 'formal', 'prism', 'oauth-rotation.props');
 const hasProps   = !hasPf && fs.existsSync(propsFile);
 // Inject live max_retries unless the caller already overrides it
 const callerOverridesRetries = extraArgs.some(

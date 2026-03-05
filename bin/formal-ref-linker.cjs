@@ -4,7 +4,7 @@
  *
  * - manual: existing formal_ref set by human (never overwritten)
  * - auto-detect: keyword matching against requirements.json
- * - spec-inferred: module name matching against .formal/spec/ directories
+ * - spec-inferred: module name matching against .planning/formal/spec/ directories
  * - null: no match found
  */
 
@@ -41,12 +41,12 @@ function keywordScore(tokensA, tokensB) {
  * @param {object[]} entries - Array of debt entries
  * @param {object} [options] - Options
  * @param {string} [options.requirementsPath] - Path to requirements.json
- * @param {string} [options.specDir] - Path to .formal/spec/ directory
+ * @param {string} [options.specDir] - Path to .planning/formal/spec/ directory
  * @returns {{ entries: object[], linkedCount: number, linkLog: object[] }}
  */
 function linkFormalRefs(entries, options = {}) {
-  const requirementsPath = options.requirementsPath || path.resolve(process.cwd(), '.formal/requirements.json');
-  const specDir = options.specDir || path.resolve(process.cwd(), '.formal/spec');
+  const requirementsPath = options.requirementsPath || path.resolve(process.cwd(), '.planning/formal/requirements.json');
+  const specDir = options.specDir || path.resolve(process.cwd(), '.planning/formal/spec');
 
   const linkLog = [];
   let linkedCount = 0;

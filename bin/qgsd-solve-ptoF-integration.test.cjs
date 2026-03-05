@@ -14,7 +14,7 @@ describe('P->F Integration Tests', () => {
   let tmpDir;
 
   function seedLedger(entries) {
-    const formalDir = path.join(tmpDir, '.formal');
+    const formalDir = path.join(tmpDir, '.planning', 'formal');
     fs.mkdirSync(formalDir, { recursive: true });
     const ledgerPath = path.join(formalDir, 'debt.json');
     fs.writeFileSync(ledgerPath, JSON.stringify({
@@ -27,7 +27,7 @@ describe('P->F Integration Tests', () => {
   }
 
   function seedSpec(relPath, content) {
-    const specDir = path.join(tmpDir, '.formal', 'spec');
+    const specDir = path.join(tmpDir, '.planning', 'formal', 'spec');
     const filePath = path.join(specDir, relPath);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, content);
@@ -60,7 +60,7 @@ describe('P->F Integration Tests', () => {
     ]);
 
     // Seed a requirements file for the linker (won't affect much here)
-    fs.writeFileSync(path.join(tmpDir, '.formal', 'requirements.json'), JSON.stringify([]));
+    fs.writeFileSync(path.join(tmpDir, '.planning', 'formal', 'requirements.json'), JSON.stringify([]));
 
     const result = sweepPtoF({ root: tmpDir });
 

@@ -1,4 +1,4 @@
--- .formal/alloy/platform-install-compat.als
+-- .planning/formal/alloy/platform-install-compat.als
 -- Handwritten — not generated from XState.
 -- Source: bin/install.js
 --

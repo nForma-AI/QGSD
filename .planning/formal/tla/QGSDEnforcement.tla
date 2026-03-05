@@ -1,6 +1,6 @@
 ---- MODULE QGSDEnforcement ----
 (*
- * .formal/tla/QGSDEnforcement.tla
+ * .planning/formal/tla/QGSDEnforcement.tla
  * Handwritten — models circuit breaker enforcement in PreToolUse hook.
  * Source: hooks/qgsd-circuit-breaker.js
  *

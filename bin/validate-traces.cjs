@@ -5,7 +5,7 @@
 // and reports a deviation score (% of traces that are valid XState executions).
 //
 // MCPENV-03: also validates MCP interaction metadata for mcp_call events.
-// Schema: .formal/trace/trace.schema.json
+// Schema: .planning/formal/trace/trace.schema.json
 //
 // Exit code 0: no divergences found (or log file missing)
 // Exit code 1: one or more divergences found
@@ -44,7 +44,7 @@ function readScoreboardMeta() {
 }
 
 // Validates MCP-specific metadata fields for mcp_call events (MCPENV-03).
-// Schema: .formal/trace/trace.schema.json
+// Schema: .planning/formal/trace/trace.schema.json
 // Returns true if valid, or an array of error strings if invalid.
 // Non-mcp_call events are always valid (returns true immediately).
 function validateMCPMetadata(event) {
@@ -373,13 +373,13 @@ if (require.main === module) {
   const score = ((valid / total) * 100).toFixed(1);
   const observationWindow = buildObservationWindow(scoreboardMeta, total);
 
-  // Export first 10 state_mismatch TTrace records to .formal/.divergences.json (DIAG-01)
+  // Export first 10 state_mismatch TTrace records to .planning/formal/.divergences.json (DIAG-01)
   // Atomic write (tmp + rename) consistent with project pattern.
   const ttraceDivergences = divergences
     .filter(d => d.divergenceType === 'state_mismatch')
     .slice(0, 10);
   if (ttraceDivergences.length > 0) {
-    const divergencesPath = path.join(process.cwd(), '.formal', '.divergences.json');
+    const divergencesPath = path.join(process.cwd(), '.planning', 'formal', '.divergences.json');
     const tmpPath = divergencesPath + '.tmp.' + Date.now();
     try {
       fs.writeFileSync(tmpPath, JSON.stringify(ttraceDivergences, null, 2), 'utf8');

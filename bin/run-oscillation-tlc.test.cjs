@@ -32,7 +32,7 @@ test('exits non-zero and prints download URL when tla2tools.jar is not found', (
   if (!javaHome) { return; }  // test is skipped, not failed
   // If the JAR is present on disk (gitignored but downloaded), skip — cannot test absence.
   const fs = require('fs');
-  const jarPath = require('path').join(__dirname, '..', '.formal', 'tla', 'tla2tools.jar');
+  const jarPath = require('path').join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
   if (fs.existsSync(jarPath)) { return; }  // test is skipped, not failed
   const result = spawnSync(process.execPath, [RUN_OSCILLATION_TLC], {
     encoding: 'utf8',

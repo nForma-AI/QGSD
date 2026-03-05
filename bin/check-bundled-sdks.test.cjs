@@ -135,8 +135,8 @@ describe('scope filtering', () => {
     assert.equal(isInScope('docs/example.js'), false);
   });
 
-  it('excludes .formal/', () => {
-    assert.equal(isInScope('.formal/some-tool.cjs'), false);
+  it('excludes .planning/formal/', () => {
+    assert.equal(isInScope('.planning/formal/some-tool.cjs'), false);
   });
 });
 

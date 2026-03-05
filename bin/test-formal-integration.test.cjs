@@ -259,20 +259,20 @@ describe('IVL-03: all TLA+ specs pass TLC clean', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 describe('IVL-02: full chain validation', () => {
   test('IVL-02 chain: plan-phase keyword scan produces FORMAL_SPEC_CONTEXT structure', () => {
-    // Verify .formal/spec/ directory has all expected modules with invariants.md
-    const specDir = path.join(ROOT, '.formal', 'spec');
-    assert.ok(fs.existsSync(specDir), '.formal/spec/ directory must exist');
+    // Verify .planning/formal/spec/ directory has all expected modules with invariants.md
+    const specDir = path.join(ROOT, '.planning', 'formal', 'spec');
+    assert.ok(fs.existsSync(specDir), '.planning/formal/spec/ directory must exist');
 
     const expectedModules = ['quorum', 'breaker', 'deliberation'];
     for (const mod of expectedModules) {
       const invPath = path.join(specDir, mod, 'invariants.md');
-      assert.ok(fs.existsSync(invPath), `.formal/spec/${mod}/invariants.md must exist`);
+      assert.ok(fs.existsSync(invPath), `.planning/formal/spec/${mod}/invariants.md must exist`);
       const content = fs.readFileSync(invPath, 'utf8');
-      assert.ok(content.length > 0, `.formal/spec/${mod}/invariants.md must be non-empty`);
+      assert.ok(content.length > 0, `.planning/formal/spec/${mod}/invariants.md must be non-empty`);
       // invariants.md should contain property declarations
       assert.ok(
         content.includes('Property:') || content.includes('Config line:') || content.includes('##'),
-        `.formal/spec/${mod}/invariants.md should contain property structure markers`
+        `.planning/formal/spec/${mod}/invariants.md should contain property structure markers`
       );
     }
   });
@@ -367,8 +367,8 @@ describe('IVL-02: full chain validation', () => {
     const { groupByFormalism } = require('./verify-formal-results.cjs');
 
     // Step 1: Verify spec files exist (plan-phase scan source)
-    const invPath = path.join(ROOT, '.formal', 'spec', 'quorum', 'invariants.md');
-    assert.ok(fs.existsSync(invPath), '.formal/spec/quorum/invariants.md must exist');
+    const invPath = path.join(ROOT, '.planning', 'formal', 'spec', 'quorum', 'invariants.md');
+    assert.ok(fs.existsSync(invPath), '.planning/formal/spec/quorum/invariants.md must exist');
 
     // Step 2: Invoke run-formal-check (execute-phase equivalent)
     const result = spawnSync(process.execPath, [RUN_FORMAL_CHECK, '--modules=quorum'], {

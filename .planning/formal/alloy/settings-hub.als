@@ -1,4 +1,4 @@
--- .formal/alloy/settings-hub.als
+-- .planning/formal/alloy/settings-hub.als
 -- Models the /qgsd:settings guided project manager hub with state-aware dashboard.
 -- Source: commands/qgsd/settings.md
 --

@@ -1,4 +1,4 @@
-// .formal/prism/observability-delivery.pm
+// .planning/formal/prism/observability-delivery.pm
 // Models quorum observability: telemetry, delivery rate, flakiness scoring.
 // Source: quorum-scoreboard.json, hooks/qgsd-prompt.js
 //
@@ -12,7 +12,7 @@
 // Tracks delivery rate (3/3 vs degraded) and per-slot flakiness.
 //
 // Usage:
-//   prism .formal/prism/observability-delivery.pm .formal/prism/observability-delivery.props
+//   prism .planning/formal/prism/observability-delivery.pm .planning/formal/prism/observability-delivery.props
 //     -const slot1_reliability=0.90 -const slot2_reliability=0.85 -const slot3_reliability=0.80
 
 dtmc

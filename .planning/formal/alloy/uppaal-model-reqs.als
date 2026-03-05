@@ -1,6 +1,6 @@
--- .formal/alloy/uppaal-model-reqs.als
+-- .planning/formal/alloy/uppaal-model-reqs.als
 -- Models the structural requirements for the UPPAAL timed automaton.
--- Source: bin/run-uppaal.cjs, .formal/uppaal/quorum-races.xml
+-- Source: bin/run-uppaal.cjs, .planning/formal/uppaal/quorum-races.xml
 --
 -- @requirement UPPAAL-01
 -- @requirement UPPAAL-02

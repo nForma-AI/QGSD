@@ -13,7 +13,7 @@ function _syncFromBaseline(baseline, projectRoot) {
   const root = projectRoot || process.cwd();
 
   // 2. Read existing requirements
-  const reqPath = path.join(root, '.formal', 'requirements.json');
+  const reqPath = path.join(root, '.planning', 'formal', 'requirements.json');
   let rawEnvelope;
   let requirements;
 
@@ -27,7 +27,7 @@ function _syncFromBaseline(baseline, projectRoot) {
     }
   } else {
     // Create .formal directory if needed
-    fs.mkdirSync(path.join(root, '.formal'), { recursive: true });
+    fs.mkdirSync(path.join(root, '.planning', 'formal'), { recursive: true });
     rawEnvelope = {};
     requirements = [];
   }
@@ -128,7 +128,7 @@ function _syncFromBaseline(baseline, projectRoot) {
 }
 
 /**
- * Merge baseline requirements into .formal/requirements.json.
+ * Merge baseline requirements into .planning/formal/requirements.json.
  * Idempotent: matches on exact `text` field to skip duplicates.
  * Assigns next-available IDs per category prefix for new entries.
  *
@@ -153,7 +153,7 @@ function syncBaselineRequirements(profile, projectRoot) {
 }
 
 /**
- * Merge intent-based baseline requirements into .formal/requirements.json.
+ * Merge intent-based baseline requirements into .planning/formal/requirements.json.
  * Idempotent: matches on exact `text` field to skip duplicates.
  * Assigns next-available IDs per category prefix for new entries.
  *

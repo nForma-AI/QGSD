@@ -107,15 +107,15 @@ function pickPrismArgs(modelName) {
 }
 
 // ── Dynamic model discovery ───────────────────────────────────────────────────
-// Scans ROOT/.formal/{tla,alloy,prism,petri,uppaal}/ and builds step entries.
-// Also reads ROOT/.formal/model-registry.json for:
+// Scans ROOT/.planning/formal/{tla,alloy,prism,petri,uppaal}/ and builds step entries.
+// Also reads ROOT/.planning/formal/model-registry.json for:
 //   - search_dirs: additional directories to scan for formal model files
 //   - models[].check.command: custom shell commands producing type:shell steps
 function discoverModels(root) {
   const discovered = [];
-  const formalDir = path.join(root, '.formal');
+  const formalDir = path.join(root, '.planning', 'formal');
 
-  // TLA+: scan for *.cfg files in .formal/tla/
+  // TLA+: scan for *.cfg files in .planning/formal/tla/
   const tlaDir = path.join(formalDir, 'tla');
   if (fs.existsSync(tlaDir)) {
     const cfgFiles = fs.readdirSync(tlaDir).filter(f => f.endsWith('.cfg'));
@@ -133,7 +133,7 @@ function discoverModels(root) {
     }
   }
 
-  // Alloy: scan for *.als files in .formal/alloy/ (exclude subdirectories, JARs)
+  // Alloy: scan for *.als files in .planning/formal/alloy/ (exclude subdirectories, JARs)
   const alloyDir = path.join(formalDir, 'alloy');
   if (fs.existsSync(alloyDir)) {
     const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
@@ -150,7 +150,7 @@ function discoverModels(root) {
     }
   }
 
-  // PRISM: scan for *.pm files in .formal/prism/
+  // PRISM: scan for *.pm files in .planning/formal/prism/
   const prismDir = path.join(formalDir, 'prism');
   if (fs.existsSync(prismDir)) {
     const pmFiles = fs.readdirSync(prismDir).filter(f => f.endsWith('.pm'));
@@ -167,7 +167,7 @@ function discoverModels(root) {
     }
   }
 
-  // Petri: scan for *.dot files in .formal/petri/
+  // Petri: scan for *.dot files in .planning/formal/petri/
   const petriDir = path.join(formalDir, 'petri');
   if (fs.existsSync(petriDir)) {
     const dotFiles = fs.readdirSync(petriDir).filter(f => f.endsWith('.dot'));
@@ -184,7 +184,7 @@ function discoverModels(root) {
     }
   }
 
-  // UPPAAL: scan for *.xml files in .formal/uppaal/
+  // UPPAAL: scan for *.xml files in .planning/formal/uppaal/
   const uppaalDir = path.join(formalDir, 'uppaal');
   if (fs.existsSync(uppaalDir)) {
     const xmlFiles = fs.readdirSync(uppaalDir).filter(f => f.endsWith('.xml'));
@@ -205,7 +205,7 @@ function discoverModels(root) {
   // Read model-registry.json for search_dirs and check.command entries.
   // Fail-open: if missing or malformed, log warning and continue.
   let registry = null;
-  const registryPath = path.join(root, '.formal', 'model-registry.json');
+  const registryPath = path.join(root, '.planning', 'formal', 'model-registry.json');
   try {
     const raw = fs.readFileSync(registryPath, 'utf8');
     registry = JSON.parse(raw);
@@ -317,18 +317,18 @@ function discoverModels(root) {
 // ── Step registry ─────────────────────────────────────────────────────────────
 //
 // type: 'node'     — run  node bin/<script> <args...>
-// type: 'wasm-dot' — render .formal/petri/<dot> → .formal/petri/<svg>
+// type: 'wasm-dot' — render .planning/formal/petri/<dot> → .planning/formal/petri/<svg>
 //                    via @hpcc-js/wasm-graphviz (async)
 //
 // STATIC_STEPS: always run (generate, CI enforcement, triage, traceability).
-// Dynamic steps are discovered from ROOT/.formal/{tla,alloy,prism,petri,uppaal}/.
+// Dynamic steps are discovered from ROOT/.planning/formal/{tla,alloy,prism,petri,uppaal}/.
 const STATIC_STEPS = [
   // ─ Source extraction — must run first so generated specs are fresh ──────────
   {
     tool: 'generate', id: 'generate:tla-from-xstate',
     label: 'Generate TLA+ spec (QGSDQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
     type: 'node', script: 'xstate-to-tla.cjs',
-    args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=.formal/tla/guards/qgsd-workflow.json'],
+    args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=.planning/formal/tla/guards/qgsd-workflow.json'],
   },
   {
     tool: 'generate', id: 'generate:alloy-prism-specs',
@@ -394,7 +394,7 @@ const STATIC_STEPS = [
   },
 ];
 
-// Discover dynamic model steps from ROOT/.formal/
+// Discover dynamic model steps from ROOT/.planning/formal/
 const dynamicSteps = discoverModels(ROOT);
 
 // Deduplicate: if a dynamic step has the same id as a static step, skip it
@@ -480,7 +480,7 @@ function runShellStep(step) {
 }
 
 async function runWasmDotStep(step) {
-  const petriDir = path.join(ROOT, '.formal', 'petri');
+  const petriDir = path.join(ROOT, '.planning', 'formal', 'petri');
   const dotPath  = path.join(petriDir, step.dot);
   const svgPath  = path.join(petriDir, step.svg);
 
@@ -543,7 +543,7 @@ async function runOnce() {
   // Reset results array so watch-mode re-runs start clean
   results.length = 0;
   // Truncate NDJSON file — fresh run (UNIF-02)
-  const ndjsonPath = path.join(ROOT, '.formal', 'check-results.ndjson');
+  const ndjsonPath = path.join(ROOT, '.planning', 'formal', 'check-results.ndjson');
   fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');
