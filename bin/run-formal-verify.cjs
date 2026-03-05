@@ -27,6 +27,8 @@
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
+//   node bin/run-formal-verify.cjs --concurrent       # run tool groups in parallel (old behavior)
+//   QGSD_FORMAL_CONCURRENT=1 node bin/run-formal-verify.cjs  # same via env var
 //   node bin/run-formal-verify.cjs --only=generate    # source extraction only (2 steps)
 //   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (10 steps)
 //   node bin/run-formal-verify.cjs --only=alloy       # Alloy only (8 steps)
@@ -410,6 +412,7 @@ process.stdout.write(TAG + ' Discovered models: ' + uniqueDynamicSteps.length + 
 const argv    = process.argv.slice(2);
 const onlyArg = argv.find(a => a.startsWith('--only='));
 const only    = onlyArg ? onlyArg.split('=')[1] : null;
+const concurrent = argv.includes('--concurrent') || process.env.QGSD_FORMAL_CONCURRENT === '1';
 
 const steps = only
   ? STEPS.filter(s => s.tool === only || s.id === only)
@@ -566,14 +569,20 @@ async function runOnce() {
     await runGroup(generateSteps);
   }
 
-  // ── Phase 2: Tool groups (concurrent) ─────────────────────────────────────
+  // ── Phase 2: Tool groups (sequential by default, --concurrent for parallel) ─
   if (toolSteps.length > 0) {
     const toolGroupNames = [...new Set(toolSteps.map(s => s.tool))];
-    process.stdout.write(TAG + ' Phase 2: Running tool groups concurrently: ' + toolGroupNames.join(', ') + '\n\n');
-
-    await Promise.all(
-      toolGroupNames.map(tool => runGroup(toolSteps.filter(s => s.tool === tool)))
-    );
+    if (concurrent) {
+      process.stdout.write(TAG + ' Phase 2: Running tool groups concurrently: ' + toolGroupNames.join(', ') + '\n\n');
+      await Promise.all(
+        toolGroupNames.map(tool => runGroup(toolSteps.filter(s => s.tool === tool)))
+      );
+    } else {
+      process.stdout.write(TAG + ' Phase 2: Running tool groups sequentially: ' + toolGroupNames.join(', ') + '\n\n');
+      for (const tool of toolGroupNames) {
+        await runGroup(toolSteps.filter(s => s.tool === tool));
+      }
+    }
   }
 
   // ── Phase 3: Post-processing (needs fully populated check-results.ndjson) ──
@@ -641,7 +650,7 @@ if (watchArg) {
   process.stdout.write(TAG + ' Watch mode enabled\n');
   process.stdout.write(TAG + ' Watching: ' + path.join(machineDir, machineName) + '\n');
   process.stdout.write(TAG + ' Press Ctrl+C to stop.\n');
-  process.stdout.write(TAG + ' Tip: use --only=generate for faster feedback.\n');
+  process.stdout.write(TAG + ' Tip: use --only=generate for faster feedback, --concurrent for parallel tool groups.\n');
   process.stdout.write(TAG + ' ' + HR + '\n\n');
 
   // Existence check — fail fast if invoked from wrong directory
