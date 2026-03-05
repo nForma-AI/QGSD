@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 176: Add reverse traceability discovery (C→R, T→R, D→R)
+Last activity: 2026-03-05 - Completed quick task 177: Add VERIFY-03 tests and clean install Dockerfile
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -84,6 +84,7 @@ Resume file: None
 | 174 | Harden test runner against glob failures, timeout hangs, and missing test-file mappings | 2026-03-05 | 5057f922 | Verified | [174-harden-test-runner-against-glob-failures](./quick/174-harden-test-runner-against-glob-failures/) |
 | 175 | Add priority tiering and actionable filtering to analyze-assumptions | 2026-03-05 | ecf297f4 | Verified | [175-add-priority-tiering-and-actionable-filt](./quick/175-add-priority-tiering-and-actionable-filt/) |
 | 176 | Add reverse traceability discovery (C→R, T→R, D→R) | 2026-03-05 | b9b65c8d | Verified | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
+| 177 | Add VERIFY-03 tests (static + dynamic) and clean install Dockerfile | 2026-03-05 | bea9431a | Pending | [177-add-both-test-approaches-for-verify-03-s](./quick/177-add-both-test-approaches-for-verify-03-s/) |
 
 ## Recent Accomplishments
 
