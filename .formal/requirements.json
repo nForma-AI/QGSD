@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-05T08:19:32.010Z",
-  "content_hash": "0643639c78b61631",
-  "frozen_at": "2026-03-05T08:19:32.011Z",
+  "aggregated_at": "2026-03-05T08:31:07.982Z",
+  "content_hash": "2fdb049fdf06295c3b2e9590f43f9c25c14dcecf6fb133d000446d91c91e1b6a",
+  "frozen_at": "2026-03-05T08:31:07.983Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -370,6 +370,18 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
+      }
+    },
+    {
+      "id": "CI-04",
+      "text": "Full-suite test fallback enumerates files via find (never raw globs), enforces --test-timeout=15000 per file and a 5-minute Bash timeout, and treats timeout as pass-with-warning when task-specific tests already passed.",
+      "category": "CI/CD",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Raw glob patterns passed to node --test cause zsh fatal errors when no files match, and the 373+ test file suite exceeds the default 2-minute Bash timeout, leading to hangs and retry loops. This requirement codifies find-based enumeration and layered timeouts as mandatory patterns in the quick workflow.",
+      "provenance": {
+        "source_file": ".planning/quick/174-harden-test-runner-against-glob-failures/174-PLAN.md",
+        "milestone": "quick-174"
       }
     },
     {
