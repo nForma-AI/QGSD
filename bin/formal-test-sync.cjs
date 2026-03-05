@@ -551,6 +551,31 @@ function classifyTestStrategy(requirementText) {
   return 'structural';
 }
 
+/**
+ * Classify test template based on test strategy, source files, and requirement text.
+ * Returns one of: 'source-grep', 'import-and-call', 'config-validate'.
+ * Also generates pre-filled boilerplate with placeholder tokens.
+ */
+function classifyTestTemplate(testStrategy, sourceFiles, requirementText) {
+  if (testStrategy === 'behavioral') {
+    return {
+      template: 'import-and-call',
+      boilerplate: "const mod = require(SOURCE);\nconst result = mod.FUNCTION(INPUT);\nassert.strictEqual(result, EXPECTED);",
+    };
+  }
+  if (testStrategy === 'constant') {
+    return {
+      template: 'config-validate',
+      boilerplate: "const { DEFAULT_CONFIG } = require(CONFIG_PATH);\nassert.strictEqual(resolveConfigPath(PATH, DEFAULT_CONFIG), EXPECTED);",
+    };
+  }
+  // Default: source-grep when testStrategy is undefined/null (quorum R3.6 hardening)
+  return {
+    template: 'source-grep',
+    boilerplate: "const content = fs.readFileSync(SOURCE, 'utf8');\nassert.match(content, /PATTERN/);",
+  };
+}
+
 // ── Stub Generation ──────────────────────────────────────────────────────────
 
 /**
@@ -600,9 +625,10 @@ test('TODO: implement test for ${requirement_id} — ${property}', () => {
       const definition = modelFile ? extractPropertyDefinition(path.join(ROOT, modelFile), property) : '';
       const sourceFiles = findSourceFiles(requirement_id, req ? req.text : '');
       const importHint = sourceFiles.length > 0
-        ? "const mod = require('" + path.relative(stubsDir, path.join(ROOT, sourceFiles[0])).replace(/\\/g, '/') + "');"
+        ? "const mod = require('" + path.resolve(ROOT, sourceFiles[0]) + "');"
         : '';
       const testStrategy = classifyTestStrategy(req ? req.text : '');
+      const templateClassification = classifyTestTemplate(testStrategy, sourceFiles, req ? req.text : '');
 
       const recipe = {
         requirement_id,
@@ -614,8 +640,12 @@ test('TODO: implement test for ${requirement_id} — ${property}', () => {
           type: modelFile.endsWith('.tla') ? 'invariant' : modelFile.endsWith('.als') ? 'assertion' : 'property',
         },
         source_files: sourceFiles,
+        source_file_absolute: sourceFiles.length > 0 ? path.resolve(ROOT, sourceFiles[0]) : '',
+        source_files_absolute: sourceFiles.map(f => path.resolve(ROOT, f)),
         import_hint: importHint,
         test_strategy: testStrategy,
+        template: templateClassification.template,
+        template_boilerplate: templateClassification.boilerplate,
       };
 
       fs.writeFileSync(recipeFilePath, JSON.stringify(recipe, null, 2) + '\n', 'utf8');
@@ -749,7 +779,7 @@ function main() {
 
 // ── Exports (for testing) ────────────────────────────────────────────────────
 
-module.exports = { parseAlloyDefaults, extractPropertyDefinition, findSourceFiles, classifyTestStrategy };
+module.exports = { parseAlloyDefaults, extractPropertyDefinition, findSourceFiles, classifyTestStrategy, classifyTestTemplate };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
 
