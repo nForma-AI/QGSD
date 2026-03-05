@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 174: Harden test runner against glob failures, timeout hangs, and missing test-file mappings
+Last activity: 2026-03-05 - Completed quick task 172: Build assumption-to-instrumentation analysis (Verified)
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -79,7 +79,7 @@ Resume file: None
 | 168 | Add internal work detection handler to observe | 2026-03-04 | 21951ed3 | Verified | [168-add-internal-work-detection-handler-to-o](./quick/168-add-internal-work-detection-handler-to-o/) |
 | 170 | Inject relevant requirements subset into quorum dispatch prompts for better-informed agent judgement | 2026-03-04 | 12fe407e | Verified | [170-inject-relevant-requirements-subset-into](./quick/170-inject-relevant-requirements-subset-into/) |
 | 171 | Modify solve skill to use direct parallel executor dispatch for F-T and R-D | 2026-03-05 | 9d5342bb | Verified | [171-modify-solve-skill-to-use-direct-paralle](./quick/171-modify-solve-skill-to-use-direct-paralle/) |
-| 172 | Build assumption-to-instrumentation analysis | 2026-03-05 | a3fce37a | Pending | [172-build-assumption-to-instrumentation-anal](./quick/172-build-assumption-to-instrumentation-anal/) |
+| 172 | Build assumption-to-instrumentation analysis | 2026-03-05 | a3fce37a | Verified | [172-build-assumption-to-instrumentation-anal](./quick/172-build-assumption-to-instrumentation-anal/) |
 | 173 | Teach discoverModels() to read model-registry.json search_dirs and add check_command support for project-level formal models | 2026-03-05 | 25f32777 | Pending | [173-teach-discovermodels-to-read-model-regis](./quick/173-teach-discovermodels-to-read-model-regis/) |
 | 174 | Harden test runner against glob failures, timeout hangs, and missing test-file mappings | 2026-03-05 | 5057f922 | Pending | [174-harden-test-runner-against-glob-failures](./quick/174-harden-test-runner-against-glob-failures/) |
 
