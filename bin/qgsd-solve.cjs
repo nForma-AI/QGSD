@@ -4,7 +4,7 @@
 // Consistency solver orchestrator: sweeps Requirements->Formal->Tests->Code->Docs,
 // computes a residual vector per layer transition, and auto-closes gaps.
 //
-// Layer transitions (8):
+// Layer transitions (8 forward + 3 reverse):
 //   R->F: Requirements without formal model coverage
 //   F->T: Formal invariants without test backing
 //   C->F: Code constants diverging from formal specs
@@ -13,6 +13,10 @@
 //   R->D: Requirements not documented in developer docs
 //   D->C: Stale structural claims in docs (dead file paths, missing CLI commands, absent dependencies)
 //   P->F: Acknowledged production debt entries diverging from formal model thresholds
+// Reverse (discovery-only, human-gated):
+//   C->R: Source modules in bin/hooks/ with no requirement tracing
+//   T->R: Test files with no @req annotation or formal-test-sync mapping
+//   D->R: Doc capability claims without requirement backing
 //
 // Usage:
 //   node bin/qgsd-solve.cjs                  # full sync, up to 3 iterations
@@ -641,15 +645,15 @@ function sweepFtoC() {
 
   // Non-zero exit is expected when checks fail — still parse check-results.ndjson.
   // Only bail on spawn errors (result.stderr without any ndjson output).
-  if (!result.ok && result.stderr && !fs.existsSync(path.join(ROOT, '.formal', 'check-results.ndjson'))) {
+  if (!result.ok && result.stderr && !fs.existsSync(path.join(ROOT, '.planning', 'formal', 'check-results.ndjson'))) {
     return {
       residual: -1,
       detail: { error: result.stderr.slice(0, 500) || 'run-formal-verify.cjs failed' },
     };
   }
 
-  // Parse .formal/check-results.ndjson
-  const checkResultsPath = path.join(ROOT, '.formal', 'check-results.ndjson');
+  // Parse .planning/formal/check-results.ndjson
+  const checkResultsPath = path.join(ROOT, '.planning', 'formal', 'check-results.ndjson');
 
   if (!fs.existsSync(checkResultsPath)) {
     return {
@@ -716,7 +720,7 @@ function sweepFtoC() {
  */
 function sweepRtoD() {
   // Load requirements.json
-  const reqPath = path.join(ROOT, '.formal', 'requirements.json');
+  const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
     return {
       residual: 0,
@@ -926,11 +930,485 @@ function sweepDtoC() {
   };
 }
 
+// ── Reverse traceability sweeps ──────────────────────────────────────────────
+
+const MAX_REVERSE_CANDIDATES = 200;
+
+/**
+ * C->R: Code to Requirements (reverse).
+ * Scans bin/ and hooks/ for source modules not traced to any requirement.
+ * Returns { residual: N, detail: { untraced_modules: [{file}], total_modules, traced } }
+ */
+function sweepCtoR() {
+  const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+  if (!fs.existsSync(reqPath)) {
+    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+  }
+
+  let reqData;
+  try {
+    reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+  } catch (e) {
+    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+  }
+
+  // Flatten requirements
+  let requirements = [];
+  if (Array.isArray(reqData)) {
+    requirements = reqData;
+  } else if (reqData.requirements && Array.isArray(reqData.requirements)) {
+    requirements = reqData.requirements;
+  } else if (reqData.groups && Array.isArray(reqData.groups)) {
+    for (const group of reqData.groups) {
+      if (group.requirements && Array.isArray(group.requirements)) {
+        for (const r of group.requirements) requirements.push(r);
+      }
+    }
+  }
+
+  // Build searchable text from all requirements
+  const allReqText = requirements.map(r => {
+    const parts = [r.id || '', r.text || '', r.description || '', r.background || ''];
+    if (r.provenance && r.provenance.source_file) parts.push(r.provenance.source_file);
+    return parts.join(' ');
+  }).join('\n');
+
+  // Scan bin/ and hooks/ for source modules
+  const scanDirs = ['bin', 'hooks'];
+  const sourceFiles = [];
+
+  for (const dir of scanDirs) {
+    const absDir = path.join(ROOT, dir);
+    if (!fs.existsSync(absDir)) continue;
+
+    let entries;
+    try {
+      entries = fs.readdirSync(absDir, { withFileTypes: true });
+    } catch (e) {
+      continue;
+    }
+
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      if (!entry.name.endsWith('.cjs') && !entry.name.endsWith('.js') && !entry.name.endsWith('.mjs')) continue;
+      // Skip test files, dist copies, and generated files
+      if (entry.name.includes('.test.')) continue;
+      if (dir === 'hooks' && entry.name === 'dist') continue;
+
+      sourceFiles.push(path.join(dir, entry.name));
+    }
+  }
+
+  // Also scan hooks/dist/ as separate entry point files
+  const distDir = path.join(ROOT, 'hooks', 'dist');
+  if (fs.existsSync(distDir)) {
+    try {
+      const distEntries = fs.readdirSync(distDir, { withFileTypes: true });
+      for (const entry of distEntries) {
+        if (!entry.isFile()) continue;
+        if (!entry.name.endsWith('.cjs') && !entry.name.endsWith('.js')) continue;
+        // dist/ files are copies — skip, they trace through their source in hooks/
+      }
+    } catch (e) {
+      // skip
+    }
+  }
+
+  const untraced = [];
+  let traced = 0;
+
+  for (const file of sourceFiles) {
+    const fileName = path.basename(file);
+    const fileNoExt = fileName.replace(/\.(cjs|js|mjs)$/, '');
+
+    // Check if any requirement references this file
+    if (allReqText.includes(file) || allReqText.includes(fileName) || allReqText.includes(fileNoExt)) {
+      traced++;
+    } else {
+      untraced.push({ file });
+    }
+  }
+
+  return {
+    residual: untraced.length,
+    detail: {
+      untraced_modules: untraced,
+      total_modules: sourceFiles.length,
+      traced: traced,
+    },
+  };
+}
+
+/**
+ * T->R: Tests to Requirements (reverse).
+ * Scans test files for tests without @req annotation or formal-test-sync mapping.
+ * Returns { residual: N, detail: { orphan_tests: [file_paths], total_tests, mapped } }
+ */
+function sweepTtoR() {
+  // Discover test files
+  const testPatterns = [
+    { dir: 'bin', suffix: '.test.cjs' },
+    { dir: 'test', suffix: '.test.cjs' },
+    { dir: 'test', suffix: '.test.js' },
+  ];
+
+  const testFiles = [];
+  for (const { dir, suffix } of testPatterns) {
+    const absDir = path.join(ROOT, dir);
+    if (!fs.existsSync(absDir)) continue;
+
+    let entries;
+    try {
+      entries = fs.readdirSync(absDir, { withFileTypes: true });
+    } catch (e) {
+      continue;
+    }
+
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      if (!entry.name.endsWith(suffix)) continue;
+      testFiles.push(path.join(dir, entry.name));
+    }
+  }
+
+  if (testFiles.length === 0) {
+    return { residual: 0, detail: { orphan_tests: [], total_tests: 0, mapped: 0 } };
+  }
+
+  // Load formal-test-sync data for mapping info
+  const syncData = loadFormalTestSync();
+  const syncMappedFiles = new Set();
+  if (syncData && syncData.coverage_gaps && syncData.coverage_gaps.gaps) {
+    for (const gap of syncData.coverage_gaps.gaps) {
+      if (gap.test_file) syncMappedFiles.add(gap.test_file);
+    }
+  }
+  // Also check stub files from generated-stubs directory
+  if (syncData && syncData.generated_stubs) {
+    for (const stub of syncData.generated_stubs) {
+      if (stub.source_test) syncMappedFiles.add(stub.source_test);
+    }
+  }
+
+  const orphans = [];
+  let mapped = 0;
+
+  for (const testFile of testFiles) {
+    const absPath = path.join(ROOT, testFile);
+
+    // Check for @req annotation in file content
+    let hasReqAnnotation = false;
+    try {
+      const content = fs.readFileSync(absPath, 'utf8');
+      // Match patterns like: @req REQ-01, @req ACT-02, // req: STOP-03
+      hasReqAnnotation = /@req\s+[A-Z]+-\d+/i.test(content) ||
+                         /\/\/\s*req:\s*[A-Z]+-\d+/i.test(content);
+    } catch (e) {
+      // Can't read — treat as orphan
+    }
+
+    // Check if formal-test-sync knows about this file
+    const inSyncReport = syncMappedFiles.has(testFile) || syncMappedFiles.has(absPath);
+
+    if (hasReqAnnotation || inSyncReport) {
+      mapped++;
+    } else {
+      orphans.push(testFile);
+    }
+  }
+
+  return {
+    residual: orphans.length,
+    detail: {
+      orphan_tests: orphans,
+      total_tests: testFiles.length,
+      mapped: mapped,
+    },
+  };
+}
+
+/**
+ * D->R: Docs to Requirements (reverse).
+ * Extracts capability claims from docs and checks if requirements back them.
+ * Returns { residual: N, detail: { unbacked_claims: [{doc_file, line, claim_text}], total_claims, backed } }
+ */
+function sweepDtoR() {
+  const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+  if (!fs.existsSync(reqPath)) {
+    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+  }
+
+  let reqData;
+  try {
+    reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+  } catch (e) {
+    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+  }
+
+  // Flatten requirements and extract keywords per requirement
+  let requirements = [];
+  if (Array.isArray(reqData)) {
+    requirements = reqData;
+  } else if (reqData.requirements && Array.isArray(reqData.requirements)) {
+    requirements = reqData.requirements;
+  } else if (reqData.groups && Array.isArray(reqData.groups)) {
+    for (const group of reqData.groups) {
+      if (group.requirements && Array.isArray(group.requirements)) {
+        for (const r of group.requirements) requirements.push(r);
+      }
+    }
+  }
+
+  const reqKeywordSets = requirements.map(r => {
+    const text = (r.text || r.description || '') + ' ' + (r.background || '');
+    return extractKeywords(text);
+  });
+
+  // Discover doc files
+  const docFiles = discoverDocFiles();
+  if (docFiles.length === 0) {
+    return { residual: 0, detail: { skipped: true, reason: 'no doc files found' } };
+  }
+
+  // Action verbs that indicate capability claims
+  const ACTION_VERBS = [
+    'supports', 'enables', 'provides', 'ensures', 'guarantees',
+    'validates', 'enforces', 'detects', 'prevents', 'handles',
+    'automates', 'generates', 'monitors', 'verifies', 'dispatches',
+  ];
+  const verbPattern = new RegExp('\\b(' + ACTION_VERBS.join('|') + ')\\b', 'i');
+
+  const unbacked = [];
+  let totalClaims = 0;
+  let backed = 0;
+
+  for (const { absPath } of docFiles) {
+    let content;
+    try {
+      content = fs.readFileSync(absPath, 'utf8');
+    } catch (e) {
+      continue;
+    }
+
+    const relativePath = path.relative(ROOT, absPath).replace(/\\/g, '/');
+    const lines = content.split('\n');
+    let inFencedBlock = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Skip fenced code blocks
+      if (line.trimStart().startsWith('```')) {
+        inFencedBlock = !inFencedBlock;
+        continue;
+      }
+      if (inFencedBlock) continue;
+
+      // Skip headings, empty lines, and list markers only
+      if (line.match(/^#{1,6}\s/) || line.trim().length === 0) continue;
+
+      // Check for action verb
+      if (!verbPattern.test(line)) continue;
+
+      totalClaims++;
+
+      // Extract keywords from this claim line
+      const claimKeywords = extractKeywords(line);
+      if (claimKeywords.length < 2) {
+        // Too few keywords to match meaningfully
+        backed++;
+        continue;
+      }
+
+      // Check if any requirement has 3+ keyword overlap
+      let hasBacking = false;
+      for (const reqKws of reqKeywordSets) {
+        let overlap = 0;
+        for (const kw of claimKeywords) {
+          if (reqKws.includes(kw)) overlap++;
+        }
+        if (overlap >= 3) {
+          hasBacking = true;
+          break;
+        }
+      }
+
+      if (hasBacking) {
+        backed++;
+      } else {
+        unbacked.push({
+          doc_file: relativePath,
+          line: i + 1,
+          claim_text: line.trim().slice(0, 120),
+        });
+      }
+    }
+  }
+
+  return {
+    residual: unbacked.length,
+    detail: {
+      unbacked_claims: unbacked,
+      total_claims: totalClaims,
+      backed: backed,
+    },
+  };
+}
+
+/**
+ * Assemble and deduplicate reverse traceability candidates from all 3 scanners.
+ * Merges C→R, T→R, D→R results, deduplicates, filters, and respects acknowledged-not-required.json.
+ * Returns { candidates: [...], total_raw, deduped, filtered, acknowledged }
+ */
+function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
+  const raw = [];
+
+  // Gather C→R candidates
+  if (c_to_r.residual > 0 && c_to_r.detail.untraced_modules) {
+    for (const mod of c_to_r.detail.untraced_modules) {
+      raw.push({
+        source_scanners: ['C→R'],
+        evidence: mod.file,
+        file_or_claim: mod.file,
+        type: 'module',
+      });
+    }
+  }
+
+  // Gather T→R candidates
+  if (t_to_r.residual > 0 && t_to_r.detail.orphan_tests) {
+    for (const testFile of t_to_r.detail.orphan_tests) {
+      raw.push({
+        source_scanners: ['T→R'],
+        evidence: testFile,
+        file_or_claim: testFile,
+        type: 'test',
+      });
+    }
+  }
+
+  // Gather D→R candidates
+  if (d_to_r.residual > 0 && d_to_r.detail.unbacked_claims) {
+    for (const claim of d_to_r.detail.unbacked_claims) {
+      raw.push({
+        source_scanners: ['D→R'],
+        evidence: claim.doc_file + ':' + claim.line,
+        file_or_claim: claim.claim_text,
+        type: 'claim',
+      });
+    }
+  }
+
+  const totalRaw = raw.length;
+
+  // Deduplicate: merge test files that correspond to source modules
+  // e.g., test/foo.test.cjs and bin/foo.cjs → single candidate with both scanners
+  const merged = [];
+  const testToSource = new Map();
+
+  for (const candidate of raw) {
+    if (candidate.type === 'test') {
+      // Extract base name: test/foo.test.cjs → foo
+      const baseName = path.basename(candidate.file_or_claim)
+        .replace(/\.test\.(cjs|js|mjs)$/, '');
+      testToSource.set(baseName, candidate);
+    }
+  }
+
+  const mergedTestBases = new Set();
+
+  for (const candidate of raw) {
+    if (candidate.type === 'module') {
+      const baseName = path.basename(candidate.file_or_claim)
+        .replace(/\.(cjs|js|mjs)$/, '');
+      const matchingTest = testToSource.get(baseName);
+      if (matchingTest) {
+        // Merge: combine scanners
+        if (verboseMode) {
+          process.stderr.write(TAG + ' Dedup: merged C→R ' + candidate.file_or_claim +
+            ' + T→R ' + matchingTest.file_or_claim + '\n');
+        }
+        merged.push({
+          source_scanners: ['C→R', 'T→R'],
+          evidence: candidate.file_or_claim + ' + ' + matchingTest.file_or_claim,
+          file_or_claim: candidate.file_or_claim,
+          type: 'module',
+        });
+        mergedTestBases.add(baseName);
+      } else {
+        merged.push(candidate);
+      }
+    } else if (candidate.type === 'test') {
+      const baseName = path.basename(candidate.file_or_claim)
+        .replace(/\.test\.(cjs|js|mjs)$/, '');
+      if (!mergedTestBases.has(baseName)) {
+        merged.push(candidate);
+      }
+    } else {
+      merged.push(candidate);
+    }
+  }
+
+  const deduped = totalRaw - merged.length;
+
+  // Filter out .planning/ files, generated stubs, node_modules
+  let filtered = 0;
+  const candidates = [];
+  for (const c of merged) {
+    if (c.file_or_claim.startsWith('.planning/') ||
+        c.file_or_claim.includes('generated-stubs') ||
+        c.file_or_claim.includes('node_modules')) {
+      filtered++;
+      continue;
+    }
+    candidates.push(c);
+  }
+
+  // Load acknowledged-not-required.json and filter out previously rejected
+  let acknowledged = 0;
+  const ackPath = path.join(ROOT, '.planning', 'formal', 'acknowledged-not-required.json');
+  if (fs.existsSync(ackPath)) {
+    try {
+      const ackData = JSON.parse(fs.readFileSync(ackPath, 'utf8'));
+      const ackSet = new Set((ackData.entries || []).map(e => e.file_or_claim));
+      const afterAck = [];
+      for (const c of candidates) {
+        if (ackSet.has(c.file_or_claim)) {
+          acknowledged++;
+        } else {
+          afterAck.push(c);
+        }
+      }
+      candidates.length = 0;
+      for (const c of afterAck) candidates.push(c);
+    } catch (e) {
+      // malformed ack file — fail-open
+    }
+  }
+
+  // Apply max candidate cap (R3.6 improvement from copilot-1)
+  if (candidates.length > MAX_REVERSE_CANDIDATES) {
+    if (verboseMode) {
+      process.stderr.write(TAG + ' Capping reverse candidates from ' +
+        candidates.length + ' to ' + MAX_REVERSE_CANDIDATES + '\n');
+    }
+    candidates.length = MAX_REVERSE_CANDIDATES;
+  }
+
+  return {
+    candidates: candidates,
+    total_raw: totalRaw,
+    deduped: deduped,
+    filtered: filtered,
+    acknowledged: acknowledged,
+  };
+}
+
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
- * Computes residual vector for all 7 layer transitions.
- * Returns residual object with r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, d_to_c.
+ * Computes residual vector for all layer transitions (8 forward + 3 reverse).
+ * Returns residual object with forward layers + reverse discovery layers.
  */
 function computeResidual() {
   const r_to_f = sweepRtoF();
@@ -942,6 +1420,11 @@ function computeResidual() {
   const d_to_c = sweepDtoC();
   const p_to_f = sweepPtoF({ root: ROOT });
 
+  // Reverse traceability discovery (do NOT add to automatable total)
+  const c_to_r = sweepCtoR();
+  const t_to_r = sweepTtoR();
+  const d_to_r = sweepDtoR();
+
   const total =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
     (f_to_t.residual >= 0 ? f_to_t.residual : 0) +
@@ -952,6 +1435,14 @@ function computeResidual() {
     (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
     (p_to_f.residual >= 0 ? p_to_f.residual : 0);
 
+  const reverse_discovery_total =
+    (c_to_r.residual >= 0 ? c_to_r.residual : 0) +
+    (t_to_r.residual >= 0 ? t_to_r.residual : 0) +
+    (d_to_r.residual >= 0 ? d_to_r.residual : 0);
+
+  // Assemble deduplicated reverse candidates
+  const assembled_candidates = assembleReverseCandidates(c_to_r, t_to_r, d_to_r);
+
   return {
     r_to_f,
     f_to_t,
@@ -961,7 +1452,12 @@ function computeResidual() {
     r_to_d,
     d_to_c,
     p_to_f,
+    c_to_r,
+    t_to_r,
+    d_to_r,
+    assembled_candidates,
     total,
+    reverse_discovery_total,
     timestamp: new Date().toISOString(),
   };
 }
@@ -1139,6 +1635,37 @@ function formatReport(iterations, finalResidual, converged) {
 
   lines.push('─────────────────────────────────────────────');
   lines.push('Total residual:          ' + finalResidual.total);
+
+  // Reverse traceability discovery section
+  if (finalResidual.c_to_r || finalResidual.t_to_r || finalResidual.d_to_r) {
+    lines.push('');
+    lines.push('Reverse Traceability Discovery (human-gated):');
+    lines.push('─────────────────────────────────────────────');
+
+    const reverseRows = [
+      { label: 'C -> R (Code->Req)', residual: finalResidual.c_to_r ? finalResidual.c_to_r.residual : -1 },
+      { label: 'T -> R (Test->Req)', residual: finalResidual.t_to_r ? finalResidual.t_to_r.residual : -1 },
+      { label: 'D -> R (Docs->Req)', residual: finalResidual.d_to_r ? finalResidual.d_to_r.residual : -1 },
+    ];
+
+    for (const row of reverseRows) {
+      const res = row.residual >= 0 ? row.residual : '?';
+      const health = healthIndicator(row.residual);
+      const line = row.label.padEnd(28) + String(res).padStart(4) + '    ' + health;
+      lines.push(line);
+    }
+
+    const rdTotal = finalResidual.reverse_discovery_total || 0;
+    lines.push('─────────────────────────────────────────────');
+    lines.push('Discovery total:         ' + rdTotal);
+
+    if (finalResidual.assembled_candidates && finalResidual.assembled_candidates.candidates.length > 0) {
+      const ac = finalResidual.assembled_candidates;
+      lines.push('Candidates: ' + ac.candidates.length + ' (raw: ' + ac.total_raw +
+        ', deduped: ' + ac.deduped + ', filtered: ' + ac.filtered +
+        ', acknowledged: ' + ac.acknowledged + ')');
+    }
+  }
   lines.push('');
 
   // Per-layer detail sections (only non-zero)
@@ -1284,6 +1811,52 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  // Reverse traceability detail
+  if (finalResidual.c_to_r && finalResidual.c_to_r.residual > 0) {
+    lines.push('## C -> R (Code -> Requirements) [reverse discovery]');
+    const detail = finalResidual.c_to_r.detail;
+    if (detail.untraced_modules && detail.untraced_modules.length > 0) {
+      lines.push('Untraced modules (' + detail.untraced_modules.length + ' of ' + detail.total_modules + '):');
+      for (const mod of detail.untraced_modules.slice(0, 20)) {
+        lines.push('  - ' + mod.file);
+      }
+      if (detail.untraced_modules.length > 20) {
+        lines.push('  ... and ' + (detail.untraced_modules.length - 20) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
+  if (finalResidual.t_to_r && finalResidual.t_to_r.residual > 0) {
+    lines.push('## T -> R (Tests -> Requirements) [reverse discovery]');
+    const detail = finalResidual.t_to_r.detail;
+    if (detail.orphan_tests && detail.orphan_tests.length > 0) {
+      lines.push('Orphan tests (' + detail.orphan_tests.length + ' of ' + detail.total_tests + '):');
+      for (const t of detail.orphan_tests.slice(0, 20)) {
+        lines.push('  - ' + t);
+      }
+      if (detail.orphan_tests.length > 20) {
+        lines.push('  ... and ' + (detail.orphan_tests.length - 20) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
+  if (finalResidual.d_to_r && finalResidual.d_to_r.residual > 0) {
+    lines.push('## D -> R (Docs -> Requirements) [reverse discovery]');
+    const detail = finalResidual.d_to_r.detail;
+    if (detail.unbacked_claims && detail.unbacked_claims.length > 0) {
+      lines.push('Unbacked doc claims (' + detail.unbacked_claims.length + ' of ' + detail.total_claims + '):');
+      for (const c of detail.unbacked_claims.slice(0, 20)) {
+        lines.push('  - ' + c.doc_file + ':' + c.line + ' — ' + c.claim_text);
+      }
+      if (detail.unbacked_claims.length > 20) {
+        lines.push('  ... and ' + (detail.unbacked_claims.length - 20) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
   return lines.join('\n');
 }
 
@@ -1320,7 +1893,7 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f']) {
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r']) {
     const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
@@ -1328,7 +1901,7 @@ function formatJSON(iterations, finalResidual, converged) {
   const truncatedResidual = truncateResidualDetail(finalResidual);
 
   return {
-    solver_version: '1.1',
+    solver_version: '1.2',
     generated_at: new Date().toISOString(),
     iteration_count: iterations.length,
     max_iterations: maxIterations,
@@ -1422,6 +1995,10 @@ module.exports = {
   sweepRtoD,
   sweepDtoC,
   sweepTtoC,
+  sweepCtoR,
+  sweepTtoR,
+  sweepDtoR,
+  assembleReverseCandidates,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────

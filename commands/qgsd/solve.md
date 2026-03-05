@@ -107,12 +107,12 @@ Log: `"Dispatching R->F remediation: close-formal-gaps for {N} uncovered require
 Wait for the skill to complete. If it fails, log the failure and continue to the next gap type.
 
 **IMPORTANT — Verify generated models:** After close-formal-gaps completes, run the model checkers on every newly created model:
-- **TLA+**: `java -cp <tla2tools.jar> tlc2.TLC -config <MC*.cfg> <*.tla> -workers 1` in `.formal/tla/`
-- **Alloy**: `java -jar <alloy.jar> exec --output - --type text --quiet <*.als>` in `.formal/alloy/`
+- **TLA+**: `java -cp <tla2tools.jar> tlc2.TLC -config <MC*.cfg> <*.tla> -workers 1` in `.planning/formal/tla/`
+- **Alloy**: `java -jar <alloy.jar> exec --output - --type text --quiet <*.als>` in `.planning/formal/alloy/`
 
 If a model fails verification (syntax error, counterexample, scope error), fix it immediately and re-run. Up to 3 fix attempts per model. Models that pass are confirmed; models that fail after 3 attempts are logged as needing manual review.
 
-Find tool JARs at: `.formal/tla/tla2tools.jar` (or `~/.claude/.formal/tla/tla2tools.jar`) and `.formal/alloy/org.alloytools.alloy.dist.jar` (or `~/.claude/.formal/alloy/org.alloytools.alloy.dist.jar`).
+Find tool JARs at: `.planning/formal/tla/tla2tools.jar` (or `~/.claude/.planning/formal/tla/tla2tools.jar`) and `.planning/formal/alloy/org.alloytools.alloy.dist.jar` (or `~/.claude/.planning/formal/alloy/org.alloytools.alloy.dist.jar`).
 
 ### 3b. F->T Gaps (residual_vector.f_to_t.residual > 0)
 
@@ -127,7 +127,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
 
 **Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `qgsd-executor` agents directly to implement real test logic — it does NOT use `/qgsd:quick` for bulk stub implementation.
 
-1. **Load context:** Parse `.formal/formal-test-sync-report.json` for each stub's `requirement_id`, `formal_properties[].model_file`, `formal_properties[].property`. Cross-reference `.formal/requirements.json` for requirement text.
+1. **Load context:** Parse `.planning/formal/formal-test-sync-report.json` for each stub's `requirement_id`, `formal_properties[].model_file`, `formal_properties[].property`. Cross-reference `.planning/formal/requirements.json` for requirement text.
 
 2. **Group into batches** by category prefix (e.g., all `ACT-*`, all `CONF-*`), max 15 stubs per batch. **No cap per iteration** — process ALL stubs. The convergence loop handles failures.
 
@@ -146,8 +146,8 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    wave: 1
    depends_on: []
    files_modified:
-     - .formal/generated-stubs/{ID1}.stub.test.js
-     - .formal/generated-stubs/{ID2}.stub.test.js
+     - .planning/formal/generated-stubs/{ID1}.stub.test.js
+     - .planning/formal/generated-stubs/{ID2}.stub.test.js
    autonomous: true
    requirements: [{ID1}, {ID2}]
    formal_artifacts: none
@@ -167,7 +167,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    <tasks>
    <task type="auto">
      <name>Implement stubs: {ID1}, {ID2}, ... {IDn}</name>
-     <files>.formal/generated-stubs/{ID1}.stub.test.js, ...</files>
+     <files>.planning/formal/generated-stubs/{ID1}.stub.test.js, ...</files>
      <action>
    For each stub:
    1. Read the stub file
@@ -178,7 +178,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    5. For behavioral reqs that can't be unit-tested directly, test the
       structural constraint (function exists, constants match, exports present)
      </action>
-     <verify>node --test .formal/generated-stubs/{ID1}.stub.test.js</verify>
+     <verify>node --test .planning/formal/generated-stubs/{ID1}.stub.test.js</verify>
      <done>No assert.fail('TODO') remains. Each stub has real test logic.</done>
    </task>
    </tasks>
@@ -190,7 +190,7 @@ Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
    ```
    Wait for ALL to complete.
 
-5. **Run tests once:** `node --test .formal/generated-stubs/*.stub.test.js`. Log pass/fail counts. Failed stubs are handled by T->C in the next iteration.
+5. **Run tests once:** `node --test .planning/formal/generated-stubs/*.stub.test.js`. Log pass/fail counts. Failed stubs are handled by T->C in the next iteration.
 
 6. Log: `"F->T phase 2: spawned {N} parallel executors for {M} stubs (no quorum overhead)"`
 
@@ -243,7 +243,7 @@ node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
 
 If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
-Then parse `.formal/check-results.ndjson` and classify each failure:
+Then parse `.planning/formal/check-results.ndjson` and classify each failure:
 
 | Classification | Criteria | Dispatch |
 |---------------|----------|----------|
@@ -276,7 +276,7 @@ R->D: {N} requirement(s) undocumented in developer docs:
 
 Then auto-remediate by dispatching a single `qgsd-executor` agent directly — it does NOT use `/qgsd:quick` for bulk doc generation.
 
-1. Read `.formal/requirements.json` to get the text/description for each undocumented requirement ID.
+1. Read `.planning/formal/requirements.json` to get the text/description for each undocumented requirement ID.
 2. For each undocumented ID, identify the most relevant source file(s) by grepping the codebase for the requirement ID and its key terms (use Grep tool).
 3. **Write ONE PLAN.md** to `.planning/quick/solve-rd-{iteration}/PLAN.md` covering all undocumented requirements (up to 100). The plan has multiple `<task>` blocks (one per group of ~15 IDs) for natural checkpointing. Each task specifies: requirement IDs, requirement text, relevant source files, and the output format for `docs/dev/requirements-coverage.md`.
 
@@ -319,6 +319,61 @@ D->C: {N} stale structural claim(s) in docs:
 Log: `"D->C: {N} stale structural claim(s) in docs — manual review required"`
 
 Do NOT dispatch any skill — this is informational only.
+
+### 3h. Reverse Traceability Discovery (C→R + T→R + D→R)
+
+This step surfaces implementation artifacts that have no requirement backing. Unlike forward layers (which auto-remediate), reverse layers use a **two-step pattern**: autonomous discovery followed by human approval.
+
+**Phase 1 — Discovery (autonomous):**
+
+Extract reverse residuals from the diagnostic sweep (already computed in Step 1):
+- `residual_vector.c_to_r.detail.untraced_modules` — source files in bin/ and hooks/ with no requirement tracing
+- `residual_vector.t_to_r.detail.orphan_tests` — test files with no @req annotation or formal-test-sync mapping
+- `residual_vector.d_to_r.detail.unbacked_claims` — doc capability claims without requirement backing
+
+The diagnostic engine runs `assembleReverseCandidates()` automatically, which:
+1. Merges candidates from all 3 scanners
+2. Deduplicates (e.g., if test/foo.test.cjs and bin/foo.cjs are both untraced, merge into 1 candidate)
+3. Filters out .planning/ files, generated stubs, and node_modules paths
+4. Removes candidates present in `.planning/formal/acknowledged-not-required.json`
+5. Caps at 200 candidates maximum
+
+If `assembled_candidates.candidates` is empty after dedup + filtering: Log `"Reverse discovery: 0 candidates after dedup/filtering"` and skip Phase 2.
+
+**Phase 2 — Human Approval (interactive):**
+
+Present the deduplicated candidate list to the user:
+
+```
+Discovered {N} candidate requirement(s) from reverse traceability:
+
+  #  Source    Evidence                              Candidate
+  ─────────────────────────────────────────────────────────────────
+  1  C→R      bin/check-provider-health.cjs          Provider health probe module
+  2  C→R,T→R  bin/validate-traces.cjs + test/...     Trace validation module
+  3  D→R      README.md:42                            "supports automatic OAuth rotation"
+  ...
+
+Accept: [a]ll / [n]one / comma-separated numbers (e.g. 1,3,5) / [s]kip this cycle
+```
+
+Wait for user input via AskUserQuestion. Route based on response:
+
+- **Numbers or "all"**: For each accepted candidate, dispatch `/qgsd:add-requirement` with the candidate evidence as context. The add-requirement skill handles ID assignment, duplicate checks, and semantic conflict detection. Approved candidates enter the forward flow (R→F→T→C) in the next iteration.
+
+- **"none"**: Write ALL candidates to `.planning/formal/acknowledged-not-required.json` so they are not resurfaced in future runs. Each entry:
+  ```json
+  {
+    "file_or_claim": "<candidate file or claim text>",
+    "source_scanners": ["C→R", "T→R"],
+    "acknowledged_at": "<ISO timestamp>",
+    "reason": "user-rejected"
+  }
+  ```
+
+- **"skip"**: Do nothing — candidates will resurface in the next solve run. This is the default if the user does not respond.
+
+Log: `"Reverse discovery: {N} candidates presented, {M} approved, {K} rejected, {J} skipped"`
 
 ## Step 4: Re-Diagnostic Sweep
 
@@ -407,7 +462,7 @@ node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
 
 If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
-Parse `.formal/check-results.ndjson` and display **every check** grouped by result:
+Parse `.planning/formal/check-results.ndjson` and display **every check** grouped by result:
 
 ```
 Formal Verification Detail ({pass}/{total} passed):
@@ -456,6 +511,8 @@ This table is mandatory even when the solver layer residuals are all zero — be
    - **quick** for constant mismatches (C->F), syntax/scope errors, conformance divergences (F->C)
    - **direct executor dispatch** for R->D documentation generation
 
-6. **Cascade awareness** — fixing one layer often creates gaps in the next (e.g., new formal models → new F→T gaps → new stubs → new T→C gaps). The iteration loop handles this naturally. Expect the total to fluctuate between iterations before converging.
+6. **Cascade awareness** — fixing one layer often creates gaps in the next (e.g., new formal models → new F→T gaps → new stubs → new T→C gaps). The iteration loop handles this naturally. Expect the total to fluctuate between iterations before converging. Reverse discovery candidates that get approved also feed into the forward flow (R→F→T→C) in subsequent iterations.
+
+7. **Reverse flows are discovery-only** — C→R, T→R, and D→R never auto-remediate. They surface candidates for human approval. The human gate prevents unbounded requirement expansion (if C→R auto-added requirements, those would trigger R→F→T→C, generating more code, triggering more C→R — an infinite loop). Reverse residuals do NOT count toward the automatable total or affect the convergence check in Step 5.
 
 </process>

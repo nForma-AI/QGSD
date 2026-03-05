@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 175: Add priority tiering and actionable filtering
+Last activity: 2026-03-05 - Completed quick task 176: Add reverse traceability discovery (C→R, T→R, D→R)
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -83,6 +83,7 @@ Resume file: None
 | 173 | Teach discoverModels() to read model-registry.json search_dirs and add check_command support for project-level formal models | 2026-03-05 | 25f32777 | Verified | [173-teach-discovermodels-to-read-model-regis](./quick/173-teach-discovermodels-to-read-model-regis/) |
 | 174 | Harden test runner against glob failures, timeout hangs, and missing test-file mappings | 2026-03-05 | 5057f922 | Verified | [174-harden-test-runner-against-glob-failures](./quick/174-harden-test-runner-against-glob-failures/) |
 | 175 | Add priority tiering and actionable filtering to analyze-assumptions | 2026-03-05 | ecf297f4 | Verified | [175-add-priority-tiering-and-actionable-filt](./quick/175-add-priority-tiering-and-actionable-filt/) |
+| 176 | Add reverse traceability discovery (C→R, T→R, D→R) | 2026-03-05 | Pending | Pending | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
 
 ## Recent Accomplishments
 
