@@ -1,0 +1,18 @@
+{
+  "description": "Suppressed D->C false positives. Add entries to prevent known-stale claims from inflating residual.",
+  "entries": [],
+  "patterns": [
+    {
+      "type": "dependency",
+      "regex": "^claude-\\d+$",
+      "reason": "MCP slot names, not npm packages",
+      "enabled": true
+    },
+    {
+      "type": "dependency",
+      "regex": "^(date|mode|time|name|type|state|status|level|path|port)$",
+      "reason": "Common English words matching npm package name regex",
+      "enabled": true
+    }
+  ]
+}
