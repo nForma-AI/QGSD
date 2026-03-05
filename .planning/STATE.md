@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 168: Add internal work detection handler to observe (Verified)
+Last activity: 2026-03-05 - Completed quick task 171: Modify solve skill for bulk dispatch
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -78,6 +78,7 @@ Resume file: None
 | 167 | Implement SOLVE-05: Make the formal verification harness project-agnostic | 2026-03-04 | f3341590 | Verified | [167-implement-solve-05-make-the-formal-verif](./quick/167-implement-solve-05-make-the-formal-verif/) |
 | 168 | Add internal work detection handler to observe | 2026-03-04 | 21951ed3 | Verified | [168-add-internal-work-detection-handler-to-o](./quick/168-add-internal-work-detection-handler-to-o/) |
 | 170 | Inject relevant requirements subset into quorum dispatch prompts for better-informed agent judgement | 2026-03-04 | 12fe407e | Verified | [170-inject-relevant-requirements-subset-into](./quick/170-inject-relevant-requirements-subset-into/) |
+| 171 | Modify solve skill to use direct parallel executor dispatch for F-T and R-D | 2026-03-05 | 9d5342bb | Pending | [171-modify-solve-skill-to-use-direct-paralle](./quick/171-modify-solve-skill-to-use-direct-paralle/) |
 
 ## Recent Accomplishments
 
