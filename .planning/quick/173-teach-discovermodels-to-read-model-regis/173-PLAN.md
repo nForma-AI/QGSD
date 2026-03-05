@@ -78,7 +78,7 @@ Output: Updated discoverModels() that reads search_dirs from registry, new type:
         - `*.pm` files → PRISM steps (use pickPrismRunner/pickPrismArgs)
         - `*.dot` files → Petri wasm-dot steps
         - `*.xml` files → UPPAAL steps
-      - Prefix the step id with the search_dir path to avoid collisions with .formal/ models (e.g., `tla:formal-spec/mcfoo` instead of `tla:mcfoo`)
+      - Prefix the step id with the search_dir path to avoid collisions with .formal/ models (e.g., `tla:formal-spec/mcfoo` instead of `tla:mcfoo`). Normalize path separators in step IDs using `.replace(/\\\\/g, '/')` for cross-platform consistency (Windows produces backslashes).
    c. After scanning search_dirs, iterate `registry.models` entries. For any entry that has a `check` object with `check.command` (string), create a `type: 'shell'` step:
       ```
       {
@@ -93,8 +93,11 @@ Output: Updated discoverModels() that reads search_dirs from registry, new type:
       }
       ```
       Where `modelPath` is the registry key (e.g., `.formal/alloy/foo.als`).
+      Note: `--only=registry` works because the existing filter at line 300-302 checks `s.tool === only`, and registry steps use `tool: 'registry'`. No new filter logic is needed.
 
-3. Add optional `check` field documentation in a comment near the top of model-registry.json schema description (inside the file header of run-formal-verify.cjs, around line 108).
+3. Update the `--only` error message (line 306-307 of run-formal-verify.cjs) to include 'registry' and 'uppaal' in the list of valid values. Currently the error string only lists tla/alloy/prism/petri/generate — add registry and uppaal so users know these filters exist.
+
+4. Add optional `check` field documentation in a comment near the top of model-registry.json schema description (inside the file header of run-formal-verify.cjs, around line 108).
 
 Important: Do NOT refactor the existing scanning blocks into a shared function. Keep the existing code unchanged and add the search_dirs scanning as new code after the UPPAAL block (before the `return discovered;` at line 200). This minimizes risk to existing behavior.
   </action>
@@ -106,6 +109,7 @@ Important: Do NOT refactor the existing scanning blocks into a shared function. 
     - model-registry.json has top-level `search_dirs: []` array
     - discoverModels reads the registry and scans search_dirs directories
     - discoverModels creates type:shell steps for entries with check.command
+    - --only error message includes 'registry' and 'uppaal' as valid values
     - Existing .formal/ scanning is untouched
     - Script passes syntax check
   </done>
@@ -121,6 +125,9 @@ Important: Do NOT refactor the existing scanning blocks into a shared function. 
 1. In `bin/run-formal-verify.cjs`, add a `runShellStep(step)` function near `runNodeStep` (after line 342):
    ```javascript
    function runShellStep(step) {
+     // NOTE: command.split(/\s+/) is a known limitation — quoted arguments
+     // with spaces (e.g., 'echo "hello world"') will be split incorrectly.
+     // Future enhancement: accept command as an array format for complex args.
      const parts = step.command.split(/\s+/);
      const cmd = parts[0];
      const args = parts.slice(1);
@@ -154,7 +161,7 @@ Important: Do NOT refactor the existing scanning blocks into a shared function. 
 
 4. In `bin/run-formal-verify.test.cjs`, add these tests:
 
-   a. **Registry search_dirs discovery test**: Create a tmpDir with a `model-registry.json` containing `search_dirs: ["specs/"]` and a `specs/` directory with a `test-model.cfg` file. Spawn `run-formal-verify.cjs --project-root=<tmpDir> --only=tla` and verify the output contains a step ID referencing `specs/test-model`. Must also create a minimal `.formal/` dir in tmpDir so the script does not error.
+   a. **Registry search_dirs discovery test**: Create a tmpDir with a `model-registry.json` containing `search_dirs: ["specs/"]` and a `specs/` directory with a `test-model.cfg` file. Spawn `run-formal-verify.cjs --project-root=<tmpDir> --only=tla` and verify the output contains a step ID with the prefixed format (e.g., assert output contains `tla:specs/` prefix) to confirm search_dirs models don't collide with .formal/ models. The `--only=tla` filter works because it matches on `step.tool === 'tla'`, so the tool field is correct regardless of prefix. Must also create a minimal `.formal/` dir in tmpDir so the script does not error.
 
    b. **Registry check.command discovery test**: Create a tmpDir with a `model-registry.json` containing a model entry with `check: { command: "echo hello" }`. Spawn `run-formal-verify.cjs --project-root=<tmpDir> --only=registry` and verify the output contains `registry:` step ID and "echo hello" executes (exit 0).
 
