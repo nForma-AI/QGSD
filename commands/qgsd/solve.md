@@ -24,6 +24,12 @@ failure and continue to the next gap. The only valid reason to stop is:
 all iterations exhausted, or total residual is zero.
 
 This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/qgsd-solve.cjs) and orchestrates higher-level remediation via sub-skills and scripts. No external quorum dispatch is needed — quorum enforcement, if required, is the responsibility of the sub-skills being called.
+
+BULK REMEDIATION: For F->T and R->D gaps, the solve skill writes PLAN.md files
+directly and dispatches qgsd-executor agents in parallel — it does NOT invoke
+/qgsd:quick for bulk remediation. This avoids per-batch quorum overhead while
+maintaining quality through the convergence loop's before/after verification.
+The solve skill IS the planner for these mechanical remediation tasks.
 </execution_context>
 
 <process>
@@ -119,31 +125,74 @@ If ~/.claude/qgsd-bin/formal-test-sync.cjs does not exist, fall back to bin/form
 
 Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
 
-**Phase 2 — Implement stubs via /qgsd:quick batches:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver MUST dispatch `/qgsd:quick` to implement real test logic.
+**Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `qgsd-executor` agents directly to implement real test logic — it does NOT use `/qgsd:quick` for bulk stub implementation.
 
-1. List all `.stub.test.js` files in the stubs directory (default: `hooks/generated-stubs/`)
-2. Read each stub to get the requirement ID and invariant name
-3. Group stubs by category prefix (e.g., all `ACT-*`, all `CONF-*`) into batches of 10-15
-4. For each batch, dispatch:
-```
-/qgsd:quick Implement test stubs for {IDS}: read each stub in hooks/generated-stubs/, read the corresponding formal model and requirement text, then replace the assert.fail('TODO') with real test logic that verifies the invariant. Use node:test and node:assert/strict. Each test should import the actual source module and test the requirement's behavior.
-```
+1. **Load context:** Parse `.formal/formal-test-sync-report.json` for each stub's `requirement_id`, `formal_properties[].model_file`, `formal_properties[].property`. Cross-reference `.formal/requirements.json` for requirement text.
 
-5. After all batches complete, run the test suite to verify:
-```bash
-node --test hooks/generated-stubs/*.test.js
-```
+2. **Group into batches** by category prefix (e.g., all `ACT-*`, all `CONF-*`), max 15 stubs per batch. **No cap per iteration** — process ALL stubs. The convergence loop handles failures.
 
-6. If tests fail, log failures and let the T→C remediation (Step 3c) handle them in the next iteration.
+3. **Write PLAN.md files directly** — The solve skill IS the planner for these mechanical tasks. For each batch, write a PLAN.md to `.planning/quick/solve-ft-batch-{iteration}-{B}/PLAN.md` with:
+   - YAML frontmatter: `autonomous: true`, `requirements: [IDs]`, `files_modified: [stub paths]`
+   - Objective: implement stubs by reading formal model + requirement text + finding source module
+   - Task block per batch with `<action>/<verify>/<done>` fields
+   - Each task specifies: stub file path, formal model path, property name, requirement text
 
-Log: `"F->T phase 2: dispatched {N} quick tasks to implement {M} test stubs"`
+   PLAN.md template for each batch:
+   ```markdown
+   ---
+   phase: solve-ft-batch-{iteration}-{B}
+   plan: 01
+   type: execute
+   wave: 1
+   depends_on: []
+   files_modified:
+     - hooks/generated-stubs/{ID1}.stub.test.js
+     - hooks/generated-stubs/{ID2}.stub.test.js
+   autonomous: true
+   requirements: [{ID1}, {ID2}]
+   formal_artifacts: none
+   ---
 
-**Batching strategy:** Process highest-value stubs first. Priority order:
-1. Stubs for requirements that the current solve run created formal models for (the cascade)
-2. Stubs for core categories (Hooks, Quorum, Configuration)
-3. Remaining stubs alphabetically
+   <objective>
+   Implement {N} test stubs for {category} requirements.
 
-If more than 50 stubs exist, cap at 50 per iteration to avoid unbounded work. The iteration loop will handle the remainder.
+   For each stub, read the formal model and requirement text, then replace
+   assert.fail('TODO') with real test logic using node:test + node:assert/strict.
+
+   Formal context:
+   - {ID1}: model={model_file} property={property_name} text="{requirement text}"
+   - {ID2}: ...
+   </objective>
+
+   <tasks>
+   <task type="auto">
+     <name>Implement stubs: {ID1}, {ID2}, ... {IDn}</name>
+     <files>hooks/generated-stubs/{ID1}.stub.test.js, ...</files>
+     <action>
+   For each stub:
+   1. Read the stub file
+   2. Read the formal model (find the property/invariant definition)
+   3. Grep codebase for the source module implementing this requirement
+   4. Replace assert.fail('TODO') with test logic that imports the source
+      module and asserts the invariant behavior
+   5. For behavioral reqs that can't be unit-tested directly, test the
+      structural constraint (function exists, constants match, exports present)
+     </action>
+     <verify>node --test hooks/generated-stubs/{ID1}.stub.test.js</verify>
+     <done>No assert.fail('TODO') remains. Each stub has real test logic.</done>
+   </task>
+   </tasks>
+   ```
+
+4. **Spawn all executors in parallel** — Single wave, all batches simultaneously:
+   ```
+   Task(subagent_type="qgsd-executor", description="F->T stubs batch {B}: {category prefixes}")
+   ```
+   Wait for ALL to complete.
+
+5. **Run tests once:** `node --test hooks/generated-stubs/*.stub.test.js`. Log pass/fail counts. Failed stubs are handled by T->C in the next iteration.
+
+6. Log: `"F->T phase 2: spawned {N} parallel executors for {M} stubs (no quorum overhead)"`
 
 ### 3c. T->C Gaps (residual_vector.t_to_c.residual > 0)
 
@@ -225,30 +274,32 @@ R->D: {N} requirement(s) undocumented in developer docs:
   ...
 ```
 
-Then auto-remediate by dispatching `/qgsd:quick` to generate developer doc entries:
+Then auto-remediate by dispatching a single `qgsd-executor` agent directly — it does NOT use `/qgsd:quick` for bulk doc generation.
 
 1. Read `.formal/requirements.json` to get the text/description for each undocumented requirement ID.
 2. For each undocumented ID, identify the most relevant source file(s) by grepping the codebase for the requirement ID and its key terms (use Grep tool).
-3. Group IDs into batches of up to 10.
-4. For each batch, dispatch:
+3. **Write ONE PLAN.md** to `.planning/quick/solve-rd-{iteration}/PLAN.md` covering all undocumented requirements (up to 100). The plan has multiple `<task>` blocks (one per group of ~15 IDs) for natural checkpointing. Each task specifies: requirement IDs, requirement text, relevant source files, and the output format for `docs/dev/requirements-coverage.md`.
 
-```
-/qgsd:quick Generate developer doc entries for requirements {IDS}: For each requirement ID, read its text from .formal/requirements.json, read the relevant source files identified by searching for the ID and key terms, then append a new section to docs/dev/requirements-coverage.md (create the file if it does not exist). Each section must follow this format:
+   Each task block's action should instruct the executor to append sections following this format:
+   ```
+   ## {REQ-ID}: {requirement title or first 80 chars of text}
 
-## {REQ-ID}: {requirement title or first 80 chars of text}
+   **Requirement:** {full requirement text}
 
-**Requirement:** {full requirement text}
+   **Implementation:** {1-3 sentence summary of how the codebase satisfies this requirement, citing specific files/functions}
 
-**Implementation:** {1-3 sentence summary of how the codebase satisfies this requirement, citing specific files/functions}
+   **Source files:** {comma-separated list of relevant source files}
+   ```
 
-**Source files:** {comma-separated list of relevant source files}
+   Do NOT modify docs/ (user docs). Only write to docs/dev/requirements-coverage.md.
 
-Do NOT modify docs/ (user docs). Only write to docs/dev/requirements-coverage.md.
-```
+4. **Spawn ONE executor:**
+   ```
+   Task(subagent_type="qgsd-executor", description="R->D: generate doc entries for {N} requirements")
+   ```
+   Wait for it to complete. If it fails, log the failure and continue.
 
-Wait for each batch to complete before dispatching the next. If a batch fails, log the failure and continue.
-
-Log: `"R->D: dispatching auto-generation for {N} requirement(s) into docs/dev/requirements-coverage.md"`
+Log: `"R->D: spawned 1 executor for {N} requirements (no quorum overhead)"`
 
 ### 3g. D->C Gaps (residual_vector.d_to_c.residual > 0)
 
@@ -399,10 +450,11 @@ This table is mandatory even when the solver layer residuals are all zero — be
 4. **Ordering** — remediation order is strict because R→F must precede F→T (new formal specs create new invariants needing test backing). T→C fixes must happen before F→C verification (tests must pass before checking formal properties against code).
 
 5. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "stubs generated" or "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
-   - **close-formal-gaps --batch** for missing formal models (R→F), then **run model checkers** to verify them
-   - **formal-test-sync** to generate stubs (F→T phase 1), then **quick** in batches to implement real test logic (F→T phase 2)
-   - **fix-tests** for failing tests (T→C)
-   - **quick** for constant mismatches (C→F), syntax/scope errors, conformance divergences, and verification counterexamples in formal models (F→C)
+   - **close-formal-gaps --batch** for missing formal models (R->F), then **run model checkers** to verify them
+   - **formal-test-sync** to generate stubs (F->T phase 1), then **direct parallel executor dispatch** to implement real test logic (F->T phase 2)
+   - **fix-tests** for failing tests (T->C)
+   - **quick** for constant mismatches (C->F), syntax/scope errors, conformance divergences (F->C)
+   - **direct executor dispatch** for R->D documentation generation
 
 6. **Cascade awareness** — fixing one layer often creates gaps in the next (e.g., new formal models → new F→T gaps → new stubs → new T→C gaps). The iteration loop handles this naturally. Expect the total to fluctuate between iterations before converging.
 
