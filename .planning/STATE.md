@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-04)
 Phase: —
 Plan: —
 Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-05 - Completed quick task 181: Cap JVM memory in formal model runners
+Last activity: 2026-03-05 - Completed quick task 178: Implement all 7 solver improvements
 
 Progress: Ready for /qgsd:new-milestone
 
@@ -49,6 +49,7 @@ Recent decisions affecting current work:
 - [v0.27 roadmap]: Cross-source dedup (Phase 3) and production sources (Phase 4) can run in parallel after Phase 2
 - [v0.27 roadmap]: Solve P->F integration is last — requires stable debt ledger + dedup before feedback loop closes
 - [v0.27 research]: Six critical pitfalls identified (false positive floods, unbounded growth, fingerprint collisions, solve instability, abstraction leaks, human gate bypass)
+- [quick-178]: Reverse discovery candidates classified A/B/C; acknowledged FPs keyed by doc_file:value (no line numbers); conformance trace self-healing at 50% event overlap threshold
 
 ### Pending Todos
 
@@ -60,8 +61,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-04
-Stopped at: Completed quick task 161 (Replace blessed-xterm/node-pty with pure-JS terminal widget using @xterm/headless)
+Last session: 2026-03-05
+Stopped at: Completed quick-178 (Implement all 7 solver improvements)
 Resume file: None
 
 ## Quick Tasks Completed
@@ -85,6 +86,7 @@ Resume file: None
 | 175 | Add priority tiering and actionable filtering to analyze-assumptions | 2026-03-05 | ecf297f4 | Verified | [175-add-priority-tiering-and-actionable-filt](./quick/175-add-priority-tiering-and-actionable-filt/) |
 | 176 | Add reverse traceability discovery (C→R, T→R, D→R) | 2026-03-05 | b9b65c8d | Verified | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
 | 177 | Add VERIFY-03 tests (static + dynamic) and clean install Dockerfile | 2026-03-05 | bea9431a | Verified | [177-add-both-test-approaches-for-verify-03-s](./quick/177-add-both-test-approaches-for-verify-03-s/) |
+| 178 | Implement all 7 solver improvements (preflight, test runner, triage, FP filter, state, self-healing, categorization) | 2026-03-05 | b0d31ed6 | Completed | [178-implement-all-7-solver-improvements-auto](./quick/178-implement-all-7-solver-improvements-auto/) |
 | 181 | Cap JVM memory in formal model runners and add sequential execution to prevent RAM exhaustion | 2026-03-05 | f336091d | Pending | [181-cap-jvm-memory-in-formal-model-runners-a](./quick/181-cap-jvm-memory-in-formal-model-runners-a/) |
 
 ## Recent Accomplishments
