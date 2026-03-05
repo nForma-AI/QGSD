@@ -4,17 +4,17 @@
 
 **Every planning decision verified by a quorum of AI models before Claude executes a single line.**
 
-[![npm version](https://img.shields.io/npm/v/@nforma.ai/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/qgsd)
-[![npm downloads](https://img.shields.io/npm/dm/@nforma.ai/qgsd?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/qgsd)
+[![npm version](https://img.shields.io/npm/v/@nforma.ai/nforma?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/nforma)
+[![npm downloads](https://img.shields.io/npm/dm/@nforma.ai/nforma?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/nforma)
 [![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/M8SevJEuZG)
 [![X (Twitter)](https://img.shields.io/badge/X-@JonathanBorduas-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/JonathanBorduas)
-[![GitHub stars](https://img.shields.io/github/stars/nForma-AI/QGSD?style=for-the-badge&logo=github&color=181717)](https://github.com/nForma-AI/QGSD)
+[![GitHub stars](https://img.shields.io/github/stars/nForma-AI/nForma?style=for-the-badge&logo=github&color=181717)](https://github.com/nForma-AI/nForma)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 
 <br>
 
 ```bash
-npx qgsd@latest
+npx nforma@latest
 ```
 
 **Works on Mac, Windows, and Linux.**
@@ -54,7 +54,7 @@ People who want to describe what they want and have it built correctly — with 
 ## Getting Started
 
 ```bash
-npx qgsd@latest
+npx nforma@latest
 ```
 
 The installer prompts you to choose:
@@ -122,13 +122,13 @@ The `/nf:mcp-setup` wizard handles all registration automatically. If you prefer
 
 ```bash
 # All slots use the same entrypoint
-claude mcp add <slot-name> -- node /path/to/QGSD/bin/unified-mcp-server.mjs
+claude mcp add <slot-name> -- node /path/to/nForma/bin/unified-mcp-server.mjs
 ```
 
 After adding or renaming any MCP server, re-run with `--redetect-mcps` to update the cache:
 
 ```bash
-npx qgsd@latest --redetect-mcps
+npx nforma@latest --redetect-mcps
 ```
 
 This re-reads `~/.claude.json`, re-derives tool prefixes from your registered servers, and rewrites `~/.claude/qgsd.json`.
@@ -141,8 +141,8 @@ A full-featured keyboard-navigable terminal interface for managing your quorum a
 
 ```bash
 # Requires a local clone
-git clone https://github.com/nForma-AI/QGSD.git
-cd QGSD && npm install
+git clone https://github.com/nForma-AI/nForma.git
+cd nForma && npm install
 
 node bin/qgsd.cjs
 ```
@@ -188,7 +188,7 @@ The TUI also includes a **requirements management** section — browse, filter, 
 nForma evolves fast. Update periodically:
 
 ```bash
-npx qgsd@latest
+npx nforma@latest
 ```
 
 <details>
@@ -220,8 +220,8 @@ Use `--claude`, `--opencode`, `--gemini`, or `--all` to skip the runtime prompt.
 Clone the repository and run the installer locally:
 
 ```bash
-git clone https://github.com/nForma-AI/QGSD.git
-cd QGSD
+git clone https://github.com/nForma-AI/nForma.git
+cd nForma
 node bin/install.js --claude --local
 ```
 
@@ -964,18 +964,18 @@ This prevents Claude from reading these files entirely, regardless of what comma
 
 **Commands not working as expected?**
 - Run `/nf:help` to verify installation
-- Re-run `npx qgsd@latest` to reinstall
+- Re-run `npx nforma@latest` to reinstall
 
 **Updating to the latest version?**
 ```bash
-npx qgsd@latest
+npx nforma@latest
 ```
 
 **Using Docker or containerized environments?**
 
 If file reads fail with tilde paths (`~/.claude/...`), set `CLAUDE_CONFIG_DIR` before installing:
 ```bash
-CLAUDE_CONFIG_DIR=/home/youruser/.claude npx qgsd@latest
+CLAUDE_CONFIG_DIR=/home/youruser/.claude npx nforma@latest
 ```
 This ensures absolute paths are used instead of `~` which may not expand correctly in containers.
 
@@ -999,11 +999,11 @@ This removes all nForma commands, agents, hooks, and settings while preserving y
 
 ## Star History
 
-<a href="https://star-history.com/#nForma-AI/QGSD&Date">
+<a href="https://star-history.com/#nForma-AI/nForma&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=nForma-AI/QGSD&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=nForma-AI/nForma&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=nForma-AI/nForma&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=nForma-AI/nForma&type=Date" />
  </picture>
 </a>
 

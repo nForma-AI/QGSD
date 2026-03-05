@@ -1,8 +1,9 @@
 {
-  "name": "@nforma.ai/qgsd",
+  "name": "@nforma.ai/nforma",
   "version": "0.2.1",
   "description": "nForma — Quorum Gets Shit Done. Multi-model quorum enforcement for GSD planning commands via Claude Code hooks.",
   "bin": {
+    "nforma": "bin/install.js",
     "qgsd": "bin/install.js",
     "get-shit-done-cc": "bin/install.js"
   },
@@ -34,11 +35,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nForma-AI/QGSD.git"
+    "url": "git+https://github.com/nForma-AI/nForma.git"
   },
-  "homepage": "https://github.com/nForma-AI/QGSD",
+  "homepage": "https://github.com/nForma-AI/nForma",
   "bugs": {
-    "url": "https://github.com/nForma-AI/QGSD/issues"
+    "url": "https://github.com/nForma-AI/nForma/issues"
   },
   "engines": {
     "node": ">=16.7.0"
