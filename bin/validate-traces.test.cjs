@@ -429,6 +429,15 @@ test('buildTTrace: validateMCPMetadata non-mcp_call event returns true', () => {
   assert.strictEqual(validateMCPMetadata({ action: 'quorum_start' }), true);
 });
 
+test('mapToXStateEvent maps circuit_break to CIRCUIT_BREAK', () => {
+  const lines = [
+    JSON.stringify({ action: 'circuit_break', phase: 'IDLE', ts: Date.now(), session: 'test-cb' })
+  ];
+  const result = runValidator(lines);
+  assert.strictEqual(result.status, 0, 'circuit_break trace should validate without divergence');
+  assert.ok(!result.stdout.includes('unmappable_action'), 'should not report unmappable_action for circuit_break');
+});
+
 test('buildTTrace: exported and callable from module.exports', () => {
   const m = require('../bin/validate-traces.cjs');
   assert.strictEqual(typeof m.buildTTrace, 'function', 'buildTTrace must be exported');

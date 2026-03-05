@@ -80,6 +80,8 @@ function mapToXStateEvent(event) {
       return { type: 'DECIDE', outcome: 'BLOCK' };
     case 'deliberation_round':
       return { type: 'VOTES_COLLECTED', successCount: event.vote_result || 0 };
+    case 'circuit_break':
+      return { type: 'CIRCUIT_BREAK' };
     default:
       return null;
   }
@@ -186,6 +188,9 @@ function expectedState(event) {
   // deliberation_round: these happen mid-session (phase=DECIDING) too
   // but are already excluded by the phase check below
   if (event.action === 'deliberation_round') return 'DELIBERATING';
+
+  // circuit_break self-loops to IDLE — no state transition occurs
+  if (event.action === 'circuit_break') return 'IDLE';
 
   // H1 fix: skip validation for mid-session events (phase !== 'IDLE').
   // These events require cross-event context that a fresh actor starting in IDLE cannot provide.

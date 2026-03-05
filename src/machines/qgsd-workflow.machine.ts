@@ -15,7 +15,8 @@ export type QGSDEvent =
   | { type: 'QUORUM_START';    slotsAvailable: number; polledCount: number }
   | { type: 'VOTES_COLLECTED'; successCount: number }
   | { type: 'DELIBERATE' }
-  | { type: 'DECIDE';          outcome: 'APPROVE' | 'BLOCK' };
+  | { type: 'DECIDE';          outcome: 'APPROVE' | 'BLOCK' }
+  | { type: 'CIRCUIT_BREAK' };
 
 export const qgsdWorkflowMachine = setup({
   types: {
@@ -56,6 +57,9 @@ export const qgsdWorkflowMachine = setup({
             polledCount:    ({ event }) => event.polledCount,
             currentPhase:   () => 'COLLECTING_VOTES',
           }),
+        },
+        CIRCUIT_BREAK: {
+          target: 'IDLE',
         },
       },
     },
