@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-04T23:40:13.836Z",
-  "content_hash": "bd8683a6dd4d69b9",
+  "aggregated_at": "2026-03-05T07:38:32.912Z",
+  "content_hash": "5945f33641722848",
   "frozen_at": "2026-03-04T23:40:13.836Z",
   "schema_version": "1",
   "requirements": [
@@ -1750,6 +1750,18 @@
       "provenance": {
         "source_file": "qgsd-baseline",
         "milestone": "baseline"
+      }
+    },
+    {
+      "id": "OBS-06",
+      "text": "Scan local project state for unfinished quick tasks, stale debug sessions, and unverified milestone phases; surface them as always-on issues in /qgsd:observe without requiring configuration.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Project housekeeping tasks—incomplete quick tasks, unresolved debug sessions, and active phases without verification—can fall through the cracks when only monitoring external sources (GitHub, Sentry). This requirement adds an internal work detector that automatically surfaces local consistency issues as observe issues, routing them to appropriate follow-up skills (/qgsd:quick, /qgsd:debug, /qgsd:solve) without manual configuration.",
+      "provenance": {
+        "source_file": ".planning/quick/168-add-internal-work-detection-handler-to-o/168-PLAN.md",
+        "milestone": "quick-168"
       }
     },
     {
