@@ -435,13 +435,131 @@ function buildCoverageReport(formalAnnotations, testAnnotations, requirements) {
   };
 }
 
+// ── Recipe Helpers ────────────────────────────────────────────────────────────
+
+/**
+ * Extract property/invariant definition text from a formal model file.
+ * Supports TLA+ (.tla), Alloy (.als), and PRISM (.prism/.sm).
+ * Returns the extracted text string, or '' on failure (fail-open).
+ */
+function extractPropertyDefinition(modelFile, propertyName) {
+  try {
+    if (!fs.existsSync(modelFile)) return '';
+    const content = fs.readFileSync(modelFile, 'utf8');
+
+    if (modelFile.endsWith('.tla')) {
+      // TLA+: propertyName == <body> until blank line or next definition
+      const escaped = propertyName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp('^' + escaped + '\\s*==[\\s\\S]*?(?=\\n\\s*\\n|\\n\\w+\\s*==|$)', 'm');
+      const m = content.match(re);
+      return m ? m[0].trim() : '';
+    }
+
+    if (modelFile.endsWith('.als')) {
+      // Alloy: pred propertyName { ... } or assert propertyName { ... }
+      const escaped = propertyName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp('(?:pred|assert|fact)\\s+' + escaped + '\\s*\\{', 'm');
+      const m = content.match(re);
+      if (!m) return '';
+      // Find matching closing brace
+      const start = m.index;
+      let depth = 0;
+      let end = start;
+      for (let i = start; i < content.length; i++) {
+        if (content[i] === '{') depth++;
+        if (content[i] === '}') { depth--; if (depth === 0) { end = i + 1; break; } }
+      }
+      return content.slice(start, end).trim();
+    }
+
+    if (modelFile.endsWith('.prism') || modelFile.endsWith('.sm')) {
+      // PRISM: look for @requirement comment near P=? or filter lines
+      const lines = content.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes(propertyName) || lines[i].includes('@requirement')) {
+          // Capture the property line and surrounding context
+          const start = Math.max(0, i - 1);
+          const end = Math.min(lines.length, i + 2);
+          return lines.slice(start, end).join('\n').trim();
+        }
+      }
+    }
+
+    return '';
+  } catch (_err) {
+    return '';
+  }
+}
+
+/**
+ * Find source files implementing a requirement by grepping for the requirement ID.
+ * Falls back to key terms from requirement text if no direct matches.
+ * Returns array of relative file paths, or [] on failure (fail-open).
+ */
+function findSourceFiles(requirementId, requirementText) {
+  try {
+    const result = spawnSync('grep', [
+      '-rl', requirementId,
+      'bin/', 'hooks/', 'commands/',
+      '--include=*.cjs', '--include=*.mjs', '--include=*.js', '--include=*.md',
+    ], { encoding: 'utf8', cwd: ROOT, timeout: 10000 });
+
+    let files = (result.stdout || '').split('\n').filter(Boolean);
+    // Filter out formal model files and test files
+    files = files.filter(f =>
+      !f.endsWith('.tla') && !f.endsWith('.als') && !f.endsWith('.prism') &&
+      !f.endsWith('.sm') && !f.endsWith('.cfg') &&
+      !f.includes('.stub.test.js') && !f.includes('.test.js') && !f.includes('.test.cjs')
+    );
+
+    if (files.length === 0 && requirementText) {
+      // Fallback: try key terms (first 3 significant words >4 chars)
+      const words = requirementText.toLowerCase()
+        .replace(/[^a-z0-9\s]/g, '')
+        .split(/\s+/)
+        .filter(w => w.length > 4);
+      const keyTerms = words.slice(0, 3);
+      for (const term of keyTerms) {
+        const fallback = spawnSync('grep', [
+          '-rl', term,
+          'bin/', 'hooks/',
+          '--include=*.cjs', '--include=*.mjs', '--include=*.js',
+        ], { encoding: 'utf8', cwd: ROOT, timeout: 10000 });
+        const found = (fallback.stdout || '').split('\n').filter(Boolean);
+        files.push(...found);
+        if (files.length > 0) break;
+      }
+      // Deduplicate
+      files = [...new Set(files)];
+    }
+
+    return files;
+  } catch (_err) {
+    return [];
+  }
+}
+
+/**
+ * Classify test strategy based on requirement text keywords.
+ * Returns 'structural', 'behavioral', or 'constant'.
+ */
+function classifyTestStrategy(requirementText) {
+  const text = (requirementText || '').toLowerCase();
+  if (/(?:returns|outputs|produces|result|calculates)/.test(text)) return 'behavioral';
+  if (/(?:constant|value|equals|match|threshold)/.test(text)) return 'constant';
+  // Default and explicit structural keywords
+  return 'structural';
+}
+
 // ── Stub Generation ──────────────────────────────────────────────────────────
 
 /**
  * Generate test stub files for uncovered invariants (gaps).
  * Each stub is a skeleton test file with a TODO comment and assert.fail().
+ * Also generates .stub.recipe.json sidecars with pre-resolved context.
  */
-function generateStubs(gaps, formalAnnotations) {
+function generateStubs(gaps, formalAnnotations, requirements) {
+  const requirementMap = new Map(requirements.map(r => [r.id, r]));
   const stubs = [];
 
   for (const gap of gaps) {
@@ -470,11 +588,43 @@ test('TODO: implement test for ${requirement_id} — ${property}', () => {
 });
 `;
       fs.writeFileSync(stubFilePath, stubContent, 'utf8');
+
+      // Write recipe sidecar with pre-resolved context
+      const recipeFileName = requirement_id + '.stub.recipe.json';
+      const recipeFilePath = path.join(stubsDir, recipeFileName);
+      const req = requirementMap.get(requirement_id);
+      // NOTE: Only the first formal_property is used for the recipe. Gaps with multiple
+      // formal_properties are intentionally reduced to the first entry — this is acceptable
+      // because most gaps have a single property, and the recipe is a hint, not exhaustive.
+      const modelFile = gap.formal_properties.length > 0 ? gap.formal_properties[0].model_file : '';
+      const definition = modelFile ? extractPropertyDefinition(path.join(ROOT, modelFile), property) : '';
+      const sourceFiles = findSourceFiles(requirement_id, req ? req.text : '');
+      const importHint = sourceFiles.length > 0
+        ? "const mod = require('" + path.relative(stubsDir, path.join(ROOT, sourceFiles[0])).replace(/\\/g, '/') + "');"
+        : '';
+      const testStrategy = classifyTestStrategy(req ? req.text : '');
+
+      const recipe = {
+        requirement_id,
+        requirement_text: req ? req.text : '',
+        formal_property: {
+          name: property,
+          model_file: modelFile,
+          definition,
+          type: modelFile.endsWith('.tla') ? 'invariant' : modelFile.endsWith('.als') ? 'assertion' : 'property',
+        },
+        source_files: sourceFiles,
+        import_hint: importHint,
+        test_strategy: testStrategy,
+      };
+
+      fs.writeFileSync(recipeFilePath, JSON.stringify(recipe, null, 2) + '\n', 'utf8');
     }
 
     stubs.push({
       requirement_id,
       stub_file: stubFilePath,
+      recipe_file: path.join(stubsDir, requirement_id + '.stub.recipe.json'),
       property,
     });
   }
@@ -557,6 +707,8 @@ function printSummary(coverageReport, constantsValidation, stubs) {
 
   if (stubs.length > 0) {
     process.stdout.write(TAG_SUMMARY + '   Test stubs generated: ' + stubs.length + ' in ' + stubsDir + '\n');
+    const recipeCount = stubs.filter(s => s.recipe_file).length;
+    process.stdout.write(TAG_SUMMARY + '   Recipes: ' + recipeCount + ' generated\n');
   }
 
   if (!reportOnly) {
@@ -578,7 +730,7 @@ function main() {
 
   let stubs = [];
   if (!reportOnly) {
-    stubs = generateStubs(coverageReport.gaps, formalAnnotations);
+    stubs = generateStubs(coverageReport.gaps, formalAnnotations, requirements);
     writeSidecar(coverageReport);
     writeReport(coverageReport, constantsValidation);
   }
@@ -597,7 +749,7 @@ function main() {
 
 // ── Exports (for testing) ────────────────────────────────────────────────────
 
-module.exports = { parseAlloyDefaults };
+module.exports = { parseAlloyDefaults, extractPropertyDefinition, findSourceFiles, classifyTestStrategy };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
 
