@@ -16,6 +16,7 @@
 //   - .planning/formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
+const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -137,7 +138,10 @@ process.stdout.write('[run-installer-alloy] JAR:  ' + jarPath + '\n');
 const _startMs = Date.now();
 
 // Use stdio: 'pipe' so we can scan stdout for counterexamples (Alloy exits 0 even on CEX)
+process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
 const alloyResult = spawnSync(javaExe, [
+  '-Djava.awt.headless=true',
+  '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
   '-jar', jarPath,
   'exec',
   '--output', '-',

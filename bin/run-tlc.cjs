@@ -14,6 +14,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
+const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -294,11 +295,58 @@ if (require.main === module) {
   }
 
   // ── 4. Invoke TLC ──────────────────────────────────────────────────────────
-  // Map config names to their corresponding spec files
+  // Map config names to their corresponding spec files.
+  // Static map for known exceptions; auto-discovery handles the rest.
   const SPEC_MAP = {
-    'MCMCPEnv': 'QGSDMCPEnv.tla',
+    'MCMCPEnv':              'QGSDMCPEnv.tla',
+    'MCsafety':              'QGSDQuorum.tla',
+    'MCliveness':            'QGSDQuorum.tla',
+    'MCQGSDQuorum':          'QGSDQuorum_xstate.tla',
+    'MCrecruiting-liveness': 'QGSDRecruiting.tla',
+    'MCrecruiting-safety':   'QGSDRecruiting.tla',
+    'MCTUINavigation':       'TUINavigation.tla',
   };
-  const specFile = SPEC_MAP[configName] || 'QGSDQuorum.tla';
+
+  // Auto-discover spec file: (1) check SPEC_MAP, (2) scan cfg header for QGSD*.tla ref,
+  // (3) try naming conventions, (4) fall back to QGSDQuorum.tla
+  function resolveSpecFile(cfgName) {
+    if (SPEC_MAP[cfgName]) return SPEC_MAP[cfgName];
+
+    const tlaDir = path.join(ROOT, '.planning', 'formal', 'tla');
+
+    // Strategy 1: read cfg header for QGSD*.tla reference (with or without .tla suffix)
+    try {
+      const cfgContent = fs.readFileSync(path.join(tlaDir, cfgName + '.cfg'), 'utf8');
+      const headerLines = cfgContent.split('\n').slice(0, 5).join('\n');
+      // Match QGSD*.tla or "for QGSD*." (without .tla extension)
+      const refMatch = headerLines.match(/QGSD\w+\.tla/) || headerLines.match(/QGSD\w+/);
+      if (refMatch) {
+        const candidate = refMatch[0].endsWith('.tla') ? refMatch[0] : refMatch[0] + '.tla';
+        if (fs.existsSync(path.join(tlaDir, candidate))) return candidate;
+      }
+    } catch (_) { /* fall through */ }
+
+    // Strategy 2: naming convention — strip MC prefix, normalize hyphens, find matching QGSD*.tla
+    const stripped = cfgName.replace(/^MC/, '').toLowerCase().replace(/-/g, '');
+    try {
+      const allTla = fs.readdirSync(tlaDir).filter(f => f.endsWith('.tla') && !f.includes('TTrace'));
+      const qgsdFiles = allTla.filter(f => f.startsWith('QGSD'));
+      const normalize = (s) => s.toLowerCase().replace(/-/g, '');
+      // Exact match against QGSD-prefixed files
+      const match = qgsdFiles.find(f => normalize(f.replace('QGSD', '').replace('.tla', '')) === stripped);
+      if (match) return match;
+      // Fuzzy substring match against QGSD-prefixed files
+      const fuzzy = qgsdFiles.find(f => normalize(f).includes(stripped));
+      if (fuzzy) return fuzzy;
+      // Fallback: check non-QGSD-prefixed files (exact match on stripped name)
+      const nonPrefixed = allTla.find(f => normalize(f.replace('.tla', '')) === stripped);
+      if (nonPrefixed) return nonPrefixed;
+    } catch (_) { /* fall through */ }
+
+    return 'QGSDQuorum.tla';
+  }
+
+  const specFile = resolveSpecFile(configName);
   const specPath = path.join(ROOT, '.planning', 'formal', 'tla', specFile);
   const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
   // Use -workers 1 for liveness (defensive — avoids known multi-worker liveness bugs in older TLC)
@@ -309,7 +357,9 @@ if (require.main === module) {
   process.stdout.write('[run-tlc] Cfg:    ' + cfgPath + '\n');
 
   const _startMs = Date.now();
+  process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
   const tlcResult = spawnSync(javaExe, [
+    '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
     '-jar', jarPath,
     '-config', cfgPath,
     '-workers', workers,

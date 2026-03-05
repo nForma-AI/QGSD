@@ -13,6 +13,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
+const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -127,7 +128,9 @@ process.stdout.write('[run-breaker-tlc] Spec:   ' + specPath + '\n');
 process.stdout.write('[run-breaker-tlc] Cfg:    ' + cfgPath + '\n');
 
 const _startMs = Date.now();
+process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
 const tlcResult = spawnSync(javaExe, [
+  '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
   '-jar', jarPath,
   '-config', cfgPath,
   '-workers', workers,

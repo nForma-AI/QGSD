@@ -15,6 +15,7 @@
 // NOTE: Uses spawnSync (no shell) for safe subprocess invocation -- no exec().
 
 const { spawnSync } = require('child_process');
+const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 
@@ -80,8 +81,10 @@ function runPhaseTlc(specPath, cfgPath, options) {
 
   // Invoke TLC via spawnSync (no shell -- safe subprocess)
   const startMs = Date.now();
+  process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
   const tlcResult = spawnSync(javaExe, [
     '-XX:+UseParallelGC',
+    '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
     '-jar', tla2toolsPath,
     '-workers', '1',
     '-config', cfgPath,
