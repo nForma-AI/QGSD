@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-06T12:32:23.149Z",
-  "content_hash": "754eca602b3ee995",
-  "frozen_at": "2026-03-06T12:32:23.151Z",
+  "aggregated_at": "2026-03-06T14:11:08.604Z",
+  "content_hash": "ac7d9144d5bd3863",
+  "frozen_at": "2026-03-06T14:11:08.605Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -866,6 +866,18 @@
         ".planning/formal/tla/QGSDOscillation.tla"
       ],
       "category_raw": "Detection"
+    },
+    {
+      "id": "DETECT-06",
+      "text": "Oscillation detection requires at least one diff pair with net content removal (deletions > additions) before classifying a commit pattern as oscillation — pure zero-net substitution pairs are not treated as reversion evidence",
+      "category": "Hooks & Enforcement",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The hasReversionInHashes function previously used totalNetChange <= 0 as the sole oscillation signal, causing false positives during monotonic workflow progression (e.g., template placeholders replaced by real data). Adding a hasNegativePair guard ensures only true content reversions trigger the circuit breaker.",
+      "provenance": {
+        "source_file": ".planning/quick/191-harden-circuit-breaker-to-prevent-false-/191-PLAN.md",
+        "milestone": "quick-191"
+      }
     },
     {
       "id": "DISP-01",
