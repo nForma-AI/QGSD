@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-06T15:19:01.696Z",
-  "content_hash": "75d18bbbf87a8a26",
-  "frozen_at": "2026-03-06T15:19:01.696Z",
+  "aggregated_at": "2026-03-06T19:42:44.532Z",
+  "content_hash": "1ec1b5cbb8885970",
+  "frozen_at": "2026-03-06T19:42:44.533Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -2947,6 +2947,18 @@
       "formal_models": [
         ".planning/formal/tla/QGSDSpecGeneration.tla"
       ]
+    },
+    {
+      "id": "SPEC-05",
+      "text": "Formal scope scan uses per-module scope.json metadata with exact concept matching, source-file overlap, and module-name matching instead of substring-based keyword heuristics, and is centralized in bin/formal-scope-scan.cjs for all 4 workflow files",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/196-improve-formal-scope-scan-to-use-semanti/196-PLAN.md",
+        "milestone": "quick-196"
+      },
+      "background": "The previous inline keyword-substring matching in workflows produced false positives (e.g., session matching agent-loop, safety matching unrelated modules). Structured scope.json metadata per formal spec module with curated concepts enables precise semantic relevance matching without substring ambiguity."
     },
     {
       "id": "STATE-01",
