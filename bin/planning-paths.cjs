@@ -84,6 +84,12 @@ const TYPES = {
     legacy:    (root, p) => path.join(root, '.planning', `${p.version}-INTEGRATION-REPORT.md`),
   },
 
+  // Quorum cache
+  'quorum-cache': {
+    canonical: (root) => path.join(root, '.planning', '.quorum-cache'),
+    legacy:    (root) => path.join(root, '.planning', '.quorum-cache'),
+  },
+
   // State backups
   'state-backup': {
     canonical: (root, p) => path.join(root, '.planning', 'archive', 'state-backups', `STATE.md.bak-${p.timestamp}`),

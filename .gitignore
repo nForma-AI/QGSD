@@ -99,6 +99,9 @@ states/
 .planning/quorum-rounds-session-*.jsonl
 .planning/quorum/rounds/
 
+# Quorum cache (ephemeral, per-session)
+.planning/.quorum-cache/
+
 # Planning migration marker
 .planning/.migrated
 .planning/.gitignore
