@@ -135,6 +135,42 @@ function classifyUpstreamSeverity(item, itemType) {
   return 'info';
 }
 
+// Keywords that signal incompatible/breaking changes
+const BREAKING_KEYWORDS = ['breaking', 'remove', 'deprecat', 'drop', 'incompatible'];
+
+// Keywords that signal candidate changes worth evaluating
+const CANDIDATE_KEYWORDS = ['feat', 'feature', 'fix', 'perf', 'security', 'harden', 'plugin', 'hook'];
+
+/**
+ * Classify an upstream change as SKIP, CANDIDATE, or INCOMPATIBLE (OBS-11)
+ * Evaluates whether an upstream release or PR should be ported/adopted.
+ *
+ * @param {object} item - Release or PR object with title/name/tagName fields
+ * @param {string} coupling - 'tight' or 'loose'
+ * @returns {'SKIP'|'CANDIDATE'|'INCOMPATIBLE'} Classification result
+ */
+function classifyUpstreamOverlap(item, coupling) {
+  const text = ((item.title || '') + ' ' + (item.name || '') + ' ' + (item.tagName || '')).toLowerCase();
+
+  // Check for breaking/incompatible signals first
+  if (BREAKING_KEYWORDS.some(kw => text.includes(kw))) {
+    return 'INCOMPATIBLE';
+  }
+
+  // For tight coupling: major version bumps are incompatible
+  if (coupling === 'tight' && item.tagName && /\d+\.0\.0/.test(item.tagName)) {
+    return 'INCOMPATIBLE';
+  }
+
+  // Check for candidate signals
+  if (CANDIDATE_KEYWORDS.some(kw => text.includes(kw))) {
+    return 'CANDIDATE';
+  }
+
+  // Default: skip — not relevant enough to evaluate
+  return 'SKIP';
+}
+
 /**
  * Upstream source handler
  * @param {object} sourceConfig - { type, label, repo, coupling, branch?, filter?: { since } }
@@ -192,7 +228,7 @@ function handleUpstream(sourceConfig, options) {
         meta: `${repo} ${rel.tagName}${rel.isPrerelease ? ' (pre-release)' : ''}`,
         source_type: 'upstream',
         issue_type: 'upstream',
-        _upstream: { coupling, repo, tag: rel.tagName }
+        _upstream: { coupling, repo, tag: rel.tagName, classification: classifyUpstreamOverlap(rel, coupling) }
       });
     }
 
@@ -210,7 +246,7 @@ function handleUpstream(sourceConfig, options) {
           meta: `${repo} #${pr.number} (+${pr.additions || 0}/-${pr.deletions || 0}, ${pr.changedFiles || 0} files)`,
           source_type: 'upstream',
           issue_type: 'upstream',
-          _upstream: { coupling, repo, pr: pr.number }
+          _upstream: { coupling, repo, pr: pr.number, classification: classifyUpstreamOverlap(pr, coupling) }
         });
       }
     }
@@ -247,5 +283,6 @@ module.exports = {
   fetchReleases,
   fetchNotablePRs,
   classifyUpstreamSeverity,
+  classifyUpstreamOverlap,
   INSPIRATION_KEYWORDS
 };
