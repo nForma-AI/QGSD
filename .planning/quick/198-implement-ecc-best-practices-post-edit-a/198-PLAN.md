@@ -45,7 +45,7 @@ must_haves:
   key_links:
     - from: "bin/install.js"
       to: "hooks/nf-post-edit-format.js"
-      via: "PostToolUse hook registration with matcher Edit"
+      via: "PostToolUse hook registration (no matcher — tool_name filtered inside hook)"
       pattern: "nf-post-edit-format"
     - from: "bin/install.js"
       to: "hooks/nf-console-guard.js"
@@ -103,6 +103,7 @@ Create `hooks/nf-console-guard.js` — a Stop hook that warns about console.log:
 2. Load config via `require('./config-loader')` and call `shouldRunHook('nf-console-guard', profile)` — exit 0 if inactive.
 3. Run `git diff --cached --name-only` AND `git diff --name-only` via `spawnSync` to get all modified files. Combine and dedupe.
 4. Filter to only `.js`, `.ts`, `.cjs`, `.mjs`, `.jsx`, `.tsx` files.
+4a. **File-count cap:** If the filtered file list exceeds 20 files, exit 0 silently (skip scan). This prevents Stop hook latency spikes in large repos with many modified files.
 5. For each file, read contents and scan for `console.log` statements using regex `/^\s*console\.log\b/gm` (only match lines starting with console.log, not commented-out ones — skip lines starting with `//` or `*`).
 6. If any found, output JSON with `decision: 'warn'` (NOT `block`) and `reason` listing the files and line counts. Example: `"CONSOLE.LOG WARNING: Found console.log statements in: hooks/nf-post-edit-format.js (2 occurrences). Consider removing debug logging before shipping."`.
 7. If none found, exit 0 silently.
@@ -135,7 +136,7 @@ Both hook files exist, pass syntax check, and exit 0 on empty/minimal input (fai
 
 Add two new registration blocks following the exact pattern of the nf-spec-regen block:
 
-1. Post-edit format hook (PostToolUse with matcher):
+1. Post-edit format hook (PostToolUse — NO matcher, tool_name filtering is inside the hook code per Claude Code limitation: PostToolUse does not support `matcher` for tool name filtering, only SubagentStart/SubagentStop do. See v0.21-03-RESEARCH.md lines 153-155 for confirmation):
 ```javascript
 // Register nForma post-edit format hook (PostToolUse — auto-format JS/TS after Edit)
 if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
@@ -144,7 +145,6 @@ const hasPostEditFormatHook = settings.hooks.PostToolUse.some(entry =>
 );
 if (!hasPostEditFormatHook) {
   settings.hooks.PostToolUse.push({
-    matcher: 'Edit',
     hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-post-edit-format.js') }]
   });
   console.log(`  ${green}✓${reset} Configured nForma post-edit format hook (PostToolUse)`);
@@ -185,7 +185,7 @@ cp hooks/config-loader.js hooks/dist/
 Then run `node bin/install.js --claude --global` to install.
   </action>
   <verify>
-Run `node bin/install.js --claude --global` and confirm output includes the two new hook registration messages. Then verify `cat ~/.claude/settings.json | grep -c 'nf-post-edit-format'` returns 1 and `cat ~/.claude/settings.json | grep -c 'nf-console-guard'` returns 1.
+Run config-loader tests first to catch regressions from HOOK_PROFILE_MAP changes: `npx vitest run hooks/dist/config-loader.test.* --reporter verbose 2>&1 | tail -20`. Then run `node bin/install.js --claude --global` and confirm output includes the two new hook registration messages. Finally verify `cat ~/.claude/settings.json | grep -c 'nf-post-edit-format'` returns 1 and `cat ~/.claude/settings.json | grep -c 'nf-console-guard'` returns 1.
   </verify>
   <done>
 Both hooks are registered in install.js (install and uninstall paths), added to HOOK_PROFILE_MAP in config-loader.js, synced to hooks/dist/, and successfully installed to ~/.claude/hooks/ via install.js.
