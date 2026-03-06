@@ -141,4 +141,4 @@ Plans:
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 2/2 | Complete    | 2026-03-06 |
 | v0.29-04. Gate C Validation and Test Generation | 3/3 | Complete   | 2026-03-06 |
 | v0.29-05. Dashboard and Progressive Maturity Rollout | 1/1 | Complete    | 2026-03-06 |
-| v0.29-06. Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync | 1/1 | Complete   | 2026-03-06 |
+| v0.29-06. Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync | 1/1 | Complete    | 2026-03-06 |
