@@ -35,7 +35,8 @@ must_haves:
     - "Running `node bin/formal-scope-scan.cjs --description 'Safety Diagnostics Security Sweep Session State Harness'` does NOT match agent-loop or deliberation-revision (the false positive case)"
     - "All 4 workflow files call `node bin/formal-scope-scan.cjs` instead of inline keyword matching"
     - "Each of the 15 formal spec modules has a scope.json with source_files, concepts, and requirements arrays"
-    - "The script returns valid JSON array of {module, path} objects"
+    - "The script returns valid JSON array with --format=json and tab-separated lines with --format=lines"
+    - "bin/formal-scope-scan.cjs is synced to ~/.claude/nf-bin/ for installed-path access"
   artifacts:
     - path: "bin/formal-scope-scan.cjs"
       provides: "Centralized formal scope scanner with semantic matching"
@@ -123,7 +124,7 @@ Each scope.json has this schema:
 Read each module's `invariants.md` to determine the correct source_files and concepts. Key mappings (derive from `Spec source` and `Realism rationale` fields in each invariants.md):
 
 - **account-manager**: source_files: `["bin/account-manager.cjs"]`, concepts: `["account", "api-key", "provider", "credentials", "akash", "together", "fireworks"]`
-- **agent-loop**: source_files: `["bin/nForma.cjs"]`, concepts: `["agent-loop", "session", "main-loop", "orchestration", "nforma"]`
+- **agent-loop**: source_files: `["bin/nForma.cjs"]`, concepts: `["agent-loop", "agent-session", "session-lifecycle", "main-loop", "orchestration", "nforma"]`
 - **breaker**: source_files: `["hooks/nf-circuit-breaker.js", "hooks/dist/nf-circuit-breaker.js"]`, concepts: `["circuit-breaker", "breaker", "oscillation-detection", "run-collapse", "false-positive"]`
 - **convergence**: source_files: `["bin/run-quorum.cjs"]`, concepts: `["convergence", "quorum-rounds", "deliberation-rounds", "vote-agreement", "consensus"]`
 - **deliberation**: source_files: `["bin/run-quorum.cjs", "hooks/nf-prompt.js"]`, concepts: `["deliberation", "quorum-decision", "vote", "slot-worker", "majority"]`
@@ -145,16 +146,19 @@ Set `requirements` to `[]` for all modules (no requirement IDs currently mapped)
 Script accepts CLI args:
 - `--description "text"` (required) -- the description to match against
 - `--files file1,file2,...` (optional) -- source files to check for overlap
+- `--format json|lines` (optional, default: `json`) -- output format. `json` emits a JSON array (backward compat). `lines` emits one `module\tpath` per line (no JSON parsing needed by callers).
 
 Matching algorithm (a module matches if ANY signal fires):
 
 1. **Source file overlap** (highest priority): If `--files` provided, check if any provided file matches any of the module's `source_files` globs. Use simple glob matching (convert glob `*` to regex `[^/]*`, `**` to `.*`).
 
-2. **Concept matching** (primary): Lowercase the description, split on spaces/hyphens/underscores. For each concept in module's scope.json, check if any description token contains the concept as a substring OR the concept contains any token as a substring. BUT apply a minimum token length of 4 characters to prevent short words like "and", "the", "for", "state", "safe" from matching. Exception: if a concept is shorter than 4 chars, it must match exactly (not as substring).
+2. **Concept matching** (primary): Lowercase the description, split on spaces/hyphens/underscores to produce tokens. For each concept in the module's scope.json, check if any description token matches the concept **exactly** (case-insensitive). Since concepts are curated strings, exact matching eliminates false-positive risk that substring matching would introduce. The 4-char minimum band-aid is unnecessary with exact matching. Multi-word concepts (e.g., "circuit-breaker") should also be checked against the raw lowercased description as a substring so hyphenated phrases in the description still match.
 
-3. **Module name match** (fallback, lowest priority): Same logic as current -- module name substring of token or token substring of module name. Apply same 4-char minimum.
+3. **Module name match** (fallback, lowest priority): Check if any description token matches the module directory name exactly (case-insensitive). No substring matching -- exact only.
 
-Output: JSON array to stdout. Each element: `{ "module": "name", "path": ".planning/formal/spec/name/invariants.md", "matched_by": "concept|source_file|module_name" }`.
+Output depends on `--format`:
+- `json` (default): JSON array to stdout. Each element: `{ "module": "name", "path": ".planning/formal/spec/name/invariants.md", "matched_by": "concept|source_file|module_name" }`.
+- `lines`: One line per match, tab-separated: `module\tpath`. No JSON wrapping. Easy to consume in shell `while read` loops without `node -e` parsing.
 
 If no matches: output `[]`.
 
@@ -172,9 +176,10 @@ Error handling: If `.planning/formal/spec/` does not exist, output `[]` and exit
 5. `node bin/formal-scope-scan.cjs --description "completely unrelated topic about databases"` -- should return `[]`
 6. `node bin/formal-scope-scan.cjs --files "hooks/nf-stop.js" --description "something"` -- should match stop-hook, safety, quorum via source_file overlap
 7. All 15 scope.json files exist: `ls .planning/formal/spec/*/scope.json | wc -l` returns 15
+8. `node bin/formal-scope-scan.cjs --description "fix quorum deliberation bug" --format lines` -- outputs tab-separated module\tpath lines (no JSON wrapping)
   </verify>
   <done>
-All 15 formal spec modules have scope.json with source_files, concepts, and requirements. The bin/formal-scope-scan.cjs script accepts --description and --files, matches using concept/source_file/module_name signals with 4-char minimum token filter, and returns JSON array to stdout. False positive case ("Safety Diagnostics Security Sweep Session State Harness") no longer matches agent-loop or deliberation-revision.
+All 15 formal spec modules have scope.json with source_files, concepts, and requirements. The bin/formal-scope-scan.cjs script accepts --description, --files, and --format (json|lines), matches using exact concept/source_file/module_name matching (no substring), and returns output to stdout. False positive case ("Safety Diagnostics Security Sweep Session State Harness") no longer matches agent-loop or deliberation-revision. The agent-loop scope.json uses "agent-session" and "session-lifecycle" instead of the generic "session" concept.
   </done>
 </task>
 
@@ -196,19 +201,15 @@ Replace the entire inline keyword-matching block (the `for MODULE_DIR ... done` 
 ```bash
 FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
-  SCAN_RESULT=$(node bin/formal-scope-scan.cjs --description "$DESCRIPTION_VAR")
-  # Parse JSON array into FORMAL_SPEC_CONTEXT bash array
-  while IFS= read -r line; do
-    FORMAL_SPEC_CONTEXT+=("$line")
-  done < <(echo "$SCAN_RESULT" | node -e "
-    const arr = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-    arr.forEach(e => console.log(JSON.stringify({module: e.module, path: e.path})));
-  ")
+  # Use --format=lines to avoid inline JSON parsing
+  while IFS=$'\t' read -r mod modpath; do
+    FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
+  done < <(node bin/formal-scope-scan.cjs --description "$DESCRIPTION_VAR" --format lines)
   MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
   if [ "$MATCH_COUNT" -gt 0 ]; then
-    MATCHED_MODULES=$(echo "$SCAN_RESULT" | node -e "
-      const arr = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-      console.log(arr.map(e => e.module).join(', '));
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
+      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+      console.log(lines.map(l=>JSON.parse(l).module).join(', '));
     ")
     echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
   else
@@ -229,13 +230,16 @@ fi
 
 **Important:** Preserve ALL downstream usage of `$FORMAL_SPEC_CONTEXT` in each workflow (the variable is consumed by later steps for checker injection, formal check invocation, etc.). Only replace the MATCHING logic, not the consumption logic.
 
-After updating all 4 files, install the updated workflows:
+After updating all 4 files, install the updated workflows and sync the scanner script to `~/.claude/nf-bin/`:
 ```bash
 cp core/workflows/quick.md ~/.claude/nf/workflows/quick.md
 cp core/workflows/plan-phase.md ~/.claude/nf/workflows/plan-phase.md
 cp core/workflows/execute-phase.md ~/.claude/nf/workflows/execute-phase.md
 cp core/workflows/new-milestone.md ~/.claude/nf/workflows/new-milestone.md
+cp bin/formal-scope-scan.cjs ~/.claude/nf-bin/formal-scope-scan.cjs
 ```
+
+This ensures the scanner is available at the path workflows will actually reference when running from installed locations.
   </action>
   <verify>
 1. `grep -c "formal-scope-scan.cjs" core/workflows/quick.md core/workflows/plan-phase.md core/workflows/execute-phase.md core/workflows/new-milestone.md` -- each file should show at least 1 occurrence
@@ -245,9 +249,10 @@ cp core/workflows/new-milestone.md ~/.claude/nf/workflows/new-milestone.md
 5. `diff core/workflows/plan-phase.md ~/.claude/nf/workflows/plan-phase.md` -- no differences
 6. `diff core/workflows/execute-phase.md ~/.claude/nf/workflows/execute-phase.md` -- no differences
 7. `diff core/workflows/new-milestone.md ~/.claude/nf/workflows/new-milestone.md` -- no differences
+8. `diff bin/formal-scope-scan.cjs ~/.claude/nf-bin/formal-scope-scan.cjs` -- no differences (install synced)
   </verify>
   <done>
-All 4 workflow files call `node bin/formal-scope-scan.cjs --description "..."` instead of inline keyword-substring matching. The inline `for KEYWORD ... MATCHED=0 ... grep -qF` loops are completely removed. Downstream FORMAL_SPEC_CONTEXT consumption (checker injection, formal check invocation, display) is preserved unchanged. Installed copies at ~/.claude/nf/workflows/ are synced.
+All 4 workflow files call `node bin/formal-scope-scan.cjs --description "..." --format lines` instead of inline keyword-substring matching, avoiding inline `node -e` JSON parsing. The inline `for KEYWORD ... MATCHED=0 ... grep -qF` loops are completely removed. Downstream FORMAL_SPEC_CONTEXT consumption (checker injection, formal check invocation, display) is preserved unchanged. Installed copies at ~/.claude/nf/workflows/ are synced. bin/formal-scope-scan.cjs is synced to ~/.claude/nf-bin/.
   </done>
 </task>
 
@@ -262,11 +267,12 @@ All 4 workflow files call `node bin/formal-scope-scan.cjs --description "..."` i
 </verification>
 
 <success_criteria>
-- bin/formal-scope-scan.cjs exists and returns correct JSON for all test cases
-- 15 scope.json files exist under .planning/formal/spec/*/
-- 4 workflow files updated to call centralized script
+- bin/formal-scope-scan.cjs exists, supports --format json|lines, and returns correct output for all test cases
+- 15 scope.json files exist under .planning/formal/spec/*/ with curated exact-match concepts (no generic "session")
+- 4 workflow files updated to call centralized script with --format lines (no inline JSON parsing)
 - False positive case (Safety Diagnostics description) no longer matches agent-loop or deliberation-revision
 - Installed workflows synced to ~/.claude/nf/workflows/
+- bin/formal-scope-scan.cjs synced to ~/.claude/nf-bin/
 </success_criteria>
 
 <output>
