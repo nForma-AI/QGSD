@@ -425,7 +425,96 @@ ls -1 .planning/phases/[current-phase-dir]/*-SUMMARY.md 2>/dev/null | wc -l
 |-----------|-------|--------|
 | summaries < plans | **A: More plans** | Find next PLAN without SUMMARY. Yolo: auto-continue. Interactive: show next plan, suggest `/nf:execute-phase {phase}` + `/nf:verify-work`. STOP here. |
 | summaries = plans, current < highest phase | **B: Phase done** | Show completion, suggest `/nf:plan-phase {Z+1}` + `/nf:verify-work {Z}` + `/nf:discuss-phase {Z+1}` |
-| summaries = plans, current = highest phase | **C: Milestone done** | Show banner, suggest `/nf:complete-milestone` + `/nf:verify-work` + `/nf:add-phase` |
+| summaries = plans, current = highest phase | **C: Milestone done** | Show banner, detect gap closure, chain into audit-milestone (see below) |
+
+---
+
+**Route C expanded: Milestone done — chain into audit-milestone**
+
+Step 1: Detect whether the completed phase is a Gap Closure phase.
+
+```bash
+# Check if the completed phase's ROADMAP.md entry has a Gap Closure marker
+IS_GAP_CLOSURE=$(grep -A 4 "^### Phase ${COMPLETED_PHASE}:" .planning/ROADMAP.md | grep -c '\*\*Gap Closure:\*\*')
+# IS_GAP_CLOSURE=0 -> primary path (first audit before completing)
+# IS_GAP_CLOSURE=1+ -> re-audit path (gap closure phase just finished)
+```
+
+Step 2a: Gap Closure re-audit path (IS_GAP_CLOSURE=1+)
+
+<if mode="yolo">
+
+```
+Phase {X} plan complete — all plans finished.
+
+Gap closure phase finished — re-auditing milestone {version}
+
+Auto-continuing: Re-run milestone audit to verify gaps are closed
+```
+
+Exit and invoke SlashCommand("/nf:audit-milestone {version} --auto")
+
+</if>
+
+<if mode="interactive">
+
+```
+## Phase {X}: {Phase Name} Complete
+
+Gap closure phase finished.
+
+---
+
+## Next Up
+
+**Re-audit Milestone {version}** — verify gap closure succeeded
+
+`/nf:audit-milestone {version}`
+
+<sub>`/clear` first - fresh context window</sub>
+
+---
+```
+
+</if>
+
+Step 2b: Primary completion path (IS_GAP_CLOSURE=0)
+
+<if mode="yolo">
+
+```
+Phase {X} plan complete — all plans finished.
+
+Milestone {version} is 100% complete — all {N} phases finished!
+
+Auto-continuing: Run milestone audit before completing
+```
+
+Exit and invoke SlashCommand("/nf:audit-milestone {version} --auto")
+
+</if>
+
+<if mode="interactive">
+
+```
+## Phase {X}: {Phase Name} Complete
+
+Milestone {version} is 100% complete — all {N} phases finished!
+
+---
+
+## Next Up
+
+**Audit Milestone {version}** — verify requirements before completing
+
+`/nf:audit-milestone {version}`
+
+<sub>`/clear` first - fresh context window</sub>
+
+---
+```
+
+</if>
 
 All routes: `/clear` first for fresh context.
 </step>
