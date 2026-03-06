@@ -8,7 +8,7 @@
     },
     "formalism": {
       "type": "string",
-      "enum": ["tla", "alloy", "prism", "trace", "redaction", "uppaal"]
+      "enum": ["tla", "alloy", "prism", "trace", "redaction", "uppaal", "layer"]
     },
     "result": {
       "type": "string",
@@ -53,6 +53,14 @@
         "pattern": "^[A-Z]"
       },
       "default": []
+    },
+    "source_layer": {
+      "type": "string",
+      "enum": ["L1", "L2", "L3"]
+    },
+    "gate": {
+      "type": "string",
+      "enum": ["A", "B", "C"]
     }
   },
   "additionalProperties": false

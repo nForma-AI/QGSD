@@ -1,0 +1,45 @@
+{
+  "schema_version": "1",
+  "extensibility": "additive",
+  "extensibility_note": "New actions can be added in later phases without incrementing schema_version. schema_version only changes for structural/breaking changes to the vocabulary format itself.",
+  "generated": "2026-03-06T13:00:00.000Z",
+  "unknown_action_policy": "reject_and_log",
+  "vocabulary": {
+    "quorum_start": {
+      "source": "nf-prompt.js",
+      "xstate_event": "QUORUM_START",
+      "layer": "L1"
+    },
+    "quorum_complete": {
+      "source": "nf-prompt.js",
+      "xstate_event": "VOTES_COLLECTED",
+      "layer": "L1"
+    },
+    "quorum_block": {
+      "source": "nf-stop.js",
+      "xstate_event": "BLOCK_DECISION",
+      "layer": "L1"
+    },
+    "quorum_block_r3_2": {
+      "source": "nf-stop.js",
+      "xstate_event": "BLOCK_DECISION",
+      "layer": "L1"
+    },
+    "circuit_break": {
+      "source": "nf-circuit-breaker.js",
+      "xstate_event": "CIRCUIT_BREAK",
+      "layer": "L1"
+    },
+    "mcp_call": {
+      "source": "nf-prompt.js",
+      "xstate_event": null,
+      "layer": "L1"
+    },
+    "undefined": {
+      "source": "unknown",
+      "classification": "instrumentation_gap",
+      "xstate_event": null,
+      "layer": "L1"
+    }
+  }
+}
