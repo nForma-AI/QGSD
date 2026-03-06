@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.29-05 — Phase v0.29-05 complete (Dashboard and Progressive Maturity Rollout)
+**Current focus:** v0.28-02 — Cache integration into quorum hooks
 
 ## Current Position
 
-Phase: v0.29-05 (Dashboard and Progressive Maturity Rollout)
-Plan: 1 of 1 in current phase
-Status: Complete
-Last activity: 2026-03-06 - Completed v0.29-05-01 Cross-layer alignment dashboard
+Phase: v0.28-02 (Data Pipeline, Quorum Cache, Pass@k Metrics)
+Plan: 2 of 3 in current phase
+Status: In Progress
+Last activity: 2026-03-06 - Completed v0.28-02-02 Hook Cache Integration
 
-Progress: [##########] 100%
+Progress: [######----] 67%
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Progress: [##########] 100%
 | Phase v0.29-04 P03 | 16min | 2 tasks | 4 files |
 | Phase v0.29-04 P01 | 3min | 2 tasks | 6 files |
 | Phase v0.29-05 P01 | 3min | 2 tasks | 2 files |
+| Phase v0.28-02 P02 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase v0.29-02]: Observed invariant checks 1-3 fail on real data; added checks 4-5 (complete_requires_block, action_count_consistency) that hold across all 349 sessions
 - [v0.28-02-01]: Null-byte separator in cache key prevents cross-field collisions
 - [v0.28-02-01]: Cache validity checks both git HEAD and quorum composition to prevent stale results
+- [v0.28-02-02]: nf-stop.js trusts NF_CACHE_HIT marker because nf-prompt.js is the validation gatekeeper
+- [v0.28-02-02]: Cache backfill reads raw file instead of readCache() since pending entries lack completed field
 - [v0.29-04-02]: L2/L3 analysis skipped when L1 produces zero impact -- avoids false positives from non-instrumented files
 - [v0.29-04-02]: Emission points with null xstate_event excluded from L2 chaining -- only mapped events propagate
 - [v0.29-04-01]: Oracle type directly maps to failure mode type: omission->state_assertion, commission->guard_rejection, corruption->state_equality
@@ -98,5 +101,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-05-01-PLAN.md (Cross-layer alignment dashboard)
+Stopped at: Completed v0.28-02-02-PLAN.md (Hook Cache Integration)
 Resume file: None
