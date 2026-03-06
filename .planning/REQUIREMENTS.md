@@ -41,9 +41,9 @@
 
 ### Semantics (Layer 2)
 - [ ] **SEM-01**: Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog
-- [ ] **SEM-02**: Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status
+- [x] **SEM-02**: Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status
 - [ ] **SEM-03**: Assumption register catalogs assumptions made when deriving L2 from L1 with validation status and linked L2 states
-- [ ] **SEM-04**: Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models
+- [x] **SEM-04**: Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models
 
 ### Reasoning (Layer 3)
 - [ ] **RSN-01**: Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions
@@ -93,9 +93,9 @@
 | EVID-04 | v0.29-01 | Pending |
 | EVID-05 | v0.29-01 | Pending |
 | SEM-01 | v0.29-02 | Pending |
-| SEM-02 | v0.29-02 | Pending |
+| SEM-02 | v0.29-02 | Complete |
 | SEM-03 | v0.29-02 | Pending |
-| SEM-04 | v0.29-02 | Pending |
+| SEM-04 | v0.29-02 | Complete |
 | RSN-01 | v0.29-03 | Pending |
 | RSN-02 | v0.29-03 | Pending |
 | RSN-03 | v0.29-03 | Pending |

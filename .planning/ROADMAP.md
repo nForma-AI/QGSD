@@ -146,7 +146,7 @@ Plans:
   2. Running a trace comparison produces JSONL mismatch entries tracking every L2-model vs L1-trace disagreement with resolution status (open/explained/bug)
   3. Running the assumption register script produces a catalog of assumptions made when deriving L2 from L1, each with validation status and linked L2 states
   4. Running Gate A produces a numeric grounding_score (traces_explained / total_traces) with target >= 80% and classifies every unexplained trace into instrumentation bug, model gap, or genuine violation
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
 - [ ] v0.29-02-01-PLAN.md -- Invariant catalog and assumption register (SEM-01, SEM-03)
 - [ ] v0.29-02-02-PLAN.md -- Mismatch register and observed FSM derivation (SEM-02, SEM-04)
@@ -192,7 +192,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.29-01. Layer Manifest and Evidence Foundation | 0/3 | Complete    | 2026-03-06 |
-| v0.29-02. Semantics Layer and Gate A Grounding | 0/3 | Not started | - |
+| v0.29-02. Semantics Layer and Gate A Grounding | 1/3 | In Progress|  |
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 0/TBD | Not started | - |
 | v0.29-04. Gate C Validation and Test Generation | 0/TBD | Not started | - |
 | v0.29-05. Dashboard and Progressive Maturity Rollout | 0/TBD | Not started | - |

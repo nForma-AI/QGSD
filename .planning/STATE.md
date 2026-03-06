@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.29 — Phase v0.29-01 complete, ready for v0.29-02
+**Current focus:** v0.29 — Phase v0.29-02 in progress (Semantics Layer and Gate A Grounding)
 
 ## Current Position
 
-Phase: v0.29-01 complete (Layer Manifest and Evidence Foundation)
-Plan: 3 of 3 in current phase
-Status: Complete
-Last activity: 2026-03-06 - Completed v0.29-01 phase execution (3 plans, 50 tests, 8 requirements)
+Phase: v0.29-02 (Semantics Layer and Gate A Grounding)
+Plan: 2 of 3 in current phase
+Status: In Progress
+Last activity: 2026-03-06 - Completed v0.29-02-02 (Mismatch Register + Observed FSM)
 
-Progress: [##########] 100%
+Progress: [######----] 67%
 
 ## Performance Metrics
 
@@ -52,6 +52,9 @@ Recent decisions affecting current work:
 - [v0.29 Roadmap]: Gate A comes WITH L2 (not after) -- grounding metric must be locked before L2 implementation to prevent vacuous pass
 - [v0.29 Roadmap]: Gate B comes WITH L3 (not after) -- traceability enforcement must be built into L3 from the start
 - [v0.29 Research]: Zero new npm dependencies -- all 14 new scripts use Node.js built-ins + existing XState/Ajv
+- [v0.29-02-02]: H1 methodology skip prevents false positives -- mid-session events skipped in fresh-actor replay
+- [v0.29-02-02]: Timestamp-based session windowing (2s gap) for per-session replay since events lack session_id
+- [v0.29-02-02]: All 10 divergences.json entries are genuine IDLE-phase circuit_break disagreements, classified as open
 - [Phase v0.28-01]: Cleanup subagent is non-blocking -- failure never prevents phase completion
 
 ### Pending Todos
@@ -73,5 +76,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-01 phase execution — all 3 plans, 50 tests pass
+Stopped at: Completed v0.29-02-02 (Mismatch Register + Observed FSM, 21 tests)
 Resume file: None
