@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-06T19:42:44.532Z",
-  "content_hash": "1ec1b5cbb8885970",
-  "frozen_at": "2026-03-06T19:42:44.533Z",
+  "aggregated_at": "2026-03-06T21:35:08.253Z",
+  "content_hash": "6759eddcf58659b8",
+  "frozen_at": "2026-03-06T21:35:08.254Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -1136,6 +1136,18 @@
       "provenance": {
         "source_file": "reverse-discovery",
         "milestone": "solve-iteration-1"
+      }
+    },
+    {
+      "id": "GUARD-01",
+      "text": "The hook system provides three code-quality guardrails: a PostToolUse hook that auto-formats JS/TS files after Edit using prettier or biome (fail-open), a Stop hook that warns about leftover console.log statements in git-modified files without blocking, and a modular .claude/rules/ directory with project-specific convention files auto-loaded per session.",
+      "category": "Code Quality Guardrails",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Adopted from everything-claude-code best practices to catch formatting drift at edit-time, debug logging at stop-time, and enforce project conventions automatically. All three mechanisms are fail-open and advisory.",
+      "provenance": {
+        "source_file": ".planning/quick/198-implement-ecc-best-practices-post-edit-a/198-PLAN.md",
+        "milestone": "quick-198"
       }
     },
     {
