@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.28-01 Phase v0.28-01 -- Foundation: Hook Profiles De-sloppify
+**Current focus:** v0.29 — Phase v0.29-01 complete, ready for v0.29-02
 
 ## Current Position
 
-Phase: v0.28-01 (Foundation: Hook Profiles De-sloppify)
+Phase: v0.29-01 complete (Layer Manifest and Evidence Foundation)
 Plan: 3 of 3 in current phase
-Status: Executing
-Last activity: 2026-03-06 - Completed v0.28-01-03: Hook Profile Guards + Strict Mode
+Status: Complete
+Last activity: 2026-03-06 - Completed v0.29-01 phase execution (3 plans, 50 tests, 8 requirements)
 
 Progress: [##########] 100%
 
@@ -28,6 +28,7 @@ Progress: [##########] 100%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | v0.28-01 | 3 | 10min | 3min |
+| v0.29-01 | 3 | 12min | 4min |
 
 **Recent Trend:**
 - Last 5 plans: 2min, 2min, 6min
@@ -72,5 +73,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.28-01-03-PLAN.md
+Stopped at: Completed v0.29-01 phase execution — all 3 plans, 50 tests pass
 Resume file: None

@@ -113,7 +113,7 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
 
 ## Phases
 
-- [ ] **Phase v0.29-01: Layer Manifest and Evidence Foundation** - Register all formal artifacts into layer architecture and build L1 evidence collection infrastructure
+- [x] **Phase v0.29-01: Layer Manifest and Evidence Foundation** - Register all formal artifacts into layer architecture and build L1 evidence collection infrastructure (completed 2026-03-06)
 - [ ] **Phase v0.29-02: Semantics Layer and Gate A Grounding** - Derive operational semantics from traces and quantify how well models explain observed behavior
 - [ ] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics
 - [ ] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration
@@ -131,7 +131,7 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
   3. Running the trace corpus stats script returns session-indexed, action-typed, transition-queryable metadata for the existing 35K+ conformance traces
   4. Running the failure taxonomy script classifies every check-result failure into exactly one of five categories (crash, timeout, logic-violation, drift, degradation)
   5. A canonical event vocabulary file exists and all Layer 1 scripts validate emitted event names against it, rejecting unknown events
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] v0.29-01-01-PLAN.md -- Event vocabulary, layer manifest, and model registry foundation
 - [ ] v0.29-01-02-PLAN.md -- Instrumentation map and trace corpus stats
@@ -187,7 +187,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.29-01. Layer Manifest and Evidence Foundation | 0/3 | Not started | - |
+| v0.29-01. Layer Manifest and Evidence Foundation | 0/3 | Complete    | 2026-03-06 |
 | v0.29-02. Semantics Layer and Gate A Grounding | 0/TBD | Not started | - |
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 0/TBD | Not started | - |
 | v0.29-04. Gate C Validation and Test Generation | 0/TBD | Not started | - |
