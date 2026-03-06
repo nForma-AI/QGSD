@@ -2115,10 +2115,11 @@ function computeResidual() {
   // Assemble deduplicated reverse candidates
   const assembled_candidates = assembleReverseCandidates(c_to_r, t_to_r, d_to_r);
 
-  // Layer alignment sweeps (cross-layer gate checks)
-  const l1_to_l2 = sweepL1toL2();
-  const l2_to_l3 = sweepL2toL3();
-  const l3_to_tc = sweepL3toTC();
+  // Layer alignment sweeps (cross-layer gate checks) — skip in fast mode
+  const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  const l1_to_l2 = fastMode ? skipLayer : sweepL1toL2();
+  const l2_to_l3 = fastMode ? skipLayer : sweepL2toL3();
+  const l3_to_tc = fastMode ? skipLayer : sweepL3toTC();
 
   const layer_total =
     (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +

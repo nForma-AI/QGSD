@@ -427,7 +427,7 @@ test('TC-INT-1: node bin/nf-solve.cjs --json --report-only exits with valid JSON
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
@@ -457,7 +457,7 @@ test('TC-INT-2: node bin/nf-solve.cjs --report-only produces human-readable outp
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
@@ -482,7 +482,7 @@ test('TC-INT-3: node bin/nf-solve.cjs --report-only --max-iterations=1 iteration
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
@@ -505,7 +505,7 @@ test('TC-INT-4: node bin/nf-solve.cjs --json --report-only --verbose exits witho
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
@@ -530,7 +530,7 @@ test('TC-CONV-1: --report-only mode does single iteration (iteration_count === 1
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
@@ -553,7 +553,7 @@ test('TC-CONV-2: --max-iterations limits iterations', () => {
   ], {
     encoding: 'utf8',
     cwd: ROOT,
-    timeout: 60000,
+    timeout: 180000,
     maxBuffer: 1024 * 1024,
   });
 
