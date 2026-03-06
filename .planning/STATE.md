@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-06 after v0.29)
 Phase: None (between milestones)
 Plan: N/A
 Status: Milestone v0.29 complete
-Last activity: 2026-03-06 - Completed quick task 198: Implement ECC best practices
+Last activity: 2026-03-06 - Completed quick task 199: Consolidate nf:solve baseline diagnostic into a single unified table
 
 Progress: Milestone complete
 
@@ -44,6 +44,7 @@ None — clean milestone boundary.
 | 196 | Improve formal scope scan to use semantic relevance instead of keyword-only matching for determining which formal spec modules apply | 2026-03-06 | d1ea24da | Verified | [196-improve-formal-scope-scan-to-use-semanti](./quick/196-improve-formal-scope-scan-to-use-semanti/) |
 | 197 | Add CI virgin install tests and workflow | 2026-03-06 | 0a0c07e5 | Verified | [197-add-ci-virgin-install-tests-and-workflow](./quick/197-add-ci-virgin-install-tests-and-workflow/) |
 | 198 | Implement ECC best practices: post-edit auto-format hook, console.log guard on Stop, and modular .claude/rules/ directory | 2026-03-06 | 1bd37864 | Verified | [198-implement-ecc-best-practices-post-edit-a](./quick/198-implement-ecc-best-practices-post-edit-a/) |
+| 199 | Consolidate nf:solve baseline diagnostic into a single unified table | 2026-03-06 | 08883451 | Pending | [199-consolidate-nf-solve-baseline-diagnostic](./quick/199-consolidate-nf-solve-baseline-diagnostic/) |
 
 ## Session Continuity
 
