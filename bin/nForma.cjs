@@ -4,6 +4,7 @@
 const fs         = require('fs');
 const path       = require('path');
 const os         = require('os');
+const crypto     = require('crypto');
 const { spawnSync } = require('child_process');
 
 // ─── Circuit breaker CLI (non-interactive, exits before TUI loads) ───────────
@@ -105,6 +106,7 @@ const reqCore = require('./requirements-core.cjs');
 const CLAUDE_JSON_PATH   = path.join(os.homedir(), '.claude.json');
 const PROVIDERS_JSON     = path.join(__dirname, 'providers.json');
 const PROVIDERS_JSON_TMP = PROVIDERS_JSON + '.tmp';
+const SESSIONS_FILE      = path.join(os.homedir(), '.claude', 'nf', 'sessions.json');
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const PROVIDER_KEY_NAMES = [
@@ -202,10 +204,36 @@ function logEvent(level, msg) {
 
 if (_xtermError) logEvent('warn', `blessed-xterm unavailable: ${_xtermError}`);
 
-// ─── Session state ───────────────────────────────────────────────────────────
-const sessions = [];        // { id, name, cwd, term (XTerm widget), alive }
+// ─── Session state & persistence ─────────────────────────────────────────────
+const sessions = [];        // { id, name, cwd, claudeSessionId, term (XTerm widget), alive }
 let activeSessionIdx = -1;  // -1 = no terminal shown
 let sessionIdCounter = 0;
+
+function loadPersistedSessions() {
+  try {
+    if (!fs.existsSync(SESSIONS_FILE)) return [];
+    return JSON.parse(fs.readFileSync(SESSIONS_FILE, 'utf8'));
+  } catch (_) { return []; }
+}
+
+function savePersistedSessions() {
+  const data = sessions.map(s => ({
+    id: s.id, name: s.name, cwd: s.cwd, claudeSessionId: s.claudeSessionId,
+  }));
+  try {
+    fs.mkdirSync(path.dirname(SESSIONS_FILE), { recursive: true });
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (_) {}
+}
+
+function removePersistedSession(claudeSessionId) {
+  try {
+    const persisted = loadPersistedSessions();
+    const filtered = persisted.filter(s => s.claudeSessionId !== claudeSessionId);
+    fs.mkdirSync(path.dirname(SESSIONS_FILE), { recursive: true });
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(filtered, null, 2), 'utf8');
+  } catch (_) {}
+}
 
 // ─── Module switching (activity bar) ──────────────────────────────────────────
 let activeModuleIdx = 0;
@@ -249,6 +277,9 @@ function switchModule(idx) {
     return;
   }
 
+  // Sessions module: don't auto-dispatch (avoids unwanted "New Session" modal)
+  if (idx === 3) return;
+
   // Auto-show first item's content (skip separators, use view-only for interactive actions)
   const first = mod.items[0];
   if (first && first.action !== 'sep') {
@@ -262,8 +293,24 @@ function switchModule(idx) {
 function refreshSessionMenu() {
   const mod = MODULES[3]; // Sessions
   const items = [{ label: '  New Session', action: 'session-new' }];
+
+  // Show persisted sessions that aren't currently loaded
+  const loadedIds = new Set(sessions.map(s => s.claudeSessionId));
+  const persisted = loadPersistedSessions().filter(p => !loadedIds.has(p.claudeSessionId));
+  if (persisted.length > 0) {
+    items.push({ label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' });
+    items.push({ label: ' {#888888-fg}Previous Sessions{/}', action: 'sep' });
+    persisted.forEach(p => {
+      items.push({
+        label: `  {yellow-fg}\u21bb{/} [${p.id}] ${p.name}`,
+        action: `session-resume-${p.claudeSessionId}`,
+      });
+    });
+  }
+
   if (sessions.length > 0) {
     items.push({ label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' });
+    items.push({ label: ' {#888888-fg}Active Sessions{/}', action: 'sep' });
     sessions.forEach((s, i) => {
       const status = s.alive ? '{green-fg}\u25cf{/}' : '{red-fg}\u25cb{/}';
       const active = (i === activeSessionIdx) ? '{#4a9090-fg}\u25b8{/} ' : '  ';
@@ -275,6 +322,7 @@ function refreshSessionMenu() {
     items.push({ label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' });
     items.push({ label: '  Kill Session', action: 'session-kill' });
   }
+
   mod.items = items;
   // If Sessions module is active, refresh the visible menu
   if (activeModuleIdx === 3) {
@@ -284,18 +332,28 @@ function refreshSessionMenu() {
   }
 }
 
-function createSession(name, cwd) {
+function createSession(name, cwd, resumeSessionId) {
   if (!XTerm) {
     toast('Sessions require blessed-xterm (native rebuild needed). Run: npm rebuild', true);
     return null;
   }
+  // Guard: fall back to process.cwd() if provided cwd no longer exists (e.g., resumed session)
+  let effectiveCwd = cwd || process.cwd();
+  if (!fs.existsSync(effectiveCwd)) {
+    logEvent('warn', `Session cwd "${effectiveCwd}" no longer exists, falling back to ${process.cwd()}`);
+    effectiveCwd = process.cwd();
+  }
   const id = ++sessionIdCounter;
+  const claudeSessionId = resumeSessionId || crypto.randomUUID();
+  const args = resumeSessionId
+    ? ['--resume', resumeSessionId]
+    : ['--session-id', claudeSessionId];
   const term = new XTerm({
     screen,
     parent: screen,
     shell: 'claude',
-    args: [],
-    cwd: cwd || process.cwd(),
+    args,
+    cwd: effectiveCwd,
     cursorType: 'block',
     scrollback: 1000,
     top: 3, left: 35, right: 0, bottom: 2,
@@ -311,8 +369,9 @@ function createSession(name, cwd) {
   });
   term.hide();
 
-  const session = { id, name, cwd: cwd || process.cwd(), term, alive: true };
+  const session = { id, name, cwd: effectiveCwd, claudeSessionId, term, alive: true };
   sessions.push(session);
+  savePersistedSessions();
 
   term.on('exit', () => {
     session.alive = false;
@@ -358,6 +417,7 @@ function killSession(idx) {
   const session = sessions[idx];
   try { session.term.terminate(); } catch (_) {}
   screen.remove(session.term);
+  removePersistedSession(session.claudeSessionId);
   sessions.splice(idx, 1);
   // Adjust activeSessionIdx
   if (activeSessionIdx === idx) {
@@ -376,13 +436,31 @@ async function newSessionFlow() {
 }
 
 async function killSessionFlow() {
-  if (sessions.length === 0) { toast('No sessions to kill'); return; }
-  const items = sessions.map((s, i) => ({
-    label: `[${s.id}] ${s.name} (${s.alive ? 'alive' : 'dead'})`,
-    value: i,
-  }));
+  const items = [];
+  sessions.forEach((s, i) => {
+    items.push({
+      label: `[${s.id}] ${s.name} (${s.alive ? 'alive' : 'dead'})`,
+      value: { type: 'active', idx: i },
+    });
+  });
+  // Also offer to remove persisted (inactive) sessions
+  const loadedIds = new Set(sessions.map(s => s.claudeSessionId));
+  const persisted = loadPersistedSessions().filter(p => !loadedIds.has(p.claudeSessionId));
+  persisted.forEach(p => {
+    items.push({
+      label: `[${p.id}] ${p.name} (saved)`,
+      value: { type: 'persisted', claudeSessionId: p.claudeSessionId },
+    });
+  });
+  if (items.length === 0) { toast('No sessions to kill'); return; }
   const choice = await promptList({ title: 'Kill Session', items });
-  killSession(choice.value);
+  if (choice.value.type === 'active') {
+    killSession(choice.value.idx);
+  } else {
+    removePersistedSession(choice.value.claudeSessionId);
+    refreshSessionMenu();
+    toast('Saved session removed');
+  }
 }
 
 // ─── Providers.json helpers ───────────────────────────────────────────────────
@@ -2335,6 +2413,13 @@ async function dispatch(action) {
     else if (action === 'req-gaps')         reqCoverageGapsFlow();
     else if (action === 'session-new')  await newSessionFlow();
     else if (action === 'session-kill') await killSessionFlow();
+    else if (action.startsWith('session-resume-')) {
+      const csid = action.replace('session-resume-', '');
+      const persisted = loadPersistedSessions().find(p => p.claudeSessionId === csid);
+      if (persisted) {
+        createSession(persisted.name, persisted.cwd, persisted.claudeSessionId);
+      }
+    }
     else if (action.startsWith('session-connect-')) {
       connectSession(parseInt(action.replace('session-connect-', ''), 10));
     }
@@ -2698,6 +2783,12 @@ function applyUpdateBadge(outdatedCount) {
 // ─── Start ────────────────────────────────────────────────────────────────────
 if (require.main === module) {
   renderHeader();
+  // Restore persisted session counter so IDs don't collide
+  const _persisted = loadPersistedSessions();
+  if (_persisted.length > 0) {
+    sessionIdCounter = Math.max(..._persisted.map(p => p.id));
+  }
+  refreshSessionMenu();
   switchModule(0);
   const warns = _logEntries.filter(e => e.level === 'warn' || e.level === 'error');
   if (warns.length) {
@@ -2723,4 +2814,8 @@ module.exports._pure = {
   MODULES,
   logEvent,
   _logEntries,
+  loadPersistedSessions,
+  savePersistedSessions,
+  removePersistedSession,
+  SESSIONS_FILE,
 };
