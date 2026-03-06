@@ -1,0 +1,52 @@
+name: CI Install Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bin/install.js'
+      - 'hooks/dist/**'
+      - 'commands/**'
+      - 'agents/**'
+      - 'core/**'
+      - 'test/install-virgin.test.cjs'
+      - '.github/workflows/ci-install.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'bin/install.js'
+      - 'hooks/dist/**'
+      - 'commands/**'
+      - 'agents/**'
+      - 'core/**'
+      - 'test/install-virgin.test.cjs'
+      - '.github/workflows/ci-install.yml'
+
+jobs:
+  install-test:
+    name: Install (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: ['18', '20', '22']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build hooks
+        run: npm run build:hooks
+
+      - name: Run install tests
+        run: node --test test/install-virgin.test.cjs

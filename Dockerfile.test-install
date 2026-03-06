@@ -1,5 +1,5 @@
-# Dockerfile.test-install — Verifies QGSD installs cleanly in a virgin node:20-slim environment
-# Build: docker build -f Dockerfile.test-install -t qgsd-test-install .
+# Dockerfile.test-install — Verifies nForma installs cleanly in a virgin node:20-slim environment
+# Build: docker build -f Dockerfile.test-install -t nforma-test-install .
 # A successful build means the install works. No need to run the container.
 
 FROM node:20-slim
@@ -25,6 +25,6 @@ RUN node scripts/postinstall.js || true
 RUN node bin/install.js --help
 
 # Verify package loads
-RUN node -e "const pkg = require('./package.json'); console.log('QGSD ' + pkg.version + ' installed successfully')"
+RUN node -e "const pkg = require('./package.json'); console.log('nForma ' + pkg.version + ' installed successfully')"
 
 CMD ["node", "bin/install.js", "--help"]
