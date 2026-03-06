@@ -12,7 +12,7 @@ allowed-tools:
   - AskUserQuestion
 ---
 <objective>
-Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
+Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows. Auto-remediates tech debt and gaps via solve→plan→execute loop.
 
 **This command IS the orchestrator.** Reads existing VERIFICATION.md files (phases already verified during execute-phase), aggregates tech debt and deferred gaps, then spawns integration checker for cross-phase wiring.
 </objective>
