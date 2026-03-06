@@ -2287,115 +2287,83 @@ function formatReport(iterations, finalResidual, converged) {
   );
   lines.push('');
 
-  // Residual vector table
+  // Unified residual vector table
   lines.push('Layer Transition             Residual  Health');
   lines.push('─────────────────────────────────────────────');
 
-  const rows = [
-    {
-      label: 'R -> F (Req->Formal)',
-      residual: finalResidual.r_to_f.residual,
-    },
-    {
-      label: 'F -> T (Formal->Test)',
-      residual: finalResidual.f_to_t.residual,
-    },
-    {
-      label: 'C -> F (Code->Formal)',
-      residual: finalResidual.c_to_f.residual,
-    },
-    {
-      label: 'T -> C (Test->Code)',
-      residual: finalResidual.t_to_c.residual,
-    },
-    {
-      label: 'F -> C (Formal->Code)',
-      residual: finalResidual.f_to_c.residual,
-    },
-    {
-      label: 'R -> D (Req->Docs)',
-      residual: finalResidual.r_to_d.residual,
-    },
-    {
-      label: 'D -> C (Docs->Code)',
-      residual: finalResidual.d_to_c.residual,
-    },
-    {
-      label: 'P -> F (Prod->Formal)',
-      residual: finalResidual.p_to_f ? finalResidual.p_to_f.residual : -1,
-    },
+  // Helper to render a single row
+  function renderRow(label, residual) {
+    const res = residual >= 0 ? residual : '?';
+    const health = healthIndicator(residual);
+    return label.padEnd(28) + String(res).padStart(4) + '    ' + health;
+  }
+
+  // Forward layer transitions
+  const forwardRows = [
+    { label: 'R -> F (Req->Formal)', residual: finalResidual.r_to_f.residual },
+    { label: 'F -> T (Formal->Test)', residual: finalResidual.f_to_t.residual },
+    { label: 'C -> F (Code->Formal)', residual: finalResidual.c_to_f.residual },
+    { label: 'T -> C (Test->Code)', residual: finalResidual.t_to_c.residual },
+    { label: 'F -> C (Formal->Code)', residual: finalResidual.f_to_c.residual },
+    { label: 'R -> D (Req->Docs)', residual: finalResidual.r_to_d.residual },
+    { label: 'D -> C (Docs->Code)', residual: finalResidual.d_to_c.residual },
+    { label: 'P -> F (Prod->Formal)', residual: finalResidual.p_to_f ? finalResidual.p_to_f.residual : -1 },
   ];
 
-  for (const row of rows) {
-    const res =
-      row.residual >= 0 ? row.residual : '?';
-    const health = healthIndicator(row.residual);
-    const line = row.label.padEnd(28) + String(res).padStart(4) + '    ' + health;
-    lines.push(line);
+  for (const row of forwardRows) {
+    lines.push(renderRow(row.label, row.residual));
+  }
+  lines.push('  Forward subtotal:      ' + finalResidual.total);
+
+  // Reverse Discovery section (always rendered)
+  lines.push('\u2500 Reverse Discovery (human-gated) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+  const reverseRows = [
+    { label: 'C -> R (Code->Req)', residual: finalResidual.c_to_r ? finalResidual.c_to_r.residual : -1 },
+    { label: 'T -> R (Test->Req)', residual: finalResidual.t_to_r ? finalResidual.t_to_r.residual : -1 },
+    { label: 'D -> R (Docs->Req)', residual: finalResidual.d_to_r ? finalResidual.d_to_r.residual : -1 },
+  ];
+
+  for (const row of reverseRows) {
+    lines.push(renderRow(row.label, row.residual));
   }
 
-  lines.push('─────────────────────────────────────────────');
-  lines.push('Total residual:          ' + finalResidual.total);
+  const rdTotal = finalResidual.reverse_discovery_total || 0;
+  lines.push('  Discovery subtotal:    ' + rdTotal);
 
-  // Reverse traceability discovery section
-  if (finalResidual.c_to_r || finalResidual.t_to_r || finalResidual.d_to_r) {
-    lines.push('');
-    lines.push('Reverse Traceability Discovery (human-gated):');
-    lines.push('─────────────────────────────────────────────');
-
-    const reverseRows = [
-      { label: 'C -> R (Code->Req)', residual: finalResidual.c_to_r ? finalResidual.c_to_r.residual : -1 },
-      { label: 'T -> R (Test->Req)', residual: finalResidual.t_to_r ? finalResidual.t_to_r.residual : -1 },
-      { label: 'D -> R (Docs->Req)', residual: finalResidual.d_to_r ? finalResidual.d_to_r.residual : -1 },
-    ];
-
-    for (const row of reverseRows) {
-      const res = row.residual >= 0 ? row.residual : '?';
-      const health = healthIndicator(row.residual);
-      const line = row.label.padEnd(28) + String(res).padStart(4) + '    ' + health;
-      lines.push(line);
-    }
-
-    const rdTotal = finalResidual.reverse_discovery_total || 0;
-    lines.push('─────────────────────────────────────────────');
-    lines.push('Discovery total:         ' + rdTotal);
-
-    if (finalResidual.assembled_candidates && finalResidual.assembled_candidates.candidates.length > 0) {
-      const ac = finalResidual.assembled_candidates;
-      lines.push('Candidates: ' + ac.candidates.length + ' (raw: ' + ac.total_raw +
-        ', deduped: ' + ac.deduped + ', filtered: ' + ac.filtered +
-        ', acknowledged: ' + ac.acknowledged + ')');
-      if (ac.category_counts) {
-        lines.push('  Category A (likely reqs): ' + (ac.category_counts.A || 0) +
-          ', Category B (likely docs): ' + (ac.category_counts.B || 0) +
-          ', Category C (ambiguous): ' + (ac.category_counts.C || 0));
-      }
+  if (finalResidual.assembled_candidates && finalResidual.assembled_candidates.candidates &&
+      finalResidual.assembled_candidates.candidates.length > 0) {
+    const ac = finalResidual.assembled_candidates;
+    lines.push('Candidates: ' + ac.candidates.length + ' (raw: ' + ac.total_raw +
+      ', deduped: ' + ac.deduped + ', filtered: ' + ac.filtered +
+      ', acknowledged: ' + ac.acknowledged + ')');
+    if (ac.category_counts) {
+      lines.push('  Category A (likely reqs): ' + (ac.category_counts.A || 0) +
+        ', Category B (likely docs): ' + (ac.category_counts.B || 0) +
+        ', Category C (ambiguous): ' + (ac.category_counts.C || 0));
     }
   }
 
-  // Layer Alignment section
-  if (finalResidual.l1_to_l2 || finalResidual.l2_to_l3 || finalResidual.l3_to_tc) {
-    lines.push('');
-    lines.push('Layer Alignment (cross-layer gate checks):');
-    lines.push('─────────────────────────────────────────────');
+  // Layer Alignment section (always rendered)
+  lines.push('\u2500 Layer Alignment (cross-layer gates) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
-    const layerRows = [
-      { label: 'L1 -> L2 (Gate A)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
-      { label: 'L2 -> L3 (Gate B)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
-      { label: 'L3 -> TC (Gate C)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
-    ];
+  const layerRows = [
+    { label: 'L1 -> L2 (Gate A)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
+    { label: 'L2 -> L3 (Gate B)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
+    { label: 'L3 -> TC (Gate C)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
+  ];
 
-    for (const row of layerRows) {
-      const res = row.residual >= 0 ? row.residual : '?';
-      const health = healthIndicator(row.residual);
-      const line = row.label.padEnd(28) + String(res).padStart(4) + '    ' + health;
-      lines.push(line);
-    }
-
-    const layerTotal = finalResidual.layer_total || 0;
-    lines.push('─────────────────────────────────────────────');
-    lines.push('Layer total:             ' + layerTotal);
+  for (const row of layerRows) {
+    lines.push(renderRow(row.label, row.residual));
   }
+
+  const layerTotal = finalResidual.layer_total || 0;
+  lines.push('  Alignment subtotal:    ' + layerTotal);
+
+  // Combined total across all sections
+  const grandTotal = (finalResidual.total || 0) + rdTotal + layerTotal;
+  lines.push('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
+  lines.push('Grand total:             ' + grandTotal);
   lines.push('');
 
   // Per-layer detail sections (only non-zero)
