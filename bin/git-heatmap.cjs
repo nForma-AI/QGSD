@@ -314,7 +314,7 @@ function extractNumericalAdjustments(root, since, coverageMap) {
 
 // ── Signal 2: Bugfix Hotspots ──────────────────────────────────────────────
 
-const BUGFIX_PATTERN = /\b(fix|bug|patch|hotfix|resolve[ds]?)\b/i;
+const BUGFIX_PATTERN = /\b(fix|bug|bugfix|patch|hotfix|resolve[ds]?)\b/i;
 
 function isBugfixCommit(message) {
   return BUGFIX_PATTERN.test(message);
