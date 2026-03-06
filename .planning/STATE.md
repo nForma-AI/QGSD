@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-04)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.27 archived — planning next milestone
+**Current focus:** v0.28 — Agent Harness Optimization
 
 ## Current Position
 
-Phase: —
+Phase: Not started (defining requirements)
 Plan: —
-Status: Milestone v0.27 archived. Ready for next milestone.
-Last activity: 2026-03-06 - Completed quick task 187: Add V8 line-level coverage to T→C sweep
-
-Progress: Ready for /qgsd:new-milestone
+Status: Defining requirements
+Last activity: 2026-03-06 — Milestone v0.28 started
 
 ## Performance Metrics
 

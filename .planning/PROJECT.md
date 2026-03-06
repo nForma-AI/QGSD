@@ -10,6 +10,22 @@ Profile: cli-tool
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.28 — Agent Harness Optimization
+
+**Goal:** Improve nForma's agent harness reliability, cost efficiency, and developer experience — inspired by patterns from the everything-claude-code ecosystem, adapted to nForma's quorum-first architecture.
+
+**Target features:**
+- Hook profiles (minimal/standard/strict) for tiered hook enforcement
+- Quorum response caching via content-hash to reduce redundant API calls
+- Budget-aware auto-downgrade from quality→balanced profile on token threshold
+- Session-start state reminder for mid-phase context restoration
+- Security sweep step in verify-phase (secrets, debug artifacts)
+- pass@k metrics in conformance event log for quorum reliability measurement
+- De-sloppify cleanup pass after phase execution in fresh context
+- Stall detection in wave execution with escalation after N stalled checkpoints
+- Harness self-diagnostic agent analyzing conformance and token logs
+- Smart compact timing suggestions tied to workflow boundaries
+
 ## Shipped: v0.27 Production Feedback Loop (2026-03-04)
 
 **Goal:** Close the loop between formal models and production reality — a unified observe skill surfaces issues and metric drifts from production tools, a debt ledger deduplicates and aggregates them with human triage, and solve gains a P→F residual layer that remediates acknowledged debt as part of its convergence cycle.
