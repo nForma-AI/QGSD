@@ -4,22 +4,7 @@
  * Returns standard issue schema for the observe registry
  */
 
-/**
- * Format age from ISO date to human-readable string
- * @param {string} isoDate - ISO8601 date string
- * @returns {string} Human-readable age
- */
-function formatAge(isoDate) {
-  if (!isoDate) return 'unknown';
-  const diffMs = Date.now() - new Date(isoDate).getTime();
-  if (diffMs < 0) return 'future';
-  const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
-}
+const { formatAge } = require('./observe-utils.cjs');
 
 /**
  * Prometheus source handler

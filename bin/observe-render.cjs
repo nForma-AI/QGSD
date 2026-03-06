@@ -3,6 +3,8 @@
  * Renders Issues table and Drifts table with error section
  */
 
+const { formatAge } = require('./observe-utils.cjs');
+
 // Severity sort order (lower = higher priority)
 const SEVERITY_ORDER = { error: 0, critical: 0, bug: 1, warning: 2, info: 3 };
 
@@ -13,23 +15,6 @@ const SEVERITY_ORDER = { error: 0, critical: 0, bug: 1, warning: 2, info: 3 };
  */
 function classifySeverity(severity) {
   return SEVERITY_ORDER[severity] ?? 4;
-}
-
-/**
- * Format age from ISO date to human-readable string
- * @param {string} isoDate
- * @returns {string}
- */
-function formatAge(isoDate) {
-  if (!isoDate) return '';
-  const diffMs = Date.now() - new Date(isoDate).getTime();
-  if (diffMs < 0) return 'future';
-  const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
 }
 
 /**
