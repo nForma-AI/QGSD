@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: v0.28-04 (Safety & Diagnostics -- Security Sweep + Session State + Harness Diagnostics)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: Executing
-Last activity: 2026-03-06 - Completed v0.28-04-01-PLAN.md (Security Sweep Scanner)
+Last activity: 2026-03-06 - Completed v0.28-04-02-PLAN.md (Session State Reminder)
 
-Progress: [###.......] 33%
+Progress: [######....] 67%
 
 ## Performance Metrics
 
@@ -44,6 +44,7 @@ Progress: [###.......] 33%
 | Phase v0.28-02 P02 | 3min | 2 tasks | 4 files |
 | Phase v0.28-02 P03 | 3min | 2 tasks | 4 files |
 | Phase v0.28-04 P01 | 2min | 2 tasks | 5 files |
+| Phase v0.28-04 P02 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,8 @@ Recent decisions affecting current work:
 - [v0.29-05-01]: Accept exit code 0 OR 1 from gate scripts -- exit 1 means target not met but JSON valid
 - [v0.29-05-01]: require.main guard prevents auto-execution when module required for testing
 - [Phase v0.28-04]: Advisory-only security scanner -- exit code 0 always, findings are informational not blocking
+- [v0.28-04-02]: Collect-then-emit pattern for combining multiple additionalContext sources in SessionStart hook
+- [v0.28-04-02]: SessionStart vs PreCompact separation by design -- separate hooks on separate events, no conditional logic needed
 
 ### Pending Todos
 
@@ -108,5 +111,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.28-04-01-PLAN.md (Security Sweep Scanner)
+Stopped at: Completed v0.28-04-02-PLAN.md (Session State Reminder)
 Resume file: None
