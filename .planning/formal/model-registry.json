@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-06T10:11:45.142Z",
+  "last_sync": "2026-03-06T12:52:51.138Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
@@ -16,7 +16,10 @@
         "CRED-09",
         "CRED-10",
         "CRED-11"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/availability-parsing.als": {
       "version": 1,
@@ -29,7 +32,10 @@
         "CALIB-01",
         "CALIB-02",
         "CALIB-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/install-scope.als": {
       "version": 1,
@@ -44,7 +50,10 @@
         "INST-03",
         "INST-04",
         "INST-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/quorum-composition.als": {
       "version": 1,
@@ -56,15 +65,21 @@
       "requirements": [
         "SPEC-03",
         "COMP-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 2693,
-      "last_updated": "2026-03-06T10:11:45.140Z",
+      "version": 2719,
+      "last_updated": "2026-03-06T12:37:45.587Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/scoreboard-recompute.als": {
       "version": 1,
@@ -78,7 +93,10 @@
         "SCBD-02",
         "SCBD-03",
         "SCBD-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/taxonomy-safety.als": {
       "version": 1,
@@ -91,7 +109,10 @@
         "SCBD-05",
         "SCBD-06",
         "SCBD-07"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/transcript-scan.als": {
       "version": 1,
@@ -105,7 +126,10 @@
         "STOP-09",
         "STOP-10",
         "STOP-11"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/prism/mcp-availability.pm": {
       "version": 1,
@@ -117,7 +141,10 @@
       "requirements": [
         "MCPENV-04",
         "FAIL-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/prism/oauth-rotation.pm": {
       "version": 1,
@@ -129,15 +156,21 @@
       "requirements": [
         "PRM-AM-01",
         "CRED-12"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 2693,
-      "last_updated": "2026-03-06T10:11:45.142Z",
+      "version": 2719,
+      "last_updated": "2026-03-06T12:37:45.587Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDAccountManager.tla": {
       "version": 1,
@@ -153,7 +186,10 @@
         "CRED-04",
         "CRED-05",
         "CRED-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDCircuitBreaker.tla": {
       "version": 1,
@@ -166,7 +202,10 @@
         "DETECT-01",
         "DETECT-02",
         "DETECT-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDConvergence.tla": {
       "version": 1,
@@ -181,7 +220,10 @@
         "ORES-03",
         "ORES-04",
         "ORES-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDDeliberation.tla": {
       "version": 1,
@@ -196,7 +238,10 @@
         "SAFE-03",
         "IMPR-01",
         "LOOP-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDMCPEnv.tla": {
       "version": 1,
@@ -209,7 +254,10 @@
         "MCPENV-01",
         "MCPENV-02",
         "MCPENV-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDOscillation.tla": {
       "version": 1,
@@ -222,7 +270,10 @@
         "DETECT-04",
         "DETECT-05",
         "DETECT-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDPreFilter.tla": {
       "version": 1,
@@ -237,7 +288,10 @@
         "PLAN-05",
         "PLAN-06",
         "LOOP-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDQuorum.tla": {
       "version": 1246,
@@ -245,7 +299,10 @@
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDQuorum_xstate.tla": {
       "version": 1,
@@ -254,7 +311,10 @@
       "source_id": "generate:tla-from-xstate",
       "session_id": null,
       "description": "",
-      "requirements": []
+      "requirements": [],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDRecruiting.tla": {
       "version": 1,
@@ -268,7 +328,10 @@
         "SLOT-03",
         "SLOT-04",
         "SLOT-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDStopHook.tla": {
       "version": 1,
@@ -286,7 +349,10 @@
         "STOP-06",
         "STOP-07",
         "SPEC-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/TUINavigation.tla": {
       "version": 1,
@@ -295,7 +361,10 @@
       "source_id": null,
       "session_id": null,
       "description": "",
-      "requirements": []
+      "requirements": [],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     "../../../../tmp/promote-test/.formal/tla/QGSDQuorum.tla": {
       "version": 1,
@@ -304,7 +373,10 @@
       "source_id": "test-001",
       "session_id": null,
       "description": "",
-      "requirements": []
+      "requirements": [],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDActivityTracking.tla": {
       "version": 1,
@@ -321,7 +393,10 @@
         "ACT-05",
         "ACT-06",
         "ACT-07"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDSetupWizard.tla": {
       "version": 1,
@@ -339,7 +414,10 @@
         "WIZ-08",
         "WIZ-09",
         "WIZ-10"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDPromptHook.tla": {
       "version": 1,
@@ -354,7 +432,10 @@
         "UPS-03",
         "UPS-04",
         "UPS-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDDispatchPipeline.tla": {
       "version": 1,
@@ -369,7 +450,10 @@
         "DISP-03",
         "DISP-04",
         "DISP-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDEnforcement.tla": {
       "version": 1,
@@ -382,7 +466,10 @@
         "ENFC-01",
         "ENFC-02",
         "ENFC-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDInstallerIdempotency.tla": {
       "version": 1,
@@ -397,7 +484,10 @@
         "INST-08",
         "INST-09",
         "INST-10"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDBreakerState.tla": {
       "version": 1,
@@ -411,7 +501,10 @@
         "STATE-02",
         "STATE-03",
         "STATE-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDKeyManagement.tla": {
       "version": 1,
@@ -425,7 +518,10 @@
         "KEY-02",
         "KEY-03",
         "KEY-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDAgentProvisioning.tla": {
       "version": 1,
@@ -443,7 +539,10 @@
         "PROV-03",
         "PRST-01",
         "PRST-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDConfigPortability.tla": {
       "version": 1,
@@ -456,7 +555,10 @@
         "PORT-01",
         "PORT-02",
         "PORT-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/config-two-layer.als": {
       "version": 1,
@@ -475,7 +577,10 @@
         "CONF-07",
         "CONF-08",
         "CONF-09"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/mcp-detection.als": {
       "version": 1,
@@ -491,7 +596,10 @@
         "MCP-04",
         "MCP-05",
         "MCP-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/schema-extensions.als": {
       "version": 1,
@@ -505,7 +613,10 @@
         "SCHEMA-02",
         "SCHEMA-03",
         "SCHEMA-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/unified-check-results.als": {
       "version": 1,
@@ -519,7 +630,10 @@
         "UNIF-02",
         "UNIF-03",
         "UNIF-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/multi-slot-structure.als": {
       "version": 1,
@@ -533,7 +647,10 @@
         "MULTI-02",
         "MULTI-03",
         "SLOT-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/quorum-policy.als": {
       "version": 1,
@@ -549,7 +666,10 @@
         "COMP-02",
         "COMP-03",
         "COMP-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/architecture-registry.als": {
       "version": 1,
@@ -565,7 +685,10 @@
         "META-01",
         "META-02",
         "META-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/traceability-annotations.als": {
       "version": 1,
@@ -585,7 +708,10 @@
         "ANNOT-03",
         "ANNOT-04",
         "ANNOT-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/prism/observability-delivery.pm": {
       "version": 1,
@@ -599,7 +725,10 @@
         "OBS-02",
         "OBS-03",
         "OBS-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/prism/deliberation-healing.pm": {
       "version": 1,
@@ -611,7 +740,10 @@
       "requirements": [
         "HEAL-01",
         "HEAL-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/tla/QGSDDashboard.tla": {
       "version": 1,
@@ -624,7 +756,10 @@
         "DASH-01",
         "DASH-02",
         "DASH-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDCIChecks.tla": {
       "version": 1,
@@ -641,7 +776,10 @@
         "REDACT-03",
         "LIVE-01",
         "LIVE-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDSensitivity.tla": {
       "version": 1,
@@ -654,7 +792,10 @@
         "SENS-01",
         "SENS-02",
         "SENS-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDSpecGeneration.tla": {
       "version": 1,
@@ -666,7 +807,10 @@
       "requirements": [
         "SPEC-04",
         "LOOP-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/state-space-analysis.als": {
       "version": 1,
@@ -680,7 +824,10 @@
         "DECOMP-02",
         "DECOMP-03",
         "DECOMP-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/evidence-triage.als": {
       "version": 1,
@@ -694,7 +841,10 @@
         "EVID-02",
         "TRIAGE-01",
         "TRIAGE-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/uppaal-model-reqs.als": {
       "version": 1,
@@ -707,7 +857,10 @@
         "UPPAAL-01",
         "UPPAAL-02",
         "UPPAAL-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/signal-analysis-tools.als": {
       "version": 1,
@@ -721,7 +874,10 @@
         "SIG-02",
         "SIG-03",
         "SIG-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/gsd-sync-invariants.als": {
       "version": 1,
@@ -735,7 +891,10 @@
         "SYNC-02",
         "SYNC-03",
         "SYNC-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/health-validation.als": {
       "version": 1,
@@ -749,7 +908,10 @@
         "HLTH-02",
         "HLTH-03",
         "VIS-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/verification-integration.als": {
       "version": 1,
@@ -761,7 +923,10 @@
       "requirements": [
         "VERIFY-01",
         "VERIFY-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/provider-failure.als": {
       "version": 1,
@@ -773,7 +938,10 @@
       "requirements": [
         "FAIL-02",
         "CALIB-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/codebase-arch-constraints.als": {
       "version": 1,
@@ -786,7 +954,10 @@
         "ARCH-10",
         "REN-03",
         "STD-10"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solve-consistency.als": {
       "version": 1,
@@ -798,7 +969,10 @@
       "requirements": [
         "SOLVE-01",
         "SOLVE-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/config-zero-providers.als": {
       "version": 1,
@@ -809,7 +983,10 @@
       "description": "Models graceful degradation when providers.json has zero providers",
       "requirements": [
         "CONF-10"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/decomp-cross-model.als": {
       "version": 1,
@@ -820,7 +997,10 @@
       "description": "Models cross-model decomposition analysis for state-space reduction",
       "requirements": [
         "DECOMP-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/formal-test-trace.als": {
       "version": 1,
@@ -831,7 +1011,10 @@
       "description": "Models the formal-test-sync cross-referencing structure",
       "requirements": [
         "TRACE-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/ci-pipeline-gates.als": {
       "version": 1,
@@ -844,7 +1027,10 @@
         "CI-01",
         "CI-02",
         "CI-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/polyrepo-config.als": {
       "version": 1,
@@ -856,7 +1042,10 @@
       "requirements": [
         "CONF-11",
         "CONF-12"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDAgentLoop.tla": {
       "version": 1,
@@ -867,7 +1056,10 @@
       "description": "Autonomous looping behavior required of QGSD subagents",
       "requirements": [
         "AGT-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/security-scanning.als": {
       "version": 1,
@@ -881,7 +1073,10 @@
         "SEC-02",
         "SEC-03",
         "SEC-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/reliability-patterns.als": {
       "version": 1,
@@ -893,7 +1088,10 @@
       "requirements": [
         "REL-01",
         "REL-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/ux-feedback-safety.als": {
       "version": 1,
@@ -906,7 +1104,10 @@
         "UX-01",
         "UX-02",
         "UX-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/platform-install-compat.als": {
       "version": 1,
@@ -917,7 +1118,10 @@
       "description": "Platform compatibility: macOS, Ubuntu, Windows install/operate without platform-specific failures",
       "requirements": [
         "PLAT-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/cli-exit-conventions.als": {
       "version": 1,
@@ -928,7 +1132,10 @@
       "description": "CLI tools exit code conventions: 0=success, non-zero=failure, stderr for errors",
       "requirements": [
         "OBS-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solver-doc-layers.als": {
       "version": 1,
@@ -940,7 +1147,10 @@
       "requirements": [
         "SOLVE-03",
         "SOLVE-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/bin-path-resolution.als": {
       "version": 1,
@@ -951,7 +1161,10 @@
       "description": "Bin scripts resolve ROOT from process.cwd() not __dirname",
       "requirements": [
         "INST-11"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/baseline-merge-idempotent.als": {
       "version": 1,
@@ -962,7 +1175,10 @@
       "description": "Baseline requirements merge is idempotent",
       "requirements": [
         "INST-12"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/baseline-requirements-filter.als": {
       "version": 1,
@@ -973,7 +1189,10 @@
       "description": "Baseline requirements filtered by project profile",
       "requirements": [
         "INIT-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDTUIModules.tla": {
       "version": 1,
@@ -984,7 +1203,10 @@
       "description": "TUI module navigation with 3-module structure and shortcut keys",
       "requirements": [
         "NAV-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDTUISessions.tla": {
       "version": 1,
@@ -995,7 +1217,10 @@
       "description": "TUI Sessions module lifecycle: create, connect, terminate PTY-backed sessions",
       "requirements": [
         "NAV-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/terminal-emulation-purity.als": {
       "version": 1,
@@ -1006,7 +1231,10 @@
       "description": "Pure-JS terminal emulation: no native addons, @xterm/headless + child_process.spawn",
       "requirements": [
         "NAV-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/QGSDDeliberationRevision.tla": {
       "version": 1,
@@ -1017,7 +1245,10 @@
       "description": "Deliberation position revision: all voters review peers and revise before each round",
       "requirements": [
         "QUORUM-05"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/settings-hub.als": {
       "version": 1,
@@ -1028,7 +1259,10 @@
       "description": "Settings hub: state-aware dashboard with categorized menu and smart routing",
       "requirements": [
         "WIZ-11"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/ci-test-fallback.als": {
       "version": 1,
@@ -1039,7 +1273,10 @@
       "description": "CI test fallback: find enumeration, per-file/global timeout, timeout-as-pass logic",
       "requirements": [
         "CI-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/dispatch-formal-context.als": {
       "version": 1,
@@ -1050,7 +1287,10 @@
       "description": "Quorum dispatch prompt injection of matched formal requirements by keyword/artifact",
       "requirements": [
         "DISP-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/observability-analysis.als": {
       "version": 1,
@@ -1063,7 +1303,10 @@
         "OBS-06",
         "OBS-07",
         "OBS-08"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solver-portability.als": {
       "version": 1,
@@ -1075,15 +1318,21 @@
       "requirements": [
         "SOLVE-05",
         "SOLVE-06"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 1447,
-      "last_updated": "2026-03-06T10:11:45.139Z",
+      "version": 1473,
+      "last_updated": "2026-03-06T12:37:45.586Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 1
     },
     ".planning/formal/alloy/solve-automation-features.als": {
       "version": 1,
@@ -1094,7 +1343,10 @@
       "description": "Solve diagnostic engine automation: fast mode, FP suppression, Category B auto-ack, recipe sidecars",
       "requirements": [
         "SOLVE-09"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solve-legacy-merge.als": {
       "version": 1,
@@ -1105,7 +1357,10 @@
       "description": "Legacy .formal/ directory migration and merge behavior",
       "requirements": [
         "SOLVE-8"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solve-ft-recipe.als": {
       "version": 1,
@@ -1116,7 +1371,10 @@
       "description": "F->T recipe sidecar pre-resolved context",
       "requirements": [
         "SOLVE-7"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/headless-execution.als": {
       "version": 1,
@@ -1127,7 +1385,10 @@
       "description": "Headless execution constraint for JVM-based formal runners",
       "requirements": [
         "VERIFY-03"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/jvm-heap-sequential.als": {
       "version": 1,
@@ -1138,7 +1399,10 @@
       "description": "JVM heap cap flags and sequential execution constraints",
       "requirements": [
         "VERIFY-04"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/traceability-obligations.als": {
       "version": 1,
@@ -1151,7 +1415,10 @@
         "DEBT-01",
         "FVTOOL-01",
         "TRACE-07"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/project-identity.als": {
       "version": 1,
@@ -1163,7 +1430,10 @@
       "requirements": [
         "PROJECT-01",
         "PROJECT-02"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/doc-claims-backing.als": {
       "version": 1,
@@ -1174,7 +1444,10 @@
       "description": "README capability claims must be backed by requirements",
       "requirements": [
         "DOC-01"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     },
     ".planning/formal/alloy/solve-tc-coverage.als": {
       "version": 1,
@@ -1185,7 +1458,10 @@
       "description": "T->C false-green detection via cross-referenced coverage",
       "requirements": [
         "SOLVE-10"
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "ADVISORY",
+      "layer_maturity": 0
     }
   },
   ".planning/formal/alloy/account-pool-structure.als": {
