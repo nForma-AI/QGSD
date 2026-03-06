@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-05T21:22:42.178Z",
-  "content_hash": "738fbcaacd81b590209bcc047d8287b63dee11d85dcf54b94834e6e114378b21",
-  "frozen_at": "2026-03-05T21:22:42.178Z",
+  "aggregated_at": "2026-03-06T08:16:09.649Z",
+  "content_hash": "8bacfa1a94818d8c",
+  "frozen_at": "2026-03-06T08:16:09.656Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -2789,6 +2789,18 @@
       "provenance": {
         "source_file": ".planning/quick/184-implement-5-solve-automation-improvement/184-PLAN.md",
         "milestone": "quick-184"
+      }
+    },
+    {
+      "id": "SOLVE-10",
+      "text": "The T->C sweep collects line-level test coverage data and crossReferenceFormalCoverage() cross-references covered source files against formal-test-sync recipe source_files to identify false-green properties (tests pass but exercise zero implementing source files), surfacing an F->T->C coverage summary without altering residual scores, with coverage collection fail-open.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The T->C sweep previously only checked test pass/fail. Line-level coverage closes the full Formal->Test->Code traceability chain by detecting false greens — regardless of language or test framework.",
+      "provenance": {
+        "source_file": ".planning/quick/187-add-v8-line-level-coverage-to-t-c-sweep-/187-PLAN.md",
+        "milestone": "quick-187"
       }
     },
     {
