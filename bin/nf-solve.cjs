@@ -30,6 +30,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { spawnSync } = require('child_process');
 
 const TAG = '[nf-solve]';
@@ -748,6 +749,15 @@ function sweepTtoC() {
   }
 
   // Runner mode: node-test (default)
+  // V8 coverage collection: create temp dir and set NODE_V8_COVERAGE env var
+  let covDir = null;
+  try {
+    covDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-solve-cov-'));
+    spawnOpts.env = Object.assign({}, process.env, { NODE_V8_COVERAGE: covDir });
+  } catch (e) {
+    covDir = null; // fail-open: continue without coverage
+  }
+
   let result;
   try {
     result = spawnSync(process.execPath, ['--test'], spawnOpts);
@@ -789,6 +799,26 @@ function sweepTtoC() {
     todoCount = 0;
   }
 
+  // Collect V8 coverage data from temp directory (fail-open)
+  let coverageData = null;
+  try {
+    if (covDir && fs.existsSync(covDir)) {
+      const covFiles = fs.readdirSync(covDir).filter(f => f.endsWith('.json'));
+      coverageData = [];
+      for (const cf of covFiles) {
+        const raw = fs.readFileSync(path.join(covDir, cf), 'utf8');
+        coverageData.push(JSON.parse(raw));
+      }
+      if (coverageData.length === 0) coverageData = null;
+    }
+  } catch (e) {
+    coverageData = null; // fail-open
+  } finally {
+    try {
+      if (covDir) fs.rmSync(covDir, { recursive: true, force: true });
+    } catch (e) { /* ignore cleanup errors */ }
+  }
+
   // Scope-based auto-detection: if scope is "generated-stubs-only", check if all failures
   // are outside .planning/formal/generated-stubs/
   if (tToCConfig.runner === 'node-test' && tToCConfig.scope === 'generated-stubs-only' && failCount > 0) {
@@ -805,6 +835,7 @@ function sweepTtoC() {
           todo: todoCount,
           runner_mismatch: true,
           warning: 'All ' + failLines.length + ' failures are outside generated-stubs scope — likely runner mismatch',
+          v8_coverage: coverageData,
         },
       };
     }
@@ -818,8 +849,91 @@ function sweepTtoC() {
       failed: failCount,
       skipped: skipCount,
       todo: todoCount,
+      v8_coverage: coverageData,
     },
   };
+}
+
+/**
+ * Cross-reference V8 coverage data against formal-test-sync recipe source_files.
+ * Identifies "false green" properties: tests pass but exercise none of the implementing source files.
+ * Returns { available: false } when coverage data is null/undefined.
+ */
+function crossReferenceFormalCoverage(v8CoverageData) {
+  if (!v8CoverageData) return { available: false };
+
+  try {
+    const syncData = loadFormalTestSync();
+    const recipes = (syncData && syncData.recipes) ? syncData.recipes : [];
+
+    // Build set of covered absolute file paths from V8 data
+    const coveredFiles = new Set();
+    for (const entry of v8CoverageData) {
+      const results = entry.result || [];
+      for (const r of results) {
+        if (!r.url) continue;
+        const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
+        const resolved = path.resolve(filePath);
+        // A file is "covered" if ANY function range has count > 0
+        const hasCoverage = (r.functions || []).some(fn =>
+          (fn.ranges || []).some(range => range.count > 0)
+        );
+        if (hasCoverage) coveredFiles.add(resolved);
+      }
+    }
+
+    const coverageRatios = [];
+    const falseGreens = [];
+    let propertiesWithTests = 0;
+    let fullyCovered = 0;
+    let partiallyCovered = 0;
+    let uncovered = 0;
+
+    for (const recipe of recipes) {
+      const sourceFiles = recipe.source_files_absolute || [];
+      if (sourceFiles.length === 0) continue;
+      const hasTest = !!(recipe.test_file || recipe.test_files);
+      if (hasTest) propertiesWithTests++;
+
+      let coveredCount = 0;
+      for (const sf of sourceFiles) {
+        if (coveredFiles.has(path.resolve(sf))) coveredCount++;
+      }
+      const ratio = coveredCount / sourceFiles.length;
+      const propName = recipe.property || recipe.invariant || recipe.id || 'unknown';
+
+      coverageRatios.push({ property: propName, ratio: ratio });
+
+      if (ratio === 0 && hasTest) {
+        falseGreens.push({
+          property: propName,
+          test_file: recipe.test_file || (recipe.test_files || [])[0] || 'unknown',
+          source_files: sourceFiles,
+          covered: 0,
+        });
+        uncovered++;
+      } else if (ratio < 1) {
+        partiallyCovered++;
+      } else {
+        fullyCovered++;
+      }
+    }
+
+    return {
+      available: true,
+      total_properties: recipes.length,
+      properties_with_tests: propertiesWithTests,
+      false_greens: falseGreens,
+      coverage_ratios: coverageRatios,
+      summary: {
+        fully_covered: fullyCovered,
+        partially_covered: partiallyCovered,
+        uncovered: uncovered,
+      },
+    };
+  } catch (e) {
+    return { available: false };
+  }
 }
 
 /**
@@ -1831,6 +1945,12 @@ function computeResidual() {
   const t_to_c = fastMode
     ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
     : sweepTtoC();
+
+  // Cross-reference V8 coverage against formal-test-sync recipe source_files
+  if (t_to_c.detail && t_to_c.detail.v8_coverage) {
+    t_to_c.detail.formal_coverage = crossReferenceFormalCoverage(t_to_c.detail.v8_coverage);
+  }
+
   const f_to_c = fastMode
     ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
     : sweepFtoC();
@@ -2161,6 +2281,16 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  // F->T->C coverage summary (shown regardless of T->C residual)
+  if (finalResidual.t_to_c.detail && finalResidual.t_to_c.detail.formal_coverage &&
+      finalResidual.t_to_c.detail.formal_coverage.available === true) {
+    const fc = finalResidual.t_to_c.detail.formal_coverage;
+    lines.push('  F->T->C coverage: ' + fc.summary.fully_covered + '/' +
+      fc.total_properties + ' properties fully traced (' +
+      fc.false_greens.length + ' false greens)');
+    lines.push('');
+  }
+
   if (finalResidual.f_to_c.residual > 0 || (finalResidual.f_to_c.detail && finalResidual.f_to_c.detail.inconclusive > 0)) {
     lines.push('## F -> C (Formal -> Code)');
     const detail = finalResidual.f_to_c.detail;
@@ -2468,6 +2598,7 @@ module.exports = {
   sweepDtoR,
   assembleReverseCandidates,
   classifyCandidate,
+  crossReferenceFormalCoverage,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
