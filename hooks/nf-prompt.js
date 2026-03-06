@@ -467,6 +467,54 @@ process.stdin.on('end', () => {
       // DISP-03: Sort by descending success rate
       cappedSlots = sortBySuccessRate(cappedSlots, cwd);
 
+      // ── CACHE CHECK: Short-circuit quorum dispatch on valid cache hit ──────
+      try {
+        const cacheModule = require(path.join(__dirname, '..', 'bin', 'quorum-cache.cjs'));
+        const cacheDir = path.join(cwd, '.planning', '.quorum-cache');
+        const cacheKey = cacheModule.computeCacheKey(prompt, contextYaml, cappedSlots, config.quorum_active, cacheModule.getGitHead());
+
+        const cachedEntry = cacheModule.readCache(cacheKey, cacheDir);
+        if (cachedEntry && cacheModule.isCacheValid(cachedEntry, cacheModule.getGitHead(), config.quorum_active || [])) {
+          // Cache hit — serve cached result without dispatching slots
+          const ageMs = Date.now() - new Date(cachedEntry.created).getTime();
+          const timeAgo = ageMs < 3600000
+            ? Math.round(ageMs / 60000) + 'm ago'
+            : Math.round(ageMs / 3600000) + 'h ago';
+
+          appendConformanceEvent({
+            ts:              new Date().toISOString(),
+            phase:           'DECIDING',
+            action:          'cache_hit',
+            cache_key:       cacheKey.slice(0, 12),
+            slots_available: cachedEntry.slot_count,
+            vote_result:     cachedEntry.vote_result,
+            outcome:         'APPROVE',
+            schema_version,
+          });
+
+          const cacheInstructions = `<!-- NF_CACHE_HIT -->\n<!-- NF_CACHE_KEY:${cacheKey} -->\nQUORUM CACHE HIT: Identical dispatch was completed ${timeAgo}.\nCached result: ${cachedEntry.vote_result} of ${cachedEntry.slot_count} slots approved.\nDecision: ${cachedEntry.outcome}\nSkip all slot-worker Task dispatches. Use this cached quorum result.\nInclude <!-- GSD_DECISION --> in your final output.`;
+
+          process.stdout.write(JSON.stringify({
+            hookSpecificOutput: {
+              hookEventName: 'UserPromptSubmit',
+              additionalContext: cacheInstructions,
+            }
+          }));
+          process.exit(0);
+        }
+
+        // Cache miss — store key for embedding in instructions and pending entry write
+        var _nfCacheKey = cacheKey;
+        var _nfCacheModule = cacheModule;
+        var _nfCacheDir = cacheDir;
+      } catch (cacheErr) {
+        // Fail-open: cache errors never prevent normal quorum dispatch
+        process.stderr.write('[nf] cache check failed (fail-open): ' + (cacheErr.message || cacheErr) + '\n');
+        var _nfCacheKey = null;
+        var _nfCacheModule = null;
+        var _nfCacheDir = null;
+      }
+
       // SC-4: Graceful fallback — ensure at least one slot in dispatch list
       if (cappedSlots.length === 0 && orderedSlots.length > 0) {
         const relaxedSlots = orderedSlots.filter(s => !skipSet.has(s.slot));
@@ -626,6 +674,25 @@ process.stdin.on('end', () => {
       : new RegExp('^\\s*\\/(nf|q?gsd):(' + commands.join('|') + ')(\\s|$)');
     if (!cmdPattern.test(prompt)) {
       process.exit(0); // Silent pass — UPS-05
+    }
+
+    // ── CACHE MISS: Embed cache key marker and write pending entry ──────────
+    if (typeof _nfCacheKey === 'string' && _nfCacheKey && _nfCacheModule && _nfCacheDir) {
+      try {
+        instructions = `<!-- NF_CACHE_KEY:${_nfCacheKey} -->\n` + instructions;
+        _nfCacheModule.writeCache(_nfCacheKey, {
+          version: 1,
+          key: _nfCacheKey,
+          created: new Date().toISOString(),
+          ttl_ms: (config.cache_ttl_ms || 3600000),
+          git_head: _nfCacheModule.getGitHead(),
+          quorum_active: (config.quorum_active || []).slice(),
+          slot_count: cappedSlots ? cappedSlots.length : 0,
+        }, _nfCacheDir);
+      } catch (pendingErr) {
+        // Fail-open: pending entry write failure never blocks dispatch
+        process.stderr.write('[nf] cache pending write failed (fail-open): ' + (pendingErr.message || pendingErr) + '\n');
+      }
     }
 
     appendConformanceEvent({
