@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 Phase: v0.28-02 (Data Pipeline Quorum Cache Pass-at-K Metrics)
 Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-06 - Completed v0.29-04-02 design impact analysis tool
+Last activity: 2026-03-06 - Completed v0.29-04-01 Gate C validation and test generation
 
 Progress: [###-------] 33%
 
@@ -38,6 +38,7 @@ Progress: [###-------] 33%
 | Phase v0.29-02 P01 | 8min | 2 tasks | 6 files |
 | Phase v0.28-02 P01 | 2min | 2 tasks | 6 files |
 | Phase v0.29-04 P02 | 2min | 1 tasks | 2 files |
+| Phase v0.29-04 P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,8 @@ Recent decisions affecting current work:
 - [v0.28-02-01]: Cache validity checks both git HEAD and quorum composition to prevent stale results
 - [v0.29-04-02]: L2/L3 analysis skipped when L1 produces zero impact -- avoids false positives from non-instrumented files
 - [v0.29-04-02]: Emission points with null xstate_event excluded from L2 chaining -- only mapped events propagate
+- [v0.29-04-01]: Oracle type directly maps to failure mode type: omission->state_assertion, commission->guard_rejection, corruption->state_equality
+- [v0.29-04-01]: Gate C target threshold set at 0.8 (80%) following gate-b pattern; current score is 1.0
 
 ### Pending Todos
 
@@ -88,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-04-02-PLAN.md (Design Impact Analysis, 21 tests)
+Stopped at: Completed v0.29-04-01-PLAN.md (Gate C Validation and Test Generation, 25 tests)
 Resume file: None

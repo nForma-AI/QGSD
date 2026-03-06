@@ -49,13 +49,13 @@
 - [ ] **RSN-01**: Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions
 - [ ] **RSN-02**: Failure mode catalog enumerates concrete failure modes per L2 state/transition with effects and severity classification
 - [ ] **RSN-03**: Risk heatmap produces ranked transition list (highest-risk-first) combining FMEA severity with coverage gap data
-- [ ] **RSN-04**: Model-driven test generation produces test recipe JSON from L3 failure modes with input sequence, expected outcome, and oracle
+- [x] **RSN-04**: Model-driven test generation produces test recipe JSON from L3 failure modes with input sequence, expected outcome, and oracle
 - [x] **RSN-05**: Design impact analysis traces a git diff through all three layers showing instrumentation, state, and hazard effects
 
 ### Gates
 - [ ] **GATE-01**: Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces
 - [ ] **GATE-02**: Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards
-- [ ] **GATE-03**: Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario
+- [x] **GATE-03**: Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario
 - [ ] **GATE-04**: Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)
 
 ### Integration
@@ -99,11 +99,11 @@
 | RSN-01 | v0.29-03 | Pending |
 | RSN-02 | v0.29-03 | Pending |
 | RSN-03 | v0.29-03 | Pending |
-| RSN-04 | v0.29-04 | Pending |
+| RSN-04 | v0.29-04 | Complete |
 | RSN-05 | v0.29-04 | Complete |
 | GATE-01 | v0.29-02 | Pending |
 | GATE-02 | v0.29-03 | Pending |
-| GATE-03 | v0.29-04 | Pending |
+| GATE-03 | v0.29-04 | Complete |
 | GATE-04 | v0.29-03 | Pending |
 | INTG-01 | v0.29-01 | Pending |
 | INTG-02 | v0.29-04 | Pending |
