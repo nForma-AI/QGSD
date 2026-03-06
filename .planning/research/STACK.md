@@ -1,247 +1,232 @@
-# Stack Research: Agent Harness Optimization
+# Stack Research: Three-Layer Formal Verification Architecture
 
-**Domain:** Hook profiles, content-hash caching, budget-aware downgrade, session state reminder, security sweep, pass@k metrics, stall detection, harness diagnostics, smart compact timing
+**Domain:** Formal verification pipeline extension — Evidence, Semantics, Reasoning layers
 **Researched:** 2026-03-06
-**Overall Confidence:** HIGH
+**Confidence:** MEDIUM (novel architecture; individual components HIGH, integration patterns MEDIUM)
 
-## Foundational Constraint: Zero External Dependencies for Hooks
+## Foundational Constraint: Existing FV Pipeline
 
-nForma hooks are standalone Node.js CJS scripts spawned by Claude Code via stdin/stdout IPC. They use **only Node.js built-ins** (`fs`, `path`, `os`, `crypto`, `child_process`, `https`). This is a hard architectural constraint: hooks ship to `~/.claude/hooks/` and must work immediately after install without native compilation or network-fetched packages.
+nForma already has a mature formal verification stack. The three-layer architecture **extends** it, not replaces it.
 
-Every recommendation below uses Node.js built-ins exclusively. No new `npm install` required.
+**Already validated (DO NOT add):**
+- TLA+ / TLC model checker (bin/run-tlc.cjs, bin/run-formal-verify.cjs)
+- Alloy analyzer (60+ .als models in .planning/formal/alloy/)
+- PRISM probabilistic model checker (auto-calibration from scoreboard)
+- UPPAAL timed automata
+- XState v5.28.0 (conformance tracing, state machine definitions)
+- Ajv (JSON Schema validation, draft-07)
+- Traceability matrix (requirements.json <-> formal models)
+- Model registry (model-registry.json, check-result.schema.json v2.1)
+- Conformance event logging (.planning/conformance-events.jsonl)
+- Trace validation (bin/validate-traces.cjs, trace.schema.json)
+- Debt ledger (debt.json, debt.schema.json)
 
-**Runtime:** Node.js >= 16.7.0 (package.json `engines`). Dev environment: Node 25.6.1.
+**Runtime:** Node.js >= 18.19.0 (align with OpenTelemetry SDK 2.x requirement; current engines field says >=16.7.0 but should bump for this milestone). Dev environment: Node 25.6.1.
 
 ---
 
 ## Recommended Stack
 
-### 1. Content-Hash Caching (Quorum Response Cache)
+### Layer 1: Evidence Collection (Instrumentation + Trace + Failure Taxonomy)
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:crypto` (sha256) | Built-in | Content fingerprinting for quorum cache keys | Already used in `fingerprint-issue.cjs` (sha256) and `nf-circuit-breaker.js` (sha1). SHA-256 is the right choice: collision-resistant, consistent with existing fingerprint patterns, and fast enough (< 1ms for typical prompt content). |
-| `node:fs` (JSON file) | Built-in | Cache storage at `.planning/quorum-cache.json` | JSONL is the project pattern for append-only logs (token-usage, conformance-events). Cache needs key lookup, so a keyed JSON object `{ [hash]: { verdict, reasoning, ts, ttl_hours } }` is correct. File stays small because entries are keyed by content hash -- deduplication is intrinsic. |
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| Custom JSONL trace format (extend existing) | v3.0 (new schema) | Structured trace collection | nForma already emits conformance-events.jsonl with trace.schema.json. Extending this schema is far cheaper than adopting OpenTelemetry's full SDK. The existing validate-traces.cjs pipeline, Ajv validation, and XState replay infrastructure all consume this format. Adding new event types (failure_observed, invariant_violated, hazard_triggered) to the existing schema preserves all downstream tooling. |
+| `node:crypto` (sha256) | Built-in | Failure fingerprinting for taxonomy | Already used throughout codebase (fingerprint-issue.cjs, nf-circuit-breaker.js). Fingerprints deduplicate failure modes into a taxonomy keyed by deterministic hashes. |
+| `node:perf_hooks` | Built-in | High-resolution timing for trace events | Built-in performance.now() provides sub-millisecond timestamps without external deps. Already compatible with existing runtime_ms field in check-result.schema.json. |
 
-**Cache key construction:** Hash the tuple `(question_text, artifact_content_hash, sorted_slot_names, mode)` into a single sha256 digest. This captures everything that affects the quorum response, matching how `quorum-slot-dispatch.cjs` builds prompts.
+**Why NOT OpenTelemetry:**
+OpenTelemetry SDK 2.x (@opentelemetry/sdk-node >=2.0.0, @opentelemetry/api >=1.9.0) is the industry standard for distributed tracing. However, nForma is NOT a distributed system — it is a CLI tool that orchestrates quorum calls. The overhead is unjustified:
+- OTel SDK 2.x requires Node.js >=18.19.0 and adds ~15 packages to the dependency tree
+- nForma hooks are zero-dependency CJS scripts; OTel cannot run in hooks
+- The existing JSONL conformance trace format already captures what matters: actions, timestamps, phases, outcomes, MCP metadata
+- OTel's value (distributed correlation, backend exporters, auto-instrumentation) is irrelevant for a CLI planning tool
+- Extending trace.schema.json to v3.0 with failure taxonomy fields gets 90% of the value at 0% dependency cost
 
-**Implementation point:** `bin/quorum-slot-dispatch.cjs`. Before spawning slot calls, compute cache key from inputs. If cache hit with unexpired TTL, return cached verdict directly. On cache miss, dispatch normally and write result to cache.
-
-**Why NOT SQLite/LevelDB/Redis:** Adds native dependencies. The cache is small -- hundreds of entries at most (one per unique quorum question). A JSON file read into memory, checked, and written back is simpler and fits the existing pattern.
-
-### 2. Budget Tracking and Downgrade
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:fs` (readFileSync) | Built-in | Sum costs from `.planning/token-usage.jsonl` | `nf-token-collector.js` already writes per-slot token records with `input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`. Add `cost_usd` computed from a static pricing table. No new file needed -- extend the existing JSONL schema. |
-| `config-loader.js` (extended) | Existing | New config keys for budget limits and pricing | Two-layer merge already works. Add flat keys to avoid nested-object shallow-merge loss. |
-
-**Cost calculation approach:** Static pricing table in `nf.json`, NOT live API calls. Provider pricing changes infrequently. A config-based table means: (1) no network calls in hot path, (2) user can override for custom providers (AkashML, Together.xyz, Fireworks), (3) works offline.
-
-**Budget enforcement point:** `nf-prompt.js` (UserPromptSubmit hook). Before building quorum steps, sum today's costs from token-usage.jsonl, compare against `budget_daily_limit_usd`. If over threshold percentage, downgrade `model_tier_planner` from opus to sonnet and `model_tier_worker` from sonnet to haiku. This is the right hook because it runs before every quorum dispatch and already reads config.
-
-**Why NOT a separate budget daemon:** Hooks are stateless processes. Reading a JSONL file and summing today's costs is O(n) on line count but n is small (a few hundred lines per day at most). A daemon adds process management complexity for no benefit.
-
-### 3. Hook Profiles
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `config-loader.js` (extended) | Existing | New config key: `hook_profile` | Profiles control which hooks run. Each hook checks `config.hook_profile` on startup and exits(0) immediately if its category is disabled for that profile. |
-
-**Profile definitions:**
-
-| Profile | Active Hooks | Use Case |
-|---------|-------------|----------|
-| `full` (default) | All 10 hooks | Normal operation, current behavior |
-| `fast` | nf-prompt, nf-stop, nf-circuit-breaker, gsd-context-monitor, nf-security-scan | Quick iterations -- skip spec-regen, token-collector, precompact state, statusline |
-| `minimal` | nf-prompt, nf-stop | Bare quorum enforcement only -- fastest possible |
-
-**Why self-gating instead of dynamic hook registration:** Claude Code hook registration is in `~/.claude.json` which is static JSON set at install time. There is no API to dynamically enable/disable hooks at runtime. Each hook must check its own profile gate. This is a 3-line check at the top of each hook's stdin handler:
-
-```javascript
-const { loadConfig } = require('./config-loader');
-const config = loadConfig(input.cwd);
-if (config.hook_profile === 'minimal' && !['nf-prompt', 'nf-stop'].includes('THIS_HOOK')) process.exit(0);
+**Trace Schema v3.0 additions:**
+```json
+{
+  "failure_mode": { "type": "string", "description": "Taxonomy category: timeout|crash|wrong_answer|drift|invariant_violation" },
+  "severity": { "type": "integer", "minimum": 1, "maximum": 10 },
+  "detection_method": { "type": "string", "enum": ["automated", "manual", "model_check", "runtime_assert"] },
+  "evidence_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+  "layer": { "type": "string", "enum": ["evidence", "semantics", "reasoning"] }
+}
 ```
 
-### 4. Security Scanning
+### Layer 2: Operational State Machine Derivation + Invariant Catalogs
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Regex pattern set | Custom CJS module | Fast secret pattern matching in PostToolUse | Patterns for: AWS keys (`AKIA[0-9A-Z]{16}`), GitHub tokens (`gh[ps]_[A-Za-z0-9_]{36,}`), generic high-entropy base64 > 20 chars, PEM private keys. This is the approach used by gitleaks and detect-secrets -- nForma needs only the regex subset, not the full tools. |
-| Shannon entropy (pure JS) | Custom | Entropy analysis for generic secret detection | Calculate `-sum(p * log2(p))` over character frequency distribution. Strings with entropy > 4.5 bits/char and length > 20 are likely secrets. Pure math, no library needed. |
-| `node:child_process` (execSync) | Built-in | Optional: shell out to `gitleaks` if installed | Project already has gitleaks configured (`.gitleaks.toml`, `npm run secrets:gitleaks`). For deep scanning, delegate to existing tooling. For hot-path hook scanning, use the lightweight regex + entropy approach. |
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| XState graph utilities (`xstate/graph`) | 5.28.0 (bundled with xstate) | Path enumeration, reachability analysis, test generation | Already a devDependency. `getShortestPaths()` and `getSimplePaths()` enumerate all reachable states from traces. Use these to derive operational state machines from observed behavior and compare against designed machines. |
+| Custom FSM inference (bin/infer-operational-fsm.cjs) | New | Derive state machines from trace logs | Build a lightweight Angluin-style L* learner that reads conformance-events.jsonl and produces an XState-compatible machine definition. This is a ~300-line implementation: partition traces into sessions, extract state-event-state triples, merge compatible states, output JSON. No external library needed — academic FSM inference tools (SCRAM, MINT) are C++/Java and don't integrate with the Node.js pipeline. |
+| Invariant catalog (JSON schema) | New | Structured invariant storage with evidence links | Extend the existing pattern from acknowledged-false-positives.json and archived-non-invariants.json. Each invariant entry links to: source (TLA+/Alloy/observed), confidence tier (low/medium/high using existing thresholds from validate-traces.cjs), violation count, last verified timestamp. |
 
-**Implementation hook:** PostToolUse. Check `tool_result` content for secret patterns. If found, inject a WARNING via `additionalContext` telling Claude not to echo the value. This mirrors the `gsd-context-monitor.js` pattern exactly.
+**Why custom FSM inference instead of academic tools:**
+- SCRAM (v0.16.2, last release 2018) is a C++ fault tree tool, not an FSM inference tool
+- MINT/LearnLib are Java-based and would require JVM orchestration
+- LLM-based inference (ProtocolGPT) is interesting but nondeterministic — unsuitable for formal verification
+- The conformance trace format is simple enough that L*-style inference is a straightforward implementation
+- Output must be XState-compatible JSON for integration with existing xstate-to-tla.cjs pipeline
 
-**Why NOT trufflehog/detect-secrets as runtime deps:** Python tools. Adding Python as a runtime dependency breaks the zero-dep constraint. The regex approach catches 95% of accidental leaks. Deep audits use the existing `npm run secrets:gitleaks`.
+### Layer 3: Hazard Models, Failure Mode Analysis, Risk Ranking, Test Generation
 
-### 5. Stall Detection
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| Custom FMEA engine (bin/fmea-analyze.cjs) | New | Failure Mode and Effects Analysis with RPN scoring | No viable npm FMEA library exists. FMEA is a structured methodology, not a complex algorithm: enumerate failure modes, score Severity x Occurrence x Detection = RPN. Build a ~200-line CJS script that reads the failure taxonomy from Layer 1, computes RPNs, and outputs a ranked JSON report. Integrates with existing check-result.schema.json for formal verification results. |
+| SCRAM (Open-PSA) | 0.16.2 | Fault tree analysis, minimal cut sets, importance analysis | Despite its age, SCRAM remains the only open-source CLI fault tree analyzer supporting the Open-PSA standard. Use it as an optional external tool (like TLC/Alloy) for fault tree quantification. Input: Open-PSA MEF XML. Output: minimal cut sets + failure probabilities. Install via source build or Docker. LOW confidence — verify it builds on macOS ARM before committing to this. |
+| XState test generation (`xstate/graph`) | 5.28.0 | Automated test path generation from hazard models | `getShortestPaths()` generates test cases covering all reachable states. Combine with hazard-annotated state machines to prioritize tests that exercise high-RPN failure modes. Already available, no new dependency. |
+| Alloy (existing) | Already integrated | Hazard model constraints | Express hazard relationships as Alloy predicates. Already have 60+ Alloy models; add hazard-specific models (e.g., `hazard-quorum-timeout.als`) following existing patterns. |
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:fs` (statSync) | Built-in | Check file modification times | If no file in `.planning/` has been modified in N minutes while tool calls continue, the session may be stalled (spinning without progress). |
-| `Date.now()` | Built-in | Timestamp comparison | Compare current time against last `.planning/` modification. No time libraries needed. |
+**RPN Calculation:**
+```
+RPN = Severity (1-10) x Occurrence (1-10) x Detection (1-10)
+```
+- Severity: derived from failure taxonomy impact classification
+- Occurrence: computed from conformance-events.jsonl frequency data
+- Detection: based on which layer catches the failure (Layer 1 automated = low detection score = good; Layer 3 only = high detection score = concerning)
 
-**Implementation:** PostToolUse hook (extend `gsd-context-monitor.js` or new `nf-stall-detector.js`). On each PostToolUse event, scan `.planning/` for most recent `mtimeMs`. If gap exceeds configurable threshold (default 10 minutes) AND tool calls are happening (the hook is firing), inject stall advisory.
+### Cross-Layer: Alignment Measurement + Drift Detection
 
-### 6. Smart Compact Timing
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| Custom alignment monitor (bin/alignment-monitor.cjs) | New | Measure cross-layer consistency | Implements the Henzinger et al. (RV 2025) alignment monitoring pattern: compare predicted next-state (from Layer 2 operational FSM) against actual observed state (from Layer 1 traces). Compute alignment score as ratio of matching predictions. Drift = alignment score dropping below threshold over a sliding window. |
+| Population Stability Index (PSI) | Built-in (math) | Distribution drift detection | PSI is a single formula: PSI = SUM((actual% - expected%) * ln(actual%/expected%)). Compute in pure JS. Compare current failure mode distributions against baseline. PSI > 0.2 = significant drift. No library needed — it's 10 lines of arithmetic. |
+| Kolmogorov-Smirnov test | Built-in (math) | Statistical drift significance | KS test compares two distributions. Implementation is ~50 lines of sorted-array comparison. Used to detect whether observed state transition probabilities have drifted from PRISM model predictions. |
+| Existing traceability matrix | Already integrated | Cross-layer requirement tracing | Extend traceability-matrix.json to track which layer each verification result comes from. Add `layer` field to check-result.schema.json (already proposed above). |
 
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `context_window.remaining_percentage` | Hook input payload | Already available in PostToolUse events | `gsd-context-monitor.js` already reads this. Smart compact extends the logic: add task-awareness by reading STATE.md and checking plan progress. |
-
-**Implementation:** Extend `gsd-context-monitor.js` with graduated responses:
-
-| Context Used | Current Behavior | New Behavior |
-|-------------|-----------------|-------------|
-| 70-84% | WARNING | WARNING + suggest saving state if mid-plan |
-| 85-89% | WARNING | Recommend `/nf:pause-work` proactively |
-| 90%+ | CRITICAL | CRITICAL (unchanged) |
-
-The 85% tier is new. It reads STATE.md (same pattern as `nf-precompact.js`) to determine if a plan is in progress before recommending pause.
-
-### 7. Session State Reminder
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:fs` (readFileSync) | Built-in | Read STATE.md and active PLAN.md | On session start or after compaction, remind Claude of current execution state. |
-
-**Implementation:** Extend `nf-precompact.js` (PreCompact hook). Currently injects `## Current Position` from STATE.md. Add: active plan step detection (parse PLAN.md for current checked/unchecked items), pending quorum results, and budget status. This is purely extending existing code, not new infrastructure.
-
-### 8. Pass@k Metrics
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:fs` | Built-in | Read quorum dispatch results | Pass@k = "of k slots dispatched, how many returned the correct/agreeing verdict." Data already exists in quorum output. |
-
-**Implementation:** Add pass@k computation to `bin/update-scoreboard.cjs`. After each quorum round, record `{ k: slots_dispatched, pass: agreeing_count, pass_at_k: agreeing_count / slots_dispatched }`. This is a pure math addition to existing scoreboard code -- no new files needed.
-
-### 9. Harness Diagnostics Agent
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| `node:fs` | Built-in | Read scoreboard, token-usage.jsonl, conformance-events.jsonl | Diagnostic agent is a command/workflow, not a hook. Reads existing observability files and produces a structured report. |
-| `node:child_process` (execSync) | Built-in | Run `node bin/check-mcp-health.cjs` for live provider health | Reuse existing health-check tooling rather than reimplementing. |
-
-**Implementation:** New command `commands/nf/diagnose-harness.md` + workflow `core/workflows/diagnose-harness.md`. NOT a hook -- diagnostics are user-triggered. The workflow reads all observability files, computes metrics (avg latency, failure rate per slot, budget burn rate, pass@k trend), and outputs a structured report.
-
----
-
-## Config Changes (config-loader.js)
-
-New flat keys to add to `DEFAULT_CONFIG`:
-
-```javascript
-// Hook profiles
-hook_profile: 'full',                    // 'full' | 'fast' | 'minimal'
-
-// Budget tracking
-budget_daily_limit_usd: 0,              // 0 = unlimited (no enforcement)
-budget_downgrade_threshold_pct: 80,     // downgrade model tier at 80% of daily limit
-budget_pricing: {},                      // { "model-id": { input_per_mtok: N, output_per_mtok: N } }
-
-// Stall detection
-stall_detection_minutes: 10,            // 0 = disabled
-
-// Quorum cache
-quorum_cache_ttl_hours: 24,             // content-hash cache TTL
-quorum_cache_enabled: true,             // master switch
-
-// Security scanning
-security_scan_enabled: true,            // PostToolUse secret detection
-security_scan_entropy_threshold: 4.5,   // Shannon entropy bits/char threshold
+**Alignment Score:**
+```
+alignment_score = matching_predictions / total_predictions
+drift_detected = alignment_score < threshold over window_size observations
 ```
 
-All flat keys (not nested objects) because config-loader.js uses `{ ...DEFAULT_CONFIG, ...global, ...project }` shallow spread. The existing validation pattern in `validateConfig()` handles each key independently with type checks and stderr warnings.
+Threshold calibration: start at 0.85 (15% mismatch tolerance), calibrate from observed data using the same confidence tier system already in validate-traces.cjs (low/medium/high based on observation count and window duration).
 
 ---
 
-## New Files
+## Supporting Libraries
 
-| File | Type | Purpose |
-|------|------|---------|
-| `bin/budget-check.cjs` | Utility (imported) | Sum today's costs from token-usage.jsonl, compare against limits. Exported function, imported by `nf-prompt.js`. |
-| `bin/secret-patterns.cjs` | Utility (imported) | Regex patterns + Shannon entropy calculator. Exported functions, imported by security hook. |
-| `hooks/nf-security-scan.js` | PostToolUse hook | Scan tool output for secret patterns. Inject WARNING via additionalContext. |
-| `commands/nf/diagnose-harness.md` | Command definition | `/nf:diagnose-harness` command registration. |
-| `core/workflows/diagnose-harness.md` | Workflow | Reads observability files, computes metrics, outputs report. |
-| `.planning/quorum-cache.json` | Cache (gitignored) | Content-hash keyed quorum response cache. |
-
----
-
-## Hook Registration Changes (install.js)
-
-New hooks to register in `~/.claude.json`:
-
-| Hook File | Event Type | Purpose |
-|-----------|-----------|---------|
-| `nf-security-scan.js` | PostToolUse | Secret detection in tool output |
-
-No new hook event types needed. All features fit into existing types:
-- **UserPromptSubmit:** Budget check + downgrade (extends `nf-prompt.js`)
-- **PostToolUse:** Security scan (new hook), stall detection (extends `gsd-context-monitor.js`), smart compact (extends `gsd-context-monitor.js`)
-- **PreCompact:** Session state reminder (extends `nf-precompact.js`)
-- **SubagentStop:** Pass@k + cache write (extends `nf-token-collector.js` or `update-scoreboard.cjs`)
-
----
-
-## What NOT to Add
-
-| Category | Rejected Option | Why Not |
-|----------|----------------|---------|
-| Database | SQLite, LevelDB, Redis | Zero-dep constraint. JSON/JSONL files are sufficient for data volumes (< 10K records/day). |
-| HTTP framework | Express, Fastify | No HTTP server needed. All hooks are stdin/stdout processes. |
-| Logging library | Winston, Pino, Bunyan | `process.stderr.write()` is the established pattern. Structured logging would require consumers -- there are none. |
-| Schema validation | Ajv, Zod, Joi | `validateConfig()` in config-loader.js is hand-rolled and works. Adding a schema library for flat config keys is over-engineering. |
-| Cron/scheduler | node-cron | Budget checks happen inline at prompt time. No periodic tasks needed. |
-| Test framework | Jest, Vitest | Project uses `node:test` (built-in). Do not introduce a second test runner. |
-| Secret scanning lib | trufflehog, detect-secrets (runtime) | Python dependencies. Use regex patterns for hot-path, existing `gitleaks` CLI for deep audits. |
-| Content hashing | xxhash, murmurhash | `crypto.createHash('sha256')` is fast enough (< 1ms). Non-cryptographic hashes save microseconds but add a dependency. |
-| Config format | YAML, TOML | Project uses JSON exclusively (nf.json, requirements.json, providers.json). Do not introduce a second config format. |
-| Cache eviction lib | lru-cache, node-cache | Cache is small (< 1000 entries). Manual TTL check on read + periodic prune is simpler than a library. |
-| Time library | dayjs, luxon, moment | `Date.now()` and `new Date().toISOString()` cover all needs. Budget sums use JSONL timestamps parsed with `new Date(ts)`. |
-
----
-
-## Alternatives Considered
-
-| Category | Recommended | Alternative | Why Not Alternative |
-|----------|-------------|-------------|---------------------|
-| Cache key hashing | sha256 (node:crypto) | xxhash via wasm | Adds wasm binary. sha256 is < 1ms for prompt-sized text. |
-| Cache storage | JSON file | JSONL append log | Cache needs key lookup (is this hash cached?). JSONL requires full scan. JSON object has O(1) lookup after parse. |
-| Budget enforcement | Inline in nf-prompt.js | Separate budget-gate hook | Adding another hook means another process spawn per prompt. Inline check in existing hook is zero-cost. |
-| Profile gating | Self-gate in each hook | Dynamic ~/.claude.json rewrite | Rewriting claude.json at runtime is fragile and requires re-registering hooks. Self-gating is stateless and safe. |
-| Secret detection | Regex + entropy | ML-based classifier | No model inference in hooks. Regex + entropy catches AWS keys, GitHub tokens, PEM keys, generic high-entropy strings. Good enough for hot path. |
-| Stall detection | File mtime check | Heartbeat file | Heartbeat requires a writer (another process). File mtime check is passive -- reads existing files. |
+| Library | Version | Purpose | When to Use |
+|---------|---------|---------|-------------|
+| `ajv` | Already installed | Schema validation for extended trace format | Validate all Layer 1 trace events, invariant catalog entries, FMEA reports against JSON schemas |
+| `xstate` | 5.28.0 (already installed) | State machine definitions, graph analysis, test generation | Layer 2 operational FSM representation, Layer 3 test path generation |
+| `node:fs` | Built-in | JSONL append, JSON read/write | All layers — trace logging, report output, catalog storage |
+| `node:child_process` | Built-in | SCRAM CLI invocation (optional) | Layer 3 fault tree analysis when SCRAM is available |
 
 ---
 
 ## Installation
 
-No new `npm install` commands needed. All features use Node.js built-ins.
-
 ```bash
-# After implementing, rebuild hooks for distribution
-npm run build:hooks
+# No new npm dependencies required for Layers 1-2 and cross-layer alignment.
+# All implementations use Node.js built-ins + existing devDependencies.
 
-# Reinstall to update ~/.claude/hooks/ with new hooks
-node bin/install.js --claude --global
+# Layer 3 optional: SCRAM for fault tree analysis
+# macOS (build from source — no Homebrew formula available):
+git clone https://github.com/rakhimov/scram.git
+cd scram && mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
+make && make install
+
+# Verify SCRAM installation (optional, gracefully degrade if absent):
+scram --version || echo "SCRAM not available, fault tree analysis disabled"
 ```
+
+**Node.js engine bump required:**
+```json
+{
+  "engines": {
+    "node": ">=18.19.0"
+  }
+}
+```
+This aligns with the broader Node.js ecosystem (OTel SDK 2.x, current LTS) even though we're not using OTel. Node 16 EOL was September 2023.
 
 ---
 
+## Alternatives Considered
+
+| Recommended | Alternative | When to Use Alternative |
+|-------------|-------------|-------------------------|
+| Extend JSONL trace format | OpenTelemetry SDK 2.x (@opentelemetry/sdk-node >=2.0.0) | Only if nForma becomes a distributed service with multiple processes needing correlation. Currently a CLI tool — OTel overhead is not justified. |
+| Custom FSM inference (~300 LOC) | LearnLib (Java) or MINT | If trace complexity grows beyond what simple L* handles (>1000 unique states, non-deterministic traces). Would require JVM sidecar. |
+| Custom FMEA engine (~200 LOC) | Siemens Teamcenter / Sphera FMEA-Pro | Enterprise tools for regulated industries (medical devices, automotive). Massive overkill for a developer tool's internal FV pipeline. |
+| PSI + KS test (pure JS math) | scipy.stats (Python) or drift-detection npm packages | If statistical rigor needs to increase. For now, PSI and KS are sufficient and keep the stack pure Node.js. |
+| SCRAM (C++ CLI, Open-PSA) | Custom fault tree solver | If SCRAM proves too hard to build/maintain on macOS ARM. A basic AND/OR gate solver with minimal cut set enumeration is ~150 LOC in JS and handles 90% of cases. |
+
+## What NOT to Use
+
+| Avoid | Why | Use Instead |
+|-------|-----|-------------|
+| OpenTelemetry SDK for trace collection | 15+ packages, distributed-system overhead for a CLI tool | Extend existing JSONL trace.schema.json |
+| Python-based tools (SFTA, PyFTA) for fault tree analysis | Adds Python runtime dependency to a Node.js project | SCRAM (C++ CLI) or custom JS fault tree solver |
+| LLM-based FSM inference (ProtocolGPT) | Nondeterministic output, requires API calls, unsuitable for formal verification | Deterministic L*-style inference from traces |
+| Heavy drift detection frameworks (Evidently, NannyML) | Python ML ecosystem, designed for ML model monitoring not FV | Custom PSI/KS implementation in pure JS |
+| @xstate/inspect for production trace collection | Designed for dev-time debugging, generates high data volume, not for production | Existing conformance-events.jsonl with extended schema |
+
+---
+
+## New Files to Create
+
+| File | Layer | Purpose |
+|------|-------|---------|
+| `.planning/formal/trace/trace.schema.v3.json` | 1 | Extended trace schema with failure taxonomy fields |
+| `.planning/formal/failure-taxonomy.json` | 1 | Canonical failure mode catalog |
+| `.planning/formal/invariant-catalog.json` | 2 | Discovered invariants with evidence links |
+| `.planning/formal/fmea-report.json` | 3 | FMEA results with RPN scores |
+| `.planning/formal/alignment-baseline.json` | Cross | Baseline alignment scores for drift detection |
+| `bin/infer-operational-fsm.cjs` | 2 | FSM inference from traces |
+| `bin/fmea-analyze.cjs` | 3 | FMEA/RPN computation |
+| `bin/alignment-monitor.cjs` | Cross | Cross-layer alignment and drift detection |
+| `bin/fault-tree-runner.cjs` | 3 | SCRAM CLI wrapper (optional, graceful degradation) |
+
+---
+
+## Version Compatibility
+
+| Package | Compatible With | Notes |
+|---------|-----------------|-------|
+| xstate@5.28.0 | Node.js >=18.19.0 | Already installed as devDependency. Graph utilities available via `xstate/graph` import. |
+| ajv@8.x | Node.js >=18.19.0 | Verify current installed version; draft-07 schemas (existing) compatible. |
+| SCRAM 0.16.2 | C++17 compiler | Last release 2018. Builds with CMake. Test on macOS ARM (M-series) before relying on it. LOW confidence on build success. |
+| check-result.schema.json v2.1 | New `layer` field | Backward compatible — `layer` field is optional, existing results remain valid. |
+| trace.schema.json v3.0 | Existing conformance-events.jsonl | Backward compatible — new fields use `additionalProperties: true` (already set in current schema). |
+
+---
+
+## Integration Points with Existing Pipeline
+
+```
+Layer 1 (Evidence)
+  conformance-events.jsonl ──→ validate-traces.cjs (existing, extend)
+  failure-taxonomy.json ──→ debt.json (existing, cross-reference)
+
+Layer 2 (Semantics)
+  infer-operational-fsm.cjs ──→ xstate-to-tla.cjs (existing, feed inferred FSM)
+  invariant-catalog.json ──→ requirements.json (existing, link invariants to reqs)
+
+Layer 3 (Reasoning)
+  fmea-analyze.cjs ──→ check-result.schema.json (existing, emit as check results)
+  fault-tree-runner.cjs ──→ run-formal-verify.cjs (existing, add as formalism type)
+
+Cross-Layer
+  alignment-monitor.cjs ──→ traceability-matrix.json (existing, add alignment scores)
+  drift detection ──→ debt.json (existing, create debt entries for drift)
+```
+
 ## Sources
 
-- Existing codebase patterns verified by reading source:
-  - `hooks/config-loader.js` — two-layer merge, flat keys, validation pattern
-  - `hooks/nf-circuit-breaker.js` — sha1 hashing via `crypto.createHash()`
-  - `bin/fingerprint-issue.cjs` — sha256 hashing for content addressing
-  - `hooks/gsd-context-monitor.js` — PostToolUse `additionalContext` injection pattern
-  - `hooks/nf-token-collector.js` — JSONL append, per-slot token records
-  - `hooks/nf-precompact.js` — PreCompact STATE.md reading pattern
-  - `bin/quorum-slot-dispatch.cjs` — prompt construction, slot dispatch
-  - `package.json` — zero runtime deps for hooks (confirmed: all deps are for TUI/terminal, not hooks)
-- Node.js crypto module (built-in, verified on Node 25.6.1)
-- Node.js fs module (statSync, readFileSync, appendFileSync -- all used elsewhere in codebase)
-- gitleaks configuration present at `.gitleaks.toml` with npm scripts `secrets:gitleaks`, `secrets:scan`
+- [OpenTelemetry JS SDK 2.0 announcement](https://opentelemetry.io/blog/2025/otel-js-sdk-2-0/) — version numbers, Node.js requirements (MEDIUM confidence)
+- [OpenTelemetry Node.js docs](https://opentelemetry.io/docs/languages/js/getting-started/nodejs/) — capabilities assessment (HIGH confidence)
+- [SCRAM GitHub](https://github.com/rakhimov/scram) — fault tree analysis tool, Open-PSA format (LOW confidence on macOS ARM build)
+- [XState graph docs](https://stately.ai/docs/graph) — path enumeration, test generation (HIGH confidence)
+- [Henzinger et al., RV 2025](https://arxiv.org/abs/2508.00021) — alignment monitoring framework (MEDIUM confidence)
+- [PSI/KS drift detection methods](https://www.statsig.com/perspectives/model-drift-detection-methods-metrics) — statistical drift approaches (HIGH confidence)
+- [CMU SEI — RPN for Software](https://www.sei.cmu.edu/library/risk-priority-number-rpn-a-method-for-software-defect-report-analysis/) — RPN methodology for software defects (HIGH confidence)
+- [FSM Inference from Long Traces](https://www.semanticscholar.org/paper/FSM-Inference-from-Long-Traces-Avellaneda-Petrenko/4bce9409aa4a3e5e8093632bcfeaef2c269502c9) — L* learning approach (MEDIUM confidence)
+- Existing codebase: trace.schema.json, check-result.schema.json, validate-traces.cjs, model-registry.json — direct inspection (HIGH confidence)
+
+---
+*Stack research for: Three-Layer Formal Verification Architecture*
+*Researched: 2026-03-06*

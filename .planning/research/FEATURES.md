@@ -1,130 +1,208 @@
-# Feature Landscape: ECC-Inspired Agent Harness Improvements
+# Feature Research
 
-**Domain:** Agent harness optimization (Claude Code plugin)
+**Domain:** Three-layer formal verification architecture (Evidence / Semantics / Reasoning) for CLI-based agent orchestration tool
 **Researched:** 2026-03-06
-**Applies to:** nForma v0.28+ milestone (10 ECC-inspired features)
+**Confidence:** MEDIUM — domain patterns synthesized from formal methods literature, FMEA standards, model-based testing research, and existing nForma FV infrastructure; no single canonical "three-layer FV" framework exists so the architecture is novel synthesis
 
-## Table Stakes
+## Feature Landscape
 
-Features that agent harness users increasingly expect. Missing = nForma falls behind the ecosystem baseline.
+### Table Stakes (Users Expect These)
 
-| # | Feature | Why Expected | Complexity | Dependencies |
-|---|---------|--------------|------------|--------------|
-| 4 | Session-start state reminder | Every serious harness injects context on session resume. Claude Code fires SessionStart on both new sessions AND after compaction. Without re-injection, agents lose mid-phase positioning. Anthropic's own harness engineering docs call this out as fundamental. nForma already has `nf-precompact.js` that reads STATE.md "Current Position" -- this extends it to also inject phase-specific context (current step, pending tasks, ROADMAP criteria). | Low | Existing: `nf-precompact.js`, `nf-session-start.js`, STATE.md. Extends existing hooks -- no new hook type needed. |
-| 5 | Security sweep in verify-phase | AI-generated code leaks secrets at alarming rates (GitGuardian, Clawhatch 2026 audits confirm). nForma already runs TruffleHog + Gitleaks + detect-secrets in CI. But CI catches secrets AFTER commit. Table stakes = catching them BEFORE commit during the verify-phase workflow. Industry standard is shifting security left into the agent harness itself. | Low-Med | Existing: `.github/workflows/secret-scan.yml` (TruffleHog + Gitleaks + detect-secrets), `bin/secrets.cjs`, `.secrets.baseline`. Verify-phase workflow needs a new step calling existing secret-scan tooling locally. |
-| 8 | Stall detection in waves | 40% of multi-agent pilots fail in production (Composio 2025 report). Top cause: agents stall silently. nForma's quorum dispatch already uses waves/rounds -- if a slot hangs, the entire wave blocks. Every production harness needs timeout + escalation. The circuit breaker detects oscillation (repetitive behavior) but NOT stalls (no behavior). | Med | Existing: `bin/quorum-slot-dispatch.cjs` (wave dispatch), circuit breaker (oscillation only). New: per-slot timeout tracking, escalation to skip/retry/replace stalled slots. Must not conflict with circuit breaker logic. |
-| 10 | Smart compact timing | Context window exhaustion is the #1 session killer. nForma already monitors context via `gsd-context-monitor.js` (warn at 70%, critical at 90%). But warning at 70% is reactive -- by then the agent is mid-task. Smart = suggesting /compact at natural workflow boundaries (between phases, after verification, after commit). Claude Code's buffer is ~33K tokens as of early 2026. | Low | Existing: `gsd-context-monitor.js` (PostToolUse), `context_monitor` config. New: boundary detection logic in the context monitor. Reads workflow stage from STATE.md or task-envelope to determine if current moment is a "clean break." |
+Features that a three-layer FV system must have to be considered functional. Missing any of these means the layer boundaries are decorative rather than structural.
 
-## Differentiators
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Instrumentation Map** (L1) | Without a map of what is instrumented vs. not, you cannot know where evidence is absent vs. where the system is healthy. Coverage blind spots create false confidence. | MEDIUM | Builds on existing `conformance-events.jsonl` and trace schema. Must catalog every hook/handler emission point and map to state variables. Output: `instrumentation-map.json` listing source files, event types, and mapped state variables. |
+| **Trace Corpus with Structured Metadata** (L1) | Raw traces are useless without structured indexing. Every formal methods paper on trace-to-model derivation assumes a queryable corpus, not flat log files. | MEDIUM | Extend existing JSONL traces with corpus management: indexing by session, action type, state transition. Depends on existing trace schema (`trace.schema.json`). |
+| **Failure Taxonomy** (L1) | Distinguishing failure classes (timeout vs. crash vs. logic error vs. degradation) is prerequisite for any failure mode analysis at L3. FMEA requires classified failure modes as input. | LOW | Parse existing check-results.ndjson and telemetry JSONL to classify failures. Taxonomy: crash, timeout, logic-violation, drift, degradation. |
+| **Operational State Machine** (L2) | The core of L2 — a state machine derived from observed traces, not hand-written specs. Must be comparable to hand-written TLA+/XState models. Without this, L2 has no formal object. | HIGH | State machine inference from traces is a well-studied problem (EFSM inference). But nForma already has hand-written XState + TLA+ models. The real work is deriving an observed-behavior state machine and comparing it to the specified one. |
+| **Invariant Catalog** (L2) | List of invariants discovered from traces (via mining) merged with declared invariants from specs. L3 hazard analysis needs this as input. | MEDIUM | Extend existing `invariants.md` files (15 spec dirs) with observed-invariant mining. Leverage existing debug-discovered invariant pipeline from v0.21. |
+| **Grounding Gate (Gate A)** | L2 must explain real traces. Without measurable alignment between L2 model and L1 evidence, the three-layer architecture collapses to the same "hand-written specs with no evidence" problem nForma already has. | HIGH | This is the hardest table-stakes feature. Requires: (1) replay traces against L2 model, (2) measure explanation rate, (3) queue unexplained behaviors. Existing conformance trace validation (`validate-traces.cjs`) is a starting point but currently has 0% coverage per `coverage-gaps.md`. |
+| **Abstraction Gate (Gate B)** | L3 must be traceable to L2. Without this, hazard models are disconnected speculation. | MEDIUM | Build an abstraction map: every L3 hazard/failure-mode links to L2 states/transitions. Structural check: no L3 element without L2 backing. |
+| **Validation Gate (Gate C)** | L3 outputs must map back to testable code scenarios. Without this, the analysis produces untestable claims. | MEDIUM | Counterexample-to-code translation. Extends existing `attribute-trace-divergence.cjs` pattern. Each L3 finding must produce a concrete test scenario. |
+| **Mismatch Register** (L2) | When L2 model disagrees with L1 traces, the disagreements must be tracked, not silently ignored. This is the "unexplained behavior queue" from the v0.29 description. | LOW | Simple JSONL ledger of (trace_id, expected_state, observed_state, resolution_status). Pattern mirrors existing debt ledger (`debt.json`). |
+| **Hazard Model** (L3) | Enumeration of what can go wrong, derived from L2 state machine analysis. This is software FMEA applied to the operational model. | HIGH | For each L2 state and transition: what failure modes exist? What are their effects? What is their severity? Standard FMEA methodology (Severity x Occurrence x Detection = RPN) applied to formal model states. |
 
-Features that set nForma apart. Not expected by the ecosystem, but high value for multi-model quorum harnesses specifically.
+### Differentiators (Competitive Advantage)
 
-| # | Feature | Value Proposition | Complexity | Dependencies |
-|---|---------|-------------------|------------|--------------|
-| 1 | Hook profiles (minimal/standard/strict) | No other harness offers tiered enforcement levels as a first-class config concept. Most harnesses are binary (on/off). nForma can offer: **minimal** (circuit breaker only, no quorum enforcement -- fast solo dev), **standard** (current behavior -- quorum on plan/verify), **strict** (quorum on ALL commands, pre-commit security sweep, formal verification gate). Maps cleanly onto existing profile system (`/nf:set-profile` for quality/balanced/budget) but is orthogonal -- budget profile + strict enforcement is a valid combo. | Med | Existing: `config-loader.js` (two-layer config), `/nf:set-profile` (model tiers). New config key `hook_profile` in `nf.json`. Each hook reads this key and adjusts behavior. Must update: `nf-prompt.js`, `nf-stop.js`, `nf-circuit-breaker.js`. |
-| 2 | Quorum response caching (content-hash) | Multi-model quorum is expensive. If the same planning prompt is sent twice (session restart, re-run after failure), all 4+ slots re-execute. Content-hash caching: SHA-256 the prompt, cache slot responses, replay on cache hit. Reduces cost 30-50% for re-runs. No other multi-model orchestrator does this at the harness level. Semantic caching (GPTCache, liteLLM) operates at the API proxy layer -- nForma can do it at the quorum dispatch layer with full awareness of which slots responded. | Med-High | Existing: `bin/quorum-slot-dispatch.cjs` (dispatch), scoreboard (records all votes). New: cache directory (`.planning/.quorum-cache/`), hash computation, cache lookup before dispatch, TTL expiry. Risk: stale cache serving outdated responses. Must include invalidation on codebase changes (git HEAD changes = cache bust). |
-| 3 | Budget-aware auto-downgrade | Existing profile system requires manual `/nf:set-profile budget`. Auto-downgrade monitors cumulative token spend per session and automatically shifts tiers: quality -> balanced at 60% budget, balanced -> budget at 85%. The token collector hook already tracks per-slot token usage. No manual intervention needed. Real differentiator: per-session spend awareness with automatic cost control. | Med | Existing: `nf-token-collector.js` (per-slot token tracking), `model_tier_planner`/`model_tier_worker` config, `agent_config.auth_type` (sub vs api). New: budget threshold config, auto-profile-switch logic. Must respect `auth_type: "sub"` (subscription slots have zero marginal cost -- never downgrade). |
-| 6 | pass@k metrics | HumanEval's pass@k is the gold standard for measuring LLM code reliability. Applying it to quorum: "what fraction of rounds produce consensus on first attempt (pass@1) vs requiring deliberation (pass@2, pass@3)?" This directly measures quorum efficiency and identifies which slots are reliability bottlenecks. nForma already records every round in the scoreboard -- this is a computed metric layer on existing data. | Low-Med | Existing: `bin/update-scoreboard.cjs` (round-by-round vote recording), `bin/verify-quorum-health.cjs` (statistical analysis). New: pass@k computation function. Formula: P(at least `minSize` agreeing votes in round k). Can be added to `verify-quorum-health.cjs` as an additional metric. |
-| 7 | De-sloppify cleanup | The desloppify pattern (peteromallet/desloppify) is gaining traction: run a SEPARATE agent context to review code quality AFTER the primary agent finishes. Key insight: the executing agent is biased toward its own output. A fresh context catches naming issues, dead code, missing error handling, and abstraction problems. nForma can spawn this as a post-verify cleanup step using a cheap model (Haiku). | Med | Existing: verify-phase workflow, subagent spawning patterns. New: cleanup subagent prompt template, separate invocation after verify-phase completes. Must use a FRESH context (not the execution context) to avoid bias. Could reuse the Haiku reviewer pattern from the circuit breaker. |
-| 9 | Harness self-diagnostic | nForma generates extensive logs: MCP logs, scoreboard data, circuit breaker events, context monitor warnings, token usage. Currently analyzed manually via `bin/review-mcp-logs.cjs`. Self-diagnostic: automatically analyze own performance logs and surface actionable insights (e.g., "codex-1 has been UNAVAIL for 3 consecutive sessions -- consider removing from quorum_active"). | Med | Existing: `bin/review-mcp-logs.cjs` (health report), scoreboard, token collector data. New: diagnostic engine that cross-references multiple data sources. Output: structured diagnostic report in `.planning/diagnostics/`. Could run on SessionStart or on-demand via `/nf:health`. |
+Features that go beyond the structural minimum and make the three-layer architecture genuinely powerful. These are where nForma's FV pipeline becomes more than a compliance checkbox.
 
-## Anti-Features
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Risk Heatmap with Ranked Transitions** | Visual risk ranking across the entire state space — immediately shows where to focus testing and review. No existing CLI FV tool produces this. Combines FMEA severity/occurrence data with state-space coverage data to produce actionable ranked lists. | MEDIUM | Input: L3 hazard model + L1 coverage data. Output: ranked transition list (highest-risk-first) and optional terminal-rendered heatmap. Risk = (failure severity) x (1 - coverage). |
+| **Model-Driven Test Generation** | Automatically generate test scenarios from L3 failure mode analysis. Each identified hazard produces a concrete test case targeting the uncovered failure path. Closes the loop: formal analysis produces tests, not just reports. | HIGH | Extends existing TLC counterexample handling. For each L3 failure mode: generate a test recipe (input sequence + expected outcome + oracle). Output format: test recipe JSON compatible with existing `generated-stubs/` pattern. Requires Gate C (validation gate) as prerequisite. |
+| **Design Impact Analysis** | When a code change is proposed, trace through all three layers to show: what evidence changes (L1), what model transitions are affected (L2), what hazards shift (L3). No manual "what might break?" — the layers answer it structurally. | HIGH | Requires: file-to-instrumentation mapping (L1), instrumentation-to-state mapping (L2), state-to-hazard mapping (L3). Given a `git diff`, walk the chain and produce an impact report. |
+| **Cross-Layer Alignment Dashboard** | Single-view report showing: L1 coverage %, L2 grounding rate (Gate A score), L3 abstraction completeness (Gate B score), validation rate (Gate C score). Makes three-layer health visible at a glance. | MEDIUM | Aggregation report from gate scores. Terminal-renderable table. JSON backing for programmatic consumption. Pattern: similar to existing `diff-report.md` and `sensitivity-report.cjs`. |
+| **Progressive Model Maturity Tracking** | Per-model rollout: track which of the 92 registered models have L1 evidence, L2 grounding, L3 analysis. Shows FV maturity as a percentage, not binary. Enables incremental adoption without blocking on full coverage. | LOW | Extend `model-registry.json` with `layer_maturity: { L1: bool, L2: bool, L3: bool }` fields. Dashboard consumes this. |
+| **Assumption Register** (L2) | Explicit catalog of assumptions made when deriving L2 from L1. Makes hidden modeling decisions visible and auditable. When assumptions are violated by new evidence, triggers re-analysis. | LOW | Structured JSON register. Each entry: assumption text, source (which trace gap motivated it), validation status, linked L2 states. |
+| **Automated State Candidate Extraction** (L1) | Mine traces to suggest state variables and transitions that the hand-written models may have missed. Reduces the "you only verify what you already knew" problem. | MEDIUM | Trace clustering + transition pattern detection. Output: suggested state candidates with evidence counts. Human reviews before L2 promotion. |
 
-Features to explicitly NOT build, even though they sound appealing.
+### Anti-Features (Commonly Requested, Often Problematic)
 
-| Anti-Feature | Why Avoid | What to Do Instead |
-|--------------|-----------|-------------------|
-| Full semantic caching (embedding-based similarity) | Massive complexity, requires embedding model, similarity threshold tuning, false positive risk where "similar enough" prompts get stale cached responses. GPTCache and liteLLM already do this at the API proxy layer -- nForma should not duplicate. | Use exact content-hash caching only (Feature #2). Identical prompts get cached responses. Similar-but-different prompts always go to the model. |
-| Auto-upgrade (budget -> quality) | Tempting but dangerous. Auto-upgrading burns budget unpredictably. The user chose budget mode for a reason. Auto-DOWNGRADE is safe (saves money). Auto-UPGRADE is not (spends money without consent). | Keep auto-downgrade only (Feature #3). Upgrading requires explicit `/nf:set-profile quality`. |
-| Per-file security scanning on every tool call | PreToolUse hook running secret detection on every file write would add 200-500ms latency per tool call. At 50+ tool calls per phase, that is 10-25s of pure overhead. | Batch scan at verify-phase boundary (Feature #5). One scan catches everything. |
-| Automatic /compact execution | Claude Code's /compact is user-initiated for good reason -- it destroys context. Auto-executing it risks losing critical mid-task state. | SUGGEST /compact at workflow boundaries (Feature #10). Show the suggestion. Let the user decide. |
-| Real-time cost dashboard | Building a live-updating cost UI in a CLI plugin is over-engineering. Token costs change monthly, model pricing varies by provider. | Log cumulative tokens. Auto-downgrade at thresholds (Feature #3). Report costs in harness self-diagnostic (Feature #9). |
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| **Real-time Streaming Dashboard** | "Show me verification results as they happen." Sounds modern and responsive. | nForma runs in CLI sessions, not as a long-running service. Real-time dashboards require a persistent server, WebSocket infrastructure, and continuous monitoring — none of which exist or are needed. The session-based execution model makes batch reporting the natural fit. | Batch alignment report generated at milestone boundaries. `--watch` flag on the dashboard command for iterative sessions. |
+| **Full Automated State Machine Inference** | "Derive the complete state machine from traces alone, no hand-written specs needed." Sounds like the ultimate automation. | State machine inference from traces is fundamentally incomplete — you can only infer what you've observed. nForma already has 22 TLA+ models and 15 spec directories hand-written by domain experts. Replacing them with inferred models would lose intentional design constraints. | Use inference as a _supplement_: mine traces for state candidates, compare against existing specs, surface discrepancies. The hand-written model is the source of truth; the inferred model is the challenger. |
+| **Probabilistic Risk Quantification** | "Give me exact failure probabilities for every hazard." Sounds rigorous and scientific. | PRISM already provides probabilistic model checking, but the underlying probability estimates are calibrated from limited empirical data (scoreboard). Presenting these as precise risk numbers creates false confidence. The sample sizes are too small for actuarial-grade quantification. | Use qualitative risk ranking (High/Medium/Low) with quantitative backing where available. Show confidence intervals, not point estimates. Flag when sample size is below threshold. |
+| **Universal Code Instrumentation** | "Instrument every function and branch for complete evidence." Sounds like it solves the coverage problem. | Instrumentation overhead in hooks is performance-critical (hooks run on every tool call). Over-instrumentation would slow every Claude Code interaction. Most code paths are irrelevant to formal properties. | Targeted instrumentation: only instrument state-changing code paths that map to formal model variables. Use the instrumentation map to identify gaps, not blanket coverage. |
+| **Cross-Project Model Reuse** | "Make the three-layer models portable across different projects." Sounds like good engineering. | nForma's formal models are deeply specific to its own agent orchestration semantics. The quorum state machine, circuit breaker, and hook lifecycle are not generalizable patterns. Abstracting them would dilute the models without adding value. | Keep models project-specific. If a second project adopts nForma, it builds its own three-layer stack using the same tooling but different models. |
 
 ## Feature Dependencies
 
 ```
-Feature 1 (Hook Profiles) --- independent, foundational
-  |
-  +-- Feature 5 (Security Sweep) can be gated by profile (strict only vs always)
-  +-- Feature 2 (Response Caching) can be disabled in strict profile
+[Instrumentation Map (L1)]
+    |
+    +--requires--> [Trace Corpus (L1)]
+    |                  |
+    |                  +--requires--> [Failure Taxonomy (L1)]
+    |                  |
+    |                  +--feeds--> [State Candidate Extraction (L1)]
+    |
+    +--feeds--> [Operational State Machine (L2)]
+                    |
+                    +--requires--> [Invariant Catalog (L2)]
+                    |
+                    +--requires--> [Mismatch Register (L2)]
+                    |
+                    +--requires--> [Assumption Register (L2)]
+                    |
+                    +--validated-by--> [Grounding Gate (Gate A)]
+                    |                      |
+                    |                      +--requires--> [Trace Corpus (L1)]
+                    |
+                    +--feeds--> [Hazard Model (L3)]
+                                    |
+                                    +--validated-by--> [Abstraction Gate (Gate B)]
+                                    |
+                                    +--feeds--> [Risk Heatmap]
+                                    |
+                                    +--feeds--> [Test Generation]
+                                    |               |
+                                    |               +--validated-by--> [Validation Gate (Gate C)]
+                                    |
+                                    +--feeds--> [Design Impact Analysis]
+                                                    |
+                                                    +--requires--> [Instrumentation Map (L1)]
 
-Feature 3 (Budget Auto-Downgrade) requires:
-  +-- Token collector data (already exists)
-  +-- Profile system (already exists)
+[Gate A + Gate B + Gate C] --feeds--> [Cross-Layer Alignment Dashboard]
 
-Feature 4 (Session State Reminder) --- independent, extends existing hooks
-
-Feature 6 (pass@k) requires:
-  +-- Scoreboard data (already exists)
-  +-- Can feed into Feature 9 (Self-Diagnostic)
-
-Feature 7 (De-sloppify) requires:
-  +-- Verify-phase completion (existing workflow)
-  +-- Subagent spawning (existing pattern)
-
-Feature 8 (Stall Detection) requires:
-  +-- Wave dispatch system (already exists)
-  +-- Should integrate with Feature 9 (Self-Diagnostic) for post-mortem
-
-Feature 9 (Self-Diagnostic) benefits from:
-  +-- Feature 6 (pass@k metrics) as input data
-  +-- Feature 8 (stall detection events) as input data
-  +-- Feature 3 (budget tracking data) as input data
-
-Feature 10 (Smart Compact) requires:
-  +-- Context monitor (already exists)
-  +-- Workflow boundary detection (needs STATE.md or task-envelope awareness)
+[Model Registry (existing)] --extended-by--> [Progressive Maturity Tracking]
 ```
 
-## MVP Recommendation
+### Dependency Notes
 
-**Phase 1 -- Foundation + Quick Wins (4 features):**
-1. **Feature 4** (Session state reminder) -- Low complexity, extends existing hooks, immediate user value
-2. **Feature 10** (Smart compact timing) -- Low complexity, extends existing monitor, prevents session crashes
-3. **Feature 5** (Security sweep) -- Low-Med complexity, reuses existing CI tools locally, critical safety
-4. **Feature 6** (pass@k metrics) -- Low-Med complexity, computed from existing scoreboard data, enables Feature 9
+- **Operational State Machine (L2) requires Instrumentation Map (L1):** You cannot derive an observed-behavior model without knowing what is being observed and where the observation gaps are.
+- **Grounding Gate (Gate A) requires both L1 Trace Corpus and L2 Operational State Machine:** The gate replays traces against the model — both must exist.
+- **Hazard Model (L3) requires L2 Operational State Machine:** FMEA analysis operates on state machine transitions. Without L2, L3 has nothing to analyze.
+- **Test Generation requires both L3 Hazard Model and Gate C:** Tests are generated from failure modes (L3) and validated for concrete executability (Gate C).
+- **Design Impact Analysis requires all three layers:** It traces a code change through L1 (instrumentation), L2 (state effects), and L3 (hazard shifts).
+- **Cross-Layer Alignment Dashboard requires all three gates:** It aggregates gate scores into a single health view.
 
-**Phase 2 -- Core Differentiators (3 features):**
-5. **Feature 1** (Hook profiles) -- Med complexity, foundational config that gates other features
-6. **Feature 8** (Stall detection) -- Med complexity, prevents silent quorum failures
-7. **Feature 3** (Budget auto-downgrade) -- Med complexity, requires profile system working
+### Dependencies on Existing FV Pipeline
 
-**Phase 3 -- Advanced (3 features):**
-8. **Feature 7** (De-sloppify) -- Med complexity, post-verify cleanup pass
-9. **Feature 9** (Self-diagnostic) -- Med complexity, benefits from pass@k + stall data from earlier phases
-10. **Feature 2** (Response caching) -- Med-High complexity, highest risk (cache invalidation), most cost savings
+| Existing Feature | How Three-Layer Uses It |
+|-----------------|------------------------|
+| `conformance-events.jsonl` + trace schema | L1 trace corpus foundation — extend, don't replace |
+| `validate-traces.cjs` | Gate A starting point — extend with replay-against-model logic |
+| 22 TLA+ models + XState machine | L2 "specified model" to compare against L2 "observed model" |
+| `invariants.md` (15 spec dirs) | L2 invariant catalog baseline — merge with mined invariants |
+| `check-results.ndjson` + check-result schema | L1 failure taxonomy input — classify existing results |
+| `model-registry.json` (92 models) | Progressive maturity tracking extension point |
+| `attribute-trace-divergence.cjs` | Gate C counterexample-to-code starting point |
+| `generated-stubs/*.recipe.json` | Test generation output format template |
+| `debt.json` + debt schema | Mismatch register pattern — follow same ledger design |
+| `traceability-matrix.json` (63.8% coverage) | Gate B abstraction map — extend with L2-to-L3 links |
+| `coverage-gaps.md` | Risk heatmap input — states reachable by TLC but unobserved |
+| Sensitivity sweep pipeline | Risk ranking input — parameter sensitivity feeds hazard severity |
+| PRISM probabilistic checking | Hazard occurrence estimation — calibrate from PRISM priors |
+| `diff-report.md` + `suspects.md` | Design impact analysis pattern — extend with three-layer tracing |
 
-**Defer rationale:** Response caching is last because cache invalidation is notoriously hard, and doing it wrong serves stale quorum responses. Get the simpler features shipping first.
+## MVP Definition
 
-## Complexity Summary
+### Launch With (Phase 1-2: Foundation)
 
-| Feature | Lines of Code (est.) | New Files | Modified Files | Risk |
-|---------|---------------------|-----------|----------------|------|
-| 1. Hook Profiles | 200-300 | 0 | 4 (config-loader, 3 hooks) | Low -- config-driven |
-| 2. Response Caching | 400-600 | 1-2 (cache module) | 1 (slot-dispatch) | High -- cache invalidation |
-| 3. Budget Auto-Downgrade | 150-250 | 0-1 | 2 (token collector, config) | Med -- threshold tuning |
-| 4. Session State Reminder | 50-100 | 0 | 1 (nf-precompact.js) | Low -- extends existing |
-| 5. Security Sweep | 100-200 | 0-1 | 1 (verify-phase.md) | Low -- reuses CI tools |
-| 6. pass@k Metrics | 100-150 | 0 | 1 (verify-quorum-health) | Low -- pure computation |
-| 7. De-sloppify | 200-300 | 1 (cleanup template) | 1 (verify-phase.md) | Med -- prompt engineering |
-| 8. Stall Detection | 200-300 | 0-1 | 1 (slot-dispatch) | Med -- timeout calibration |
-| 9. Self-Diagnostic | 300-400 | 1 (diagnostic engine) | 1 (health workflow) | Med -- data correlation |
-| 10. Smart Compact | 80-120 | 0 | 1 (context-monitor) | Low -- boundary detection |
+Minimum viable three-layer architecture — the layers exist, one gate works end-to-end for at least one model.
+
+- [ ] **Instrumentation Map** — catalog all emission points in hooks, map to state variables, identify gaps. Without this, no evidence layer exists.
+- [ ] **Trace Corpus Management** — index existing conformance events with structured metadata, make queryable by session/action/state.
+- [ ] **Failure Taxonomy** — classify existing check-results and telemetry into failure categories.
+- [ ] **State Candidate Extraction** — mine traces for state variables and transitions not in current specs.
+- [ ] **Operational State Machine (for one model)** — derive observed-behavior FSM from traces for one domain (e.g., quorum lifecycle), compare against existing TLA+ spec.
+- [ ] **Mismatch Register** — track divergences between observed and specified behavior.
+- [ ] **Grounding Gate (Gate A) for one model** — replay traces against L2 model, measure explanation rate, queue unexplained behaviors.
+
+### Add After Validation (Phase 3: Reasoning Layer)
+
+Once L1 and L2 are proven for one model, build L3 analysis on top.
+
+- [ ] **Invariant Catalog** — merge declared + mined invariants into unified catalog.
+- [ ] **Assumption Register** — make hidden L2 assumptions explicit.
+- [ ] **Hazard Model (FMEA)** — failure mode enumeration for L2 states/transitions.
+- [ ] **Abstraction Gate (Gate B)** — verify every L3 hazard traces to L2 elements.
+- [ ] **Validation Gate (Gate C)** — verify every L3 finding maps to a concrete test scenario.
+- [ ] **Risk Heatmap** — ranked transitions by risk score.
+
+### Future Consideration (Phase 4+: Integration)
+
+Features that require all three layers to be stable before they add value.
+
+- [ ] **Model-Driven Test Generation** — automated test recipe creation from L3 failure modes. Defer until Gate C is reliable.
+- [ ] **Design Impact Analysis** — three-layer change tracing. Defer until all layers are populated for multiple models.
+- [ ] **Cross-Layer Alignment Dashboard** — aggregated health view. Defer until all three gates produce stable scores.
+- [ ] **Progressive Maturity Tracking** — per-model L1/L2/L3 maturity. Defer until the model registry extension is designed.
+- [ ] **Multi-model rollout** — extend three-layer coverage from one model to all 92. Defer until the single-model pipeline is validated.
+
+## Feature Prioritization Matrix
+
+| Feature | User Value | Implementation Cost | Priority | Layer |
+|---------|------------|---------------------|----------|-------|
+| Instrumentation Map | HIGH | MEDIUM | P1 | L1 |
+| Trace Corpus Management | HIGH | MEDIUM | P1 | L1 |
+| Failure Taxonomy | MEDIUM | LOW | P1 | L1 |
+| State Candidate Extraction | MEDIUM | MEDIUM | P1 | L1 |
+| Operational State Machine | HIGH | HIGH | P1 | L2 |
+| Mismatch Register | HIGH | LOW | P1 | L2 |
+| Grounding Gate (Gate A) | HIGH | HIGH | P1 | Gate |
+| Invariant Catalog | MEDIUM | MEDIUM | P2 | L2 |
+| Assumption Register | MEDIUM | LOW | P2 | L2 |
+| Hazard Model (FMEA) | HIGH | HIGH | P2 | L3 |
+| Abstraction Gate (Gate B) | HIGH | MEDIUM | P2 | Gate |
+| Validation Gate (Gate C) | HIGH | MEDIUM | P2 | Gate |
+| Risk Heatmap | HIGH | MEDIUM | P2 | L3 |
+| Model-Driven Test Generation | HIGH | HIGH | P3 | L3 |
+| Design Impact Analysis | HIGH | HIGH | P3 | Cross |
+| Cross-Layer Alignment Dashboard | MEDIUM | MEDIUM | P3 | Cross |
+| Progressive Maturity Tracking | LOW | LOW | P3 | Cross |
+
+**Priority key:**
+- P1: Must have for launch — establishes L1, L2, and the grounding gate
+- P2: Should have — completes L3 and remaining gates
+- P3: Nice to have — cross-layer integration and automation
+
+## Comparable Tools & Approaches
+
+| Feature | FMEA (IEC 60812) | TLA+ Toolbox | Alloy Analyzer | nForma v0.29 Approach |
+|---------|-------------------|--------------|----------------|----------------------|
+| Failure enumeration | Manual expert process | Counterexample discovery | Instance finding | Automated from L2 state machine + FMEA methodology |
+| Trace analysis | Not applicable | TLC trace replay | Not applicable | L1 corpus with structured indexing and mining |
+| Risk ranking | RPN (Severity x Occurrence x Detection) | Not built-in | Not built-in | Modified RPN: Severity from FMEA, Occurrence from PRISM, Detection from coverage gaps |
+| Test generation | Manual from FMEA results | Manual from counterexamples | Manual from instances | Automated: L3 failure mode to test recipe JSON |
+| Cross-layer tracing | Not applicable | Not applicable | Not applicable | Three gates (A/B/C) with measurable alignment scores |
+| Change impact | Manual re-analysis | Re-run TLC | Re-run Alloy | Automated: git diff to three-layer impact report |
 
 ## Sources
 
-- [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) -- harness lifecycle, context management
-- [OpenAI: Harness Engineering with Codex](https://openai.com/index/harness-engineering/) -- agent harness patterns
-- [Martin Fowler: Harness Engineering](https://martinfowler.com/articles/exploring-gen-ai/harness-engineering.html) -- lifecycle hooks, enforcement tiers
-- [Phil Schmid: The Importance of Agent Harness in 2026](https://www.philschmid.de/agent-harness-2026) -- budget management, observability
-- [GitGuardian: Shifting Security Left for AI Agents](https://blog.gitguardian.com/shifting-security-left-for-ai-agents-enforcing-ai-generated-code-security-with-gitguardian-mcp/) -- secret detection in agent workflows
-- [Clawhatch: State of AI Agent Security 2026](https://clawhatch.com/blog/state-of-ai-agent-security-2026) -- AI-generated code vulnerability rates
-- [Composio: Why AI Agent Pilots Fail](https://composio.dev/blog/why-ai-agent-pilots-fail-2026-integration-roadmap) -- 40% failure rate, stall detection need
-- [peteromallet/desloppify](https://github.com/peteromallet/desloppify) -- separate-context code quality review pattern
-- [Emergent Mind: Pass@k Metrics](https://www.emergentmind.com/topics/pass-k-metrics-2508a3b6-8dc0-488f-a854-891fb35d80b0) -- pass@k for LLM evaluation
-- [Statistics for AI/ML: pass@k](https://leehanchung.github.io/blogs/2025/09/08/pass-at-k/) -- unbiased estimator formulation
-- [Claude Code Context Window Management](https://www.morphllm.com/claude-code-context-window) -- compact timing, 33K buffer
-- [Martin Fowler: Context Engineering for Coding Agents](https://martinfowler.com/articles/exploring-gen-ai/context-engineering-coding-agents.html) -- session state injection patterns
-- [AWS: Optimize LLM Response Costs with Caching](https://aws.amazon.com/blogs/database/optimize-llm-response-costs-and-latency-with-effective-caching/) -- content-hash caching strategies
-- [liteLLM: Caching](https://docs.litellm.ai/docs/proxy/caching) -- API-level response caching patterns
-- [Skywork: AI API Cost Best Practices 2025](https://skywork.ai/blog/ai-api-cost-throughput-pricing-token-math-budgets-2025/) -- budget alerting patterns
+- [Inferring Computational State Machine Models from Program Executions](https://ieeexplore.ieee.org/document/7816460/) — state machine inference from traces
+- [Inferring Extended Finite State Machine Models from Software Executions](https://dl.acm.org/doi/abs/10.1007/s10664-015-9367-7) — EFSM inference methodology
+- [Combining Model Learning and Formal Analysis for Protocol Implementation Verification](https://www.sciencedirect.com/science/article/abs/pii/S2214212625001164) — three-step instrumentation + inference + formalization methodology
+- [Automated FMEA Based on High-Level Design Specification with Behavior Trees](https://link.springer.com/chapter/10.1007/11589976_9) — automated failure mode analysis from formal specs
+- [FMEA: Failure Mode and Effects Analysis (IEC 60812)](https://en.wikipedia.org/wiki/Failure_mode_and_effects_analysis) — standard FMEA methodology (Severity x Occurrence x Detection = RPN)
+- [Fault Model-Driven Test Derivation from Finite State Models](https://link.springer.com/chapter/10.1007/3-540-45510-8_10) — test generation from FSM failure models
+- [Model-Based Testing of Asynchronously Communicating Distributed Controllers](https://www.sciencedirect.com/science/article/pii/S0167642325000048) — validated mappings to formal representations for test generation
+- [Automatic Generation of Formal Specification and Verification Annotations Using LLMs](https://arxiv.org/html/2601.12845v1) — LLM-assisted specification derivation (2025)
+- [Formal Methods in Industry (2024)](https://dl.acm.org/doi/full/10.1145/3689374) — survey of formal methods adoption patterns
+- [On the Impact of Formal Verification on Software Development (2025)](https://ranjitjhala.github.io/static/oopsla25-formal.pdf) — practical impact assessment
+
+---
+*Feature research for: Three-layer formal verification architecture (Evidence / Semantics / Reasoning)*
+*Researched: 2026-03-06*

@@ -1,308 +1,287 @@
-# Domain Pitfalls: Agent Harness Optimization (v0.28)
+# Pitfalls Research
 
-**Domain:** AI agent harness hooks — adding profiles, caching, budget tracking, security scanning, and self-diagnostics to an existing Claude Code plugin
+**Domain:** Three-Layer Formal Verification Architecture (Evidence/Semantics/Reasoning) for CLI tool with existing FV pipeline
 **Researched:** 2026-03-06
-**Confidence:** HIGH (based on direct codebase analysis of hooks/, config-loader.js, install.js, and 26 shipped milestones)
-
----
+**Confidence:** HIGH (grounded in nForma's own operational data + formal methods literature)
 
 ## Critical Pitfalls
 
-Mistakes that cause session crashes, data loss, or silent behavioral regression.
+### Pitfall 1: Trace Explosion Drowns Layer 1 Before Layer 2 Can Consume It
 
-### Pitfall 1: Shallow Merge Destroys Nested Profile Config
+**What goes wrong:**
+Layer 1 (Evidence) collects traces from all instrumentation points. Without aggressive filtering and normalization, the trace corpus grows faster than Layer 2 (Semantics) can process. nForma already has 35,627 conformance traces with 6,369 divergences (17.9% divergence rate). Adding new instrumentation points for the evidence layer will multiply this volume. The system spends all its time replaying traces against models instead of surfacing actionable insights.
 
-**What goes wrong:** Hook profiles (minimal/standard/strict) naturally suggest a nested config structure like `profiles: { minimal: { ... }, standard: { ... } }`. The config-loader uses shallow spread (`{ ...DEFAULT_CONFIG, ...global, ...project }`). Any nested object in project config entirely replaces the global value — a project-level `profiles` key with one field wipes all other profile fields from global config.
+**Why it happens:**
+The instinct when building an evidence layer is "collect everything, filter later." This works for logging but not for formal verification, where each trace must be replayed against a model. The trace-to-model replay is O(|trace| * |model state space|). nForma's xstate-trace-walker already takes 215ms for conformance checks -- with richer operational models, this becomes seconds per check, and the pipeline blocks on batch replay.
 
-**Why it happens:** The config-loader was designed for flat keys. The comment at line 83 of config-loader.js explicitly warns: "Flat keys required -- nested objects lost in shallow merge." Every nested config addition in the past (circuit_breaker, context_monitor, quorum) required per-field fallback validation. Developers forget this and add nested structures assuming deep merge.
+**How to avoid:**
+- Define a strict instrumentation map BEFORE collecting traces. The map specifies exactly which code points emit events and what state transitions they should correspond to.
+- Layer 1 must normalize traces into a canonical event vocabulary that Layer 2 expects. Do NOT pass raw heterogeneous events upward.
+- Implement incremental replay: only check new traces since last checkpoint, not the full corpus every time.
+- Set a divergence budget: if divergence rate exceeds a threshold (e.g., 5%), halt trace collection and fix the model or instrumentation before proceeding.
 
-**Consequences:** Users with global nf.json profiles who set a project-level override lose all unset profile fields. Hooks read incomplete config, fall back to defaults unpredictably. Worst case: strict profile degrades to minimal silently.
+**Warning signs:**
+- Conformance check runtime growing super-linearly across runs
+- Divergence count increasing faster than trace count
+- Layer 2 model changes triggering full corpus re-replay
+- Assumption-gap report staying at 0% coverage (as it currently is: 567/567 uncovered)
 
-**Prevention:**
-- Use flat keys for profile selection: `hook_profile: "standard"` (not nested profile definitions)
-- Profile definitions should be hardcoded in the hook code itself, not user-configurable nested objects
-- If nested config is unavoidable, add per-field fallback logic in `validateConfig()` like circuit_breaker already does (lines 124-160)
-
-**Detection:** Add a test that loads config with partial project override and verifies no field loss. Pattern exists in config-loader.test.js already.
-
-**Phase:** Must be addressed in the hook profiles phase (Phase 1). Getting this wrong contaminates every subsequent feature.
-
----
-
-### Pitfall 2: Cache Invalidation Serving Stale Quorum Decisions
-
-**What goes wrong:** Content-hash caching for quorum responses sounds efficient — same prompt hash = reuse cached votes. But quorum context includes dynamic state: provider health, scoreboard stats, availability windows, recent conformance events. Two identical prompts at different times should produce different quorum outcomes because the system state changed.
-
-**Why it happens:** The hash key captures prompt content but misses ambient state. The existing provider cache (`nf-provider-cache.json`) already demonstrates this: it uses TTL-based expiry (cache entries have `cachedAt` timestamps checked against a TTL, visible in nf-prompt.js lines 268-284). A content-hash cache without similar TTL or state-sensitivity will serve stale decisions.
-
-**Consequences:** Quorum votes from 30 minutes ago (when Gemini was healthy) get replayed when Gemini is now in quota cooldown. Worse: cached APPROVE decisions bypass the structural enforcement guarantee — the Stop hook sees tool_call evidence in the transcript and passes, but the actual quorum reasoning is stale.
-
-**Prevention:**
-- Hash key MUST include: prompt content + quorum_active slot list + provider health snapshot hash + timestamp bucket (e.g., 15-minute windows)
-- Add mandatory TTL with conservative default (10-15 minutes max)
-- Cache hits should still log a conformance event with `cache_hit: true` so the diagnostic agent can detect over-caching
-- Never cache BLOCK decisions — those represent problems that need fresh evaluation
-
-**Detection:** If conformance-events.jsonl shows repeated identical `quorum_complete` events with zero token usage, cache is serving stale decisions.
-
-**Phase:** Quorum caching phase (Phase 2). Must be designed together with budget-aware downgrade to avoid caching at the wrong tier.
+**Phase to address:**
+Phase 1 (Evidence layer foundation). The instrumentation map and canonical event vocabulary must be defined before any trace collection begins.
 
 ---
 
-### Pitfall 3: Budget Tracker Race Condition Across Concurrent Hooks
+### Pitfall 2: Layer 2 Becomes a Second XState Machine Instead of an Operational Abstraction
 
-**What goes wrong:** Multiple hooks fire per turn (nf-prompt on UserPromptSubmit, nf-circuit-breaker on PreToolUse, gsd-context-monitor on PostToolUse, nf-stop on Stop, nf-token-collector on SubagentStop). If the budget tracker writes to a shared state file (e.g., `.claude/budget-state.json`), concurrent hook processes can race on read-modify-write.
+**What goes wrong:**
+nForma already has an XState machine modeling workflow states. The natural temptation is to make the Layer 2 operational model "XState but bigger" -- adding more states, more transitions, more guards. This creates a duplicate model that drifts from the real XState machine. You end up maintaining two state machines that disagree, and the conformance check between them becomes the main source of divergence rather than a check of code-vs-model alignment.
 
-**Why it happens:** Claude Code hooks run as separate Node.js processes (not threads). There is no shared memory. The existing codebase uses `appendFileSync` for JSONL logs (atomic for writes < POSIX PIPE_BUF = 4096 bytes, documented in nf-prompt.js line 49) but full JSON files require read-parse-modify-write which is NOT atomic.
+**Why it happens:**
+XState is familiar. The team already thinks in XState terms. When asked "what is the operational semantics of this code?" the answer defaults to "more XState." But Layer 2's purpose is fundamentally different: it must capture behavioral invariants and state relationships that XState's transition graph cannot express (e.g., "this counter is monotonically increasing," "these two fields are never both non-null," "this sequence of operations is atomic"). XState models control flow; Layer 2 models behavioral semantics.
 
-**Consequences:** Budget counter resets, double-counts tokens, or triggers premature downgrade. A race between nf-token-collector (writing token usage) and the budget-aware downgrade hook (reading cumulative usage) can cause the downgrade to fire based on partial data.
+**How to avoid:**
+- Layer 2 is NOT a state machine. It is an invariant catalog + mismatch register + assumption register. State machines are a representation choice for Layer 3 TLA+ models.
+- Define Layer 2's deliverables explicitly: (1) invariant catalog derived from traces, (2) mismatch register where code violates expected invariants, (3) assumption register documenting what the formal models assume but evidence doesn't confirm.
+- Layer 2 reads FROM XState (to know what transitions are expected) but does not duplicate XState's job.
+- The existing XState-to-TLA+ spec generation pipeline (spec auto-regen when XState changes) stays in place. Layer 2 enriches what that pipeline produces, not replaces it.
 
-**Prevention:**
-- Use append-only JSONL for budget events (same pattern as token-usage.jsonl and conformance-events.jsonl)
-- Budget calculation should be a read-time aggregation (sum the JSONL) not a stateful counter
-- If a running total is needed for performance, use `fs.renameSync` for atomic swap (same pattern as `consumePendingTask` in nf-prompt.js line 78)
-- Alternatively, have ONE hook own the budget state exclusively (nf-token-collector is the natural owner since it already tracks all token usage)
+**Warning signs:**
+- Layer 2 artifacts contain `states: {}` or `transitions: []` structures mirroring XState
+- Conformance checks running XState replay AND Layer 2 replay on the same traces
+- Layer 2 model changes requiring XState changes (or vice versa) -- they should be independent
+- Team asking "should this guard go in XState or Layer 2?"
 
-**Detection:** Budget total that does not match `sum(token-usage.jsonl)` indicates a race. Add a reconciliation check in the diagnostic agent.
-
-**Phase:** Budget-aware downgrade phase (Phase 3). Must be implemented AFTER token collector enhancements, not before.
-
----
-
-### Pitfall 4: Stdout Pollution Crashes Hook Protocol
-
-**What goes wrong:** A new feature (diagnostic agent, security scanner) writes informational output to stdout. The Claude Code hook protocol uses stdout exclusively for the JSON decision payload. Any non-JSON bytes on stdout — even a stray `console.log` — corrupt the hook response and crash the session.
-
-**Why it happens:** Every existing hook has the comment "NEVER writes to stdout — stdout is the Claude Code hook decision channel" but new developers or new code paths (especially shelling out to external tools like `detect-secrets` or `gitleaks`) inherit stdout from the parent process. The security sweep calling `gitleaks` via `spawnSync` with `stdio: 'inherit'` would dump scanner output to the hook's stdout.
-
-**Consequences:** Session crash. Claude Code receives malformed JSON from the hook and may kill the session or enter an undefined state. This is not a soft failure — it is a hard crash.
-
-**Prevention:**
-- All `spawnSync`/`execFileSync` calls in hooks MUST use `stdio: 'pipe'` (never 'inherit')
-- Add a lint rule or test that greps hook source files for `console.log` and `stdio: 'inherit'` — fail the build if found
-- Wrap all hook entry points in a top-level try/catch that writes errors to stderr and exits 0 (fail-open pattern already used in all existing hooks)
-- The security sweep should run as a bin/ script called during verify-phase workflow, NOT as a hook
-
-**Detection:** If users report "hook crashed my session," check for stdout pollution first.
-
-**Phase:** Applies to ALL phases. Add the lint guard in Phase 1 and enforce it throughout.
+**Phase to address:**
+Phase 2 (Semantics layer design). The sharp boundary between XState (control flow) and Layer 2 (behavioral semantics) must be a design decision locked before implementation.
 
 ---
 
-### Pitfall 5: Install Sync Desynchronization
+### Pitfall 3: Gate A (Grounding) Passes Vacuously Because "Explains" Is Under-Specified
 
-**What goes wrong:** Developer edits hook source in `hooks/nf-*.js`, tests pass locally (tests require from `hooks/`), but forgets to copy to `hooks/dist/` and run `node bin/install.js --claude --global`. The installed copy at `~/.claude/hooks/` is stale. New features appear to work in tests but are absent in actual sessions.
+**What goes wrong:**
+Gate A requires "Layer 2 must explain real traces." But what does "explain" mean? If the criterion is "the model doesn't reject the trace," any sufficiently permissive model passes. If the criterion is "the model predicts the trace," any sufficiently specific model fails on novel but correct behavior. nForma learned this the hard way: v0.21 reduced trace divergence from 69% to 0%, then the current diff-report shows 6,369 divergences in 35,627 traces. The "fix" was too brittle -- it passed at one point in time but broke as the system evolved.
 
-**Why it happens:** The three-stage pipeline (hooks/ -> hooks/dist/ -> ~/.claude/hooks/) has no automated sync. The memory doc explicitly calls this out: "Install sync required: source -> hooks/dist/ -> ~/.claude/hooks/". The build:hooks script exists but is only run on prepublishOnly, not on every change.
+**Why it happens:**
+"Grounding" is the hardest gate in any layered verification architecture. The alignment metric is inherently a tradeoff between precision (rejecting invalid traces) and recall (accepting valid traces). Without a formal definition of the alignment score, Gate A becomes a checkbox that passes or fails based on vibes.
 
-**Consequences:** Silent feature absence. Developer thinks hook profiles are active but the installed hook is the old version. Debugging is extremely confusing because tests pass and source looks correct.
+**How to avoid:**
+- Define a quantitative alignment metric before building Gate A. Proposed: `grounding_score = (traces_explained / total_traces)` where "explained" means the trace can be replayed through the Layer 2 model without encountering an undefined transition, AND the invariant catalog is not violated.
+- Maintain an explicit "unexplained behavior queue" -- traces that fail replay go here for triage, not into a generic divergence count.
+- Set graduated thresholds: initial target 80% explained, with the 20% in the queue driving model refinement. Do NOT target 100% -- that forces over-fitting.
+- Every unexplained trace must be classified: (a) instrumentation bug, (b) model gap, (c) genuine violation. Only (b) triggers model updates.
 
-**Prevention:**
-- Every phase plan that modifies hook files MUST include an explicit install sync task as the final step
-- Consider adding a version hash to each hook file (e.g., `const HOOK_VERSION = 'v0.28.1'`) and having nf-session-start.js compare installed vs source versions on startup, warning on mismatch
-- The diagnostic agent should check for source/installed version drift as one of its first checks
+**Warning signs:**
+- Gate A passing at 100% (over-fit or vacuous model)
+- Gate A score swinging wildly between runs (instrumentation instability, not model issues)
+- Unexplained behavior queue growing monotonically (Layer 2 not being refined in response)
+- No classification of WHY traces are unexplained
 
-**Detection:** `diff hooks/nf-prompt.js hooks/dist/nf-prompt.js` shows differences = desync. Automate this check.
-
-**Phase:** Phase 1 should add the version hash mechanism. Every subsequent phase must include install sync in its plan.
-
----
-
-## Moderate Pitfalls
-
-### Pitfall 6: Profile Switch Mid-Session Causes Inconsistent Enforcement
-
-**What goes wrong:** User switches from `strict` to `minimal` profile mid-session. The prompt hook reads the new profile on next prompt, but the stop hook still has the old profile's expectations cached from its previous invocation (hooks are separate processes, no shared state). Result: prompt injects minimal quorum instructions but stop hook still expects full quorum evidence.
-
-**Prevention:**
-- Profiles must be stateless — each hook invocation reads the profile fresh from config (loadConfig already does this, so the risk is low IF profile selection is config-driven)
-- Never cache profile selection in a state file between hook invocations
-- Document that profile changes take effect on next prompt (not retroactively on current turn)
-
-**Phase:** Hook profiles (Phase 1).
+**Phase to address:**
+Phase 2 (Semantics layer) for the metric definition; Phase 3 (Gate implementation) for the enforcement mechanism. The metric MUST be defined before the gate is built.
 
 ---
 
-### Pitfall 7: Security Scanner False Positives Block Legitimate Work
+### Pitfall 4: Layer 3 Reasoning Models Lose Traceability Back to Code
 
-**What goes wrong:** The security sweep in verify-phase flags base64-encoded test fixtures, example API keys in documentation, or hash constants as "leaked secrets." Developer has to manually dismiss dozens of false positives, eroding trust in the feature.
+**What goes wrong:**
+Layer 3 produces hazard models, failure mode catalogs, risk rankings, and test generation rules. These are analytically powerful but abstract. When a hazard is identified ("quorum can deadlock if all providers fail simultaneously"), the path back to which code path, which test, which line is unclear. The hazard becomes a "known risk" that nobody can act on. nForma's existing traceability infrastructure (v0.25: 63.8% coverage, `@requirement` annotations on 43 formal model files) was hard-won and fragile. Adding another layer of abstraction without extending the traceability chain will break it.
 
-**Why it happens:** Generic secret scanners (gitleaks, detect-secrets) have high false-positive rates on codebases with test fixtures, formal verification models (TLA+/Alloy files contain string constants), and configuration examples.
+**Why it happens:**
+Abstraction is seductive. Each layer of abstraction removes detail, which is the point -- but without an explicit "abstraction map" documenting what was removed, the path back is lost. The existing model-registry.json tracks models-to-requirements but not models-to-code-locations. Layer 3 will add models-that-reference-models, creating a chain where the code endpoint is two hops away.
 
-**Prevention:**
-- Use allowlisting from day one: `.gitleaks.toml` already exists in the repo (package.json line 85) — extend its allowlist with known false-positive patterns
-- Scope scanning to changed files only (`git diff --name-only` against the phase's starting commit), not the entire repo
-- Classify findings as CRITICAL (high-entropy strings in .env/credentials files) vs INFO (everything else) — only CRITICAL blocks the phase
-- The existing `scripts/secret-audit.sh` and `bin/secrets.cjs` should be reused, not reimplemented
+**How to avoid:**
+- Gate B (Abstraction) must enforce bidirectional traceability: every Layer 3 artifact must point to its Layer 2 source, and every Layer 2 artifact must point to its Layer 1 evidence.
+- Extend model-registry.json to carry `source_layer` and `derived_from` fields. A Layer 3 hazard model entry must reference the Layer 2 invariants it abstracts from.
+- Gate C (Validation) is the critical check: every Layer 3 output must produce at least one concrete test scenario. If a hazard cannot be turned into a test, it is not grounded -- move it to an "ungrounded hazards" queue.
+- Leverage the existing annotation infrastructure: `@requirement` tags should extend to `@layer2_source` and `@layer1_evidence` tags.
 
-**Phase:** Security sweep phase (Phase 5).
+**Warning signs:**
+- Layer 3 artifacts with no `derived_from` links
+- Test generation producing scenarios that cannot be mapped to specific code paths
+- Risk rankings that cannot be verified by running any existing test
+- Traceability matrix coverage dropping below current 63.8% baseline after Layer 3 introduction
 
----
-
-### Pitfall 8: Diagnostic Agent Token Overhead Defeats Budget Savings
-
-**What goes wrong:** The harness diagnostic agent is implemented as an AI agent call (Task subagent) that reads conformance logs, token usage, and provider health to produce a diagnostic report. But calling an AI model to diagnose cost issues itself costs tokens — potentially more than the savings from its recommendations.
-
-**Prevention:**
-- Implement diagnostics as a deterministic Node.js script (bin/ tool), NOT as an AI agent call
-- The script should produce a structured JSON report that a human or Claude can read
-- Only escalate to an AI agent call if the deterministic analysis finds anomalies that need natural-language explanation
-- Set a hard token ceiling on the diagnostic agent if it must use AI (e.g., use Haiku tier, 2k max output)
-
-**Phase:** Diagnostic agent phase (Phase 9). Design the deterministic analysis first, AI escalation second.
+**Phase to address:**
+Phase 3 (Reasoning layer). But the traceability schema extension should happen in Phase 1 so the chain is established from the start.
 
 ---
 
-### Pitfall 9: Stall Detection False Triggers During Legitimate Long Operations
+### Pitfall 5: Existing 22 TLA+ Models Become Orphaned by the New Architecture
 
-**What goes wrong:** Stall detection fires after N minutes without checkpoint progress. But some legitimate operations take a long time: formal verification (TLC can run 30+ seconds), large quorum deliberation rounds (up to 10 rounds per R3.3), or complex file generation. The stall detector escalates or interrupts a productive operation.
+**What goes wrong:**
+nForma has 22+ TLA+ models, 43 formal model files with annotations, Alloy models, PRISM models. The three-layer architecture introduces a new way of deriving formal models (bottom-up from evidence) that conflicts with the existing top-down approach (requirements -> TLA+ specs). If the integration is not planned, the existing models become "legacy" -- still running in CI, still checked, but disconnected from the new layers. You maintain two parallel verification worlds.
 
-**Prevention:**
-- Stall detection should track checkpoint TYPES, not just time since last checkpoint — a running TLC check is not a stall
-- Use a heartbeat mechanism: long-running operations emit periodic "still working" signals to a state file that the stall detector reads
-- Default threshold should be generous (10+ minutes for wave execution, configurable per workflow step)
-- Never auto-interrupt — only surface a warning. Let the user or quorum decide to abort
+**Why it happens:**
+The three-layer architecture is philosophically bottom-up (evidence drives semantics drives reasoning). The existing pipeline is philosophically top-down (requirements drive specs drive checks). These are complementary, not competing, but the integration point is non-obvious. Teams typically build the new system alongside the old one, promise to "integrate later," and never do.
 
-**Phase:** Stall detection phase (Phase 8).
+**How to avoid:**
+- Define the integration point explicitly: existing TLA+ models become Layer 3 artifacts. They are reasoning models. The new pipeline provides grounding for them through Layers 1 and 2.
+- For each existing TLA+ model, create a "grounding plan" specifying which Layer 2 invariants justify its assumptions and which Layer 1 evidence supports those invariants.
+- The existing assumption-gaps.md (567 uncovered assumptions) IS the integration backlog. Each uncovered assumption is a missing Layer 1/2 link.
+- Do NOT create new TLA+ models through the old pipeline once Layer 2 is operational. New models must flow through the layers.
 
----
+**Warning signs:**
+- New TLA+ models being created without Layer 2 justification
+- assumption-gaps.md count not decreasing as Layers 1/2 mature
+- Two separate "formal verification passed" signals (old pipeline + new pipeline) that can disagree
+- Existing models never getting `source_layer` annotations
 
-### Pitfall 10: Smart Compact Timing Fights Context Monitor
-
-**What goes wrong:** Smart compact timing suggests "compact now" at workflow boundaries. But the context monitor (gsd-context-monitor.js) already injects warnings at 70% and critical at 90%. Two independent systems both advising about context usage create conflicting or redundant messages, confusing Claude.
-
-**Prevention:**
-- Smart compact timing should integrate WITH the context monitor, not beside it. Extend the existing context_monitor config with workflow-boundary awareness
-- At a workflow boundary: lower the warn_pct temporarily (e.g., 60% instead of 70%) to encourage compaction at natural break points
-- Single source of compaction advice: the context monitor hook, with smart timing as an input signal rather than a separate hook
-
-**Phase:** Smart compact timing phase (Phase 10). Implement as an enhancement to gsd-context-monitor.js, not a new hook.
+**Phase to address:**
+Phase 1 (Evidence layer) should include an audit of existing models to classify them into the layer architecture. Phase 4 (Integration) should migrate the existing pipeline's outputs into Layer 3.
 
 ---
 
-### Pitfall 11: pass@k Metric Calculation Assumes Independent Samples
+### Pitfall 6: Conformance Trace Schema Drift Between Layers
 
-**What goes wrong:** pass@k metrics (probability that at least one of k quorum samples passes) assume independent, identically distributed samples. But quorum slots are NOT independent — they share the same prompt, the same codebase context, and providers have correlated failure modes (e.g., all API-backed providers fail during a cloud outage). The metric gives false confidence.
+**What goes wrong:**
+Each layer introduces its own event schema. Layer 1 has raw instrumentation events. Layer 2 has normalized semantic events. Layer 3 has abstract model events. When the Layer 1 schema changes (new field, renamed field, different semantics for an existing field), the downstream layers break silently. nForma already has `check-trace-schema-drift.cjs` for the current pipeline, but the three-layer architecture multiplies the number of schema boundaries.
 
-**Prevention:**
-- Document that pass@k is a proxy metric, not a rigorous statistical guarantee
-- Track correlation between slot outcomes in conformance events — if slots consistently agree, the effective k is lower than nominal k
-- Use pass@k as a trend indicator (is reliability improving over milestones?) not an absolute reliability guarantee
-- Consider reporting both raw pass@k and correlation-adjusted pass@k
+**Why it happens:**
+Schema evolution in a pipeline is a classic distributed systems problem. Each layer is developed somewhat independently, and the "contract" between layers is initially informal ("Layer 2 reads the `action` field from Layer 1 events"). As the system evolves, these informal contracts diverge.
 
-**Phase:** pass@k metrics phase (Phase 6).
+**How to avoid:**
+- Define explicit schema contracts at each layer boundary with JSON Schema validation.
+- Layer boundaries are versioned APIs: Layer 1 emits events conforming to `evidence-event.schema.json` v1; Layer 2 consumes v1 and emits `semantic-event.schema.json` v1.
+- Schema drift detection runs at every boundary, not just at the trace-to-model boundary.
+- Extend the existing `check-trace-schema-drift.cjs` to cover all three layer boundaries.
+- Schema changes require explicit version bumps. Breaking changes require migration scripts.
 
----
+**Warning signs:**
+- Layer 2 silently ignoring fields from Layer 1 events
+- `additionalProperties: true` in any inter-layer schema (currently present in trace.schema.json -- this MUST be tightened)
+- Conformance checks passing despite schema changes (because the check only validates known fields)
+- Different layers using different timestamp formats or event type vocabularies
 
-## Minor Pitfalls
-
-### Pitfall 12: De-sloppify Cleanup Creates Context Pollution
-
-**What goes wrong:** Running a cleanup pass in "fresh context" after phase execution means spawning a new agent context. But the cleanup agent needs to understand what was just built — requiring it to re-read significant codebase context. This context loading partially defeats the "fresh eyes" benefit.
-
-**Prevention:**
-- Provide the cleanup agent with a focused manifest: list of files changed in the phase (from git diff) and the phase's PLAN.md
-- Do NOT give it the full codebase map — scoped context only
-- Set a hard time/token limit to prevent the cleanup pass from becoming more expensive than the original work
-
-**Phase:** De-sloppify phase (Phase 7).
+**Phase to address:**
+Phase 1 (Evidence layer). Schema contracts for all three layers should be defined upfront, even if Layers 2 and 3 schemas are initially stubs.
 
 ---
 
-### Pitfall 13: Session State Reminder Leaks Sensitive Context
+### Pitfall 7: Gate Implementation Blocks the Pipeline on Every Run
 
-**What goes wrong:** The session-start state reminder reads STATE.md and injects it as additionalContext. If STATE.md contains task-specific details from a previous session (e.g., specific file paths with security-relevant content, API endpoint details), this leaks into the new session's context regardless of whether it's relevant.
+**What goes wrong:**
+Gates A, B, and C are alignment checks. If implemented as hard blockers (like the existing FV gates in v0.23), every pipeline run must pass all three gates. During development of new layers, gates will fail constantly because the layers are incomplete. This creates a choice: disable the gates (defeating the purpose) or spend all time fixing gate failures instead of building features.
 
-**Prevention:**
-- State reminder should inject only structural position (milestone, phase number, step) not task-specific content
-- The existing nf-precompact.js already extracts only the "Current Position" section from STATE.md — reuse that same extraction function
-- Never inject raw STATE.md content; always filter through `extractCurrentPosition()`
+**Why it happens:**
+nForma's existing FV gates are "hard-block on counterexamples with traceable user override" (v0.23). This is appropriate for mature, stable models. But during the bootstrapping phase of a new layer, models are immature and SHOULD produce failures that drive refinement. Hard-blocking on immature model failures is counterproductive.
 
-**Phase:** Session state reminder phase (Phase 4).
+**How to avoid:**
+- Implement gates with maturity levels: ADVISORY -> SOFT_GATE -> HARD_GATE.
+- ADVISORY: gate runs, results logged, never blocks. Used during layer bootstrapping.
+- SOFT_GATE: gate runs, failures produce warnings that require acknowledgment but don't block. Used when the layer is stabilizing.
+- HARD_GATE: gate runs, failures block. Used for mature layers. This is where existing v0.23 gates operate.
+- Each model in model-registry.json gets a `gate_maturity` field. Promotion from ADVISORY to HARD_GATE requires a minimum grounding_score and a minimum number of runs without failure.
+- The per-model rollout plan in v0.29's target features aligns with this: progressive maturity across all three layers.
 
----
+**Warning signs:**
+- Gates disabled "temporarily" for more than one phase
+- All models at the same maturity level (should be graduated)
+- No promotion criteria defined (maturity is manual judgment, not metric-driven)
+- Pipeline runtime increasing as gates accumulate (gates should be fast -- under 1s each)
 
-### Pitfall 14: Adding New Config Keys Without Backward Compatibility
-
-**What goes wrong:** New features add config keys to DEFAULT_CONFIG (hook_profile, budget_limit, cache_ttl, etc.). Existing user nf.json files don't have these keys. If validation treats missing keys as errors instead of falling back to defaults, existing installations break on upgrade.
-
-**Prevention:**
-- Every new config key MUST have a default in DEFAULT_CONFIG
-- Validation MUST use the pattern: `if (config.X !== undefined) { validate(config.X) }` — missing = use default, present = validate
-- Add a test for each new key: load config with empty nf.json, verify default is applied
-- The existing validateConfig function demonstrates the correct pattern (lines 246-265 for model_tier_planner)
-
-**Phase:** Applies to ALL phases that add config keys. Enforce in Phase 1 code review.
-
----
-
-### Pitfall 15: Hook File Count Explosion
-
-**What goes wrong:** Each new feature becomes a new hook file: nf-budget-tracker.js, nf-diagnostic.js, nf-security-scan.js, nf-stall-detector.js. Each hook is a separate Node.js process spawned by Claude Code on every relevant event. 10+ hooks firing per turn adds measurable latency and process overhead.
-
-**Prevention:**
-- Consolidate features into existing hooks by event type:
-  - UserPromptSubmit (nf-prompt.js): add profile selection, state reminder injection, cache lookup
-  - PostToolUse (gsd-context-monitor.js): add smart compact timing
-  - SubagentStop (nf-token-collector.js): add budget tracking, pass@k recording
-  - Stop (nf-stop.js): add cache write on quorum completion
-- New hook files only when the event type is genuinely new
-- Target: zero new hook files for v0.28. Extend existing ones
-
-**Detection:** `ls ~/.claude/hooks/nf-*.js | wc -l` growing past 10 is a smell.
-
-**Phase:** Architecture decision for Phase 1. Document the consolidation strategy before implementing any features.
+**Phase to address:**
+Phase 3 (Gate implementation). But the maturity level schema should be added to model-registry.json in Phase 1.
 
 ---
 
-## Phase-Specific Warnings
+## Technical Debt Patterns
 
-| Phase Topic | Likely Pitfall | Mitigation |
-|---|---|---|
-| Hook profiles | Shallow merge destroys nested config (#1), mid-session inconsistency (#6) | Flat config key, stateless per-invocation reads |
-| Quorum caching | Stale decisions (#2), cache key too narrow | Include dynamic state in hash, mandatory TTL |
-| Budget-aware downgrade | Race condition on shared state (#3), double-counting | Append-only JSONL, single-owner pattern |
-| Session state reminder | Sensitive context leak (#13) | Reuse extractCurrentPosition(), never inject raw STATE.md |
-| Security sweep | False positive flood (#7), stdout pollution if run as hook (#4) | Scoped scanning, allowlists, run as bin/ script not hook |
-| pass@k metrics | Independence assumption (#11) | Track correlation, use as trend indicator |
-| De-sloppify cleanup | Context pollution (#12), cost exceeds benefit (#8) | Focused manifest, hard token ceiling |
-| Stall detection | False triggers (#9) | Checkpoint type awareness, generous defaults, warn-only |
-| Diagnostic agent | Token overhead (#8) | Deterministic script first, AI escalation only for anomalies |
-| Smart compact timing | Conflicts with context monitor (#10) | Extend existing hook, single advice source |
-| All phases | Install desync (#5), backward-compat config (#14), hook proliferation (#15), stdout pollution (#4) | Version hashes, default-first validation, consolidate into existing hooks |
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| `additionalProperties: true` in layer schemas | Allows incremental schema development | Silent schema drift between layers; fields consumed but not validated | Phase 1 only, must be tightened to `false` by Phase 2 |
+| Replaying full trace corpus on every run | Simple implementation | O(n) growth in CI time as corpus grows; nForma already at 35K traces | Never in production pipeline; use incremental checkpointing from the start |
+| Shared mutable state between layer processors | Avoids serialization overhead | Layer coupling; changes in Layer 1 processor break Layer 2 | Never; layers must communicate via serialized schemas |
+| Skipping Gate A during Layer 3 development | Faster iteration on reasoning models | Layer 3 models ungrounded; produce hazards with no evidence basis | Phase 3 only; Gate A must be at least SOFT_GATE before Layer 3 goes to HARD_GATE |
+| Manual invariant curation instead of trace-derived | Faster to get started | Invariants reflect developer assumptions, not code reality; same gap the architecture is designed to close | Phase 1 seed only; must be replaced by trace-derived invariants in Phase 2 |
 
----
+## Integration Gotchas
 
-## Integration-Level Warnings
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| XState machine <-> Layer 2 | Making Layer 2 a superset of XState (duplicate control flow modeling) | Layer 2 reads XState transition definitions as inputs; outputs invariant/mismatch/assumption registers that XState cannot express |
+| Existing TLA+ models <-> Layer 3 | Treating existing models as "already Layer 3" without grounding | Classify each existing model; create grounding plans; progressively add Layer 1/2 links through assumption-gaps backlog |
+| model-registry.json <-> Layer metadata | Adding layer info as ad-hoc fields | Extend schema formally with `source_layer`, `derived_from`, `gate_maturity` fields; validate with JSON Schema |
+| conformance-events.jsonl <-> Layer 1 | Treating current conformance events as Layer 1 evidence directly | Current events are quorum-focused; Layer 1 evidence must cover broader code behavior (state candidates, failure taxonomy). Extend, don't reuse as-is |
+| PRISM auto-calibration <-> Layer 2 metrics | PRISM reading raw scoreboard data when Layer 2 could provide richer behavioral metrics | Route PRISM calibration through Layer 2's invariant catalog; use behavioral invariant violation rates as PRISM parameters |
+| Debt ledger (debt.json) <-> Layer mismatch register | Duplicating the concept of "something is wrong" in two places | Layer 2 mismatch register feeds into debt ledger; mismatches become debt entries when they persist beyond a threshold |
+| `@requirement` annotations <-> Layer traceability | Three separate annotation systems (requirements, layers, grounding) | Unified annotation syntax: `@requirement REQ-01 @layer L2 @grounded_by L1:trace:12345` |
 
-### Warning: Feature Interaction Matrix
+## Performance Traps
 
-These features interact with each other in non-obvious ways:
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| Full corpus replay on model change | CI time grows linearly with trace history | Incremental replay with checkpoint; only replay traces newer than last successful check | At ~50K traces (nForma currently at 35K -- imminent) |
+| Layer 2 invariant enumeration over all traces | Quadratic in traces * invariants | Maintain a violation index: only re-check invariants against traces where related state variables changed | At ~100 invariants * 50K traces |
+| Gate A/B/C running sequentially | Pipeline blocked for sum of all gate runtimes | Gates A, B, C are independent per-model checks; parallelize across models | At ~30 models (nForma currently at 22 TLA+ models + Alloy + PRISM) |
+| Layer 3 test generation producing combinatorial test suites | Test suite too large to run, defeating the purpose | Budget-constrained test generation: rank by risk, select top-N per failure mode | At ~20 failure modes * 10 scenarios each |
+| Trace storage as append-only JSONL | Disk usage and parse time grow without bound | Rotation policy: archive traces older than N days; keep summary statistics | At ~100K traces or ~500MB |
 
-- **Cache + Budget**: A cache hit should NOT count toward the budget (no tokens spent). But the budget tracker must still record that a quorum occurred. If the cache populates before the budget checks, the downgrade logic never fires.
-- **Profile + Cache**: Switching from `strict` to `minimal` profile should invalidate the cache — cached strict-quorum results should not satisfy minimal-profile requirements (different slot counts, different enforcement rules).
-- **Stall Detection + De-sloppify**: The cleanup pass runs after phase execution. The stall detector must know that a cleanup pass is a legitimate post-phase activity, not a stall.
-- **Diagnostic Agent + Budget**: The diagnostic agent analyzing budget data must not itself blow the budget. Circular dependency if not handled.
+## Security Mistakes
 
-**Mitigation:** Build a simple integration test matrix that covers these cross-feature interactions. Do not test features in isolation only.
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| Traces containing sensitive runtime data (API keys in event payloads) | Key leakage through trace corpus (nForma already has `check-trace-redaction.cjs` -- must extend to all layers) | Redaction at Layer 1 emission point; never store raw payloads; validate with schema that rejects known-sensitive field patterns |
+| Layer 2 invariants exposing internal architecture | Invariant names/descriptions reveal system internals if trace corpus is shared | Invariant IDs are opaque; descriptions are in a separate, non-exported catalog |
+| Gate override tokens stored in plain text | Bypass of formal verification gates | Override requires signed acknowledgment (existing traceable user override pattern from v0.23 applies) |
 
-### Warning: Conformance Event Schema Evolution
+## UX Pitfalls
 
-Adding cache_hit, budget_remaining, profile_name, stall_detected, etc. to conformance events changes the schema. The existing `schema_version = '1'` (conformance-schema.cjs) must be bumped, and `validate-traces.cjs` must handle both v1 and v2 events for backward compatibility with existing JSONL logs.
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| Gate failures showing raw divergence counts (e.g., "6369 divergences") | Developer cannot determine action from a number | Categorized failure summary: "3 instrumentation bugs, 12 model gaps, 1 genuine violation" with fix guidance per category |
+| Layer maturity invisible to user | Developer does not know if a gate failure is expected (ADVISORY) or blocking (HARD_GATE) | Show maturity badge next to each gate result: `[ADVISORY] Gate A: 78% grounded` vs `[HARD] Gate A: FAIL` |
+| Risk heatmap with no actionable next step | Pretty visualization, no action | Each heatmap cell links to the specific test scenario that would validate it, or flags "no test available -- generate?" |
+| Unexplained behavior queue with no triage workflow | Queue grows, nobody processes it | Weekly auto-triage: classify top-10 unexplained traces; auto-close traces older than 30 days that match known instrumentation bugs |
 
-**Mitigation:** Bump to schema_version '2' in Phase 1. Add v1 compatibility to validate-traces.cjs. All new fields should be optional (not required) in the schema.
+## "Looks Done But Isn't" Checklist
 
----
+- [ ] **Layer 1 (Evidence):** Often missing failure taxonomy -- verify that failure events are classified, not just "success/error" binary
+- [ ] **Layer 1 (Evidence):** Often missing state candidate list -- verify that potential state variables are identified from code analysis, not just from existing XState states
+- [ ] **Layer 2 (Semantics):** Often missing assumption register -- verify that every TLA+ ASSUME and CONSTANT is tracked with evidence status (confirmed/unconfirmed/contradicted)
+- [ ] **Layer 2 (Semantics):** Often missing mismatch register entries -- verify that traces violating invariants produce mismatch entries, not just increment a divergence counter
+- [ ] **Gate A (Grounding):** Often missing unexplained behavior queue -- verify that failed replays are triaged, not just counted
+- [ ] **Gate B (Abstraction):** Often missing abstraction map -- verify that every Layer 3 hazard has a `derived_from` chain to Layer 2
+- [ ] **Gate C (Validation):** Often missing counterexample-to-code translation -- verify that abstract counterexamples produce runnable test code, not just model traces
+- [ ] **Integration:** Often missing existing model classification -- verify that all 22+ TLA+ models are assigned to a layer with grounding plans
+- [ ] **Schema:** Often missing `additionalProperties: false` at layer boundaries -- verify all inter-layer schemas are strict
+- [ ] **Performance:** Often missing incremental replay -- verify trace checking uses checkpoints, not full corpus replay
+
+## Recovery Strategies
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| Trace explosion (Pitfall 1) | MEDIUM | Implement trace sampling (1-in-N); backfill instrumentation map; add divergence budget circuit breaker |
+| Layer 2 duplicates XState (Pitfall 2) | HIGH | Refactor Layer 2 to invariant catalog format; delete state machine structures; update all consumers. This is an architecture mistake that compounds over time |
+| Gate A vacuous (Pitfall 3) | LOW | Define quantitative metric; retroactively score existing alignment; set thresholds. Mostly a definition + tooling problem |
+| Layer 3 traceability lost (Pitfall 4) | HIGH | Retroactively add `derived_from` links to all Layer 3 artifacts; backfill abstraction map. Gets harder as Layer 3 grows -- do early |
+| Existing models orphaned (Pitfall 5) | MEDIUM | Classify models; create grounding plans; progressively link. Can be done incrementally per-model |
+| Schema drift (Pitfall 6) | MEDIUM | Lock schemas with `additionalProperties: false`; add migration scripts for existing data; run drift detection in CI |
+| Gates block pipeline (Pitfall 7) | LOW | Add maturity levels to model-registry.json; re-classify existing gates. Backward-compatible change |
+
+## Pitfall-to-Phase Mapping
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| Trace explosion (1) | Phase 1: Evidence Layer | Trace growth rate < 2x per milestone; divergence rate < 5% |
+| Layer 2 = XState clone (2) | Phase 2: Semantics Layer | Layer 2 artifacts contain zero state machine structures; only invariant/mismatch/assumption registers |
+| Gate A vacuous (3) | Phase 2-3: Semantics + Gates | Grounding score defined, measured, and between 70-95% (not 100%) |
+| Layer 3 traceability lost (4) | Phase 3: Reasoning Layer | Every Layer 3 artifact has `derived_from` links; traceability matrix coverage >= 63.8% baseline |
+| Existing models orphaned (5) | Phase 1 (audit) + Phase 4 (migrate) | assumption-gaps.md uncovered count decreasing each phase; all models have `source_layer` |
+| Schema drift (6) | Phase 1: Evidence Layer | All inter-layer schemas validated in CI; `additionalProperties: false` everywhere |
+| Gates block pipeline (7) | Phase 3: Gate Implementation | Model-registry.json has `gate_maturity` field; promotion criteria documented and automated |
 
 ## Sources
 
-- Direct codebase analysis: hooks/config-loader.js (shallow merge, lines 276-294)
-- Direct codebase analysis: hooks/nf-prompt.js (provider cache pattern, lines 264-284; conformance logging, lines 48-60; stdout discipline, lines 17, 51)
-- Direct codebase analysis: hooks/nf-stop.js (transcript parsing, conformance events)
-- Direct codebase analysis: hooks/nf-token-collector.js (append-only JSONL pattern)
-- Direct codebase analysis: hooks/nf-circuit-breaker.js (state file pattern, spawnSync usage)
-- Direct codebase analysis: hooks/gsd-context-monitor.js (context threshold pattern)
-- Direct codebase analysis: hooks/nf-precompact.js (extractCurrentPosition pattern)
-- Direct codebase analysis: hooks/conformance-schema.cjs (schema versioning)
-- Direct codebase analysis: bin/install.js (three-stage hook deployment, lines 1745-1772)
-- Project memory: install sync requirement, hook constraints, provider availability patterns
+- nForma operational data: `.planning/formal/diff-report.md` (6369 divergences in 35627 traces), `.planning/formal/assumption-gaps.md` (567/567 uncovered), `.planning/formal/coverage-gaps.md` (0% state coverage)
+- nForma v0.21 trace divergence reduction (69% -> 0% -> regression): PROJECT.md history
+- nForma v0.25 traceability infrastructure: 63.8% coverage, 43 annotated model files
+- [Validating Traces of Distributed Programs Against TLA+ Specifications](https://link.springer.com/chapter/10.1007/978-3-031-77382-2_8) -- trace validation framework and abstraction gap challenges
+- [Verifying Software Traces Against a Formal Specification with TLA+ and TLC](https://pron.github.io/files/Trace.pdf) -- Ron Pressler, Oracle, canonical reference on TLA+ trace checking
+- [Model Checking Guided Testing for Distributed Systems](http://muratbuffalo.blogspot.com/2023/08/model-checking-guided-testing-for.html) -- Murat Demirbas on abstraction gap, concurrency mismatches, false abstraction security
+- [Conformance Checking: Foundations, Milestones and Challenges](https://link.springer.com/chapter/10.1007/978-3-031-08848-3_5) -- alignment complexity exponential in model/trace size
+- [Leveraging LLMs for Formal Software Requirements](https://arxiv.org/html/2507.14330v1) -- semantic ambiguity and lifecycle traceability barriers
+- [Formalizing UML State Machines for Automated Verification](https://dl.acm.org/doi/10.1145/3579821) -- operational semantics formalization approaches
+
+---
+*Pitfalls research for: Three-Layer Formal Verification Architecture (v0.29)*
+*Researched: 2026-03-06*
