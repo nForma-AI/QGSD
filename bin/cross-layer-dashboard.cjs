@@ -292,4 +292,6 @@ function main() {
 // Export for testing
 module.exports = { healthIndicator, buildResult, renderTerminal };
 
-main();
+if (require.main === module) {
+  main();
+}
