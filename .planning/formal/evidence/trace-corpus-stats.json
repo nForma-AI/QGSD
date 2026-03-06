@@ -1,0 +1,4795 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-06T12:57:02.418Z",
+  "session_gap_ms": 300000,
+  "total_events": 35790,
+  "date_range": {
+    "earliest": "2026-02-24T23:35:59.711Z",
+    "latest": "2026-03-06T12:56:51.448Z"
+  },
+  "sessions": [
+    {
+      "id": "session-001",
+      "start": "2026-02-24T23:35:59.711Z",
+      "end": "2026-02-24T23:50:09.360Z",
+      "event_count": 206,
+      "actions": {
+        "quorum_start": 48,
+        "circuit_break": 81,
+        "quorum_block": 70,
+        "quorum_complete": 7
+      }
+    },
+    {
+      "id": "session-002",
+      "start": "2026-02-25T00:13:21.851Z",
+      "end": "2026-02-25T00:23:58.184Z",
+      "event_count": 179,
+      "actions": {
+        "quorum_start": 39,
+        "quorum_block": 70,
+        "circuit_break": 63,
+        "quorum_complete": 7
+      }
+    },
+    {
+      "id": "session-003",
+      "start": "2026-02-25T08:38:59.978Z",
+      "end": "2026-02-25T08:44:55.334Z",
+      "event_count": 127,
+      "actions": {
+        "quorum_start": 27,
+        "quorum_block": 50,
+        "circuit_break": 45,
+        "quorum_complete": 5
+      }
+    },
+    {
+      "id": "session-004",
+      "start": "2026-02-25T09:34:10.096Z",
+      "end": "2026-02-25T09:34:10.096Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-005",
+      "start": "2026-02-25T10:24:42.842Z",
+      "end": "2026-02-25T10:24:46.215Z",
+      "event_count": 25,
+      "actions": {
+        "quorum_start": 5,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-006",
+      "start": "2026-02-25T10:35:39.941Z",
+      "end": "2026-02-25T10:37:05.874Z",
+      "event_count": 151,
+      "actions": {
+        "quorum_start": 31,
+        "quorum_block": 60,
+        "circuit_break": 54,
+        "quorum_complete": 6
+      }
+    },
+    {
+      "id": "session-007",
+      "start": "2026-02-25T10:45:04.115Z",
+      "end": "2026-02-25T10:45:19.678Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-008",
+      "start": "2026-02-25T11:13:20.969Z",
+      "end": "2026-02-25T11:29:22.710Z",
+      "event_count": 403,
+      "actions": {
+        "quorum_start": 83,
+        "quorum_block": 160,
+        "circuit_break": 144,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-009",
+      "start": "2026-02-25T11:35:01.974Z",
+      "end": "2026-02-25T11:37:23.726Z",
+      "event_count": 18,
+      "actions": {
+        "circuit_break": 18
+      }
+    },
+    {
+      "id": "session-010",
+      "start": "2026-02-25T13:17:47.647Z",
+      "end": "2026-02-25T13:23:57.060Z",
+      "event_count": 126,
+      "actions": {
+        "quorum_start": 26,
+        "quorum_block": 50,
+        "circuit_break": 45,
+        "quorum_complete": 5
+      }
+    },
+    {
+      "id": "session-011",
+      "start": "2026-02-25T13:29:44.147Z",
+      "end": "2026-02-25T13:35:18.605Z",
+      "event_count": 125,
+      "actions": {
+        "quorum_start": 25,
+        "quorum_block": 50,
+        "circuit_break": 45,
+        "quorum_complete": 5
+      }
+    },
+    {
+      "id": "session-012",
+      "start": "2026-02-25T13:49:37.790Z",
+      "end": "2026-02-25T13:53:14.436Z",
+      "event_count": 175,
+      "actions": {
+        "quorum_start": 35,
+        "quorum_block": 70,
+        "circuit_break": 63,
+        "quorum_complete": 7
+      }
+    },
+    {
+      "id": "session-013",
+      "start": "2026-02-25T16:43:26.418Z",
+      "end": "2026-02-25T16:43:49.283Z",
+      "event_count": 50,
+      "actions": {
+        "quorum_start": 10,
+        "quorum_block": 20,
+        "circuit_break": 18,
+        "quorum_complete": 2
+      }
+    },
+    {
+      "id": "session-014",
+      "start": "2026-02-25T17:05:23.746Z",
+      "end": "2026-02-25T17:05:23.746Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-015",
+      "start": "2026-02-25T17:30:20.475Z",
+      "end": "2026-02-25T17:31:03.119Z",
+      "event_count": 75,
+      "actions": {
+        "quorum_start": 15,
+        "quorum_block": 30,
+        "circuit_break": 27,
+        "quorum_complete": 3
+      }
+    },
+    {
+      "id": "session-016",
+      "start": "2026-02-25T17:41:17.149Z",
+      "end": "2026-02-25T17:44:49.302Z",
+      "event_count": 175,
+      "actions": {
+        "quorum_start": 35,
+        "quorum_block": 70,
+        "circuit_break": 63,
+        "quorum_complete": 7
+      }
+    },
+    {
+      "id": "session-017",
+      "start": "2026-02-25T18:11:09.625Z",
+      "end": "2026-02-25T18:12:59.025Z",
+      "event_count": 21,
+      "actions": {
+        "quorum_start": 21
+      }
+    },
+    {
+      "id": "session-018",
+      "start": "2026-02-25T18:32:25.043Z",
+      "end": "2026-02-25T18:47:25.812Z",
+      "event_count": 449,
+      "actions": {
+        "quorum_start": 129,
+        "quorum_block": 160,
+        "circuit_break": 144,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-019",
+      "start": "2026-02-25T19:50:29.066Z",
+      "end": "2026-02-25T19:51:55.136Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-020",
+      "start": "2026-02-25T20:30:02.333Z",
+      "end": "2026-02-25T20:30:06.048Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-021",
+      "start": "2026-02-25T23:56:41.490Z",
+      "end": "2026-02-26T00:01:06.125Z",
+      "event_count": 84,
+      "actions": {
+        "quorum_start": 24,
+        "quorum_block": 30,
+        "circuit_break": 27,
+        "quorum_complete": 3
+      }
+    },
+    {
+      "id": "session-022",
+      "start": "2026-02-26T08:03:41.302Z",
+      "end": "2026-02-26T08:03:44.477Z",
+      "event_count": 28,
+      "actions": {
+        "quorum_start": 8,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-023",
+      "start": "2026-02-26T08:09:43.620Z",
+      "end": "2026-02-26T08:13:24.767Z",
+      "event_count": 84,
+      "actions": {
+        "quorum_start": 24,
+        "quorum_block": 30,
+        "circuit_break": 27,
+        "quorum_complete": 3
+      }
+    },
+    {
+      "id": "session-024",
+      "start": "2026-02-26T08:28:30.824Z",
+      "end": "2026-02-26T08:28:34.112Z",
+      "event_count": 28,
+      "actions": {
+        "quorum_start": 8,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-025",
+      "start": "2026-02-26T08:36:04.144Z",
+      "end": "2026-02-26T08:39:53.498Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-026",
+      "start": "2026-02-26T09:39:11.971Z",
+      "end": "2026-02-26T09:39:34.514Z",
+      "event_count": 56,
+      "actions": {
+        "quorum_start": 16,
+        "quorum_block": 20,
+        "circuit_break": 18,
+        "quorum_complete": 2
+      }
+    },
+    {
+      "id": "session-027",
+      "start": "2026-02-26T09:47:51.301Z",
+      "end": "2026-02-26T09:47:51.301Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-028",
+      "start": "2026-02-26T09:53:57.523Z",
+      "end": "2026-02-26T09:54:00.979Z",
+      "event_count": 28,
+      "actions": {
+        "quorum_start": 8,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-029",
+      "start": "2026-02-26T10:20:26.007Z",
+      "end": "2026-02-26T10:20:26.007Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-030",
+      "start": "2026-02-26T10:33:58.040Z",
+      "end": "2026-02-26T10:40:26.848Z",
+      "event_count": 168,
+      "actions": {
+        "quorum_start": 48,
+        "quorum_block": 60,
+        "circuit_break": 54,
+        "quorum_complete": 6
+      }
+    },
+    {
+      "id": "session-031",
+      "start": "2026-02-26T11:35:18.579Z",
+      "end": "2026-02-26T11:35:21.705Z",
+      "event_count": 28,
+      "actions": {
+        "quorum_start": 8,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-032",
+      "start": "2026-02-26T14:13:36.937Z",
+      "end": "2026-02-26T14:13:53.084Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-033",
+      "start": "2026-02-26T18:59:25.090Z",
+      "end": "2026-02-26T19:14:16.306Z",
+      "event_count": 452,
+      "actions": {
+        "quorum_start": 132,
+        "quorum_block": 160,
+        "circuit_break": 144,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-034",
+      "start": "2026-02-26T19:32:39.135Z",
+      "end": "2026-02-26T19:32:39.135Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-035",
+      "start": "2026-02-26T19:43:16.510Z",
+      "end": "2026-02-26T19:44:07.387Z",
+      "event_count": 29,
+      "actions": {
+        "quorum_start": 9,
+        "quorum_block": 10,
+        "circuit_break": 9,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-036",
+      "start": "2026-02-26T20:00:31.832Z",
+      "end": "2026-02-26T20:00:38.839Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-037",
+      "start": "2026-02-26T20:16:26.798Z",
+      "end": "2026-02-26T20:17:37.843Z",
+      "event_count": 168,
+      "actions": {
+        "quorum_start": 48,
+        "quorum_block": 60,
+        "circuit_break": 54,
+        "quorum_complete": 6
+      }
+    },
+    {
+      "id": "session-038",
+      "start": "2026-02-26T20:24:21.326Z",
+      "end": "2026-02-26T20:24:21.326Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-039",
+      "start": "2026-02-27T00:00:44.924Z",
+      "end": "2026-02-27T00:00:44.924Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-040",
+      "start": "2026-02-27T00:18:22.676Z",
+      "end": "2026-02-27T00:32:06.139Z",
+      "event_count": 76,
+      "actions": {
+        "quorum_start": 32,
+        "quorum_complete": 6,
+        "quorum_block": 20,
+        "circuit_break": 18
+      }
+    },
+    {
+      "id": "session-041",
+      "start": "2026-02-27T00:42:27.131Z",
+      "end": "2026-02-27T01:30:58.784Z",
+      "event_count": 1751,
+      "actions": {
+        "quorum_start": 523,
+        "quorum_block": 655,
+        "circuit_break": 369,
+        "quorum_complete": 204
+      }
+    },
+    {
+      "id": "session-042",
+      "start": "2026-02-27T08:08:55.250Z",
+      "end": "2026-02-27T08:09:43.875Z",
+      "event_count": 2,
+      "actions": {
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-043",
+      "start": "2026-02-27T08:25:09.354Z",
+      "end": "2026-02-27T08:25:09.354Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-044",
+      "start": "2026-02-27T08:40:04.389Z",
+      "end": "2026-02-27T08:45:22.825Z",
+      "event_count": 363,
+      "actions": {
+        "quorum_block": 144,
+        "quorum_complete": 48,
+        "quorum_start": 99,
+        "circuit_break": 72
+      }
+    },
+    {
+      "id": "session-045",
+      "start": "2026-02-27T08:51:18.796Z",
+      "end": "2026-02-27T08:58:31.426Z",
+      "event_count": 608,
+      "actions": {
+        "quorum_start": 176,
+        "quorum_block": 216,
+        "circuit_break": 144,
+        "quorum_complete": 72
+      }
+    },
+    {
+      "id": "session-046",
+      "start": "2026-02-27T09:14:44.985Z",
+      "end": "2026-02-27T09:16:43.716Z",
+      "event_count": 216,
+      "actions": {
+        "quorum_start": 66,
+        "quorum_block": 72,
+        "circuit_break": 54,
+        "quorum_complete": 24
+      }
+    },
+    {
+      "id": "session-047",
+      "start": "2026-02-27T09:33:04.683Z",
+      "end": "2026-02-27T09:33:05.580Z",
+      "event_count": 12,
+      "actions": {
+        "quorum_start": 12
+      }
+    },
+    {
+      "id": "session-048",
+      "start": "2026-02-27T10:11:48.199Z",
+      "end": "2026-02-27T10:12:47.696Z",
+      "event_count": 13,
+      "actions": {
+        "quorum_start": 13
+      }
+    },
+    {
+      "id": "session-049",
+      "start": "2026-02-27T10:25:43.511Z",
+      "end": "2026-02-27T10:25:45.512Z",
+      "event_count": 12,
+      "actions": {
+        "quorum_start": 12
+      }
+    },
+    {
+      "id": "session-050",
+      "start": "2026-02-27T10:43:44.743Z",
+      "end": "2026-02-27T10:43:44.743Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-051",
+      "start": "2026-02-27T11:42:17.036Z",
+      "end": "2026-02-27T11:42:45.724Z",
+      "event_count": 8,
+      "actions": {
+        "quorum_start": 8
+      }
+    },
+    {
+      "id": "session-052",
+      "start": "2026-02-27T11:54:53.606Z",
+      "end": "2026-02-27T11:55:04.561Z",
+      "event_count": 8,
+      "actions": {
+        "quorum_start": 8
+      }
+    },
+    {
+      "id": "session-053",
+      "start": "2026-02-27T12:03:38.073Z",
+      "end": "2026-02-27T12:04:37.569Z",
+      "event_count": 127,
+      "actions": {
+        "quorum_start": 52,
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-054",
+      "start": "2026-02-27T12:11:55.942Z",
+      "end": "2026-02-27T12:12:50.824Z",
+      "event_count": 115,
+      "actions": {
+        "quorum_start": 40,
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-055",
+      "start": "2026-02-27T12:19:02.952Z",
+      "end": "2026-02-27T12:19:03.119Z",
+      "event_count": 4,
+      "actions": {
+        "quorum_start": 4
+      }
+    },
+    {
+      "id": "session-056",
+      "start": "2026-02-27T12:24:11.800Z",
+      "end": "2026-02-27T12:24:29.949Z",
+      "event_count": 41,
+      "actions": {
+        "quorum_start": 16,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-057",
+      "start": "2026-02-27T12:39:54.906Z",
+      "end": "2026-02-27T12:39:55.094Z",
+      "event_count": 4,
+      "actions": {
+        "quorum_start": 4
+      }
+    },
+    {
+      "id": "session-058",
+      "start": "2026-02-27T13:43:06.343Z",
+      "end": "2026-02-27T13:43:09.719Z",
+      "event_count": 37,
+      "actions": {
+        "quorum_start": 12,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-059",
+      "start": "2026-02-27T13:49:10.298Z",
+      "end": "2026-02-27T13:49:13.992Z",
+      "event_count": 37,
+      "actions": {
+        "quorum_start": 12,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-060",
+      "start": "2026-02-27T13:56:43.424Z",
+      "end": "2026-02-27T13:56:43.424Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-061",
+      "start": "2026-02-27T14:34:49.090Z",
+      "end": "2026-02-27T14:39:34.630Z",
+      "event_count": 296,
+      "actions": {
+        "quorum_start": 96,
+        "quorum_block": 96,
+        "circuit_break": 72,
+        "quorum_complete": 32
+      }
+    },
+    {
+      "id": "session-062",
+      "start": "2026-02-27T14:48:47.213Z",
+      "end": "2026-02-27T14:48:47.213Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-063",
+      "start": "2026-02-27T15:04:56.227Z",
+      "end": "2026-02-27T15:06:13.664Z",
+      "event_count": 333,
+      "actions": {
+        "quorum_start": 108,
+        "quorum_block": 108,
+        "circuit_break": 81,
+        "quorum_complete": 36
+      }
+    },
+    {
+      "id": "session-064",
+      "start": "2026-02-27T15:17:31.420Z",
+      "end": "2026-02-27T15:21:46.407Z",
+      "event_count": 74,
+      "actions": {
+        "quorum_start": 24,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-065",
+      "start": "2026-02-27T15:30:10.541Z",
+      "end": "2026-02-27T15:30:10.541Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-066",
+      "start": "2026-02-27T15:43:42.578Z",
+      "end": "2026-02-27T15:43:47.727Z",
+      "event_count": 37,
+      "actions": {
+        "quorum_start": 12,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-067",
+      "start": "2026-02-27T15:57:23.810Z",
+      "end": "2026-02-27T16:04:58.007Z",
+      "event_count": 75,
+      "actions": {
+        "quorum_start": 25,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-068",
+      "start": "2026-02-27T16:17:52.831Z",
+      "end": "2026-02-27T16:17:57.572Z",
+      "event_count": 41,
+      "actions": {
+        "quorum_start": 16,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-069",
+      "start": "2026-02-27T17:33:04.428Z",
+      "end": "2026-02-27T17:37:36.173Z",
+      "event_count": 111,
+      "actions": {
+        "quorum_start": 36,
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-070",
+      "start": "2026-02-27T18:09:55.510Z",
+      "end": "2026-02-27T18:09:55.510Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-071",
+      "start": "2026-02-27T18:49:53.061Z",
+      "end": "2026-02-27T18:58:42.152Z",
+      "event_count": 370,
+      "actions": {
+        "quorum_start": 120,
+        "quorum_block": 120,
+        "circuit_break": 90,
+        "quorum_complete": 40
+      }
+    },
+    {
+      "id": "session-072",
+      "start": "2026-02-27T19:04:34.980Z",
+      "end": "2026-02-27T19:08:49.987Z",
+      "event_count": 111,
+      "actions": {
+        "quorum_start": 36,
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-073",
+      "start": "2026-02-27T19:14:19.980Z",
+      "end": "2026-02-27T19:14:19.980Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-074",
+      "start": "2026-02-27T19:35:47.128Z",
+      "end": "2026-02-27T19:35:51.157Z",
+      "event_count": 37,
+      "actions": {
+        "quorum_start": 12,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-075",
+      "start": "2026-02-27T19:40:52.928Z",
+      "end": "2026-02-27T19:40:57.003Z",
+      "event_count": 37,
+      "actions": {
+        "quorum_start": 12,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-076",
+      "start": "2026-02-27T19:48:47.247Z",
+      "end": "2026-02-27T20:14:16.033Z",
+      "event_count": 485,
+      "actions": {
+        "quorum_start": 211,
+        "quorum_block": 108,
+        "circuit_break": 81,
+        "quorum_complete": 36,
+        "undefined": 49
+      }
+    },
+    {
+      "id": "session-077",
+      "start": "2026-02-27T21:16:39.685Z",
+      "end": "2026-02-27T21:20:32.162Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-078",
+      "start": "2026-02-27T21:39:39.823Z",
+      "end": "2026-02-27T22:07:44.843Z",
+      "event_count": 165,
+      "actions": {
+        "undefined": 44,
+        "quorum_start": 71,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-079",
+      "start": "2026-02-27T22:13:30.254Z",
+      "end": "2026-02-27T22:34:30.974Z",
+      "event_count": 82,
+      "actions": {
+        "undefined": 39,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-080",
+      "start": "2026-02-27T22:39:52.917Z",
+      "end": "2026-02-27T22:42:31.289Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 2,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-081",
+      "start": "2026-02-27T22:50:44.036Z",
+      "end": "2026-02-27T22:52:08.094Z",
+      "event_count": 51,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-082",
+      "start": "2026-02-27T22:58:16.129Z",
+      "end": "2026-02-27T22:59:40.378Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-083",
+      "start": "2026-02-27T23:26:05.184Z",
+      "end": "2026-02-27T23:30:00.938Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 5,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-084",
+      "start": "2026-02-27T23:47:13.488Z",
+      "end": "2026-02-27T23:47:16.920Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-085",
+      "start": "2026-02-28T00:00:31.285Z",
+      "end": "2026-02-28T00:00:34.897Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-086",
+      "start": "2026-02-28T00:09:21.008Z",
+      "end": "2026-02-28T00:09:21.008Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-087",
+      "start": "2026-02-28T00:44:48.439Z",
+      "end": "2026-02-28T00:44:51.765Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-088",
+      "start": "2026-02-28T00:55:19.288Z",
+      "end": "2026-02-28T01:15:27.886Z",
+      "event_count": 211,
+      "actions": {
+        "undefined": 39,
+        "quorum_start": 72,
+        "quorum_block": 48,
+        "circuit_break": 36,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-089",
+      "start": "2026-02-28T01:25:20.417Z",
+      "end": "2026-02-28T01:38:03.262Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-090",
+      "start": "2026-02-28T01:54:14.257Z",
+      "end": "2026-02-28T01:55:50.861Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-091",
+      "start": "2026-02-28T02:04:13.538Z",
+      "end": "2026-02-28T02:04:54.253Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-092",
+      "start": "2026-02-28T08:21:21.159Z",
+      "end": "2026-02-28T08:52:57.386Z",
+      "event_count": 87,
+      "actions": {
+        "undefined": 41,
+        "quorum_start": 20,
+        "quorum_block": 13,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-093",
+      "start": "2026-02-28T09:05:14.765Z",
+      "end": "2026-02-28T09:06:01.279Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-094",
+      "start": "2026-02-28T09:11:44.083Z",
+      "end": "2026-02-28T09:18:27.747Z",
+      "event_count": 22,
+      "actions": {
+        "undefined": 5,
+        "quorum_block": 13,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-095",
+      "start": "2026-02-28T09:31:40.760Z",
+      "end": "2026-02-28T09:31:40.760Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-096",
+      "start": "2026-02-28T09:39:25.880Z",
+      "end": "2026-02-28T09:39:35.719Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-097",
+      "start": "2026-02-28T09:47:06.886Z",
+      "end": "2026-02-28T09:48:23.485Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-098",
+      "start": "2026-02-28T10:03:28.085Z",
+      "end": "2026-02-28T10:05:37.210Z",
+      "event_count": 102,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "quorum_block": 26,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-099",
+      "start": "2026-02-28T12:43:33.560Z",
+      "end": "2026-02-28T12:47:08.628Z",
+      "event_count": 8,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-100",
+      "start": "2026-02-28T12:59:04.689Z",
+      "end": "2026-02-28T13:35:17.615Z",
+      "event_count": 122,
+      "actions": {
+        "undefined": 34,
+        "quorum_start": 36,
+        "quorum_block": 26,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-101",
+      "start": "2026-02-28T13:51:52.875Z",
+      "end": "2026-02-28T13:57:24.421Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-102",
+      "start": "2026-02-28T14:08:07.885Z",
+      "end": "2026-02-28T14:11:47.318Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-103",
+      "start": "2026-02-28T14:19:59.342Z",
+      "end": "2026-02-28T14:32:55.346Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-104",
+      "start": "2026-02-28T14:41:26.120Z",
+      "end": "2026-02-28T14:48:09.694Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-105",
+      "start": "2026-02-28T14:57:24.167Z",
+      "end": "2026-02-28T14:57:24.169Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-106",
+      "start": "2026-02-28T15:03:35.710Z",
+      "end": "2026-02-28T16:11:10.173Z",
+      "event_count": 153,
+      "actions": {
+        "undefined": 78,
+        "quorum_start": 32,
+        "quorum_block": 26,
+        "quorum_complete": 8,
+        "circuit_break": 9
+      }
+    },
+    {
+      "id": "session-107",
+      "start": "2026-02-28T16:23:44.899Z",
+      "end": "2026-02-28T16:23:44.899Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-108",
+      "start": "2026-02-28T19:03:51.495Z",
+      "end": "2026-02-28T19:14:02.532Z",
+      "event_count": 200,
+      "actions": {
+        "undefined": 41,
+        "quorum_start": 64,
+        "circuit_break": 27,
+        "quorum_block": 52,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-109",
+      "start": "2026-02-28T19:19:18.123Z",
+      "end": "2026-02-28T19:20:58.811Z",
+      "event_count": 54,
+      "actions": {
+        "undefined": 9,
+        "quorum_start": 19,
+        "circuit_break": 9,
+        "quorum_block": 13,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-110",
+      "start": "2026-02-28T19:41:38.868Z",
+      "end": "2026-02-28T20:11:02.040Z",
+      "event_count": 92,
+      "actions": {
+        "undefined": 48,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 13,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-111",
+      "start": "2026-02-28T20:16:12.542Z",
+      "end": "2026-02-28T20:29:56.077Z",
+      "event_count": 19,
+      "actions": {
+        "undefined": 19
+      }
+    },
+    {
+      "id": "session-112",
+      "start": "2026-02-28T20:42:00.305Z",
+      "end": "2026-02-28T21:41:16.455Z",
+      "event_count": 1468,
+      "actions": {
+        "undefined": 220,
+        "quorum_start": 522,
+        "circuit_break": 261,
+        "quorum_block": 349,
+        "quorum_complete": 116
+      }
+    },
+    {
+      "id": "session-113",
+      "start": "2026-02-28T21:47:02.882Z",
+      "end": "2026-02-28T21:47:06.746Z",
+      "event_count": 51,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-114",
+      "start": "2026-02-28T21:52:21.194Z",
+      "end": "2026-02-28T21:54:00.039Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 2,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-115",
+      "start": "2026-02-28T22:01:24.506Z",
+      "end": "2026-02-28T22:16:03.811Z",
+      "event_count": 233,
+      "actions": {
+        "undefined": 41,
+        "quorum_start": 76,
+        "quorum_block": 60,
+        "circuit_break": 36,
+        "quorum_complete": 20
+      }
+    },
+    {
+      "id": "session-116",
+      "start": "2026-02-28T22:28:52.926Z",
+      "end": "2026-02-28T22:45:24.174Z",
+      "event_count": 213,
+      "actions": {
+        "undefined": 40,
+        "quorum_start": 73,
+        "quorum_block": 48,
+        "circuit_break": 36,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-117",
+      "start": "2026-02-28T22:52:33.197Z",
+      "end": "2026-02-28T23:01:44.919Z",
+      "event_count": 56,
+      "actions": {
+        "undefined": 13,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-118",
+      "start": "2026-02-28T23:10:09.437Z",
+      "end": "2026-02-28T23:10:13.240Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-119",
+      "start": "2026-02-28T23:46:50.221Z",
+      "end": "2026-02-28T23:49:05.640Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-120",
+      "start": "2026-02-28T23:55:21.760Z",
+      "end": "2026-02-28T23:55:21.760Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-121",
+      "start": "2026-03-01T00:11:52.493Z",
+      "end": "2026-03-01T00:11:52.493Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-122",
+      "start": "2026-03-01T00:19:02.764Z",
+      "end": "2026-03-01T00:21:45.462Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "quorum_block": 24,
+        "circuit_break": 18,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-123",
+      "start": "2026-03-01T00:36:36.438Z",
+      "end": "2026-03-01T00:36:36.438Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-124",
+      "start": "2026-03-01T07:46:20.403Z",
+      "end": "2026-03-01T07:46:20.403Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-125",
+      "start": "2026-03-01T07:59:35.595Z",
+      "end": "2026-03-01T07:59:35.595Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-126",
+      "start": "2026-03-01T08:09:41.484Z",
+      "end": "2026-03-01T08:18:02.337Z",
+      "event_count": 12,
+      "actions": {
+        "undefined": 12
+      }
+    },
+    {
+      "id": "session-127",
+      "start": "2026-03-01T08:35:52.138Z",
+      "end": "2026-03-01T08:35:52.138Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-128",
+      "start": "2026-03-01T09:07:15.990Z",
+      "end": "2026-03-01T09:10:40.633Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-129",
+      "start": "2026-03-01T09:25:11.483Z",
+      "end": "2026-03-01T09:32:32.823Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-130",
+      "start": "2026-03-01T09:38:55.221Z",
+      "end": "2026-03-01T09:38:55.221Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-131",
+      "start": "2026-03-01T09:44:10.334Z",
+      "end": "2026-03-01T09:44:10.334Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-132",
+      "start": "2026-03-01T10:04:50.466Z",
+      "end": "2026-03-01T10:13:29.286Z",
+      "event_count": 8,
+      "actions": {
+        "undefined": 8
+      }
+    },
+    {
+      "id": "session-133",
+      "start": "2026-03-01T10:25:51.404Z",
+      "end": "2026-03-01T10:42:20.645Z",
+      "event_count": 19,
+      "actions": {
+        "undefined": 19
+      }
+    },
+    {
+      "id": "session-134",
+      "start": "2026-03-01T13:19:27.443Z",
+      "end": "2026-03-01T13:19:27.445Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-135",
+      "start": "2026-03-01T13:34:54.022Z",
+      "end": "2026-03-01T13:38:33.335Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-136",
+      "start": "2026-03-01T13:47:10.571Z",
+      "end": "2026-03-01T13:50:15.363Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-137",
+      "start": "2026-03-01T14:31:53.749Z",
+      "end": "2026-03-01T14:31:53.749Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-138",
+      "start": "2026-03-01T14:38:10.962Z",
+      "end": "2026-03-01T14:44:38.759Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-139",
+      "start": "2026-03-01T14:50:51.370Z",
+      "end": "2026-03-01T14:51:30.775Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-140",
+      "start": "2026-03-01T15:17:13.556Z",
+      "end": "2026-03-01T15:18:28.192Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 3,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-141",
+      "start": "2026-03-01T15:39:13.702Z",
+      "end": "2026-03-01T15:59:50.165Z",
+      "event_count": 53,
+      "actions": {
+        "undefined": 53
+      }
+    },
+    {
+      "id": "session-142",
+      "start": "2026-03-01T16:30:50.202Z",
+      "end": "2026-03-01T16:30:57.627Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 2,
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-143",
+      "start": "2026-03-01T16:42:43.762Z",
+      "end": "2026-03-01T16:44:28.400Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-144",
+      "start": "2026-03-01T17:40:38.053Z",
+      "end": "2026-03-01T17:40:38.054Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-145",
+      "start": "2026-03-01T17:46:52.348Z",
+      "end": "2026-03-01T17:46:52.348Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-146",
+      "start": "2026-03-01T18:01:17.430Z",
+      "end": "2026-03-01T18:05:20.245Z",
+      "event_count": 8,
+      "actions": {
+        "undefined": 8
+      }
+    },
+    {
+      "id": "session-147",
+      "start": "2026-03-01T18:12:12.049Z",
+      "end": "2026-03-01T18:23:34.724Z",
+      "event_count": 18,
+      "actions": {
+        "undefined": 18
+      }
+    },
+    {
+      "id": "session-148",
+      "start": "2026-03-01T18:47:06.240Z",
+      "end": "2026-03-01T18:52:58.783Z",
+      "event_count": 5,
+      "actions": {
+        "undefined": 4,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-149",
+      "start": "2026-03-01T19:04:08.293Z",
+      "end": "2026-03-01T19:05:27.304Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-150",
+      "start": "2026-03-01T19:11:29.470Z",
+      "end": "2026-03-01T19:16:37.759Z",
+      "event_count": 57,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-151",
+      "start": "2026-03-01T19:22:39.324Z",
+      "end": "2026-03-01T19:22:39.324Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-152",
+      "start": "2026-03-01T19:42:36.630Z",
+      "end": "2026-03-01T19:52:12.819Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-153",
+      "start": "2026-03-01T20:04:53.411Z",
+      "end": "2026-03-01T20:06:16.601Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-154",
+      "start": "2026-03-01T20:15:19.492Z",
+      "end": "2026-03-01T20:15:19.492Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-155",
+      "start": "2026-03-01T20:27:34.674Z",
+      "end": "2026-03-01T20:39:41.002Z",
+      "event_count": 104,
+      "actions": {
+        "undefined": 18,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-156",
+      "start": "2026-03-01T20:44:57.755Z",
+      "end": "2026-03-01T20:47:06.851Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-157",
+      "start": "2026-03-01T21:01:34.800Z",
+      "end": "2026-03-01T21:19:57.914Z",
+      "event_count": 20,
+      "actions": {
+        "undefined": 20
+      }
+    },
+    {
+      "id": "session-158",
+      "start": "2026-03-01T21:28:22.090Z",
+      "end": "2026-03-01T21:28:22.092Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-159",
+      "start": "2026-03-01T21:34:43.212Z",
+      "end": "2026-03-01T21:47:22.272Z",
+      "event_count": 13,
+      "actions": {
+        "undefined": 13
+      }
+    },
+    {
+      "id": "session-160",
+      "start": "2026-03-01T22:54:58.740Z",
+      "end": "2026-03-01T23:02:15.227Z",
+      "event_count": 8,
+      "actions": {
+        "undefined": 8
+      }
+    },
+    {
+      "id": "session-161",
+      "start": "2026-03-02T06:11:09.139Z",
+      "end": "2026-03-02T06:19:09.639Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-162",
+      "start": "2026-03-02T06:30:02.651Z",
+      "end": "2026-03-02T06:41:05.649Z",
+      "event_count": 15,
+      "actions": {
+        "undefined": 15
+      }
+    },
+    {
+      "id": "session-163",
+      "start": "2026-03-02T06:58:09.548Z",
+      "end": "2026-03-02T06:58:09.548Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-164",
+      "start": "2026-03-02T08:11:52.160Z",
+      "end": "2026-03-02T08:16:04.707Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-165",
+      "start": "2026-03-02T08:34:50.062Z",
+      "end": "2026-03-02T08:34:50.062Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-166",
+      "start": "2026-03-02T08:54:13.854Z",
+      "end": "2026-03-02T08:54:13.855Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-167",
+      "start": "2026-03-02T09:00:37.447Z",
+      "end": "2026-03-02T09:04:41.549Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 9
+      }
+    },
+    {
+      "id": "session-168",
+      "start": "2026-03-02T09:15:17.901Z",
+      "end": "2026-03-02T09:24:28.927Z",
+      "event_count": 12,
+      "actions": {
+        "undefined": 12
+      }
+    },
+    {
+      "id": "session-169",
+      "start": "2026-03-02T09:36:17.766Z",
+      "end": "2026-03-02T09:36:17.766Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-170",
+      "start": "2026-03-02T09:42:34.046Z",
+      "end": "2026-03-02T09:53:33.302Z",
+      "event_count": 11,
+      "actions": {
+        "undefined": 11
+      }
+    },
+    {
+      "id": "session-171",
+      "start": "2026-03-02T09:59:53.819Z",
+      "end": "2026-03-02T10:06:32.962Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 9
+      }
+    },
+    {
+      "id": "session-172",
+      "start": "2026-03-02T10:29:35.076Z",
+      "end": "2026-03-02T10:34:35.608Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 3,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-173",
+      "start": "2026-03-02T10:49:14.433Z",
+      "end": "2026-03-02T10:53:33.144Z",
+      "event_count": 5,
+      "actions": {
+        "undefined": 5
+      }
+    },
+    {
+      "id": "session-174",
+      "start": "2026-03-02T10:58:46.100Z",
+      "end": "2026-03-02T11:01:54.762Z",
+      "event_count": 5,
+      "actions": {
+        "undefined": 5
+      }
+    },
+    {
+      "id": "session-175",
+      "start": "2026-03-02T11:13:50.611Z",
+      "end": "2026-03-02T11:13:50.611Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-176",
+      "start": "2026-03-02T11:22:26.973Z",
+      "end": "2026-03-02T11:22:26.974Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-177",
+      "start": "2026-03-02T11:32:21.030Z",
+      "end": "2026-03-02T11:32:21.030Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-178",
+      "start": "2026-03-02T11:43:44.836Z",
+      "end": "2026-03-02T11:52:07.537Z",
+      "event_count": 17,
+      "actions": {
+        "undefined": 17
+      }
+    },
+    {
+      "id": "session-179",
+      "start": "2026-03-02T12:04:03.077Z",
+      "end": "2026-03-02T12:06:41.486Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-180",
+      "start": "2026-03-02T12:11:59.284Z",
+      "end": "2026-03-02T12:13:03.758Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-181",
+      "start": "2026-03-02T12:32:28.774Z",
+      "end": "2026-03-02T12:34:23.046Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-182",
+      "start": "2026-03-02T12:44:29.978Z",
+      "end": "2026-03-02T12:46:47.000Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-183",
+      "start": "2026-03-02T13:01:07.128Z",
+      "end": "2026-03-02T13:01:07.128Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-184",
+      "start": "2026-03-02T13:12:29.987Z",
+      "end": "2026-03-02T13:16:26.067Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-185",
+      "start": "2026-03-02T13:22:29.788Z",
+      "end": "2026-03-02T13:22:49.173Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 2,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-186",
+      "start": "2026-03-02T13:42:19.028Z",
+      "end": "2026-03-02T13:48:41.168Z",
+      "event_count": 13,
+      "actions": {
+        "undefined": 13
+      }
+    },
+    {
+      "id": "session-187",
+      "start": "2026-03-02T13:56:24.507Z",
+      "end": "2026-03-02T14:11:54.864Z",
+      "event_count": 15,
+      "actions": {
+        "undefined": 15
+      }
+    },
+    {
+      "id": "session-188",
+      "start": "2026-03-02T14:18:24.083Z",
+      "end": "2026-03-02T14:30:19.502Z",
+      "event_count": 17,
+      "actions": {
+        "undefined": 17
+      }
+    },
+    {
+      "id": "session-189",
+      "start": "2026-03-02T14:37:48.916Z",
+      "end": "2026-03-02T14:46:03.533Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 9
+      }
+    },
+    {
+      "id": "session-190",
+      "start": "2026-03-02T14:51:58.156Z",
+      "end": "2026-03-02T14:57:54.480Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 9
+      }
+    },
+    {
+      "id": "session-191",
+      "start": "2026-03-02T15:05:38.218Z",
+      "end": "2026-03-02T15:23:30.388Z",
+      "event_count": 18,
+      "actions": {
+        "undefined": 18
+      }
+    },
+    {
+      "id": "session-192",
+      "start": "2026-03-02T15:48:47.340Z",
+      "end": "2026-03-02T15:51:37.970Z",
+      "event_count": 100,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-193",
+      "start": "2026-03-02T16:08:43.788Z",
+      "end": "2026-03-02T16:08:43.790Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-194",
+      "start": "2026-03-02T16:29:02.285Z",
+      "end": "2026-03-02T16:35:31.539Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-195",
+      "start": "2026-03-02T16:44:30.198Z",
+      "end": "2026-03-02T16:45:46.033Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-196",
+      "start": "2026-03-02T16:51:59.502Z",
+      "end": "2026-03-02T16:56:15.214Z",
+      "event_count": 12,
+      "actions": {
+        "undefined": 12
+      }
+    },
+    {
+      "id": "session-197",
+      "start": "2026-03-02T17:08:50.838Z",
+      "end": "2026-03-02T17:08:54.625Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-198",
+      "start": "2026-03-02T17:19:51.226Z",
+      "end": "2026-03-02T17:22:49.173Z",
+      "event_count": 54,
+      "actions": {
+        "undefined": 11,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-199",
+      "start": "2026-03-02T17:29:27.641Z",
+      "end": "2026-03-02T17:58:39.291Z",
+      "event_count": 290,
+      "actions": {
+        "undefined": 75,
+        "quorum_start": 90,
+        "circuit_break": 45,
+        "quorum_block": 60,
+        "quorum_complete": 20
+      }
+    },
+    {
+      "id": "session-200",
+      "start": "2026-03-02T18:06:46.759Z",
+      "end": "2026-03-02T18:13:23.094Z",
+      "event_count": 12,
+      "actions": {
+        "undefined": 12
+      }
+    },
+    {
+      "id": "session-201",
+      "start": "2026-03-02T18:33:47.529Z",
+      "end": "2026-03-02T18:33:47.529Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-202",
+      "start": "2026-03-02T19:30:53.753Z",
+      "end": "2026-03-02T19:34:21.268Z",
+      "event_count": 18,
+      "actions": {
+        "undefined": 18
+      }
+    },
+    {
+      "id": "session-203",
+      "start": "2026-03-02T20:12:18.544Z",
+      "end": "2026-03-02T20:13:48.057Z",
+      "event_count": 52,
+      "actions": {
+        "undefined": 9,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-204",
+      "start": "2026-03-02T20:27:52.261Z",
+      "end": "2026-03-02T20:31:57.356Z",
+      "event_count": 51,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-205",
+      "start": "2026-03-02T20:39:42.216Z",
+      "end": "2026-03-02T20:42:09.944Z",
+      "event_count": 51,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-206",
+      "start": "2026-03-02T21:42:23.992Z",
+      "end": "2026-03-02T21:47:02.227Z",
+      "event_count": 204,
+      "actions": {
+        "undefined": 32,
+        "quorum_start": 72,
+        "circuit_break": 36,
+        "quorum_block": 48,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-207",
+      "start": "2026-03-02T21:55:02.315Z",
+      "end": "2026-03-02T22:06:19.567Z",
+      "event_count": 155,
+      "actions": {
+        "undefined": 26,
+        "quorum_start": 54,
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-208",
+      "start": "2026-03-02T22:14:21.051Z",
+      "end": "2026-03-02T22:30:22.939Z",
+      "event_count": 251,
+      "actions": {
+        "undefined": 36,
+        "quorum_start": 90,
+        "circuit_break": 45,
+        "quorum_block": 60,
+        "quorum_complete": 20
+      }
+    },
+    {
+      "id": "session-209",
+      "start": "2026-03-02T22:36:09.375Z",
+      "end": "2026-03-02T22:40:20.722Z",
+      "event_count": 150,
+      "actions": {
+        "undefined": 21,
+        "quorum_start": 54,
+        "circuit_break": 27,
+        "quorum_block": 36,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-210",
+      "start": "2026-03-02T22:54:08.215Z",
+      "end": "2026-03-02T23:02:32.934Z",
+      "event_count": 72,
+      "actions": {
+        "undefined": 29,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-211",
+      "start": "2026-03-02T23:08:32.636Z",
+      "end": "2026-03-02T23:21:16.948Z",
+      "event_count": 18,
+      "actions": {
+        "undefined": 16,
+        "quorum_start": 2
+      }
+    },
+    {
+      "id": "session-212",
+      "start": "2026-03-02T23:37:45.589Z",
+      "end": "2026-03-02T23:38:49.577Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-213",
+      "start": "2026-03-02T23:44:45.589Z",
+      "end": "2026-03-02T23:49:04.190Z",
+      "event_count": 12,
+      "actions": {
+        "undefined": 12
+      }
+    },
+    {
+      "id": "session-214",
+      "start": "2026-03-03T00:03:50.110Z",
+      "end": "2026-03-03T00:03:50.111Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-215",
+      "start": "2026-03-03T00:14:44.743Z",
+      "end": "2026-03-03T00:39:01.584Z",
+      "event_count": 59,
+      "actions": {
+        "undefined": 59
+      }
+    },
+    {
+      "id": "session-216",
+      "start": "2026-03-03T01:01:58.880Z",
+      "end": "2026-03-03T01:01:58.880Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-217",
+      "start": "2026-03-03T01:08:24.869Z",
+      "end": "2026-03-03T01:16:30.035Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-218",
+      "start": "2026-03-03T01:26:26.136Z",
+      "end": "2026-03-03T01:28:14.852Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-219",
+      "start": "2026-03-03T05:59:09.568Z",
+      "end": "2026-03-03T06:02:01.581Z",
+      "event_count": 102,
+      "actions": {
+        "undefined": 16,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-220",
+      "start": "2026-03-03T06:28:30.573Z",
+      "end": "2026-03-03T06:30:17.808Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-221",
+      "start": "2026-03-03T06:37:23.503Z",
+      "end": "2026-03-03T06:50:56.029Z",
+      "event_count": 265,
+      "actions": {
+        "undefined": 46,
+        "circuit_break": 45,
+        "quorum_block": 60,
+        "quorum_start": 94,
+        "quorum_complete": 20
+      }
+    },
+    {
+      "id": "session-222",
+      "start": "2026-03-03T07:00:07.431Z",
+      "end": "2026-03-03T07:16:18.730Z",
+      "event_count": 9,
+      "actions": {
+        "undefined": 9
+      }
+    },
+    {
+      "id": "session-223",
+      "start": "2026-03-03T07:28:18.525Z",
+      "end": "2026-03-03T07:30:51.198Z",
+      "event_count": 10,
+      "actions": {
+        "undefined": 10
+      }
+    },
+    {
+      "id": "session-224",
+      "start": "2026-03-03T07:37:31.619Z",
+      "end": "2026-03-03T07:37:31.619Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-225",
+      "start": "2026-03-03T07:44:52.060Z",
+      "end": "2026-03-03T07:44:52.060Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-226",
+      "start": "2026-03-03T07:50:17.508Z",
+      "end": "2026-03-03T07:50:33.446Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-227",
+      "start": "2026-03-03T07:56:16.186Z",
+      "end": "2026-03-03T08:03:10.606Z",
+      "event_count": 7,
+      "actions": {
+        "undefined": 7
+      }
+    },
+    {
+      "id": "session-228",
+      "start": "2026-03-03T08:21:20.955Z",
+      "end": "2026-03-03T08:21:53.373Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-229",
+      "start": "2026-03-03T08:27:43.310Z",
+      "end": "2026-03-03T08:28:13.121Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-230",
+      "start": "2026-03-03T08:48:54.325Z",
+      "end": "2026-03-03T08:57:55.839Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-231",
+      "start": "2026-03-03T09:23:42.582Z",
+      "end": "2026-03-03T09:23:42.582Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-232",
+      "start": "2026-03-03T09:29:29.414Z",
+      "end": "2026-03-03T09:30:50.895Z",
+      "event_count": 52,
+      "actions": {
+        "undefined": 9,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-233",
+      "start": "2026-03-03T10:49:37.292Z",
+      "end": "2026-03-03T10:56:46.588Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-234",
+      "start": "2026-03-03T11:02:54.941Z",
+      "end": "2026-03-03T11:07:22.907Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-235",
+      "start": "2026-03-03T11:24:04.382Z",
+      "end": "2026-03-03T11:41:25.940Z",
+      "event_count": 20,
+      "actions": {
+        "undefined": 20
+      }
+    },
+    {
+      "id": "session-236",
+      "start": "2026-03-03T11:48:02.647Z",
+      "end": "2026-03-03T12:01:28.473Z",
+      "event_count": 60,
+      "actions": {
+        "undefined": 16,
+        "quorum_start": 19,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-237",
+      "start": "2026-03-03T12:07:21.325Z",
+      "end": "2026-03-03T12:07:21.325Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-238",
+      "start": "2026-03-03T12:20:13.792Z",
+      "end": "2026-03-03T12:24:01.796Z",
+      "event_count": 54,
+      "actions": {
+        "undefined": 11,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-239",
+      "start": "2026-03-03T12:37:35.752Z",
+      "end": "2026-03-03T12:38:10.100Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-240",
+      "start": "2026-03-03T12:46:52.993Z",
+      "end": "2026-03-03T12:47:24.165Z",
+      "event_count": 116,
+      "actions": {
+        "quorum_block": 12,
+        "quorum_complete": 4,
+        "undefined": 28,
+        "quorum_start": 72
+      }
+    },
+    {
+      "id": "session-241",
+      "start": "2026-03-03T12:53:33.859Z",
+      "end": "2026-03-03T12:53:51.269Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-242",
+      "start": "2026-03-03T13:04:11.857Z",
+      "end": "2026-03-03T13:29:20.242Z",
+      "event_count": 27,
+      "actions": {
+        "undefined": 27
+      }
+    },
+    {
+      "id": "session-243",
+      "start": "2026-03-03T13:38:49.285Z",
+      "end": "2026-03-03T13:38:49.285Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-244",
+      "start": "2026-03-03T13:43:55.532Z",
+      "end": "2026-03-03T13:45:15.036Z",
+      "event_count": 52,
+      "actions": {
+        "undefined": 8,
+        "quorum_start": 19,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-245",
+      "start": "2026-03-03T13:53:42.222Z",
+      "end": "2026-03-03T13:59:05.104Z",
+      "event_count": 102,
+      "actions": {
+        "undefined": 16,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-246",
+      "start": "2026-03-03T14:14:20.790Z",
+      "end": "2026-03-03T14:14:20.790Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-247",
+      "start": "2026-03-03T14:19:50.972Z",
+      "end": "2026-03-03T14:20:19.038Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-248",
+      "start": "2026-03-03T14:56:33.283Z",
+      "end": "2026-03-03T15:00:34.388Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 2,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-249",
+      "start": "2026-03-03T15:06:53.950Z",
+      "end": "2026-03-03T15:31:47.396Z",
+      "event_count": 414,
+      "actions": {
+        "undefined": 86,
+        "circuit_break": 72,
+        "quorum_start": 144,
+        "quorum_block": 84,
+        "quorum_complete": 28
+      }
+    },
+    {
+      "id": "session-250",
+      "start": "2026-03-03T15:36:53.453Z",
+      "end": "2026-03-03T15:39:22.257Z",
+      "event_count": 53,
+      "actions": {
+        "undefined": 9,
+        "quorum_start": 19,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-251",
+      "start": "2026-03-03T15:50:00.917Z",
+      "end": "2026-03-03T15:50:39.869Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-252",
+      "start": "2026-03-03T16:19:14.536Z",
+      "end": "2026-03-03T16:25:42.812Z",
+      "event_count": 163,
+      "actions": {
+        "undefined": 30,
+        "quorum_start": 58,
+        "circuit_break": 27,
+        "quorum_block": 36,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-253",
+      "start": "2026-03-03T16:31:56.364Z",
+      "end": "2026-03-03T16:36:01.599Z",
+      "event_count": 27,
+      "actions": {
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4,
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-254",
+      "start": "2026-03-03T17:07:46.412Z",
+      "end": "2026-03-03T17:08:50.901Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-255",
+      "start": "2026-03-03T17:41:41.529Z",
+      "end": "2026-03-03T17:49:56.806Z",
+      "event_count": 105,
+      "actions": {
+        "undefined": 19,
+        "quorum_start": 36,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-256",
+      "start": "2026-03-03T18:09:36.101Z",
+      "end": "2026-03-03T18:34:40.894Z",
+      "event_count": 91,
+      "actions": {
+        "undefined": 48,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-257",
+      "start": "2026-03-03T18:40:28.868Z",
+      "end": "2026-03-03T18:40:29.149Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-258",
+      "start": "2026-03-03T19:02:51.334Z",
+      "end": "2026-03-03T19:35:43.956Z",
+      "event_count": 239,
+      "actions": {
+        "undefined": 66,
+        "quorum_start": 73,
+        "circuit_break": 36,
+        "quorum_block": 48,
+        "quorum_complete": 16
+      }
+    },
+    {
+      "id": "session-259",
+      "start": "2026-03-03T19:54:28.854Z",
+      "end": "2026-03-03T19:59:47.170Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-260",
+      "start": "2026-03-03T20:14:10.295Z",
+      "end": "2026-03-03T20:40:02.771Z",
+      "event_count": 467,
+      "actions": {
+        "undefined": 98,
+        "quorum_start": 169,
+        "circuit_break": 72,
+        "quorum_block": 96,
+        "quorum_complete": 32
+      }
+    },
+    {
+      "id": "session-261",
+      "start": "2026-03-03T20:55:11.776Z",
+      "end": "2026-03-03T20:59:04.810Z",
+      "event_count": 121,
+      "actions": {
+        "undefined": 25,
+        "quorum_start": 46,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-262",
+      "start": "2026-03-03T21:07:00.743Z",
+      "end": "2026-03-03T21:07:00.743Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-263",
+      "start": "2026-03-03T21:12:26.243Z",
+      "end": "2026-03-03T21:17:42.758Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 3,
+        "quorum_start": 3
+      }
+    },
+    {
+      "id": "session-264",
+      "start": "2026-03-03T21:23:26.169Z",
+      "end": "2026-03-03T21:57:05.995Z",
+      "event_count": 479,
+      "actions": {
+        "undefined": 150,
+        "quorum_start": 154,
+        "circuit_break": 63,
+        "quorum_block": 84,
+        "quorum_complete": 28
+      }
+    },
+    {
+      "id": "session-265",
+      "start": "2026-03-03T22:02:24.067Z",
+      "end": "2026-03-03T22:30:22.917Z",
+      "event_count": 675,
+      "actions": {
+        "undefined": 157,
+        "quorum_start": 243,
+        "circuit_break": 99,
+        "quorum_block": 132,
+        "quorum_complete": 44
+      }
+    },
+    {
+      "id": "session-266",
+      "start": "2026-03-03T22:37:38.891Z",
+      "end": "2026-03-03T23:06:13.445Z",
+      "event_count": 129,
+      "actions": {
+        "undefined": 80,
+        "quorum_start": 24,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-267",
+      "start": "2026-03-03T23:21:39.262Z",
+      "end": "2026-03-03T23:35:13.413Z",
+      "event_count": 574,
+      "actions": {
+        "circuit_break": 99,
+        "undefined": 89,
+        "quorum_start": 210,
+        "quorum_block": 132,
+        "quorum_complete": 44
+      }
+    },
+    {
+      "id": "session-268",
+      "start": "2026-03-04T00:02:30.278Z",
+      "end": "2026-03-04T00:04:56.709Z",
+      "event_count": 110,
+      "actions": {
+        "undefined": 20,
+        "quorum_start": 40,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-269",
+      "start": "2026-03-04T00:10:55.193Z",
+      "end": "2026-03-04T00:30:07.191Z",
+      "event_count": 306,
+      "actions": {
+        "undefined": 71,
+        "quorum_start": 110,
+        "circuit_break": 45,
+        "quorum_block": 60,
+        "quorum_complete": 20
+      }
+    },
+    {
+      "id": "session-270",
+      "start": "2026-03-04T07:10:08.776Z",
+      "end": "2026-03-04T07:13:04.464Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 3,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-271",
+      "start": "2026-03-04T07:18:18.798Z",
+      "end": "2026-03-04T09:02:31.399Z",
+      "event_count": 2813,
+      "actions": {
+        "undefined": 655,
+        "quorum_start": 962,
+        "circuit_break": 396,
+        "quorum_block": 410,
+        "quorum_complete": 86,
+        "quorum_block_r3_2": 304
+      }
+    },
+    {
+      "id": "session-272",
+      "start": "2026-03-04T09:09:00.436Z",
+      "end": "2026-03-04T09:39:24.646Z",
+      "event_count": 84,
+      "actions": {
+        "undefined": 83,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-273",
+      "start": "2026-03-04T09:44:29.173Z",
+      "end": "2026-03-04T10:55:30.297Z",
+      "event_count": 422,
+      "actions": {
+        "undefined": 185,
+        "quorum_start": 112,
+        "circuit_break": 45,
+        "quorum_block_r3_2": 40,
+        "quorum_block": 35,
+        "quorum_complete": 5
+      }
+    },
+    {
+      "id": "session-274",
+      "start": "2026-03-04T11:42:18.491Z",
+      "end": "2026-03-04T11:44:57.761Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-275",
+      "start": "2026-03-04T12:02:05.356Z",
+      "end": "2026-03-04T12:38:33.465Z",
+      "event_count": 563,
+      "actions": {
+        "undefined": 186,
+        "quorum_start": 177,
+        "circuit_break": 72,
+        "quorum_block_r3_2": 64,
+        "quorum_block": 56,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-276",
+      "start": "2026-03-04T12:45:35.794Z",
+      "end": "2026-03-04T13:16:31.349Z",
+      "event_count": 175,
+      "actions": {
+        "undefined": 82,
+        "quorum_start": 43,
+        "circuit_break": 18,
+        "quorum_block_r3_2": 16,
+        "quorum_block": 14,
+        "quorum_complete": 2
+      }
+    },
+    {
+      "id": "session-277",
+      "start": "2026-03-04T13:33:56.724Z",
+      "end": "2026-03-04T13:33:59.637Z",
+      "event_count": 50,
+      "actions": {
+        "undefined": 7,
+        "circuit_break": 9,
+        "quorum_start": 18,
+        "quorum_block_r3_2": 8,
+        "quorum_block": 7,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-278",
+      "start": "2026-03-04T17:18:53.548Z",
+      "end": "2026-03-04T17:32:12.611Z",
+      "event_count": 126,
+      "actions": {
+        "undefined": 31,
+        "quorum_start": 45,
+        "circuit_break": 18,
+        "quorum_block_r3_2": 16,
+        "quorum_block": 14,
+        "quorum_complete": 2
+      }
+    },
+    {
+      "id": "session-279",
+      "start": "2026-03-04T18:00:59.079Z",
+      "end": "2026-03-04T18:03:02.241Z",
+      "event_count": 3,
+      "actions": {
+        "undefined": 3
+      }
+    },
+    {
+      "id": "session-280",
+      "start": "2026-03-04T18:16:23.758Z",
+      "end": "2026-03-04T19:37:57.931Z",
+      "event_count": 1541,
+      "actions": {
+        "undefined": 399,
+        "quorum_start": 530,
+        "circuit_break": 212,
+        "quorum_block_r3_2": 200,
+        "quorum_block": 175,
+        "quorum_complete": 25
+      }
+    },
+    {
+      "id": "session-281",
+      "start": "2026-03-04T19:44:42.877Z",
+      "end": "2026-03-04T20:07:31.949Z",
+      "event_count": 303,
+      "actions": {
+        "undefined": 68,
+        "quorum_start": 110,
+        "circuit_break": 45,
+        "quorum_block_r3_2": 40,
+        "quorum_block": 35,
+        "quorum_complete": 5
+      }
+    },
+    {
+      "id": "session-282",
+      "start": "2026-03-04T22:37:44.398Z",
+      "end": "2026-03-04T23:01:37.161Z",
+      "event_count": 150,
+      "actions": {
+        "undefined": 53,
+        "quorum_start": 47,
+        "circuit_break": 18,
+        "quorum_block_r3_2": 16,
+        "quorum_block": 14,
+        "quorum_complete": 2
+      }
+    },
+    {
+      "id": "session-283",
+      "start": "2026-03-04T23:08:36.929Z",
+      "end": "2026-03-04T23:08:41.086Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block_r3_2": 8,
+        "quorum_block": 7,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-284",
+      "start": "2026-03-04T23:17:55.067Z",
+      "end": "2026-03-04T23:17:58.865Z",
+      "event_count": 58,
+      "actions": {
+        "undefined": 11,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block_r3_2": 8,
+        "quorum_block": 7,
+        "quorum_complete": 1
+      }
+    },
+    {
+      "id": "session-285",
+      "start": "2026-03-05T07:25:51.790Z",
+      "end": "2026-03-05T07:25:51.791Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 1,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-286",
+      "start": "2026-03-05T07:32:14.513Z",
+      "end": "2026-03-05T07:41:59.924Z",
+      "event_count": 28,
+      "actions": {
+        "undefined": 24,
+        "quorum_start": 4
+      }
+    },
+    {
+      "id": "session-287",
+      "start": "2026-03-05T07:48:05.308Z",
+      "end": "2026-03-05T07:55:27.532Z",
+      "event_count": 31,
+      "actions": {
+        "undefined": 31
+      }
+    },
+    {
+      "id": "session-288",
+      "start": "2026-03-05T08:05:37.860Z",
+      "end": "2026-03-05T08:35:33.241Z",
+      "event_count": 98,
+      "actions": {
+        "undefined": 51,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-289",
+      "start": "2026-03-05T08:41:20.844Z",
+      "end": "2026-03-05T08:45:54.292Z",
+      "event_count": 66,
+      "actions": {
+        "undefined": 23,
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-290",
+      "start": "2026-03-05T08:56:44.727Z",
+      "end": "2026-03-05T08:56:44.843Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-291",
+      "start": "2026-03-05T09:13:45.038Z",
+      "end": "2026-03-05T09:14:31.064Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-292",
+      "start": "2026-03-05T09:25:17.353Z",
+      "end": "2026-03-05T09:30:07.236Z",
+      "event_count": 8,
+      "actions": {
+        "undefined": 7,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-293",
+      "start": "2026-03-05T09:35:26.832Z",
+      "end": "2026-03-05T09:38:21.196Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-294",
+      "start": "2026-03-05T10:16:53.997Z",
+      "end": "2026-03-05T10:23:01.974Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-295",
+      "start": "2026-03-05T10:40:01.353Z",
+      "end": "2026-03-05T10:45:24.111Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-296",
+      "start": "2026-03-05T10:53:48.544Z",
+      "end": "2026-03-05T10:53:48.544Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-297",
+      "start": "2026-03-05T11:07:09.911Z",
+      "end": "2026-03-05T11:10:30.307Z",
+      "event_count": 120,
+      "actions": {
+        "undefined": 26,
+        "quorum_start": 44,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-298",
+      "start": "2026-03-05T11:24:48.715Z",
+      "end": "2026-03-05T11:24:48.835Z",
+      "event_count": 2,
+      "actions": {
+        "undefined": 2
+      }
+    },
+    {
+      "id": "session-299",
+      "start": "2026-03-05T11:30:28.159Z",
+      "end": "2026-03-05T11:30:33.676Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-300",
+      "start": "2026-03-05T11:35:45.449Z",
+      "end": "2026-03-05T11:42:05.081Z",
+      "event_count": 61,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-301",
+      "start": "2026-03-05T11:47:13.663Z",
+      "end": "2026-03-05T11:47:19.025Z",
+      "event_count": 58,
+      "actions": {
+        "undefined": 11,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-302",
+      "start": "2026-03-05T11:52:25.705Z",
+      "end": "2026-03-05T11:52:31.475Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-303",
+      "start": "2026-03-05T11:59:56.375Z",
+      "end": "2026-03-05T12:00:01.988Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-304",
+      "start": "2026-03-05T12:09:05.175Z",
+      "end": "2026-03-05T12:09:05.175Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-305",
+      "start": "2026-03-05T12:16:14.145Z",
+      "end": "2026-03-05T12:20:36.935Z",
+      "event_count": 26,
+      "actions": {
+        "undefined": 26
+      }
+    },
+    {
+      "id": "session-306",
+      "start": "2026-03-05T12:29:19.784Z",
+      "end": "2026-03-05T12:48:56.427Z",
+      "event_count": 354,
+      "actions": {
+        "undefined": 72,
+        "quorum_start": 132,
+        "circuit_break": 54,
+        "quorum_block": 72,
+        "quorum_complete": 24
+      }
+    },
+    {
+      "id": "session-307",
+      "start": "2026-03-05T12:54:10.512Z",
+      "end": "2026-03-05T12:57:20.215Z",
+      "event_count": 118,
+      "actions": {
+        "circuit_break": 18,
+        "undefined": 24,
+        "quorum_start": 44,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-308",
+      "start": "2026-03-05T13:39:57.106Z",
+      "end": "2026-03-05T13:56:20.989Z",
+      "event_count": 182,
+      "actions": {
+        "undefined": 41,
+        "quorum_start": 66,
+        "circuit_break": 27,
+        "quorum_block": 36,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-309",
+      "start": "2026-03-05T14:16:07.202Z",
+      "end": "2026-03-05T14:25:29.541Z",
+      "event_count": 430,
+      "actions": {
+        "undefined": 140,
+        "quorum_start": 156,
+        "circuit_break": 58,
+        "quorum_block": 58,
+        "quorum_complete": 18
+      }
+    },
+    {
+      "id": "session-310",
+      "start": "2026-03-05T14:53:20.835Z",
+      "end": "2026-03-05T14:58:36.789Z",
+      "event_count": 119,
+      "actions": {
+        "undefined": 25,
+        "quorum_start": 44,
+        "circuit_break": 18,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-311",
+      "start": "2026-03-05T15:07:33.605Z",
+      "end": "2026-03-05T15:08:38.326Z",
+      "event_count": 19,
+      "actions": {
+        "undefined": 19
+      }
+    },
+    {
+      "id": "session-312",
+      "start": "2026-03-05T15:16:02.500Z",
+      "end": "2026-03-05T15:20:51.275Z",
+      "event_count": 61,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-313",
+      "start": "2026-03-05T15:26:38.350Z",
+      "end": "2026-03-05T15:33:48.616Z",
+      "event_count": 142,
+      "actions": {
+        "undefined": 33,
+        "quorum_start": 50,
+        "circuit_break": 27,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-314",
+      "start": "2026-03-05T15:48:28.811Z",
+      "end": "2026-03-05T15:51:55.981Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 3,
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-315",
+      "start": "2026-03-05T15:59:18.639Z",
+      "end": "2026-03-05T16:04:16.972Z",
+      "event_count": 4,
+      "actions": {
+        "undefined": 4
+      }
+    },
+    {
+      "id": "session-316",
+      "start": "2026-03-05T16:12:24.114Z",
+      "end": "2026-03-05T16:26:25.588Z",
+      "event_count": 463,
+      "actions": {
+        "undefined": 95,
+        "quorum_start": 170,
+        "circuit_break": 71,
+        "quorum_block": 95,
+        "quorum_complete": 32
+      }
+    },
+    {
+      "id": "session-317",
+      "start": "2026-03-05T16:32:00.659Z",
+      "end": "2026-03-05T16:32:00.659Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-318",
+      "start": "2026-03-05T17:10:03.751Z",
+      "end": "2026-03-05T17:12:47.227Z",
+      "event_count": 61,
+      "actions": {
+        "undefined": 14,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-319",
+      "start": "2026-03-05T17:19:39.471Z",
+      "end": "2026-03-05T17:19:48.333Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-320",
+      "start": "2026-03-05T17:35:07.229Z",
+      "end": "2026-03-05T17:35:21.133Z",
+      "event_count": 58,
+      "actions": {
+        "circuit_break": 9,
+        "undefined": 11,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-321",
+      "start": "2026-03-05T17:42:03.158Z",
+      "end": "2026-03-05T17:43:14.995Z",
+      "event_count": 59,
+      "actions": {
+        "undefined": 12,
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-322",
+      "start": "2026-03-05T18:00:43.553Z",
+      "end": "2026-03-05T18:03:48.220Z",
+      "event_count": 6,
+      "actions": {
+        "undefined": 6
+      }
+    },
+    {
+      "id": "session-323",
+      "start": "2026-03-05T18:13:15.639Z",
+      "end": "2026-03-05T18:13:15.639Z",
+      "event_count": 1,
+      "actions": {
+        "undefined": 1
+      }
+    },
+    {
+      "id": "session-324",
+      "start": "2026-03-05T18:20:16.986Z",
+      "end": "2026-03-05T18:34:50.695Z",
+      "event_count": 936,
+      "actions": {
+        "quorum_block": 240,
+        "undefined": 13,
+        "circuit_break": 177,
+        "quorum_start": 426,
+        "quorum_complete": 80
+      }
+    },
+    {
+      "id": "session-325",
+      "start": "2026-03-05T18:51:41.648Z",
+      "end": "2026-03-05T18:51:41.648Z",
+      "event_count": 1,
+      "actions": {
+        "quorum_start": 1
+      }
+    },
+    {
+      "id": "session-326",
+      "start": "2026-03-05T19:56:05.216Z",
+      "end": "2026-03-05T19:57:18.280Z",
+      "event_count": 48,
+      "actions": {
+        "quorum_start": 23,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-327",
+      "start": "2026-03-05T20:03:55.663Z",
+      "end": "2026-03-05T20:04:08.523Z",
+      "event_count": 47,
+      "actions": {
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-328",
+      "start": "2026-03-05T20:11:06.357Z",
+      "end": "2026-03-05T20:16:27.782Z",
+      "event_count": 94,
+      "actions": {
+        "circuit_break": 18,
+        "quorum_start": 44,
+        "quorum_block": 24,
+        "quorum_complete": 8
+      }
+    },
+    {
+      "id": "session-329",
+      "start": "2026-03-05T21:15:02.723Z",
+      "end": "2026-03-05T21:15:08.428Z",
+      "event_count": 47,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-330",
+      "start": "2026-03-05T21:42:47.161Z",
+      "end": "2026-03-05T21:54:22.918Z",
+      "event_count": 137,
+      "actions": {
+        "quorum_block": 36,
+        "quorum_start": 80,
+        "circuit_break": 9,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-331",
+      "start": "2026-03-05T22:50:14.554Z",
+      "end": "2026-03-05T22:50:54.479Z",
+      "event_count": 71,
+      "actions": {
+        "quorum_start": 55,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-332",
+      "start": "2026-03-05T22:56:53.630Z",
+      "end": "2026-03-05T22:59:02.351Z",
+      "event_count": 59,
+      "actions": {
+        "quorum_block": 24,
+        "quorum_complete": 8,
+        "quorum_start": 18,
+        "circuit_break": 9
+      }
+    },
+    {
+      "id": "session-333",
+      "start": "2026-03-05T23:12:58.566Z",
+      "end": "2026-03-05T23:13:05.444Z",
+      "event_count": 43,
+      "actions": {
+        "quorum_start": 18,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-334",
+      "start": "2026-03-05T23:23:10.022Z",
+      "end": "2026-03-05T23:31:26.727Z",
+      "event_count": 192,
+      "actions": {
+        "quorum_start": 151,
+        "quorum_block": 24,
+        "quorum_complete": 8,
+        "circuit_break": 9
+      }
+    },
+    {
+      "id": "session-335",
+      "start": "2026-03-05T23:41:43.947Z",
+      "end": "2026-03-05T23:41:46.689Z",
+      "event_count": 43,
+      "actions": {
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "circuit_break": 9,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-336",
+      "start": "2026-03-05T23:48:01.551Z",
+      "end": "2026-03-05T23:48:04.170Z",
+      "event_count": 43,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-337",
+      "start": "2026-03-06T00:00:20.410Z",
+      "end": "2026-03-06T00:00:22.974Z",
+      "event_count": 43,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 18,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-338",
+      "start": "2026-03-06T07:39:40.041Z",
+      "end": "2026-03-06T07:51:08.160Z",
+      "event_count": 611,
+      "actions": {
+        "quorum_block": 156,
+        "quorum_start": 286,
+        "circuit_break": 117,
+        "quorum_complete": 52
+      }
+    },
+    {
+      "id": "session-339",
+      "start": "2026-03-06T07:57:57.927Z",
+      "end": "2026-03-06T07:58:06.014Z",
+      "event_count": 47,
+      "actions": {
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-340",
+      "start": "2026-03-06T08:04:55.388Z",
+      "end": "2026-03-06T08:05:03.528Z",
+      "event_count": 47,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-341",
+      "start": "2026-03-06T08:12:23.577Z",
+      "end": "2026-03-06T08:42:28.722Z",
+      "event_count": 1284,
+      "actions": {
+        "quorum_block": 324,
+        "quorum_start": 603,
+        "quorum_complete": 108,
+        "circuit_break": 249
+      }
+    },
+    {
+      "id": "session-342",
+      "start": "2026-03-06T08:48:57.536Z",
+      "end": "2026-03-06T08:49:05.177Z",
+      "event_count": 47,
+      "actions": {
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-343",
+      "start": "2026-03-06T08:56:00.154Z",
+      "end": "2026-03-06T08:56:07.174Z",
+      "event_count": 47,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-344",
+      "start": "2026-03-06T09:02:51.129Z",
+      "end": "2026-03-06T09:16:58.793Z",
+      "event_count": 705,
+      "actions": {
+        "circuit_break": 135,
+        "quorum_start": 330,
+        "quorum_block": 180,
+        "quorum_complete": 60
+      }
+    },
+    {
+      "id": "session-345",
+      "start": "2026-03-06T09:23:35.627Z",
+      "end": "2026-03-06T09:57:51.467Z",
+      "event_count": 1504,
+      "actions": {
+        "quorum_block": 384,
+        "quorum_start": 704,
+        "quorum_complete": 128,
+        "circuit_break": 288
+      }
+    },
+    {
+      "id": "session-346",
+      "start": "2026-03-06T10:03:28.568Z",
+      "end": "2026-03-06T10:04:08.854Z",
+      "event_count": 147,
+      "actions": {
+        "quorum_block": 36,
+        "circuit_break": 27,
+        "quorum_start": 72,
+        "quorum_complete": 12
+      }
+    },
+    {
+      "id": "session-347",
+      "start": "2026-03-06T12:28:44.356Z",
+      "end": "2026-03-06T12:28:52.642Z",
+      "event_count": 47,
+      "actions": {
+        "circuit_break": 9,
+        "quorum_start": 22,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-348",
+      "start": "2026-03-06T12:36:04.574Z",
+      "end": "2026-03-06T12:36:16.461Z",
+      "event_count": 47,
+      "actions": {
+        "quorum_start": 22,
+        "circuit_break": 9,
+        "quorum_block": 12,
+        "quorum_complete": 4
+      }
+    },
+    {
+      "id": "session-349",
+      "start": "2026-03-06T12:53:45.217Z",
+      "end": "2026-03-06T12:56:51.448Z",
+      "event_count": 69,
+      "actions": {
+        "quorum_block": 24,
+        "quorum_complete": 8,
+        "quorum_start": 37
+      }
+    }
+  ],
+  "action_index": {
+    "quorum_start": {
+      "total": 12434,
+      "sessions": [
+        "session-001",
+        "session-002",
+        "session-003",
+        "session-004",
+        "session-005",
+        "session-006",
+        "session-007",
+        "session-008",
+        "session-010",
+        "session-011",
+        "session-012",
+        "session-013",
+        "session-014",
+        "session-015",
+        "session-016",
+        "session-017",
+        "session-018",
+        "session-019",
+        "session-020",
+        "session-021",
+        "session-022",
+        "session-023",
+        "session-024",
+        "session-025",
+        "session-026",
+        "session-027",
+        "session-028",
+        "session-029",
+        "session-030",
+        "session-031",
+        "session-032",
+        "session-033",
+        "session-034",
+        "session-035",
+        "session-036",
+        "session-037",
+        "session-038",
+        "session-039",
+        "session-040",
+        "session-041",
+        "session-042",
+        "session-043",
+        "session-044",
+        "session-045",
+        "session-046",
+        "session-047",
+        "session-048",
+        "session-049",
+        "session-050",
+        "session-051",
+        "session-052",
+        "session-053",
+        "session-054",
+        "session-055",
+        "session-056",
+        "session-057",
+        "session-058",
+        "session-059",
+        "session-060",
+        "session-061",
+        "session-062",
+        "session-063",
+        "session-064",
+        "session-065",
+        "session-066",
+        "session-067",
+        "session-068",
+        "session-069",
+        "session-070",
+        "session-071",
+        "session-072",
+        "session-073",
+        "session-074",
+        "session-075",
+        "session-076",
+        "session-078",
+        "session-079",
+        "session-080",
+        "session-081",
+        "session-082",
+        "session-083",
+        "session-084",
+        "session-085",
+        "session-087",
+        "session-088",
+        "session-089",
+        "session-092",
+        "session-098",
+        "session-099",
+        "session-100",
+        "session-105",
+        "session-106",
+        "session-108",
+        "session-109",
+        "session-110",
+        "session-112",
+        "session-113",
+        "session-114",
+        "session-115",
+        "session-116",
+        "session-117",
+        "session-118",
+        "session-119",
+        "session-122",
+        "session-131",
+        "session-134",
+        "session-140",
+        "session-142",
+        "session-144",
+        "session-148",
+        "session-150",
+        "session-155",
+        "session-156",
+        "session-158",
+        "session-166",
+        "session-172",
+        "session-176",
+        "session-182",
+        "session-185",
+        "session-192",
+        "session-193",
+        "session-194",
+        "session-197",
+        "session-198",
+        "session-199",
+        "session-203",
+        "session-204",
+        "session-205",
+        "session-206",
+        "session-207",
+        "session-208",
+        "session-209",
+        "session-210",
+        "session-211",
+        "session-214",
+        "session-217",
+        "session-219",
+        "session-221",
+        "session-232",
+        "session-236",
+        "session-238",
+        "session-240",
+        "session-243",
+        "session-244",
+        "session-245",
+        "session-248",
+        "session-249",
+        "session-250",
+        "session-252",
+        "session-255",
+        "session-256",
+        "session-258",
+        "session-260",
+        "session-261",
+        "session-263",
+        "session-264",
+        "session-265",
+        "session-266",
+        "session-267",
+        "session-268",
+        "session-269",
+        "session-270",
+        "session-271",
+        "session-272",
+        "session-273",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284",
+        "session-285",
+        "session-286",
+        "session-288",
+        "session-289",
+        "session-292",
+        "session-297",
+        "session-299",
+        "session-300",
+        "session-301",
+        "session-302",
+        "session-303",
+        "session-306",
+        "session-307",
+        "session-308",
+        "session-309",
+        "session-310",
+        "session-312",
+        "session-313",
+        "session-314",
+        "session-316",
+        "session-318",
+        "session-319",
+        "session-320",
+        "session-321",
+        "session-324",
+        "session-325",
+        "session-326",
+        "session-327",
+        "session-328",
+        "session-329",
+        "session-330",
+        "session-331",
+        "session-332",
+        "session-333",
+        "session-334",
+        "session-335",
+        "session-336",
+        "session-337",
+        "session-338",
+        "session-339",
+        "session-340",
+        "session-341",
+        "session-342",
+        "session-343",
+        "session-344",
+        "session-345",
+        "session-346",
+        "session-347",
+        "session-348",
+        "session-349"
+      ]
+    },
+    "circuit_break": {
+      "total": 6428,
+      "sessions": [
+        "session-001",
+        "session-002",
+        "session-003",
+        "session-005",
+        "session-006",
+        "session-008",
+        "session-009",
+        "session-010",
+        "session-011",
+        "session-012",
+        "session-013",
+        "session-015",
+        "session-016",
+        "session-018",
+        "session-021",
+        "session-022",
+        "session-023",
+        "session-024",
+        "session-026",
+        "session-028",
+        "session-030",
+        "session-031",
+        "session-033",
+        "session-035",
+        "session-037",
+        "session-040",
+        "session-041",
+        "session-044",
+        "session-045",
+        "session-046",
+        "session-053",
+        "session-054",
+        "session-056",
+        "session-058",
+        "session-059",
+        "session-061",
+        "session-063",
+        "session-064",
+        "session-066",
+        "session-067",
+        "session-068",
+        "session-069",
+        "session-071",
+        "session-072",
+        "session-074",
+        "session-075",
+        "session-076",
+        "session-078",
+        "session-079",
+        "session-081",
+        "session-082",
+        "session-084",
+        "session-085",
+        "session-087",
+        "session-088",
+        "session-092",
+        "session-098",
+        "session-100",
+        "session-106",
+        "session-108",
+        "session-109",
+        "session-110",
+        "session-112",
+        "session-113",
+        "session-115",
+        "session-116",
+        "session-117",
+        "session-118",
+        "session-119",
+        "session-122",
+        "session-150",
+        "session-155",
+        "session-156",
+        "session-182",
+        "session-192",
+        "session-197",
+        "session-198",
+        "session-199",
+        "session-203",
+        "session-204",
+        "session-205",
+        "session-206",
+        "session-207",
+        "session-208",
+        "session-209",
+        "session-210",
+        "session-219",
+        "session-221",
+        "session-232",
+        "session-236",
+        "session-238",
+        "session-244",
+        "session-245",
+        "session-249",
+        "session-250",
+        "session-252",
+        "session-253",
+        "session-255",
+        "session-256",
+        "session-258",
+        "session-260",
+        "session-261",
+        "session-264",
+        "session-265",
+        "session-266",
+        "session-267",
+        "session-268",
+        "session-269",
+        "session-271",
+        "session-273",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284",
+        "session-288",
+        "session-289",
+        "session-297",
+        "session-299",
+        "session-300",
+        "session-301",
+        "session-302",
+        "session-303",
+        "session-306",
+        "session-307",
+        "session-308",
+        "session-309",
+        "session-310",
+        "session-312",
+        "session-313",
+        "session-316",
+        "session-318",
+        "session-319",
+        "session-320",
+        "session-321",
+        "session-324",
+        "session-326",
+        "session-327",
+        "session-328",
+        "session-329",
+        "session-330",
+        "session-332",
+        "session-333",
+        "session-334",
+        "session-335",
+        "session-336",
+        "session-337",
+        "session-338",
+        "session-339",
+        "session-340",
+        "session-341",
+        "session-342",
+        "session-343",
+        "session-344",
+        "session-345",
+        "session-346",
+        "session-347",
+        "session-348"
+      ]
+    },
+    "quorum_block": {
+      "total": 8249,
+      "sessions": [
+        "session-001",
+        "session-002",
+        "session-003",
+        "session-005",
+        "session-006",
+        "session-008",
+        "session-010",
+        "session-011",
+        "session-012",
+        "session-013",
+        "session-015",
+        "session-016",
+        "session-018",
+        "session-021",
+        "session-022",
+        "session-023",
+        "session-024",
+        "session-026",
+        "session-028",
+        "session-030",
+        "session-031",
+        "session-033",
+        "session-035",
+        "session-037",
+        "session-040",
+        "session-041",
+        "session-044",
+        "session-045",
+        "session-046",
+        "session-053",
+        "session-054",
+        "session-056",
+        "session-058",
+        "session-059",
+        "session-061",
+        "session-063",
+        "session-064",
+        "session-066",
+        "session-067",
+        "session-068",
+        "session-069",
+        "session-071",
+        "session-072",
+        "session-074",
+        "session-075",
+        "session-076",
+        "session-078",
+        "session-079",
+        "session-081",
+        "session-082",
+        "session-084",
+        "session-085",
+        "session-087",
+        "session-088",
+        "session-092",
+        "session-094",
+        "session-098",
+        "session-100",
+        "session-106",
+        "session-108",
+        "session-109",
+        "session-110",
+        "session-112",
+        "session-113",
+        "session-115",
+        "session-116",
+        "session-117",
+        "session-118",
+        "session-119",
+        "session-122",
+        "session-150",
+        "session-155",
+        "session-156",
+        "session-182",
+        "session-192",
+        "session-197",
+        "session-198",
+        "session-199",
+        "session-203",
+        "session-204",
+        "session-205",
+        "session-206",
+        "session-207",
+        "session-208",
+        "session-209",
+        "session-210",
+        "session-219",
+        "session-221",
+        "session-232",
+        "session-236",
+        "session-238",
+        "session-240",
+        "session-244",
+        "session-245",
+        "session-249",
+        "session-250",
+        "session-252",
+        "session-253",
+        "session-255",
+        "session-256",
+        "session-258",
+        "session-260",
+        "session-261",
+        "session-264",
+        "session-265",
+        "session-266",
+        "session-267",
+        "session-268",
+        "session-269",
+        "session-271",
+        "session-273",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284",
+        "session-288",
+        "session-289",
+        "session-297",
+        "session-299",
+        "session-300",
+        "session-301",
+        "session-302",
+        "session-303",
+        "session-306",
+        "session-307",
+        "session-308",
+        "session-309",
+        "session-310",
+        "session-312",
+        "session-313",
+        "session-316",
+        "session-318",
+        "session-319",
+        "session-320",
+        "session-321",
+        "session-324",
+        "session-326",
+        "session-327",
+        "session-328",
+        "session-329",
+        "session-330",
+        "session-331",
+        "session-332",
+        "session-333",
+        "session-334",
+        "session-335",
+        "session-336",
+        "session-337",
+        "session-338",
+        "session-339",
+        "session-340",
+        "session-341",
+        "session-342",
+        "session-343",
+        "session-344",
+        "session-345",
+        "session-346",
+        "session-347",
+        "session-348",
+        "session-349"
+      ]
+    },
+    "quorum_complete": {
+      "total": 2310,
+      "sessions": [
+        "session-001",
+        "session-002",
+        "session-003",
+        "session-005",
+        "session-006",
+        "session-008",
+        "session-010",
+        "session-011",
+        "session-012",
+        "session-013",
+        "session-015",
+        "session-016",
+        "session-018",
+        "session-021",
+        "session-022",
+        "session-023",
+        "session-024",
+        "session-026",
+        "session-028",
+        "session-030",
+        "session-031",
+        "session-033",
+        "session-035",
+        "session-037",
+        "session-040",
+        "session-041",
+        "session-044",
+        "session-045",
+        "session-046",
+        "session-053",
+        "session-054",
+        "session-056",
+        "session-058",
+        "session-059",
+        "session-061",
+        "session-063",
+        "session-064",
+        "session-066",
+        "session-067",
+        "session-068",
+        "session-069",
+        "session-071",
+        "session-072",
+        "session-074",
+        "session-075",
+        "session-076",
+        "session-078",
+        "session-079",
+        "session-081",
+        "session-082",
+        "session-084",
+        "session-085",
+        "session-087",
+        "session-088",
+        "session-092",
+        "session-094",
+        "session-098",
+        "session-100",
+        "session-106",
+        "session-108",
+        "session-109",
+        "session-110",
+        "session-112",
+        "session-113",
+        "session-115",
+        "session-116",
+        "session-117",
+        "session-118",
+        "session-119",
+        "session-122",
+        "session-150",
+        "session-155",
+        "session-156",
+        "session-182",
+        "session-192",
+        "session-197",
+        "session-198",
+        "session-199",
+        "session-203",
+        "session-204",
+        "session-205",
+        "session-206",
+        "session-207",
+        "session-208",
+        "session-209",
+        "session-210",
+        "session-219",
+        "session-221",
+        "session-232",
+        "session-236",
+        "session-238",
+        "session-240",
+        "session-244",
+        "session-245",
+        "session-249",
+        "session-250",
+        "session-252",
+        "session-253",
+        "session-255",
+        "session-256",
+        "session-258",
+        "session-260",
+        "session-261",
+        "session-264",
+        "session-265",
+        "session-266",
+        "session-267",
+        "session-268",
+        "session-269",
+        "session-271",
+        "session-273",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284",
+        "session-288",
+        "session-289",
+        "session-297",
+        "session-299",
+        "session-300",
+        "session-301",
+        "session-302",
+        "session-303",
+        "session-306",
+        "session-307",
+        "session-308",
+        "session-309",
+        "session-310",
+        "session-312",
+        "session-313",
+        "session-316",
+        "session-318",
+        "session-319",
+        "session-320",
+        "session-321",
+        "session-324",
+        "session-326",
+        "session-327",
+        "session-328",
+        "session-329",
+        "session-330",
+        "session-331",
+        "session-332",
+        "session-333",
+        "session-334",
+        "session-335",
+        "session-336",
+        "session-337",
+        "session-338",
+        "session-339",
+        "session-340",
+        "session-341",
+        "session-342",
+        "session-343",
+        "session-344",
+        "session-345",
+        "session-346",
+        "session-347",
+        "session-348",
+        "session-349"
+      ]
+    },
+    "undefined": {
+      "total": 5649,
+      "sessions": [
+        "session-076",
+        "session-077",
+        "session-078",
+        "session-079",
+        "session-080",
+        "session-081",
+        "session-082",
+        "session-083",
+        "session-084",
+        "session-085",
+        "session-086",
+        "session-087",
+        "session-088",
+        "session-089",
+        "session-090",
+        "session-091",
+        "session-092",
+        "session-093",
+        "session-094",
+        "session-095",
+        "session-096",
+        "session-097",
+        "session-098",
+        "session-099",
+        "session-100",
+        "session-101",
+        "session-102",
+        "session-103",
+        "session-104",
+        "session-105",
+        "session-106",
+        "session-107",
+        "session-108",
+        "session-109",
+        "session-110",
+        "session-111",
+        "session-112",
+        "session-113",
+        "session-114",
+        "session-115",
+        "session-116",
+        "session-117",
+        "session-118",
+        "session-119",
+        "session-120",
+        "session-121",
+        "session-122",
+        "session-123",
+        "session-124",
+        "session-125",
+        "session-126",
+        "session-127",
+        "session-128",
+        "session-129",
+        "session-130",
+        "session-131",
+        "session-132",
+        "session-133",
+        "session-134",
+        "session-135",
+        "session-136",
+        "session-137",
+        "session-138",
+        "session-139",
+        "session-140",
+        "session-141",
+        "session-142",
+        "session-143",
+        "session-144",
+        "session-145",
+        "session-146",
+        "session-147",
+        "session-148",
+        "session-149",
+        "session-150",
+        "session-151",
+        "session-152",
+        "session-153",
+        "session-154",
+        "session-155",
+        "session-156",
+        "session-157",
+        "session-158",
+        "session-159",
+        "session-160",
+        "session-161",
+        "session-162",
+        "session-163",
+        "session-164",
+        "session-165",
+        "session-166",
+        "session-167",
+        "session-168",
+        "session-169",
+        "session-170",
+        "session-171",
+        "session-172",
+        "session-173",
+        "session-174",
+        "session-175",
+        "session-176",
+        "session-177",
+        "session-178",
+        "session-179",
+        "session-180",
+        "session-181",
+        "session-182",
+        "session-183",
+        "session-184",
+        "session-185",
+        "session-186",
+        "session-187",
+        "session-188",
+        "session-189",
+        "session-190",
+        "session-191",
+        "session-192",
+        "session-193",
+        "session-194",
+        "session-195",
+        "session-196",
+        "session-197",
+        "session-198",
+        "session-199",
+        "session-200",
+        "session-201",
+        "session-202",
+        "session-203",
+        "session-204",
+        "session-205",
+        "session-206",
+        "session-207",
+        "session-208",
+        "session-209",
+        "session-210",
+        "session-211",
+        "session-212",
+        "session-213",
+        "session-214",
+        "session-215",
+        "session-216",
+        "session-217",
+        "session-218",
+        "session-219",
+        "session-220",
+        "session-221",
+        "session-222",
+        "session-223",
+        "session-224",
+        "session-225",
+        "session-226",
+        "session-227",
+        "session-228",
+        "session-229",
+        "session-230",
+        "session-231",
+        "session-232",
+        "session-233",
+        "session-234",
+        "session-235",
+        "session-236",
+        "session-237",
+        "session-238",
+        "session-239",
+        "session-240",
+        "session-241",
+        "session-242",
+        "session-243",
+        "session-244",
+        "session-245",
+        "session-246",
+        "session-247",
+        "session-248",
+        "session-249",
+        "session-250",
+        "session-251",
+        "session-252",
+        "session-253",
+        "session-254",
+        "session-255",
+        "session-256",
+        "session-257",
+        "session-258",
+        "session-259",
+        "session-260",
+        "session-261",
+        "session-262",
+        "session-263",
+        "session-264",
+        "session-265",
+        "session-266",
+        "session-267",
+        "session-268",
+        "session-269",
+        "session-270",
+        "session-271",
+        "session-272",
+        "session-273",
+        "session-274",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-279",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284",
+        "session-285",
+        "session-286",
+        "session-287",
+        "session-288",
+        "session-289",
+        "session-290",
+        "session-291",
+        "session-292",
+        "session-293",
+        "session-294",
+        "session-295",
+        "session-296",
+        "session-297",
+        "session-298",
+        "session-299",
+        "session-300",
+        "session-301",
+        "session-302",
+        "session-303",
+        "session-304",
+        "session-305",
+        "session-306",
+        "session-307",
+        "session-308",
+        "session-309",
+        "session-310",
+        "session-311",
+        "session-312",
+        "session-313",
+        "session-314",
+        "session-315",
+        "session-316",
+        "session-317",
+        "session-318",
+        "session-319",
+        "session-320",
+        "session-321",
+        "session-322",
+        "session-323",
+        "session-324"
+      ]
+    },
+    "quorum_block_r3_2": {
+      "total": 720,
+      "sessions": [
+        "session-271",
+        "session-273",
+        "session-275",
+        "session-276",
+        "session-277",
+        "session-278",
+        "session-280",
+        "session-281",
+        "session-282",
+        "session-283",
+        "session-284"
+      ]
+    }
+  },
+  "transition_index": [],
+  "vocabulary_validation": {
+    "known": 6,
+    "unknown": 0,
+    "unknown_actions": []
+  },
+  "summary": "35790 events across 349 sessions (2026-02-24T23:35:59.711Z to 2026-03-06T12:56:51.448Z). 6 known actions, 0 unknown. 0 distinct transitions."
+}
