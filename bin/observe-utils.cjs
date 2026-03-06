@@ -34,4 +34,41 @@ function formatAge(isoDate) {
   return `${days}d`;
 }
 
-module.exports = { parseDuration, formatAge };
+// Severity labels recognized from GitHub labels (ordered by priority)
+const SEVERITY_LABELS = ['critical', 'error', 'bug', 'warning', 'enhancement', 'info'];
+
+/**
+ * Classify severity from GitHub labels
+ * @param {Array} labels - Array of label objects with 'name' field, or strings
+ * @returns {string} Severity string
+ */
+function classifySeverityFromLabels(labels) {
+  if (!Array.isArray(labels)) return 'info';
+  const labelNames = labels.map(l => (typeof l === 'string' ? l : l.name || '').toLowerCase());
+  for (const sev of SEVERITY_LABELS) {
+    if (labelNames.some(name => name.includes(sev))) {
+      return sev;
+    }
+  }
+  return 'info';
+}
+
+/**
+ * Format age from mtime (Date) to human-readable string
+ * Named distinctly from formatAge(isoString) to avoid confusion.
+ * @param {Date} mtime - File modification time
+ * @returns {string} Human-readable age like "5m", "2h", "3d"
+ */
+function formatAgeFromMtime(mtime) {
+  if (!mtime || !(mtime instanceof Date)) return 'unknown';
+  const diffMs = Date.now() - mtime.getTime();
+  if (diffMs < 0) return 'future';
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `${days}d`;
+}
+
+module.exports = { parseDuration, formatAge, classifySeverityFromLabels, formatAgeFromMtime, SEVERITY_LABELS };

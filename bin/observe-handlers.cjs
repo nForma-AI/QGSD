@@ -10,26 +10,7 @@
  */
 
 const { execFileSync } = require('node:child_process');
-const { parseDuration, formatAge } = require('./observe-utils.cjs');
-
-// Severity labels recognized from GitHub labels (ordered by priority)
-const SEVERITY_LABELS = ['critical', 'error', 'bug', 'warning', 'enhancement', 'info'];
-
-/**
- * Classify severity from GitHub labels
- * @param {Array} labels - Array of label objects with 'name' field, or strings
- * @returns {string} Severity string
- */
-function classifySeverityFromLabels(labels) {
-  if (!Array.isArray(labels)) return 'info';
-  const labelNames = labels.map(l => (typeof l === 'string' ? l : l.name || '').toLowerCase());
-  for (const sev of SEVERITY_LABELS) {
-    if (labelNames.some(name => name.includes(sev))) {
-      return sev;
-    }
-  }
-  return 'info';
-}
+const { parseDuration, formatAge, classifySeverityFromLabels } = require('./observe-utils.cjs');
 
 /**
  * Detect repo from git remote

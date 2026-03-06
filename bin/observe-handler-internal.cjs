@@ -12,24 +12,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
-
-/**
- * Format age from mtime (Date) to human-readable string
- * Named distinctly from observe-handlers.cjs formatAge(isoString) to avoid confusion.
- * @param {Date} mtime - File modification time
- * @returns {string} Human-readable age like "5m", "2h", "3d"
- */
-function formatAgeFromMtime(mtime) {
-  if (!mtime || !(mtime instanceof Date)) return 'unknown';
-  const diffMs = Date.now() - mtime.getTime();
-  if (diffMs < 0) return 'future';
-  const minutes = Math.floor(diffMs / 60000);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
-}
+const { formatAgeFromMtime } = require('./observe-utils.cjs');
 
 /**
  * Internal work detection handler
@@ -298,4 +281,4 @@ function handleInternal(sourceConfig, options) {
   }
 }
 
-module.exports = { handleInternal, formatAgeFromMtime };
+module.exports = { handleInternal };
