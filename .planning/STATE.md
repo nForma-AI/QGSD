@@ -35,6 +35,7 @@ Progress: [######----] 67%
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase v0.29-02 P01 | 8min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -56,6 +57,7 @@ Recent decisions affecting current work:
 - [v0.29-02-02]: Timestamp-based session windowing (2s gap) for per-session replay since events lack session_id
 - [v0.29-02-02]: All 10 divergences.json entries are genuine IDLE-phase circuit_break disagreements, classified as open
 - [Phase v0.28-01]: Cleanup subagent is non-blocking -- failure never prevents phase completion
+- [Phase v0.29-02]: Observed invariant checks 1-3 fail on real data; added checks 4-5 (complete_requires_block, action_count_consistency) that hold across all 349 sessions
 
 ### Pending Todos
 
@@ -76,5 +78,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-02-02 (Mismatch Register + Observed FSM, 21 tests)
+Stopped at: Completed v0.29-02-01 (Invariant Catalog + Assumption Register, 26 tests)
 Resume file: None

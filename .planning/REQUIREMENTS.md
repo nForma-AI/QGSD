@@ -40,9 +40,9 @@
 - [ ] **EVID-05**: Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers
 
 ### Semantics (Layer 2)
-- [ ] **SEM-01**: Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog
+- [x] **SEM-01**: Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog
 - [x] **SEM-02**: Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status
-- [ ] **SEM-03**: Assumption register catalogs assumptions made when deriving L2 from L1 with validation status and linked L2 states
+- [x] **SEM-03**: Assumption register catalogs assumptions made when deriving L2 from L1 with validation status and linked L2 states
 - [x] **SEM-04**: Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models
 
 ### Reasoning (Layer 3)
@@ -92,9 +92,9 @@
 | EVID-03 | v0.29-01 | Pending |
 | EVID-04 | v0.29-01 | Pending |
 | EVID-05 | v0.29-01 | Pending |
-| SEM-01 | v0.29-02 | Pending |
+| SEM-01 | v0.29-02 | Complete |
 | SEM-02 | v0.29-02 | Complete |
-| SEM-03 | v0.29-02 | Pending |
+| SEM-03 | v0.29-02 | Complete |
 | SEM-04 | v0.29-02 | Complete |
 | RSN-01 | v0.29-03 | Pending |
 | RSN-02 | v0.29-03 | Pending |
