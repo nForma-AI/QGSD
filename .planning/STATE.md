@@ -2,10 +2,10 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-06)
+See: .planning/PROJECT.md (updated 2026-03-06 after v0.29)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Planning next milestone
+**Current focus:** Milestone v0.29 archived. Use `/nf:new-milestone` to start next.
 
 ## Current Position
 
@@ -20,8 +20,8 @@ Progress: Milestone complete
 
 ### Decisions
 
-Decisions are logged in PROJECT.md Key Decisions table.
-No active decisions — milestone boundary.
+Decisions logged in PROJECT.md Key Decisions table.
+v0.29 milestone archived — clean boundary.
 
 ### Pending Todos
 
