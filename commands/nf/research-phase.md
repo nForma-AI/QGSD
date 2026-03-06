@@ -1,5 +1,5 @@
 ---
-name: qgsd:research-phase
+name: nf:research-phase
 description: Research how to implement a phase (standalone - usually use /nf:plan-phase instead)
 argument-hint: "[phase]"
 allowed-tools:
@@ -9,7 +9,7 @@ allowed-tools:
 ---
 
 <objective>
-Research how to implement a phase. Spawns qgsd-phase-researcher agent with phase context.
+Research how to implement a phase. Spawns nf-phase-researcher agent with phase context.
 
 **Note:** This is a standalone research command. For most workflows, use `/nf:plan-phase` which integrates research automatically.
 
@@ -34,20 +34,20 @@ Normalize phase input in step 1 before any directory lookups.
 ## 0. Initialize Context
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init phase-op "$ARGUMENTS")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "$ARGUMENTS")
 ```
 
 Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `phase_found`, `commit_docs`, `has_research`, `state_path`, `requirements_path`, `context_path`, `research_path`.
 
 Resolve researcher model:
 ```bash
-RESEARCHER_MODEL=$(node ~/.claude/qgsd/bin/gsd-tools.cjs resolve-model qgsd-phase-researcher --raw)
+RESEARCHER_MODEL=$(node ~/.claude/nf/bin/gsd-tools.cjs resolve-model nf-phase-researcher --raw)
 ```
 
 ## 1. Validate Phase
 
 ```bash
-PHASE_INFO=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${phase_number}")
+PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${phase_number}")
 ```
 
 **If `found` is false:** Error and exit. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -71,7 +71,7 @@ Use paths from INIT (do not inline file contents in orchestrator context):
 
 Present summary with phase description and what files the researcher will load.
 
-## 4. Spawn qgsd-phase-researcher Agent
+## 4. Spawn nf-phase-researcher Agent
 
 Research modes: ecosystem (default), feasibility, implementation, comparison.
 
@@ -135,7 +135,7 @@ Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-phase-researcher.md for your role and instructions.\n\n" + filled_prompt,
+  prompt="First, read ~/.claude/agents/nf-phase-researcher.md for your role and instructions.\n\n" + filled_prompt,
   subagent_type="general-purpose",
   model="{researcher_model}",
   description="Research Phase {phase}"
@@ -171,7 +171,7 @@ Continue research for Phase {phase_number}: {phase_name}
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-phase-researcher.md for your role and instructions.\n\n" + continuation_prompt,
+  prompt="First, read ~/.claude/agents/nf-phase-researcher.md for your role and instructions.\n\n" + continuation_prompt,
   subagent_type="general-purpose",
   model="{researcher_model}",
   description="Continue research Phase {phase}"
@@ -183,7 +183,7 @@ Task(
 <success_criteria>
 - [ ] Phase validated against roadmap
 - [ ] Existing research checked
-- [ ] qgsd-phase-researcher spawned with context
+- [ ] nf-phase-researcher spawned with context
 - [ ] Checkpoints handled correctly
 - [ ] User knows next steps
 </success_criteria>

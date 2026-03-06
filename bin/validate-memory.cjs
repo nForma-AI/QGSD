@@ -4,7 +4,7 @@
 /**
  * validate-memory.cjs
  *
- * Memory staleness checker for QGSD auto-memory (MEMORY.md).
+ * Memory staleness checker for nForma auto-memory (MEMORY.md).
  *
  * Checks:
  *   1. Stale counts — numbers referencing requirements.json count vs actual
@@ -147,7 +147,7 @@ function checkDeadFileRefs(memoryContent, cwd) {
 
       // Skip URLs, patterns, and common non-path references
       if (ref.includes('://') || ref.includes('*') || ref.includes('{')) continue;
-      // Skip package names like qgsd@0.2.0
+      // Skip package names like nforma@0.2.0
       if (ref.includes('@')) continue;
       // Skip references that start with ~ (home dir)
       if (ref.startsWith('~')) {

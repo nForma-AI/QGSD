@@ -1,6 +1,6 @@
 # Phase Prompt Template
 
-> **Note:** Planning methodology is in `agents/qgsd-planner.md`.
+> **Note:** Planning methodology is in `agents/nf-planner.md`.
 > This template defines the PLAN.md output format that the agent produces.
 
 Template for `.planning/phases/XX-name/{phase}-{plan}-PLAN.md` - executable phase plans optimized for parallel execution.
@@ -38,10 +38,10 @@ Output: [What artifacts will be created]
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/execute-plan.md
-@~/.claude/qgsd/templates/summary.md
+@~/.claude/nf/workflows/execute-plan.md
+@~/.claude/nf/templates/summary.md
 [If plan contains checkpoint tasks (type="checkpoint:*"), add:]
-@~/.claude/qgsd/references/checkpoints.md
+@~/.claude/nf/references/checkpoints.md
 </execution_context>
 
 <context>
@@ -76,7 +76,7 @@ Output: [What artifacts will be created]
   <done>[Acceptance criteria]</done>
 </task>
 
-<!-- For checkpoint task examples and patterns, see @~/.claude/qgsd/references/checkpoints.md -->
+<!-- For checkpoint task examples and patterns, see @~/.claude/nf/references/checkpoints.md -->
 <!-- Key rule: Claude starts dev server BEFORE human-verify checkpoints. User only visits URLs. -->
 
 <task type="checkpoint:decision" gate="blocking">
@@ -270,7 +270,7 @@ TDD features get dedicated plans with `type: tdd`.
 → Yes: Create a TDD plan
 → No: Standard task in standard plan
 
-See `~/.claude/qgsd/references/tdd.md` for TDD plan structure.
+See `~/.claude/nf/references/tdd.md` for TDD plan structure.
 
 ---
 
@@ -374,9 +374,9 @@ Output: Working dashboard component.
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/execute-plan.md
-@~/.claude/qgsd/templates/summary.md
-@~/.claude/qgsd/references/checkpoints.md
+@~/.claude/nf/workflows/execute-plan.md
+@~/.claude/nf/templates/summary.md
+@~/.claude/nf/references/checkpoints.md
 </execution_context>
 
 <context>
@@ -499,7 +499,7 @@ user_setup:
 
 **Result:** Execute-plan generates `{phase}-USER-SETUP.md` with checklist for the user.
 
-See `~/.claude/qgsd/templates/user-setup.md` for full schema and examples
+See `~/.claude/nf/templates/user-setup.md` for full schema and examples
 
 ---
 
@@ -566,4 +566,4 @@ Task completion ≠ Goal achievement. A task "create chat component" can complet
 5. Gaps found → fix plans created → execute → re-verify
 6. All must_haves pass → phase complete
 
-See `~/.claude/qgsd/workflows/verify-phase.md` for verification logic.
+See `~/.claude/nf/workflows/verify-phase.md` for verification logic.

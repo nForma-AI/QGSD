@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ---------------------------------------------------------------------------
-// Forbidden SDK list — LLM SDKs that QGSD must not bundle (ARCH-10)
+// Forbidden SDK list — LLM SDKs that nForma must not bundle (ARCH-10)
 // ---------------------------------------------------------------------------
 
 const FORBIDDEN_SDKS = [

@@ -332,13 +332,13 @@ describe('crossReference', () => {
 // ── Gap report tests ────────────────────────────────────────────────────────
 
 describe('generateGapReport', () => {
-  it('generates metric_name with qgsd_ prefix', () => {
+  it('generates metric_name with nf_ prefix', () => {
     const input = [
       { source: 'tla', file: 'test.tla', name: 'MaxRetries', type: 'assume', value: 3, coverage: 'uncovered', matchSource: null }
     ];
     const report = generateGapReport(input);
-    assert.ok(report.gaps[0].metric_name.startsWith('qgsd_'), 'Metric name should start with qgsd_');
-    assert.strictEqual(report.gaps[0].metric_name, 'qgsd_maxretries');
+    assert.ok(report.gaps[0].metric_name.startsWith('nf_'), 'Metric name should start with nf_');
+    assert.strictEqual(report.gaps[0].metric_name, 'nf_maxretries');
   });
 
   it('generates correct metric_type for different assumption types', () => {
@@ -360,8 +360,8 @@ describe('generateGapReport', () => {
     ];
     const report = generateGapReport(input);
     const names = report.gaps.map(g => g.metric_name);
-    assert.ok(names.includes('qgsd_maxsize__tla'), `Expected qgsd_maxsize__tla, got ${names}`);
-    assert.ok(names.includes('qgsd_maxsize__alloy'), `Expected qgsd_maxsize__alloy, got ${names}`);
+    assert.ok(names.includes('nf_maxsize__tla'), `Expected nf_maxsize__tla, got ${names}`);
+    assert.ok(names.includes('nf_maxsize__alloy'), `Expected nf_maxsize__alloy, got ${names}`);
   });
 
   it('generates instrumentation_snippet for each gap', () => {
@@ -419,13 +419,13 @@ describe('formatMarkdownReport', () => {
     const report = {
       total_assumptions: 5, covered: 2, partial: 1, uncovered: 2,
       gaps: [
-        { source: 'tla', name: 'X', type: 'assume', coverage: 'uncovered', metric_name: 'qgsd_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
+        { source: 'tla', name: 'X', type: 'assume', coverage: 'uncovered', metric_name: 'nf_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
       ]
     };
     const md = formatMarkdownReport(report);
     assert.ok(md.includes('# Assumption-to-Instrumentation Gap Report'), 'Should have title');
     assert.ok(md.includes('Total assumptions'), 'Should have summary');
-    assert.ok(md.includes('qgsd_x'), 'Should include metric name');
+    assert.ok(md.includes('nf_x'), 'Should include metric name');
   });
 
   it('generates empty-gaps message when all covered', () => {
@@ -530,7 +530,7 @@ describe('generateSnippet defensive default', () => {
     // Generate gap report (will assign tier), then manually create a gap without tier
     const gapWithoutTier = {
       source: 'tla', file: 'test.tla', name: 'UntypedGap', type: 'constant', value: 5,
-      coverage: 'uncovered', matchSource: null, metric_name: 'qgsd_untypedgap', metric_type: 'gauge'
+      coverage: 'uncovered', matchSource: null, metric_name: 'nf_untypedgap', metric_type: 'gauge'
       // tier intentionally omitted
     };
     // Call generateGapReport on a single entry to get access to generateSnippet behavior
@@ -557,7 +557,7 @@ describe('generateSnippet defensive default', () => {
       total_assumptions: 1, covered: 0, partial: 0, uncovered: 1,
       gaps: [{
         source: 'tla', file: 'test.tla', name: 'NoTier', type: 'constant', value: 5,
-        coverage: 'uncovered', matchSource: null, metric_name: 'qgsd_notier', metric_type: 'gauge',
+        coverage: 'uncovered', matchSource: null, metric_name: 'nf_notier', metric_type: 'gauge',
         // tier: undefined  -- deliberately omitted
         instrumentation_snippet: '// observe handler format without Gauge'
       }]
@@ -702,7 +702,7 @@ describe('formatMarkdownReport tier column', () => {
     const report = {
       total_assumptions: 1, covered: 0, partial: 0, uncovered: 1,
       gaps: [
-        { source: 'tla', name: 'X', type: 'constant', tier: 1, coverage: 'uncovered', metric_name: 'qgsd_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
+        { source: 'tla', name: 'X', type: 'constant', tier: 1, coverage: 'uncovered', metric_name: 'nf_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
       ]
     };
     const md = formatMarkdownReport(report);
@@ -713,7 +713,7 @@ describe('formatMarkdownReport tier column', () => {
     const report = {
       total_assumptions: 1, covered: 0, partial: 0, uncovered: 1,
       gaps: [
-        { source: 'tla', name: 'X', type: 'constant', tier: 1, coverage: 'uncovered', metric_name: 'qgsd_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
+        { source: 'tla', name: 'X', type: 'constant', tier: 1, coverage: 'uncovered', metric_name: 'nf_x', metric_type: 'gauge', instrumentation_snippet: '// snippet' }
       ]
     };
     const md = formatMarkdownReport(report);

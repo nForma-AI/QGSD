@@ -19,7 +19,7 @@ const HOOK_PATH = path.join(__dirname, 'gsd-context-monitor.js');
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeTmpDir() {
-  const dir = path.join(os.tmpdir(), 'qgsd-cm-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  const dir = path.join(os.tmpdir(), 'nf-cm-' + Date.now() + '-' + Math.random().toString(36).slice(2));
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -39,10 +39,10 @@ function runHook(payload, cwd) {
   };
 }
 
-function writeQgsdConfig(dir, config) {
+function writeNfConfig(dir, config) {
   const claudeDir = path.join(dir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), JSON.stringify(config), 'utf8');
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), JSON.stringify(config), 'utf8');
 }
 
 // ─── Below-threshold tests ────────────────────────────────────────────────────
@@ -145,7 +145,7 @@ test('empty stdin: exits 0 (fail-open)', () => {
 
 test('custom warn_pct=50 in config: warns at 55% used', () => {
   const tmpDir = makeTmpDir();
-  writeQgsdConfig(tmpDir, { context_monitor: { warn_pct: 50, critical_pct: 90 } });
+  writeNfConfig(tmpDir, { context_monitor: { warn_pct: 50, critical_pct: 90 } });
 
   const { parsed } = runHook({
     context_window: { remaining_percentage: 45 }, // used = 55%
@@ -157,7 +157,7 @@ test('custom warn_pct=50 in config: warns at 55% used', () => {
 
 test('custom critical_pct=80 in config: CRITICAL at 85% used', () => {
   const tmpDir = makeTmpDir();
-  writeQgsdConfig(tmpDir, { context_monitor: { warn_pct: 70, critical_pct: 80 } });
+  writeNfConfig(tmpDir, { context_monitor: { warn_pct: 70, critical_pct: 80 } });
 
   const { parsed } = runHook({
     context_window: { remaining_percentage: 15 }, // used = 85%
@@ -168,7 +168,7 @@ test('custom critical_pct=80 in config: CRITICAL at 85% used', () => {
 
 test('custom thresholds: below custom warn_pct=80 → no output', () => {
   const tmpDir = makeTmpDir();
-  writeQgsdConfig(tmpDir, { context_monitor: { warn_pct: 80, critical_pct: 95 } });
+  writeNfConfig(tmpDir, { context_monitor: { warn_pct: 80, critical_pct: 95 } });
 
   const { stdout } = runHook({
     context_window: { remaining_percentage: 25 }, // used = 75%, below custom 80%

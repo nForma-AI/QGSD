@@ -11,7 +11,7 @@ const path = require('path');
 
 // Helper: write a temp NDJSON file and run validate-traces.cjs against it
 function runValidator(ndjsonLines) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-test-'));
   const planningDir = path.join(tmpDir, '.planning');
   fs.mkdirSync(planningDir, { recursive: true });
   if (ndjsonLines !== null) {
@@ -175,7 +175,7 @@ test('CONFIDENCE_THRESHOLDS.medium.min_rounds === 500 and high.min_rounds === 10
 });
 
 test('integration: divergence object contains confidence field for unmappable_action', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-vtrace-conf-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-vtrace-conf-test-'));
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
   const planningDir = path.join(tmpDir, '.planning');
   fs.mkdirSync(planningDir, { recursive: true });
@@ -242,7 +242,7 @@ test('validate-traces ignores MCP metadata fields for non-mcp_call actions', () 
 
 // Helper: run validator and keep tmpDir for NDJSON inspection
 function runValidatorKeepTmp(ndjsonLines) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-evid-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-evid-test-'));
   const planningDir = path.join(tmpDir, '.planning');
   const formalDir   = path.join(tmpDir, '.planning', 'formal');
   fs.mkdirSync(planningDir, { recursive: true });
@@ -331,7 +331,7 @@ test('observation_window.window_days is 0 without scoreboard', () => {
 });
 
 test('observation_window.window_days matches multi-day scoreboard span', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-evid-sb-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-evid-sb-test-'));
   const planningDir = path.join(tmpDir, '.planning');
   const formalDir   = path.join(tmpDir, '.planning', 'formal');
   fs.mkdirSync(planningDir, { recursive: true });

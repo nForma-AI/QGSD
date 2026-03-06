@@ -1,5 +1,5 @@
 ---
-name: qgsd:solve
+name: nf:solve
 description: Orchestrator skill that migrates legacy .formal/ layouts, diagnoses consistency gaps, dispatches to remediation skills for each gap type, and converges via diagnose-remediate-rediagnose loop with before/after comparison
 argument-hint: [--report-only] [--max-iterations=N] [--json] [--verbose]
 allowed-tools:
@@ -14,7 +14,7 @@ allowed-tools:
 ---
 
 <objective>
-Run the QGSD consistency solver as a full orchestrator. Sweeps 7 layer transitions (R->F, F->T, C->F, T->C, F->C, R->D, D->C), computes a residual vector showing gaps at each boundary, and automatically dispatches to the correct remediation skill/script for each gap type. Re-diagnoses after each remediation round and iterates until convergence or max iterations reached. Returns before/after residual comparison.
+Run the nForma consistency solver as a full orchestrator. Sweeps 7 layer transitions (R->F, F->T, C->F, T->C, F->C, R->D, D->C), computes a residual vector showing gaps at each boundary, and automatically dispatches to the correct remediation skill/script for each gap type. Re-diagnoses after each remediation round and iterates until convergence or max iterations reached. Returns before/after residual comparison.
 </objective>
 
 <execution_context>
@@ -23,10 +23,10 @@ any questions. Do NOT stop for human input. If a sub-skill fails, log the
 failure and continue to the next gap. The only valid reason to stop is:
 all iterations exhausted, or total residual is zero.
 
-This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/qgsd-solve.cjs) and orchestrates higher-level remediation via sub-skills and scripts. No external quorum dispatch is needed — quorum enforcement, if required, is the responsibility of the sub-skills being called.
+This is a self-contained orchestrator skill. It runs the diagnostic engine (bin/nf-solve.cjs) and orchestrates higher-level remediation via sub-skills and scripts. No external quorum dispatch is needed — quorum enforcement, if required, is the responsibility of the sub-skills being called.
 
 BULK REMEDIATION: For F->T and R->D gaps, the solve skill writes PLAN.md files
-directly and dispatches qgsd-executor agents — it does NOT invoke
+directly and dispatches nf-executor agents — it does NOT invoke
 /nf:quick for bulk remediation. This avoids per-batch quorum overhead while
 maintaining quality through the convergence loop's before/after verification.
 The solve skill IS the planner for these mechanical remediation tasks.
@@ -46,10 +46,10 @@ Before running the diagnostic sweep, check for a legacy `.formal/` directory at 
 Run the migration script using absolute paths (or fall back to CWD-relative):
 
 ```bash
-MIGRATE=$(node ~/.claude/qgsd-bin/migrate-formal-dir.cjs --json --project-root=$(pwd) 2>&1)
+MIGRATE=$(node ~/.claude/nf-bin/migrate-formal-dir.cjs --json --project-root=$(pwd) 2>&1)
 ```
 
-If `~/.claude/qgsd-bin/migrate-formal-dir.cjs` does not exist, fall back to `bin/migrate-formal-dir.cjs` (CWD-relative).
+If `~/.claude/nf-bin/migrate-formal-dir.cjs` does not exist, fall back to `bin/migrate-formal-dir.cjs` (CWD-relative).
 If neither exists, skip this step silently — the migration script is optional for projects that never had a legacy layout.
 
 Parse the JSON output:
@@ -63,11 +63,11 @@ Parse the JSON output:
 Run the diagnostic solver using absolute paths (or fall back to CWD-relative):
 
 ```bash
-BASELINE=$(node ~/.claude/qgsd-bin/qgsd-solve.cjs --json --report-only --project-root=$(pwd))
+BASELINE=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd))
 ```
 
-If ~/.claude/qgsd-bin/qgsd-solve.cjs does not exist, fall back to bin/qgsd-solve.cjs (CWD-relative).
-If neither exists, error with: "QGSD solve scripts not installed. Run `node bin/install.js --claude --global` from the QGSD repo."
+If ~/.claude/nf-bin/nf-solve.cjs does not exist, fall back to bin/nf-solve.cjs (CWD-relative).
+If neither exists, error with: "nForma solve scripts not installed. Run `node bin/install.js --claude --global` from the nForma repo."
 
 Parse the JSON output to extract the `residual_vector` object. Key fields:
 - `residual_vector.r_to_f.residual` — count of requirements lacking formal coverage
@@ -142,10 +142,10 @@ Find tool JARs at: `.planning/formal/tla/tla2tools.jar` (or `~/.claude/.planning
 
 **Phase 1 — Generate stubs:** Run the formal-test-sync script to generate test stubs and update traceability sidecars:
 ```bash
-node ~/.claude/qgsd-bin/formal-test-sync.cjs --project-root=$(pwd)
+node ~/.claude/nf-bin/formal-test-sync.cjs --project-root=$(pwd)
 ```
 
-If ~/.claude/qgsd-bin/formal-test-sync.cjs does not exist, fall back to bin/formal-test-sync.cjs (CWD-relative).
+If ~/.claude/nf-bin/formal-test-sync.cjs does not exist, fall back to bin/formal-test-sync.cjs (CWD-relative).
 
 Log: `"F->T phase 1: formal-test-sync generated {N} stubs"`
 
@@ -164,7 +164,7 @@ console.log('[solve] Recipes: ' + recipes.length + ' total, ' + incomplete.lengt
 ```
 Incomplete recipes (missing source_files or definition) produce lower-quality tests but do NOT block dispatch.
 
-**Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `qgsd-executor` agents directly to implement real test logic — it does NOT use `/nf:quick` for bulk stub implementation.
+**Phase 2 — Implement stubs via direct parallel executor dispatch:** Stubs alone do not close the gap — they contain `assert.fail('TODO')`. The solver dispatches `nf-executor` agents directly to implement real test logic — it does NOT use `/nf:quick` for bulk stub implementation.
 
 1. **Load context:** Parse `.planning/formal/formal-test-sync-report.json` for each stub's `requirement_id`, `formal_properties[].model_file`, `formal_properties[].property`. Also verify recipe files exist at `.planning/formal/generated-stubs/{ID}.stub.recipe.json` — these contain pre-resolved context (requirement text, property definition, source files, import hints, test strategy).
 
@@ -229,9 +229,9 @@ Incomplete recipes (missing source_files or definition) produce lower-quality te
 
 4. **Spawn executors in sequential waves of 3** — To avoid OOM on developer machines (each executor consumes ~1GB RAM), dispatch at most 3 parallel executors at a time. Wait for each wave to finish before starting the next:
    ```
-   Wave 1: Task(subagent_type="qgsd-executor", description="F->T stubs batch 1"), batch 2, batch 3
+   Wave 1: Task(subagent_type="nf-executor", description="F->T stubs batch 1"), batch 2, batch 3
    [wait for all 3 to complete]
-   Wave 2: Task(subagent_type="qgsd-executor", description="F->T stubs batch 4"), batch 5, batch 6
+   Wave 2: Task(subagent_type="nf-executor", description="F->T stubs batch 4"), batch 5, batch 6
    [wait for all 3 to complete]
    ... continue until all batches dispatched
    ```
@@ -285,10 +285,10 @@ If the mismatch has `intentional_divergence: true`, skip it and log as intention
 
 First, run the formal verification using absolute paths to get fresh failure data:
 ```bash
-node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
+node ~/.claude/nf-bin/run-formal-verify.cjs --project-root=$(pwd)
 ```
 
-If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
+If ~/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
 Then parse `.planning/formal/check-results.ndjson` and classify each failure:
 
@@ -321,7 +321,7 @@ R->D: {N} requirement(s) undocumented in developer docs:
   ...
 ```
 
-Then auto-remediate by dispatching a single `qgsd-executor` agent directly — it does NOT use `/nf:quick` for bulk doc generation.
+Then auto-remediate by dispatching a single `nf-executor` agent directly — it does NOT use `/nf:quick` for bulk doc generation.
 
 1. Read `.planning/formal/requirements.json` to get the text/description for each undocumented requirement ID.
 2. For each undocumented ID, identify the most relevant source file(s) by grepping the codebase for the requirement ID and its key terms (use Grep tool).
@@ -342,7 +342,7 @@ Then auto-remediate by dispatching a single `qgsd-executor` agent directly — i
 
 4. **Spawn ONE executor:**
    ```
-   Task(subagent_type="qgsd-executor", description="R->D: generate doc entries for {N} requirements")
+   Task(subagent_type="nf-executor", description="R->D: generate doc entries for {N} requirements")
    ```
    Wait for it to complete. If it fails, log the failure and continue.
 
@@ -426,10 +426,10 @@ Log: `"Reverse discovery: {N} candidates presented, {M} approved, {K} rejected, 
 
 After all remediations in Step 3 complete, run the diagnostic again using absolute paths:
 ```bash
-POST=$(node ~/.claude/qgsd-bin/qgsd-solve.cjs --json --report-only --project-root=$(pwd))
+POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd))
 ```
 
-If ~/.claude/qgsd-bin/qgsd-solve.cjs does not exist, fall back to bin/qgsd-solve.cjs (CWD-relative).
+If ~/.claude/nf-bin/nf-solve.cjs does not exist, fall back to bin/nf-solve.cjs (CWD-relative).
 
 Parse the result as `post_residual`.
 
@@ -504,10 +504,10 @@ Note: R->D gaps are auto-remediated by generating developer doc entries in docs/
 
 After the before/after table, run the full formal verification using absolute paths if not already run during Step 3e:
 ```bash
-node ~/.claude/qgsd-bin/run-formal-verify.cjs --project-root=$(pwd)
+node ~/.claude/nf-bin/run-formal-verify.cjs --project-root=$(pwd)
 ```
 
-If ~/.claude/qgsd-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
+If ~/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
 Parse `.planning/formal/check-results.ndjson` and display **every check** grouped by result:
 
@@ -543,7 +543,7 @@ This table is mandatory even when the solver layer residuals are all zero — be
 
 ## Important Constraints
 
-1. **bin/qgsd-solve.cjs is NOT modified** — it remains the diagnostic engine. This skill orchestrates remediation at the skill/script level.
+1. **bin/nf-solve.cjs is NOT modified** — it remains the diagnostic engine. This skill orchestrates remediation at the skill/script level.
 
 2. **Convergence loop is at skill level** — when the skill calls diagnostic again in Step 4, it uses `--json --report-only` to get fresh data. The skill then decides whether to loop back to Step 3 or exit. The script's internal auto-close loop is bypassed.
 

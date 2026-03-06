@@ -2,11 +2,11 @@
 'use strict';
 
 /**
- * account-manager.cjs — OAuth account pool manager for QGSD providers
+ * account-manager.cjs — OAuth account pool manager for nForma providers
  *
  * Manages multiple OAuth credentials for providers with oauth_rotation config.
  * The implementation is a state machine that directly mirrors
- * .planning/formal/tla/QGSDAccountManager.tla — each TLA+ action is one FSM event.
+ * .planning/formal/tla/NFAccountManager.tla — each TLA+ action is one FSM event.
  *
  * Usage:
  *   node bin/account-manager.cjs add --login [--name alias] [--provider gemini-1]
@@ -19,7 +19,7 @@
  * Credential layout (configurable via oauth_rotation in providers.json):
  *   active_file  — ~/.gemini/oauth_creds.json  (the live credential Gemini CLI reads)
  *   creds_dir    — ~/.gemini/accounts/          (pool: one .json per account)
- *   active_ptr   — ~/.gemini/accounts/.qgsd-active  (sidecar: name of active account)
+ *   active_ptr   — ~/.gemini/accounts/.nf-active  (sidecar: name of active account)
  */
 
 const fs     = require('fs');
@@ -27,7 +27,7 @@ const path   = require('path');
 const os     = require('os');
 const { spawn } = require('child_process');
 
-// ─── FSM states and events (mirrors QGSDAccountManager.tla) ──────────────────
+// ─── FSM states and events (mirrors NFAccountManager.tla) ──────────────────
 
 const S = Object.freeze({
   IDLE:      'IDLE',
@@ -53,7 +53,7 @@ const E = Object.freeze({
   RESET:         'RESET',
 });
 
-// Transition table derived from QGSDAccountManager.tla Next relation.
+// Transition table derived from NFAccountManager.tla Next relation.
 // TRANSITIONS[currentState][event] = nextState
 const TRANSITIONS = {
   [S.IDLE]: {
@@ -115,7 +115,7 @@ function expandHome(p) {
 function findProviders() {
   const search = [
     path.join(__dirname, 'providers.json'),
-    path.join(os.homedir(), '.claude', 'qgsd-bin', 'providers.json'),
+    path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),
   ];
   try {
     const cfg = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8'));
@@ -184,7 +184,7 @@ function getActiveFile(provider) {
 // Sidecar pointer file — stores just the account name of the current active.
 // Avoids content-diffing which breaks when tokens are silently refreshed.
 function getActivePtr(credsDir) {
-  return path.join(credsDir, '.qgsd-active');
+  return path.join(credsDir, '.nf-active');
 }
 
 function listPool(credsDir) {
@@ -402,7 +402,7 @@ const C = {
 
 
 function printAccountsHeader(provider, pool, active) {
-  const tag    = `QGSD · Accounts · ${provider.name}  ·  ${provider.display_provider ?? ''}`;
+  const tag    = `nForma · Accounts · ${provider.name}  ·  ${provider.display_provider ?? ''}`;
   const border = '─'.repeat(tag.length + 4);
   console.log('');
   console.log(`  ${C.cyan}╭${border}╮${C.reset}`);
@@ -657,11 +657,11 @@ function usage(prefix = 'node bin/account-manager.cjs') {
     '  --login             Spawn auth login inline; auto-detect email from id_token',
     '  --name <email>      Account name/email (overrides auto-detection)',
     '',
-    'Formal spec: .planning/formal/tla/QGSDAccountManager.tla',
+    'Formal spec: .planning/formal/tla/NFAccountManager.tla',
   ].join('\n'));
 }
 
-// ─── Exported entry point (called by qgsd.cjs) ─────────────────────────
+// ─── Exported entry point (called by nf.cjs) ─────────────────────────
 
 async function run(argv, usagePrefix) {
   const getArg  = (f) => { const i = argv.indexOf(f); return i !== -1 && argv[i + 1] ? argv[i + 1] : null; };

@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const TAG = '[qgsd-polyrepo]';
+const TAG = '[nf-polyrepo]';
 const POLYREPOS_DIR = path.join(os.homedir(), '.claude', 'polyrepos');
 const MARKER_FILE = 'polyrepo.json';
 

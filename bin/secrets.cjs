@@ -2,9 +2,9 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const SERVICE = 'qgsd';
+const SERVICE = 'nforma';
 
-const INDEX_PATH = path.join(os.homedir(), '.claude', 'qgsd-key-index.json');
+const INDEX_PATH = path.join(os.homedir(), '.claude', 'nf-key-index.json');
 
 // Read the key index (no keychain access needed — just a JSON file)
 function readIndex() {
@@ -84,7 +84,7 @@ async function syncToClaudeJson(service) {
   try {
     credentials = await list(service);
   } catch (e) {
-    process.stderr.write('[qgsd-secrets] keytar unavailable: ' + e.message + '\n');
+    process.stderr.write('[nf-secrets] keytar unavailable: ' + e.message + '\n');
     return;
   }
 
@@ -100,7 +100,7 @@ async function syncToClaudeJson(service) {
   try {
     raw = fs.readFileSync(claudeJsonPath, 'utf8');
   } catch (e) {
-    process.stderr.write('[qgsd-secrets] ~/.claude.json not found, skipping sync\n');
+    process.stderr.write('[nf-secrets] ~/.claude.json not found, skipping sync\n');
     return;
   }
 
@@ -108,7 +108,7 @@ async function syncToClaudeJson(service) {
   try {
     claudeJson = JSON.parse(raw);
   } catch (e) {
-    process.stderr.write('[qgsd-secrets] ~/.claude.json is invalid JSON, skipping sync\n');
+    process.stderr.write('[nf-secrets] ~/.claude.json is invalid JSON, skipping sync\n');
     return;
   }
 

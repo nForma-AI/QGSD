@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-stop-hook-tlc.cjs
-// Invokes TLC model checker for the QGSD Stop hook TLA+ specification.
+// Invokes TLC model checker for the nForma Stop hook TLA+ specification.
 // Requirements: SPEC-01
 //
 // Usage:
@@ -13,7 +13,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -118,7 +118,7 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Resolve spec and config paths ─────────────────────────────────────────
-const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDStopHook.tla');
+const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'NFStopHook.tla');
 const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
 
 // LivenessProperty1/2/3 requires -workers 1 (TLC multi-worker liveness bug in v1.8.0)

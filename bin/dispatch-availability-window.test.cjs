@@ -12,28 +12,28 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // ----- STRUCTURAL TESTS (RED until Plan 02 adds getAvailableSlots + health probe) -----
-// These tests read hooks/qgsd-prompt.js source (NOT installed ~/.claude/ copies).
+// These tests read hooks/nf-prompt.js source (NOT installed ~/.claude/ copies).
 
-const QGSD_PROMPT_PATH = path.resolve(__dirname, '..', 'hooks', 'qgsd-prompt.js');
-let qgsdPromptContent = '';
+const NF_PROMPT_PATH = path.resolve(__dirname, '..', 'hooks', 'nf-prompt.js');
+let nfPromptContent = '';
 try {
-  qgsdPromptContent = fs.readFileSync(QGSD_PROMPT_PATH, 'utf8');
+  nfPromptContent = fs.readFileSync(NF_PROMPT_PATH, 'utf8');
 } catch (e) {
-  qgsdPromptContent = '';
+  nfPromptContent = '';
 }
 
-test('STRUCTURAL: getAvailableSlots function exists in qgsd-prompt.js', () => {
+test('STRUCTURAL: getAvailableSlots function exists in nf-prompt.js', () => {
   assert.ok(
-    qgsdPromptContent.includes('getAvailableSlots'),
-    'getAvailableSlots function not found in qgsd-prompt.js -- Plan 02 must add it'
+    nfPromptContent.includes('getAvailableSlots'),
+    'getAvailableSlots function not found in nf-prompt.js -- Plan 02 must add it'
   );
 });
 
 test('STRUCTURAL: getAvailableSlots is exported for testing', () => {
   // Check that getAvailableSlots appears in module.exports (either object literal or property assignment)
   const hasExport =
-    qgsdPromptContent.includes('module.exports.getAvailableSlots') ||
-    (qgsdPromptContent.match(/module\.exports\s*=\s*\{[^}]*getAvailableSlots[^}]*\}/s) !== null);
+    nfPromptContent.includes('module.exports.getAvailableSlots') ||
+    (nfPromptContent.match(/module\.exports\s*=\s*\{[^}]*getAvailableSlots[^}]*\}/s) !== null);
   assert.ok(
     hasExport,
     'getAvailableSlots not found in module.exports -- Plan 02 must export it'
@@ -45,8 +45,8 @@ test('STRUCTURAL: availability filtering integrated into dispatch flow', () => {
   // Look for assignment pattern: cappedSlots = getAvailableSlots( or similar call site
   // that is distinct from the function definition line.
   const hasCallSite =
-    qgsdPromptContent.includes('= getAvailableSlots(') ||
-    qgsdPromptContent.includes('getAvailableSlots(cappedSlots');
+    nfPromptContent.includes('= getAvailableSlots(') ||
+    nfPromptContent.includes('getAvailableSlots(cappedSlots');
   assert.ok(
     hasCallSite,
     'getAvailableSlots is defined but never called in dispatch flow -- Plan 02 must integrate it'
@@ -55,19 +55,19 @@ test('STRUCTURAL: availability filtering integrated into dispatch flow', () => {
 
 test('STRUCTURAL: DISP-01 health probe integration (spawnSync + check-provider-health)', () => {
   assert.ok(
-    qgsdPromptContent.includes('spawnSync'),
-    'spawnSync not found in qgsd-prompt.js -- health probe trigger missing (DISP-01)'
+    nfPromptContent.includes('spawnSync'),
+    'spawnSync not found in nf-prompt.js -- health probe trigger missing (DISP-01)'
   );
   assert.ok(
-    qgsdPromptContent.includes('check-provider-health'),
-    'check-provider-health not found in qgsd-prompt.js -- health probe integration missing (DISP-01)'
+    nfPromptContent.includes('check-provider-health'),
+    'check-provider-health not found in nf-prompt.js -- health probe integration missing (DISP-01)'
   );
 });
 
 // ----- UNIT TESTS (GREEN immediately -- pure function tests with inline reference implementation) -----
 
 // Reference implementation matching the RESEARCH.md pattern for availability window filtering.
-// This is the expected behavior that Plan 02 will implement in qgsd-prompt.js.
+// This is the expected behavior that Plan 02 will implement in nf-prompt.js.
 function getAvailableSlots(slots, scoreboard) {
   if (!scoreboard || !scoreboard.availability) return slots;
   const now = Date.now();
@@ -128,7 +128,7 @@ test('UNIT: filter includes all slots when availability section missing', () => 
 
 // ----- FAIL-OPEN GUARD TESTS -----
 
-test('fail-open: missing qgsd-prompt.js file does not crash test runner', () => {
-  // If file is truly missing, qgsdPromptContent is empty and structural tests fail gracefully
+test('fail-open: missing nf-prompt.js file does not crash test runner', () => {
+  // If file is truly missing, nfPromptContent is empty and structural tests fail gracefully
   assert.ok(true, 'Guard allows missing file -- fail-open');
 });

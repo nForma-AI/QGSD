@@ -3,7 +3,7 @@
 // bin/generate-tla-cfg.cjs
 // Generates TLA+ model configuration files from the XState machine.
 //
-// The XState machine (src/machines/qgsd-workflow.machine.ts) is the SOURCE OF TRUTH.
+// The XState machine (src/machines/nf-workflow.machine.ts) is the SOURCE OF TRUTH.
 // MCsafety.cfg and MCliveness.cfg are generated artifacts — do not edit them by hand.
 // To change MaxDeliberation, update the XState machine context default instead.
 //
@@ -23,11 +23,11 @@ const ROOT  = path.join(__dirname, '..');
 const DRY   = process.argv.includes('--dry');
 
 // ── Model-checking parameters (stable, not derived from code) ─────────────────
-const SAFETY_AGENTS   = 5;   // N for MCsafety — matches QGSD quorum slot count
+const SAFETY_AGENTS   = 5;   // N for MCsafety — matches nForma quorum slot count
 const LIVENESS_AGENTS = 3;   // N for MCliveness — smaller for tractable liveness
 
 // ── Extract MaxDeliberation from the XState machine ───────────────────────────
-const machineFile = path.join(ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
+const machineFile = path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
 if (!fs.existsSync(machineFile)) {
   process.stderr.write('[generate-tla-cfg] XState machine not found: ' + machineFile + '\n');
   process.exit(1);
@@ -64,7 +64,7 @@ function agentsSet(n) {
 const safetyCfg = [
   '\\* .planning/formal/tla/MCsafety.cfg',
   '\\* GENERATED — do not edit by hand.',
-  '\\* Source of truth: src/machines/qgsd-workflow.machine.ts',
+  '\\* Source of truth: src/machines/nf-workflow.machine.ts',
   '\\* Regenerate: node bin/generate-tla-cfg.cjs',
   '\\*',
   '\\* TLC safety model: N=' + SAFETY_AGENTS + ' agents, symmetry reduction, no liveness check.',
@@ -87,7 +87,7 @@ const safetyCfg = [
 const livenessCfg = [
   '\\* .planning/formal/tla/MCliveness.cfg',
   '\\* GENERATED — do not edit by hand.',
-  '\\* Source of truth: src/machines/qgsd-workflow.machine.ts',
+  '\\* Source of truth: src/machines/nf-workflow.machine.ts',
   '\\* Regenerate: node bin/generate-tla-cfg.cjs',
   '\\*',
   '\\* TLC liveness model: N=' + LIVENESS_AGENTS + ' agents, NO symmetry (incompatible with liveness), PROPERTY only.',

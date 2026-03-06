@@ -1,6 +1,6 @@
 'use strict';
-// hooks/qgsd-spec-regen.js
-// PostToolUse hook: when Claude writes to qgsd-workflow.machine.ts,
+// hooks/nf-spec-regen.js
+// PostToolUse hook: when Claude writes to nf-workflow.machine.ts,
 // automatically trigger generate-formal-specs.cjs to regenerate TLA+/Alloy specs.
 //
 // LOOP-02 (v0.21-03): Self-Calibrating Feedback Loops
@@ -26,8 +26,8 @@ process.stdin.on('end', () => {
     const toolName = input.tool_name || '';
     const filePath = (input.tool_input && input.tool_input.file_path) || '';
 
-    // Only act on Write calls to qgsd-workflow.machine.ts
-    if (toolName !== 'Write' || !filePath.includes('qgsd-workflow.machine.ts')) {
+    // Only act on Write calls to nf-workflow.machine.ts
+    if (toolName !== 'Write' || !filePath.includes('nf-workflow.machine.ts')) {
       process.exit(0); // No-op — not a machine file write
     }
 
@@ -50,16 +50,16 @@ process.stdin.on('end', () => {
             (result.error ? String(result.error) : '');
     }
 
-    // Also regenerate QGSDQuorum_xstate.tla (xstate-to-tla.cjs)
+    // Also regenerate NFQuorum_xstate.tla (xstate-to-tla.cjs)
     const xstateScript = path.join(cwd, 'bin', 'xstate-to-tla.cjs');
-    const machineFile = path.join(cwd, 'src', 'machines', 'qgsd-workflow.machine.ts');
-    const guardsConfig = path.join(cwd, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
+    const machineFile = path.join(cwd, 'src', 'machines', 'nf-workflow.machine.ts');
+    const guardsConfig = path.join(cwd, '.planning', 'formal', 'tla', 'guards', 'nf-workflow.json');
 
     if (fs.existsSync(xstateScript) && fs.existsSync(guardsConfig)) {
       const xstateResult = spawnSync(process.execPath, [
         xstateScript, machineFile,
         '--config=' + guardsConfig,
-        '--module=QGSDQuorum'
+        '--module=NFQuorum'
       ], {
         encoding: 'utf8',
         cwd: cwd,

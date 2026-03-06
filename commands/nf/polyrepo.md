@@ -1,6 +1,6 @@
 ---
-name: qgsd:polyrepo
-description: Manage polyrepo groups — register repos that form one product for cross-repo QGSD awareness
+name: nf:polyrepo
+description: Manage polyrepo groups — register repos that form one product for cross-repo nForma awareness
 argument-hint: create | add <group> <path> [role] | remove <group> <path> | list [group] | info
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-token-collector.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-token-collector.test.js
+// Test suite for hooks/nf-token-collector.js
+// Uses Node.js built-in test runner: node --test hooks/nf-token-collector.test.js
 //
 // Each test spawns the hook as a child process with a mock stdin JSON payload,
 // writes fixture JSONL transcript to an isolated tmpdir, asserts stdout/exitCode/file output.
@@ -14,11 +14,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-token-collector.js');
+const HOOK_PATH = path.join(__dirname, 'nf-token-collector.js');
 
 // Helper: create isolated tmpdir per test
 function makeTmpDir() {
-  return path.join(os.tmpdir(), 'qgsd-tc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  return path.join(os.tmpdir(), 'nf-tc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
 }
 
 // Helper: run the hook with a given stdin JSON payload, using tmpDir as cwd
@@ -73,7 +73,7 @@ test('normal case: appends correct record to token-usage.jsonl', () => {
   ]);
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 'sess1',
     agent_id: 'agent1',
     agent_transcript_path: transcriptPath,
@@ -112,7 +112,7 @@ test('isSidechain entries are excluded', () => {
   ]);
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
     agent_transcript_path: transcriptPath,
@@ -141,7 +141,7 @@ test('isApiErrorMessage entries are excluded', () => {
   ]);
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
     agent_transcript_path: transcriptPath,
@@ -162,7 +162,7 @@ test('null transcript path: exits 0 and writes null record', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
     agent_transcript_path: null,
@@ -178,7 +178,7 @@ test('null transcript path: exits 0 and writes null record', () => {
   assert.equal(records[0].output_tokens, null);
 });
 
-test('non-qgsd agent type: exits 0, no file written', () => {
+test('non-nf agent type: exits 0, no file written', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
@@ -193,7 +193,7 @@ test('non-qgsd agent type: exits 0, no file written', () => {
   assert.equal(exitCode, 0);
 
   const records = readTokenLog(tmpDir);
-  assert.equal(records, null, 'No file should be written for non-qgsd agents');
+  assert.equal(records, null, 'No file should be written for non-nf agents');
 });
 
 test('slot resolution: fallback to last_assistant_message when no correlation file', () => {
@@ -208,7 +208,7 @@ test('slot resolution: fallback to last_assistant_message when no correlation fi
   ]);
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a2',
     agent_transcript_path: transcriptPath,
@@ -242,7 +242,7 @@ test('slot resolution: correlation file exists with slot: null, falls back to la
   ]);
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
     agent_transcript_path: transcriptPath,

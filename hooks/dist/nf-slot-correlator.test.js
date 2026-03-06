@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-slot-correlator.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-slot-correlator.test.js
+// Test suite for hooks/nf-slot-correlator.js
+// Uses Node.js built-in test runner: node --test hooks/nf-slot-correlator.test.js
 
 'use strict';
 
@@ -11,11 +11,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-slot-correlator.js');
+const HOOK_PATH = path.join(__dirname, 'nf-slot-correlator.js');
 
 // Helper: create isolated tmpdir per test
 function makeTmpDir() {
-  return path.join(os.tmpdir(), 'qgsd-sc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  return path.join(os.tmpdir(), 'nf-sc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
 }
 
 // Helper: run the hook with a given stdin JSON payload using tmpDir as cwd
@@ -34,11 +34,11 @@ function runHook(stdinPayload, tmpDir) {
   };
 }
 
-test('writes correlation placeholder for qgsd-quorum-slot-worker', () => {
+test('writes correlation placeholder for nf-quorum-slot-worker', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     agent_id: 'agent42',
   };
 
@@ -54,7 +54,7 @@ test('writes correlation placeholder for qgsd-quorum-slot-worker', () => {
   assert.ok(data.ts, 'ts field should be present');
 });
 
-test('non-qgsd agent type: exits 0, no file written', () => {
+test('non-nf agent type: exits 0, no file written', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
@@ -68,14 +68,14 @@ test('non-qgsd agent type: exits 0, no file written', () => {
   const planningDir = path.join(tmpDir, '.planning');
   // No .planning dir should be created at all
   const anyFile = fs.existsSync(planningDir);
-  assert.equal(anyFile, false, 'No files should be written for non-qgsd agents');
+  assert.equal(anyFile, false, 'No files should be written for non-nf agents');
 });
 
 test('missing agent_id: exits 0 gracefully', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
-    agent_type: 'qgsd-quorum-slot-worker',
+    agent_type: 'nf-quorum-slot-worker',
     agent_id: null,
   };
 

@@ -16,7 +16,7 @@ Read STATE.md before any operation to load project context.
 Load all context in one call:
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init execute-phase "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init execute-phase "${PHASE_ARG}")
 ```
 
 Parse JSON for: `executor_model`, `verifier_model`, `commit_docs`, `parallelization`, `branching_strategy`, `branch_name`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `plans`, `incomplete_plans`, `plan_count`, `incomplete_count`, `state_exists`, `roadmap_exists`.
@@ -51,7 +51,7 @@ Report: "Found {plan_count} plans in {phase_dir} ({incomplete_count} incomplete)
 Load plan inventory with wave grouping in one call:
 
 ```bash
-PLAN_INDEX=$(node ~/.claude/qgsd/bin/gsd-tools.cjs phase-plan-index "${PHASE_NUMBER}")
+PLAN_INDEX=$(node ~/.claude/nf/bin/gsd-tools.cjs phase-plan-index "${PHASE_NUMBER}")
 ```
 
 Parse JSON for: `phase`, `plans[]` (each with `id`, `wave`, `autonomous`, `objective`, `files_modified`, `task_count`, `has_summary`), `waves` (map of wave number → plan IDs), `incomplete`, `has_checkpoints`.
@@ -79,7 +79,7 @@ Execute each wave in sequence. Within a wave: parallel if `PARALLELIZATION=true`
 Run this Bash command at the start of each plan execution (before spawning the executor agent), substituting `${PHASE_NUMBER}` (from init JSON), the current plan filename (e.g. `14-02-PLAN.md`), and the current wave number (e.g. `2`):
 ```bash
 # Track current activity
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"executing_plan\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"wave\":${WAVE_N}}"
 ```
 
@@ -108,7 +108,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
    ```
    Task(
-     subagent_type="qgsd-executor",
+     subagent_type="nf-executor",
      model="{executor_model}",
      prompt="
        <objective>
@@ -117,10 +117,10 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
        </objective>
 
        <execution_context>
-       @~/.claude/qgsd/workflows/execute-plan.md
-       @~/.claude/qgsd/templates/summary.md
-       @~/.claude/qgsd/references/checkpoints.md
-       @~/.claude/qgsd/references/tdd.md
+       @~/.claude/nf/workflows/execute-plan.md
+       @~/.claude/nf/templates/summary.md
+       @~/.claude/nf/references/checkpoints.md
+       @~/.claude/nf/references/tdd.md
        </execution_context>
 
        <files_to_read>
@@ -189,15 +189,15 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
    Then execute these steps inline (no user gate):
    ```bash
-   INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init quick "$DESCRIPTION")
+   INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init quick "$DESCRIPTION")
    # Parse next_num, slug, task_dir, planner_model, executor_model from INIT
    mkdir -p "${task_dir}"
-   node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+   node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
      "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
    ```
-   Then spawn qgsd-planner Task with the description and QUICK_DIR (same prompt as quick.md Step 5 standard mode).
+   Then spawn nf-planner Task with the description and QUICK_DIR (same prompt as quick.md Step 5 standard mode).
    After planner returns, run quorum review (quick.md Step 5.7).
-   After quorum approves, spawn qgsd-executor Task (description="Execute quick task {task_number}: {slug}", same prompt as quick.md Step 6).
+   After quorum approves, spawn nf-executor Task (description="Execute quick task {task_number}: {slug}", same prompt as quick.md Step 6).
    After executor completes, update STATE.md quick tasks table and commit (same as quick.md Steps 7-8).
 
    **Post-fix verification (cap: 1 retry):**
@@ -216,7 +216,7 @@ Plans with `autonomous: false` require user interaction.
 When an executor agent returns a `checkpoint:verify` result, run this Bash command before spawning `/nf:quorum-test`, substituting `${PHASE_NUMBER}` and the current plan filename:
 ```bash
 # Track checkpoint:verify activity
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"checkpoint_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"checkpoint\":\"checkpoint:verify\"}"
 ```
 
@@ -224,7 +224,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 
 Read auto-advance config:
 ```bash
-AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
 ```
 
 When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
@@ -235,7 +235,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 If quorum-test returns BLOCK or REVIEW-NEEDED and you enter a `/nf:debug` loop, run this Bash command before each debug round, substituting `${PHASE_NUMBER}`, the current plan filename, and the debug round counter (1, 2, or 3):
 ```bash
 # Track debug loop activity
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"debug_loop\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\",\"debug_round\":${DEBUG_ROUND}}"
 ```
 
@@ -258,7 +258,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
    After presenting `checkpoint:human-verify` to the user, run this Bash command, substituting `${PHASE_NUMBER}` and the current plan filename:
    ```bash
    # Track human-verify pause
-   node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+   node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
      "{\"activity\":\"execute_phase\",\"sub_activity\":\"awaiting_human_verify\",\"phase\":\"${PHASE_NUMBER}\",\"plan\":\"${PLAN_FILE}\"}"
    ```
 
@@ -314,7 +314,7 @@ fi
 
 **2. Find parent UAT file:**
 ```bash
-PARENT_INFO=$(node ~/.claude/qgsd/bin/gsd-tools.cjs find-phase "${PARENT_PHASE}" --raw)
+PARENT_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs find-phase "${PARENT_PHASE}" --raw)
 # Extract directory from PARENT_INFO JSON, then find UAT file in that directory
 ```
 
@@ -345,7 +345,7 @@ mv .planning/debug/{slug}.md .planning/debug/resolved/
 
 **6. Commit updated artifacts:**
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE}): resolve UAT gaps and debug sessions after ${PHASE_NUMBER} gap closure" --files .planning/phases/*${PARENT_PHASE}*/*-UAT.md .planning/debug/resolved/*.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE}): resolve UAT gaps and debug sessions after ${PHASE_NUMBER} gap closure" --files .planning/phases/*${PARENT_PHASE}*/*-UAT.md .planning/debug/resolved/*.md
 ```
 </step>
 
@@ -353,13 +353,13 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-${PARENT_PHASE}): resol
 Verify phase achieved its GOAL, not just completed tasks.
 
 ```bash
-PHASE_REQ_IDS=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
+PHASE_REQ_IDS=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.section' | grep -i "Requirements:" | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g')
 ```
 
 Before spawning the verifier Task, run this Bash command to track the verification activity:
 ```bash
 # Track phase verification activity
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"execute_phase\",\"sub_activity\":\"verifying_phase\",\"phase\":\"${PHASE_NUMBER}\"}"
 ```
 
@@ -371,7 +371,7 @@ Run the keyword-match scan and formal check before spawning the verifier. The sc
 # Formal scope scan — identical algorithm to plan-phase Step 4.5
 FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
-  PHASE_DESC=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
+  PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
   for MODULE_DIR in .planning/formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
     INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
@@ -446,7 +446,7 @@ Rules:
 </formal_context>
 
 Create VERIFICATION.md.",
-  subagent_type="qgsd-verifier",
+  subagent_type="nf-verifier",
   model="{verifier_model}",
   description="Verify phase {phase_number}"
 )
@@ -472,11 +472,11 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
 
 2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes) with 1-2 sentence rationale.
 
-3. Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
    - Mode A — pure question
    - Question: "Can each human_needed item from phase ${PHASE_NUMBER} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
-   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
    Fail-open: if all slots error, treat as BLOCK (escalate to user).
@@ -503,15 +503,15 @@ Read the gaps section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`. Extract 
 
 Form your own position: are these gaps auto-resolvable via plan-phase --gaps, or do they require human review? State your vote APPROVE (auto-resolvable) or BLOCK (needs human) with 1-2 sentence rationale.
 
-Run R3 quorum inline (dispatch_pattern from `commands/qgsd/quorum.md`):
+Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — compact prompt to preserve context budget
 - Question: "Phase {PHASE_NUMBER} verification found {N} gaps. Are these auto-resolvable via plan-phase --gaps Task spawn, or do they require human review? Gaps: {1-sentence-per-gap — max 20 words each}. Vote APPROVE (auto-resolvable) or BLOCK (needs human)."
-- Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+- Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
 After quorum vote completes, update the scoreboard BEFORE spawning any Task:
 ```bash
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --model <model_name_or_slot> \
   --result <vote_code> \
   --task "execute-phase-{PHASE_NUMBER}" \
@@ -598,7 +598,7 @@ counterexample_override:
   override_by: user
 Also change status: from counterexample_found to passed.
 Preserve ALL other existing VERIFICATION.md content unchanged.",
-  subagent_type="qgsd-verifier",
+  subagent_type="nf-verifier",
   model="{verifier_model}",
   description="Write counterexample override to VERIFICATION.md"
 )
@@ -626,7 +626,7 @@ Key constraint: ANY override MUST produce a `counterexample_override:` entry wit
 **Mark phase complete and update all tracking files:**
 
 ```bash
-COMPLETION=$(node ~/.claude/qgsd/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}")
+COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}")
 ```
 
 The CLI handles:
@@ -641,11 +641,11 @@ Extract from result: `next_phase`, `next_phase_name`, `is_last_phase`.
 After the `phase complete` call succeeds, run this Bash command to clear the activity state:
 ```bash
 # Clear activity on successful completion
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase execution" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md {phase_dir}/*-VERIFICATION.md
 ```
 </step>
 
@@ -658,7 +658,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase ex
 1. Parse `--auto` flag from $ARGUMENTS
 2. Read `workflow.auto_advance` from config:
    ```bash
-   AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+   AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
    ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true (AND verification passed with no gaps):**
@@ -672,7 +672,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-{X}): complete phase ex
 
 Execute the transition workflow inline (do NOT use Task — orchestrator context is ~10-15%, transition needs phase completion data already in context):
 
-Read and follow `~/.claude/qgsd/workflows/transition.md`, passing through the `--auto` flag so it propagates to the next phase invocation.
+Read and follow `~/.claude/nf/workflows/transition.md`, passing through the `--auto` flag so it propagates to the next phase invocation.
 
 **If neither `--auto` nor `AUTO_CFG` is true:**
 
@@ -687,7 +687,7 @@ Orchestrator: ~10-15% context. Subagents: fresh 200k each. No polling (Task bloc
 
 <failure_handling>
 - **classifyHandoffIfNeeded false failure:** Agent reports "failed" but error is `classifyHandoffIfNeeded is not defined` → Claude Code bug, not GSD. Spot-check (SUMMARY exists, commits present) → if pass, treat as success
-- **CI failures with diagnosed root causes:** Executor SUMMARY.md contains sections with "Root Cause:", "Diagnosed", "Bug N —", "CI Failures", or "Deferred: CI fixes" → read diagnosis → auto-spawn quick task using init quick + qgsd-planner + qgsd-executor sequence (quick.md Steps 2-6 pattern), no user gate → resume phase execution after quick task completes
+- **CI failures with diagnosed root causes:** Executor SUMMARY.md contains sections with "Root Cause:", "Diagnosed", "Bug N —", "CI Failures", or "Deferred: CI fixes" → read diagnosis → auto-spawn quick task using init quick + nf-planner + nf-executor sequence (quick.md Steps 2-6 pattern), no user gate → resume phase execution after quick task completes
 - **Agent fails mid-plan:** Missing SUMMARY.md → report, ask user how to proceed
 - **Dependency chain breaks:** Wave 1 fails → Wave 2 dependents likely fail → user chooses attempt or skip
 - **All agents in wave fail:** Systemic issue → stop, report for investigation

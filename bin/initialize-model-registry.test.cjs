@@ -76,7 +76,7 @@ test('empty .planning/formal/ produces registry with correct update_source', asy
   const tmpDir = createTempFormalDir({
     tla: {
       'Test.tla': '---- MODULE Test ----\nEXTENDS Integers\n====',
-      'QGSDQuorum_xstate.tla': '---- MODULE QGSDQuorum_xstate ----\n(* Generated from XState *)\n===='
+      'NFQuorum_xstate.tla': '---- MODULE NFQuorum_xstate ----\n(* Generated from XState *)\n===='
     }
   });
 

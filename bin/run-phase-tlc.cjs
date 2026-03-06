@@ -15,7 +15,7 @@
 // NOTE: Uses spawnSync (no shell) for safe subprocess invocation -- no exec().
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 

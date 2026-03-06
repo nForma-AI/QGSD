@@ -77,7 +77,7 @@ if (circuitBreaker.active === true) {
     id:          'circuit-breaker-active',
     priority:    90,
     description: 'Circuit breaker is currently active — oscillation was detected and execution is paused.',
-    action:      'Run /nf:debug to diagnose the oscillation root cause, then run `npx qgsd --reset-breaker`.',
+    action:      'Run /nf:debug to diagnose the oscillation root cause, then run `npx nforma --reset-breaker`.',
     surfaced:    false,
     detectedAt:  now,
   });

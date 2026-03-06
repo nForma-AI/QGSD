@@ -31,7 +31,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCliveness.cfg',
-        '.planning/formal/tla/QGSDQuorum.tla',
+        '.planning/formal/tla/NFQuorum.tla',
         '-workers', '1'
       ]
     },
@@ -67,7 +67,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCbreaker.cfg',
-        '.planning/formal/tla/QGSDCircuitBreaker.tla',
+        '.planning/formal/tla/NFCircuitBreaker.tla',
         '-workers', '1'
       ]
     }
@@ -78,7 +78,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCdeliberation.cfg',
-        '.planning/formal/tla/QGSDDeliberation.tla',
+        '.planning/formal/tla/NFDeliberation.tla',
         '-workers', '1'
       ]
     }
@@ -89,7 +89,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCoscillation.cfg',
-        '.planning/formal/tla/QGSDOscillation.tla',
+        '.planning/formal/tla/NFOscillation.tla',
         '-workers', '1'
       ]
     }
@@ -100,7 +100,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCconvergence.cfg',
-        '.planning/formal/tla/QGSDConvergence.tla',
+        '.planning/formal/tla/NFConvergence.tla',
         '-workers', '1'
       ]
     }
@@ -111,7 +111,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCprefilter.cfg',
-        '.planning/formal/tla/QGSDPreFilter.tla',
+        '.planning/formal/tla/NFPreFilter.tla',
         '-workers', '1'
       ]
     }
@@ -122,7 +122,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCrecruiting-safety.cfg',
-        '.planning/formal/tla/QGSDRecruiting.tla',
+        '.planning/formal/tla/NFRecruiting.tla',
         '-workers', '1'
       ]
     }
@@ -133,7 +133,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCaccount-manager.cfg',
-        '.planning/formal/tla/QGSDAccountManager.tla',
+        '.planning/formal/tla/NFAccountManager.tla',
         '-workers', '1'
       ]
     }
@@ -144,7 +144,7 @@ const MODULE_CHECKS = {
       cmd: [
         'java', '-cp', '.planning/formal/tla/tla2tools.jar', 'tlc2.TLC',
         '-config', '.planning/formal/tla/MCMCPEnv.cfg',
-        '.planning/formal/tla/QGSDMCPEnv.tla',
+        '.planning/formal/tla/NFMCPEnv.tla',
         '-workers', '1'
       ]
     }

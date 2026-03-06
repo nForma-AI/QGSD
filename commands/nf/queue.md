@@ -1,5 +1,5 @@
 ---
-name: qgsd:queue
+name: nf:queue
 description: Queue a skill or command to auto-invoke after the next /clear
 argument-hint: <command to queue, e.g. "/nf:quick --full">
 allowed-tools:

@@ -37,7 +37,7 @@ const CLI_SRC = path.join(__dirname, 'ccr-secure-config.cjs');
 function makeTmpDir() {
   const dir = path.join(
     os.tmpdir(),
-    'qgsd-ccr-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    'nf-ccr-' + Date.now() + '-' + Math.random().toString(36).slice(2)
   );
   fs.mkdirSync(dir, { recursive: true });
   return dir;
@@ -132,7 +132,7 @@ test('exits 0 with diagnostic when secrets.cjs is not found', () => {
   const tmpDir = makeTmpDir();
   installCli(tmpDir);
   // No secrets.cjs planted — both candidate paths will be absent
-  // (installed path: <HOME>/.claude/qgsd-bin/secrets.cjs also absent)
+  // (installed path: <HOME>/.claude/nf-bin/secrets.cjs also absent)
   const { exitCode, stderr } = run(tmpDir);
   assert.equal(exitCode, 0, 'should exit 0 (fail-silent) when secrets not found');
   assert.ok(
@@ -420,13 +420,13 @@ test('exits 0 with "Populated 0" when providers array is empty', () => {
   );
 });
 
-// ─── Test 16: secrets.cjs found in installed global path (~/.claude/qgsd-bin) ─
+// ─── Test 16: secrets.cjs found in installed global path (~/.claude/nf-bin) ─
 
-test('finds secrets.cjs at the installed global path (~/.claude/qgsd-bin/secrets.cjs)', () => {
+test('finds secrets.cjs at the installed global path (~/.claude/nf-bin/secrets.cjs)', () => {
   const tmpDir = makeTmpDir();
   installCli(tmpDir);
-  // Plant secrets at the installed path (first candidate): <HOME>/.claude/qgsd-bin/secrets.cjs
-  const installedDir = path.join(tmpDir, '.claude', 'qgsd-bin');
+  // Plant secrets at the installed path (first candidate): <HOME>/.claude/nf-bin/secrets.cjs
+  const installedDir = path.join(tmpDir, '.claude', 'nf-bin');
   fs.mkdirSync(installedDir, { recursive: true });
   const body = `
 'use strict';

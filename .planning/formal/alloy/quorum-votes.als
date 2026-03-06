@@ -1,13 +1,13 @@
 -- .planning/formal/alloy/quorum-votes.als
 -- GENERATED — do not edit by hand.
--- Source of truth: src/machines/qgsd-workflow.machine.ts
+-- Source of truth: src/machines/nf-workflow.machine.ts
 -- Regenerate:      node bin/generate-formal-specs.cjs
--- Generated:       2026-03-05
+-- Generated:       2026-03-06
 
--- QGSD Quorum Vote-Counting Model (Alloy 6)
+-- nForma Quorum Vote-Counting Model (Alloy 6)
 -- Requirements: ALY-01
 --
--- Models the unanimityMet guard from src/machines/qgsd-workflow.machine.ts:
+-- Models the unanimityMet guard from src/machines/nf-workflow.machine.ts:
 --   successCount >= polledCount
 --   ≡  #r.approvals = #r.polled  (all polled agents approved)
 --
@@ -15,11 +15,11 @@
 -- All polled agents approved (unanimity within the polled set)
 --
 -- Checks that no round reaches DECIDED without satisfying the unanimity predicate.
--- Scope: 5 agents (QGSD quorum slot count), 5 vote rounds.
+-- Scope: 5 agents (nForma quorum slot count), 5 vote rounds.
 
 module quorum_votes
 
--- Fix agent count to 5 (QGSD quorum slot count).
+-- Fix agent count to 5 (nForma quorum slot count).
 -- This makes the numeric threshold assertions below concrete and verifiable.
 fact AgentCount { #Agent = 5 }
 

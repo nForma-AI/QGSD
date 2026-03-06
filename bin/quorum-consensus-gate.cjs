@@ -154,7 +154,7 @@ function readEarlyEscalationThreshold(configPaths) {
   const DEFAULT = 0.10;
   const paths = configPaths || [
     path.join(process.cwd(), '.planning', 'config.json'),
-    path.join(process.cwd(), '.planning', 'qgsd.json'),
+    path.join(process.cwd(), '.planning', 'nf.json'),
   ];
   for (const cfgPath of paths) {
     try {

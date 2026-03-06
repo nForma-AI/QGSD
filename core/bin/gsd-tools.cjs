@@ -156,7 +156,7 @@ const MODEL_PROFILES = {
   'gsd-codebase-mapper':      { quality: 'sonnet', balanced: 'haiku', budget: 'haiku' },
   'gsd-verifier':             { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
   'gsd-plan-checker':         { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
-  'qgsd-integration-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
+  'nf-integration-checker': { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku' },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -1024,7 +1024,7 @@ function cmdRoadmapGetPhase(cwd, phaseNum, raw) {
     const section = content.slice(headerIndex, sectionEnd).trim();
 
     // Extract goal if present
-    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal:?\*\*:?\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     // Extract success criteria as structured array
@@ -2707,7 +2707,7 @@ function cmdRoadmapAnalyze(cwd, raw) {
     const sectionEnd = nextHeader ? sectionStart + nextHeader.index : content.length;
     const section = content.slice(sectionStart, sectionEnd);
 
-    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal:?\*\*:?\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     const dependsMatch = section.match(/\*\*Depends on:\*\*\s*([^\n]+)/i);
@@ -4473,7 +4473,7 @@ function getRoadmapPhaseInternal(cwd, phaseNum) {
     const sectionEnd = nextHeaderMatch ? headerIndex + nextHeaderMatch.index : content.length;
     const section = content.slice(headerIndex, sectionEnd).trim();
 
-    const goalMatch = section.match(/\*\*Goal\*\*:\s*([^\n]+)/i);
+    const goalMatch = section.match(/\*\*Goal:?\*\*:?\s*([^\n]+)/i);
     const goal = goalMatch ? goalMatch[1].trim() : null;
 
     return {
@@ -5784,10 +5784,10 @@ function cmdMaintainTestsBatch(cwd, options, raw) {
   // Read config for default batch_size
   let configBatchSize = 100;
   try {
-    const qgsdConfigPath = path.join(cwd, '.claude', 'qgsd.json');
-    const qgsdConfig = JSON.parse(fs.readFileSync(qgsdConfigPath, 'utf-8'));
-    if (qgsdConfig.maintain_tests && typeof qgsdConfig.maintain_tests.batch_size === 'number') {
-      configBatchSize = qgsdConfig.maintain_tests.batch_size;
+    const nfConfigPath = path.join(cwd, '.claude', 'nf.json');
+    const nfConfig = JSON.parse(fs.readFileSync(nfConfigPath, 'utf-8'));
+    if (nfConfig.maintain_tests && typeof nfConfig.maintain_tests.batch_size === 'number') {
+      configBatchSize = nfConfig.maintain_tests.batch_size;
     }
   } catch { /* config absent — use default */ }
 

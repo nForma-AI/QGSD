@@ -291,6 +291,7 @@ Output: All live code files consistently use nf/nForma naming.
     bin/nForma.cjs
     bin/nf-solve.cjs
     bin/manage-agents-core.cjs
+    bin/migrate-to-slots.cjs
     bin/*.cjs (all 100+ bin scripts with qgsd references)
     package.json
     commands/nf/*.md (48 files)
@@ -374,6 +375,11 @@ Output: All live code files consistently use nf/nForma naming.
     | `migrateQgsdJson` | `migrateNfJson` |
     | `addSlotToQuorumActive` (keep — not qgsd-named) | (no change) |
 
+    **bin/migrate-to-slots.cjs specifically:**
+    This file has 36 qgsd references including the `migrateQgsdJson` export name. Update:
+    - `migrateQgsdJson` -> `migrateNfJson` (exported function name)
+    - All internal `qgsd` path/config/variable references per the mapping table above
+
     **CRITICAL EXCEPTIONS — DO NOT replace these patterns:**
     1. The tri-prefix backward-compat regex `/(nf\|q?gsd):/` in hooks — KEEP as-is for backward compat
     2. The OpenCode conversion regex `convertedContent.replace(/\/nf:/g, '/qgsd-')` in install.js — this is intentional OpenCode compat, BUT update the comment to explain why qgsd- is kept for OpenCode
@@ -397,7 +403,7 @@ Output: All live code files consistently use nf/nForma naming.
     11. `templates/nf.json` — update comments and any qgsd references
     12. `scripts/*.js`, `scripts/*.sh` — update references
     13. `package.json` — update bin field key and build:machines path
-    14. `CHANGELOG.md` — update remaining qgsd references (34 occurrences)
+    14. `CHANGELOG.md` — update current/template UI strings referencing "QGSD" (e.g., banner strings, format labels) to "nForma". **Leave historical version entries as-is** — they describe what happened at the time (e.g., "v0.20: QGSD quorum enforcement") and rewriting history would be misleading. Only update forward-looking or template references.
 
     **For bin/install.js specifically:**
     - `path.join(configDir, 'qgsd')` -> `path.join(configDir, 'nf')`
@@ -412,10 +418,10 @@ Output: All live code files consistently use nf/nForma naming.
     - Variable names: `qgsdConfig` -> `nfConfig`, `qgsdConfigPath` -> `nfConfigPath`
     - Keep the uninstall cleanup that removes OLD qgsd paths (add nf paths too, or rename)
     - Add migration logic: if `~/.claude/qgsd/` exists and `~/.claude/nf/` does not, rename the old directory during install (similar to existing gsd->qgsd migration pattern)
+    - Add config FILE migration: if `~/.claude/qgsd.json` exists and `~/.claude/nf.json` does not, rename `~/.claude/qgsd.json` -> `~/.claude/nf.json` during install. This is separate from the directory migration and must not be omitted — existing users' config would break without it.
 
-    **For the OpenCode `/qgsd-` conversion in install.js:**
-    Keep `convertedContent.replace(/\/nf:/g, '/qgsd-')` — OpenCode uses flat commands and the qgsd- prefix is their convention. Update the comment to explain this is intentional for OpenCode backward compat.
-    ACTUALLY: Since OpenCode already has the old commands, update this to `/nf-` for consistency: `convertedContent.replace(/\/nf:/g, '/nf-')`. The old `/qgsd-` commands won't exist after this rebrand.
+    **For the OpenCode `/nf-` conversion in install.js:**
+    Update `convertedContent.replace(/\/nf:/g, '/nf-')` — OpenCode uses flat commands so colons become hyphens. The old `/qgsd-` commands won't exist after this rebrand, so use `/nf-` for consistency. Update the comment to explain: "OpenCode uses flat command names; convert /nf: colon syntax to /nf- hyphen syntax."
   </action>
   <verify>
     ```bash
@@ -485,9 +491,12 @@ Output: All live code files consistently use nf/nForma naming.
     ```
     Should return empty.
 
-    **5. Final grep verification:**
+    **5. Final grep verification (ensure hooks/conformance-schema.cjs and hooks/gsd-context-monitor.js are included):**
     ```bash
     # Only backward-compat regex, git URLs, and OpenCode compat should remain
+    # Explicitly verify the two easily-missed hook support files:
+    grep -n 'qgsd' hooks/conformance-schema.cjs hooks/gsd-context-monitor.js | grep -v 'q?gsd'
+    # Then full sweep:
     grep -rn 'qgsd' bin/ hooks/ commands/ core/ scripts/ agents/ templates/ src/ \
       --include='*.js' --include='*.cjs' --include='*.mjs' --include='*.md' --include='*.json' --include='*.ts' --include='*.sh' \
       | grep -v 'q?gsd' | grep -v 'nForma-AI/QGSD' | grep -v 'formerly\|renamed\|old name\|was QGSD'

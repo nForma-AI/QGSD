@@ -1,6 +1,6 @@
 # Debug Subagent Prompt Template
 
-Template for spawning qgsd-debugger agent. The agent contains all debugging expertise - this template provides problem context only.
+Template for spawning nf-debugger agent. The agent contains all debugging expertise - this template provides problem context only.
 
 ---
 
@@ -55,14 +55,14 @@ Create: .planning/debug/{slug}.md
 ```python
 Task(
   prompt=filled_template,
-  subagent_type="qgsd-debugger",
+  subagent_type="nf-debugger",
   description="Debug {slug}"
 )
 ```
 
 **From diagnose-issues (UAT):**
 ```python
-Task(prompt=template, subagent_type="qgsd-debugger", description="Debug UAT-001")
+Task(prompt=template, subagent_type="nf-debugger", description="Debug UAT-001")
 ```
 
 ---

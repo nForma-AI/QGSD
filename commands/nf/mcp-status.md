@@ -1,5 +1,5 @@
 ---
-name: qgsd:mcp-status
+name: nf:mcp-status
 description: Show status of all connected quorum agents — provider, model, health, and latency
 allowed-tools:
   - Read
@@ -116,7 +116,7 @@ Display as `sub` or `api` in the Auth column.
 Print:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► MCP STATUS
+ nForma ► MCP STATUS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Querying 4 CLI agents + 6 HTTP providers...

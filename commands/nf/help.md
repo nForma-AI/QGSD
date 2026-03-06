@@ -1,5 +1,5 @@
 ---
-name: qgsd:help
+name: nf:help
 description: Show available GSD commands and usage guide
 ---
 <objective>
@@ -13,10 +13,10 @@ Output ONLY the reference content below. Do NOT add:
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/help.md
+@~/.claude/nf/workflows/help.md
 </execution_context>
 
 <process>
-Output the complete GSD command reference from @~/.claude/qgsd/workflows/help.md.
+Output the complete GSD command reference from @~/.claude/nf/workflows/help.md.
 Display the reference content directly — no additions or modifications.
 </process>

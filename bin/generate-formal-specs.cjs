@@ -3,11 +3,11 @@
 // bin/generate-formal-specs.cjs
 // Generates ALL formal verification artifacts from the XState machine.
 //
-// The XState machine (src/machines/qgsd-workflow.machine.ts) is the SINGLE SOURCE OF TRUTH.
+// The XState machine (src/machines/nf-workflow.machine.ts) is the SINGLE SOURCE OF TRUTH.
 // All formal specs are generated artifacts — do not edit them by hand.
 //
 // Generates:
-//   .planning/formal/tla/QGSDQuorum.tla   — TLA+ spec (states, transitions, invariants)
+//   .planning/formal/tla/NFQuorum.tla   — TLA+ spec (states, transitions, invariants)
 //   .planning/formal/tla/MCsafety.cfg     — TLC safety model config (N=5, symmetry)
 //   .planning/formal/tla/MCliveness.cfg   — TLC liveness model config (N=3)
 //   .planning/formal/alloy/quorum-votes.als — Alloy vote-counting model
@@ -68,7 +68,7 @@ function updateModelRegistry(absPath) {
 }
 
 // ── Parse XState machine ──────────────────────────────────────────────────────
-const machineFile = path.join(ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
+const machineFile = path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
 if (!fs.existsSync(machineFile)) {
   process.stderr.write('[generate-formal-specs] XState machine not found at ' + machineFile + ' — skipping (not required for external projects)\n');
   process.exit(0);
@@ -114,7 +114,7 @@ const ts = new Date().toISOString().split('T')[0];
 const GENERATED_HEADER = (comment, file) =>
   comment + ' ' + file + '\n' +
   comment + ' GENERATED — do not edit by hand.\n' +
-  comment + ' Source of truth: src/machines/qgsd-workflow.machine.ts\n' +
+  comment + ' Source of truth: src/machines/nf-workflow.machine.ts\n' +
   comment + ' Regenerate:      node bin/generate-formal-specs.cjs\n' +
   comment + ' Generated:       ' + ts + '\n';
 
@@ -148,17 +148,17 @@ const GUARD_REGISTRY = {
   },
 };
 
-// ── 1. QGSDQuorum.tla ─────────────────────────────────────────────────────────
+// ── 1. NFQuorum.tla ─────────────────────────────────────────────────────────
 // Intermediate states = all states except initial and final
 const collectingState   = 'COLLECTING_VOTES';
 const deliberatingState = 'DELIBERATING';
 const phaseSet = stateNames.map(s => '"' + s + '"').join(', ');
 
 const tlaSpec = [
-  '---- MODULE QGSDQuorum ----',
+  '---- MODULE NFQuorum ----',
   '(*',
-  GENERATED_HEADER(' *', '.planning/formal/tla/QGSDQuorum.tla'),
-  ' * Models the quorum workflow defined in src/machines/qgsd-workflow.machine.ts.',
+  GENERATED_HEADER(' *', '.planning/formal/tla/NFQuorum.tla'),
+  ' * Models the quorum workflow defined in src/machines/nf-workflow.machine.ts.',
   ' * Guard translations (from GUARD_REGISTRY in bin/generate-formal-specs.cjs):',
   ' *   unanimityMet (' + GUARD_REGISTRY.unanimityMet.ts + '):   ' + GUARD_REGISTRY.unanimityMet.tla,
   ' *   noInfiniteDeliberation (' + GUARD_REGISTRY.noInfiniteDeliberation.ts + '):  ' + GUARD_REGISTRY.noInfiniteDeliberation.tla,
@@ -335,7 +335,7 @@ function agentsSet(n) {
 const tlaCfgHeader = (file, desc) => [
   '\\* ' + file,
   '\\* GENERATED — do not edit by hand.',
-  '\\* Source of truth: src/machines/qgsd-workflow.machine.ts',
+  '\\* Source of truth: src/machines/nf-workflow.machine.ts',
   '\\* Regenerate:      node bin/generate-formal-specs.cjs',
   '\\* Generated:       ' + ts,
   '\\*',
@@ -379,10 +379,10 @@ const livenessCfg = tlaCfgHeader('.planning/formal/tla/MCliveness.cfg',
 // Alloy vote-counting model — derived from unanimityMet guard in XState machine
 const alloySpec = [
   GENERATED_HEADER('--', '.planning/formal/alloy/quorum-votes.als'),
-  '-- QGSD Quorum Vote-Counting Model (Alloy 6)',
+  '-- nForma Quorum Vote-Counting Model (Alloy 6)',
   '-- Requirements: ALY-01',
   '--',
-  '-- Models the unanimityMet guard from src/machines/qgsd-workflow.machine.ts:',
+  '-- Models the unanimityMet guard from src/machines/nf-workflow.machine.ts:',
   '--   ' + GUARD_REGISTRY.unanimityMet.ts,
   '--   ≡  ' + GUARD_REGISTRY.unanimityMet.alloy + '  (all polled agents approved)',
   '--',
@@ -390,11 +390,11 @@ const alloySpec = [
   '-- ' + GUARD_REGISTRY.unanimityMet.desc,
   '--',
   '-- Checks that no round reaches ' + finalState + ' without satisfying the unanimity predicate.',
-  '-- Scope: ' + SAFETY_AGENTS + ' agents (QGSD quorum slot count), 5 vote rounds.',
+  '-- Scope: ' + SAFETY_AGENTS + ' agents (nForma quorum slot count), 5 vote rounds.',
   '',
   'module quorum_votes',
   '',
-  '-- Fix agent count to ' + SAFETY_AGENTS + ' (QGSD quorum slot count).',
+  '-- Fix agent count to ' + SAFETY_AGENTS + ' (nForma quorum slot count).',
   '-- This makes the numeric threshold assertions below concrete and verifiable.',
   'fact AgentCount { #Agent = ' + SAFETY_AGENTS + ' }',
   '',
@@ -458,7 +458,7 @@ const alloySpec = [
 // State numbering: 0=collecting, 1=decided, 2=deliberating (absorbing at 1)
 const prismSpec = [
   GENERATED_HEADER('//', '.planning/formal/prism/quorum.pm'),
-  '// QGSD Quorum Convergence — DTMC Model',
+  '// nForma Quorum Convergence — DTMC Model',
   '// Requirements: PRM-01',
   '//',
   '// Discrete-Time Markov Chain modeling quorum state transitions.',
@@ -467,7 +467,7 @@ const prismSpec = [
   '//   s=1 : ' + finalState + '       (absorbing)',
   '//   s=2 : ' + deliberatingState + '     (retry)',
   '//',
-  '// Derived from src/machines/qgsd-workflow.machine.ts:',
+  '// Derived from src/machines/nf-workflow.machine.ts:',
   '//   ' + stateNames.join(', '),
   '//',
   '// Guard translations (from GUARD_REGISTRY):',
@@ -528,7 +528,7 @@ const prismSpec = [
 const prismProps = [
   '// .planning/formal/prism/quorum.props',
   '// GENERATED — do not edit by hand.',
-  '// Source of truth: src/machines/qgsd-workflow.machine.ts',
+  '// Source of truth: src/machines/nf-workflow.machine.ts',
   '// Regenerate:      node bin/generate-formal-specs.cjs',
   '// Generated:       ' + ts,
   '//',
@@ -558,7 +558,7 @@ const prismProps = [
 
 // ── Write or print ────────────────────────────────────────────────────────────
 const outputs = [
-  { rel: '.planning/formal/tla/QGSDQuorum.tla',              content: tlaSpec      },
+  { rel: '.planning/formal/tla/NFQuorum.tla',              content: tlaSpec      },
   { rel: '.planning/formal/tla/MCsafety.cfg',                content: safetyCfg    },
   { rel: '.planning/formal/tla/MCliveness.cfg',              content: livenessCfg  },
   { rel: '.planning/formal/alloy/quorum-votes.als',           content: alloySpec    },

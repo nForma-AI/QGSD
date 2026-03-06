@@ -1,16 +1,16 @@
 ---
-name: qgsd:join-discord
-description: Join the QGSD Discord community
+name: nf:join-discord
+description: Join the nForma Discord community
 ---
 
 <objective>
-Display the Discord invite link for the QGSD community server.
+Display the Discord invite link for the nForma community server.
 </objective>
 
 <output>
-# Join the QGSD Discord
+# Join the nForma Discord
 
-Connect with other QGSD users, get help, share what you're building, and stay updated.
+Connect with other nForma users, get help, share what you're building, and stay updated.
 
 **Server link:** https://discord.com/servers/1474810068636663886
 

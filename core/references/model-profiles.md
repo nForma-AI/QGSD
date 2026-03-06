@@ -6,17 +6,17 @@ Model profiles control which Claude model each GSD agent uses. This allows balan
 
 | Agent | `quality` | `balanced` | `budget` |
 |-------|-----------|------------|----------|
-| qgsd-planner | opus | opus | sonnet |
-| qgsd-roadmapper | opus | sonnet | sonnet |
-| qgsd-executor | opus | sonnet | sonnet |
-| qgsd-phase-researcher | opus | sonnet | haiku |
-| qgsd-project-researcher | opus | sonnet | haiku |
-| qgsd-research-synthesizer | sonnet | sonnet | haiku |
-| qgsd-debugger | opus | sonnet | sonnet |
-| qgsd-codebase-mapper | sonnet | haiku | haiku |
-| qgsd-verifier | sonnet | sonnet | haiku |
-| qgsd-plan-checker | sonnet | sonnet | haiku |
-| qgsd-integration-checker | sonnet | sonnet | haiku |
+| nf-planner | opus | opus | sonnet |
+| nf-roadmapper | opus | sonnet | sonnet |
+| nf-executor | opus | sonnet | sonnet |
+| nf-phase-researcher | opus | sonnet | haiku |
+| nf-project-researcher | opus | sonnet | haiku |
+| nf-research-synthesizer | sonnet | sonnet | haiku |
+| nf-debugger | opus | sonnet | sonnet |
+| nf-codebase-mapper | sonnet | haiku | haiku |
+| nf-verifier | sonnet | sonnet | haiku |
+| nf-plan-checker | sonnet | sonnet | haiku |
+| nf-integration-checker | sonnet | sonnet | haiku |
 
 ## Profile Philosophy
 
@@ -55,8 +55,8 @@ Override specific agents without changing the entire profile:
 {
   "model_profile": "balanced",
   "model_overrides": {
-    "qgsd-executor": "opus",
-    "qgsd-planner": "haiku"
+    "nf-executor": "opus",
+    "nf-planner": "haiku"
   }
 }
 ```
@@ -76,16 +76,16 @@ Per-project default: Set in `.planning/config.json`:
 
 ## Design Rationale
 
-**Why Opus for qgsd-planner?**
+**Why Opus for nf-planner?**
 Planning involves architecture decisions, goal decomposition, and task design. This is where model quality has the highest impact.
 
-**Why Sonnet for qgsd-executor?**
+**Why Sonnet for nf-executor?**
 Executors follow explicit PLAN.md instructions. The plan already contains the reasoning; execution is implementation.
 
 **Why Sonnet (not Haiku) for verifiers in balanced?**
 Verification requires goal-backward reasoning - checking if code *delivers* what the phase promised, not just pattern matching. Sonnet handles this well; Haiku may miss subtle gaps.
 
-**Why Haiku for qgsd-codebase-mapper?**
+**Why Haiku for nf-codebase-mapper?**
 Read-only exploration and pattern extraction. No reasoning required, just structured output from file contents.
 
 **Why `inherit` instead of passing `opus` directly?**

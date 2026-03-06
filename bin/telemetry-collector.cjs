@@ -4,7 +4,7 @@
 /**
  * telemetry-collector.cjs
  *
- * Pure disk I/O telemetry collector for QGSD.
+ * Pure disk I/O telemetry collector for nForma.
  * Reads existing log sources, aggregates stats, writes .planning/telemetry/report.json.
  *
  * Sources:

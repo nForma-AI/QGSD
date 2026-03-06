@@ -22,7 +22,7 @@ const os   = require('os');
 
 const CLI      = path.join(__dirname, 'generate-tla-cfg.cjs');
 const REPO_ROOT = path.join(__dirname, '..');
-const MACHINE_FILE = path.join(REPO_ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
+const MACHINE_FILE = path.join(REPO_ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
 const SAFETY_PATH   = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'MCsafety.cfg');
 const LIVENESS_PATH = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'MCliveness.cfg');
 
@@ -30,7 +30,7 @@ const LIVENESS_PATH = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'MClive
 
 /**
  * Build a minimal synthetic repo tree under tmpDir with:
- *   src/machines/qgsd-workflow.machine.ts  (custom content)
+ *   src/machines/nf-workflow.machine.ts  (custom content)
  *   .planning/formal/tla/                            (empty dir)
  *
  * Returns an object with helpers to spawn the CLI pointing at that tree.
@@ -77,7 +77,7 @@ function makeSyntheticCLI(tmpDir, machineContent) {
 
   if (machineContent !== undefined) {
     fs.writeFileSync(
-      path.join(tmpDir, 'src', 'machines', 'qgsd-workflow.machine.ts'),
+      path.join(tmpDir, 'src', 'machines', 'nf-workflow.machine.ts'),
       machineContent,
       'utf8'
     );
@@ -114,7 +114,7 @@ test('stderr mentions machine file path when it is missing', () => {
   try {
     const patchedCLI = makeSyntheticCLI(tmpDir, undefined);
     const result = run(patchedCLI);
-    assert.match(result.stderr, /XState machine not found|qgsd-workflow\.machine\.ts/);
+    assert.match(result.stderr, /XState machine not found|nf-workflow\.machine\.ts/);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }

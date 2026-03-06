@@ -13,7 +13,7 @@ const { addSlotToQuorumActive } = require('./migrate-to-slots.cjs');
 
 // Helper: create a temporary directory and return its path
 function makeTmpDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-add-slot-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'nf-add-slot-test-'));
 }
 
 // Helper: clean up a temp directory
@@ -25,12 +25,12 @@ function cleanTmpDir(dir) {
 test('MS-TC-ADD-1: new slot not in quorum_active is added', () => {
   const tmpDir = makeTmpDir();
   try {
-    const qgsdPath = path.join(tmpDir, 'qgsd.json');
-    fs.writeFileSync(qgsdPath, JSON.stringify({ quorum_active: ['copilot-1'] }) + '\n');
-    const result = addSlotToQuorumActive('copilot-2', qgsdPath);
+    const nfPath = path.join(tmpDir, 'nf.json');
+    fs.writeFileSync(nfPath, JSON.stringify({ quorum_active: ['copilot-1'] }) + '\n');
+    const result = addSlotToQuorumActive('copilot-2', nfPath);
     assert.strictEqual(result.added, true, 'added must be true for new slot');
     assert.strictEqual(result.slot, 'copilot-2', 'slot must match the input');
-    const after = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
+    const after = JSON.parse(fs.readFileSync(nfPath, 'utf8'));
     assert.deepStrictEqual(after.quorum_active, ['copilot-1', 'copilot-2']);
   } finally {
     cleanTmpDir(tmpDir);
@@ -41,27 +41,27 @@ test('MS-TC-ADD-1: new slot not in quorum_active is added', () => {
 test('MS-TC-ADD-2: slot already in quorum_active is no-op', () => {
   const tmpDir = makeTmpDir();
   try {
-    const qgsdPath = path.join(tmpDir, 'qgsd.json');
-    fs.writeFileSync(qgsdPath, JSON.stringify({ quorum_active: ['copilot-1', 'copilot-2'] }) + '\n');
-    const result = addSlotToQuorumActive('copilot-2', qgsdPath);
+    const nfPath = path.join(tmpDir, 'nf.json');
+    fs.writeFileSync(nfPath, JSON.stringify({ quorum_active: ['copilot-1', 'copilot-2'] }) + '\n');
+    const result = addSlotToQuorumActive('copilot-2', nfPath);
     assert.strictEqual(result.added, false, 'added must be false for already-present slot');
     assert.strictEqual(result.skipped, true, 'skipped must be true for already-present slot');
-    const after = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
+    const after = JSON.parse(fs.readFileSync(nfPath, 'utf8'));
     assert.deepStrictEqual(after.quorum_active, ['copilot-1', 'copilot-2'], 'array must be unchanged');
   } finally {
     cleanTmpDir(tmpDir);
   }
 });
 
-// MS-TC-ADD-3: quorum_active absent in qgsd.json → creates array with the new slot
+// MS-TC-ADD-3: quorum_active absent in nf.json → creates array with the new slot
 test('MS-TC-ADD-3: quorum_active absent creates array with new slot', () => {
   const tmpDir = makeTmpDir();
   try {
-    const qgsdPath = path.join(tmpDir, 'qgsd.json');
-    fs.writeFileSync(qgsdPath, JSON.stringify({ required_models: {} }) + '\n');
-    const result = addSlotToQuorumActive('opencode-2', qgsdPath);
+    const nfPath = path.join(tmpDir, 'nf.json');
+    fs.writeFileSync(nfPath, JSON.stringify({ required_models: {} }) + '\n');
+    const result = addSlotToQuorumActive('opencode-2', nfPath);
     assert.strictEqual(result.added, true, 'added must be true');
-    const after = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
+    const after = JSON.parse(fs.readFileSync(nfPath, 'utf8'));
     assert.deepStrictEqual(after.quorum_active, ['opencode-2']);
   } finally {
     cleanTmpDir(tmpDir);
@@ -72,13 +72,13 @@ test('MS-TC-ADD-3: quorum_active absent creates array with new slot', () => {
 test('MS-TC-ADD-4: dryRun=true returns {added: true, dryRun: true} without writing', () => {
   const tmpDir = makeTmpDir();
   try {
-    const qgsdPath = path.join(tmpDir, 'qgsd.json');
+    const nfPath = path.join(tmpDir, 'nf.json');
     const initial = { quorum_active: ['copilot-1'] };
-    fs.writeFileSync(qgsdPath, JSON.stringify(initial) + '\n');
-    const result = addSlotToQuorumActive('copilot-2', qgsdPath, true);
+    fs.writeFileSync(nfPath, JSON.stringify(initial) + '\n');
+    const result = addSlotToQuorumActive('copilot-2', nfPath, true);
     assert.strictEqual(result.added, true, 'added must be true in dryRun');
     assert.strictEqual(result.dryRun, true, 'dryRun must be true');
-    const after = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
+    const after = JSON.parse(fs.readFileSync(nfPath, 'utf8'));
     assert.deepStrictEqual(after.quorum_active, ['copilot-1'], 'file must be unchanged in dryRun');
   } finally {
     cleanTmpDir(tmpDir);
@@ -89,12 +89,12 @@ test('MS-TC-ADD-4: dryRun=true returns {added: true, dryRun: true} without writi
 test('MS-TC-ADD-5: multiple calls append all slots in call order', () => {
   const tmpDir = makeTmpDir();
   try {
-    const qgsdPath = path.join(tmpDir, 'qgsd.json');
-    fs.writeFileSync(qgsdPath, JSON.stringify({ quorum_active: ['claude-1'] }) + '\n');
-    addSlotToQuorumActive('copilot-2', qgsdPath);
-    addSlotToQuorumActive('opencode-2', qgsdPath);
-    addSlotToQuorumActive('codex-cli-2', qgsdPath);
-    const after = JSON.parse(fs.readFileSync(qgsdPath, 'utf8'));
+    const nfPath = path.join(tmpDir, 'nf.json');
+    fs.writeFileSync(nfPath, JSON.stringify({ quorum_active: ['claude-1'] }) + '\n');
+    addSlotToQuorumActive('copilot-2', nfPath);
+    addSlotToQuorumActive('opencode-2', nfPath);
+    addSlotToQuorumActive('codex-cli-2', nfPath);
+    const after = JSON.parse(fs.readFileSync(nfPath, 'utf8'));
     assert.deepStrictEqual(
       after.quorum_active,
       ['claude-1', 'copilot-2', 'opencode-2', 'codex-cli-2'],

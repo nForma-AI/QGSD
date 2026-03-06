@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// hooks/qgsd-token-collector.js
+// hooks/nf-token-collector.js
 // SubagentStop hook — reads agent_transcript_path, sums message.usage fields,
 // appends a token record to .planning/token-usage.jsonl.
 //
 // Guards:
-//   - Only processes agent_type === 'qgsd-quorum-slot-worker' (exits 0 otherwise)
+//   - Only processes agent_type === 'nf-quorum-slot-worker' (exits 0 otherwise)
 //   - If transcript path is absent or missing: writes null-token record and exits 0 (fail-open)
 //   - isSidechain === true entries are excluded from token sum
 //   - isApiErrorMessage === true entries are excluded from token sum
@@ -78,8 +78,8 @@ function main() {
     try {
       const input = JSON.parse(raw);
 
-      // Guard: only process qgsd-quorum-slot-worker subagents
-      if (input.agent_type !== 'qgsd-quorum-slot-worker') {
+      // Guard: only process nf-quorum-slot-worker subagents
+      if (input.agent_type !== 'nf-quorum-slot-worker') {
         process.exit(0);
       }
 

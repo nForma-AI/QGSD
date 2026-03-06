@@ -1,5 +1,5 @@
 ---
-name: qgsd:update
+name: nf:update
 description: Update GSD to latest version with changelog display
 allowed-tools:
   - Bash
@@ -19,11 +19,11 @@ Routes to the update workflow which handles:
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/update.md
+@~/.claude/nf/workflows/update.md
 </execution_context>
 
 <process>
-**Follow the update workflow** from `@~/.claude/qgsd/workflows/update.md`.
+**Follow the update workflow** from `@~/.claude/nf/workflows/update.md`.
 
 The workflow handles all logic including:
 1. Installed version detection (local/global)

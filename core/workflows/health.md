@@ -30,7 +30,7 @@ fi
 **Run health validation:**
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs validate health $REPAIR_FLAG $FORCE_FLAG
+node ~/.claude/nf/bin/gsd-tools.cjs validate health $REPAIR_FLAG $FORCE_FLAG
 ```
 
 Parse JSON output:
@@ -167,7 +167,7 @@ If yes, re-run with --repair flag and display results.
 Re-run health check without --repair to confirm issues are resolved:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs validate health
+node ~/.claude/nf/bin/gsd-tools.cjs validate health
 ```
 
 Report final status.

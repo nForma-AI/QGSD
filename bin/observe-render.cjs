@@ -79,26 +79,32 @@ function renderObserveOutput(results) {
   }
 
   // Split by issue_type
-  const issues = allItems.filter(item => item.issue_type !== 'drift');
+  const issues = allItems.filter(item => !['drift', 'upstream', 'deps'].includes(item.issue_type));
   const drifts = allItems.filter(item => item.issue_type === 'drift');
+  const upstreams = allItems.filter(item => item.issue_type === 'upstream');
+  const deps = allItems.filter(item => item.issue_type === 'deps');
 
   const totalIssues = issues.length;
   const totalDrifts = drifts.length;
+  const totalUpstreams = upstreams.length;
+  const totalDeps = deps.length;
 
   // Header
-  if (totalIssues === 0 && totalDrifts === 0 && errorResults.length === 0) {
+  if (totalIssues === 0 && totalDrifts === 0 && totalUpstreams === 0 && totalDeps === 0 && errorResults.length === 0) {
     lines.push('');
     lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    lines.push(' QGSD > OBSERVE: All clear — no open issues found');
+    lines.push(' nForma > OBSERVE: All clear — no open issues found');
     lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     lines.push(`Sources checked: ${sourceCount}`);
     return lines.join('\n');
   }
 
+  const upstreamNote = totalUpstreams > 0 ? `, ${totalUpstreams} upstream(s)` : '';
+  const depsNote = totalDeps > 0 ? `, ${totalDeps} dep(s)` : '';
   const failNote = errorResults.length > 0 ? `; ${errorResults.length} source(s) failed` : '';
   lines.push('');
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  lines.push(` QGSD > OBSERVE: ${totalIssues} issue(s), ${totalDrifts} drift(s) across ${sourceCount} source(s)${failNote}`);
+  lines.push(` nForma > OBSERVE: ${totalIssues} issue(s), ${totalDrifts} drift(s)${upstreamNote}${depsNote} across ${sourceCount} source(s)${failNote}`);
   lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   // Sort issues by severity then age (newest first)
@@ -148,6 +154,61 @@ function renderObserveOutput(results) {
       const actual = pad(truncate(String(drift.actual_value || ''), 6), 6);
       const sev = pad(truncate(drift.severity || 'info', 4), 4);
       lines.push(`│ ${num} │ ${param} │ ${formal} │ ${actual} │ ${sev} │`);
+    }
+
+    lines.push('└─────────────────────────────────────────────────────────────────────┘');
+  }
+
+  // Render Upstream table
+  if (upstreams.length > 0) {
+    // Sort: warnings first, then by age (newest first)
+    upstreams.sort((a, b) => {
+      const sevCmp = classifySeverity(a.severity) - classifySeverity(b.severity);
+      if (sevCmp !== 0) return sevCmp;
+      return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+    });
+
+    lines.push('');
+    lines.push('┌──────────────────────────── UPSTREAM ──────────────────────────────┐');
+    lines.push('│ #  │ Title                                    │ Repo    │ Tag │ Age  │');
+    lines.push('├─────────────────────────────────────────────────────────────────────┤');
+
+    for (let i = 0; i < upstreams.length; i++) {
+      const item = upstreams[i];
+      const num = String(i + 1).padStart(2, ' ');
+      const title = pad(truncate(item.title, 40), 40);
+      const repo = pad(truncate((item._upstream?.repo || item.source_label || '').split('/').pop(), 7), 7);
+      const tag = pad(truncate(item._upstream?.tag || `#${item._upstream?.pr || ''}`, 3), 3);
+      const age = pad(item.age || formatAge(item.created_at), 4);
+      lines.push(`│ ${num} │ ${title} │ ${repo} │ ${tag} │ ${age} │`);
+    }
+
+    lines.push('└─────────────────────────────────────────────────────────────────────┘');
+  }
+
+  // Render Dependencies table
+  if (deps.length > 0) {
+    // Sort: vulns first (error), then warnings (major), then info (minor/patch)
+    deps.sort((a, b) => {
+      const sevCmp = classifySeverity(a.severity) - classifySeverity(b.severity);
+      if (sevCmp !== 0) return sevCmp;
+      // Within same severity, sort by package name
+      return (a.title || '').localeCompare(b.title || '');
+    });
+
+    lines.push('');
+    lines.push('┌────────────────────────── DEPENDENCIES ────────────────────────────┐');
+    lines.push('│ #  │ Package                                  │ Bump    │ Sev │ Meta │');
+    lines.push('├─────────────────────────────────────────────────────────────────────┤');
+
+    for (let i = 0; i < deps.length; i++) {
+      const item = deps[i];
+      const num = String(i + 1).padStart(2, ' ');
+      const title = pad(truncate(item.title, 40), 40);
+      const bump = pad(truncate(item._deps?.bumpType || '', 7), 7);
+      const sev = pad(truncate(item.severity || 'info', 3), 3);
+      const meta = pad(truncate(item.meta || '', 4), 4);
+      lines.push(`│ ${num} │ ${title} │ ${bump} │ ${sev} │ ${meta} │`);
     }
 
     lines.push('└─────────────────────────────────────────────────────────────────────┘');

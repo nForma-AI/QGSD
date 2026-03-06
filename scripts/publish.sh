@@ -18,7 +18,7 @@ if [ -z "$NPM_TOKEN" ]; then
   exit 1
 fi
 
-echo "Publishing @nforma.ai/qgsd..."
+echo "Publishing @nforma.ai/nf..."
 
 # Write a temporary project-level .npmrc with the token
 NPMRC="$ROOT_DIR/.npmrc"

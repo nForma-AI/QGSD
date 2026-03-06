@@ -19,7 +19,7 @@
  *     [--cwd <dir>]
  *
  * Builds the Mode A or Mode B prompt from deterministic JS templates matching
- * agents/qgsd-quorum-slot-worker.md Step 2, pipes it to call-quorum-slot.cjs via
+ * agents/nf-quorum-slot-worker.md Step 2, pipes it to call-quorum-slot.cjs via
  * child_process.spawn, parses the output, and emits a structured YAML result block.
  *
  * Exported pure functions (testable without subprocess):
@@ -118,7 +118,7 @@ const PATH_CATEGORY_MAP = new Map([
  *
  * @param {Array} requirements — full requirements array
  * @param {string} question — the question text
- * @param {string|null} artifactPath — optional artifact path (e.g. "hooks/qgsd-stop.js")
+ * @param {string|null} artifactPath — optional artifact path (e.g. "hooks/nf-stop.js")
  * @returns {Array} — filtered requirements (max 20), sorted by score descending
  */
 function matchRequirementsByKeywords(requirements, question, artifactPath) {
@@ -279,7 +279,7 @@ function formatRequirementsSection(requirements) {
 /**
  * buildModeAPrompt — constructs the Mode A question prompt.
  *
- * Matches the EXACT template from agents/qgsd-quorum-slot-worker.md Step 2 Mode A.
+ * Matches the EXACT template from agents/nf-quorum-slot-worker.md Step 2 Mode A.
  *
  * @param {object} opts
  * @param {number}  opts.round
@@ -297,7 +297,7 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
   const lines = [];
 
   // Header
-  lines.push(`QGSD Quorum — Round ${round}`);
+  lines.push(`nForma Quorum — Round ${round}`);
   lines.push('');
 
   // Repository + question
@@ -422,7 +422,7 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
 /**
  * buildModeBPrompt — constructs the Mode B execution review prompt.
  *
- * Matches the EXACT template from agents/qgsd-quorum-slot-worker.md Step 2 Mode B.
+ * Matches the EXACT template from agents/nf-quorum-slot-worker.md Step 2 Mode B.
  *
  * @param {object} opts
  * @param {number}  opts.round
@@ -440,7 +440,7 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
   const lines = [];
 
   // Header
-  lines.push(`QGSD Quorum — Execution Review (Round ${round})`);
+  lines.push(`nForma Quorum — Execution Review (Round ${round})`);
   lines.push('');
 
   // Repository + question

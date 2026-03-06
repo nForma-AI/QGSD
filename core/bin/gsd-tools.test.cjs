@@ -3381,14 +3381,14 @@ describe('maintain-tests load-state command', () => {
 // ============================================================================
 
 describe('maintain-tests INTG-03 compliance', () => {
-  test('TC-INTG03-1: fix-tests absent from quorum_commands in ~/.claude/qgsd.json', () => {
+  test('TC-INTG03-1: fix-tests absent from quorum_commands in ~/.claude/nf.json', () => {
     const os = require('os');
-    const qgsdJsonPath = path.join(os.homedir(), '.claude', 'qgsd.json');
-    if (!fs.existsSync(qgsdJsonPath)) {
-      assert.ok(true, 'qgsd.json not installed — INTG-03 N/A');
+    const nfJsonPath = path.join(os.homedir(), '.claude', 'nf.json');
+    if (!fs.existsSync(nfJsonPath)) {
+      assert.ok(true, 'nf.json not installed — INTG-03 N/A');
       return;
     }
-    const config = JSON.parse(fs.readFileSync(qgsdJsonPath, 'utf8'));
+    const config = JSON.parse(fs.readFileSync(nfJsonPath, 'utf8'));
     const quorumCommands = config.quorum_commands || [];
     assert.ok(
       !quorumCommands.includes('fix-tests'),
@@ -3605,7 +3605,7 @@ describe('milestone-scoped phase IDs', () => {
   test('MS-TC-01: roadmap analyze parses milestone-scoped phase headers', () => {
     fs.writeFileSync(
       path.join(tmpDir, '.planning', 'ROADMAP.md'),
-      `# Roadmap: QGSD\n\n### Phase v0.7-01: Composition Architecture\n**Goal:** Config-driven quorum\n\n### Phase v0.7-02: Multiple Slots\n**Goal:** N instances per family\n`
+      `# Roadmap: nForma\n\n### Phase v0.7-01: Composition Architecture\n**Goal:** Config-driven quorum\n\n### Phase v0.7-02: Multiple Slots\n**Goal:** N instances per family\n`
     );
 
     const result = runGsdTools('roadmap analyze', tmpDir);

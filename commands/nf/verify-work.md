@@ -1,5 +1,5 @@
 ---
-name: qgsd:verify-work
+name: nf:verify-work
 description: Validate built features through conversational UAT
 argument-hint: "[phase number, e.g., '4']"
 allowed-tools:
@@ -20,8 +20,8 @@ Output: {phase_num}-UAT.md tracking all test results. If issues found: diagnosed
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/verify-work.md
-@~/.claude/qgsd/templates/UAT.md
+@~/.claude/nf/workflows/verify-work.md
+@~/.claude/nf/templates/UAT.md
 </execution_context>
 
 <context>
@@ -33,6 +33,6 @@ Context files are resolved inside the workflow (`init verify-work`) and delegate
 </context>
 
 <process>
-Execute the verify-work workflow from @~/.claude/qgsd/workflows/verify-work.md end-to-end.
+Execute the verify-work workflow from @~/.claude/nf/workflows/verify-work.md end-to-end.
 Preserve all workflow gates (session management, test presentation, diagnosis, fix planning, routing).
 </process>

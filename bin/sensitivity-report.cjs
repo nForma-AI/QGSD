@@ -22,7 +22,7 @@ const REPORT_MD_PATH = process.env.SENSITIVITY_MD_PATH ||
 
 const PARAM_ANNOTATIONS = {
   MaxSize: {
-    codePath: 'hooks/qgsd-prompt.js FAN_OUT_COUNT; .planning/formal/tla/MCsafety.cfg MaxSize',
+    codePath: 'hooks/nf-prompt.js FAN_OUT_COUNT; .planning/formal/tla/MCsafety.cfg MaxSize',
     testCases: [
       'Test quorum at N=2 boundary: set FAN_OUT_COUNT=2 in providers.json and run quorum round',
       'Test quorum at N=1 (no quorum): verify workflow rejects insufficient available slots',
@@ -44,7 +44,7 @@ const PARAM_ANNOTATIONS = {
     ],
   },
   MaxDeliberation: {
-    codePath: '.planning/formal/tla/MCsafety.cfg MaxDeliberation=7; src/machines/qgsd-workflow.machine.ts MaxDeliberation guard',
+    codePath: '.planning/formal/tla/MCsafety.cfg MaxDeliberation=7; src/machines/nf-workflow.machine.ts MaxDeliberation guard',
     testCases: [
       'Test quorum workflow with max deliberation rounds reached — verify DECIDED fallback',
       'Test rapid-fire slot responses (all within 1 deliberation round)',
@@ -89,7 +89,7 @@ function parseNDJSON(filePath) {
 function generateReport(records) {
   const now = new Date().toISOString();
   const lines = [
-    '# Sensitivity Report — QGSD v0.20',
+    '# Sensitivity Report — nForma v0.20',
     '',
     'Generated: ' + now,
     'Source: .planning/formal/sensitivity-report.ndjson (' + records.length + ' records)',

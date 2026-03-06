@@ -4,7 +4,7 @@
 /**
  * install-formal-tools.cjs
  *
- * Cross-platform installer for QGSD formal verification tools:
+ * Cross-platform installer for nForma formal verification tools:
  *   TLA+    — downloads tla2tools.jar into .planning/formal/tla/
  *   Alloy   — downloads org.alloytools.alloy.dist.jar into .planning/formal/alloy/
  *   PRISM   — downloads and installs platform-specific binary

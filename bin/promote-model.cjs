@@ -20,7 +20,7 @@ const ROOT = path.join(__dirname, '..');
 // ── Find .planning/formal/ root from target path ───────────────────────────────────────
 // Walks up from a given path until finding .planning/formal/, then
 // returns the grandparent of that directory as the project root.
-// Falls back to ROOT (the QGSD project root) if no .planning/formal/ ancestor is found.
+// Falls back to ROOT (the nForma project root) if no .planning/formal/ ancestor is found.
 function findProjectRoot(startPath) {
   let current = path.dirname(startPath);
   while (true) {

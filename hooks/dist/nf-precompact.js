@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// hooks/qgsd-precompact.js
-// PreCompact hook — injects QGSD session state as additionalContext before context compaction.
+// hooks/nf-precompact.js
+// PreCompact hook — injects nForma session state as additionalContext before context compaction.
 // Reads .planning/STATE.md "Current Position" section and any pending task files.
 // Output survives compaction and appears in the first message of the compacted context.
 // Fails open on all errors — never blocks compaction.
@@ -30,7 +30,7 @@ function extractCurrentPosition(stateContent) {
   return section.trim() || null;
 }
 
-// Read pending task files without consuming them (unlike qgsd-prompt.js's consumePendingTask).
+// Read pending task files without consuming them (unlike nf-prompt.js's consumePendingTask).
 // Checks .claude/pending-task.txt and .claude/pending-task-*.txt files.
 // Returns an array of { filename, content } objects for each file found.
 function readPendingTasks(cwd) {
@@ -46,7 +46,7 @@ function readPendingTasks(cwd) {
       const content = fs.readFileSync(genericFile, 'utf8').trim();
       if (content) results.push({ filename: 'pending-task.txt', content });
     } catch (e) {
-      process.stderr.write('[qgsd-precompact] Could not read ' + genericFile + ': ' + e.message + '\n');
+      process.stderr.write('[nf-precompact] Could not read ' + genericFile + ': ' + e.message + '\n');
     }
   }
 
@@ -60,12 +60,12 @@ function readPendingTasks(cwd) {
           const content = fs.readFileSync(filePath, 'utf8').trim();
           if (content) results.push({ filename: entry, content });
         } catch (e) {
-          process.stderr.write('[qgsd-precompact] Could not read ' + filePath + ': ' + e.message + '\n');
+          process.stderr.write('[nf-precompact] Could not read ' + filePath + ': ' + e.message + '\n');
         }
       }
     }
   } catch (e) {
-    process.stderr.write('[qgsd-precompact] Could not read .claude dir: ' + e.message + '\n');
+    process.stderr.write('[nf-precompact] Could not read .claude dir: ' + e.message + '\n');
   }
 
   return results;
@@ -85,14 +85,14 @@ process.stdin.on('end', () => {
 
     if (!fs.existsSync(statePath)) {
       // No STATE.md — minimal context
-      additionalContext = 'QGSD session resumed after compaction. Run `cat .planning/STATE.md` for project state.';
+      additionalContext = 'nForma session resumed after compaction. Run `cat .planning/STATE.md` for project state.';
     } else {
       let stateContent;
       try {
         stateContent = fs.readFileSync(statePath, 'utf8');
       } catch (e) {
-        process.stderr.write('[qgsd-precompact] Could not read STATE.md: ' + e.message + '\n');
-        additionalContext = 'QGSD session resumed after compaction. Run `cat .planning/STATE.md` for project state.';
+        process.stderr.write('[nf-precompact] Could not read STATE.md: ' + e.message + '\n');
+        additionalContext = 'nForma session resumed after compaction. Run `cat .planning/STATE.md` for project state.';
         emitOutput(additionalContext);
         return;
       }
@@ -101,7 +101,7 @@ process.stdin.on('end', () => {
       const pendingTasks = readPendingTasks(cwd);
 
       const lines = [
-        'QGSD CONTINUATION CONTEXT (auto-injected at compaction)',
+        'nForma CONTINUATION CONTEXT (auto-injected at compaction)',
         '',
         '## Current Position',
         currentPosition || '(Could not extract Current Position section — run `cat .planning/STATE.md` for full state.)',
@@ -113,13 +113,13 @@ process.stdin.on('end', () => {
         // Include the first pending task found (generic file takes priority)
         lines.push(pendingTasks[0].content);
         if (pendingTasks.length > 1) {
-          process.stderr.write('[qgsd-precompact] Multiple pending task files found; injecting first: ' + pendingTasks[0].filename + '\n');
+          process.stderr.write('[nf-precompact] Multiple pending task files found; injecting first: ' + pendingTasks[0].filename + '\n');
         }
       }
 
       lines.push('');
       lines.push('## Resume Instructions');
-      lines.push('You are mid-session on a QGSD project. The context above shows where you were.');
+      lines.push('You are mid-session on a nForma project. The context above shows where you were.');
       lines.push('- If a PLAN.md is in progress, continue executing from the current plan.');
       lines.push('- If a pending task is shown above, execute it next.');
       lines.push('- Run `cat .planning/STATE.md` to get full project state if needed.');
@@ -131,7 +131,7 @@ process.stdin.on('end', () => {
     emitOutput(additionalContext);
 
   } catch (e) {
-    process.stderr.write('[qgsd-precompact] Fatal error: ' + e.message + '\n');
+    process.stderr.write('[nf-precompact] Fatal error: ' + e.message + '\n');
     process.exit(0); // Fail open — never block compaction
   }
 });

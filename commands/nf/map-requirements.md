@@ -1,5 +1,5 @@
 ---
-name: qgsd:map-requirements
+name: nf:map-requirements
 description: Map current and archived milestone requirements into .planning/formal/requirements.json
 argument-hint: [--dry-run] [--skip-archive] [--skip-validate]
 allowed-tools:
@@ -11,10 +11,10 @@ Run the requirements mapping pipeline — merges current `.planning/REQUIREMENTS
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/map-requirements.md
+@~/.claude/nf/workflows/map-requirements.md
 </execution_context>
 
 <process>
-Execute the map-requirements workflow from @~/.claude/qgsd/workflows/map-requirements.md end-to-end.
+Execute the map-requirements workflow from @~/.claude/nf/workflows/map-requirements.md end-to-end.
 Pass through --dry-run and --skip-archive flags from arguments.
 </process>

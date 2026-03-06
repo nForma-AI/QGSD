@@ -415,6 +415,12 @@ const { handleLogstash } = require('./observe-handler-logstash.cjs');
 // Internal work detection handler
 const { handleInternal } = require('./observe-handler-internal.cjs');
 
+// Upstream tracking handler
+const { handleUpstream } = require('./observe-handler-upstream.cjs');
+
+// Dependency freshness handler
+const { handleDeps } = require('./observe-handler-deps.cjs');
+
 module.exports = {
   handleGitHub,
   handleSentry,
@@ -428,6 +434,10 @@ module.exports = {
   handleLogstash,
   // Internal work detection (quick-168)
   handleInternal,
+  // Upstream tracking
+  handleUpstream,
+  // Dependency freshness
+  handleDeps,
   // Exported for testing
   parseDuration,
   formatAge,

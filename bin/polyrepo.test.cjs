@@ -14,7 +14,7 @@ const polyrepo = require('./polyrepo.cjs');
  * Create isolated test environment
  */
 function createTestEnv() {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-polyrepo-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-polyrepo-test-'));
   const polyreposDir = path.join(tmpDir, '.claude', 'polyrepos');
   const repoA = path.join(tmpDir, 'repo-a');
   const repoB = path.join(tmpDir, 'repo-b');

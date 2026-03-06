@@ -1,5 +1,5 @@
 ---
-name: qgsd:new-milestone
+name: nf:new-milestone
 description: Start a new milestone cycle — update PROJECT.md and route to requirements
 argument-hint: "[milestone name, e.g., 'v1.1 Notifications']"
 allowed-tools:
@@ -25,11 +25,11 @@ Brownfield equivalent of new-project. Project exists, PROJECT.md has history. Ga
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/new-milestone.md
-@~/.claude/qgsd/references/questioning.md
-@~/.claude/qgsd/references/ui-brand.md
-@~/.claude/qgsd/templates/project.md
-@~/.claude/qgsd/templates/requirements.md
+@~/.claude/nf/workflows/new-milestone.md
+@~/.claude/nf/references/questioning.md
+@~/.claude/nf/references/ui-brand.md
+@~/.claude/nf/templates/project.md
+@~/.claude/nf/templates/requirements.md
 </execution_context>
 
 <context>
@@ -39,6 +39,6 @@ Project and milestone context files are resolved inside the workflow (`init new-
 </context>
 
 <process>
-Execute the new-milestone workflow from @~/.claude/qgsd/workflows/new-milestone.md end-to-end.
+Execute the new-milestone workflow from @~/.claude/nf/workflows/new-milestone.md end-to-end.
 Preserve all workflow gates (validation, questioning, research, requirements, roadmap approval, commits).
 </process>

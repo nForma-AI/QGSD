@@ -1,5 +1,5 @@
 ---
-name: qgsd:mcp-restart
+name: nf:mcp-restart
 description: Restart a quorum agent's MCP server process — kills the running process and waits for Claude Code to reconnect automatically
 argument-hint: "<agent>"
 allowed-tools:

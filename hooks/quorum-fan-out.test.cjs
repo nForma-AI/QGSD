@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Path to quorum.md
-const QUORUM_MD_PATH = path.join(__dirname, '..', 'commands', 'qgsd', 'quorum.md');
+const QUORUM_MD_PATH = path.join(__dirname, '..', 'commands', 'nforma', 'quorum.md');
 
 // Helper: read quorum.md content
 function readQuorumMd() {

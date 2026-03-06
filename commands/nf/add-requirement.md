@@ -1,5 +1,5 @@
 ---
-name: qgsd:add-requirement
+name: nf:add-requirement
 description: Add a single requirement to .planning/formal/requirements.json with duplicate and conflict checks
 argument-hint: [--id=PREFIX-NN] [--text="..."] [--category="..."] [--phase=vX.XX-NN] [--dry-run]
 allowed-tools:
@@ -15,10 +15,10 @@ Add a single requirement to the formal requirements envelope (`.planning/formal/
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/add-requirement.md
+@~/.claude/nf/workflows/add-requirement.md
 </execution_context>
 
 <process>
-Execute the add-requirement workflow from @~/.claude/qgsd/workflows/add-requirement.md end-to-end.
+Execute the add-requirement workflow from @~/.claude/nf/workflows/add-requirement.md end-to-end.
 Pass through all --flags from arguments. If required fields (id, text, category, phase) are not provided as arguments, prompt the user interactively.
 </process>

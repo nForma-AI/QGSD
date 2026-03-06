@@ -20,7 +20,7 @@ const {
 
 // Helper: create temp directory for test files
 function createTempDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-test-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'nf-test-'));
 }
 
 // Helper: clean up temp directory
@@ -32,7 +32,7 @@ function cleanupTempDir(dir) {
 
 // Test 1: parseRequirements extracts REQ-ID, text, and category from markdown bullets
 test('parseRequirements extracts REQ-ID, text, and category from markdown bullets', function() {
-  const markdown = `# Requirements: QGSD v0.22
+  const markdown = `# Requirements: nForma v0.22
 
 ### Requirements Envelope — ENV
 
@@ -193,7 +193,7 @@ test('aggregateRequirements produces valid JSON from temp REQUIREMENTS.md', func
     const tempReqPath = path.join(tempDir, 'REQUIREMENTS.md');
     const tempOutputPath = path.join(tempDir, 'requirements.json');
 
-    const tempMarkdown = `# Requirements: QGSD v0.22
+    const tempMarkdown = `# Requirements: nForma v0.22
 
 ### Requirements Envelope — ENV
 
@@ -239,7 +239,7 @@ test('aggregateRequirements is deterministic -- same input produces identical ou
     const tempOutputPath1 = path.join(tempDir, 'requirements1.json');
     const tempOutputPath2 = path.join(tempDir, 'requirements2.json');
 
-    const tempMarkdown = `# Requirements: QGSD v0.22
+    const tempMarkdown = `# Requirements: nForma v0.22
 
 ### Requirements Envelope — ENV
 
@@ -288,7 +288,7 @@ test('aggregateRequirements refuses to overwrite frozen envelope', function() {
     const tempReqPath = path.join(tempDir, 'REQUIREMENTS.md');
     const tempOutputPath = path.join(tempDir, 'requirements.json');
 
-    const tempMarkdown = `# Requirements: QGSD v0.22
+    const tempMarkdown = `# Requirements: nForma v0.22
 
 ### Requirements Envelope — ENV
 
@@ -341,7 +341,7 @@ test('content_hash is consistent across runs', function() {
     const tempOutputPath1 = path.join(tempDir, 'requirements1.json');
     const tempOutputPath2 = path.join(tempDir, 'requirements2.json');
 
-    const tempMarkdown = `# Requirements: QGSD v0.22
+    const tempMarkdown = `# Requirements: nForma v0.22
 
 ### Requirements Envelope — ENV
 
@@ -396,7 +396,7 @@ test('archive requirements are included in envelope', function() {
     const milestonesDir = path.join(tempDir, 'milestones');
     fs.mkdirSync(milestonesDir, { recursive: true });
 
-    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: QGSD v0.20
+    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: nForma v0.20
 
 ### Schema — SCHEMA
 
@@ -411,7 +411,7 @@ test('archive requirements are included in envelope', function() {
 
     // Create current REQUIREMENTS.md
     const currentPath = path.join(tempDir, 'REQUIREMENTS.md');
-    fs.writeFileSync(currentPath, `# Requirements: QGSD v0.24
+    fs.writeFileSync(currentPath, `# Requirements: nForma v0.24
 
 ### Requirements Envelope — ENV
 
@@ -460,7 +460,7 @@ test('current requirement wins on ID conflict', function() {
     const milestonesDir = path.join(tempDir, 'milestones');
     fs.mkdirSync(milestonesDir, { recursive: true });
 
-    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: QGSD v0.20
+    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: nForma v0.20
 
 ### Test — SAME
 
@@ -474,7 +474,7 @@ test('current requirement wins on ID conflict', function() {
 `, 'utf8');
 
     const currentPath = path.join(tempDir, 'REQUIREMENTS.md');
-    fs.writeFileSync(currentPath, `# Requirements: QGSD v0.24
+    fs.writeFileSync(currentPath, `# Requirements: nForma v0.24
 
 ### Test — SAME
 
@@ -518,7 +518,7 @@ test('skipArchive excludes archive requirements', function() {
     const milestonesDir = path.join(tempDir, 'milestones');
     fs.mkdirSync(milestonesDir, { recursive: true });
 
-    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: QGSD v0.20
+    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: nForma v0.20
 
 ### Schema — SCHEMA
 
@@ -532,7 +532,7 @@ test('skipArchive excludes archive requirements', function() {
 `, 'utf8');
 
     const currentPath = path.join(tempDir, 'REQUIREMENTS.md');
-    fs.writeFileSync(currentPath, `# Requirements: QGSD v0.24
+    fs.writeFileSync(currentPath, `# Requirements: nForma v0.24
 
 ### Requirements Envelope — ENV
 
@@ -573,7 +573,7 @@ test('multiple archive milestones merge in version order', function() {
     const milestonesDir = path.join(tempDir, 'milestones');
     fs.mkdirSync(milestonesDir, { recursive: true });
 
-    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: QGSD v0.20
+    fs.writeFileSync(path.join(milestonesDir, 'v0.20-REQUIREMENTS.md'), `# Requirements: nForma v0.20
 
 ### Test — FOO
 
@@ -586,7 +586,7 @@ test('multiple archive milestones merge in version order', function() {
 | FOO-01 | v0.20-01 | Complete |
 `, 'utf8');
 
-    fs.writeFileSync(path.join(milestonesDir, 'v0.21-REQUIREMENTS.md'), `# Requirements: QGSD v0.21
+    fs.writeFileSync(path.join(milestonesDir, 'v0.21-REQUIREMENTS.md'), `# Requirements: nForma v0.21
 
 ### Test — FOO
 
@@ -601,7 +601,7 @@ test('multiple archive milestones merge in version order', function() {
 
     // Current file does NOT define FOO-01
     const currentPath = path.join(tempDir, 'REQUIREMENTS.md');
-    fs.writeFileSync(currentPath, `# Requirements: QGSD v0.24
+    fs.writeFileSync(currentPath, `# Requirements: nForma v0.24
 
 ### Requirements Envelope — ENV
 

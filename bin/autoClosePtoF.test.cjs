@@ -186,7 +186,7 @@ describe('autoClosePtoF', () => {
     let callCount = 0;
     const mixedSpawn = () => {
       callCount++;
-      spawnCalls.push({ script: 'qgsd-quick.cjs', args: [] });
+      spawnCalls.push({ script: 'nf-quick.cjs', args: [] });
       // First call succeeds, second fails (e2 is investigation so no call, e3 is second dispatch)
       return { ok: callCount === 1 };
     };

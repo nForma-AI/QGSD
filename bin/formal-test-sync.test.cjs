@@ -237,7 +237,7 @@ test('TC-GAP-4: Multiple test cases for same requirement tracked correctly', () 
 // ── TC-STUB: Stub Generation Tests ──────────────────────────────────────────
 
 test('TC-STUB-1: Generated stubs contain @requirement annotation', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stub-test-'));
   try {
     const result = spawnSync(process.execPath, [
       path.join(__dirname, 'formal-test-sync.cjs'),
@@ -257,7 +257,7 @@ test('TC-STUB-1: Generated stubs contain @requirement annotation', () => {
 });
 
 test('TC-STUB-2: Stub files contain assert.fail with TODO', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stub-test-'));
   try {
     const result = spawnSync(process.execPath, [
       path.join(__dirname, 'formal-test-sync.cjs'),
@@ -284,7 +284,7 @@ test('TC-STUB-2: Stub files contain assert.fail with TODO', () => {
 });
 
 test('TC-STUB-3: Stub filenames follow REQ-ID.stub.test.js convention', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stub-test-'));
   try {
     const result = spawnSync(process.execPath, [
       path.join(__dirname, 'formal-test-sync.cjs'),
@@ -308,7 +308,7 @@ test('TC-STUB-3: Stub filenames follow REQ-ID.stub.test.js convention', () => {
 });
 
 test('TC-STUB-4: --dry-run mode does not create files', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-stub-dryrun-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stub-dryrun-'));
   try {
     const result = spawnSync(process.execPath, [
       path.join(__dirname, 'formal-test-sync.cjs'),

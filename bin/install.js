@@ -135,23 +135,23 @@ function getGlobalDir(runtime, explicitDir = null) {
 }
 
 const banner = '\n' +
-  salmon + ' ███╗   ██╗' + cyan + '███████╗ ██████╗ ██████╗ ███╗   ███╗ █████╗\n' +
-  salmon + ' ████╗  ██║' + cyan + '██╔════╝██╔═══██╗██╔══██╗████╗ ████║██╔══██╗\n' +
-  salmon + ' ██╔██╗ ██║' + cyan + '█████╗  ██║   ██║██████╔╝██╔████╔██║███████║\n' +
-  salmon + ' ██║╚██╗██║' + cyan + '██╔══╝  ██║   ██║██╔══██╗██║╚██╔╝██║██╔══██║\n' +
-  salmon + ' ██║ ╚████║' + cyan + '██║     ╚██████╔╝██║  ██║██║ ╚═╝ ██║██║  ██║\n' +
-  salmon + ' ╚═╝  ╚═══╝' + cyan + '╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝' + reset + '\n' +
+  salmon + '          ' + cyan + '███████╗\n' +
+  salmon + '          ' + cyan + '██╔════╝\n' +
+  salmon + ' ██████╗  ' + cyan + '█████╗\n' +
+  salmon + ' ██╔══██╗ ' + cyan + '██╔══╝\n' +
+  salmon + ' ██║  ██║ ' + cyan + '██║\n' +
+  salmon + ' ╚═╝  ╚═╝ ' + cyan + '╚═╝' + reset + '\n' +
   '\n' +
-  '  nForma — Quorum Gets Shit Done ' + dim + 'v' + pkg.version + reset + '\n' +
+  '  nForma — Consensus before code. Proof before production. ' + dim + 'v' + pkg.version + reset + '\n' +
   '  Built on GSD-CC by TÂCHES.\n' +
-  '  Full automation through quorum of coding agents. By Jonathan Borduas.\n' +
+  '  A quorum of diverse coding agents + formal verification. By Jonathan Borduas.\n' +
   '\n' +
   cyan + '  The task of leadership is to create an alignment of strengths\n' +
   '   so strong that it makes the system\u2019s weaknesses irrelevant.\n' +
   dim + '  \u2014 Peter Drucker' + reset + '\n';
 
 // nForma: MCP auto-detection — keyword map for quorum model server matching
-const QGSD_KEYWORD_MAP = {
+const NF_KEYWORD_MAP = {
   codex:    { keywords: ['codex'],    defaultPrefix: 'mcp__codex-cli-1__'  },
   gemini:   { keywords: ['gemini'],   defaultPrefix: 'mcp__gemini-cli-1__' },
   opencode: { keywords: ['opencode'], defaultPrefix: 'mcp__opencode-1__'   },
@@ -177,7 +177,7 @@ function buildRequiredModelsFromMcp() {
   const requiredModels = {};
   let anyDetected = false;
 
-  for (const [modelKey, { keywords, defaultPrefix }] of Object.entries(QGSD_KEYWORD_MAP)) {
+  for (const [modelKey, { keywords, defaultPrefix }] of Object.entries(NF_KEYWORD_MAP)) {
     const matched = Object.keys(mcpServers).find(serverName =>
       keywords.some(kw => serverName.toLowerCase().includes(kw))
     );
@@ -192,7 +192,7 @@ function buildRequiredModelsFromMcp() {
   }
 
   if (!anyDetected) {
-    console.warn(`  ${yellow}⚠${reset} No quorum MCP servers detected — using hardcoded defaults. Edit ~/.claude/qgsd.json to configure.`);
+    console.warn(`  ${yellow}⚠${reset} No quorum MCP servers detected — using hardcoded defaults. Edit ~/.claude/nf.json to configure.`);
   }
 
   return requiredModels;
@@ -255,7 +255,7 @@ function warnMissingMcpServers() {
     return;
   }
 
-  for (const [modelKey, { keywords }] of Object.entries(QGSD_KEYWORD_MAP)) {
+  for (const [modelKey, { keywords }] of Object.entries(NF_KEYWORD_MAP)) {
     const found = Object.keys(mcpServers).some(serverName =>
       keywords.some(kw => serverName.toLowerCase().includes(kw))
     );
@@ -624,8 +624,8 @@ function convertClaudeToOpencodeFrontmatter(content) {
   convertedContent = convertedContent.replace(/\bAskUserQuestion\b/g, 'question');
   convertedContent = convertedContent.replace(/\bSlashCommand\b/g, 'skill');
   convertedContent = convertedContent.replace(/\bTodoWrite\b/g, 'todowrite');
-  // Replace /nf:command with /qgsd-command for opencode (flat command structure)
-  convertedContent = convertedContent.replace(/\/nf:/g, '/qgsd-');
+  // Replace /nf:command with /nf-command for opencode (flat command structure)
+  convertedContent = convertedContent.replace(/\/nf:/g, '/nf-');
   // Replace ~/.claude with ~/.config/opencode (OpenCode's correct config location)
   convertedContent = convertedContent.replace(/~\/\.claude\b/g, '~/.config/opencode');
   // Replace general-purpose subagent type with OpenCode's equivalent "general"
@@ -884,8 +884,14 @@ function cleanupOrphanedFiles(configDir) {
   const orphanedFiles = [
     'hooks/gsd-notify.sh',        // Removed in v1.6.x
     'hooks/statusline.js',         // Renamed to gsd-statusline.js in v1.9.0
-    'hooks/gsd-statusline.js',     // Renamed to qgsd-statusline.js in v0.2
-    'hooks/gsd-check-update.js',   // Renamed to qgsd-check-update.js in v0.2
+    'hooks/gsd-statusline.js',     // Renamed to nf-statusline.js in v0.2
+    'hooks/gsd-check-update.js',   // Renamed to nf-check-update.js in v0.2
+    'hooks/qgsd-prompt.js',        // Renamed to nf-prompt.js in v0.2
+    'hooks/qgsd-stop.js',          // Renamed to nf-stop.js in v0.2
+    'hooks/qgsd-circuit-breaker.js', // Renamed to nf-circuit-breaker.js in v0.2
+    'hooks/qgsd-session-start.js', // Renamed to nf-session-start.js in v0.2
+    'hooks/qgsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'hooks/qgsd-statusline.js',    // Renamed to nf-statusline.js in v0.2
   ];
 
   for (const relPath of orphanedFiles) {
@@ -907,8 +913,14 @@ function cleanupOrphanedHooks(settings) {
     'gsd-intel-index.js',  // Removed in v1.9.2
     'gsd-intel-session.js',  // Removed in v1.9.2
     'gsd-intel-prune.js',  // Removed in v1.9.2
-    'hooks/gsd-check-update.js',  // Renamed to qgsd-check-update.js in v0.2
-    'hooks/gsd-statusline.js',  // Renamed to qgsd-statusline.js in v0.2
+    'hooks/gsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'hooks/gsd-statusline.js',  // Renamed to nf-statusline.js in v0.2
+    'qgsd-prompt.js',  // Renamed to nf-prompt.js in v0.2
+    'qgsd-stop.js',  // Renamed to nf-stop.js in v0.2
+    'qgsd-circuit-breaker.js',  // Renamed to nf-circuit-breaker.js in v0.2
+    'qgsd-session-start.js',  // Renamed to nf-session-start.js in v0.2
+    'qgsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
+    'qgsd-statusline.js',  // Renamed to nf-statusline.js in v0.2
   ];
 
   let cleanedHooks = false;
@@ -941,15 +953,16 @@ function cleanupOrphanedHooks(settings) {
     console.log(`  ${green}✓${reset} Removed orphaned hook registrations`);
   }
 
-  // Fix #330 + qgsd migration: update statusLine if it points to old statusline path
+  // Fix #330 + nf migration: update statusLine if it points to old statusline path
   if (settings.statusLine && settings.statusLine.command) {
     const cmd = settings.statusLine.command;
-    if ((cmd.includes('statusline.js') || cmd.includes('gsd-statusline.js')) &&
-        !cmd.includes('qgsd-statusline.js')) {
+    if ((cmd.includes('statusline.js') || cmd.includes('gsd-statusline.js') || cmd.includes('qgsd-statusline.js')) &&
+        !cmd.includes('nf-statusline.js')) {
       settings.statusLine.command = cmd
-        .replace(/\bgsd-statusline\.js\b/, 'qgsd-statusline.js')
-        .replace(/\bstatusline\.js\b/, 'qgsd-statusline.js');
-      console.log(`  ${green}✓${reset} Updated statusline path → qgsd-statusline.js`);
+        .replace(/\bqgsd-statusline\.js\b/, 'nf-statusline.js')
+        .replace(/\bgsd-statusline\.js\b/, 'nf-statusline.js')
+        .replace(/\bstatusline\.js\b/, 'nf-statusline.js');
+      console.log(`  ${green}✓${reset} Updated statusline path → nf-statusline.js`);
     }
   }
 
@@ -992,12 +1005,12 @@ function uninstall(isGlobal, runtime = 'claude') {
 
   // 1. Remove GSD commands directory
   if (isOpencode) {
-    // OpenCode: remove command/qgsd-*.md files
+    // OpenCode: remove command/nf-*.md files (and legacy qgsd-*.md)
     const commandDir = path.join(targetDir, 'command');
     if (fs.existsSync(commandDir)) {
       const files = fs.readdirSync(commandDir);
       for (const file of files) {
-        if (file.startsWith('qgsd-') && file.endsWith('.md')) {
+        if (file.startsWith('nf-') && file.endsWith('.md')) {
           fs.unlinkSync(path.join(commandDir, file));
           removedCount++;
         }
@@ -1014,12 +1027,12 @@ function uninstall(isGlobal, runtime = 'claude') {
     }
   }
 
-  // 2. Remove qgsd directory
-  const gsdDir = path.join(targetDir, 'qgsd');
+  // 2. Remove nf directory
+  const gsdDir = path.join(targetDir, 'nf');
   if (fs.existsSync(gsdDir)) {
     fs.rmSync(gsdDir, { recursive: true });
     removedCount++;
-    console.log(`  ${green}✓${reset} Removed qgsd/`);
+    console.log(`  ${green}✓${reset} Removed nf/`);
   }
 
   // 2b. Migration: warn about old get-shit-done/ and commands/gsd/ paths from pre-v0.2 nForma installs
@@ -1036,13 +1049,13 @@ function uninstall(isGlobal, runtime = 'claude') {
     console.log();
   }
 
-  // 3. Remove GSD agents (qgsd-*.md files only)
+  // 3. Remove GSD agents (nf-*.md files only)
   const agentsDir = path.join(targetDir, 'agents');
   if (fs.existsSync(agentsDir)) {
     const files = fs.readdirSync(agentsDir);
     let agentCount = 0;
     for (const file of files) {
-      if (file.startsWith('qgsd-') && file.endsWith('.md')) {
+      if (file.startsWith('nf-') && file.endsWith('.md')) {
         fs.unlinkSync(path.join(agentsDir, file));
         agentCount++;
       }
@@ -1065,7 +1078,11 @@ function uninstall(isGlobal, runtime = 'claude') {
   // 4. Remove GSD hooks
   const hooksDir = path.join(targetDir, 'hooks');
   if (fs.existsSync(hooksDir)) {
-    const gsdHooks = ['qgsd-statusline.js', 'qgsd-check-update.js', 'gsd-check-update.sh'];
+    const gsdHooks = [
+      'nf-statusline.js', 'nf-check-update.js', 'gsd-check-update.sh',
+      'qgsd-prompt.js', 'qgsd-stop.js', 'qgsd-circuit-breaker.js',
+      'qgsd-session-start.js', 'qgsd-check-update.js', 'qgsd-statusline.js',
+    ];
     let hookCount = 0;
     for (const hook of gsdHooks) {
       const hookPath = path.join(hooksDir, hook);
@@ -1102,9 +1119,9 @@ function uninstall(isGlobal, runtime = 'claude') {
     let settings = readSettings(settingsPath);
     let settingsModified = false;
 
-    // Remove GSD statusline if it references our hook
+    // Remove GSD statusline if it references our hook (nf-* or old qgsd-*)
     if (settings.statusLine && settings.statusLine.command &&
-        settings.statusLine.command.includes('qgsd-statusline')) {
+        (settings.statusLine.command.includes('nf-statusline') || settings.statusLine.command.includes('qgsd-statusline'))) {
       delete settings.statusLine;
       settingsModified = true;
       console.log(`  ${green}✓${reset} Removed GSD statusline from settings`);
@@ -1118,6 +1135,9 @@ function uninstall(isGlobal, runtime = 'claude') {
           // Filter out GSD hooks
           const hasGsdHook = entry.hooks.some(h =>
             h.command && (
+              h.command.includes('nf-check-update') ||
+              h.command.includes('nf-statusline') ||
+              h.command.includes('nf-session-start') ||
               h.command.includes('qgsd-check-update') ||
               h.command.includes('qgsd-statusline') ||
               h.command.includes('qgsd-session-start')
@@ -1140,7 +1160,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.UserPromptSubmit) {
       const before = settings.hooks.UserPromptSubmit.length;
       settings.hooks.UserPromptSubmit = settings.hooks.UserPromptSubmit.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-prompt')))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-prompt') || h.command.includes('qgsd-prompt'))))
       );
       if (settings.hooks.UserPromptSubmit.length < before) {
         settingsModified = true;
@@ -1151,7 +1171,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.Stop) {
       const before = settings.hooks.Stop.length;
       settings.hooks.Stop = settings.hooks.Stop.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-stop')))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-stop') || h.command.includes('qgsd-stop'))))
       );
       if (settings.hooks.Stop.length < before) {
         settingsModified = true;
@@ -1162,7 +1182,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.PreToolUse) {
       const before = settings.hooks.PreToolUse.length;
       settings.hooks.PreToolUse = settings.hooks.PreToolUse.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-circuit-breaker')))
+        !(entry.hooks && entry.hooks.some(h => h.command && (h.command.includes('nf-circuit-breaker') || h.command.includes('qgsd-circuit-breaker'))))
       );
       if (settings.hooks.PreToolUse.length < before) {
         settingsModified = true;
@@ -1181,11 +1201,11 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
     }
-    // Remove qgsd-spec-regen hook (uninstall path)
+    // Remove nf-spec-regen hook (uninstall path)
     if (settings.hooks && settings.hooks.PostToolUse) {
       const before = settings.hooks.PostToolUse.length;
       settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-spec-regen')))
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-spec-regen')))
       );
       if (settings.hooks.PostToolUse.length < before) {
         settingsModified = true;
@@ -1196,7 +1216,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.PreCompact) {
       const before = settings.hooks.PreCompact.length;
       settings.hooks.PreCompact = settings.hooks.PreCompact.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-precompact')))
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-precompact')))
       );
       if (settings.hooks.PreCompact.length < before) {
         settingsModified = true;
@@ -1235,7 +1255,7 @@ function uninstall(isGlobal, runtime = 'claude') {
             if (config.permission[permType]) {
               const keys = Object.keys(config.permission[permType]);
               for (const key of keys) {
-                if (key.includes('qgsd')) {
+                if (key.includes('nf')) {
                   delete config.permission[permType][key];
                   modified = true;
                 }
@@ -1335,7 +1355,7 @@ function parseJsonc(content) {
 
 /**
  * Configure OpenCode permissions to allow reading GSD reference docs
- * This prevents permission prompts when GSD accesses the qgsd directory
+ * This prevents permission prompts when GSD accesses the nf directory
  * @param {boolean} isGlobal - Whether this is a global or local install
  */
 function configureOpencodePermissions(isGlobal = true) {
@@ -1373,8 +1393,8 @@ function configureOpencodePermissions(isGlobal = true) {
   // Use ~ shorthand if it's in the default location, otherwise use full path
   const defaultConfigDir = path.join(os.homedir(), '.config', 'opencode');
   const gsdPath = opencodeConfigDir === defaultConfigDir
-    ? '~/.config/opencode/qgsd/*'
-    : `${opencodeConfigDir.replace(/\\/g, '/')}/qgsd/*`;
+    ? '~/.config/opencode/nf/*'
+    : `${opencodeConfigDir.replace(/\\/g, '/')}/nf/*`;
   
   let modified = false;
 
@@ -1448,7 +1468,7 @@ function verifyFileInstalled(filePath, description) {
 // ──────────────────────────────────────────────────────
 
 const PATCHES_DIR_NAME = 'gsd-local-patches';
-const MANIFEST_NAME = 'qgsd-file-manifest.json';
+const MANIFEST_NAME = 'nf-file-manifest.json';
 
 /**
  * Compute SHA256 hash of file contents
@@ -1482,14 +1502,14 @@ function generateManifest(dir, baseDir) {
  * Write file manifest after installation for future modification detection
  */
 function writeManifest(configDir) {
-  const gsdDir = path.join(configDir, 'qgsd');
+  const gsdDir = path.join(configDir, 'nf');
   const commandsDir = path.join(configDir, 'commands', 'nf');
   const agentsDir = path.join(configDir, 'agents');
   const manifest = { version: pkg.version, timestamp: new Date().toISOString(), files: {} };
 
   const gsdHashes = generateManifest(gsdDir);
   for (const [rel, hash] of Object.entries(gsdHashes)) {
-    manifest.files['qgsd/' + rel] = hash;
+    manifest.files['nf/' + rel] = hash;
   }
   if (fs.existsSync(commandsDir)) {
     const cmdHashes = generateManifest(commandsDir);
@@ -1499,7 +1519,7 @@ function writeManifest(configDir) {
   }
   if (fs.existsSync(agentsDir)) {
     for (const file of fs.readdirSync(agentsDir)) {
-      if (file.startsWith('qgsd-') && file.endsWith('.md')) {
+      if (file.startsWith('nf-') && file.endsWith('.md')) {
         manifest.files['agents/' + file] = fileHash(path.join(agentsDir, file));
       }
     }
@@ -1644,14 +1664,14 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Copy qgsd skill with path replacement
-  const skillSrc = path.join(src, 'qgsd-core');
-  const skillDest = path.join(targetDir, 'qgsd');
+  // Copy nf skill with path replacement
+  const skillSrc = path.join(src, 'core');
+  const skillDest = path.join(targetDir, 'nf');
   copyWithPathReplacement(skillSrc, skillDest, pathPrefix, runtime);
-  if (verifyInstalled(skillDest, 'qgsd')) {
-    console.log(`  ${green}✓${reset} Installed qgsd`);
+  if (verifyInstalled(skillDest, 'nf')) {
+    console.log(`  ${green}✓${reset} Installed nf`);
   } else {
-    failures.push('qgsd');
+    failures.push('nf');
   }
 
   // Copy agents to agents directory
@@ -1663,7 +1683,7 @@ function install(isGlobal, runtime = 'claude') {
     // Remove old nf-*.md files before copying new ones
     if (fs.existsSync(agentsDest)) {
       for (const file of fs.readdirSync(agentsDest)) {
-        if (file.startsWith('qgsd-') && file.endsWith('.md')) {
+        if (file.startsWith('nf-') && file.endsWith('.md')) {
           fs.unlinkSync(path.join(agentsDest, file));
         }
       }
@@ -1696,7 +1716,7 @@ function install(isGlobal, runtime = 'claude') {
 
   // Copy CHANGELOG.md
   const changelogSrc = path.join(src, 'CHANGELOG.md');
-  const changelogDest = path.join(targetDir, 'qgsd', 'CHANGELOG.md');
+  const changelogDest = path.join(targetDir, 'nf', 'CHANGELOG.md');
   if (fs.existsSync(changelogSrc)) {
     fs.copyFileSync(changelogSrc, changelogDest);
     if (verifyFileInstalled(changelogDest, 'CHANGELOG.md')) {
@@ -1707,7 +1727,7 @@ function install(isGlobal, runtime = 'claude') {
   }
 
   // Write VERSION file
-  const versionDest = path.join(targetDir, 'qgsd', 'VERSION');
+  const versionDest = path.join(targetDir, 'nf', 'VERSION');
   fs.writeFileSync(versionDest, pkg.version);
   if (verifyFileInstalled(versionDest, 'VERSION')) {
     console.log(`  ${green}✓${reset} Wrote VERSION (${pkg.version})`);
@@ -1751,10 +1771,10 @@ function install(isGlobal, runtime = 'claude') {
     }
   }
 
-  // Copy bin/*.cjs scripts to qgsd-bin/ (used by commands with absolute paths)
+  // Copy bin/*.cjs scripts to nf-bin/ (used by commands with absolute paths)
   const binSrc = path.join(src, 'bin');
   if (fs.existsSync(binSrc)) {
-    const binDest = path.join(targetDir, 'qgsd-bin');
+    const binDest = path.join(targetDir, 'nf-bin');
     fs.mkdirSync(binDest, { recursive: true });
     const binEntries = fs.readdirSync(binSrc);
     for (const entry of binEntries) {
@@ -1762,7 +1782,7 @@ function install(isGlobal, runtime = 'claude') {
         fs.copyFileSync(path.join(binSrc, entry), path.join(binDest, entry));
       }
     }
-    console.log(`  ${green}✓${reset} Installed qgsd-bin scripts`);
+    console.log(`  ${green}✓${reset} Installed nf-bin scripts`);
   }
 
   if (failures.length > 0) {
@@ -1775,11 +1795,11 @@ function install(isGlobal, runtime = 'claude') {
   const settingsPath = path.join(targetDir, 'settings.json');
   const settings = cleanupOrphanedHooks(readSettings(settingsPath));
   const statuslineCommand = isGlobal
-    ? buildHookCommand(targetDir, 'qgsd-statusline.js')
-    : 'node ' + dirName + '/hooks/qgsd-statusline.js';
+    ? buildHookCommand(targetDir, 'nf-statusline.js')
+    : 'node ' + dirName + '/hooks/nf-statusline.js';
   const updateCheckCommand = isGlobal
-    ? buildHookCommand(targetDir, 'qgsd-check-update.js')
-    : 'node ' + dirName + '/hooks/qgsd-check-update.js';
+    ? buildHookCommand(targetDir, 'nf-check-update.js')
+    : 'node ' + dirName + '/hooks/nf-check-update.js';
 
   // Enable experimental agents for Gemini CLI (required for custom sub-agents)
   if (isGemini) {
@@ -1802,7 +1822,7 @@ function install(isGlobal, runtime = 'claude') {
     }
 
     const hasGsdUpdateHook = settings.hooks.SessionStart.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-check-update'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-check-update'))
     );
 
     if (!hasGsdUpdateHook) {
@@ -1819,14 +1839,14 @@ function install(isGlobal, runtime = 'claude') {
 
     // Register nForma session-start secret sync hook
     const hasGsdSessionStartHook = settings.hooks.SessionStart.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-session-start'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-session-start'))
     );
     if (!hasGsdSessionStartHook) {
       settings.hooks.SessionStart.push({
         hooks: [
           {
             type: 'command',
-            command: buildHookCommand(targetDir, 'qgsd-session-start.js')
+            command: buildHookCommand(targetDir, 'nf-session-start.js')
           }
         ]
       });
@@ -1836,27 +1856,52 @@ function install(isGlobal, runtime = 'claude') {
     // INST-05: Warn (yellow) if quorum MCP servers are absent — runs every install
     warnMissingMcpServers();
 
+    // ── MIGRATION: remove old qgsd-* hook entries ─────────────────────────
+    // Old installs registered hooks as qgsd-prompt.js, qgsd-stop.js, qgsd-circuit-breaker.js.
+    // Remove them so the nf-* replacements below can register cleanly.
+    const OLD_HOOK_MAP = {
+      UserPromptSubmit: 'qgsd-prompt',
+      Stop: 'qgsd-stop',
+      PreToolUse: 'qgsd-circuit-breaker',
+      SessionStart: ['qgsd-check-update', 'qgsd-session-start'],
+    };
+    for (const [event, oldNames] of Object.entries(OLD_HOOK_MAP)) {
+      if (settings.hooks[event]) {
+        const names = Array.isArray(oldNames) ? oldNames : [oldNames];
+        const before = settings.hooks[event].length;
+        settings.hooks[event] = settings.hooks[event].filter(entry =>
+          !(entry.hooks && entry.hooks.some(h =>
+            h.command && names.some(n => h.command.includes(n))
+          ))
+        );
+        if (settings.hooks[event].length < before) {
+          console.log(`  ${green}✓${reset} Migrated old ${names.join(', ')} hook(s) → nf equivalent`);
+        }
+        if (settings.hooks[event].length === 0) delete settings.hooks[event];
+      }
+    }
+
     // Register nForma UserPromptSubmit hook (quorum injection)
     // MUST be in settings.json — plugin hooks.json silently discards UserPromptSubmit output (GitHub #10225)
     if (!settings.hooks.UserPromptSubmit) settings.hooks.UserPromptSubmit = [];
-    const hasQgsdPromptHook = settings.hooks.UserPromptSubmit.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-prompt'))
+    const hasNfPromptHook = settings.hooks.UserPromptSubmit.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-prompt'))
     );
-    if (!hasQgsdPromptHook) {
+    if (!hasNfPromptHook) {
       settings.hooks.UserPromptSubmit.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-prompt.js') }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-prompt.js') }]
       });
       console.log(`  ${green}✓${reset} Configured nForma quorum injection hook (UserPromptSubmit)`);
     }
 
     // Register nForma Stop hook (quorum gate — verifies quorum evidence before Claude delivers planning output)
     if (!settings.hooks.Stop) settings.hooks.Stop = [];
-    const hasQgsdStopHook = settings.hooks.Stop.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-stop'))
+    const hasNfStopHook = settings.hooks.Stop.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-stop'))
     );
-    if (!hasQgsdStopHook) {
+    if (!hasNfStopHook) {
       settings.hooks.Stop.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-stop.js'), timeout: 30 }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-stop.js'), timeout: 30 }]
       });
       console.log(`  ${green}✓${reset} Configured nForma quorum gate hook (Stop)`);
     }
@@ -1864,11 +1909,11 @@ function install(isGlobal, runtime = 'claude') {
     // INST-08: Register nForma circuit breaker hook (PreToolUse — Claude Code only)
     if (!settings.hooks.PreToolUse) settings.hooks.PreToolUse = [];
     const hasCircuitBreakerHook = settings.hooks.PreToolUse.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-circuit-breaker'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-circuit-breaker'))
     );
     if (!hasCircuitBreakerHook) {
       settings.hooks.PreToolUse.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-circuit-breaker.js'), timeout: 10 }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-circuit-breaker.js'), timeout: 10 }]
       });
       console.log(`  ${green}✓${reset} Configured nForma circuit breaker hook (PreToolUse)`);
     }
@@ -1888,11 +1933,11 @@ function install(isGlobal, runtime = 'claude') {
     // Register nForma spec-regen hook (PostToolUse — auto-regenerate specs on machine file write)
     if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
     const hasSpecRegenHook = settings.hooks.PostToolUse.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-spec-regen'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-spec-regen'))
     );
     if (!hasSpecRegenHook) {
       settings.hooks.PostToolUse.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-spec-regen.js') }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-spec-regen.js') }]
       });
       console.log(`  ${green}✓${reset} Configured nForma spec-regen hook (PostToolUse)`);
     }
@@ -1900,11 +1945,11 @@ function install(isGlobal, runtime = 'claude') {
     // Register nForma PreCompact hook (phase state injection at compaction time)
     if (!settings.hooks.PreCompact) settings.hooks.PreCompact = [];
     const hasPreCompactHook = settings.hooks.PreCompact.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-precompact'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-precompact'))
     );
     if (!hasPreCompactHook) {
       settings.hooks.PreCompact.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-precompact.js') }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-precompact.js') }]
       });
       console.log(`  ${green}✓${reset} Configured nForma PreCompact hook (phase state injection)`);
     }
@@ -1912,12 +1957,12 @@ function install(isGlobal, runtime = 'claude') {
     // Register nForma token collector hook (SubagentStop — logs per-slot token usage)
     if (!settings.hooks.SubagentStop) settings.hooks.SubagentStop = [];
     const hasTokenCollectorHook = settings.hooks.SubagentStop.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-token-collector'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-token-collector'))
     );
     if (!hasTokenCollectorHook) {
       settings.hooks.SubagentStop.push({
-        matcher: 'qgsd-quorum-slot-worker',
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-token-collector.js'), async: true }]
+        matcher: 'nf-quorum-slot-worker',
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-token-collector.js'), async: true }]
       });
       console.log(`  ${green}✓${reset} Configured nForma token collector hook (SubagentStop)`);
     }
@@ -1925,29 +1970,29 @@ function install(isGlobal, runtime = 'claude') {
     // Register nForma slot correlator hook (SubagentStart — writes agent_id correlation file)
     if (!settings.hooks.SubagentStart) settings.hooks.SubagentStart = [];
     const hasSlotCorrelatorHook = settings.hooks.SubagentStart.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('qgsd-slot-correlator'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-slot-correlator'))
     );
     if (!hasSlotCorrelatorHook) {
       settings.hooks.SubagentStart.push({
-        matcher: 'qgsd-quorum-slot-worker',
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'qgsd-slot-correlator.js'), async: true }]
+        matcher: 'nf-quorum-slot-worker',
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-slot-correlator.js'), async: true }]
       });
       console.log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
     }
 
     // Write nForma config — skip if exists unless --redetect-mcps flag set
-    const qgsdConfigPath = path.join(targetDir, 'qgsd.json');
+    const nfConfigPath = path.join(targetDir, 'nf.json');
 
     // --redetect-mcps: delete existing config so fresh detection runs below
-    if (hasRedetectMcps && fs.existsSync(qgsdConfigPath)) {
-      fs.unlinkSync(qgsdConfigPath);
+    if (hasRedetectMcps && fs.existsSync(nfConfigPath)) {
+      fs.unlinkSync(nfConfigPath);
       console.log(`  ${cyan}◆${reset} Re-detecting MCP prefixes (--redetect-mcps)...`);
     }
 
-    if (!fs.existsSync(qgsdConfigPath)) {
+    if (!fs.existsSync(nfConfigPath)) {
       // Build config with auto-detected MCP prefixes
       const detectedModels = buildRequiredModelsFromMcp();
-      const qgsdConfig = {
+      const nfConfig = {
         quorum_commands: [
           'plan-phase', 'new-project', 'new-milestone',
           'discuss-phase', 'verify-work', 'research-phase',
@@ -1964,25 +2009,25 @@ function install(isGlobal, runtime = 'claude') {
         },
       };
 
-      fs.writeFileSync(qgsdConfigPath, JSON.stringify(qgsdConfig, null, 2) + '\n', 'utf8');
-      console.log(`  ${green}✓${reset} Wrote nForma config with detected MCP prefixes (~/.claude/qgsd.json)`);
-      console.log(`  ${green}✓${reset} Wrote quorum_active (${qgsdConfig.quorum_active.length} slots) to qgsd.json`);
+      fs.writeFileSync(nfConfigPath, JSON.stringify(nfConfig, null, 2) + '\n', 'utf8');
+      console.log(`  ${green}✓${reset} Wrote nForma config with detected MCP prefixes (~/.claude/nf.json)`);
+      console.log(`  ${green}✓${reset} Wrote quorum_active (${nfConfig.quorum_active.length} slots) to nf.json`);
     } else {
       // INST-06: print active config summary on reinstall
       try {
-        const existingConfig = JSON.parse(fs.readFileSync(qgsdConfigPath, 'utf8'));
+        const existingConfig = JSON.parse(fs.readFileSync(nfConfigPath, 'utf8'));
         const models = existingConfig.required_models || {};
         const summary = Object.entries(models)
           .map(([key, def]) => `${key} → ${def.tool_prefix || '(unset)'}`)
           .join(', ');
-        console.log(`  ${dim}↳ ~/.claude/qgsd.json exists — active config: ${summary}${reset}`);
+        console.log(`  ${dim}↳ ~/.claude/nf.json exists — active config: ${summary}${reset}`);
         console.log(`  ${dim}  (run with --redetect-mcps to refresh MCP prefix detection)${reset}`);
 
         // INST-10: Add missing circuit_breaker block or missing sub-keys without touching existing user values
         if (!existingConfig.circuit_breaker) {
           existingConfig.circuit_breaker = { oscillation_depth: 3, commit_window: 6 };
-          fs.writeFileSync(qgsdConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-          console.log(`  ${green}✓${reset} Added circuit_breaker config block to qgsd.json`);
+          fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
+          console.log(`  ${green}✓${reset} Added circuit_breaker config block to nf.json`);
         } else {
           // Backfill individual missing sub-keys without touching values the user has set
           let subKeyAdded = false;
@@ -1995,8 +2040,8 @@ function install(isGlobal, runtime = 'claude') {
             subKeyAdded = true;
           }
           if (subKeyAdded) {
-            fs.writeFileSync(qgsdConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-            console.log(`  ${green}✓${reset} Added missing circuit_breaker sub-keys to qgsd.json`);
+            fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
+            console.log(`  ${green}✓${reset} Added missing circuit_breaker sub-keys to nf.json`);
           }
         }
 
@@ -2005,8 +2050,8 @@ function install(isGlobal, runtime = 'claude') {
           const discoveredSlots = buildActiveSlots();
           if (discoveredSlots.length > 0) {
             existingConfig.quorum_active = discoveredSlots;
-            fs.writeFileSync(qgsdConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
-            console.log(`  ${green}✓${reset} Backfilled quorum_active (${discoveredSlots.length} slots) in qgsd.json`);
+            fs.writeFileSync(nfConfigPath, JSON.stringify(existingConfig, null, 2) + '\n', 'utf8');
+            console.log(`  ${green}✓${reset} Backfilled quorum_active (${discoveredSlots.length} slots) in nf.json`);
           }
         }
 
@@ -2017,7 +2062,7 @@ function install(isGlobal, runtime = 'claude') {
           const allCurrentSlots = buildActiveSlots();
           const newSlots = allCurrentSlots.filter(s => !existingConfig.quorum_active.includes(s));
           for (const newSlot of newSlots) {
-            const result = addSlotToQuorumActive(newSlot, qgsdConfigPath);
+            const result = addSlotToQuorumActive(newSlot, nfConfigPath);
             if (result.added) {
               console.log(`  ${green}✓${reset} Added new slot to quorum_active: ${newSlot}`);
               existingConfig.quorum_active.push(newSlot); // keep in-memory copy consistent
@@ -2026,7 +2071,7 @@ function install(isGlobal, runtime = 'claude') {
         }
         // If quorum_active is already set and non-empty: do NOT overwrite (user config preserved)
       } catch {
-        console.log(`  ${dim}↳ ~/.claude/qgsd.json already exists — skipping (user config preserved)${reset}`);
+        console.log(`  ${dim}↳ ~/.claude/nf.json already exists — skipping (user config preserved)${reset}`);
       }
     }
   }
@@ -2067,7 +2112,7 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
   if (runtime === 'opencode') program = 'OpenCode';
   if (runtime === 'gemini') program = 'Gemini';
 
-  const command = isOpencode ? '/qgsd-help' : '/nf:help';
+  const command = isOpencode ? '/nf-help' : '/nf:help';
 
   let nudge = '';
   if (runtime === 'claude' && !hasClaudeMcpAgents()) {
@@ -2332,7 +2377,7 @@ if (hasDisableBreaker) {
     : {};
   fs.writeFileSync(stateFile, JSON.stringify({ ...existing, disabled: true, active: false }, null, 2), 'utf8');
   console.log(`  ${yellow}⊘${reset} Circuit breaker ${yellow}disabled${reset}. Detection and enforcement paused.`);
-  console.log(`    Run ${cyan}npx qgsd --enable-breaker${reset} to resume.`);
+  console.log(`    Run ${cyan}npx nforma --enable-breaker${reset} to resume.`);
   process.exit(0);
 }
 
@@ -2357,14 +2402,14 @@ if (hasEnableBreaker) {
   process.exit(0);
 }
 
-// SLOT-02: --migrate-slots renames mcpServers keys and patches qgsd.json tool_prefix values
+// SLOT-02: --migrate-slots renames mcpServers keys and patches nf.json tool_prefix values
 if (hasMigrateSlots) {
-  const { migrateClaudeJson, migrateQgsdJson } = require('./migrate-to-slots.cjs');
+  const { migrateClaudeJson, migrateNfJson } = require('./migrate-to-slots.cjs');
   const claudeJsonPath = path.join(os.homedir(), '.claude.json');
-  const qgsdJsonPath = path.join(os.homedir(), '.claude', 'qgsd.json');
+  const nfJsonPath = path.join(os.homedir(), '.claude', 'nf.json');
   const dryRun = args.includes('--dry-run');
   const r1 = migrateClaudeJson(claudeJsonPath, dryRun);
-  const r2 = migrateQgsdJson(qgsdJsonPath, dryRun);
+  const r2 = migrateNfJson(nfJsonPath, dryRun);
   if (r1.changed === 0 && r2.changed === 0) {
     console.log(`  ${green}✓${reset} Already migrated — no changes needed`);
   } else {
@@ -2373,7 +2418,7 @@ if (hasMigrateSlots) {
       r1.renamed.forEach(r => console.log(`      ${r.from} → ${r.to}`));
     }
     if (r2.changed > 0) {
-      console.log(`  ${green}✓${reset} Patched ${r2.changed} qgsd.json tool_prefix values`);
+      console.log(`  ${green}✓${reset} Patched ${r2.changed} nf.json tool_prefix values`);
     }
   }
   process.exit(0);

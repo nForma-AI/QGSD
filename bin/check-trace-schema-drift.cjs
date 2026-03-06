@@ -16,10 +16,10 @@ const VALIDATOR_FILE = 'bin/validate-traces.cjs';
 
 const KNOWN_EMITTERS = [
   'bin/validate-traces.cjs',
-  'hooks/qgsd-stop.js',
-  'hooks/qgsd-prompt.js',
-  'hooks/dist/qgsd-stop.js',
-  'hooks/dist/qgsd-prompt.js',
+  'hooks/nf-stop.js',
+  'hooks/nf-prompt.js',
+  'hooks/dist/nf-stop.js',
+  'hooks/dist/nf-prompt.js',
 ];
 
 /**
@@ -44,7 +44,7 @@ function checkSchemaDrift(changedFiles) {
   // but validator_updated alone does not satisfy emitter_updated — need a non-validator emitter
   // OR validate-traces.cjs satisfies both when it IS the emitter.
   // Per spec: atomic requires validator AND an emitter. validate-traces.cjs counts as emitter only
-  // when a separate hook file (qgsd-stop.js, qgsd-prompt.js, etc.) is also present.
+  // when a separate hook file (nf-stop.js, nf-prompt.js, etc.) is also present.
   const NON_VALIDATOR_EMITTERS = KNOWN_EMITTERS.filter(e => e !== VALIDATOR_FILE);
   const emitterUpdated = changedFiles.some(f =>
     NON_VALIDATOR_EMITTERS.some(emitter => f === emitter || f.includes(emitter))

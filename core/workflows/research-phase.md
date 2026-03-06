@@ -1,5 +1,5 @@
 <purpose>
-Research how to implement a phase. Spawns qgsd-phase-researcher with phase context.
+Research how to implement a phase. Spawns nf-phase-researcher with phase context.
 
 Standalone research command. For most workflows, use `/nf:plan-phase` which integrates research automatically.
 </purpose>
@@ -8,17 +8,17 @@ Standalone research command. For most workflows, use `/nf:plan-phase` which inte
 
 ## Step 0: Resolve Model Profile
 
-@~/.claude/qgsd/references/model-profile-resolution.md
+@~/.claude/nf/references/model-profile-resolution.md
 
 Resolve model for:
-- `qgsd-phase-researcher`
+- `nf-phase-researcher`
 
 ## Step 1: Normalize and Validate Phase
 
-@~/.claude/qgsd/references/phase-argument-parsing.md
+@~/.claude/nf/references/phase-argument-parsing.md
 
 ```bash
-PHASE_INFO=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}")
+PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}")
 ```
 
 If `found` is false: Error and exit.
@@ -34,7 +34,7 @@ If exists: Offer update/view/skip options.
 ## Step 3: Gather Phase Context
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init phase-op "${PHASE}")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${PHASE}")
 # Extract: phase_dir, padded_phase, phase_number, state_path, requirements_path, context_path
 ```
 
@@ -59,7 +59,7 @@ Phase description: {description}
 <output>
 Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 </output>",
-  subagent_type="qgsd-phase-researcher",
+  subagent_type="nf-phase-researcher",
   model="{researcher_model}",
   description="Research phase {phase}: {name}"
 )

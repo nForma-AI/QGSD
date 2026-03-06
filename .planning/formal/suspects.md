@@ -1,20 +1,14 @@
 # Formal Verification Suspects
 
-**Generated:** 2026-03-05T12:00:53.080Z
-**Total Suspects:** 3
+**Generated:** 2026-03-06T10:11:46.117Z
+**Total Suspects:** 2
 
 ## Critical Failures (result=fail)
 
-### alloy:scoreboard
-- **Property:** Scoreboard idempotency — no vote loss, no double counting
-- **Summary:** fail: alloy:scoreboard in 736ms
-- **Runtime:** 736ms
-- **Tags:** none
-
 ### ci:conformance-traces
 - **Property:** Conformance event replay through XState machine
-- **Summary:** fail: 10758 divergence(s) in 27217 traces (165ms)
-- **Runtime:** 165ms
+- **Summary:** fail: 6369 divergence(s) in 35627 traces (356ms)
+- **Runtime:** 356ms
 - **Tags:** trace-divergence
 
 ## Inconclusive with Tags (result=inconclusive)
@@ -22,5 +16,5 @@
 ### ci:liveness-fairness-lint
 - **Property:** Liveness fairness declarations — all TLA+ liveness properties documented with WF/SF rationale
 - **Summary:** inconclusive: fairness declarations missing — MCconvergence: ResolvedAtWriteOnce, HaikuUnavailableNoCorruption; MCdeliberation: DeliberationMonotone, ImprovementMonotone
-- **Runtime:** 1ms
+- **Runtime:** 10ms
 - **Tags:** needs-fairness

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // bin/ccr-secure-config.cjs
-// Reads the 3 CCR provider API keys from keytar (qgsd service) and writes them
+// Reads the 3 CCR provider API keys from keytar (nforma service) and writes them
 // into ~/.claude-code-router/config.json with chmod 600.
 // Designed to be called at session start and on-demand. Fail-silent when keytar
 // is unavailable or keys are not yet stored.
@@ -17,7 +17,7 @@ const CONFIG_PATH = path.join(os.homedir(), '.claude-code-router', 'config.json'
 // Locate secrets.cjs — try installed global path first, then local dev path.
 function findSecrets() {
   const candidates = [
-    path.join(os.homedir(), '.claude', 'qgsd-bin', 'secrets.cjs'), // installed path
+    path.join(os.homedir(), '.claude', 'nf-bin', 'secrets.cjs'), // installed path
     path.join(__dirname, 'secrets.cjs'),                             // local dev path
   ];
   for (const p of candidates) {
@@ -39,9 +39,9 @@ async function main() {
 
   let akashKey, togetherKey, fireworksKey;
   try {
-    akashKey    = await secrets.get('qgsd', 'AKASHML_API_KEY');
-    togetherKey = await secrets.get('qgsd', 'TOGETHER_API_KEY');
-    fireworksKey = await secrets.get('qgsd', 'FIREWORKS_API_KEY');
+    akashKey    = await secrets.get('nforma', 'AKASHML_API_KEY');
+    togetherKey = await secrets.get('nforma', 'TOGETHER_API_KEY');
+    fireworksKey = await secrets.get('nforma', 'FIREWORKS_API_KEY');
   } catch (e) {
     process.stderr.write('[ccr-secure-config] keytar unavailable: ' + e.message + '\n');
     process.exit(0);

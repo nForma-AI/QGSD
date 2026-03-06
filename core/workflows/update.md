@@ -14,11 +14,11 @@ Detect whether GSD is installed locally or globally by checking both locations:
 ```bash
 # Check local first (takes priority)
 # Paths templated at install time for runtime compatibility
-if [ -f ./.claude/qgsd/VERSION ]; then
-  cat ./.claude/qgsd/VERSION
+if [ -f ./.claude/nf/VERSION ]; then
+  cat ./.claude/nf/VERSION
   echo "LOCAL"
-elif [ -f ~/.claude/qgsd/VERSION ]; then
-  cat ~/.claude/qgsd/VERSION
+elif [ -f ~/.claude/nf/VERSION ]; then
+  cat ~/.claude/nf/VERSION
   echo "GLOBAL"
 else
   echo "UNKNOWN"
@@ -118,15 +118,15 @@ Exit.
 ────────────────────────────────────────────────────────────
 
 ⚠️  **Note:** The installer performs a clean install of GSD folders:
-- `commands/qgsd/` will be wiped and replaced
-- `qgsd/` will be wiped and replaced
-- `agents/qgsd-*` files will be replaced
+- `commands/nf/` will be wiped and replaced
+- `nf/` will be wiped and replaced
+- `agents/nf-*` files will be replaced
 
 (Paths are relative to your install location: `~/.claude/` for global, `./.claude/` for local)
 
 Your custom files in other locations are preserved:
-- Custom commands not in `commands/qgsd/` ✓
-- Custom agents not prefixed with `qgsd-` ✓
+- Custom commands not in `commands/nf/` ✓
+- Custom agents not prefixed with `nf-` ✓
 - Custom hooks ✓
 - Your CLAUDE.md files ✓
 

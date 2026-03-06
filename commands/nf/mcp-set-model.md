@@ -1,6 +1,6 @@
 ---
-name: qgsd:mcp-set-model
-description: Set the default model for a quorum agent — validates against the agent's available_models and persists to ~/.claude/qgsd.json
+name: nf:mcp-set-model
+description: Set the default model for a quorum agent — validates against the agent's available_models and persists to ~/.claude/nf.json
 argument-hint: "<agent> <model>"
 allowed-tools:
   - Bash
@@ -17,7 +17,7 @@ allowed-tools:
 ---
 
 <objective>
-Set the default model for a named quorum agent. The preference is written to `~/.claude/qgsd.json` under `model_preferences` and is picked up by the QGSD prompt hook on the next quorum invocation.
+Set the default model for a named quorum agent. The preference is written to `~/.claude/nf.json` under `model_preferences` and is picked up by the nForma prompt hook on the next quorum invocation.
 </objective>
 
 <process>
@@ -84,7 +84,7 @@ Available models for $AGENT:
 Run /nf:mcp-set-model $AGENT <model> with one of the above models.
 ```
 
-## Step 5 — Write model preference to qgsd.json
+## Step 5 — Write model preference to nf.json
 
 Run this inline node script via Bash:
 
@@ -94,7 +94,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const cfgPath = path.join(os.homedir(), '.claude', 'qgsd.json');
+const cfgPath = path.join(os.homedir(), '.claude', 'nf.json');
 
 let cfg;
 try {
@@ -127,7 +127,7 @@ Model preference updated
   Old model: <oldModel or "(none — using agent default)">
   New model: $MODEL
 
-The preference is saved to ~/.claude/qgsd.json.
+The preference is saved to ~/.claude/nf.json.
 The next quorum invocation will pass model="$MODEL" when calling $AGENT.
 ```
 

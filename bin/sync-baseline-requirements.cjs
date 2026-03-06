@@ -82,7 +82,7 @@ function _syncFromBaseline(baseline, projectRoot) {
           phase: 'baseline',
           status: 'Pending',
           provenance: {
-            source_file: 'qgsd-baseline',
+            source_file: 'nf-baseline',
             milestone: 'baseline',
           },
         };

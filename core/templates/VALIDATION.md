@@ -78,7 +78,7 @@ created: {date}
 
 ## Validation Sign-Off
 
-Updated by `qgsd-plan-checker` when plans are approved:
+Updated by `nf-plan-checker` when plans are approved:
 
 - [ ] All tasks have `<automated>` verify commands or Wave 0 dependencies
 - [ ] No 3 consecutive implementation tasks without automated verify (sampling continuity)

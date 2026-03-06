@@ -28,7 +28,7 @@ test('exits 1 when TLA+ TypeOK contains a state not in XState machine (fixture-b
   // Fixture-based drift injection test (replaces no-op placeholder).
   // Creates a temp TLA+ file with a phantom state injected into the TypeOK block,
   // then passes it via --tla-path to check-spec-sync.cjs and asserts exit code 1.
-  const tlaPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
+  const tlaPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'NFQuorum.tla');
   if (!fs.existsSync(tlaPath)) {
     return; // Skip if TLA+ spec not present (CI without formal specs)
   }
@@ -49,7 +49,7 @@ test('exits 1 when TLA+ TypeOK contains a state not in XState machine (fixture-b
   );
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-spec-sync-state-test-'));
-  const tmpTla = path.join(tmpDir, 'QGSDQuorum.tla');
+  const tmpTla = path.join(tmpDir, 'NFQuorum.tla');
   fs.writeFileSync(tmpTla, driftedTla, 'utf8');
 
   try {
@@ -72,11 +72,11 @@ test('exits 1 when TLA+ TypeOK contains a state not in XState machine (fixture-b
   }
 });
 
-test('exits 1 when guards/qgsd-workflow.json references a guard not in XState machine (fixture-based guard drift)', () => {
+test('exits 1 when guards/nf-workflow.json references a guard not in XState machine (fixture-based guard drift)', () => {
   // Fixture-based guard drift injection test (Copilot improvement: test guard drift scenario).
   // Creates a temp guards JSON with a phantom guard injected, passes it via --guards-path,
   // and asserts check-spec-sync.cjs exits 1 with a mention of the phantom guard name.
-  const guardsPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
+  const guardsPath = path.join(REPO_ROOT, '.planning', 'formal', 'tla', 'guards', 'nf-workflow.json');
   if (!fs.existsSync(guardsPath)) {
     return; // Skip if guards JSON not present
   }
@@ -88,7 +88,7 @@ test('exits 1 when guards/qgsd-workflow.json references a guard not in XState ma
   driftedGuards.guards['phantomGuardXYZ'] = 'FALSE';
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-spec-sync-guard-test-'));
-  const tmpGuards = path.join(tmpDir, 'qgsd-workflow.json');
+  const tmpGuards = path.join(tmpDir, 'nf-workflow.json');
   fs.writeFileSync(tmpGuards, JSON.stringify(driftedGuards, null, 2), 'utf8');
 
   try {

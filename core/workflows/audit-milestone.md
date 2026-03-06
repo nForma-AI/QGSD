@@ -19,21 +19,21 @@ If `$AUTO_MODE`:
   Set `current_iteration` from `--iteration N` argument (default 0)
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init milestone-op)
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init milestone-op)
 ```
 
 Extract from init JSON: `milestone_version`, `milestone_name`, `phase_count`, `completed_phases`, `commit_docs`.
 
 Resolve integration checker model:
 ```bash
-CHECKER_MODEL=$(node ~/.claude/qgsd/bin/gsd-tools.cjs resolve-model qgsd-integration-checker --raw)
+CHECKER_MODEL=$(node ~/.claude/nf/bin/gsd-tools.cjs resolve-model nf-integration-checker --raw)
 ```
 
 ## 1. Determine Milestone Scope
 
 ```bash
 # Get phases in milestone (sorted numerically, handles decimals)
-node ~/.claude/qgsd/bin/gsd-tools.cjs phases list
+node ~/.claude/nf/bin/gsd-tools.cjs phases list
 ```
 
 - Parse version from arguments or detect current from ROADMAP.md
@@ -47,7 +47,7 @@ For each phase directory, read the VERIFICATION.md:
 
 ```bash
 # For each phase, use find-phase to resolve the directory (handles archived phases)
-PHASE_INFO=$(node ~/.claude/qgsd/bin/gsd-tools.cjs find-phase 01 --raw)
+PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs find-phase 01 --raw)
 # Extract directory from JSON, then read VERIFICATION.md from that directory
 # Repeat for each phase number from ROADMAP.md
 ```
@@ -69,7 +69,7 @@ For any phase with no directory at all, determine whether a plan already exists:
 # Check quick tasks for a plan referencing this phase
 ls .planning/quick/*/
 # Check if phase plan exists but was never executed
-node ~/.claude/qgsd/bin/gsd-tools.cjs find-phase {N} --raw
+node ~/.claude/nf/bin/gsd-tools.cjs find-phase {N} --raw
 ```
 
 Classify each missing phase as:
@@ -98,7 +98,7 @@ Milestone Requirements:
 MUST map each integration finding to affected requirement IDs where applicable.
 
 Verify cross-phase wiring and E2E user flows.",
-  subagent_type="qgsd-integration-checker",
+  subagent_type="nf-integration-checker",
   model="{integration_checker_model}",
   description="Audit milestone: integration check"
 )
@@ -130,7 +130,7 @@ For each phase's VERIFICATION.md, extract the expanded requirements table:
 For each phase's SUMMARY.md, extract `requirements-completed` from YAML frontmatter:
 ```bash
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  node ~/.claude/qgsd/bin/gsd-tools.cjs summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
+  node ~/.claude/nf/bin/gsd-tools.cjs summary-extract "$summary" --fields requirements_completed | jq -r '.requirements_completed'
 done
 ```
 
@@ -203,7 +203,7 @@ Plus full markdown report with tables for requirements, phases, integration, tec
 After writing the MILESTONE-AUDIT.md artifact, update STATE.md with the audit result:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs state record-session \
+node ~/.claude/nf/bin/gsd-tools.cjs state record-session \
   --stopped-at "Milestone ${MILESTONE_VERSION} audit: ${AUDIT_STATUS} (${REQUIREMENTS_SATISFIED}/${REQUIREMENTS_TOTAL} requirements)" \
   --resume-file "None"
 ```
@@ -228,7 +228,7 @@ Route by status (see `<offer_next>`).
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-COMPLETE MILESTONE (iteration {current_iteration}/{MAX_ITERATIONS})
+ nForma ► AUTO-COMPLETE MILESTONE (iteration {current_iteration}/{MAX_ITERATIONS})
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Audit status: {AUDIT_STATUS} ({REQUIREMENTS_SATISFIED}/{REQUIREMENTS_TOTAL} requirements)
@@ -241,7 +241,7 @@ Display: `◆ Audit passed — auto-completing milestone {version}...`
 ```
 Task(
   prompt="Run /nf:complete-milestone {version}
-  Follow @~/.claude/qgsd/workflows/complete-milestone.md end-to-end.",
+  Follow @~/.claude/nf/workflows/complete-milestone.md end-to-end.",
   subagent_type="general-purpose",
   description="Auto-complete: milestone {version}"
 )
@@ -267,7 +267,7 @@ If `current_iteration > MAX_ITERATIONS` (3):
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-COMPLETE HALTED (iteration {current_iteration}/{MAX_ITERATIONS})
+ nForma ► AUTO-COMPLETE HALTED (iteration {current_iteration}/{MAX_ITERATIONS})
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Max iterations reached. Remaining gaps:
@@ -315,7 +315,7 @@ Task(
   Context: Milestone {version} audit found gaps. Run the full 8-layer solve pipeline
   to auto-remediate consistency gaps before we plan structural gap-closure phases.
 
-  Follow @~/.claude/qgsd/workflows/solve.md end-to-end.",
+  Follow @~/.claude/nf/workflows/solve.md end-to-end.",
   subagent_type="general-purpose",
   description="Auto-complete: solve consistency gaps (iteration {current_iteration})"
 )
@@ -353,7 +353,7 @@ Check gap classification from Step 2b:
   Milestone: {version}
   Missing phases (no plan): {list of missing_no_plan phase names and their unsatisfied requirements}
 
-  Follow @~/.claude/qgsd/workflows/plan-milestone-gaps.md to create gap closure phases.
+  Follow @~/.claude/nf/workflows/plan-milestone-gaps.md to create gap closure phases.
   plan-milestone-gaps Step 10 will auto-spawn plan-phase for the first gap phase.
   After planning, execute all gap phases.",
     subagent_type="general-purpose",
@@ -376,7 +376,7 @@ Output this markdown directly (not as a code block). Route based on status:
 
 - If ALL unsatisfied requirements are from phases classified as `plan_exists_not_executed` (zero `missing_no_plan` phases):
   → Present the audit summary (gaps, cross-phase issues, broken flows)
-  → Then **auto-execute**: follow `@~/.claude/qgsd/workflows/execute-phase.md` for each missing phase in sequence (lowest phase number first)
+  → Then **auto-execute**: follow `@~/.claude/nf/workflows/execute-phase.md` for each missing phase in sequence (lowest phase number first)
   → After all executions complete, re-run the audit check and present the final result
   → Do NOT show the `/nf:plan-milestone-gaps` suggestion
 
@@ -444,7 +444,7 @@ Audit file: .planning/v{version}-MILESTONE-AUDIT.md
 Milestone: {version}
 Missing phases (no plan): {list of missing_no_plan phase names and their unsatisfied requirements}
 
-Follow @~/.claude/qgsd/workflows/plan-milestone-gaps.md to create gap closure phases in ROADMAP.md.",
+Follow @~/.claude/nf/workflows/plan-milestone-gaps.md to create gap closure phases in ROADMAP.md.",
   subagent_type="general-purpose",
   description="Plan milestone gaps: {version}"
 )

@@ -1,5 +1,5 @@
 <purpose>
-Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking). Quick mode spawns qgsd-planner (quick mode) + qgsd-executor(s), tracks tasks in `.planning/quick/`, and updates STATE.md's "Quick Tasks Completed" table.
+Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking). Quick mode spawns nf-planner (quick mode) + nf-executor(s), tracks tasks in `.planning/quick/`, and updates STATE.md's "Quick Tasks Completed" table.
 
 With `--full` flag: enables plan-checking (max 2 iterations) and post-execution verification for quality guarantees without full milestone ceremony.
 </purpose>
@@ -32,7 +32,7 @@ If still empty, re-prompt: "Please provide a task description."
 If `$FULL_MODE`:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUICK TASK (FULL MODE)
+ nForma ► QUICK TASK (FULL MODE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Plan checking + verification enabled
@@ -43,7 +43,7 @@ If `$FULL_MODE`:
 **Step 2: Initialize**
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init quick "$DESCRIPTION")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init quick "$DESCRIPTION")
 ```
 
 Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
@@ -127,7 +127,7 @@ Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5.
 **If NOT `$FULL_MODE`:** Use standard `quick` mode.
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"quick\",\"sub_activity\":\"planning\"}"
 ```
 
@@ -178,7 +178,7 @@ Write plan to: ${QUICK_DIR}/${next_num}-PLAN.md
 Return: ## PLANNING COMPLETE with plan path
 </output>
 ",
-  subagent_type="qgsd-planner",
+  subagent_type="nf-planner",
   model="{planner_model}",
   description="Quick plan: ${DESCRIPTION}"
 )
@@ -200,7 +200,7 @@ Skip this step entirely if NOT `$FULL_MODE`.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► CHECKING PLAN
+ nForma ► CHECKING PLAN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning plan checker...
@@ -246,7 +246,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTE
 ```
 Task(
   prompt=checker_prompt,
-  subagent_type="qgsd-plan-checker",
+  subagent_type="nf-plan-checker",
   model="{checker_model}",
   description="Check quick plan: ${DESCRIPTION}"
 )
@@ -288,7 +288,7 @@ Return what changed.
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.\n\n" + revision_prompt,
+  prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n" + revision_prompt,
   subagent_type="general-purpose",
   model="{planner_model}",
   description="Revise quick plan: ${DESCRIPTION}"
@@ -315,13 +315,13 @@ Initialize: `improvement_iteration = 0`
 
 Form your own position on the current plan: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale).
 
-Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — artifact review (plan is pre-execution; no traces to pass)
 - artifact_path: `${QUICK_DIR}/${next_num}-PLAN.md`
 - review_context: "This is a pre-execution task plan. The code does not exist yet. Evaluate whether the task breakdown is atomic, safe to execute, and correctly addresses the objective — not whether the implementation already exists."
 - request_improvements: true          ← R3.6 signal infrastructure
 - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
-- Dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
+- Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
@@ -358,7 +358,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
     Display:
     ```
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     QGSD ► QUICK TASK — R3.6 improvements (${improvement_iteration}/10)
+     nForma ► QUICK TASK — R3.6 improvements (${improvement_iteration}/10)
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ```
 
@@ -373,7 +373,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
     ```
     Task(
-      prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.\n\n
+      prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n
       <revision_context>
       Mode: improvement-revision (R3.6 iteration ${improvement_iteration}/10)
 
@@ -411,10 +411,10 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
 **Step 6: Spawn executor**
 
-Spawn qgsd-executor with plan reference:
+Spawn nf-executor with plan reference:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"quick\",\"sub_activity\":\"executing\"}"
 ```
 
@@ -444,13 +444,13 @@ Execute quick task ${next_num}.
     Use "Pending" as the Status placeholder (orchestrator will update when verifier runs, if --full)
   - Update "Last activity" line: "${date} - Completed quick task ${next_num}: ${DESCRIPTION}"
 - Commit STATE.md alongside PLAN.md and SUMMARY.md in a single final commit:
-  node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" \
+  node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): ${DESCRIPTION}" \
     --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
-- After committing, run: node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+- After committing, run: node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 - Return the final commit hash in your completion response (format: "Commit: {hash}")
 </constraints>
 ",
-  subagent_type="qgsd-executor",
+  subagent_type="nf-executor",
   model="{executor_model}",
   description="Execute: ${DESCRIPTION}"
 )
@@ -472,7 +472,7 @@ Note: For quick tasks producing multiple plans (rare), spawn executors in parall
 ```
 ---
 
-QGSD > QUICK TASK COMPLETE
+nForma > QUICK TASK COMPLETE
 
 Quick Task ${next_num}: ${DESCRIPTION}
 
@@ -493,7 +493,7 @@ Skip this step entirely if NOT `$FULL_MODE` or `$FORMAL_SPEC_CONTEXT` is empty.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► FORMAL CHECK (post-execution)
+ nForma ► FORMAL CHECK (post-execution)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Running TLC/Alloy/PRISM for modules: ${FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ')}
@@ -541,7 +541,7 @@ Skip this step entirely if NOT `$FULL_MODE`.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► VERIFYING RESULTS
+ nForma ► VERIFYING RESULTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning verifier...
@@ -572,7 +572,7 @@ If failed > 0 in formal check result: treat as a HARD FAILURE in your verificati
 </formal_context>
 
 Check must_haves against actual codebase. Create VERIFICATION.md at ${QUICK_DIR}/${next_num}-VERIFICATION.md.",
-  subagent_type="qgsd-verifier",
+  subagent_type="nf-verifier",
   model="{verifier_model}",
   description="Verify: ${DESCRIPTION}"
 )
@@ -596,7 +596,7 @@ Store as `$VERIFICATION_STATUS`.
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM REVIEW OF VERIFICATION
+ nForma ► QUORUM REVIEW OF VERIFICATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Running quorum review of VERIFICATION.md...
@@ -604,13 +604,13 @@ Display:
 
 Form your own position: does VERIFICATION.md confirm all must_haves are met and no invariants violated? State your vote as APPROVE or BLOCK with 1-2 sentences.
 
-Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — artifact review
 - artifact_path: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
 - review_context: "Review this VERIFICATION.md and answer: (1) Are all must_haves confirmed met? (2) Are any invariants from the formal context violated? Vote APPROVE if verification is sound and complete. Vote BLOCK if must_haves are not confirmed or invariants are violated."
 - request_improvements: false
 - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
-- Dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
+- Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 
 Fail-open: if all slots are UNAVAIL, keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
 
@@ -629,11 +629,11 @@ Route on quorum result:
 
 2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely requires human eyes) with 1-2 sentence rationale per item.
 
-3. Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
    - Mode A — pure question
    - Question: "Can each human_needed item from quick task ${next_num} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
-   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
    Fail-open: if all slots error, treat as BLOCK (escalate to user).
@@ -648,7 +648,7 @@ Route on quorum result:
 Read STATE.md, find the row for `${next_num}`, replace "Pending" with the actual `$VERIFICATION_STATUS`. Then commit:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(quick-${next_num}): update verification status" \
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(quick-${next_num}): update verification status" \
   --files .planning/STATE.md ${QUICK_DIR}/${next_num}-VERIFICATION.md
 ```
 
@@ -661,7 +661,7 @@ Skip this step if NOT `$FULL_MODE` or `$VERIFICATION_STATUS` is not `"Verified"`
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REQUIREMENT ELEVATION
+ nForma ► REQUIREMENT ELEVATION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Drafting requirement from verified quick task...
@@ -778,7 +778,7 @@ Execute the add-requirement workflow inline (same checks as `/nf:add-requirement
 
 8. **Commit**:
    ```bash
-   node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
+   node ~/.claude/nf/bin/gsd-tools.cjs commit "req(quick-${next_num}): add ${DRAFT_REQ.id}" \
      --files .planning/formal/requirements.json
    ```
 
@@ -795,7 +795,7 @@ Display final completion banner:
 ```
 ---
 
-QGSD > QUICK TASK COMPLETE (FULL MODE)
+nForma > QUICK TASK COMPLETE (FULL MODE)
 
 Quick Task ${next_num}: ${DESCRIPTION}
 

@@ -2,8 +2,8 @@
 /**
  * lint-isolation.js
  *
- * Guards against QGSD commands referencing the GSD install path.
- * Commands must use ~/.claude/qgsd/ (QGSD's own folder), never ~/.claude/get-shit-done/.
+ * Guards against nForma commands referencing the GSD install path.
+ * Commands must use ~/.claude/nf/ (nForma's own folder), never ~/.claude/get-shit-done/.
  *
  * Pattern caught: any path containing /get-shit-done/ as a directory segment
  * (e.g. ~/.claude/get-shit-done/workflows/..., ./get-shit-done/bin/...)
@@ -47,8 +47,8 @@ if (violations.length === 0) {
   console.log('✓ lint-isolation: no GSD path interference found');
   process.exit(0);
 } else {
-  console.error('✗ lint-isolation: QGSD commands must not reference /get-shit-done/ paths\n');
-  console.error('  Use ~/.claude/qgsd/ instead of ~/.claude/get-shit-done/\n');
+  console.error('✗ lint-isolation: nForma commands must not reference /get-shit-done/ paths\n');
+  console.error('  Use ~/.claude/nf/ instead of ~/.claude/get-shit-done/\n');
   for (const v of violations) {
     console.error(`  ${v.file}:${v.line}`);
     console.error(`    ${v.text}\n`);

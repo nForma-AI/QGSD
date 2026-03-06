@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { _pure } = require('./manage-agents-core.cjs');
 const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
-        readQgsdJson, writeQgsdJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
+        readNfJson, writeNfJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
         findPresetForUrl, buildCloneEntry,
         classifyProbeResult, writeKeyStatus,
         buildDashboardLines, formatTimestamp,
@@ -147,8 +147,8 @@ test('applyKeyUpdate: __REMOVE__ with mock secretsLib -> calls delete with corre
   };
   const newEnv = { ANTHROPIC_API_KEY: 'old-key' };
   applyKeyUpdate({ apiKey: '__REMOVE__' }, 'ACCOUNT', newEnv, mockLib);
-  assert.ok(calls.some(([op, s, k]) => op === 'del' && s === 'qgsd' && k === 'ACCOUNT'),
-    'delete should be called with qgsd and ACCOUNT');
+  assert.ok(calls.some(([op, s, k]) => op === 'del' && s === 'nforma' && k === 'ACCOUNT'),
+    'delete should be called with nforma and ACCOUNT');
 });
 
 test('applyKeyUpdate: real key with mock secretsLib -> set called, ANTHROPIC_API_KEY absent from newEnv', () => {
@@ -160,7 +160,7 @@ test('applyKeyUpdate: real key with mock secretsLib -> set called, ANTHROPIC_API
   const newEnv = {};
   const result = applyKeyUpdate({ apiKey: 'sk-real-key' }, 'ACCOUNT', newEnv, mockLib);
   assert.strictEqual(result.ANTHROPIC_API_KEY, undefined, 'ANTHROPIC_API_KEY must be absent when secretsLib present');
-  assert.ok(calls.some(([op, s, k, v]) => op === 'set' && s === 'qgsd' && k === 'ACCOUNT' && v === 'sk-real-key'),
+  assert.ok(calls.some(([op, s, k, v]) => op === 'set' && s === 'nforma' && k === 'ACCOUNT' && v === 'sk-real-key'),
     'set should be called with correct args');
 });
 
@@ -182,7 +182,7 @@ test('applyCcrProviderUpdate: set AKASHML_API_KEY -> returns set result and call
   };
   const result = await applyCcrProviderUpdate('set', 'AKASHML_API_KEY', 'abc123', mockLib);
   assert.deepStrictEqual(result, { action: 'set', key: 'AKASHML_API_KEY' });
-  assert.ok(calls.some(([op, s, k, v]) => op === 'set' && s === 'qgsd' && k === 'AKASHML_API_KEY' && v === 'abc123'),
+  assert.ok(calls.some(([op, s, k, v]) => op === 'set' && s === 'nforma' && k === 'AKASHML_API_KEY' && v === 'abc123'),
     'set should be called with correct args');
 });
 
@@ -194,7 +194,7 @@ test('applyCcrProviderUpdate: remove TOGETHER_API_KEY -> returns remove result a
   };
   const result = await applyCcrProviderUpdate('remove', 'TOGETHER_API_KEY', '', mockLib);
   assert.deepStrictEqual(result, { action: 'remove', key: 'TOGETHER_API_KEY' });
-  assert.ok(calls.some(([op, s, k]) => op === 'del' && s === 'qgsd' && k === 'TOGETHER_API_KEY'),
+  assert.ok(calls.some(([op, s, k]) => op === 'del' && s === 'nforma' && k === 'TOGETHER_API_KEY'),
     'delete should be called with correct key');
 });
 
@@ -273,12 +273,12 @@ const os = require('os');
 const fs = require('fs');
 
 test('readCcrConfigSafe: non-existent path -> null (EDGE CASE 2: absent CCR config)', () => {
-  const result = readCcrConfigSafe('/tmp/__qgsd_test_nonexistent_ccr_config_' + Date.now() + '.json');
+  const result = readCcrConfigSafe('/tmp/__nf_test_nonexistent_ccr_config_' + Date.now() + '.json');
   assert.strictEqual(result, null);
 });
 
 test('readCcrConfigSafe: valid JSON file -> parsed object', () => {
-  const tmpPath = require('path').join(os.tmpdir(), 'qgsd_ccr_test_' + Date.now() + '.json');
+  const tmpPath = require('path').join(os.tmpdir(), 'nf_ccr_test_' + Date.now() + '.json');
   const testData = { providers: [{ name: 'TestProvider', models: ['model-x'] }] };
   fs.writeFileSync(tmpPath, JSON.stringify(testData), 'utf8');
   try {
@@ -345,21 +345,21 @@ test('getKeyInvalidBadge: status invalid and hasKeyFn returns true -> [key inval
 });
 
 // ---------------------------------------------------------------------------
-// readQgsdJson / writeQgsdJson
+// readNfJson / writeNfJson
 // ---------------------------------------------------------------------------
 
-test('readQgsdJson: non-existent file -> empty object {}', () => {
-  const tmpPath = '/tmp/__qgsd_test_nonexistent_' + Date.now() + '.json';
-  const result = readQgsdJson(tmpPath);
+test('readNfJson: non-existent file -> empty object {}', () => {
+  const tmpPath = '/tmp/__nf_test_nonexistent_' + Date.now() + '.json';
+  const result = readNfJson(tmpPath);
   assert.deepStrictEqual(result, {});
 });
 
-test('writeQgsdJson and readQgsdJson: roundtrip via tmp dir', () => {
-  const tmpPath = require('path').join(os.tmpdir(), 'qgsd_rw_test_' + Date.now() + '.json');
+test('writeNfJson and readNfJson: roundtrip via tmp dir', () => {
+  const tmpPath = require('path').join(os.tmpdir(), 'nf_rw_test_' + Date.now() + '.json');
   const testData = { orchestrator: { model: 'test-model' }, agent_config: {} };
   try {
-    writeQgsdJson(testData, tmpPath);
-    const result = readQgsdJson(tmpPath);
+    writeNfJson(testData, tmpPath);
+    const result = readNfJson(tmpPath);
     assert.deepStrictEqual(result, testData);
   } finally {
     try { fs.unlinkSync(tmpPath); } catch (_) {}
@@ -531,7 +531,7 @@ test("classifyProbeResult: healthy=true, statusCode=null -> 'ok' (statusCode abs
 // ---------------------------------------------------------------------------
 // writeKeyStatus
 // Note: writeKeyStatus is impure (file I/O) but exported via _pure because it accepts
-// an optional filePath parameter for testability — matching the readQgsdJson/writeQgsdJson
+// an optional filePath parameter for testability — matching the readNfJson/writeNfJson
 // precedent from v0.10-01.
 //
 // 'unreachable' guard: the invariant that writeKeyStatus is never called for status
@@ -541,20 +541,20 @@ test("classifyProbeResult: healthy=true, statusCode=null -> 'ok' (statusCode abs
 // Unit tests here verify the read-mutate-write correctness (existing keys preserved).
 // ---------------------------------------------------------------------------
 
-test('writeKeyStatus: writes {status: \'invalid\', checkedAt: ISO} and preserves unrelated qgsd.json keys', () => {
+test('writeKeyStatus: writes {status: \'invalid\', checkedAt: ISO} and preserves unrelated nf.json keys', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ws_test_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ws_test_' + Date.now() + '.json';
   try {
-    // Seed with existing data — simulates a real qgsd.json with other top-level keys
+    // Seed with existing data — simulates a real nf.json with other top-level keys
     fs.writeFileSync(tmpPath, JSON.stringify({ orchestrator: { model: 'test-model' }, agent_config: {} }), 'utf8');
     writeKeyStatus('claude-1', 'invalid', tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'invalid');
     assert.strictEqual(typeof result.agent_config['claude-1'].key_status.checkedAt, 'string');
     assert.ok(!isNaN(new Date(result.agent_config['claude-1'].key_status.checkedAt).getTime()));
     // Preservation assertion: unrelated top-level key must survive the write
-    assert.strictEqual(result.orchestrator.model, 'test-model', 'writeKeyStatus must not truncate existing qgsd.json keys');
+    assert.strictEqual(result.orchestrator.model, 'test-model', 'writeKeyStatus must not truncate existing nf.json keys');
   } finally {
     if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
   }
@@ -563,7 +563,7 @@ test('writeKeyStatus: writes {status: \'invalid\', checkedAt: ISO} and preserves
 test('writeKeyStatus: writes {status: \'ok\', checkedAt: ISO} and overwrites prior key_status for same slot', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ws_test2_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ws_test2_' + Date.now() + '.json';
   try {
     // Seed with a prior 'invalid' status and an unrelated agent slot + top-level key
     const seed = {
@@ -575,7 +575,7 @@ test('writeKeyStatus: writes {status: \'ok\', checkedAt: ISO} and overwrites pri
     };
     fs.writeFileSync(tmpPath, JSON.stringify(seed), 'utf8');
     writeKeyStatus('gemini-1', 'ok', tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     // Target slot: status must update from 'invalid' to 'ok'
     assert.strictEqual(result.agent_config['gemini-1'].key_status.status, 'ok');
     assert.strictEqual(typeof result.agent_config['gemini-1'].key_status.checkedAt, 'string');
@@ -595,7 +595,7 @@ test('writeKeyStatus: writes {status: \'ok\', checkedAt: ISO} and overwrites pri
 test('probeAndPersistKey: probe succeeds (200), classifyProbeResult returns ok, writeKeyStatus persists correctly', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ppk_ok_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ppk_ok_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
     // Simulate the probe-classify-write chain that probeAndPersistKey performs
@@ -603,7 +603,7 @@ test('probeAndPersistKey: probe succeeds (200), classifyProbeResult returns ok, 
     const status = classifyProbeResult(probeResult);
     assert.strictEqual(status, 'ok');
     writeKeyStatus('test-slot', status, tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['test-slot'].key_status.status, 'ok');
     // checkedAt must be a valid ISO date string
     const checkedAt = result.agent_config['test-slot'].key_status.checkedAt;
@@ -617,14 +617,14 @@ test('probeAndPersistKey: probe succeeds (200), classifyProbeResult returns ok, 
 test('probeAndPersistKey: probe returns 401, status persists as invalid', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ppk_401_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ppk_401_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
     const probeResult = { healthy: true, statusCode: 401, latencyMs: 100, error: null };
     const status = classifyProbeResult(probeResult);
     assert.strictEqual(status, 'invalid');
     writeKeyStatus('test-slot', status, tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['test-slot'].key_status.status, 'invalid');
     assert.strictEqual(typeof result.agent_config['test-slot'].key_status.checkedAt, 'string');
   } finally {
@@ -635,7 +635,7 @@ test('probeAndPersistKey: probe returns 401, status persists as invalid', () => 
 test('probeAndPersistKey: probe times out (statusCode null), existing status NOT overwritten', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ppk_timeout_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ppk_timeout_' + Date.now() + '.json';
   try {
     // Seed with existing 'ok' status
     const seed = {
@@ -651,7 +651,7 @@ test('probeAndPersistKey: probe times out (statusCode null), existing status NOT
     assert.ok(!shouldPersist, 'timeout probe must NOT trigger persistence');
     // Do NOT call writeKeyStatus (matching probeAndPersistKey behavior)
     // Verify existing status is preserved
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['test-slot'].key_status.status, 'ok', 'existing status must NOT be overwritten on timeout');
     assert.strictEqual(result.agent_config['test-slot'].key_status.checkedAt, '2026-01-01T00:00:00.000Z');
   } finally {
@@ -662,12 +662,12 @@ test('probeAndPersistKey: probe times out (statusCode null), existing status NOT
 test('probeAndPersistKey: multiple slots persist independently', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_ppk_multi_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_ppk_multi_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ orchestrator: { model: 'test' }, agent_config: {} }), 'utf8');
     writeKeyStatus('slot-a', 'ok', tmpPath);
     writeKeyStatus('slot-b', 'invalid', tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['slot-a'].key_status.status, 'ok');
     assert.strictEqual(result.agent_config['slot-b'].key_status.status, 'invalid');
     // Verify other top-level keys preserved
@@ -698,14 +698,14 @@ test('probeAllSlots persistence guard: correctly identifies which results should
 test('E2E persistence chain: probe 200 -> classify -> write -> read back with valid ISO timestamp', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_e2e_200_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_e2e_200_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
     const probeResult = { healthy: true, statusCode: 200, latencyMs: 50, error: null };
     const status = classifyProbeResult(probeResult);
     assert.strictEqual(status, 'ok');
     writeKeyStatus('claude-1', status, tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'ok');
     const checkedAt = result.agent_config['claude-1'].key_status.checkedAt;
     assert.strictEqual(typeof checkedAt, 'string');
@@ -718,14 +718,14 @@ test('E2E persistence chain: probe 200 -> classify -> write -> read back with va
 test('E2E persistence chain: probe 401 -> classify -> write -> read back as invalid', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_e2e_401_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_e2e_401_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
     const probeResult = { healthy: true, statusCode: 401, latencyMs: 100, error: null };
     const status = classifyProbeResult(probeResult);
     assert.strictEqual(status, 'invalid');
     writeKeyStatus('claude-1', status, tmpPath);
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'invalid');
   } finally {
     if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
@@ -735,16 +735,16 @@ test('E2E persistence chain: probe 401 -> classify -> write -> read back as inva
 test('Status survives across read cycles (simulates session restart)', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_e2e_survive_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_e2e_survive_' + Date.now() + '.json';
   try {
     fs.writeFileSync(tmpPath, JSON.stringify({ agent_config: {} }), 'utf8');
     // First session: write gemini-1 as ok
     writeKeyStatus('gemini-1', 'ok', tmpPath);
-    const afterFirst = readQgsdJson(tmpPath);
+    const afterFirst = readNfJson(tmpPath);
     assert.strictEqual(afterFirst.agent_config['gemini-1'].key_status.status, 'ok');
     // Second session: write codex-1 as invalid
     writeKeyStatus('codex-1', 'invalid', tmpPath);
-    const afterSecond = readQgsdJson(tmpPath);
+    const afterSecond = readNfJson(tmpPath);
     // Both must be present
     assert.strictEqual(afterSecond.agent_config['gemini-1'].key_status.status, 'ok', 'gemini-1 must survive second write');
     assert.strictEqual(afterSecond.agent_config['codex-1'].key_status.status, 'invalid', 'codex-1 must be present');
@@ -756,7 +756,7 @@ test('Status survives across read cycles (simulates session restart)', () => {
 test('Persistence guard prevents overwrite on timeout: existing ok status preserved', () => {
   const os = require('os');
   const fs = require('fs');
-  const tmpPath = os.tmpdir() + '/qgsd_e2e_guard_' + Date.now() + '.json';
+  const tmpPath = os.tmpdir() + '/nf_e2e_guard_' + Date.now() + '.json';
   try {
     // Seed with existing 'ok' status for claude-1
     const seed = {
@@ -770,7 +770,7 @@ test('Persistence guard prevents overwrite on timeout: existing ok status preser
     const shouldPersist = probeResult.healthy || probeResult.statusCode;
     assert.ok(!shouldPersist, 'timeout must not trigger persistence');
     // Do NOT write (matching probeAndPersistKey behavior)
-    const result = readQgsdJson(tmpPath);
+    const result = readNfJson(tmpPath);
     assert.strictEqual(result.agent_config['claude-1'].key_status.status, 'ok', 'status must still be ok');
     assert.strictEqual(result.agent_config['claude-1'].key_status.checkedAt, '2026-03-03T00:00:00.000Z', 'checkedAt must be unchanged');
   } finally {
@@ -953,7 +953,7 @@ test('buildDashboardLines: per-slot data isolation — two-slot output has each 
 test('buildDashboardLines: output contains header title and footer keybinding hint', () => {
   const lines = buildDashboardLines([], {}, {}, null);
   const joined = lines.join('\n');
-  assert.ok(joined.includes('QGSD Live Health Dashboard'), 'must contain header title');
+  assert.ok(joined.includes('nForma Live Health Dashboard'), 'must contain header title');
   assert.ok(joined.includes('[space/r] refresh'), 'must contain keybinding hint');
   assert.ok(joined.includes('[q/Esc] exit'), 'must contain exit hint');
 });
@@ -1325,7 +1325,7 @@ test('REGRESSION PLCY-03: runAutoUpdateCheck logs UPDATE_AVAILABLE not SKIP for 
 
 test('PLCY-03 Integration: runAutoUpdateCheck with auto-policy slot logs UPDATE_AVAILABLE', async () => {
   // Integration test validating PLCY-03 startup contract:
-  // - Create temporary qgsd.json with a slot having update_policy=auto
+  // - Create temporary nf.json with a slot having update_policy=auto
   // - Call runAutoUpdateCheck() with injected getStatusesFn returning update-available status
   // - Verify UPDATE_AVAILABLE is written to log
   const fs = require('fs');
@@ -1334,17 +1334,17 @@ test('PLCY-03 Integration: runAutoUpdateCheck with auto-policy slot logs UPDATE_
   const { runAutoUpdateCheck } = require('./manage-agents-core.cjs')._pure;
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'plcy-03-test-'));
-  const tmpQgsdJsonPath = path.join(tmpDir, 'qgsd.json');
+  const tmpNfJsonPath = path.join(tmpDir, 'nf.json');
 
   try {
-    // Setup: Create qgsd.json with auto-policy slot
-    const qgsdConfig = {
+    // Setup: Create nf.json with auto-policy slot
+    const nfConfig = {
       agent_config: {
         'codex-1': { update_policy: 'auto' },
         'claude-1': { update_policy: 'manual' }
       }
     };
-    fs.writeFileSync(tmpQgsdJsonPath, JSON.stringify(qgsdConfig, null, 2));
+    fs.writeFileSync(tmpNfJsonPath, JSON.stringify(nfConfig, null, 2));
 
     // Mock getStatusesFn returning update-available for codex
     const mockGetStatuses = async () => {
@@ -1372,7 +1372,7 @@ test('PLCY-03 Integration: runAutoUpdateCheck with auto-policy slot logs UPDATE_
     assert.ok(logContent.includes('UPDATE_AVAILABLE'), 'Log must contain UPDATE_AVAILABLE status (not SKIP)');
   } finally {
     // Cleanup
-    try { fs.unlinkSync(tmpQgsdJsonPath); } catch (_) {}
+    try { fs.unlinkSync(tmpNfJsonPath); } catch (_) {}
     try { fs.rmdirSync(tmpDir); } catch (_) {}
   }
 });
@@ -1593,7 +1593,7 @@ test('buildBackupPath: file I/O integration — backup copy matches original', (
   const fs = require('fs');
   const os = require('os');
   const path = require('path');
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-test-backup-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-test-backup-'));
   const original = path.join(tmpDir, '.claude.json');
   const content = JSON.stringify({ mcpServers: { s1: { command: 'node' } } });
   fs.writeFileSync(original, content, 'utf8');
@@ -1656,7 +1656,7 @@ test('PROVIDER_PRESETS: contains exactly 3 named entries (AkashML, Together.xyz,
 });
 
 // ---------------------------------------------------------------------------
-// Clone metadata copy logic (PRST-02 — qgsd.json agent_config)
+// Clone metadata copy logic (PRST-02 — nf.json agent_config)
 // ---------------------------------------------------------------------------
 
 test('clone metadata: deep-clone copies timeout_ms and update_policy from source', () => {
@@ -1708,7 +1708,7 @@ test('REN-03: zero get-shit-done/ directory paths in bin/*.cjs', () => {
 test('REN-03: zero get-shit-done/ directory paths in workflow files', () => {
   const fs = require('fs');
   const path = require('path');
-  const wfDir = path.join(__dirname, '..', 'qgsd-core', 'workflows');
+  const wfDir = path.join(__dirname, '..', 'core', 'workflows');
   if (!fs.existsSync(wfDir)) return; // skip if dir doesn't exist
   const mdFiles = fs.readdirSync(wfDir).filter(f => f.endsWith('.md'));
   const re = /\/get-shit-done\//g;
@@ -1725,7 +1725,7 @@ test('REN-03: zero get-shit-done/ directory paths in workflow files', () => {
 test('REN-03: zero get-shit-done/ directory paths in template files', () => {
   const fs = require('fs');
   const path = require('path');
-  const tplDir = path.join(__dirname, '..', 'qgsd-core', 'templates');
+  const tplDir = path.join(__dirname, '..', 'core', 'templates');
   if (!fs.existsSync(tplDir)) return; // skip if dir doesn't exist
   const mdFiles = fs.readdirSync(tplDir).filter(f => f.endsWith('.md'));
   const re = /\/get-shit-done\//g;
@@ -1745,10 +1745,10 @@ test('REN-03: zero get-shit-done/ directory paths in template files', () => {
 
 // ── DASH-01: Dashboard display ──────────────────────────────────────────────
 
-test('DASH-01: buildDashboardLines renders header with "QGSD Live Health Dashboard" title', () => {
+test('DASH-01: buildDashboardLines renders header with "nForma Live Health Dashboard" title', () => {
   const lines = buildDashboardLines([], {}, {}, null);
   const joined = lines.join('\n');
-  assert.ok(joined.includes('QGSD Live Health Dashboard'), 'must contain header title');
+  assert.ok(joined.includes('nForma Live Health Dashboard'), 'must contain header title');
 });
 
 test('DASH-01: buildDashboardLines shows slot name, provider hostname, model name, and health status for each slot', () => {

@@ -102,10 +102,10 @@ describe('applyMaxDeliberationUpdate(newValue, options)', () => {
     // Create temp directory with mock machine.ts
     const machineDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machineDir, { recursive: true });
-    const machineFile = path.join(machineDir, 'qgsd-workflow.machine.ts');
+    const machineFile = path.join(machineDir, 'nf-workflow.machine.ts');
 
     const originalContent = `
-export const qgsdWorkflowMachine = createMachine({
+export const nfWorkflowMachine = createMachine({
   context: {
     maxDeliberation:    7,
     otherField: 'value',
@@ -168,10 +168,10 @@ export const qgsdWorkflowMachine = createMachine({
     // Create temp directory with mock machine.ts
     const machineDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machineDir, { recursive: true });
-    const machineFile = path.join(machineDir, 'qgsd-workflow.machine.ts');
+    const machineFile = path.join(machineDir, 'nf-workflow.machine.ts');
 
     const originalContent = `
-export const qgsdWorkflowMachine = createMachine({
+export const nfWorkflowMachine = createMachine({
   context: {
     maxDeliberation:    7,
   },

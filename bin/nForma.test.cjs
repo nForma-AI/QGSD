@@ -12,7 +12,7 @@ const path    = require('path');
 
 // ─── Temp dir helpers ─────────────────────────────────────────────────────────
 function makeTmp() {
-  const dir = path.join(os.tmpdir(), 'qgsd-blessed-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  const dir = path.join(os.tmpdir(), 'nf-blessed-' + Date.now() + '-' + Math.random().toString(36).slice(2));
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -277,50 +277,50 @@ test('writeProvidersJson: overwrites existing data', () => {
 // 4. writeUpdatePolicy()
 // ─────────────────────────────────────────────────────────────────────────────
 
-const { readQgsdJson, writeQgsdJson } = require('./manage-agents-core.cjs')._pure;
-const QGSD_JSON_PATH = path.join(os.homedir(), '.claude', 'qgsd.json');
+const { readNfJson, writeNfJson } = require('./manage-agents-core.cjs')._pure;
+const NF_JSON_PATH = path.join(os.homedir(), '.claude', 'nf.json');
 
-function withQgsdJson(data, fn) {
-  const bak = QGSD_JSON_PATH + '.test-bak';
-  const had = fs.existsSync(QGSD_JSON_PATH);
-  if (had) fs.copyFileSync(QGSD_JSON_PATH, bak);
-  writeQgsdJson(data);
+function withNfJson(data, fn) {
+  const bak = NF_JSON_PATH + '.test-bak';
+  const had = fs.existsSync(NF_JSON_PATH);
+  if (had) fs.copyFileSync(NF_JSON_PATH, bak);
+  writeNfJson(data);
   try { return fn(); }
   finally {
-    if (had) fs.copyFileSync(bak, QGSD_JSON_PATH), fs.unlinkSync(bak);
-    else if (fs.existsSync(QGSD_JSON_PATH)) fs.unlinkSync(QGSD_JSON_PATH);
+    if (had) fs.copyFileSync(bak, NF_JSON_PATH), fs.unlinkSync(bak);
+    else if (fs.existsSync(NF_JSON_PATH)) fs.unlinkSync(NF_JSON_PATH);
   }
 }
 
 test('writeUpdatePolicy: sets policy on a new slot', () => {
-  withQgsdJson({}, () => {
+  withNfJson({}, () => {
     _pure.writeUpdatePolicy('claude-7', 'auto');
-    const q = readQgsdJson();
+    const q = readNfJson();
     assert.strictEqual(q.agent_config['claude-7'].update_policy, 'auto');
   });
 });
 
 test('writeUpdatePolicy: updates existing policy', () => {
-  withQgsdJson({ agent_config: { 'claude-7': { update_policy: 'skip' } } }, () => {
+  withNfJson({ agent_config: { 'claude-7': { update_policy: 'skip' } } }, () => {
     _pure.writeUpdatePolicy('claude-7', 'prompt');
-    const q = readQgsdJson();
+    const q = readNfJson();
     assert.strictEqual(q.agent_config['claude-7'].update_policy, 'prompt');
   });
 });
 
 test('writeUpdatePolicy: preserves other slots', () => {
-  withQgsdJson({ agent_config: { 'claude-1': { update_policy: 'auto' } } }, () => {
+  withNfJson({ agent_config: { 'claude-1': { update_policy: 'auto' } } }, () => {
     _pure.writeUpdatePolicy('claude-2', 'skip');
-    const q = readQgsdJson();
+    const q = readNfJson();
     assert.strictEqual(q.agent_config['claude-1'].update_policy, 'auto');
     assert.strictEqual(q.agent_config['claude-2'].update_policy, 'skip');
   });
 });
 
 test('writeUpdatePolicy: creates agent_config if absent', () => {
-  withQgsdJson({ orchestrator: { model: 'claude-sonnet-4-6' } }, () => {
+  withNfJson({ orchestrator: { model: 'claude-sonnet-4-6' } }, () => {
     _pure.writeUpdatePolicy('claude-5', 'prompt');
-    const q = readQgsdJson();
+    const q = readNfJson();
     assert.ok(q.agent_config, 'agent_config should be created');
     assert.strictEqual(q.agent_config['claude-5'].update_policy, 'prompt');
   });
@@ -328,9 +328,9 @@ test('writeUpdatePolicy: creates agent_config if absent', () => {
 
 test('writeUpdatePolicy: all three valid policy values are accepted', () => {
   for (const policy of ['auto', 'prompt', 'skip']) {
-    withQgsdJson({}, () => {
+    withNfJson({}, () => {
       _pure.writeUpdatePolicy('slot-x', policy);
-      const q = readQgsdJson();
+      const q = readNfJson();
       assert.strictEqual(q.agent_config['slot-x'].update_policy, policy);
     });
   }

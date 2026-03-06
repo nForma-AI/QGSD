@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-prompt.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-prompt.test.js
+// Test suite for hooks/nf-prompt.js
+// Uses Node.js built-in test runner: node --test hooks/nf-prompt.test.js
 //
 // Each test spawns the hook as a child process with mock stdin.
 // The hook reads JSON from stdin and writes JSON to stdout.
@@ -12,7 +12,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-prompt.js');
+const HOOK_PATH = path.join(__dirname, 'nf-prompt.js');
 
 // Helper: run the hook with a given stdin payload, return { stdout, stderr, exitCode }
 function runHook(stdinPayload, extraEnv) {
@@ -139,7 +139,7 @@ test('TC8: /qgsd:plan-phase-extra does NOT trigger injection (word boundary enfo
 // TC9: circuit breaker active in temp dir → injects resolution context
 // Creates a temp git repo with .claude/circuit-breaker-state.json { active: true }
 test('TC9: circuit breaker active → injects CIRCUIT BREAKER ACTIVE context', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-tc9-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-tc9-'));
   try {
     // Init git repo so isBreakerActive can find the git root
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
@@ -171,24 +171,24 @@ test('TC9: circuit breaker active → injects CIRCUIT BREAKER ACTIVE context', (
 });
 
 // TC11: activeSlots path — instructions use Task dispatch syntax, not direct MCP calls
-// When quorum_active is configured, the step list must contain qgsd-quorum-slot-worker Tasks
+// When quorum_active is configured, the step list must contain nf-quorum-slot-worker Tasks
 // and must NOT contain mcp__*__* tool names (the escape hatch must be absent).
 test('TC11: activeSlots path uses Task dispatch syntax (not direct MCP calls)', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-tc11-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-tc11-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
     const { stdout } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     assert.ok(
-      ctx.includes('qgsd-quorum-slot-worker'),
-      'instructions must contain qgsd-quorum-slot-worker Task dispatch syntax'
+      ctx.includes('nf-quorum-slot-worker'),
+      'instructions must contain nf-quorum-slot-worker Task dispatch syntax'
     );
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
@@ -198,13 +198,13 @@ test('TC11: activeSlots path uses Task dispatch syntax (not direct MCP calls)', 
 // TC12: activeSlots path — no mcp__*__* tool names in injected instructions
 // The escape hatch "fall back to direct MCP calls" must be absent entirely.
 test('TC12: activeSlots path has no mcp__*__* tool names in instructions', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-tc12-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-tc12-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
@@ -230,13 +230,13 @@ test('TC12: activeSlots path has no mcp__*__* tool names in instructions', () =>
 // Even when model_preferences is configured, mcp__*__* names must not appear
 // (the !activeSlots guard must prevent the AGENT_TOOL_MAP block from running).
 test('TC13: activeSlots path suppresses model_preferences override (no mcp__ leak)', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-tc13-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-tc13-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['codex-1', 'gemini-1'],
         model_preferences: { 'codex-1': 'gpt-5-turbo' },
@@ -259,7 +259,7 @@ test('TC13: activeSlots path suppresses model_preferences override (no mcp__ lea
 // TC10: circuit breaker disabled flag → does NOT inject resolution context
 // Same temp dir setup but state = { active: true, disabled: true }
 test('TC10: circuit breaker disabled flag → no injection (silent pass)', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-tc10-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-tc10-'));
   try {
     // Init git repo
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
@@ -287,13 +287,13 @@ test('TC10: circuit breaker disabled flag → no injection (silent pass)', () =>
 
 // TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots
 test('TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-nc-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-nc-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1', 'claude-1'] }),
       'utf8'
     );
@@ -302,7 +302,7 @@ test('TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots', (
     // Must announce the override
     assert.ok(ctx.includes('QUORUM SIZE OVERRIDE (--n 3)'), 'must announce --n 3 override');
     // Must cap to 2 numbered step Task lines (N-1 = 2). Regex matches numbered steps, not header prose.
-    const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="qgsd-quorum-slot-worker"/g) || []).length;
+    const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="nf-quorum-slot-worker"/g) || []).length;
     assert.strictEqual(taskLineCount, 2, '--n 3 must produce exactly 2 slot-worker Task lines (N-1=2)');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
@@ -311,21 +311,21 @@ test('TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots', (
 
 // TC-PROMPT-SOLO: --n 1 injects SOLO MODE ACTIVE, no Task slot lines
 test('TC-PROMPT-SOLO: --n 1 injects SOLO MODE ACTIVE, no Task slot lines', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-solo-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-solo-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ quorum_active: ['codex-1', 'gemini-1'] }),
       'utf8'
     );
     const { stdout } = runHook({ prompt: '/qgsd:plan-phase --n 1', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     assert.ok(ctx.includes('SOLO MODE ACTIVE (--n 1)'), 'must inject SOLO MODE ACTIVE marker');
-    assert.ok(ctx.includes('<!-- QGSD_SOLO_MODE -->'), 'must include QGSD_SOLO_MODE XML comment');
-    const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="qgsd-quorum-slot-worker"/g) || []).length;
+    assert.ok(ctx.includes('<!-- NF_SOLO_MODE -->'), 'must include NF_SOLO_MODE XML comment');
+    const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="nf-quorum-slot-worker"/g) || []).length;
     assert.strictEqual(taskLineCount, 0, '--n 1 solo mode must produce zero slot-worker Task lines');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
@@ -334,14 +334,14 @@ test('TC-PROMPT-SOLO: --n 1 injects SOLO MODE ACTIVE, no Task slot lines', () =>
 
 // TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub slots appear before api slots
 test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub slots appear before api slots', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-psub-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-psub-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     // sub-1 listed AFTER api-1 in quorum_active — default preferSub must reorder
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['api-slot-1', 'sub-slot-1'],
         agent_config: {
@@ -365,17 +365,17 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub s
 });
 
 // TC-PROMPT-FAILOVER-RULE: injected context must instruct Claude to skip UNAVAIL slots.
-// This is the runtime bridge that determines polledCount in QGSDQuorum.tla: Claude
+// This is the runtime bridge that determines polledCount in NFQuorum.tla: Claude
 // follows these injected instructions to skip unresponsive slot-workers, reducing
 // polledCount from MaxSize to however many slots actually responded.
 test('TC-PROMPT-FAILOVER-RULE: injected context includes skip-if-UNAVAIL failover rule', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-fr-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-fr-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ quorum_active: ['gemini-1', 'opencode-1', 'copilot-1'] }),
       'utf8'
     );
@@ -407,14 +407,14 @@ test('TC-PROMPT-FAILOVER-RULE: injected context includes skip-if-UNAVAIL failove
 // (codex-1, gemini-1) were UNAVAIL and the fallback jumped directly to claude-1/claude-2
 // instead of trying opencode-1 and copilot-1 first.
 test('TC-PROMPT-FALLBACK-T1-PRIORITY: unused sub-CLI slots listed as T1 before ccr in Failover rule', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-t1-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-t1-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     // 4 sub slots, maxSize=3 → externalSlotCap=2 → 2 are dispatched, 2 are T1 unused
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
         quorum: { maxSize: 3 },
@@ -438,7 +438,7 @@ test('TC-PROMPT-FALLBACK-T1-PRIORITY: unused sub-CLI slots listed as T1 before c
     assert.ok(ctx.includes('copilot-1'), 'T1 unused slot copilot-1 must appear in failover rule');
 
     // The dispatched steps (1., 2.) must only contain the first 2 capped sub slots
-    const dispatchedSlots = [...ctx.matchAll(/\d+\. Task\(subagent_type="qgsd-quorum-slot-worker", prompt="slot: (\S+)\\n/g)]
+    const dispatchedSlots = [...ctx.matchAll(/\d+\. Task\(subagent_type="nf-quorum-slot-worker", prompt="slot: (\S+)\\n/g)]
       .map(m => m[1]);
     assert.equal(dispatchedSlots.length, 2, 'Exactly 2 slots should be in the dispatch list (externalSlotCap=2)');
     assert.ok(!dispatchedSlots.includes('opencode-1'), 'opencode-1 should NOT be in initial dispatch (it is T1 unused)');
@@ -458,13 +458,13 @@ test('TC-PROMPT-FALLBACK-T1-PRIORITY: unused sub-CLI slots listed as T1 before c
 // TC-PROMPT-FALLBACK-ROUTINE: FAN_OUT_COUNT=2 (routine risk, 1 external slot) leaves 3 sub
 // slots unused as T1. The structured sequence must name all 3 in Step 2.
 test('TC-PROMPT-FALLBACK-ROUTINE: routine risk_level → FAN_OUT_COUNT=2, 3 T1 slots in sequence', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-routine-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-routine-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
         quorum: { maxSize: 5 },
@@ -488,7 +488,7 @@ test('TC-PROMPT-FALLBACK-ROUTINE: routine risk_level → FAN_OUT_COUNT=2, 3 T1 s
 
     // FAN_OUT_COUNT=2 → externalSlotCap=1 → 1 primary, 3 T1 unused
     assert.ok(ctx.includes('FALLBACK-01'), 'Must use FALLBACK-01 when T1 slots exist');
-    const dispatchedSlots = [...ctx.matchAll(/\d+\. Task\(subagent_type="qgsd-quorum-slot-worker", prompt="slot: (\S+)\\n/g)]
+    const dispatchedSlots = [...ctx.matchAll(/\d+\. Task\(subagent_type="nf-quorum-slot-worker", prompt="slot: (\S+)\\n/g)]
       .map(m => m[1]);
     assert.equal(dispatchedSlots.length, 1, 'Only 1 external slot dispatched for routine risk');
 
@@ -505,14 +505,14 @@ test('TC-PROMPT-FALLBACK-ROUTINE: routine risk_level → FAN_OUT_COUNT=2, 3 T1 s
 
 // TC-PROMPT-FALLBACK-NO-T1: all sub slots fit within the cap → no T1 unused → simple rule.
 test('TC-PROMPT-FALLBACK-NO-T1: all sub slots dispatched → no FALLBACK-01, simple rule', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-not1-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-not1-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     // 2 sub slots, maxSize=5 → externalSlotCap=4 → both sub slots fit, no T1 unused
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['gemini-1', 'opencode-1'],
         quorum: { maxSize: 5 },
@@ -540,14 +540,14 @@ test('TC-PROMPT-FALLBACK-NO-T1: all sub slots dispatched → no FALLBACK-01, sim
 // TC-PROMPT-FALLBACK-T1-EXCLUDES-PRIMARIES: T1 list must not include slots already dispatched.
 // Regression: if opencode-1 is in the primary dispatch, it must not also appear in Step 2 T1.
 test('TC-PROMPT-FALLBACK-T1-EXCLUDES-PRIMARIES: T1 list excludes slots already in primary dispatch', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-excl-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-excl-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     // 4 sub slots, maxSize=4 → externalSlotCap=3 → 3 dispatched, 1 T1 unused (copilot-1)
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
         quorum: { maxSize: 4 },
@@ -588,7 +588,7 @@ test('TC-PROMPT-FALLBACK-T1-EXCLUDES-PRIMARIES: T1 list excludes slots already i
 // NOT by slot naming convention. A "ccr" named slot with auth_type=sub must land in T1;
 // a "native CLI" named slot with auth_type=api must land in T2.
 test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_type, not slot name', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-authtype-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-authtype-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
@@ -610,7 +610,7 @@ test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_t
     // T2 = [codex-1] (api)
     // FALLBACK-01 must fire with claude-2 in Step 2 T1 and codex-1 in Step 3 T2
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['gemini-1', 'claude-1', 'claude-2', 'codex-1'],
         quorum: { maxSize: 3 },
@@ -650,7 +650,7 @@ test('TC-PROMPT-FALLBACK-AUTHTYPE-DYNAMIC: T1/T2 classification driven by auth_t
 // appear in Step 3 T2. Regression for the bug where t2Slots filtered all non-sub slots
 // without excluding cappedSlots, causing primary api slots to appear in both Step 1 and Step 3.
 test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary excluded from T2 list', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-prompt-t2excl-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-t2excl-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
@@ -664,7 +664,7 @@ test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary 
     // t2Slots (correct) = api slots not in capped = [api-slot-C]   (excludes api-slot-A)
     // t2Slots (buggy)   = all api slots           = [api-slot-A, api-slot-C]  (includes primary!)
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({
         quorum_active: ['api-slot-A', 'sub-slot-B', 'api-slot-C'],
         quorum: { maxSize: 2, preferSub: false },

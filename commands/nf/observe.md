@@ -1,5 +1,5 @@
 ---
-name: qgsd:observe
+name: nf:observe
 description: Fetch issues and drifts from configured sources, render dual-table output, and write to debt ledger. Replaces /nf:triage.
 argument-hint: "[--source github|sentry|sentry-feedback|bash|internal] [--since 24h|7d] [--limit N]"
 allowed-tools:
@@ -11,7 +11,7 @@ allowed-tools:
 ---
 
 <objective>
-Aggregate issues and drifts from all configured sources, deduplicate, render a prioritized dual-table output (Issues + Drifts), write observations to the debt ledger, and route the selected issue to the right QGSD workflow.
+Aggregate issues and drifts from all configured sources, deduplicate, render a prioritized dual-table output (Issues + Drifts), write observations to the debt ledger, and route the selected issue to the right nForma workflow.
 
 This command is the project's unified "what's broken right now?" entry point. It replaces `/nf:triage` with debt-aware persistence and dual-table rendering.
 </objective>
@@ -46,7 +46,7 @@ The loader automatically:
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD > OBSERVE: No sources configured
+ nForma > OBSERVE: No sources configured
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Create .planning/observe-sources.md to configure issue sources.
 ```
@@ -67,7 +67,7 @@ if (!$SOURCE_FILTER || $SOURCE_FILTER === 'internal') {
 // Critical: check for empty sources AFTER internal injection
 if (config.sources.length === 0) {
   // Display "no sources" message only if sources is empty AFTER internal source injection
-  display("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n QGSD > OBSERVE: No sources configured\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCreate .planning/observe-sources.md to configure issue sources.");
+  display("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n nForma > OBSERVE: No sources configured\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCreate .planning/observe-sources.md to configure issue sources.");
   stop();
 }
 ```
@@ -80,19 +80,21 @@ Import handler functions and register them with the registry:
 
 ```javascript
 const { registerHandler } = require('./bin/observe-registry.cjs');
-const { handleGitHub, handleSentry, handleSentryFeedback, handleBash, handleInternal } = require('./bin/observe-handlers.cjs');
+const { handleGitHub, handleSentry, handleSentryFeedback, handleBash, handleInternal, handleUpstream, handleDeps } = require('./bin/observe-handlers.cjs');
 
 registerHandler('github', handleGitHub);
 registerHandler('sentry', handleSentry);
 registerHandler('sentry-feedback', handleSentryFeedback);
 registerHandler('bash', handleBash);
 registerHandler('internal', handleInternal);
+registerHandler('upstream', handleUpstream);
+registerHandler('deps', handleDeps);
 ```
 
 Display dispatch header:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD > OBSERVE: Fetching from N source(s)...
+ nForma > OBSERVE: Fetching from N source(s)...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -163,7 +165,7 @@ Display the output.
 If total issues = 0 and no drifts:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD > OBSERVE: All clear — no open issues found
+ nForma > OBSERVE: All clear — no open issues found
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Sources checked: <list>
 ```
@@ -225,6 +227,7 @@ Enter issue # to work on, "ack N" to acknowledge, "solve" for all internal issue
 - Load the full issue details (title, URL, meta) for that index.
 - Determine routing:
   - If the issue has `source_type: 'internal'` and `_route` metadata: use the `_route` value as the suggested action (example: unfinished quick task suggests `/nf:quick "original-slug"`, debug session suggests `/nf:debug --resume`)
+  - If the issue has `issue_type: 'upstream'`: route to **upstream evaluation** (see below)
   - Otherwise, routing by severity:
     - `severity: error` or `severity: bug` → suggest `/nf:debug`
     - `severity: warning` or `severity: info` → suggest `/nf:quick`
@@ -238,6 +241,36 @@ Enter issue # to work on, "ack N" to acknowledge, "solve" for all internal issue
   Run it? [Y/n]
   ```
 - If confirmed, invoke the suggested skill with the issue as context.
+
+**Upstream evaluation routing (issue_type: 'upstream'):**
+
+When the user selects an upstream item, do NOT blindly suggest porting it. Instead:
+
+1. Fetch the release notes or PR diff from the upstream URL (use `gh release view <tag> --repo <repo> --json body` or `gh pr view <number> --repo <repo> --json body,files`)
+2. Identify the areas of our codebase that overlap with the upstream change
+3. **Compare quality**: For each overlapping area, assess whether:
+   - Our implementation is already equivalent or better → `SKIP` (we diverged for good reason or already have it)
+   - The upstream change introduces something we lack → `CANDIDATE` (worth porting)
+   - The upstream change conflicts with our architecture → `INCOMPATIBLE` (their approach doesn't fit our patterns)
+4. Display the evaluation:
+   ```
+   ◆ Upstream: <title>
+     Source: <repo> <tag or #PR>
+     URL: <url>
+
+     Evaluation:
+     ┌─────────────────────────────────────────────────┐
+     │ Area              │ Ours  │ Theirs │ Verdict     │
+     ├─────────────────────────────────────────────────┤
+     │ hook registration │ ✓     │ ✓      │ SKIP        │
+     │ error retry logic │ basic │ exp-bo │ CANDIDATE   │
+     │ config format     │ YAML  │ TOML   │ INCOMPATIBLE│
+     └─────────────────────────────────────────────────┘
+
+     Candidates for porting: 1 of 3 areas
+   ```
+5. If there are CANDIDATE items, ask: `Port candidate changes? [Y/n]`
+   - If yes → suggest `/nf:quick "port <area> from <repo> <tag>"` for each candidate
 
 **If user enters "solve":**
 - Collect all issues with `source_type: 'internal'`

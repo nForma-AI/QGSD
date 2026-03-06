@@ -16,7 +16,7 @@
  * Reads providers.json, dispatches to the slot's CLI (subprocess) or HTTP provider,
  * prints the response text to stdout.
  *
- * Used by qgsd-quorum-orchestrator (sub-agent) which cannot access MCP tools.
+ * Used by nf-quorum-orchestrator (sub-agent) which cannot access MCP tools.
  *
  * Exit codes: 0 = success, 1 = error (message on stderr)
  */
@@ -205,8 +205,8 @@ if (!slot) {
 // ─── Find providers.json ───────────────────────────────────────────────────────
 function findProviders() {
   const searchPaths = [
-    path.join(__dirname, 'providers.json'),                             // same dir (qgsd-bin)
-    path.join(os.homedir(), '.claude', 'qgsd-bin', 'providers.json'),  // installed fallback
+    path.join(__dirname, 'providers.json'),                             // same dir (nf-bin)
+    path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),  // installed fallback
   ];
 
   // Also derive path from unified-1 MCP server config in ~/.claude.json

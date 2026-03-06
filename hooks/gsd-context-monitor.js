@@ -7,7 +7,7 @@
 // exceeds configurable thresholds. Fails open on all errors.
 //
 // Config: context_monitor.warn_pct (default 70%) and
-//         context_monitor.critical_pct (default 90%) in qgsd.json.
+//         context_monitor.critical_pct (default 90%) in nf.json.
 // Two-layer merge via shared config-loader.
 
 'use strict';

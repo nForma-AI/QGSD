@@ -26,11 +26,11 @@ if crontab -l 2>/dev/null | grep -q "telemetry-collector"; then
 fi
 
 # Install cron entry: top of every hour
-(crontab -l 2>/dev/null; echo "0 * * * * $CRON_CMD >> /tmp/qgsd-telemetry.log 2>&1") | crontab -
+(crontab -l 2>/dev/null; echo "0 * * * * $CRON_CMD >> /tmp/nf-telemetry.log 2>&1") | crontab -
 
 echo "Telemetry cron installed."
 
 # Windows: use Task Scheduler. Create a Basic Task that runs:
-#   node C:\path\to\qgsd\bin\telemetry-collector.cjs
-# followed by: node C:\path\to\qgsd\bin\issue-classifier.cjs
+#   node C:\path\to\nforma\bin\telemetry-collector.cjs
+# followed by: node C:\path\to\nforma\bin\issue-classifier.cjs
 # Trigger: Daily, repeat every 1 hour indefinitely.

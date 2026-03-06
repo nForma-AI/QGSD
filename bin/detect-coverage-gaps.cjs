@@ -5,7 +5,7 @@
 // Requirements: SIG-01
 //
 // Usage:
-//   node bin/detect-coverage-gaps.cjs [--spec=QGSDQuorum] [--log=path]
+//   node bin/detect-coverage-gaps.cjs [--spec=NFQuorum] [--log=path]
 //
 // Output:
 //   .planning/formal/coverage-gaps.md — structured test backlog when gaps exist
@@ -19,15 +19,15 @@ const path = require('path');
 // Maps each TLA+ spec to its state variable name and value-to-name mapping.
 // Source of truth: state comments in the TLA+ spec files.
 const STATE_MAPS = {
-  'QGSDQuorum': {
+  'NFQuorum': {
     variable: 's',
     values: { '0': 'COLLECTING_VOTES', '1': 'DECIDED', '2': 'DELIBERATING' },
   },
-  'QGSDStopHook': {
+  'NFStopHook': {
     variable: 'phase',
     values: { '0': 'IDLE', '1': 'READING', '2': 'DECIDING', '3': 'BLOCKED' },
   },
-  'QGSDCircuitBreaker': {
+  'NFCircuitBreaker': {
     variable: 'state',
     values: { '0': 'MONITORING', '1': 'TRIGGERED', '2': 'RECOVERING' },
   },
@@ -51,7 +51,7 @@ const ACTION_TO_STATE = {
 
 /**
  * parseTlcStates(specName) — returns the full set of named states for a spec.
- * @param {string} specName - TLA+ spec name (e.g. 'QGSDQuorum')
+ * @param {string} specName - TLA+ spec name (e.g. 'NFQuorum')
  * @returns {{ specName: string, states: Set<string>, variable: string } | null}
  */
 function parseTlcStates(specName) {
@@ -102,7 +102,7 @@ function parseTraceStates(logPath) {
  * @returns {{ status: string, gaps?: string[], outputPath?: string, reason?: string }}
  */
 function detectCoverageGaps(options = {}) {
-  const specName   = options.specName || 'QGSDQuorum';
+  const specName   = options.specName || 'NFQuorum';
   const pp2 = require('./planning-paths.cjs');
   const logPath    = options.logPath || pp2.resolveWithFallback(process.cwd(), 'conformance-events');
   const outputPath = options.outputPath || path.join(process.cwd(), '.planning', 'formal', 'coverage-gaps.md');
@@ -186,7 +186,7 @@ if (require.main === module) {
   const specArg = args.find(a => a.startsWith('--spec='));
   const logArg  = args.find(a => a.startsWith('--log='));
 
-  const specName = specArg ? specArg.split('=')[1] : 'QGSDQuorum';
+  const specName = specArg ? specArg.split('=')[1] : 'NFQuorum';
   const logPath  = logArg ? logArg.split('=')[1] : undefined;
 
   const result = detectCoverageGaps({ specName, logPath });

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-statusline.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-statusline.test.js
+// Test suite for hooks/nf-statusline.js
+// Uses Node.js built-in test runner: node --test hooks/nf-statusline.test.js
 //
 // Each test spawns the hook as a child process with mock stdin (JSON payload).
 // Captures stdout + exit code. The hook reads JSON from stdin and writes
@@ -13,7 +13,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-statusline.js');
+const HOOK_PATH = path.join(__dirname, 'nf-statusline.js');
 
 // Helper: run the hook with a given stdin JSON payload and optional extra env vars
 function runHook(stdinPayload, extraEnv) {
@@ -36,7 +36,7 @@ function runHook(stdinPayload, extraEnv) {
 
 // Helper: create a temp directory structure, write a file inside it, return tempDir
 function makeTempDir(suffix) {
-  const dir = path.join(os.tmpdir(), `qgsd-sl-test-${Date.now()}-${suffix}`);
+  const dir = path.join(os.tmpdir(), `nf-sl-test-${Date.now()}-${suffix}`);
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -115,7 +115,7 @@ test('TC7: update available banner shows /nf:update in output', () => {
   const tempHome = makeTempDir('tc7');
   const cacheDir = path.join(tempHome, '.claude', 'cache');
   fs.mkdirSync(cacheDir, { recursive: true });
-  const cacheFile = path.join(cacheDir, 'qgsd-update-check.json');
+  const cacheFile = path.join(cacheDir, 'nf-update-check.json');
   fs.writeFileSync(cacheFile, JSON.stringify({ update_available: true, latest: '1.0.1' }), 'utf8');
 
   try {

@@ -31,7 +31,7 @@ const CHAR_W   = 48;
 const LINE_H   = Math.round(CHAR_W * 22 / 8.4);   // 126px
 const STROKE_W = Math.round(CHAR_W * 1.5 / 8.4);  //   9px
 
-// ─── QGSD ANSI Shadow art — Q in salmon, GSD in cyan ─────────────────────────
+// ─── nForma ANSI Shadow art — Q in salmon, GSD in cyan ─────────────────────────
 // logoCol = first column index of the GSD portion (cyan starts here)
 const ROWS = [
   { t: '  ██████╗  ██████╗ ███████╗██████╗ ', logoCol: 9  },

@@ -1,5 +1,5 @@
 ---
-name: qgsd:mcp-update
+name: nf:mcp-update
 description: Update a quorum agent to its latest version — detects install method from ~/.claude.json and runs the correct update command
 argument-hint: "<agent|all>"
 allowed-tools:

@@ -8,11 +8,11 @@ const path = require('path');
  * Load baseline requirements filtered by project profile.
  *
  * @param {string} profile - One of: web, mobile, desktop, api, cli, library
- * @param {string} [basePath] - Path to baseline-requirements directory, defaults to qgsd-core/defaults/baseline-requirements
+ * @param {string} [basePath] - Path to baseline-requirements directory, defaults to core/defaults/baseline-requirements
  * @returns {Object} { profile, label, description, categories: [...], total }
  */
 function loadBaselineRequirements(profile, basePath) {
-  const defaultBasePath = path.resolve(__dirname, '../qgsd-core/defaults/baseline-requirements');
+  const defaultBasePath = path.resolve(__dirname, '../core/defaults/baseline-requirements');
   const basePathToUse = basePath || defaultBasePath;
 
   // Read index.json
@@ -105,7 +105,7 @@ function loadBaselineRequirements(profile, basePath) {
  * @returns {Object} { profile, label, intent, categories, packs_applied, total }
  */
 function loadBaselineRequirementsFromIntent(intent, basePath) {
-  const defaultBasePath = path.resolve(__dirname, '../qgsd-core/defaults/baseline-requirements');
+  const defaultBasePath = path.resolve(__dirname, '../core/defaults/baseline-requirements');
   const basePathToUse = basePath || defaultBasePath;
 
   // Validate base_profile
@@ -231,7 +231,7 @@ if (require.main === module) {
   const args = process.argv.slice(2);
 
   if (args.includes('--list-profiles')) {
-    const indexPath = path.resolve(__dirname, '../qgsd-core/defaults/baseline-requirements/index.json');
+    const indexPath = path.resolve(__dirname, '../core/defaults/baseline-requirements/index.json');
     const indexContent = fs.readFileSync(indexPath, 'utf8');
     const index = JSON.parse(indexContent);
     const profiles = Object.entries(index.profiles).map(([key, val]) => ({

@@ -1,5 +1,5 @@
 ---
-name: qgsd:fix-tests
+name: nf:fix-tests
 description: Autonomously discover, batch, run, categorize, and fix test failures across large suites
 allowed-tools:
   - Read
@@ -19,9 +19,9 @@ This command is execution-only — it does NOT invoke quorum workers (R2.1 / INT
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/fix-tests.md
+@~/.claude/nf/workflows/fix-tests.md
 </execution_context>
 
 <process>
-Follow the fix-tests workflow from @~/.claude/qgsd/workflows/fix-tests.md end-to-end.
+Follow the fix-tests workflow from @~/.claude/nf/workflows/fix-tests.md end-to-end.
 </process>

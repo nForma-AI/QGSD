@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Baseline requirements automatically seeded into every QGSD project. Users can remove any requirement during the scoping step.",
+  "description": "Baseline requirements automatically seeded into every nForma project. Users can remove any requirement during the scoping step.",
   "profiles": {
     "web": {
       "label": "Web Application",

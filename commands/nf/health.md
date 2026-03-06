@@ -1,5 +1,5 @@
 ---
-name: qgsd:health
+name: nf:health
 description: Diagnose planning directory health and optionally repair issues
 argument-hint: [--repair] [--force]
 allowed-tools:
@@ -13,10 +13,10 @@ Validate `.planning/` directory integrity and report actionable issues. Checks f
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/health.md
+@~/.claude/nf/workflows/health.md
 </execution_context>
 
 <process>
-Execute the health workflow from @~/.claude/qgsd/workflows/health.md end-to-end.
+Execute the health workflow from @~/.claude/nf/workflows/health.md end-to-end.
 Parse --repair flag from arguments and pass to workflow.
 </process>

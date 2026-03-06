@@ -14,7 +14,7 @@ const os = require('os');
 const TOOL_PATH   = path.join(__dirname, 'run-sensitivity-sweep.cjs');
 const REPORT_PATH = path.join(__dirname, 'sensitivity-report.cjs');
 const PLAN_PHASE_PATH = path.join(
-  os.homedir(), '.claude', 'qgsd', 'workflows', 'plan-phase.md'
+  os.homedir(), '.claude', 'nf', 'workflows', 'plan-phase.md'
 );
 
 /**

@@ -15,7 +15,7 @@ const {
   assembleReverseCandidates,
   computeResidual,
   formatJSON,
-} = require('./qgsd-solve.cjs');
+} = require('./nf-solve.cjs');
 
 // ── sweepCtoR ────────────────────────────────────────────────────────────────
 

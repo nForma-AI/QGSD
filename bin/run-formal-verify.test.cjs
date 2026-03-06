@@ -109,8 +109,8 @@ test('watch mode (DX-01): --watch flag starts process and does not exit immediat
     const machinesDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machinesDir, { recursive: true });
     fs.copyFileSync(
-      path.resolve(__dirname, '..', 'src', 'machines', 'qgsd-workflow.machine.ts'),
-      path.join(machinesDir, 'qgsd-workflow.machine.ts')
+      path.resolve(__dirname, '..', 'src', 'machines', 'nf-workflow.machine.ts'),
+      path.join(machinesDir, 'nf-workflow.machine.ts')
     );
 
     const child = spawn(process.execPath, [RUN_FV, '--watch', '--only=generate'], {
@@ -157,9 +157,9 @@ test('watch mode (DX-01): re-runs verification when machine file changes', { tim
   try {
     const machinesDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machinesDir, { recursive: true });
-    const machinePath = path.join(machinesDir, 'qgsd-workflow.machine.ts');
+    const machinePath = path.join(machinesDir, 'nf-workflow.machine.ts');
     fs.copyFileSync(
-      path.resolve(__dirname, '..', 'src', 'machines', 'qgsd-workflow.machine.ts'),
+      path.resolve(__dirname, '..', 'src', 'machines', 'nf-workflow.machine.ts'),
       machinePath
     );
 
@@ -214,8 +214,8 @@ test('watch mode (DX-01): exits cleanly on SIGINT with exit code 0', { timeout: 
     const machinesDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machinesDir, { recursive: true });
     fs.copyFileSync(
-      path.resolve(__dirname, '..', 'src', 'machines', 'qgsd-workflow.machine.ts'),
-      path.join(machinesDir, 'qgsd-workflow.machine.ts')
+      path.resolve(__dirname, '..', 'src', 'machines', 'nf-workflow.machine.ts'),
+      path.join(machinesDir, 'nf-workflow.machine.ts')
     );
 
     const child = spawn(process.execPath, [RUN_FV, '--watch', '--only=generate'], {

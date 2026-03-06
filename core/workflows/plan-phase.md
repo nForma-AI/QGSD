@@ -1,11 +1,11 @@
 <purpose>
-Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification. Default flow: Research (if needed) -> Plan -> Verify -> Done. Orchestrates qgsd-phase-researcher, qgsd-planner, and qgsd-plan-checker agents with a revision loop (max 3 iterations).
+Create executable phase prompts (PLAN.md files) for a roadmap phase with integrated research and verification. Default flow: Research (if needed) -> Plan -> Verify -> Done. Orchestrates nf-phase-researcher, nf-planner, and nf-plan-checker agents with a revision loop (max 3 iterations).
 </purpose>
 
 <required_reading>
 Read all files referenced by the invoking prompt's execution_context before starting.
 
-@~/.claude/qgsd/references/ui-brand.md
+@~/.claude/nf/references/ui-brand.md
 </required_reading>
 
 <process>
@@ -15,7 +15,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 Load all context in one call (paths only to minimize orchestrator context):
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init plan-phase "$PHASE")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init plan-phase "$PHASE")
 ```
 
 Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_enabled`, `plan_checker_enabled`, `nyquist_validation_enabled`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `plan_count`, `planning_exists`, `roadmap_exists`.
@@ -40,7 +40,7 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ## 3. Validate Phase
 
 ```bash
-PHASE_INFO=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}")
+PHASE_INFO=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}")
 ```
 
 **If `found` is false:** Error with available phases. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -77,7 +77,7 @@ FORMAL_SPEC_CONTEXT=[]
 
 ```bash
 if [ -d ".planning/formal/spec" ]; then
-  PHASE_DESC_LOWER=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name' | tr '[:upper:]' '[:lower:]')
+  PHASE_DESC_LOWER=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name' | tr '[:upper:]' '[:lower:]')
   for MODULE_DIR in .planning/formal/spec/*/; do
     MODULE=$(basename "$MODULE_DIR")
     INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
@@ -115,22 +115,22 @@ Store `$FORMAL_SPEC_CONTEXT` for use in steps 7, 8, 10.
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► RESEARCHING PHASE {X}
+ nForma ► RESEARCHING PHASE {X}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning researcher...
 ```
 
-### Spawn qgsd-phase-researcher
+### Spawn nf-phase-researcher
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"researching\",\"phase\":${PHASE_NUMBER}}"
 ```
 
 ```bash
-PHASE_DESC=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section')
-PHASE_REQ_IDS=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section // empty' | grep -i "Requirements:" | head -1 | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g' | tr ',' '\n' | sed 's/^ *//;s/ *$//' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
+PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section')
+PHASE_REQ_IDS=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.section // empty' | grep -i "Requirements:" | head -1 | sed 's/.*Requirements:\*\*\s*//' | sed 's/[\[\]]//g' | tr ',' '\n' | sed 's/^ *//;s/ *$//' | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
 ```
 
 Research prompt:
@@ -151,7 +151,7 @@ Answer: "What do I need to know to PLAN this phase well?"
 **Phase description:** {phase_description}
 **Phase requirement IDs (MUST address):** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
+**Project instructions:** Follow project-specific guidelines from CLAUDE.md context (already loaded)
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, research should account for project skill patterns
 
 **Nyquist Validation:** If `nyquist_validation_enabled` is true (from INIT JSON), your RESEARCH.md MUST include a `## Validation Architecture` section covering:
@@ -169,7 +169,7 @@ Write to: {phase_dir}/{phase_num}-RESEARCH.md
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-phase-researcher.md for your role and instructions.\n\n" + research_prompt,
+  prompt="First, read ~/.claude/agents/nf-phase-researcher.md for your role and instructions.\n\n" + research_prompt,
   subagent_type="general-purpose",
   model="{researcher_model}",
   description="Research Phase {phase}"
@@ -192,12 +192,12 @@ grep -l "## Validation Architecture" "${PHASE_DIR}"/*-RESEARCH.md 2>/dev/null
 ```
 
 **If found:**
-1. Read validation template from `~/.claude/qgsd/templates/VALIDATION.md`
+1. Read validation template from `~/.claude/nf/templates/VALIDATION.md`
 2. Write to `${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md`
 3. Fill frontmatter: replace `{N}` with phase number, `{phase-slug}` with phase slug, `{date}` with current date
 4. If `commit_docs` is true:
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): add validation strategy" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): add validation strategy" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
 ```
 
 **If not found (and nyquist enabled):**
@@ -209,7 +209,7 @@ ERROR: Nyquist validation is enabled but no "## Validation Architecture" section
 
 To fix: Either
   1. Re-run research (the researcher must include ## Validation Architecture in its output), or
-  2. Disable Nyquist: node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.nyquist_validation false
+  2. Disable Nyquist: node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.nyquist_validation false
 
 Do NOT proceed to plan creation without VALIDATION.md when nyquist_validation_enabled is true.
 ```
@@ -220,7 +220,7 @@ After researcher completes and VALIDATION.md is written:
 
 ```bash
 # Initialize task envelope with research context
-TASK_ENVELOPE_ENABLED=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
+TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
 if [ "$TASK_ENVELOPE_ENABLED" = "true" ]; then
   PHASE_NUM="${PADDED_PHASE}"
   RISK_LEVEL=$(grep -oE '"risk_level"\s*:\s*"(low|medium|high)"' "${PHASE_DIR}/${PADDED_PHASE}-RESEARCH.md" 2>/dev/null | grep -oE '(low|medium|high)' | head -1 || echo "medium")
@@ -254,17 +254,17 @@ UAT_PATH=$(echo "$INIT" | jq -r '.uat_path // empty')
 CONTEXT_PATH=$(echo "$INIT" | jq -r '.context_path // empty')
 ```
 
-## 8. Spawn qgsd-planner Agent
+## 8. Spawn nf-planner Agent
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"planning\",\"phase\":${PHASE_NUMBER}}"
 ```
 
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PLANNING PHASE {X}
+ nForma ► PLANNING PHASE {X}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning planner...
@@ -290,7 +290,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ? FORMAL_SPEC_CONTEXT.map(f => `- ${f.path} (Fo
 
 **Phase requirement IDs (every ID MUST appear in a plan's `requirements` field):** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — follow project-specific guidelines
+**Project instructions:** Follow project-specific guidelines from CLAUDE.md context (already loaded)
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, plans should account for project skill rules
 
 <formal_context>
@@ -344,7 +344,7 @@ Output consumed by /nf:execute-phase. Plans need:
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.\n\n" + filled_prompt,
+  prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n" + filled_prompt,
   subagent_type="general-purpose",
   model="{planner_model}",
   description="Plan Phase {phase}"
@@ -357,7 +357,7 @@ After planner completes and PLAN.md files are committed:
 
 ```bash
 # Update envelope with plan metadata
-TASK_ENVELOPE_ENABLED=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
+TASK_ENVELOPE_ENABLED=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get task_envelope_enabled 2>/dev/null || echo "true")
 if [ "$TASK_ENVELOPE_ENABLED" = "true" ]; then
   # Find first PLAN.md path for this phase
   PLAN_PATH=$(ls "${PHASE_DIR}/${PADDED_PHASE}-"*"-PLAN.md" 2>/dev/null | head -1 || echo "")
@@ -391,20 +391,20 @@ Initialize: `improvement_iteration = 0`
 **LOOP** (while `improvement_iteration <= 10`):
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"quorum\",\"phase\":${PHASE_NUMBER},\"quorum_round\":${improvement_iteration + 1}}"
 ```
 
 Form your own position on the current plan files first (CLAUDE.md R3.2): do they correctly address the phase goal, requirement IDs, and user decisions from CONTEXT.md? State your vote as APPROVE or BLOCK with 1-2 sentence rationale.
 
-Run quorum inline (R3 dispatch_pattern from `commands/qgsd/quorum.md`):
+Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — pure question (reviewers read artifact directly)
 - artifact_path: all current `${PHASE_DIR}/*-PLAN.md` files
 - envelope_path: `${ENVELOPE_PATH}` (if file exists) for risk_level context
 - review_context: "This is a pre-execution implementation plan. The code does not exist yet. Evaluate the plan's approach, task breakdown, and correctness — not whether the implementation already exists in the repository."
 - request_improvements: true          ← R3.6 signal infrastructure
 - Build `$DISPATCH_LIST` first (Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
-- Dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
+- Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
 
 Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
@@ -441,7 +441,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
     Display:
     ```
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     QGSD ► QUORUM APPROVED — R3.6 improvements (${improvement_iteration}/10)
+     nForma ► QUORUM APPROVED — R3.6 improvements (${improvement_iteration}/10)
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     ```
 
@@ -459,7 +459,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
     ```
     Task(
-      prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.\n\n
+      prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n
       <revision_context>
       Phase: ${PHASE_NUMBER}
       Mode: improvement-revision (R3.6 iteration ${improvement_iteration}/10)
@@ -502,17 +502,17 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 - **`## CHECKPOINT REACHED`:** Present to user, get response, spawn continuation (step 12)
 - **`## PLANNING INCONCLUSIVE`:** Show attempts, offer: Add context / Retry / Manual
 
-## 10. Spawn qgsd-plan-checker Agent
+## 10. Spawn nf-plan-checker Agent
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"checking_plan\",\"phase\":${PHASE_NUMBER}}"
 ```
 
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► VERIFYING PLANS
+ nForma ► VERIFYING PLANS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning plan checker...
@@ -534,7 +534,7 @@ Checker prompt:
 
 **Phase requirement IDs (MUST ALL be covered):** {phase_req_ids}
 
-**Project instructions:** Read ./CLAUDE.md if exists — verify plans honor project guidelines
+**Project instructions:** Verify plans honor project guidelines from CLAUDE.md context (already loaded)
 **Project skills:** Check .agents/skills/ directory (if exists) — verify plans account for project skill rules
 
 <binding_rule id="R9">
@@ -571,7 +571,7 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ? `Relevant formal modules: ${FORMAL_SPEC_CONTE
 ```
 Task(
   prompt=checker_prompt,
-  subagent_type="qgsd-plan-checker",
+  subagent_type="nf-plan-checker",
   model="{checker_model}",
   description="Verify Phase {phase} plans"
 )
@@ -637,7 +637,7 @@ After plan-checker passes, the orchestrator populates VALIDATION.md with real da
 
 5. **Commit if `commit_docs` is true:**
    ```bash
-   node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): populate validation strategy from approved plans" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
+   node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(phase-${PHASE}): populate validation strategy from approved plans" --files "${PHASE_DIR}/${PADDED_PHASE}-VALIDATION.md"
    ```
 
 Proceed to step 13.
@@ -676,7 +676,7 @@ Return what changed.
 
 ```
 Task(
-  prompt="First, read ~/.claude/agents/qgsd-planner.md for your role and instructions.\n\n" + revision_prompt,
+  prompt="First, read ~/.claude/agents/nf-planner.md for your role and instructions.\n\n" + revision_prompt,
   subagent_type="general-purpose",
   model="{planner_model}",
   description="Revise Phase {phase} plans"
@@ -698,7 +698,7 @@ Route to `<offer_next>` OR `auto_advance` depending on flags/config.
 After presenting final status to the user (offer_next output displayed OR auto-advance complete):
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 ```
 
 ## 14. Auto-Advance Check
@@ -708,7 +708,7 @@ Check for auto-advance trigger:
 1. Parse `--auto` flag from $ARGUMENTS
 2. Read `workflow.auto_advance` from config:
    ```bash
-   AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+   AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
    ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -716,7 +716,7 @@ Check for auto-advance trigger:
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-ADVANCING TO EXECUTE
+ nForma ► AUTO-ADVANCING TO EXECUTE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Plans ready. Spawning execute-phase...
@@ -747,7 +747,7 @@ Task(
   3. Display banner:
      ```
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      QGSD ► PHASE ${PHASE} COMPLETE ✓
+      nForma ► PHASE ${PHASE} COMPLETE ✓
      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
      Auto-advance pipeline finished.
@@ -777,7 +777,7 @@ Route to `<offer_next>` (existing behavior).
 Output this markdown directly (not as a code block):
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PHASE {X} PLANNED ✓
+ nForma ► PHASE {X} PLANNED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Phase {X}: {Name}** — {N} plan(s) in {M} wave(s)
@@ -815,11 +815,11 @@ Verification: {Passed | Passed with override | Skipped}
 - [ ] Phase directory created if needed
 - [ ] CONTEXT.md loaded early (step 4) and passed to ALL agents
 - [ ] Research completed (unless --skip-research or --gaps or research_enabled=false)
-- [ ] qgsd-phase-researcher spawned with CONTEXT.md
+- [ ] nf-phase-researcher spawned with CONTEXT.md
 - [ ] Existing plans checked
-- [ ] qgsd-planner spawned with CONTEXT.md + RESEARCH.md
+- [ ] nf-planner spawned with CONTEXT.md + RESEARCH.md
 - [ ] Plans created (PLANNING COMPLETE or CHECKPOINT handled)
-- [ ] qgsd-plan-checker spawned with CONTEXT.md
+- [ ] nf-plan-checker spawned with CONTEXT.md
 - [ ] Verification passed OR user override OR max iterations with user decision
 - [ ] Quorum ran (step 8.5) with `request_improvements: true`
 - [ ] R3.6 loop ran: if improvements were proposed, planner revision was spawned; if none, loop exited cleanly; `<!-- GSD_DECISION -->` present in response

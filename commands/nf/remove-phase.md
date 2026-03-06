@@ -1,5 +1,5 @@
 ---
-name: qgsd:remove-phase
+name: nf:remove-phase
 description: Remove a future phase from roadmap and renumber subsequent phases
 argument-hint: <phase-number>
 allowed-tools:
@@ -16,7 +16,7 @@ Output: Phase deleted, all subsequent phases renumbered, git commit as historica
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/remove-phase.md
+@~/.claude/nf/workflows/remove-phase.md
 </execution_context>
 
 <context>
@@ -26,6 +26,6 @@ Roadmap and state are resolved in-workflow via `init phase-op` and targeted read
 </context>
 
 <process>
-Execute the remove-phase workflow from @~/.claude/qgsd/workflows/remove-phase.md end-to-end.
+Execute the remove-phase workflow from @~/.claude/nf/workflows/remove-phase.md end-to-end.
 Preserve all validation gates (future phase check, work check), renumbering logic, and commit.
 </process>

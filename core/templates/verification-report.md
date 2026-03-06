@@ -336,7 +336,7 @@ None needed until automated gaps are fixed.
 
 ## Formal Verification
 
-> This section is generated automatically by `qgsd-verifier` using `FORMAL_CHECK_RESULT` passed
+> This section is generated automatically by `nf-verifier` using `FORMAL_CHECK_RESULT` passed
 > from `execute-phase` after running `node bin/run-formal-check.cjs --modules={module_list}`.
 > The verifier does NOT re-run the formal check — it uses the pre-computed result as ground truth.
 

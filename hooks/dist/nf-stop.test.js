@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-stop.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-stop.test.js
+// Test suite for hooks/nf-stop.js
+// Uses Node.js built-in test runner: node --test hooks/nf-stop.test.js
 //
 // Each test spawns the hook as a child process with mock stdin and a synthetic
 // JSONL transcript written to a temp file. Captures stdout + exit code.
@@ -12,11 +12,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-stop.js');
+const HOOK_PATH = path.join(__dirname, 'nf-stop.js');
 
 // Helper: write a temp JSONL file and return its path
 function writeTempTranscript(lines) {
-  const tmpFile = path.join(os.tmpdir(), `qgsd-stop-test-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`);
+  const tmpFile = path.join(os.tmpdir(), `nf-stop-test-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`);
   fs.writeFileSync(tmpFile, lines.join('\n') + '\n', 'utf8');
   return tmpFile;
 }
@@ -36,7 +36,7 @@ function runHook(stdinPayload) {
 }
 
 // Helper: run the hook with a given stdin JSON payload and additional env vars
-// Used for TC11-TC13 to inject QGSD_CLAUDE_JSON for deterministic MCP availability testing
+// Used for TC11-TC13 to inject NF_CLAUDE_JSON for deterministic MCP availability testing
 function runHookWithEnv(stdinPayload, extraEnv) {
   const result = spawnSync('node', [HOOK_PATH], {
     input: JSON.stringify(stdinPayload),
@@ -203,17 +203,17 @@ test('TC5b: /qgsd:plan-phase — quorum present → pass', () => {
 // Test 6: /gsd:plan-phase in current turn + only codex tool_use → block with decision:block
 // TC6 updated (step 1a): includes a PLAN.md artifact commit so GUARD 5 classifies this as a
 // decision turn, preserving the invariant: quorum-command + decision-turn + partial quorum = block.
-// TC6 uses runHookWithEnv to isolate from ~/.claude/qgsd.json (which may override DEFAULT_CONFIG
+// TC6 uses runHookWithEnv to isolate from ~/.claude/nf.json (which may override DEFAULT_CONFIG
 // prefixes with -1 suffixes). HOME points to an empty temp dir so loadConfig() uses DEFAULT_CONFIG.
-// QGSD_CLAUDE_JSON points to a temp file listing gemini-cli and opencode as available MCP servers
+// NF_CLAUDE_JSON points to a temp file listing gemini-cli and opencode as available MCP servers
 // so they appear in the missing list and satisfy the string assertions.
 test('TC6: planning command with only codex tool call triggers block', () => {
-  // Create a temp HOME dir with no qgsd.json — forces DEFAULT_CONFIG usage
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-tc6-${Date.now()}`);
+  // Create a temp HOME dir with no nf.json — forces DEFAULT_CONFIG usage
+  const homeDir = path.join(os.tmpdir(), `nf-home-tc6-${Date.now()}`);
   fs.mkdirSync(homeDir, { recursive: true });
 
   // Create a temp ~/.claude.json listing gemini-cli and opencode as available MCP servers
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-tc6-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-tc6-${Date.now()}.json`);
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({
     mcpServers: {
       'codex-cli': {},
@@ -241,8 +241,8 @@ test('TC6: planning command with only codex tool call triggers block', () => {
         last_assistant_message: 'Here is the plan.',
       },
       {
-        HOME: homeDir,           // No ~/.claude/qgsd.json → loadConfig() uses DEFAULT_CONFIG
-        QGSD_CLAUDE_JSON: claudeJsonTmp, // Deterministic MCP server list
+        HOME: homeDir,           // No ~/.claude/nf.json → loadConfig() uses DEFAULT_CONFIG
+        NF_CLAUDE_JSON: claudeJsonTmp, // Deterministic MCP server list
       }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
@@ -313,18 +313,18 @@ test('TC8: malformed JSONL lines are skipped gracefully', () => {
 // Test 9: config file missing → DEFAULT_CONFIG used, hook still works
 // TC9 updated (step 1a): includes a RESEARCH.md artifact commit so GUARD 5 classifies this as a
 // decision turn, preserving the invariant: quorum-command + decision-turn + no quorum = block.
-// TC9 uses runHookWithEnv to isolate from ~/.claude/qgsd.json (which may override DEFAULT_CONFIG
+// TC9 uses runHookWithEnv to isolate from ~/.claude/nf.json (which may override DEFAULT_CONFIG
 // prefixes with -1 suffixes). HOME points to an empty temp dir so loadConfig() uses DEFAULT_CONFIG.
-// QGSD_CLAUDE_JSON points to a non-existent path so getAvailableMcpPrefixes() returns null,
+// NF_CLAUDE_JSON points to a non-existent path so getAvailableMcpPrefixes() returns null,
 // meaning all models are treated as available (conservative enforcement) and DEFAULT_CONFIG names appear.
 test('TC9: missing config file falls back to DEFAULT_CONFIG', () => {
-  // Create a temp HOME dir with no qgsd.json — forces DEFAULT_CONFIG usage
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-tc9-${Date.now()}`);
+  // Create a temp HOME dir with no nf.json — forces DEFAULT_CONFIG usage
+  const homeDir = path.join(os.tmpdir(), `nf-home-tc9-${Date.now()}`);
   fs.mkdirSync(homeDir, { recursive: true });
 
-  // Point QGSD_CLAUDE_JSON to a non-existent file → getAvailableMcpPrefixes() returns null
+  // Point NF_CLAUDE_JSON to a non-existent file → getAvailableMcpPrefixes() returns null
   // → all models treated as available (conservative) → DEFAULT_CONFIG names appear in block reason
-  const nonExistentClaudeJson = path.join(os.tmpdir(), `qgsd-claude-tc9-nonexistent-${Date.now()}.json`);
+  const nonExistentClaudeJson = path.join(os.tmpdir(), `nf-claude-tc9-nonexistent-${Date.now()}.json`);
 
   const tmpFile = writeTempTranscript([
     userLine('/gsd:research-phase 1'),
@@ -342,8 +342,8 @@ test('TC9: missing config file falls back to DEFAULT_CONFIG', () => {
         last_assistant_message: 'No quorum calls here.',
       },
       {
-        HOME: homeDir,                         // No ~/.claude/qgsd.json → DEFAULT_CONFIG
-        QGSD_CLAUDE_JSON: nonExistentClaudeJson, // Missing → null prefixes → conservative enforcement
+        HOME: homeDir,                         // No ~/.claude/nf.json → DEFAULT_CONFIG
+        NF_CLAUDE_JSON: nonExistentClaudeJson, // Missing → null prefixes → conservative enforcement
       }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
@@ -420,9 +420,9 @@ test('TC10: quorum calls interleaved with tool_result user messages are in scope
 
 // ── TC11-TC13: Fail-open unavailability detection ──────────────────────────────
 //
-// These tests use QGSD_CLAUDE_JSON env var to inject a deterministic ~/.claude.json
+// These tests use NF_CLAUDE_JSON env var to inject a deterministic ~/.claude.json
 // substitute. The hook must read this env var via:
-//   const claudeJsonPath = process.env.QGSD_CLAUDE_JSON || path.join(os.homedir(), '.claude.json');
+//   const claudeJsonPath = process.env.NF_CLAUDE_JSON || path.join(os.homedir(), '.claude.json');
 // This env var is for testing only — production always uses ~/.claude.json.
 //
 // TC11: Model prefix not in mcpServers → unavailable → fail-open (pass)
@@ -432,7 +432,7 @@ test('TC10: quorum calls interleaved with tool_result user messages are in scope
 // TC11: opencode prefix not in mcpServers (empty servers) → unavailable → pass (fail-open)
 test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', () => {
   // Create temp ~/.claude.json substitute with empty mcpServers
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-tc11-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-tc11-${Date.now()}.json`);
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: {} }), 'utf8');
 
   // Transcript: quorum command issued, but no quorum tool_use calls at all
@@ -450,10 +450,10 @@ test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', 
         codex: { tool_prefix: 'mcp__codex-cli__', required: true },
       },
     });
-    const configTmp = path.join(os.tmpdir(), `qgsd-cfg-tc11-${Date.now()}.json`);
-    const qgsdConfigDir = path.join(os.tmpdir(), `qgsd-home-tc11-${Date.now()}`);
-    fs.mkdirSync(qgsdConfigDir, { recursive: true });
-    fs.writeFileSync(path.join(qgsdConfigDir, 'qgsd.json'), configPayload, 'utf8');
+    const configTmp = path.join(os.tmpdir(), `nf-cfg-tc11-${Date.now()}.json`);
+    const nfConfigDir = path.join(os.tmpdir(), `nf-home-tc11-${Date.now()}`);
+    fs.mkdirSync(nfConfigDir, { recursive: true });
+    fs.writeFileSync(path.join(nfConfigDir, 'nf.json'), configPayload, 'utf8');
 
     const { stdout, exitCode } = runHookWithEnv(
       {
@@ -463,8 +463,8 @@ test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', 
         last_assistant_message: 'Here is the plan.',
       },
       {
-        QGSD_CLAUDE_JSON: claudeJsonTmp,
-        HOME: qgsdConfigDir, // Makes loadConfig() read from our temp ~/.claude/qgsd.json
+        NF_CLAUDE_JSON: claudeJsonTmp,
+        HOME: nfConfigDir, // Makes loadConfig() read from our temp ~/.claude/nf.json
       }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 — unavailable model → fail-open pass');
@@ -480,7 +480,7 @@ test('TC11: model prefix not in mcpServers → unavailable → fail-open pass', 
 // decision turn, preserving the invariant: quorum-command + decision-turn + available-but-missing = block.
 test('TC12: partial availability — unavailable model skipped, available-but-missing model blocks', () => {
   // Create temp ~/.claude.json with only codex-cli in mcpServers (gemini absent)
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-tc12-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-tc12-${Date.now()}.json`);
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: { 'codex-cli': {} } }), 'utf8');
 
   // Transcript: quorum command issued, PLAN.md artifact commit, no quorum calls
@@ -501,9 +501,9 @@ test('TC12: partial availability — unavailable model skipped, available-but-mi
         gemini: { tool_prefix: 'mcp__gemini-cli__', required: true },
       },
     });
-    const qgsdConfigDir = path.join(os.tmpdir(), `qgsd-home-tc12-${Date.now()}`);
-    fs.mkdirSync(qgsdConfigDir, { recursive: true });
-    fs.writeFileSync(path.join(qgsdConfigDir, 'qgsd.json'), configPayload, 'utf8');
+    const nfConfigDir = path.join(os.tmpdir(), `nf-home-tc12-${Date.now()}`);
+    fs.mkdirSync(nfConfigDir, { recursive: true });
+    fs.writeFileSync(path.join(nfConfigDir, 'nf.json'), configPayload, 'utf8');
 
     const { stdout, exitCode } = runHookWithEnv(
       {
@@ -513,8 +513,8 @@ test('TC12: partial availability — unavailable model skipped, available-but-mi
         last_assistant_message: 'Here is the plan.',
       },
       {
-        QGSD_CLAUDE_JSON: claudeJsonTmp,
-        HOME: qgsdConfigDir,
+        NF_CLAUDE_JSON: claudeJsonTmp,
+        HOME: nfConfigDir,
       }
     );
     // codex IS in mcpServers but was not called → block
@@ -531,7 +531,7 @@ test('TC12: partial availability — unavailable model skipped, available-but-mi
 // TC13: MCP-06 regression — renamed prefix matched correctly (pass when called)
 test('TC13: MCP-06 regression — renamed prefix detected and matched correctly', () => {
   // Config has a custom prefix (renamed MCP server); mcpServers has that server; transcript has a call
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-tc13-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-tc13-${Date.now()}.json`);
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: { 'my-custom-codex': {} } }), 'utf8');
 
   const tmpFile = writeTempTranscript([
@@ -548,9 +548,9 @@ test('TC13: MCP-06 regression — renamed prefix detected and matched correctly'
         custom: { tool_prefix: 'mcp__my-custom-codex__', required: true },
       },
     });
-    const qgsdConfigDir = path.join(os.tmpdir(), `qgsd-home-tc13-${Date.now()}`);
-    fs.mkdirSync(qgsdConfigDir, { recursive: true });
-    fs.writeFileSync(path.join(qgsdConfigDir, 'qgsd.json'), configPayload, 'utf8');
+    const nfConfigDir = path.join(os.tmpdir(), `nf-home-tc13-${Date.now()}`);
+    fs.mkdirSync(nfConfigDir, { recursive: true });
+    fs.writeFileSync(path.join(nfConfigDir, 'nf.json'), configPayload, 'utf8');
 
     const { stdout, exitCode } = runHookWithEnv(
       {
@@ -560,8 +560,8 @@ test('TC13: MCP-06 regression — renamed prefix detected and matched correctly'
         last_assistant_message: 'Plan with custom codex.',
       },
       {
-        QGSD_CLAUDE_JSON: claudeJsonTmp,
-        HOME: qgsdConfigDir,
+        NF_CLAUDE_JSON: claudeJsonTmp,
+        HOME: nfConfigDir,
       }
     );
     // custom prefix IS in mcpServers AND was called → pass
@@ -578,12 +578,12 @@ test('TC13: MCP-06 regression — renamed prefix detected and matched correctly'
 // Verifies that when copilot is a required model and is not called on a decision turn,
 // the block reason correctly names mcp__copilot-cli__ask (not mcp__copilot-cli__copilot).
 //
-// Uses QGSD_CLAUDE_JSON with copilot-cli in mcpServers to force it to be treated as available,
+// Uses NF_CLAUDE_JSON with copilot-cli in mcpServers to force it to be treated as available,
 // so it triggers a block (not unavailable skip).
 
 test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reason names mcp__copilot-cli__ask', () => {
   // claude.json with copilot-cli in mcpServers → available
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-tc-copilot-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-tc-copilot-${Date.now()}.json`);
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: { 'copilot-cli': {} } }), 'utf8');
 
   // Config: only copilot required
@@ -594,9 +594,9 @@ test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reas
       copilot: { tool_prefix: 'mcp__copilot-cli__', required: true },
     },
   });
-  const qgsdConfigDir = path.join(os.tmpdir(), `qgsd-home-tc-copilot-${Date.now()}`);
-  fs.mkdirSync(qgsdConfigDir, { recursive: true });
-  fs.writeFileSync(path.join(qgsdConfigDir, 'qgsd.json'), configPayload, 'utf8');
+  const nfConfigDir = path.join(os.tmpdir(), `nf-home-tc-copilot-${Date.now()}`);
+  fs.mkdirSync(nfConfigDir, { recursive: true });
+  fs.writeFileSync(path.join(nfConfigDir, 'nf.json'), configPayload, 'utf8');
 
   // Transcript: plan-phase command + PLAN.md artifact commit + no copilot tool call
   const tmpFile = writeTempTranscript([
@@ -616,8 +616,8 @@ test('TC-COPILOT: deriveMissingToolName returns "ask" for copilot — block reas
         last_assistant_message: 'Here is the plan.',
       },
       {
-        QGSD_CLAUDE_JSON: claudeJsonTmp,
-        HOME: qgsdConfigDir,
+        NF_CLAUDE_JSON: claudeJsonTmp,
+        HOME: nfConfigDir,
       }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
@@ -892,7 +892,7 @@ test('TC20c: real /qgsd:new-project tag on a decision turn blocks when quorum mi
 // TC-CEIL-3: error response does not count — 5 calls made but one is error → still blocks
 //
 // These tests use quorum_active (not required_models) and minSize config to exercise
-// the success-counter loop in qgsd-stop.js main().
+// the success-counter loop in nf-stop.js main().
 
 // Helper: build a user JSONL line with a tool_result that has is_error:true
 // Simulates an agent returning a quota/error response.
@@ -949,13 +949,13 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
     agent_config: agentConfig,
     quorum: { minSize: 5, preferSub: true },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil1-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-ceil1-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload, 'utf8');
 
   // ~/.claude.json lists all 11 slots as available MCP servers
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil1-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-ceil1-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
@@ -990,7 +990,7 @@ test('TC-CEIL-1: ceiling passes with exactly 5 successful calls out of 11-agent 
         transcript_path: tmpFile,
         last_assistant_message: 'Plan complete with ceiling satisfied.',
       },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     assert.strictEqual(stdout, '', 'stdout must be empty — 5 successful responses satisfies ceiling');
@@ -1017,12 +1017,12 @@ test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been calle
     agent_config: agentConfig,
     quorum: { maxSize: 5, preferSub: true },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil2-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-ceil2-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload, 'utf8');
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil2-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-ceil2-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
@@ -1056,7 +1056,7 @@ test('TC-CEIL-2: ceiling blocks when only 4 of 5 required agents have been calle
         transcript_path: tmpFile,
         last_assistant_message: 'Plan with only 4 agents.',
       },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
     assert.ok(stdout.length > 0, 'stdout must contain block decision JSON');
@@ -1090,12 +1090,12 @@ test('TC-CEIL-3: error response does not count toward ceiling — still blocks w
     agent_config: agentConfig,
     quorum: { maxSize: 5, preferSub: false },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-ceil3-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-ceil3-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload, 'utf8');
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload, 'utf8');
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-ceil3-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-ceil3-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }), 'utf8');
@@ -1139,7 +1139,7 @@ test('TC-CEIL-3: error response does not count toward ceiling — still blocks w
         transcript_path: tmpFile,
         last_assistant_message: 'Plan with one errored agent.',
       },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     // Only 4 successful responses (slot-api-3 errored) — ceiling requires 5 → block
     assert.strictEqual(exitCode, 0, 'exit code must be 0 even when blocking');
@@ -1169,12 +1169,12 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
     agent_config: agentConfig,
     // No quorum.maxSize — default kicks in (= 2)
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-dceil-pass-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-dceil-pass-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload);
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload);
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-dceil-pass-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-dceil-pass-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }));
@@ -1193,7 +1193,7 @@ test('TC-DEFAULT-CEIL-PASS: default ceiling=2 passes with 2 successful calls', (
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done.' },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', 'default ceiling=2 satisfied by 2 calls — must not block');
@@ -1213,12 +1213,12 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
     agent_config: agentConfig,
     // No quorum.maxSize — default = 2
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-dceil-block-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-dceil-block-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload);
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload);
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-dceil-block-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-dceil-block-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }));
@@ -1235,7 +1235,7 @@ test('TC-DEFAULT-CEIL-BLOCK: default ceiling=2 blocks with only 1 successful cal
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done.' },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0);
     assert.ok(stdout.length > 0, 'must block — only 1 of 2 required calls made');
@@ -1262,12 +1262,12 @@ test('TC-SOLO-STOP: --n 1 solo mode bypasses quorum enforcement (GUARD 6)', () =
     agent_config: agentConfig,
     quorum: { maxSize: 2 },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-solo-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-solo-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload);
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload);
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-solo-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-solo-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }));
@@ -1282,7 +1282,7 @@ test('TC-SOLO-STOP: --n 1 solo mode bypasses quorum enforcement (GUARD 6)', () =
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done solo.' },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', '--n 1 solo mode must not block even with zero external calls');
@@ -1309,12 +1309,12 @@ test('TC-N-OVERRIDE-PASS: --n 3 overrides maxSize=5 config, 2 calls satisfy N-1=
     agent_config: agentConfig,
     quorum: { maxSize: 5 },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-nov-pass-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-nov-pass-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload);
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload);
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-nov-pass-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-nov-pass-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }));
@@ -1333,7 +1333,7 @@ test('TC-N-OVERRIDE-PASS: --n 3 overrides maxSize=5 config, 2 calls satisfy N-1=
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done n3.' },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0);
     assert.strictEqual(stdout, '', '--n 3 override: 2 calls satisfy N-1=2 ceiling — must not block');
@@ -1353,12 +1353,12 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
     agent_config: agentConfig,
     quorum: { maxSize: 5 },
   });
-  const homeDir = path.join(os.tmpdir(), `qgsd-home-nov-block-${Date.now()}`);
+  const homeDir = path.join(os.tmpdir(), `nf-home-nov-block-${Date.now()}`);
   const claudeDir = path.join(homeDir, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
-  fs.writeFileSync(path.join(claudeDir, 'qgsd.json'), configPayload);
+  fs.writeFileSync(path.join(claudeDir, 'nf.json'), configPayload);
 
-  const claudeJsonTmp = path.join(os.tmpdir(), `qgsd-claude-nov-block-${Date.now()}.json`);
+  const claudeJsonTmp = path.join(os.tmpdir(), `nf-claude-nov-block-${Date.now()}.json`);
   const mcpServers = {};
   for (const s of slots) mcpServers[s] = {};
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers }));
@@ -1375,7 +1375,7 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
   try {
     const { stdout, exitCode } = runHookWithEnv(
       { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile, last_assistant_message: 'Done n3 one call.' },
-      { HOME: homeDir, QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { HOME: homeDir, NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0);
     assert.ok(stdout.length > 0, 'must block — only 1 of 2 required calls made (--n 3 override)');

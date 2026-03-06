@@ -1,5 +1,5 @@
 ---
-name: qgsd:check-todos
+name: nf:check-todos
 description: List pending todos and select one to work on
 argument-hint: [area filter]
 allowed-tools:
@@ -21,7 +21,7 @@ Routes to the check-todos workflow which handles:
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/check-todos.md
+@~/.claude/nf/workflows/check-todos.md
 </execution_context>
 
 <context>
@@ -31,7 +31,7 @@ Todo state and roadmap correlation are loaded in-workflow using `init todos` and
 </context>
 
 <process>
-**Follow the check-todos workflow** from `@~/.claude/qgsd/workflows/check-todos.md`.
+**Follow the check-todos workflow** from `@~/.claude/nf/workflows/check-todos.md`.
 
 The workflow handles all logic including:
 1. Todo existence checking

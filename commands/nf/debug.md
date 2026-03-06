@@ -1,5 +1,5 @@
 ---
-name: qgsd:debug
+name: nf:debug
 description: Debug loop with quorum consensus on next step. Feed failure context to 4 quorum workers — each identifies the single most likely root cause and next debugging step. Renders a NEXT STEP table. Call repeatedly: run test → fail → /nf:debug → apply step → run test again.
 argument-hint: "[failure context: test output, error trace, or symptom description]"
 allowed-tools:
@@ -16,7 +16,7 @@ Dispatch the full quorum debug process to a subagent. The main command stays cle
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-DEBUG: Dispatching debug subagent...
+ nForma ► QUORUM-DEBUG: Dispatching debug subagent...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -29,7 +29,7 @@ Task(
   subagent_type="general-purpose",
   description="Quorum debug orchestration",
   prompt="""
-You are the QGSD quorum debug orchestrator. Run the full process below for this failure.
+You are the nForma quorum debug orchestrator. Run the full process below for this failure.
 
 ARGUMENTS: $ARGUMENTS
 
@@ -64,7 +64,7 @@ Compose $BUNDLE:
 
 Worker prompt template (inline $BUNDLE verbatim in each):
 
-  You are a debugging advisor for the QGSD project.
+  You are a debugging advisor for the nForma project.
 
   <bundle>
   $BUNDLE
@@ -102,7 +102,7 @@ Consensus rules:
 Return this output:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-DEBUG RESULTS
+ nForma ► QUORUM-DEBUG RESULTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌──────────────┬──────────────┬─────────────────────────────────────────────┐

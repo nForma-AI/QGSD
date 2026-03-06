@@ -13,7 +13,7 @@
 // Always exits 0.
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
@@ -67,7 +67,7 @@ function runTLCSweep(maxSize) {
   const overrideCfg = baseCfg.replace(/MaxSize\s*=\s*\d+/, 'MaxSize = ' + maxSize);
   fs.writeFileSync(tmpCfg, overrideCfg, 'utf8');
 
-  const tlaFile = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
+  const tlaFile = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'NFQuorum.tla');
   process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
   const javaResult = spawnSync('java', [
     '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,

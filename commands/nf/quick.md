@@ -1,5 +1,5 @@
 ---
-name: qgsd:quick
+name: nf:quick
 description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
 argument-hint: "[--full]"
 allowed-tools:
@@ -16,7 +16,7 @@ allowed-tools:
 Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking).
 
 Quick mode is the same system with a shorter path:
-- Spawns qgsd-planner (quick mode) + qgsd-executor(s)
+- Spawns nf-planner (quick mode) + nf-executor(s)
 - Quick tasks live in `.planning/quick/` separate from planned phases
 - Updates STATE.md "Quick Tasks Completed" table (NOT ROADMAP.md)
 
@@ -34,7 +34,7 @@ Use when you want quality guarantees with formal correctness properties, without
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/quick.md
+@~/.claude/nf/workflows/quick.md
 </execution_context>
 
 <context>
@@ -44,7 +44,7 @@ Context files are resolved inside the workflow (`init quick`) and delegated via 
 </context>
 
 <process>
-Execute the quick workflow from @~/.claude/qgsd/workflows/quick.md end-to-end.
+Execute the quick workflow from @~/.claude/nf/workflows/quick.md end-to-end.
 Preserve all workflow gates (validation, task description, planning, execution, state updates, commits).
 </process>
 
@@ -60,7 +60,7 @@ When Step 6.5 reaches `gaps_found` status, do NOT pause for user input and do NO
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► GAPS FOUND — AUTO-FIX
+ nForma ► GAPS FOUND — AUTO-FIX
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Verification found gaps. Spawning fix executor...
@@ -88,7 +88,7 @@ Fix gaps identified in verification.
 - Return the fix commit hash in your response (format: 'Fix Commit: {hash}')
 </constraints>
 ",
-  subagent_type="qgsd-executor",
+  subagent_type="nf-executor",
   model="{executor_model}",
   description="Fix gaps: ${DESCRIPTION}"
 )
@@ -120,7 +120,7 @@ Set `$VERIFICATION_STATUS` based on human response ("verified" → "Verified", "
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-FIX EXHAUSTED
+ nForma ► AUTO-FIX EXHAUSTED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Max fix iterations reached. Quorum still reports gaps.

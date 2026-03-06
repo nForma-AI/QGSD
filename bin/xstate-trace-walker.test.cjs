@@ -6,45 +6,45 @@ const fs       = require('fs');
 
 // Load machine to pass to walker (same resolution logic as validate-traces.cjs)
 const machinePath = (() => {
-  const repoDist    = path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-  const installDist = path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+  const repoDist    = path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
+  const installDist = path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
   if (fs.existsSync(repoDist))    return repoDist;
   if (fs.existsSync(installDist)) return installDist;
-  throw new Error('Cannot find qgsd-workflow.machine.cjs');
+  throw new Error('Cannot find nf-workflow.machine.js');
 })();
-const { createActor, qgsdWorkflowMachine } = require(machinePath);
+const { createActor, nfWorkflowMachine } = require(machinePath);
 
 // Load walker (will not exist yet → module-not-found error causes test suite to fail)
 const { evaluateTransitions, replayTrace } = require('./xstate-trace-walker.cjs');
 
 test('evaluateTransitions: QUORUM_START in IDLE state returns COLLECTING_VOTES', () => {
-  const actor = createActor(qgsdWorkflowMachine);
+  const actor = createActor(nfWorkflowMachine);
   actor.start();
   const snapshot = actor.getSnapshot(); // IDLE
   actor.stop();
-  const result = evaluateTransitions(snapshot, { type: 'QUORUM_START', slotsAvailable: 3 }, qgsdWorkflowMachine);
+  const result = evaluateTransitions(snapshot, { type: 'QUORUM_START', slotsAvailable: 3 }, nfWorkflowMachine);
   assert.equal(result.currentState, 'IDLE');
   assert.ok(result.expectedNextState !== null, 'Should have a valid next state');
   assert.equal(result.emptyTransitions, false);
 });
 
 test('evaluateTransitions: unknown event type returns emptyTransitions=true', () => {
-  const actor = createActor(qgsdWorkflowMachine);
+  const actor = createActor(nfWorkflowMachine);
   actor.start();
   const snapshot = actor.getSnapshot();
   actor.stop();
-  const result = evaluateTransitions(snapshot, { type: 'NO_SUCH_EVENT_XYZ' }, qgsdWorkflowMachine);
+  const result = evaluateTransitions(snapshot, { type: 'NO_SUCH_EVENT_XYZ' }, nfWorkflowMachine);
   assert.equal(result.emptyTransitions, true);
   assert.equal(result.expectedNextState, null);
 });
 
 test('evaluateTransitions: guardContext captures context at evaluation time', () => {
-  const actor = createActor(qgsdWorkflowMachine);
+  const actor = createActor(nfWorkflowMachine);
   actor.start();
   actor.send({ type: 'QUORUM_START', slotsAvailable: 5 });
   const snapshot = actor.getSnapshot(); // COLLECTING_VOTES
   actor.stop();
-  const result = evaluateTransitions(snapshot, { type: 'VOTES_COLLECTED', successCount: 5 }, qgsdWorkflowMachine);
+  const result = evaluateTransitions(snapshot, { type: 'VOTES_COLLECTED', successCount: 5 }, nfWorkflowMachine);
   assert.ok(Array.isArray(result.possibleTransitions), 'possibleTransitions must be an array');
   // Each transition has guardContext captured
   for (const t of result.possibleTransitions) {
@@ -61,7 +61,7 @@ test('replayTrace: maintains state across multi-event sequence (guards in event 
     { type: 'QUORUM_START', slotsAvailable: 3 },
     { type: 'VOTES_COLLECTED', successCount: 3 },
   ];
-  const results = replayTrace(events, qgsdWorkflowMachine);
+  const results = replayTrace(events, nfWorkflowMachine);
   assert.equal(results.length, 2, 'Should produce one result per event');
   // First event: walker evaluates from IDLE
   assert.equal(results[0].walkerResult.currentState, 'IDLE');
@@ -80,19 +80,19 @@ test('replayTrace: maintains state across multi-event sequence (guards in event 
 
 test('replayTrace: snapshotBefore and snapshotAfter differ after valid transition', () => {
   const events = [{ type: 'QUORUM_START', slotsAvailable: 3 }];
-  const results = replayTrace(events, qgsdWorkflowMachine);
+  const results = replayTrace(events, nfWorkflowMachine);
   const before = results[0].snapshotBefore.value;
   const after  = results[0].snapshotAfter.value;
   assert.notDeepEqual(before, after, 'Snapshot must change after QUORUM_START');
 });
 
 test('evaluateTransitions: possibleTransitions includes guardName for guarded transitions', () => {
-  const actor = createActor(qgsdWorkflowMachine);
+  const actor = createActor(nfWorkflowMachine);
   actor.start();
   actor.send({ type: 'QUORUM_START', slotsAvailable: 5 });
   const snapshot = actor.getSnapshot(); // COLLECTING_VOTES
   actor.stop();
-  const result = evaluateTransitions(snapshot, { type: 'VOTES_COLLECTED', successCount: 5 }, qgsdWorkflowMachine);
+  const result = evaluateTransitions(snapshot, { type: 'VOTES_COLLECTED', successCount: 5 }, nfWorkflowMachine);
   // All transitions should have guardName (string or null) and guardPassed (boolean)
   for (const t of result.possibleTransitions) {
     assert.ok('guardName' in t, 'guardName field required on each transition');

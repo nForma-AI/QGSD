@@ -69,7 +69,7 @@ after(() => {
 function makeTmpDir() {
   const dir = path.join(
     os.tmpdir(),
-    'qgsd-secrets-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    'nf-secrets-' + Date.now() + '-' + Math.random().toString(36).slice(2)
   );
   fs.mkdirSync(dir, { recursive: true });
   return dir;
@@ -127,11 +127,11 @@ function restoreHomedir(real) {
 }
 
 /**
- * Write the key index JSON into <tmpDir>/.claude/qgsd-key-index.json.
+ * Write the key index JSON into <tmpDir>/.claude/nf-key-index.json.
  * Mirrors what writeIndex() does inside secrets.cjs.
  */
 function writeKeyIndex(tmpDir, accounts) {
-  const indexPath = path.join(tmpDir, '.claude', 'qgsd-key-index.json');
+  const indexPath = path.join(tmpDir, '.claude', 'nf-key-index.json');
   fs.mkdirSync(path.dirname(indexPath), { recursive: true });
   fs.writeFileSync(indexPath, JSON.stringify({ accounts }, null, 2), 'utf8');
 }
@@ -151,10 +151,10 @@ function writeClaudeJson(tmpDir, content) {
 
 // ─── SERVICE constant ─────────────────────────────────────────────────────────
 
-test('SERVICE constant equals "qgsd"', () => {
+test('SERVICE constant equals "nforma"', () => {
   clearSecretsCache();
   const { SERVICE } = require(SECRETS_PATH);
-  assert.equal(SERVICE, 'qgsd');
+  assert.equal(SERVICE, 'nforma');
   clearSecretsCache();
 });
 
@@ -249,7 +249,7 @@ test('hasKey: returns false when index file contains invalid JSON', () => {
   const tmpDir = makeTmpDir();
   const indexDir = path.join(tmpDir, '.claude');
   fs.mkdirSync(indexDir, { recursive: true });
-  fs.writeFileSync(path.join(indexDir, 'qgsd-key-index.json'), '{ not valid json }', 'utf8');
+  fs.writeFileSync(path.join(indexDir, 'nf-key-index.json'), '{ not valid json }', 'utf8');
 
   const realHomedir = os.homedir.bind(os);
   const mod = requireSecretsWithTmpHome(tmpDir);
@@ -277,7 +277,7 @@ test('hasKey: returns false when index accounts array is empty', () => {
 
 test('hasKey: returns false when index JSON has no accounts field', () => {
   const tmpDir = makeTmpDir();
-  const indexPath = path.join(tmpDir, '.claude', 'qgsd-key-index.json');
+  const indexPath = path.join(tmpDir, '.claude', 'nf-key-index.json');
   fs.mkdirSync(path.dirname(indexPath), { recursive: true });
   fs.writeFileSync(indexPath, JSON.stringify({ someOtherField: [] }), 'utf8');
 
@@ -331,7 +331,7 @@ test('syncToClaudeJson: patches matching env keys across multiple servers', asyn
   const mod = requireSecretsWithTmpHome(tmpDir);
   // Keep os.homedir patched through the async call
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -381,7 +381,7 @@ test('syncToClaudeJson: does not write claude.json when credentials list is empt
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -425,7 +425,7 @@ test('syncToClaudeJson: does not write claude.json when no env key matches any c
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -460,7 +460,7 @@ test('syncToClaudeJson: exits silently when claude.json does not exist', async (
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw when claude.json is absent'
     );
   } finally {
@@ -497,7 +497,7 @@ test('syncToClaudeJson: exits silently when claude.json contains invalid JSON', 
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw on invalid JSON'
     );
   } finally {
@@ -534,7 +534,7 @@ test('syncToClaudeJson: exits silently when mcpServers is missing from claude.js
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw when mcpServers is absent'
     );
   } finally {
@@ -570,7 +570,7 @@ test('syncToClaudeJson: exits silently when mcpServers is not an object', async 
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw when mcpServers is a non-object'
     );
   } finally {
@@ -616,7 +616,7 @@ test('syncToClaudeJson: skips servers without env block, patches servers that ha
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -671,7 +671,7 @@ test('syncToClaudeJson: handles keytar error gracefully — writes to stderr, do
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw on keytar failure'
     );
   } finally {
@@ -683,8 +683,8 @@ test('syncToClaudeJson: handles keytar error gracefully — writes to stderr, do
 
   const stderrOutput = stderrChunks.join('');
   assert.ok(
-    stderrOutput.includes('[qgsd-secrets]'),
-    'should write a [qgsd-secrets] diagnostic message to stderr'
+    stderrOutput.includes('[nf-secrets]'),
+    'should write a [nf-secrets] diagnostic message to stderr'
   );
   assert.ok(
     stderrOutput.includes('mock keytar failure') || stderrOutput.includes('keytar'),
@@ -722,7 +722,7 @@ test('syncToClaudeJson: writes valid JSON with 2-space indent after patching', a
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -776,7 +776,7 @@ test('syncToClaudeJson: patches all matching credentials across one server', asy
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    await mod.syncToClaudeJson('qgsd');
+    await mod.syncToClaudeJson('nforma');
   } finally {
     restoreHomedir(realHomedir);
     restoreKeytar();
@@ -824,7 +824,7 @@ test('syncToClaudeJson: does not throw when credentials contain null or undefine
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
     await assert.doesNotReject(
-      () => mod.syncToClaudeJson('qgsd'),
+      () => mod.syncToClaudeJson('nforma'),
       'syncToClaudeJson should not throw when credentials contain null/undefined passwords'
     );
   } finally {
@@ -850,10 +850,10 @@ test('set, get, delete, list all return Promises when mock keytar is installed',
   const restoreKeytar = installMockKeytar(mockKeytar);
   const mod = requireSecretsWithTmpHome(tmpDir);
   try {
-    const setResult    = mod.set('qgsd', 'TEST_KEY', 'test-val');
-    const getResult    = mod.get('qgsd', 'TEST_KEY');
-    const deleteResult = mod.delete('qgsd', 'TEST_KEY');
-    const listResult   = mod.list('qgsd');
+    const setResult    = mod.set('nforma', 'TEST_KEY', 'test-val');
+    const getResult    = mod.get('nforma', 'TEST_KEY');
+    const deleteResult = mod.delete('nforma', 'TEST_KEY');
+    const listResult   = mod.list('nforma');
 
     assert.ok(typeof setResult.then    === 'function', 'set() should return a Promise');
     assert.ok(typeof getResult.then    === 'function', 'get() should return a Promise');

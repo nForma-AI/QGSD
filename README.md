@@ -1,8 +1,8 @@
 <div align="center">
 
-# nForma — Quorum Gets Shit Done
+# nForma — Consensus before code. Proof before production.
 
-**Every planning decision verified by a quorum of AI models before Claude executes a single line.**
+**nForma orchestrates a quorum of diverse coding agents that debate a plan until they reach full consensus.<br>Then formal methods turn requirements into invariants and simulate the system ahead of time.<br>The result: fewer hallucinations, fewer blind spots, and systems designed to survive the future.**
 
 [![npm version](https://img.shields.io/npm/v/@nforma.ai/nforma?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/nforma)
 [![npm downloads](https://img.shields.io/npm/dm/@nforma.ai/nforma?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/@nforma.ai/nforma)

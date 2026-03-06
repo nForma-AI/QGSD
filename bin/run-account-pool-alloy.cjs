@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-account-pool-alloy.cjs
-// Invokes Alloy 6 JAR headless for the QGSD account pool structure spec.
+// Invokes Alloy 6 JAR headless for the nForma account pool structure spec.
 // Requirements: ALY-AM-01
 //
 // Usage:
@@ -19,7 +19,7 @@
 //   - .planning/formal/alloy/org.alloytools.alloy.dist.jar (see VERIFICATION_TOOLS.md for download)
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');

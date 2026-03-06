@@ -228,12 +228,12 @@ try {
   updateScoreboardContent = '';
 }
 
-const QGSD_PROMPT_PATH = path.resolve(__dirname, '../hooks/qgsd-prompt.js');
-let qgsdPromptContent = '';
+const NF_PROMPT_PATH = path.resolve(__dirname, '../hooks/nf-prompt.js');
+let nfPromptContent = '';
 try {
-  qgsdPromptContent = fs.readFileSync(QGSD_PROMPT_PATH, 'utf8');
+  nfPromptContent = fs.readFileSync(NF_PROMPT_PATH, 'utf8');
 } catch (e) {
-  qgsdPromptContent = '';
+  nfPromptContent = '';
 }
 
 test('update-scoreboard.cjs: computeDeliveryStats function exists', () => {
@@ -288,11 +288,11 @@ test('update-scoreboard.cjs: scoreboard includes flakiness_score field for slots
   );
 });
 
-test('hooks/qgsd-prompt.js: contains flakiness reference for dispatch ordering', () => {
-  const hasFlakinessRef = qgsdPromptContent.includes('flakiness');
+test('hooks/nf-prompt.js: contains flakiness reference for dispatch ordering', () => {
+  const hasFlakinessRef = nfPromptContent.includes('flakiness');
   assert.ok(
     hasFlakinessRef || updateScoreboardContent.includes('flakiness'),
-    'flakiness not referenced in qgsd-prompt.js or dispatch logic — Plan 03 must add flakiness-aware sorting'
+    'flakiness not referenced in nf-prompt.js or dispatch logic — Plan 03 must add flakiness-aware sorting'
   );
 });
 

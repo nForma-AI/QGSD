@@ -1,5 +1,5 @@
 ---
-name: qgsd:mcp-setup
+name: nf:mcp-setup
 description: Configure quorum agents — first-run linear onboarding for new installs, live-status agent menu for re-runs
 allowed-tools:
   - Bash
@@ -7,7 +7,7 @@ allowed-tools:
 ---
 
 <objective>
-Configure QGSD quorum agents in `~/.claude.json`. Detects whether any MCP servers are configured and routes to the appropriate flow:
+Configure nForma quorum agents in `~/.claude.json`. Detects whether any MCP servers are configured and routes to the appropriate flow:
 - **First-run** (zero configured entries): linear onboarding — select agent templates, collect API keys via keytar, write batch changes with backup, restart agents
 - **Re-run** (existing entries): live-status agent roster menu — view model/provider/key status, select agent, choose action (set key / swap provider / remove)
 </objective>
@@ -53,7 +53,7 @@ Display the welcome banner:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► MCP SETUP — FIRST RUN
+ nForma ► MCP SETUP — FIRST RUN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 No quorum agents configured. Let's set up your first agent.
@@ -116,7 +116,7 @@ Store the key using this Bash command (substitute AGENT_KEY and API_KEY):
 
 ```bash
 KEY_RESULT=$(node -e "
-const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 const agentKey = process.env.AGENT_KEY;
 const apiKey   = process.env.API_KEY;
 (async () => {
@@ -153,7 +153,7 @@ mkdir -p ~/.claude/debug
 node -e "
 const fs = require('fs');
 const ts = new Date().toISOString();
-const msg = ts + ' QGSD mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
 fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
 " AGENT_KEY="{agent-name}"
 ```
@@ -186,7 +186,7 @@ Display pending summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Agents to add to ~/.claude.json:
@@ -298,7 +298,7 @@ process.stdout.write(JSON.stringify({ written: true, count: pendingAgents.length
 
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 syncToClaudeJson(SERVICE)
   .then(() => process.stdout.write('synced\n'))
   .catch(e => process.stderr.write('sync warning: ' + e.message + '\n'));
@@ -322,7 +322,7 @@ If restart fails or times out, leave config in written state and display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► SETUP COMPLETE ✓
+ nForma ► SETUP COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Changes applied and agents restarted.
@@ -364,7 +364,7 @@ const os   = require('os');
 
     let keyStatus = 'no key';
     try {
-      const { get, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+      const { get, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
       const keyName = 'ANTHROPIC_API_KEY_' + name.toUpperCase().replace(/-/g,'_');
       const stored  = await get(SERVICE, keyName);
       keyStatus = stored ? 'key stored' : (env.ANTHROPIC_API_KEY ? 'key in env' : 'no key');
@@ -386,7 +386,7 @@ Display re-run banner:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► MCP SETUP — AGENT ROSTER
+ nForma ► MCP SETUP — AGENT ROSTER
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -493,7 +493,7 @@ Store the key using bin/secrets.cjs (agent name and key passed via env vars — 
 
 ```bash
 KEY_RESULT=$(node -e "
-const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 const agentKey = process.env.AGENT_KEY;
 const apiKey   = process.env.API_KEY;
 (async () => {
@@ -527,7 +527,7 @@ Parse KEY_RESULT:
   node -e "
   const fs = require('fs');
   const ts = new Date().toISOString();
-  const msg = ts + ' QGSD mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+  const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
   fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
   " AGENT_KEY="{agent-name}"
   ```
@@ -538,7 +538,7 @@ Show pending summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {agent-name}  →  {provider-name}  ({base-url})
@@ -626,7 +626,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 4. Sync keytar secrets to ~/.claude.json:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -672,7 +672,7 @@ Show a confirmation screen:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {new-slot-name}  →  copied from {source-slot-name}
@@ -718,18 +718,18 @@ process.stdout.write(JSON.stringify({ written: true, newSlot, sourceSlot: srcSlo
 
 If `written: false`: display error and return to roster.
 
-3. Append new slot to `quorum_active` in `~/.claude/qgsd.json`:
+3. Append new slot to `quorum_active` in `~/.claude/nf.json`:
 ```bash
 node -e "
 const fs = require('fs'), os = require('os');
-const qgsdPath = os.homedir() + '/.claude/qgsd.json';
+const nfPath = os.homedir() + '/.claude/nf.json';
 let cfg = {};
-try { cfg = JSON.parse(fs.readFileSync(qgsdPath, 'utf8')); } catch(e) {}
+try { cfg = JSON.parse(fs.readFileSync(nfPath, 'utf8')); } catch(e) {}
 const active = Array.isArray(cfg.quorum_active) ? cfg.quorum_active : [];
 const newSlot = process.env.NEW_SLOT;
 if (!active.includes(newSlot)) {
   cfg.quorum_active = [...active, newSlot];
-  fs.writeFileSync(qgsdPath, JSON.stringify(cfg, null, 2) + '\n');
+  fs.writeFileSync(nfPath, JSON.stringify(cfg, null, 2) + '\n');
   process.stdout.write(JSON.stringify({ added: true, slot: newSlot }) + '\n');
 } else {
   process.stdout.write(JSON.stringify({ added: false, slot: newSlot, reason: 'already present' }) + '\n');
@@ -790,14 +790,14 @@ try {
   slots = Object.keys(cj.mcpServers || {});
 } catch(e) {}
 try {
-  const qgsd = JSON.parse(fs.readFileSync(os.homedir() + '/.claude/qgsd.json', 'utf8'));
-  active = Array.isArray(qgsd.quorum_active) ? qgsd.quorum_active : [];
+  const nfCfg = JSON.parse(fs.readFileSync(os.homedir() + '/.claude/nf.json', 'utf8'));
+  active = Array.isArray(nf.quorum_active) ? nf.quorum_active : [];
 } catch(e) {}
 process.stdout.write(JSON.stringify({ slots, active }) + '\n');
 ")
 ```
 
-Parse `COMPOSITION_DATA` for `slots` (array of all slot names from `~/.claude.json`) and `active` (current `quorum_active` array from `~/.claude/qgsd.json`).
+Parse `COMPOSITION_DATA` for `slots` (array of all slot names from `~/.claude.json`) and `active` (current `quorum_active` array from `~/.claude/nf.json`).
 
 **Step CS-2: Display composition table**
 
@@ -805,7 +805,7 @@ Display banner:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM COMPOSITION
+ nForma ► QUORUM COMPOSITION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -838,7 +838,7 @@ Use AskUserQuestion:
 - question: "Enter slot number to toggle ON/OFF, or choose an option:"
 - options:
   - "1 — {slot-name} [{current PENDING_ACTIVE status}]" (one per slot — show ● ON or ○ OFF based on current PENDING_ACTIVE state)
-  - "Apply — save changes to qgsd.json"
+  - "Apply — save changes to nf.json"
   - "Add new slot — add a slot to ~/.claude.json and quorum_active"
   - "Cancel — discard changes"
 
@@ -857,11 +857,11 @@ Re-display the AskUserQuestion with updated statuses after each toggle.
 ```bash
 node -e "
 const fs = require('fs'), os = require('os');
-const qgsdPath = os.homedir() + '/.claude/qgsd.json';
+const nfPath = os.homedir() + '/.claude/nf.json';
 let cfg = {};
-try { cfg = JSON.parse(fs.readFileSync(qgsdPath, 'utf8')); } catch(e) {}
+try { cfg = JSON.parse(fs.readFileSync(nfPath, 'utf8')); } catch(e) {}
 cfg.quorum_active = JSON.parse(process.env.PENDING_ACTIVE);
-fs.writeFileSync(qgsdPath, JSON.stringify(cfg, null, 2) + '\n');
+fs.writeFileSync(nfPath, JSON.stringify(cfg, null, 2) + '\n');
 process.stdout.write(JSON.stringify({ written: true, count: cfg.quorum_active.length }) + '\n');
 " PENDING_ACTIVE="{JSON.stringify(PENDING_ACTIVE)}"
 ```
@@ -898,7 +898,7 @@ Display agent detail banner:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► {agent-name}
+ nForma ► {agent-name}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Model:    {model}
@@ -923,7 +923,7 @@ Run an inline node script to check whether a key is already stored in keytar for
 
 ```bash
 KEY_CHECK_RESULT=$(node -e "
-const { get, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { get, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 (async () => {
   try {
     const agentName = process.env.AGENT_NAME;
@@ -985,7 +985,7 @@ Run inline node script using `set()` from `bin/secrets.cjs`. Pass key via enviro
 
 ```bash
 KEY_STORE_RESULT=$(node -e "
-const { set, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { set, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 (async () => {
   try {
     const agentName = process.env.AGENT_NAME;
@@ -1019,7 +1019,7 @@ Parse KEY_STORE_RESULT:
   node -e "
   const fs = require('fs');
   const ts = new Date().toISOString();
-  const msg = ts + ' QGSD mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+  const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
   fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
   " AGENT_KEY="{agent-name}"
   ```
@@ -1030,7 +1030,7 @@ Show pending summary using the existing "Confirm + Apply + Restart Flow" pattern
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {agent-name} — API key updated (stored in system keychain)
@@ -1075,7 +1075,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 3. Sync all keytar secrets back to ~/.claude.json:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -1159,7 +1159,7 @@ Show pending summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {agent-name} — provider changed to {NEW_PROVIDER_NAME} ({NEW_URL})
@@ -1204,7 +1204,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 3. Sync keytar secrets to ~/.claude.json:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -1234,7 +1234,7 @@ Display removal warning:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REMOVE AGENT
+ nForma ► REMOVE AGENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ⚠ This will permanently remove {agent-name} from
@@ -1302,7 +1302,7 @@ Display pending summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► REVIEW PENDING CHANGES
+ nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {agent-name} — {description of change}
@@ -1329,7 +1329,7 @@ cp ~/.claude.json ~/.claude.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || 
 3. Sync keytar secrets:
 ```bash
 node -e "
-const { syncToClaudeJson, SERVICE } = require('~/.claude/qgsd-bin/secrets.cjs');
+const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 syncToClaudeJson(SERVICE).then(() => process.stdout.write('synced\n')).catch(e => process.stderr.write(e.message + '\n'));
 "
 ```
@@ -1366,6 +1366,6 @@ If a restart fails, leave config written and display:
 - Keytar failure: warning + Linux hint + confirmation before env-block fallback + audit log
 - Key value never appears in displayed text, log output, or shell history (passed via env var only)
 - Edit Quorum Composition flow (WIZ-08): re-run menu option "Edit Quorum Composition" → routes to Composition Screen
-- Composition toggle flow (WIZ-09): slot list with ● ON / ○ OFF indicators → toggle updates PENDING_ACTIVE → apply writes quorum_active to ~/.claude/qgsd.json → no restart required
+- Composition toggle flow (WIZ-09): slot list with ● ON / ○ OFF indicators → toggle updates PENDING_ACTIVE → apply writes quorum_active to ~/.claude/nf.json → no restart required
 - Add slot from composition flow (WIZ-10): "Add new slot" → Step A/B/B-native → identity ping → return to Composition Screen showing new slot ● ON
 </success_criteria>

@@ -19,7 +19,7 @@ const acm = require('../account-manager.cjs');
 
 /**
  * list(provider) → [{ name, active }]
- * Reads the pool directory and the .qgsd-active pointer — no subprocess.
+ * Reads the pool directory and the .nf-active pointer — no subprocess.
  */
 function list(provider) {
   const credsDir = acm.getCredsDir(provider);

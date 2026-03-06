@@ -4,11 +4,11 @@ const assert = require('node:assert');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-// Wave 0 RED stubs for LOOP-02: hooks/qgsd-spec-regen.js
+// Wave 0 RED stubs for LOOP-02: hooks/nf-spec-regen.js
 // These tests define the contract. They will fail until Plan 03 implements the hook.
 
 function runHook(inputPayload) {
-  const hookPath = path.join(__dirname, 'qgsd-spec-regen.js');
+  const hookPath = path.join(__dirname, 'nf-spec-regen.js');
   const result = spawnSync(process.execPath, [hookPath], {
     input: JSON.stringify(inputPayload),
     encoding: 'utf8',
@@ -17,7 +17,7 @@ function runHook(inputPayload) {
   return result;
 }
 
-test('LOOP-02: qgsd-spec-regen.js exits 0 and is a no-op for non-Write tool events', () => {
+test('LOOP-02: nf-spec-regen.js exits 0 and is a no-op for non-Write tool events', () => {
   const result = runHook({
     tool_name: 'Read',
     tool_input: { file_path: '/some/file.ts' },
@@ -29,7 +29,7 @@ test('LOOP-02: qgsd-spec-regen.js exits 0 and is a no-op for non-Write tool even
   assert.strictEqual(result.status, 0, 'LOOP-02: hook must exit 0 for non-Write tools. Not yet implemented.');
 });
 
-test('LOOP-02: qgsd-spec-regen.js exits 0 and is a no-op for Write to non-machine file', () => {
+test('LOOP-02: nf-spec-regen.js exits 0 and is a no-op for Write to non-machine file', () => {
   const result = runHook({
     tool_name: 'Write',
     tool_input: { file_path: '/some/other-file.ts' },
@@ -41,10 +41,10 @@ test('LOOP-02: qgsd-spec-regen.js exits 0 and is a no-op for Write to non-machin
   // Should produce no output or empty additionalContext for non-matching files
 });
 
-test('LOOP-02: qgsd-spec-regen.js exits 0 for Write to qgsd-workflow.machine.ts and returns additionalContext', () => {
+test('LOOP-02: nf-spec-regen.js exits 0 for Write to nf-workflow.machine.ts and returns additionalContext', () => {
   const result = runHook({
     tool_name: 'Write',
-    tool_input: { file_path: '/Users/jonathanborduas/code/QGSD/src/machines/qgsd-workflow.machine.ts' },
+    tool_input: { file_path: '/Users/jonathanborduas/code/QGSD/src/machines/nf-workflow.machine.ts' },
     tool_response: {},
     cwd: '/Users/jonathanborduas/code/QGSD',
     context_window: {}
@@ -62,8 +62,8 @@ test('LOOP-02: qgsd-spec-regen.js exits 0 for Write to qgsd-workflow.machine.ts 
   }
 });
 
-test('LOOP-02: qgsd-spec-regen.js exits 0 (fail-open) on malformed stdin JSON', () => {
-  const hookPath = path.join(__dirname, 'qgsd-spec-regen.js');
+test('LOOP-02: nf-spec-regen.js exits 0 (fail-open) on malformed stdin JSON', () => {
+  const hookPath = path.join(__dirname, 'nf-spec-regen.js');
   const result = spawnSync(process.execPath, [hookPath], {
     input: 'not-valid-json',
     encoding: 'utf8',

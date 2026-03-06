@@ -71,13 +71,13 @@ Keep Accumulated Context section from previous milestone.
 Delete MILESTONE-CONTEXT.md if exists (consumed).
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: start milestone v[X.Y] [Name]" --files .planning/PROJECT.md .planning/STATE.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: start milestone v[X.Y] [Name]" --files .planning/PROJECT.md .planning/STATE.md
 ```
 
 ## 7. Load Context and Resolve Models
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init new-milestone)
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init new-milestone)
 ```
 
 Extract from init JSON: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `research_enabled`, `current_milestone`, `project_exists`, `roadmap_exists`.
@@ -92,17 +92,17 @@ AskUserQuestion: "Research the domain ecosystem for new features before defining
 
 ```bash
 # If "Research first": persist true
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.research true
+node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.research true
 
 # If "Skip research": persist false
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.research false
+node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.research false
 ```
 
 **If "Research first":**
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► RESEARCHING
+ nForma ► RESEARCHING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning 4 researchers in parallel...
@@ -110,7 +110,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.research false
 ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"researching\"}"
 ```
 
@@ -118,7 +118,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
 mkdir -p .planning/research
 ```
 
-Spawn 4 parallel qgsd-project-researcher agents. Each uses this template with dimension-specific fields:
+Spawn 4 parallel nf-project-researcher agents. Each uses this template with dimension-specific fields:
 
 **Common structure for all 4 researchers:**
 ```
@@ -143,9 +143,9 @@ Focus ONLY on what's needed for the NEW features.
 
 <output>
 Write to: .planning/research/{FILE}
-Use template: ~/.claude/qgsd/templates/research-project/{FILE}
+Use template: ~/.claude/nf/templates/research-project/{FILE}
 </output>
-", subagent_type="qgsd-project-researcher", model="{researcher_model}", description="{DIMENSION} research")
+", subagent_type="nf-project-researcher", model="{researcher_model}", description="{DIMENSION} research")
 ```
 
 **Dimension-specific fields:**
@@ -172,15 +172,15 @@ Synthesize research outputs into SUMMARY.md.
 </files_to_read>
 
 Write to: .planning/research/SUMMARY.md
-Use template: ~/.claude/qgsd/templates/research-project/SUMMARY.md
+Use template: ~/.claude/nf/templates/research-project/SUMMARY.md
 Commit after writing.
-", subagent_type="qgsd-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
+", subagent_type="nf-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
 ```
 
 Display key findings from SUMMARY.md:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► RESEARCH COMPLETE ✓
+ nForma ► RESEARCH COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Stack additions:** [from SUMMARY.md]
@@ -289,7 +289,7 @@ If any requirements were added, include `.planning/formal/requirements.json` in 
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► DEFINING REQUIREMENTS
+ nForma ► DEFINING REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -332,7 +332,7 @@ If this is the first milestone with baselines, add a `## Baseline Requirements` 
 ```markdown
 ## Baseline Requirements
 
-*Included from QGSD baseline defaults (profile: [profile]). Cross-cutting quality gates.*
+*Included from nForma baseline defaults (profile: [profile]). Cross-cutting quality gates.*
 
 ### [Category]
 - [x] **UX-01**: [text]
@@ -370,7 +370,7 @@ If "adjust": Return to scoping.
 
 **Commit requirements:**
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requirements" --files .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requirements" --files .planning/REQUIREMENTS.md
 ```
 
 ## 9.5. Formal Scope Scan (Pre-Roadmapper)
@@ -447,7 +447,7 @@ fi
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► CREATING ROADMAP
+ nForma ► CREATING ROADMAP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning roadmapper...
@@ -456,7 +456,7 @@ fi
 **Starting phase number:** Read MILESTONES.md for last phase number. Continue from there (v1.0 ended at phase 5 → v1.1 starts at phase 6).
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"creating_roadmap\"}"
 ```
 
@@ -490,7 +490,7 @@ Create roadmap for milestone v[X.Y]:
 
 Write files first, then return.
 </instructions>
-", subagent_type="qgsd-roadmapper", model="{roadmapper_model}", description="Create roadmap")
+", subagent_type="nf-roadmapper", model="{roadmapper_model}", description="Create roadmap")
 ```
 
 **Handle return:**
@@ -528,14 +528,14 @@ Success criteria:
 
 **Commit roadmap** (after approval):
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: create milestone v[X.Y] roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
 ## 11. Done
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► MILESTONE INITIALIZED ✓
+ nForma ► MILESTONE INITIALIZED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Milestone v[X.Y]: [Name]**
@@ -561,14 +561,14 @@ Also: `/nf:plan-phase [N]` — skip discussion, plan directly
 ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 ```
 
 **Auto-advance check:**
 
 ```bash
-AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
-FIRST_PHASE=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap list-phases 2>/dev/null | jq -r '.[0].phase_number // empty')
+AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+FIRST_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap list-phases 2>/dev/null | jq -r '.[0].phase_number // empty')
 # Fallback: extract first phase number from ROADMAP.md if tool unavailable
 if [ -z "$FIRST_PHASE" ]; then
   FIRST_PHASE=$(grep -m1 "^### Phase [0-9]" .planning/ROADMAP.md | grep -o '[0-9]*' | head -1)
@@ -580,14 +580,14 @@ fi
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-ADVANCING TO PLAN PHASE ${FIRST_PHASE}
+ nForma ► AUTO-ADVANCING TO PLAN PHASE ${FIRST_PHASE}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Roadmap complete. Spawning plan-phase...
 ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"new_milestone\",\"sub_activity\":\"plan_phase_${FIRST_PHASE}\"}"
 ```
 
@@ -603,7 +603,7 @@ Task(
 - **PLANNING COMPLETE** → Display:
   ```
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   QGSD ► PHASE ${FIRST_PHASE} PLANNED ✓
+   nForma ► PHASE ${FIRST_PHASE} PLANNED ✓
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Auto-advance pipeline finished.
@@ -619,7 +619,7 @@ Task(
   ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 ```
 
 **If `AUTO_CFG` is false OR `FIRST_PHASE` is empty:**
@@ -638,7 +638,7 @@ Show existing "Next Up" prompt (already in the Done banner — no change needed 
 - [ ] Requirements gathered and scoped per category
 - [ ] REQUIREMENTS.md includes Baseline Requirements section
 - [ ] REQUIREMENTS.md created with REQ-IDs
-- [ ] qgsd-roadmapper spawned with phase numbering context
+- [ ] nf-roadmapper spawned with phase numbering context
 - [ ] Roadmap files written immediately (not draft)
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md phases continue from previous milestone

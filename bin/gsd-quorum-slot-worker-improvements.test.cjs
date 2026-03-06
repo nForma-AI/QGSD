@@ -1,9 +1,9 @@
 'use strict';
 // bin/gsd-quorum-slot-worker-improvements.test.cjs
-// Unit tests for improvements parsing in qgsd-quorum-slot-worker
+// Unit tests for improvements parsing in nf-quorum-slot-worker
 // Requirements: IMPR-01
 //
-// Tests validate the parsing spec described in agents/qgsd-quorum-slot-worker.md lines 251-260.
+// Tests validate the parsing spec described in agents/nf-quorum-slot-worker.md lines 251-260.
 // parseImprovements is defined inline here as a pure function implementing the spec.
 // Pattern: parseImprovements|Improvements:
 

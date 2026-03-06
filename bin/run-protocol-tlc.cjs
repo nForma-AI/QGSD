@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-protocol-tlc.cjs
-// Invokes TLC model checker for QGSD protocol termination TLA+ specifications.
+// Invokes TLC model checker for nForma protocol termination TLA+ specifications.
 // Requirements: GAP-2, GAP-6
 //
 // Usage:
@@ -14,7 +14,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -129,8 +129,8 @@ if (!fs.existsSync(jarPath)) {
 
 // ── 4. Resolve spec and config paths ─────────────────────────────────────────
 const specFileName = configName === 'MCdeliberation'
-  ? 'QGSDDeliberation.tla'
-  : 'QGSDPreFilter.tla';
+  ? 'NFDeliberation.tla'
+  : 'NFPreFilter.tla';
 const specPath = path.join(ROOT, '.planning', 'formal', 'tla', specFileName);
 const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
 

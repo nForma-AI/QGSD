@@ -12,11 +12,11 @@
 //
 // Usage:
 //   node bin/xstate-to-tla.cjs <machine-file.ts>
-//   node bin/xstate-to-tla.cjs src/machines/qgsd-workflow.machine.ts \
-//       --module=QGSDQuorum \
-//       --config=.planning/formal/tla/guards/qgsd-workflow.json
+//   node bin/xstate-to-tla.cjs src/machines/nf-workflow.machine.ts \
+//       --module=NFQuorum \
+//       --config=.planning/formal/tla/guards/nf-workflow.json
 //   node bin/xstate-to-tla.cjs src/machines/account-manager.machine.ts \
-//       --module=QGSDAccountManager \
+//       --module=NFAccountManager \
 //       --config=.planning/formal/tla/guards/account-manager.json \
 //       --dry
 //

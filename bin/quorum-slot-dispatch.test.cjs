@@ -75,8 +75,8 @@ test('parseImprovements exported: parseImprovements is exported as a function', 
 test('buildModeAPrompt Round 1 basic: contains required header, repository, question, and Round 1 instructions', () => {
   assert.ok(mod, 'Module not available yet — expected after Plan 02');
   const result = mod.buildModeAPrompt({ round: 1, repoDir: '/tmp/repo', question: 'Is this good?' });
-  assert.ok(result.includes('QGSD Quorum — Round 1'),
-    'Expected "QGSD Quorum — Round 1" in output');
+  assert.ok(result.includes('nForma Quorum — Round 1'),
+    'Expected "nForma Quorum — Round 1" in output');
   assert.ok(result.includes('Repository: /tmp/repo'),
     'Expected "Repository: /tmp/repo" in output');
   assert.ok(result.includes('Question: Is this good?'),
@@ -172,8 +172,8 @@ test('buildModeBPrompt Round 1: contains execution review header, traces section
     question: 'Does it pass?',
     traces: '=== Command: node --test === exit 0'
   });
-  assert.ok(result.includes('QGSD Quorum — Execution Review (Round 1)'),
-    'Expected "QGSD Quorum — Execution Review (Round 1)" in Mode B prompt');
+  assert.ok(result.includes('nForma Quorum — Execution Review (Round 1)'),
+    'Expected "nForma Quorum — Execution Review (Round 1)" in Mode B prompt');
   assert.ok(result.includes('=== EXECUTION TRACES ==='),
     'Expected "=== EXECUTION TRACES ===" section in Mode B prompt');
   assert.ok(result.includes('verdict: APPROVE | REJECT | FLAG'),
@@ -332,7 +332,7 @@ test('matchRequirementsByKeywords — hook keywords: returns Hooks & Enforcement
 test('matchRequirementsByKeywords — artifact path matching: maps artifact path to category', () => {
   assert.ok(mod, 'Module not available yet');
   const reqs = mod.loadRequirements(process.cwd());
-  const matched = mod.matchRequirementsByKeywords(reqs, 'review this', 'hooks/qgsd-stop.js');
+  const matched = mod.matchRequirementsByKeywords(reqs, 'review this', 'hooks/nf-stop.js');
   assert.ok(matched.length > 0, 'Expected matches when artifact path contains "hook"');
   const hasHookOrEnforcement = matched.some(r =>
     r.category.includes('Hooks') || r.category.includes('Enforcement')

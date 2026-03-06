@@ -1,5 +1,5 @@
 ---
-name: qgsd:formal-test-sync
+name: nf:formal-test-sync
 description: Cross-reference formal model invariants with unit test coverage, validate constants, and generate test stubs
 argument-hint: [--report-only] [--dry-run] [--json] [--stubs-dir=<path>]
 allowed-tools:

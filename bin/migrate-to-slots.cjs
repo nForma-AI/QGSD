@@ -62,8 +62,8 @@ function migrateClaudeJson(claudeJsonPath, dryRun = false) {
   return { changed, renamed };
 }
 
-// tool_prefix migration map for qgsd.json
-const QGSD_PREFIX_MAP = {
+// tool_prefix migration map for nf.json
+const NF_PREFIX_MAP = {
   'mcp__codex-cli__':   'mcp__codex-cli-1__',
   'mcp__gemini-cli__':  'mcp__gemini-cli-1__',
   'mcp__opencode__':    'mcp__opencode-1__',
@@ -71,21 +71,21 @@ const QGSD_PREFIX_MAP = {
 };
 
 /**
- * Migrate ~/.claude/qgsd.json required_models tool_prefix values to slot-based prefixes.
- * @param {string} qgsdJsonPath - Absolute path to ~/.claude/qgsd.json
+ * Migrate ~/.claude/nf.json required_models tool_prefix values to slot-based prefixes.
+ * @param {string} nfJsonPath - Absolute path to ~/.claude/nf.json
  * @param {boolean} dryRun - If true, do not write changes
  * @returns {{ changed: number, patched: Array<{key: string, from: string, to: string}> }}
  */
-function migrateQgsdJson(qgsdJsonPath, dryRun = false) {
-  if (!fs.existsSync(qgsdJsonPath)) {
+function migrateNfJson(nfJsonPath, dryRun = false) {
+  if (!fs.existsSync(nfJsonPath)) {
     return { changed: 0, patched: [] };
   }
 
   let raw;
   try {
-    raw = JSON.parse(fs.readFileSync(qgsdJsonPath, 'utf8'));
+    raw = JSON.parse(fs.readFileSync(nfJsonPath, 'utf8'));
   } catch (e) {
-    throw new Error(`Failed to read ${qgsdJsonPath}: ${e.message}`);
+    throw new Error(`Failed to read ${nfJsonPath}: ${e.message}`);
   }
 
   const requiredModels = raw.required_models;
@@ -98,7 +98,7 @@ function migrateQgsdJson(qgsdJsonPath, dryRun = false) {
 
   for (const [modelKey, modelDef] of Object.entries(requiredModels)) {
     if (modelDef && typeof modelDef.tool_prefix === 'string') {
-      const newPrefix = QGSD_PREFIX_MAP[modelDef.tool_prefix];
+      const newPrefix = NF_PREFIX_MAP[modelDef.tool_prefix];
       if (newPrefix) {
         patched.push({ key: modelKey, from: modelDef.tool_prefix, to: newPrefix });
         modelDef.tool_prefix = newPrefix;
@@ -108,21 +108,21 @@ function migrateQgsdJson(qgsdJsonPath, dryRun = false) {
   }
 
   if (changed > 0 && !dryRun) {
-    fs.writeFileSync(qgsdJsonPath, JSON.stringify(raw, null, 2) + '\n', 'utf8');
+    fs.writeFileSync(nfJsonPath, JSON.stringify(raw, null, 2) + '\n', 'utf8');
   }
 
   return { changed, patched };
 }
 
 /**
- * Populate quorum_active in ~/.claude/qgsd.json from current mcpServers in ~/.claude.json.
+ * Populate quorum_active in ~/.claude/nf.json from current mcpServers in ~/.claude.json.
  * Idempotent: skips if quorum_active already present and non-empty.
- * @param {string} qgsdJsonPath - Absolute path to ~/.claude/qgsd.json
+ * @param {string} nfJsonPath - Absolute path to ~/.claude/nf.json
  * @param {string} claudeJsonPath - Absolute path to ~/.claude.json
  * @param {boolean} dryRun - If true, do not write changes
  * @returns {{ skipped: boolean, slots: string[] }}
  */
-function populateActiveSlots(qgsdJsonPath, claudeJsonPath, dryRun = false) {
+function populateActiveSlots(nfJsonPath, claudeJsonPath, dryRun = false) {
   // Read current slot names from ~/.claude.json
   let slotNames = [];
   try {
@@ -134,25 +134,25 @@ function populateActiveSlots(qgsdJsonPath, claudeJsonPath, dryRun = false) {
     return { skipped: true, slots: [] };
   }
 
-  // Read or create qgsd.json
-  let qgsdConfig = {};
+  // Read or create nf.json
+  let nfConfig = {};
   try {
-    qgsdConfig = JSON.parse(fs.readFileSync(qgsdJsonPath, 'utf8'));
+    nfConfig = JSON.parse(fs.readFileSync(nfJsonPath, 'utf8'));
   } catch (e) {
-    if (e.code !== 'ENOENT') throw new Error(`Failed to read ${qgsdJsonPath}: ${e.message}`);
-    // qgsd.json absent — create minimal object
+    if (e.code !== 'ENOENT') throw new Error(`Failed to read ${nfJsonPath}: ${e.message}`);
+    // nf.json absent — create minimal object
   }
 
   // Idempotent: skip if already set and non-empty
-  if (Array.isArray(qgsdConfig.quorum_active) && qgsdConfig.quorum_active.length > 0) {
-    return { skipped: true, slots: qgsdConfig.quorum_active };
+  if (Array.isArray(nfConfig.quorum_active) && nfConfig.quorum_active.length > 0) {
+    return { skipped: true, slots: nfConfig.quorum_active };
   }
 
   // Populate and write
-  qgsdConfig.quorum_active = slotNames;
+  nfConfig.quorum_active = slotNames;
   if (!dryRun) {
-    fs.mkdirSync(path.dirname(qgsdJsonPath), { recursive: true });
-    fs.writeFileSync(qgsdJsonPath, JSON.stringify(qgsdConfig, null, 2) + '\n', 'utf8');
+    fs.mkdirSync(path.dirname(nfJsonPath), { recursive: true });
+    fs.writeFileSync(nfJsonPath, JSON.stringify(nfConfig, null, 2) + '\n', 'utf8');
   }
   return { skipped: false, slots: slotNames };
 }
@@ -161,7 +161,7 @@ function populateActiveSlots(qgsdJsonPath, claudeJsonPath, dryRun = false) {
 if (require.main === module) {
   const dryRun = process.argv.includes('--dry-run');
   const claudeJsonPath = path.join(os.homedir(), '.claude.json');
-  const qgsdJsonPath = path.join(os.homedir(), '.claude', 'qgsd.json');
+  const nfJsonPath = path.join(os.homedir(), '.claude', 'nf.json');
 
   let r1, r2;
   try {
@@ -172,15 +172,15 @@ if (require.main === module) {
   }
 
   try {
-    r2 = migrateQgsdJson(qgsdJsonPath, dryRun);
+    r2 = migrateNfJson(nfJsonPath, dryRun);
   } catch (e) {
-    console.error(`Error migrating ~/.claude/qgsd.json: ${e.message}`);
+    console.error(`Error migrating ~/.claude/nf.json: ${e.message}`);
     process.exit(1);
   }
 
   let r3;
   try {
-    r3 = populateActiveSlots(qgsdJsonPath, claudeJsonPath, dryRun);
+    r3 = populateActiveSlots(nfJsonPath, claudeJsonPath, dryRun);
     if (!r3.skipped) {
       console.log(`[migrate-to-slots] quorum_active populated: ${r3.slots.join(', ')}`);
     } else {
@@ -200,7 +200,7 @@ if (require.main === module) {
       console.log(`  mcpServers: ${from} → ${to}`);
     }
     for (const { key, from, to } of r2.patched) {
-      console.log(`  qgsd.json required_models.${key}.tool_prefix: ${from} → ${to}`);
+      console.log(`  nf.json required_models.${key}.tool_prefix: ${from} → ${to}`);
     }
   } else {
     if (r1.changed > 0) {
@@ -210,7 +210,7 @@ if (require.main === module) {
       }
     }
     if (r2.changed > 0) {
-      console.log(`Patched ${r2.changed} qgsd.json tool_prefix values`);
+      console.log(`Patched ${r2.changed} nf.json tool_prefix values`);
       for (const { key, from, to } of r2.patched) {
         console.log(`  required_models.${key}.tool_prefix: ${from} → ${to}`);
       }
@@ -221,24 +221,24 @@ if (require.main === module) {
 }
 
 /**
- * Append a single slot name to quorum_active in qgsd.json if not already present.
+ * Append a single slot name to quorum_active in nf.json if not already present.
  * Idempotent: no-op if slot is already in the array.
  * @param {string} slotName - e.g. "copilot-2"
- * @param {string} qgsdJsonPath - path to ~/.claude/qgsd.json
+ * @param {string} nfJsonPath - path to ~/.claude/nf.json
  * @param {boolean} dryRun - if true, report but do not write
  * @returns {{ added: boolean, slot: string, skipped: boolean }}
  */
-function addSlotToQuorumActive(slotName, qgsdJsonPath, dryRun = false) {
-  let qgsdConfig = {};
+function addSlotToQuorumActive(slotName, nfJsonPath, dryRun = false) {
+  let nfConfig = {};
   try {
-    if (fs.existsSync(qgsdJsonPath)) {
-      qgsdConfig = JSON.parse(fs.readFileSync(qgsdJsonPath, 'utf8'));
+    if (fs.existsSync(nfJsonPath)) {
+      nfConfig = JSON.parse(fs.readFileSync(nfJsonPath, 'utf8'));
     }
   } catch (e) {
     return { added: false, slot: slotName, skipped: true, error: e.message };
   }
 
-  const active = Array.isArray(qgsdConfig.quorum_active) ? qgsdConfig.quorum_active : [];
+  const active = Array.isArray(nfConfig.quorum_active) ? nfConfig.quorum_active : [];
   if (active.includes(slotName)) {
     return { added: false, slot: slotName, skipped: true, reason: 'already present' };
   }
@@ -247,9 +247,9 @@ function addSlotToQuorumActive(slotName, qgsdJsonPath, dryRun = false) {
     return { added: true, slot: slotName, skipped: false, dryRun: true };
   }
 
-  qgsdConfig.quorum_active = [...active, slotName];
-  fs.writeFileSync(qgsdJsonPath, JSON.stringify(qgsdConfig, null, 2) + '\n');
+  nfConfig.quorum_active = [...active, slotName];
+  fs.writeFileSync(nfJsonPath, JSON.stringify(nfConfig, null, 2) + '\n');
   return { added: true, slot: slotName, skipped: false };
 }
 
-module.exports = { migrateClaudeJson, migrateQgsdJson, populateActiveSlots, addSlotToQuorumActive, SLOT_MIGRATION_MAP };
+module.exports = { migrateClaudeJson, migrateNfJson, populateActiveSlots, addSlotToQuorumActive, SLOT_MIGRATION_MAP };

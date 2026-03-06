@@ -67,7 +67,7 @@ function autoClosePtoF(residual, options = {}) {
       let dispatchOk = false;
 
       if (spawnFn) {
-        const result = spawnFn('qgsd-quick.cjs', [
+        const result = spawnFn('nf-quick.cjs', [
           `Update formal parameter ${entry.formal_ref} to match production`,
           `Production measurement: ${entry.meta?.measured_value}`,
           `Current formal: ${div.expected}`,

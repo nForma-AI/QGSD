@@ -19,11 +19,11 @@ let _cachedMachineModule = null;
 
 function loadMachineModule() {
   if (_cachedMachineModule) return _cachedMachineModule;
-  const repoDist    = path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-  const installDist = path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+  const repoDist    = path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
+  const installDist = path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
   const machinePath = fs.existsSync(repoDist) ? repoDist : installDist;
   if (!fs.existsSync(machinePath)) {
-    throw new Error('Cannot find qgsd-workflow.machine.cjs at ' + repoDist + ' or ' + installDist);
+    throw new Error('Cannot find nf-workflow.machine.js at ' + repoDist + ' or ' + installDist);
   }
   _cachedMachineModule = require(machinePath);
   return _cachedMachineModule;

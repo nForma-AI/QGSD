@@ -68,7 +68,7 @@ test('both MCoscillation and MCconvergence use -workers 1 (both have liveness PR
   // GAP-5 fix: both configs have PROPERTY (liveness); workers must always be '1'
   // Assert unconditional workers assignment to '1'
   assert.match(src, /const workers = '1';/);
-  // Assert no workers ternary conditional (the spec-file ternary for QGSDOscillation/QGSDConvergence
+  // Assert no workers ternary conditional (the spec-file ternary for NFOscillation/NFConvergence
   // is still valid — only the workers ternary must be gone)
   assert.doesNotMatch(src, /workers\s*=\s*configName\s*===\s*['"]MCoscillation['"]\s*\?/);
   // Assert 'auto' is not assigned as the workers value

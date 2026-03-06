@@ -85,7 +85,7 @@ function pMajorityExternal(agents) {
 // Atomically updates maxDeliberation in the XState machine and config.json,
 // then regenerates formal specs. Returns { success, newValue, machineUpdated, configUpdated, specsRegenerated, error, rolledBack }
 function applyMaxDeliberationUpdate(newValue, options = {}) {
-  const machineFile = options.machineFile || path.join(ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts');
+  const machineFile = options.machineFile || path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
   const configFile = options.configFile || path.join(ROOT, '.planning', 'config.json');
   const skipSpecGen = options.skipSpecGen || false; // For testing without generate-formal-specs.cjs
 
@@ -145,7 +145,7 @@ function main() {
 
   // ── Load XState machine (source of truth for MaxDeliberation) ─────────────────
   const machineSrc = fs.readFileSync(
-    path.join(ROOT, 'src', 'machines', 'qgsd-workflow.machine.ts'), 'utf8'
+    path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts'), 'utf8'
   );
   const maxDelibMatch = machineSrc.match(/maxDeliberation:\s*(\d+)/);
   const maxDelib = maxDelibMatch ? parseInt(maxDelibMatch[1], 10) : null;
@@ -193,7 +193,7 @@ function main() {
   const pPriorWithinK = k => 1 - Math.pow(1 - P_PRIOR_PER_ROUND, k);
 
   // ── Report ────────────────────────────────────────────────────────────────────
-  process.stdout.write('\n[verify-quorum-health] QGSD Quorum Reliability Report\n');
+  process.stdout.write('\n[verify-quorum-health] nForma Quorum Reliability Report\n');
   process.stdout.write('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n');
 
   process.stdout.write('Per-agent effective approval probability (tp_rate × availability):\n');
@@ -256,7 +256,7 @@ function main() {
       }
     } else {
       process.stderr.write('        Run with --auto-apply to apply automatically, or manually update:\n' +
-        '        src/machines/qgsd-workflow.machine.ts and re-run: node bin/generate-formal-specs.cjs && node bin/check-spec-sync.cjs\n\n');
+        '        src/machines/nf-workflow.machine.ts and re-run: node bin/generate-formal-specs.cjs && node bin/check-spec-sync.cjs\n\n');
       process.exit(1);
     }
   }

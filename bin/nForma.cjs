@@ -89,7 +89,7 @@ const { readClaudeJson, writeClaudeJson, getGlobalMcpServers } = core;
 const {
   buildDashboardLines, probeAllSlots,
   maskKey, deriveKeytarAccount,
-  readQgsdJson, writeQgsdJson,
+  readNfJson, writeNfJson,
   buildExportData, validateImportSchema, buildBackupPath,
   buildTimeoutChoices, applyTimeoutUpdate,
   buildPolicyChoices,
@@ -397,11 +397,11 @@ function writeProvidersJson(data) {
 
 // ─── Update policy helper ────────────────────────────────────────────────────
 function writeUpdatePolicy(slotName, policy) {
-  const qgsd = readQgsdJson();
-  if (!qgsd.agent_config) qgsd.agent_config = {};
-  if (!qgsd.agent_config[slotName]) qgsd.agent_config[slotName] = {};
-  qgsd.agent_config[slotName].update_policy = policy;
-  writeQgsdJson(qgsd);
+  const nfCfg = readNfJson();
+  if (!nf.agent_config) nf.agent_config = {};
+  if (!nf.agent_config[slotName]) nf.agent_config[slotName] = {};
+  nf.agent_config[slotName].update_policy = policy;
+  writeNfJson(nfCfg);
 }
 
 // ─── Secrets loader (cached — keychain prompted once per process) ─────────────
@@ -409,7 +409,7 @@ let _secretsCache = undefined;
 function loadSecrets() {
   if (_secretsCache !== undefined) return _secretsCache;
   const candidates = [
-    path.join(os.homedir(), '.claude', 'qgsd-bin', 'secrets.cjs'),
+    path.join(os.homedir(), '.claude', 'nf-bin', 'secrets.cjs'),
     path.join(__dirname, 'secrets.cjs'),
   ];
   for (const p of candidates) {
@@ -521,7 +521,7 @@ function agentRows() {
         const pp = require('./planning-paths.cjs');
         failPath = pp.resolveWithFallback(process.cwd(), 'quorum-failures');
       } catch (_) {
-        failPath = path.join(os.homedir(), '.claude', 'qgsd', 'quorum-failures.json');
+        failPath = path.join(os.homedir(), '.claude', 'nf', 'quorum-failures.json');
       }
       if (fs.existsSync(failPath)) {
         const failures = JSON.parse(fs.readFileSync(failPath, 'utf8'));
@@ -554,15 +554,15 @@ function buildHeaderInfo() {
   let quorumN = '—';
   let failMode = '—';
   try {
-    const qgsd   = readQgsdJson();
-    const defN   = qgsd.quorum?.maxSize;
-    const byProf = qgsd.quorum?.maxSizeByProfile || {};
+    const nfCfg   = readNfJson();
+    const defN   = nf.quorum?.maxSize;
+    const byProf = nf.quorum?.maxSizeByProfile || {};
     const effN   = byProf[profile] ?? defN;
     if (effN != null) quorumN = String(effN) + (byProf[profile] != null ? '*' : '');
-    if (qgsd.fail_mode) failMode = qgsd.fail_mode;
+    if (nf.fail_mode) failMode = nf.fail_mode;
   } catch (_) {}
 
-  // Key agent tiers — from qgsd-core/references/model-profiles.md
+  // Key agent tiers — from core/references/model-profiles.md
   const TIERS = {
     planner:    { quality: 'opus',   balanced: 'opus',   budget: 'sonnet' },
     executor:   { quality: 'opus',   balanced: 'sonnet', budget: 'sonnet' },
@@ -674,19 +674,19 @@ function refreshStatusBar(extra) {
 // ─── Settings content (rendered in contentBox when Settings action selected) ──
 function buildSettingsPaneContent() {
   const cfg     = readProjectConfig();
-  const qgsd    = readQgsdJson();
+  const nfCfg    = readNfJson();
   const profile = cfg.model_profile || 'balanced';
   const ov      = cfg.model_overrides || {};
-  const defN    = qgsd.quorum?.maxSize ?? 3;
-  const byProf  = qgsd.quorum?.maxSizeByProfile || {};
+  const defN    = nf.quorum?.maxSize ?? 3;
+  const byProf  = nf.quorum?.maxSizeByProfile || {};
   const effN    = byProf[profile] ?? defN;
   const nStr    = String(effN) + (byProf[profile] != null ? '*' : '');
-  const failStr = qgsd.fail_mode || '—';
+  const failStr = nf.fail_mode || '—';
 
   const D = '{#777777-fg}', V = '{#aaaaaa-fg}', A = '{#4a9090-fg}', Z = '{/}';
   const mTag = k => ov[k] ? `${A}${ov[k]}${Z}{#888888-fg}*${Z}` : `${V}${AGENT_TIERS[k]?.[profile] || '—'}${Z}`;
 
-  const agents = ['qgsd-planner', 'qgsd-executor', 'qgsd-phase-researcher', 'qgsd-verifier', 'qgsd-codebase-mapper'];
+  const agents = ['nf-planner', 'nf-executor', 'nf-phase-researcher', 'nf-verifier', 'nf-codebase-mapper'];
   const labels = ['Planner', 'Executor', 'Researcher', 'Verifier', 'Mapper'];
 
   const lines = [
@@ -865,7 +865,7 @@ function promptCheckbox(opts) {
 // Writes a temp shell script and opens it in a new Terminal.app window via osascript.
 // Returns true if the terminal was opened successfully.
 function spawnExternalTerminal(loginCmd) {
-  const tmpScript = path.join(os.tmpdir(), 'qgsd-auth-' + Date.now() + '.sh');
+  const tmpScript = path.join(os.tmpdir(), 'nf-auth-' + Date.now() + '.sh');
   try {
     fs.writeFileSync(tmpScript, [
       '#!/bin/sh',
@@ -1073,7 +1073,7 @@ async function addAgentFlow() {
 
   const secrets = loadSecrets();
   if (apiKey && secrets) {
-    await secrets.set('qgsd', deriveKeytarAccount(slotName), apiKey);
+    await secrets.set('nforma', deriveKeytarAccount(slotName), apiKey);
   } else if (apiKey) {
     env.ANTHROPIC_API_KEY = apiKey;
   }
@@ -1104,20 +1104,20 @@ async function cloneSlotFlow() {
   data.mcpServers = { ...servers, [newName]: cloned };
   writeClaudeJson(data);
 
-  // Copy qgsd.json agent_config metadata from source to cloned slot
+  // Copy nf.json agent_config metadata from source to cloned slot
   try {
-    const qgsd = readQgsdJson();
-    const sourceConfig = (qgsd.agent_config || {})[source.value];
+    const nfCfg = readNfJson();
+    const sourceConfig = (nf.agent_config || {})[source.value];
     if (sourceConfig) {
-      if (!qgsd.agent_config) qgsd.agent_config = {};
-      qgsd.agent_config[newName] = JSON.parse(JSON.stringify(sourceConfig));
+      if (!nf.agent_config) nf.agent_config = {};
+      nf.agent_config[newName] = JSON.parse(JSON.stringify(sourceConfig));
       // Clear key_status from clone (needs fresh probe)
-      if (qgsd.agent_config[newName].key_status) {
-        delete qgsd.agent_config[newName].key_status;
+      if (nf.agent_config[newName].key_status) {
+        delete nf.agent_config[newName].key_status;
       }
-      writeQgsdJson(qgsd);
+      writeNfJson(nfCfg);
     }
-  } catch (_) { /* qgsd.json might not exist yet -- non-fatal */ }
+  } catch (_) { /* nf.json might not exist yet -- non-fatal */ }
 
   toast(`✓ Cloned "${source.value}" → "${newName}"`);
   renderList();
@@ -1193,9 +1193,9 @@ async function editAgentFlow() {
             prompt: 'ANTHROPIC_API_KEY (blank = remove):', isPassword: true });
           const secrets = loadSecrets();
           const account = deriveKeytarAccount(slotName);
-          if (val && secrets)      { await secrets.set('qgsd', account, val); delete env.ANTHROPIC_API_KEY; }
+          if (val && secrets)      { await secrets.set('nforma', account, val); delete env.ANTHROPIC_API_KEY; }
           else if (val)             { env.ANTHROPIC_API_KEY = val; }
-          else if (secrets)         { await secrets.delete('qgsd', account); delete env.ANTHROPIC_API_KEY; }
+          else if (secrets)         { await secrets.delete('nforma', account); delete env.ANTHROPIC_API_KEY; }
           else                      { delete env.ANTHROPIC_API_KEY; }
 
         } else if (field.value === 'baseUrl') {
@@ -1478,7 +1478,7 @@ async function loginAgentFlow() {
 // ─── Provider Keys ────────────────────────────────────────────────────────────
 async function renderProviderKeys() {
   const secrets = loadSecrets();
-  if (!secrets) { setContent('Provider Keys', '{red-fg}secrets.cjs not found — QGSD not installed.{/}'); return; }
+  if (!secrets) { setContent('Provider Keys', '{red-fg}secrets.cjs not found — nForma not installed.{/}'); return; }
   const lines = ['{bold}Provider Keys (keytar){/bold}', '─'.repeat(40)];
   for (const { key, label } of PROVIDER_KEY_NAMES) {
     // hasKey() reads local JSON index — no keychain prompt
@@ -1492,7 +1492,7 @@ async function renderProviderKeys() {
 async function providerKeysFlow() {
   setContent('Provider Keys', '{gray-fg}Select an action…{/}');
   const secrets = loadSecrets();
-  if (!secrets) { toast('secrets.cjs not found — QGSD not installed', true); return; }
+  if (!secrets) { toast('secrets.cjs not found — nForma not installed', true); return; }
 
   while (true) {                                                // action loop: ESC → main menu
     let action;
@@ -1518,7 +1518,7 @@ async function providerKeysFlow() {
 
       try {
         if (action.value === 'remove') {
-          await secrets.delete('qgsd', picked.value);
+          await secrets.delete('nforma', picked.value);
           toast(`Removed ${picked.label}`);
           await renderProviderKeys();
           continue;                                             // re-show key picker (remove more)
@@ -1526,7 +1526,7 @@ async function providerKeysFlow() {
 
         const val = await promptInput({ title: `Set ${picked.label}`, prompt: `Value for ${picked.value}:`, isPassword: true });
         if (!val) { toast('Empty value — key not stored', true); continue; }
-        await secrets.set('qgsd', picked.value, val);
+        await secrets.set('nforma', picked.value, val);
         toast(`${picked.label} saved to keychain`);
         await renderProviderKeys();
       } catch (_) { continue; }                                // ESC during value input → re-show key picker
@@ -1537,7 +1537,7 @@ async function providerKeysFlow() {
 // ─── Post-Rotation Validation (CRED-01: fire-and-forget, non-blocking) ───────
 /**
  * Fire-and-forget post-rotation validation.
- * Probes each rotated slot and persists key_status to qgsd.json.
+ * Probes each rotated slot and persists key_status to nf.json.
  * Does NOT block the caller -- called with .catch(() => {}).
  * Uses sequential for...of to avoid keychain concurrency (same pattern as rotation loop).
  * Reuses probeAndPersistKey from manage-agents-core.cjs (DRY -- do not duplicate probe/classify/write logic).
@@ -1556,7 +1556,7 @@ async function validateRotatedKeys(rotatedSlots) {
     if (secretsLib) {
       try {
         const account = deriveKeytarAccount(slotName);
-        const k = await secretsLib.get('qgsd', account);
+        const k = await secretsLib.get('nforma', account);
         if (k) apiKey = k;
       } catch (_) {}
     }
@@ -1604,7 +1604,7 @@ async function batchRotateFlow() {
 
     const account = deriveKeytarAccount(picked.value);
     if (secrets) {
-      await secrets.set('qgsd', account, newKey);
+      await secrets.set('nforma', account, newKey);
     } else {
       if (!servers[picked.value].env) servers[picked.value].env = {};
       servers[picked.value].env.ANTHROPIC_API_KEY = newKey;
@@ -1973,18 +1973,18 @@ async function updateAgentsFlow() {
 
 // ─── Settings helpers ─────────────────────────────────────────────────────────
 const AGENT_TIERS = {
-  'qgsd-planner':          { quality: 'opus',   balanced: 'opus',   budget: 'sonnet' },
-  'qgsd-executor':         { quality: 'opus',   balanced: 'sonnet', budget: 'sonnet' },
-  'qgsd-phase-researcher': { quality: 'opus',   balanced: 'sonnet', budget: 'haiku'  },
-  'qgsd-verifier':         { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku'  },
-  'qgsd-codebase-mapper':  { quality: 'sonnet', balanced: 'haiku',  budget: 'haiku'  },
+  'nf-planner':          { quality: 'opus',   balanced: 'opus',   budget: 'sonnet' },
+  'nf-executor':         { quality: 'opus',   balanced: 'sonnet', budget: 'sonnet' },
+  'nf-phase-researcher': { quality: 'opus',   balanced: 'sonnet', budget: 'haiku'  },
+  'nf-verifier':         { quality: 'sonnet', balanced: 'sonnet', budget: 'haiku'  },
+  'nf-codebase-mapper':  { quality: 'sonnet', balanced: 'haiku',  budget: 'haiku'  },
 };
 const AGENT_LABELS = {
-  'qgsd-planner':          'Planner',
-  'qgsd-executor':         'Executor',
-  'qgsd-phase-researcher': 'Researcher',
-  'qgsd-verifier':         'Verifier',
-  'qgsd-codebase-mapper':  'Mapper',
+  'nf-planner':          'Planner',
+  'nf-executor':         'Executor',
+  'nf-phase-researcher': 'Researcher',
+  'nf-verifier':         'Verifier',
+  'nf-codebase-mapper':  'Mapper',
 };
 
 function readProjectConfig() {
@@ -2001,10 +2001,10 @@ function writeProjectConfig(cfg) {
 async function settingsFlow() {
   while (true) {
     const cfg     = readProjectConfig();
-    const qgsd    = readQgsdJson();
+    const nfCfg    = readNfJson();
     const profile = cfg.model_profile || 'balanced';
-    const defN    = qgsd.quorum?.maxSize ?? 3;
-    const byProf  = qgsd.quorum?.maxSizeByProfile || {};
+    const defN    = nf.quorum?.maxSize ?? 3;
+    const byProf  = nf.quorum?.maxSizeByProfile || {};
     const effN    = byProf[profile] ?? defN;
     const nStr    = String(effN) + (byProf[profile] != null ? '*' : '');
     const ovCount = Object.keys(cfg.model_overrides || {}).length;
@@ -2014,7 +2014,7 @@ async function settingsFlow() {
       picked = await promptList({ title: 'Settings', items: [
         { label: `  Profile          ${profile}`,              value: 'profile'   },
         { label: `  Quorum n         ${nStr}  →`,              value: 'n'         },
-        { label: `  Fail mode        ${qgsd.fail_mode || '—'}`,value: 'fail'      },
+        { label: `  Fail mode        ${nf.fail_mode || '—'}`,value: 'fail'      },
         { label: `  Model overrides  ${ovCount ? `${ovCount} active` : 'none'}  →`, value: 'overrides' },
       ]});
     } catch (_) { return; }
@@ -2046,9 +2046,9 @@ async function settingsFlow() {
           { label: 'strict   Block if any required slot fails',       value: 'strict'  },
         ]});
       } catch (_) { continue; }
-      const qg = readQgsdJson();
+      const qg = readNfJson();
       qg.fail_mode = choice.value;
-      writeQgsdJson(qg);
+      writeNfJson(qg);
       refreshSettingsPane();
       toast(`✓ Fail mode → ${choice.value}`);
 
@@ -2109,9 +2109,9 @@ async function modelOverridesFlow() {
 
 async function quorumNFlow() {
   while (true) {
-    const qgsd   = readQgsdJson();
-    const defN   = qgsd.quorum?.maxSize ?? 3;
-    const byProf = qgsd.quorum?.maxSizeByProfile || {};
+    const nfCfg   = readNfJson();
+    const defN   = nf.quorum?.maxSize ?? 3;
+    const byProf = nf.quorum?.maxSizeByProfile || {};
     const fmt    = p => byProf[p] != null ? String(byProf[p]) : `${defN} (default)`;
 
     let picked;
@@ -2138,19 +2138,19 @@ async function quorumNFlow() {
     const n = parseInt(val.trim(), 10);
     if (isNaN(n) || n < 0) { toast('Invalid — enter a positive number or 0 to remove', true); continue; }
 
-    if (!qgsd.quorum) qgsd.quorum = {};
+    if (!nf.quorum) nf.quorum = {};
     if (picked.value === 'default') {
-      qgsd.quorum.maxSize = n;
+      nf.quorum.maxSize = n;
     } else {
-      if (!qgsd.quorum.maxSizeByProfile) qgsd.quorum.maxSizeByProfile = {};
+      if (!nf.quorum.maxSizeByProfile) nf.quorum.maxSizeByProfile = {};
       if (n === 0) {
-        delete qgsd.quorum.maxSizeByProfile[picked.value];
-        if (!Object.keys(qgsd.quorum.maxSizeByProfile).length) delete qgsd.quorum.maxSizeByProfile;
+        delete nf.quorum.maxSizeByProfile[picked.value];
+        if (!Object.keys(nf.quorum.maxSizeByProfile).length) delete nf.quorum.maxSizeByProfile;
       } else {
-        qgsd.quorum.maxSizeByProfile[picked.value] = n;
+        nf.quorum.maxSizeByProfile[picked.value] = n;
       }
     }
-    writeQgsdJson(qgsd);
+    writeNfJson(nfCfg);
     renderHeader();
     refreshSettingsPane();
     toast(`✓ Quorum n (${picked.value}) → ${n === 0 ? 'reset to default' : n}`);
@@ -2209,8 +2209,8 @@ async function updatePolicyFlow() {
   const slots   = Object.keys(servers);
   if (!slots.length) { toast('No slots configured', true); return; }
 
-  const qgsd        = readQgsdJson();
-  const agentConfig = qgsd.agent_config || {};
+  const nfCfg        = readNfJson();
+  const agentConfig = nf.agent_config || {};
 
   const target = await promptList({ title: 'Update Policy — Pick slot',
     items: slots.map(s => ({
@@ -2276,7 +2276,7 @@ async function importFlow() {
             prompt: `API key for ${slotName} / ${envKey} (blank = skip):`, isPassword: true });
         } catch (_) { delete cfg.env[envKey]; continue; }       // ESC → skip key, move to next
         if (val) {
-          if (secrets) { await secrets.set('qgsd', deriveKeytarAccount(slotName), val); delete cfg.env[envKey]; }
+          if (secrets) { await secrets.set('nforma', deriveKeytarAccount(slotName), val); delete cfg.env[envKey]; }
           else          { cfg.env[envKey] = val; }
         } else {
           delete cfg.env[envKey];
@@ -2568,7 +2568,7 @@ function reqCoverageGapsFlow() {
     lines.push('');
 
     // Run for all known specs
-    const specs = ['QGSDQuorum', 'QGSDStopHook', 'QGSDCircuitBreaker'];
+    const specs = ['NFQuorum', 'NFStopHook', 'NFCircuitBreaker'];
     let totalGaps = 0;
 
     for (const specName of specs) {

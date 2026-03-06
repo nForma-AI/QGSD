@@ -71,14 +71,14 @@ test('fail-open: missing .planning/formal/spec/ directory → FORMAL_SPEC_CONTEX
 });
 
 // ----- STRUCTURAL TESTS (RED until Plan 02 updates source + Plan 03 installs) -----
-// These tests read source files from qgsd-core/ and agents/ (NOT installed ~/.claude/ copies).
+// These tests read source files from core/ and agents/ (NOT installed ~/.claude/ copies).
 // Implementation edits source; Plan 03 runs install.js to sync to ~/.claude/.
 
 // ---- Test Group 1: gsd-tools.cjs goal regex fix (ISSUE-2) ----
 // Plan 02 must replace **Goal:** (colon inside asterisks) with **Goal**: (colon outside).
 // Three locations: lines 1027, 2612, 4370.
 
-const GSD_TOOLS_PATH = path.resolve(__dirname, '../qgsd-core/bin/gsd-tools.cjs');
+const GSD_TOOLS_PATH = path.resolve(__dirname, '../core/bin/gsd-tools.cjs');
 let gsdToolsContent = '';
 try {
   gsdToolsContent = fs.readFileSync(GSD_TOOLS_PATH, 'utf8');
@@ -89,7 +89,7 @@ try {
 test('gsd-tools.cjs: old broken regex **Goal:** is NOT present', () => {
   assert.ok(
     !gsdToolsContent.includes('**Goal:**'),
-    'Old broken regex still present: "**Goal:**" found in qgsd-core/bin/gsd-tools.cjs — fix all 3 regex locations'
+    'Old broken regex still present: "**Goal:**" found in core/bin/gsd-tools.cjs — fix all 3 regex locations'
   );
 });
 
@@ -108,7 +108,7 @@ test('gsd-tools.cjs: fixed regex **Goal**: appears at least 3 times (all 3 parse
 // ---- Test Group 2: plan-phase.md Step 4.5 source field fix (ISSUE-1 part 1) ----
 // Plan 02 must change .phase_name to .goal // .phase_name in Step 4.5 bash block.
 
-const PLAN_PHASE_PATH = path.resolve(__dirname, '../qgsd-core/workflows/plan-phase.md');
+const PLAN_PHASE_PATH = path.resolve(__dirname, '../core/workflows/plan-phase.md');
 let planPhaseContent = '';
 try {
   planPhaseContent = fs.readFileSync(PLAN_PHASE_PATH, 'utf8');
@@ -119,14 +119,14 @@ try {
 test('plan-phase.md: Step 4.5 uses .goal // .phase_name (not bare .phase_name)', () => {
   assert.ok(
     planPhaseContent.includes('.goal // .phase_name'),
-    'Pattern not found: expected ".goal // .phase_name" in qgsd-core/workflows/plan-phase.md Step 4.5 — fix source field'
+    'Pattern not found: expected ".goal // .phase_name" in core/workflows/plan-phase.md Step 4.5 — fix source field'
   );
 });
 
 // ---- Test Group 3: execute-phase.md verify_phase_goal standardization (ISSUE-1 part 2) ----
 // Plan 02 must fix: .goal // empty → .goal // .phase_name, add '/' to separator, add bidirectional match.
 
-const EXECUTE_PHASE_PATH = path.resolve(__dirname, '../qgsd-core/workflows/execute-phase.md');
+const EXECUTE_PHASE_PATH = path.resolve(__dirname, '../core/workflows/execute-phase.md');
 let executePhaseContent = '';
 try {
   executePhaseContent = fs.readFileSync(EXECUTE_PHASE_PATH, 'utf8');
@@ -137,14 +137,14 @@ try {
 test('execute-phase.md: verify_phase_goal uses .goal // .phase_name fallback (not .goal // empty)', () => {
   assert.ok(
     executePhaseContent.includes('.goal // .phase_name'),
-    'Pattern not found: expected ".goal // .phase_name" in qgsd-core/workflows/execute-phase.md verify_phase_goal — fix field fallback'
+    'Pattern not found: expected ".goal // .phase_name" in core/workflows/execute-phase.md verify_phase_goal — fix field fallback'
   );
 });
 
 test("execute-phase.md: verify_phase_goal separator includes '/' (tr ' -/')", () => {
   assert.ok(
     executePhaseContent.includes("tr ' -/'"),
-    "Pattern not found: expected \"tr ' -/'\" in qgsd-core/workflows/execute-phase.md — add slash to separator"
+    "Pattern not found: expected \"tr ' -/'\" in core/workflows/execute-phase.md — add slash to separator"
   );
 });
 
@@ -153,14 +153,14 @@ test('execute-phase.md: verify_phase_goal uses bidirectional match (grep -qF "$K
   // In bash: grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF
   assert.ok(
     executePhaseContent.includes('grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF'),
-    'Pattern not found: expected bidirectional match pattern in qgsd-core/workflows/execute-phase.md — add reverse match condition'
+    'Pattern not found: expected bidirectional match pattern in core/workflows/execute-phase.md — add reverse match condition'
   );
 });
 
 // ---- Test Group 4: new-milestone.md formal scope scan block (WFI-05) ----
 // Plan 02 must add Step 9.5 / inline Step 10 pre-roadmapper formal scan.
 
-const NEW_MILESTONE_PATH = path.resolve(__dirname, '../qgsd-core/workflows/new-milestone.md');
+const NEW_MILESTONE_PATH = path.resolve(__dirname, '../core/workflows/new-milestone.md');
 let newMilestoneContent = '';
 try {
   newMilestoneContent = fs.readFileSync(NEW_MILESTONE_PATH, 'utf8');
@@ -171,28 +171,28 @@ try {
 test('new-milestone.md: contains .planning/formal/spec scan block (directory check exists)', () => {
   assert.ok(
     newMilestoneContent.includes('.planning/formal/spec'),
-    'Pattern not found: expected ".planning/formal/spec" in qgsd-core/workflows/new-milestone.md — add formal scope scan step'
+    'Pattern not found: expected ".planning/formal/spec" in core/workflows/new-milestone.md — add formal scope scan step'
   );
 });
 
 test('new-milestone.md: builds FORMAL_SPEC_CONTEXT variable', () => {
   assert.ok(
     newMilestoneContent.includes('FORMAL_SPEC_CONTEXT'),
-    'Pattern not found: expected "FORMAL_SPEC_CONTEXT" in qgsd-core/workflows/new-milestone.md — add context accumulator'
+    'Pattern not found: expected "FORMAL_SPEC_CONTEXT" in core/workflows/new-milestone.md — add context accumulator'
   );
 });
 
 test('new-milestone.md: references invariants.md (roadmapper injection includes invariant files)', () => {
   assert.ok(
     newMilestoneContent.includes('invariants.md'),
-    'Pattern not found: expected "invariants.md" in qgsd-core/workflows/new-milestone.md — reference invariants file in injection block'
+    'Pattern not found: expected "invariants.md" in core/workflows/new-milestone.md — reference invariants file in injection block'
   );
 });
 
-// ---- Test Group 5: qgsd-roadmapper.md formal_context handling (WFI-05) ----
+// ---- Test Group 5: nf-roadmapper.md formal_context handling (WFI-05) ----
 // Plan 02 must add formal_context handling section to roadmapper agent execution_flow.
 
-const ROADMAPPER_PATH = path.resolve(__dirname, '../agents/qgsd-roadmapper.md');
+const ROADMAPPER_PATH = path.resolve(__dirname, '../agents/nf-roadmapper.md');
 let roadmapperContent = '';
 try {
   roadmapperContent = fs.readFileSync(ROADMAPPER_PATH, 'utf8');
@@ -200,16 +200,16 @@ try {
   roadmapperContent = '';
 }
 
-test('qgsd-roadmapper.md: contains formal_context section (agent knows to use formal context)', () => {
+test('nf-roadmapper.md: contains formal_context section (agent knows to use formal context)', () => {
   assert.ok(
     roadmapperContent.includes('formal_context'),
-    'Pattern not found: expected "formal_context" in agents/qgsd-roadmapper.md — add formal context handling to execution_flow'
+    'Pattern not found: expected "formal_context" in agents/nf-roadmapper.md — add formal context handling to execution_flow'
   );
 });
 
-test('qgsd-roadmapper.md: references invariants (agent uses invariants for success criteria)', () => {
+test('nf-roadmapper.md: references invariants (agent uses invariants for success criteria)', () => {
   assert.ok(
     roadmapperContent.includes('invariants'),
-    'Pattern not found: expected "invariants" in agents/qgsd-roadmapper.md — agent must reference invariants when deriving criteria'
+    'Pattern not found: expected "invariants" in agents/nf-roadmapper.md — agent must reference invariants when deriving criteria'
   );
 });

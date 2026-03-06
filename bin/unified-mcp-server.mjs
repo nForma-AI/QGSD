@@ -110,7 +110,7 @@ function buildSlotTools(provider) {
   // Universal: identity
   tools.push({
     name: 'identity',
-    description: 'Get server identity: name, version, active LLM model, and MCP server name. Used by QGSD to fingerprint the active quorum team.',
+    description: 'Get server identity: name, version, active LLM model, and MCP server name. Used by nForma to fingerprint the active quorum team.',
     inputSchema: NO_ARGS_SCHEMA,
   });
 
@@ -526,7 +526,7 @@ function buildIdentityResult(provider) {
     model,
     display_provider: provider.display_provider ?? null,
     provider: provider.description,
-    install_method: 'qgsd-monorepo',
+    install_method: 'nf-monorepo',
   });
 }
 
@@ -699,7 +699,7 @@ async function main() {
     const keytarAccount = 'ANTHROPIC_API_KEY_' + SLOT.toUpperCase().replace(/-/g, '_');
     try {
       const { default: keytar } = await import('keytar');
-      const secret = await keytar.getPassword('qgsd', keytarAccount);
+      const secret = await keytar.getPassword('nforma', keytarAccount);
       if (secret) {
         process.env.ANTHROPIC_API_KEY = secret;
         process.stderr.write(`[unified-mcp-server] Loaded API key for slot ${SLOT} from keychain\n`);

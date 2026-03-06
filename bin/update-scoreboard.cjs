@@ -555,7 +555,7 @@ async function initTeam(argv) {
   let mcps = [];
   let plugins = [];
   try {
-    const claudeJsonPath = process.env.QGSD_CLAUDE_JSON || path.join(os.homedir(), '.claude.json');
+    const claudeJsonPath = process.env.NF_CLAUDE_JSON || path.join(os.homedir(), '.claude.json');
     const claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8'));
     mcps = Object.keys(claudeJson.mcpServers || {});
     plugins = claudeJson.plugins || [];

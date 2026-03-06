@@ -1,7 +1,7 @@
 'use strict';
 // bin/conformance-schema.cjs
 // Single source of truth for conformance event field enumerations.
-// Imported by hooks (qgsd-stop.js, qgsd-prompt.js, qgsd-circuit-breaker.js) and validate-traces.cjs.
+// Imported by hooks (nf-stop.js, nf-prompt.js, nf-circuit-breaker.js) and validate-traces.cjs.
 // NEVER add external require() calls — hooks have zero runtime dependencies.
 
 const VALID_ACTIONS  = ['quorum_start', 'quorum_complete', 'quorum_block', 'deliberation_round', 'circuit_break'];

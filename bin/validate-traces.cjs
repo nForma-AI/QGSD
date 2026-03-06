@@ -120,8 +120,8 @@ function buildTTrace(event, actualState, expectedStateName, divergenceType, scor
       const _path = require('path');
       const _fs   = require('fs');
       const _machinePath = (() => {
-        const repoDist    = _path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-        const installDist = _path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+        const repoDist    = _path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
+        const installDist = _path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
         return _fs.existsSync(repoDist) ? repoDist : installDist;
       })();
       const { createActor } = require(_machinePath);
@@ -237,15 +237,15 @@ if (require.main === module) {
   const _startMs = Date.now();
   const { writeCheckResult } = require('./write-check-result.cjs');
   // Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
-  // When installed at ~/.claude/qgsd-bin/, ./dist/machines/ (qgsd-bin/ → qgsd-bin/dist/machines/)
+  // When installed at ~/.claude/nf-bin/, ./dist/machines/ (nf-bin/ → nf-bin/dist/machines/)
   const machinePath = (function () {
-    const repoDist = path.join(__dirname, '..', 'dist', 'machines', 'qgsd-workflow.machine.cjs');
-    const installDist = path.join(__dirname, 'dist', 'machines', 'qgsd-workflow.machine.cjs');
+    const repoDist = path.join(__dirname, '..', 'dist', 'machines', 'nf-workflow.machine.js');
+    const installDist = path.join(__dirname, 'dist', 'machines', 'nf-workflow.machine.js');
     if (fs.existsSync(repoDist)) return repoDist;
     if (fs.existsSync(installDist)) return installDist;
-    throw new Error('[validate-traces] Cannot find qgsd-workflow.machine.cjs in ' + repoDist + ' or ' + installDist);
+    throw new Error('[validate-traces] Cannot find nf-workflow.machine.js in ' + repoDist + ' or ' + installDist);
   })();
-  const { createActor, qgsdWorkflowMachine } = require(machinePath);
+  const { createActor, nfWorkflowMachine } = require(machinePath);
 
   // Load walker for TTrace export (DIAG-01) — lazy-loaded here to avoid breaking module.exports usage
   let walker = null;
@@ -358,7 +358,7 @@ if (require.main === module) {
     }
 
     // Fresh actor per event — each conformance event is a single-step trace
-    const actor = createActor(qgsdWorkflowMachine);
+    const actor = createActor(nfWorkflowMachine);
     actor.start();
     actor.send(xstateEvent);
     const snapshot = actor.getSnapshot();
@@ -372,7 +372,7 @@ if (require.main === module) {
       const roundKey    = event.round_id || event.session_id || '__standalone__' + event._lineIndex;
       const roundEvents = roundGroups.get(roundKey) || [event];
       divergences.push(
-        buildTTrace(event, snapshot.value, expected, 'state_mismatch', scoreboardMeta, confidence, walker, qgsdWorkflowMachine, roundEvents)
+        buildTTrace(event, snapshot.value, expected, 'state_mismatch', scoreboardMeta, confidence, walker, nfWorkflowMachine, roundEvents)
       );
     }
   }

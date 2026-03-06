@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-breaker-tlc.cjs
-// Invokes TLC model checker for the QGSD circuit breaker TLA+ specification.
+// Invokes TLC model checker for the nForma circuit breaker TLA+ specification.
 // Requirements: QT-105
 //
 // Usage:
@@ -13,7 +13,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -117,7 +117,7 @@ if (!fs.existsSync(jarPath)) {
 }
 
 // ── 4. Invoke TLC ────────────────────────────────────────────────────────────
-const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDCircuitBreaker.tla');
+const specPath = path.join(ROOT, '.planning', 'formal', 'tla', 'NFCircuitBreaker.tla');
 const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
 // Always use 'auto' workers — MCbreaker has a small state space and liveness
 // can safely run with multiple workers (no known multi-worker liveness bugs at this scale).

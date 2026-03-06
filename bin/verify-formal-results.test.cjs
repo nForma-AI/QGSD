@@ -104,8 +104,8 @@ test('VERIFY-01 edge: parseNDJSON skips malformed JSON lines without throwing', 
 });
 
 // ─── Test 7: VERIFY-02 — verification-report.md template includes ## Formal Verification ─
-test('VERIFY-02: qgsd-core/templates/verification-report.md contains ## Formal Verification section', () => {
-  const templatePath = path.join(__dirname, '..', 'qgsd-core', 'templates', 'verification-report.md');
+test('VERIFY-02: core/templates/verification-report.md contains ## Formal Verification section', () => {
+  const templatePath = path.join(__dirname, '..', 'core', 'templates', 'verification-report.md');
   assert.ok(fs.existsSync(templatePath), 'verification-report.md must exist');
   const src = fs.readFileSync(templatePath, 'utf8');
   assert.match(src, /## Formal Verification/,

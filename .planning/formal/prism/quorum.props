@@ -1,8 +1,8 @@
 // .planning/formal/prism/quorum.props
 // GENERATED — do not edit by hand.
-// Source of truth: src/machines/qgsd-workflow.machine.ts
+// Source of truth: src/machines/nf-workflow.machine.ts
 // Regenerate:      node bin/generate-formal-specs.cjs
-// Generated:       2026-03-05
+// Generated:       2026-03-06
 //
 // Run all properties:
 //   $PRISM_BIN .planning/formal/prism/quorum.pm .planning/formal/prism/quorum.props

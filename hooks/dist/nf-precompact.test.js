@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-precompact.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-precompact.test.js
+// Test suite for hooks/nf-precompact.js
+// Uses Node.js built-in test runner: node --test hooks/nf-precompact.test.js
 //
 // Unit tests target exported helpers (extractCurrentPosition, readPendingTasks).
 // Integration tests spawn the hook as a child process with mock stdin.
@@ -14,13 +14,13 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-precompact.js');
+const HOOK_PATH = path.join(__dirname, 'nf-precompact.js');
 const { extractCurrentPosition, readPendingTasks } = require(HOOK_PATH);
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeTmpDir() {
-  const dir = path.join(os.tmpdir(), 'qgsd-pc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  const dir = path.join(os.tmpdir(), 'nf-pc-' + Date.now() + '-' + Math.random().toString(36).slice(2));
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -174,7 +174,7 @@ test('subprocess: exits 0 and emits additionalContext when STATE.md has Current 
   assert.ok(parsed.hookSpecificOutput, 'should have hookSpecificOutput');
   assert.equal(parsed.hookSpecificOutput.hookEventName, 'PreCompact');
   const ctx = parsed.hookSpecificOutput.additionalContext;
-  assert.ok(ctx.includes('QGSD CONTINUATION CONTEXT'), 'should include header');
+  assert.ok(ctx.includes('nForma CONTINUATION CONTEXT'), 'should include header');
   assert.ok(ctx.includes('v0.19-05'), 'should include current position content');
   assert.ok(ctx.includes('Resume Instructions'), 'should include resume instructions');
 });

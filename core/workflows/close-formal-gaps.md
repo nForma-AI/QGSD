@@ -90,7 +90,7 @@ For each approved cluster, select the most appropriate formalism based on these 
 If the user overrides the heuristic via `--formalism=tla|alloy|prism|petri`, use that instead.
 
 For each cluster, also determine:
-- **File name**: following existing conventions (e.g., `QGSDDispatch.tla`, `dispatch-pipeline.als`)
+- **File name**: following existing conventions (e.g., `NFDispatch.tla`, `dispatch-pipeline.als`)
 - **What to model**: the key state variables, transitions, and properties
 - **What properties to verify**: safety invariants, liveness, structural constraints
 </step>
@@ -204,7 +204,7 @@ Requirements covered: 12
 Verification:       2 passed, 1 pending
 
 New models:
-  .planning/formal/tla/QGSDDispatch.tla        → DISP-01..05  ✓ verified
+  .planning/formal/tla/NFDispatch.tla        → DISP-01..05  ✓ verified
   .planning/formal/alloy/config-validation.als → CONF-01..04  ✓ verified
   .planning/formal/prism/mcp-health.pm         → HLTH-01..03  ⏳ pending
 

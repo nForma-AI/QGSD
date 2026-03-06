@@ -66,7 +66,7 @@ Gap: Flow "View dashboard" broken at data fetch
 Find highest existing phase:
 ```bash
 # Get sorted phase list, extract last one
-PHASES=$(node ~/.claude/qgsd/bin/gsd-tools.cjs phases list)
+PHASES=$(node ~/.claude/nf/bin/gsd-tools.cjs phases list)
 HIGHEST=$(echo "$PHASES" | jq -r '.directories[-1]')
 ```
 
@@ -115,16 +115,16 @@ Before updating ROADMAP.md, submit the proposed phases to R3 quorum for approval
 
 Form your own position first: are the proposed phases correctly scoped to close all identified gaps? State your vote as APPROVE or BLOCK with 1-2 sentence rationale.
 
-Run R3 quorum inline (dispatch_pattern from `commands/qgsd/quorum.md`):
+Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — pure question
 - Question: "Are these gap closure phases correctly scoped and complete to close the identified milestone gaps? Proposed phases: {summary — 1 line per proposed phase showing phase name, requirements it closes, and task count}"
 - Include the proposed phases markdown from the presentation block above as context
-- Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks — do NOT dispatch slots outside `$DISPATCH_LIST`
+- Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks — do NOT dispatch slots outside `$DISPATCH_LIST`
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
 After quorum vote completes, update the scoreboard for each participating model:
 ```bash
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --model <model_name_or_slot> \
   --result <vote_code> \
   --task "plan-milestone-gaps-{version}" \
@@ -190,7 +190,7 @@ mkdir -p ".planning/phases/{NN}-{name}"
 ## 9. Commit Roadmap and Requirements Update
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(roadmap): add gap closure phases {N}-{M}" --files .planning/ROADMAP.md .planning/REQUIREMENTS.md
 ```
 
 ## 10. Auto-Spawn Plan-Phase for First Gap Closure Phase (LOOP-04)

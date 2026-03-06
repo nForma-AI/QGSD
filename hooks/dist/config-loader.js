@@ -4,7 +4,7 @@
 //
 // Exports: loadConfig(projectDir?), DEFAULT_CONFIG
 //
-// Load order: DEFAULT_CONFIG → ~/.claude/qgsd.json (global) → .claude/qgsd.json in projectDir (project)
+// Load order: DEFAULT_CONFIG → ~/.claude/nf.json (global) → .claude/nf.json in projectDir (project)
 // Merge: shallow spread — project values fully replace global values for any overlapping key.
 // Warnings: all written to process.stderr — stdout is never touched (it is the hook decision channel).
 
@@ -15,7 +15,7 @@ const path = require('path');
 const os = require('os');
 
 // Maps the family name of a slot (trailing -N stripped) to the MCP tool suffix to call.
-// Used by both qgsd-prompt.js (step generation) and qgsd-stop.js (evidence detection).
+// Used by both nf-prompt.js (step generation) and nf-stop.js (evidence detection).
 const SLOT_TOOL_SUFFIX = {
   'codex-cli': 'review',
   'codex':     'review',
@@ -97,7 +97,7 @@ function readConfigFile(filePath) {
   try {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (e) {
-    process.stderr.write('[qgsd] WARNING: Malformed config at ' + filePath + ': ' + e.message + '\n');
+    process.stderr.write('[nf] WARNING: Malformed config at ' + filePath + ': ' + e.message + '\n');
     return null;
   }
 }
@@ -107,33 +107,33 @@ function readConfigFile(filePath) {
 // Returns the (possibly corrected) config object.
 function validateConfig(config) {
   if (!Array.isArray(config.quorum_commands)) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: quorum_commands must be an array; using defaults\n');
+    process.stderr.write('[nf] WARNING: nf.json: quorum_commands must be an array; using defaults\n');
     config.quorum_commands = DEFAULT_CONFIG.quorum_commands;
   }
 
   if (typeof config.required_models !== 'object' || config.required_models === null) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: required_models must be an object; using defaults\n');
+    process.stderr.write('[nf] WARNING: nf.json: required_models must be an object; using defaults\n');
     config.required_models = DEFAULT_CONFIG.required_models;
   }
 
   if (!['open', 'closed'].includes(config.fail_mode)) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: fail_mode "' + config.fail_mode + '" invalid; defaulting to "open"\n');
+    process.stderr.write('[nf] WARNING: nf.json: fail_mode "' + config.fail_mode + '" invalid; defaulting to "open"\n');
     config.fail_mode = 'open';
   }
 
   // Validate circuit_breaker sub-object
   if (typeof config.circuit_breaker !== 'object' || config.circuit_breaker === null) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker must be an object; using defaults\n');
+    process.stderr.write('[nf] WARNING: nf.json: circuit_breaker must be an object; using defaults\n');
     config.circuit_breaker = { ...DEFAULT_CONFIG.circuit_breaker };
   } else {
     // Validate oscillation_depth independently
     if (!Number.isInteger(config.circuit_breaker.oscillation_depth) || config.circuit_breaker.oscillation_depth < 1) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.oscillation_depth must be a positive integer; defaulting to 3\n');
+      process.stderr.write('[nf] WARNING: nf.json: circuit_breaker.oscillation_depth must be a positive integer; defaulting to 3\n');
       config.circuit_breaker.oscillation_depth = 3;
     }
     // Validate commit_window independently
     if (!Number.isInteger(config.circuit_breaker.commit_window) || config.circuit_breaker.commit_window < 1) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.commit_window must be a positive integer; defaulting to 6\n');
+      process.stderr.write('[nf] WARNING: nf.json: circuit_breaker.commit_window must be a positive integer; defaulting to 6\n');
       config.circuit_breaker.commit_window = 6;
     }
     // Fill in missing sub-keys with defaults (handles partial circuit_breaker objects)
@@ -150,18 +150,18 @@ function validateConfig(config) {
       config.circuit_breaker.haiku_model = DEFAULT_CONFIG.circuit_breaker.haiku_model;
     }
     if (typeof config.circuit_breaker.haiku_reviewer !== 'boolean') {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.haiku_reviewer must be boolean; defaulting to true\n');
+      process.stderr.write('[nf] WARNING: nf.json: circuit_breaker.haiku_reviewer must be boolean; defaulting to true\n');
       config.circuit_breaker.haiku_reviewer = true;
     }
     if (typeof config.circuit_breaker.haiku_model !== 'string') {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: circuit_breaker.haiku_model must be a string; using default\n');
+      process.stderr.write('[nf] WARNING: nf.json: circuit_breaker.haiku_model must be a string; using default\n');
       config.circuit_breaker.haiku_model = DEFAULT_CONFIG.circuit_breaker.haiku_model;
     }
   }
 
   // Validate quorum_active
   if (!Array.isArray(config.quorum_active)) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: quorum_active must be an array; using []\n');
+    process.stderr.write('[nf] WARNING: nf.json: quorum_active must be an array; using []\n');
     config.quorum_active = [];
   } else {
     config.quorum_active = config.quorum_active.filter(
@@ -174,7 +174,7 @@ function validateConfig(config) {
     config.quorum = { ...DEFAULT_CONFIG.quorum };
   } else {
     if (!Number.isInteger(config.quorum.minSize) || config.quorum.minSize < 1) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: quorum.minSize must be a positive integer; defaulting to 4\n');
+      process.stderr.write('[nf] WARNING: nf.json: quorum.minSize must be a positive integer; defaulting to 4\n');
       config.quorum.minSize = DEFAULT_CONFIG.quorum.minSize;
     }
     if (typeof config.quorum.preferSub !== 'boolean') {
@@ -184,15 +184,15 @@ function validateConfig(config) {
 
   // Validate agent_config
   if (typeof config.agent_config !== 'object' || config.agent_config === null || Array.isArray(config.agent_config)) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: agent_config must be an object; using {}\n');
+    process.stderr.write('[nf] WARNING: nf.json: agent_config must be an object; using {}\n');
     config.agent_config = {};
   } else {
     for (const [slot, meta] of Object.entries(config.agent_config)) {
       if (typeof meta !== 'object' || meta === null) {
-        process.stderr.write('[qgsd] WARNING: qgsd.json: agent_config.' + slot + ' must be an object; removing\n');
+        process.stderr.write('[nf] WARNING: nf.json: agent_config.' + slot + ' must be an object; removing\n');
         delete config.agent_config[slot];
       } else if (meta.auth_type && !['sub', 'api'].includes(meta.auth_type)) {
-        process.stderr.write('[qgsd] WARNING: qgsd.json: agent_config.' + slot + '.auth_type must be "sub" or "api"; defaulting to "api"\n');
+        process.stderr.write('[nf] WARNING: nf.json: agent_config.' + slot + '.auth_type must be "sub" or "api"; defaulting to "api"\n');
         meta.auth_type = 'api';
       }
     }
@@ -200,13 +200,13 @@ function validateConfig(config) {
 
   // Validate model_preferences
   if (typeof config.model_preferences !== 'object' || config.model_preferences === null || Array.isArray(config.model_preferences)) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: model_preferences must be an object; using {}\n');
+    process.stderr.write('[nf] WARNING: nf.json: model_preferences must be an object; using {}\n');
     config.model_preferences = {};
   } else {
     // Remove invalid entries (non-string values) with a warning
     for (const [key, val] of Object.entries(config.model_preferences)) {
       if (typeof val !== 'string' || val.trim() === '') {
-        process.stderr.write('[qgsd] WARNING: qgsd.json: model_preferences.' + key + ' must be a non-empty string; removing\n');
+        process.stderr.write('[nf] WARNING: nf.json: model_preferences.' + key + ' must be a non-empty string; removing\n');
         delete config.model_preferences[key];
       }
     }
@@ -214,21 +214,21 @@ function validateConfig(config) {
 
   // Validate context_monitor sub-object
   if (typeof config.context_monitor !== 'object' || config.context_monitor === null) {
-    process.stderr.write('[qgsd] WARNING: qgsd.json: context_monitor must be an object; using defaults\n');
+    process.stderr.write('[nf] WARNING: nf.json: context_monitor must be an object; using defaults\n');
     config.context_monitor = { ...DEFAULT_CONFIG.context_monitor };
   } else {
     if (!Number.isInteger(config.context_monitor.warn_pct) ||
         config.context_monitor.warn_pct < 1 || config.context_monitor.warn_pct > 99) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: context_monitor.warn_pct must be an integer 1-99; defaulting to 70\n');
+      process.stderr.write('[nf] WARNING: nf.json: context_monitor.warn_pct must be an integer 1-99; defaulting to 70\n');
       config.context_monitor.warn_pct = DEFAULT_CONFIG.context_monitor.warn_pct;
     }
     if (!Number.isInteger(config.context_monitor.critical_pct) ||
         config.context_monitor.critical_pct < 1 || config.context_monitor.critical_pct > 100) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: context_monitor.critical_pct must be an integer 1-100; defaulting to 90\n');
+      process.stderr.write('[nf] WARNING: nf.json: context_monitor.critical_pct must be an integer 1-100; defaulting to 90\n');
       config.context_monitor.critical_pct = DEFAULT_CONFIG.context_monitor.critical_pct;
     }
     if (config.context_monitor.warn_pct >= config.context_monitor.critical_pct) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: context_monitor.warn_pct must be less than critical_pct; resetting to defaults\n');
+      process.stderr.write('[nf] WARNING: nf.json: context_monitor.warn_pct must be less than critical_pct; resetting to defaults\n');
       config.context_monitor.warn_pct = DEFAULT_CONFIG.context_monitor.warn_pct;
       config.context_monitor.critical_pct = DEFAULT_CONFIG.context_monitor.critical_pct;
     }
@@ -245,13 +245,13 @@ function validateConfig(config) {
   const VALID_TIERS = ['haiku', 'sonnet', 'opus'];
   if (config.model_tier_planner !== undefined) {
     if (typeof config.model_tier_planner !== 'string' || !VALID_TIERS.includes(config.model_tier_planner)) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: model_tier_planner must be "haiku", "sonnet", or "opus"; removing\n');
+      process.stderr.write('[nf] WARNING: nf.json: model_tier_planner must be "haiku", "sonnet", or "opus"; removing\n');
       delete config.model_tier_planner;
     }
   }
   if (config.model_tier_worker !== undefined) {
     if (typeof config.model_tier_worker !== 'string' || !VALID_TIERS.includes(config.model_tier_worker)) {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: model_tier_worker must be "haiku", "sonnet", or "opus"; removing\n');
+      process.stderr.write('[nf] WARNING: nf.json: model_tier_worker must be "haiku", "sonnet", or "opus"; removing\n');
       delete config.model_tier_worker;
     }
   }
@@ -259,7 +259,7 @@ function validateConfig(config) {
   // Validate task_envelope_enabled
   if (config.task_envelope_enabled !== undefined) {
     if (typeof config.task_envelope_enabled !== 'boolean') {
-      process.stderr.write('[qgsd] WARNING: qgsd.json: task_envelope_enabled must be a boolean; using default true\n');
+      process.stderr.write('[nf] WARNING: nf.json: task_envelope_enabled must be a boolean; using default true\n');
       config.task_envelope_enabled = true;
     }
   }
@@ -267,24 +267,24 @@ function validateConfig(config) {
   return config;
 }
 
-// Loads the two-layer QGSD config.
+// Loads the two-layer nForma config.
 //
-// Layer 1 (global): ~/.claude/qgsd.json
-// Layer 2 (project): <projectDir>/.claude/qgsd.json  (defaults to process.cwd())
+// Layer 1 (global): ~/.claude/nf.json
+// Layer 2 (project): <projectDir>/.claude/nf.json  (defaults to process.cwd())
 //
 // Merge is shallow: { ...DEFAULT_CONFIG, ...global, ...project }
 // If both layers are missing/malformed, returns DEFAULT_CONFIG with a warning.
 // All warnings go to stderr — stdout is never touched.
 function loadConfig(projectDir) {
-  const globalPath = path.join(os.homedir(), '.claude', 'qgsd.json');
-  const projectPath = path.join(projectDir || process.cwd(), '.claude', 'qgsd.json');
+  const globalPath = path.join(os.homedir(), '.claude', 'nf.json');
+  const projectPath = path.join(projectDir || process.cwd(), '.claude', 'nf.json');
 
   const globalObj = readConfigFile(globalPath);
   const projectObj = readConfigFile(projectPath);
 
   let config;
   if (!globalObj && !projectObj) {
-    process.stderr.write('[qgsd] WARNING: No qgsd.json found at ' + globalPath + ' or ' + projectPath + '; using hardcoded defaults\n');
+    process.stderr.write('[nf] WARNING: No nf.json found at ' + globalPath + ' or ' + projectPath + '; using hardcoded defaults\n');
     config = { ...DEFAULT_CONFIG };
   } else {
     config = { ...DEFAULT_CONFIG, ...(globalObj || {}), ...(projectObj || {}) };

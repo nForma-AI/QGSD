@@ -3,7 +3,7 @@ Step-by-step procedure Claude follows when the circuit breaker hook detects osci
 </purpose>
 
 <trigger>
-Triggered when: The PreToolUse circuit breaker hook emits an OSCILLATION DETECTED — PRIORITY NOTICE message (permissionDecision: 'allow' with warning reason), or when qgsd-prompt.js injects CIRCUIT BREAKER ACTIVE context at the start of a user message.
+Triggered when: The PreToolUse circuit breaker hook emits an OSCILLATION DETECTED — PRIORITY NOTICE message (permissionDecision: 'allow' with warning reason), or when nf-prompt.js injects CIRCUIT BREAKER ACTIVE context at the start of a user message.
 </trigger>
 
 <process>
@@ -63,7 +63,7 @@ Display as a table to make the A→B→A→B ping-pong pattern visually obvious:
 ## Step 4 — Quorum Diagnosis
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"circuit_breaker\",\"sub_activity\":\"oscillation_diagnosis\",\"phase\":\"${PHASE_NUMBER}\"}"
 ```
 
@@ -91,14 +91,14 @@ Apply R3.3 deliberation rules (up to 4 rounds, stop immediately on consensus).
 ## Step 5 — On Consensus
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"circuit_breaker\",\"sub_activity\":\"awaiting_approval\",\"phase\":\"${PHASE_NUMBER}\"}"
 ```
 
 Present the unified solution plan to the user with:
 - Summary of structural coupling diagnosed
 - The unified solution (files to change, what to change, why this breaks the oscillation)
-- Instructions: "To implement: [steps]. After committing the fix, run `node ~/.claude/qgsd-bin/qgsd.cjs --reset-breaker` to clear the circuit breaker."
+- Instructions: "To implement: [steps]. After committing the fix, run `node ~/.claude/nf-bin/nf.cjs --reset-breaker` to clear the circuit breaker."
 
 Wait for explicit user approval before any implementation.
 
@@ -120,7 +120,7 @@ User must make the final call.
 
 <constraints>
 - EXECUTION is single-model only (R2.2) — quorum diagnoses and plans, never executes
-- No commits to the oscillating file set until user approves the plan AND runs `node ~/.claude/qgsd-bin/qgsd.cjs --reset-breaker`
+- No commits to the oscillating file set until user approves the plan AND runs `node ~/.claude/nf-bin/nf.cjs --reset-breaker`
 - Environmental file fast-path skips quorum entirely — human escalation only
 - See CLAUDE.md R5 for the full policy definition
 </constraints>

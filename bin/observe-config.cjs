@@ -11,6 +11,10 @@ const path = require('node:path');
 const ISSUE_TYPES = ['github', 'sentry', 'sentry-feedback', 'bash'];
 // Source types that default to "drift"
 const DRIFT_TYPES = ['prometheus', 'grafana', 'logstash'];
+// Source types that default to "upstream"
+const UPSTREAM_TYPES = ['upstream'];
+// Source types that default to "deps"
+const DEPS_TYPES = ['deps'];
 
 /**
  * Parse a YAML value string into appropriate JS type
@@ -324,6 +328,10 @@ function loadObserveConfig(configPath, basePath) {
         source.issue_type = 'issue';
       } else if (DRIFT_TYPES.includes(source.type)) {
         source.issue_type = 'drift';
+      } else if (UPSTREAM_TYPES.includes(source.type)) {
+        source.issue_type = 'upstream';
+      } else if (DEPS_TYPES.includes(source.type)) {
+        source.issue_type = 'deps';
       }
     }
 

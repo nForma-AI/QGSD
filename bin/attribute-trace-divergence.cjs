@@ -70,7 +70,7 @@ function classifyDivergence(ttrace) {
 
   const recommendation = implBugConfidence >= specBugConfidence
     ? `impl-bug: check hook implementation — context field initialization or event payload mapping`
-    : `spec-bug: review XState guard "${failingGuard || 'unknown'}" in qgsd-workflow.machine.ts`;
+    : `spec-bug: review XState guard "${failingGuard || 'unknown'}" in nf-workflow.machine.ts`;
 
   return { specBugConfidence, implBugConfidence, failingGuard, recommendation, evidence };
 }

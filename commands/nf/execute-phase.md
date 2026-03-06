@@ -1,5 +1,5 @@
 ---
-name: qgsd:execute-phase
+name: nf:execute-phase
 description: Execute all plans in a phase with wave parallelization and automated checkpoint:verify gates via quorum-test.
 argument-hint: "<phase-number>"
 allowed-tools:
@@ -19,7 +19,7 @@ Execute all plans in a phase. Delegates to the gsd:execute-phase workflow for wa
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/execute-phase.md
+@~/.claude/nf/workflows/execute-phase.md
 </execution_context>
 
 <context>
@@ -31,16 +31,16 @@ Phase: $ARGUMENTS
 
 <process>
 
-Execute the execute-phase workflow from @~/.claude/qgsd/workflows/execute-phase.md end-to-end, applying the checkpoint type handling rules below at every plan step.
+Execute the execute-phase workflow from @~/.claude/nf/workflows/execute-phase.md end-to-end, applying the checkpoint type handling rules below at every plan step.
 
-## Agent Substitution (QGSD override)
+## Agent Substitution (nForma override)
 
 The GSD workflow uses GSD-specific agent types. When following that workflow, substitute:
 
-| GSD agent type (in workflow) | Use instead (QGSD) |
+| GSD agent type (in workflow) | Use instead (nForma) |
 |------------------------------|---------------------|
-| `gsd-executor` | `qgsd-executor` |
-| `gsd-verifier` | `qgsd-verifier` |
+| `gsd-executor` | `nf-executor` |
+| `gsd-verifier` | `nf-verifier` |
 
 This applies everywhere the workflow calls `Task(subagent_type="gsd-executor", ...)` or `Task(subagent_type="gsd-verifier", ...)`. All other agent types pass through unchanged.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-tlc.cjs
-// Invokes TLC model checker for the QGSD formal TLA+ specification.
+// Invokes TLC model checker for the nForma formal TLA+ specification.
 // Requirements: TLA-04
 //
 // Usage:
@@ -14,7 +14,7 @@
 //   - .planning/formal/tla/tla2tools.jar (see .planning/formal/tla/README.md for download command)
 
 const { spawnSync } = require('child_process');
-const JAVA_HEAP_MAX = process.env.QGSD_JAVA_HEAP_MAX || '512m';
+const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -298,52 +298,52 @@ if (require.main === module) {
   // Map config names to their corresponding spec files.
   // Static map for known exceptions; auto-discovery handles the rest.
   const SPEC_MAP = {
-    'MCMCPEnv':              'QGSDMCPEnv.tla',
-    'MCsafety':              'QGSDQuorum.tla',
-    'MCliveness':            'QGSDQuorum.tla',
-    'MCQGSDQuorum':          'QGSDQuorum_xstate.tla',
-    'MCrecruiting-liveness': 'QGSDRecruiting.tla',
-    'MCrecruiting-safety':   'QGSDRecruiting.tla',
+    'MCMCPEnv':              'NFMCPEnv.tla',
+    'MCsafety':              'NFQuorum.tla',
+    'MCliveness':            'NFQuorum.tla',
+    'MCNFQuorum':          'NFQuorum_xstate.tla',
+    'MCrecruiting-liveness': 'NFRecruiting.tla',
+    'MCrecruiting-safety':   'NFRecruiting.tla',
     'MCTUINavigation':       'TUINavigation.tla',
   };
 
-  // Auto-discover spec file: (1) check SPEC_MAP, (2) scan cfg header for QGSD*.tla ref,
-  // (3) try naming conventions, (4) fall back to QGSDQuorum.tla
+  // Auto-discover spec file: (1) check SPEC_MAP, (2) scan cfg header for nForma*.tla ref,
+  // (3) try naming conventions, (4) fall back to NFQuorum.tla
   function resolveSpecFile(cfgName) {
     if (SPEC_MAP[cfgName]) return SPEC_MAP[cfgName];
 
     const tlaDir = path.join(ROOT, '.planning', 'formal', 'tla');
 
-    // Strategy 1: read cfg header for QGSD*.tla reference (with or without .tla suffix)
+    // Strategy 1: read cfg header for nForma*.tla reference (with or without .tla suffix)
     try {
       const cfgContent = fs.readFileSync(path.join(tlaDir, cfgName + '.cfg'), 'utf8');
       const headerLines = cfgContent.split('\n').slice(0, 5).join('\n');
-      // Match QGSD*.tla or "for QGSD*." (without .tla extension)
-      const refMatch = headerLines.match(/QGSD\w+\.tla/) || headerLines.match(/QGSD\w+/);
+      // Match NF*.tla or "for nForma*." (without .tla extension)
+      const refMatch = headerLines.match(/NF\w+\.tla/) || headerLines.match(/NF\w+/);
       if (refMatch) {
         const candidate = refMatch[0].endsWith('.tla') ? refMatch[0] : refMatch[0] + '.tla';
         if (fs.existsSync(path.join(tlaDir, candidate))) return candidate;
       }
     } catch (_) { /* fall through */ }
 
-    // Strategy 2: naming convention — strip MC prefix, normalize hyphens, find matching QGSD*.tla
+    // Strategy 2: naming convention — strip MC prefix, normalize hyphens, find matching NF*.tla
     const stripped = cfgName.replace(/^MC/, '').toLowerCase().replace(/-/g, '');
     try {
       const allTla = fs.readdirSync(tlaDir).filter(f => f.endsWith('.tla') && !f.includes('TTrace'));
-      const qgsdFiles = allTla.filter(f => f.startsWith('QGSD'));
+      const nfFiles = allTla.filter(f => f.startsWith('NF'));
       const normalize = (s) => s.toLowerCase().replace(/-/g, '');
-      // Exact match against QGSD-prefixed files
-      const match = qgsdFiles.find(f => normalize(f.replace('QGSD', '').replace('.tla', '')) === stripped);
+      // Exact match against nForma-prefixed files
+      const match = nfFiles.find(f => normalize(f.replace('NF', '').replace('.tla', '')) === stripped);
       if (match) return match;
-      // Fuzzy substring match against QGSD-prefixed files
-      const fuzzy = qgsdFiles.find(f => normalize(f).includes(stripped));
+      // Fuzzy substring match against nForma-prefixed files
+      const fuzzy = nfFiles.find(f => normalize(f).includes(stripped));
       if (fuzzy) return fuzzy;
-      // Fallback: check non-QGSD-prefixed files (exact match on stripped name)
+      // Fallback: check non-nForma-prefixed files (exact match on stripped name)
       const nonPrefixed = allTla.find(f => normalize(f.replace('.tla', '')) === stripped);
       if (nonPrefixed) return nonPrefixed;
     } catch (_) { /* fall through */ }
 
-    return 'QGSDQuorum.tla';
+    return 'NFQuorum.tla';
   }
 
   const specFile = resolveSpecFile(configName);

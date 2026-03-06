@@ -12,7 +12,7 @@ const fs        = require('node:fs');
 const path      = require('path');
 const os        = require('os');
 
-const PLAN_PHASE_MD = '/Users/jonathanborduas/.claude/qgsd/workflows/plan-phase.md';
+const PLAN_PHASE_MD = '/Users/jonathanborduas/.claude/nf/workflows/plan-phase.md';
 
 // ── Structural tests (Tests 1-3): RED until Plan 02 implements step 8.3 ─────
 

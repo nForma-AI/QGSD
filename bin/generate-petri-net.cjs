@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // bin/generate-petri-net.cjs
-// Generates a Graphviz DOT + SVG Petri Net for the QGSD quorum token-passing model.
+// Generates a Graphviz DOT + SVG Petri Net for the nForma quorum token-passing model.
 // Requirements: PET-01, PET-02, PET-03
 //
 // Usage:
@@ -44,7 +44,7 @@ function buildDot(slots, minQuorum) {
   return [
     'digraph quorum_petri_net {',
     '  rankdir=LR;',
-    '  label="QGSD Quorum Petri Net (min_quorum=' + minQuorum + '/' + slots.length + ')";',
+    '  label="nForma Quorum Petri Net (min_quorum=' + minQuorum + '/' + slots.length + ')";',
     '  node [fontname="Helvetica"];',
     '',
     '  // Places (circles)',
@@ -158,7 +158,7 @@ function buildRoadmapDot(phases) {
   const lines = [
     'digraph roadmap_petri_net {',
     '  rankdir=LR;',
-    '  label="QGSD Roadmap Petri Net (' + phases.length + ' phases)";',
+    '  label="nForma Roadmap Petri Net (' + phases.length + ' phases)";',
     '  node [fontname="Helvetica"];',
     '',
   ];

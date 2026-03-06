@@ -13,7 +13,7 @@ test('registry schema has required top-level fields (version, last_sync, models)
     version: '1.0',
     last_sync: '2026-03-01T12:34:56.789Z',
     models: {
-      'tla/QGSDQuorum_xstate.tla': {
+      'tla/NFQuorum_xstate.tla': {
         version: 2,
         last_updated: '2026-03-01T12:34:56.789Z',
         update_source: 'generate',

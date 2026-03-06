@@ -1,5 +1,5 @@
 ---
-name: qgsd:quorum-test
+name: nf:quorum-test
 description: Run the test suite and submit the full execution bundle to quorum workers for independent quality review. Parallel workers evaluate whether tests genuinely pass and whether assertions are meaningful.
 argument-hint: "[path/to/test.file.js]"
 allowed-tools:
@@ -13,7 +13,7 @@ allowed-tools:
 <objective>
 Run the project test suite, assemble a full execution bundle, and dispatch parallel quorum workers to independently evaluate whether the tests genuinely pass and whether they are real tests.
 
-This command extends QGSD quorum from *planning* (consensus on direction) to *verification* (consensus on test quality).
+This command extends nForma quorum from *planning* (consensus on direction) to *verification* (consensus on test quality).
 </objective>
 
 <process>
@@ -70,7 +70,7 @@ If `$TEST_FILES` is empty, display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-TEST: No automated tests found
+ nForma ► QUORUM-TEST: No automated tests found
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Searched for: <$TEST_PATTERNS>
@@ -93,7 +93,7 @@ If any file is missing, display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-TEST: BLOCK (missing test files)
+ nForma ► QUORUM-TEST: BLOCK (missing test files)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Missing: <list of missing files>
@@ -128,7 +128,7 @@ Append `echo "EXIT:$?"` to capture exit code. Store full output as `$TEST_OUTPUT
 Read the full source of every file in `$TEST_FILES`. Store as `$TEST_SOURCES` — a combined block with filename headers:
 
 ```
-=== hooks/qgsd-stop.test.js ===
+=== hooks/nf-stop.test.js ===
 <full source>
 
 === hooks/config-loader.test.js ===
@@ -147,7 +147,7 @@ If exit code is non-zero, stop immediately and display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-TEST: BLOCK (test infrastructure failure)
+ nForma ► QUORUM-TEST: BLOCK (test infrastructure failure)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Tests did not run cleanly (exit code: N).
@@ -179,7 +179,7 @@ $TEST_SOURCES
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-TEST: Dispatching workers...
+ nForma ► QUORUM-TEST: Dispatching workers...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -187,7 +187,7 @@ Dispatch all four workers as parallel Task calls (Task subagents are isolated su
 
 Worker prompt template for each:
 ```
-You are a skeptical test reviewer for the QGSD project.
+You are a skeptical test reviewer for the nForma project.
 
 <bundle>
 $BUNDLE
@@ -215,7 +215,7 @@ Dispatch (each call in a single parallel message — Task subagents are isolated
 - `Task(subagent_type="general-purpose", prompt="Call mcp__copilot-1__ask with the following prompt. Pass the full literal text of the bundle inline — do not summarize or truncate: [full worker prompt with $BUNDLE inlined verbatim]")`
 - `Task(subagent_type="general-purpose", prompt="Call mcp__codex-cli-1__review with the following prompt. Pass the full literal text of the bundle inline — do not summarize or truncate: [full worker prompt with $BUNDLE inlined verbatim]")`
 
-Note: `agents/qgsd-quorum-test-worker.md` defines this same role and output format and can be invoked directly with a bundle as `$ARGUMENTS`. The parallel Task dispatch above is used when targeting specific external models (Gemini, OpenCode, Copilot, Codex) rather than a single agent.
+Note: `agents/nf-quorum-test-worker.md` defines this same role and output format and can be invoked directly with a bundle as `$ARGUMENTS`. The parallel Task dispatch above is used when targeting specific external models (Gemini, OpenCode, Copilot, Codex) rather than a single agent.
 
 **Collect verdicts and render table**
 
@@ -235,7 +235,7 @@ Display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM-TEST RESULTS
+ nForma ► QUORUM-TEST RESULTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌──────────────┬──────────────────┬─────────────────────────────────────┐

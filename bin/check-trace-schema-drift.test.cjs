@@ -19,9 +19,9 @@ test('exports checkSchemaDrift and KNOWN_EMITTERS', () => {
   assert.ok(Array.isArray(KNOWN_EMITTERS), 'KNOWN_EMITTERS should be an array');
 });
 
-test('KNOWN_EMITTERS contains bin/validate-traces.cjs and hooks/qgsd-stop.js', () => {
+test('KNOWN_EMITTERS contains bin/validate-traces.cjs and hooks/nf-stop.js', () => {
   assert.ok(KNOWN_EMITTERS.includes('bin/validate-traces.cjs'), 'should contain bin/validate-traces.cjs');
-  assert.ok(KNOWN_EMITTERS.includes('hooks/qgsd-stop.js'), 'should contain hooks/qgsd-stop.js');
+  assert.ok(KNOWN_EMITTERS.includes('hooks/nf-stop.js'), 'should contain hooks/nf-stop.js');
 });
 
 test('checkSchemaDrift([]) => pass, no-schema-change', () => {
@@ -40,7 +40,7 @@ test('checkSchemaDrift with schema + validator + emitter => pass, schema-change-
   const result = checkSchemaDrift([
     '.planning/formal/trace/trace.schema.json',
     'bin/validate-traces.cjs',
-    'hooks/qgsd-stop.js',
+    'hooks/nf-stop.js',
   ]);
   assert.strictEqual(result.status, 'pass');
   assert.strictEqual(result.reason, 'schema-change-atomic');
@@ -64,7 +64,7 @@ test('checkSchemaDrift with schema + validator only => fail, schema-drift-detect
 });
 
 test('checkSchemaDrift with schema + emitter only => fail, schema-drift-detected (validator_updated=false)', () => {
-  const result = checkSchemaDrift(['.planning/formal/trace/trace.schema.json', 'hooks/qgsd-stop.js']);
+  const result = checkSchemaDrift(['.planning/formal/trace/trace.schema.json', 'hooks/nf-stop.js']);
   assert.strictEqual(result.status, 'fail');
   assert.strictEqual(result.reason, 'schema-drift-detected');
   assert.strictEqual(result.validator_updated, false);
@@ -74,7 +74,7 @@ test('checkSchemaDrift with schema + emitter only => fail, schema-drift-detected
 // ── Integration test ──────────────────────────────────────────────────────────
 
 test('integration: node bin/check-trace-schema-drift.cjs exits 0 or 1 and writes NDJSON', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-schema-drift-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-schema-drift-test-'));
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
 
   try {

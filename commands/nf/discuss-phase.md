@@ -1,5 +1,5 @@
 ---
-name: qgsd:discuss-phase
+name: nf:discuss-phase
 description: Gather phase context through adaptive questioning before planning
 argument-hint: "<phase> [--auto]"
 allowed-tools:
@@ -25,8 +25,8 @@ Extract implementation decisions that downstream agents need — researcher and 
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/discuss-phase.md
-@~/.claude/qgsd/templates/context.md
+@~/.claude/nf/workflows/discuss-phase.md
+@~/.claude/nf/templates/context.md
 </execution_context>
 
 <context>

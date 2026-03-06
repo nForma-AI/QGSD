@@ -28,7 +28,7 @@ const DEBUG_DIR = path.join(os.homedir(), '.claude', 'debug');
 // Returns the full file path for cleanup.
 function writeSyntheticLog(lines) {
   fs.mkdirSync(DEBUG_DIR, { recursive: true });
-  const filename = `qgsd-test-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`;
+  const filename = `nf-test-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`;
   const filePath = path.join(DEBUG_DIR, filename);
   fs.writeFileSync(filePath, lines.join('\n') + '\n', 'utf8');
   return filePath;
@@ -68,15 +68,15 @@ test('TC1: --days 0 produces no qualifying files, exits 0 with appropriate messa
 });
 
 // TC2: Synthetic log file with a successful tool call → --json output contains server entry.
-// Uses --tool qgsd-tc2-svc to filter to only our synthetic server, keeping JSON output small
+// Uses --tool nf-tc2-svc to filter to only our synthetic server, keeping JSON output small
 // and avoiding pipe buffer overflow on machines with large real debug dirs.
 test('TC2: synthetic successful tool call shows up in --json serverStats', () => {
-  const serverName = 'qgsd-tc2-svc';
+  const serverName = 'nf-tc2-svc';
   const logFile = writeSyntheticLog([
     `2026-02-22T10:00:00.000Z MCP server "${serverName}": Tool 'test-tool' completed successfully in 150ms`,
   ]);
   try {
-    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'qgsd-tc2']);
+    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'nf-tc2']);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     let parsed;
     try {
@@ -100,14 +100,14 @@ test('TC2: synthetic successful tool call shows up in --json serverStats', () =>
 });
 
 // TC3: Synthetic log file with a failure → --json output shows failureCount > 0.
-// Uses --tool qgsd-tc3 filter for compact output.
+// Uses --tool nf-tc3 filter for compact output.
 test('TC3: synthetic failed tool call shows failureCount >= 1 in --json output', () => {
-  const serverName = 'qgsd-tc3-slow';
+  const serverName = 'nf-tc3-slow';
   const logFile = writeSyntheticLog([
     `2026-02-22T10:00:00.000Z MCP server "${serverName}": Tool 'slow-tool' failed after 25s: connection timeout`,
   ]);
   try {
-    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'qgsd-tc3']);
+    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'nf-tc3']);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     let parsed;
     try {
@@ -152,12 +152,12 @@ test('TC4: --tool alpha filter includes alpha-server and excludes beta-server', 
 });
 
 // TC5: Percentile logic — p50 and p95 reported correctly for 4 durations (100, 200, 300, 400ms).
-// Uses --tool qgsd-tc5 filter for compact output.
+// Uses --tool nf-tc5 filter for compact output.
 // The percentile() function: sorted=[100,200,300,400]
 //   p50: idx = ceil(0.50 * 4) - 1 = ceil(2) - 1 = 1 → sorted[1] = 200
 //   p95: idx = ceil(0.95 * 4) - 1 = ceil(3.8) - 1 = 3 → sorted[3] = 400
 test('TC5: percentile logic p50 >= 100 and p95 >= 300 for 4 durations', () => {
-  const serverName = 'qgsd-tc5-perf';
+  const serverName = 'nf-tc5-perf';
   const logFile = writeSyntheticLog([
     `2026-02-22T10:00:00.000Z MCP server "${serverName}": Tool 'tool-a' completed successfully in 100ms`,
     `2026-02-22T10:00:01.000Z MCP server "${serverName}": Tool 'tool-b' completed successfully in 200ms`,
@@ -165,7 +165,7 @@ test('TC5: percentile logic p50 >= 100 and p95 >= 300 for 4 durations', () => {
     `2026-02-22T10:00:03.000Z MCP server "${serverName}": Tool 'tool-d' completed successfully in 400ms`,
   ]);
   try {
-    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'qgsd-tc5']);
+    const { stdout, exitCode } = runCLI(['--json', '--days', '1', '--tool', 'nf-tc5']);
     assert.strictEqual(exitCode, 0, 'exit code must be 0');
     let parsed;
     try {

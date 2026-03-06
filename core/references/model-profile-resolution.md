@@ -12,14 +12,14 @@ Default: `balanced` if not set or config missing.
 
 ## Lookup Table
 
-@~/.claude/qgsd/references/model-profiles.md
+@~/.claude/nf/references/model-profiles.md
 
 Look up the agent in the table for the resolved profile. Pass the model parameter to Task calls:
 
 ```
 Task(
   prompt="...",
-  subagent_type="qgsd-planner",
+  subagent_type="nf-planner",
   model="{resolved_model}",  # "inherit", "sonnet", or "haiku"
   description="[descriptive label for this sub-agent]"
 )

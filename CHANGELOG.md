@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to QGSD will be documented in this file.
+All notable changes to nForma will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -9,7 +9,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.2.1] - 2026-03-03
 
 ### Fixed
-- **Update checker scope** — `qgsd-check-update` hook was still querying `@langblaze.ai/qgsd`; now correctly queries `@nforma.ai/qgsd`
+- **Update checker scope** — `nf-check-update` hook was still querying `@nforma.ai/nforma`; now correctly queries `@nforma.ai/nforma`
 
 ### Added
 - **Memory staleness check** — Session-start hook warns about outdated MEMORY.md entries via `bin/validate-memory.cjs`
@@ -24,14 +24,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Package size reduced 25%** — 606.7 kB → 453.0 kB via expanded `.npmignore` and `files` negation patterns
 - **Package files reduced 35%** — 258 → 169 files; all 87 test files and 4 dev-only scripts excluded from tarball
 - **Author updated** — `TÂCHES` → `nForma AI`
-- **Stale peerDependency removed** — `get-shit-done-cc` no longer required (bundled in `qgsd-core/`)
+- **Stale peerDependency removed** — `get-shit-done-cc` no longer required (bundled in `core/`)
 - **package-lock.json scope** — Cleared all `@langblaze.ai` references to `@nforma.ai`
 - **Git remote** — Updated from `LangBlaze-AI/QGSD` to `nForma-AI/QGSD`
 
 ## [0.2.0] - 2026-02-21
 
 ### Added
-- **Circuit breaker hook** (`hooks/qgsd-circuit-breaker.js`) — PreToolUse hook that detects
+- **Circuit breaker hook** (`hooks/nf-circuit-breaker.js`) — PreToolUse hook that detects
   oscillation in git history (strict set equality across the last N commits) and persists
   breaker state to `.claude/circuit-breaker-state.json`; survives across tool calls
 - **Enforcement blocking** — When the circuit breaker is active, any non-read-only Bash
@@ -40,14 +40,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Oscillation Resolution Mode** — Deny message renders the commit graph as a markdown table
   and explicitly invokes Oscillation Resolution Mode per R5 (CLAUDE.md); procedure detailed
   in `get-shit-done/workflows/oscillation-resolution-mode.md`
-- **`circuit_breaker` config block** — `qgsd.json` extended with `circuit_breaker.oscillation_depth`
+- **`circuit_breaker` config block** — `nf.json` extended with `circuit_breaker.oscillation_depth`
   (default: 3) and `circuit_breaker.commit_window` (default: 6); validated on load with
   stderr warnings for invalid values; two-layer merge (global + per-project) applies
-- **`npx qgsd --reset-breaker`** — CLI flag clears `.claude/circuit-breaker-state.json`
+- **`npx nforma --reset-breaker`** — CLI flag clears `.claude/circuit-breaker-state.json`
   (project-relative, resolved via git rev-parse) enabling manual recovery from deadlock
-- **Installer auto-registers circuit breaker hook** — `npx qgsd@latest` now writes a
-  PreToolUse entry for `qgsd-circuit-breaker.js` in `~/.claude/settings.json` and writes
-  the default `circuit_breaker` config block to `~/.claude/qgsd.json`; reinstall is
+- **Installer auto-registers circuit breaker hook** — `npx nforma@latest` now writes a
+  PreToolUse entry for `nf-circuit-breaker.js` in `~/.claude/settings.json` and writes
+  the default `circuit_breaker` config block to `~/.claude/nf.json`; reinstall is
   idempotent (existing user values are never overwritten)
 - **QGSD rebranding** — Package renamed to `qgsd`; banner updated to "QGSD: Quorum Gets Shit
   Done" with salmon Q; all commands use `/qgsd:` prefix; hooks updated to match both
@@ -68,36 +68,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **User Guide updated** — Execution Wave Coordination diagram includes checkpoint:verify
   pipeline (quick task 7)
 - **`--redetect-mcps` flag** — Re-runs MCP prefix detection and overwrites
-  `~/.claude/qgsd.json` without a full reinstall
+  `~/.claude/nf.json` without a full reinstall
 
 ### Fixed
 - **GUARD 5 delivery gaps** — `hooks/dist/` rebuilt to include Phase 4 GUARD 5 code
   (`hasArtifactCommit` + `hasDecisionMarker`); `buildQuorumInstructions()` in `bin/install.js`
   now appends the `<!-- GSD_DECISION -->` marker step so installer-written configs trigger
-  `hasDecisionMarker()` correctly; `templates/qgsd.json` updated to match
+  `hasDecisionMarker()` correctly; `templates/nf.json` updated to match
 - **Installer uninstall dead hook** (INST-08) — `uninstall()` now removes the PreToolUse
   circuit breaker hook entry from `~/.claude/settings.json`, mirroring the existing Stop
   and UserPromptSubmit removal pattern
 - **`--reset-breaker` path resolution** (RECV-01) — Uses `git rev-parse --show-toplevel`
-  with `process.cwd()` fallback, consistent with how `qgsd-circuit-breaker.js` resolves
+  with `process.cwd()` fallback, consistent with how `nf-circuit-breaker.js` resolves
   the git root
 - **Installer sub-key backfill** (INST-10) — Uses `=== undefined` check (not falsy) to
   preserve user-set values including `0`; `validateConfig()` handles runtime validation
 
 ## [0.1.0] - 2026-02-20
 
-### QGSD — Initial Release
+### nForma — Initial Release
 
 QGSD adds multi-model quorum enforcement to GSD via Claude Code hooks. It installs
 alongside GSD without modifying any GSD source files.
 
 **GSD compatibility:** `get-shit-done-cc >= 1.20.0`
 
-**Files installed into `~/.claude/` by QGSD:**
-- `hooks/qgsd-stop.js` — Stop hook: reads transcript JSONL, blocks if quorum evidence missing
-- `hooks/qgsd-prompt.js` — UserPromptSubmit hook: injects quorum instructions before planning commands
-- `hooks/config-loader.js` — Shared config loader: two-layer merge (global + per-project qgsd.json)
-- `qgsd.json` — Quorum config with MCP-auto-detected tool prefixes
+**Files installed into `~/.claude/` by nForma:**
+- `hooks/nf-stop.js` — Stop hook: reads transcript JSONL, blocks if quorum evidence missing
+- `hooks/nf-prompt.js` — UserPromptSubmit hook: injects quorum instructions before planning commands
+- `hooks/config-loader.js` — Shared config loader: two-layer merge (global + per-project nf.json)
+- `nf.json` — Quorum config with MCP-auto-detected tool prefixes
 
 **SYNC-04 audit (no GSD source modifications):**
 QGSD adds only the files listed above. Zero imports from GSD internals
@@ -106,7 +106,7 @@ QGSD adds only the files listed above. Zero imports from GSD internals
 **SYNC-02 maintenance note:**
 When GSD adds a new planning command, update `quorum_commands` in three places:
 `hooks/config-loader.js` (DEFAULT_CONFIG), `bin/install.js` (qgsd config write block),
-and `templates/qgsd.json`. Then cut a QGSD patch release.
+and `templates/nf.json`. Then cut a nForma patch release.
 
 ## [1.20.5] - 2026-02-19
 

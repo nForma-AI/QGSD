@@ -46,7 +46,7 @@ The document should describe what you want to build.
 **MANDATORY FIRST STEP — Execute these checks before ANY user interaction:**
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init new-project)
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init new-project)
 ```
 
 Parse JSON for: `researcher_model`, `synthesizer_model`, `roadmapper_model`, `commit_docs`, `project_exists`, `has_codebase_map`, `planning_exists`, `has_existing_code`, `has_package_file`, `is_brownfield`, `needs_codebase_map`, `has_git`, `project_path`.
@@ -188,13 +188,13 @@ Create `.planning/config.json` with mode set to "yolo":
 
 ```bash
 mkdir -p .planning
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
+node ~/.claude/nf/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
 ```
 
 **Persist auto-advance to config (survives context compaction):**
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.auto_advance true
+node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.auto_advance true
 ```
 
 Proceed to Step 4 (skip Steps 3 and 5).
@@ -207,7 +207,7 @@ Proceed to Step 4 (skip Steps 3 and 5).
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUESTIONING
+ nForma ► QUESTIONING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -338,7 +338,7 @@ Do not compress. Capture everything gathered.
 
 ```bash
 mkdir -p .planning
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: initialize project" --files .planning/PROJECT.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: initialize project" --files .planning/PROJECT.md
 ```
 
 ## 5. Workflow Preferences
@@ -490,7 +490,7 @@ Create `.planning/config.json` with all settings:
 **Commit config.json:**
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
+node ~/.claude/nf/bin/gsd-tools.cjs commit "chore: add project config" --files .planning/config.json
 ```
 
 **Note:** Run `/nf:settings` anytime to update these preferences.
@@ -515,7 +515,7 @@ Use AskUserQuestion:
 Display stage banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► RESEARCHING
+ nForma ► RESEARCHING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Researching [domain] ecosystem...
@@ -541,10 +541,10 @@ Display spawning indicator:
   → Pitfalls research
 ```
 
-Spawn 4 parallel qgsd-project-researcher agents with path references:
+Spawn 4 parallel nf-project-researcher agents with path references:
 
 ```
-Task(prompt="First, read ~/.claude/agents/qgsd-project-researcher.md for your role and instructions.
+Task(prompt="First, read ~/.claude/agents/nf-project-researcher.md for your role and instructions.
 
 <research_type>
 Project Research — Stack dimension for [domain].
@@ -580,11 +580,11 @@ Your STACK.md feeds into roadmap creation. Be prescriptive:
 
 <output>
 Write to: .planning/research/STACK.md
-Use template: ~/.claude/qgsd/templates/research-project/STACK.md
+Use template: ~/.claude/nf/templates/research-project/STACK.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Stack research")
 
-Task(prompt="First, read ~/.claude/agents/qgsd-project-researcher.md for your role and instructions.
+Task(prompt="First, read ~/.claude/agents/nf-project-researcher.md for your role and instructions.
 
 <research_type>
 Project Research — Features dimension for [domain].
@@ -620,11 +620,11 @@ Your FEATURES.md feeds into requirements definition. Categorize clearly:
 
 <output>
 Write to: .planning/research/FEATURES.md
-Use template: ~/.claude/qgsd/templates/research-project/FEATURES.md
+Use template: ~/.claude/nf/templates/research-project/FEATURES.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Features research")
 
-Task(prompt="First, read ~/.claude/agents/qgsd-project-researcher.md for your role and instructions.
+Task(prompt="First, read ~/.claude/agents/nf-project-researcher.md for your role and instructions.
 
 <research_type>
 Project Research — Architecture dimension for [domain].
@@ -660,11 +660,11 @@ Your ARCHITECTURE.md informs phase structure in roadmap. Include:
 
 <output>
 Write to: .planning/research/ARCHITECTURE.md
-Use template: ~/.claude/qgsd/templates/research-project/ARCHITECTURE.md
+Use template: ~/.claude/nf/templates/research-project/ARCHITECTURE.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Architecture research")
 
-Task(prompt="First, read ~/.claude/agents/qgsd-project-researcher.md for your role and instructions.
+Task(prompt="First, read ~/.claude/agents/nf-project-researcher.md for your role and instructions.
 
 <research_type>
 Project Research — Pitfalls dimension for [domain].
@@ -700,7 +700,7 @@ Your PITFALLS.md prevents mistakes in roadmap/planning. For each pitfall:
 
 <output>
 Write to: .planning/research/PITFALLS.md
-Use template: ~/.claude/qgsd/templates/research-project/PITFALLS.md
+Use template: ~/.claude/nf/templates/research-project/PITFALLS.md
 </output>
 ", subagent_type="general-purpose", model="{researcher_model}", description="Pitfalls research")
 ```
@@ -722,16 +722,16 @@ Synthesize research outputs into SUMMARY.md.
 
 <output>
 Write to: .planning/research/SUMMARY.md
-Use template: ~/.claude/qgsd/templates/research-project/SUMMARY.md
+Use template: ~/.claude/nf/templates/research-project/SUMMARY.md
 Commit after writing.
 </output>
-", subagent_type="qgsd-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
+", subagent_type="nf-research-synthesizer", model="{synthesizer_model}", description="Synthesize research")
 ```
 
 Display research complete banner and key findings:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► RESEARCH COMPLETE ✓
+ nForma ► RESEARCH COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## Key Findings
@@ -793,7 +793,7 @@ Present baseline requirements for opt-out:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► BASELINE REQUIREMENTS
+ nForma ► BASELINE REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Profile: [label] | [N] baseline requirements across [M] categories
@@ -830,7 +830,7 @@ Store `BASELINE_KEPT` and `BASELINE_REMOVED` for use in Step 7.
 Display stage banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► DEFINING REQUIREMENTS
+ nForma ► DEFINING REQUIREMENTS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -933,7 +933,7 @@ Add a `## Baseline Requirements` section BEFORE the project-specific `## v1 Requ
 ```markdown
 ## Baseline Requirements
 
-*Included from QGSD baseline defaults (profile: [profile]). These are non-functional quality requirements.*
+*Included from nForma baseline defaults (profile: [profile]). These are non-functional quality requirements.*
 
 ### [Category 1]
 - [x] **UX-01**: [text]
@@ -991,7 +991,7 @@ If "adjust": Return to scoping.
 **Commit requirements:**
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: define v1 requirements" --files .planning/REQUIREMENTS.md
 ```
 
 **Sync baselines into formal envelope:**
@@ -1007,7 +1007,7 @@ This merges baseline requirements into the formal envelope with idempotent text 
 If any requirements were added, commit:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .planning/formal/requirements.json
+node ~/.claude/nf/bin/gsd-tools.cjs commit "req(baseline): sync baseline requirements into formal envelope" --files .planning/formal/requirements.json
 ```
 
 ## 8. Create Roadmap
@@ -1015,13 +1015,13 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync baseline requi
 Display stage banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► CREATING ROADMAP
+ nForma ► CREATING ROADMAP
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning roadmapper...
 ```
 
-Spawn qgsd-roadmapper agent with path references:
+Spawn nf-roadmapper agent with path references:
 
 ```
 Task(prompt="
@@ -1047,7 +1047,7 @@ Create roadmap:
 
 Write files first, then return. This ensures artifacts persist even if context is lost.
 </instructions>
-", subagent_type="qgsd-roadmapper", model="{roadmapper_model}", description="Create roadmap")
+", subagent_type="nf-roadmapper", model="{roadmapper_model}", description="Create roadmap")
 ```
 
 **Handle roadmapper return:**
@@ -1127,7 +1127,7 @@ Use AskUserQuestion:
   Update the roadmap based on feedback. Edit files in place.
   Return ROADMAP REVISED with changes made.
   </revision>
-  ", subagent_type="qgsd-roadmapper", model="{roadmapper_model}", description="Revise roadmap")
+  ", subagent_type="nf-roadmapper", model="{roadmapper_model}", description="Revise roadmap")
   ```
 - Present revised roadmap
 - Loop until user approves
@@ -1137,7 +1137,7 @@ Use AskUserQuestion:
 **Commit roadmap (after approval or auto mode):**
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs: create roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: create roadmap ([N] phases)" --files .planning/ROADMAP.md .planning/STATE.md .planning/REQUIREMENTS.md
 ```
 
 ## 9. Done
@@ -1146,7 +1146,7 @@ Present completion summary:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PROJECT INITIALIZED ✓
+ nForma ► PROJECT INITIALIZED ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **[Project Name]**
@@ -1165,8 +1165,8 @@ Present completion summary:
 **Auto-advance check:**
 
 ```bash
-AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
-FIRST_PHASE=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase 1 2>/dev/null | jq -r '.phase_number // "1"')
+AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+FIRST_PHASE=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase 1 2>/dev/null | jq -r '.phase_number // "1"')
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -1174,14 +1174,14 @@ FIRST_PHASE=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap get-phase 1 2>/dev/n
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-ADVANCING TO PLAN PHASE 1
+ nForma ► AUTO-ADVANCING TO PLAN PHASE 1
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Roadmap complete. Spawning plan-phase...
 ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-set \
+node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"new_project\",\"sub_activity\":\"plan_phase_1\"}"
 ```
 
@@ -1197,7 +1197,7 @@ Task(
 - **PLANNING COMPLETE** → Display:
   ```
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   QGSD ► PHASE 1 PLANNED ✓
+   nForma ► PHASE 1 PLANNED ✓
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Auto-advance pipeline finished.
@@ -1213,7 +1213,7 @@ Task(
   ```
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
+node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 ```
 
 **If neither `--auto` nor `AUTO_CFG` enabled:**
@@ -1270,7 +1270,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs activity-clear
 - [ ] User scoped each category (v1/v2/out of scope)
 - [ ] REQUIREMENTS.md includes Baseline Requirements section with kept/removed tracking → **committed**
 - [ ] REQUIREMENTS.md includes project-specific requirements with REQ-IDs → **committed**
-- [ ] qgsd-roadmapper spawned with context
+- [ ] nf-roadmapper spawned with context
 - [ ] Roadmap files written immediately (not draft)
 - [ ] User feedback incorporated (if any)
 - [ ] ROADMAP.md created with phases, requirement mappings, success criteria

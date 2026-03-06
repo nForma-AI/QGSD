@@ -68,7 +68,7 @@ function parseTraceability(content) {
 }
 
 // Extract milestone from document title
-// Matches: # Requirements: QGSD vX.XX ... or similar
+// Matches: # Requirements: nForma vX.XX ... or similar
 function extractMilestone(content) {
   const match = content.match(/#\s+Requirements:.*?(v[\d.]+)/);
   return match ? match[1] : 'unknown';

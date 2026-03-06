@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-session-start.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-session-start.test.js
+// Test suite for hooks/nf-session-start.js
+// Uses Node.js built-in test runner: node --test hooks/nf-session-start.test.js
 //
 // All tests spawn the hook as a child process with a mock stdin JSON payload.
 // The hook has no exports — only subprocess integration tests are possible.
@@ -15,14 +15,14 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-session-start.js');
+const HOOK_PATH = path.join(__dirname, 'nf-session-start.js');
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeTmpDir() {
   const dir = path.join(
     os.tmpdir(),
-    'qgsd-ss-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    'nf-ss-' + Date.now() + '-' + Math.random().toString(36).slice(2)
   );
   fs.mkdirSync(dir, { recursive: true });
   return dir;
@@ -73,7 +73,7 @@ function readPendingFixes(dir) {
 // ─── Subprocess integration tests ───────────────────────────────────────────
 
 test('valid empty JSON stdin → exits 0 (secrets not found, silently skips)', () => {
-  // Pass a cwd that is not a QGSD repo so telemetry branch also skips.
+  // Pass a cwd that is not a nForma repo so telemetry branch also skips.
   const tmpDir = makeTmpDir();
   const { exitCode, stderr } = runHook({ cwd: tmpDir });
   assert.equal(exitCode, 0, 'hook must exit 0 even when secrets module is absent');
@@ -105,7 +105,7 @@ test('empty stdin → exits 0 (fail-open)', () => {
 
 test('telemetry: unsurfaced issue with priority >= 50 → outputs additionalContext and marks issue surfaced', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-001',
@@ -154,7 +154,7 @@ test('telemetry: unsurfaced issue with priority >= 50 → outputs additionalCont
 
 test('telemetry: issue already surfaced (surfaced=true) → no additionalContext output', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-002',
@@ -175,7 +175,7 @@ test('telemetry: issue already surfaced (surfaced=true) → no additionalContext
 
 test('telemetry: priority below 50 → no additionalContext output', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-003',
@@ -194,7 +194,7 @@ test('telemetry: priority below 50 → no additionalContext output', () => {
 
 test('telemetry: priority exactly 50 → outputs additionalContext (boundary value)', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-004',
@@ -216,13 +216,13 @@ test('telemetry: priority exactly 50 → outputs additionalContext (boundary val
   );
 });
 
-test('non-QGSD repo (package.json name != "qgsd") → no telemetry output', () => {
+test('non-nForma repo (package.json name != "nforma") → no telemetry output', () => {
   const tmpDir = makeTmpDir();
   writePackageJson(tmpDir, 'some-other-project');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-005',
-      description: 'Should never be surfaced in non-QGSD repo',
+      description: 'Should never be surfaced in non-nForma repo',
       action: 'N/A',
       priority: 99,
       surfaced: false,
@@ -232,20 +232,20 @@ test('non-QGSD repo (package.json name != "qgsd") → no telemetry output', () =
   const { exitCode, stdout } = runHook({ cwd: tmpDir });
 
   assert.equal(exitCode, 0, 'hook must exit 0');
-  assert.equal(stdout.trim(), '', 'stdout must be empty for non-QGSD repo');
+  assert.equal(stdout.trim(), '', 'stdout must be empty for non-nForma repo');
 
   // Verify the file was NOT modified (issue.surfaced remains false).
   const unchanged = readPendingFixes(tmpDir);
   assert.equal(
     unchanged.issues[0].surfaced,
     false,
-    'issue.surfaced must remain false when repo is not QGSD'
+    'issue.surfaced must remain false when repo is not nForma'
   );
 });
 
 test('missing .planning/telemetry/pending-fixes.json → exits 0 silently', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   // Do NOT write pending-fixes.json — directory does not even exist.
 
   const { exitCode, stdout, stderr } = runHook({ cwd: tmpDir });
@@ -260,7 +260,7 @@ test('missing .planning/telemetry/pending-fixes.json → exits 0 silently', () =
 
 test('telemetry: multiple issues, only first unsurfaced high-priority one is surfaced', () => {
   const tmpDir = makeTmpDir();
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-low',
@@ -317,7 +317,7 @@ test('telemetry: multiple issues, only first unsurfaced high-priority one is sur
 
 test('cwd field absent in stdin JSON → exits 0 (defaults to process.cwd, no crash)', () => {
   // Pass an object with no cwd field. The hook should default to process.cwd()
-  // and not crash regardless of whether that directory has a QGSD package.json.
+  // and not crash regardless of whether that directory has a nForma package.json.
   const { exitCode } = runHook({});
   assert.equal(exitCode, 0, 'hook must exit 0 when cwd is absent from stdin');
 });
@@ -325,7 +325,7 @@ test('cwd field absent in stdin JSON → exits 0 (defaults to process.cwd, no cr
 test('stdout is either empty or valid JSON (never partial/corrupt output)', () => {
   const tmpDir = makeTmpDir();
   // Repo with a surfaceable issue to exercise the stdout write path.
-  writePackageJson(tmpDir, 'qgsd');
+  writePackageJson(tmpDir, 'nforma');
   writePendingFixes(tmpDir, [
     {
       id: 'fix-json-integrity',

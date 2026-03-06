@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// hooks/qgsd-slot-correlator.js
-// SubagentStart hook — writes a correlation placeholder file for qgsd-quorum-slot-worker subagents.
+// hooks/nf-slot-correlator.js
+// SubagentStart hook — writes a correlation placeholder file for nf-quorum-slot-worker subagents.
 //
 // At SubagentStart time, the prompt/slot name is not available in the hook payload.
 // This hook writes a stub correlation file { agent_id, ts, slot: null } so the
@@ -8,7 +8,7 @@
 // The slot is resolved from last_assistant_message preamble by the token collector.
 //
 // Guards:
-//   - Only processes agent_type === 'qgsd-quorum-slot-worker' (exits 0 otherwise)
+//   - Only processes agent_type === 'nf-quorum-slot-worker' (exits 0 otherwise)
 //   - If agent_id is absent: exits 0 gracefully
 //   - Fail-open: any unhandled error exits 0
 
@@ -25,8 +25,8 @@ function main() {
     try {
       const input = JSON.parse(raw);
 
-      // Guard: only process qgsd-quorum-slot-worker subagents
-      if (input.agent_type !== 'qgsd-quorum-slot-worker') {
+      // Guard: only process nf-quorum-slot-worker subagents
+      if (input.agent_type !== 'nf-quorum-slot-worker') {
         process.exit(0);
       }
 

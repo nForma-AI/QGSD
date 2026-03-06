@@ -1,5 +1,5 @@
 ---
-name: qgsd:pause-work
+name: nf:pause-work
 description: Create context handoff when pausing work mid-phase
 allowed-tools:
   - Read
@@ -19,7 +19,7 @@ Routes to the pause-work workflow which handles:
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/pause-work.md
+@~/.claude/nf/workflows/pause-work.md
 </execution_context>
 
 <context>
@@ -27,7 +27,7 @@ State and phase progress are gathered in-workflow with targeted reads.
 </context>
 
 <process>
-**Follow the pause-work workflow** from `@~/.claude/qgsd/workflows/pause-work.md`.
+**Follow the pause-work workflow** from `@~/.claude/nf/workflows/pause-work.md`.
 
 The workflow handles all logic including:
 1. Phase directory detection

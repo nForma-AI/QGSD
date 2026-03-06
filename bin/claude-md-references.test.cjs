@@ -12,22 +12,22 @@ const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 
-// Root of the QGSD repository (two levels up from bin/)
+// Root of the nForma repository (two levels up from bin/)
 const REPO_ROOT = path.join(__dirname, '..');
 
 // Files to audit for CLAUDE.md file-read instructions
 const FILES_TO_AUDIT = [
-  'qgsd-core/workflows/execute-phase.md',
-  'qgsd-core/workflows/plan-phase.md',
-  'qgsd-core/workflows/quick.md',
-  'agents/qgsd-executor.md',
-  'agents/qgsd-phase-researcher.md',
-  'agents/qgsd-plan-checker.md',
-  'agents/qgsd-planner.md',
-  'agents/qgsd-quorum-worker.md',
-  'agents/qgsd-quorum-slot-worker.md',
-  'commands/qgsd/quick.md',
-  'commands/qgsd/quorum.md',
+  'core/workflows/execute-phase.md',
+  'core/workflows/plan-phase.md',
+  'core/workflows/quick.md',
+  'agents/nf-executor.md',
+  'agents/nf-phase-researcher.md',
+  'agents/nf-plan-checker.md',
+  'agents/nf-planner.md',
+  'agents/nf-quorum-worker.md',
+  'agents/nf-quorum-slot-worker.md',
+  'commands/nf/quick.md',
+  'commands/nf/quorum.md',
 ];
 
 // FILE_READ_PATTERN — matches lines that instruct reading CLAUDE.md as a file:

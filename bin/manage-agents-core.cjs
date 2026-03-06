@@ -4,7 +4,7 @@
  * Pure functions and shared helpers for manage-agents CLI and blessed TUI.
  * No interactive dependencies (inquirer, blessed). This module provides:
  * - File I/O helpers: readClaudeJson, writeClaudeJson, readProvidersJson, writeProvidersJson
- * - Configuration parsing: readQgsdJson, readCcrConfigSafe, getGlobalMcpServers
+ * - Configuration parsing: readNfJson, readCcrConfigSafe, getGlobalMcpServers
  * - Provider management: fetchProviderModels, probeProviderUrl, probeAllSlots, liveDashboard
  * - Pure transformation functions exported in _pure namespace
  *
@@ -23,9 +23,9 @@ const { updateAgents, getUpdateStatuses } = require('./update-agents.cjs');
 // File paths
 const CLAUDE_JSON_PATH = path.join(os.homedir(), '.claude.json');
 const CLAUDE_JSON_TMP = CLAUDE_JSON_PATH + '.tmp';
-const QGSD_JSON_PATH = path.join(os.homedir(), '.claude', 'qgsd.json');
+const NF_JSON_PATH = path.join(os.homedir(), '.claude', 'nf.json');
 const CCR_CONFIG_PATH = path.join(os.homedir(), '.claude-code-router', 'config.json');
-const UPDATE_LOG_PATH = path.join(os.homedir(), '.claude', 'qgsd-update.log');
+const UPDATE_LOG_PATH = path.join(os.homedir(), '.claude', 'nf-update.log');
 const PROVIDERS_JSON_PATH = path.join(__dirname, 'providers.json');
 const PROVIDERS_JSON_TMP = PROVIDERS_JSON_PATH + '.tmp';
 
@@ -145,7 +145,7 @@ function probeProviderUrl(baseUrl, apiKey) {
         headers: {
           'Authorization': apiKey ? `Bearer ${apiKey}` : '',
           'Accept': 'application/json',
-          'User-Agent': 'qgsd-manage-agents/1.0',
+          'User-Agent': 'nf-manage-agents/1.0',
         },
         timeout: 7000,
       },
@@ -185,17 +185,17 @@ function classifyProbeResult(probeResult) {
 }
 
 /**
- * Write key validity status to qgsd.json under agent_config[slotName].key_status.
+ * Write key validity status to nf.json under agent_config[slotName].key_status.
  */
 function writeKeyStatus(slotName, status, filePath) {
-  const qgsd = readQgsdJson(filePath);
-  if (!qgsd.agent_config) qgsd.agent_config = {};
-  if (!qgsd.agent_config[slotName]) qgsd.agent_config[slotName] = {};
-  qgsd.agent_config[slotName].key_status = {
+  const nfCfg = readNfJson(filePath);
+  if (!nf.agent_config) nf.agent_config = {};
+  if (!nf.agent_config[slotName]) nf.agent_config[slotName] = {};
+  nf.agent_config[slotName].key_status = {
     status,
     checkedAt: new Date().toISOString(),
   };
-  writeQgsdJson(qgsd, filePath);
+  writeNfJson(nfCfg, filePath);
 }
 
 /**
@@ -214,7 +214,7 @@ function formatTimestamp(ts) {
  */
 function buildDashboardLines(slots, mcpServers, healthMap, lastUpdated) {
   const lines = [];
-  lines.push('  QGSD Live Health Dashboard');
+  lines.push('  nForma Live Health Dashboard');
   lines.push('  ' + '\u2500'.repeat(60));
   lines.push('');
 
@@ -324,11 +324,11 @@ function writeProvidersJson(data) {
 }
 
 // ---------------------------------------------------------------------------
-// QGSD JSON helpers
+// nForma JSON helpers
 // ---------------------------------------------------------------------------
 
-function readQgsdJson(filePath) {
-  const p = filePath || QGSD_JSON_PATH;
+function readNfJson(filePath) {
+  const p = filePath || NF_JSON_PATH;
   if (!fs.existsSync(p)) return {};
   try {
     return JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -337,19 +337,19 @@ function readQgsdJson(filePath) {
   }
 }
 
-function writeQgsdJson(data, filePath) {
-  const p = filePath || QGSD_JSON_PATH;
+function writeNfJson(data, filePath) {
+  const p = filePath || NF_JSON_PATH;
   const tmp = p + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
   fs.renameSync(tmp, p);
 }
 
 function writeUpdatePolicy(slotName, policy, filePath) {
-  const qgsd = readQgsdJson(filePath);
-  if (!qgsd.agent_config) qgsd.agent_config = {};
-  if (!qgsd.agent_config[slotName]) qgsd.agent_config[slotName] = {};
-  qgsd.agent_config[slotName].update_policy = policy;
-  writeQgsdJson(qgsd, filePath);
+  const nfCfg = readNfJson(filePath);
+  if (!nf.agent_config) nf.agent_config = {};
+  if (!nf.agent_config[slotName]) nf.agent_config[slotName] = {};
+  nf.agent_config[slotName].update_policy = policy;
+  writeNfJson(nfCfg, filePath);
 }
 
 // ---------------------------------------------------------------------------
@@ -392,11 +392,11 @@ function applyKeyUpdate(updates, keytarAccount, newEnv, secretsLib) {
   if (!('apiKey' in updates)) return newEnv;
   if (updates.apiKey === '__REMOVE__') {
     delete newEnv.ANTHROPIC_API_KEY;
-    if (secretsLib) secretsLib.delete('qgsd', keytarAccount);
+    if (secretsLib) secretsLib.delete('nforma', keytarAccount);
   } else {
     delete newEnv.ANTHROPIC_API_KEY;
     if (secretsLib) {
-      secretsLib.set('qgsd', keytarAccount, updates.apiKey);
+      secretsLib.set('nforma', keytarAccount, updates.apiKey);
     } else {
       newEnv.ANTHROPIC_API_KEY = updates.apiKey;
     }
@@ -406,11 +406,11 @@ function applyKeyUpdate(updates, keytarAccount, newEnv, secretsLib) {
 
 async function applyCcrProviderUpdate(subAction, selectedKey, keyValue, secretsLib) {
   if (subAction === 'set') {
-    await secretsLib.set('qgsd', selectedKey, keyValue);
+    await secretsLib.set('nforma', selectedKey, keyValue);
     return { action: 'set', key: selectedKey };
   }
   if (subAction === 'remove') {
-    await secretsLib.delete('qgsd', selectedKey);
+    await secretsLib.delete('nforma', selectedKey);
     return { action: 'remove', key: selectedKey };
   }
   return null;
@@ -611,7 +611,7 @@ function validateImportSchema(parsed) {
 // ---------------------------------------------------------------------------
 
 /**
- * Probe a single slot and persist key_status to qgsd.json if the provider responded.
+ * Probe a single slot and persist key_status to nf.json if the provider responded.
  * Does NOT persist for timeout/network errors (statusCode is null) -- this is
  * a provider/network issue, not a key validity issue.
  * @param {string} slotName - MCP server slot name (e.g. 'claude-1')
@@ -642,7 +642,7 @@ async function probeAllSlots(mcpServers, slots, secretsLib) {
     let apiKey = env.ANTHROPIC_API_KEY || '';
     if (secretsLib) {
       try {
-        const k = await secretsLib.get('qgsd', account);
+        const k = await secretsLib.get('nforma', account);
         if (k) apiKey = k;
       } catch (_) {}
     }
@@ -654,9 +654,9 @@ async function probeAllSlots(mcpServers, slots, secretsLib) {
 
 async function runAutoUpdateCheck(getStatusesFn = getUpdateStatuses) {
   const check = async () => {
-    let qgsd;
-    try { qgsd = readQgsdJson(); } catch { return; }
-    const agentConfig = qgsd.agent_config || {};
+    let nfCfg;
+    try { nfCfg = readNfJson(); } catch { return; }
+    const agentConfig = nf.agent_config || {};
     const autoSlots = Object.keys(agentConfig).filter(
       (s) => agentConfig[s] && agentConfig[s].update_policy === 'auto'
     );
@@ -777,8 +777,8 @@ module.exports._pure = {
   buildAgentChoiceLabel,
   applyKeyUpdate,
   applyCcrProviderUpdate,
-  readQgsdJson,
-  writeQgsdJson,
+  readNfJson,
+  writeNfJson,
   slotToFamily,
   getWlDisplay,
   readCcrConfigSafe,

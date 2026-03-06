@@ -169,9 +169,9 @@ describe('ENF-03 fail-open: graceful degradation', () => {
 //
 // Previously known spec issues (fixed in v0.24-01 TLA+ spec fixes):
 // - deliberation: MCdeliberation.cfg reclassified temporal formulas INVARIANT→PROPERTY
-// - oscillation: QGSDOscillation.tla Naturals→Integers for unary minus
-// - convergence: QGSDConvergence.tla added vars definition + reclassified temporal properties
-// - mcp-calls: QGSDMCPEnv.tla added Done stuttering step for terminal DECIDED state
+// - oscillation: NFOscillation.tla Naturals→Integers for unary minus
+// - convergence: NFConvergence.tla added vars definition + reclassified temporal properties
+// - mcp-calls: NFMCPEnv.tla added Done stuttering step for terminal DECIDED state
 //
 // All 4 modules now pass TLC clean and are promoted to the must-pass regression path.
 // ═══════════════════════════════════════════════════════════════════════════
@@ -332,7 +332,7 @@ describe('IVL-02: full chain validation', () => {
     }
     const ndjsonContent = ndjsonLines.join('\n') + '\n';
 
-    const tmpFile = path.join(os.tmpdir(), `qgsd-ivl02-test-${Date.now()}.ndjson`);
+    const tmpFile = path.join(os.tmpdir(), `nf-ivl02-test-${Date.now()}.ndjson`);
     try {
       fs.writeFileSync(tmpFile, ndjsonContent);
 

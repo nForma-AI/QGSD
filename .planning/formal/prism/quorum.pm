@@ -1,10 +1,10 @@
 // .planning/formal/prism/quorum.pm
 // GENERATED — do not edit by hand.
-// Source of truth: src/machines/qgsd-workflow.machine.ts
+// Source of truth: src/machines/nf-workflow.machine.ts
 // Regenerate:      node bin/generate-formal-specs.cjs
-// Generated:       2026-03-05
+// Generated:       2026-03-06
 
-// QGSD Quorum Convergence — DTMC Model
+// nForma Quorum Convergence — DTMC Model
 // Requirements: PRM-01
 //
 // Discrete-Time Markov Chain modeling quorum state transitions.
@@ -13,7 +13,7 @@
 //   s=1 : DECIDED       (absorbing)
 //   s=2 : DELIBERATING     (retry)
 //
-// Derived from src/machines/qgsd-workflow.machine.ts:
+// Derived from src/machines/nf-workflow.machine.ts:
 //   IDLE, COLLECTING_VOTES, DELIBERATING, DECIDED
 //
 // Guard translations (from GUARD_REGISTRY):

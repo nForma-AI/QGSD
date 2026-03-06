@@ -31,7 +31,7 @@ function findProjectRoot(startPath) {
     if (parent === current) break; // filesystem root
     current = parent;
   }
-  return path.join(__dirname, '..'); // fallback to QGSD project root
+  return path.join(__dirname, '..'); // fallback to nForma project root
 }
 
 // ── Parse CLI arguments ───────────────────────────────────────────────────────

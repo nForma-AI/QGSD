@@ -3,22 +3,22 @@
 // bin/check-spec-sync.cjs
 // Verifies that formal specs stay in sync with the XState machine.
 //
-// The XState machine (src/machines/qgsd-workflow.machine.ts) is the SOURCE OF TRUTH.
+// The XState machine (src/machines/nf-workflow.machine.ts) is the SOURCE OF TRUTH.
 // Formal specs must mirror it — not the other way around.
 //
 // Checks:
-//   1. State names in QGSDQuorum.tla TypeOK match the XState machine states
+//   1. State names in NFQuorum.tla TypeOK match the XState machine states
 //   2. MaxDeliberation in MCsafety.cfg and MCliveness.cfg matches the XState context default
-//   3. Initial state in QGSDQuorum.tla Init matches the XState initial state
+//   3. Initial state in NFQuorum.tla Init matches the XState initial state
 //   4. Alloy .als files do not reference state names or guard names not in XState machine
-//   5. Guard names in XState machine match keys in .planning/formal/tla/guards/qgsd-workflow.json (bidirectional)
+//   5. Guard names in XState machine match keys in .planning/formal/tla/guards/nf-workflow.json (bidirectional)
 //
 // Exit 0 = in sync; Exit 1 = drift detected.
 // Usage: node bin/check-spec-sync.cjs [--tla-path=<path>] [--guards-path=<path>]
 //
 // CLI overrides (for fixture-based tests):
-//   --tla-path=<abs-path>    Override path to QGSDQuorum.tla (default: .planning/formal/tla/QGSDQuorum.tla)
-//   --guards-path=<abs-path> Override path to guards JSON (default: .planning/formal/tla/guards/qgsd-workflow.json)
+//   --tla-path=<abs-path>    Override path to NFQuorum.tla (default: .planning/formal/tla/NFQuorum.tla)
+//   --guards-path=<abs-path> Override path to guards JSON (default: .planning/formal/tla/guards/nf-workflow.json)
 
 const { buildSync } = require('esbuild');
 const fs   = require('fs');
@@ -35,11 +35,11 @@ const guardsPathOverride = process.argv.find(a => a.startsWith('--guards-path=')
 // Resolved paths (absolute)
 const TLA_ABS_PATH = tlaPathOverride
   ? tlaPathOverride.slice('--tla-path='.length)
-  : path.join(ROOT, '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
+  : path.join(ROOT, '.planning', 'formal', 'tla', 'NFQuorum.tla');
 
 const GUARDS_ABS_PATH = guardsPathOverride
   ? guardsPathOverride.slice('--guards-path='.length)
-  : path.join(ROOT, '.planning', 'formal', 'tla', 'guards', 'qgsd-workflow.json');
+  : path.join(ROOT, '.planning', 'formal', 'tla', 'guards', 'nf-workflow.json');
 
 // ── Load files ───────────────────────────────────────────────────────────────
 function load(rel) {
@@ -67,7 +67,7 @@ const livenessCfg = load('.planning/formal/tla/MCliveness.cfg');
 // Compile the TypeScript machine to a temporary CJS bundle, then require() it.
 // This gives us the live machine object — no regex parsing of raw source.
 
-const MACHINE_FILE = path.join(ROOT, 'src/machines/qgsd-workflow.machine.ts');
+const MACHINE_FILE = path.join(ROOT, 'src/machines/nf-workflow.machine.ts');
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-spec-sync-'));
 const tmpBundle = path.join(tmpDir, 'machine.cjs');
 
@@ -128,7 +128,7 @@ if (machineObj && machineObj.config) {
   // Fallback: use regex if esbuild fails (e.g., in environments without esbuild)
   process.stderr.write('[check-spec-sync] esbuild extraction failed: ' + xstateExtractError + '\n');
   process.stderr.write('[check-spec-sync] Falling back to regex extraction (limited)\n');
-  const machineSrc = load('src/machines/qgsd-workflow.machine.ts');
+  const machineSrc = load('src/machines/nf-workflow.machine.ts');
   xstateStateNames = (machineSrc.match(/^    ([A-Z_]+):\s*\{/gm) || []).map(l => l.trim().split(':')[0]);
   const md = machineSrc.match(/maxDeliberation:\s*(\d+)/);
   xstateMaxDelib = md ? parseInt(md[1], 10) : null;
@@ -161,7 +161,7 @@ function fail(msg) { errors.push('  FAIL  ' + msg); }
 function warn(msg) { warnings.push('  WARN  ' + msg); }
 function ok(msg)   { process.stdout.write('  OK    ' + msg + '\n'); }
 
-process.stdout.write('\n[check-spec-sync] Source of truth: src/machines/qgsd-workflow.machine.ts\n\n');
+process.stdout.write('\n[check-spec-sync] Source of truth: src/machines/nf-workflow.machine.ts\n\n');
 
 // Check 1: State names
 if (xstateStateNames.length === 0) {
@@ -170,7 +170,7 @@ if (xstateStateNames.length === 0) {
   ok('XState states: ' + xstateStateNames.join(', '));
 
   if (tlaPhaseValues.length === 0) {
-    fail('Could not parse phase values from QGSDQuorum.tla TypeOK');
+    fail('Could not parse phase values from NFQuorum.tla TypeOK');
   } else {
     ok('TLA+ phases:  ' + tlaPhaseValues.join(', '));
 
@@ -182,7 +182,7 @@ if (xstateStateNames.length === 0) {
     }
     if (extra.length > 0) {
       fail('TLA+ TypeOK has orphaned phases not in XState machine: ' + extra.join(', ') +
-        '\n         (These TLA+ phases have no corresponding XState state — update QGSDQuorum.tla)');
+        '\n         (These TLA+ phases have no corresponding XState state — update NFQuorum.tla)');
     }
     if (missing.length === 0 && extra.length === 0) {
       ok('State names match exactly');
@@ -226,7 +226,7 @@ if (xstateInitial === null) {
   ok('XState initial state: ' + xstateInitial);
 
   if (tlaInitPhase === null) {
-    fail('Could not parse Init phase from QGSDQuorum.tla');
+    fail('Could not parse Init phase from NFQuorum.tla');
   } else if (tlaInitPhase !== xstateInitial) {
     fail(
       'TLA+ Init sets phase="' + tlaInitPhase +
@@ -244,7 +244,7 @@ if (xstateInitial === null) {
 //
 // Note: Alloy orphan detection uses warn() not fail() because Alloy models are intentional
 // abstractions — they may use different predicate names (e.g., MajorityReached instead of
-// minQuorumMet). The authoritative guard mapping check is in Check 5 (guards/qgsd-workflow.json).
+// minQuorumMet). The authoritative guard mapping check is in Check 5 (guards/nf-workflow.json).
 const alloyDir = path.join(ROOT, '.planning', 'formal', 'alloy');
 if (fs.existsSync(alloyDir)) {
   const alsFiles = fs.readdirSync(alloyDir).filter(f => f.endsWith('.als'));
@@ -282,17 +282,17 @@ if (fs.existsSync(alloyDir)) {
 // Mapping context:
 //   XState uses camelCase guard names (minQuorumMet, noInfiniteDeliberation, phaseMonotonicallyAdvances).
 //   TLA+ uses PascalCase predicates (MinQuorumMet, DeliberationBounded) — different names, same semantics.
-//   The bridge is .planning/formal/tla/guards/qgsd-workflow.json, which maps XState guard names to TLA+ expressions.
+//   The bridge is .planning/formal/tla/guards/nf-workflow.json, which maps XState guard names to TLA+ expressions.
 //
-//   If a guard is renamed in the XState machine, it must also be updated in guards/qgsd-workflow.json.
-//   If a mapping entry is removed from guards/qgsd-workflow.json without removing the guard from
+//   If a guard is renamed in the XState machine, it must also be updated in guards/nf-workflow.json.
+//   If a mapping entry is removed from guards/nf-workflow.json without removing the guard from
 //   the machine (or vice versa), this check will detect the inconsistency.
 //
-// This check also corroborates by scanning QGSDQuorum.tla source text for camelCase guard name
+// This check also corroborates by scanning NFQuorum.tla source text for camelCase guard name
 // occurrences (they appear in the header comment block as documentation of guard translations).
 if (xstateGuardNames.length > 0) {
   if (!fs.existsSync(GUARDS_ABS_PATH)) {
-    fail('.planning/formal/tla/guards/qgsd-workflow.json not found — cannot verify guard name sync');
+    fail('.planning/formal/tla/guards/nf-workflow.json not found — cannot verify guard name sync');
   } else {
     let guardsJson = null;
     try {
@@ -306,28 +306,28 @@ if (xstateGuardNames.length > 0) {
       ok('Guards JSON mapped names:     ' + mappedGuardNames.join(', '));
 
       // Forward check: XState guard → guards JSON (drift detection)
-      // If a guard is renamed in XState but guards/qgsd-workflow.json still has the old name, this fires.
+      // If a guard is renamed in XState but guards/nf-workflow.json still has the old name, this fires.
       const missingFromMapping = xstateGuardNames.filter(g => !mappedGuardNames.includes(g));
       if (missingFromMapping.length > 0) {
         fail(
-          'XState guards not found in guards/qgsd-workflow.json: ' + missingFromMapping.join(', ') +
-          '\n         (Update .planning/formal/tla/guards/qgsd-workflow.json to map these guard names to their TLA+ predicates)'
+          'XState guards not found in guards/nf-workflow.json: ' + missingFromMapping.join(', ') +
+          '\n         (Update .planning/formal/tla/guards/nf-workflow.json to map these guard names to their TLA+ predicates)'
         );
       }
 
       // Reverse check: guards JSON → XState (orphan detection)
-      // If a guard mapping entry exists in guards/qgsd-workflow.json but the guard was removed from
+      // If a guard mapping entry exists in guards/nf-workflow.json but the guard was removed from
       // the XState machine, this is an orphaned mapping.
       const orphanedGuards = mappedGuardNames.filter(g => !xstateGuardNames.includes(g));
       if (orphanedGuards.length > 0) {
         fail(
-          'guards/qgsd-workflow.json references guards not in XState machine: ' + orphanedGuards.join(', ') +
+          'guards/nf-workflow.json references guards not in XState machine: ' + orphanedGuards.join(', ') +
           '\n         (These guard mappings are orphaned — remove them or restore the XState guard)'
         );
       }
 
       if (missingFromMapping.length === 0 && orphanedGuards.length === 0) {
-        ok('Guard names match exactly between XState machine and guards/qgsd-workflow.json');
+        ok('Guard names match exactly between XState machine and guards/nf-workflow.json');
       }
 
       // Corroboration: check TLA+ source mentions guard names in comment references

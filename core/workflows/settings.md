@@ -1,5 +1,5 @@
 <purpose>
-Guided project manager hub: displays project dashboard, provides categorized menu for all QGSD capabilities, and routes to appropriate actions. Backward compatible: --config flag skips hub and goes directly to workflow settings.
+Guided project manager hub: displays project dashboard, provides categorized menu for all nForma capabilities, and routes to appropriate actions. Backward compatible: --config flag skips hub and goes directly to workflow settings.
 </purpose>
 
 <required_reading>
@@ -18,7 +18,7 @@ If `--config` is present: skip directly to the `config_flow` step (the original 
 Load project state using the same gsd-tools calls as `progress.md`:
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init progress)
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init progress)
 ```
 
 Extract from init JSON: `project_exists`, `roadmap_exists`, `state_exists`, `phases`, `current_phase`, `next_phase`, `milestone_version`, `completed_count`, `phase_count`, `paused_at`.
@@ -28,9 +28,9 @@ If `project_exists` is false: go to the `no_project` step.
 Also load:
 
 ```bash
-ROADMAP=$(node ~/.claude/qgsd/bin/gsd-tools.cjs roadmap analyze)
-STATE=$(node ~/.claude/qgsd/bin/gsd-tools.cjs state-snapshot)
-PROGRESS_BAR=$(node ~/.claude/qgsd/bin/gsd-tools.cjs progress bar --raw)
+ROADMAP=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap analyze)
+STATE=$(node ~/.claude/nf/bin/gsd-tools.cjs state-snapshot)
+PROGRESS_BAR=$(node ~/.claude/nf/bin/gsd-tools.cjs progress bar --raw)
 CONFIG=$(cat .planning/config.json)
 ```
 
@@ -58,7 +58,7 @@ Display the project dashboard. Format EXACTLY as:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PROJECT HUB
+ nForma ► PROJECT HUB
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Project: {name from PROJECT.md or INIT}
@@ -86,7 +86,7 @@ If `project_exists` is false, display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PROJECT HUB
+ nForma ► PROJECT HUB
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 No project found. Run /nf:new-project to get started.
@@ -483,8 +483,8 @@ This is the PRESERVED original 6-question settings form. Reached via `--config` 
 Ensure config exists and load current state:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-ensure-section
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs state load)
+node ~/.claude/nf/bin/gsd-tools.cjs config-ensure-section
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs state load)
 ```
 
 Creates `.planning/config.json` with defaults if missing and loads current config values.
@@ -637,7 +637,7 @@ Display:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► SETTINGS UPDATED
+ nForma ► SETTINGS UPDATED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 | Setting              | Value |

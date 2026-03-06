@@ -1,5 +1,5 @@
 ---
-name: qgsd:triage
+name: nf:triage
 description: Fetch issues/errors from configured sources (GitHub, Sentry, custom) and triage them. Sources are defined in .planning/triage-sources.md
 argument-hint: "[--source github|sentry|sentry-feedback|bash] [--since 24h|7d] [--limit N]"
 allowed-tools:
@@ -11,7 +11,7 @@ allowed-tools:
 ---
 
 <objective>
-Aggregate issues and errors from all configured sources, deduplicate, render a prioritized triage table, and route the selected issue to the right QGSD workflow.
+Aggregate issues and errors from all configured sources, deduplicate, render a prioritized triage table, and route the selected issue to the right nForma workflow.
 
 This command is the project's unified "what's broken right now?" entry point.
 </objective>
@@ -36,7 +36,7 @@ Parse the YAML frontmatter block (between `---` delimiters at the top of the fil
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► TRIAGE: No sources configured
+ nForma ► TRIAGE: No sources configured
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Create .planning/triage-sources.md to configure issue sources.
@@ -50,7 +50,7 @@ Stop.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► TRIAGE: Fetching from N source(s)...
+ nForma ► TRIAGE: Fetching from N source(s)...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 (Replace N with actual count.)
@@ -172,7 +172,7 @@ Sort by:
 If total issues = 0:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► TRIAGE: All clear — no open issues found
+ nForma ► TRIAGE: All clear — no open issues found
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Sources checked: <list>
 ```
@@ -181,7 +181,7 @@ Stop.
 Otherwise:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► TRIAGE: N issues across M source(s)
+ nForma ► TRIAGE: N issues across M source(s)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌────┬─────────────────────────────────────────────┬──────────────┬─────────┬────────────┐

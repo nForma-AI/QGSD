@@ -1,8 +1,8 @@
 ---
-name: qgsd:plan-phase
+name: nf:plan-phase
 description: Create detailed phase plan (PLAN.md) with verification loop
 argument-hint: "[phase] [--auto] [--research] [--skip-research] [--gaps] [--skip-verify]"
-agent: qgsd-planner
+agent: nf-planner
 allowed-tools:
   - Read
   - Write
@@ -18,12 +18,12 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 
 **Default flow:** Research (if needed) → Plan → Verify → Done
 
-**Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn qgsd-planner, verify with qgsd-plan-checker, iterate until pass or max iterations, present results.
+**Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn nf-planner, verify with nf-plan-checker, iterate until pass or max iterations, present results.
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/plan-phase.md
-@~/.claude/qgsd/references/ui-brand.md
+@~/.claude/nf/workflows/plan-phase.md
+@~/.claude/nf/references/ui-brand.md
 </execution_context>
 
 <context>
@@ -39,6 +39,6 @@ Normalize phase input in step 2 before any directory lookups.
 </context>
 
 <process>
-Execute the plan-phase workflow from @~/.claude/qgsd/workflows/plan-phase.md end-to-end.
+Execute the plan-phase workflow from @~/.claude/nf/workflows/plan-phase.md end-to-end.
 Preserve all workflow gates (validation, research, planning, verification loop, routing).
 </process>

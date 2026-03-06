@@ -27,7 +27,7 @@ const os         = require('os');
 function findProviders() {
   const searchPaths = [
     path.join(__dirname, 'providers.json'),
-    path.join(os.homedir(), '.claude', 'qgsd-bin', 'providers.json'),
+    path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),
   ];
   try {
     const claudeJson = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8'));

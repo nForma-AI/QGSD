@@ -13,7 +13,7 @@
  *
  * No LLM inference is performed — this completes in ~2–3 seconds.
  *
- * TTL cache at ~/.claude/qgsd-provider-cache.json:
+ * TTL cache at ~/.claude/nf-provider-cache.json:
  *   - DOWN entries: 5 minutes TTL
  *   - UP entries:   3 minutes TTL
  *   Cache is read before probing; stale or missing → probe runs normally.
@@ -54,7 +54,7 @@ const NO_CACHE     = hasFlag('--no-cache');
 const CACHE_STATUS = hasFlag('--cache-status');
 
 // ─── TTL cache constants ──────────────────────────────────────────────────────
-const CACHE_FILE    = path.join(os.homedir(), '.claude', 'qgsd-provider-cache.json');
+const CACHE_FILE    = path.join(os.homedir(), '.claude', 'nf-provider-cache.json');
 const TTL_DOWN_MS   = 300000; // 5 minutes
 const TTL_UP_MS     = 180000; // 3 minutes
 
@@ -122,11 +122,11 @@ try {
   process.exit(1);
 }
 
-// Load quorum_active from ~/.claude/qgsd.json (project config takes precedence)
+// Load quorum_active from ~/.claude/nf.json (project config takes precedence)
 let quorumActive = [];
 try {
-  const globalQgsd = path.join(os.homedir(), '.claude', 'qgsd.json');
-  const projQgsd   = path.join(process.cwd(), '.claude', 'qgsd.json');
+  const globalQgsd = path.join(os.homedir(), '.claude', 'nf.json');
+  const projQgsd   = path.join(process.cwd(), '.claude', 'nf.json');
   for (const cfgPath of [globalQgsd, projQgsd]) {
     try {
       const cfgRaw = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
@@ -239,7 +239,7 @@ function probeUrl(baseUrl, apiKey) {
     const parsed = new URL(probeUrl);
     const lib = parsed.protocol === 'https:' ? https : http;
 
-    const headers = { 'User-Agent': 'qgsd-health-check/1.0' };
+    const headers = { 'User-Agent': 'nf-health-check/1.0' };
     if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
     const req = lib.request(

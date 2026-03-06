@@ -1,5 +1,5 @@
 ---
-name: qgsd:sync-baselines
+name: nf:sync-baselines
 description: Sync baseline requirements into .planning/formal/requirements.json (auto-detects project intent by default)
 argument-hint: [--profile <web|mobile|desktop|api|cli|library>]
 allowed-tools:
@@ -9,7 +9,7 @@ allowed-tools:
 ---
 
 <objective>
-Sync baseline requirements from the QGSD defaults into `.planning/formal/requirements.json`. Auto-detects project intent by default by scanning the repo for framework, deployment, and configuration signals. Supports explicit `--profile` override. Runs `node bin/sync-baseline-requirements.cjs`, displays results, and commits if requirements were added.
+Sync baseline requirements from the nForma defaults into `.planning/formal/requirements.json`. Auto-detects project intent by default by scanning the repo for framework, deployment, and configuration signals. Supports explicit `--profile` override. Runs `node bin/sync-baseline-requirements.cjs`, displays results, and commits if requirements were added.
 </objective>
 
 <process>
@@ -97,13 +97,13 @@ fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
 If `added.length > 0`:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "req(baseline): sync N baseline requirements" --files .planning/formal/requirements.json
+node ~/.claude/nf/bin/gsd-tools.cjs commit "req(baseline): sync N baseline requirements" --files .planning/formal/requirements.json
 ```
 
 Also commit config if intent was stored:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "chore(baseline): store detected project intent" --files .planning/config.json
+node ~/.claude/nf/bin/gsd-tools.cjs commit "chore(baseline): store detected project intent" --files .planning/config.json
 ```
 
 Where N is the count of added requirements.

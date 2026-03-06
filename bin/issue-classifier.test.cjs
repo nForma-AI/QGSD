@@ -16,7 +16,7 @@ const path = require('path');
 const CLI = path.join(__dirname, 'issue-classifier.cjs');
 
 function makeTmpDir() {
-  const dir = path.join(os.tmpdir(), 'qgsd-ic-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  const dir = path.join(os.tmpdir(), 'nf-ic-' + Date.now() + '-' + Math.random().toString(36).slice(2));
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }

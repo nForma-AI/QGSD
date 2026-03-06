@@ -15,7 +15,7 @@ No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. D
 </philosophy>
 
 <template>
-@~/.claude/qgsd/templates/UAT.md
+@~/.claude/nf/templates/UAT.md
 </template>
 
 <process>
@@ -24,7 +24,7 @@ No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. D
 If $ARGUMENTS contains a phase number, load context:
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init verify-work "${PHASE_ARG}")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init verify-work "${PHASE_ARG}")
 ```
 
 Parse JSON for: `planner_model`, `checker_model`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `has_verification`.
@@ -292,7 +292,7 @@ Clear Current Test section:
 
 Commit the UAT file:
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "test({phase_num}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase_num}-UAT.md"
+node ~/.claude/nf/bin/gsd-tools.cjs commit "test({phase_num}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase_num}-UAT.md"
 ```
 
 Present summary:
@@ -334,7 +334,7 @@ Spawning parallel debug agents to investigate each issue.
 ```
 
 - Load diagnose-issues workflow
-- Follow @~/.claude/qgsd/workflows/diagnose-issues.md
+- Follow @~/.claude/nf/workflows/diagnose-issues.md
 - Spawn parallel debug agents for each issue
 - Collect root causes
 - Update UAT.md with root causes
@@ -349,13 +349,13 @@ Diagnosis runs automatically - no user prompt. Parallel agents investigate simul
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► PLANNING FIXES
+ nForma ► PLANNING FIXES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning planner for gap closure...
 ```
 
-Spawn qgsd-planner in --gaps mode:
+Spawn nf-planner in --gaps mode:
 
 ```
 Task(
@@ -378,7 +378,7 @@ Output consumed by /nf:execute-phase
 Plans must be executable prompts.
 </downstream_consumer>
 """,
-  subagent_type="qgsd-planner",
+  subagent_type="nf-planner",
   model="{planner_model}",
   description="Plan gap fixes for Phase {phase}"
 )
@@ -395,7 +395,7 @@ On return:
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► VERIFYING FIX PLANS
+ nForma ► VERIFYING FIX PLANS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ◆ Spawning plan checker...
@@ -403,7 +403,7 @@ Display:
 
 Initialize: `iteration_count = 1`
 
-Spawn qgsd-plan-checker:
+Spawn nf-plan-checker:
 
 ```
 Task(
@@ -425,7 +425,7 @@ Return one of:
 - ## ISSUES FOUND — structured issue list
 </expected_output>
 """,
-  subagent_type="qgsd-plan-checker",
+  subagent_type="nf-plan-checker",
   model="{checker_model}",
   description="Verify Phase {phase} fix plans"
 )
@@ -443,7 +443,7 @@ On return:
 
 Display: `Sending back to planner for revision... (iteration {N}/3)`
 
-Spawn qgsd-planner with revision context:
+Spawn nf-planner with revision context:
 
 ```
 Task(
@@ -467,7 +467,7 @@ Read existing PLAN.md files. Make targeted updates to address checker issues.
 Do NOT replan from scratch unless issues are fundamental.
 </instructions>
 """,
-  subagent_type="qgsd-planner",
+  subagent_type="nf-planner",
   model="{planner_model}",
   description="Revise Phase {phase} plans"
 )
@@ -493,7 +493,7 @@ Wait for user response.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► FIXES READY ✓
+ nForma ► FIXES READY ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 **Phase {X}: {Name}** — {N} gap(s) diagnosed, {M} fix plan(s) created
@@ -520,7 +520,7 @@ Plans verified and ready for execution.
 
 Check for --auto flag and config:
 ```bash
-AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -530,7 +530,7 @@ Two sub-cases based on gap result:
 **Sub-case A — Gaps found (fix plans were created):**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-ADVANCING TO EXECUTE GAPS
+ nForma ► AUTO-ADVANCING TO EXECUTE GAPS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Gap fix plans ready. Spawning execute-phase --gaps-only...
@@ -540,7 +540,7 @@ Invoke: `SlashCommand("/nf:execute-phase ${PHASE} --gaps-only --auto")`
 **Sub-case B — All tests pass (no gaps found):**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► VERIFICATION COMPLETE ✓
+ nForma ► VERIFICATION COMPLETE ✓
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 All tests pass. Advancing to next phase...
@@ -598,8 +598,8 @@ Default to **major** if unclear. User can correct if needed.
 - [ ] Batched writes: on issue, every 5 passes, or completion
 - [ ] Committed on completion
 - [ ] If issues: parallel debug agents diagnose root causes
-- [ ] If issues: qgsd-planner creates fix plans (gap_closure mode)
-- [ ] If issues: qgsd-plan-checker verifies fix plans
+- [ ] If issues: nf-planner creates fix plans (gap_closure mode)
+- [ ] If issues: nf-plan-checker verifies fix plans
 - [ ] If issues: revision loop until plans pass (max 3 iterations)
 - [ ] Ready for `/nf:execute-phase --gaps-only` when complete
 </success_criteria>

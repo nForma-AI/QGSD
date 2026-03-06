@@ -3,7 +3,7 @@
 // Unit tests for quorum improvements signal emission and de-duplication
 // Requirements: IMPR-02
 //
-// Tests validate the signal format described in commands/qgsd/quorum.md lines 449-471.
+// Tests validate the signal format described in commands/nf/quorum.md lines 449-471.
 // collectImprovements and formatSignal are defined inline as pure functions implementing the spec.
 // Pattern: QUORUM_IMPROVEMENTS_START|QUORUM_IMPROVEMENTS_END
 
@@ -22,7 +22,7 @@ const assert = require('node:assert');
 //   - If empty: return single-line empty signal
 //   - Otherwise: return multi-line signal with JSON array
 //
-// Source: commands/qgsd/quorum.md lines 449-471
+// Source: commands/nf/quorum.md lines 449-471
 
 function collectImprovements(workerBlocks) {
   if (!Array.isArray(workerBlocks)) return [];

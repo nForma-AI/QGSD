@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Test suite for hooks/qgsd-circuit-breaker.js
-// Uses Node.js built-in test runner: node --test hooks/qgsd-circuit-breaker.test.js
+// Test suite for hooks/nf-circuit-breaker.js
+// Uses Node.js built-in test runner: node --test hooks/nf-circuit-breaker.test.js
 //
 // Each test spawns the hook as a child process with mock stdin and captures stdout + exit code.
 // For git-dependent tests, creates temp git repos with controlled commits.
@@ -12,11 +12,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const HOOK_PATH = path.join(__dirname, 'qgsd-circuit-breaker.js');
+const HOOK_PATH = path.join(__dirname, 'nf-circuit-breaker.js');
 
 // Helper: write a temp JSONL file and return its path (though not used in circuit breaker tests)
 function writeTempTranscript(lines) {
-  const tmpFile = path.join(os.tmpdir(), `qgsd-circuit-breaker-test-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`);
+  const tmpFile = path.join(os.tmpdir(), `nf-circuit-breaker-test-${Date.now()}-${Math.random().toString(36).slice(2)}.jsonl`);
   fs.writeFileSync(tmpFile, lines.join('\n') + '\n', 'utf8');
   return tmpFile;
 }
@@ -37,7 +37,7 @@ function runHook(stdinPayload) {
 
 // Helper: create a temp git repo with controlled commits
 function createTempGitRepo() {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-circuit-breaker-git-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-circuit-breaker-git-'));
   const git = (cmd) => spawnSync('git', cmd.split(' '), { cwd: tempDir, encoding: 'utf8' });
 
   // Initialize repo and configure
@@ -105,7 +105,7 @@ function createNonOscillationCommits(repoDir, commitCount) {
 // Test CB-TC1: No git repo in cwd → exit 0, stdout empty (DETECT-05)
 // @requirement DETECT-05
 test('CB-TC1: No git repo in cwd exits 0 with no output', () => {
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-no-git-'));
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-no-git-'));
   try {
     const { stdout, exitCode } = runHook({
       tool_name: 'Bash',
@@ -515,7 +515,7 @@ test('CB-TC15: State write failure logs to stderr but does not block', () => {
     });
     assert.strictEqual(exitCode, 0, 'exit code must be 0 (not blocked)');
     assert.strictEqual(stdout, '', 'stdout must be empty');
-    assert(stderr.includes('[qgsd] WARNING'), 'stderr should contain warning about write failure');
+    assert(stderr.includes('[nf] WARNING'), 'stderr should contain warning about write failure');
   } finally {
     fs.rmSync(repoDir, { recursive: true, force: true });
   }
@@ -589,7 +589,7 @@ test('CB-TC17: Block reason includes file names, R5 reference, git log, and rese
     // Allowed read-only operations
     assert.ok(reason.includes('git log'), 'reason must include git log as allowed operation');
     // Reset breaker instruction
-    assert.ok(reason.includes('npx qgsd --reset-breaker'), 'reason must include reset-breaker command');
+    assert.ok(reason.includes('npx nforma --reset-breaker'), 'reason must include reset-breaker command');
   } finally {
     fs.rmSync(repoDir, { recursive: true, force: true });
   }
@@ -606,7 +606,7 @@ test('CB-TC18: Project config oscillation_depth:2 triggers oscillation detection
     const claudeDir = path.join(repoDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ circuit_breaker: { oscillation_depth: 2, commit_window: 6 } }),
       'utf8'
     );
@@ -638,7 +638,7 @@ test('CB-TC18: Project config oscillation_depth:2 triggers oscillation detection
 // --- Direct unit tests for buildBlockReason() (CB-TC-BR series) ---
 // These test buildBlockReason() directly via module.exports rather than via spawnSync.
 
-const { buildBlockReason } = require('../hooks/qgsd-circuit-breaker.js');
+const { buildBlockReason } = require('../hooks/nf-circuit-breaker.js');
 
 // Test CB-TC-BR1: Deny message includes commit graph when snapshot present
 test('CB-TC-BR1: Deny message includes commit graph when snapshot present', () => {
@@ -677,7 +677,7 @@ test('CB-TC-BR3: Deny message still references --reset-breaker instruction', () 
     commit_window_snapshot: [['any.js']],
   };
   const reason = buildBlockReason(state);
-  assert.ok(reason.includes('npx qgsd --reset-breaker'), 'deny reason must include --reset-breaker command');
+  assert.ok(reason.includes('npx nforma --reset-breaker'), 'deny reason must include --reset-breaker command');
 });
 
 // Test CB-TC20: TDD pattern — same file extended with new content each time does not trigger oscillation
@@ -840,7 +840,7 @@ test('CB-TC22: appendFalseNegative creates and appends audit log entries', () =>
     const src = fs.readFileSync(HOOK_PATH, 'utf8');
     assert.ok(src.includes('appendFalseNegative'), 'hook source must define appendFalseNegative');
     assert.ok(src.includes('circuit-breaker-false-negatives.json'), 'hook source must reference false-negatives log file');
-    assert.ok(src.includes('[qgsd] INFO'), 'hook source must emit INFO log on false-negative');
+    assert.ok(src.includes('[nf] INFO'), 'hook source must emit INFO log on false-negative');
   } finally {
     fs.rmSync(repoDir, { recursive: true, force: true });
   }
@@ -863,7 +863,7 @@ test('CB-TC19: Project config commit_window:3 excludes commits beyond window fro
     const claudeDir = path.join(repoDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
     fs.writeFileSync(
-      path.join(claudeDir, 'qgsd.json'),
+      path.join(claudeDir, 'nf.json'),
       JSON.stringify({ circuit_breaker: { oscillation_depth: 3, commit_window: 3 } }),
       'utf8'
     );

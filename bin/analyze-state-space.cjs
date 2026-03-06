@@ -59,23 +59,23 @@ const MERGE_BUDGET = {
 
 // ── CFG → TLA module mapping ────────────────────────────────────────────────
 // Reverse map: cfg base name (without .cfg) → TLA module name
-// Needed because cfg naming is inconsistent (MCbreaker vs MCQGSDQuorum etc.)
+// Needed because cfg naming is inconsistent (MCbreaker vs MCNFQuorum etc.)
 
 const CFG_TO_MODULE = {
-  'MCbreaker':             'QGSDCircuitBreaker',
-  'MCoscillation':         'QGSDOscillation',
-  'MCconvergence':         'QGSDConvergence',
-  'MCdeliberation':        'QGSDDeliberation',
-  'MCprefilter':           'QGSDPreFilter',
-  'MCsafety':              'QGSDQuorum',
-  'MCliveness':            'QGSDQuorum',
-  'MCQGSDQuorum':          'QGSDQuorum_xstate',
-  'MCaccount-manager':     'QGSDAccountManager',
-  'MCMCPEnv':              'QGSDMCPEnv',
+  'MCbreaker':             'NFCircuitBreaker',
+  'MCoscillation':         'NFOscillation',
+  'MCconvergence':         'NFConvergence',
+  'MCdeliberation':        'NFDeliberation',
+  'MCprefilter':           'NFPreFilter',
+  'MCsafety':              'NFQuorum',
+  'MCliveness':            'NFQuorum',
+  'MCNFQuorum':          'NFQuorum_xstate',
+  'MCaccount-manager':     'NFAccountManager',
+  'MCMCPEnv':              'NFMCPEnv',
   'MCTUINavigation':       'TUINavigation',
-  'MCStopHook':            'QGSDStopHook',
-  'MCrecruiting-safety':   'QGSDRecruiting',
-  'MCrecruiting-liveness': 'QGSDRecruiting',
+  'MCStopHook':            'NFStopHook',
+  'MCrecruiting-safety':   'NFRecruiting',
+  'MCrecruiting-liveness': 'NFRecruiting',
 };
 
 // ── Parsing Utilities ───────────────────────────────────────────────────────

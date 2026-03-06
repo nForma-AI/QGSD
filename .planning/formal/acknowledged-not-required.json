@@ -83,6 +83,24 @@
       ],
       "acknowledged_at": "2026-03-05T21:14:41.413Z",
       "reason": "Example output snippet, not a capability claim"
+    },
+    {
+      "file_or_claim": "The `/nf:mcp-setup` wizard handles all registration automatically. If you prefer manual setup, slots are registered in `",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-06T07:41:33.198Z"
+    },
+    {
+      "file_or_claim": "nForma handles it for you:",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-06T07:41:33.199Z"
+    },
+    {
+      "file_or_claim": "Control how nForma handles branches during execution.",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-06T07:41:33.199Z"
     }
   ]
 }

@@ -12,7 +12,7 @@ const rc = require('./requirements-core.cjs');
 
 // ─── Temp dir helpers ─────────────────────────────────────────────────────────
 function makeTmp() {
-  const dir = path.join(os.tmpdir(), 'qgsd-reqcore-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+  const dir = path.join(os.tmpdir(), 'nf-reqcore-' + Date.now() + '-' + Math.random().toString(36).slice(2));
   fs.mkdirSync(path.join(dir, '.planning', 'formal'), { recursive: true });
   return dir;
 }

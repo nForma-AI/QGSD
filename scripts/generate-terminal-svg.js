@@ -3,7 +3,7 @@
  * generate-terminal-svg.js
  *
  * Generates assets/terminal.svg — the terminal screenshot shown in README.md.
- * Mirrors the actual `npx qgsd@latest` install output from bin/install.js.
+ * Mirrors the actual `npx nforma@latest` install output from bin/install.js.
  *
  * Usage:
  *   node scripts/generate-terminal-svg.js
@@ -27,7 +27,7 @@ const COLORS = {
   btnRed:   '#f7768e',
   btnYellow:'#e0af68',
   btnGreen: '#9ece6a',
-  salmon:   '#f4956a',   // Q in the QGSD logo
+  salmon:   '#f4956a',   // Q in the nForma logo
   cyan:     '#7dcfff',   // GSD in the logo + highlights
   green:    '#9ece6a',   // ✓ checkmarks
   dim:      '#565f89',   // muted text
@@ -56,10 +56,10 @@ const version = pkg.version;
 
 const LINES = [
   // Prompt + command
-  { parts: [{ t: '~', c: COLORS.prompt }, { t: ' $ ', c: COLORS.dim }, { t: 'npx qgsd@latest', c: COLORS.white }] },
+  { parts: [{ t: '~', c: COLORS.prompt }, { t: ' $ ', c: COLORS.dim }, { t: 'npx nforma@latest', c: COLORS.white }] },
   { parts: [] },  // blank
 
-  // QGSD ASCII art — original ANSI Shadow font.
+  // nForma ASCII art — original ANSI Shadow font.
   // Rendered as SVG primitives (rects + paths) — no font dependency, pixel-perfect.
   // Q in salmon (first logoCol cols), GSD in cyan (rest).
   { parts: [{ t: '  ██████╗  ██████╗ ███████╗██████╗ ', c: COLORS.salmon }], logo: true, logoCol: 9 },

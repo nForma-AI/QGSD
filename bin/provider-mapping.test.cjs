@@ -112,7 +112,7 @@ test('fail-open: empty down-providers set produces no filtering (no error)', () 
 
 // ----- STRUCTURAL TESTS (RED until Plan 03 adds provider field and provider-skip logic) -----
 // These tests read source files from bin/ and hooks/ (NOT installed ~/.claude/ copies).
-// Plan 03 must add provider field to providers.json, provider-skip logic to qgsd-prompt.js,
+// Plan 03 must add provider field to providers.json, provider-skip logic to nf-prompt.js,
 // and provider-level resolution to probe-quorum-slots.cjs. Plan 03 then runs install.js to sync.
 
 const PROVIDERS_JSON_PATH = path.resolve(__dirname, './providers.json');
@@ -161,24 +161,24 @@ test('providers.json: at least one provider maps to 2+ slots (verifying grouping
   );
 });
 
-const QGSD_PROMPT_PATH = path.resolve(__dirname, '../hooks/qgsd-prompt.js');
-let qgsdPromptContent = '';
+const NF_PROMPT_PATH = path.resolve(__dirname, '../hooks/nf-prompt.js');
+let nfPromptContent = '';
 try {
-  qgsdPromptContent = fs.readFileSync(QGSD_PROMPT_PATH, 'utf8');
+  nfPromptContent = fs.readFileSync(NF_PROMPT_PATH, 'utf8');
 } catch (e) {
-  qgsdPromptContent = '';
+  nfPromptContent = '';
 }
 
-test('hooks/qgsd-prompt.js: provider-skip logic is present (PROVIDER DOWN or provider-cache reference)', () => {
+test('hooks/nf-prompt.js: provider-skip logic is present (PROVIDER DOWN or provider-cache reference)', () => {
   const hasProviderSkip =
-    qgsdPromptContent.includes('PROVIDER DOWN') ||
-    qgsdPromptContent.includes('provider-cache') ||
-    qgsdPromptContent.includes('provider-skip') ||
-    qgsdPromptContent.includes('skipDownProviders') ||
-    qgsdPromptContent.match(/downProviders|provider.*down|skip.*provider/i);
+    nfPromptContent.includes('PROVIDER DOWN') ||
+    nfPromptContent.includes('provider-cache') ||
+    nfPromptContent.includes('provider-skip') ||
+    nfPromptContent.includes('skipDownProviders') ||
+    nfPromptContent.match(/downProviders|provider.*down|skip.*provider/i);
   assert.ok(
     hasProviderSkip,
-    'Provider-skip logic not found: no PROVIDER DOWN, provider-cache, or skipDownProviders reference in qgsd-prompt.js — Plan 03 must add it'
+    'Provider-skip logic not found: no PROVIDER DOWN, provider-cache, or skipDownProviders reference in nf-prompt.js — Plan 03 must add it'
   );
 });
 
@@ -210,9 +210,9 @@ test('fail-open: missing providers.json file → structural checks fail graceful
   assert.ok(true, 'Guard allows missing file — fail-open');
 });
 
-test('fail-open: missing qgsd-prompt.js file → structural checks fail gracefully', () => {
+test('fail-open: missing nf-prompt.js file → structural checks fail gracefully', () => {
   // If file is truly missing, empty content → all checks fail gracefully
-  const content = qgsdPromptContent;
+  const content = nfPromptContent;
   // This test passes if the guard allows missing files (fail-open principle)
   // No error thrown — test runner continues
   assert.ok(true, 'Guard allows missing file — fail-open');

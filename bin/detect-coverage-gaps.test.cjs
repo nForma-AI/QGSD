@@ -25,9 +25,9 @@ afterEach(() => {
 // ── parseTlcStates tests ─────────────────────────────────────────────────────
 
 test('parseTlcStates returns state set for known spec', () => {
-  const result = parseTlcStates('QGSDQuorum');
-  assert.ok(result, 'Should return a result for QGSDQuorum');
-  assert.strictEqual(result.specName, 'QGSDQuorum');
+  const result = parseTlcStates('NFQuorum');
+  assert.ok(result, 'Should return a result for NFQuorum');
+  assert.strictEqual(result.specName, 'NFQuorum');
   assert.strictEqual(result.variable, 's');
   assert.ok(result.states.has('COLLECTING_VOTES'));
   assert.ok(result.states.has('DECIDED'));
@@ -67,7 +67,7 @@ test('parseTraceStates extracts observed states from JSONL', () => {
 
 test('detectCoverageGaps returns no-traces when log missing', () => {
   const result = detectCoverageGaps({
-    specName: 'QGSDQuorum',
+    specName: 'NFQuorum',
     logPath: '/nonexistent/path.jsonl',
   });
   assert.strictEqual(result.status, 'no-traces');
@@ -85,7 +85,7 @@ test('detectCoverageGaps returns full-coverage when all states observed', () => 
 
   const outputPath = path.join(tmpDir, 'coverage-gaps.md');
   const result = detectCoverageGaps({
-    specName: 'QGSDQuorum',
+    specName: 'NFQuorum',
     logPath,
     outputPath,
   });
@@ -104,7 +104,7 @@ test('detectCoverageGaps returns gaps-found and writes coverage-gaps.md', () => 
 
   const outputPath = path.join(tmpDir, 'coverage-gaps.md');
   const result = detectCoverageGaps({
-    specName: 'QGSDQuorum',
+    specName: 'NFQuorum',
     logPath,
     outputPath,
   });
@@ -128,7 +128,7 @@ test('coverage-gaps.md contains correct coverage percentage', () => {
 
   const outputPath = path.join(tmpDir, 'coverage-gaps.md');
   detectCoverageGaps({
-    specName: 'QGSDQuorum',
+    specName: 'NFQuorum',
     logPath,
     outputPath,
   });

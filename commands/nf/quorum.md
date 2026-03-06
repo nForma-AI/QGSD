@@ -1,6 +1,6 @@
 ---
-name: qgsd:quorum
-description: Answer a question using full quorum consensus (Claude + native CLI agents + all configured claude-mcp-server instances) following QGSD quorum protocol. Use when no arguments provided to answer the current conversation's open question.
+name: nf:quorum
+description: Answer a question using full quorum consensus (Claude + native CLI agents + all configured claude-mcp-server instances) following nForma quorum protocol. Use when no arguments provided to answer the current conversation's open question.
 argument-hint: "[question or prompt]"
 allowed-tools:
   - Read
@@ -12,7 +12,7 @@ allowed-tools:
 ---
 
 <objective>
-Run a question or prompt through the full QGSD quorum (R3 protocol): Claude + native CLI agents (Codex, Gemini, OpenCode, Copilot) + all claude-mcp-server instances configured in `~/.claude.json`.
+Run a question or prompt through the full nForma quorum (R3 protocol): Claude + native CLI agents (Codex, Gemini, OpenCode, Copilot) + all claude-mcp-server instances configured in `~/.claude.json`.
 
 **Two modes** based on context:
 - **Mode A — Pure Question**: No commands required. Claude forms its own position first, then dispatches all slot-workers as parallel Tasks, deliberates to consensus.
@@ -62,7 +62,7 @@ If $ARGUMENTS is empty: use the most recent open question or decision from the c
 Before any model calls, run a fast HTTP probe of the underlying LLM providers:
 
 ```bash
-node "$HOME/.claude/qgsd-bin/check-provider-health.cjs" --json
+node "$HOME/.claude/nf-bin/check-provider-health.cjs" --json
 ```
 
 Parse the JSON output. Build two structures:
@@ -73,12 +73,12 @@ Parse the JSON output. Build two structures:
 
 Any server with `available: false` must be marked UNAVAIL immediately — skip its health_check and inference calls entirely. This prevents hangs from unresponsive provider endpoints.
 
-3. **`$QUORUM_ACTIVE`**: read from `~/.claude/qgsd.json` (project config takes precedence over global):
+3. **`$QUORUM_ACTIVE`**: read from `~/.claude/nf.json` (project config takes precedence over global):
 ```bash
 node -e "
 const fs = require('fs'), os = require('os'), path = require('path');
-const globalCfg = path.join(os.homedir(), '.claude', 'qgsd.json');
-const projCfg   = path.join(process.cwd(), '.claude', 'qgsd.json');
+const globalCfg = path.join(os.homedir(), '.claude', 'nf.json');
+const projCfg   = path.join(process.cwd(), '.claude', 'nf.json');
 let cfg = {};
 for (const f of [globalCfg, projCfg]) {
   try { Object.assign(cfg, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch(_){}
@@ -96,12 +96,12 @@ A server in `$QUORUM_ACTIVE` but absent from `$CLAUDE_MCP_SERVERS` = skip silent
 - Reorder the remaining working list: healthy servers first (preserving discovery order within each group).
 - Log the final working list as: `Active slots: <slot1>, <slot2>, ...`
 
-**max_quorum_size check:** Read `max_quorum_size` from `~/.claude/qgsd.json` (project config takes precedence; default: 3 if absent):
+**max_quorum_size check:** Read `max_quorum_size` from `~/.claude/nf.json` (project config takes precedence; default: 3 if absent):
 ```bash
 node -e "
 const fs = require('fs'), os = require('os'), path = require('path');
-const globalCfg = path.join(os.homedir(), '.claude', 'qgsd.json');
-const projCfg   = path.join(process.cwd(), '.claude', 'qgsd.json');
+const globalCfg = path.join(os.homedir(), '.claude', 'nf.json');
+const projCfg   = path.join(process.cwd(), '.claude', 'nf.json');
 let cfg = {};
 for (const f of [globalCfg, projCfg]) {
   try { Object.assign(cfg, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch(_){}
@@ -136,7 +136,7 @@ node -e "
 const fs = require('fs'), path = require('path'), os = require('os');
 
 const searchPaths = [
-  path.join(os.homedir(), '.claude', 'qgsd-bin', 'providers.json'),
+  path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),
 ];
 try {
   const cj = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8'));
@@ -150,8 +150,8 @@ for (const p of searchPaths) {
   try { providers = JSON.parse(fs.readFileSync(p, 'utf8')).providers; break; } catch(_) {}
 }
 
-const globalCfg = path.join(os.homedir(), '.claude', 'qgsd.json');
-const projCfg   = path.join(process.cwd(), '.claude', 'qgsd.json');
+const globalCfg = path.join(os.homedir(), '.claude', 'nf.json');
+const projCfg   = path.join(process.cwd(), '.claude', 'nf.json');
 let cfg = {};
 for (const f of [globalCfg, projCfg]) {
   try { Object.assign(cfg, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch(_) {}
@@ -178,7 +178,7 @@ Detect Claude's model ID from: `CLAUDE_MODEL` env var → `ANTHROPIC_MODEL` env 
 
 Run:
 ```bash
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" init-team \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" init-team \
   --claude-model "<claude_model_id>" \
   --team '<TEAM_JSON>'
 ```
@@ -236,7 +236,7 @@ echo "Adaptive fan-out: risk_level=${RISK_LEVEL} → fan_out_count=${FAN_OUT_COU
 
 **Apply cap — build DISPATCH_LIST:** Take the first `FAN_OUT_COUNT - 1` slots from the active working list (healthy-first order from pre-flight). This is the definitive slot cap. Call this `$DISPATCH_LIST`. All subsequent round dispatches (Round 1 and deliberation) use `$DISPATCH_LIST` — never the full working list.
 
-> **Why here and not only in the hook:** `qgsd-prompt.js` enforces this cap via `--n` for main-session prompts. But quorum is also dispatched inline from subagents (e.g., `qgsd-planner` in step 8.5 of `plan-phase.md`) where no UserPromptSubmit hook fires. `quorum.md` must self-enforce the cap for all dispatch contexts.
+> **Why here and not only in the hook:** `nf-prompt.js` enforces this cap via `--n` for main-session prompts. But quorum is also dispatched inline from subagents (e.g., `nf-planner` in step 8.5 of `plan-phase.md`) where no UserPromptSubmit hook fires. `quorum.md` must self-enforce the cap for all dispatch contexts.
 
 ### R6.4 Reduced-Quorum Note (FAN-05)
 
@@ -250,7 +250,7 @@ fi
 # When FAN_OUT_COUNT = MAX_QUORUM_SIZE (high/absent): no note emitted.
 ```
 
-The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. The fan-out logic is now implemented in both quorum.md (above) and qgsd-prompt.js (which emits `--n N` for downstream ceiling verification).
+The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. The fan-out logic is now implemented in both quorum.md (above) and nf-prompt.js (which emits `--n N` for downstream ceiling verification).
 
 ---
 
@@ -276,7 +276,7 @@ When a question is inferred via any priority, Claude MUST display before proceed
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM: Round 1 — N workers dispatched
+ nForma ► QUORUM: Round 1 — N workers dispatched
  Active: gemini-1, opencode-1, copilot-1, codex-1
  Fallback pool: T1 = unused slots with auth_type=sub; T2 = slots with auth_type≠sub (on UNAVAIL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -296,7 +296,7 @@ Store as `$CLAUDE_POSITION`.
 
 ### Query models (parallel — one Task per slot)
 
-Dispatch one `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
+Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
 
 ```
 slot: <slotName>
@@ -318,11 +318,11 @@ Set it to the evaluation criteria appropriate for the artifact type, e.g.:
 - Audit:    "This is a milestone audit. Evaluate whether the work achieves the stated milestone goals."
 
 Example dispatch (all Tasks in one message turn):
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
 (model="haiku" — slot-workers are orchestrators (read files, build prompt, run Bash subprocess), NOT reasoners. The actual reasoning is done by the external CLI. Haiku is faster with zero quality loss.)
 
 The slot-worker reads repo context, builds its own prompt from the YAML arguments, calls the slot via `call-quorum-slot.cjs`, and returns a structured result block.
@@ -369,7 +369,7 @@ If all available models agree → skip to **Consensus output**.
 
 Run up to 9 deliberation rounds (max 10 total rounds including Round 1).
 
-For each round, dispatch one `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** as **parallel sibling calls**. Append `prior_positions` to the YAML block for Round 2+ dispatch:
+For each round, dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** as **parallel sibling calls**. Append `prior_positions` to the YAML block for Round 2+ dispatch:
 
 ```
 slot: <slotName>
@@ -405,7 +405,7 @@ After 10 total rounds with no consensus → **Escalate**.
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM CONSENSUS REACHED
+ nForma ► QUORUM CONSENSUS REACHED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
@@ -427,7 +427,7 @@ Update the scoreboard: for each model that voted this round, run:
 
 ```bash
 # For native agents:
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --model <model_name> \
   --result <vote_code> \
   --task "<task_label>" \
@@ -436,7 +436,7 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --task-description "<question or topic being debated>"
 
 # For each claude-mcp server (use slot + full model-id, NOT --model):
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --slot <slotName> \
   --model-id <fullModelId> \
   --result <vote_code> \
@@ -519,7 +519,7 @@ Only write the `## Improvements` section when `request_improvements: true` AND i
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM ESCALATING — NO CONSENSUS AFTER 10 ROUNDS
+ nForma ► QUORUM ESCALATING — NO CONSENSUS AFTER 10 ROUNDS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [question]
@@ -541,7 +541,7 @@ Update the scoreboard: for each model that voted this round, run:
 
 ```bash
 # For native agents:
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --model <model_name> \
   --result <vote_code> \
   --task "<task_label>" \
@@ -550,7 +550,7 @@ node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
   --task-description "<question or topic being debated>"
 
 # For each claude-mcp server (use slot + full model-id, NOT --model):
-node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
   --slot <slotName> \
   --model-id <fullModelId> \
   --result <vote_code> \
@@ -581,7 +581,7 @@ Extract command(s) to run from $ARGUMENTS. If unclear, ask the user to specify.
 Display:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM: Mode B — Execution + Trace Review
+ nForma ► QUORUM: Mode B — Execution + Trace Review
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Question: [original question]
@@ -615,7 +615,7 @@ $TRACES
 
 ### Dispatch quorum workers via Task (parallel per round)
 
-Dispatch one `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
+Dispatch one `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, ...)` per slot in **`$DISPATCH_LIST`** (capped to `FAN_OUT_COUNT - 1` external slots) as **parallel sibling calls** in one message turn. Do NOT dispatch slots outside `$DISPATCH_LIST`. Build a YAML prompt block per the slot-worker argument spec:
 
 ```
 slot: <slotName>
@@ -643,11 +643,11 @@ prior_positions: |
 Populate `citations:` from the `citations:` field in each model's slot-worker result block. If the result block had no `citations:` field or it was empty, write `(none)`. For Claude's own position, include any file paths or line numbers Claude cited in its reasoning.
 
 Example dispatch (all Tasks in one message turn):
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
-- `Task(subagent_type="qgsd-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="gemini-1 [gemini-cli · gemini-3-pro-preview] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="codex-1 [codex-cli · gpt-5.3-codex] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="opencode-1 [opencode-cli · grok-code-fast-1] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="copilot-1 [copilot-cli · gpt-4.1] quorum R1", prompt=<YAML block>)`
+- `Task(subagent_type="nf-quorum-slot-worker", model="haiku", max_turns=100, description="claude-1 [claude-code-router · deepseek-ai/DeepSeek-V3.2] quorum R1", prompt=<YAML block>)` ← one per claude-mcp server with `available: true`
 (model="haiku" — slot-workers are orchestrators (read files, build prompt, run Bash subprocess), NOT reasoners. The actual reasoning is done by the external CLI. Haiku is faster with zero quality loss.)
 
 The slot-worker reads repo context, builds the Mode B prompt (with execution traces) from the YAML arguments, calls the slot via `call-quorum-slot.cjs`, and returns a structured result block with a `verdict: APPROVE | REJECT | FLAG` field.
@@ -669,7 +669,7 @@ If split: run deliberation (up to 9 deliberation rounds, max 10 total rounds inc
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► QUORUM VERDICT
+ nForma ► QUORUM VERDICT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ┌────────────────────────────────┬──────────────┬──────────────────────────────────────────┐

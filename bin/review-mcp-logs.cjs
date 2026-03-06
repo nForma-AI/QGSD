@@ -192,7 +192,7 @@ const fmtMs = (ms) => {
 };
 
 console.log(`\n${bold('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')}`);
-console.log(bold(' QGSD ► MCP LOG REVIEW'));
+console.log(bold(' nForma ► MCP LOG REVIEW'));
 console.log(bold('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
 console.log(dim(` Scanned: ${files.length} debug files | Last ${MAX_DAYS} days | ${DEBUG_DIR}`));
 console.log();

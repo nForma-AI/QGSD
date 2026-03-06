@@ -72,7 +72,7 @@ test('validateTraceEvent returns 2 violations for event with forbidden key and f
 // ── Integration tests ─────────────────────────────────────────────────────────
 
 test('integration: exits 0 with clean trace event JSONL file', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-redact-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-redact-test-'));
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
 
   try {
@@ -95,7 +95,7 @@ test('integration: exits 0 with clean trace event JSONL file', () => {
 });
 
 test('integration: exits 1 when trace event contains forbidden key api_key', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-redact-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-redact-test-'));
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
 
   try {
@@ -118,7 +118,7 @@ test('integration: exits 1 when trace event contains forbidden key api_key', () 
 });
 
 test('integration: exits 0 with non-existent trace directory (graceful no-op)', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qgsd-redact-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-redact-test-'));
   const ndjsonPath = path.join(tmpDir, 'check-results.ndjson');
 
   try {

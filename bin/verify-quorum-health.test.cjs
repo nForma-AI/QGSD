@@ -4,7 +4,7 @@
 // Comprehensive unit tests for bin/verify-quorum-health.cjs
 //
 // Strategy: spawn the script as a subprocess with a temp directory containing:
-//   - src/machines/qgsd-workflow.machine.ts  with a known maxDeliberation value
+//   - src/machines/nf-workflow.machine.ts  with a known maxDeliberation value
 //   - .planning/quorum-scoreboard.json       with known round data
 //
 // The script uses ROOT = path.join(__dirname, '..') to locate files, so we
@@ -14,7 +14,7 @@
 // run the script with a NODE_PATH override that makes it resolve against a
 // wrapper, OR (simpler) we copy the script to tmpDir and patch ROOT.
 //
-// SIMPLEST approach: use env var QGSD_ROOT to override ROOT in the script.
+// SIMPLEST approach: use env var NF_ROOT to override ROOT in the script.
 // The script does not support that today, so we use a thin wrapper shim that
 // patches ROOT before requiring the real script.  The shim is written to a
 // temp file for each test.
@@ -34,7 +34,7 @@ const SCRIPT_PATH = path.join(__dirname, 'verify-quorum-health.cjs');
 
 /**
  * Create a temporary directory with the required filesystem layout:
- *   <tmpDir>/src/machines/qgsd-workflow.machine.ts
+ *   <tmpDir>/src/machines/nf-workflow.machine.ts
  *   <tmpDir>/.planning/quorum-scoreboard.json   (optional)
  *
  * Returns the tmpDir path.
@@ -52,14 +52,14 @@ function writeMachineFile(tmpDir, maxDeliberation) {
   fs.mkdirSync(machinesDir, { recursive: true });
   const content = [
     '// Minimal stub for verify-quorum-health tests',
-    'export const qgsdWorkflowMachine = createMachine({',
+    'export const nfWorkflowMachine = createMachine({',
     '  context: {',
     '    maxDeliberation: ' + maxDeliberation + ',',
     '    otherValue: 42,',
     '  },',
     '});',
   ].join('\n');
-  fs.writeFileSync(path.join(machinesDir, 'qgsd-workflow.machine.ts'), content, 'utf8');
+  fs.writeFileSync(path.join(machinesDir, 'nf-workflow.machine.ts'), content, 'utf8');
 }
 
 /**
@@ -213,7 +213,7 @@ test('stderr mentions maxDeliberation when machine file is missing', () => {
     // fs.readFileSync before it can write its own error message.  The Node.js
     // runtime prints the uncaught error to stderr, so we match the OS-level
     // ENOENT text and the filename that the script attempts to open.
-    assert.match(stderr, /ENOENT|qgsd-workflow\.machine\.ts/,
+    assert.match(stderr, /ENOENT|nf-workflow\.machine\.ts/,
       'stderr should contain the ENOENT error for the missing machine file');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -230,7 +230,7 @@ test('exits 1 when machine file exists but contains no maxDeliberation field', (
     const machinesDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machinesDir, { recursive: true });
     fs.writeFileSync(
-      path.join(machinesDir, 'qgsd-workflow.machine.ts'),
+      path.join(machinesDir, 'nf-workflow.machine.ts'),
       '// no maxDeliberation here\nexport const x = 1;\n',
       'utf8'
     );
@@ -443,7 +443,7 @@ test('FAIL output includes recommended maxDeliberation adjustment', () => {
 
     assert.match(stderr, /maxDeliberation/,
       'FAIL message should reference maxDeliberation update action');
-    assert.match(stderr, /src\/machines\/qgsd-workflow\.machine\.ts/,
+    assert.match(stderr, /src\/machines\/nf-workflow\.machine\.ts/,
       'FAIL message should name the file to update');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -568,7 +568,7 @@ test('--target=0.50 passes even with a very low maxDelib=1', () => {
 
 // ─── Test: report header and structure ───────────────────────────────────────
 
-test('output contains "QGSD Quorum Reliability Report" header', () => {
+test('output contains "nForma Quorum Reliability Report" header', () => {
   const tmpDir = makeTmpDir();
   try {
     writeMachineFile(tmpDir, 10);
@@ -577,7 +577,7 @@ test('output contains "QGSD Quorum Reliability Report" header', () => {
 
     const { stdout } = runScript(tmpDir);
 
-    assert.match(stdout, /QGSD Quorum Reliability Report/,
+    assert.match(stdout, /nForma Quorum Reliability Report/,
       'stdout should contain the report header');
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -941,7 +941,7 @@ test('maxDeliberation regex matches even with surrounding whitespace variations'
     const machinesDir = path.join(tmpDir, 'src', 'machines');
     fs.mkdirSync(machinesDir, { recursive: true });
     fs.writeFileSync(
-      path.join(machinesDir, 'qgsd-workflow.machine.ts'),
+      path.join(machinesDir, 'nf-workflow.machine.ts'),
       'export const m = createMachine({ context: { maxDeliberation:   15, } });\n',
       'utf8'
     );

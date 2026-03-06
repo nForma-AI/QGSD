@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-05T12:04:07.010Z",
+  "last_sync": "2026-03-06T10:11:45.142Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
@@ -59,8 +59,8 @@
       ]
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 1233,
-      "last_updated": "2026-03-05T12:04:07.010Z",
+      "version": 2693,
+      "last_updated": "2026-03-06T10:11:45.140Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -132,8 +132,8 @@
       ]
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 1233,
-      "last_updated": "2026-03-05T12:04:07.010Z",
+      "version": 2693,
+      "last_updated": "2026-03-06T10:11:45.142Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -240,8 +240,8 @@
       ]
     },
     ".planning/formal/tla/QGSDQuorum.tla": {
-      "version": 1234,
-      "last_updated": "2026-03-05T12:04:07.009Z",
+      "version": 1246,
+      "last_updated": "2026-03-05T21:42:46.915Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -1075,6 +1075,116 @@
       "requirements": [
         "SOLVE-05",
         "SOLVE-06"
+      ]
+    },
+    ".planning/formal/tla/NFQuorum.tla": {
+      "version": 1447,
+      "last_updated": "2026-03-06T10:11:45.139Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
+      "session_id": null,
+      "description": ""
+    },
+    ".planning/formal/alloy/solve-automation-features.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:16:40.647Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "Solve diagnostic engine automation: fast mode, FP suppression, Category B auto-ack, recipe sidecars",
+      "requirements": [
+        "SOLVE-09"
+      ]
+    },
+    ".planning/formal/alloy/solve-legacy-merge.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:16:40.647Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "Legacy .formal/ directory migration and merge behavior",
+      "requirements": [
+        "SOLVE-8"
+      ]
+    },
+    ".planning/formal/alloy/solve-ft-recipe.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:16:40.647Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "F->T recipe sidecar pre-resolved context",
+      "requirements": [
+        "SOLVE-7"
+      ]
+    },
+    ".planning/formal/alloy/headless-execution.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:16:40.647Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "Headless execution constraint for JVM-based formal runners",
+      "requirements": [
+        "VERIFY-03"
+      ]
+    },
+    ".planning/formal/alloy/jvm-heap-sequential.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:16:40.647Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "JVM heap cap flags and sequential execution constraints",
+      "requirements": [
+        "VERIFY-04"
+      ]
+    },
+    ".planning/formal/alloy/traceability-obligations.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:18:08.542Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "Traceability annotation obligations for debt, FV tooling, conformance subsystems",
+      "requirements": [
+        "DEBT-01",
+        "FVTOOL-01",
+        "TRACE-07"
+      ]
+    },
+    ".planning/formal/alloy/project-identity.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:18:08.542Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "Project naming and skill prefix constraints",
+      "requirements": [
+        "PROJECT-01",
+        "PROJECT-02"
+      ]
+    },
+    ".planning/formal/alloy/doc-claims-backing.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:18:08.542Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "README capability claims must be backed by requirements",
+      "requirements": [
+        "DOC-01"
+      ]
+    },
+    ".planning/formal/alloy/solve-tc-coverage.als": {
+      "version": 1,
+      "last_updated": "2026-03-06T09:18:08.542Z",
+      "update_source": "close-formal-gaps",
+      "source_id": "solve-batch",
+      "session_id": null,
+      "description": "T->C false-green detection via cross-referenced coverage",
+      "requirements": [
+        "SOLVE-10"
       ]
     }
   },

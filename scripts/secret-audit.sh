@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-echo "=== QGSD Full-History Secret Audit ==="
+echo "=== nForma Full-History Secret Audit ==="
 echo ""
 
 # --- Gitleaks full-history scan ---

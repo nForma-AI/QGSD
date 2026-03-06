@@ -43,7 +43,7 @@ If NOT dry-run:
 node bin/aggregate-requirements.cjs $DRY_RUN $SKIP_ARCHIVE
 ```
 
-Note: Run from the QGSD project root directory.
+Note: Run from the nForma project root directory.
 </step>
 
 <step name="invariant_gate">

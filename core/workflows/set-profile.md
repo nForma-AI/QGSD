@@ -23,8 +23,8 @@ if $ARGUMENTS.profile not in ["quality", "balanced", "budget"]:
 Ensure config exists and load current state:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-ensure-section
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs state load)
+node ~/.claude/nf/bin/gsd-tools.cjs config-ensure-section
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs state load)
 ```
 
 This creates `.planning/config.json` with defaults if missing and loads current config.
@@ -56,9 +56,9 @@ Agents will now use:
 Example:
 | Agent | Model |
 |-------|-------|
-| qgsd-planner | opus |
-| qgsd-executor | sonnet |
-| qgsd-verifier | haiku |
+| nf-planner | opus |
+| nf-executor | sonnet |
+| nf-verifier | haiku |
 | ... | ... |
 
 Next spawned agents will use the new profile.

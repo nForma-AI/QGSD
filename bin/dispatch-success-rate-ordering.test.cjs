@@ -12,28 +12,28 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 // ----- STRUCTURAL TESTS (RED until Plan 02 adds sortBySuccessRate + fallback) -----
-// These tests read hooks/qgsd-prompt.js source (NOT installed ~/.claude/ copies).
+// These tests read hooks/nf-prompt.js source (NOT installed ~/.claude/ copies).
 
-const QGSD_PROMPT_PATH = path.resolve(__dirname, '..', 'hooks', 'qgsd-prompt.js');
-let qgsdPromptContent = '';
+const NF_PROMPT_PATH = path.resolve(__dirname, '..', 'hooks', 'nf-prompt.js');
+let nfPromptContent = '';
 try {
-  qgsdPromptContent = fs.readFileSync(QGSD_PROMPT_PATH, 'utf8');
+  nfPromptContent = fs.readFileSync(NF_PROMPT_PATH, 'utf8');
 } catch (e) {
-  qgsdPromptContent = '';
+  nfPromptContent = '';
 }
 
-test('STRUCTURAL: sortBySuccessRate function exists in qgsd-prompt.js', () => {
+test('STRUCTURAL: sortBySuccessRate function exists in nf-prompt.js', () => {
   assert.ok(
-    qgsdPromptContent.includes('sortBySuccessRate'),
-    'sortBySuccessRate function not found in qgsd-prompt.js -- Plan 02 must add it'
+    nfPromptContent.includes('sortBySuccessRate'),
+    'sortBySuccessRate function not found in nf-prompt.js -- Plan 02 must add it'
   );
 });
 
 test('STRUCTURAL: sortBySuccessRate is exported for testing', () => {
   // Check that sortBySuccessRate appears in module.exports (either object literal or property assignment)
   const hasExport =
-    qgsdPromptContent.includes('module.exports.sortBySuccessRate') ||
-    (qgsdPromptContent.match(/module\.exports\s*=\s*\{[^}]*sortBySuccessRate[^}]*\}/s) !== null);
+    nfPromptContent.includes('module.exports.sortBySuccessRate') ||
+    (nfPromptContent.match(/module\.exports\s*=\s*\{[^}]*sortBySuccessRate[^}]*\}/s) !== null);
   assert.ok(
     hasExport,
     'sortBySuccessRate not found in module.exports -- Plan 02 must export it'
@@ -44,8 +44,8 @@ test('STRUCTURAL: success rate sorting integrated into dispatch flow', () => {
   // Check that sortBySuccessRate is called in the dispatch flow.
   // Look for assignment pattern: cappedSlots = sortBySuccessRate( or similar call site.
   const hasCallSite =
-    qgsdPromptContent.includes('= sortBySuccessRate(') ||
-    qgsdPromptContent.includes('sortBySuccessRate(cappedSlots');
+    nfPromptContent.includes('= sortBySuccessRate(') ||
+    nfPromptContent.includes('sortBySuccessRate(cappedSlots');
   assert.ok(
     hasCallSite,
     'sortBySuccessRate is defined but never called in dispatch flow -- Plan 02 must integrate it'
@@ -55,10 +55,10 @@ test('STRUCTURAL: success rate sorting integrated into dispatch flow', () => {
 test('STRUCTURAL: graceful fallback logic exists (ensures at least one slot)', () => {
   // Check for a guard pattern that prevents empty dispatch list
   const hasFallback =
-    qgsdPromptContent.includes('length === 0') ||
-    qgsdPromptContent.includes('.length === 0') ||
-    qgsdPromptContent.includes('fallback') ||
-    qgsdPromptContent.match(/cappedSlots\.length\s*(===|==)\s*0/);
+    nfPromptContent.includes('length === 0') ||
+    nfPromptContent.includes('.length === 0') ||
+    nfPromptContent.includes('fallback') ||
+    nfPromptContent.match(/cappedSlots\.length\s*(===|==)\s*0/);
   assert.ok(
     hasFallback,
     'Graceful fallback logic not found -- Plan 02 must ensure at least one slot in dispatch list'
@@ -180,6 +180,6 @@ test('UNIT: graceful fallback returns at least one slot when all filtered', () =
 
 // ----- FAIL-OPEN GUARD TESTS -----
 
-test('fail-open: missing qgsd-prompt.js file does not crash test runner', () => {
+test('fail-open: missing nf-prompt.js file does not crash test runner', () => {
   assert.ok(true, 'Guard allows missing file -- fail-open');
 });

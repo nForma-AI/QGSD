@@ -13,7 +13,7 @@ const fs   = require('fs');
 const NON_INTERACTIVE = process.argv.includes('--non-interactive');
 const DEBUG_ARTIFACT_PATH = path.join(process.cwd(), '.planning', 'quick', 'quorum-debug-latest.md');
 const ACCEPT_SCRIPT = path.join(__dirname, 'accept-debug-invariant.cjs');
-const DEFAULT_SPEC  = path.join(process.cwd(), '.planning', 'formal', 'tla', 'QGSDQuorum.tla');
+const DEFAULT_SPEC  = path.join(process.cwd(), '.planning', 'formal', 'tla', 'NFQuorum.tla');
 
 function sanitizeTlaName(str) {
   return str.replace(/[^a-zA-Z0-9]+/g, '_').slice(0, 40).replace(/^_+|_+$/g, '') || 'Unknown';

@@ -72,6 +72,27 @@ sources:
   #   timeout: 15
   #   fail_open: true
 
+  # Upstream: tight fork (releases = sync obligations)
+  - type: upstream
+    label: "GSD (fork parent)"
+    repo: gsd-build/get-shit-done
+    coupling: tight
+    filter:
+      since: 30d
+
+  # Upstream: loose / inspirational (releases + notable PRs)
+  - type: upstream
+    label: "Everything Claude Code"
+    repo: affaan-m/everything-claude-code
+    coupling: loose
+    filter:
+      since: 14d
+
+  # Dependencies (auto-detects node/python ecosystem)
+  - type: deps
+    label: "Dependencies"
+    timeout: 30
+
   # Logstash / Elasticsearch
   # - type: logstash
   #   label: "Production Errors"
@@ -104,6 +125,8 @@ Configuration for `/qgsd:observe` — the project's production feedback system.
 | `prometheus` | drift | Prometheus alerts and PromQL metric queries |
 | `grafana` | drift | Grafana unified alerting dashboard alerts |
 | `logstash` | issue | Elasticsearch/Logstash log entry queries |
+| `upstream` | upstream | Upstream repo releases and notable PRs (tight fork or loose inspiration) |
+| `deps` | deps | Outdated packages, runtime versions, and security audit (auto-detects ecosystem) |
 
 ### Config Fields
 

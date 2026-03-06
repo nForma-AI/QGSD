@@ -1,5 +1,5 @@
 ---
-name: qgsd:settings
+name: nf:settings
 description: Project manager hub — dashboard, smart routing, and configuration
 allowed-tools:
   - Read
@@ -23,11 +23,11 @@ Backward compatible: /nf:settings --config goes directly to workflow settings (o
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/settings.md
+@~/.claude/nf/workflows/settings.md
 </execution_context>
 
 <process>
-**Follow the settings workflow** from `@~/.claude/qgsd/workflows/settings.md`.
+**Follow the settings workflow** from `@~/.claude/nf/workflows/settings.md`.
 
 The workflow handles all logic including:
 1. Flag check (--config for backward compat)

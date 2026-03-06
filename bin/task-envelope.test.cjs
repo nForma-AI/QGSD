@@ -18,7 +18,7 @@ const { validateEnvelope, ENVELOPE_SCHEMA } = require('./task-envelope.cjs');
 
 // Helper: create isolated tmpDir with .planning/phases structure
 function setupTempPhase(phaseId) {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `qgsd-envelope-`));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `nf-envelope-`));
   const phaseDir = path.join(tmpDir, '.planning', 'phases', phaseId);
   fs.mkdirSync(phaseDir, { recursive: true });
   return { tmpDir, phaseDir };

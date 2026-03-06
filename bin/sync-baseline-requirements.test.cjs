@@ -113,7 +113,7 @@ describe('syncBaselineRequirements', () => {
     const written = readResult(tmpDir);
     const first = written.requirements[0];
     assert.equal(first.status, 'Pending');
-    assert.equal(first.provenance.source_file, 'qgsd-baseline');
+    assert.equal(first.provenance.source_file, 'nf-baseline');
     assert.equal(first.provenance.milestone, 'baseline');
     assert.equal(first.phase, 'baseline');
   });
@@ -203,7 +203,7 @@ describe('syncBaselineRequirements', () => {
     const written = readResult(tmpDir);
     for (const req of written.requirements) {
       assert.deepEqual(req.provenance, {
-        source_file: 'qgsd-baseline',
+        source_file: 'nf-baseline',
         milestone: 'baseline',
       }, `Provenance mismatch for ${req.id}`);
       assert.equal(req.phase, 'baseline', `Phase mismatch for ${req.id}`);

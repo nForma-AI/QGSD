@@ -28,7 +28,7 @@
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
 //   node bin/run-formal-verify.cjs --concurrent       # run tool groups in parallel (old behavior)
-//   QGSD_FORMAL_CONCURRENT=1 node bin/run-formal-verify.cjs  # same via env var
+//   NF_FORMAL_CONCURRENT=1 node bin/run-formal-verify.cjs  # same via env var
 //   node bin/run-formal-verify.cjs --only=generate    # source extraction only (2 steps)
 //   node bin/run-formal-verify.cjs --only=tla         # TLA+ only  (10 steps)
 //   node bin/run-formal-verify.cjs --only=alloy       # Alloy only (8 steps)
@@ -63,7 +63,7 @@ for (const arg of process.argv.slice(2)) {
 }
 
 // ── Runner picker maps ─────────────────────────────────────────────────────────
-// Maps known QGSD model names to their specialized runners. Unknown models
+// Maps known nForma model names to their specialized runners. Unknown models
 // fall back to generic runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs).
 
 const TLA_RUNNER_MAP = {
@@ -328,9 +328,9 @@ const STATIC_STEPS = [
   // ─ Source extraction — must run first so generated specs are fresh ──────────
   {
     tool: 'generate', id: 'generate:tla-from-xstate',
-    label: 'Generate TLA+ spec (QGSDQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
+    label: 'Generate TLA+ spec (NFQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
     type: 'node', script: 'xstate-to-tla.cjs',
-    args: ['src/machines/qgsd-workflow.machine.ts', '--module=QGSDQuorum', '--config=.planning/formal/tla/guards/qgsd-workflow.json'],
+    args: ['src/machines/nf-workflow.machine.ts', '--module=NFQuorum', '--config=.planning/formal/tla/guards/nf-workflow.json'],
   },
   {
     tool: 'generate', id: 'generate:alloy-prism-specs',
@@ -412,7 +412,7 @@ process.stdout.write(TAG + ' Discovered models: ' + uniqueDynamicSteps.length + 
 const argv    = process.argv.slice(2);
 const onlyArg = argv.find(a => a.startsWith('--only='));
 const only    = onlyArg ? onlyArg.split('=')[1] : null;
-const concurrent = argv.includes('--concurrent') || process.env.QGSD_FORMAL_CONCURRENT === '1';
+const concurrent = argv.includes('--concurrent') || process.env.NF_FORMAL_CONCURRENT === '1';
 
 const steps = only
   ? STEPS.filter(s => s.tool === only || s.id === only)
@@ -550,7 +550,7 @@ async function runOnce() {
   fs.writeFileSync(ndjsonPath, '', 'utf8');
 
   process.stdout.write(TAG + ' ' + HR + '\n');
-  process.stdout.write(TAG + ' QGSD Formal Verification Suite\n');
+  process.stdout.write(TAG + ' nForma Formal Verification Suite\n');
   if (only) {
     process.stdout.write(TAG + ' Filter: --only=' + only + '\n');
   }
@@ -641,7 +641,7 @@ if (watchArg) {
   // by spawning with a custom cwd. __dirname-relative paths would always point
   // to the real repo's src/machines/ regardless of spawn cwd, breaking isolation.
   const machineDir  = path.join(process.cwd(), 'src', 'machines');
-  const machineName = 'qgsd-workflow.machine.ts';
+  const machineName = 'nf-workflow.machine.ts';
   let debounceTimer = null;
   let running       = false;  // concurrent-run guard
   let watcher       = null;

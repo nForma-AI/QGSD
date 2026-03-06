@@ -7,11 +7,11 @@ You are a thinking partner, not an interviewer. The user is the visionary — yo
 <downstream_awareness>
 **CONTEXT.md feeds into:**
 
-1. **qgsd-phase-researcher** — Reads CONTEXT.md to know WHAT to research
+1. **nf-phase-researcher** — Reads CONTEXT.md to know WHAT to research
    - "User wants card-based layout" → researcher investigates card component patterns
    - "Infinite scroll decided" → researcher looks into virtualization libraries
 
-2. **qgsd-planner** — Reads CONTEXT.md to know WHAT decisions are locked
+2. **nf-planner** — Reads CONTEXT.md to know WHAT decisions are locked
    - "Pull-to-refresh on mobile" → planner includes that in task specs
    - "Claude's Discretion: loading skeleton" → planner can decide approach
 
@@ -111,7 +111,7 @@ Phase: "API documentation"
 Phase number from argument (required).
 
 ```bash
-INIT=$(node ~/.claude/qgsd/bin/gsd-tools.cjs init phase-op "${PHASE}")
+INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init phase-op "${PHASE}")
 ```
 
 Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`.
@@ -202,10 +202,10 @@ Apply the R4 pre-filter (CLAUDE.md §R4) to every gray area candidate before pre
 
 2. **Run quorum inline** for this question (one quorum round per question — sequential, not parallel):
 
-   R3 dispatch_pattern from `commands/qgsd/quorum.md` — Mode A:
+   R3 dispatch_pattern from `commands/nf/quorum.md` — Mode A:
    - Question: "Should '[question text]' be decided by quorum now (removing it from the user's question list), or does it genuinely require the user's vision/preference? If quorum can decide: provide the recommended answer biased toward the long-term solution. Vote APPROVE (quorum can decide — CONSENSUS-READY) or BLOCK (user input needed)."
    - Include context: phase name, goal from ROADMAP.md, relevant patterns from STATE.md
-   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 3 rounds per R4
 
    Fail-open: if all slots error (UNAVAIL), mark the question for user presentation per R6.
@@ -239,7 +239,7 @@ Present the domain boundary and gray areas to user.
 Before presenting to the user, check if auto mode is active:
 
 ```bash
-AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is `"true"` AND `for_user[]` is non-empty:**
@@ -250,15 +250,15 @@ For each question still in `for_user[]` (process sequentially):
 
 1. Form Claude's position: can quorum decide this question, or does it genuinely require the user's vision/preference? State APPROVE (quorum can decide) or BLOCK (needs user) with 1-2 sentence rationale.
 
-2. Run R3 quorum inline (dispatch_pattern from `commands/qgsd/quorum.md`):
+2. Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
    - Mode A — pure question
    - Question: "Should '[question text]' be decided by quorum now (removing it from user presentation), or does it genuinely require the user's vision/preference? Phase: {phase_name}. Goal: {phase_goal}. Context: {any relevant patterns from STATE.md}. If quorum can decide: provide the recommended answer biased toward the long-term solution."
-   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `qgsd-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Deliberate up to 3 rounds per R4 (secondary pre-filter, not full R3 10 rounds)
 
 3. After quorum vote for this question, update scoreboard BEFORE moving to next question:
    ```bash
-   node "$HOME/.claude/qgsd-bin/update-scoreboard.cjs" \
+   node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
      --model <model_name_or_slot> \
      --result <vote_code> \
      --task "discuss-phase-{PHASE_NUMBER}" \
@@ -516,7 +516,7 @@ Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 Commit phase context (uses `commit_docs` from init internally):
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
 Confirm: "Committed: docs(${padded_phase}): capture phase context"
@@ -526,7 +526,7 @@ Confirm: "Committed: docs(${padded_phase}): capture phase context"
 Update STATE.md with session info:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs state record-session \
+node ~/.claude/nf/bin/gsd-tools.cjs state record-session \
   --stopped-at "Phase ${PHASE} context gathered" \
   --resume-file "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
@@ -534,7 +534,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs state record-session \
 Commit STATE.md:
 
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs commit "docs(state): record phase ${PHASE} context session" --files .planning/STATE.md
+node ~/.claude/nf/bin/gsd-tools.cjs commit "docs(state): record phase ${PHASE} context session" --files .planning/STATE.md
 ```
 </step>
 
@@ -544,12 +544,12 @@ Check for auto-advance trigger:
 1. Parse `--auto` flag from $ARGUMENTS
 2. Read `workflow.auto_advance` from config:
    ```bash
-   AUTO_CFG=$(node ~/.claude/qgsd/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
+   AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 2>/dev/null || echo "true")
    ```
 
 **If `--auto` flag present AND `AUTO_CFG` is not true:** Persist auto-advance to config (handles direct `--auto` usage without new-project):
 ```bash
-node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.auto_advance true
+node ~/.claude/nf/bin/gsd-tools.cjs config-set workflow.auto_advance true
 ```
 
 **If `--auto` flag present OR `AUTO_CFG` is true:**
@@ -557,7 +557,7 @@ node ~/.claude/qgsd/bin/gsd-tools.cjs config-set workflow.auto_advance true
 Display banner:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- QGSD ► AUTO-ADVANCING TO PLAN
+ nForma ► AUTO-ADVANCING TO PLAN
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Context captured. Spawning plan-phase...

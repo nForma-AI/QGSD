@@ -30,7 +30,7 @@ function runCLI(args, extraEnv) {
 
 // Helper: generate a unique temp scoreboard path
 function tmpScoreboard() {
-  return path.join(os.tmpdir(), 'qgsd-sb-test-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.json');
+  return path.join(os.tmpdir(), 'nf-sb-test-' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.json');
 }
 
 // Helper: safe cleanup — wraps unlinkSync in try/catch
@@ -270,7 +270,7 @@ test('SC-TC13: UNAVAIL result keeps score at 0 and prints UNAVAIL (0)', () => {
 test('SC-TC14: init-team writes fingerprint to scoreboard (16-char hex string)', () => {
   const sb = tmpScoreboard();
   // Point to a temp ~/.claude.json substitute to avoid reading production mcpServers
-  const claudeJsonTmp = path.join(os.tmpdir(), 'qgsd-test-claude-' + Date.now() + '.json');
+  const claudeJsonTmp = path.join(os.tmpdir(), 'nf-test-claude-' + Date.now() + '.json');
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: {} }), 'utf8');
   try {
     const { exitCode } = runCLI(
@@ -280,7 +280,7 @@ test('SC-TC14: init-team writes fingerprint to scoreboard (16-char hex string)',
         '--team', JSON.stringify({ gemini: 'gemini-2.0' }),
         '--scoreboard', sb,
       ],
-      { QGSD_CLAUDE_JSON: claudeJsonTmp }
+      { NF_CLAUDE_JSON: claudeJsonTmp }
     );
     assert.strictEqual(exitCode, 0, 'exit code must be 0 for init-team');
     assert.ok(fs.existsSync(sb), 'scoreboard file must be created by init-team');
@@ -297,7 +297,7 @@ test('SC-TC14: init-team writes fingerprint to scoreboard (16-char hex string)',
 // SC-TC15: init-team idempotent — second call with same composition writes "no change"
 test('SC-TC15: init-team is idempotent — second identical call outputs "no change"', () => {
   const sb = tmpScoreboard();
-  const claudeJsonTmp = path.join(os.tmpdir(), 'qgsd-test-claude-' + Date.now() + '.json');
+  const claudeJsonTmp = path.join(os.tmpdir(), 'nf-test-claude-' + Date.now() + '.json');
   fs.writeFileSync(claudeJsonTmp, JSON.stringify({ mcpServers: {} }), 'utf8');
   const args = [
     'init-team',
@@ -305,7 +305,7 @@ test('SC-TC15: init-team is idempotent — second identical call outputs "no cha
     '--team', JSON.stringify({ gemini: 'gemini-2.0' }),
     '--scoreboard', sb,
   ];
-  const env = { QGSD_CLAUDE_JSON: claudeJsonTmp };
+  const env = { NF_CLAUDE_JSON: claudeJsonTmp };
   try {
     // First call: writes the fingerprint
     const first = runCLI(args, env);
@@ -442,7 +442,7 @@ test('SC-TC-ATOMIC-2: scoreboard is valid JSON after atomic write', () => {
 // SC-TC-MERGE-1: merge-wave with no matching files is a graceful no-op
 test('SC-TC-MERGE-1: merge-wave with empty dir is a graceful no-op', () => {
   const sb = tmpScoreboard();
-  const tmpDir = path.join(os.tmpdir(), 'qgsd-mw-test-' + Date.now());
+  const tmpDir = path.join(os.tmpdir(), 'nf-mw-test-' + Date.now());
   fs.mkdirSync(tmpDir, { recursive: true });
   try {
     const { stdout, exitCode } = runCLI([
@@ -512,7 +512,7 @@ test('SC-TC-INV-4: slot mode TP vote sets slot invocations to 1', () => {
 // SC-TC-INV-5: merge-wave computes invocations for merged votes
 test('SC-TC-INV-5: merge-wave sets invocations on merged slot votes', () => {
   const sb = tmpScoreboard();
-  const tmpDir = path.join(os.tmpdir(), 'qgsd-inv5-' + Date.now());
+  const tmpDir = path.join(os.tmpdir(), 'nf-inv5-' + Date.now());
   fs.mkdirSync(tmpDir, { recursive: true });
   try {
     const vote1 = { slot: 'claude-1', modelId: 'deepseek-ai/DeepSeek-V3', result: 'TP', verdict: 'APPROVE' };
@@ -532,7 +532,7 @@ test('SC-TC-INV-5: merge-wave sets invocations on merged slot votes', () => {
 // SC-TC-MERGE-2: merge-wave applies N vote files in one transaction
 test('SC-TC-MERGE-2: merge-wave applies multiple slot vote files in one transaction', () => {
   const sb = tmpScoreboard();
-  const tmpDir = path.join(os.tmpdir(), 'qgsd-mw-votes-' + Date.now());
+  const tmpDir = path.join(os.tmpdir(), 'nf-mw-votes-' + Date.now());
   fs.mkdirSync(tmpDir, { recursive: true });
   try {
     // Write two vote files simulating two worker outputs

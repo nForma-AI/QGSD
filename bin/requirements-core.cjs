@@ -3,7 +3,7 @@
 /**
  * Pure data functions for requirements management.
  * No blessed dependency — all functions are testable in isolation.
- * Consumers: bin/qgsd.cjs (blessed TUI)
+ * Consumers: bin/nf.cjs (blessed TUI)
  *
  * Data sources (project-relative paths via process.cwd()):
  *   .planning/formal/requirements.json    — 210 requirements in frozen envelope

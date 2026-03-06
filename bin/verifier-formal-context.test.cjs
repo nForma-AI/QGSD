@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 // bin/verifier-formal-context.test.cjs
-// TDD tests for v0.23-02: formal context parsing in qgsd-verifier.md
-// STRUCTURAL tests are RED until Plan 03 updates agents/qgsd-verifier.md
-// and Plan 04 installs it to ~/.claude/agents/qgsd-verifier.md.
+// TDD tests for v0.23-02: formal context parsing in nf-verifier.md
+// STRUCTURAL tests are RED until Plan 03 updates agents/nf-verifier.md
+// and Plan 04 installs it to ~/.claude/agents/nf-verifier.md.
 // UNIT tests are GREEN from the start (pure functions, no file reads).
 // Requirements: WFI-04, ENF-01, ENF-02
 
@@ -49,10 +49,10 @@ test('null FORMAL_CHECK_RESULT maps to skip (no formal scope)', () => {
 });
 
 // ----- STRUCTURAL TESTS (RED until Plan 03 + Plan 04 install) -----
-// These tests read the INSTALLED qgsd-verifier.md from ~/.claude/agents/qgsd-verifier.md
+// These tests read the INSTALLED nf-verifier.md from ~/.claude/agents/nf-verifier.md
 // Plan 04 runs the installer — until then, this file lacks counterexample_found.
 
-const INSTALLED_VERIFIER = path.join(os.homedir(), '.claude', 'agents', 'qgsd-verifier.md');
+const INSTALLED_VERIFIER = path.join(os.homedir(), '.claude', 'agents', 'nf-verifier.md');
 
 let verifierContent = '';
 try {
@@ -62,18 +62,18 @@ try {
   verifierContent = '';
 }
 
-test('agents/qgsd-verifier.md contains counterexample_found status', () => {
+test('agents/nf-verifier.md contains counterexample_found status', () => {
   assert.match(
     verifierContent,
     /counterexample_found/,
-    'Pattern not found: expected "counterexample_found" in ~/.claude/agents/qgsd-verifier.md'
+    'Pattern not found: expected "counterexample_found" in ~/.claude/agents/nf-verifier.md'
   );
 });
 
-test('agents/qgsd-verifier.md contains FORMAL_CHECK_RESULT reference', () => {
+test('agents/nf-verifier.md contains FORMAL_CHECK_RESULT reference', () => {
   assert.match(
     verifierContent,
     /FORMAL_CHECK_RESULT/,
-    'Pattern not found: expected "FORMAL_CHECK_RESULT" in ~/.claude/agents/qgsd-verifier.md'
+    'Pattern not found: expected "FORMAL_CHECK_RESULT" in ~/.claude/agents/nf-verifier.md'
   );
 });

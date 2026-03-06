@@ -1,5 +1,5 @@
 ---
-name: qgsd:progress
+name: nf:progress
 description: Check project progress, show context, and route to next action (execute or plan)
 allowed-tools:
   - Read
@@ -15,10 +15,10 @@ Provides situational awareness before continuing work.
 </objective>
 
 <execution_context>
-@~/.claude/qgsd/workflows/progress.md
+@~/.claude/nf/workflows/progress.md
 </execution_context>
 
 <process>
-Execute the progress workflow from @~/.claude/qgsd/workflows/progress.md end-to-end.
+Execute the progress workflow from @~/.claude/nf/workflows/progress.md end-to-end.
 Preserve all routing logic (Routes A through F) and edge case handling.
 </process>

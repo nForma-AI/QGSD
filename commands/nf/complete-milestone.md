@@ -1,6 +1,6 @@
 ---
 type: prompt
-name: qgsd:complete-milestone
+name: nf:complete-milestone
 description: Archive completed milestone and prepare for next version
 argument-hint: <version>
 allowed-tools:
@@ -19,8 +19,8 @@ Output: Milestone archived (roadmap + requirements), PROJECT.md evolved, git tag
 <execution_context>
 **Load these files NOW (before proceeding):**
 
-- @~/.claude/qgsd/workflows/complete-milestone.md (main workflow)
-- @~/.claude/qgsd/templates/milestone-archive.md (archive template)
+- @~/.claude/nf/workflows/complete-milestone.md (main workflow)
+- @~/.claude/nf/templates/milestone-archive.md (archive template)
   </execution_context>
 
 <context>

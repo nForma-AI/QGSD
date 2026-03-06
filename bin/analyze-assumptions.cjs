@@ -511,13 +511,13 @@ function generateGapReport(crossRefResults) {
   const partial = crossRefResults.filter(a => a.coverage === 'partial').length;
   const uncovered = crossRefResults.filter(a => a.coverage === 'uncovered').length;
 
-  // Generate metric names with qgsd_ prefix and collision detection
+  // Generate metric names with nf_ prefix and collision detection
   const metricNameCounts = new Map();
   const gaps = crossRefResults
     .filter(a => a.coverage !== 'covered')
     .map(a => {
-      // Generate canonical metric name: qgsd_ + lowercase + replace non-alnum with _
-      const baseName = 'qgsd_' + a.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+      // Generate canonical metric name: nf_ + lowercase + replace non-alnum with _
+      const baseName = 'nf_' + a.name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
       // Track for collision detection
       const count = metricNameCounts.get(baseName) || 0;
       metricNameCounts.set(baseName, count + 1);
