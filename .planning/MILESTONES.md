@@ -403,3 +403,13 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.28 Agent Harness Optimization (Shipped: 2026-03-06)
+
+**Phases completed:** 25 phases, 71 plans, 34 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
