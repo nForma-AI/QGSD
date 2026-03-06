@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 Phase: v0.28-02 (Data Pipeline Quorum Cache Pass-at-K Metrics)
 Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-06 - Completed v0.29-04-01 Gate C validation and test generation
+Last activity: 2026-03-06 - Completed v0.29-04-03 Gate integration into solve and verify pipelines
 
 Progress: [###-------] 33%
 
@@ -38,6 +38,7 @@ Progress: [###-------] 33%
 | Phase v0.29-02 P01 | 8min | 2 tasks | 6 files |
 | Phase v0.28-02 P01 | 2min | 2 tasks | 6 files |
 | Phase v0.29-04 P02 | 2min | 1 tasks | 2 files |
+| Phase v0.29-04 P03 | 16min | 2 tasks | 4 files |
 | Phase v0.29-04 P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [v0.29-04-02]: Emission points with null xstate_event excluded from L2 chaining -- only mapped events propagate
 - [v0.29-04-01]: Oracle type directly maps to failure mode type: omission->state_assertion, commission->guard_rejection, corruption->state_equality
 - [v0.29-04-01]: Gate C target threshold set at 0.8 (80%) following gate-b pattern; current score is 1.0
+- [v0.29-04-03]: Layer sweeps use separate layer_total field -- never inflate existing total for backward compatibility
+- [v0.29-04-03]: Gate steps in run-formal-verify marked nonCritical (ADVISORY maturity, not hard gates)
 
 ### Pending Todos
 
@@ -91,5 +94,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-04-01-PLAN.md (Gate C Validation and Test Generation, 25 tests)
+Stopped at: Completed v0.29-04-03-PLAN.md (Gate integration into solve and verify pipelines)
 Resume file: None

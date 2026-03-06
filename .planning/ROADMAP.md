@@ -120,7 +120,7 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
 - [x] **Phase v0.29-01: Layer Manifest and Evidence Foundation** - Register all formal artifacts into layer architecture and build L1 evidence collection infrastructure (completed 2026-03-06)
 - [x] **Phase v0.29-02: Semantics Layer and Gate A Grounding** - Derive operational semantics from traces and quantify how well models explain observed behavior (completed 2026-03-06)
 - [ ] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics
-- [ ] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration
+- [x] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration (completed 2026-03-06)
 - [ ] **Phase v0.29-05: Dashboard and Progressive Maturity Rollout** - Surface cross-layer alignment in a single terminal view
 
 ## Phase Details
@@ -181,7 +181,7 @@ Plans:
   3. Running the design impact analysis on a git diff shows instrumentation (L1), state (L2), and hazard (L3) effects of the change
   4. Running nf-solve includes three new layer-transition sweeps (L1->L2, L2->L3, L3->TC) in its convergence loop
   5. Running run-formal-verify includes three new gate check step groups that produce alignment scores and gap reports
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] v0.29-04-01-PLAN.md -- Gate C validation + test recipe generation (RSN-04, GATE-03)
 - [ ] v0.29-04-02-PLAN.md -- Design impact analysis (RSN-05)
@@ -205,5 +205,5 @@ Plans:
 | v0.29-01. Layer Manifest and Evidence Foundation | 0/3 | Complete    | 2026-03-06 |
 | v0.29-02. Semantics Layer and Gate A Grounding | 2/3 | Complete    | 2026-03-06 |
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 0/2 | Not started | - |
-| v0.29-04. Gate C Validation and Test Generation | 2/3 | In Progress|  |
+| v0.29-04. Gate C Validation and Test Generation | 3/3 | Complete   | 2026-03-06 |
 | v0.29-05. Dashboard and Progressive Maturity Rollout | 0/TBD | Not started | - |
