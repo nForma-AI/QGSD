@@ -86,35 +86,29 @@ Store `$QUICK_DIR` for use in orchestration.
 Skip this step entirely if NOT `$FULL_MODE`.
 
 ```bash
-FORMAL_SPEC_CONTEXT=[]
+FORMAL_SPEC_CONTEXT=()
+if [ -d ".planning/formal/spec" ]; then
+  # Use centralized semantic matching via scope.json metadata
+  while IFS=$'\t' read -r mod modpath; do
+    FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
+  done < <(node bin/formal-scope-scan.cjs --description "$DESCRIPTION" --format lines)
+  MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
+  if [ "$MATCH_COUNT" -gt 0 ]; then
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
+      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+      console.log(lines.map(l=>JSON.parse(l).module).join(', '));
+    ")
+    echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
+  else
+    echo ":: Formal scope scan: no modules matched (fail-open)"
+  fi
+fi
 ```
 
-List subdirectories under `.planning/formal/spec/` (if the directory exists):
-```bash
-ls .planning/formal/spec/ 2>/dev/null
-```
-
-For each subdirectory found, check if `.planning/formal/spec/{module}/invariants.md` exists:
-```bash
-ls .planning/formal/spec/{module}/invariants.md 2>/dev/null
-```
-
-If it exists, record the module name and path: `.planning/formal/spec/{module}/invariants.md`.
-
-**Relevance heuristic:** Match `$DESCRIPTION` keywords (lowercased, split on spaces/hyphens) against module names. A module is relevant if any keyword appears as a substring of the module name, or the module name appears as a substring of any keyword.
-
-Examples:
+Matching uses exact concept tokens from each module's `scope.json` (no substring matching). Examples:
 - Description "fix quorum deliberation bug" → modules matching: `quorum`, `deliberation`
 - Description "update TUI navigation flow" → modules matching: `tui-nav`
 - Description "refactor breaker circuit logic" → modules matching: `breaker`
-
-If no modules match: `$FORMAL_SPEC_CONTEXT = []`
-If modules match: `$FORMAL_SPEC_CONTEXT` = array of `{ module, path }` objects for each matching module.
-
-Display:
-```
-◆ Formal scope scan: found {N} relevant module(s): {module names or "none"}
-```
 
 Store `$FORMAL_SPEC_CONTEXT` for use in steps 5, 5.5, 6.5.
 

@@ -67,41 +67,28 @@ If "Run discuss-phase first": Display `/nf:discuss-phase {X}` and exit workflow.
 
 ## 4.5. Formal Scope Scan
 
-Before spawning the researcher, scan `.planning/formal/spec/` for modules whose names keyword-match the phase description. This populates `$FORMAL_SPEC_CONTEXT` for use in Step 8 (planner) and Step 10 (checker).
+Before spawning the researcher, scan `.planning/formal/spec/` for modules matching the phase description using centralized `bin/formal-scope-scan.cjs`. This populates `$FORMAL_SPEC_CONTEXT` for use in Step 8 (planner) and Step 10 (checker).
+
+**Fail-open:** If `.planning/formal/spec/` does not exist, `formal-scope-scan.cjs` returns empty and FORMAL_SPEC_CONTEXT stays empty.
 
 ```bash
-FORMAL_SPEC_CONTEXT=[]
-```
-
-**Fail-open:** If `.planning/formal/spec/` does not exist, skip entirely (set FORMAL_SPEC_CONTEXT=[] and proceed).
-
-```bash
+FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
-  PHASE_DESC_LOWER=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name' | tr '[:upper:]' '[:lower:]')
-  for MODULE_DIR in .planning/formal/spec/*/; do
-    MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
-    if [ -f "$INVARIANTS_FILE" ]; then
-      MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
-      # Keyword-match: any word in phase description is substring of module name, or module name is substring of any word
-      MATCHED=0
-      for KEYWORD in $(echo "$PHASE_DESC_LOWER" | tr ' -/' '\n' | grep -v '^$'); do
-        if echo "$MODULE_LOWER" | grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF "$MODULE_LOWER"; then
-          MATCHED=1
-          break
-        fi
-      done
-      if [ "$MATCHED" -eq 1 ]; then
-        FORMAL_SPEC_CONTEXT+=("{\"module\":\"${MODULE}\",\"path\":\"${INVARIANTS_FILE}\"}")
-      fi
-    fi
-  done
+  PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE}" | jq -r '.goal // .phase_name')
+  while IFS=$'\t' read -r mod modpath; do
+    FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
+  done < <(node bin/formal-scope-scan.cjs --description "$PHASE_DESC" --format lines)
+  MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
+  if [ "$MATCH_COUNT" -gt 0 ]; then
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
+      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+      console.log(lines.map(l=>JSON.parse(l).module).join(', '));
+    ")
+    echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
+  else
+    echo ":: Formal scope scan: no modules matched (fail-open)"
+  fi
 fi
-```
-
-Display:
-```
-◆ Formal scope scan: found ${#FORMAL_SPEC_CONTEXT[@]} relevant module(s)${#FORMAL_SPEC_CONTEXT[@] > 0 ? ': ' + FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ') : ''}
 ```
 
 Store `$FORMAL_SPEC_CONTEXT` for use in steps 7, 8, 10.

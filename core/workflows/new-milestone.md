@@ -381,7 +381,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs commit "docs: define milestone v[X.Y] requir
 FORMAL_SPEC_CONTEXT=()
 
 if [ -d ".planning/formal/spec" ]; then
-  echo "◆ Formal scope scan (pre-roadmapper)..."
+  echo ":: Formal scope scan (pre-roadmapper)..."
   # Use milestone goal description as keyword source.
   # Extract from PROJECT.md ## Current Milestone section (written by Step 4).
   MILESTONE_GOAL=$(grep -A3 "## Current Milestone" .planning/PROJECT.md 2>/dev/null | grep -v "## Current Milestone" | head -1 | sed 's/^[[:space:]]*//')
@@ -389,32 +389,21 @@ if [ -d ".planning/formal/spec" ]; then
     # Fallback: use milestone name variable if goal not found in PROJECT.md
     MILESTONE_GOAL="${MILESTONE_NAME:-}"
   fi
-  MILESTONE_DESC_LOWER=$(echo "${MILESTONE_GOAL}" | tr '[:upper:]' '[:lower:]')
 
-  for MODULE_DIR in .planning/formal/spec/*/; do
-    MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
-    if [ -f "$INVARIANTS_FILE" ]; then
-      MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
-      MATCHED=0
-      for KEYWORD in $(echo "$MILESTONE_DESC_LOWER" | tr ' -/' '\n' | grep -v '^$'); do
-        if echo "$MODULE_LOWER" | grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF "$MODULE_LOWER"; then
-          MATCHED=1
-          break
-        fi
-      done
-      if [ "$MATCHED" -eq 1 ]; then
-        FORMAL_SPEC_CONTEXT+=("{\"module\":\"${MODULE}\",\"path\":\"${INVARIANTS_FILE}\"}")
-      fi
-    fi
-  done
+  # Use centralized bin/formal-scope-scan.cjs for semantic matching
+  while IFS=$'\t' read -r mod modpath; do
+    FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
+  done < <(node bin/formal-scope-scan.cjs --description "$MILESTONE_GOAL" --format lines)
 
   MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
   if [ "$MATCH_COUNT" -gt 0 ]; then
-    MATCHED_MODULES=$(for e in "${FORMAL_SPEC_CONTEXT[@]}"; do echo "$e" | sed 's/.*"module":"\([^"]*\)".*/\1/'; done | tr '\n' ',' | sed 's/,$//')
-    echo "◆ Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
+      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+      console.log(lines.map(l=>JSON.parse(l).module).join(', '));
+    ")
+    echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
   else
-    echo "◆ Formal scope scan: no keyword-matched modules (fail-open)"
+    echo ":: Formal scope scan: no modules matched (fail-open)"
   fi
 fi
 

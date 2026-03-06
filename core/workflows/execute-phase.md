@@ -368,28 +368,23 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
 Run the keyword-match scan and formal check before spawning the verifier. The scan is identical to the plan-phase Step 4.5 algorithm.
 
 ```bash
-# Formal scope scan — identical algorithm to plan-phase Step 4.5
+# Formal scope scan — uses centralized bin/formal-scope-scan.cjs
 FORMAL_SPEC_CONTEXT=()
 if [ -d ".planning/formal/spec" ]; then
   PHASE_DESC=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap get-phase "${PHASE_NUMBER}" | jq -r '.goal // .phase_name')
-  for MODULE_DIR in .planning/formal/spec/*/; do
-    MODULE=$(basename "$MODULE_DIR")
-    INVARIANTS_FILE=".planning/formal/spec/${MODULE}/invariants.md"
-    if [ -f "$INVARIANTS_FILE" ]; then
-      DESC_LOWER=$(echo "$PHASE_DESC" | tr '[:upper:]' '[:lower:]')
-      MODULE_LOWER=$(echo "$MODULE" | tr '[:upper:]' '[:lower:]')
-      MATCHED=0
-      for KEYWORD in $(echo "$DESC_LOWER" | tr ' -/' '\n' | grep -v '^$'); do
-        if echo "$MODULE_LOWER" | grep -qF "$KEYWORD" || echo "$KEYWORD" | grep -qF "$MODULE_LOWER"; then
-          MATCHED=1
-          break
-        fi
-      done
-      if [ $MATCHED -eq 1 ]; then
-        FORMAL_SPEC_CONTEXT+=("{\"module\":\"${MODULE}\",\"path\":\"${INVARIANTS_FILE}\"}")
-      fi
-    fi
-  done
+  while IFS=$'\t' read -r mod modpath; do
+    FORMAL_SPEC_CONTEXT+=("{\"module\":\"$mod\",\"path\":\"$modpath\"}")
+  done < <(node bin/formal-scope-scan.cjs --description "$PHASE_DESC" --format lines)
+  MATCH_COUNT=${#FORMAL_SPEC_CONTEXT[@]}
+  if [ "$MATCH_COUNT" -gt 0 ]; then
+    MATCHED_MODULES=$(printf '%s\n' "${FORMAL_SPEC_CONTEXT[@]}" | node -e "
+      const lines=require('fs').readFileSync('/dev/stdin','utf8').trim().split('\n');
+      console.log(lines.map(l=>JSON.parse(l).module).join(', '));
+    ")
+    echo ":: Formal scope scan: found ${MATCH_COUNT} module(s): ${MATCHED_MODULES}"
+  else
+    echo ":: Formal scope scan: no modules matched (fail-open)"
+  fi
 fi
 ```
 
