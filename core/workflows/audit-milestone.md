@@ -480,17 +480,29 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 
 ───────────────────────────────────────────────────────────────
 
-## ▶ Options
+## ▶ Next Up
 
-**A. Complete milestone** — accept debt, track in backlog
+**Planning tech debt remediation** — auto-spawning planner
 
-/nf:complete-milestone {version}
+```
+Task(
+  prompt="Run /nf:plan-milestone-gaps workflow.
 
-**B. Plan cleanup phase** — address debt before completing
+Audit file: .planning/milestones/v{version}-MILESTONE-AUDIT.md
+Milestone: {version}
+Tech debt items: {list of tech debt items by phase with descriptions}
 
-/nf:plan-milestone-gaps
+Follow @~/.claude/nf/workflows/plan-milestone-gaps.md to create tech debt remediation phases in ROADMAP.md.",
+  subagent_type="general-purpose",
+  description="Plan tech debt remediation: {version}"
+)
+```
 
-<sub>/clear first → fresh context window</sub>
+───────────────────────────────────────────────────────────────
+
+**Also available:**
+- cat .planning/milestones/v{version}-MILESTONE-AUDIT.md — see full report
+- /nf:complete-milestone {version} — proceed anyway (accept tech debt)
 
 ───────────────────────────────────────────────────────────────
 </offer_next>
@@ -509,9 +521,10 @@ All requirements met. No critical blockers. Accumulated tech debt needs review.
 - [ ] Missing phases classified as plan_exists_not_executed vs missing_no_plan (Step 2b)
 - [ ] If all gaps are executable: auto-execute phases then re-audit instead of routing to plan-milestone-gaps
 - [ ] Results presented with actionable next steps
+- [ ] (interactive) If tech_debt → auto-spawn plan-milestone-gaps for remediation
 - [ ] (--auto) `$AUTO_MODE` parsed from arguments
 - [ ] (--auto) If passed → auto-invoke complete-milestone
-- [ ] (--auto) If tech_debt → auto-invoke complete-milestone (accept debt)
+- [ ] (--auto) If tech_debt → treat as gaps_found, run solve→plan→execute→re-audit loop
 - [ ] (--auto) If gaps_found → auto plan-gaps → execute → re-audit loop
 - [ ] (--auto) MAX_ITERATIONS=3 enforced (hard halt)
 - [ ] (--auto) User confirmation gate after iteration 2
