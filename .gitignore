@@ -9,8 +9,9 @@ CLAUDE.md
 /research.claude/
 commands.html
 
-# Local test installs
-.claude/
+# Local test installs — ignore .claude/ contents except rules/
+.claude/*
+!.claude/rules/
 .claude/circuit-breaker-state.json
 
 # Build artifacts (committed to npm, not git)
