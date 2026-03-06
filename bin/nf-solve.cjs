@@ -1950,7 +1950,9 @@ function sweepL1toL2() {
 
   const result = spawnTool('bin/gate-a-grounding.cjs', ['--json']);
 
-  if (!result.ok) {
+  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
+  // Only bail on spawn errors (no stdout to parse).
+  if (!result.ok && !result.stdout) {
     return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
   }
 
@@ -1965,9 +1967,9 @@ function sweepL1toL2() {
         target: 0.8,
         gap: 0.8 - score,
         unexplained_breakdown: {
-          instrumentation_bug: data.instrumentation_bug || 0,
-          model_gap: data.model_gap || 0,
-          genuine_violation: data.genuine_violation || 0,
+          instrumentation_bug: (data.unexplained_counts && data.unexplained_counts.instrumentation_bug) || 0,
+          model_gap: (data.unexplained_counts && data.unexplained_counts.model_gap) || 0,
+          genuine_violation: (data.unexplained_counts && data.unexplained_counts.genuine_violation) || 0,
         },
       },
     };
@@ -1988,7 +1990,9 @@ function sweepL2toL3() {
 
   const result = spawnTool('bin/gate-b-abstraction.cjs', ['--json']);
 
-  if (!result.ok) {
+  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
+  // Only bail on spawn errors (no stdout to parse).
+  if (!result.ok && !result.stdout) {
     return { residual: -1, detail: { error: true } };
   }
 
@@ -2044,7 +2048,9 @@ function sweepL3toTC() {
 
   const result = spawnTool('bin/gate-c-validation.cjs', ['--json']);
 
-  if (!result.ok) {
+  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
+  // Only bail on spawn errors (no stdout to parse).
+  if (!result.ok && !result.stdout) {
     return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
   }
 
