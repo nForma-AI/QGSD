@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/account-manager.cjs"],
+  "concepts": ["account", "api-key", "provider", "credentials", "akash", "together", "fireworks"],
+  "requirements": []
+}

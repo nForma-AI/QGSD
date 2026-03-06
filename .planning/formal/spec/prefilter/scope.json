@@ -1,0 +1,5 @@
+{
+  "source_files": ["hooks/nf-prompt.js"],
+  "concepts": ["prefilter", "pre-filter", "command-routing", "prompt-classification"],
+  "requirements": []
+}

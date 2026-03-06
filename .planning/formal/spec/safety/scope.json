@@ -1,0 +1,5 @@
+{
+  "source_files": ["hooks/nf-stop.js", "hooks/nf-prompt.js"],
+  "concepts": ["safety", "stop-hook", "blocking", "guard", "validation"],
+  "requirements": []
+}

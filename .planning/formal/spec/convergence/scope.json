@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/run-quorum.cjs"],
+  "concepts": ["convergence", "quorum-rounds", "deliberation-rounds", "vote-agreement", "consensus"],
+  "requirements": []
+}

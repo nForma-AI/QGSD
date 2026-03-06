@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/run-quorum.cjs"],
+  "concepts": ["recruiting", "slot-recruitment", "provider-selection", "available-slots"],
+  "requirements": []
+}

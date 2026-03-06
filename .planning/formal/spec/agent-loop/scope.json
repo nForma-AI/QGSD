@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/nForma.cjs"],
+  "concepts": ["agent-loop", "agent-session", "session-lifecycle", "main-loop", "orchestration", "nforma"],
+  "requirements": []
+}

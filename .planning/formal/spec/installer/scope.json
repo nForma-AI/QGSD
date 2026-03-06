@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/install.js"],
+  "concepts": ["installer", "install", "hook-migration", "global-config", "cleanup"],
+  "requirements": []
+}

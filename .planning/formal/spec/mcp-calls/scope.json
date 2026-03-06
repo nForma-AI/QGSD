@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/unified-mcp-server.mjs", "bin/call-quorum-slot.cjs"],
+  "concepts": ["mcp", "mcp-server", "mcp-tool", "health-check", "ping", "timeout", "subprocess"],
+  "requirements": []
+}

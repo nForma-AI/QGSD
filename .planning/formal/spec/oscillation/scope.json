@@ -1,0 +1,5 @@
+{
+  "source_files": ["hooks/nf-circuit-breaker.js"],
+  "concepts": ["oscillation", "oscillation-resolution", "commit-pattern", "alternating-groups"],
+  "requirements": []
+}

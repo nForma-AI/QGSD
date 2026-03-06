@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/run-quorum.cjs"],
+  "concepts": ["deliberation-revision", "revision-round", "re-deliberation", "improvement-cycle"],
+  "requirements": []
+}

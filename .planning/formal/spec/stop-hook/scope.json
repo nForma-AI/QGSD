@@ -1,0 +1,5 @@
+{
+  "source_files": ["hooks/nf-stop.js", "hooks/dist/nf-stop.js"],
+  "concepts": ["stop-hook", "stop", "response-blocking", "plan-required", "quorum-enforcement"],
+  "requirements": []
+}

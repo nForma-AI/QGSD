@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/nForma.cjs"],
+  "concepts": ["tui", "navigation", "terminal-ui", "menu", "interactive"],
+  "requirements": []
+}

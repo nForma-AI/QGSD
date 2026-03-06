@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/run-quorum.cjs", "hooks/nf-prompt.js"],
+  "concepts": ["deliberation", "quorum-decision", "vote", "slot-worker", "majority"],
+  "requirements": []
+}

@@ -1,0 +1,5 @@
+{
+  "source_files": ["hooks/nf-circuit-breaker.js", "hooks/dist/nf-circuit-breaker.js"],
+  "concepts": ["circuit-breaker", "breaker", "oscillation-detection", "run-collapse", "false-positive"],
+  "requirements": []
+}
