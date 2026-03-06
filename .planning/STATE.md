@@ -43,7 +43,7 @@ None — clean milestone boundary.
 | 195 | Add automated audit→plan→execute loop to nf:audit-milestone for tech debt auto-remediation | 2026-03-06 | c5467c79 | Pending | [195-add-automated-audit-plan-execute-loop-to](./quick/195-add-automated-audit-plan-execute-loop-to/) |
 | 196 | Improve formal scope scan to use semantic relevance instead of keyword-only matching for determining which formal spec modules apply | 2026-03-06 | d1ea24da | Verified | [196-improve-formal-scope-scan-to-use-semanti](./quick/196-improve-formal-scope-scan-to-use-semanti/) |
 | 197 | Add CI virgin install tests and workflow | 2026-03-06 | 0a0c07e5 | Verified | [197-add-ci-virgin-install-tests-and-workflow](./quick/197-add-ci-virgin-install-tests-and-workflow/) |
-| 198 | Implement ECC best practices: post-edit auto-format hook, console.log guard on Stop, and modular .claude/rules/ directory | 2026-03-06 | 833ead9d | Pending | [198-implement-ecc-best-practices-post-edit-a](./quick/198-implement-ecc-best-practices-post-edit-a/) |
+| 198 | Implement ECC best practices: post-edit auto-format hook, console.log guard on Stop, and modular .claude/rules/ directory | 2026-03-06 | 1bd37864 | Verified | [198-implement-ecc-best-practices-post-edit-a](./quick/198-implement-ecc-best-practices-post-edit-a/) |
 
 ## Session Continuity
 
