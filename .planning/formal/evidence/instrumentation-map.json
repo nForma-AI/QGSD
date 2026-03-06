@@ -1,0 +1,72 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-06T12:55:30.728Z",
+  "emission_points": [
+    {
+      "file": "hooks/nf-prompt.js",
+      "line_number": 531,
+      "action": "quorum_fallback_t1_required",
+      "state_variables": [],
+      "vocabulary_match": false,
+      "xstate_event": null
+    },
+    {
+      "file": "hooks/nf-prompt.js",
+      "line_number": 634,
+      "action": "quorum_start",
+      "state_variables": [],
+      "vocabulary_match": true,
+      "xstate_event": "QUORUM_START"
+    },
+    {
+      "file": "hooks/nf-stop.js",
+      "line_number": 472,
+      "action": "quorum_complete",
+      "state_variables": [
+        "quorum_size"
+      ],
+      "vocabulary_match": true,
+      "xstate_event": "VOTES_COLLECTED"
+    },
+    {
+      "file": "hooks/nf-stop.js",
+      "line_number": 531,
+      "action": "quorum_block",
+      "state_variables": [
+        "verdict"
+      ],
+      "vocabulary_match": true,
+      "xstate_event": "BLOCK_DECISION"
+    },
+    {
+      "file": "hooks/nf-stop.js",
+      "line_number": 547,
+      "action": "quorum_complete",
+      "state_variables": [
+        "verdict"
+      ],
+      "vocabulary_match": true,
+      "xstate_event": "VOTES_COLLECTED"
+    },
+    {
+      "file": "hooks/nf-circuit-breaker.js",
+      "line_number": 665,
+      "action": "circuit_break",
+      "state_variables": [
+        "breaker_state"
+      ],
+      "vocabulary_match": true,
+      "xstate_event": "CIRCUIT_BREAK"
+    }
+  ],
+  "coverage": {
+    "total_vocabulary_actions": 6,
+    "mapped_actions": 4,
+    "coverage_pct": 66.7
+  },
+  "unmapped_actions": [
+    "quorum_block_r3_2",
+    "mcp_call"
+  ],
+  "summary": "Found 6 emission points across 3 hooks and observe handlers. Coverage: 4/6 vocabulary actions mapped (66.7%). Unmapped: quorum_block_r3_2, mcp_call."
+}
