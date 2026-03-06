@@ -94,7 +94,7 @@ Resume file: None
 | 183 | Add legacy .formal/ migration step to qgsd:solve | 2026-03-05 | c5368b60 | Verified | [183-add-legacy-formal-migration-step-to-qgsd](./quick/183-add-legacy-formal-migration-step-to-qgsd/) |
 | 184 | Implement 5 solve automation improvements | 2026-03-05 | d0ae6285 | Verified | [184-implement-5-solve-automation-improvement](./quick/184-implement-5-solve-automation-improvement/) |
 | 185 | Fix conformance trace divergences — add circuit_break action to XState machine | 2026-03-05 | 429d0f60 | Pending | [185-fix-conformance-trace-divergences-add-ci](./quick/185-fix-conformance-trace-divergences-add-ci/) |
-| 187 | Add V8 line-level coverage to T->C sweep and cross-reference with F->T recipe source_files | 2026-03-06 | 3e289300 | Pending | [187-add-v8-line-level-coverage-to-t-c-sweep-](./quick/187-add-v8-line-level-coverage-to-t-c-sweep-/) |
+| 187 | Add V8 line-level coverage to T->C sweep and cross-reference with F→T recipe source_files | 2026-03-06 | 492ed29a | Verified | [187-add-v8-line-level-coverage-to-t-c-sweep-](./quick/187-add-v8-line-level-coverage-to-t-c-sweep-/) |
 
 ## Recent Accomplishments
 
