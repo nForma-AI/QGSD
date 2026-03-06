@@ -13,7 +13,7 @@ const path = require('path');
 const os = require('os');
 
 // We test via the module under test
-const { loadConfig, DEFAULT_CONFIG } = require('./config-loader');
+const { loadConfig, DEFAULT_CONFIG, shouldRunHook, HOOK_PROFILE_MAP } = require('./config-loader');
 
 // Helper: write a JSON file to a temp directory
 function writeTempConfig(dir, content) {
@@ -491,4 +491,159 @@ test('ENV-TC3: task_envelope_enabled: yes (non-boolean) → defaults to true + s
     process.stderr.write = origWrite;
     fs.rmSync(projectDir, { recursive: true, force: true });
   }
+});
+
+// ============================================================================
+// Hook Profile Tests
+// ============================================================================
+
+// PROF-TC1: Valid profiles accepted without warning
+test('PROF-TC1: valid hook_profile values accepted without warning', async (t) => {
+  for (const profile of ['minimal', 'standard', 'strict']) {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prof-tc1-'));
+    const stderrChunks = [];
+    const origWrite = process.stderr.write.bind(process.stderr);
+    process.stderr.write = (chunk, ...args) => {
+      stderrChunks.push(chunk);
+      return origWrite(chunk, ...args);
+    };
+    try {
+      writeTempConfig(projectDir, JSON.stringify({ hook_profile: profile }));
+      const config = loadConfig(projectDir);
+      assert.equal(config.hook_profile, profile, `hook_profile '${profile}' should be accepted`);
+      const stderrOutput = stderrChunks.join('');
+      assert.ok(!stderrOutput.includes('hook_profile'), `no warning for valid profile '${profile}'`);
+    } finally {
+      process.stderr.write = origWrite;
+      fs.rmSync(projectDir, { recursive: true, force: true });
+    }
+  }
+});
+
+// PROF-TC2: Invalid string profile corrected to 'standard' with warning
+test('PROF-TC2: invalid hook_profile string corrected to standard with warning', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prof-tc2-'));
+  let stderrOutput = '';
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (msg) => { stderrOutput += msg; return true; };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ hook_profile: 'turbo' }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.hook_profile, 'standard', 'invalid profile should fall back to standard');
+    assert.ok(stderrOutput.includes('hook_profile'), 'WARNING should mention hook_profile');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// PROF-TC3: Non-string profile (number) corrected to 'standard' with warning
+test('PROF-TC3: non-string hook_profile (42) corrected to standard with warning', async (t) => {
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prof-tc3-'));
+  let stderrOutput = '';
+  const origWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (msg) => { stderrOutput += msg; return true; };
+  try {
+    writeTempConfig(projectDir, JSON.stringify({ hook_profile: 42 }));
+    const config = loadConfig(projectDir);
+    assert.equal(config.hook_profile, 'standard', 'non-string profile should fall back to standard');
+    assert.ok(stderrOutput.includes('hook_profile'), 'WARNING should mention hook_profile');
+  } finally {
+    process.stderr.write = origWrite;
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// PROF-TC4: Missing hook_profile defaults to 'standard' via DEFAULT_CONFIG
+test('PROF-TC4: missing hook_profile defaults to standard via DEFAULT_CONFIG', async (t) => {
+  assert.equal(DEFAULT_CONFIG.hook_profile, 'standard', 'DEFAULT_CONFIG.hook_profile must be standard');
+  const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prof-tc4-'));
+  try {
+    const config = loadConfig(projectDir);
+    assert.equal(config.hook_profile, 'standard', 'missing hook_profile should default to standard');
+  } finally {
+    fs.rmSync(projectDir, { recursive: true, force: true });
+  }
+});
+
+// ============================================================================
+// shouldRunHook() Tests
+// ============================================================================
+
+// SRH-TC1: circuit-breaker active in minimal
+test('SRH-TC1: shouldRunHook nf-circuit-breaker in minimal returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-circuit-breaker', 'minimal'), true);
+});
+
+// SRH-TC2: precompact active in minimal
+test('SRH-TC2: shouldRunHook nf-precompact in minimal returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-precompact', 'minimal'), true);
+});
+
+// SRH-TC3: nf-prompt disabled in minimal
+test('SRH-TC3: shouldRunHook nf-prompt in minimal returns false', async (t) => {
+  assert.equal(shouldRunHook('nf-prompt', 'minimal'), false);
+});
+
+// SRH-TC4: nf-stop disabled in minimal
+test('SRH-TC4: shouldRunHook nf-stop in minimal returns false', async (t) => {
+  assert.equal(shouldRunHook('nf-stop', 'minimal'), false);
+});
+
+// SRH-TC5: nf-prompt active in standard
+test('SRH-TC5: shouldRunHook nf-prompt in standard returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-prompt', 'standard'), true);
+});
+
+// SRH-TC6: nf-stop active in standard
+test('SRH-TC6: shouldRunHook nf-stop in standard returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-stop', 'standard'), true);
+});
+
+// SRH-TC7: nf-prompt active in strict
+test('SRH-TC7: shouldRunHook nf-prompt in strict returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-prompt', 'strict'), true);
+});
+
+// SRH-TC8: circuit-breaker active in strict
+test('SRH-TC8: shouldRunHook nf-circuit-breaker in strict returns true', async (t) => {
+  assert.equal(shouldRunHook('nf-circuit-breaker', 'strict'), true);
+});
+
+// SRH-TC9: unknown profile falls back to standard
+test('SRH-TC9: shouldRunHook with unknown profile falls back to standard', async (t) => {
+  assert.equal(shouldRunHook('nf-prompt', 'turbo'), true, 'unknown profile should behave like standard');
+});
+
+// ============================================================================
+// HOOK_PROFILE_MAP Structure Tests
+// ============================================================================
+
+// HPM-TC1: All three profiles exist
+test('HPM-TC1: HOOK_PROFILE_MAP has all three profiles', async (t) => {
+  assert.ok(HOOK_PROFILE_MAP.minimal, 'minimal profile must exist');
+  assert.ok(HOOK_PROFILE_MAP.standard, 'standard profile must exist');
+  assert.ok(HOOK_PROFILE_MAP.strict, 'strict profile must exist');
+});
+
+// HPM-TC2: minimal has exactly 2 entries
+test('HPM-TC2: minimal profile has exactly 2 hooks', async (t) => {
+  assert.equal(HOOK_PROFILE_MAP.minimal.size, 2, 'minimal must have 2 hooks');
+});
+
+// HPM-TC3: standard has 10 entries
+test('HPM-TC3: standard profile has 10 hooks', async (t) => {
+  assert.equal(HOOK_PROFILE_MAP.standard.size, 10, 'standard must have 10 hooks');
+});
+
+// HPM-TC4: strict has 10 entries (same as standard)
+test('HPM-TC4: strict profile has 10 hooks (same as standard)', async (t) => {
+  assert.equal(HOOK_PROFILE_MAP.strict.size, 10, 'strict must have 10 hooks');
+});
+
+// HPM-TC5: circuit-breaker in ALL profiles (MonitoringReachable invariant)
+test('HPM-TC5: nf-circuit-breaker is in all three profiles', async (t) => {
+  assert.ok(HOOK_PROFILE_MAP.minimal.has('nf-circuit-breaker'), 'minimal must include circuit-breaker');
+  assert.ok(HOOK_PROFILE_MAP.standard.has('nf-circuit-breaker'), 'standard must include circuit-breaker');
+  assert.ok(HOOK_PROFILE_MAP.strict.has('nf-circuit-breaker'), 'strict must include circuit-breaker');
 });
