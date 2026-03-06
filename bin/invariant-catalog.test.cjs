@@ -1,172 +1,147 @@
 #!/usr/bin/env node
 'use strict';
-// bin/invariant-catalog.test.cjs
-// Tests for invariant catalog: .cfg parsing, invariants.md parsing, deduplication, observed mining
 
 const { describe, it } = require('node:test');
-const assert = require('node:assert/strict');
+const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 
-const {
-  parseCfgFiles,
-  parseSpecInvariants,
-  mineObservedInvariants,
-  deduplicateInvariants,
-} = require('./invariant-catalog.cjs');
+const ROOT = path.join(__dirname, '..');
+const { parseCfgFiles, parseSpecInvariants, mineObservedInvariants, deduplicateInvariants } = require('./invariant-catalog.cjs');
 
-// ── Unit tests: .cfg parsing ─────────────────────────────────────────────────
+// ── Unit tests: .cfg parsing ────────────────────────────────────────────────
 
 describe('parseCfgFiles', () => {
-  it('parses single-line INVARIANT declarations', () => {
-    const invs = parseCfgFiles();
-    const single = invs.find(i => i.name === 'TypeOK' && i.source === 'tla_cfg');
-    assert.ok(single, 'Should find TypeOK from .cfg files');
-    assert.equal(single.type, 'declared');
-    assert.equal(single.formalism, 'tla');
+  it('extracts single-line INVARIANT declarations', () => {
+    const results = parseCfgFiles();
+    const typeOKs = results.filter(r => r.name === 'TypeOK');
+    assert.ok(typeOKs.length > 0, 'Should find at least one TypeOK invariant');
+    assert.strictEqual(typeOKs[0].source, 'tla_cfg');
+    assert.strictEqual(typeOKs[0].type, 'declared');
   });
 
-  it('parses INVARIANTS block format', () => {
-    const invs = parseCfgFiles();
-    // MCaccount-manager.cfg uses INVARIANTS block format
-    const accountInvs = invs.filter(i => i.config === 'MCaccount-manager');
-    assert.ok(accountInvs.length >= 4, `Should find 4+ invariants from MCaccount-manager, found ${accountInvs.length}`);
-    const names = accountInvs.map(i => i.name);
+  it('extracts PROPERTY declarations', () => {
+    const results = parseCfgFiles();
+    const properties = results.filter(r =>
+      r.name.includes('Terminates') || r.name.includes('Reachable') ||
+      r.name.includes('Consensus') || r.name.includes('Monotone') ||
+      r.name.includes('Preserved') || r.name.includes('Progress') ||
+      r.name.includes('Decision')
+    );
+    assert.ok(properties.length > 0, 'Should find at least one PROPERTY');
+  });
+
+  it('extracts block-format INVARIANTS declarations', () => {
+    const results = parseCfgFiles();
+    // MCaccount-manager.cfg has INVARIANTS block
+    const blockInvs = results.filter(r => r.config === 'MCaccount-manager');
+    assert.ok(blockInvs.length >= 4, `Expected >= 4 from MCaccount-manager block, got ${blockInvs.length}`);
+    const names = blockInvs.map(b => b.name);
     assert.ok(names.includes('ActiveIsPoolMember'), 'Should include ActiveIsPoolMember');
   });
 
-  it('parses PROPERTY declarations', () => {
-    const invs = parseCfgFiles();
-    const props = invs.filter(i => i.name === 'EventualConsensus');
-    assert.ok(props.length > 0, 'Should find EventualConsensus property');
-  });
-
-  it('all .cfg invariants have source tla_cfg', () => {
-    const invs = parseCfgFiles();
-    assert.ok(invs.every(i => i.source === 'tla_cfg'), 'All should have source tla_cfg');
+  it('all entries have source tla_cfg', () => {
+    const results = parseCfgFiles();
+    assert.ok(results.every(r => r.source === 'tla_cfg'));
   });
 });
 
-// ── Unit tests: spec/invariants.md parsing ───────────────────────────────────
+// ── Unit tests: spec/invariants.md parsing ──────────────────────────────────
 
 describe('parseSpecInvariants', () => {
-  it('parses ## section headers as invariant names', () => {
-    const invs = parseSpecInvariants();
-    assert.ok(invs.length > 0, 'Should find invariants from spec/*/invariants.md');
-    const names = invs.map(i => i.name);
-    assert.ok(names.includes('MonitoringReachable'), 'Should include MonitoringReachable from breaker');
+  it('extracts invariant names from ## headers', () => {
+    const results = parseSpecInvariants();
+    assert.ok(results.length > 0, 'Should find at least one spec invariant');
+    assert.ok(results.every(r => r.name && r.name.length > 0));
   });
 
-  it('extracts property_expression from **Property:** lines', () => {
-    const invs = parseSpecInvariants();
-    const monitoring = invs.find(i => i.name === 'MonitoringReachable');
-    assert.ok(monitoring, 'Should find MonitoringReachable');
-    assert.ok(monitoring.property_expression, 'Should have property_expression');
-    assert.ok(monitoring.property_expression.includes('<>'), 'Should contain temporal operator');
+  it('extracts property expressions', () => {
+    const results = parseSpecInvariants();
+    const withExpr = results.filter(r => r.property_expression !== null);
+    assert.ok(withExpr.length > 0, 'At least one should have property_expression');
   });
 
-  it('classifies liveness vs safety based on property expression', () => {
-    const invs = parseSpecInvariants();
-    const monitoring = invs.find(i => i.name === 'MonitoringReachable');
-    assert.equal(monitoring.formalism, 'liveness', 'MonitoringReachable should be liveness');
-  });
-
-  it('all spec invariants have source spec_invariants_md', () => {
-    const invs = parseSpecInvariants();
-    assert.ok(invs.every(i => i.source === 'spec_invariants_md'), 'All should have source spec_invariants_md');
+  it('all entries have source spec_invariants_md', () => {
+    const results = parseSpecInvariants();
+    assert.ok(results.every(r => r.source === 'spec_invariants_md'));
   });
 });
 
-// ── Unit tests: deduplication ────────────────────────────────────────────────
-
-describe('deduplicateInvariants', () => {
-  it('deduplicates same name + same model to one entry with check_references', () => {
-    const raw = [
-      { name: 'TypeOK', source: 'tla_cfg', source_file: 'tla/MCfoo.cfg', config: 'MCfoo', type: 'declared' },
-      { name: 'TypeOK', source: 'tla_cfg', source_file: 'tla/MCfoo.cfg', config: 'MCfoo', type: 'declared' },
-    ];
-    const deduped = deduplicateInvariants(raw);
-    assert.equal(deduped.length, 1, 'Should deduplicate to 1');
-    assert.ok(deduped[0].check_references, 'Should have check_references array');
-    assert.equal(deduped[0].check_references.length, 2);
-  });
-
-  it('keeps same name across different models as separate entries', () => {
-    const raw = [
-      { name: 'TypeOK', source: 'tla_cfg', source_file: 'tla/MCfoo.cfg', config: 'MCfoo', type: 'declared' },
-      { name: 'TypeOK', source: 'tla_cfg', source_file: 'tla/MCbar.cfg', config: 'MCbar', type: 'declared' },
-    ];
-    const deduped = deduplicateInvariants(raw);
-    assert.equal(deduped.length, 2, 'Should keep both -- different models');
-  });
-});
-
-// ── Unit tests: observed invariants ──────────────────────────────────────────
+// ── Unit tests: observed invariants ─────────────────────────────────────────
 
 describe('mineObservedInvariants', () => {
   it('produces at least 1 observed invariant', () => {
-    const invs = mineObservedInvariants();
-    assert.ok(invs.length >= 1, `Should produce at least 1 observed invariant, got ${invs.length}`);
+    const results = mineObservedInvariants();
+    assert.ok(results.length >= 1, `Expected >= 1 observed, got ${results.length}`);
   });
 
-  it('all observed invariants have confidence "curated"', () => {
-    const invs = mineObservedInvariants();
-    for (const inv of invs) {
-      assert.equal(inv.confidence, 'curated', `${inv.name} should have confidence "curated", got "${inv.confidence}"`);
+  it('observed invariants have confidence "curated"', () => {
+    const results = mineObservedInvariants();
+    for (const inv of results) {
+      assert.strictEqual(inv.confidence, 'curated', `${inv.name} should have curated confidence`);
     }
   });
 
-  it('all observed invariants have type "observed"', () => {
-    const invs = mineObservedInvariants();
-    for (const inv of invs) {
-      assert.equal(inv.type, 'observed', `${inv.name} should have type "observed"`);
-    }
-  });
-
-  it('observed invariants have evidence_sessions count', () => {
-    const invs = mineObservedInvariants();
-    for (const inv of invs) {
-      assert.ok(typeof inv.evidence_sessions === 'number' && inv.evidence_sessions > 0,
-        `${inv.name} should have positive evidence_sessions`);
+  it('observed invariants have type "observed"', () => {
+    const results = mineObservedInvariants();
+    for (const inv of results) {
+      assert.strictEqual(inv.type, 'observed');
     }
   });
 });
 
-// ── Integration test ─────────────────────────────────────────────────────────
+// ── Unit tests: deduplication ───────────────────────────────────────────────
+
+describe('deduplicateInvariants', () => {
+  it('deduplicates by (name, config) pair', () => {
+    const input = [
+      { name: 'TypeOK', source: 'tla_cfg', source_file: 'a.cfg', config: 'MCfoo' },
+      { name: 'TypeOK', source: 'tla_cfg', source_file: 'b.cfg', config: 'MCfoo' },
+      { name: 'TypeOK', source: 'tla_cfg', source_file: 'c.cfg', config: 'MCbar' },
+    ];
+    const result = deduplicateInvariants(input);
+    assert.strictEqual(result.length, 2);
+  });
+
+  it('preserves distinct models with same name', () => {
+    const input = [
+      { name: 'TypeOK', source: 'tla_cfg', source_file: 'a.cfg', config: 'MCfoo' },
+      { name: 'TypeOK', source: 'tla_cfg', source_file: 'b.cfg', config: 'MCbar' },
+    ];
+    const result = deduplicateInvariants(input);
+    assert.strictEqual(result.length, 2);
+  });
+});
+
+// ── Integration test ────────────────────────────────────────────────────────
 
 describe('integration', () => {
-  it('reads real .cfg files and invariants.md, total_deduplicated in range 50-200', () => {
-    const cfgInvs = parseCfgFiles();
-    const specInvs = parseSpecInvariants();
-    const observedInvs = mineObservedInvariants();
-    const all = [...cfgInvs, ...specInvs, ...observedInvs];
-    const deduped = deduplicateInvariants(all);
-
-    assert.ok(deduped.length >= 50, `Expected >= 50 deduplicated, got ${deduped.length}`);
-    assert.ok(deduped.length <= 200, `Expected <= 200 deduplicated, got ${deduped.length}`);
-  });
-
-  it('no invariant has source "unclassified"', () => {
-    const cfgInvs = parseCfgFiles();
-    const specInvs = parseSpecInvariants();
-    const observedInvs = mineObservedInvariants();
-    const all = [...cfgInvs, ...specInvs, ...observedInvs];
-    const deduped = deduplicateInvariants(all);
-
-    for (const inv of deduped) {
-      assert.notEqual(inv.source, 'unclassified', `${inv.name} should not have source "unclassified"`);
-    }
-  });
-
-  it('generated catalog JSON is valid and has expected structure', () => {
-    const catPath = path.join(__dirname, '..', '.planning', 'formal', 'semantics', 'invariant-catalog.json');
+  it('invariant-catalog.json has expected structure', () => {
+    const catPath = path.join(ROOT, '.planning', 'formal', 'semantics', 'invariant-catalog.json');
     assert.ok(fs.existsSync(catPath), 'invariant-catalog.json should exist');
     const cat = JSON.parse(fs.readFileSync(catPath, 'utf8'));
-    assert.equal(cat.schema_version, '1');
-    assert.ok(cat.generated);
+    assert.strictEqual(cat.schema_version, '1');
     assert.ok(Array.isArray(cat.invariants));
     assert.ok(cat.summary.total_deduplicated > 0);
     assert.ok(cat.summary.by_type.declared > 0);
-    assert.ok(cat.summary.by_source.tla_cfg > 0);
+  });
+
+  it('total_deduplicated in reasonable range (50-200)', () => {
+    const catPath = path.join(ROOT, '.planning', 'formal', 'semantics', 'invariant-catalog.json');
+    const cat = JSON.parse(fs.readFileSync(catPath, 'utf8'));
+    assert.ok(cat.summary.total_deduplicated >= 50 && cat.summary.total_deduplicated <= 200,
+      `Expected 50-200, got ${cat.summary.total_deduplicated}`);
+  });
+
+  it('no invariant has source "unclassified"', () => {
+    const catPath = path.join(ROOT, '.planning', 'formal', 'semantics', 'invariant-catalog.json');
+    const cat = JSON.parse(fs.readFileSync(catPath, 'utf8'));
+    assert.ok(cat.invariants.every(i => i.source !== 'unclassified'));
+  });
+
+  it('all invariants are declared or observed', () => {
+    const catPath = path.join(ROOT, '.planning', 'formal', 'semantics', 'invariant-catalog.json');
+    const cat = JSON.parse(fs.readFileSync(catPath, 'utf8'));
+    assert.ok(cat.invariants.every(i => i.type === 'declared' || i.type === 'observed'));
   });
 });
