@@ -696,3 +696,67 @@ test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary 
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+// ── Profile Guard Tests ─────────────────────────────────────────────────────
+
+// TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal → nf-prompt exits 0 with no output
+test('TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal exits 0 with no output', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-profile-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'minimal' }),
+      'utf8'
+    );
+
+    // A planning command that would normally trigger quorum injection
+    const { stdout, exitCode } = runHook({
+      prompt: '/nf:plan-phase 03',
+      cwd: tempDir,
+    });
+
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.strictEqual(stdout, '', 'stdout must be empty — minimal profile skips nf-prompt entirely');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-STRICT-QUORUM-ON-NON-QUORUM-CMD: hook_profile=strict → /nf:execute-phase gets quorum injection
+test('TC-STRICT-QUORUM-ON-NON-QUORUM-CMD: strict mode injects quorum for non-quorum command', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-strict-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({
+        hook_profile: 'strict',
+        quorum_active: ['codex-1', 'gemini-1'],
+      }),
+      'utf8'
+    );
+
+    // /nf:execute-phase is NOT in default quorum_commands list
+    // Strict mode should still inject quorum instructions
+    const { stdout, exitCode } = runHook({
+      prompt: '/nf:execute-phase 03',
+      cwd: tempDir,
+    });
+
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.length > 0, 'stdout must contain quorum injection — strict mode matches execute-phase');
+    const parsed = JSON.parse(stdout);
+    assert.ok(parsed.hookSpecificOutput, 'output must have hookSpecificOutput');
+    assert.ok(
+      parsed.hookSpecificOutput.additionalContext.includes('QUORUM REQUIRED'),
+      'additionalContext must include "QUORUM REQUIRED" for strict mode'
+    );
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
