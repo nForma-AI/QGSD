@@ -1,0 +1,1469 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-06T15:24:49.084Z",
+  "source": {
+    "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
+    "hazard_model": "reasoning/hazard-model.json",
+    "risk_heatmap": "reasoning/risk-heatmap.json"
+  },
+  "recipes": [
+    {
+      "id": "TR-FM-IDLE-QUORUM_START-OMISSION",
+      "failure_mode_id": "FM-IDLE-QUORUM_START-OMISSION",
+      "title": "Test omission of IDLE --[QUORUM_START]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "COLLECTING_VOTES",
+        "assertions": [
+          "Machine transitions to COLLECTING_VOTES"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 80,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-QUORUM_START-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-CIRCUIT_BREAK-OMISSION",
+      "failure_mode_id": "FM-IDLE-CIRCUIT_BREAK-OMISSION",
+      "title": "Test omission of IDLE --[CIRCUIT_BREAK]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "IDLE",
+        "assertions": [
+          "Machine transitions to IDLE"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 120,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-CIRCUIT_BREAK-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-CIRCUIT_BREAK-CORRUPTION",
+      "failure_mode_id": "FM-IDLE-CIRCUIT_BREAK-CORRUPTION",
+      "title": "Test corruption of IDLE --[CIRCUIT_BREAK]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "IDLE",
+        "not_state": "any_other",
+        "assertions": [
+          "Machine transitions to exactly IDLE, not any other state"
+        ]
+      },
+      "oracle": {
+        "type": "state_equality",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Corruption: wrong target state reached"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 120,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-CIRCUIT_BREAK-CORRUPTION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-DECIDE-OMISSION",
+      "failure_mode_id": "FM-IDLE-DECIDE-OMISSION",
+      "title": "Test omission of IDLE --[DECIDE]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "IDLE",
+        "assertions": [
+          "Machine transitions to IDLE"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-DECIDE-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-DECIDE-COMMISSION",
+      "failure_mode_id": "FM-IDLE-DECIDE-COMMISSION",
+      "title": "Test commission of IDLE --[DECIDE]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in IDLE; event DECIDE is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-DECIDE-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-VOTES_COLLECTED-OMISSION",
+      "failure_mode_id": "FM-IDLE-VOTES_COLLECTED-OMISSION",
+      "title": "Test omission of IDLE --[VOTES_COLLECTED]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "IDLE",
+        "assertions": [
+          "Machine transitions to IDLE"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-VOTES_COLLECTED-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IDLE-VOTES_COLLECTED-COMMISSION",
+      "failure_mode_id": "FM-IDLE-VOTES_COLLECTED-COMMISSION",
+      "title": "Test commission of IDLE --[VOTES_COLLECTED]--> IDLE",
+      "setup": {
+        "initial_state": "IDLE",
+        "preconditions": [
+          "Machine is in IDLE state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in IDLE state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in IDLE; event VOTES_COLLECTED is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'IDLE'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IDLE-VOTES_COLLECTED-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-IDLE-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-QUORUM_START-OMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-QUORUM_START-OMISSION",
+      "title": "Test omission of COLLECTING_VOTES --[QUORUM_START]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "COLLECTING_VOTES",
+        "assertions": [
+          "Machine transitions to COLLECTING_VOTES"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-QUORUM_START-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-QUORUM_START-COMMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-QUORUM_START-COMMISSION",
+      "title": "Test commission of COLLECTING_VOTES --[QUORUM_START]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in COLLECTING_VOTES; event QUORUM_START is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-QUORUM_START-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-CIRCUIT_BREAK-OMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-CIRCUIT_BREAK-OMISSION",
+      "title": "Test omission of COLLECTING_VOTES --[CIRCUIT_BREAK]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "COLLECTING_VOTES",
+        "assertions": [
+          "Machine transitions to COLLECTING_VOTES"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 120,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-CIRCUIT_BREAK-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-CIRCUIT_BREAK-COMMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-CIRCUIT_BREAK-COMMISSION",
+      "title": "Test commission of COLLECTING_VOTES --[CIRCUIT_BREAK]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in COLLECTING_VOTES; event CIRCUIT_BREAK is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 120,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-CIRCUIT_BREAK-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-CIRCUIT_BREAK-CORRUPTION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-CIRCUIT_BREAK-CORRUPTION",
+      "title": "Test corruption of COLLECTING_VOTES --[CIRCUIT_BREAK]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "COLLECTING_VOTES",
+        "not_state": "any_other",
+        "assertions": [
+          "Machine transitions to exactly COLLECTING_VOTES, not any other state"
+        ]
+      },
+      "oracle": {
+        "type": "state_equality",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Corruption: wrong target state reached"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 120,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-CIRCUIT_BREAK-CORRUPTION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-DECIDE-OMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-DECIDE-OMISSION",
+      "title": "Test omission of COLLECTING_VOTES --[DECIDE]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "COLLECTING_VOTES",
+        "assertions": [
+          "Machine transitions to COLLECTING_VOTES"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-DECIDE-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-DECIDE-COMMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-DECIDE-COMMISSION",
+      "title": "Test commission of COLLECTING_VOTES --[DECIDE]--> COLLECTING_VOTES",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in COLLECTING_VOTES; event DECIDE is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'COLLECTING_VOTES'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 80,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-DECIDE-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-VOTES_COLLECTED-OMISSION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-VOTES_COLLECTED-OMISSION",
+      "title": "Test omission of COLLECTING_VOTES --[VOTES_COLLECTED]--> DELIBERATING",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "assertions": [
+          "Machine transitions to DELIBERATING"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 72,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-VOTES_COLLECTED-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-COLLECTING_VOTES-VOTES_COLLECTED-CORRUPTION",
+      "failure_mode_id": "FM-COLLECTING_VOTES-VOTES_COLLECTED-CORRUPTION",
+      "title": "Test corruption of COLLECTING_VOTES --[VOTES_COLLECTED]--> DELIBERATING",
+      "setup": {
+        "initial_state": "COLLECTING_VOTES",
+        "preconditions": [
+          "Machine is in COLLECTING_VOTES state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in COLLECTING_VOTES state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "not_state": "any_other",
+        "assertions": [
+          "Machine transitions to exactly DELIBERATING, not any other state"
+        ]
+      },
+      "oracle": {
+        "type": "state_equality",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Corruption: wrong target state reached"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 72,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-COLLECTING_VOTES-VOTES_COLLECTED-CORRUPTION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-COLLECTING_VOTES-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-DECIDE-OMISSION",
+      "failure_mode_id": "FM-DELIBERATING-DECIDE-OMISSION",
+      "title": "Test omission of DELIBERATING --[DECIDE]--> DECIDED",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "assertions": [
+          "Machine transitions to DECIDED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "critical",
+        "rpn": 96,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-DECIDE-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-DECIDE-CORRUPTION",
+      "failure_mode_id": "FM-DELIBERATING-DECIDE-CORRUPTION",
+      "title": "Test corruption of DELIBERATING --[DECIDE]--> DECIDED",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "not_state": "any_other",
+        "assertions": [
+          "Machine transitions to exactly DECIDED, not any other state"
+        ]
+      },
+      "oracle": {
+        "type": "state_equality",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Corruption: wrong target state reached"
+      },
+      "risk_context": {
+        "severity_class": "critical",
+        "rpn": 96,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-DECIDE-CORRUPTION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-VOTES_COLLECTED-OMISSION",
+      "failure_mode_id": "FM-DELIBERATING-VOTES_COLLECTED-OMISSION",
+      "title": "Test omission of DELIBERATING --[VOTES_COLLECTED]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "assertions": [
+          "Machine transitions to DELIBERATING"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 16,
+        "risk_tier": "low"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-VOTES_COLLECTED-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-QUORUM_START-OMISSION",
+      "failure_mode_id": "FM-DELIBERATING-QUORUM_START-OMISSION",
+      "title": "Test omission of DELIBERATING --[QUORUM_START]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "assertions": [
+          "Machine transitions to DELIBERATING"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 48,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-QUORUM_START-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-QUORUM_START-COMMISSION",
+      "failure_mode_id": "FM-DELIBERATING-QUORUM_START-COMMISSION",
+      "title": "Test commission of DELIBERATING --[QUORUM_START]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DELIBERATING; event QUORUM_START is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 48,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-QUORUM_START-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-CIRCUIT_BREAK-OMISSION",
+      "failure_mode_id": "FM-DELIBERATING-CIRCUIT_BREAK-OMISSION",
+      "title": "Test omission of DELIBERATING --[CIRCUIT_BREAK]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "assertions": [
+          "Machine transitions to DELIBERATING"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 72,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-CIRCUIT_BREAK-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-CIRCUIT_BREAK-COMMISSION",
+      "failure_mode_id": "FM-DELIBERATING-CIRCUIT_BREAK-COMMISSION",
+      "title": "Test commission of DELIBERATING --[CIRCUIT_BREAK]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DELIBERATING; event CIRCUIT_BREAK is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 72,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-CIRCUIT_BREAK-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DELIBERATING-CIRCUIT_BREAK-CORRUPTION",
+      "failure_mode_id": "FM-DELIBERATING-CIRCUIT_BREAK-CORRUPTION",
+      "title": "Test corruption of DELIBERATING --[CIRCUIT_BREAK]--> DELIBERATING",
+      "setup": {
+        "initial_state": "DELIBERATING",
+        "preconditions": [
+          "Machine is in DELIBERATING state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in DELIBERATING state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DELIBERATING",
+        "not_state": "any_other",
+        "assertions": [
+          "Machine transitions to exactly DELIBERATING, not any other state"
+        ]
+      },
+      "oracle": {
+        "type": "state_equality",
+        "check": "machine.state === 'DELIBERATING'",
+        "failure_indicates": "Corruption: wrong target state reached"
+      },
+      "risk_context": {
+        "severity_class": "stalled",
+        "rpn": 72,
+        "risk_tier": "high"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DELIBERATING-CIRCUIT_BREAK-CORRUPTION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-DECIDE-OMISSION",
+      "failure_mode_id": "FM-DECIDED-DECIDE-OMISSION",
+      "title": "Test omission of DECIDED --[DECIDE]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "assertions": [
+          "Machine transitions to DECIDED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "cosmetic",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-DECIDE-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-DECIDE-COMMISSION",
+      "failure_mode_id": "FM-DECIDED-DECIDE-COMMISSION",
+      "title": "Test commission of DECIDED --[DECIDE]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "DECIDE",
+          "description": "Send DECIDE event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DECIDED; event DECIDE is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-DECIDE-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-DECIDE]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-CIRCUIT_BREAK-OMISSION",
+      "failure_mode_id": "FM-DECIDED-CIRCUIT_BREAK-OMISSION",
+      "title": "Test omission of DECIDED --[CIRCUIT_BREAK]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "assertions": [
+          "Machine transitions to DECIDED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "cosmetic",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-CIRCUIT_BREAK-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-CIRCUIT_BREAK-COMMISSION",
+      "failure_mode_id": "FM-DECIDED-CIRCUIT_BREAK-COMMISSION",
+      "title": "Test commission of DECIDED --[CIRCUIT_BREAK]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CIRCUIT_BREAK",
+          "description": "Send CIRCUIT_BREAK event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DECIDED; event CIRCUIT_BREAK is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-CIRCUIT_BREAK-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-CIRCUIT_BREAK]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-QUORUM_START-OMISSION",
+      "failure_mode_id": "FM-DECIDED-QUORUM_START-OMISSION",
+      "title": "Test omission of DECIDED --[QUORUM_START]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "assertions": [
+          "Machine transitions to DECIDED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "cosmetic",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-QUORUM_START-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-QUORUM_START-COMMISSION",
+      "failure_mode_id": "FM-DECIDED-QUORUM_START-COMMISSION",
+      "title": "Test commission of DECIDED --[QUORUM_START]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "QUORUM_START",
+          "description": "Send QUORUM_START event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DECIDED; event QUORUM_START is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-QUORUM_START-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-QUORUM_START]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-VOTES_COLLECTED-OMISSION",
+      "failure_mode_id": "FM-DECIDED-VOTES_COLLECTED-OMISSION",
+      "title": "Test omission of DECIDED --[VOTES_COLLECTED]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "DECIDED",
+        "assertions": [
+          "Machine transitions to DECIDED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "cosmetic",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-VOTES_COLLECTED-OMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-VOTES_COLLECTED]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-DECIDED-VOTES_COLLECTED-COMMISSION",
+      "failure_mode_id": "FM-DECIDED-VOTES_COLLECTED-COMMISSION",
+      "title": "Test commission of DECIDED --[VOTES_COLLECTED]--> DECIDED",
+      "setup": {
+        "initial_state": "DECIDED",
+        "preconditions": [
+          "Machine is in DECIDED state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VOTES_COLLECTED",
+          "description": "Send VOTES_COLLECTED event to machine in DECIDED state"
+        }
+      ],
+      "expected_outcome": {
+        "rejection": true,
+        "assertions": [
+          "Machine remains in DECIDED; event VOTES_COLLECTED is rejected"
+        ]
+      },
+      "oracle": {
+        "type": "guard_rejection",
+        "check": "machine.state === 'DECIDED'",
+        "failure_indicates": "Commission: unmodeled event was accepted"
+      },
+      "risk_context": {
+        "severity_class": "model_gap",
+        "rpn": 40,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECIDED-VOTES_COLLECTED-COMMISSION]"
+        },
+        {
+          "layer": "L3",
+          "artifact": "reasoning/hazard-model.json",
+          "ref": "hazards[id=HAZARD-DECIDED-VOTES_COLLECTED]"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_recipes": 32,
+    "by_failure_mode": {
+      "omission": 16,
+      "corruption": 5,
+      "commission": 11
+    },
+    "by_risk_tier": {
+      "medium": 15,
+      "high": 16,
+      "low": 1
+    }
+  }
+}
