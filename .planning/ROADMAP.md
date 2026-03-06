@@ -67,7 +67,7 @@ Plans:
   3. Cache files are stored in `.planning/.quorum-cache/` and are gitignored
   4. `verify-quorum-health.cjs` reports pass@1, pass@3, and pass@k rates computed from conformance event history
   5. Quorum still reaches a DECIDED state on every run where at least one slot responds, whether results come from cache or live dispatch (formal: EventualConsensus invariant preserved)
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
 - [ ] v0.28-02-01-PLAN.md -- Cache infrastructure, conformance schema, gitignore, planning-paths (CACHE-01, CACHE-03, CACHE-04)
 - [ ] v0.28-02-02-PLAN.md -- Cache integration in nf-prompt.js and nf-stop.js hooks (CACHE-02)
@@ -105,7 +105,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.28-01. Foundation -- Hook Profiles + De-Sloppify | 3/3 | Complete    | 2026-03-06 |
-| v0.28-02. Data Pipeline -- Quorum Cache + Pass@k Metrics | 0/3 | Not started | - |
+| v0.28-02. Data Pipeline -- Quorum Cache + Pass@k Metrics | 1/3 | In Progress|  |
 | v0.28-03. Runtime Intelligence -- Budget + Stall + Smart Compact | 0/TBD | Not started | - |
 | v0.28-04. Safety & Diagnostics -- Security + State + Diagnostics | 0/TBD | Not started | - |
 

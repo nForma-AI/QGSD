@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.29 — Phase v0.29-02 in progress (Semantics Layer and Gate A Grounding)
+**Current focus:** v0.28-02 — Phase v0.28-02 in progress (Data Pipeline Quorum Cache Pass-at-K Metrics)
 
 ## Current Position
 
-Phase: v0.29-02 (Semantics Layer and Gate A Grounding)
+Phase: v0.28-02 (Data Pipeline Quorum Cache Pass-at-K Metrics)
 Plan: 2 of 3 in current phase
 Status: In Progress
-Last activity: 2026-03-06 - Completed quick task 192: Fix execute-plan Route C audit-milestone chaining
+Last activity: 2026-03-06 - Completed v0.28-02-01 (Cache Infrastructure)
 
-Progress: [######----] 67%
+Progress: [###-------] 33%
 
 ## Performance Metrics
 
@@ -36,6 +36,7 @@ Progress: [######----] 67%
 
 *Updated after each plan completion*
 | Phase v0.29-02 P01 | 8min | 2 tasks | 6 files |
+| Phase v0.28-02 P01 | 2min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -58,6 +59,8 @@ Recent decisions affecting current work:
 - [v0.29-02-02]: All 10 divergences.json entries are genuine IDLE-phase circuit_break disagreements, classified as open
 - [Phase v0.28-01]: Cleanup subagent is non-blocking -- failure never prevents phase completion
 - [Phase v0.29-02]: Observed invariant checks 1-3 fail on real data; added checks 4-5 (complete_requires_block, action_count_consistency) that hold across all 349 sessions
+- [v0.28-02-01]: Null-byte separator in cache key prevents cross-field collisions
+- [v0.28-02-01]: Cache validity checks both git HEAD and quorum composition to prevent stale results
 
 ### Pending Todos
 
@@ -80,5 +83,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-02-01 (Invariant Catalog + Assumption Register, 26 tests)
+Stopped at: Completed v0.28-02-01-PLAN.md (Cache Infrastructure, 16 tests)
 Resume file: None
