@@ -75,7 +75,7 @@ None yet.
 |---|-------------|------|--------|--------|-----------|
 | 190 | Review and validate session persistence and modal fix changes in nForma.cjs | 2026-03-06 | fd0c6634 | Verified | [190-review-and-validate-session-persistence-](./quick/190-review-and-validate-session-persistence-/) |
 | 191 | Harden circuit breaker to prevent false positives on monotonic workflow progression | 2026-03-06 | 60e5f8bc | Verified | [191-harden-circuit-breaker-to-prevent-false-](./quick/191-harden-circuit-breaker-to-prevent-false-/) |
-| 192 | Fix execute-plan Route C to chain into transition.md audit-milestone logic on last phase completion | 2026-03-06 | 1711e881 | Pending | [192-fix-execute-plan-route-c-to-chain-into-t](./quick/192-fix-execute-plan-route-c-to-chain-into-t/) |
+| 192 | Fix execute-plan Route C to chain into transition.md audit-milestone logic on last phase completion | 2026-03-06 | 1711e881 | Verified | [192-fix-execute-plan-route-c-to-chain-into-t](./quick/192-fix-execute-plan-route-c-to-chain-into-t/) |
 
 ## Session Continuity
 
