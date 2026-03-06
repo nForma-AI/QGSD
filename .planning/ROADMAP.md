@@ -51,7 +51,7 @@ This milestone optimizes the nForma agent harness for production use -- adding c
   3. Changing `hook_profile` in nf.json takes effect on the next tool call without restart or reinstall
   4. After a successful execute-phase verification, a cleanup subagent spawns and produces a structured report listing redundancy, dead code, and over-defensive patterns with file:line references
   5. Circuit breaker remains functional across all three profiles -- oscillation detection fires in minimal, standard, and strict modes (formal: MonitoringReachable invariant holds regardless of profile)
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 Plans:
 - [ ] v0.28-01-01-PLAN.md -- Config-loader profile infrastructure (HOOK_PROFILE_MAP, shouldRunHook, validation)
 - [ ] v0.28-01-02-PLAN.md -- Cleanup subagent workflow and execute-phase integration
@@ -100,7 +100,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.28-01. Foundation -- Hook Profiles + De-Sloppify | 0/3 | Not started | - |
+| v0.28-01. Foundation -- Hook Profiles + De-Sloppify | 2/3 | In Progress|  |
 | v0.28-02. Data Pipeline -- Quorum Cache + Pass@k Metrics | 0/TBD | Not started | - |
 | v0.28-03. Runtime Intelligence -- Budget + Stall + Smart Compact | 0/TBD | Not started | - |
 | v0.28-04. Safety & Diagnostics -- Security + State + Diagnostics | 0/TBD | Not started | - |
