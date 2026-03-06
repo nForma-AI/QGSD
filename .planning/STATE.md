@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 ## Current Position
 
 Phase: v0.28-01 (Foundation: Hook Profiles De-sloppify)
-Plan: 1 of 3 in current phase
+Plan: 3 of 3 in current phase
 Status: Executing
-Last activity: 2026-03-06 - Completed v0.28-01-01: Hook Profile Infrastructure (config-loader)
+Last activity: 2026-03-06 - Completed v0.28-01-03: Hook Profile Guards + Strict Mode
 
-Progress: [###░░░░░░░] 33%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 2min
-- Total execution time: 0.03 hours
+- Total plans completed: 3
+- Average duration: 3min
+- Total execution time: 0.17 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| v0.28-01 | 1 | 2min | 2min |
+| v0.28-01 | 3 | 10min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 2min
-- Trend: Starting
+- Last 5 plans: 2min, 2min, 6min
+- Trend: Stable
 
 *Updated after each plan completion*
 
@@ -42,6 +42,9 @@ Progress: [###░░░░░░░] 33%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [v0.28-01-03]: Profile guard placed AFTER stdin consumption to prevent deadlock
+- [v0.28-01-03]: Strict mode uses broadened regex instead of patching quorum_commands list
+- [v0.28-01-03]: nf-circuit-breaker.js and nf-precompact.js intentionally untouched -- always active per HOOK_PROFILE_MAP
 - [v0.28-01-01]: standard and strict profiles share identical hook sets -- behavioral difference handled in individual hooks not profile map
 - [v0.28-01-01]: nf-check-update excluded from profile map -- SessionStart hook runs independently of profile system
 - [v0.29 Roadmap]: Strict bottom-up ordering (L1 -> L2+GateA -> L3+GateB -> GateC -> Dashboard) -- building any layer before its foundation is the single most expensive mistake
@@ -69,5 +72,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.28-01-01-PLAN.md
+Stopped at: Completed v0.28-01-03-PLAN.md
 Resume file: None

@@ -34,7 +34,7 @@ This milestone optimizes the nForma agent harness for production use -- adding c
 
 ## Phases
 
-- [ ] **Phase v0.28-01: Foundation -- Hook Profiles + De-Sloppify** - Configurable hook profiles and post-verification cleanup subagent
+- [x] **Phase v0.28-01: Foundation -- Hook Profiles + De-Sloppify** - Configurable hook profiles and post-verification cleanup subagent (completed 2026-03-06)
 - [ ] **Phase v0.28-02: Data Pipeline -- Quorum Cache + Pass@k Metrics** - SHA-256 quorum response caching and pass@k conformance tracking
 - [ ] **Phase v0.28-03: Runtime Intelligence -- Budget Downgrade + Stall Detection + Smart Compact** - Token budget monitoring, stall escalation, and workflow-aware compaction suggestions
 - [ ] **Phase v0.28-04: Safety & Diagnostics -- Security Sweep + Session State + Harness Diagnostics** - Verify-time security scanning, session state reminders, and unified diagnostic reporting
@@ -51,7 +51,7 @@ This milestone optimizes the nForma agent harness for production use -- adding c
   3. Changing `hook_profile` in nf.json takes effect on the next tool call without restart or reinstall
   4. After a successful execute-phase verification, a cleanup subagent spawns and produces a structured report listing redundancy, dead code, and over-defensive patterns with file:line references
   5. Circuit breaker remains functional across all three profiles -- oscillation detection fires in minimal, standard, and strict modes (formal: MonitoringReachable invariant holds regardless of profile)
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] v0.28-01-01-PLAN.md -- Config-loader profile infrastructure (HOOK_PROFILE_MAP, shouldRunHook, validation)
 - [ ] v0.28-01-02-PLAN.md -- Cleanup subagent workflow and execute-phase integration
@@ -100,7 +100,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.28-01. Foundation -- Hook Profiles + De-Sloppify | 2/3 | In Progress|  |
+| v0.28-01. Foundation -- Hook Profiles + De-Sloppify | 3/3 | Complete   | 2026-03-06 |
 | v0.28-02. Data Pipeline -- Quorum Cache + Pass@k Metrics | 0/TBD | Not started | - |
 | v0.28-03. Runtime Intelligence -- Budget + Stall + Smart Compact | 0/TBD | Not started | - |
 | v0.28-04. Safety & Diagnostics -- Security + State + Diagnostics | 0/TBD | Not started | - |
