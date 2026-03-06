@@ -33,11 +33,11 @@
 ## Milestone v0.29 Requirements
 
 ### Evidence (Layer 1)
-- [ ] **EVID-01**: Instrumentation map (`instrumentation-map.json`) catalogs every hook/handler emission point and maps to state variables with coverage percentages
-- [ ] **EVID-02**: Trace corpus management indexes conformance events by session, action type, and state transition with queryable metadata
-- [ ] **EVID-03**: Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-violation, drift, degradation)
-- [ ] **EVID-04**: State candidate extractor mines traces to suggest state variables and transitions that hand-written models may have missed
-- [ ] **EVID-05**: Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers
+- [x] **EVID-01**: Instrumentation map (`instrumentation-map.json`) catalogs every hook/handler emission point and maps to state variables with coverage percentages
+- [x] **EVID-02**: Trace corpus management indexes conformance events by session, action type, and state transition with queryable metadata
+- [x] **EVID-03**: Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-violation, drift, degradation)
+- [x] **EVID-04**: State candidate extractor mines traces to suggest state variables and transitions that hand-written models may have missed
+- [x] **EVID-05**: Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers
 
 ### Semantics (Layer 2)
 - [x] **SEM-01**: Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog
@@ -46,25 +46,25 @@
 - [x] **SEM-04**: Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models
 
 ### Reasoning (Layer 3)
-- [ ] **RSN-01**: Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions
-- [ ] **RSN-02**: Failure mode catalog enumerates concrete failure modes per L2 state/transition with effects and severity classification
-- [ ] **RSN-03**: Risk heatmap produces ranked transition list (highest-risk-first) combining FMEA severity with coverage gap data
+- [x] **RSN-01**: Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions
+- [x] **RSN-02**: Failure mode catalog enumerates concrete failure modes per L2 state/transition with effects and severity classification
+- [x] **RSN-03**: Risk heatmap produces ranked transition list (highest-risk-first) combining FMEA severity with coverage gap data
 - [x] **RSN-04**: Model-driven test generation produces test recipe JSON from L3 failure modes with input sequence, expected outcome, and oracle
 - [x] **RSN-05**: Design impact analysis traces a git diff through all three layers showing instrumentation, state, and hazard effects
 
 ### Gates
-- [ ] **GATE-01**: Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces
-- [ ] **GATE-02**: Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards
+- [x] **GATE-01**: Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces
+- [x] **GATE-02**: Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards
 - [x] **GATE-03**: Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario
-- [ ] **GATE-04**: Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)
+- [x] **GATE-04**: Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)
 
 ### Integration
-- [ ] **INTG-01**: Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status
+- [x] **INTG-01**: Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status
 - [x] **INTG-02**: `nf-solve` gains three new layer-transition sweeps (L1->L2, L2->L3, L3->TC) in its convergence loop
 - [x] **INTG-03**: `run-formal-verify` gains three new gate check step groups that produce alignment scores and gap reports
 - [x] **INTG-04**: Cross-layer alignment dashboard shows L1 coverage %, Gate A score, Gate B score, Gate C score in single terminal view
-- [ ] **INTG-05**: Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model
-- [ ] **INTG-06**: All existing 43+ formal models classified into layer architecture with maturity level (Level 0-3)
+- [x] **INTG-05**: Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model
+- [x] **INTG-06**: All existing 43+ formal models classified into layer architecture with maturity level (Level 0-3)
 
 ## Future Requirements
 
@@ -87,30 +87,30 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EVID-01 | v0.29-01 | Pending |
-| EVID-02 | v0.29-01 | Pending |
-| EVID-03 | v0.29-01 | Pending |
-| EVID-04 | v0.29-01 | Pending |
-| EVID-05 | v0.29-01 | Pending |
+| EVID-01 | v0.29-01 | Complete |
+| EVID-02 | v0.29-01 | Complete |
+| EVID-03 | v0.29-01 | Complete |
+| EVID-04 | v0.29-01 | Complete |
+| EVID-05 | v0.29-01 | Complete |
 | SEM-01 | v0.29-02 | Complete |
 | SEM-02 | v0.29-02 | Complete |
 | SEM-03 | v0.29-02 | Complete |
 | SEM-04 | v0.29-02 | Complete |
-| RSN-01 | v0.29-03 | Pending |
-| RSN-02 | v0.29-03 | Pending |
-| RSN-03 | v0.29-03 | Pending |
+| RSN-01 | v0.29-03 | Complete |
+| RSN-02 | v0.29-03 | Complete |
+| RSN-03 | v0.29-03 | Complete |
 | RSN-04 | v0.29-04 | Complete |
 | RSN-05 | v0.29-04 | Complete |
-| GATE-01 | v0.29-02 | Pending |
-| GATE-02 | v0.29-03 | Pending |
+| GATE-01 | v0.29-02 | Complete |
+| GATE-02 | v0.29-03 | Complete |
 | GATE-03 | v0.29-04 | Complete |
-| GATE-04 | v0.29-03 | Pending |
-| INTG-01 | v0.29-01 | Pending |
+| GATE-04 | v0.29-03 | Complete |
+| INTG-01 | v0.29-01 | Complete |
 | INTG-02 | v0.29-04 | Complete |
 | INTG-03 | v0.29-04 | Complete |
 | INTG-04 | v0.29-05 | Complete |
-| INTG-05 | v0.29-01 | Pending |
-| INTG-06 | v0.29-01 | Pending |
+| INTG-05 | v0.29-01 | Complete |
+| INTG-06 | v0.29-01 | Complete |
 
 **Coverage:**
 - v0.29 requirements: 24 total
@@ -119,4 +119,4 @@
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after roadmap creation*
+*Last updated: 2026-03-06 after milestone audit (14 stale checkboxes synced)*

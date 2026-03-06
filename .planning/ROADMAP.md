@@ -123,9 +123,10 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
 
 - [x] **Phase v0.29-01: Layer Manifest and Evidence Foundation** - Register all formal artifacts into layer architecture and build L1 evidence collection infrastructure (completed 2026-03-06)
 - [x] **Phase v0.29-02: Semantics Layer and Gate A Grounding** - Derive operational semantics from traces and quantify how well models explain observed behavior (completed 2026-03-06)
-- [ ] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics
+- [x] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics (completed 2026-03-06)
 - [x] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration (completed 2026-03-06)
 - [x] **Phase v0.29-05: Dashboard and Progressive Maturity Rollout** - Surface cross-layer alignment in a single terminal view (completed 2026-03-06)
+- [ ] **Phase v0.29-06: Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync** - Fix nf-solve data contract mismatch and exit-code handling, sync stale REQUIREMENTS.md and ROADMAP.md entries
 
 ## Phase Details
 
@@ -202,14 +203,26 @@ Plans:
 Plans:
 - [ ] v0.29-05-01-PLAN.md -- Cross-layer alignment dashboard with gate aggregation and terminal rendering
 
+### Phase v0.29-06: Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync
+**Goal**: Fix nf-solve integration bugs (data contract mismatch and exit-code handling) and sync all stale planning document entries
+**Depends on**: Phase v0.29-05
+**Requirements**: (none — tech debt closure, no new requirements)
+**Gap Closure**: Closes gaps from v0.29 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Running nf-solve sweepL1toL2 reports correct unexplained_breakdown values (not zeros) matching gate-a's unexplained_counts
+  2. Running nf-solve sweeps with a gate that exits code 1 (target not met) still produces valid residual scores instead of error responses
+  3. All 14 previously-stale REQUIREMENTS.md checkboxes show `[x]` Complete for verified requirements
+Plans: TBD
+
 ## Progress
 
-**Execution Order:** v0.29-01 -> v0.29-02 -> v0.29-03 -> v0.29-04 -> v0.29-05
+**Execution Order:** v0.29-01 -> v0.29-02 -> v0.29-03 -> v0.29-04 -> v0.29-05 -> v0.29-06
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.29-01. Layer Manifest and Evidence Foundation | 0/3 | Complete    | 2026-03-06 |
-| v0.29-02. Semantics Layer and Gate A Grounding | 2/3 | Complete    | 2026-03-06 |
-| v0.29-03. Reasoning Enrichment and Gate B Abstraction | 0/2 | Not started | - |
+| v0.29-01. Layer Manifest and Evidence Foundation | 3/3 | Complete    | 2026-03-06 |
+| v0.29-02. Semantics Layer and Gate A Grounding | 3/3 | Complete    | 2026-03-06 |
+| v0.29-03. Reasoning Enrichment and Gate B Abstraction | 2/2 | Complete    | 2026-03-06 |
 | v0.29-04. Gate C Validation and Test Generation | 3/3 | Complete   | 2026-03-06 |
 | v0.29-05. Dashboard and Progressive Maturity Rollout | 1/1 | Complete    | 2026-03-06 |
+| v0.29-06. Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync | 0/TBD | Not started | - |
