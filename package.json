@@ -13,6 +13,7 @@
     "get-shit-done",
     "agents",
     "hooks/dist",
+    "!hooks/dist/*.test.*",
     "scripts",
     "!scripts/generate-logo-svg.js",
     "!scripts/generate-terminal-svg.js",
