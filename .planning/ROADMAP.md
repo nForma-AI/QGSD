@@ -121,7 +121,7 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
 - [x] **Phase v0.29-02: Semantics Layer and Gate A Grounding** - Derive operational semantics from traces and quantify how well models explain observed behavior (completed 2026-03-06)
 - [ ] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics
 - [x] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration (completed 2026-03-06)
-- [ ] **Phase v0.29-05: Dashboard and Progressive Maturity Rollout** - Surface cross-layer alignment in a single terminal view
+- [x] **Phase v0.29-05: Dashboard and Progressive Maturity Rollout** - Surface cross-layer alignment in a single terminal view (completed 2026-03-06)
 
 ## Phase Details
 
@@ -194,7 +194,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Running the cross-layer alignment dashboard displays L1 coverage %, Gate A score, Gate B score, and Gate C score in a single terminal view
   2. The dashboard reflects real-time state: changes from any prior phase (new traces, updated models, gate score changes) appear on next dashboard invocation
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] v0.29-05-01-PLAN.md -- Cross-layer alignment dashboard with gate aggregation and terminal rendering
 
@@ -208,4 +208,4 @@ Plans:
 | v0.29-02. Semantics Layer and Gate A Grounding | 2/3 | Complete    | 2026-03-06 |
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 0/2 | Not started | - |
 | v0.29-04. Gate C Validation and Test Generation | 3/3 | Complete   | 2026-03-06 |
-| v0.29-05. Dashboard and Progressive Maturity Rollout | 0/1 | Not started | - |
+| v0.29-05. Dashboard and Progressive Maturity Rollout | 1/1 | Complete   | 2026-03-06 |

@@ -62,7 +62,7 @@
 - [ ] **INTG-01**: Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status
 - [x] **INTG-02**: `nf-solve` gains three new layer-transition sweeps (L1->L2, L2->L3, L3->TC) in its convergence loop
 - [x] **INTG-03**: `run-formal-verify` gains three new gate check step groups that produce alignment scores and gap reports
-- [ ] **INTG-04**: Cross-layer alignment dashboard shows L1 coverage %, Gate A score, Gate B score, Gate C score in single terminal view
+- [x] **INTG-04**: Cross-layer alignment dashboard shows L1 coverage %, Gate A score, Gate B score, Gate C score in single terminal view
 - [ ] **INTG-05**: Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model
 - [ ] **INTG-06**: All existing 43+ formal models classified into layer architecture with maturity level (Level 0-3)
 
@@ -108,7 +108,7 @@
 | INTG-01 | v0.29-01 | Pending |
 | INTG-02 | v0.29-04 | Complete |
 | INTG-03 | v0.29-04 | Complete |
-| INTG-04 | v0.29-05 | Pending |
+| INTG-04 | v0.29-05 | Complete |
 | INTG-05 | v0.29-01 | Pending |
 | INTG-06 | v0.29-01 | Pending |
 

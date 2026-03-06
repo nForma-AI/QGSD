@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.28-02 — Phase v0.28-02 in progress (Data Pipeline Quorum Cache Pass-at-K Metrics)
+**Current focus:** v0.29-05 — Phase v0.29-05 complete (Dashboard and Progressive Maturity Rollout)
 
 ## Current Position
 
-Phase: v0.28-02 (Data Pipeline Quorum Cache Pass-at-K Metrics)
-Plan: 2 of 3 in current phase
-Status: In Progress
-Last activity: 2026-03-06 - Completed v0.29-04-03 Gate integration into solve and verify pipelines
+Phase: v0.29-05 (Dashboard and Progressive Maturity Rollout)
+Plan: 1 of 1 in current phase
+Status: Complete
+Last activity: 2026-03-06 - Completed v0.29-05-01 Cross-layer alignment dashboard
 
-Progress: [###-------] 33%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
@@ -40,6 +40,7 @@ Progress: [###-------] 33%
 | Phase v0.29-04 P02 | 2min | 1 tasks | 2 files |
 | Phase v0.29-04 P03 | 16min | 2 tasks | 4 files |
 | Phase v0.29-04 P01 | 3min | 2 tasks | 6 files |
+| Phase v0.29-05 P01 | 3min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,9 @@ Recent decisions affecting current work:
 - [v0.29-04-01]: Gate C target threshold set at 0.8 (80%) following gate-b pattern; current score is 1.0
 - [v0.29-04-03]: Layer sweeps use separate layer_total field -- never inflate existing total for backward compatibility
 - [v0.29-04-03]: Gate steps in run-formal-verify marked nonCritical (ADVISORY maturity, not hard gates)
+- [v0.29-05-01]: Gate scripts spawned via child_process for isolation -- matches nf-solve.cjs pattern
+- [v0.29-05-01]: Accept exit code 0 OR 1 from gate scripts -- exit 1 means target not met but JSON valid
+- [v0.29-05-01]: require.main guard prevents auto-execution when module required for testing
 
 ### Pending Todos
 
@@ -94,5 +98,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.29-04-03-PLAN.md (Gate integration into solve and verify pipelines)
+Stopped at: Completed v0.29-05-01-PLAN.md (Cross-layer alignment dashboard)
 Resume file: None
