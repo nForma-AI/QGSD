@@ -51,6 +51,8 @@ const HOOK_PROFILE_MAP = {
     'nf-slot-correlator',
     'nf-session-start',
     'nf-statusline',
+    'nf-post-edit-format',
+    'nf-console-guard',
   ]),
   strict: new Set([
     'nf-circuit-breaker',
@@ -63,6 +65,8 @@ const HOOK_PROFILE_MAP = {
     'nf-slot-correlator',
     'nf-session-start',
     'nf-statusline',
+    'nf-post-edit-format',
+    'nf-console-guard',
   ]),
 };
 

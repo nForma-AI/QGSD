@@ -1213,6 +1213,30 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
     }
+    // Remove nf-post-edit-format hook (uninstall path)
+    if (settings.hooks && settings.hooks.PostToolUse) {
+      const before = settings.hooks.PostToolUse.length;
+      settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-post-edit-format')))
+      );
+      if (settings.hooks.PostToolUse.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed nForma post-edit format hook`);
+      }
+      if (settings.hooks.PostToolUse.length === 0) delete settings.hooks.PostToolUse;
+    }
+    // Remove nf-console-guard hook (uninstall path)
+    if (settings.hooks && settings.hooks.Stop) {
+      const before = settings.hooks.Stop.length;
+      settings.hooks.Stop = settings.hooks.Stop.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-console-guard')))
+      );
+      if (settings.hooks.Stop.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed nForma console guard hook`);
+      }
+      if (settings.hooks.Stop.length === 0) delete settings.hooks.Stop;
+    }
     if (settings.hooks && settings.hooks.PreCompact) {
       const before = settings.hooks.PreCompact.length;
       settings.hooks.PreCompact = settings.hooks.PreCompact.filter(entry =>
@@ -1940,6 +1964,30 @@ function install(isGlobal, runtime = 'claude') {
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-spec-regen.js') }]
       });
       console.log(`  ${green}✓${reset} Configured nForma spec-regen hook (PostToolUse)`);
+    }
+
+    // Register nForma post-edit format hook (PostToolUse — auto-format JS/TS after Edit)
+    if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
+    const hasPostEditFormatHook = settings.hooks.PostToolUse.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-post-edit-format'))
+    );
+    if (!hasPostEditFormatHook) {
+      settings.hooks.PostToolUse.push({
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-post-edit-format.js') }]
+      });
+      console.log(`  ${green}✓${reset} Configured nForma post-edit format hook (PostToolUse)`);
+    }
+
+    // Register nForma console guard hook (Stop — warn about leftover console.log)
+    if (!settings.hooks.Stop) settings.hooks.Stop = [];
+    const hasConsoleGuardHook = settings.hooks.Stop.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-console-guard'))
+    );
+    if (!hasConsoleGuardHook) {
+      settings.hooks.Stop.push({
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-console-guard.js') }]
+      });
+      console.log(`  ${green}✓${reset} Configured nForma console guard hook (Stop)`);
     }
 
     // Register nForma PreCompact hook (phase state injection at compaction time)
