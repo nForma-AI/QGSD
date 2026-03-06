@@ -2,17 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-04)
+See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.28 — Agent Harness Optimization
+**Current focus:** v0.28-01 Foundation -- Hook Profiles + De-Sloppify
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-06 — Completed quick task 188: Review upstream and deps handler implementations
+Phase: 1 of 4 (v0.28-01 Foundation -- Hook Profiles + De-Sloppify)
+Plan: 0 of TBD in current phase
+Status: Ready to plan
+Last activity: 2026-03-06 -- Roadmap created for v0.28 Agent Harness Optimization
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -41,14 +43,9 @@ Last activity: 2026-03-06 — Completed quick task 188: Review upstream and deps
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [v0.27 roadmap]: Debt schema + fingerprinting are foundation phase — everything depends on valid data structure
-- [v0.27 roadmap]: Observe skill core in Phase 2 reuses existing triage architecture (pluggable sources, parallel fetch)
-- [v0.27 roadmap]: Production source types (Prometheus/Grafana/Logstash) are framework-ready stubs, no live endpoints required
-- [v0.27 roadmap]: Cross-source dedup (Phase 3) and production sources (Phase 4) can run in parallel after Phase 2
-- [v0.27 roadmap]: Solve P->F integration is last — requires stable debt ledger + dedup before feedback loop closes
-- [v0.27 research]: Six critical pitfalls identified (false positive floods, unbounded growth, fingerprint collisions, solve instability, abstraction leaks, human gate bypass)
-- [quick-178]: Reverse discovery candidates classified A/B/C; acknowledged FPs keyed by doc_file:value (no line numbers); conformance trace self-healing at 50% event overlap threshold
-- [quick-179]: grep -Z for NUL-delimited parsing; .planning/ excluded at grep level; TODO issues enriched with exception_type/function_name for debt fingerprinting
+- [v0.28 Roadmap]: 4-phase structure -- config foundation first, gsd-context-monitor.js features sequenced (stall before compact), diagnostics last
+- [v0.28 Roadmap]: PostToolUse performance is primary risk -- gsd-context-monitor.js fires hundreds of times per session; any I/O must be sub-millisecond
+- [v0.28 Research]: All 10 features integrate into existing hooks; 0 new hook files needed; 5 config-loader changes, 2 gsd-context-monitor changes
 
 ### Pending Todos
 
@@ -56,12 +53,13 @@ None yet.
 
 ### Blockers/Concerns
 
-None yet.
+- Phase v0.28-03: Token-usage.jsonl read performance under high volume needs validation (research flag)
+- Phase v0.28-03: STATE.md parsing heuristic for smart compact needs empirical tuning (research flag)
 
 ## Session Continuity
 
-Last session: 2026-03-05
-Stopped at: Completed quick-182 (Add test recipe generation)
+Last session: 2026-03-06
+Stopped at: Roadmap created, ready to plan Phase v0.28-01
 Resume file: None
 
 ## Quick Tasks Completed
@@ -73,7 +71,7 @@ Resume file: None
 | 162 | Make sync-baselines always use detect mode by default | 2026-03-04 | 39fc61e9 | Completed | [162-make-sync-baselines-always-use-detect-mo](./quick/162-make-sync-baselines-always-use-detect-mo/) |
 | 163 | Add developer doc auto-generation to qgsd solve skill | 2026-03-04 | ea9363ea | Verified | [163-add-developer-doc-auto-generation-to-qgs](./quick/163-add-developer-doc-auto-generation-to-qgs/) |
 | 164 | Add UPPAAL verifyta installation to bin/install.js | 2026-03-04 | 8caf29e4 | Completed | [164-add-uppaal-verifyta-installation-to-bin-](./quick/164-add-uppaal-verifyta-installation-to-bin-/) |
-| 165 | Fix solver F→C diagnostic to read all 26+ formal checks instead of 4 CI-only | 2026-03-04 | 6ff105da | Completed | [165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-](./quick/165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-/) |
+| 165 | Fix solver F->C diagnostic to read all 26+ formal checks instead of 4 CI-only | 2026-03-04 | 6ff105da | Completed | [165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-](./quick/165-fix-qgsd-solve-cjs-f-to-c-diagnostic-to-/) |
 | 166 | Autonomous milestone completion loop via audit-milestone --auto | 2026-03-04 | e6d375c3 | Pending | [166-implement-autonomous-milestone-completio](./quick/166-implement-autonomous-milestone-completio/) |
 | 167 | Implement SOLVE-05: Make the formal verification harness project-agnostic | 2026-03-04 | f3341590 | Verified | [167-implement-solve-05-make-the-formal-verif](./quick/167-implement-solve-05-make-the-formal-verif/) |
 | 168 | Add internal work detection handler to observe | 2026-03-04 | 21951ed3 | Verified | [168-add-internal-work-detection-handler-to-o](./quick/168-add-internal-work-detection-handler-to-o/) |
@@ -83,7 +81,7 @@ Resume file: None
 | 173 | Teach discoverModels() to read model-registry.json search_dirs and add check_command support for project-level formal models | 2026-03-05 | 25f32777 | Verified | [173-teach-discovermodels-to-read-model-regis](./quick/173-teach-discovermodels-to-read-model-regis/) |
 | 174 | Harden test runner against glob failures, timeout hangs, and missing test-file mappings | 2026-03-05 | 5057f922 | Verified | [174-harden-test-runner-against-glob-failures](./quick/174-harden-test-runner-against-glob-failures/) |
 | 175 | Add priority tiering and actionable filtering to analyze-assumptions | 2026-03-05 | ecf297f4 | Verified | [175-add-priority-tiering-and-actionable-filt](./quick/175-add-priority-tiering-and-actionable-filt/) |
-| 176 | Add reverse traceability discovery (C→R, T→R, D→R) | 2026-03-05 | b9b65c8d | Verified | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
+| 176 | Add reverse traceability discovery (C->R, T->R, D->R) | 2026-03-05 | b9b65c8d | Verified | [176-add-reverse-traceability-discovery-c-r-t](./quick/176-add-reverse-traceability-discovery-c-r-t/) |
 | 177 | Add VERIFY-03 tests (static + dynamic) and clean install Dockerfile | 2026-03-05 | bea9431a | Verified | [177-add-both-test-approaches-for-verify-03-s](./quick/177-add-both-test-approaches-for-verify-03-s/) |
 | 178 | Implement all 7 solver improvements (preflight, test runner, triage, FP filter, state, self-healing, categorization) | 2026-03-05 | b0d31ed6 | Completed | [178-implement-all-7-solver-improvements-auto](./quick/178-implement-all-7-solver-improvements-auto/) |
 | 179 | Review TODO scanner implementation in observe-handler-internal | 2026-03-05 | 08b49281 | Completed | [179-review-todo-scanner-implementation-in-ob](./quick/179-review-todo-scanner-implementation-in-ob/) |
@@ -91,9 +89,10 @@ Resume file: None
 | 182 | Add test recipe generation to formal-test-sync.cjs and update solve.md F-T template | 2026-03-05 | 825048c7 | Verified | [182-add-test-recipe-generation-to-formal-tes](./quick/182-add-test-recipe-generation-to-formal-tes/) |
 | 183 | Add legacy .formal/ migration step to qgsd:solve | 2026-03-05 | c5368b60 | Verified | [183-add-legacy-formal-migration-step-to-qgsd](./quick/183-add-legacy-formal-migration-step-to-qgsd/) |
 | 184 | Implement 5 solve automation improvements | 2026-03-05 | d0ae6285 | Verified | [184-implement-5-solve-automation-improvement](./quick/184-implement-5-solve-automation-improvement/) |
-| 185 | Fix conformance trace divergences — add circuit_break action to XState machine | 2026-03-05 | 429d0f60 | Pending | [185-fix-conformance-trace-divergences-add-ci](./quick/185-fix-conformance-trace-divergences-add-ci/) |
-| 187 | Add V8 line-level coverage to T->C sweep and cross-reference with F→T recipe source_files | 2026-03-06 | 492ed29a | Verified | [187-add-v8-line-level-coverage-to-t-c-sweep-](./quick/187-add-v8-line-level-coverage-to-t-c-sweep-/) |
+| 185 | Fix conformance trace divergences -- add circuit_break action to XState machine | 2026-03-05 | 429d0f60 | Pending | [185-fix-conformance-trace-divergences-add-ci](./quick/185-fix-conformance-trace-divergences-add-ci/) |
+| 187 | Add V8 line-level coverage to T->C sweep and cross-reference with F->T recipe source_files | 2026-03-06 | 492ed29a | Verified | [187-add-v8-line-level-coverage-to-t-c-sweep-](./quick/187-add-v8-line-level-coverage-to-t-c-sweep-/) |
 | 188 | Review upstream and deps handler implementations and elevate worthy patterns as requirements | 2026-03-06 | 9478b1a4 | Verified | [188-review-upstream-and-deps-handler-impleme](./quick/188-review-upstream-and-deps-handler-impleme/) |
+| 186 | Full QGSD-to-nForma rebrand — rename all qgsd references to nf/nForma | 2026-03-06 | (pending) | Completed | [186-full-qgsd-to-nforma-rebrand-rename-all-r](./quick/186-full-qgsd-to-nforma-rebrand-rename-all-r/) |
 
 ## Recent Accomplishments
 
@@ -106,24 +105,3 @@ Resume file: None
   - 56 tests (40 unit + 11 autoClose + 5 integration), all passing
   - Requirements PF-01 through PF-05 completed
   - v0.27 milestone shipped: production feedback loop fully closed
-
-- **v0.27-01-01 (Debt Schema & Validation)** [2026-03-04]
-  - JSON Schema draft-07 definition with all required fields
-  - Runtime validation module (validateDebtEntry, validateDebtLedger)
-  - State machine enforcement (canTransition, transitionDebtEntry)
-  - 70 tests (36 validation + 34 state machine), all passing
-  - Requirements DEBT-01 and DEBT-03 completed
-
-- **v0.27-01-02 (Deterministic Fingerprinting)** [2026-03-04]
-  - Issue fingerprinting: hierarchical (exception_type → function_name → message hash)
-  - Drift fingerprinting: formal parameter key hash
-  - 38 tests (20 issue + 18 drift), all passing
-  - Requirements FP-01 and FP-02 completed
-
-- **v0.27-01-03 (Ledger I/O and Retention Policy)** [2026-03-04]
-  - Atomic read/write operations with fail-open behavior (readDebtLedger, writeDebtLedger)
-  - Retention policy for archival of resolved entries > max_age (applyRetentionPolicy, writeArchive)
-  - Seed .formal/debt.json with empty ledger structure
-  - 27 tests (19 ledger/retention + 8 integration), all passing
-  - Requirement DEBT-04 completed
-  - Complete v0.27-01 phase foundation: schema + validation + state machine + fingerprinting + ledger + retention

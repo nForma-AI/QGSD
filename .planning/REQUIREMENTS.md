@@ -68,39 +68,39 @@ Deferred beyond v0.28:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| CLEAN-01 | — | Pending |
-| CLEAN-02 | — | Pending |
-| CACHE-01 | — | Pending |
-| CACHE-02 | — | Pending |
-| CACHE-03 | — | Pending |
-| CACHE-04 | — | Pending |
-| PASSK-01 | — | Pending |
-| PASSK-02 | — | Pending |
-| BUDG-01 | — | Pending |
-| BUDG-02 | — | Pending |
-| BUDG-03 | — | Pending |
-| STALL-01 | — | Pending |
-| STALL-02 | — | Pending |
-| SMART-01 | — | Pending |
-| SMART-02 | — | Pending |
-| SEC-01 | — | Pending |
-| SEC-02 | — | Pending |
-| SEC-03 | — | Pending |
-| STATE-01 | — | Pending |
-| STATE-02 | — | Pending |
-| DIAG-01 | — | Pending |
-| DIAG-02 | — | Pending |
-| DIAG-03 | — | Pending |
+| PROF-01 | v0.28-01 | Pending |
+| PROF-02 | v0.28-01 | Pending |
+| PROF-03 | v0.28-01 | Pending |
+| PROF-04 | v0.28-01 | Pending |
+| CLEAN-01 | v0.28-01 | Pending |
+| CLEAN-02 | v0.28-01 | Pending |
+| CACHE-01 | v0.28-02 | Pending |
+| CACHE-02 | v0.28-02 | Pending |
+| CACHE-03 | v0.28-02 | Pending |
+| CACHE-04 | v0.28-02 | Pending |
+| PASSK-01 | v0.28-02 | Pending |
+| PASSK-02 | v0.28-02 | Pending |
+| BUDG-01 | v0.28-03 | Pending |
+| BUDG-02 | v0.28-03 | Pending |
+| BUDG-03 | v0.28-03 | Pending |
+| STALL-01 | v0.28-03 | Pending |
+| STALL-02 | v0.28-03 | Pending |
+| SMART-01 | v0.28-03 | Pending |
+| SMART-02 | v0.28-03 | Pending |
+| SEC-01 | v0.28-04 | Pending |
+| SEC-02 | v0.28-04 | Pending |
+| SEC-03 | v0.28-04 | Pending |
+| STATE-01 | v0.28-04 | Pending |
+| STATE-02 | v0.28-04 | Pending |
+| DIAG-01 | v0.28-04 | Pending |
+| DIAG-02 | v0.28-04 | Pending |
+| DIAG-03 | v0.28-04 | Pending |
 
 **Coverage:**
 - v0.28 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-06*
-*Last updated: 2026-03-06 after initial definition*
+*Last updated: 2026-03-06 after roadmap creation*
