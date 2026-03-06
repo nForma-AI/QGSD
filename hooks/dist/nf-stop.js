@@ -20,6 +20,12 @@ const os = require('os');
 const { loadConfig, DEFAULT_CONFIG, slotToToolCall, shouldRunHook } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
 
+// Cache module — fail-open: if require fails, all cache logic is skipped
+let cacheModule = null;
+try {
+  cacheModule = require(path.join(__dirname, '..', 'bin', 'quorum-cache.cjs'));
+} catch (_) { /* fail-open: cache unavailable */ }
+
 // Appends a structured conformance event to .planning/conformance-events.jsonl.
 // Uses appendFileSync (atomic for writes < POSIX PIPE_BUF = 4096 bytes).
 // Always wrapped in try/catch — hooks are fail-open; never crashes on logging failure.
@@ -401,6 +407,54 @@ function deriveMissingToolName(modelKey, modelDef) {
   return prefix + modelKey;
 }
 
+// Returns true if any user entry in currentTurnLines contains the NF_CACHE_HIT marker.
+// This marker is injected by nf-prompt.js when a valid cache hit is found.
+function hasCacheHitMarker(currentTurnLines) {
+  for (const line of currentTurnLines) {
+    try {
+      const entry = JSON.parse(line);
+      if (entry.type !== 'user') continue;
+      const content = entry.message?.content;
+      let text = '';
+      if (typeof content === 'string') {
+        text = content;
+      } else if (Array.isArray(content)) {
+        text = content
+          .filter(c => c?.type === 'text')
+          .map(c => c.text || '')
+          .join('');
+      }
+      if (text.includes('<!-- NF_CACHE_HIT -->')) return true;
+    } catch { /* skip malformed lines */ }
+  }
+  return false;
+}
+
+// Extracts the cache key from NF_CACHE_KEY marker in currentTurnLines.
+// Returns the hex string or null if not found.
+function extractCacheKey(currentTurnLines) {
+  const keyPattern = /<!-- NF_CACHE_KEY:([a-f0-9]+) -->/;
+  for (const line of currentTurnLines) {
+    try {
+      const entry = JSON.parse(line);
+      if (entry.type !== 'user') continue;
+      const content = entry.message?.content;
+      let text = '';
+      if (typeof content === 'string') {
+        text = content;
+      } else if (Array.isArray(content)) {
+        text = content
+          .filter(c => c?.type === 'text')
+          .map(c => c.text || '')
+          .join('');
+      }
+      const m = text.match(keyPattern);
+      if (m) return m[1];
+    } catch { /* skip malformed lines */ }
+  }
+  return null;
+}
+
 function main() {
   let raw = '';
   process.stdin.setEncoding('utf8');
@@ -478,6 +532,23 @@ function main() {
         process.exit(0); // Solo mode: Claude's vote is the quorum — no block
       }
 
+      // GUARD 7: Cache hit bypass — nf-prompt.js validated the cache entry and injected
+      // the NF_CACHE_HIT marker. Trust it: the entry was completed, within TTL, and
+      // matches git HEAD + quorum_active composition (EventualConsensus preserved).
+      if (hasCacheHitMarker(currentTurnLines)) {
+        appendConformanceEvent({
+          ts:              new Date().toISOString(),
+          phase:           'DECIDING',
+          action:          'quorum_complete',
+          cache_hit:       true,
+          slots_available: 0,
+          vote_result:     0,
+          outcome:         'APPROVE',
+          schema_version,
+        });
+        process.exit(0); // Cache hit: quorum approved via cached result
+      }
+
       // Build agent pool from config
       const agentPool = buildAgentPool(config);
 
@@ -539,6 +610,29 @@ function main() {
           reason: 'QUORUM REQUIRED: Missing tool calls for: ' + missingAgents.join(', ') + '. Run the required quorum agent(s) before completing this planning command.'
         }));
         process.exit(0);
+      }
+
+      // Cache backfill: update pending cache entry with vote result after successful quorum
+      if (cacheModule) {
+        try {
+          const cKey = extractCacheKey(currentTurnLines);
+          if (cKey) {
+            const cacheDir = path.join(process.cwd(), '.planning', '.quorum-cache');
+            const pendingEntry = cacheModule.readCache(cKey, cacheDir);
+            // readCache returns null for pending entries (no completed field) — read raw instead
+            const cacheFilePath = path.join(cacheDir, `${cKey}.json`);
+            if (fs.existsSync(cacheFilePath)) {
+              const rawEntry = JSON.parse(fs.readFileSync(cacheFilePath, 'utf8'));
+              rawEntry.vote_result = successCount;
+              rawEntry.outcome = 'APPROVE';
+              rawEntry.completed = new Date().toISOString();
+              cacheModule.writeCache(cKey, rawEntry, cacheDir);
+            }
+          }
+        } catch (backfillErr) {
+          // Fail-open: backfill failure never blocks quorum approval
+          process.stderr.write('[nf] cache backfill failed (fail-open): ' + (backfillErr.message || backfillErr) + '\n');
+        }
       }
 
       appendConformanceEvent({
