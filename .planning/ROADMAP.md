@@ -40,7 +40,7 @@ This milestone organizes nForma's existing 92+ formal models and 35K+ conformanc
 - [x] **Phase v0.29-03: Reasoning Enrichment and Gate B Abstraction** - Apply FMEA hazard analysis to operational model and enforce traceability from reasoning back to semantics (completed 2026-03-06)
 - [x] **Phase v0.29-04: Gate C Validation and Test Generation** - Close the loop from reasoning outputs to executable test scenarios with nf-solve and run-formal-verify integration (completed 2026-03-06)
 - [x] **Phase v0.29-05: Dashboard and Progressive Maturity Rollout** - Surface cross-layer alignment in a single terminal view (completed 2026-03-06)
-- [ ] **Phase v0.29-06: Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync** - Fix nf-solve data contract mismatch and exit-code handling, sync stale REQUIREMENTS.md and ROADMAP.md entries
+- [x] **Phase v0.29-06: Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync** - Fix nf-solve data contract mismatch and exit-code handling, sync stale REQUIREMENTS.md and ROADMAP.md entries (completed 2026-03-06)
 
 ## Phase Details
 
@@ -141,4 +141,4 @@ Plans:
 | v0.29-03. Reasoning Enrichment and Gate B Abstraction | 2/2 | Complete    | 2026-03-06 |
 | v0.29-04. Gate C Validation and Test Generation | 3/3 | Complete   | 2026-03-06 |
 | v0.29-05. Dashboard and Progressive Maturity Rollout | 1/1 | Complete    | 2026-03-06 |
-| v0.29-06. Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync | 1/1 | Complete | 2026-03-06 |
+| v0.29-06. Tech Debt Cleanup — nf-solve Fixes and Bookkeeping Sync | 1/1 | Complete   | 2026-03-06 |

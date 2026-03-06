@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.28-04 — Safety & Diagnostics (Security Sweep, Session State, Harness Diagnostics)
+**Current focus:** v0.29-06 — Tech Debt Cleanup (nf-solve fixes and bookkeeping sync)
 
 ## Current Position
 
-Phase: v0.28-04 (Safety & Diagnostics -- Security Sweep + Session State + Harness Diagnostics)
-Plan: 3 of 3 in current phase (COMPLETE)
+Phase: v0.29-06 (Tech Debt Cleanup -- nf-solve fixes and bookkeeping sync)
+Plan: 1 of 1 in current phase (COMPLETE)
 Status: Phase Complete
-Last activity: 2026-03-06 - Completed quick task 197: Add CI virgin install tests and workflow
+Last activity: 2026-03-06 - Completed v0.29-06-01-PLAN.md (Fix nf-solve data contract and exit-code bugs)
 
 Progress: [##########] 100%
 
@@ -46,6 +46,7 @@ Progress: [##########] 100%
 | Phase v0.28-04 P01 | 2min | 2 tasks | 5 files |
 | Phase v0.28-04 P02 | 2min | 2 tasks | 3 files |
 | Phase v0.28-04 P03 | 2min | 2 tasks | 3 files |
+| Phase v0.29-06 P01 | 2min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,7 @@ Recent decisions affecting current work:
 - [v0.28-04-03]: Each diagnostic section independent with try/catch -- one broken data source never crashes the report
 - [v0.28-04-03]: Reuses existing computePassAtKRates and detectStalledSlots instead of reimplementing
 - [v0.28-04-03]: Exit code always 0 -- diagnostic tool is informational, never blocking
+- [v0.29-06-01]: Gate sweep guard pattern: if (!result.ok && !result.stdout) -- accept non-zero exit with valid JSON
 
 ### Pending Todos
 
@@ -117,5 +119,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-06
-Stopped at: Completed v0.28-04-03-PLAN.md (Harness Diagnostic) -- Phase v0.28-04 complete
+Stopped at: Completed v0.29-06-01-PLAN.md (Fix nf-solve data contract and exit-code bugs) -- Phase v0.29-06 complete
 Resume file: None
