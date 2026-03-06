@@ -1,0 +1,161 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-06T13:01:16.629Z",
+  "total_unmapped_events": 5649,
+  "candidates": [
+    {
+      "action": "quorum_fallback_t1_required",
+      "count": 5649,
+      "first_seen": "2026-02-27T20:03:10.475Z",
+      "last_seen": "2026-02-27T20:03:10.835Z",
+      "sample_timestamps": [
+        "2026-02-27T20:03:10.475Z",
+        "2026-02-27T20:03:10.567Z",
+        "2026-02-27T20:03:10.648Z",
+        "2026-02-27T20:03:10.738Z",
+        "2026-02-27T20:03:10.835Z"
+      ],
+      "context_before": {
+        "circuit_break": 656,
+        "quorum_fallback_t1_required": 2727,
+        "quorum_start": 2090,
+        "quorum_block": 141,
+        "quorum_complete": 14,
+        "quorum_block_r3_2": 21
+      },
+      "context_after": {
+        "quorum_fallback_t1_required": 2727,
+        "quorum_start": 2705,
+        "quorum_block": 77,
+        "quorum_complete": 6,
+        "circuit_break": 99,
+        "quorum_block_r3_2": 35
+      },
+      "suggested_state": "instrumentation_gap",
+      "confidence": "high"
+    }
+  ],
+  "missing_transitions": [
+    {
+      "from_action": "circuit_break",
+      "to_action": "undefined",
+      "count": 656,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "undefined",
+      "count": 2727,
+      "note": "XState mapping missing: from=null, to=null"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "quorum_start",
+      "count": 2705,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_start",
+      "to_action": "undefined",
+      "count": 2090,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "quorum_block",
+      "count": 77,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_block",
+      "to_action": "undefined",
+      "count": 141,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "quorum_complete",
+      "count": 6,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "circuit_break",
+      "count": 99,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_complete",
+      "to_action": "undefined",
+      "count": 14,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "circuit_break",
+      "to_action": "quorum_block_r3_2",
+      "count": 90,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "quorum_block",
+      "count": 13,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_block",
+      "to_action": "quorum_block_r3_2",
+      "count": 46,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "quorum_block_r3_2",
+      "count": 280,
+      "note": "XState mapping missing: from=null, to=null"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "quorum_complete",
+      "count": 43,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_complete",
+      "to_action": "quorum_block_r3_2",
+      "count": 53,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "undefined",
+      "count": 21,
+      "note": "XState mapping missing: from=null, to=null"
+    },
+    {
+      "from_action": "quorum_start",
+      "to_action": "quorum_block_r3_2",
+      "count": 216,
+      "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "quorum_start",
+      "count": 257,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "quorum_block_r3_2",
+      "to_action": "circuit_break",
+      "count": 106,
+      "note": "XState mapping missing: from=null, to=[object Object]"
+    },
+    {
+      "from_action": "undefined",
+      "to_action": "quorum_block_r3_2",
+      "count": 35,
+      "note": "XState mapping missing: from=null, to=null"
+    }
+  ],
+  "summary": "5649 unmapped events found. 1 candidate(s): quorum_fallback_t1_required (5649x). 20 potentially missing transitions."
+}
