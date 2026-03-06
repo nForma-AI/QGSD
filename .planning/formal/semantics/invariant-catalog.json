@@ -1,0 +1,1227 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-06T13:57:41.427Z",
+  "invariants": [
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCAgentLoop.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCAgentLoop"
+    },
+    {
+      "name": "NeverExceedsCap",
+      "source": "tla_cfg",
+      "source_file": "tla/MCAgentLoop.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCAgentLoop"
+    },
+    {
+      "name": "GoalImpliesSuccess",
+      "source": "tla_cfg",
+      "source_file": "tla/MCAgentLoop.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCAgentLoop"
+    },
+    {
+      "name": "NoPathsImpliesUnrecoverable",
+      "source": "tla_cfg",
+      "source_file": "tla/MCAgentLoop.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCAgentLoop"
+    },
+    {
+      "name": "EventuallyTerminates",
+      "source": "tla_cfg",
+      "source_file": "tla/MCAgentLoop.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCAgentLoop"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCDeliberationRevision.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCDeliberationRevision"
+    },
+    {
+      "name": "NoFrozenPositions",
+      "source": "tla_cfg",
+      "source_file": "tla/MCDeliberationRevision.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCDeliberationRevision"
+    },
+    {
+      "name": "AllVotersReviseBeforeAdvance",
+      "source": "tla_cfg",
+      "source_file": "tla/MCDeliberationRevision.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCDeliberationRevision"
+    },
+    {
+      "name": "PeerReviewBeforeRevision",
+      "source": "tla_cfg",
+      "source_file": "tla/MCDeliberationRevision.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCDeliberationRevision"
+    },
+    {
+      "name": "NoSpuriousConsensus",
+      "source": "tla_cfg",
+      "source_file": "tla/MCMCPEnv.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCMCPEnv"
+    },
+    {
+      "name": "TypeInvariantHolds",
+      "source": "tla_cfg",
+      "source_file": "tla/MCMCPEnv.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCMCPEnv"
+    },
+    {
+      "name": "EventualDecision",
+      "source": "tla_cfg",
+      "source_file": "tla/MCMCPEnv.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCMCPEnv"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCQGSDQuorum.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCQGSDQuorum"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "SafetyInvariant1",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "SafetyInvariant2",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "SafetyInvariant3",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "LivenessProperty1",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "LivenessProperty2",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "LivenessProperty3",
+      "source": "tla_cfg",
+      "source_file": "tla/MCStopHook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCStopHook"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUIModules.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUIModules"
+    },
+    {
+      "name": "OnlyRelevantItems",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUIModules.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUIModules"
+    },
+    {
+      "name": "ExactlyThreeModules",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUIModules.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUIModules"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUINavigation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUINavigation"
+    },
+    {
+      "name": "NoDeadlock",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUINavigation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUINavigation"
+    },
+    {
+      "name": "DepthBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUINavigation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUINavigation"
+    },
+    {
+      "name": "EscapeProgress",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUINavigation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUINavigation"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUISessions.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUISessions"
+    },
+    {
+      "name": "ConnectedImpliesExists",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUISessions.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUISessions"
+    },
+    {
+      "name": "FocusedImpliesConnected",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUISessions.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUISessions"
+    },
+    {
+      "name": "BoundedSessions",
+      "source": "tla_cfg",
+      "source_file": "tla/MCTUISessions.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCTUISessions"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "ActiveIsPoolMember",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "NoActiveWhenEmpty",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "IdleNoPending",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "OpMatchesState",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "IdleReachable",
+      "source": "tla_cfg",
+      "source_file": "tla/MCaccount-manager.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCaccount-manager"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCactivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCactivity"
+    },
+    {
+      "name": "ActivityValid",
+      "source": "tla_cfg",
+      "source_file": "tla/MCactivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCactivity"
+    },
+    {
+      "name": "ClearResetsActivity",
+      "source": "tla_cfg",
+      "source_file": "tla/MCactivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCactivity"
+    },
+    {
+      "name": "RecoveryRequiresFile",
+      "source": "tla_cfg",
+      "source_file": "tla/MCactivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCactivity"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCagent-prov.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCagent-prov"
+    },
+    {
+      "name": "VerifiedInRoster",
+      "source": "tla_cfg",
+      "source_file": "tla/MCagent-prov.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCagent-prov"
+    },
+    {
+      "name": "RemoveClears",
+      "source": "tla_cfg",
+      "source_file": "tla/MCagent-prov.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCagent-prov"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker-state.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker-state"
+    },
+    {
+      "name": "ActiveRequiresFile",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker-state.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker-state"
+    },
+    {
+      "name": "ConsistentState",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker-state.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker-state"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker"
+    },
+    {
+      "name": "DisabledExcludesActive",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker"
+    },
+    {
+      "name": "MonitoringReachable",
+      "source": "tla_cfg",
+      "source_file": "tla/MCbreaker.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCbreaker"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCci-checks.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCci-checks"
+    },
+    {
+      "name": "RedactionNeverInconclusive",
+      "source": "tla_cfg",
+      "source_file": "tla/MCci-checks.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCci-checks"
+    },
+    {
+      "name": "LivenessNeverFail",
+      "source": "tla_cfg",
+      "source_file": "tla/MCci-checks.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCci-checks"
+    },
+    {
+      "name": "ResultsMatchCount",
+      "source": "tla_cfg",
+      "source_file": "tla/MCci-checks.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCci-checks"
+    },
+    {
+      "name": "AllChecksEventuallyRun",
+      "source": "tla_cfg",
+      "source_file": "tla/MCci-checks.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCci-checks"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCconvergence.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCconvergence"
+    },
+    {
+      "name": "LogBeforeDelete",
+      "source": "tla_cfg",
+      "source_file": "tla/MCconvergence.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCconvergence"
+    },
+    {
+      "name": "ResolvedAtWriteOnce",
+      "source": "tla_cfg",
+      "source_file": "tla/MCconvergence.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCconvergence"
+    },
+    {
+      "name": "HaikuUnavailableNoCorruption",
+      "source": "tla_cfg",
+      "source_file": "tla/MCconvergence.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCconvergence"
+    },
+    {
+      "name": "ConvergenceEventuallyResolves",
+      "source": "tla_cfg",
+      "source_file": "tla/MCconvergence.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCconvergence"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdashboard.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdashboard"
+    },
+    {
+      "name": "TimestampWhenVisible",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdashboard.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdashboard"
+    },
+    {
+      "name": "StdinCleanAtMenu",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdashboard.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdashboard"
+    },
+    {
+      "name": "DashboardReachable",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdashboard.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdashboard"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdeliberation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdeliberation"
+    },
+    {
+      "name": "TotalRoundsBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdeliberation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdeliberation"
+    },
+    {
+      "name": "DeliberationMonotone",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdeliberation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdeliberation"
+    },
+    {
+      "name": "ImprovementMonotone",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdeliberation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdeliberation"
+    },
+    {
+      "name": "ProtocolTerminates",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdeliberation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdeliberation"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "HealthyBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "AvailableBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "DispatchBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "ParsedBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "PipelineNarrowing",
+      "source": "tla_cfg",
+      "source_file": "tla/MCdispatch.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCdispatch"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCenforcement.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCenforcement"
+    },
+    {
+      "name": "BlockRequiresBothConditions",
+      "source": "tla_cfg",
+      "source_file": "tla/MCenforcement.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCenforcement"
+    },
+    {
+      "name": "MessageAfterBlock",
+      "source": "tla_cfg",
+      "source_file": "tla/MCenforcement.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCenforcement"
+    },
+    {
+      "name": "AllowWhenSafe",
+      "source": "tla_cfg",
+      "source_file": "tla/MCenforcement.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCenforcement"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCinstaller.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCinstaller"
+    },
+    {
+      "name": "IdempotentHooks",
+      "source": "tla_cfg",
+      "source_file": "tla/MCinstaller.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCinstaller"
+    },
+    {
+      "name": "BreakerAlwaysRegistered",
+      "source": "tla_cfg",
+      "source_file": "tla/MCinstaller.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCinstaller"
+    },
+    {
+      "name": "DefaultConfigPresent",
+      "source": "tla_cfg",
+      "source_file": "tla/MCinstaller.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCinstaller"
+    },
+    {
+      "name": "OverridesPreserved",
+      "source": "tla_cfg",
+      "source_file": "tla/MCinstaller.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCinstaller"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCkey-mgmt.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCkey-mgmt"
+    },
+    {
+      "name": "KeytarBeforeEnv",
+      "source": "tla_cfg",
+      "source_file": "tla/MCkey-mgmt.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCkey-mgmt"
+    },
+    {
+      "name": "EnvWriteRequiresKeytar",
+      "source": "tla_cfg",
+      "source_file": "tla/MCkey-mgmt.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCkey-mgmt"
+    },
+    {
+      "name": "RestartRequiresEnvWrite",
+      "source": "tla_cfg",
+      "source_file": "tla/MCkey-mgmt.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCkey-mgmt"
+    },
+    {
+      "name": "PhaseOrder",
+      "source": "tla_cfg",
+      "source_file": "tla/MCkey-mgmt.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCkey-mgmt"
+    },
+    {
+      "name": "EventualConsensus",
+      "source": "tla_cfg",
+      "source_file": "tla/MCliveness.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCliveness"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCoscillation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCoscillation"
+    },
+    {
+      "name": "OscillationFlaggedCorrectly",
+      "source": "tla_cfg",
+      "source_file": "tla/MCoscillation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCoscillation"
+    },
+    {
+      "name": "AlgorithmTerminates",
+      "source": "tla_cfg",
+      "source_file": "tla/MCoscillation.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCoscillation"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCportability.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCportability"
+    },
+    {
+      "name": "ExportAlwaysRedacted",
+      "source": "tla_cfg",
+      "source_file": "tla/MCportability.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCportability"
+    },
+    {
+      "name": "ImportRequiresBackup",
+      "source": "tla_cfg",
+      "source_file": "tla/MCportability.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCportability"
+    },
+    {
+      "name": "ApplyRequiresKeys",
+      "source": "tla_cfg",
+      "source_file": "tla/MCportability.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCportability"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprefilter.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprefilter"
+    },
+    {
+      "name": "AutoResolutionSound",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprefilter.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprefilter"
+    },
+    {
+      "name": "FilterRoundsBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprefilter.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprefilter"
+    },
+    {
+      "name": "AutoResolvedPhaseConsistent",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprefilter.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprefilter"
+    },
+    {
+      "name": "PreFilterTerminates",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprefilter.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprefilter"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprompt-hook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprompt-hook"
+    },
+    {
+      "name": "InjectionRequiresPlanning",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprompt-hook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprompt-hook"
+    },
+    {
+      "name": "NonPlanningNeverInjected",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprompt-hook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprompt-hook"
+    },
+    {
+      "name": "PlanningFromAllowlist",
+      "source": "tla_cfg",
+      "source_file": "tla/MCprompt-hook.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCprompt-hook"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-liveness.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-liveness"
+    },
+    {
+      "name": "PolledCeiling",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-liveness.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-liveness"
+    },
+    {
+      "name": "SubslotsFirst",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-liveness.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-liveness"
+    },
+    {
+      "name": "FullRecruitment",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-liveness.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-liveness"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-safety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-safety"
+    },
+    {
+      "name": "PolledCeiling",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-safety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-safety"
+    },
+    {
+      "name": "SubslotsFirst",
+      "source": "tla_cfg",
+      "source_file": "tla/MCrecruiting-safety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCrecruiting-safety"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "UnanimityMet",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "QuorumCeilingMet",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "DeliberationBounded",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "AllTransitionsValid",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "DeliberationMonotone",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsafety.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsafety"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsensitivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsensitivity"
+    },
+    {
+      "name": "DeltasBoundedByConfigs",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsensitivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsensitivity"
+    },
+    {
+      "name": "ContextAfterSweep",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsensitivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsensitivity"
+    },
+    {
+      "name": "ReportAfterContext",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsensitivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsensitivity"
+    },
+    {
+      "name": "PhaseOrdering",
+      "source": "tla_cfg",
+      "source_file": "tla/MCsensitivity.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCsensitivity"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCspec-gen.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCspec-gen"
+    },
+    {
+      "name": "StubsBoundedByTruths",
+      "source": "tla_cfg",
+      "source_file": "tla/MCspec-gen.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCspec-gen"
+    },
+    {
+      "name": "AllTruthsCoveredWhenDone",
+      "source": "tla_cfg",
+      "source_file": "tla/MCspec-gen.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCspec-gen"
+    },
+    {
+      "name": "InvariantsBoundedBySessions",
+      "source": "tla_cfg",
+      "source_file": "tla/MCspec-gen.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCspec-gen"
+    },
+    {
+      "name": "TypeOK",
+      "source": "tla_cfg",
+      "source_file": "tla/MCwizard.cfg",
+      "type": "declared",
+      "formalism": "tla",
+      "config": "MCwizard"
+    },
+    {
+      "name": "IdleReachable",
+      "source": "spec_invariants_md",
+      "source_file": "spec/account-manager/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "IdleReachable == <>(state = \"IDLE\")"
+    },
+    {
+      "name": "EventuallyTerminates",
+      "source": "spec_invariants_md",
+      "source_file": "spec/agent-loop/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "EventuallyTerminates == <>(status \\in {\"success\", \"cap_exhausted\", \"unrecoverable\"})"
+    },
+    {
+      "name": "MonitoringReachable",
+      "source": "spec_invariants_md",
+      "source_file": "spec/breaker/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "MonitoringReachable == <>(active = FALSE /\\ disabled = FALSE)"
+    },
+    {
+      "name": "ConvergenceEventuallyResolves",
+      "source": "spec_invariants_md",
+      "source_file": "spec/convergence/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "ConvergenceEventuallyResolves == <>(logWritten = TRUE)"
+    },
+    {
+      "name": "ProtocolTerminates",
+      "source": "spec_invariants_md",
+      "source_file": "spec/deliberation/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "ProtocolTerminates == <>(round > MaxDeliberationRounds \\/ voteState = \"CONSENSUS\" \\/ voteState = \"ESCALATED\")"
+    },
+    {
+      "name": "AllVotersReviseBeforeAdvance",
+      "source": "spec_invariants_md",
+      "source_file": "spec/deliberation-revision/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": "AllVotersReviseBeforeAdvance == [][round' > round => \\A v \\in Voters : lastRevised[v] = round]_vars"
+    },
+    {
+      "name": "PeerReviewBeforeRevision",
+      "source": "spec_invariants_md",
+      "source_file": "spec/deliberation-revision/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": "PeerReviewBeforeRevision == [][\\A v \\in Voters : (lastRevised'[v] > lastRevised[v] /\\ round > 1) => reviewedPeers[v] = Voters \\ {v}]_vars"
+    },
+    {
+      "name": "OverridesPreserved",
+      "source": "spec_invariants_md",
+      "source_file": "spec/installer/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": "OverridesPreserved == [][projectOverrides = TRUE => projectOverrides' = TRUE]_vars"
+    },
+    {
+      "name": "EventualDecision",
+      "source": "spec_invariants_md",
+      "source_file": "spec/mcp-calls/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "EventualDecision == <>(quorumPhase = \"DECIDED\")"
+    },
+    {
+      "name": "AlgorithmTerminates",
+      "source": "spec_invariants_md",
+      "source_file": "spec/oscillation/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "AlgorithmTerminates == <>(algorithmDone = TRUE)"
+    },
+    {
+      "name": "PreFilterTerminates",
+      "source": "spec_invariants_md",
+      "source_file": "spec/prefilter/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "PreFilterTerminates == <>(filterPhase = \"AUTO_RESOLVED\" \\/ filterPhase = \"USER_NEEDED\")"
+    },
+    {
+      "name": "EventualConsensus",
+      "source": "spec_invariants_md",
+      "source_file": "spec/quorum/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "EventualConsensus == <>(phase = \"DECIDED\")"
+    },
+    {
+      "name": "FullRecruitment",
+      "source": "spec_invariants_md",
+      "source_file": "spec/recruiting/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "FullRecruitment == EnoughResponsive => <>(Cardinality(recruited) = MaxSize)"
+    },
+    {
+      "name": "AllTransitionsValid",
+      "source": "spec_invariants_md",
+      "source_file": "spec/safety/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": "AllTransitionsValid == [][phase = \"IDLE\" => phase' \\in {\"IDLE\", \"COLLECTING_VOTES\"}]_vars /\\ ..."
+    },
+    {
+      "name": "DeliberationMonotone",
+      "source": "spec_invariants_md",
+      "source_file": "spec/safety/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": "DeliberationMonotone == [][deliberationRounds' >= deliberationRounds]_vars"
+    },
+    {
+      "name": "LivenessProperty1",
+      "source": "spec_invariants_md",
+      "source_file": "spec/stop-hook/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "LivenessProperty1 == <>algorithmDone"
+    },
+    {
+      "name": "LivenessProperty2",
+      "source": "spec_invariants_md",
+      "source_file": "spec/stop-hook/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "LivenessProperty2 == hasQuorumEvidence => <>(decision = \"PASS\")"
+    },
+    {
+      "name": "LivenessProperty3",
+      "source": "spec_invariants_md",
+      "source_file": "spec/stop-hook/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "LivenessProperty3 == (hasCommand /\\ ~hasQuorumEvidence) => <>(decision = \"BLOCK\")"
+    },
+    {
+      "name": "EscapeProgress",
+      "source": "spec_invariants_md",
+      "source_file": "spec/tui-nav/invariants.md",
+      "type": "declared",
+      "formalism": "liveness",
+      "property_expression": "EscapeProgress == [][EscapeUp => depth' < depth]_vars"
+    },
+    {
+      "name": "EventuallyExits and MainMenuReachable — NOT CHECKED (user-cooperation properties)",
+      "source": "spec_invariants_md",
+      "source_file": "spec/tui-nav/invariants.md",
+      "type": "declared",
+      "formalism": "safety",
+      "property_expression": null
+    },
+    {
+      "name": "complete_requires_block",
+      "source": "trace_mining",
+      "type": "observed",
+      "property_expression": "sessions with quorum_complete also have quorum_block events",
+      "confidence": "curated",
+      "evidence_sessions": 349
+    },
+    {
+      "name": "action_count_consistency",
+      "source": "trace_mining",
+      "type": "observed",
+      "property_expression": "sum of per-action counts equals total event_count for every session",
+      "confidence": "curated",
+      "evidence_sessions": 349
+    }
+  ],
+  "summary": {
+    "total_raw": 151,
+    "total_deduplicated": 151,
+    "by_type": {
+      "declared": 149,
+      "observed": 2
+    },
+    "by_source": {
+      "tla_cfg": 129,
+      "spec_invariants_md": 20,
+      "trace_mining": 2
+    }
+  }
+}
