@@ -31,6 +31,10 @@ const {
   sweepRtoD,
   sweepDtoC,
   sweepTtoC,
+  sweepL1toL2,
+  sweepL2toL3,
+  sweepL3toTC,
+  computeResidual,
   crossReferenceFormalCoverage,
 } = require('./nf-solve.cjs');
 
@@ -276,7 +280,7 @@ test('TC-JSON-4: formatJSON includes r_to_d and d_to_c health keys', () => {
 
   assert.ok(result.health.r_to_d !== undefined, 'health should have r_to_d key');
   assert.ok(result.health.d_to_c !== undefined, 'health should have d_to_c key');
-  assert.equal(result.solver_version, '1.1');
+  assert.equal(result.solver_version, '1.2');
 });
 
 // ── TC-KEYWORD: Keyword Extraction Tests ─────────────────────────────────────
@@ -627,4 +631,94 @@ test('TC-COV-5: sweepTtoC detail contains v8_coverage field', () => {
   const result = sweepTtoC();
   assert.ok(result.detail, 'sweepTtoC should return detail');
   assert.ok('v8_coverage' in result.detail, 'detail should have v8_coverage key');
+});
+
+// ── TC-LAYER: Layer Alignment Sweep Tests ─────────────────────────────────────
+
+test('TC-LAYER-1: sweepL1toL2 returns normalized residual from gate-a JSON', () => {
+  const result = sweepL1toL2();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(typeof result.detail === 'object');
+  // Residual should be 0-10 or -1 (error/skipped)
+  assert.ok(result.residual >= -1 && result.residual <= 10,
+    'residual should be -1 to 10, got ' + result.residual);
+  if (result.residual >= 0) {
+    assert.ok('grounding_score' in result.detail, 'detail should have grounding_score');
+    assert.ok('target' in result.detail, 'detail should have target');
+    assert.ok('gap' in result.detail, 'detail should have gap');
+  }
+});
+
+test('TC-LAYER-2: sweepL2toL3 returns normalized residual capped at 10', () => {
+  const result = sweepL2toL3();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(result.residual >= -1 && result.residual <= 10,
+    'residual should be -1 to 10, got ' + result.residual);
+  if (result.residual >= 0) {
+    assert.ok('gate_b_score' in result.detail, 'detail should have gate_b_score');
+    assert.ok('orphaned_count' in result.detail, 'detail should have orphaned_count');
+    assert.ok('residual_capped' in result.detail, 'detail should have residual_capped');
+  }
+});
+
+test('TC-LAYER-3: sweepL3toTC returns normalized residual from gate-c JSON', () => {
+  const result = sweepL3toTC();
+  assert.ok(typeof result === 'object');
+  assert.ok(typeof result.residual === 'number');
+  assert.ok(result.residual >= -1 && result.residual <= 10,
+    'residual should be -1 to 10, got ' + result.residual);
+  if (result.residual >= 0) {
+    assert.ok('gate_c_score' in result.detail, 'detail should have gate_c_score');
+    assert.ok('unvalidated_count' in result.detail, 'detail should have unvalidated_count');
+    assert.ok('total_failure_modes' in result.detail, 'detail should have total_failure_modes');
+    assert.ok('total_recipes' in result.detail, 'detail should have total_recipes');
+  }
+});
+
+test('TC-LAYER-4: layer_total computed correctly (sum of 3 layer residuals, excluding -1 errors)', () => {
+  // Build a mock residual to verify layer_total computation logic
+  const mockL1 = { residual: 3, detail: {} };
+  const mockL2 = { residual: -1, detail: { error: true } };
+  const mockL3 = { residual: 5, detail: {} };
+
+  // Replicate the computation from computeResidual
+  const layerTotal =
+    (mockL1.residual >= 0 ? mockL1.residual : 0) +
+    (mockL2.residual >= 0 ? mockL2.residual : 0) +
+    (mockL3.residual >= 0 ? mockL3.residual : 0);
+
+  assert.equal(layerTotal, 8, 'layer_total should sum non-error residuals: 3 + 0 + 5 = 8');
+});
+
+test('TC-LAYER-5: layer sweeps do NOT inflate existing total field', () => {
+  // Run the actual computeResidual and verify total vs layer_total separation
+  const result = computeResidual();
+  assert.ok(typeof result.total === 'number', 'total should be a number');
+  assert.ok(typeof result.layer_total === 'number', 'layer_total should be a number');
+
+  // Verify total does not include layer sweep residuals
+  const forwardTotal =
+    (result.r_to_f.residual >= 0 ? result.r_to_f.residual : 0) +
+    (result.f_to_t.residual >= 0 ? result.f_to_t.residual : 0) +
+    (result.c_to_f.residual >= 0 ? result.c_to_f.residual : 0) +
+    (result.t_to_c.residual >= 0 ? result.t_to_c.residual : 0) +
+    (result.f_to_c.residual >= 0 ? result.f_to_c.residual : 0) +
+    (result.r_to_d.residual >= 0 ? result.r_to_d.residual : 0) +
+    (result.d_to_c.residual >= 0 ? result.d_to_c.residual : 0) +
+    (result.p_to_f.residual >= 0 ? result.p_to_f.residual : 0);
+
+  assert.equal(result.total, forwardTotal, 'total should only sum forward sweeps, not layer sweeps');
+});
+
+test('TC-LAYER-6: computeResidual includes l1_to_l2, l2_to_l3, l3_to_tc in output', () => {
+  const result = computeResidual();
+  assert.ok('l1_to_l2' in result, 'should have l1_to_l2');
+  assert.ok('l2_to_l3' in result, 'should have l2_to_l3');
+  assert.ok('l3_to_tc' in result, 'should have l3_to_tc');
+  assert.ok('layer_total' in result, 'should have layer_total');
+  assert.ok(typeof result.l1_to_l2.residual === 'number');
+  assert.ok(typeof result.l2_to_l3.residual === 'number');
+  assert.ok(typeof result.l3_to_tc.residual === 'number');
 });

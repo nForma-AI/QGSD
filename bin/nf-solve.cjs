@@ -4,7 +4,7 @@
 // Consistency solver orchestrator: sweeps Requirements->Formal->Tests->Code->Docs,
 // computes a residual vector per layer transition, and auto-closes gaps.
 //
-// Layer transitions (8 forward + 3 reverse):
+// Layer transitions (8 forward + 3 reverse + 3 layer alignment):
 //   R->F: Requirements without formal model coverage
 //   F->T: Formal invariants without test backing
 //   C->F: Code constants diverging from formal specs
@@ -17,6 +17,10 @@
 //   C->R: Source modules in bin/hooks/ with no requirement tracing
 //   T->R: Test files with no @req annotation or formal-test-sync mapping
 //   D->R: Doc capability claims without requirement backing
+// Layer alignment (cross-layer gate checks):
+//   L1->L2: Gate A grounding alignment score
+//   L2->L3: Gate B traceability alignment score
+//   L3->TC: Gate C validation alignment score
 //
 // Usage:
 //   node bin/nf-solve.cjs                  # full sync, up to 3 iterations
@@ -1932,11 +1936,141 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
   };
 }
 
+// ── Layer alignment sweeps ────────────────────────────────────────────────────
+
+/**
+ * L1->L2: Gate A grounding alignment score.
+ * Spawns gate-a-grounding.cjs --json and computes normalized 0-10 residual.
+ * Returns { residual: N, detail: {...} }
+ */
+function sweepL1toL2() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  const result = spawnTool('bin/gate-a-grounding.cjs', ['--json']);
+
+  if (!result.ok) {
+    return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+  }
+
+  try {
+    const data = JSON.parse(result.stdout);
+    const score = data.grounding_score || 0;
+    const residual = Math.ceil((1 - score) * 10);
+    return {
+      residual: residual,
+      detail: {
+        grounding_score: score,
+        target: 0.8,
+        gap: 0.8 - score,
+        unexplained_breakdown: {
+          instrumentation_bug: data.instrumentation_bug || 0,
+          model_gap: data.model_gap || 0,
+          genuine_violation: data.genuine_violation || 0,
+        },
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
+  }
+}
+
+/**
+ * L2->L3: Gate B traceability alignment score.
+ * Spawns gate-b-abstraction.cjs --json and computes normalized 0-10 residual.
+ * Returns { residual: N, detail: {...} }
+ */
+function sweepL2toL3() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  const result = spawnTool('bin/gate-b-abstraction.cjs', ['--json']);
+
+  if (!result.ok) {
+    return { residual: -1, detail: { error: true } };
+  }
+
+  try {
+    const data = JSON.parse(result.stdout);
+    const score = data.gate_b_score || 0;
+    const orphanedCount = data.orphaned_entries || 0;
+    const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
+    const residual = Math.min(rawResidual, 10);
+    return {
+      residual: residual,
+      detail: {
+        gate_b_score: score,
+        orphaned_count: orphanedCount,
+        residual_capped: rawResidual > 10,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true } };
+  }
+}
+
+/**
+ * L3->TC: Gate C validation alignment score.
+ * Spawns gate-c-validation.cjs --json and computes normalized 0-10 residual.
+ * Checks test-recipes.json staleness before scoring.
+ * Returns { residual: N, detail: {...} }
+ */
+function sweepL3toTC() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  // Check if test-recipes.json exists and staleness
+  const recipesPath = path.join(ROOT, '.planning', 'formal', 'test-recipes', 'test-recipes.json');
+  const catalogPath = path.join(ROOT, '.planning', 'formal', 'reasoning', 'failure-mode-catalog.json');
+
+  if (fs.existsSync(recipesPath) && fs.existsSync(catalogPath)) {
+    try {
+      const recipesMtime = fs.statSync(recipesPath).mtimeMs;
+      const catalogMtime = fs.statSync(catalogPath).mtimeMs;
+      if (recipesMtime < catalogMtime) {
+        if (reportOnly) {
+          process.stderr.write(TAG + ' WARNING: test-recipes.json is stale; run test-recipe-gen.cjs to update\n');
+        } else {
+          spawnTool('bin/test-recipe-gen.cjs', []);
+        }
+      }
+    } catch (e) {
+      // fail-open: skip staleness check
+    }
+  }
+
+  const result = spawnTool('bin/gate-c-validation.cjs', ['--json']);
+
+  if (!result.ok) {
+    return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+  }
+
+  try {
+    const data = JSON.parse(result.stdout);
+    const score = data.gate_c_score || 0;
+    const residual = Math.ceil((1 - score) * 10);
+    return {
+      residual: residual,
+      detail: {
+        gate_c_score: score,
+        unvalidated_count: data.unvalidated_entries || 0,
+        total_failure_modes: data.total_entries || 0,
+        total_recipes: data.validated_entries || 0,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
+  }
+}
+
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
- * Computes residual vector for all layer transitions (8 forward + 3 reverse).
- * Returns residual object with forward layers + reverse discovery layers.
+ * Computes residual vector for all layer transitions (8 forward + 3 reverse + 3 layer alignment).
+ * Returns residual object with forward layers + reverse discovery layers + layer alignment.
  */
 function computeResidual() {
   const r_to_f = sweepRtoF();
@@ -1981,6 +2115,16 @@ function computeResidual() {
   // Assemble deduplicated reverse candidates
   const assembled_candidates = assembleReverseCandidates(c_to_r, t_to_r, d_to_r);
 
+  // Layer alignment sweeps (cross-layer gate checks)
+  const l1_to_l2 = sweepL1toL2();
+  const l2_to_l3 = sweepL2toL3();
+  const l3_to_tc = sweepL3toTC();
+
+  const layer_total =
+    (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
+    (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
+    (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
+
   return {
     r_to_f,
     f_to_t,
@@ -1993,8 +2137,12 @@ function computeResidual() {
     c_to_r,
     t_to_r,
     d_to_r,
+    l1_to_l2,
+    l2_to_l3,
+    l3_to_tc,
     assembled_candidates,
     total,
+    layer_total,
     reverse_discovery_total,
     timestamp: new Date().toISOString(),
   };
@@ -2216,6 +2364,30 @@ function formatReport(iterations, finalResidual, converged) {
           ', Category C (ambiguous): ' + (ac.category_counts.C || 0));
       }
     }
+  }
+
+  // Layer Alignment section
+  if (finalResidual.l1_to_l2 || finalResidual.l2_to_l3 || finalResidual.l3_to_tc) {
+    lines.push('');
+    lines.push('Layer Alignment (cross-layer gate checks):');
+    lines.push('─────────────────────────────────────────────');
+
+    const layerRows = [
+      { label: 'L1 -> L2 (Gate A)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
+      { label: 'L2 -> L3 (Gate B)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
+      { label: 'L3 -> TC (Gate C)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
+    ];
+
+    for (const row of layerRows) {
+      const res = row.residual >= 0 ? row.residual : '?';
+      const health = healthIndicator(row.residual);
+      const line = row.label.padEnd(28) + String(res).padStart(4) + '    ' + health;
+      lines.push(line);
+    }
+
+    const layerTotal = finalResidual.layer_total || 0;
+    lines.push('─────────────────────────────────────────────');
+    lines.push('Layer total:             ' + layerTotal);
   }
   lines.push('');
 
@@ -2454,7 +2626,7 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r']) {
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc']) {
     const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
@@ -2596,6 +2768,9 @@ module.exports = {
   sweepCtoR,
   sweepTtoR,
   sweepDtoR,
+  sweepL1toL2,
+  sweepL2toL3,
+  sweepL3toTC,
   assembleReverseCandidates,
   classifyCandidate,
   crossReferenceFormalCoverage,
