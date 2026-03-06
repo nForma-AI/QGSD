@@ -45,6 +45,7 @@ None — clean milestone boundary.
 | 197 | Add CI virgin install tests and workflow | 2026-03-06 | 0a0c07e5 | Verified | [197-add-ci-virgin-install-tests-and-workflow](./quick/197-add-ci-virgin-install-tests-and-workflow/) |
 | 198 | Implement ECC best practices: post-edit auto-format hook, console.log guard on Stop, and modular .claude/rules/ directory | 2026-03-06 | 1bd37864 | Verified | [198-implement-ecc-best-practices-post-edit-a](./quick/198-implement-ecc-best-practices-post-edit-a/) |
 | 199 | Consolidate nf:solve baseline diagnostic into a single unified table | 2026-03-06 | 08883451 | Pending | [199-consolidate-nf-solve-baseline-diagnostic](./quick/199-consolidate-nf-solve-baseline-diagnostic/) |
+| 200 | Verify OBS-09..12 code conformance and F->T test coverage | 2026-03-06 | ae9e1ecb | Verified | [200-verify-obs-09-12-code-conformance-and-f-t-test](./quick/200-verify-obs-09-12-code-conformance-and-f-t-test/) |
 
 ## Session Continuity
 
