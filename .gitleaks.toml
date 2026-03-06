@@ -15,6 +15,7 @@ paths = [
   '''bin/secrets\.test\.cjs''',
   '''bin/ccr-secure-config\.test\.cjs''',
   '''bin/set-secret\.test\.cjs''',
+  '''bin/security-sweep\.test\.cjs''',
   '''\.planning/.*\.jsonl''',
   '''\.formal/''',
   '''hooks/generated-stubs/''',
