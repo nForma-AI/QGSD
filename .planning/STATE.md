@@ -36,6 +36,7 @@ Progress: [####......] 43%
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase v0.30-04 P01 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - [v0.30-03-02]: Memory reminder has lower priority than telemetry alerts -- shortened to one-liner when telemetry present
 - [v0.30-03-02]: Dual-path require pattern reused from findSecrets() for memory-store resolution
 - [v0.30-03-02]: hooks/dist/ is gitignored so install sync has no git commit (deployment artifact only)
+- [Phase v0.30-04]: Weekly decay 0.05/week with 0.1 floor for failure confidence scoring
+- [Phase v0.30-04]: Correction detection requires 2+ indicator matches to reduce false positives
 
 ### Pending Todos
 

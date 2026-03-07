@@ -151,7 +151,7 @@ v0.30-01 -> v0.30-02 -> v0.30-03 -> v0.30-04 -> v0.30-05 -> v0.30-06 -> v0.30-07
 | v0.30-01. Dynamic Model Selection | 3/3 | Complete    | 2026-03-07 |
 | v0.30-02. File-Based Execution State | 1/1 | Complete   | 2026-03-07 |
 | v0.30-03. Memory Persistence | 2/2 | Complete    | 2026-03-07 |
-| v0.30-04. Continuous Learning | 0/TBD | Not started | - |
+| v0.30-04. Continuous Learning | 1/2 | In Progress|  |
 | v0.30-05. Continuous Verification | 0/TBD | Not started | - |
 | v0.30-06. Subagent Orchestration | 0/TBD | Not started | - |
 | v0.30-07. Worktree Parallelization | 0/TBD | Not started | - |
