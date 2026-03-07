@@ -1,4 +1,6 @@
 'use strict';
+// Test suite for bin/generate-tui-assets.cjs
+// Uses Node.js built-in test runner: node --test bin/generate-tui-assets.test.cjs
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
@@ -7,13 +9,11 @@ const { ansiToSvg, stripAnsi, parseAnsiSpans, ANSI_FG_MAP } = require('./generat
 describe('generate-tui-assets', () => {
   describe('stripAnsi', () => {
     it('removes standard ANSI escape codes', () => {
-      const input = '\x1b[36mhello\x1b[0m world';
-      assert.equal(stripAnsi(input), 'hello world');
+      assert.equal(stripAnsi('\x1b[36mhello\x1b[0m world'), 'hello world');
     });
 
     it('removes 24-bit color codes', () => {
-      const input = '\x1b[38;2;224;120;80mtext\x1b[0m';
-      assert.equal(stripAnsi(input), 'text');
+      assert.equal(stripAnsi('\x1b[38;2;224;120;80mtext\x1b[0m'), 'text');
     });
 
     it('returns plain text unchanged', () => {
@@ -27,28 +27,23 @@ describe('generate-tui-assets', () => {
 
   describe('parseAnsiSpans', () => {
     it('parses standard foreground colors', () => {
-      const input = '\x1b[36mcyan\x1b[0m';
-      const result = parseAnsiSpans(input);
+      const result = parseAnsiSpans('\x1b[36mcyan\x1b[0m');
       assert.equal(result.length, 1);
       assert.equal(result[0][0].text, 'cyan');
       assert.equal(result[0][0].color, ANSI_FG_MAP['36']);
     });
 
     it('parses 24-bit RGB colors', () => {
-      const input = '\x1b[38;2;255;0;128mrgb\x1b[0m';
-      const result = parseAnsiSpans(input);
+      const result = parseAnsiSpans('\x1b[38;2;255;0;128mrgb\x1b[0m');
       assert.equal(result[0][0].color, '#ff0080');
     });
 
     it('handles multiple lines', () => {
-      const input = 'line1\nline2';
-      const result = parseAnsiSpans(input);
-      assert.equal(result.length, 2);
+      assert.equal(parseAnsiSpans('line1\nline2').length, 2);
     });
 
     it('handles empty input', () => {
-      const result = parseAnsiSpans('');
-      assert.equal(result.length, 1);
+      assert.equal(parseAnsiSpans('').length, 1);
     });
   });
 
@@ -81,8 +76,7 @@ describe('generate-tui-assets', () => {
     });
 
     it('includes content text', () => {
-      const svg = ansiToSvg('hello world', 'Test');
-      assert.ok(svg.includes('hello world'));
+      assert.ok(ansiToSvg('hello world', 'Test').includes('hello world'));
     });
 
     it('handles ANSI colored input', () => {
@@ -117,8 +111,7 @@ describe('generate-tui-assets', () => {
     });
 
     it('uses dark background color', () => {
-      const svg = ansiToSvg('test', 'Test');
-      assert.ok(svg.includes('#1a1b26'));
+      assert.ok(ansiToSvg('test', 'Test').includes('#1a1b26'));
     });
   });
 });

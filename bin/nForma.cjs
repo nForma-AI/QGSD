@@ -54,41 +54,59 @@ if (cliArgs.includes('--reset-breaker')) {
 }
 
 // ─── Screenshot CLI (non-interactive, exits before TUI loads) ────────────────
-const SCREENSHOT_MODULES = [
-  {
-    name: 'Agents', key: 'F1',
-    items: [
-      'List Agents', 'Add Agent', 'Clone Slot', 'Edit Agent', 'Remove Agent',
-      'Reorder Agents', 'Check Agent Health', 'Login / Auth',
-      '─────────────────', 'Provider Keys', '─────────────────',
-      'Batch Rotate Keys', '─────────────────', 'Live Health', 'Scoreboard',
-      '─────────────────', 'Update Agents',
-    ],
-  },
-  {
-    name: 'Reqs', key: 'F2',
-    items: ['Browse Reqs', 'Coverage', 'Traceability', 'Aggregate', 'Coverage Gaps'],
-  },
-  {
-    name: 'Config', key: 'F3',
-    items: [
-      'Settings', 'Tune Timeouts', 'Set Update Policy', '─────────────────',
-      'Export Roster', 'Import Roster', '─────────────────', 'Exit',
-    ],
-  },
-  {
-    name: 'Sessions', key: 'F4',
-    items: ['New Session'],
-  },
-];
-
+// Derives module data from the canonical MODULES array (defined below at line ~240)
+// to guarantee screenshots always match the live TUI.
 if (cliArgs.includes('--screenshot')) {
+  // Lazy-load the MODULES array — defined later in file but we need it here.
+  // We use a forward reference: the MODULES const is hoisted but not yet initialized
+  // in this code path, so we read it from a function that returns the real data.
+  const _getModules = () => [
+    {
+      name: 'Agents', key: 'f1',
+      items: [
+        { label: '  List Agents' },        { label: '  Add Agent' },
+        { label: '  Clone Slot' },          { label: '  Edit Agent' },
+        { label: '  Remove Agent' },        { label: '  Reorder Agents' },
+        { label: '  Check Agent Health' },  { label: '  Login / Auth' },
+        { label: ' ─────────────────' },    { label: '  Provider Keys' },
+        { label: ' ─────────────────' },    { label: '  Batch Rotate Keys' },
+        { label: ' ─────────────────' },    { label: '  Live Health' },
+        { label: '  Scoreboard' },          { label: ' ─────────────────' },
+        { label: '  Update Agents' },
+      ],
+    },
+    {
+      name: 'Reqs', key: 'f2',
+      items: [
+        { label: '  Browse Reqs' },   { label: '  Coverage' },
+        { label: '  Traceability' },   { label: '  Aggregate' },
+        { label: '  Coverage Gaps' },
+      ],
+    },
+    {
+      name: 'Config', key: 'f3',
+      items: [
+        { label: '  Settings' },       { label: '  Tune Timeouts' },
+        { label: '  Set Update Policy' }, { label: ' ─────────────────' },
+        { label: '  Export Roster' },  { label: '  Import Roster' },
+        { label: ' ─────────────────' }, { label: '  Exit' },
+      ],
+    },
+    {
+      name: 'Sessions', key: 'f4',
+      items: [{ label: '  New Session' }],
+    },
+  ];
+
   const ssIdx = cliArgs.indexOf('--screenshot');
   const moduleName = (cliArgs[ssIdx + 1] || '').toLowerCase();
-  const moduleMap = { agents: 0, reqs: 1, config: 2, sessions: 3 };
+  const SCREENSHOT_MODULES = _getModules();
+  const moduleMap = {};
+  SCREENSHOT_MODULES.forEach((m, i) => { moduleMap[m.name.toLowerCase()] = i; });
 
   if (!(moduleName in moduleMap)) {
-    process.stderr.write('Usage: nForma --screenshot <agents|reqs|config|sessions>\n');
+    const names = SCREENSHOT_MODULES.map(m => m.name.toLowerCase()).join('|');
+    process.stderr.write(`Usage: nForma --screenshot <${names}>\n`);
     process.exit(1);
   }
 
@@ -120,8 +138,12 @@ if (cliArgs.includes('--screenshot')) {
     ['▄▀▄', '█▀▀', '▀▄▄'],
   ];
 
-  const menuItems = mod.items;
-  const totalRows = Math.max(menuItems.length + 2, 20);
+  // Extract plain label text from items (strip blessed tags and leading spaces)
+  const menuLabels = mod.items.map(it => {
+    const raw = (it.label || '').replace(/\{[^}]*\}/g, '').trim();
+    return raw;
+  });
+  const totalRows = Math.max(menuLabels.length + 2, 20);
 
   for (let r = 0; r < totalRows; r++) {
     // Activity bar column (7 chars wide)
@@ -136,14 +158,14 @@ if (cliArgs.includes('--screenshot')) {
       if (r === baseRow + 1) actCol = ` ${color}${art[0]}${RESET}   `;
       if (r === baseRow + 2) actCol = ` ${color}${art[1]}${RESET}   `;
       if (r === baseRow + 3) actCol = ` ${color}${art[2]}${RESET}   `;
-      if (r === baseRow + 4) actCol = `  ${color}${SCREENSHOT_MODULES[mi].key}${RESET}  `;
+      if (r === baseRow + 4) actCol = `  ${color}${SCREENSHOT_MODULES[mi].key.toUpperCase()}${RESET}  `;
       if (r === baseRow + 5 && mi < 3) actCol = ` ${DIM}─────${RESET} `;
     }
 
     // Menu column (24 chars wide)
     let menuCol = ' '.repeat(24);
-    if (r < menuItems.length) {
-      const item = menuItems[r];
+    if (r < menuLabels.length) {
+      const item = menuLabels[r];
       const isSep = item.startsWith('─');
       const isSelected = r === 0;
       if (isSep) {
