@@ -57,7 +57,11 @@ v0.30 extends nForma's hook-driven pipeline with six advanced agent patterns: dy
   2. User can set `thinking_budget_scaling` in nf.json to control extended thinking per task type (0 for exploration, reduced for reviews, full for architecture) and observe the configured budget applied in quorum dispatch
   3. User can run a token dashboard command that shows cost breakdown per milestone, phase, and slot aggregated from token-usage.jsonl
   4. User observes simple tasks (linting, file reads, config changes) routed to cheaper models while complex tasks (architecture decisions, multi-file refactors) route to Opus, with no downgrade oscillation (cooldown period prevents thrashing)
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] v0.30-01-01-PLAN.md — Task complexity classifier + thinking budget scaling in quorum dispatch
+- [ ] v0.30-01-02-PLAN.md — Token usage dashboard CLI with /nf:tokens command
+- [ ] v0.30-01-03-PLAN.md — Enhanced compaction at clean boundaries + anti-oscillation cooldown
 
 #### Phase v0.30-02: File-Based Execution State
 **Goal**: Execution progress survives mid-task compaction so the agent loop always resumes at the correct sub-task
@@ -127,7 +131,7 @@ v0.30-01 -> v0.30-02 -> v0.30-03 -> v0.30-04 -> v0.30-05 -> v0.30-06 -> v0.30-07
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.30-01. Dynamic Model Selection | 0/TBD | Not started | - |
+| v0.30-01. Dynamic Model Selection | 0/3 | Planned | - |
 | v0.30-02. File-Based Execution State | 0/TBD | Not started | - |
 | v0.30-03. Memory Persistence | 0/TBD | Not started | - |
 | v0.30-04. Continuous Learning | 0/TBD | Not started | - |
