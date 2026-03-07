@@ -38,6 +38,7 @@ const {
   computeResidual,
   crossReferenceFormalCoverage,
   autoClose,
+  persistSessionSummary,
 } = require('./nf-solve.cjs');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -891,4 +892,68 @@ test('TC-AUTOCLOSE-STUBS-2: autoClose with zero f_to_t does not dispatch stub up
     !allActions.includes('Upgraded TODO stubs'),
     'should not reference stub upgrade when f_to_t is 0'
   );
+});
+
+// ── TC-SESSION: Session Persistence Tests ─────────────────────────────────────
+
+const os = require('os');
+const fs = require('fs');
+
+test('TC-SESSION-1: persistSessionSummary writes file to target directory', () => {
+  const tmpDir = path.join(os.tmpdir(), 'nf-solve-test-session-' + Date.now());
+  try {
+    persistSessionSummary('mock report', '{"mock": true}', true, [{ iteration: 1, actions: [] }], tmpDir);
+    const files = fs.readdirSync(tmpDir).filter(f => f.startsWith('solve-session-') && f.endsWith('.md'));
+    assert.ok(files.length === 1, 'Should create exactly one session file, got ' + files.length);
+    assert.ok(files[0].match(/^solve-session-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}Z\.md$/), 'Filename should match timestamp pattern');
+  } finally {
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (_) { /* cleanup */ }
+  }
+});
+
+test('TC-SESSION-2: Session file contains expected sections', () => {
+  const tmpDir = path.join(os.tmpdir(), 'nf-solve-test-session-' + Date.now());
+  try {
+    persistSessionSummary('mock report text', '{"mock": "json"}', false, [{ iteration: 1, actions: ['closed gap X'] }], tmpDir);
+    const files = fs.readdirSync(tmpDir).filter(f => f.endsWith('.md'));
+    const content = fs.readFileSync(path.join(tmpDir, files[0]), 'utf8');
+    assert.ok(content.includes('# nf-solve Session Summary'), 'Should have main header');
+    assert.ok(content.includes('## Residual Vector'), 'Should have Residual Vector section');
+    assert.ok(content.includes('## Machine State'), 'Should have Machine State section');
+    assert.ok(content.includes('## Actions Taken'), 'Should have Actions Taken section');
+    assert.ok(content.includes('mock report text'), 'Should contain the report text');
+    assert.ok(content.includes('"mock": "json"'), 'Should contain the JSON data');
+    assert.ok(content.includes('closed gap X'), 'Should contain action items');
+    assert.ok(content.includes('**Converged:** No'), 'Should show convergence status');
+  } finally {
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (_) { /* cleanup */ }
+  }
+});
+
+test('TC-SESSION-3: Pruning keeps only MAX_SESSION_FILES (20)', () => {
+  const tmpDir = path.join(os.tmpdir(), 'nf-solve-test-prune-' + Date.now());
+  try {
+    fs.mkdirSync(tmpDir, { recursive: true });
+    // Create 25 dummy session files with sequential timestamps
+    for (let i = 0; i < 25; i++) {
+      const pad = String(i).padStart(2, '0');
+      fs.writeFileSync(path.join(tmpDir, 'solve-session-2026-01-' + pad + 'T00-00-00Z.md'), 'dummy');
+    }
+    // Call persistSessionSummary which will add one more and prune
+    persistSessionSummary('report', '{}', true, [{ iteration: 1, actions: [] }], tmpDir);
+    const remaining = fs.readdirSync(tmpDir).filter(f => f.startsWith('solve-session-') && f.endsWith('.md'));
+    assert.ok(remaining.length <= 20, 'Should have at most 20 files after pruning, got ' + remaining.length);
+    // The oldest files (00-04) should be deleted
+    assert.ok(!remaining.includes('solve-session-2026-01-00T00-00-00Z.md'), 'Oldest file should be pruned');
+    assert.ok(!remaining.includes('solve-session-2026-01-04T00-00-00Z.md'), 'Fifth oldest file should be pruned');
+  } finally {
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch (_) { /* cleanup */ }
+  }
+});
+
+test('TC-SESSION-4: Fail-open on write error (invalid directory)', () => {
+  // Should not throw — fail-open pattern
+  persistSessionSummary('report', '{}', true, [{ iteration: 1, actions: [] }], '/nonexistent/path/that/should/fail');
+  // If we reach here, the function handled the error gracefully
+  assert.ok(true, 'persistSessionSummary should not throw on write error');
 });
