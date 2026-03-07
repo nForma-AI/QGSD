@@ -61,7 +61,7 @@ assert RecomputeIdempotent {
 assert NoVoteLoss {
   all m: Model, rounds: set Round |
     (all r: rounds | some r.votes[m]) =>
-    computeScore[m, rounds] = sum r: rounds | scoreDelta[r.votes[m]]
+    computeScore[m, rounds] = (sum r: rounds | scoreDelta[r.votes[m]])
 }
 
 -- NoDoubleCounting: the score equals the sum of individual round deltas, not more

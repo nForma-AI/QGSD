@@ -12,6 +12,9 @@
  *)
 EXTENDS Naturals, TLC
 
+CONSTANTS
+    MaxInstalls  \* Upper bound on install count for model checking (e.g., 3)
+
 VARIABLES
     hooksInstalled,     \* BOOLEAN — hooks synced to ~/.claude/hooks/
     breakerRegistered,  \* BOOLEAN — PreToolUse hook registered in settings.json
@@ -26,7 +29,7 @@ TypeOK ==
     /\ breakerRegistered \in BOOLEAN
     /\ defaultConfig     \in BOOLEAN
     /\ projectOverrides  \in BOOLEAN
-    /\ installCount      \in Nat
+    /\ installCount      \in 0..MaxInstalls
 
 Init ==
     /\ hooksInstalled    = FALSE
@@ -40,6 +43,7 @@ Init ==
 \* INST-06: Idempotent install — updates hooks and config without breaking
 \* @requirement INST-06
 Install ==
+    /\ installCount < MaxInstalls
     /\ hooksInstalled'    = TRUE
     /\ breakerRegistered' = TRUE
     /\ defaultConfig'     = TRUE

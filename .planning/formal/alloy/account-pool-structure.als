@@ -72,8 +72,8 @@ pred RemoveOp [pre, post: PoolState, removed: Account] {
         post.active = pre.active
     -- Active rotates when removing the active account
     pre.active = removed => (
-        no post.pool  => no post.active
-        some post.pool => post.active in post.pool
+        (no post.pool  => no post.active) and
+        (some post.pool => post.active in post.pool)
     )
 }
 

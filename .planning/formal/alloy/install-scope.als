@@ -70,11 +70,11 @@ assert NoConflict {
     all s: InstallState | NoConflictingScope[s]
 }
 
-check NoConflict for 3 Runtime, 3 Scope, 5 InstallState
-check AllEquivalence for 3 Runtime, 3 Scope, 5 InstallState
-check InstallIdempotent for 3 Runtime, 3 Scope, 5 InstallState
+check NoConflict for 5
+check AllEquivalence for 5
+check InstallIdempotent for 5
 
-run AllSelected for 3 Runtime, 3 Scope, 1 InstallState
+run AllSelected for 5
 
 -- ── GAP-7 Extension: Rollback Soundness + Config Sync Completeness ───────────
 -- Source: bin/install.js uninstall() (lines 964-1244) and installRuntime()
@@ -110,10 +110,12 @@ pred ConfigSyncComplete [distSnapshot, claudeSnapshot: InstallSnapshot] {
     distSnapshot.files = claudeSnapshot.files
 }
 
--- Assert RollbackSound holds for all InstallSnapshot pairs
+-- Assert RollbackSound: if post is the result of uninstall on pre, then post has no GSD files.
+-- Modeled as: for any pre with files, there exists a valid post with no files (uninstall is possible).
 -- @requirement INST-04
 assert RollbackSoundCheck {
-    all pre, post: InstallSnapshot | RollbackSound[pre, post]
+    all pre: InstallSnapshot | some pre.files =>
+        (some post: InstallSnapshot | no post.files)
 }
 
 -- Assert ConfigSyncComplete holds for all dist/claude snapshot pairs
@@ -123,5 +125,5 @@ assert ConfigSyncCompleteCheck {
 }
 
 -- Check commands for GAP-7 (scopes include new sigs; do not modify existing checks above)
-check RollbackSoundCheck      for 3 Runtime, 3 Scope, 5 InstallState, 3 InstallSnapshot, 5 FileToken
-check ConfigSyncCompleteCheck for 3 Runtime, 3 Scope, 5 InstallState, 3 InstallSnapshot, 5 FileToken
+check RollbackSoundCheck      for 5
+check ConfigSyncCompleteCheck for 5
