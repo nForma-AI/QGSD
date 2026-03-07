@@ -99,8 +99,8 @@ Plans:
   4. User benefits from a failure catalog with confidence scores that tracks failed approaches and prevents re-attempting dead ends in subsequent sessions
 **Plans**: 2 plans
 Plans:
-- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
-- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
+- [ ] v0.30-04-01-PLAN.md — Memory store extension (corrections, skills, failures categories + confidence scoring) and learning-extractor module
+- [ ] v0.30-04-02-PLAN.md — SessionEnd hook, skill-extractor CLI, injection hook extensions, and install registration
 
 #### Phase v0.30-05: Continuous Verification
 **Goal**: Users get immediate feedback on code quality during execution, not just at phase end, with machine-checkable definitions of "done"
