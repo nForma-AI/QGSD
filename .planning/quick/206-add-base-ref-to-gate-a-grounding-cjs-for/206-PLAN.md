@@ -17,6 +17,8 @@ must_haves:
     - "Scoped grounding score for changed files must independently meet 80% target"
     - "Global grounding score is still computed and reported but marked informational when --base-ref is used"
     - "Running without --base-ref produces identical output to current behavior (backward compatible)"
+    - "Path normalization prevents silent scope mismatches between git diff output and instrumentation-map entries"
+    - "Missing or malformed instrumentation-map.json triggers graceful fallback to global mode with stderr warning"
   artifacts:
     - path: "bin/gate-a-grounding.cjs"
       provides: "--base-ref flag implementation with diff-scoped grounding"
@@ -69,7 +71,9 @@ Add the following capabilities to gate-a-grounding.cjs:
    - Use `require('child_process').execSync` to run `git diff --name-only <baseRef>..HEAD` from ROOT
    - Parse the output into a list of changed file paths
    - Load instrumentation-map.json from `.planning/formal/evidence/instrumentation-map.json`
-   - Build a Set of action names whose `file` field matches any of the changed files (normalize paths — instrumentation-map uses relative paths like `hooks/nf-prompt.js`)
+     - **Graceful degradation**: Wrap the load in try/catch. If the file is missing or contains malformed JSON, log a warning to stderr ("instrumentation-map.json missing or malformed, falling back to global mode") and return `null` (caller treats null as "use global mode"). This prevents unexpected failures in environments where the map is unavailable.
+   - **Path normalization**: Before comparing git diff paths against instrumentation-map `file` fields, normalize both sides by stripping any leading `./` and resolving to repo-root-relative form (e.g., `path.normalize(p).replace(/^\.\//, '')`). This prevents silent scope mismatches if git outputs paths differently from the map entries (e.g., `./hooks/nf-prompt.js` vs `hooks/nf-prompt.js`).
+   - Build a Set of action names whose normalized `file` field matches any of the normalized changed files
    - Return the Set of scoped actions (may be empty if no changed files have emission points)
 
 3. Modify the CLI section (inside `if (require.main === module)`):
@@ -103,6 +107,7 @@ Add the following capabilities to gate-a-grounding.cjs:
 
 4. Handle edge cases:
    - If git diff fails (bad ref), write warning to stderr and fall back to global mode
+   - If `getChangedActions` returns `null` (instrumentation-map.json missing or malformed), fall back to global mode with stderr warning
    - If no changed files map to any instrumentation actions, warn to stderr ("No scoped actions found for changed files, falling back to global mode") and use global result
    - Export `getChangedActions` for testing
 
@@ -141,16 +146,22 @@ Add a new describe block 'diff-scoped grounding (--base-ref)' to gate-a-groundin
 
 5. **backward compatibility: no --base-ref produces scope.mode=global**: Run gate-a-grounding.cjs without --base-ref (use the existing integration tests as a model), read gate-a-grounding.json, assert scope.mode === 'global'.
 
+6. **graceful degradation when instrumentation-map.json is missing**: Call `getChangedActions` with a valid base-ref but temporarily rename/remove instrumentation-map.json (or mock `fs.readFileSync` to throw). Assert the function returns `null`, confirming it degrades to global mode rather than throwing.
+
+7. **path normalization handles leading ./ prefix**: Create a synthetic instrumentation-map entry with `file: "./hooks/nf-prompt.js"` and a git diff result of `hooks/nf-prompt.js` (no leading `./`). Verify that `getChangedActions` correctly matches the action despite the path format difference. (This can be tested by calling the normalization logic directly or by constructing a focused unit test around the matching.)
+
 Keep all existing tests unchanged. Run the full test file to confirm no regressions.
   </action>
   <verify>
     node --test bin/gate-a-grounding.test.cjs
   </verify>
   <done>
-    - All new tests pass
+    - All new tests pass (including graceful degradation and path normalization tests)
     - All existing tests pass (no regressions)
     - Scoped filtering logic validated with synthetic data
     - Schema additions (scope object) validated
+    - Graceful degradation for missing/malformed instrumentation-map.json validated
+    - Path normalization (leading ./ stripping) validated
   </done>
 </task>
 
