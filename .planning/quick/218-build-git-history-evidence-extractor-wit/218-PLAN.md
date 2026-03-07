@@ -88,7 +88,7 @@ Create bin/git-history-evidence.cjs following the same patterns as bin/git-heatm
 - For each classified commit, get touched files via `git diff-tree --no-commit-id -r --name-only`
 
 **TLA+ cross-referencing:**
-- Read model-registry.json to get all TLA+ model paths (filter for .tla extension)
+- Read model-registry.json to get all TLA+ model paths (filter for .tla extension). Wrap the read+parse in try/catch with fail-open: if the file is missing, unreadable, or contains malformed JSON, log a warning to stderr and continue with an empty model list (no TLA+ cross-refs, no crash).
 - For each TLA+ file, extract source file references by scanning content for patterns like `hooks/xxx.js`, `bin/xxx.cjs`, etc. (reuse the same regex pattern from git-heatmap.cjs `buildCoverageMap`)
 - Build a reverse map: source_file -> [tla_spec_paths]
 - For each commit, if any touched file appears in the reverse map, tag the commit with its tla_cross_refs
@@ -150,6 +150,7 @@ Create bin/git-history-evidence.cjs following the same patterns as bin/git-heatm
 - Unit test `buildTlaCoverageReverseMap()` with mock registry data
 - Unit test `computeFileBreakdown()` with mock commit data
 - Test fail-open: empty/missing git output does not crash
+- Test fail-open: missing or corrupted model-registry.json does not crash (returns empty TLA+ cross-refs)
 - Test `--since` validation rejects injection attempts
   </action>
   <verify>
