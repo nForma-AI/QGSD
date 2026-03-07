@@ -170,6 +170,8 @@ function readMemoryInjection(cwd) {
   }
 }
 
+// Only register stdin handler when run directly (not when require()'d by tests)
+if (require.main === module) {
 let raw = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => { raw += chunk; });
@@ -239,6 +241,34 @@ process.stdin.on('end', () => {
         lines.push(memoryBlock);
       }
 
+      // Learning snapshot injection (LRNG-01, LRNG-04)
+      try {
+        if (memoryStore && memoryStore.readLastN) {
+          const recentFailures = memoryStore.readLastN(cwd, 'failures', 2);
+          const recentCorrections = memoryStore.readLastN(cwd, 'corrections', 2);
+          if (recentFailures.length > 0 || recentCorrections.length > 0) {
+            const learningLines = ['', '## Learning Snapshot (auto-injected at compaction)', ''];
+            if (recentFailures.length > 0) {
+              learningLines.push('Known failures:');
+              for (const f of recentFailures) {
+                const approach = (f.approach || '').slice(0, 60);
+                const conf = memoryStore.computeCurrentConfidence ? memoryStore.computeCurrentConfidence(f) : (f.confidence || 0.7);
+                learningLines.push('  - ' + approach + ' (conf: ' + conf.toFixed(2) + ')');
+              }
+            }
+            if (recentCorrections.length > 0) {
+              learningLines.push('Recent corrections:');
+              for (const c of recentCorrections) {
+                const wrong = (c.wrong_approach || '').slice(0, 50);
+                const correct = (c.correct_approach || '').slice(0, 50);
+                learningLines.push('  - Not: ' + wrong + ' -> Instead: ' + correct);
+              }
+            }
+            lines.push(...learningLines);
+          }
+        }
+      } catch (_) {}
+
       additionalContext = lines.join('\n');
     }
 
@@ -249,6 +279,7 @@ process.stdin.on('end', () => {
     process.exit(0); // Fail open — never block compaction
   }
 });
+} // end require.main === module
 
 function emitOutput(additionalContext) {
   process.stdout.write(JSON.stringify({
@@ -260,9 +291,8 @@ function emitOutput(additionalContext) {
   process.exit(0);
 }
 
-// Export helpers for unit testing (tree-shaken at runtime — no cost)
-// The file is a script and exits via process.exit() before reaching this line in normal operation.
-// When require()d by tests, the stdin handler is registered but never fires, so module.exports is set.
+// Export helpers for unit testing.
+// When require()d by tests, the stdin handler is not registered (require.main guard above).
 if (typeof module !== 'undefined') {
   module.exports = module.exports || {};
   module.exports.extractCurrentPosition = extractCurrentPosition;

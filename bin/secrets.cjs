@@ -131,4 +131,76 @@ async function syncToClaudeJson(service) {
   }
 }
 
-module.exports = { set, get, delete: del, list, hasKey, syncToClaudeJson, SERVICE };
+// Maps env var names to CCR provider names (used by patchCcrConfigForKey).
+const CCR_KEY_MAP = {
+  FIREWORKS_API_KEY: 'fireworks',
+  AKASHML_API_KEY:   'akashml',
+  TOGETHER_API_KEY:  'together',
+};
+
+/**
+ * Synchronously patch a single env key across all mcpServers in ~/.claude.json.
+ * Uses atomic write (write to .tmp then rename) to avoid partial files on crash.
+ * No-op if claude.json is missing or the key is not found in any env block.
+ */
+function patchClaudeJsonForKey(envKey, value) {
+  const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+  const tmpPath = claudeJsonPath + '.tmp';
+
+  let raw;
+  try { raw = fs.readFileSync(claudeJsonPath, 'utf8'); } catch (_) { return; }
+
+  let claudeJson;
+  try { claudeJson = JSON.parse(raw); } catch (_) { return; }
+
+  if (!claudeJson.mcpServers || typeof claudeJson.mcpServers !== 'object') return;
+
+  let patched = 0;
+  for (const serverName of Object.keys(claudeJson.mcpServers)) {
+    const server = claudeJson.mcpServers[serverName];
+    if (!server.env || typeof server.env !== 'object') continue;
+    if (Object.prototype.hasOwnProperty.call(server.env, envKey)) {
+      server.env[envKey] = value;
+      patched++;
+    }
+  }
+
+  if (patched > 0) {
+    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2));
+    fs.renameSync(tmpPath, claudeJsonPath);
+  }
+}
+
+/**
+ * Synchronously patch a provider's api_key in ~/.claude-code-router/config.json.
+ * Uses CCR_KEY_MAP to resolve envKey → provider name, then patches all matching
+ * providers (case-insensitive name match). No-op if key is unknown or file missing.
+ */
+function patchCcrConfigForKey(envKey, value) {
+  const providerName = CCR_KEY_MAP[envKey];
+  if (!providerName) return;
+
+  const configPath = path.join(os.homedir(), '.claude-code-router', 'config.json');
+
+  let raw;
+  try { raw = fs.readFileSync(configPath, 'utf8'); } catch (_) { return; }
+
+  let config;
+  try { config = JSON.parse(raw); } catch (_) { return; }
+
+  if (!Array.isArray(config.providers)) return;
+
+  let patched = 0;
+  for (const provider of config.providers) {
+    if (provider.name && provider.name.toLowerCase() === providerName.toLowerCase()) {
+      provider.api_key = value;
+      patched++;
+    }
+  }
+
+  if (patched > 0) {
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  }
+}
+
+module.exports = { set, get, delete: del, list, hasKey, syncToClaudeJson, patchClaudeJsonForKey, patchCcrConfigForKey, CCR_KEY_MAP, SERVICE };

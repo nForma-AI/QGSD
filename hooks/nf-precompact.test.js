@@ -1,6 +1,5 @@
-#!/usr/bin/env node
 // Test suite for hooks/nf-precompact.js
-// Uses Node.js built-in test runner: node --test hooks/nf-precompact.test.js
+// Run: node --test hooks/nf-precompact.test.js
 //
 // Unit tests target exported helpers (extractCurrentPosition, readPendingTasks).
 // Integration tests spawn the hook as a child process with mock stdin.

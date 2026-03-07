@@ -14,13 +14,18 @@ const fs   = require('fs');
 const { loadConfig, shouldRunHook } = require('./config-loader');
 
 // ─── Stdin accumulation (for hook input JSON containing cwd) ─────────────────
+// Only register stdin handler when run directly (not when require()'d by tests)
 let _stdinRaw = '';
-process.stdin.setEncoding('utf8');
-process.stdin.on('data', c => _stdinRaw += c);
-
-let _stdinReady;
-const _stdinPromise = new Promise(resolve => { _stdinReady = resolve; });
-process.stdin.on('end', () => _stdinReady());
+let _stdinPromise;
+if (require.main === module) {
+  let _stdinReady;
+  _stdinPromise = new Promise(resolve => { _stdinReady = resolve; });
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data', c => _stdinRaw += c);
+  process.stdin.on('end', () => _stdinReady());
+} else {
+  _stdinPromise = Promise.resolve();
+}
 
 // Locate secrets.cjs — try installed global path first, then local dev path.
 //
@@ -81,7 +86,7 @@ function parseStateForReminder(stateContent) {
   return 'SESSION STATE REMINDER: Phase ' + phase + ' -- ' + plan + ' -- ' + status + ' (last: ' + lastActivity + ')';
 }
 
-(async () => {
+if (require.main === module) (async () => {
   // Resolve project cwd from hook input JSON
   await _stdinPromise;
   let _hookCwd = process.cwd();
@@ -169,13 +174,37 @@ function parseStateForReminder(stateContent) {
         const dCount = memStore.countEntries(_hookCwd, 'decisions');
         const eCount = memStore.countEntries(_hookCwd, 'errors');
         const qCount = memStore.countEntries(_hookCwd, 'quorum');
+        const sCount = memStore.countEntries ? memStore.countEntries(_hookCwd, 'skills') : 0;
+        const fCount = memStore.countEntries ? memStore.countEntries(_hookCwd, 'failures') : 0;
+        const cCount = memStore.countEntries ? memStore.countEntries(_hookCwd, 'corrections') : 0;
         if (dCount > 0 || eCount > 0 || qCount > 0) {
-          _contextPieces.push('Memory available: ' + dCount + ' decisions, ' + eCount + ' errors, ' + qCount + ' quorum entries. Query: node bin/memory-store.cjs query-decisions --last 5');
+          let oneLiner = 'Memory available: ' + dCount + ' decisions, ' + eCount + ' errors, ' + qCount + ' quorum entries.';
+          if (sCount > 0 || fCount > 0 || cCount > 0) {
+            oneLiner += ' Learning: ' + sCount + ' skills, ' + fCount + ' failures, ' + cCount + ' corrections.';
+          }
+          oneLiner += ' Query: node bin/memory-store.cjs query-decisions --last 5';
+          _contextPieces.push(oneLiner);
         }
       } else {
         const reminder = memStore.generateSessionReminder(_hookCwd);
         if (reminder) {
           _contextPieces.push(reminder);
+        }
+
+        // Learning catalog counts (LRNG-01, LRNG-04)
+        if (memStore.countEntries) {
+          const skillCount = memStore.countEntries(_hookCwd, 'skills');
+          const failureCount = memStore.countEntries(_hookCwd, 'failures');
+          const correctionCount = memStore.countEntries(_hookCwd, 'corrections');
+
+          if (skillCount > 0 || failureCount > 0 || correctionCount > 0) {
+            let learningLine = 'Learning catalog:';
+            if (skillCount > 0) learningLine += ' ' + skillCount + ' validated skills,';
+            if (failureCount > 0) learningLine += ' ' + failureCount + ' known failures,';
+            if (correctionCount > 0) learningLine += ' ' + correctionCount + ' corrections.';
+            learningLine += ' Query: node bin/memory-store.cjs query-failures --min-confidence 0.3';
+            _contextPieces.push(learningLine);
+          }
         }
       }
     }
@@ -212,9 +241,6 @@ function parseStateForReminder(stateContent) {
   process.exit(0);
 })();
 
-// Export for unit testing
-if (typeof module !== 'undefined') {
-  module.exports = module.exports || {};
-  module.exports.parseStateForReminder = parseStateForReminder;
-  module.exports.findMemoryStore = findMemoryStore;
-}
+// Export for unit testing.
+// When require()'d by tests, the stdin handler and async IIFE are not registered (require.main guard above).
+module.exports = { parseStateForReminder, findMemoryStore };
