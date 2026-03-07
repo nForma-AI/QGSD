@@ -24,6 +24,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 **Phase v0.30-01 shipped (2026-03-07):** Dynamic Model Selection — task classifier (trivial/simple/moderate/complex), TIER_SLOT_MAP slot filtering in quorum dispatch, thinking_budget_scaling nested config, token dashboard CLI (/nf:tokens), 65% smart compaction with quorum lockout, anti-oscillation cooldown. 3 plans, 9 commits, 88 tests.
 **Phase v0.30-02 shipped (2026-03-07):** File-Based Execution State — execution-progress.cjs with init/completeTask/getStatus/incrementIteration/clear, nf-precompact.js progress injection on compaction, execute-plan.md workflow wiring at 4 integration points, iteration cap (5) and stuck detection (3 attempts). 1 plan, 5 commits, 18 tests.
+**Phase v0.30-03 shipped (2026-03-07):** Memory Persistence — memory-store.cjs with 3 JSONL categories (decisions/errors/quorum), append/query/prune/dedup, generateSessionReminder (800 char cap), formatMemoryInjection (1200 char cap). nf-session-start.js memory reminder, nf-precompact.js compaction snapshot. 2 plans, 6 commits, 35 tests.
 
 ## Shipped: v0.29 — Three-Layer Formal Verification Architecture (2026-03-06)
 
