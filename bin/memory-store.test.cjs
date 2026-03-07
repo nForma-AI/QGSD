@@ -18,6 +18,9 @@ const {
   generateSessionReminder,
   formatMemoryInjection,
   pruneOlderThan,
+  computeCurrentConfidence,
+  boostConfidence,
+  queryWithConfidence,
   MEMORY_DIR,
   FILES,
 } = require('./memory-store.cjs');
@@ -51,6 +54,23 @@ describe('memory-store', () => {
       assert.equal(FILES.errors, 'errors.jsonl');
       assert.equal(FILES.quorum, 'quorum-decisions.jsonl');
       assert.equal(MEMORY_DIR, '.planning/memory');
+    });
+  });
+
+  describe('new categories', () => {
+    it('FILES has all 6 categories', () => {
+      assert.equal(Object.keys(FILES).length, 6);
+      assert.equal(FILES.corrections, 'corrections.jsonl');
+      assert.equal(FILES.skills, 'skills.jsonl');
+      assert.equal(FILES.failures, 'failures.jsonl');
+    });
+
+    it('getMemoryPath works for each new category', () => {
+      const tmp = freshTmp();
+      assert.ok(getMemoryPath(tmp, 'corrections').endsWith('corrections.jsonl'));
+      assert.ok(getMemoryPath(tmp, 'skills').endsWith('skills.jsonl'));
+      assert.ok(getMemoryPath(tmp, 'failures').endsWith('failures.jsonl'));
+      cleanTmp();
     });
   });
 
@@ -374,6 +394,240 @@ describe('memory-store', () => {
       fs.writeFileSync(filePath, '', 'utf8');
       const result = pruneOlderThan(tmpDir, 'decisions', 90);
       assert.deepStrictEqual(result, { removed: 0, remaining: 0 });
+    });
+  });
+
+  describe('append-correction', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('appends a correction with required schema fields', () => {
+      const result = appendEntry(tmpDir, 'corrections', {
+        type: 'correction',
+        wrong_approach: 'Using var',
+        correct_approach: 'Using const',
+        context: 'variable declarations',
+        tags: ['js', 'style'],
+      });
+      assert.ok(result.ts);
+      assert.equal(result.type, 'correction');
+      assert.equal(result.wrong_approach, 'Using var');
+      assert.equal(result.correct_approach, 'Using const');
+      assert.equal(result.context, 'variable declarations');
+      assert.deepStrictEqual(result.tags, ['js', 'style']);
+    });
+  });
+
+  describe('append-skill', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('appends a skill with required schema fields', () => {
+      const result = appendEntry(tmpDir, 'skills', {
+        type: 'skill',
+        skill: 'Use async IIFE pattern for hooks',
+        evidence_count: 3,
+        validated_by: ['codex-1', 'gemini-1'],
+        tags: ['hooks', 'async'],
+        confidence: 0.9,
+      });
+      assert.ok(result.ts);
+      assert.equal(result.type, 'skill');
+      assert.equal(result.skill, 'Use async IIFE pattern for hooks');
+      assert.equal(result.evidence_count, 3);
+      assert.deepStrictEqual(result.validated_by, ['codex-1', 'gemini-1']);
+      assert.equal(result.confidence, 0.9);
+    });
+  });
+
+  describe('append-failure', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('appends a failure with confidence=0.7, last_confirmed set, confirmation_count=1', () => {
+      const entry = {
+        type: 'failure',
+        approach: 'Using SQLite for memory',
+        context: 'memory persistence',
+        why_failed: 'Too heavy for simple JSONL needs',
+        confidence: 0.7,
+        last_confirmed: new Date().toISOString(),
+        confirmation_count: 1,
+        tags: ['storage'],
+      };
+      const result = appendEntry(tmpDir, 'failures', entry);
+      assert.ok(result.ts);
+      assert.equal(result.confidence, 0.7);
+      assert.ok(result.last_confirmed);
+      assert.equal(result.confirmation_count, 1);
+    });
+
+    it('dedup prevents duplicate approach', () => {
+      appendEntry(tmpDir, 'failures', {
+        type: 'failure',
+        approach: 'Using SQLite for memory',
+        why_failed: 'Too heavy',
+        confidence: 0.7,
+        last_confirmed: new Date().toISOString(),
+        confirmation_count: 1,
+        tags: [],
+      });
+      assert.equal(isDuplicate(tmpDir, 'failures', 'approach', 'Using SQLite for memory'), true);
+    });
+  });
+
+  describe('computeCurrentConfidence', () => {
+    it('returns stored confidence for fresh entry (0 days old)', () => {
+      const entry = { confidence: 0.7, last_confirmed: new Date().toISOString() };
+      const result = computeCurrentConfidence(entry);
+      assert.equal(result, 0.7);
+    });
+
+    it('decays by 0.1 for 14-day old entry', () => {
+      const twoWeeksAgo = new Date(Date.now() - 14 * 86400 * 1000).toISOString();
+      const entry = { confidence: 0.7, last_confirmed: twoWeeksAgo };
+      const result = computeCurrentConfidence(entry);
+      assert.ok(Math.abs(result - 0.6) < 0.001, `Expected ~0.6 but got ${result}`);
+    });
+
+    it('floors at 0.1 for 84-day old entry (12 weeks decay)', () => {
+      const longAgo = new Date(Date.now() - 84 * 86400 * 1000).toISOString();
+      const entry = { confidence: 0.7, last_confirmed: longAgo };
+      const result = computeCurrentConfidence(entry);
+      assert.equal(result, 0.1);
+    });
+
+    it('returns 0.7 when missing fields', () => {
+      const result = computeCurrentConfidence({});
+      assert.equal(result, 0.7);
+    });
+  });
+
+  describe('boostConfidence', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('boosts confidence by 0.2 and updates last_confirmed', () => {
+      appendEntry(tmpDir, 'failures', {
+        type: 'failure',
+        approach: 'Using spawnSync for async ops',
+        why_failed: 'blocks event loop',
+        confidence: 0.7,
+        last_confirmed: new Date(Date.now() - 7 * 86400 * 1000).toISOString(),
+        confirmation_count: 1,
+        tags: [],
+      });
+
+      const result = boostConfidence(tmpDir, 'spawnSync');
+      assert.ok(result);
+      assert.ok(Math.abs(result.confidence - 0.9) < 0.001, `Expected ~0.9 but got ${result.confidence}`);
+      assert.equal(result.confirmation_count, 2);
+      // last_confirmed should be recent (within last minute)
+      const confAge = Date.now() - new Date(result.last_confirmed).getTime();
+      assert.ok(confAge < 60000, 'last_confirmed should be very recent');
+    });
+
+    it('returns null when approach not found', () => {
+      const result = boostConfidence(tmpDir, 'nonexistent');
+      assert.equal(result, null);
+    });
+
+    it('clamps confidence at 1.0', () => {
+      appendEntry(tmpDir, 'failures', {
+        type: 'failure',
+        approach: 'Test approach',
+        why_failed: 'reason',
+        confidence: 0.95,
+        last_confirmed: new Date().toISOString(),
+        confirmation_count: 1,
+        tags: [],
+      });
+
+      const result = boostConfidence(tmpDir, 'Test approach');
+      assert.ok(result);
+      assert.equal(result.confidence, 1.0);
+    });
+  });
+
+  describe('queryWithConfidence', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('filters by minConfidence and sorts by confidence descending', () => {
+      // Add failures with different confidences
+      const now = new Date().toISOString();
+      const oldDate = new Date(Date.now() - 70 * 86400 * 1000).toISOString();
+
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'High conf approach', why_failed: 'reason',
+        confidence: 0.9, last_confirmed: now, confirmation_count: 3, tags: [], ts: now,
+      });
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'Low conf approach', why_failed: 'reason',
+        confidence: 0.7, last_confirmed: oldDate, confirmation_count: 1, tags: [], ts: oldDate,
+      });
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'Medium conf approach', why_failed: 'reason',
+        confidence: 0.5, last_confirmed: now, confirmation_count: 2, tags: [], ts: now,
+      });
+
+      // Query with min confidence 0.3 -- should include all except the decayed old one
+      const results = queryWithConfidence(tmpDir, 'failures', 'approach', '', 0.3, 10);
+      assert.ok(results.length >= 2);
+      // First result should be highest confidence
+      assert.ok(results[0]._currentConfidence >= results[1]._currentConfidence);
+    });
+
+    it('returns empty array when no entries above minConfidence', () => {
+      const oldDate = new Date(Date.now() - 200 * 86400 * 1000).toISOString();
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'Very old failure', why_failed: 'reason',
+        confidence: 0.2, last_confirmed: oldDate, confirmation_count: 1, tags: [], ts: oldDate,
+      });
+      const results = queryWithConfidence(tmpDir, 'failures', 'approach', '', 0.5, 5);
+      assert.equal(results.length, 0);
+    });
+
+    it('filters by keyword when provided', () => {
+      const now = new Date().toISOString();
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'SQLite approach', why_failed: 'reason',
+        confidence: 0.9, last_confirmed: now, confirmation_count: 1, tags: [], ts: now,
+      });
+      writeRawEntry(tmpDir, 'failures', {
+        type: 'failure', approach: 'Redis approach', why_failed: 'reason',
+        confidence: 0.9, last_confirmed: now, confirmation_count: 1, tags: [], ts: now,
+      });
+      const results = queryWithConfidence(tmpDir, 'failures', 'approach', 'sqlite', 0.3, 5);
+      assert.equal(results.length, 1);
+      assert.ok(results[0].approach.includes('SQLite'));
+    });
+  });
+
+  describe('query-corrections', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('readLastN returns corrections in order', () => {
+      appendEntry(tmpDir, 'corrections', { type: 'correction', wrong_approach: 'A', correct_approach: 'B' });
+      appendEntry(tmpDir, 'corrections', { type: 'correction', wrong_approach: 'C', correct_approach: 'D' });
+      const results = readLastN(tmpDir, 'corrections', 5);
+      assert.equal(results.length, 2);
+      assert.equal(results[0].wrong_approach, 'A');
+      assert.equal(results[1].wrong_approach, 'C');
+    });
+  });
+
+  describe('query-skills', () => {
+    beforeEach(() => freshTmp());
+    afterEach(() => cleanTmp());
+
+    it('queryByField on tag works for skills', () => {
+      appendEntry(tmpDir, 'skills', { type: 'skill', skill: 'Async IIFE', tags: ['hooks', 'async'] });
+      appendEntry(tmpDir, 'skills', { type: 'skill', skill: 'Config merge', tags: ['config'] });
+      const results = queryByField(tmpDir, 'skills', 'skill', 'hooks');
+      assert.equal(results.length, 1);
+      assert.equal(results[0].skill, 'Async IIFE');
     });
   });
 });

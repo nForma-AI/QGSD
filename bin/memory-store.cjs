@@ -9,6 +9,9 @@ const FILES = {
   decisions: 'decisions.jsonl',
   errors: 'errors.jsonl',
   quorum: 'quorum-decisions.jsonl',
+  corrections: 'corrections.jsonl',
+  skills: 'skills.jsonl',
+  failures: 'failures.jsonl',
 };
 
 /**
@@ -202,6 +205,99 @@ function pruneOlderThan(cwd, category, days = 90) {
   return { removed, remaining: kept.length };
 }
 
+/**
+ * Computes current confidence for a failure entry with weekly decay.
+ * Returns stored confidence minus 0.05 per week since last_confirmed, floor 0.1.
+ */
+function computeCurrentConfidence(entry) {
+  if (!entry.confidence || !entry.last_confirmed) {
+    return entry.confidence || 0.7;
+  }
+  const daysSinceConfirmed = (Date.now() - new Date(entry.last_confirmed).getTime()) / (86400 * 1000);
+  const weekDecay = Math.floor(daysSinceConfirmed / 7) * 0.05;
+  return Math.max(0.1, entry.confidence - weekDecay);
+}
+
+/**
+ * Boosts confidence for a failure entry matching approach (case-insensitive substring).
+ * Returns the updated entry or null if not found.
+ */
+function boostConfidence(cwd, approach) {
+  const filePath = getMemoryPath(cwd, 'failures');
+  if (!fs.existsSync(filePath)) return null;
+
+  const content = fs.readFileSync(filePath, 'utf8').trim();
+  if (!content) return null;
+
+  const lines = content.split('\n').filter(Boolean);
+  const needle = approach.toLowerCase();
+  let foundIdx = -1;
+  const entries = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    try {
+      const entry = JSON.parse(lines[i]);
+      entries.push(entry);
+      if (foundIdx === -1 && (entry.approach || '').toLowerCase().includes(needle)) {
+        foundIdx = i;
+      }
+    } catch {
+      entries.push(null); // keep line position
+    }
+  }
+
+  if (foundIdx === -1) return null;
+
+  const target = entries[foundIdx];
+  target.confidence = Math.min(1.0, (target.confidence || 0.7) + 0.2);
+  target.last_confirmed = new Date().toISOString();
+  target.confirmation_count = (target.confirmation_count || 1) + 1;
+
+  // Rewrite file
+  const newLines = lines.map((line, i) => {
+    if (i === foundIdx) return JSON.stringify(target);
+    return line;
+  });
+  fs.writeFileSync(filePath, newLines.join('\n') + '\n', 'utf8');
+
+  return target;
+}
+
+/**
+ * Query entries filtered by computed confidence >= minConfidence.
+ * Sorted by confidence descending. Primarily for failures category.
+ */
+function queryWithConfidence(cwd, category, field, keyword, minConfidence = 0.3, limit = 5) {
+  const filePath = getMemoryPath(cwd, category);
+  if (!fs.existsSync(filePath)) return [];
+  const content = fs.readFileSync(filePath, 'utf8').trim();
+  if (!content) return [];
+
+  const lines = content.split('\n').filter(Boolean);
+  const kw = keyword ? keyword.toLowerCase() : '';
+  const matches = [];
+
+  for (const line of lines) {
+    try {
+      const entry = JSON.parse(line);
+      const currentConf = computeCurrentConfidence(entry);
+      if (currentConf < minConfidence) continue;
+
+      if (kw) {
+        const fieldVal = (entry[field] || '').toLowerCase();
+        const tagsVal = (entry.tags || []).join(' ').toLowerCase();
+        if (!fieldVal.includes(kw) && !tagsVal.includes(kw)) continue;
+      }
+
+      matches.push({ ...entry, _currentConfidence: currentConf });
+    } catch { /* skip malformed */ }
+  }
+
+  // Sort by confidence descending
+  matches.sort((a, b) => b._currentConfidence - a._currentConfidence);
+  return matches.slice(0, limit);
+}
+
 // ─── CLI interface ──────────────────────────────────────────────────────────
 
 if (require.main === module) {
@@ -332,9 +428,141 @@ if (require.main === module) {
         break;
       }
 
+      case 'append-correction': {
+        const wrong = getArg('wrong');
+        const correct = getArg('correct');
+        if (!wrong || !correct) { process.stderr.write('Missing --wrong and/or --correct\n'); process.exit(0); }
+        const entry = {
+          type: 'correction',
+          wrong_approach: wrong,
+          correct_approach: correct,
+          context: getArg('context') || '',
+          tags: (getArg('tags') || '').split(',').filter(Boolean),
+        };
+        const result = appendEntry(cwd, 'corrections', entry);
+        process.stdout.write(JSON.stringify(result) + '\n');
+        break;
+      }
+
+      case 'append-skill': {
+        const skill = getArg('skill');
+        if (!skill) { process.stderr.write('Missing --skill\n'); process.exit(0); }
+        const entry = {
+          type: 'skill',
+          skill,
+          evidence_count: parseInt(getArg('evidence-count') || '0', 10),
+          validated_by: (getArg('validated-by') || '').split(',').filter(Boolean),
+          tags: (getArg('tags') || '').split(',').filter(Boolean),
+          confidence: parseFloat(getArg('confidence') || '0.7'),
+        };
+        const result = appendEntry(cwd, 'skills', entry);
+        process.stdout.write(JSON.stringify(result) + '\n');
+        break;
+      }
+
+      case 'append-failure': {
+        const approach = getArg('approach');
+        const whyFailed = getArg('why-failed');
+        if (!approach || !whyFailed) { process.stderr.write('Missing --approach and/or --why-failed\n'); process.exit(0); }
+        if (isDuplicate(cwd, 'failures', 'approach', approach)) {
+          const existing = readLastN(cwd, 'failures', 10).find(e =>
+            e.approach && (e.approach.toLowerCase().includes(approach.toLowerCase()) ||
+              approach.toLowerCase().includes(e.approach.toLowerCase()))
+          );
+          process.stdout.write(JSON.stringify({ skipped: true, reason: 'duplicate', existing }) + '\n');
+          break;
+        }
+        const entry = {
+          type: 'failure',
+          approach,
+          context: getArg('context') || '',
+          why_failed: whyFailed,
+          confidence: 0.7,
+          last_confirmed: new Date().toISOString(),
+          confirmation_count: 1,
+          tags: (getArg('tags') || '').split(',').filter(Boolean),
+        };
+        const result = appendEntry(cwd, 'failures', entry);
+        process.stdout.write(JSON.stringify(result) + '\n');
+        break;
+      }
+
+      case 'query-corrections': {
+        const n = parseInt(getArg('last') || '5', 10);
+        const results = readLastN(cwd, 'corrections', n);
+        process.stdout.write(JSON.stringify(results) + '\n');
+        break;
+      }
+
+      case 'query-skills': {
+        const tag = getArg('tag');
+        const limit = parseInt(getArg('limit') || '5', 10);
+        if (tag) {
+          const results = queryByField(cwd, 'skills', 'skill', tag, limit);
+          process.stdout.write(JSON.stringify(results) + '\n');
+        } else {
+          const results = readLastN(cwd, 'skills', limit);
+          process.stdout.write(JSON.stringify(results) + '\n');
+        }
+        break;
+      }
+
+      case 'query-failures': {
+        const tag = getArg('tag');
+        const minConf = parseFloat(getArg('min-confidence') || '0.3');
+        const limit = parseInt(getArg('limit') || '5', 10);
+        const results = queryWithConfidence(cwd, 'failures', 'approach', tag || '', minConf, limit);
+        process.stdout.write(JSON.stringify(results) + '\n');
+        break;
+      }
+
+      case 'boost-failure': {
+        const approach = getArg('approach');
+        if (!approach) { process.stderr.write('Missing --approach\n'); process.exit(0); }
+        const result = boostConfidence(cwd, approach);
+        if (result) {
+          process.stdout.write(JSON.stringify(result) + '\n');
+        } else {
+          process.stdout.write(JSON.stringify({ found: false }) + '\n');
+        }
+        break;
+      }
+
+      case 'decay-failures': {
+        const filePath = getMemoryPath(cwd, 'failures');
+        if (!fs.existsSync(filePath)) {
+          process.stdout.write(JSON.stringify({ updated: 0 }) + '\n');
+          break;
+        }
+        const content = fs.readFileSync(filePath, 'utf8').trim();
+        if (!content) {
+          process.stdout.write(JSON.stringify({ updated: 0 }) + '\n');
+          break;
+        }
+        const lines = content.split('\n').filter(Boolean);
+        let updated = 0;
+        const newLines = lines.map(line => {
+          try {
+            const entry = JSON.parse(line);
+            const current = computeCurrentConfidence(entry);
+            if (Math.abs((entry.confidence || 0.7) - current) > 0.01) {
+              entry.confidence = current;
+              updated++;
+              return JSON.stringify(entry);
+            }
+            return line;
+          } catch { return line; }
+        });
+        if (updated > 0) {
+          fs.writeFileSync(filePath, newLines.join('\n') + '\n', 'utf8');
+        }
+        process.stdout.write(JSON.stringify({ updated }) + '\n');
+        break;
+      }
+
       default:
         process.stderr.write('Unknown command: ' + command + '\n');
-        process.stderr.write('Usage: memory-store.cjs <append-decision|append-error|append-quorum|query-decisions|query-errors|query-quorum|session-reminder|prune>\n');
+        process.stderr.write('Usage: memory-store.cjs <append-decision|append-error|append-quorum|append-correction|append-skill|append-failure|query-decisions|query-errors|query-quorum|query-corrections|query-skills|query-failures|boost-failure|decay-failures|session-reminder|prune>\n');
         process.exit(0);
     }
   } catch (e) {
@@ -353,6 +581,9 @@ module.exports = {
   generateSessionReminder,
   formatMemoryInjection,
   pruneOlderThan,
+  computeCurrentConfidence,
+  boostConfidence,
+  queryWithConfidence,
   MEMORY_DIR,
   FILES,
 };
