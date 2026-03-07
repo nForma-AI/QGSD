@@ -10,27 +10,27 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 1 of 7 (Dynamic Model Selection)
-Plan: 2 of 3 in current phase (3 plans in 2 waves)
-Status: Executing — plans 01 and 02 complete
-Last activity: 2026-03-07 - Completed v0.30-01-01 Task Classifier (2 tasks, 21+25 tests passing)
+Plan: 3 of 3 in current phase (3 plans in 2 waves)
+Status: Phase complete — all 3 plans executed
+Last activity: 2026-03-07 - Completed v0.30-01-03 Anti-Oscillation Cooldown (2 tasks, 53 tests passing)
 
-Progress: [######....] 66%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 3min
-- Total execution time: 0.1 hours
+- Total execution time: 0.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| v0.30-01 | 2 | 6min | 3min |
+| v0.30-01 | 3 | 10min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 3min
+- Last 5 plans: 3min, 3min, 4min
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - [v0.30-01-02]: Copilot displays 'subscription' instead of '$0.00' to avoid user confusion
 - [v0.30-01-01]: Slot filtering uses TIER_SLOT_MAP with >= 2 slot minimum to preserve quorum diversity
 - [v0.30-01-01]: Classification inserted after DISP-03 sort and before cache check to affect cache key computation
+- [v0.30-01-03]: Compaction threshold defaults to 65% via smart_compact_threshold_pct, separate from smart_compact.context_warn_pct
+- [v0.30-01-03]: Quorum lockout checks .claude/quorum-in-progress file existence before suggesting compaction
+- [v0.30-01-03]: Oscillation detection requires 3+ alternating direction changes within 10 minutes
 
 ### Pending Todos
 
@@ -68,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: Completed v0.30-01-01-PLAN.md (Task Classifier and Thinking Budget)
+Stopped at: Completed v0.30-01-03-PLAN.md (Anti-Oscillation Cooldown and Enhanced Compaction)
 Resume file: None
