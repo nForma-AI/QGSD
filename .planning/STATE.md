@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 ## Current Position
 
 Phase: 3 of 7 (Memory Persistence)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-07 - Completed quick task 212: Fix hooks-sync issue
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-03-07 - Completed v0.30-03-01: Memory Store
 
-Progress: [##........] 28%
+Progress: [###.......] 35%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 3min
 - Total execution time: 0.3 hours
 
@@ -29,9 +29,10 @@ Progress: [##........] 28%
 |-------|-------|-------|----------|
 | v0.30-01 | 3 | 10min | 3min |
 | v0.30-02 | 1 | 4min | 4min |
+| v0.30-03 | 1 | 3min | 3min |
 
 **Recent Trend:**
-- Last 5 plans: 3min, 3min, 4min, 4min
+- Last 5 plans: 3min, 3min, 4min, 4min, 3min
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -56,6 +57,9 @@ Recent decisions affecting current work:
 - [v0.30-02-01]: Iteration counter only incremented via nf-precompact.js on compaction, not on status checks
 - [v0.30-02-01]: Progress injection capped at 3200 chars to stay within additionalContext token budget
 - [v0.30-02-01]: Pattern A/B orchestrator-level progress tracking deferred; calls target Pattern C main path
+- [v0.30-03-01]: Self-contained path resolution in memory-store.cjs (no planning-paths dependency) for module independence
+- [v0.30-03-01]: Bidirectional substring matching for dedup: hay.includes(needle) || needle.includes(hay)
+- [v0.30-03-01]: Malformed JSONL lines preserved during prune (no silent data loss)
 
 ### Pending Todos
 
@@ -78,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-07
-Stopped at: Phase v0.30-02 complete, ready to plan Phase v0.30-03
+Stopped at: Completed v0.30-03-01-PLAN.md
 Resume file: None

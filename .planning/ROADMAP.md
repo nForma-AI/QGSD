@@ -85,7 +85,7 @@ Plans:
   4. User benefits from quorum decision memory -- debate rationale ("chose X over Y because Z") persists across compaction and is available in subsequent quorum rounds
 **Plans**: 2 plans
 Plans:
-- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
 - [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-04: Continuous Learning
@@ -99,7 +99,7 @@ Plans:
   4. User benefits from a failure catalog with confidence scores that tracks failed approaches and prevents re-attempting dead ends in subsequent sessions
 **Plans**: 2 plans
 Plans:
-- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
 - [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-05: Continuous Verification
@@ -112,7 +112,7 @@ Plans:
   3. Verification checks do not stall the agent loop -- checks that timeout or fail degrade gracefully to advisory warnings without blocking execution (formal: EventuallyTerminates)
 **Plans**: 2 plans
 Plans:
-- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
 - [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-06: Subagent Orchestration
@@ -125,7 +125,7 @@ Plans:
   3. User benefits from specialized retrieval agents -- domain-specific agents (test-retriever, architecture-retriever, formal-model-retriever) with preloaded skills fetch targeted context more efficiently than generic retrieval
 **Plans**: 2 plans
 Plans:
-- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
 - [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-07: Worktree Parallelization
@@ -138,7 +138,7 @@ Plans:
   3. Each parallel executor reaches a terminal state (success, cap exhausted, or unrecoverable) independently -- no executor stalls or blocks other executors (formal: EventuallyTerminates)
 **Plans**: 2 plans
 Plans:
-- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
 - [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 ### Progress

@@ -14,10 +14,10 @@
 
 ### Memory Persistence
 
-- [ ] **MEMP-01**: User's accumulated decisions, rejected approaches, and partial findings persist across compaction via structured state beyond STATE.md
+- [x] **MEMP-01**: User's accumulated decisions, rejected approaches, and partial findings persist across compaction via structured state beyond STATE.md
 - [ ] **MEMP-02**: User receives proactive session reminders at SessionStart with richer context — last 3 decisions made, blockers discovered, relevant learnings from previous sessions
-- [ ] **MEMP-03**: User benefits from error resolution memory — tricky bug fixes persist as searchable symptom/root-cause/fix patterns via subagent memory
-- [ ] **MEMP-04**: User benefits from quorum decision memory — debate rationale ("chose X over Y because Z") persists across compaction and sessions
+- [x] **MEMP-03**: User benefits from error resolution memory — tricky bug fixes persist as searchable symptom/root-cause/fix patterns via subagent memory
+- [x] **MEMP-04**: User benefits from quorum decision memory — debate rationale ("chose X over Y because Z") persists across compaction and sessions
 
 ### Continuous Learning
 
@@ -76,10 +76,10 @@
 | TOKN-02 | v0.30-01 | Complete |
 | TOKN-03 | v0.30-01 | Complete |
 | TOKN-04 | v0.30-01 | Complete |
-| MEMP-01 | v0.30-03 | Pending |
+| MEMP-01 | v0.30-03 | Complete |
 | MEMP-02 | v0.30-03 | Pending |
-| MEMP-03 | v0.30-03 | Pending |
-| MEMP-04 | v0.30-03 | Pending |
+| MEMP-03 | v0.30-03 | Complete |
+| MEMP-04 | v0.30-03 | Complete |
 | LRNG-01 | v0.30-04 | Pending |
 | LRNG-02 | v0.30-04 | Pending |
 | LRNG-03 | v0.30-04 | Pending |
