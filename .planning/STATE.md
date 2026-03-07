@@ -59,7 +59,7 @@ None yet.
 
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
-| 207 | Improve nf:solve to auto-remediate TODO stubs including behavioral strategy | 2026-03-07 | b727a7b3 | Pending | [207-improve-nf-solve-to-auto-remediate-todo-](./quick/207-improve-nf-solve-to-auto-remediate-todo-/) |
+| 207 | Improve nf:solve to auto-remediate TODO stubs including behavioral strategy | 2026-03-07 | b727a7b3 | Verified | [207-improve-nf-solve-to-auto-remediate-todo-](./quick/207-improve-nf-solve-to-auto-remediate-todo-/) |
 
 ## Session Continuity
 
