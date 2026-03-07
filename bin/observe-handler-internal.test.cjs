@@ -356,6 +356,97 @@ describe('formatAgeFromMtime', () => {
   });
 });
 
+// ── Category 15: Health diagnostics ──
+
+describe('Category 15 — Health diagnostics', () => {
+  it('skips when core/bin/gsd-tools.cjs absent (non-QGSD repo)', () => {
+    const tmpDir = makeTmpDir();
+    try {
+      // No core/bin/gsd-tools.cjs — should silently skip
+      const result = handleInternal({}, { projectRoot: tmpDir });
+      const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
+      assert.equal(healthIssues.length, 0, 'no health issues when gsd-tools absent');
+      assert.equal(result.status, 'ok');
+    } finally {
+      rmrf(tmpDir);
+    }
+  });
+
+  it('maps health check JSON output to observe issues with correct severities and routes', () => {
+    const tmpDir = makeTmpDir();
+    try {
+      const mockScript = `#!/usr/bin/env node
+process.stdout.write(JSON.stringify({
+  status: 'degraded',
+  errors: [{ code: 'E001', message: '.planning/ directory not found', fix: 'Run init', repairable: false }],
+  warnings: [{ code: 'W003', message: 'config.json not found', fix: 'Run repair', repairable: true }],
+  info: [{ code: 'I001', message: 'Plan has no SUMMARY', fix: 'May be in progress', repairable: false }],
+  repairable_count: 1
+}));`;
+      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+
+      const result = handleInternal({}, { projectRoot: tmpDir });
+      const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
+
+      // Error issue
+      const e001 = healthIssues.find(i => i.id === 'internal-health-E001');
+      assert.ok(e001, 'should find E001 error');
+      assert.equal(e001.severity, 'error');
+      assert.equal(e001._route, '/nf:solve');
+      assert.ok(e001.title.includes('.planning/ directory not found'));
+
+      // Warning issue (repairable)
+      const w003 = healthIssues.find(i => i.id === 'internal-health-W003');
+      assert.ok(w003, 'should find W003 warning');
+      assert.equal(w003.severity, 'warning');
+      assert.equal(w003._route, '/nf:health --repair', 'repairable warning should route to health --repair');
+
+      // Info issue
+      const i001 = healthIssues.find(i => i.id === 'internal-health-I001');
+      assert.ok(i001, 'should find I001 info');
+      assert.equal(i001.severity, 'info');
+      assert.equal(i001._route, '/nf:solve');
+    } finally {
+      rmrf(tmpDir);
+    }
+  });
+
+  it('fail-open when gsd-tools.cjs returns non-JSON', () => {
+    const tmpDir = makeTmpDir();
+    try {
+      const mockScript = `#!/usr/bin/env node
+process.stdout.write('not json');`;
+      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+
+      const result = handleInternal({}, { projectRoot: tmpDir });
+      assert.equal(result.status, 'ok');
+      const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
+      assert.equal(healthIssues.length, 0, 'non-JSON output should yield no health issues');
+    } finally {
+      rmrf(tmpDir);
+    }
+  });
+
+  it('fail-open when gsd-tools.cjs exits non-zero', () => {
+    const tmpDir = makeTmpDir();
+    try {
+      const mockScript = `#!/usr/bin/env node
+process.exit(1);`;
+      createFile(tmpDir, 'core/bin/gsd-tools.cjs', mockScript);
+      fs.chmodSync(path.join(tmpDir, 'core/bin/gsd-tools.cjs'), 0o755);
+
+      const result = handleInternal({}, { projectRoot: tmpDir });
+      assert.equal(result.status, 'ok');
+      const healthIssues = result.issues.filter(i => i.id.startsWith('internal-health-'));
+      assert.equal(healthIssues.length, 0, 'non-zero exit should yield no health issues');
+    } finally {
+      rmrf(tmpDir);
+    }
+  });
+});
+
 // ── Fail-open cross-cutting ──
 
 describe('Fail-open behavior', () => {
