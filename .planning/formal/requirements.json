@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-07T08:05:02.972Z",
-  "content_hash": "b983b5d92d899376",
-  "frozen_at": "2026-03-07T08:05:02.972Z",
+  "aggregated_at": "2026-03-07T13:56:10.493Z",
+  "content_hash": "15a5d03b740113d7",
+  "frozen_at": "2026-03-07T13:56:10.493Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -1962,7 +1962,7 @@
       "text": "Observe utility functions (formatAge, parseDuration, classifySeverity) are defined in a single canonical module and imported by all handlers. No handler duplicates these functions.",
       "category": "Observability",
       "phase": "unknown",
-      "status": "Planned",
+      "status": "Complete",
       "background": "formatAge is duplicated in 6 files with 3 different null-handling behaviors (unknown, empty string, new vs future). parseDuration is duplicated in 2 files. This drift already causes visual inconsistency in observe output.",
       "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
       "milestone": "quick-188"
@@ -1998,6 +1998,28 @@
         "source_file": ".planning/quick/201-survey-code-for-producer-without-consume/201-PLAN.md",
         "milestone": "quick-201"
       }
+    },
+    {
+      "id": "OBS-14",
+      "text": "Observe handlers accept execFn and basePath options for dependency injection. All subprocess calls use the injected execFn (defaulting to execFileSync) and all filesystem paths resolve relative to basePath.",
+      "category": "Observability",
+      "phase": "unknown",
+      "status": "Planned",
+      "priority": "MEDIUM",
+      "background": "Handlers that shell out to git or read filesystem paths are hard to test in isolation without dependency injection. Accepting execFn and basePath as options enables unit tests to supply stubs and temporary directories.",
+      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
+      "milestone": "quick-188"
+    },
+    {
+      "id": "OBS-15",
+      "text": "Stateful observe handlers persist their cursor in .planning/ as JSON with a last_checked ISO8601 field. State writes use atomic write (write to temp file + rename) to prevent corruption.",
+      "category": "Observability",
+      "phase": "unknown",
+      "status": "Planned",
+      "priority": "LOW",
+      "background": "Handlers that track incremental state (e.g., upstream commit cursors) need a durable, corruption-resistant persistence mechanism. Atomic write-then-rename prevents partial writes from corrupting the cursor file on crash or interrupt.",
+      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
+      "milestone": "quick-188"
     },
     {
       "id": "ORES-01",
@@ -2983,6 +3005,18 @@
         "milestone": "quick-196"
       },
       "background": "The previous inline keyword-substring matching in workflows produced false positives (e.g., session matching agent-loop, safety matching unrelated modules). Structured scope.json metadata per formal spec module with curated concepts enables precise semantic relevance matching without substring ambiguity."
+    },
+    {
+      "id": "SPEC-06",
+      "text": "All Alloy assertions verify non-tautological properties (no P=>P or x=x patterns), all TLA+ TypeOK variable domains use bounded ranges (no raw Nat/Int), and all Alloy check commands use per-sig scopes matching their signature hierarchy",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/204-audit-formal-models-for-state-space-expl/204-PLAN.md",
+        "milestone": "quick-204"
+      },
+      "background": "Audit of 94 formal models (61 Alloy, 33 TLA+) revealed tautological assertions giving false verification confidence, unbounded TLA+ counters risking state space explosion, and Alloy check commands using overall scopes that under-explore signature combinations."
     },
     {
       "id": "STATE-01",
