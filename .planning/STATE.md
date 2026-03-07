@@ -71,7 +71,7 @@ None yet.
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 207 | Improve nf:solve to auto-remediate TODO stubs including behavioral strategy | 2026-03-07 | b727a7b3 | Verified | [207-improve-nf-solve-to-auto-remediate-todo-](./quick/207-improve-nf-solve-to-auto-remediate-todo-/) |
-| 210 | Replace checkpoint:human-verify auto-approval with quorum consensus gate (100% APPROVE required) | 2026-03-07 | a50d3fbe | Pending | [210-replace-checkpoint-human-verify-auto-app](./quick/210-replace-checkpoint-human-verify-auto-app/) |
+| 210 | Replace checkpoint:human-verify auto-approval with quorum consensus gate (100% APPROVE required) | 2026-03-07 | 0224c258 | Verified | [210-replace-checkpoint-human-verify-auto-app](./quick/210-replace-checkpoint-human-verify-auto-app/) |
 | 211 | Add wiring-in checks to planner and verifier workflows | 2026-03-07 | 369fda5e | Verified | [211-add-wiring-in-checks-to-planner-and-veri](./quick/211-add-wiring-in-checks-to-planner-and-veri/) |
 
 ## Session Continuity
