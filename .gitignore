@@ -100,6 +100,9 @@ states/
 .planning/quorum-rounds-session-*.jsonl
 .planning/quorum/rounds/
 
+# Task classification (ephemeral, written by nf-prompt.js per quorum dispatch)
+.planning/task-classification.json
+
 # Quorum cache (ephemeral, per-session)
 .planning/.quorum-cache/
 
