@@ -53,6 +53,124 @@ if (cliArgs.includes('--reset-breaker')) {
   process.exit(0);
 }
 
+// ─── Screenshot CLI (non-interactive, exits before TUI loads) ────────────────
+const SCREENSHOT_MODULES = [
+  {
+    name: 'Agents', key: 'F1',
+    items: [
+      'List Agents', 'Add Agent', 'Clone Slot', 'Edit Agent', 'Remove Agent',
+      'Reorder Agents', 'Check Agent Health', 'Login / Auth',
+      '─────────────────', 'Provider Keys', '─────────────────',
+      'Batch Rotate Keys', '─────────────────', 'Live Health', 'Scoreboard',
+      '─────────────────', 'Update Agents',
+    ],
+  },
+  {
+    name: 'Reqs', key: 'F2',
+    items: ['Browse Reqs', 'Coverage', 'Traceability', 'Aggregate', 'Coverage Gaps'],
+  },
+  {
+    name: 'Config', key: 'F3',
+    items: [
+      'Settings', 'Tune Timeouts', 'Set Update Policy', '─────────────────',
+      'Export Roster', 'Import Roster', '─────────────────', 'Exit',
+    ],
+  },
+  {
+    name: 'Sessions', key: 'F4',
+    items: ['New Session'],
+  },
+];
+
+if (cliArgs.includes('--screenshot')) {
+  const ssIdx = cliArgs.indexOf('--screenshot');
+  const moduleName = (cliArgs[ssIdx + 1] || '').toLowerCase();
+  const moduleMap = { agents: 0, reqs: 1, config: 2, sessions: 3 };
+
+  if (!(moduleName in moduleMap)) {
+    process.stderr.write('Usage: nForma --screenshot <agents|reqs|config|sessions>\n');
+    process.exit(1);
+  }
+
+  const idx = moduleMap[moduleName];
+  const mod = SCREENSHOT_MODULES[idx];
+
+  // Build synthetic ANSI representation matching TUI layout
+  const ESC = '\x1b';
+  const TEAL = `${ESC}[36m`;
+  const DIM = `${ESC}[90m`;
+  const WHITE = `${ESC}[37m`;
+  const BOLD = `${ESC}[1m`;
+  const RESET = `${ESC}[0m`;
+  const SALMON = `${ESC}[38;2;224;120;80m`;
+  const SELBG = `${ESC}[48;2;30;58;58m`;
+
+  // Header
+  const headerLine = `${SALMON}${BOLD}nForma AI${RESET} ${DIM}· agent manager${RESET}`;
+  const keyHints = `${TEAL}[F1]${RESET} A  ${TEAL}[F2]${RESET} R  ${TEAL}[F3]${RESET} C  ${TEAL}[F4]${RESET} S   ${TEAL}[Tab]${RESET} cycle  ${TEAL}[q]${RESET} quit`;
+  process.stdout.write(`┌${'─'.repeat(118)}┐\n`);
+  process.stdout.write(`│ ${headerLine}  ${keyHints} │\n`);
+  process.stdout.write(`├${'─'.repeat(7)}┬${'─'.repeat(24)}┬${'─'.repeat(85)}┤\n`);
+
+  // Activity bar icons + menu + content area
+  const artByModule = [
+    ['▄█▄', '█ █', '█▀█'],
+    ['█▀█', '██▀', '█ █'],
+    ['▄▀▀', '█  ', '▀▄▄'],
+    ['▄▀▄', '█▀▀', '▀▄▄'],
+  ];
+
+  const menuItems = mod.items;
+  const totalRows = Math.max(menuItems.length + 2, 20);
+
+  for (let r = 0; r < totalRows; r++) {
+    // Activity bar column (7 chars wide)
+    let actCol = '       ';
+    // Each module block takes 5 rows: blank, art[0], art[1], art[2], key label
+    // Plus 1 separator row between modules
+    for (let mi = 0; mi < 4; mi++) {
+      const baseRow = mi * 6;
+      const art = artByModule[mi];
+      const isActive = mi === idx;
+      const color = isActive ? TEAL : DIM;
+      if (r === baseRow + 1) actCol = ` ${color}${art[0]}${RESET}   `;
+      if (r === baseRow + 2) actCol = ` ${color}${art[1]}${RESET}   `;
+      if (r === baseRow + 3) actCol = ` ${color}${art[2]}${RESET}   `;
+      if (r === baseRow + 4) actCol = `  ${color}${SCREENSHOT_MODULES[mi].key}${RESET}  `;
+      if (r === baseRow + 5 && mi < 3) actCol = ` ${DIM}─────${RESET} `;
+    }
+
+    // Menu column (24 chars wide)
+    let menuCol = ' '.repeat(24);
+    if (r < menuItems.length) {
+      const item = menuItems[r];
+      const isSep = item.startsWith('─');
+      const isSelected = r === 0;
+      if (isSep) {
+        menuCol = ` ${DIM}${item}${RESET}`.padEnd(24);
+      } else if (isSelected) {
+        menuCol = `${SELBG}  ${WHITE}${item}${RESET}`.padEnd(24);
+      } else {
+        menuCol = `  ${DIM}${item}${RESET}`.padEnd(24);
+      }
+    }
+
+    // Content column (placeholder)
+    let contentCol = ' '.repeat(85);
+    if (r === 0) contentCol = ` ${WHITE}${mod.name} Module${RESET}` + ' '.repeat(85 - mod.name.length - 8);
+    if (r === 1) contentCol = ` ${DIM}${'─'.repeat(40)}${RESET}` + ' '.repeat(44);
+
+    process.stdout.write(`│${actCol}│${menuCol}│${contentCol}│\n`);
+  }
+
+  // Status bar
+  process.stdout.write(`├${'─'.repeat(7)}┴${'─'.repeat(24)}┴${'─'.repeat(85)}┤\n`);
+  process.stdout.write(`│ ${DIM}nForma TUI${RESET}${' '.repeat(107)}│\n`);
+  process.stdout.write(`└${'─'.repeat(118)}┘\n`);
+
+  process.exit(0);
+}
+
 // ─── TUI (interactive mode — no CLI flags matched) ───────────────────────────
 const blessed    = require('blessed');
 let XTerm;
