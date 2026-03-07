@@ -14,7 +14,7 @@ must_haves:
   truths:
     - "README Formal Verification section explains the capability from a user perspective"
     - "No internal model names (QGSDQuorum, QGSDCircuitBreaker, etc.) appear in the section"
-    - "No .planning/formal/ directory tree listing appears in the section"
+    - "No directory tree listings (├── / └──) appear in the section"
     - "Prerequisites and running instructions are preserved for users who want to run verification"
     - "Link to VERIFICATION_TOOLS.md is preserved for detailed documentation"
   artifacts:
@@ -58,7 +58,7 @@ The new section MUST:
 
 1. Keep the `## Formal Verification` heading (the ToC nav link at line 28 references `#formal-verification`)
 
-2. Open with a brief paragraph (2-3 sentences) explaining that nForma uses formal methods (TLA+, Alloy, PRISM, Petri nets, UPPAAL) to machine-check its own protocol correctness -- safety invariants, liveness properties, and probabilistic convergence. Frame this as a trust signal: "the protocols governing your planning decisions are mathematically verified, not just tested."
+2. Open with a brief paragraph (2-3 sentences) explaining that nForma uses formal methods (TLA+, Alloy, PRISM, Petri nets, UPPAAL) to machine-check its own protocol correctness -- safety invariants, liveness properties, and probabilistic convergence. Frame as a user benefit: protocols are machine-checked for correctness, not just tested. Write naturally fitting prose rather than marketing copy.
 
 3. Keep the note that formal verification is optional and not required to use nForma normally.
 
@@ -77,7 +77,7 @@ Keep the `---` separator after the section (before ## Commands).
   <verify>
 Run these checks:
 - `grep -c 'QGSDQuorum\|QGSDCircuitBreaker\|QGSDOscillation\|QGSDConvergence' README.md` returns 0
-- `grep -c 'planning/formal/' README.md` returns 0 (no directory tree)
+- `grep -c '├──\|└──' README.md | grep -q '^0$'` — no directory tree listings remain (incidental path references like install paths in prose are acceptable)
 - `grep -c 'VERIFICATION_TOOLS.md' README.md` returns at least 1
 - `grep -c '## Formal Verification' README.md` returns 1
 - `grep -c 'run-formal-verify' README.md` returns at least 1
@@ -101,7 +101,7 @@ The Formal Verification section answers "what does nForma do for me?" (mathemati
 <success_criteria>
 - Formal Verification section is 30-40 lines (down from 87)
 - Zero references to specific internal model names
-- Zero directory tree listings
+- Zero directory tree listings (├── / └── patterns)
 - Prerequisites and running commands preserved
 - VERIFICATION_TOOLS.md linked for full details
 </success_criteria>
