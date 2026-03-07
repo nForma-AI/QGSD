@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-07T21:15:22.830Z",
-  "content_hash": "fd27bfcb31074a8f",
+  "aggregated_at": "2026-03-07T22:20:37.832Z",
+  "content_hash": "ecda85496122c875",
   "schema_version": "1",
   "requirements": [
     {
@@ -2072,6 +2072,18 @@
       "milestone": "quick-188"
     },
     {
+      "id": "OBS-16",
+      "text": "The observe handler surfaces nf:health diagnostic codes (E*/W*/I*) as observe issues with severity-mapped routing, gated to the QGSD source repo via core/bin/gsd-tools.cjs existence check.",
+      "category": "Observability",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Health check problems previously required manual /nf:health runs to discover. Wiring health diagnostics into /nf:observe as Category 15 creates a self-development feedback loop where planning health issues appear automatically in observe output, but only when running inside the QGSD repo itself.",
+      "provenance": {
+        "source_file": ".planning/quick/219-wire-nf-health-diagnostics-into-nf-obser/219-PLAN.md",
+        "milestone": "quick-219"
+      }
+    },
+    {
       "id": "ORES-01",
       "text": "When oscillation is detected and the oscillating file set contains only internal code files, Claude MUST enter oscillation resolution mode instead of hard-stopping",
       "category": "Hooks & Enforcement",
@@ -3978,5 +3990,5 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-07T21:15:22.876Z"
+  "frozen_at": "2026-03-07T22:20:37.833Z"
 }
