@@ -214,7 +214,7 @@ For full automation-first patterns, server lifecycle, CLI handling:
 
 **Auto-mode checkpoint behavior** (when `AUTO_CFG` is `"true"`):
 
-- **checkpoint:human-verify** → Auto-approve. Log `⚡ Auto-approved: [what-built]`. Continue to next task.
+- **checkpoint:human-verify** → Do NOT auto-approve. Return structured checkpoint message using checkpoint_return_format so the orchestrator can run a quorum consensus gate (100% APPROVE required). The orchestrator handles quorum dispatch and user escalation.
 - **checkpoint:decision** → Auto-select first option (planners front-load the recommended choice). Log `⚡ Auto-selected: [option name]`. Continue to next task.
 - **checkpoint:human-action** → STOP normally. Auth gates cannot be automated — return structured checkpoint message using checkpoint_return_format.
 

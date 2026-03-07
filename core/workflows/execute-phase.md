@@ -228,7 +228,22 @@ AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 
 ```
 
 When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
-- **human-verify** → Auto-spawn continuation agent with `{user_response}` = `"approved"`. Log `⚡ Auto-approved checkpoint`.
+- **human-verify** → Run quorum consensus gate:
+  1. Extract checkpoint details: `what-built` and `how-to-verify` from the checkpoint task XML. These MUST be included verbatim in the quorum question so workers have sufficient context for informed decisions.
+  2. Form your own position: can each verification criterion be confirmed via available tools (grep, file reads, test runs, curl)? Vote APPROVE or BLOCK with rationale.
+  3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+     - Mode A — pure question
+     - Question: "Checkpoint verification for auto-mode: [what-built]. Criteria: [how-to-verify]. Can each criterion be confirmed programmatically using available tools (grep, file inspection, test output, curl)? Vote APPROVE if all criteria are verifiable and met, or BLOCK if any criterion genuinely requires human eyes."
+     - Include the full checkpoint task XML as context (what-built, how-to-verify, resume-signal) so workers can evaluate each criterion independently.
+     - risk_level: Use `medium` (yielding FAN_OUT_COUNT=3) unless the task envelope specifies a different risk_level, in which case inherit it. This gives 2 external workers + Claude for a 3-way consensus.
+     - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Dispatch as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
+     - Synthesize results inline, deliberate up to 10 rounds per R3.3
+     - **Unanimous gate: 100% APPROVE required.** Unlike standard quorum majority, ALL responding workers must vote APPROVE.
+     Fail-open: if all slots error or no slots respond, treat as BLOCK (escalate to user).
+  4. Route on quorum_result:
+     - **APPROVED (unanimous)** → Log `⚡ Quorum-approved checkpoint: [what-built]`. Spawn continuation agent with `{user_response}` = `"approved"`.
+     - **BLOCKED (any BLOCK vote)** → Present checkpoint to user (standard flow below). Log `⚡ Quorum blocked checkpoint — escalating to user`.
+     - **ESCALATED** → Present checkpoint to user with escalation details. Log `⚡ Quorum escalated checkpoint — presenting to user`.
 - **decision** → Auto-spawn continuation agent with `{user_response}` = first option from checkpoint details. Log `⚡ Auto-selected: [option]`.
 - **human-action** → Present to user (existing behavior below). Auth gates cannot be automated.
 
