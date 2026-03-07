@@ -19,6 +19,8 @@ must_haves:
     - "100% APPROVE from all quorum workers required to proceed past checkpoint"
     - "Any BLOCK vote or quorum unavailability escalates to user"
     - "checkpoint:decision and checkpoint:human-action behavior unchanged"
+    - "Quorum question text includes the specific checkpoint criteria (what-built, how-to-verify) so workers have sufficient context for informed APPROVE/BLOCK decisions"
+    - "Quorum consensus gate logs its outcome (APPROVED vs ESCALATED) for audit trail"
   artifacts:
     - path: "core/references/checkpoints.md"
       provides: "Updated golden rule #5 describing quorum consensus gate"
@@ -77,23 +79,24 @@ Output: Updated workflow docs (checkpoints reference, execute-phase workflow, ex
     agents/nf-executor.md
   </files>
   <action>
-**core/references/checkpoints.md** — Line 11, golden rule #5:
+**core/references/checkpoints.md** — Find golden rule #5 (anchor: the line matching `Auto-mode bypasses verification/decision checkpoints`):
 Replace the current text:
 `5. **Auto-mode bypasses verification/decision checkpoints** — When workflow.auto_advance is true in config: human-verify auto-approves, decision auto-selects first option, human-action still stops (auth gates cannot be automated)`
 With:
 `5. **Auto-mode uses quorum consensus for verification checkpoints** — When workflow.auto_advance is true in config: human-verify triggers a quorum consensus gate (100% APPROVE required from all workers, falls back to user on any BLOCK or quorum unavailability), decision auto-selects first option, human-action still stops (auth gates cannot be automated)`
 
-**core/workflows/execute-phase.md** — Lines 230-233, the auto-mode checkpoint handling block. Replace the `human-verify` bullet:
+**core/workflows/execute-phase.md** — Find the auto-mode checkpoint handling block (anchor: the line matching `**human-verify** → Auto-spawn continuation agent`). Replace the `human-verify` bullet:
 OLD: `- **human-verify** → Auto-spawn continuation agent with {user_response} = "approved". Log ⚡ Auto-approved checkpoint.`
 NEW (model on the human_needed quorum pattern at lines 462-482):
 ```
 - **human-verify** → Run quorum consensus gate:
-  1. Extract checkpoint details: `what-built` and `how-to-verify` from the checkpoint task.
+  1. Extract checkpoint details: `what-built` and `how-to-verify` from the checkpoint task XML. These MUST be included verbatim in the quorum question so workers have sufficient context for informed decisions.
   2. Form your own position: can each verification criterion be confirmed via available tools (grep, file reads, test runs, curl)? Vote APPROVE or BLOCK with rationale.
   3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
      - Mode A — pure question
      - Question: "Checkpoint verification for auto-mode: [what-built]. Criteria: [how-to-verify]. Can each criterion be confirmed programmatically using available tools (grep, file inspection, test output, curl)? Vote APPROVE if all criteria are verifiable and met, or BLOCK if any criterion genuinely requires human eyes."
-     - Include the full checkpoint task XML as context
+     - Include the full checkpoint task XML as context (what-built, how-to-verify, resume-signal) so workers can evaluate each criterion independently.
+     - risk_level: Use `medium` (yielding FAN_OUT_COUNT=3) unless the task envelope specifies a different risk_level, in which case inherit it. This gives 2 external workers + Claude for a 3-way consensus.
      - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Dispatch as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
      - Synthesize results inline, deliberate up to 10 rounds per R3.3
      - **Unanimous gate: 100% APPROVE required.** Unlike standard quorum majority, ALL responding workers must vote APPROVE.
@@ -101,11 +104,11 @@ NEW (model on the human_needed quorum pattern at lines 462-482):
   4. Route on quorum_result:
      - **APPROVED (unanimous)** → Log `⚡ Quorum-approved checkpoint: [what-built]`. Spawn continuation agent with `{user_response}` = `"approved"`.
      - **BLOCKED (any BLOCK vote)** → Present checkpoint to user (standard flow below). Log `⚡ Quorum blocked checkpoint — escalating to user`.
-     - **ESCALATED** → Present checkpoint to user with escalation details.
+     - **ESCALATED** → Present checkpoint to user with escalation details. Log `⚡ Quorum escalated checkpoint — presenting to user`.
 ```
 Keep the `decision` and `human-action` bullets unchanged.
 
-**agents/nf-executor.md** — Lines 215-219, the auto-mode checkpoint behavior block. Replace the `human-verify` bullet:
+**agents/nf-executor.md** — Find the auto-mode checkpoint behavior block (anchor: the line matching `checkpoint:human-verify` followed by `Auto-approve`). Replace the `human-verify` bullet:
 OLD: `- **checkpoint:human-verify** → Auto-approve. Log ⚡ Auto-approved: [what-built]. Continue to next task.`
 NEW: `- **checkpoint:human-verify** → Do NOT auto-approve. Return structured checkpoint message using checkpoint_return_format so the orchestrator can run a quorum consensus gate (100% APPROVE required). The orchestrator handles quorum dispatch and user escalation.`
 
@@ -116,14 +119,17 @@ Formal invariant compliance:
 - ConvergenceEventuallyResolves (convergence): The fail-open fallback to user escalation ensures the checkpoint always resolves even if quorum is unavailable.
   </action>
   <verify>
-    - `grep -n "quorum consensus" core/references/checkpoints.md` returns line 11 area with new golden rule text
+    - `grep -n "quorum consensus" core/references/checkpoints.md` returns match at the golden rule #5 line (find via `grep -n "Auto-mode uses quorum"`)
     - `grep -n "100% APPROVE" core/workflows/execute-phase.md` returns match in auto-mode checkpoint section
+    - `grep -n "risk_level.*medium" core/workflows/execute-phase.md` returns match confirming default risk_level is specified
+    - `grep -n "what-built.*how-to-verify" core/workflows/execute-phase.md` returns match confirming checkpoint criteria are passed to quorum question
     - `grep -n "quorum consensus gate" agents/nf-executor.md` returns match in auto-mode section
     - `grep -c "Auto-approve" agents/nf-executor.md` returns 0 (no more auto-approve for human-verify)
-    - `grep -n "Auto-spawn continuation.*approved" core/workflows/execute-phase.md` returns NO match for human-verify (decision bullet may still have auto-select)
+    - Verify old auto-approve pattern is gone: `grep -c "human-verify.*Auto-spawn" core/workflows/execute-phase.md` returns 0 (not just checking for "Auto-spawn continuation.*approved" which could match other patterns)
+    - `grep -n "Log.*Quorum" core/workflows/execute-phase.md` returns matches for all three outcomes (APPROVED, BLOCKED, ESCALATED) confirming audit trail logging
   </verify>
   <done>
-    All three files updated: golden rule #5 describes quorum consensus, execute-phase uses quorum gate pattern for human-verify, executor delegates to orchestrator instead of auto-approving. Decision and human-action behaviors unchanged.
+    All three files updated: golden rule #5 describes quorum consensus, execute-phase uses quorum gate pattern for human-verify with explicit risk_level default (medium/FAN_OUT_COUNT=3), quorum question includes full checkpoint criteria (what-built, how-to-verify), all three outcome paths log their result for audit trail, executor delegates to orchestrator instead of auto-approving. Decision and human-action behaviors unchanged.
   </done>
 </task>
 
@@ -131,7 +137,7 @@ Formal invariant compliance:
   <name>Task 2: Add CHANGELOG entry for breaking change</name>
   <files>CHANGELOG.md</files>
   <action>
-Add a new entry under `## [Unreleased]` in CHANGELOG.md. Insert after line 7 (`## [Unreleased]`) and before line 9 (`## [0.2.1]`):
+Add a new entry under `## [Unreleased]` in CHANGELOG.md. Find the line matching `## [Unreleased]` and insert after it, before the next `## [` section header:
 
 ```markdown
 ### Changed
@@ -156,6 +162,9 @@ Do NOT modify any existing changelog entries below the `## [Unreleased]` section
 - Decision and human-action checkpoint behaviors unchanged in all files
 - CHANGELOG documents the breaking change under Unreleased
 - The quorum gate pattern references R3 dispatch_pattern consistently with the existing human_needed pattern
+- Quorum question text includes what-built and how-to-verify checkpoint criteria
+- Default risk_level (medium) specified for FAN_OUT_COUNT calculation
+- All three quorum outcome paths (APPROVED, BLOCKED, ESCALATED) include Log statements for audit trail
 </verification>
 
 <success_criteria>
@@ -164,6 +173,10 @@ Do NOT modify any existing changelog entries below the `## [Unreleased]` section
 - `grep -n "100% APPROVE" core/workflows/execute-phase.md` returns match
 - `grep "BREAKING.*checkpoint" CHANGELOG.md` returns match
 - Decision auto-select still present: `grep "Auto-select" agents/nf-executor.md` returns match (or equivalent decision bullet unchanged)
+- `grep -c "human-verify.*Auto-spawn" core/workflows/execute-phase.md` returns 0 (old pattern fully removed)
+- `grep "risk_level" core/workflows/execute-phase.md` returns match in checkpoint section
+- `grep "what-built.*how-to-verify" core/workflows/execute-phase.md` returns match (criteria in quorum question)
+- `grep -c "Log.*Quorum" core/workflows/execute-phase.md` returns 3 (one per outcome path)
 </success_criteria>
 
 <output>
