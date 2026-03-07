@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-07T15:56:03.783Z",
-  "content_hash": "c6baa21f850efdcd",
+  "aggregated_at": "2026-03-07T16:47:41.262Z",
+  "content_hash": "0abb058a7db5b443",
   "schema_version": "1",
   "requirements": [
     {
@@ -990,7 +990,10 @@
       "provenance": {
         "source_file": ".planning/quick/208-rewrite-readme-md-to-focus-on-user-facin/208-PLAN.md",
         "milestone": "quick-208"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/doc-public-boundary.als"
+      ]
     },
     {
       "id": "DRIFT-01",
@@ -3903,5 +3906,5 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-07T15:56:03.784Z"
+  "frozen_at": "2026-03-07T16:47:41.263Z"
 }
