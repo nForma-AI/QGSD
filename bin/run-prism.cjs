@@ -47,9 +47,9 @@ if (!prismBin) {
   );
   try {
     writeCheckResult({
-      tool: 'run-prism', formalism: 'prism', result: 'fail',
+      tool: 'run-prism', formalism: 'prism', result: 'error',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
-      runtime_ms: 0, summary: 'fail: prism:quorum (binary not found)', triage_tags: [],
+      runtime_ms: 0, summary: 'error: prism:quorum (binary not found)', triage_tags: [],
       requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
@@ -66,9 +66,9 @@ if (!fs.existsSync(modelPath)) {
   );
   try {
     writeCheckResult({
-      tool: 'run-prism', formalism: 'prism', result: 'fail',
+      tool: 'run-prism', formalism: 'prism', result: 'error',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
-      runtime_ms: 0, summary: 'fail: prism:quorum (model not found)', triage_tags: [],
+      runtime_ms: 0, summary: 'error: prism:quorum (model not found)', triage_tags: [],
       requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
@@ -151,9 +151,9 @@ try {
   process.stderr.write('[run-prism] Failed to load policy.yaml: ' + e.message + '\n');
   try {
     writeCheckResult({
-      tool: 'run-prism', formalism: 'prism', result: 'fail',
+      tool: 'run-prism', formalism: 'prism', result: 'error',
       check_id: 'prism:quorum', surface: 'prism', property: 'Quorum consensus probability under agent availability rates',
-      runtime_ms: 0, summary: 'fail: prism:quorum (policy load failed)', triage_tags: [],
+      runtime_ms: 0, summary: 'error: prism:quorum (policy load failed)', triage_tags: [],
       requirement_ids: getRequirementIds('prism:quorum'),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}
@@ -372,9 +372,9 @@ if (result.error) {
   const check_id = CHECK_ID_MAP[modelName];
   try {
     writeCheckResult({
-      tool: 'run-prism', formalism: 'prism', result: 'fail',
+      tool: 'run-prism', formalism: 'prism', result: 'error',
       check_id: check_id, surface: 'prism', property: PROPERTY_MAP[modelName],
-      runtime_ms: _runtimeMs, summary: 'fail: ' + check_id + ' in ' + _runtimeMs + 'ms', triage_tags: [],
+      runtime_ms: _runtimeMs, summary: 'error: ' + check_id + ' (launch failed)', triage_tags: [],
       requirement_ids: getRequirementIds(check_id),
       observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
       metadata: {}

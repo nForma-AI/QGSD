@@ -135,12 +135,12 @@ if (require.main === module) {
       writeCheckResult({
         tool: 'run-tlc',
         formalism: 'tla',
-        result: 'fail',
+        result: 'error',
         check_id: 'tla:' + configName.toLowerCase(),
         surface: 'tla',
         property: 'Config not found: ' + configName,
         runtime_ms: _runtimeMs,
-        summary: 'fail: config file not found in ' + _runtimeMs + 'ms',
+        summary: 'error: config file not found in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds('tla:' + configName.toLowerCase()),
         metadata: { config: configName }
       });
@@ -167,12 +167,12 @@ if (require.main === module) {
         writeCheckResult({
           tool: 'run-tlc',
           formalism: 'tla',
-          result: 'fail',
+          result: 'error',
           check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()),
           surface: 'tla',
           property: PROPERTY_MAP[configName] || configName,
           runtime_ms: _runtimeMs,
-          summary: 'fail: Java not found in ' + _runtimeMs + 'ms',
+          summary: 'error: Java not found in ' + _runtimeMs + 'ms',
           requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
           metadata: { config: configName }
         });
@@ -195,12 +195,12 @@ if (require.main === module) {
         writeCheckResult({
           tool: 'run-tlc',
           formalism: 'tla',
-          result: 'fail',
+          result: 'error',
           check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()),
           surface: 'tla',
           property: PROPERTY_MAP[configName] || configName,
           runtime_ms: _runtimeMs,
-          summary: 'fail: Java not found in ' + _runtimeMs + 'ms',
+          summary: 'error: Java not found in ' + _runtimeMs + 'ms',
           requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
           metadata: { config: configName }
         });
@@ -222,12 +222,12 @@ if (require.main === module) {
       writeCheckResult({
         tool: 'run-tlc',
         formalism: 'tla',
-        result: 'fail',
+        result: 'error',
         check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()),
         surface: 'tla',
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
-        summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms',
+        summary: 'error: Java version check failed in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
@@ -251,12 +251,12 @@ if (require.main === module) {
       writeCheckResult({
         tool: 'run-tlc',
         formalism: 'tla',
-        result: 'fail',
+        result: 'error',
         check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()),
         surface: 'tla',
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
-        summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms',
+        summary: 'error: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
@@ -281,12 +281,12 @@ if (require.main === module) {
       writeCheckResult({
         tool: 'run-tlc',
         formalism: 'tla',
-        result: 'fail',
+        result: 'error',
         check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()),
         surface: 'tla',
         property: PROPERTY_MAP[configName] || configName,
         runtime_ms: _runtimeMs,
-        summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms',
+        summary: 'error: tla2tools.jar not found in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
         metadata: { config: configName }
       });
@@ -388,12 +388,12 @@ if (require.main === module) {
       writeCheckResult({
         tool: 'run-tlc',
         formalism: 'tla',
-        result: 'fail',
+        result: 'error',
         check_id: check_id,
         surface: 'tla',
         property: property,
         runtime_ms: _runtimeMs,
-        summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms',
+        summary: 'error: TLC invocation failed in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds(check_id),
         metadata: { config: configName }
       });

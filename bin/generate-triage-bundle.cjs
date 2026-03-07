@@ -28,13 +28,15 @@ function parseCurrentNDJSON() {
 function generateSuspects(results) {
   const suspects = results.filter(r =>
     r.result === 'fail' ||
+    r.result === 'error' ||
     (Array.isArray(r.triage_tags) && r.triage_tags.length > 0)
   );
 
   const priority = (r) => {
     if (r.result === 'fail') return 0;
-    if (r.result === 'warn' && r.triage_tags && r.triage_tags.length > 0) return 1;
-    return 2;
+    if (r.result === 'error') return 1;
+    if (r.result === 'warn' && r.triage_tags && r.triage_tags.length > 0) return 2;
+    return 3;
   };
 
   suspects.sort((a, b) => priority(a) - priority(b));

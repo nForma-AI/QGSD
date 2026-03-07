@@ -169,10 +169,10 @@ function main() {
   if (result.error) {
     process.stderr.write(TAG + ' Launch error: ' + result.error.message + '\n');
     writeCheckResult({
-      tool: 'run-uppaal', formalism: 'uppaal', result: 'fail',
+      tool: 'run-uppaal', formalism: 'uppaal', result: 'error',
       check_id: CHECK_ID, surface: SURFACE, property: PROPERTY,
       runtime_ms: runtimeMs,
-      summary: 'fail: verifyta launch error — ' + result.error.message,
+      summary: 'error: verifyta launch error — ' + result.error.message,
       triage_tags: ['verifyta-error'],
       requirement_ids: getRequirementIds(CHECK_ID),
       metadata: { bounds },

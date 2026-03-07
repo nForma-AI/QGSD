@@ -80,7 +80,7 @@ function main() {
     for (const line of lines) {
       try {
         const entry = JSON.parse(line);
-        if (entry.result === 'fail') {
+        if (entry.result === 'fail' || entry.result === 'error') {
           failures.push(entry);
         }
       } catch (_) {}

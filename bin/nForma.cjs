@@ -2606,7 +2606,7 @@ async function reqTraceabilityFlow() {
   lines.push(`{bold}Check Results (${trace.checkResults.length}){/bold}`);
   if (trace.checkResults.length) {
     for (const cr of trace.checkResults) {
-      const color = cr.result === 'pass' ? 'green' : cr.result === 'fail' ? 'red' : 'yellow';
+      const color = cr.result === 'pass' ? 'green' : cr.result === 'fail' ? 'red' : cr.result === 'error' ? 'magenta' : 'yellow';
       const runtime = cr.runtime_ms != null ? ` (${cr.runtime_ms}ms)` : '';
       lines.push(`  {${color}-fg}${pad(cr.result, 14)}{/} ${cr.check_id || '—'}${runtime}`);
       if (cr.summary) lines.push(`    {gray-fg}${cr.summary}{/}`);

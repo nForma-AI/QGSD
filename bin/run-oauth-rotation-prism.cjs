@@ -40,7 +40,7 @@ if (!prismBin) {
     '[run-oauth-rotation-prism]   export PRISM_BIN="$HOME/prism/bin/prism"\n' +
     '[run-oauth-rotation-prism] Download: https://www.prismmodelchecker.org/download.php\n'
   );
-  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'fail', check_id: 'prism:oauth-rotation', surface: 'prism', property: 'OAuth token rotation probability — successful rotation under expiry and concurrency', runtime_ms: 0, summary: 'fail: prism:oauth-rotation (binary not found)', triage_tags: [], requirement_ids: getRequirementIds('prism:oauth-rotation'), observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 }, metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'error', check_id: 'prism:oauth-rotation', surface: 'prism', property: 'OAuth token rotation probability — successful rotation under expiry and concurrency', runtime_ms: 0, summary: 'error: prism:oauth-rotation (binary not found)', triage_tags: [], requirement_ids: getRequirementIds('prism:oauth-rotation'), observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 }, metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -50,7 +50,7 @@ if (!fs.existsSync(modelPath)) {
   process.stderr.write(
     '[run-oauth-rotation-prism] Model file not found: ' + modelPath + '\n'
   );
-  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'fail', check_id: 'prism:oauth-rotation', surface: 'prism', property: 'OAuth token rotation probability — successful rotation under expiry and concurrency', runtime_ms: 0, summary: 'fail: prism:oauth-rotation (model not found)', triage_tags: [], requirement_ids: getRequirementIds('prism:oauth-rotation'), observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 }, metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-oauth-rotation-prism', formalism: 'prism', result: 'error', check_id: 'prism:oauth-rotation', surface: 'prism', property: 'OAuth token rotation probability — successful rotation under expiry and concurrency', runtime_ms: 0, summary: 'error: prism:oauth-rotation (model not found)', triage_tags: [], requirement_ids: getRequirementIds('prism:oauth-rotation'), observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 }, metadata: {} }); } catch (e) { process.stderr.write('[run-oauth-rotation-prism] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 

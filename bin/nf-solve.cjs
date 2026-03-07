@@ -1016,9 +1016,11 @@ function sweepFtoC() {
   try {
     const lines = fs.readFileSync(checkResultsPath, 'utf8').split('\n');
     let failedCount = 0;
+    let errorCount = 0;
     let inconclusiveCount = 0;
     let totalCount = 0;
     const failures = [];
+    const errors = [];
     const inconclusiveChecks = [];
 
     for (const line of lines) {
@@ -1029,6 +1031,13 @@ function sweepFtoC() {
         if (entry.result === 'fail') {
           failedCount++;
           failures.push({
+            check_id: entry.check_id || entry.id || '?',
+            summary: entry.summary || '',
+            requirement_ids: entry.requirement_ids || [],
+          });
+        } else if (entry.result === 'error') {
+          errorCount++;
+          errors.push({
             check_id: entry.check_id || entry.id || '?',
             summary: entry.summary || '',
             requirement_ids: entry.requirement_ids || [],
@@ -1047,10 +1056,12 @@ function sweepFtoC() {
 
     const existingDetail = {
       total_checks: totalCount,
-      passed: Math.max(0, totalCount - failedCount - inconclusiveCount),
+      passed: Math.max(0, totalCount - failedCount - errorCount - inconclusiveCount),
       failed: failedCount,
+      error_count: errorCount,
       inconclusive: inconclusiveCount,
       failures: failures,
+      errors: errors,
       inconclusive_checks: inconclusiveChecks,
     };
 
@@ -2340,6 +2351,19 @@ function autoClose(residual) {
     }
   }
 
+  // F->T stubs upgrade: implement TODO stubs with real test logic
+  if (residual.f_to_t.residual > 0) {
+    const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
+    if (fs.existsSync(implPath)) {
+      const implResult = spawnSync(process.execPath, [implPath], {
+        encoding: 'utf8', cwd: ROOT, timeout: 60000, stdio: 'pipe'
+      });
+      if (implResult.status === 0) {
+        actions.push('Upgraded TODO stubs: ' + (implResult.stdout || '').trim());
+      }
+    }
+  }
+
   // C->F mismatches: log but do not auto-fix
   if (residual.c_to_f.residual > 0) {
     actions.push(
@@ -2693,17 +2717,26 @@ function formatReport(iterations, finalResidual, converged) {
     const parts = [];
     if (detail.passed > 0) parts.push(detail.passed + ' pass');
     if (detail.failed > 0) parts.push(detail.failed + ' fail');
+    if (detail.error_count > 0) parts.push(detail.error_count + ' error');
     if (detail.inconclusive > 0) parts.push(detail.inconclusive + ' inconclusive');
     lines.push('Checks: ' + parts.join(', ') + ' (of ' + detail.total_checks + ' total)');
     if (detail.failures && detail.failures.length > 0) {
       lines.push('');
-      lines.push('Failures:');
+      lines.push('Failures (requirement violations):');
       for (const fail of detail.failures) {
         const f = typeof fail === 'string' ? { check_id: fail, summary: '' } : fail;
         lines.push('  ✗ ' + f.check_id + (f.summary ? ' — ' + f.summary : ''));
         if (f.requirement_ids && f.requirement_ids.length > 0) {
           lines.push('    reqs: ' + f.requirement_ids.join(', '));
         }
+      }
+    }
+    if (detail.errors && detail.errors.length > 0) {
+      lines.push('');
+      lines.push('Errors (infrastructure/tooling):');
+      for (const err of detail.errors) {
+        const e = typeof err === 'string' ? { check_id: err, summary: '' } : err;
+        lines.push('  ⚙ ' + e.check_id + (e.summary ? ' — ' + e.summary : ''));
       }
     }
     if (detail.inconclusive_checks && detail.inconclusive_checks.length > 0) {

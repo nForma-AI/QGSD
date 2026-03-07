@@ -255,6 +255,45 @@ test('v2.1 record without observation_window omits the field', () => {
   }
 });
 
+// ─── Test 14b: result 'error' is accepted for infrastructure failures ─────
+test('writeCheckResult accepts result error for infrastructure failures', () => {
+  const tmpDir  = fs.mkdtempSync(path.join(os.tmpdir(), 'wcr-test-'));
+  const tmpFile = path.join(tmpDir, 'check-results.ndjson');
+  try {
+    const origEnv = process.env.CHECK_RESULTS_PATH;
+    process.env.CHECK_RESULTS_PATH = tmpFile;
+    delete require.cache[require.resolve(MODULE_PATH)];
+    const { writeCheckResult } = require(MODULE_PATH);
+
+    assert.doesNotThrow(() => {
+      writeCheckResult({
+        tool: 'run-alloy', formalism: 'alloy', result: 'error',
+        check_id: 'alloy:quorum-votes', surface: 'alloy',
+        property: 'Vote counting correctness', runtime_ms: 0,
+        summary: 'error: alloy:quorum-votes (JAR not found)'
+      });
+    });
+
+    const line   = fs.readFileSync(tmpFile, 'utf8').trim();
+    const record = JSON.parse(line);
+    assert.strictEqual(record.result, 'error');
+    assert.ok(record.summary.startsWith('error:'));
+
+    process.env.CHECK_RESULTS_PATH = origEnv;
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+    delete require.cache[require.resolve(MODULE_PATH)];
+  }
+});
+
+// ─── Test 14c: VALID_RESULTS includes error ────────────────────────────────
+test('VALID_RESULTS includes error', () => {
+  delete require.cache[require.resolve(MODULE_PATH)];
+  const { VALID_RESULTS } = require(MODULE_PATH);
+  assert.ok(VALID_RESULTS.includes('error'),
+    'VALID_RESULTS must include "error" for infrastructure failure classification');
+});
+
 // ─── Test 15a: VALID_FORMALISMS includes uppaal (UPPAAL-02) ───────────────
 test('VALID_FORMALISMS includes uppaal (UPPAAL-02)', () => {
   const { VALID_FORMALISMS } = require(MODULE_PATH);

@@ -51,7 +51,7 @@ if (!VALID_CONFIGS.includes(configName)) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: unknown config in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: unknown config in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -68,7 +68,7 @@ if (JAVA_HOME) {
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -80,7 +80,7 @@ if (JAVA_HOME) {
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: Java not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -92,7 +92,7 @@ if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-account-manager-tlc] Failed to run: ' + javaExe + ' --version\n');
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: Java version check failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -105,7 +105,7 @@ if (javaMajor < 17) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -120,7 +120,7 @@ if (!fs.existsSync(jarPath)) {
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: tla2tools.jar not found in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -147,7 +147,7 @@ const _runtimeMs = Date.now() - _startMs;
 
 if (tlcResult.error) {
   process.stderr.write('[run-account-manager-tlc] TLC invocation failed: ' + tlcResult.error.message + '\n');
-  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'fail', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-account-manager-tlc', formalism: 'tla', result: 'error', check_id: 'tla:account-manager', surface: 'tla', property: 'Account manager quorum state machine — MCAM correctness', runtime_ms: _runtimeMs, summary: 'error: TLC invocation failed in ' + _runtimeMs + 'ms', requirement_ids: getRequirementIds('tla:account-manager'), metadata: {} }); } catch (e) { process.stderr.write('[run-account-manager-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 

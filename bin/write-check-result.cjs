@@ -3,7 +3,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-const VALID_RESULTS    = ['pass', 'fail', 'warn', 'inconclusive'];
+const VALID_RESULTS    = ['pass', 'fail', 'error', 'warn', 'inconclusive'];
 const VALID_FORMALISMS = ['tla', 'alloy', 'prism', 'trace', 'redaction', 'uppaal'];
 
 /**

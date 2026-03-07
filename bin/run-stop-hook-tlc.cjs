@@ -48,7 +48,7 @@ if (!VALID_CONFIGS.includes(configName)) {
     '. Valid: ' + VALID_CONFIGS.join(', ') + '\n'
   );
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: unknown config in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: unknown config in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -64,7 +64,7 @@ if (JAVA_HOME) {
       '[run-stop-hook-tlc] Unset JAVA_HOME or fix the path.\n'
     );
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: Java not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
 } else {
@@ -76,7 +76,7 @@ if (JAVA_HOME) {
       '[run-stop-hook-tlc] Download: https://adoptium.net/\n'
     );
     const _runtimeMs = 0;
-    try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+    try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: Java not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
     process.exit(1);
   }
   javaExe = 'java';
@@ -87,7 +87,7 @@ const versionResult = spawnSync(javaExe, ['--version'], { encoding: 'utf8' });
 if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-stop-hook-tlc] Failed to run: ' + javaExe + ' --version\n');
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java version check failed in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: Java version check failed in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
@@ -99,7 +99,7 @@ if (javaMajor < 17) {
     '[run-stop-hook-tlc] Download Java 17+: https://adoptium.net/\n'
   );
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: Java ' + javaMajor + ' < 17 in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -113,7 +113,7 @@ if (!fs.existsSync(jarPath)) {
     '       -o .planning/formal/tla/tla2tools.jar\n'
   );
   const _runtimeMs = 0;
-  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'fail: tla2tools.jar not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase()), surface: 'tla', property: PROPERTY_MAP[configName] || configName, runtime_ms: _runtimeMs, summary: 'error: tla2tools.jar not found in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 
@@ -145,7 +145,7 @@ if (tlcResult.error) {
   process.stderr.write('[run-stop-hook-tlc] TLC invocation failed: ' + tlcResult.error.message + '\n');
   const check_id = CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase());
   const property = PROPERTY_MAP[configName] || configName;
-  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'fail', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'fail: TLC invocation failed in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
+  try { writeCheckResult({ tool: 'run-stop-hook-tlc', formalism: 'tla', result: 'error', check_id: check_id, surface: 'tla', property: property, runtime_ms: _runtimeMs, summary: 'error: TLC invocation failed in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { config: configName } }); } catch (e) { process.stderr.write('[run-stop-hook-tlc] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);
 }
 

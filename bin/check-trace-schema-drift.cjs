@@ -89,7 +89,7 @@ if (require.main === module) {
     const _runtimeMs = Date.now() - _startMs;
     const meta = { reason: 'git-error', error: err.message };
     try {
-      writeCheckResult({ tool: 'check-trace-schema-drift', formalism: 'trace', result: 'fail', check_id: 'ci:trace-schema-drift', surface: 'ci', property: 'Trace schema drift — no non-atomic conformance schema changes between commits', runtime_ms: _runtimeMs, summary: 'fail: ci:trace-schema-drift in ' + _runtimeMs + 'ms', triage_tags: [], requirement_ids: getRequirementIds('ci:trace-schema-drift'), metadata: meta });
+      writeCheckResult({ tool: 'check-trace-schema-drift', formalism: 'trace', result: 'error', check_id: 'ci:trace-schema-drift', surface: 'ci', property: 'Trace schema drift — no non-atomic conformance schema changes between commits', runtime_ms: _runtimeMs, summary: 'error: ci:trace-schema-drift (git error)', triage_tags: [], requirement_ids: getRequirementIds('ci:trace-schema-drift'), metadata: meta });
     } catch (_) { /* swallow */ }
     process.stderr.write('[check-trace-schema-drift] git error: ' + err.message + '\n');
     process.exit(1);
