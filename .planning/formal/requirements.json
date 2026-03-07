@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-07T13:56:58.532Z",
-  "content_hash": "d59d177ac471e9c3",
-  "frozen_at": "2026-03-07T13:56:58.534Z",
+  "aggregated_at": "2026-03-07T13:57:31.799Z",
+  "content_hash": "ffa8effeaa04c508",
+  "frozen_at": "2026-03-07T13:57:31.799Z",
   "schema_version": "1",
   "requirements": [
     {
@@ -3415,6 +3415,18 @@
       "provenance": {
         "source_file": "reverse-discovery",
         "milestone": "solve-iteration-1"
+      }
+    },
+    {
+      "id": "TRACE-08",
+      "text": "mapToXStateEvent normalizes event identity via event.action || event.type fallback and handles quorum_fallback_t1_required, quorum_block_r3_2, and security_sweep actions — non-FSM actions in KNOWN_NON_FSM_ACTIONS are counted as valid (not divergent)",
+      "category": "Conformance & Traces",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The conformance trace validator reported 6373 false divergences because mapToXStateEvent only read event.action, but 5649 events used event.type instead, and two additional actions lacked switch cases.",
+      "provenance": {
+        "source_file": ".planning/quick/205-fix-conformance-traces-expand-maptoxstat/205-PLAN.md",
+        "milestone": "quick-205"
       }
     },
     {
