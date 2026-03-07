@@ -58,6 +58,23 @@ Parse the JSON output:
 
 **Important:** This step is fail-open. If the migration script errors or is not found, log the issue and proceed to Step 1. Migration failure must never block the diagnostic sweep.
 
+### Step 0b: Config Audit
+
+Run the config audit script to detect silent misconfigurations:
+
+```bash
+AUDIT=$(node ~/.claude/nf-bin/config-audit.cjs --json --project-root=$(pwd) 2>/dev/null)
+```
+
+If `~/.claude/nf-bin/config-audit.cjs` does not exist, fall back to `bin/config-audit.cjs` (CWD-relative).
+If neither exists, skip this step silently.
+
+Parse the JSON output:
+- If `warnings` array is non-empty: log each warning to stderr as `"Step 0b: CONFIG WARNING: {warning}"`. These are non-blocking but visible in the solve output.
+- If `missing` array is non-empty: log `"Step 0b: {missing.length} provider slots have no agent_config entry"`.
+
+**Important:** This step is fail-open. Config audit failure must never block the diagnostic sweep.
+
 ## Step 1: Initial Diagnostic Sweep
 
 Run the diagnostic solver using absolute paths (or fall back to CWD-relative):

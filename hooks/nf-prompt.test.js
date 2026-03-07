@@ -697,6 +697,48 @@ test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary 
   }
 });
 
+// TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG: when agent_config is {} (empty), all slots
+// default to auth_type='api'. This means t1Unused (sub-CLI slots) is always empty,
+// so the simple failover rule is used instead of FALLBACK-01 tiered sequence.
+// The test verifies: (a) no FALLBACK-01 label appears, (b) the simple failover rule
+// IS present, (c) T2 slot names are still enumerable in the output.
+test('TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG: empty agent_config → no T1, simple failover rule', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-emptyac-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    // quorum_active set with known slots but agent_config is empty {}
+    // All slots default to auth_type='api' — no sub slots → no T1 unused → simple rule
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({
+        quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
+        agent_config: {},
+      }),
+      'utf8'
+    );
+    const { stdout, exitCode } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.length > 0, 'stdout must contain quorum injection');
+
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+
+    // (a) No FALLBACK-01 — because all slots are api, t1Unused is empty
+    assert.ok(!ctx.includes('FALLBACK-01'), 'Must NOT use FALLBACK-01 when agent_config is empty (all slots are api)');
+
+    // (b) Simple failover rule must be present
+    assert.ok(ctx.includes('Failover rule'), 'Simple Failover rule must appear when no T1 slots exist');
+    assert.ok(ctx.includes('do not count toward'), 'Failover rule must state errors do not count');
+
+    // (c) Dispatched slot names must appear in Task() lines
+    const taskLines = ctx.match(/Task\(subagent_type="nf-quorum-slot-worker"/g) || [];
+    assert.ok(taskLines.length > 0, 'At least one slot-worker Task must be dispatched');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
 // ── Profile Guard Tests ─────────────────────────────────────────────────────
 
 // TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal → nf-prompt exits 0 with no output
