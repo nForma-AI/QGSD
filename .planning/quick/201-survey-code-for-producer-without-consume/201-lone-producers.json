@@ -1,0 +1,1510 @@
+{
+  "generated": "2026-03-07T00:14:58.323Z",
+  "total_bin_scripts": 154,
+  "test_files_excluded": 144,
+  "wired_scripts": 86,
+  "lone_producers": [
+    {
+      "path": "bin/accept-debug-invariant.cjs",
+      "purpose": "Debug invariant write path (ARCH-03): writes a PROPERTY definition directly",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/analyze-assumptions.cjs",
+      "purpose": "Assumption-to-instrumentation analysis CLI",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/analyze-state-space.cjs",
+      "purpose": "Static analyzer for TLA+ models — estimates state-space size per model,",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/assumption-register.cjs",
+      "purpose": "register with validation status and linked L2 states.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/attribute-trace-divergence.cjs",
+      "purpose": "Root-cause attribution tool for XState conformance divergences.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/blessed-terminal.cjs",
+      "purpose": "Drop-in replacement for blessed-xterm's XTerm widget.",
+      "classification": "internal_utility",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/budget-tracker.cjs",
+      "purpose": "Token budget calculation, profile downgrade logic, and subscription slot exclusion.",
+      "classification": "internal_utility",
+      "suggested_skill": "/nf:health",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/build-layer-manifest.cjs",
+      "purpose": "Classifies all formal models in model-registry.json into L1/L2/L3 layers",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/build-phase-index.cjs",
+      "purpose": "Domain-specific pattern words for keyword extraction",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/call-quorum-slot.cjs",
+      "purpose": "echo \"<prompt>\" | node call-quorum-slot.cjs --slot <name> [--timeout <ms>] [--cwd <dir>]",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:quorum",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/ccr-secure-config.cjs",
+      "purpose": "Reads the 3 CCR provider API keys from keytar (nforma service) and writes them",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/ccr-secure-start.cjs",
+      "purpose": "Wrapper script for claude-code-router that:",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/check-bundled-sdks.cjs",
+      "purpose": "Forbidden SDK list — LLM SDKs that nForma must not bundle (ARCH-10)",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/check-coverage-guard.cjs",
+      "purpose": "CI coverage guard — compares current traceability matrix coverage against",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/check-mcp-health.cjs",
+      "purpose": "Pre-flight health check for all claude-mcp-server instances.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/check-results-exit.cjs",
+      "purpose": "Script: check results exit",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/check-spec-sync.cjs",
+      "purpose": "Verifies that formal specs stay in sync with the XState machine.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/check-trace-redaction.cjs",
+      "purpose": "Validates trace event files against .planning/formal/trace/redaction.yaml policy.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/check-trace-schema-drift.cjs",
+      "purpose": "Detects when .planning/formal/trace/trace.schema.json is modified without co-modifying",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/conformance-schema.cjs",
+      "purpose": "Single source of truth for conformance event field enumerations.",
+      "classification": "internal_utility",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/count-scenarios.cjs",
+      "purpose": "Counts scenarios (instance upper-bound) for every formal model across all frameworks.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/cross-layer-dashboard.cjs",
+      "purpose": "Aggregates L1 coverage, Gate A, Gate B, and Gate C scores into a single",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/debt-retention.cjs",
+      "purpose": "Debt retention policy module",
+      "classification": "internal_utility",
+      "suggested_skill": "/nf:observe",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/design-impact.cjs",
+      "purpose": "Three-layer git diff impact analysis — traces changes through L1 (instrumentation),",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:plan-phase",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/export-prism-constants.cjs",
+      "purpose": "Reads .planning/quorum-scoreboard.json and exports per-slot TP/UNAVAIL rates",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/extract-annotations.cjs",
+      "purpose": "Extracts @requirement annotations from formal model files (TLA+, Alloy, PRISM).",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/failure-mode-catalog.cjs",
+      "purpose": "Enumerates concrete failure modes (omission, commission, corruption) per",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/failure-taxonomy.cjs",
+      "purpose": "Classifies check-result failures into 5 categories:",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/formal-core.cjs",
+      "purpose": "Pure data functions for formal verification browsing.",
+      "classification": "internal_utility",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/gate-a-grounding.cjs",
+      "purpose": "Measures alignment between L1 evidence (conformance traces) and L2 semantics",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/gate-b-abstraction.cjs",
+      "purpose": "Verifies every L3 reasoning artifact entry has valid derived_from links",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/gate-c-validation.cjs",
+      "purpose": "Verifies every L3 failure mode maps to at least one test recipe.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/generate-formal-specs.cjs",
+      "purpose": "Generates ALL formal verification artifacts from the XState machine.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/generate-petri-net.cjs",
+      "purpose": "Generates a Graphviz DOT + SVG Petri Net for the nForma quorum token-passing model.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/generate-tla-cfg.cjs",
+      "purpose": "Generates TLA+ model configuration files from the XState machine.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/generate-triage-bundle.cjs",
+      "purpose": "Reads .planning/formal/check-results.ndjson, writes .planning/formal/diff-report.md and .planning/formal/suspects.md.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/gh-account-rotate.cjs",
+      "purpose": "Called by call-quorum-slot.cjs as oauth_rotation.rotate_cmd for copilot-1.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/git-heatmap.cjs",
+      "purpose": "and churn ranking. Produces .planning/formal/evidence/git-heatmap.json as",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/hazard-model.cjs",
+      "purpose": "Applies FMEA scoring (Severity x Occurrence x Detection = RPN) to every",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/initialize-model-registry.cjs",
+      "purpose": "One-time idempotent initialization of .planning/formal/model-registry.json.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/instrumentation-map.cjs",
+      "purpose": "Scans hooks for conformance event emission points and maps to state variables.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/invariant-catalog.cjs",
+      "purpose": "Builds a unified invariant catalog aggregating declared (TLA+ .cfg, spec/invariants.md)",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/issue-classifier.cjs",
+      "purpose": "Reads .planning/telemetry/report.json, ranks operational issues by severity,",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/lint-formal-models.cjs",
+      "purpose": "Formal model health linter — finds fat, unbounded, and overly complex models.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/migrate-planning.cjs",
+      "purpose": "Safe to run multiple times (idempotent). Moves files, never deletes.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:update",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/mismatch-register.cjs",
+      "purpose": "Builds a JSONL mismatch register tracking L2-model vs L1-trace disagreements.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/observed-fsm.cjs",
+      "purpose": "dual-mode replay (per-event isolation + per-session chains).",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:observe",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/prism-priority.cjs",
+      "purpose": "PRISM failure probability priority ranker for roadmap signal injection.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/probe-quorum-slots.cjs",
+      "purpose": "node probe-quorum-slots.cjs --slots slot1,slot2,slot3 [--timeout 8000] [--cwd <dir>]",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:quorum",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/promote-gate-maturity.cjs",
+      "purpose": "Manages per-model gate enforcement levels: ADVISORY -> SOFT_GATE -> HARD_GATE.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/promote-model.cjs",
+      "purpose": "Atomic promotion: merges PROPERTY definitions from proposed-changes.tla into",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/propose-debug-invariants.cjs",
+      "purpose": "LOOP-04 (v0.21-03): Mine debug session artifacts for TLA+ PROPERTY candidates.",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/quorum-cache.cjs",
+      "purpose": "Provides deterministic cache key computation (SHA-256), file-based read/write",
+      "classification": "internal_utility",
+      "suggested_skill": "/nf:quorum",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/quorum-formal-context.cjs",
+      "purpose": "PLAN-03: Generates formal_spec_summary and verification_result fields for",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve or /nf:close-formal-gaps",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/quorum-slot-dispatch.cjs",
+      "purpose": "node quorum-slot-dispatch.cjs \\",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:quorum",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/review-mcp-logs.cjs",
+      "purpose": "Scans ~/.claude/debug/*.txt for MCP tool call timing, failures, and hang",
+      "classification": "standalone_tool",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/risk-heatmap.cjs",
+      "purpose": "Combines FMEA RPN scores with L1/L2 coverage gap data to produce a",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/security-sweep.cjs",
+      "purpose": "bin/security-sweep.cjs — Standalone security scanner for nForma.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:observe",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/sensitivity-report.cjs",
+      "purpose": "Reads .planning/formal/sensitivity-report.ndjson, ranks parameters by outcome-flip count,",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/sensitivity-sweep-feedback.cjs",
+      "purpose": "LOOP-03 (v0.21-03): Read sensitivity sweep report, compare empirical TP rate,",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:observe",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/set-secret.cjs",
+      "purpose": "Usage: node bin/set-secret.cjs <KEY_NAME> <value>",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:mcp-setup",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/stall-detector.cjs",
+      "purpose": "Stall detection for quorum slots — INFORMATIONAL ONLY, never blocks.",
+      "classification": "internal_utility",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/state-candidates.cjs",
+      "purpose": "Mines conformance traces for unmodeled state candidates.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/telemetry-collector.cjs",
+      "purpose": "Pure disk I/O telemetry collector for nForma.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:health",
+      "referenced_by": [],
+      "has_companion_test": false
+    },
+    {
+      "path": "bin/test-recipe-gen.cjs",
+      "purpose": "Reads failure-mode-catalog.json, hazard-model.json, and risk-heatmap.json",
+      "classification": "test_helper",
+      "suggested_skill": null,
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/trace-corpus-stats.cjs",
+      "purpose": "Indexes conformance events by session, action type, and state transition.",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:solve",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/validate-requirements-haiku.cjs",
+      "purpose": "Semantic requirements validator using Claude Haiku",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:map-requirements",
+      "referenced_by": [],
+      "has_companion_test": true
+    },
+    {
+      "path": "bin/verify-quorum-health.cjs",
+      "purpose": "Verifies that the XState machine's maxDeliberation is calibrated for the",
+      "classification": "standalone_tool",
+      "suggested_skill": "/nf:quorum",
+      "referenced_by": [],
+      "has_companion_test": true
+    }
+  ],
+  "wired_summary": {
+    "by_skill_command": {
+      "formal-test-sync.md": [
+        "bin/formal-test-sync.cjs"
+      ],
+      "solve.md": [
+        "bin/formal-test-sync.cjs",
+        "bin/check-provider-health.cjs",
+        "bin/nf-solve.cjs",
+        "bin/migrate-formal-dir.cjs",
+        "bin/install.js",
+        "bin/run-formal-verify.cjs",
+        "bin/old-script.cjs",
+        "bin/missing.cjs",
+        "bin/foo.cjs",
+        "bin/validate-traces.cjs"
+      ],
+      "mcp-setup.md": [
+        "bin/secrets.cjs"
+      ],
+      "observe.md": [
+        "bin/observe-config.cjs",
+        "bin/observe-registry.cjs",
+        "bin/observe-handlers.cjs",
+        "bin/observe-render.cjs",
+        "bin/observe-debt-writer.cjs",
+        "bin/debt-ledger.cjs"
+      ],
+      "polyrepo.md": [
+        "bin/polyrepo.cjs"
+      ],
+      "quorum.md": [
+        "bin/check-provider-health.cjs",
+        "bin/quorum-preflight.cjs",
+        "bin/update-scoreboard.cjs"
+      ],
+      "research-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "sync-baselines.md": [
+        "bin/gsd-tools.cjs",
+        "bin/sync-baseline-requirements.cjs",
+        "bin/detect-project-intent.cjs"
+      ]
+    },
+    "by_hook": {
+      "nf-prompt.js": [
+        "bin/check-provider-health.cjs",
+        "bin/update-scoreboard.cjs",
+        "bin/quorum-consensus-gate.cjs"
+      ],
+      "nf-session-start.js": [
+        "bin/install.js"
+      ]
+    },
+    "by_core_workflow": {
+      "core/workflows/discuss-phase.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/execute-phase.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs",
+        "bin/run-formal-check.cjs",
+        "bin/formal-scope-scan.cjs"
+      ],
+      "core/workflows/plan-milestone-gaps.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs"
+      ],
+      "core/references/decimal-phase-calculation.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/references/git-integration.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/references/git-planning-commit.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/references/phase-argument-parsing.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/references/planning-config.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/add-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/add-todo.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/audit-milestone.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/check-todos.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/cleanup.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/complete-milestone.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/diagnose-issues.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/execute-plan.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/fix-tests.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/health.md": [
+        "bin/gsd-tools.cjs",
+        "bin/harness-diagnostic.cjs"
+      ],
+      "core/workflows/insert-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/map-codebase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/new-milestone.md": [
+        "bin/gsd-tools.cjs",
+        "bin/sync-baseline-requirements.cjs",
+        "bin/formal-scope-scan.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "core/workflows/new-project.md": [
+        "bin/gsd-tools.cjs",
+        "bin/sync-baseline-requirements.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "core/workflows/oscillation-resolution-mode.md": [
+        "bin/gsd-tools.cjs",
+        "bin/nf.cjs"
+      ],
+      "core/workflows/pause-work.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/plan-phase.md": [
+        "bin/gsd-tools.cjs",
+        "bin/formal-scope-scan.cjs",
+        "bin/task-envelope.cjs"
+      ],
+      "core/workflows/progress.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/quick.md": [
+        "bin/gsd-tools.cjs",
+        "bin/run-formal-check.cjs",
+        "bin/formal-scope-scan.cjs"
+      ],
+      "core/workflows/remove-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/research-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/resume-project.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/set-profile.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/settings.md": [
+        "bin/gsd-tools.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "core/workflows/transition.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/verify-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/workflows/verify-work.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "core/templates/codebase/structure.md": [
+        "bin/install.js"
+      ],
+      "core/workflows/help.md": [
+        "bin/install.js"
+      ],
+      "core/workflows/update.md": [
+        "bin/install.js"
+      ],
+      "core/references/verification-patterns.md": [
+        "bin/run-formal-check.cjs"
+      ],
+      "core/templates/verification-report.md": [
+        "bin/run-formal-check.cjs"
+      ],
+      "core/workflows/add-requirement.md": [
+        "bin/account-manager.cjs",
+        "bin/validate-invariant.cjs",
+        "bin/validate-memory.cjs"
+      ],
+      "core/workflows/review-requirements.md": [
+        "bin/account-manager.cjs",
+        "bin/validate-memory.cjs",
+        "bin/check-spec.cjs"
+      ],
+      "core/workflows/map-requirements.md": [
+        "bin/validate-invariant.cjs",
+        "bin/validate-memory.cjs",
+        "bin/aggregate-requirements.cjs"
+      ],
+      "core/workflows/close-formal-gaps.md": [
+        "bin/run-tlc.cjs"
+      ]
+    },
+    "by_installed_workflow": {
+      "~/.claude/nf/workflows/discuss-phase.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/execute-phase.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs",
+        "bin/run-formal-check.cjs",
+        "bin/formal-scope-scan.cjs"
+      ],
+      "~/.claude/nf/workflows/plan-milestone-gaps.md": [
+        "bin/update-scoreboard.cjs",
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/add-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/add-todo.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/audit-milestone.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/check-todos.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/cleanup.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/complete-milestone.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/diagnose-issues.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/execute-plan.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/fix-tests.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/health.md": [
+        "bin/gsd-tools.cjs",
+        "bin/harness-diagnostic.cjs"
+      ],
+      "~/.claude/nf/workflows/insert-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/map-codebase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/new-milestone.md": [
+        "bin/gsd-tools.cjs",
+        "bin/sync-baseline-requirements.cjs",
+        "bin/formal-scope-scan.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "~/.claude/nf/workflows/new-project.md": [
+        "bin/gsd-tools.cjs",
+        "bin/sync-baseline-requirements.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "~/.claude/nf/workflows/oscillation-resolution-mode.md": [
+        "bin/gsd-tools.cjs",
+        "bin/nf.cjs"
+      ],
+      "~/.claude/nf/workflows/pause-work.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/plan-phase.md": [
+        "bin/gsd-tools.cjs",
+        "bin/formal-scope-scan.cjs",
+        "bin/task-envelope.cjs"
+      ],
+      "~/.claude/nf/workflows/progress.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/quick.md": [
+        "bin/gsd-tools.cjs",
+        "bin/run-formal-check.cjs",
+        "bin/formal-scope-scan.cjs"
+      ],
+      "~/.claude/nf/workflows/remove-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/research-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/resume-project.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/set-profile.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/settings.md": [
+        "bin/gsd-tools.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "~/.claude/nf/workflows/transition.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/verify-phase.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/verify-work.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/references/decimal-phase-calculation.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/references/git-integration.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/references/git-planning-commit.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/references/phase-argument-parsing.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/references/planning-config.md": [
+        "bin/gsd-tools.cjs"
+      ],
+      "~/.claude/nf/workflows/help.md": [
+        "bin/install.js"
+      ],
+      "~/.claude/nf/workflows/update.md": [
+        "bin/install.js"
+      ],
+      "~/.claude/nf/templates/verification-report.md": [
+        "bin/run-formal-check.cjs"
+      ],
+      "~/.claude/nf/references/verification-patterns.md": [
+        "bin/run-formal-check.cjs"
+      ],
+      "~/.claude/nf/workflows/add-requirement.md": [
+        "bin/account-manager.cjs",
+        "bin/validate-invariant.cjs",
+        "bin/validate-memory.cjs"
+      ],
+      "~/.claude/nf/workflows/review-requirements.md": [
+        "bin/account-manager.cjs",
+        "bin/validate-memory.cjs",
+        "bin/check-spec.cjs"
+      ],
+      "~/.claude/nf/workflows/map-requirements.md": [
+        "bin/validate-invariant.cjs",
+        "bin/validate-memory.cjs",
+        "bin/aggregate-requirements.cjs"
+      ],
+      "~/.claude/nf/workflows/close-formal-gaps.md": [
+        "bin/run-tlc.cjs"
+      ]
+    },
+    "by_mcp_server": [
+      "bin/unified-mcp-server.mjs"
+    ],
+    "by_package_json": {
+      "package.json#scripts.formal-verify": [
+        "bin/run-formal-verify.cjs"
+      ],
+      "package.json#scripts.formal-verify:tla": [
+        "bin/run-formal-verify.cjs"
+      ],
+      "package.json#scripts.formal-verify:alloy": [
+        "bin/run-formal-verify.cjs"
+      ],
+      "package.json#scripts.formal-verify:prism": [
+        "bin/run-formal-verify.cjs"
+      ],
+      "package.json#scripts.formal-verify:petri": [
+        "bin/run-formal-verify.cjs"
+      ],
+      "package.json#scripts.xstate-to-tla": [
+        "bin/xstate-to-tla.cjs"
+      ],
+      "package.json#scripts.test:changed": [
+        "bin/test-changed.cjs"
+      ],
+      "package.json#scripts.test:ci": [
+        "bin/conformance-schema.test.cjs",
+        "bin/resolve-cli.test.cjs",
+        "bin/secrets.test.cjs",
+        "bin/verify-quorum-health.test.cjs",
+        "bin/gsd-tools.test.cjs",
+        "bin/update-scoreboard.test.cjs",
+        "bin/review-mcp-logs.test.cjs",
+        "bin/migrate-to-slots.test.cjs",
+        "bin/validate-traces.test.cjs",
+        "bin/write-check-result.test.cjs",
+        "bin/check-results-exit.test.cjs",
+        "bin/check-trace-redaction.test.cjs",
+        "bin/check-trace-schema-drift.test.cjs",
+        "bin/nForma.test.cjs",
+        "bin/set-secret.test.cjs",
+        "bin/issue-classifier.test.cjs",
+        "bin/generate-tla-cfg.test.cjs",
+        "bin/ccr-secure-config.test.cjs",
+        "bin/gsd-quorum-slot-worker-improvements.test.cjs",
+        "bin/quorum-improvements-signal.test.cjs",
+        "bin/claude-md-references.test.cjs",
+        "bin/propose-debug-invariants.test.cjs",
+        "bin/aggregate-requirements.test.cjs",
+        "bin/validate-requirements-haiku.test.cjs",
+        "bin/call-quorum-slot-retry.test.cjs",
+        "bin/provider-mapping.test.cjs"
+      ],
+      "package.json#scripts.test:formal": [
+        "bin/run-tlc.test.cjs",
+        "bin/run-alloy.test.cjs",
+        "bin/export-prism-constants.test.cjs",
+        "bin/generate-petri-net.test.cjs",
+        "bin/run-breaker-tlc.test.cjs",
+        "bin/run-oscillation-tlc.test.cjs",
+        "bin/run-protocol-tlc.test.cjs",
+        "bin/run-audit-alloy.test.cjs",
+        "bin/run-transcript-alloy.test.cjs",
+        "bin/run-installer-alloy.test.cjs",
+        "bin/run-formal-verify.test.cjs",
+        "bin/xstate-to-tla.test.cjs",
+        "bin/run-account-manager-tlc.test.cjs",
+        "bin/run-account-pool-alloy.test.cjs",
+        "bin/run-oauth-rotation-prism.test.cjs",
+        "bin/run-prism.test.cjs",
+        "bin/check-spec-sync.test.cjs",
+        "bin/sensitivity-sweep-feedback.test.cjs",
+        "bin/roadmapper-formal-integration.test.cjs",
+        "bin/test-formal-integration.test.cjs"
+      ]
+    },
+    "by_other_bin": {
+      "bin/manage-agents-core.cjs": [
+        "bin/secrets.cjs",
+        "bin/resolve-cli.cjs",
+        "bin/update-agents.cjs"
+      ],
+      "bin/set-secret.cjs": [
+        "bin/secrets.cjs"
+      ],
+      "bin/analyze-assumptions.cjs": [
+        "bin/observe-registry.cjs",
+        "bin/observe-handlers.cjs",
+        "bin/debt-ledger.cjs"
+      ],
+      "bin/autoClosePtoF.cjs": [
+        "bin/debt-ledger.cjs",
+        "bin/debt-state-machine.cjs",
+        "bin/isNumericThreshold.cjs"
+      ],
+      "bin/observe-debt-writer.cjs": [
+        "bin/debt-ledger.cjs",
+        "bin/fingerprint-issue.cjs",
+        "bin/fingerprint-drift.cjs",
+        "bin/validate-debt-entry.cjs",
+        "bin/debt-dedup.cjs",
+        "bin/formal-ref-linker.cjs"
+      ],
+      "bin/sweepPtoF.cjs": [
+        "bin/debt-ledger.cjs",
+        "bin/extractFormalExpected.cjs",
+        "bin/compareDrift.cjs"
+      ],
+      "bin/state-candidates.cjs": [
+        "bin/validate-traces.cjs",
+        "bin/planning-paths.cjs"
+      ],
+      "bin/sync-baseline-requirements.cjs": [
+        "bin/detect-project-intent.cjs",
+        "bin/load-baseline-requirements.cjs"
+      ],
+      "bin/check-liveness-fairness.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-account-manager-tlc.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-breaker-tlc.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-oscillation-tlc.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-protocol-tlc.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-stop-hook-tlc.cjs": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/nForma.cjs": [
+        "bin/aggregate-requirements.cjs",
+        "bin/planning-paths.cjs",
+        "bin/update-agents.cjs",
+        "bin/manage-agents-core.cjs",
+        "bin/requirements-core.cjs",
+        "bin/detect-coverage-gaps.cjs",
+        "bin/auth-drivers/index.cjs"
+      ],
+      "bin/install.js": [
+        "bin/migrate-to-slots.cjs"
+      ],
+      "bin/quorum-consensus-gate.cjs": [
+        "bin/run-prism.cjs",
+        "bin/planning-paths.cjs"
+      ],
+      "bin/call-quorum-slot.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/check-provider-health.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/detect-coverage-gaps.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/export-prism-constants.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/run-prism.cjs": [
+        "bin/planning-paths.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs",
+        "bin/read-policy.cjs"
+      ],
+      "bin/security-sweep.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/telemetry-collector.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/trace-corpus-stats.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/update-scoreboard.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/validate-traces.cjs": [
+        "bin/planning-paths.cjs",
+        "bin/write-check-result.cjs",
+        "bin/xstate-trace-walker.cjs"
+      ],
+      "bin/verify-quorum-health.cjs": [
+        "bin/planning-paths.cjs"
+      ],
+      "bin/check-results-exit.cjs": [
+        "bin/write-check-result.cjs"
+      ],
+      "bin/check-trace-redaction.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/check-trace-schema-drift.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-account-pool-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-audit-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-installer-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-oauth-rotation-prism.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-quorum-composition-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-tlc.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-transcript-alloy.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "bin/run-uppaal.cjs": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs",
+        "bin/verify-formal-results.cjs"
+      ],
+      "bin/requirements-core.cjs": [
+        "bin/requirement-map.cjs"
+      ],
+      "bin/debt-dedup.cjs": [
+        "bin/levenshtein.cjs"
+      ],
+      "bin/generate-proposed-changes.cjs": [
+        "bin/generate-phase-spec.cjs"
+      ],
+      "bin/quorum-formal-context.cjs": [
+        "bin/generate-phase-spec.cjs"
+      ],
+      "bin/run-phase-tlc.cjs": [
+        "bin/generate-phase-spec.cjs",
+        "bin/generate-proposed-changes.cjs"
+      ],
+      "bin/generate-triage-bundle.cjs": [
+        "bin/verify-formal-results.cjs"
+      ],
+      "bin/gh-account-rotate.cjs": [
+        "bin/auth-drivers/gh-cli.cjs"
+      ],
+      "bin/isNumericThreshold.cjs": [
+        "bin/extractFormalExpected.cjs"
+      ],
+      "bin/nf-solve.cjs": [
+        "bin/sweepPtoF.cjs",
+        "bin/autoClosePtoF.cjs"
+      ],
+      "bin/observe-handler-grafana.cjs": [
+        "bin/observe-utils.cjs"
+      ],
+      "bin/observe-handler-internal.cjs": [
+        "bin/observe-utils.cjs"
+      ],
+      "bin/observe-handler-logstash.cjs": [
+        "bin/observe-utils.cjs"
+      ],
+      "bin/observe-handler-prometheus.cjs": [
+        "bin/observe-utils.cjs"
+      ],
+      "bin/observe-handler-upstream.cjs": [
+        "bin/observe-utils.cjs"
+      ],
+      "bin/observe-handlers.cjs": [
+        "bin/observe-utils.cjs",
+        "bin/observe-handler-prometheus.cjs",
+        "bin/observe-handler-grafana.cjs",
+        "bin/observe-handler-logstash.cjs",
+        "bin/observe-handler-internal.cjs",
+        "bin/observe-handler-upstream.cjs",
+        "bin/observe-handler-deps.cjs"
+      ],
+      "bin/observe-render.cjs": [
+        "bin/observe-utils.cjs"
+      ]
+    }
+  },
+  "transitive_chains": [
+    {
+      "root": "bin/observe-debt-writer.cjs",
+      "chain": [
+        "bin/debt-ledger.cjs",
+        "bin/fingerprint-issue.cjs",
+        "bin/fingerprint-drift.cjs",
+        "bin/validate-debt-entry.cjs",
+        "bin/debt-dedup.cjs",
+        "bin/levenshtein.cjs",
+        "bin/formal-ref-linker.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "commands/nf/observe.md"
+    },
+    {
+      "root": "bin/nf-solve.cjs",
+      "chain": [
+        "bin/sweepPtoF.cjs",
+        "bin/debt-ledger.cjs",
+        "bin/compareDrift.cjs",
+        "bin/extractFormalExpected.cjs",
+        "bin/autoClosePtoF.cjs",
+        "bin/debt-state-machine.cjs",
+        "bin/isNumericThreshold.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "commands/nf/solve.md"
+    },
+    {
+      "root": "bin/quorum-consensus-gate.cjs",
+      "chain": [
+        "bin/planning-paths.cjs",
+        "bin/run-prism.cjs",
+        "bin/write-check-result.cjs",
+        "bin/read-policy.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "hooks/nf-prompt.js"
+    },
+    {
+      "root": "bin/run-oscillation-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/run-tlc.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-breaker-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/run-tlc.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-protocol-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/run-tlc.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-account-manager-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/run-tlc.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-stop-hook-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/run-tlc.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-phase-tlc.cjs",
+      "chain": [
+        "bin/generate-proposed-changes.cjs",
+        "bin/generate-phase-spec.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/check-liveness-fairness.cjs",
+      "chain": [
+        "bin/run-tlc.cjs",
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/nForma.cjs",
+      "chain": [
+        "bin/manage-agents-core.cjs",
+        "bin/resolve-cli.cjs",
+        "bin/update-agents.cjs",
+        "bin/secrets.cjs",
+        "bin/requirements-core.cjs",
+        "bin/requirement-map.cjs",
+        "bin/planning-paths.cjs",
+        "bin/aggregate-requirements.cjs",
+        "bin/detect-coverage-gaps.cjs",
+        "bin/auth-drivers/index.cjs"
+      ],
+      "max_depth": 2,
+      "root_consumer": "bin/nForma.cjs (CLI TUI entry point, installed to nf-bin)"
+    },
+    {
+      "root": "bin/observe-handlers.cjs",
+      "chain": [
+        "bin/observe-utils.cjs",
+        "bin/observe-handler-prometheus.cjs",
+        "bin/observe-handler-grafana.cjs",
+        "bin/observe-handler-logstash.cjs",
+        "bin/observe-handler-internal.cjs",
+        "bin/observe-handler-upstream.cjs",
+        "bin/observe-handler-deps.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/observe.md"
+    },
+    {
+      "root": "bin/observe-render.cjs",
+      "chain": [
+        "bin/observe-utils.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/observe.md"
+    },
+    {
+      "root": "bin/check-provider-health.cjs",
+      "chain": [
+        "bin/planning-paths.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/quorum.md"
+    },
+    {
+      "root": "bin/update-scoreboard.cjs",
+      "chain": [
+        "bin/planning-paths.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/quorum.md"
+    },
+    {
+      "root": "bin/install.js",
+      "chain": [
+        "bin/migrate-to-slots.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/solve.md"
+    },
+    {
+      "root": "bin/validate-traces.cjs",
+      "chain": [
+        "bin/planning-paths.cjs",
+        "bin/xstate-trace-walker.cjs",
+        "bin/write-check-result.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/solve.md"
+    },
+    {
+      "root": "bin/sync-baseline-requirements.cjs",
+      "chain": [
+        "bin/load-baseline-requirements.cjs",
+        "bin/detect-project-intent.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "commands/nf/sync-baselines.md"
+    },
+    {
+      "root": "bin/run-tlc.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "core/workflows/close-formal-gaps.md"
+    },
+    {
+      "root": "bin/run-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-audit-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-transcript-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-installer-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-account-pool-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-quorum-composition-alloy.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-prism.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/read-policy.cjs",
+        "bin/requirement-map.cjs",
+        "bin/planning-paths.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-oauth-rotation-prism.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    },
+    {
+      "root": "bin/run-uppaal.cjs",
+      "chain": [
+        "bin/write-check-result.cjs",
+        "bin/verify-formal-results.cjs",
+        "bin/requirement-map.cjs"
+      ],
+      "max_depth": 1,
+      "root_consumer": "bin/run-formal-verify.cjs (dynamic runner dispatch)"
+    }
+  ]
+}
