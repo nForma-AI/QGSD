@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-07T22:20:37.832Z",
-  "content_hash": "ecda85496122c875",
+  "aggregated_at": "2026-03-07T22:21:39.928Z",
+  "content_hash": "93415a27c5dc3aef",
   "schema_version": "1",
   "requirements": [
     {
@@ -1131,6 +1131,18 @@
       "provenance": {
         "source_file": ".planning/quick/193-build-bin-git-heatmap-cjs-mine-git-histo/193-PLAN.md",
         "milestone": "quick-193"
+      }
+    },
+    {
+      "id": "EVID-04",
+      "text": "bin/git-history-evidence.cjs classifies every commit into one of seven categories (feat/fix/refactor/docs/test/build/chore), cross-references changed files against TLA+ specifications via model-registry.json, identifies drift candidates where code evolved after its formal spec, and produces .planning/formal/evidence/git-history-evidence.json consumed by the nf-solve sweep pipeline as an informational residual",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The existing git-heatmap evidence provides churn and bugfix signals but does not classify commits by type or detect when source files drift ahead of their TLA+ formal specs. This tool closes that gap, enabling nf-solve to surface files where code changed but the corresponding formal model is stale.",
+      "provenance": {
+        "source_file": ".planning/quick/218-build-git-history-evidence-extractor-wit/218-PLAN.md",
+        "milestone": "quick-218"
       }
     },
     {
@@ -3990,5 +4002,6 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-07T22:20:37.833Z"
+  "frozen_at": "2026-03-07T22:21:39.928Z",
+  "total": 283
 }
