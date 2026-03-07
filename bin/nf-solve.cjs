@@ -2151,6 +2151,46 @@ function sweepGitHeatmap() {
   }
 }
 
+// ── Git History Evidence sweep ────────────────────────────────────────────────
+
+/**
+ * Reads git-history-evidence.json and returns TLA+ drift candidate count as residual.
+ * Refreshes the evidence file first (unless --report-only or --fast).
+ * Informational — not added to the automatable forward total.
+ */
+function sweepGitHistoryEvidence() {
+  const evidencePath = path.join(ROOT, '.planning', 'formal', 'evidence', 'git-history-evidence.json');
+
+  // Refresh evidence (skip in fast/report-only modes — too slow for git mining)
+  if (!fastMode && !reportOnly) {
+    const refresh = spawnTool('bin/git-history-evidence.cjs', []);
+    if (!refresh.ok) {
+      process.stderr.write(TAG + ' WARNING: git-history-evidence.cjs failed; using stale evidence\n');
+    }
+  }
+
+  if (!fs.existsSync(evidencePath)) {
+    return { residual: -1, detail: { skipped: true, reason: 'no evidence file' } };
+  }
+
+  try {
+    const data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+    const driftCandidates = data.tla_drift_candidates || [];
+
+    return {
+      residual: driftCandidates.length,
+      detail: {
+        tla_drift_count: driftCandidates.length,
+        total_commits: (data.summary || {}).total_commits || 0,
+        top_drift_candidates: driftCandidates.slice(0, 5),
+        generated: data.generated || null,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
+  }
+}
+
 // ── Formal model lint sweep ──────────────────────────────────────────────────
 
 /**
@@ -2291,6 +2331,9 @@ function computeResidual() {
   const git_heatmap = sweepGitHeatmap();
   const heatmap_total = git_heatmap.residual >= 0 ? git_heatmap.residual : 0;
 
+  // Git history evidence sweep (informational — not added to forward total)
+  const git_history = sweepGitHistoryEvidence();
+
   // Formal model lint sweep (informational — not added to forward total)
   const formal_lint = sweepFormalLint();
 
@@ -2313,6 +2356,7 @@ function computeResidual() {
     l2_to_l3,
     l3_to_tc,
     git_heatmap,
+    git_history,
     formal_lint,
     hazard_model,
     assembled_candidates,
@@ -2862,6 +2906,21 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  if (finalResidual.git_history && finalResidual.git_history.residual > 0) {
+    lines.push('## GH (Git History Evidence) [TLA+ drift]');
+    const detail = finalResidual.git_history.detail;
+    if (detail.top_drift_candidates && detail.top_drift_candidates.length > 0) {
+      lines.push('TLA+ drift candidates (' + detail.tla_drift_count + ' total):');
+      for (const dc of detail.top_drift_candidates.slice(0, 10)) {
+        lines.push('  - ' + dc.file + ' (' + dc.recent_feat_or_fix + ' feat/fix) -> ' + dc.tla_spec);
+      }
+      if (detail.tla_drift_count > 10) {
+        lines.push('  ... and ' + (detail.tla_drift_count - 10) + ' more');
+      }
+    }
+    lines.push('');
+  }
+
   if (finalResidual.formal_lint && finalResidual.formal_lint.residual > 0) {
     lines.push('## FL (Formal Model Lint) [quality]');
     const detail = finalResidual.formal_lint.detail;
@@ -2926,7 +2985,7 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc', 'git_heatmap', 'formal_lint', 'hazard_model']) {
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc', 'git_heatmap', 'git_history', 'formal_lint', 'hazard_model']) {
     const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
@@ -3073,6 +3132,7 @@ module.exports = {
   sweepL2toL3,
   sweepL3toTC,
   sweepGitHeatmap,
+  sweepGitHistoryEvidence,
   sweepFormalLint,
   sweepHazardModel,
   assembleReverseCandidates,
