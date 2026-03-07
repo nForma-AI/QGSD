@@ -369,6 +369,18 @@
 
 **Status:** Complete
 
+### SOLVE-11: The formal verification result schema SHALL distinguish infrastructure errors
+
+**Requirement:** The formal verification result schema SHALL distinguish infrastructure errors (binary not found, model missing, Java version wrong) from requirement violations (counterexample, divergence, property violation) using separate result values, and only requirement violations SHALL inflate the F->C residual.
+
+**Formal models:** .planning/formal/alloy/result-classification.als
+
+**Implementation:** `write-check-result.cjs` defines `VALID_RESULTS = ['pass', 'fail', 'error', 'warn', 'inconclusive']`. Runner scripts (run-alloy.cjs, run-prism.cjs, run-tlc.cjs, etc.) classify infrastructure failures as `result:'error'` and verification violations as `result:'fail'`. In `nf-solve.cjs`, `sweepFtoC()` tracks `errorCount` separately from `failedCount` — only `failedCount` drives the F→C residual.
+
+**Source files:** bin/write-check-result.cjs, bin/nf-solve.cjs, bin/run-alloy.cjs, bin/run-prism.cjs, bin/run-tlc.cjs
+
+**Status:** Complete
+
 ### SPEC-01: Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safe
 
 **Requirement:** Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness
