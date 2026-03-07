@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-07T19:45:32.625Z",
-  "content_hash": "c4be348fd83cb1f2",
+  "aggregated_at": "2026-03-07T21:15:22.830Z",
+  "content_hash": "fd27bfcb31074a8f",
   "schema_version": "1",
   "requirements": [
     {
@@ -3506,6 +3506,18 @@
       }
     },
     {
+      "id": "TRACE-09",
+      "text": "The formal proximity index builder reads all 12 formal artifact types and emits a bidirectional adjacency graph (proximity-index.json) with reverse edges for every forward edge, and the query CLI provides reach, path, neighbors, impact, coverage, proximity, and stats commands over that graph.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Isolated formal-to-code lookups required manual cross-referencing across 12 separate artifact files. The proximity index unifies these into a single bidirectional graph with BFS traversal and proximity scoring.",
+      "provenance": {
+        "source_file": ".planning/quick/217-build-formal-proximity-index-builder-and/217-PLAN.md",
+        "milestone": "quick-217"
+      }
+    },
+    {
       "id": "TRIAGE-01",
       "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.planning/formal/diff-report.md` (per-check delta from last run) and `.planning/formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
@@ -3966,5 +3978,5 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-07T19:45:32.627Z"
+  "frozen_at": "2026-03-07T21:15:22.876Z"
 }
