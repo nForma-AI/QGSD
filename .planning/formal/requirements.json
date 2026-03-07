@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-07T17:23:31.585Z",
-  "content_hash": "79d7edff60d94574",
+  "aggregated_at": "2026-03-07T19:27:51.081Z",
+  "content_hash": "7ffbd3fa613dfb7e",
   "schema_version": "1",
   "requirements": [
     {
@@ -994,6 +994,18 @@
       "formal_models": [
         ".planning/formal/alloy/doc-public-boundary.als"
       ]
+    },
+    {
+      "id": "DOC-03",
+      "text": "nForma.cjs provides a `--screenshot <module>` CLI mode that renders each TUI module headlessly as synthetic ANSI output, and bin/generate-tui-assets.cjs converts that output to Tokyo Night-themed SVG files in docs/assets/ via the `npm run assets:tui` script.",
+      "category": "Documentation",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "TUI documentation images previously required manual screenshots that drifted from the actual UI. This requirement ensures SVG assets are generated deterministically from live TUI module data, keeping documentation visuals in sync with the codebase.",
+      "provenance": {
+        "source_file": ".planning/quick/213-automate-tui-asset-generation-with-headl/213-PLAN.md",
+        "milestone": "quick-213"
+      }
     },
     {
       "id": "DRIFT-01",
@@ -2940,6 +2952,30 @@
       ]
     },
     {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
+      }
+    },
+    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -2987,30 +3023,6 @@
       "provenance": {
         "source_file": ".planning/quick/207-improve-nf-solve-to-auto-remediate-todo-/207-PLAN.md",
         "milestone": "quick-207"
-      }
-    },
-    {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
       }
     },
     {
@@ -3942,5 +3954,5 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-07T17:23:31.586Z"
+  "frozen_at": "2026-03-07T19:27:51.083Z"
 }
