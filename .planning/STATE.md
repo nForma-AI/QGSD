@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-06 after v0.29)
 Phase: None (between milestones)
 Plan: N/A
 Status: Milestone v0.29 complete
-Last activity: 2026-03-07 - Completed quick task 203: Wire remaining 12 lone producer scripts into their target skill commands
+Last activity: 2026-03-07 - Completed quick task 205: Fix conformance traces
 
 Progress: Milestone complete
 
@@ -51,6 +51,7 @@ None — clean milestone boundary.
 | 201 | Survey code for producer-without-consumer lone features not wired into top-level skills | 2026-03-07 | aa725efc | Verified | [201-survey-code-for-producer-without-consume](./quick/201-survey-code-for-producer-without-consume/) |
 | 202 | Wire gate-a/b/c, cross-layer-dashboard, and hazard-model into nf:solve remediation flow | 2026-03-07 | 4a5cdc5a | Pending | [202-wire-gate-a-b-c-cross-layer-dashboard-an](./quick/202-wire-gate-a-b-c-cross-layer-dashboard-an/) |
 | 203 | Wire remaining 12 lone producer scripts into their target skill commands | 2026-03-07 | 06489db0 | Pending | [203-wire-remaining-12-lone-producer-scripts-](./quick/203-wire-remaining-12-lone-producer-scripts-/) |
+| 205 | Fix conformance traces — expand mapToXStateEvent | 2026-03-07 | a86b34ef | Pending | [205-fix-conformance-traces-expand-maptoxstat](./quick/205-fix-conformance-traces-expand-maptoxstat/) |
 
 ## Session Continuity
 
