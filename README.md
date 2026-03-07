@@ -667,62 +667,20 @@ You're never locked in. The system adapts.
 
 ## Formal Verification
 
-> **Note:** The formal verification pipeline is optional. If you just want to use nForma, skip this section — you do not need Java 17, PRISM, or Alloy to run nForma normally. This is for developers who want to verify the correctness of nForma's protocol implementation.
+> **Note:** Formal verification is entirely optional. You do not need Java, PRISM, or Alloy to use nForma normally. This section is for anyone who wants to independently verify the correctness of nForma's protocol implementation.
 
-nForma ships executable formal models of its core protocols — not documentation, but machine-checked specs that verify safety, liveness, and probabilistic properties of the protocols that govern how your planning decisions get made.
-
-### What's Modeled
-
-The `.planning/formal/` directory contains 25+ specs across five verification tools:
-
-| Tool | Specs | What they model |
-|------|-------|-----------------|
-| **TLA+** (11 models) | `QGSDQuorum`, `QGSDCircuitBreaker`, `QGSDOscillation`, `QGSDConvergence`, `QGSDDeliberation`, `QGSDPreFilter`, `QGSDAccountManager`, `QGSDMCPEnv`, `QGSDRecruiting`, `QGSDStopHook`, `TUINavigation` | State-space exhaustive model checking — safety invariants and liveness properties |
-| **Alloy** (8 models) | quorum-votes, quorum-composition, scoreboard-recompute, availability-parsing, transcript-scan, install-scope, taxonomy-safety, account-pool-structure | Structural correctness — no impossible states, constraint satisfaction |
-| **PRISM** (3 models) | quorum consensus, OAuth rotation, MCP availability | Probabilistic model checking — convergence probability, expected rounds to consensus |
-| **Petri nets** (2 models) | quorum flow, account manager lifecycle | Visual concurrency models — token flow, place/transition reachability |
-| **UPPAAL** (1 model) | quorum timed races | Real-time model checking — timeout race conditions between concurrent slots |
-
-### Spec Sources
-
-Each protocol has a human-readable spec in `.planning/formal/spec/` that defines the invariants, then one or more tool-specific models that check them:
-
-```
-.planning/formal/
-├── spec/           # Human-readable protocol specs (invariants.md per protocol)
-├── tla/            # TLA+ models + config files (MCsafety.cfg, MCliveness.cfg, etc.)
-├── alloy/          # Alloy 6 models (.als)
-├── prism/          # PRISM models (.pm) + property files (.props)
-├── petri/          # Petri net DOT sources + rendered SVGs
-├── uppaal/         # UPPAAL timed automata (.xml) + queries (.q)
-├── trace/          # TLA+ counterexample traces for debugging
-├── model-registry.json   # Version tracking for all spec files
-├── diff-report.md        # Delta between current and previous verification runs
-├── suspects.md           # Failing or inconclusive checks needing attention
-├── requirements.json     # Formal requirements with traceability to specs
-└── policy.yaml           # Calibration governance (cold-start thresholds, PRISM priors)
-```
+nForma uses five formal methods tools -- TLA+, Alloy, PRISM, Petri nets, and UPPAAL -- to machine-check its own protocol correctness. Every core protocol (quorum consensus, circuit breaker, convergence, recruiting, account management, and others) has executable specifications that verify safety invariants, liveness properties, and probabilistic convergence bounds. The result is that the protocols governing your planning decisions are mathematically verified, not just tested.
 
 ### Prerequisites
 
-TLA+, Alloy, and PRISM all require Java 17+. Petri nets need no extra install (bundled via npm).
-
-One-step install:
+Java 17+ is required for TLA+, Alloy, and PRISM. Petri nets are bundled via npm and need no extra install.
 
 ```bash
 node bin/install-formal-tools.cjs
 # or: node bin/install.js --formal
 ```
 
-Full per-tool documentation: **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**
-
-| Tool | Requires | One-time setup |
-|------|----------|----------------|
-| TLA+ | Java 17+ | Auto-downloaded to `.planning/formal/tla/` by install script |
-| Alloy 6 | Java 17+ | Auto-downloaded to `.planning/formal/alloy/` by install script |
-| PRISM | Java 17+ | Downloaded + installed by script; set `PRISM_BIN` as instructed |
-| Petri nets | — | Nothing — bundled via `@hpcc-js/wasm-graphviz` |
-| UPPAAL | Java 17+ | Manual install — [uppaal.org](https://uppaal.org) |
+For per-tool setup details, see **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**.
 
 ### Running Verification
 
@@ -740,18 +698,7 @@ node bin/run-formal-verify.cjs --only=generate # Regenerate specs from source on
 
 Exit code 0 = all checks pass. Exit code 1 = at least one violation or configuration error.
 
-Individual runners: `bin/run-tlc.cjs`, `bin/run-alloy.cjs`, `bin/run-prism.cjs`, `bin/generate-petri-net.cjs`.
-
-### CI Pipeline Artifacts
-
-Each verification run produces machine-readable outputs:
-
-| File | Purpose |
-|------|---------|
-| `check-results.ndjson` | Structured results per check (pass/fail/warn with timing) |
-| `diff-report.md` | What changed since last run — new failures, regressions, fixes |
-| `suspects.md` | Failing or inconclusive checks that need attention |
-| `model-registry.json` | Version tracking — detects when specs drift from source |
+For the full model inventory, spec sources, and CI artifact documentation, see **[VERIFICATION_TOOLS.md](VERIFICATION_TOOLS.md)**.
 
 ---
 
