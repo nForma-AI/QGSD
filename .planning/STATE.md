@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 Phase: 3 of 7 (Memory Persistence)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-03-07 - Phase v0.30-02 verified (File-Based Execution State)
+Last activity: 2026-03-07 - Completed quick task 212: Fix hooks-sync issue
 
 Progress: [##........] 28%
 
@@ -73,6 +73,7 @@ None yet.
 | 207 | Improve nf:solve to auto-remediate TODO stubs including behavioral strategy | 2026-03-07 | b727a7b3 | Verified | [207-improve-nf-solve-to-auto-remediate-todo-](./quick/207-improve-nf-solve-to-auto-remediate-todo-/) |
 | 210 | Replace checkpoint:human-verify auto-approval with quorum consensus gate (100% APPROVE required) | 2026-03-07 | 0224c258 | Verified | [210-replace-checkpoint-human-verify-auto-app](./quick/210-replace-checkpoint-human-verify-auto-app/) |
 | 211 | Add wiring-in checks to planner and verifier workflows | 2026-03-07 | 369fda5e | Verified | [211-add-wiring-in-checks-to-planner-and-veri](./quick/211-add-wiring-in-checks-to-planner-and-veri/) |
+| 212 | Fix pre-existing hooks-sync issue: add nf-post-edit-format.js and nf-console-guard.js to HOOKS_TO_COPY | 2026-03-07 | 02ed5266 | Verified | [212-fix-pre-existing-hooks-sync-issue-add-nf](./quick/212-fix-pre-existing-hooks-sync-issue-add-nf/) |
 
 ## Session Continuity
 
