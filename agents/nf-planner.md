@@ -227,6 +227,30 @@ For each external service, determine:
 
 Record in `user_setup` frontmatter. Only include what Claude literally cannot do. Do NOT surface in planning output — execute-plan handles presentation.
 
+## System Integration Awareness
+
+When a plan creates NEW artifacts (bin/ scripts, hooks, data files, workflows), the planner MUST identify how each artifact connects to the rest of the system.
+
+**Detection:** Any task whose `<files>` section includes a NEW file (not modifying existing) in these directories:
+- `bin/*.cjs` — CLI scripts
+- `hooks/*.js` — Hook handlers
+- `core/workflows/*.md` — Workflow definitions
+- `commands/**/*.md` — Skill commands
+- `.planning/formal/**` — Formal verification artifacts
+
+**For each new artifact, answer:**
+1. **Who calls it?** — What existing script, workflow, or command will invoke this? (e.g., `nf-solve.cjs` calls it via `spawnTool()`, or a workflow step references it)
+2. **How is it called?** — What's the integration mechanism? (e.g., `require()`, `spawnTool()`, `@file` reference in a .md workflow)
+3. **What if nobody calls it?** — If no existing consumer needs it, the plan MUST include a task to wire it in. An artifact with tests but no consumer is an orphaned producer.
+
+**Rule:** If a plan creates a new bin/ script or hook, it MUST either:
+- Include a task that wires it into an existing consumer (with specific `grep` verification), OR
+- Document in the task action WHY it's a standalone tool invoked directly by the user (e.g., `bin/install.js` is user-invoked)
+
+**Anti-pattern:** Plan creates `bin/analyze-foo.cjs` + `bin/analyze-foo.test.cjs` but no task adds a `spawnTool('bin/analyze-foo.cjs')` call to the script that should invoke it.
+
+**Good pattern:** Plan has Task 1: "Create bin/analyze-foo.cjs" and Task 2: "Wire analyze-foo into nf-solve.cjs autoClose()" with verify: `grep 'analyze-foo' bin/nf-solve.cjs`
+
 </task_breakdown>
 
 <dependency_graph>
