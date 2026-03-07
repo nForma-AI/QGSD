@@ -53,7 +53,7 @@ None — clean milestone boundary.
 | 203 | Wire remaining 12 lone producer scripts into their target skill commands | 2026-03-07 | 06489db0 | Pending | [203-wire-remaining-12-lone-producer-scripts-](./quick/203-wire-remaining-12-lone-producer-scripts-/) |
 | 204 | Audit formal models for state space explosion risks and ensure inductive properties are used | 2026-03-07 | dabfd9d2 | Verified | [204-audit-formal-models-for-state-space-expl](./quick/204-audit-formal-models-for-state-space-expl/) |
 | 205 | Fix conformance traces — expand mapToXStateEvent | 2026-03-07 | a86b34ef | Verified | [205-fix-conformance-traces-expand-maptoxstat](./quick/205-fix-conformance-traces-expand-maptoxstat/) |
-| 206 | Add --base-ref to gate-a-grounding.cjs for diff-scoped grounding | 2026-03-07 | 6f366654 | Pending | [206-add-base-ref-to-gate-a-grounding-cjs-for](./quick/206-add-base-ref-to-gate-a-grounding-cjs-for/) |
+| 206 | Add --base-ref to gate-a-grounding.cjs for diff-scoped grounding | 2026-03-07 | 6f366654 | Verified | [206-add-base-ref-to-gate-a-grounding-cjs-for](./quick/206-add-base-ref-to-gate-a-grounding-cjs-for/) |
 
 ## Session Continuity
 
