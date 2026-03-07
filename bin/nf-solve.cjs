@@ -485,6 +485,20 @@ function preflight() {
   } catch (e) {
     // fail-open: PRISM constants refresh is best-effort
   }
+
+  // Rebuild proximity index (formal-proximity.cjs)
+  try {
+    const specDir = path.join(ROOT, '.planning', 'formal', 'spec');
+    if (fs.existsSync(specDir)) {
+      process.stderr.write(TAG + ' Rebuilding proximity index\n');
+      const proxResult = spawnTool('bin/formal-proximity.cjs', []);
+      if (!proxResult.ok) {
+        process.stderr.write(TAG + ' WARNING: formal-proximity.cjs failed; proximity index may be stale\n');
+      }
+    }
+  } catch (e) {
+    // fail-open: proximity index rebuild is best-effort
+  }
 }
 
 // ── Layer transition sweeps ──────────────────────────────────────────────────
@@ -695,15 +709,54 @@ function sweepCtoF() {
     );
   });
 
+  // Enrich mismatches with proximity graph data (fail-open)
+  let enrichedMismatches = mismatches.map((m) => ({
+    constant: m.constant,
+    source: m.source,
+    formal_value: m.formal_value,
+    config_value: m.config_value,
+  }));
+
+  try {
+    const indexPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(indexPath) && mismatches.length > 0) {
+      const { reach } = require('./formal-query.cjs');
+      const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+
+      enrichedMismatches = mismatches.map((m) => {
+        const entry = {
+          constant: m.constant,
+          source: m.source,
+          formal_value: m.formal_value,
+          config_value: m.config_value,
+        };
+
+        const constKey = 'constant::' + m.constant;
+        if (index.nodes && index.nodes[constKey]) {
+          const filter = ['invariant', 'requirement', 'formal_model'];
+          const reachable = reach(index, constKey, 3, filter);
+          const affected = [];
+          for (const nodes of Object.values(reachable)) {
+            for (const n of nodes) {
+              affected.push({ type: n.type, id: n.key.split('::').slice(1).join('::'), via: n.rel });
+            }
+          }
+          if (affected.length > 0) {
+            entry.affected = affected;
+          }
+        }
+
+        return entry;
+      });
+    }
+  } catch (e) {
+    // fail-open: proximity enrichment is best-effort
+  }
+
   return {
     residual: mismatches.length,
     detail: {
-      mismatches: mismatches.map((m) => ({
-        constant: m.constant,
-        source: m.source,
-        formal_value: m.formal_value,
-        config_value: m.config_value,
-      })),
+      mismatches: enrichedMismatches,
     },
   };
 }

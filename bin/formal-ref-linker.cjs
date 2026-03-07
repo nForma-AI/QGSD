@@ -78,6 +78,17 @@ function linkFormalRefs(entries, options = {}) {
     // fail-open: skip spec-inferred layer
   }
 
+  // Load proximity index (fail-open)
+  let proximityIndex = null;
+  try {
+    const indexPath = path.resolve(process.cwd(), '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(indexPath)) {
+      proximityIndex = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    }
+  } catch {
+    // fail-open: skip proximity-graph layer
+  }
+
   for (const entry of entries) {
     // Layer 1: Manual — existing formal_ref with source already set
     if (entry.formal_ref != null && entry.formal_ref_source != null) {
@@ -112,6 +123,47 @@ function linkFormalRefs(entries, options = {}) {
       linkLog.push({ entry_id: entry.id, formal_ref: entry.formal_ref, source: 'auto-detect', score: bestScore });
       linkedCount++;
       continue;
+    }
+
+    // Layer 2.5: Proximity graph — walk from source file to formal modules (fail-open)
+    if (entry.source_file && proximityIndex && proximityIndex.nodes) {
+      const fileKey = 'code_file::' + entry.source_file;
+      if (proximityIndex.nodes[fileKey]) {
+        const visited = new Set([fileKey]);
+        let frontier = [{ key: fileKey, depth: 0 }];
+        let bestProxModule = null;
+
+        while (frontier.length > 0) {
+          const nextFrontier = [];
+          for (const { key, depth } of frontier) {
+            if (depth >= 2) continue;
+            const node = proximityIndex.nodes[key];
+            if (!node) continue;
+            for (const edge of node.edges) {
+              if (visited.has(edge.to)) continue;
+              visited.add(edge.to);
+              const target = proximityIndex.nodes[edge.to];
+              if (!target) continue;
+              if (target.type === 'formal_module') {
+                bestProxModule = edge.to.replace('formal_module::', '');
+                break;
+              }
+              nextFrontier.push({ key: edge.to, depth: depth + 1 });
+            }
+            if (bestProxModule) break;
+          }
+          if (bestProxModule) break;
+          frontier = nextFrontier;
+        }
+
+        if (bestProxModule) {
+          entry.formal_ref = `spec:${bestProxModule}`;
+          entry.formal_ref_source = 'proximity-graph';
+          linkLog.push({ entry_id: entry.id, formal_ref: entry.formal_ref, source: 'proximity-graph' });
+          linkedCount++;
+          continue;
+        }
+      }
     }
 
     // Layer 3: Spec-inferred — module name substring matching
