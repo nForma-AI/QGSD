@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-07T15:25:15.214Z",
+  "generated_at": "2026-03-07T21:29:05.937Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -398,6 +398,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/CONF-12.stub.test.js",
           "test_name": "CONF-12 — PolyrepoGroup: constant verification"
+        }
+      ]
+    },
+    "CONF-13": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONF-13.stub.test.js",
+          "test_name": "CONF-13 — config-audit.als exists and contains requirement annotation"
         }
       ]
     },
@@ -1552,6 +1561,15 @@
         }
       ]
     },
+    "QUORUM-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/QUORUM-06.stub.test.js",
+          "test_name": "QUORUM-06 — QGSDCheckpointGate.tla exists and contains requirement annotation"
+        }
+      ]
+    },
     "RECV-01": {
       "covered": true,
       "test_cases": [
@@ -1876,6 +1894,24 @@
         }
       ]
     },
+    "SOLVE-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-11.stub.test.js",
+          "test_name": "SOLVE-11 — solve-result-schema.als exists and contains requirement annotation"
+        }
+      ]
+    },
+    "SOLVE-12": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-12.stub.test.js",
+          "test_name": "SOLVE-12 — solve-result-schema.als contains SOLVE-12 requirement annotation"
+        }
+      ]
+    },
     "SOLVE-7": {
       "covered": true,
       "test_cases": [
@@ -2191,6 +2227,15 @@
         }
       ]
     },
+    "TRACE-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACE-09.stub.test.js",
+          "test_name": "TRACE-09 — proximity-index.als exists and contains requirement annotation"
+        }
+      ]
+    },
     "TRIAGE-01": {
       "covered": true,
       "test_cases": [
@@ -2380,6 +2425,15 @@
         }
       ]
     },
+    "VERIFY-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERIFY-05.stub.test.js",
+          "test_name": "VERIFY-05 — wiring-awareness.als exists and contains requirement annotation"
+        }
+      ]
+    },
     "VIS-01": {
       "covered": true,
       "test_cases": [
@@ -2469,6 +2523,14 @@
           "test_name": "WIZ-11 — Bool: structural verification"
         }
       ]
+    },
+    "DOC-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DOC-03": {
+      "covered": false,
+      "test_cases": []
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-07T15:27:21.901Z",
+  "last_sync": "2026-03-07T21:29:41.999Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
@@ -71,8 +71,8 @@
       "layer_maturity": 1
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 3900,
-      "last_updated": "2026-03-07T15:27:21.900Z",
+      "version": 4945,
+      "last_updated": "2026-03-07T21:29:41.996Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -159,8 +159,8 @@
       "layer_maturity": 0
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 3898,
-      "last_updated": "2026-03-07T15:27:21.901Z",
+      "version": 4942,
+      "last_updated": "2026-03-07T21:29:41.999Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -1339,8 +1339,8 @@
       "layer_maturity": 0
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 2652,
-      "last_updated": "2026-03-07T15:27:21.899Z",
+      "version": 3697,
+      "last_updated": "2026-03-07T21:29:41.994Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -1650,6 +1650,62 @@
       "requirements": [
         "HEAL-01",
         "HEAL-02"
+      ]
+    },
+    ".planning/formal/alloy/config-audit.als": {
+      "version": 1,
+      "last_updated": "2026-03-07T21:26:50.086Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Config audit cross-referencing: auth_type anti-pattern detection",
+      "requirements": [
+        "CONF-13"
+      ]
+    },
+    ".planning/formal/alloy/solve-result-schema.als": {
+      "version": 1,
+      "last_updated": "2026-03-07T21:26:50.086Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Solver result classification schema and stub upgrade behavior",
+      "requirements": [
+        "SOLVE-11",
+        "SOLVE-12"
+      ]
+    },
+    ".planning/formal/alloy/proximity-index.als": {
+      "version": 1,
+      "last_updated": "2026-03-07T21:26:50.086Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Formal proximity index bidirectional adjacency graph",
+      "requirements": [
+        "TRACE-09"
+      ]
+    },
+    ".planning/formal/alloy/wiring-awareness.als": {
+      "version": 1,
+      "last_updated": "2026-03-07T21:26:50.086Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Planner wiring-awareness and verifier orphan-check invariants",
+      "requirements": [
+        "VERIFY-05"
+      ]
+    },
+    ".planning/formal/tla/QGSDCheckpointGate.tla": {
+      "version": 1,
+      "last_updated": "2026-03-07T21:26:50.086Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Checkpoint:human-verify 100% APPROVE consensus gate",
+      "requirements": [
+        "QUORUM-06"
       ]
     }
   }
