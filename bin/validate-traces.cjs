@@ -71,8 +71,9 @@ function validateMCPMetadata(event) {
 // Maps a conformance event action to the XState event type and payload.
 // Returns null if the action is unmappable (schema violation).
 function mapToXStateEvent(event) {
-  if (!event || typeof event.action !== 'string') return null;
-  switch (event.action) {
+  const action = (event && (event.action || event.type)) || null;
+  if (typeof action !== 'string') return null;
+  switch (action) {
     case 'quorum_start':
       return { type: 'QUORUM_START', slotsAvailable: event.slots_available || 0 };
     case 'quorum_complete':
@@ -83,6 +84,12 @@ function mapToXStateEvent(event) {
       return { type: 'VOTES_COLLECTED', successCount: event.vote_result || 0 };
     case 'circuit_break':
       return { type: 'CIRCUIT_BREAK' };
+    case 'quorum_fallback_t1_required':
+      return { type: 'QUORUM_START', slotsAvailable: event.fanOutCount || 0 };
+    case 'quorum_block_r3_2':
+      return { type: 'DECIDE', outcome: 'BLOCK' };
+    case 'security_sweep':
+      return null; // Not an FSM event — handled as known-skip below
     default:
       return null;
   }
@@ -183,15 +190,20 @@ function buildTTrace(event, actualState, expectedStateName, divergenceType, scor
 // Only quorum_start (phase=IDLE) and deliberation_round can start from IDLE legitimately.
 // All other events require session context accumulated from preceding events.
 function expectedState(event) {
+  const action = event.action || event.type;
+
   // quorum_start always starts from IDLE — the only truly standalone-valid event type
-  if (event.action === 'quorum_start') return 'COLLECTING_VOTES';
+  if (action === 'quorum_start') return 'COLLECTING_VOTES';
+
+  // quorum_fallback_t1_required is equivalent to quorum_start (type-only events)
+  if (action === 'quorum_fallback_t1_required') return 'COLLECTING_VOTES';
 
   // deliberation_round: these happen mid-session (phase=DECIDING) too
   // but are already excluded by the phase check below
-  if (event.action === 'deliberation_round') return 'DELIBERATING';
+  if (action === 'deliberation_round') return 'DELIBERATING';
 
   // circuit_break self-loops to IDLE — no state transition occurs
-  if (event.action === 'circuit_break') return 'IDLE';
+  if (action === 'circuit_break') return 'IDLE';
 
   // H1 fix: skip validation for mid-session events (phase !== 'IDLE').
   // These events require cross-event context that a fresh actor starting in IDLE cannot provide.
@@ -234,6 +246,7 @@ function buildObservationWindow(scoreboardMeta, n_events) {
 }
 
 if (require.main === module) {
+  const KNOWN_NON_FSM_ACTIONS = new Set(['security_sweep']);
   const _startMs = Date.now();
   const { writeCheckResult } = require('./write-check-result.cjs');
   // Machine CJS path: in the repo, ../dist/machines/ (bin/ → dist/machines/)
@@ -347,9 +360,14 @@ if (require.main === module) {
 
     const xstateEvent = mapToXStateEvent(event);
     if (!xstateEvent) {
+      const normalizedAction = event.action || event.type;
+      if (KNOWN_NON_FSM_ACTIONS.has(normalizedAction)) {
+        valid++;
+        continue;
+      }
       divergences.push({
         event,
-        reason: 'unmappable_action: ' + event.action,
+        reason: 'unmappable_action: ' + normalizedAction,
         divergenceType: 'unmappable_action',
         ...scoreboardMeta,
         confidence,
@@ -434,5 +452,5 @@ if (require.main === module) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { computeConfidenceTier, CONFIDENCE_THRESHOLDS, validateMCPMetadata, buildTTrace, mapToXStateEvent };
+  module.exports = { computeConfidenceTier, CONFIDENCE_THRESHOLDS, validateMCPMetadata, buildTTrace, mapToXStateEvent, expectedState };
 }
