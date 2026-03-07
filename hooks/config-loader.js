@@ -152,6 +152,7 @@ const DEFAULT_CONFIG = {
   model_routing_enabled: true,
   model_routing_cooldown_rounds: 3,
   model_routing: {},  // per-complexity tier overrides, e.g. { simple: 'haiku' }
+  smart_compact_threshold_pct: 65,  // Proactive compaction at 65% context (midpoint of 60-70% range from research)
 };
 
 // Reads and parses a JSON config file.

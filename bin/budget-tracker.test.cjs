@@ -5,7 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const { computeBudgetStatus, triggerProfileDowngrade, DOWNGRADE_CHAIN, formatBudgetWarning } = require('./budget-tracker.cjs');
+const { computeBudgetStatus, triggerProfileDowngrade, DOWNGRADE_CHAIN, formatBudgetWarning, checkCooldown, detectOscillation } = require('./budget-tracker.cjs');
 
 // Helper: create temp dir with .planning/config.json
 function makeTempProject(configObj) {
@@ -123,6 +123,132 @@ describe('formatBudgetWarning', () => {
     assert.ok(msg.includes('BUDGET ALERT'));
     assert.ok(msg.includes('balanced'));
     assert.ok(msg.includes('budget'));
+  });
+});
+
+// --- checkCooldown ---
+
+describe('checkCooldown', () => {
+  let tmpDir;
+
+  afterEach(() => { if (tmpDir) cleanTmp(tmpDir); });
+
+  it('returns inactive with no history', () => {
+    tmpDir = makeTempProject({});
+    const result = checkCooldown(tmpDir);
+    assert.equal(result.active, false);
+    assert.equal(result.lastDowngradeTs, null);
+    assert.equal(result.remainingMs, 0);
+  });
+
+  it('returns inactive with no config file', () => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'budget-test-'));
+    const result = checkCooldown(tmpDir);
+    assert.equal(result.active, false);
+  });
+
+  it('returns active with recent history entry', () => {
+    const recentTs = new Date().toISOString();
+    tmpDir = makeTempProject({ downgrade_history: [{ ts: recentTs, from: 'quality', to: 'balanced' }] });
+    const result = checkCooldown(tmpDir, 300000);
+    assert.equal(result.active, true);
+    assert.equal(result.lastDowngradeTs, recentTs);
+    assert.ok(result.remainingMs > 0);
+  });
+
+  it('returns inactive with old history entry', () => {
+    const oldTs = new Date(Date.now() - 600000).toISOString(); // 10 min ago
+    tmpDir = makeTempProject({ downgrade_history: [{ ts: oldTs, from: 'quality', to: 'balanced' }] });
+    const result = checkCooldown(tmpDir, 300000);
+    assert.equal(result.active, false);
+    assert.equal(result.remainingMs, 0);
+  });
+});
+
+// --- triggerProfileDowngrade with cooldown ---
+
+describe('triggerProfileDowngrade cooldown', () => {
+  let tmpDir;
+
+  afterEach(() => { if (tmpDir) cleanTmp(tmpDir); });
+
+  it('returns cooldown_active with recent downgrade_history', () => {
+    const recentTs = new Date().toISOString();
+    tmpDir = makeTempProject({
+      model_profile: 'quality',
+      downgrade_history: [{ ts: recentTs, from: 'balanced', to: 'budget' }],
+    });
+    const result = triggerProfileDowngrade(tmpDir, { cooldownMs: 300000 });
+    assert.equal(result.downgraded, false);
+    assert.equal(result.reason, 'cooldown_active');
+  });
+
+  it('proceeds with old downgrade_history entry', () => {
+    const oldTs = new Date(Date.now() - 600000).toISOString();
+    tmpDir = makeTempProject({
+      model_profile: 'quality',
+      downgrade_history: [{ ts: oldTs, from: 'balanced', to: 'budget' }],
+    });
+    const result = triggerProfileDowngrade(tmpDir, { cooldownMs: 300000 });
+    assert.equal(result.downgraded, true);
+    assert.equal(result.from, 'quality');
+    assert.equal(result.to, 'balanced');
+  });
+
+  it('returns oscillation_detected with 3+ alternating in 10min', () => {
+    const now = Date.now();
+    tmpDir = makeTempProject({
+      model_profile: 'quality',
+      downgrade_history: [
+        { ts: new Date(now - 120000).toISOString(), from: 'quality', to: 'balanced' },  // down
+        { ts: new Date(now - 60000).toISOString(), from: 'balanced', to: 'quality' },   // up (not in chain -> not a downgrade)
+        { ts: new Date(now - 5000).toISOString(), from: 'quality', to: 'balanced' },    // down
+      ],
+    });
+    // The last entry is 5s ago, so cooldown should trigger first. Use cooldownMs=1 to bypass.
+    const result = triggerProfileDowngrade(tmpDir, { cooldownMs: 1 });
+    assert.equal(result.downgraded, false);
+    assert.equal(result.reason, 'oscillation_detected');
+  });
+
+  it('downgrade_history is pruned to 10 entries max', () => {
+    const history = [];
+    for (let i = 0; i < 12; i++) {
+      history.push({ ts: new Date(Date.now() - (12 - i) * 600000).toISOString(), from: 'quality', to: 'balanced' });
+    }
+    tmpDir = makeTempProject({ model_profile: 'quality', downgrade_history: history });
+    triggerProfileDowngrade(tmpDir, { cooldownMs: 0 });
+    const cfg = JSON.parse(fs.readFileSync(path.join(tmpDir, '.planning', 'config.json'), 'utf8'));
+    assert.ok(cfg.downgrade_history.length <= 10, `Expected <= 10 entries, got ${cfg.downgrade_history.length}`);
+  });
+
+  it('backward compatible: no options parameter works', () => {
+    tmpDir = makeTempProject({ model_profile: 'quality' });
+    const result = triggerProfileDowngrade(tmpDir);
+    assert.equal(result.downgraded, true);
+    assert.equal(result.from, 'quality');
+    assert.equal(result.to, 'balanced');
+  });
+});
+
+// --- computeBudgetStatus with cooldownActive ---
+
+describe('computeBudgetStatus cooldownActive', () => {
+  it('shouldDowngrade false when cooldownActive is true', () => {
+    const result = computeBudgetStatus(85, { session_limit_tokens: 200000, warn_pct: 60, downgrade_pct: 85 }, {}, true);
+    assert.equal(result.active, true);
+    assert.equal(result.shouldDowngrade, false);
+    assert.equal(result.shouldWarn, true);
+  });
+
+  it('shouldDowngrade normal when cooldownActive is false', () => {
+    const result = computeBudgetStatus(85, { session_limit_tokens: 200000, warn_pct: 60, downgrade_pct: 85 }, {}, false);
+    assert.equal(result.shouldDowngrade, true);
+  });
+
+  it('shouldDowngrade normal when cooldownActive is undefined (backward compat)', () => {
+    const result = computeBudgetStatus(85, { session_limit_tokens: 200000, warn_pct: 60, downgrade_pct: 85 }, {});
+    assert.equal(result.shouldDowngrade, true);
   });
 });
 
