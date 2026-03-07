@@ -87,7 +87,7 @@ None yet.
 | 213 | Automate TUI asset generation with headless blessed screenshots to SVG | 2026-03-07 | 1c0c4a5e | Verified | [213-automate-tui-asset-generation-with-headl](./quick/213-automate-tui-asset-generation-with-headl/) |
 | 214 | Add config-audit.cjs + solve wiring + regression test | 2026-03-07 | 23bba53f | Verified | [214-add-bin-config-audit-cjs-to-cross-refere](./quick/214-add-bin-config-audit-cjs-to-cross-refere/) |
 | 215 | Add observe→solve auto-pipe | 2026-03-07 | 16d0c7fe | Verified | [215-add-observe-solve-auto-pipe-route-select](./quick/215-add-observe-solve-auto-pipe-route-select/) |
-| 216 | Integrate solve with debt ledger | 2026-03-07 | 4f1f898b | Pending | [216-integrate-solve-with-debt-ledger-auto-fe](./quick/216-integrate-solve-with-debt-ledger-auto-fe/) |
+| 216 | Integrate solve with debt ledger | 2026-03-07 | 4f1f898b | Verified | [216-integrate-solve-with-debt-ledger-auto-fe](./quick/216-integrate-solve-with-debt-ledger-auto-fe/) |
 
 ## Session Continuity
 
