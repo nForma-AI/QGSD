@@ -52,7 +52,7 @@ None — clean milestone boundary.
 | 204 | Audit formal models for state space explosion risks and ensure inductive properties are used | 2026-03-07 | dabfd9d2 | Verified | [204-audit-formal-models-for-state-space-expl](./quick/204-audit-formal-models-for-state-space-expl/) |
 | 205 | Fix conformance traces — expand mapToXStateEvent | 2026-03-07 | a86b34ef | Verified | [205-fix-conformance-traces-expand-maptoxstat](./quick/205-fix-conformance-traces-expand-maptoxstat/) |
 | 206 | Add --base-ref to gate-a-grounding.cjs for diff-scoped grounding | 2026-03-07 | 6f366654 | Verified | [206-add-base-ref-to-gate-a-grounding-cjs-for](./quick/206-add-base-ref-to-gate-a-grounding-cjs-for/) |
-| 208 | Rewrite README.md to focus on user-facing capabilities, not internal formal models | 2026-03-07 | afa978d3 | Pending | [208-rewrite-readme-md-to-focus-on-user-facin](./quick/208-rewrite-readme-md-to-focus-on-user-facin/) |
+| 208 | Rewrite README.md to focus on user-facing capabilities, not internal formal models | 2026-03-07 | afa978d3 | Verified | [208-rewrite-readme-md-to-focus-on-user-facin](./quick/208-rewrite-readme-md-to-focus-on-user-facin/) |
 | 209 | Distinguish FAIL vs ERROR in formal verification results | 2026-03-07 | e60100ed | Pending | [209-distinguish-fail-vs-error-in-formal-veri](./quick/209-distinguish-fail-vs-error-in-formal-veri/) |
 
 ## Session Continuity
