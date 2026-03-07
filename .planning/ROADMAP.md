@@ -83,7 +83,10 @@ Plans:
   2. User receives a proactive session reminder at SessionStart showing the last 3 decisions made, any blockers discovered, and relevant learnings from previous sessions
   3. User benefits from error resolution memory -- when a previously-solved error recurs, the symptom/root-cause/fix pattern is available as searchable context without re-diagnosis
   4. User benefits from quorum decision memory -- debate rationale ("chose X over Y because Z") persists across compaction and is available in subsequent quorum rounds
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-04: Continuous Learning
 **Goal**: Users accumulate reusable knowledge automatically -- error patterns, correction habits, validated skills, and failure history prevent repeated mistakes
@@ -94,7 +97,10 @@ Plans:
   2. User corrections to Claude's approach (e.g., "don't use that pattern, do this instead") are automatically recorded as learned patterns and applied in future sessions
   3. User benefits from quorum-validated skill extraction -- only patterns that multiple models agree are valuable get persisted as reusable skills, filtering out noise
   4. User benefits from a failure catalog with confidence scores that tracks failed approaches and prevents re-attempting dead ends in subsequent sessions
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-05: Continuous Verification
 **Goal**: Users get immediate feedback on code quality during execution, not just at phase end, with machine-checkable definitions of "done"
@@ -104,7 +110,10 @@ Plans:
   1. User benefits from continuous test verification during execution -- relevant tests run after each code change via PostToolUse boundary batching (max 3 per phase, 5s timeout), surfacing regressions immediately rather than at phase end
   2. User benefits from machine-verifiable completion conditions -- "done" is defined as checkable conditions (tests pass, linter clean, type-check passes) that are evaluated programmatically, not by LLM judgment
   3. Verification checks do not stall the agent loop -- checks that timeout or fail degrade gracefully to advisory warnings without blocking execution (formal: EventuallyTerminates)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-06: Subagent Orchestration
 **Goal**: Quorum slot workers retrieve context on demand instead of receiving fixed dumps, and architecture decisions accumulate across phases
@@ -114,7 +123,10 @@ Plans:
   1. User benefits from iterative retrieval for quorum slot workers -- workers can request additional context via Read/Grep/Glob as needed instead of receiving a fixed context dump, with per-slot token budget (8k max) and max 2 retrieval rounds
   2. User benefits from phase-based context accumulation -- architecture decisions, test results, and API contracts from completed phases automatically inject into subsequent phase planning via a context stack
   3. User benefits from specialized retrieval agents -- domain-specific agents (test-retriever, architecture-retriever, formal-model-retriever) with preloaded skills fetch targeted context more efficiently than generic retrieval
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 #### Phase v0.30-07: Worktree Parallelization
 **Goal**: Independent plan tasks execute simultaneously in isolated git worktrees instead of sequentially, with safe merge orchestration
@@ -124,7 +136,10 @@ Plans:
   1. User benefits from worktree-isolated executor subagents -- parallel tasks run in git worktrees using native `isolation: worktree` without file conflicts, with all mutable state scoped to worktree-specific directories
   2. User benefits from parallel plan execution -- independent plan tasks identified in the plan are dispatched simultaneously to isolated worktrees instead of running sequentially, with merge orchestration handling results
   3. Each parallel executor reaches a terminal state (success, cap exhausted, or unrecoverable) independently -- no executor stalls or blocks other executors (formal: EventuallyTerminates)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
+- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
 
 ### Progress
 
