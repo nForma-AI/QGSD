@@ -22,6 +22,8 @@ const HOOKS_TO_COPY = [
   'nf-token-collector.js', // nForma: SubagentStop token collection
   'nf-slot-correlator.js', // nForma: SubagentStart slot correlation
   'gsd-context-monitor.js', // nForma: PostToolUse context monitoring
+  'nf-post-edit-format.js',  // nForma: PostToolUse edit formatting
+  'nf-console-guard.js',     // nForma: PreToolUse console guard
   'config-loader.js',       // shared config loader (required by multiple hooks)
   'conformance-schema.cjs', // shared conformance schema (required by nf-prompt, nf-stop, nf-circuit-breaker)
 ];
