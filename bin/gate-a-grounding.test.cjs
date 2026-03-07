@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const { computeGateA, isMethodologySkip, checkGenuineViolation } = require('./gate-a-grounding.cjs');
+const { computeGateA, isMethodologySkip, checkGenuineViolation, getChangedActions, normalizePath } = require('./gate-a-grounding.cjs');
 
 // ── Unit tests: isMethodologySkip ───────────────────────────────────────────
 
@@ -158,5 +158,107 @@ describe('integration', () => {
     const gate = JSON.parse(fs.readFileSync(gatePath, 'utf8'));
     assert.strictEqual(gate.schema_version, '1');
     assert.ok(gate.generated);
+  });
+});
+
+// ── Diff-scoped grounding (--base-ref) ──────────────────────────────────────
+
+describe('diff-scoped grounding (--base-ref)', () => {
+  const vocab = { vocabulary: {
+    quorum_start: { xstate_event: 'QUORUM_START' },
+    circuit_break: { xstate_event: 'CIRCUIT_BREAK' },
+    unknown_action: {}
+  } };
+
+  it('scoped filtering produces correct score for subset', () => {
+    // 3 quorum_start (explained from IDLE) + 2 circuit_break (explained from IDLE)
+    const allEvents = [];
+    for (let i = 0; i < 3; i++) {
+      allEvents.push({ ts: '2026-01-01T00:00:00Z', phase: 'IDLE', action: 'quorum_start', slots_available: 0 });
+    }
+    for (let i = 0; i < 2; i++) {
+      allEvents.push({ ts: '2026-01-01T00:00:00Z', phase: 'IDLE', action: 'circuit_break', slots_available: 0 });
+    }
+    // Simulate scoped filtering: only quorum_start actions
+    const scopedActions = new Set(['quorum_start']);
+    const scopedEvents = allEvents.filter(e => scopedActions.has(e.action));
+    const result = computeGateA(scopedEvents, vocab, null, null);
+    assert.strictEqual(result.total, 3);
+    assert.strictEqual(result.explained, 3);
+    assert.strictEqual(result.grounding_score, 1.0);
+  });
+
+  it('scoped score is independent from global score', () => {
+    // 10 events: 8 quorum_start (explained) + 2 unknown_action (unexplained)
+    const events = [];
+    for (let i = 0; i < 8; i++) {
+      events.push({ ts: '2026-01-01T00:00:00Z', phase: 'IDLE', action: 'quorum_start', slots_available: 0 });
+    }
+    for (let i = 0; i < 2; i++) {
+      events.push({ ts: '2026-01-01T00:00:00Z', phase: 'IDLE', action: 'unknown_action', slots_available: 0 });
+    }
+    // Global: 80%
+    const globalResult = computeGateA(events, vocab, null, null);
+    assert.ok(Math.abs(globalResult.grounding_score - 0.8) < 0.001);
+
+    // Scoped to only unknown_action: 0%
+    const scopedEvents = events.filter(e => e.action === 'unknown_action');
+    const scopedResult = computeGateA(scopedEvents, vocab, null, null);
+    assert.strictEqual(scopedResult.grounding_score, 0);
+    assert.strictEqual(scopedResult.total, 2);
+    assert.strictEqual(scopedResult.explained, 0);
+  });
+
+  it('empty scoped events produce 0 total and target_met=false', () => {
+    const result = computeGateA([], vocab, null, null);
+    assert.strictEqual(result.total, 0);
+    assert.strictEqual(result.grounding_score, 0);
+    assert.strictEqual(result.target_met, false);
+  });
+
+  it('scope object schema present in gate-a-grounding.json', () => {
+    const gatePath = path.join(ROOT, '.planning', 'formal', 'gates', 'gate-a-grounding.json');
+    if (!fs.existsSync(gatePath)) return; // skip if no prior run
+    const gate = JSON.parse(fs.readFileSync(gatePath, 'utf8'));
+    assert.ok(gate.scope, 'gate-a-grounding.json should have a scope field');
+    assert.ok(gate.scope.mode, 'scope should have a mode property');
+    assert.ok(['global', 'diff'].includes(gate.scope.mode), 'scope.mode should be global or diff');
+  });
+
+  it('backward compatibility: no --base-ref produces scope.mode=global', () => {
+    // Run the CLI without --base-ref and check the output file
+    const cp = require('child_process');
+    try {
+      cp.execSync('node bin/gate-a-grounding.cjs', { cwd: ROOT, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+    } catch (_) { /* ignore exit code */ }
+    const gatePath = path.join(ROOT, '.planning', 'formal', 'gates', 'gate-a-grounding.json');
+    const gate = JSON.parse(fs.readFileSync(gatePath, 'utf8'));
+    assert.strictEqual(gate.scope.mode, 'global');
+  });
+
+  it('getChangedActions returns null for missing instrumentation-map.json', () => {
+    const mapPath = path.join(ROOT, '.planning', 'formal', 'evidence', 'instrumentation-map.json');
+    const backupPath = mapPath + '.bak';
+    let backed = false;
+    try {
+      if (fs.existsSync(mapPath)) {
+        fs.renameSync(mapPath, backupPath);
+        backed = true;
+      }
+      const result = getChangedActions('HEAD~1');
+      // Should return null (graceful degradation)
+      assert.strictEqual(result, null);
+    } finally {
+      if (backed) {
+        fs.renameSync(backupPath, mapPath);
+      }
+    }
+  });
+
+  it('normalizePath handles leading ./ prefix', () => {
+    assert.strictEqual(normalizePath('./hooks/nf-prompt.js'), 'hooks/nf-prompt.js');
+    assert.strictEqual(normalizePath('hooks/nf-prompt.js'), 'hooks/nf-prompt.js');
+    assert.strictEqual(normalizePath('./src/index.js'), 'src/index.js');
+    assert.strictEqual(normalizePath('src/index.js'), 'src/index.js');
   });
 });
