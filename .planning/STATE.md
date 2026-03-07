@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 Phase: 4 of 7 (Continuous Learning) -- EXECUTING
 Plan: 0 of 2 in current phase
 Status: Ready to execute
-Last activity: 2026-03-07 - Completed quick task 214: Add config-audit.cjs
+Last activity: 2026-03-07 - Completed quick task 215: Add observe→solve auto-pipe
 
 Progress: [####......] 43%
 
@@ -86,6 +86,7 @@ None yet.
 | 212 | Fix pre-existing hooks-sync issue: add nf-post-edit-format.js and nf-console-guard.js to HOOKS_TO_COPY | 2026-03-07 | 02ed5266 | Verified | [212-fix-pre-existing-hooks-sync-issue-add-nf](./quick/212-fix-pre-existing-hooks-sync-issue-add-nf/) |
 | 213 | Automate TUI asset generation with headless blessed screenshots to SVG | 2026-03-07 | 1c0c4a5e | Verified | [213-automate-tui-asset-generation-with-headl](./quick/213-automate-tui-asset-generation-with-headl/) |
 | 214 | Add config-audit.cjs + solve wiring + regression test | 2026-03-07 | 23bba53f | Verified | [214-add-bin-config-audit-cjs-to-cross-refere](./quick/214-add-bin-config-audit-cjs-to-cross-refere/) |
+| 215 | Add observe→solve auto-pipe | 2026-03-07 | 1d2b0773 | Pending | [215-add-observe-solve-auto-pipe-route-select](./quick/215-add-observe-solve-auto-pipe-route-select/) |
 
 ## Session Continuity
 
