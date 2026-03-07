@@ -1,7 +1,7 @@
 ---
 name: nf:solve
 description: Orchestrator skill that migrates legacy .formal/ layouts, diagnoses consistency gaps, dispatches to remediation skills for each gap type, and converges via diagnose-remediate-rediagnose loop with before/after comparison
-argument-hint: [--report-only] [--max-iterations=N] [--json] [--verbose] [--targets=<path>]
+argument-hint: [--report-only] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe]
 allowed-tools:
   - Read
   - Write
@@ -99,6 +99,65 @@ If `--targets=<path>` flag was passed:
 
 **Important:** This step is fail-open. If the targets file is missing or malformed, solve proceeds with its normal full sweep.
 
+### Step 0d: Inline Observe Refresh + Debt Load
+
+Run observe inline to get fresh data BEFORE the diagnostic sweep. This ensures debt.json reflects the latest state.
+
+If `--skip-observe` flag was passed, skip the inline observe refresh and go directly to debt load. This is useful when observe was just run manually.
+
+**Observe refresh** (unless `--skip-observe`):
+
+Log: `"Step 0d: Running inline observe to refresh debt ledger..."`
+
+Execute observe's core data-gathering steps programmatically (NOT by invoking the full `/nf:observe` skill which prompts the user). Instead, run the observe pipeline directly:
+
+```javascript
+const { loadObserveConfig } = require('./bin/observe-config.cjs');
+const { registerHandler, dispatchAll } = require('./bin/observe-registry.cjs');
+const { handleGitHub, handleSentry, handleSentryFeedback, handleBash, handleInternal, handleUpstream, handleDeps } = require('./bin/observe-handlers.cjs');
+const { writeObservationsToDebt } = require('./bin/observe-debt-writer.cjs');
+
+// Register all handlers
+registerHandler('github', handleGitHub);
+registerHandler('sentry', handleSentry);
+registerHandler('sentry_feedback', handleSentryFeedback);
+registerHandler('bash', handleBash);
+registerHandler('internal', handleInternal);
+registerHandler('upstream', handleUpstream);
+registerHandler('deps', handleDeps);
+
+const config = loadObserveConfig();
+// Inject internal source unconditionally
+if (!config.sources.find(s => s.type === 'internal')) {
+  config.sources.push({ type: 'internal', label: 'Internal Work', issue_type: 'issue' });
+}
+
+const results = await dispatchAll(config.sources, {});
+// Handle pending_mcp results same as observe Step 4b
+
+const allObservations = results.filter(r => r.status === 'ok').flatMap(r => r.issues || []);
+const { written, updated } = writeObservationsToDebt(allObservations);
+```
+
+Log: `"Step 0d: Observe refresh complete — {written} new, {updated} updated debt entries"`
+
+**Debt load** (always runs):
+
+Load open debt for the solve loop:
+
+```javascript
+const { readOpenDebt, matchDebtToResidual } = require('./bin/solve-debt-bridge.cjs');
+const { entries: openDebt } = readOpenDebt('.planning/formal/debt.json');
+```
+
+Log: `"Step 0d: {openDebt.length} open/acknowledged debt entries loaded"`
+
+Store `openDebt` in solve context for use in Steps 3 and 5.
+
+If `--targets=<path>` was provided in Step 0c AND targets loaded successfully, filter `openDebt` to only entries whose fingerprint matches a target's fingerprint. This scopes debt-driven remediation to the user's selection.
+
+**Important:** This step is fail-open. If observe config is missing, handlers fail, or debt read fails, log the issue and proceed to Step 1 with an empty openDebt array.
+
 ## Step 1: Initial Diagnostic Sweep
 
 Run the diagnostic solver using absolute paths (or fall back to CWD-relative):
@@ -187,6 +246,18 @@ This preserves the read-only diagnostic mode.
 **Important:** Dispatch remediation in this strict order because R->F coverage is a prerequisite for F->T test stubs. New formal specs create new invariants needing test backing.
 
 For each gap type with `residual > 0`, dispatch in this exact order:
+
+Additionally, after layer-based remediation dispatch, check if any openDebt entries were matched to this layer via `matchDebtToResidual()`. For matched entries, transition their status to 'resolving':
+
+```javascript
+const { transitionDebtEntries } = require('./bin/solve-debt-bridge.cjs');
+const matched = matchDebtToResidual(openDebt, residualVector);
+const resolvingFPs = matched.matched.map(m => m.entry.fingerprint);
+transitionDebtEntries('.planning/formal/debt.json', resolvingFPs, 'open', 'resolving');
+transitionDebtEntries('.planning/formal/debt.json', resolvingFPs, 'acknowledged', 'resolving');
+```
+
+Log: `"Debt: {resolvingFPs.length} entries transitioned to 'resolving'"`
 
 ### 3a. R->F Gaps (residual_vector.r_to_f.residual > 0)
 
@@ -665,6 +736,26 @@ If `--max-iterations=N` was passed and N > 1:
 **IMPORTANT — Cascade-aware convergence:** Do NOT use total residual for the loop condition. Fixing R→F creates F→T gaps (total goes UP), but the system is making progress. Use per-layer change detection instead: if ANY automatable layer's residual changed (up or down) since the previous iteration, there is still work to do. Only stop when all automatable layers are stable (unchanged between iterations) or at zero.
 
 Default behavior (no `--max-iterations` flag): max iterations = 5.
+
+### Debt Resolution Check
+
+After the convergence check, resolve debt entries whose associated layers now show zero residual:
+
+```javascript
+const { transitionDebtEntries, summarizeDebtProgress } = require('./bin/solve-debt-bridge.cjs');
+const postMatched = matchDebtToResidual(openDebt, post_residual);
+// Entries whose matched layer now has residual === 0 are resolved
+const resolvedFPs = postMatched.matched
+  .filter(m => post_residual[m.layer]?.residual === 0)
+  .map(m => m.entry.fingerprint);
+transitionDebtEntries('.planning/formal/debt.json', resolvedFPs, 'resolving', 'resolved');
+
+const progress = summarizeDebtProgress('.planning/formal/debt.json');
+```
+
+Log: `"Debt: {resolvedFPs.length} entries resolved. Ledger: {progress.open} open, {progress.resolving} resolving, {progress.resolved} resolved"`
+
+Additionally, if openDebt was loaded and any entries remain in 'resolving' status (not yet 'resolved'), treat this as automatable work remaining -- continue looping even if the residual vector is stable, up to max iterations.
 
 ## Step 6: Before/After Summary
 
