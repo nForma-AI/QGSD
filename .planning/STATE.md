@@ -81,7 +81,7 @@ None yet.
 | 210 | Replace checkpoint:human-verify auto-approval with quorum consensus gate (100% APPROVE required) | 2026-03-07 | 0224c258 | Verified | [210-replace-checkpoint-human-verify-auto-app](./quick/210-replace-checkpoint-human-verify-auto-app/) |
 | 211 | Add wiring-in checks to planner and verifier workflows | 2026-03-07 | 369fda5e | Verified | [211-add-wiring-in-checks-to-planner-and-veri](./quick/211-add-wiring-in-checks-to-planner-and-veri/) |
 | 212 | Fix pre-existing hooks-sync issue: add nf-post-edit-format.js and nf-console-guard.js to HOOKS_TO_COPY | 2026-03-07 | 02ed5266 | Verified | [212-fix-pre-existing-hooks-sync-issue-add-nf](./quick/212-fix-pre-existing-hooks-sync-issue-add-nf/) |
-| 213 | Automate TUI asset generation with headless blessed screenshots to SVG | 2026-03-07 | db0d0b4b | Pending | [213-automate-tui-asset-generation-with-headl](./quick/213-automate-tui-asset-generation-with-headl/) |
+| 213 | Automate TUI asset generation with headless blessed screenshots to SVG | 2026-03-07 | 1c0c4a5e | Verified | [213-automate-tui-asset-generation-with-headl](./quick/213-automate-tui-asset-generation-with-headl/) |
 
 ## Session Continuity
 
