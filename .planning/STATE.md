@@ -67,7 +67,7 @@ None yet.
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 207 | Improve nf:solve to auto-remediate TODO stubs including behavioral strategy | 2026-03-07 | b727a7b3 | Verified | [207-improve-nf-solve-to-auto-remediate-todo-](./quick/207-improve-nf-solve-to-auto-remediate-todo-/) |
-| 211 | Add wiring-in checks to planner and verifier workflows | 2026-03-07 | 369fda5e | Pending | [211-add-wiring-in-checks-to-planner-and-veri](./quick/211-add-wiring-in-checks-to-planner-and-veri/) |
+| 211 | Add wiring-in checks to planner and verifier workflows | 2026-03-07 | 369fda5e | Verified | [211-add-wiring-in-checks-to-planner-and-veri](./quick/211-add-wiring-in-checks-to-planner-and-veri/) |
 
 ## Session Continuity
 
