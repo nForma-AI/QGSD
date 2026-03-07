@@ -46,6 +46,10 @@ must_haves:
       to: "bin/issue-classifier.cjs"
       via: "diagnostic input step"
       pattern: "issue-classifier"
+    - from: "commands/nf/solve.md"
+      to: "bin/git-heatmap.cjs"
+      via: "diagnostic input step"
+      pattern: "git-heatmap"
     - from: "commands/nf/observe.md"
       to: "bin/observed-fsm.cjs"
       via: "analysis tool reference"
@@ -82,12 +86,30 @@ Output: 5 updated command .md files with new sections/steps referencing the 12 s
 @commands/nf/map-requirements.md
 </context>
 
+<pre-flight>
+## Pre-flight: Verify all 12 scripts exist
+
+Before any wiring work, verify all 12 target scripts exist at their expected bin/ paths. Run:
+
+```bash
+for script in probe-quorum-slots.cjs verify-quorum-health.cjs check-mcp-health.cjs review-mcp-logs.cjs telemetry-collector.cjs issue-classifier.cjs git-heatmap.cjs observed-fsm.cjs sensitivity-sweep-feedback.cjs security-sweep.cjs design-impact.cjs validate-requirements-haiku.cjs; do
+  if [ ! -f "bin/$script" ]; then
+    echo "MISSING: bin/$script"
+  fi
+done
+```
+
+If any script is reported MISSING, stop and report the gap before proceeding. A missing script silently skipped via fail-open could mask a real integration problem. All 12 must be present before wiring begins.
+</pre-flight>
+
 <tasks>
 
 <task type="auto">
   <name>Task 1: Wire Groups A+B into health.md and solve.md</name>
   <files>commands/nf/health.md, commands/nf/solve.md</files>
   <action>
+**Pre-flight: Run the script existence check above. If any of the 12 scripts are missing, stop and report.**
+
 **health.md — Add diagnostic tools section**
 
 health.md currently delegates entirely to the health workflow. Add a `<diagnostics>` section AFTER the `<process>` block that lists the 5 health-related scripts as available diagnostic tools the health workflow can invoke. Follow this pattern:
@@ -132,14 +154,28 @@ Pure disk I/O telemetry collector. Gathers operational metrics from local teleme
 
 All scripts use fail-open: if a script is not found, the health workflow skips it silently.
 
-**solve.md — Wire issue-classifier and git-heatmap**
+**solve.md — Wire git-heatmap and issue-classifier**
 
-solve.md already references git-heatmap in its objective text and Step 3 diagnostic flow. Verify `git-heatmap` is already wired by checking for `node bin/git-heatmap.cjs` in solve.md. If it is NOT already present as a `node bin/` invocation, add it as a sub-step in Step 1 (Diagnostic Sweep) alongside the existing nf-solve.cjs call.
+IMPORTANT: git-heatmap.cjs is NOT currently wired in solve.md (confirmed: grep returns 0 matches). It must be explicitly ADDED as a new diagnostic step. Do NOT assume it is already present.
 
-For issue-classifier.cjs: Add a new sub-step in Step 3 AFTER the existing diagnostic display (Step 3a) and BEFORE transition-specific remediation begins. Insert as Step 3a-bis (or the next available letter after 3a):
+Add git-heatmap.cjs as a new sub-step. Locate the content anchor "Diagnostic Sweep" (the first major step heading) and add git-heatmap as a sub-step within it, alongside the existing nf-solve.cjs call:
 
 ```
-### 3a2. Issue Classification (operational priority ranking)
+### Git Churn Heatmap
+
+Run git heatmap analysis to identify files with high recent churn:
+
+\`\`\`bash
+node bin/git-heatmap.cjs --json 2>/dev/null || true
+\`\`\`
+
+Produces a ranked list of files by commit frequency and recency-weighted churn. Files at the top of the heatmap are likely candidates for the current issue. Feed heatmap results into the diagnostic context for targeted investigation.
+```
+
+For issue-classifier.cjs: Locate the content anchor for the diagnostic display sub-step (after diagnostic results are shown, before transition-specific remediation begins). Add as the next sub-step:
+
+```
+### Issue Classification (operational priority ranking)
 
 Run the issue classifier to rank operational issues by severity from telemetry data:
 
@@ -161,12 +197,13 @@ Use fail-open pattern: `2>/dev/null || true` suffix on the node invocation.
 4. `grep "review-mcp-logs" commands/nf/health.md` returns a match
 5. `grep "telemetry-collector" commands/nf/health.md` returns a match
 6. `grep "issue-classifier" commands/nf/solve.md` returns a match
-7. `grep "fail-open" commands/nf/health.md` returns a match (or equivalent skip-silently language)
-8. YAML frontmatter in health.md is still valid (first line is `---`)
-9. YAML frontmatter in solve.md is still valid (first line is `---`)
+7. `grep "git-heatmap" commands/nf/solve.md` returns a match — MUST be present as a `node bin/git-heatmap.cjs` invocation, not just objective text
+8. `grep "fail-open" commands/nf/health.md` returns a match (or equivalent skip-silently language)
+9. YAML frontmatter in health.md is still valid (first line is `---`)
+10. YAML frontmatter in solve.md is still valid (first line is `---`)
   </verify>
   <done>
-health.md contains a diagnostics section referencing all 5 health scripts (probe-quorum-slots, verify-quorum-health, check-mcp-health, review-mcp-logs, telemetry-collector) with brief descriptions and node bin/ invocations. solve.md references issue-classifier.cjs as a diagnostic input step with fail-open handling. git-heatmap.cjs is confirmed wired (already present) or added if missing.
+health.md contains a diagnostics section referencing all 5 health scripts (probe-quorum-slots, verify-quorum-health, check-mcp-health, review-mcp-logs, telemetry-collector) with brief descriptions and node bin/ invocations. solve.md contains BOTH git-heatmap.cjs (as a new `node bin/git-heatmap.cjs` invocation in the diagnostic sweep) AND issue-classifier.cjs (as a diagnostic input step) with fail-open handling.
   </done>
 </task>
 
@@ -176,7 +213,9 @@ health.md contains a diagnostics section referencing all 5 health scripts (probe
   <action>
 **observe.md — Wire observed-fsm, sensitivity-sweep-feedback, and security-sweep**
 
-observe.md has a structured multi-step process (Steps 1-7). Add a new Step 5b AFTER Step 5 (Collect and render) and BEFORE Step 6a (Write to debt ledger). This step runs analysis tools on the collected observation data:
+observe.md has a structured multi-step process. Use content anchors to find insertion points — do NOT rely on hard-coded step numbers, as numbering may have shifted since planning.
+
+Locate the content anchor "Collect and render" (the step heading containing those words). Insert a new step AFTER that step and BEFORE the next step whose heading contains "Write to debt ledger". This new step runs analysis tools on the collected observation data:
 
 ```
 ## Step 5b: Run analysis tools
@@ -199,7 +238,7 @@ Compares empirical true-positive rate with sensitivity sweep predictions. If a d
 \`\`\`bash
 node bin/security-sweep.cjs --json 2>/dev/null || true
 \`\`\`
-Runs a standalone security scan across the codebase. If findings are returned, inject them as additional issues with `source_type: 'internal'` and `severity: 'warning'` into the results array before Step 6a writes to the debt ledger.
+Runs a standalone security scan across the codebase. If findings are returned, inject them as additional issues with `source_type: 'internal'` and `severity: 'warning'` into the results array before the "Write to debt ledger" step processes them.
 ```
 
 **plan-phase.md — Wire design-impact**
@@ -233,7 +272,7 @@ If the script is not found or fails, skip silently and proceed to the planning w
 8. YAML frontmatter in plan-phase.md is still valid (first line is `---`)
   </verify>
   <done>
-observe.md contains Step 5b referencing observed-fsm.cjs, sensitivity-sweep-feedback.cjs, and security-sweep.cjs with fail-open handling and node bin/ invocations. plan-phase.md contains a pre-planning section referencing design-impact.cjs for three-layer git diff impact analysis with fail-open handling.
+observe.md contains a new step (inserted after the "Collect and render" step and before the "Write to debt ledger" step) referencing observed-fsm.cjs, sensitivity-sweep-feedback.cjs, and security-sweep.cjs with fail-open handling and node bin/ invocations. plan-phase.md contains a pre-planning section referencing design-impact.cjs for three-layer git diff impact analysis with fail-open handling.
   </done>
 </task>
 
@@ -269,7 +308,7 @@ If the script is not found or fails, skip silently (fail-open). The `--skip-vali
 </validation>
 ```
 
-Note that --skip-validate is already listed in the argument-hint frontmatter. The workflow should check for this flag and skip the validation step if present.
+**Verify --skip-validate flag in frontmatter:** Before adding the validation section, check that `--skip-validate` appears in the `argument-hint` line of the YAML frontmatter. As of planning time, it IS present (`argument-hint: [--dry-run] [--skip-archive] [--skip-validate]`). If at execution time it is NOT present, add `[--skip-validate]` to the argument-hint list before proceeding. This ensures the flag is documented and discoverable.
   </action>
   <verify>
 1. `grep "validate-requirements-haiku" commands/nf/map-requirements.md` returns a match
@@ -278,24 +317,27 @@ Note that --skip-validate is already listed in the argument-hint frontmatter. Th
 4. YAML frontmatter in map-requirements.md is still valid (first line is `---`)
   </verify>
   <done>
-map-requirements.md contains a validation section referencing validate-requirements-haiku.cjs for semantic validation with fail-open handling. The --skip-validate flag is documented as bypassing this step.
+map-requirements.md contains a validation section referencing validate-requirements-haiku.cjs for semantic validation with fail-open handling. The --skip-validate flag is present in both the argument-hint frontmatter AND the validation section text.
   </done>
 </task>
 
 </tasks>
 
 <verification>
+- Pre-flight: all 12 scripts confirmed to exist at bin/ paths before any wiring
 - All 5 command files have valid YAML frontmatter (first line `---`)
 - All 12 scripts are referenced by name in at least one command file
 - All references use `node bin/` invocation pattern
 - All references include fail-open handling (2>/dev/null || true, or skip-silently language)
 - No existing content in any file was removed or rewritten — only additions
-- grep counts: health.md has 5 script refs, solve.md has issue-classifier + git-heatmap, observe.md has 3 script refs, plan-phase.md has design-impact, map-requirements.md has validate-requirements-haiku
+- grep counts: health.md has 5 script refs, solve.md has issue-classifier + git-heatmap (both as node bin/ invocations), observe.md has 3 script refs, plan-phase.md has design-impact, map-requirements.md has validate-requirements-haiku
+- git-heatmap.cjs is wired as a NEW `node bin/git-heatmap.cjs` invocation (not just mentioned in objective text)
 </verification>
 
 <success_criteria>
 - Running `grep -c 'probe-quorum-slots\|verify-quorum-health\|check-mcp-health\|review-mcp-logs\|telemetry-collector' commands/nf/health.md` returns 5
 - Running `grep -c 'issue-classifier' commands/nf/solve.md` returns >= 1
+- Running `grep 'node bin/git-heatmap.cjs' commands/nf/solve.md` returns a match (explicit invocation, not just objective text)
 - Running `grep -c 'observed-fsm\|sensitivity-sweep-feedback\|security-sweep' commands/nf/observe.md` returns 3
 - Running `grep -c 'design-impact' commands/nf/plan-phase.md` returns >= 1
 - Running `grep -c 'validate-requirements-haiku' commands/nf/map-requirements.md` returns >= 1
