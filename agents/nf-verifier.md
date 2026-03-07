@@ -249,6 +249,43 @@ grep -E "\{.*$state_var.*\}|\{$state_var\." "$component" 2>/dev/null
 
 Status: WIRED (state displayed) | NOT_WIRED (state exists, not rendered)
 
+## Step 5.5: Verify System Integration (Orphaned Producer Check)
+
+For each NEW file created by this phase (not modified — created), check whether it has a system-level consumer. This catches the common failure where a feature is implemented and tested but never wired into the system.
+
+**Scope:** New files in bin/, hooks/, commands/, core/workflows/. Skip test files, planning artifacts, and config files.
+
+```bash
+# Get new files from this phase's commits
+NEW_FILES=$(git diff --name-only --diff-filter=A $(git log --oneline -20 --format=%H | tail -1)..HEAD -- 'bin/*.cjs' 'hooks/*.js' 'commands/**/*.md' 'core/workflows/*.md' | grep -v test)
+
+for f in $NEW_FILES; do
+  name=$(basename "$f" | sed 's/\.\(cjs\|js\|md\)$//')
+  # Check for consumers outside of test files and planning docs
+  consumers=$(grep -rl "$name" commands/ core/workflows/ bin/ hooks/ agents/ 2>/dev/null | grep -v test | grep -v ".planning/" | grep -v "$f" | wc -l)
+  if [ "$consumers" -eq 0 ]; then
+    echo "ORPHANED: $f — no system-level consumer found"
+  fi
+done
+```
+
+**Orphaned producer = verification gap.** If a new artifact has no consumer, create a gap entry:
+
+```yaml
+- truth: "New artifact {filename} is wired into the system"
+  status: failed
+  reason: "No system-level consumer found — artifact exists but nothing invokes it"
+  artifacts:
+    - path: "{filepath}"
+      issue: "Orphaned producer — no script, workflow, or command references it"
+  missing:
+    - "Add invocation in {suggested_consumer} (e.g., spawnTool() call, require(), or @file reference)"
+```
+
+**Exception:** If the plan's must_haves.consumers section explicitly documents the consumer and the consumer verification passes, skip the orphaned check for that artifact.
+
+**Exception:** Standalone user-invoked tools (e.g., bin/install.js) are not orphaned — they are consumed by the user directly. The plan should document this in the action text.
+
 ## Step 6: Check Requirements Coverage
 
 **6a. Extract requirement IDs from PLAN frontmatter:**
@@ -367,7 +404,9 @@ reason: '...'" (this is the continuation prompt from execute-phase's override pa
 
 **Status: passed** — All truths VERIFIED, all artifacts pass levels 1-3, all key links WIRED, no blocker anti-patterns.
 
-**Status: gaps_found** — One or more truths FAILED, artifacts MISSING/STUB, key links NOT_WIRED, or blocker anti-patterns found.
+**Status: gaps_found** — One or more truths FAILED, artifacts MISSING/STUB, key links NOT_WIRED, blocker anti-patterns found, or orphaned producers detected in Step 5.5.
+
+Orphaned producers from Step 5.5 count as gaps_found — a feature that exists but has no consumer is not achieving its goal.
 
 **Status: human_needed** — All automated checks pass but items flagged for human verification.
 
@@ -394,6 +433,18 @@ gaps:
 - `reason`: Brief explanation
 - `artifacts`: Files with issues
 - `missing`: Specific things to add/fix
+
+**Orphaned producer gap example:**
+```yaml
+  - truth: "New artifact analyze-foo.cjs is wired into the system"
+    status: failed
+    reason: "No system-level consumer found — artifact exists but nothing invokes it"
+    artifacts:
+      - path: "bin/analyze-foo.cjs"
+        issue: "Orphaned producer — no script, workflow, or command references it"
+    missing:
+      - "Add spawnTool('bin/analyze-foo.cjs') call in bin/nf-solve.cjs autoClose()"
+```
 
 **Group related gaps by concern** — if multiple truths fail from the same root cause, note this to help the planner create focused plans.
 
