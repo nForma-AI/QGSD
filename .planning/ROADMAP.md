@@ -112,8 +112,8 @@ Plans:
   3. Verification checks do not stall the agent loop -- checks that timeout or fail degrade gracefully to advisory warnings without blocking execution (formal: EventuallyTerminates)
 **Plans**: 2 plans
 Plans:
-- [x] v0.30-03-01-PLAN.md — Memory store module (bin/memory-store.cjs) with append/query/prune and planning-paths registration
-- [ ] v0.30-03-02-PLAN.md — Hook extensions (nf-session-start.js, nf-precompact.js) for memory injection + install sync
+- [ ] v0.30-05-01-PLAN.md — Verification engine module (bin/continuous-verify.cjs) + done_conditions evaluator + execution-progress extension
+- [ ] v0.30-05-02-PLAN.md — Hook wiring into gsd-context-monitor.js + execute-plan.md integration + install sync
 
 #### Phase v0.30-06: Subagent Orchestration
 **Goal**: Quorum slot workers retrieve context on demand instead of receiving fixed dumps, and architecture decisions accumulate across phases
@@ -152,6 +152,6 @@ v0.30-01 -> v0.30-02 -> v0.30-03 -> v0.30-04 -> v0.30-05 -> v0.30-06 -> v0.30-07
 | v0.30-02. File-Based Execution State | 1/1 | Complete   | 2026-03-07 |
 | v0.30-03. Memory Persistence | 2/2 | Complete    | 2026-03-07 |
 | v0.30-04. Continuous Learning | 2/2 | Complete    | 2026-03-08 |
-| v0.30-05. Continuous Verification | 0/TBD | Not started | - |
+| v0.30-05. Continuous Verification | 0/2 | Not started | - |
 | v0.30-06. Subagent Orchestration | 0/TBD | Not started | - |
 | v0.30-07. Worktree Parallelization | 0/TBD | Not started | - |
