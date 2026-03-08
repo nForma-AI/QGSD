@@ -40,7 +40,7 @@ When a milestone completes:
 **Use `roadmap analyze` for comprehensive readiness check:**
 
 ```bash
-ROADMAP=$(node ~/.claude/nf/bin/gsd-tools.cjs roadmap analyze)
+ROADMAP=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs roadmap analyze)
 ```
 
 This returns all phases with plan/summary counts and disk status. Use this to verify:
@@ -154,7 +154,7 @@ Extract one-liners from SUMMARY.md files using summary-extract:
 ```bash
 # For each phase in milestone, extract one-liner
 for summary in .planning/phases/*-*/*-SUMMARY.md; do
-  node ~/.claude/nf/bin/gsd-tools.cjs summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
+  node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs summary-extract "$summary" --fields one_liner | jq -r '.one_liner'
 done
 ```
 
@@ -367,7 +367,7 @@ Update `.planning/ROADMAP.md` — group completed milestone phases:
 **Delegate archival to gsd-tools:**
 
 ```bash
-ARCHIVE=$(node ~/.claude/nf/bin/gsd-tools.cjs milestone complete "v[X.Y]" --name "[Milestone Name]")
+ARCHIVE=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs milestone complete "v[X.Y]" --name "[Milestone Name]")
 ```
 
 The CLI handles:
@@ -467,7 +467,7 @@ Check branching strategy and offer merge options.
 Use `init milestone-op` for context, or load config directly:
 
 ```bash
-INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init execute-phase "1")
+INIT=$(node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs init execute-phase "1")
 ```
 
 Extract `branching_strategy`, `phase_branch_template`, `milestone_branch_template`, and `commit_docs` from init JSON.
@@ -584,28 +584,55 @@ fi
 
 <step name="git_tag">
 
-Create git tag:
+Create git tag (lightweight — release notes go on the GitHub release, not the tag):
 
 ```bash
-git tag -a v[X.Y] -m "v[X.Y] [Name]
-
-Delivered: [One sentence]
-
-Key accomplishments:
-- [Item 1]
-- [Item 2]
-- [Item 3]
-
-See .planning/MILESTONES.md for full details."
+git tag v[X.Y]
 ```
 
 Confirm: "Tagged: v[X.Y]"
 
-Ask: "Push tag to remote? (y/n)"
+Ask: "Push tag and create GitHub release? (y/n)"
 
 If yes:
+
+**1. Push tag:**
 ```bash
 git push origin v[X.Y]
+```
+
+**2. Create GitHub release using the release-notes template format:**
+
+Read `core/templates/release-notes.md` for the canonical format. Generate release notes following these rules:
+- Summary: 1-2 sentences — what shipped, not how
+- Key features: **bold label** + colon + description, one bullet per feature, no nested bullets
+- No phase numbers or requirement IDs in feature descriptions (those are internal)
+- Stats: requirements, phases/plans, size, audit status
+- Install block with npm version
+
+```bash
+gh release create v[X.Y] --title "v[X.Y] — [Milestone Name]" --notes "$(cat <<'RELEASE_EOF'
+## [Milestone Name]
+
+[1-2 sentence summary]
+
+### Key features
+- **[Feature]:** [Description]
+- **[Feature]:** [Description]
+...
+
+### Stats
+- [N]/[N] requirements satisfied
+- [N] phases, [N] plans
+- [commits/files/lines summary]
+- Audit: [PASSED/TECH_DEBT]
+
+### Install
+\`\`\`bash
+npx @nforma.ai/nforma@[X.Y.0]
+\`\`\`
+RELEASE_EOF
+)"
 ```
 
 </step>
@@ -615,7 +642,7 @@ git push origin v[X.Y]
 Commit milestone completion.
 
 ```bash
-node ~/.claude/nf/bin/gsd-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
+node /Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs commit "chore: complete v[X.Y] milestone" --files .planning/milestones/v[X.Y]-ROADMAP.md .planning/milestones/v[X.Y]-REQUIREMENTS.md .planning/milestones/v[X.Y]-MILESTONE-AUDIT.md .planning/MILESTONES.md .planning/PROJECT.md .planning/STATE.md
 ```
 ```
 
