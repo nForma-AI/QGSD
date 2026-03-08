@@ -452,6 +452,8 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 - ✓ Unified observe skill, fingerprint-deduplicating debt ledger, P->F residual layer in solve with two-track remediation, pluggable production source handlers (DEBT-01–06, FP-01–04, OBS-01–08, PF-01–05) — v0.27
 - ✓ Configurable hook profiles (minimal/standard/strict), SHA-256 quorum response caching with git-HEAD invalidation, pass@k consensus reporting, token budget monitoring with auto-downgrade, stall detection, smart compaction suggestions, security sweep scanner, session state reminders, unified harness diagnostic (PROF-01–04, CLEAN-01–02, CACHE-01–04, PASSK-01–02, BUDG-01–03, STALL-01–02, SMART-01–02, SEC-01–03, STATE-01–02, DIAG-01–03) — v0.28
 - ✓ Three-layer formal verification architecture (Evidence/Semantics/Reasoning) with inter-layer gates (Grounding 82.2%, Abstraction, Validation 1.0), FMEA hazard model, 32 model-driven test recipes, cross-layer dashboard, nf-solve layer sweeps, design impact analysis (EVID-01–05, SEM-01–04, RSN-01–05, GATE-01–04, INTG-01–06) — v0.29
+- ✓ Hook input validation — per-event-type JSON schema validation for all 14 hook stdin inputs with structured stderr diagnostics and fail-open behavior (VALID-01) — v0.31 (Phase v0.31-01)
+- ✓ Hook priority ordering — deterministic priority-based execution ordering in install.js with Critical/Normal/Low tiers, circuit-breaker always first, user-configurable via hook_priorities in nf.json (PRIO-01) — v0.31 (Phase v0.31-01)
 
 ### Active
 
@@ -468,7 +470,7 @@ Planning decisions are multi-model verified by structural enforcement, not instr
 
 ## Context
 
-nForma v0.29 shipped 2026-03-06. 29 milestones completed (v0.1–v0.29). The formal verification pipeline is a three-layer architecture (Evidence → Semantics → Reasoning) with quantitative cross-layer gates. v0.30 focuses on integrating advanced agent patterns from the Claude Code community — token optimization, cross-session learning, continuous verification, worktree parallelization, and iterative subagent orchestration. v0.2.0 npm publish still deferred by user decision.
+nForma v0.30 shipped 2026-03-08. 30 milestones completed (v0.1–v0.30). v0.31 focuses on ruflo-inspired hardening — hook priority ordering, input validation, circuit-breaker learning, quorum latency budgets, and DX improvements. Phase v0.31-01 (Hook Infrastructure Hardening) shipped: validateHookInput schema validation for all 14 hooks + deterministic priority-based execution ordering. v0.2.0 npm publish still deferred by user decision.
 
 **Codebase:** ~100,000+ lines (JS + MD), 500+ files. 92+ formal models (TLA+, Alloy, PRISM), 35K+ conformance traces.
 **Tech stack:** Node.js, Claude Code hooks (UserPromptSubmit + Stop + PreToolUse + PostToolUse), npm package. Rebranded from QGSD to nForma (v0.28, skill prefix `/nf:`).
@@ -636,4 +638,4 @@ nForma v0.29 shipped 2026-03-06. 29 milestones completed (v0.1–v0.29). The for
 | Production source handlers are framework-ready stubs | No live endpoints required; handlers validate schema and return standard issue objects; real auth deferred to v0.28+ (WIRE-01..05) | Phase v0.27-04 — OBS-03/04/05 |
 
 ---
-*Last updated: 2026-03-08 after v0.31 milestone start*
+*Last updated: 2026-03-08 after Phase v0.31-01*

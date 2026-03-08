@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.31-01 -- Hook Infrastructure Hardening
+**Current focus:** Phase v0.31-02 -- Runtime Safety Boundaries
 
 ## Current Position
 
@@ -62,5 +62,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.31-01-02-PLAN.md (hook priority ordering)
+Stopped at: Phase v0.31-01 complete, ready to plan Phase v0.31-02
 Resume file: None
