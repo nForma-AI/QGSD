@@ -18,6 +18,7 @@ const {
   PROGRESS_FILE,
   DEFAULT_MAX_ITERATIONS,
   STUCK_THRESHOLD,
+  BLOCKED_STATUS,
 } = require('./execution-progress.cjs');
 
 let tmpDir;
@@ -304,6 +305,69 @@ describe('execution-progress', () => {
       } finally {
         fs.rmSync(dir, { recursive: true, force: true });
       }
+    });
+  });
+
+  describe('done_conditions', () => {
+    before(() => freshTmp());
+    after(() => cleanTmp());
+
+    it('initProgress with doneConditions stores conditions on tasks', () => {
+      const result = initProgress(tmpDir, {
+        planFile: 'v0.30-05-01-PLAN.md',
+        totalTasks: 2,
+        taskNames: ['Task 1', 'Task 2'],
+        doneConditions: [[{ type: 'file_exists', path: 'foo.txt' }], []],
+      });
+
+      assert.equal(result.tasks[0].done_conditions.length, 1);
+      assert.equal(result.tasks[0].done_conditions[0].type, 'file_exists');
+      assert.equal(result.tasks[1].done_conditions.length, 0);
+    });
+
+    it('initProgress without doneConditions defaults to empty arrays', () => {
+      const result = initProgress(tmpDir, {
+        planFile: 'v0.30-05-01-PLAN.md',
+        totalTasks: 2,
+        taskNames: ['Task 1', 'Task 2'],
+      });
+
+      assert.deepStrictEqual(result.tasks[0].done_conditions, []);
+      assert.deepStrictEqual(result.tasks[1].done_conditions, []);
+    });
+
+    it('completeTask with passing done_conditions marks complete', () => {
+      // Create a temp file that the condition will check for
+      const testFile = path.join(tmpDir, 'condition-target.txt');
+      fs.writeFileSync(testFile, 'exists', 'utf8');
+
+      initProgress(tmpDir, {
+        planFile: 'v0.30-05-01-PLAN.md',
+        totalTasks: 1,
+        taskNames: ['Task 1'],
+        doneConditions: [[{ type: 'file_exists', path: 'condition-target.txt' }]],
+      });
+
+      const result = completeTask(tmpDir, { taskNumber: 1, commitHash: 'abc1234' });
+      assert.equal(result.tasks[0].status, 'complete');
+      assert.equal(result.tasks[0].commit_hash, 'abc1234');
+    });
+
+    it('completeTask with failing done_conditions sets blocked status', () => {
+      initProgress(tmpDir, {
+        planFile: 'v0.30-05-01-PLAN.md',
+        totalTasks: 1,
+        taskNames: ['Task 1'],
+        doneConditions: [[{ type: 'file_exists', path: 'nonexistent-file-xyz.txt' }]],
+      });
+
+      const result = completeTask(tmpDir, { taskNumber: 1, commitHash: 'abc1234' });
+      assert.equal(result.tasks[0].status, BLOCKED_STATUS);
+      assert.equal(result.tasks[0].block_reason, 'done_conditions_failed');
+    });
+
+    it('BLOCKED_STATUS constant is exported', () => {
+      assert.equal(BLOCKED_STATUS, 'blocked');
     });
   });
 });

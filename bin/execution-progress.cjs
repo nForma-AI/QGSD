@@ -7,12 +7,13 @@ const path = require('path');
 const PROGRESS_FILE = '.planning/execution-progress.json';
 const DEFAULT_MAX_ITERATIONS = 5;
 const STUCK_THRESHOLD = 3;
+const BLOCKED_STATUS = 'blocked';
 
 function getProgressPath(cwd) {
   return path.join(cwd, PROGRESS_FILE);
 }
 
-function initProgress(cwd, { planFile, totalTasks, taskNames }) {
+function initProgress(cwd, { planFile, totalTasks, taskNames, doneConditions }) {
   const progress = {
     version: 1,
     phase: planFile.match(/v[\d.]+-\d+/)?.[0] || 'unknown',
@@ -32,12 +33,17 @@ function initProgress(cwd, { planFile, totalTasks, taskNames }) {
       commit_hash: null,
       completed_at: null,
       resume_attempts: 0,
+      done_conditions: (doneConditions && doneConditions[i]) || [],
     })),
   };
   const progressPath = getProgressPath(cwd);
   fs.mkdirSync(path.dirname(progressPath), { recursive: true });
   fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2), 'utf8');
   return progress;
+}
+
+function loadContinuousVerify() {
+  try { return require(path.join(__dirname, 'continuous-verify.cjs')); } catch (_) { return null; }
 }
 
 function completeTask(cwd, { taskNumber, commitHash }) {
@@ -47,6 +53,26 @@ function completeTask(cwd, { taskNumber, commitHash }) {
   const progress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
   const task = progress.tasks.find(t => t.number === taskNumber);
   if (!task) return null;
+
+  // Evaluate done_conditions if present
+  if (task.done_conditions && task.done_conditions.length > 0) {
+    try {
+      const cv = loadContinuousVerify();
+      if (cv) {
+        const { all_pass, results } = cv.evaluateAllConditions(cwd, task.done_conditions);
+        if (!all_pass) {
+          task.status = BLOCKED_STATUS;
+          task.block_reason = 'done_conditions_failed';
+          task.condition_results = results;
+          progress.updated_at = new Date().toISOString();
+          fs.writeFileSync(progressPath, JSON.stringify(progress, null, 2), 'utf8');
+          return progress;
+        }
+      }
+    } catch (_) {
+      // fail-open: proceed with marking complete
+    }
+  }
 
   task.status = 'complete';
   task.commit_hash = commitHash;
@@ -172,4 +198,5 @@ module.exports = {
   PROGRESS_FILE,
   DEFAULT_MAX_ITERATIONS,
   STUCK_THRESHOLD,
+  BLOCKED_STATUS,
 };
