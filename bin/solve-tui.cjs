@@ -1001,55 +1001,75 @@ const CLASSIFY_CACHE_PATH = path.join(ROOT, '.planning', 'formal', 'solve-classi
 
 /**
  * Classify solve items using Claude Haiku as a sub-agent (via claude CLI subprocess).
- * Batches items per category, asks Haiku to classify each as:
+ * Per-item forever cache: once an item is classified, its verdict persists until
+ * the item disappears from sweep results. Only NEW/unclassified items are sent to Haiku.
+ *
+ * Verdicts:
  *   genuine  — real gap that needs human action
  *   fp       — false positive, safe to auto-suppress
  *   review   — ambiguous, needs human judgment
  *
- * Results are cached to .planning/formal/solve-classifications.json.
  * @param {Object} sweepData - Output of loadSweepData()
- * @param {Object} opts - { force: boolean } to skip cache
- * @returns {Object} { dtoc: {[itemKey]: verdict}, ctor: {...}, ... }
+ * @param {Object} opts - { force: boolean } to reclassify all items
+ * @param {Function} [onProgress] - callback(message) for progress updates
+ * @returns {Object} { dtoc: {[itemKey]: verdict}, ctor: {...}, ... , _stats: {cached, classified, failed} }
  */
-function classifyWithHaiku(sweepData, opts = {}) {
-  // Check cache first
-  if (!opts.force) {
-    try {
-      const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
-      if (cached.timestamp && Date.now() - new Date(cached.timestamp).getTime() < 24 * 60 * 60 * 1000) {
-        return cached.classifications;
-      }
-    } catch (_) { /* no cache or expired */ }
-  }
+function classifyWithHaiku(sweepData, opts = {}, onProgress) {
+  // Load existing per-item cache
+  let existingCache = {};
+  try {
+    const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
+    existingCache = cached.classifications || {};
+  } catch (_) { /* no cache yet */ }
 
   const classifications = {};
+  const stats = { cached: 0, classified: 0, failed: 0 };
 
   for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
     const cat = sweepData[catKey];
     if (!cat || cat.error || !cat.items || cat.items.length === 0) {
-      classifications[catKey] = {};
+      classifications[catKey] = existingCache[catKey] || {};
       continue;
     }
 
-    // Build item summaries for classification (batch up to 50 at a time)
+    // Start with existing cached verdicts for this category
+    const catClassifications = { ...(existingCache[catKey] || {}) };
     const items = cat.items;
-    const catClassifications = {};
-    const BATCH_SIZE = 50;
 
-    for (let batchStart = 0; batchStart < items.length; batchStart += BATCH_SIZE) {
-      const batch = items.slice(batchStart, batchStart + BATCH_SIZE);
-      const itemLines = batch.map((item, i) => {
-        const idx = batchStart + i;
+    // Find items that need classification (not in cache, or force mode)
+    const needsClassification = [];
+    for (let i = 0; i < items.length; i++) {
+      const key = itemKey(catKey, items[i]);
+      if (opts.force || !catClassifications[key]) {
+        needsClassification.push({ idx: i, item: items[i], key });
+      } else {
+        stats.cached++;
+      }
+    }
+
+    if (needsClassification.length === 0) {
+      classifications[catKey] = catClassifications;
+      continue;
+    }
+
+    if (onProgress) onProgress(`Classifying ${needsClassification.length} new items in ${catKey}...`);
+
+    // Batch unclassified items to Haiku
+    const BATCH_SIZE = 50;
+    for (let batchStart = 0; batchStart < needsClassification.length; batchStart += BATCH_SIZE) {
+      const batch = needsClassification.slice(batchStart, batchStart + BATCH_SIZE);
+      const itemLines = batch.map((entry, batchIdx) => {
+        const item = entry.item;
         if (catKey === 'dtoc') {
-          return `${idx}: [${item.claimType}] "${item.value}" in ${item.doc_file}:${item.line} — ${item.reason}`;
+          return `${batchIdx}: [${item.claimType}] "${item.value}" in ${item.doc_file}:${item.line} — ${item.reason}`;
         } else if (catKey === 'ctor') {
-          return `${idx}: ${item.file} — module not traced to any requirement`;
+          return `${batchIdx}: ${item.file} — module not traced to any requirement`;
         } else if (catKey === 'ttor') {
-          return `${idx}: ${item.file} — test has no @req annotation`;
+          return `${batchIdx}: ${item.file} — test has no @req annotation`;
         } else if (catKey === 'dtor') {
-          return `${idx}: "${(item.claim_text || '').slice(0, 80)}" in ${item.doc_file}:${item.line}`;
+          return `${batchIdx}: "${(item.claim_text || '').slice(0, 80)}" in ${item.doc_file}:${item.line}`;
         }
-        return `${idx}: ${JSON.stringify(item).slice(0, 100)}`;
+        return `${batchIdx}: ${JSON.stringify(item).slice(0, 100)}`;
       }).join('\n');
 
       const categoryDesc = {
@@ -1081,33 +1101,37 @@ No explanation, no markdown, just the JSON object.`;
           { encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
         ).trim();
 
-        // Parse JSON from response (handle potential markdown wrapping)
         const jsonMatch = result.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const verdicts = JSON.parse(jsonMatch[0]);
           for (const [idxStr, verdict] of Object.entries(verdicts)) {
-            const idx = parseInt(idxStr, 10);
-            if (!isNaN(idx) && ['genuine', 'fp', 'review'].includes(verdict)) {
-              const item = items[idx];
-              const key = itemKey(catKey, item);
-              catClassifications[key] = verdict;
+            const batchIdx = parseInt(idxStr, 10);
+            if (!isNaN(batchIdx) && batchIdx < batch.length && ['genuine', 'fp', 'review'].includes(verdict)) {
+              catClassifications[batch[batchIdx].key] = verdict;
+              stats.classified++;
             }
           }
         }
       } catch (e) {
-        // Sub-agent failed — leave items unclassified (will show as "review" in TUI)
+        // Sub-agent failed — items stay unclassified
+        stats.failed += batch.length;
       }
     }
 
     classifications[catKey] = catClassifications;
   }
 
-  // Cache results
+  // Persist merged cache (keeps old items that may no longer appear in sweeps)
   try {
-    const cacheData = { timestamp: new Date().toISOString(), classifications };
+    const mergedCache = {};
+    for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+      mergedCache[catKey] = { ...(existingCache[catKey] || {}), ...(classifications[catKey] || {}) };
+    }
+    const cacheData = { updated_at: new Date().toISOString(), classifications: mergedCache };
     fs.writeFileSync(CLASSIFY_CACHE_PATH, JSON.stringify(cacheData, null, 2));
   } catch (_) { /* best effort */ }
 
+  classifications._stats = stats;
   return classifications;
 }
 

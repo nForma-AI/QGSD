@@ -719,7 +719,18 @@ function agentRows() {
 
     // Key status: check env + local index (no keychain prompt)
     const account   = 'ANTHROPIC_API_KEY_' + name.toUpperCase().replace(/-/g, '_');
-    const hasKey    = !!env.ANTHROPIC_API_KEY || (secrets ? secrets.hasKey(account) : false);
+    let   hasKey    = !!env.ANTHROPIC_API_KEY || (secrets ? secrets.hasKey(account) : false);
+
+    // ccr-based slots store keys in their own preset manifests — check there too
+    if (!hasKey && displayType === 'claude-code-router') {
+      try {
+        const mf = path.join(os.homedir(), '.claude-code-router', 'presets', name, 'manifest.json');
+        if (fs.existsSync(mf)) {
+          const manifest = JSON.parse(fs.readFileSync(mf, 'utf8'));
+          hasKey = (manifest.Providers || []).some(p => !!p.api_key);
+        }
+      } catch (_) {}
+    }
 
     // OAuth rotation pool info — delegated to the auth driver (no inline CLI-specific logic).
     // extractAccountName() is called even with an empty pool so single-account providers
@@ -1211,8 +1222,7 @@ function renderList() {
     for (const r of rows) {
       // Key badge — pad to 8 visual chars after tag close
       // No BASE_URL = subscription/CLI auth, no API key needed
-      // claude-code-router slots manage their own keys internally via ccr config
-      const isSubAuth = !r.baseUrl || r.displayType === 'claude-code-router';
+      const isSubAuth = !r.baseUrl;
       const keyBadge = r.hasKey
         ? '{green-fg}✓ set{/}   ' // 5 visible + 3 spaces = 8
         : isSubAuth
@@ -2934,9 +2944,9 @@ function solveBrowseFlow() {
   // Show classification summary
   const hasAnyClassification = Object.values(classifications).some(c => Object.keys(c).length > 0);
   if (hasAnyClassification) {
-    lines.push('{gray-fg}Haiku triage cached — items pre-classified before human review{/}');
+    lines.push('{gray-fg}Haiku triage: per-item cache active. New items classified on demand.{/}');
   } else {
-    lines.push('{gray-fg}No Haiku triage — run Classify All from menu to pre-classify{/}');
+    lines.push('{gray-fg}No Haiku triage yet — run Classify All (Haiku) from menu{/}');
   }
   if (totalCount === 0) {
     lines.push('');
@@ -3316,23 +3326,41 @@ async function solveClassifyFlow() {
     return sum + ((cat && cat.items) ? cat.items.length : 0);
   }, 0);
 
+  // Check how many items already have cached classifications
+  const existingCache = solveTui.readClassificationCache();
+  let alreadyCached = 0;
+  for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+    const cat = data[catKey];
+    const catCache = existingCache[catKey] || {};
+    if (cat && cat.items) {
+      for (const item of cat.items) {
+        if (catCache[solveTui.itemKey(catKey, item)]) alreadyCached++;
+      }
+    }
+  }
+  const newItems = totalItems - alreadyCached;
+
   setContent('Solve - Classify',
     `{bold}Haiku Classification{/bold}\n\n` +
-    `Classifying ${totalItems} items across 4 categories...\n` +
-    `Using Claude Haiku sub-agent (claude CLI subprocess).\n\n` +
-    `{gray-fg}This may take 30-60 seconds. Items are batched (50 per call).{/}`
+    `Total items: ${totalItems}\n` +
+    `Already classified: ${alreadyCached} (cached forever per item)\n` +
+    `New items to classify: ${newItems}\n\n` +
+    (newItems > 0
+      ? `Sending ${newItems} new items to Claude Haiku sub-agent...\n{gray-fg}Batched (50 per call). Only unclassified items are sent.{/}`
+      : `{green-fg}All items already classified! Nothing to do.{/}`)
   );
   screen.render();
 
   try {
-    const classifications = solveTui.classifyWithHaiku(data, { force: true });
+    const classifications = solveTui.classifyWithHaiku(data, { force: false });
+    const cStats = classifications._stats || { cached: 0, classified: 0, failed: 0 };
 
-    // Count results
-    const stats = { genuine: 0, fp: 0, review: 0 };
+    // Count verdicts across all categories
+    const verdicts = { genuine: 0, fp: 0, review: 0 };
     for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
       const catClass = classifications[catKey] || {};
       for (const v of Object.values(catClass)) {
-        if (stats[v] !== undefined) stats[v]++;
+        if (verdicts[v] !== undefined) verdicts[v]++;
       }
     }
 
@@ -3340,19 +3368,19 @@ async function solveClassifyFlow() {
     lines.push('{bold}Haiku Classification Complete{/bold}');
     lines.push('\u2500'.repeat(60));
     lines.push('');
-    lines.push(`  {red-fg}[!] Genuine gaps:{/}  ${stats.genuine}`);
-    lines.push(`  {green-fg}[~] False positives:{/} ${stats.fp}`);
-    lines.push(`  {yellow-fg}[?] Needs review:{/}  ${stats.review}`);
+    lines.push(`  {red-fg}[!] Genuine gaps:{/}  ${verdicts.genuine}`);
+    lines.push(`  {green-fg}[~] False positives:{/} ${verdicts.fp}`);
+    lines.push(`  {yellow-fg}[?] Needs review:{/}  ${verdicts.review}`);
     lines.push('');
-    lines.push(`  Total classified: ${stats.genuine + stats.fp + stats.review}/${totalItems}`);
+    lines.push(`  From cache: ${cStats.cached}  |  Newly classified: ${cStats.classified}  |  Failed: ${cStats.failed}`);
     lines.push('');
-    lines.push('{gray-fg}Results cached to .planning/formal/solve-classifications.json{/}');
-    lines.push('{gray-fg}Cache valid for 24 hours. Badges now visible in category views.{/}');
+    lines.push('{gray-fg}Per-item cache: classifications persist forever until item changes.{/}');
+    lines.push('{gray-fg}Badges now visible in category views.{/}');
     lines.push('');
     lines.push('{bold}Legend:{/bold} {red-fg}[!]{/} genuine  {green-fg}[~]{/} fp  {yellow-fg}[?]{/} review');
 
     setContent('Solve - Classify', lines.join('\n'));
-    toast(`Classified ${stats.genuine + stats.fp + stats.review} items`);
+    toast(`Done: ${cStats.classified} new, ${cStats.cached} cached`);
   } catch (e) {
     setContent('Solve - Classify',
       `{bold}Haiku Classification{/bold}\n\n{red-fg}Error: ${e.message}{/}\n\n` +
