@@ -130,6 +130,56 @@ function clearProgress(cwd) {
   }
 }
 
+function aggregateParallelProgress(mainCwd, worktreeProgressFiles) {
+  const progressPath = getProgressPath(mainCwd);
+  if (!fs.existsSync(progressPath)) {
+    process.stderr.write('[execution-progress] No main progress file to aggregate into\n');
+    return null;
+  }
+
+  const mainProgress = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+
+  if (!Array.isArray(worktreeProgressFiles) || worktreeProgressFiles.length === 0) {
+    return mainProgress;
+  }
+
+  for (const entry of worktreeProgressFiles) {
+    if (!entry || !entry.progressData) {
+      process.stderr.write('[execution-progress] Skipping invalid worktree progress entry\n');
+      continue;
+    }
+
+    const wtProgress = entry.progressData;
+    if (!wtProgress.tasks || !Array.isArray(wtProgress.tasks)) {
+      process.stderr.write('[execution-progress] Skipping worktree with no tasks array: ' + (entry.worktreePath || 'unknown') + '\n');
+      continue;
+    }
+
+    for (const wtTask of wtProgress.tasks) {
+      const mainTask = mainProgress.tasks.find(t => t.number === wtTask.number);
+      if (!mainTask) continue;
+
+      // Update from worktree version if task is complete there
+      if (wtTask.status === 'complete') {
+        mainTask.status = 'complete';
+        mainTask.commit_hash = wtTask.commit_hash || mainTask.commit_hash;
+        mainTask.completed_at = wtTask.completed_at || mainTask.completed_at;
+      } else if (wtTask.status === 'in_progress' && mainTask.status === 'pending') {
+        mainTask.status = 'in_progress';
+      }
+    }
+  }
+
+  // Check if all tasks are now complete
+  if (mainProgress.tasks.every(t => t.status === 'complete' || t.status === 'skipped')) {
+    mainProgress.status = 'complete';
+  }
+
+  mainProgress.updated_at = new Date().toISOString();
+  fs.writeFileSync(progressPath, JSON.stringify(mainProgress, null, 2), 'utf8');
+  return mainProgress;
+}
+
 // CLI interface
 if (require.main === module) {
   try {
@@ -183,6 +233,18 @@ if (require.main === module) {
         process.stdout.write(JSON.stringify({ cleared: true }) + '\n');
         break;
       }
+      case 'aggregate-parallel': {
+        const worktreePaths = args.slice(1);
+        const worktreeData = worktreePaths.map(p => {
+          try {
+            const data = JSON.parse(fs.readFileSync(path.join(p, PROGRESS_FILE), 'utf8'));
+            return { worktreePath: p, progressData: data };
+          } catch (_) { return null; }
+        }).filter(Boolean);
+        const result = aggregateParallelProgress(cwd, worktreeData);
+        process.stdout.write(JSON.stringify(result) + '\n');
+        break;
+      }
       default:
         process.stderr.write('Unknown command: ' + command + '\n');
         process.stderr.write('Usage: execution-progress.cjs <init|complete-task|get-status|increment-iteration|clear>\n');
@@ -201,6 +263,7 @@ module.exports = {
   getStatus,
   incrementIteration,
   clearProgress,
+  aggregateParallelProgress,
   PROGRESS_FILE,
   DEFAULT_MAX_ITERATIONS,
   STUCK_THRESHOLD,

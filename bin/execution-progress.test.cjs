@@ -15,6 +15,7 @@ const {
   getStatus,
   incrementIteration,
   clearProgress,
+  aggregateParallelProgress,
   PROGRESS_FILE,
   DEFAULT_MAX_ITERATIONS,
   STUCK_THRESHOLD,
@@ -368,6 +369,115 @@ describe('execution-progress', () => {
 
     it('BLOCKED_STATUS constant is exported', () => {
       assert.equal(BLOCKED_STATUS, 'blocked');
+    });
+  });
+
+  describe('aggregateParallelProgress', () => {
+    before(() => freshTmp());
+    after(() => cleanTmp());
+
+    it('merges task statuses from two worktree progress files correctly', () => {
+      // Initialize main progress with 3 tasks
+      initProgress(tmpDir, {
+        planFile: 'v0.30-07-02-PLAN.md',
+        totalTasks: 3,
+        taskNames: ['Task 1', 'Task 2', 'Task 3'],
+      });
+
+      // Create worktree progress data (simulating two worktrees)
+      const wt1Progress = {
+        tasks: [
+          { number: 1, status: 'complete', commit_hash: 'aaa1111', completed_at: '2026-03-08T10:00:00Z' },
+          { number: 2, status: 'pending', commit_hash: null, completed_at: null },
+          { number: 3, status: 'pending', commit_hash: null, completed_at: null },
+        ],
+      };
+      const wt2Progress = {
+        tasks: [
+          { number: 1, status: 'pending', commit_hash: null, completed_at: null },
+          { number: 2, status: 'complete', commit_hash: 'bbb2222', completed_at: '2026-03-08T10:01:00Z' },
+          { number: 3, status: 'pending', commit_hash: null, completed_at: null },
+        ],
+      };
+
+      const result = aggregateParallelProgress(tmpDir, [
+        { worktreePath: '/tmp/wt1', progressData: wt1Progress },
+        { worktreePath: '/tmp/wt2', progressData: wt2Progress },
+      ]);
+
+      assert.equal(result.tasks[0].status, 'complete');
+      assert.equal(result.tasks[0].commit_hash, 'aaa1111');
+      assert.equal(result.tasks[1].status, 'complete');
+      assert.equal(result.tasks[1].commit_hash, 'bbb2222');
+      assert.equal(result.tasks[2].status, 'pending');
+      assert.equal(result.status, 'in_progress'); // Not all tasks complete
+    });
+
+    it('handles missing worktree progress (skip with no crash)', () => {
+      initProgress(tmpDir, {
+        planFile: 'v0.30-07-02-PLAN.md',
+        totalTasks: 2,
+        taskNames: ['Task 1', 'Task 2'],
+      });
+
+      const result = aggregateParallelProgress(tmpDir, [
+        null,
+        { worktreePath: '/tmp/bad', progressData: null },
+        { worktreePath: '/tmp/ok', progressData: {
+          tasks: [{ number: 1, status: 'complete', commit_hash: 'ccc3333', completed_at: '2026-03-08T10:02:00Z' }],
+        }},
+      ]);
+
+      assert.equal(result.tasks[0].status, 'complete');
+      assert.equal(result.tasks[0].commit_hash, 'ccc3333');
+      assert.equal(result.tasks[1].status, 'pending');
+    });
+
+    it('handles empty worktree list (returns unchanged main progress)', () => {
+      initProgress(tmpDir, {
+        planFile: 'v0.30-07-02-PLAN.md',
+        totalTasks: 2,
+        taskNames: ['Task 1', 'Task 2'],
+      });
+
+      const result = aggregateParallelProgress(tmpDir, []);
+
+      assert.equal(result.tasks[0].status, 'pending');
+      assert.equal(result.tasks[1].status, 'pending');
+      assert.equal(result.status, 'in_progress');
+    });
+
+    it('marks overall status as complete when all tasks are done after aggregation', () => {
+      initProgress(tmpDir, {
+        planFile: 'v0.30-07-02-PLAN.md',
+        totalTasks: 2,
+        taskNames: ['Task 1', 'Task 2'],
+      });
+
+      const wtProgress = {
+        tasks: [
+          { number: 1, status: 'complete', commit_hash: 'ddd4444', completed_at: '2026-03-08T10:03:00Z' },
+          { number: 2, status: 'complete', commit_hash: 'eee5555', completed_at: '2026-03-08T10:04:00Z' },
+        ],
+      };
+
+      const result = aggregateParallelProgress(tmpDir, [
+        { worktreePath: '/tmp/wt', progressData: wtProgress },
+      ]);
+
+      assert.equal(result.status, 'complete');
+      assert.equal(result.tasks[0].commit_hash, 'ddd4444');
+      assert.equal(result.tasks[1].commit_hash, 'eee5555');
+    });
+
+    it('returns null when main progress file does not exist', () => {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ep-noagg-'));
+      try {
+        const result = aggregateParallelProgress(dir, []);
+        assert.equal(result, null);
+      } finally {
+        fs.rmSync(dir, { recursive: true, force: true });
+      }
     });
   });
 });
