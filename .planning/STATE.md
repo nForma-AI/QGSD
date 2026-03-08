@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-03-07)
 
 ## Current Position
 
-Phase: 5 of 7 (Continuous Verification) -- IN PROGRESS
-Plan: 1 of 2 in current phase
-Status: Executing
-Last activity: 2026-03-08 - Completed v0.30-05-01-PLAN.md
+Phase: 5 of 7 (Continuous Verification) -- COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase Complete
+Last activity: 2026-03-08 - Completed v0.30-05-02-PLAN.md
 
-Progress: [#######...] 64%
+Progress: [########..] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: 4min
 - Total execution time: 0.5 hours
 
@@ -38,6 +38,7 @@ Progress: [#######...] 64%
 *Updated after each plan completion*
 | Phase v0.30-04 P01 | 4min | 2 tasks | 4 files |
 | Phase v0.30-05 P01 | 3min | 2 tasks | 5 files |
+| Phase v0.30-05 P02 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [v0.30-05-01]: Boundary triggers on 5+ file accumulation, test file edits, or config file edits
 - [v0.30-05-01]: Fail-open on all error paths: timeouts, missing tools, evaluation errors return pass=true
 - [v0.30-05-01]: Dual-path require pattern for continuous-verify.cjs resolution in execution-progress.cjs
+- [v0.30-05-02]: Verification warnings injected as advisory additionalContext only -- never blocking
+- [v0.30-05-02]: Config kill switch uses flat boolean key continuous_verify_enabled (shallow merge safe)
+- [v0.30-05-02]: done_conditions evaluation in execute-plan.md is advisory -- tasks can complete even if conditions fail
 
 ### Pending Todos
 
@@ -101,5 +105,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.30-05-01-PLAN.md
+Stopped at: Completed v0.30-05-02-PLAN.md (Phase v0.30-05 complete)
 Resume file: None
