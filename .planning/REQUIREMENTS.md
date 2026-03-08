@@ -86,8 +86,8 @@
 | LRNG-02 | Phase v0.30-08 (gap closure) | Complete |
 | LRNG-03 | Phase v0.30-09 (residual fix) | Complete |
 | LRNG-04 | Phase v0.30-08 (gap closure) | Complete |
-| PARA-01 | Phase v0.30-07 | Pending |
-| PARA-02 | Phase v0.30-07 | Pending |
+| PARA-01 | Phase v0.30-07 | Complete |
+| PARA-02 | Phase v0.30-07 | Complete |
 | PRIO-01 | Phase v0.31-01 | Complete |
 | VALID-01 | Phase v0.31-01 | Complete |
 | BRKR-01 | Phase v0.31-02 | Complete |

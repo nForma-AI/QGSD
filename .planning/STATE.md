@@ -35,6 +35,7 @@ Progress: [####░░░░░░] 43%
 - Trend: Stable
 
 *Updated after each plan completion*
+| Phase v0.30-07 P01 | 5min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -53,6 +54,9 @@ Recent decisions affecting current work:
 - [v0.31-02-01]: Evidence file uses schema_version:1 envelope with signatures array for forward compatibility
 - [v0.31-02-01]: Preemptive check emits stderr warning only, never blocks tool calls (warn-only)
 - [v0.31-02-01]: Evidence cap at 50 entries sorted by last_seen descending, pruned on read
+- [Phase v0.30-07]: CONFLICT detection checks stdout+stderr+message (git outputs CONFLICT to stdout)
+- [Phase v0.30-07]: Worktree executors skip state_updates/final_commit -- orchestrator handles after merge
+- [Phase v0.30-07]: Executor completion uses structured JSON block for reliable orchestrator parsing
 
 ### Pending Todos
 
@@ -72,5 +76,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.31-02-01-PLAN.md
+Stopped at: Completed v0.30-07-01-PLAN.md
 Resume file: None
