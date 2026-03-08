@@ -42,9 +42,10 @@ None.
 | 230 | Close all solver feedback loops in TUI Solve module | 2026-03-08 | d762995f | Verified | [230-close-all-solver-feedback-loops-in-tui-s](./quick/230-close-all-solver-feedback-loops-in-tui-s/) |
 | 231 | Fix health checker W007 false positives for archived milestone phase directories | 2026-03-08 | ddfa4108 | Pending | [231-fix-health-checker-w007-false-positives-](./quick/231-fix-health-checker-w007-false-positives-/) |
 | 232 | Fix token consumption display in nf:health | 2026-03-08 | pending | Pending | [232-fix-token-consumption-in-health-workflow](./quick/232-fix-token-consumption-in-health-workflow/) |
+| 233 | Implement insights-driven nForma improvements (git safety, MCP guard, verify, preflight) | 2026-03-08 | 31c5ba8e | Verified | [233-implement-insights-driven-nforma-improve](./quick/233-implement-insights-driven-nforma-improve/) |
 
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Archived v0.30 and v0.31 milestones. Ready for /nf:new-milestone.
+Stopped at: Completed quick task 233: Insights-driven nForma improvements
 Resume file: None
