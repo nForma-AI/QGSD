@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 
 ## Current Position
 
-Phase: 6 of 7 (Subagent Orchestration) -- Ready to plan
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-08 - Phase v0.30-05 complete, transitioning to v0.30-06
+Phase: 6 of 7 (Subagent Orchestration) -- In progress
+Plan: 1 of 2 in current phase
+Status: Executing
+Last activity: 2026-03-08 - Completed v0.30-06-01 (Context Retrieval and Phase Accumulation)
 
-Progress: [########..] 71%
+Progress: [########..] 79%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: 4min
 - Total execution time: 0.5 hours
 
@@ -39,6 +39,7 @@ Progress: [########..] 71%
 | Phase v0.30-04 P01 | 4min | 2 tasks | 4 files |
 | Phase v0.30-05 P01 | 3min | 2 tasks | 5 files |
 | Phase v0.30-05 P02 | 4min | 2 tasks | 5 files |
+| Phase v0.30-06 P01 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Recent decisions affecting current work:
 - [v0.30-05-02]: Verification warnings injected as advisory additionalContext only -- never blocking
 - [v0.30-05-02]: Config kill switch uses flat boolean key continuous_verify_enabled (shallow merge safe)
 - [v0.30-05-02]: done_conditions evaluation in execute-plan.md is advisory -- tasks can complete even if conditions fail
+- [v0.30-06-01]: Keyword-based domain detection with PATH_CATEGORY_MAP for artifact path analysis
+- [v0.30-06-01]: Explicit formal subdirectories (tla/, alloy/, prism/) in DOMAIN_CONFIG.formal.searchDirs for non-recursive readdirSync
+- [v0.30-06-01]: Per-phase entry cap (MAX_ENTRIES_PER_PHASE=10) to prevent unbounded growth
 
 ### Pending Todos
 
@@ -105,5 +109,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Phase v0.30-05 complete, ready to plan Phase v0.30-06
+Stopped at: Completed v0.30-06-01-PLAN.md
 Resume file: None

@@ -39,9 +39,9 @@
 
 ### Subagent Orchestration
 
-- [ ] **ORCH-01**: User benefits from iterative retrieval for quorum slot workers — workers can request additional context as needed via Read/Grep/Glob instead of receiving a fixed context dump
-- [ ] **ORCH-02**: User benefits from phase-based context accumulation — architecture decisions, test results, and API contracts accumulate across phases and inject into subsequent phase planning
-- [ ] **ORCH-03**: User benefits from specialized retrieval agents — domain-specific agents (test-retriever, architecture-retriever, formal-model-retriever) with preloaded skills for targeted context fetching
+- [x] **ORCH-01**: User benefits from iterative retrieval for quorum slot workers — workers can request additional context as needed via Read/Grep/Glob instead of receiving a fixed context dump
+- [x] **ORCH-02**: User benefits from phase-based context accumulation — architecture decisions, test results, and API contracts accumulate across phases and inject into subsequent phase planning
+- [x] **ORCH-03**: User benefits from specialized retrieval agents — domain-specific agents (test-retriever, architecture-retriever, formal-model-retriever) with preloaded skills for targeted context fetching
 
 ## Future Requirements
 
@@ -89,9 +89,9 @@
 | VERF-03 | v0.30-05 | Complete |
 | PARA-01 | v0.30-07 | Pending |
 | PARA-02 | v0.30-07 | Pending |
-| ORCH-01 | v0.30-06 | Pending |
-| ORCH-02 | v0.30-06 | Pending |
-| ORCH-03 | v0.30-06 | Pending |
+| ORCH-01 | v0.30-06 | Complete |
+| ORCH-02 | v0.30-06 | Complete |
+| ORCH-03 | v0.30-06 | Complete |
 
 **Coverage:**
 - v0.30 requirements: 20 total
