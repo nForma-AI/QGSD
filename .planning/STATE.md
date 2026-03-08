@@ -37,6 +37,7 @@ Progress: [######░░░░] 57%
 *Updated after each plan completion*
 | Phase v0.30-07 P01 | 5min | 2 tasks | 5 files |
 | Phase v0.31-02 P02 | 7min | 2 tasks | 4 files |
+| Phase v0.30-07 P02 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ Recent decisions affecting current work:
 - [Phase v0.30-07]: CONFLICT detection checks stdout+stderr+message (git outputs CONFLICT to stdout)
 - [Phase v0.30-07]: Worktree executors skip state_updates/final_commit -- orchestrator handles after merge
 - [Phase v0.30-07]: Executor completion uses structured JSON block for reliable orchestrator parsing
+- [Phase v0.30-07]: Pattern D is opt-in via --parallel flag; existing A/B/C unchanged
+- [Phase v0.30-07]: SERIAL_FILES expanded: .gitignore, config files, settings.json prevent parallel execution
 
 ### Pending Todos
 
@@ -79,5 +82,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.31-02-02-PLAN.md
+Stopped at: Completed v0.30-07-02-PLAN.md
 Resume file: None
