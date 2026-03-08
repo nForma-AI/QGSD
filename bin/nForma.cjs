@@ -341,6 +341,7 @@ const MODULES = [
       { label: '  D->R Unbacked Claims',   action: 'solve-dtor' },
       { label: ' \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500', action: 'sep' },
       { label: '  Manage Suppressions',    action: 'solve-suppressions' },
+      { label: '  Classify All (Haiku)',   action: 'solve-classify' },
     ],
   },
 ];
@@ -1210,7 +1211,8 @@ function renderList() {
     for (const r of rows) {
       // Key badge — pad to 8 visual chars after tag close
       // No BASE_URL = subscription/CLI auth, no API key needed
-      const isSubAuth = !r.baseUrl;
+      // claude-code-router slots manage their own keys internally via ccr config
+      const isSubAuth = !r.baseUrl || r.displayType === 'claude-code-router';
       const keyBadge = r.hasKey
         ? '{green-fg}✓ set{/}   ' // 5 visible + 3 spaces = 8
         : isSubAuth
@@ -2585,6 +2587,7 @@ async function dispatch(action) {
     else if (action === 'solve-ttor')         await solveCategoryFlow('ttor');
     else if (action === 'solve-dtor')         await solveCategoryFlow('dtor');
     else if (action === 'solve-suppressions') solveSuppressionsFlow();
+    else if (action === 'solve-classify')     await solveClassifyFlow();
   } catch (err) {
     if (err.message !== 'cancelled') toast(err.message, true);
     menuList.focus();
@@ -2857,6 +2860,7 @@ function reqCoverageGapsFlow() {
 // ─── Solve: Browse overview ──────────────────────────────────────────────────
 function solveBrowseFlow() {
   const data = solveTui.loadSweepData();
+  const classifications = solveTui.readClassificationCache();
   const lines = [];
   lines.push('{bold}Solve Items{/bold}');
   lines.push('\u2500'.repeat(60));
@@ -2908,12 +2912,32 @@ function solveBrowseFlow() {
         }
         lines.push(`    {gray-fg}with matching source module: ${withSource}/${cat.items.length}{/}`);
       }
+      // Show Haiku classification breakdown if available
+      const catClass = classifications[key] || {};
+      if (Object.keys(catClass).length > 0) {
+        let genuine = 0, fp = 0, review = 0;
+        for (const it of cat.items) {
+          const k = solveTui.itemKey(key, it);
+          const v = catClass[k] || 'review';
+          if (v === 'genuine') genuine++;
+          else if (v === 'fp') fp++;
+          else review++;
+        }
+        lines.push(`    {gray-fg}haiku triage: {red-fg}${genuine} genuine{/gray-fg} | {green-fg}${fp} fp{/gray-fg} | {yellow-fg}${review} review{/gray-fg}{/}`);
+      }
     }
   }
 
   lines.push('');
   lines.push('\u2500'.repeat(60));
   lines.push(`{bold}Total: ${totalCount} item(s) across 4 categories{/bold}`);
+  // Show classification summary
+  const hasAnyClassification = Object.values(classifications).some(c => Object.keys(c).length > 0);
+  if (hasAnyClassification) {
+    lines.push('{gray-fg}Haiku triage cached — items pre-classified before human review{/}');
+  } else {
+    lines.push('{gray-fg}No Haiku triage — run Classify All from menu to pre-classify{/}');
+  }
   if (totalCount === 0) {
     lines.push('');
     lines.push('{green-fg}All clean! No human-gated items found.{/}');
@@ -2929,6 +2953,8 @@ async function solveCategoryFlow(catKey) {
   const catLabel = catLabels[catKey] || catKey;
 
   const data = solveTui.loadSweepData();
+  const classifications = solveTui.readClassificationCache();
+  const catClass = classifications[catKey] || {};
   const cat = data[catKey];
 
   if (!cat || cat.error) {
@@ -2959,16 +2985,19 @@ async function solveCategoryFlow(catKey) {
     for (let i = 0; i < pageItems.length; i++) {
       const idx = start + i;
       const item = pageItems[i];
+      const iKey = solveTui.itemKey(catKey, item);
+      const verdict = catClass[iKey];
+      const badge = verdict === 'genuine' ? '{red-fg}[!]{/}' : verdict === 'fp' ? '{green-fg}[~]{/}' : verdict === 'review' ? '{yellow-fg}[?]{/}' : '';
       const num = String(idx + 1).padStart(4) + '.';
 
       if (catKey === 'dtoc') {
         const typeTag = `[${item.claimType || item.type || '?'}]`;
-        lines.push(`  ${num} {yellow-fg}${typeTag}{/} ${(item.value || item.summary || '').slice(0, 60)}`);
+        lines.push(`  ${num}${badge} {yellow-fg}${typeTag}{/} ${(item.value || item.summary || '').slice(0, 60)}`);
         lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}${item.line ? ':' + item.line : ''}{/}  {red-fg}${item.reason || ''}{/}`);
         lines.push(`       {gray-fg}category: ${item.category || 'N/A'}{/}`);
       } else if (catKey === 'ctor') {
         const filePath = item.file || item.summary || 'N/A';
-        lines.push(`  ${num} {cyan-fg}${filePath}{/}`);
+        lines.push(`  ${num}${badge} {cyan-fg}${filePath}{/}`);
         // Show first-line description from the module
         try {
           const absFile = path.join(__dirname, '..', filePath);
@@ -2985,7 +3014,7 @@ async function solveCategoryFlow(catKey) {
         } catch (_) {}
       } else if (catKey === 'ttor') {
         const filePath = item.file || item.summary || 'N/A';
-        lines.push(`  ${num} {cyan-fg}${filePath}{/}`);
+        lines.push(`  ${num}${badge} {cyan-fg}${filePath}{/}`);
         // Show source module and whether it's requirement-traced
         const sourceFile = filePath.replace(/\.test\.(cjs|js|mjs)$/, '.$1');
         try {
@@ -3006,7 +3035,7 @@ async function solveCategoryFlow(catKey) {
           }
         } catch (_) {}
       } else if (catKey === 'dtor') {
-        lines.push(`  ${num} {yellow-fg}${(item.claim_text || item.summary || '').slice(0, 70)}{/}`);
+        lines.push(`  ${num}${badge} {yellow-fg}${(item.claim_text || item.summary || '').slice(0, 70)}{/}`);
         lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}${item.line ? ':' + item.line : ''}{/}`);
         // Show the action verb that triggered detection
         const ACTION_VERBS_LIST = ['supports','enables','provides','ensures','guarantees','validates','enforces','detects','prevents','handles','automates','generates','monitors','verifies','dispatches'];
@@ -3047,9 +3076,20 @@ async function solveCategoryFlow(catKey) {
 async function showItemDetail(catKey, item, catLabel) {
   if (!item) return;
 
+  // Show Haiku classification badge if available
+  const classifications = solveTui.readClassificationCache();
+  const catClass = classifications[catKey] || {};
+  const iKey = solveTui.itemKey(catKey, item);
+  const verdict = catClass[iKey];
+  const verdictLabel = verdict === 'genuine' ? '{red-fg}[!] GENUINE — needs action{/}'
+    : verdict === 'fp' ? '{green-fg}[~] FALSE POSITIVE — likely noise{/}'
+    : verdict === 'review' ? '{yellow-fg}[?] NEEDS REVIEW — ambiguous{/}'
+    : '{gray-fg}not classified — run Classify All{/}';
+
   const lines = [];
   lines.push('{bold}Item Detail{/bold}');
   lines.push('\u2500'.repeat(70));
+  lines.push(`  {bold}Haiku triage:{/bold} ${verdictLabel}`);
   lines.push('');
 
   if (catKey === 'dtoc') {
@@ -3263,6 +3303,62 @@ async function showItemDetail(catKey, item, catLabel) {
       }
     }
   });
+}
+
+// ─── Solve: Classify All (Haiku sub-agent) ──────────────────────────────────
+async function solveClassifyFlow() {
+  setContent('Solve - Classify', '{bold}Haiku Classification{/bold}\n\nLoading sweep data...');
+  screen.render();
+
+  const data = solveTui.loadSweepData();
+  const totalItems = ['dtoc', 'ctor', 'ttor', 'dtor'].reduce((sum, k) => {
+    const cat = data[k];
+    return sum + ((cat && cat.items) ? cat.items.length : 0);
+  }, 0);
+
+  setContent('Solve - Classify',
+    `{bold}Haiku Classification{/bold}\n\n` +
+    `Classifying ${totalItems} items across 4 categories...\n` +
+    `Using Claude Haiku sub-agent (claude CLI subprocess).\n\n` +
+    `{gray-fg}This may take 30-60 seconds. Items are batched (50 per call).{/}`
+  );
+  screen.render();
+
+  try {
+    const classifications = solveTui.classifyWithHaiku(data, { force: true });
+
+    // Count results
+    const stats = { genuine: 0, fp: 0, review: 0 };
+    for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+      const catClass = classifications[catKey] || {};
+      for (const v of Object.values(catClass)) {
+        if (stats[v] !== undefined) stats[v]++;
+      }
+    }
+
+    const lines = [];
+    lines.push('{bold}Haiku Classification Complete{/bold}');
+    lines.push('\u2500'.repeat(60));
+    lines.push('');
+    lines.push(`  {red-fg}[!] Genuine gaps:{/}  ${stats.genuine}`);
+    lines.push(`  {green-fg}[~] False positives:{/} ${stats.fp}`);
+    lines.push(`  {yellow-fg}[?] Needs review:{/}  ${stats.review}`);
+    lines.push('');
+    lines.push(`  Total classified: ${stats.genuine + stats.fp + stats.review}/${totalItems}`);
+    lines.push('');
+    lines.push('{gray-fg}Results cached to .planning/formal/solve-classifications.json{/}');
+    lines.push('{gray-fg}Cache valid for 24 hours. Badges now visible in category views.{/}');
+    lines.push('');
+    lines.push('{bold}Legend:{/bold} {red-fg}[!]{/} genuine  {green-fg}[~]{/} fp  {yellow-fg}[?]{/} review');
+
+    setContent('Solve - Classify', lines.join('\n'));
+    toast(`Classified ${stats.genuine + stats.fp + stats.review} items`);
+  } catch (e) {
+    setContent('Solve - Classify',
+      `{bold}Haiku Classification{/bold}\n\n{red-fg}Error: ${e.message}{/}\n\n` +
+      `Make sure the claude CLI is available and ANTHROPIC_API_KEY is set.`
+    );
+  }
 }
 
 // ─── Solve: Suppressions ────────────────────────────────────────────────────

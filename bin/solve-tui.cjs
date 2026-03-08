@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const { execFileSync } = require('child_process');
 
 const ROOT = process.cwd();
 const FP_PATH = path.join(ROOT, '.planning', 'formal', 'acknowledged-false-positives.json');
@@ -994,6 +995,139 @@ function createTodoFromItem(item) {
   return { ok: true, id };
 }
 
+// ── Haiku sub-agent classifier ────────────────────────────────────────────────
+
+const CLASSIFY_CACHE_PATH = path.join(ROOT, '.planning', 'formal', 'solve-classifications.json');
+
+/**
+ * Classify solve items using Claude Haiku as a sub-agent (via claude CLI subprocess).
+ * Batches items per category, asks Haiku to classify each as:
+ *   genuine  — real gap that needs human action
+ *   fp       — false positive, safe to auto-suppress
+ *   review   — ambiguous, needs human judgment
+ *
+ * Results are cached to .planning/formal/solve-classifications.json.
+ * @param {Object} sweepData - Output of loadSweepData()
+ * @param {Object} opts - { force: boolean } to skip cache
+ * @returns {Object} { dtoc: {[itemKey]: verdict}, ctor: {...}, ... }
+ */
+function classifyWithHaiku(sweepData, opts = {}) {
+  // Check cache first
+  if (!opts.force) {
+    try {
+      const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
+      if (cached.timestamp && Date.now() - new Date(cached.timestamp).getTime() < 24 * 60 * 60 * 1000) {
+        return cached.classifications;
+      }
+    } catch (_) { /* no cache or expired */ }
+  }
+
+  const classifications = {};
+
+  for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+    const cat = sweepData[catKey];
+    if (!cat || cat.error || !cat.items || cat.items.length === 0) {
+      classifications[catKey] = {};
+      continue;
+    }
+
+    // Build item summaries for classification (batch up to 50 at a time)
+    const items = cat.items;
+    const catClassifications = {};
+    const BATCH_SIZE = 50;
+
+    for (let batchStart = 0; batchStart < items.length; batchStart += BATCH_SIZE) {
+      const batch = items.slice(batchStart, batchStart + BATCH_SIZE);
+      const itemLines = batch.map((item, i) => {
+        const idx = batchStart + i;
+        if (catKey === 'dtoc') {
+          return `${idx}: [${item.claimType}] "${item.value}" in ${item.doc_file}:${item.line} — ${item.reason}`;
+        } else if (catKey === 'ctor') {
+          return `${idx}: ${item.file} — module not traced to any requirement`;
+        } else if (catKey === 'ttor') {
+          return `${idx}: ${item.file} — test has no @req annotation`;
+        } else if (catKey === 'dtor') {
+          return `${idx}: "${(item.claim_text || '').slice(0, 80)}" in ${item.doc_file}:${item.line}`;
+        }
+        return `${idx}: ${JSON.stringify(item).slice(0, 100)}`;
+      }).join('\n');
+
+      const categoryDesc = {
+        dtoc: 'D→C Broken Claims: doc references to files/commands/dependencies that don\'t exist in the codebase',
+        ctor: 'C→R Untraced Modules: code files not mentioned in any requirement. Infrastructure/utility scripts (build, lint, migrate, validate, check, install tools) are typically NOT requirement-traced and should be classified as "fp". Feature modules that implement user-facing or system behavior SHOULD be traced.',
+        ttor: 'T→R Orphan Tests: test files without @req annotations. Tests for infrastructure/utility scripts are typically "fp". Tests for feature modules should be "review".',
+        dtor: 'D→R Unbacked Claims: doc sentences with action verbs (provides, ensures, validates...) that don\'t match any requirement keywords',
+      };
+
+      const prompt = `You are classifying items from a formal verification sweep of a Node.js CLI project called nForma (a Claude Code plugin for multi-model planning workflows).
+
+Category: ${categoryDesc[catKey]}
+
+Classify each item as ONE of:
+- genuine: Real gap that needs human action (missing file, real broken reference, feature module that should have requirement tracing)
+- fp: False positive — noise that should be auto-suppressed (infrastructure scripts, utility modules, config references, English words misclassified as packages, test helpers)
+- review: Ambiguous — needs human judgment
+
+Items to classify:
+${itemLines}
+
+Respond with ONLY a JSON object mapping index to verdict. Example: {"0":"fp","1":"genuine","2":"review"}
+No explanation, no markdown, just the JSON object.`;
+
+      try {
+        const result = execFileSync(
+          'claude',
+          ['-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--no-input'],
+          { encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
+        ).trim();
+
+        // Parse JSON from response (handle potential markdown wrapping)
+        const jsonMatch = result.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const verdicts = JSON.parse(jsonMatch[0]);
+          for (const [idxStr, verdict] of Object.entries(verdicts)) {
+            const idx = parseInt(idxStr, 10);
+            if (!isNaN(idx) && ['genuine', 'fp', 'review'].includes(verdict)) {
+              const item = items[idx];
+              const key = itemKey(catKey, item);
+              catClassifications[key] = verdict;
+            }
+          }
+        }
+      } catch (e) {
+        // Sub-agent failed — leave items unclassified (will show as "review" in TUI)
+      }
+    }
+
+    classifications[catKey] = catClassifications;
+  }
+
+  // Cache results
+  try {
+    const cacheData = { timestamp: new Date().toISOString(), classifications };
+    fs.writeFileSync(CLASSIFY_CACHE_PATH, JSON.stringify(cacheData, null, 2));
+  } catch (_) { /* best effort */ }
+
+  return classifications;
+}
+
+/** Generate a stable key for an item to use in classification cache */
+function itemKey(catKey, item) {
+  if (catKey === 'dtoc') return `${item.doc_file}:${item.value}`;
+  if (catKey === 'ctor') return item.file;
+  if (catKey === 'ttor') return item.file;
+  if (catKey === 'dtor') return `${item.doc_file}:${item.line}`;
+  return JSON.stringify(item).slice(0, 100);
+}
+
+/** Read cached classifications if they exist */
+function readClassificationCache() {
+  try {
+    const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
+    return cached.classifications || {};
+  } catch (_) { return {}; }
+}
+
 // ── Exports ───────────────────────────────────────────────────────────────────
 
 if (require.main === module) {
@@ -1009,5 +1143,8 @@ if (require.main === module) {
     CATEGORIES,
     createRequirementFromItem,
     createTodoFromItem,
+    classifyWithHaiku,
+    readClassificationCache,
+    itemKey,
   };
 }
