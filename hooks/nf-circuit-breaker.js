@@ -367,6 +367,145 @@ function writeOscillationLog(logPath, log) {
   }
 }
 
+// ── Evidence persistence for cross-session oscillation signatures ────────────
+
+// Evidence file path
+function getEvidencePath(gitRoot) {
+  return path.join(gitRoot, '.planning', 'formal', 'evidence', 'oscillation-signatures.json');
+}
+
+// Writes/updates an oscillation signature to the evidence file.
+// Fail-open: any error is logged to stderr but never blocks tool calls.
+function writeEvidenceSignature(gitRoot, fileSet, fileSets, fileSetHash, patternHash) {
+  try {
+    const evidencePath = getEvidencePath(gitRoot);
+    const dir = path.dirname(evidencePath);
+    fs.mkdirSync(dir, { recursive: true });
+
+    let data = { schema_version: 1, signatures: [] };
+    if (fs.existsSync(evidencePath)) {
+      try {
+        data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+        if (!data || !Array.isArray(data.signatures)) {
+          data = { schema_version: 1, signatures: [] };
+        }
+      } catch {
+        data = { schema_version: 1, signatures: [] };
+      }
+    }
+
+    const now = new Date().toISOString();
+    const existingIdx = data.signatures.findIndex(s => s.file_set_hash === fileSetHash);
+    if (existingIdx >= 0) {
+      // Update existing entry
+      data.signatures[existingIdx].alternation_count += 1;
+      data.signatures[existingIdx].time_window.last_seen = now;
+      data.signatures[existingIdx].pattern_hash = patternHash;
+    } else {
+      // Push new entry
+      data.signatures.push({
+        id: `sig_${fileSetHash}`,
+        file_set_hash: fileSetHash,
+        pattern_hash: patternHash,
+        files: fileSet.slice().sort(),
+        alternation_count: 1,
+        time_window: { first_seen: now, last_seen: now },
+        resolved_at: null,
+        resolved_by_commit: null,
+        session_id: process.env.SESSION_ID || null,
+      });
+    }
+
+    // Cap at 50 entries sorted by last_seen descending
+    data.signatures.sort((a, b) => (b.time_window.last_seen || '').localeCompare(a.time_window.last_seen || ''));
+    if (data.signatures.length > 50) {
+      data.signatures = data.signatures.slice(0, 50);
+    }
+
+    fs.writeFileSync(evidencePath, JSON.stringify(data, null, 2), 'utf8');
+  } catch (e) {
+    process.stderr.write(`[nf] WARNING: Could not write evidence signature: ${e.message}\n`);
+    // Fail-open: do not block execution
+  }
+}
+
+// Checks for known unresolved oscillation signatures matching current file sets.
+// Prunes entries older than 30 days. Returns matching signature or null.
+// Fail-open: returns null on any error.
+function checkPreemptiveEvidence(gitRoot, fileSets) {
+  try {
+    const evidencePath = getEvidencePath(gitRoot);
+    if (!fs.existsSync(evidencePath)) return null;
+
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+    } catch {
+      return null;
+    }
+    if (!data || !Array.isArray(data.signatures)) return null;
+
+    // Prune entries older than 30 days
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const beforeLen = data.signatures.length;
+    data.signatures = data.signatures.filter(s =>
+      (s.time_window && s.time_window.last_seen) ? s.time_window.last_seen >= thirtyDaysAgo : true
+    );
+    // Write back if pruned
+    if (data.signatures.length !== beforeLen) {
+      try {
+        fs.writeFileSync(evidencePath, JSON.stringify(data, null, 2), 'utf8');
+      } catch { /* fail-open */ }
+    }
+
+    // Build hashes for current file sets
+    const currentHashes = new Set();
+    for (const fs2 of fileSets) {
+      if (fs2.length > 0) {
+        currentHashes.add(makeFileSetHash(fs2));
+      }
+    }
+
+    // Check for unresolved signatures matching current file sets
+    for (const sig of data.signatures) {
+      if (sig.resolved_at === null && currentHashes.has(sig.file_set_hash)) {
+        return sig;
+      }
+    }
+
+    return null;
+  } catch {
+    return null; // Fail-open
+  }
+}
+
+// Marks an evidence signature as resolved.
+// Fail-open: any error is logged to stderr but never blocks tool calls.
+function markEvidenceResolved(gitRoot, fileSetHash, commit) {
+  try {
+    const evidencePath = getEvidencePath(gitRoot);
+    if (!fs.existsSync(evidencePath)) return;
+
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+    } catch {
+      return;
+    }
+    if (!data || !Array.isArray(data.signatures)) return;
+
+    const entry = data.signatures.find(s => s.file_set_hash === fileSetHash);
+    if (entry) {
+      entry.resolved_at = new Date().toISOString();
+      entry.resolved_by_commit = commit || null;
+      fs.writeFileSync(evidencePath, JSON.stringify(data, null, 2), 'utf8');
+    }
+  } catch (e) {
+    process.stderr.write(`[nf] WARNING: Could not mark evidence resolved: ${e.message}\n`);
+    // Fail-open
+  }
+}
+
 // SHA-1 of sorted file list, 12 hex chars
 function makeFileSetHash(files) {
   return crypto.createHash('sha1')
@@ -585,6 +724,10 @@ req.end();
             // Clear state file so PreToolUse stops warning
             const statePath = path.join(gitRoot, '.claude', 'circuit-breaker-state.json');
             try { if (fs.existsSync(statePath)) fs.rmSync(statePath); } catch {}
+            // Mark evidence signature as resolved
+            if (activeEntry && activeEntry.files) {
+              markEvidenceResolved(gitRoot, makeFileSetHash(activeEntry.files), resolvedCommit);
+            }
             process.stderr.write(`[nf] INFO: Oscillation resolved by Haiku — circuit breaker cleared.\n`);
           }
         } catch (e) {
@@ -632,6 +775,12 @@ req.end();
       const hashes = getCommitHashes(gitRoot, config.circuit_breaker.commit_window);
       const fileSets = getCommitFileSets(gitRoot, hashes);
 
+      // Preemptive evidence check: warn about known unresolved signatures
+      const preemptiveMatch = checkPreemptiveEvidence(gitRoot, fileSets);
+      if (preemptiveMatch) {
+        process.stderr.write(`[nf] WARNING: Known unresolved oscillation signature detected (${preemptiveMatch.id}, files: ${(preemptiveMatch.files || []).join(', ')}). Review .planning/formal/evidence/oscillation-signatures.json for details.\n`);
+      }
+
       // Detect oscillation
       const result = detectOscillation(fileSets, config.circuit_breaker.oscillation_depth, hashes, gitRoot);
       if (!result.detected) {
@@ -676,6 +825,9 @@ req.end();
       // Write state so nf-prompt.js picks it up on next user message
       writeState(statePath, result.fileSet, fileSets);
 
+      // Persist oscillation signature for cross-session evidence
+      writeEvidenceSignature(gitRoot, result.fileSet, fileSets, fileSetHash, patternHash);
+
       appendConformanceEvent({
         ts:              new Date().toISOString(),
         phase:           'IDLE',
@@ -699,4 +851,13 @@ req.end();
 
 if (require.main === module) main();
 
-module.exports = { buildWarningNotice, buildBlockReason };
+module.exports = {
+  buildWarningNotice,
+  buildBlockReason,
+  writeEvidenceSignature,
+  checkPreemptiveEvidence,
+  markEvidenceResolved,
+  makeFileSetHash,
+  makePatternHash,
+  getEvidencePath,
+};
