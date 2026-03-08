@@ -88,7 +88,7 @@ None yet.
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 222 | use those insights to recommend improvements to nforma | 2026-03-08 | 3d644a39 | Verified | [222-use-those-insights-to-recommend-improvem](./quick/222-use-those-insights-to-recommend-improvem/) |
-| 224 | Add formal grounding step to list-phase-assumptions workflow | 2026-03-08 | pending | Pending | [224-add-formal-grounding-step-to-list-phase-](./quick/224-add-formal-grounding-step-to-list-phase-/) |
+| 224 | Add formal grounding step to list-phase-assumptions workflow | 2026-03-08 | 392f0fd4 | Verified | [224-add-formal-grounding-step-to-list-phase-](./quick/224-add-formal-grounding-step-to-list-phase-/) |
 | 225 | Centralize PRISM invocation in run-formal-check.cjs via delegation to run-prism.cjs | 2026-03-08 | 941af210 | Verified | [225-centralize-prism-invocation-in-run-forma](./quick/225-centralize-prism-invocation-in-run-forma/) |
 
 ## Session Continuity
