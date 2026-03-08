@@ -3993,6 +3993,7 @@ function cmdValidateHealth(cwd, options, raw) {
     }
 
     const diskPhases = new Set();
+    const archivedPhaseIds = new Set();
     try {
       const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
       for (const e of entries) {
@@ -4008,7 +4009,10 @@ function cmdValidateHealth(cwd, options, raw) {
     const archivedPhaseDirs = getArchivedPhaseDirs(cwd);
     for (const a of archivedPhaseDirs) {
       const dm = a.name.match(/^(v\d+\.\d+-\d{2}(?:\.\d+)?|\d+(?:\.\d+)?)/);
-      if (dm) diskPhases.add(dm[1]);
+      if (dm) {
+        diskPhases.add(dm[1]);
+        archivedPhaseIds.add(dm[1]);
+      }
     }
     const legacyArchiveDir = path.join(planningDir, 'archive', 'legacy');
     if (fs.existsSync(legacyArchiveDir)) {
@@ -4017,7 +4021,10 @@ function cmdValidateHealth(cwd, options, raw) {
         for (const e of legacyEntries) {
           if (e.isDirectory()) {
             const dm = e.name.match(/^(v\d+\.\d+-\d{2}(?:\.\d+)?|\d+(?:\.\d+)?)/);
-            if (dm) diskPhases.add(dm[1]);
+            if (dm) {
+              diskPhases.add(dm[1]);
+              archivedPhaseIds.add(dm[1]);
+            }
           }
         }
       } catch {}
@@ -4035,8 +4042,9 @@ function cmdValidateHealth(cwd, options, raw) {
       }
     }
 
-    // Phases on disk but not in ROADMAP
+    // Phases on disk but not in ROADMAP (skip archived phases — they are expected to be absent from ROADMAP)
     for (const p of diskPhases) {
+      if (archivedPhaseIds.has(p)) continue;
       const normalized = normalizePhaseName(p);
       const dParts = p.split('.');
       const unpadded = dParts.length > 1
