@@ -10,24 +10,33 @@ Profile: cli-tool
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.30 — Advanced Agent Patterns
+## Current Milestone: v0.31 — Ruflo-Inspired Hardening
 
-**Goal:** Integrate six advanced Claude Code agent patterns — dynamic token optimization, cross-session memory persistence, continuous learning with skill extraction, file-based continuous verification, git worktree parallelization, and iterative subagent orchestration — closing the gap between nForma's mature quorum infrastructure and community-proven agent harness techniques.
+**Goal:** Harden nForma's existing features with patterns identified from the ruflo reference codebase — adding hook execution priority ordering, circuit-breaker pattern learning, quorum latency budgets, executor read-only modes, rules shard retrieval to reduce token waste, config adapter normalization, input validation for hook stdin, and structured ADR formatting for quorum debates.
 
 **Target features:**
-- Dynamic model downgrade based on token usage metrics and task complexity
-- Cross-session learning with pattern extraction from transcripts
-- Continuous skill extraction from error resolutions and user corrections
-- File-based continuous verification during execution (not just at phase end)
-- Git worktree isolation for parallel executor subagents and cascade method
-- Iterative retrieval pattern for quorum slot workers with context stack management
+- Hook priority ordering — circuit-breaker (safety) always runs before prompt injection (enhancement)
+- Circuit-breaker learning — persist oscillation trigger patterns for future session preemption
+- Quorum latency budgets — per-slot timeout constants that cut off slow agents
+- Executor read-only mode — restricted tool access for review-only quorum workers
+- Rules shard retrieval — tag .claude/rules/ with relevance patterns, load only matching rules per turn
+- Config adapter pattern — bidirectional config translation with normalization, zero drift
+- Input validation — schema validation for hook stdin JSON, not just try/catch fail-open
+- Structured ADRs — consistent context/decision/consequences format for debates/
 
-**Phase v0.30-01 shipped (2026-03-07):** Dynamic Model Selection — task classifier (trivial/simple/moderate/complex), TIER_SLOT_MAP slot filtering in quorum dispatch, thinking_budget_scaling nested config, token dashboard CLI (/nf:tokens), 65% smart compaction with quorum lockout, anti-oscillation cooldown. 3 plans, 9 commits, 88 tests.
-**Phase v0.30-02 shipped (2026-03-07):** File-Based Execution State — execution-progress.cjs with init/completeTask/getStatus/incrementIteration/clear, nf-precompact.js progress injection on compaction, execute-plan.md workflow wiring at 4 integration points, iteration cap (5) and stuck detection (3 attempts). 1 plan, 5 commits, 18 tests.
-**Phase v0.30-03 shipped (2026-03-07):** Memory Persistence — memory-store.cjs with 3 JSONL categories (decisions/errors/quorum), append/query/prune/dedup, generateSessionReminder (800 char cap), formatMemoryInjection (1200 char cap). nf-session-start.js memory reminder, nf-precompact.js compaction snapshot. 2 plans, 6 commits, 35 tests.
-**Phase v0.30-04 shipped (2026-03-08):** Continuous Learning — memory-store extended to 6 categories (+ corrections/skills/failures), confidence scoring with weekly decay and boost, learning-extractor.cjs for transcript analysis (error patterns + correction detection), SessionEnd hook (nf-session-end.js) with 5s timeout for automatic extraction, skill-extractor.cjs CLI for quorum-validated skill persistence, session-start and precompact hooks extended with learning catalog injection. 2 plans, 4 commits, 89 tests.
-**Phase v0.30-05 shipped (2026-03-08):** Continuous Verification — continuous-verify.cjs with boundary detection (5+ files, test edits, config edits), budget-capped check runner (max 3/phase, 5s timeout), done_conditions evaluator (5 types: test_pass, file_exists, lint_clean, typecheck_pass, command_pass), execution-progress.cjs extended with done_conditions + BLOCKED_STATUS, gsd-context-monitor.js PostToolUse hook wired for advisory verification warnings, execute-plan.md workflow extended with machine-verifiable completion checks, continuous_verify_enabled config kill switch. 2 plans, 6 commits, 29 new tests.
-**Phase v0.30-06 shipped (2026-03-08):** Subagent Orchestration — context-retriever.cjs with domain-specific retrieval (test/architecture/formal DOMAIN_CONFIG, analyzeContextNeeds keyword + path detection, fetchContext with 32K char budget, max 2 retrieval rounds), context-stack.cjs with JSONL phase accumulation (append/queryRecentPhases/formatInjection, 10 entries/phase cap, 2000 char injection cap), quorum-slot-dispatch.cjs extended with enrichPromptWithRetrieval pre-dispatch enrichment (dual-path require, config kill switch context_retrieval_enabled), nf-prompt.js context stack injection (800 char hook-level cap), nf-precompact.js compaction context injection. 2 plans, 6 commits, 85 new tests.
+## Shipped: v0.30 — Advanced Agent Patterns (2026-03-08)
+
+**Goal:** Integrate six advanced Claude Code agent patterns — dynamic token optimization, cross-session memory persistence, continuous learning with skill extraction, file-based continuous verification, and iterative subagent orchestration — closing the gap between nForma's mature quorum infrastructure and community-proven agent harness techniques.
+
+**Shipped:** 6/7 phases complete. Phase v0.30-07 (Worktree Parallelization) deferred — not blocking.
+
+**Key features shipped:**
+- Dynamic Model Selection — task classifier, TIER_SLOT_MAP slot filtering, thinking_budget_scaling, /nf:tokens dashboard, 65% smart compaction with quorum lockout
+- File-Based Execution State — execution-progress.cjs with compaction injection, iteration cap, stuck detection
+- Memory Persistence — memory-store.cjs with 6 JSONL categories, session reminders, compaction snapshots
+- Continuous Learning — learning-extractor for error patterns + corrections, SessionEnd hook, skill-extractor CLI, confidence scoring with decay
+- Continuous Verification — boundary-batched checks (max 3/phase, 5s timeout), done_conditions evaluator, advisory warnings
+- Subagent Orchestration — domain-specific context retrieval, phase context stack, pre-dispatch enrichment
 
 ## Shipped: v0.29 — Three-Layer Formal Verification Architecture (2026-03-06)
 
@@ -627,4 +636,4 @@ nForma v0.29 shipped 2026-03-06. 29 milestones completed (v0.1–v0.29). The for
 | Production source handlers are framework-ready stubs | No live endpoints required; handlers validate schema and return standard issue objects; real auth deferred to v0.28+ (WIRE-01..05) | Phase v0.27-04 — OBS-03/04/05 |
 
 ---
-*Last updated: 2026-03-06 after v0.29 milestone*
+*Last updated: 2026-03-08 after v0.31 milestone start*

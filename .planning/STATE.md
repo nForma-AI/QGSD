@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.30-07: Worktree Parallelization
+**Current focus:** Milestone v0.31 — Ruflo-Inspired Hardening
 
 ## Current Position
 
-Phase: 7 of 7 (Worktree Parallelization) -- Ready to plan
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-08 - Phase v0.30-06 complete, transitioning to v0.30-07
-
-Progress: [#########.] 86%
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-08 — Milestone v0.31 started
 
 ## Performance Metrics
 
