@@ -3,6 +3,7 @@ paths:
   - "hooks/**/*.js"
   - "hooks/dist/**/*.js"
   - "bin/install.js"
+  - "core/workflows/**"
   - ".planning/**"
 ---
 
@@ -10,6 +11,7 @@ paths:
 
 - Install sync required: edits to hook source files in `hooks/` MUST be copied to `hooks/dist/` then run `node bin/install.js --claude --global`
 - The installer reads from `hooks/dist/` NOT `hooks/` -- the dist copy is what gets installed to `~/.claude/hooks/`
+- Workflow sync required: edits to installed workflows at `~/.claude/nf/workflows/` MUST also be synced to `core/workflows/` in the repo -- the installer copies from `core/workflows/` so repo source is the durable copy
 - Planning artifacts use `node bin/gsd-tools.cjs commit` for commits
 - Machine build: `npm run build:machines` produces `dist/machines/nf-workflow.machine.js` (NOT .cjs)
 - Skill prefix is `/nf:` -- all commands use this prefix (e.g., /nf:quick, /nf:solve)
