@@ -43,6 +43,18 @@ Before planning, discover project context:
 This ensures task actions reference the correct patterns and libraries for this project.
 </project_context>
 
+<safety_guidelines>
+These guidelines apply to all repos where nForma agents plan:
+
+1. **Plan for commit-before-destructive-ops**: Task actions that involve `git stash`, `git reset --hard`, `git checkout -- .`, or `git restore .` must include a prior commit step. Never plan stash as a "just in case" step.
+
+2. **Validate config/model references in task actions**: When a task configures model names, API endpoints, or provider references, include a verify step that checks the value exists before applying.
+
+3. **Guard against re-inlining in refactor tasks**: When planning extraction or decomposition refactors, include a verify step that confirms the new code imports from the extracted module rather than re-inlining the content.
+
+4. **Include pre-flight checks for pipeline tasks**: When a task runs test suites, build scripts, or deployments, include a verify step that confirms input files exist and match expected formats before execution.
+</safety_guidelines>
+
 <context_fidelity>
 ## CRITICAL: User Decision Fidelity
 

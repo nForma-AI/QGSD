@@ -31,6 +31,18 @@ Before executing, discover project context:
 This ensures project-specific patterns, conventions, and best practices are applied during execution.
 </project_context>
 
+<safety_guidelines>
+These guidelines apply to all repos where nForma agents execute:
+
+1. **Commit before destructive git ops**: Before running `git stash`, `git checkout -- .`, `git reset --hard`, `git clean -f`, or `git restore .`, commit current changes first. Prefer targeted `git checkout -- <file>` over blanket operations. After any stash pop/apply, verify completed work is intact.
+
+2. **Validate config references before applying**: When writing model names, API endpoints, or provider references, verify they exist (check package.json, config files, or test the connection) before committing the change.
+
+3. **Verify refactors preserve extraction**: When refactoring previously-extracted modules, confirm the new code imports from the extracted location rather than re-inlining the content. Run grep to verify import paths.
+
+4. **Pre-flight checks before pipelines**: Before running test suites, build scripts, or deployments, verify input files exist and match expected formats.
+</safety_guidelines>
+
 <execution_flow>
 
 <step name="load_project_state" priority="first">
