@@ -3996,6 +3996,94 @@ describe('SAFE-02: legacy numeric phase dirs archived', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// QUICK-231: W007 false positives for archived milestone phase directories
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('QUICK-231: W007 not emitted for phases archived in milestones/v*-phases/', () => {
+  let tmpDir;
+
+  beforeEach(() => {
+    tmpDir = createTempProject();
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'config.json'),
+      JSON.stringify({ model_profile: 'quality' })
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'PROJECT.md'),
+      '# Test Project\n\n## Vision\nTest\n\n## Scope\nTest\n'
+    );
+    // ROADMAP only references current phase, not archived ones
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'ROADMAP.md'),
+      '# Roadmap\n\n### Phase v0.32-01: Current Work\n'
+    );
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'STATE.md'),
+      '# State\n\nCurrent phase: v0.32-01\n'
+    );
+    // Create current phase directory
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.32-01-current-work'), { recursive: true });
+  });
+
+  afterEach(() => {
+    cleanup(tmpDir);
+  });
+
+  test('QUICK-231-TC-01: W007 not emitted for phases in milestones/v*-phases/ archive', () => {
+    // Create archived milestone phase directories (simulates post-cleanup state)
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.9-phases', 'v0.9-01-some-feature'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.9-phases', 'v0.9-02-another-feature'), { recursive: true });
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.15-phases', 'v0.15-01-health-fix'), { recursive: true });
+
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const archivedW007 = (data.warnings || []).filter(
+      i => i.code === 'W007' && i.message && (
+        i.message.includes('v0.9-01') ||
+        i.message.includes('v0.9-02') ||
+        i.message.includes('v0.15-01')
+      )
+    );
+    assert.strictEqual(archivedW007.length, 0,
+      `QUICK-231-TC-01: W007 must not fire for archived milestone phases: ${JSON.stringify(archivedW007)}`);
+  });
+
+  test('QUICK-231-TC-02: W007 still fires for genuinely orphaned phases in phases/', () => {
+    // Create an orphaned phase not in ROADMAP and not archived
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'phases', 'v0.99-01-orphaned'), { recursive: true });
+
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    const orphanW007 = (data.warnings || []).filter(
+      i => i.code === 'W007' && i.message && i.message.includes('v0.99-01')
+    );
+    assert.strictEqual(orphanW007.length, 1,
+      `QUICK-231-TC-02: W007 must fire for genuinely orphaned phase v0.99-01: ${JSON.stringify(data.warnings)}`);
+  });
+
+  test('QUICK-231-TC-03: W006 still works for archived phases (ROADMAP entry matched by archive)', () => {
+    // Add a ROADMAP entry that only exists in archive, not in phases/
+    fs.writeFileSync(
+      path.join(tmpDir, '.planning', 'ROADMAP.md'),
+      '# Roadmap\n\n### Phase v0.32-01: Current Work\n\n### Phase v0.9-01: Archived Feature\n'
+    );
+    fs.mkdirSync(path.join(tmpDir, '.planning', 'milestones', 'v0.9-phases', 'v0.9-01-archived-feature'), { recursive: true });
+
+    const result = runGsdTools('validate health', tmpDir);
+    const data = JSON.parse(result.output);
+
+    // W006 should NOT fire because the phase exists in archive
+    const w006 = (data.warnings || []).filter(
+      i => i.code === 'W006' && i.message && i.message.includes('v0.9-01')
+    );
+    assert.strictEqual(w006.length, 0,
+      `QUICK-231-TC-03: W006 must not fire for phase v0.9-01 present in archive: ${JSON.stringify(w006)}`);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // VIS-01: Quorum failure visibility in health output
 // ─────────────────────────────────────────────────────────────────────────────
 
