@@ -151,7 +151,13 @@ if (require.main === module) {
         const taskNames = namesStr ? namesStr.split(',').map(n => n.trim()) : [];
         // Pad or truncate taskNames to match tasks count
         while (taskNames.length < tasks) taskNames.push(`Task ${taskNames.length + 1}`);
-        const result = initProgress(cwd, { planFile, totalTasks: tasks, taskNames });
+        // Parse optional done_conditions (JSON string of array-of-arrays)
+        const doneCondStr = getArg('done-conditions');
+        let doneConditions;
+        if (doneCondStr) {
+          try { doneConditions = JSON.parse(doneCondStr); } catch (_) { doneConditions = undefined; }
+        }
+        const result = initProgress(cwd, { planFile, totalTasks: tasks, taskNames, doneConditions });
         process.stdout.write(JSON.stringify(result) + '\n');
         break;
       }

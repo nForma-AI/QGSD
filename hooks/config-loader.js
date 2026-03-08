@@ -39,6 +39,7 @@ const HOOK_PROFILE_MAP = {
   minimal: new Set([
     'nf-circuit-breaker',
     'nf-precompact',
+    'nf-session-end',
   ]),
   standard: new Set([
     'nf-circuit-breaker',
@@ -53,6 +54,7 @@ const HOOK_PROFILE_MAP = {
     'nf-statusline',
     'nf-post-edit-format',
     'nf-console-guard',
+    'nf-session-end',
   ]),
   strict: new Set([
     'nf-circuit-breaker',
@@ -67,6 +69,7 @@ const HOOK_PROFILE_MAP = {
     'nf-statusline',
     'nf-post-edit-format',
     'nf-console-guard',
+    'nf-session-end',
   ]),
 };
 
@@ -141,6 +144,7 @@ const DEFAULT_CONFIG = {
   // Flat key required — nested objects lost in shallow merge.
   task_envelope_enabled: true,
   hook_profile: 'standard',
+  learning_enabled: true,
   // thinking_budget_scaling: per-task-type thinking token budgets.
   // SHALLOW MERGE NOTE: project nf.json replaces entire object, not individual keys.
   // User must set all 3 keys together: { exploration, review, architecture }.
@@ -153,6 +157,7 @@ const DEFAULT_CONFIG = {
   model_routing_cooldown_rounds: 3,
   model_routing: {},  // per-complexity tier overrides, e.g. { simple: 'haiku' }
   smart_compact_threshold_pct: 65,  // Proactive compaction at 65% context (midpoint of 60-70% range from research)
+  continuous_verify_enabled: true,  // Master switch for continuous verification in PostToolUse hook
 };
 
 // Reads and parses a JSON config file.

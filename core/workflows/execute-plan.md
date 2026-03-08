@@ -72,6 +72,28 @@ PLAN_TASK_COUNT=$(grep -c '<task type=' .planning/phases/XX-name/{phase}-{plan}-
 PLAN_TASK_NAMES=$(grep '<name>' .planning/phases/XX-name/{phase}-{plan}-PLAN.md | sed 's/.*<name>//;s/<\/name>.*//' | paste -sd',' -)
 node bin/execution-progress.cjs init --plan "{phase}-{plan}-PLAN.md" --tasks "$PLAN_TASK_COUNT" --names "$PLAN_TASK_NAMES"
 ```
+
+Parse done_conditions from PLAN.md tasks (if present):
+```bash
+# Each task may have a <done_conditions> element containing JSON array of conditions.
+# Extract and pass to execution-progress.cjs init via --done-conditions flag.
+DONE_CONDITIONS=$(node -e "
+  const fs = require('fs');
+  const plan = fs.readFileSync('$PLAN_PATH', 'utf8');
+  const tasks = plan.match(/<task[^>]*>[\s\S]*?<\/task>/g) || [];
+  const conditions = tasks.map(t => {
+    const m = t.match(/<done_conditions>([\s\S]*?)<\/done_conditions>/);
+    return m ? JSON.parse(m[1].trim()) : [];
+  });
+  console.log(JSON.stringify(conditions));
+" 2>/dev/null || echo '[]')
+# If done_conditions were found, re-init with them:
+if [ "$DONE_CONDITIONS" != "[]" ]; then
+  node bin/execution-progress.cjs init --plan "{phase}-{plan}-PLAN.md" --tasks "$PLAN_TASK_COUNT" --names "$PLAN_TASK_NAMES" --done-conditions "$DONE_CONDITIONS"
+fi
+```
+
+Note: done_conditions are optional. If a task has no `<done_conditions>` element, it defaults to an empty array.
 </step>
 
 <step name="parse_segments">
@@ -278,7 +300,21 @@ TASK_COMMIT=$(git rev-parse --short HEAD)
 TASK_COMMITS+=("Task ${TASK_NUM}: ${TASK_COMMIT}")
 ```
 
-**6. Record execution progress:**
+**6. Machine-Verifiable Completion Check (done_conditions):**
+
+After each task completes successfully, if the task has done_conditions defined:
+
+1. Run: `node bin/continuous-verify.cjs evaluate --cwd . --conditions '<json-array>'`
+2. Parse the JSON result. If `all_pass` is false:
+   - Report which conditions failed
+   - Attempt to fix the failing conditions (e.g., run lint fix, fix test)
+   - Re-evaluate. If still failing after one retry, note in SUMMARY.md and continue (advisory, not blocking).
+3. If `all_pass` is true, proceed to mark task complete via execution-progress.cjs.
+
+Note: done_conditions evaluation is advisory. A task can still be marked complete even if conditions fail,
+but the executor should make a good-faith effort to satisfy them first.
+
+**7. Record execution progress:**
 ```bash
 node bin/execution-progress.cjs complete-task --number ${TASK_NUM} --commit $(git rev-parse --short HEAD)
 ```
