@@ -21,20 +21,29 @@ all iterations exhausted, or total residual is zero.
 RAM BUDGET: Never exceed 3 concurrent subagent Tasks at any point during
 execution. Sub-skill Agent calls are sequential (diagnose -> remediate -> report).
 
-@commands/nf/solve-diagnose.md
-@commands/nf/solve-remediate.md
-@commands/nf/solve-report.md
+Sub-skill files (do NOT @-include — they are loaded by Agent subprocesses):
+- commands/nf/solve-diagnose.md (Steps 0-1)
+- commands/nf/solve-remediate.md (Steps 3a-3m)
+- commands/nf/solve-report.md (Steps 6-8)
 </execution_context>
 
 <process>
 
 ## Phase 1: Diagnose
 
-Dispatch Agent to run `solve-diagnose`:
-- Pass all CLI flags: `--targets`, `--skip-observe`, `--json`, `--verbose`
-- Read the compact JSON result from the Agent's output
+```
+Agent(
+  subagent_type="general-purpose",
+  description="solve: diagnostic sweep",
+  prompt="Read and follow commands/nf/solve-diagnose.md end-to-end.
+CLI flags from orchestrator: {flags}
+After completing all steps, output ONLY the JSON result object described in the output_contract section of solve-diagnose.md."
+)
+```
+
+Parse the Agent's JSON output:
 - If `status == "error"`: log reason, exit gracefully
-- If `status == "bail"` (zero residual): skip to Phase 3 (Report) with baseline as post_residual
+- If `status == "bail"` (zero residual): skip to Phase 4 (Report) with baseline as post_residual
 - Store: `baseline_residual`, `open_debt`, `heatmap`, `issues`, `targets`
 
 ## Phase 2: Report-Only Gate
@@ -51,11 +60,18 @@ Default `max_iterations = 5`. Override with `--max-iterations=N`.
 For `iteration = 1` to `max_iterations`:
 
 **3a. Dispatch remediation:**
-Dispatch Agent to run `solve-remediate` with:
-- `residual_vector` (baseline on first iteration, post_residual on subsequent)
-- `open_debt`, `heatmap`, `targets`, `iteration` number
-- Read remediation output JSON
-- If `status == "bail"` or `"error"`: break loop, proceed to Phase 4
+```
+Agent(
+  subagent_type="general-purpose",
+  description="solve: remediation iteration {N}",
+  prompt="Read and follow commands/nf/solve-remediate.md end-to-end.
+Input context (JSON):
+{\"residual_vector\": ..., \"open_debt\": ..., \"heatmap\": ..., \"targets\": ..., \"iteration\": N}
+After completing all remediation steps, output ONLY the JSON result object described in the output_contract section."
+)
+```
+Parse remediation output JSON.
+If `status == "bail"` or `"error"`: break loop, proceed to Phase 4.
 
 **3b. Re-diagnostic sweep (Step 4):**
 ```bash
@@ -88,9 +104,16 @@ If openDebt entries remain in 'resolving' status, treat as automatable work rema
 
 ## Phase 4: Report
 
-Dispatch Agent to run `solve-report` with:
-- `baseline_residual`, `post_residual`, `iteration_count`
-- `flags`: `{ verbose, json }`
+```
+Agent(
+  subagent_type="general-purpose",
+  description="solve: final report",
+  prompt="Read and follow commands/nf/solve-report.md end-to-end.
+Input context (JSON):
+{\"baseline_residual\": ..., \"post_residual\": ..., \"iteration_count\": N, \"flags\": {\"verbose\": bool, \"json\": bool}}
+Display all tables and reports as described in the process section."
+)
+```
 
 ## Important Constraints
 
