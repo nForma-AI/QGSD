@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-08T18:33:26.756Z",
-  "content_hash": "16b5b6c44dd81406",
+  "aggregated_at": "2026-03-08T18:33:44.600Z",
+  "content_hash": "f7012d882656051f",
   "schema_version": "1",
   "requirements": [
     {
@@ -1186,6 +1186,18 @@
       "provenance": {
         "source_file": "reverse-discovery",
         "milestone": "solve-iteration-1"
+      }
+    },
+    {
+      "id": "FVTOOL-02",
+      "text": "run-formal-check.cjs delegates all PRISM model-checking invocations to run-prism.cjs via subprocess spawn, inheriting properties file injection, scoreboard-based rate calibration, cold-start detection, and policy.yaml loading.",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The inline PRISM invocation in run-formal-check.cjs duplicated a bare-bones spawnSync call that lacked features already implemented in run-prism.cjs. Centralizing through delegation eliminates the divergent code path and ensures all PRISM checks behave identically regardless of entry point.",
+      "provenance": {
+        "source_file": ".planning/quick/225-centralize-prism-invocation-in-run-forma/225-PLAN.md",
+        "milestone": "quick-225"
       }
     },
     {
@@ -4062,6 +4074,6 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-08T18:33:26.757Z",
+  "frozen_at": "2026-03-08T18:33:44.601Z",
   "total": 283
 }
