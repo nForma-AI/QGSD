@@ -67,12 +67,13 @@ test('normal case: appends correct record to token-usage.jsonl', () => {
           cache_read_input_tokens: 200,
         },
       },
-      isSidechain: false,
+      isSidechain: true,
       isApiErrorMessage: false,
     },
   ]);
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 'sess1',
     agent_id: 'agent1',
@@ -94,7 +95,7 @@ test('normal case: appends correct record to token-usage.jsonl', () => {
   assert.equal(records[0].agent_id, 'agent1');
 });
 
-test('isSidechain entries are excluded', () => {
+test('isSidechain entries are included (subagent transcripts are all sidechain)', () => {
   const tmpDir = makeTmpDir();
   const transcriptPath = writeTranscript(tmpDir, [
     {
@@ -106,12 +107,13 @@ test('isSidechain entries are excluded', () => {
     {
       type: 'assistant',
       message: { usage: { input_tokens: 50, output_tokens: 10 } },
-      isSidechain: false,
+      isSidechain: true,
       isApiErrorMessage: false,
     },
   ]);
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
@@ -124,9 +126,9 @@ test('isSidechain entries are excluded', () => {
 
   const records = readTokenLog(tmpDir);
   assert.ok(records && records.length === 1);
-  // Only the non-sidechain entry counts: 50 input, 10 output
-  assert.equal(records[0].input_tokens, 50);
-  assert.equal(records[0].output_tokens, 10);
+  // Both sidechain entries count: 999+50=1049 input, 999+10=1009 output
+  assert.equal(records[0].input_tokens, 1049);
+  assert.equal(records[0].output_tokens, 1009);
 });
 
 test('isApiErrorMessage entries are excluded', () => {
@@ -135,12 +137,13 @@ test('isApiErrorMessage entries are excluded', () => {
     {
       type: 'assistant',
       message: { usage: { input_tokens: 500, output_tokens: 100 } },
-      isSidechain: false,
+      isSidechain: true,
       isApiErrorMessage: true,
     },
   ]);
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
@@ -162,6 +165,7 @@ test('null transcript path: exits 0 and writes null record', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
@@ -182,6 +186,7 @@ test('non-nf agent type: exits 0, no file written', () => {
   const tmpDir = makeTmpDir();
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'other',
     session_id: 's1',
     agent_id: 'a1',
@@ -202,12 +207,13 @@ test('slot resolution: fallback to last_assistant_message when no correlation fi
     {
       type: 'assistant',
       message: { usage: { input_tokens: 75, output_tokens: 15 } },
-      isSidechain: false,
+      isSidechain: true,
       isApiErrorMessage: false,
     },
   ]);
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a2',
@@ -236,12 +242,13 @@ test('slot resolution: correlation file exists with slot: null, falls back to la
     {
       type: 'assistant',
       message: { usage: { input_tokens: 200, output_tokens: 40 } },
-      isSidechain: false,
+      isSidechain: true,
       isApiErrorMessage: false,
     },
   ]);
 
   const payload = {
+    hook_event_name: 'SubagentStop',
     agent_type: 'nf-quorum-slot-worker',
     session_id: 's1',
     agent_id: 'a1',
@@ -259,4 +266,39 @@ test('slot resolution: correlation file exists with slot: null, falls back to la
   assert.ok(records && records.length === 1);
   // slot: null in corr file → fallback to last_assistant_message → claude-2
   assert.equal(records[0].slot, 'claude-2');
+});
+
+test('slot resolution: falls back to transcript user message when last_assistant_message has no slot prefix', () => {
+  const tmpDir = makeTmpDir();
+  const transcriptPath = writeTranscript(tmpDir, [
+    {
+      type: 'user',
+      message: { role: 'user', content: 'slot: opencode-1\nquestion: What is 2+2?' },
+      isSidechain: true,
+    },
+    {
+      type: 'assistant',
+      message: { usage: { input_tokens: 50, output_tokens: 10 } },
+      isSidechain: true,
+      isApiErrorMessage: false,
+    },
+  ]);
+
+  const payload = {
+    hook_event_name: 'SubagentStop',
+    agent_type: 'nf-quorum-slot-worker',
+    session_id: 's1',
+    agent_id: 'a3',
+    agent_transcript_path: transcriptPath,
+    last_assistant_message: 'Four',
+  };
+
+  const { exitCode } = runHook(payload, tmpDir);
+  assert.equal(exitCode, 0);
+
+  const records = readTokenLog(tmpDir);
+  assert.ok(records && records.length === 1);
+  // last_assistant_message has no slot prefix → falls back to transcript user message
+  assert.equal(records[0].slot, 'opencode-1');
+  assert.equal(records[0].input_tokens, 50);
 });

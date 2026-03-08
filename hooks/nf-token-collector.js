@@ -6,7 +6,7 @@
 // Guards:
 //   - Only processes agent_type === 'nf-quorum-slot-worker' (exits 0 otherwise)
 //   - If transcript path is absent or missing: writes null-token record and exits 0 (fail-open)
-//   - isSidechain === true entries are excluded from token sum
+//   - isSidechain is NOT filtered (subagent transcripts mark ALL entries as sidechain)
 //   - isApiErrorMessage === true entries are excluded from token sum
 //   - Never writes to stdout (stdout is the Claude Code hook decision channel)
 //   - Fail-open: any unhandled error exits 0 without crashing the user's session
@@ -17,13 +17,14 @@ const fs   = require('fs');
 const path = require('path');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
-// Resolve slot name from correlation file or last_assistant_message preamble.
+// Resolve slot name from correlation file, last_assistant_message, or transcript.
 // Order:
 //   1. Read correlation file at .planning/quorum-slot-corr-<agent_id>.json
 //      - If slot is set → return it (and delete file)
 //      - If slot is null → delete file, fall through to next
 //   2. Parse "slot: <name>" from first matching line in last_assistant_message
-//   3. Fallback: return agent_id or 'unknown'
+//   3. Parse "slot: <name>" from the first user message in agent_transcript_path
+//   4. Fallback: return agent_id or 'unknown'
 function resolveSlot(input) {
   if (input.agent_id) {
     const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
@@ -44,6 +45,23 @@ function resolveSlot(input) {
   if (input.last_assistant_message) {
     const m = input.last_assistant_message.match(/^slot:\s*(\S+)/m);
     if (m) return m[1];
+  }
+
+  // Parse from transcript user message (slot workers receive "slot: X" as first line of prompt)
+  if (input.agent_transcript_path) {
+    try {
+      const raw = fs.readFileSync(input.agent_transcript_path, 'utf8');
+      const firstLine = raw.split('\n').find(l => l.trim());
+      if (firstLine) {
+        const entry = JSON.parse(firstLine);
+        if (entry.type === 'user' && entry.message && entry.message.content) {
+          const um = entry.message.content.match(/^slot:\s*(\S+)/m);
+          if (um) return um[1];
+        }
+      }
+    } catch (_) {
+      // Transcript read failed — fall through
+    }
   }
 
   // Final fallback
@@ -117,8 +135,8 @@ function main() {
           const entry = JSON.parse(line);
           // Only sum assistant entries
           if (entry.type !== 'assistant') continue;
-          // Exclude sidechain entries
-          if (entry.isSidechain === true) continue;
+          // NOTE: isSidechain is NOT filtered — subagent transcripts mark ALL entries
+          // as isSidechain=true, so filtering on it would exclude all usage data.
           // Exclude API error entries
           if (entry.isApiErrorMessage === true) continue;
           // Require usage data

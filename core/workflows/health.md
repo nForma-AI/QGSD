@@ -108,7 +108,7 @@ Run the following to read and display token usage data:
 node -e "
 const fs = require('fs');
 const path = require('path');
-const logPath = path.join(process.cwd(), '.planning', 'token-usage.jsonl');
+const logPath = path.join(process.cwd(), '.planning', 'telemetry', 'token-usage.jsonl');
 if (!fs.existsSync(logPath)) {
   console.log('  No token data yet. Run a quorum round to populate.');
   process.exit(0);
