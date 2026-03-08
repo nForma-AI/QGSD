@@ -121,8 +121,8 @@ process.stdin.on('end', () => {
           const candidates = skillExtractor.generateCandidates(clusters);
           let candidateCount = 0;
           for (const candidate of candidates) {
-            if (!memStore.isDuplicate(cwd, 'skill_candidates', 'skill', candidate.skill)) {
-              memStore.appendEntry(cwd, 'skill_candidates', { type: 'skill_candidate', ...candidate, status: 'pending_validation' });
+            if (!memStore.isDuplicate(cwd, 'skills', 'skill', candidate.skill)) {
+              memStore.appendEntry(cwd, 'skills', { type: 'skill_candidate', ...candidate, status: 'pending_validation' });
               candidateCount++;
             }
           }

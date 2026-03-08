@@ -43,8 +43,32 @@
   4. Phase v0.30-04 has a VERIFICATION.md that validates LRNG-01..04 satisfaction with evidence
 **Plans:** 2/2 plans complete
 Plans:
-- [ ] v0.30-08-01-PLAN.md — Fix install.js registration, wire skill-extractor, fix config-loader convention
-- [ ] v0.30-08-02-PLAN.md — Create VERIFICATION.md for v0.30-04 with LRNG-01..04 evidence
+- [x] v0.30-08-01-PLAN.md — Fix install.js registration, wire skill-extractor, fix config-loader convention
+- [x] v0.30-08-02-PLAN.md — Create VERIFICATION.md for v0.30-04 with LRNG-01..04 evidence
+
+#### Phase v0.30-09: Skill Candidate Category Fix
+**Goal:** Fix skill_candidates category mismatch in nf-session-end.js so extracted skill candidates persist to the correct `skills` JSONL file and surface in session reminders
+**Depends on:** Phase v0.30-08
+**Requirements:** LRNG-03
+**Gap Closure:** Closes residual LRNG-03 gap from v0.30 re-audit (2026-03-08T18:40:00Z)
+**Success Criteria** (what must be TRUE):
+  1. nf-session-end.js uses category `'skills'` (not `'skill_candidates'`) for isDuplicate and appendEntry calls
+  2. hooks/dist/nf-session-end.js is synced and installed
+  3. Existing nf-session-end tests pass (7/7)
+**Plans:** 1 plan (inline fix — already applied)
+Plans:
+- [x] v0.30-09-01 — Fix `'skill_candidates'` → `'skills'` in nf-session-end.js lines 124-125
+
+#### Phase v0.30-07: Worktree Parallelization
+**Goal:** Enable parallel plan execution via git worktree-isolated executor subagents, following ECC's Ralphinho/DAG orchestration pattern — dependency-ordered work units execute in isolated worktrees with merge queue coordination
+**Depends on:** Phase v0.30-06 (context retrieval for subagents)
+**Requirements:** PARA-01, PARA-02
+**Success Criteria** (what must be TRUE):
+  1. User can run `/nf:execute-phase` with `--parallel` flag and observe plans dispatched to isolated git worktrees (one worktree per plan)
+  2. Plans with no inter-plan file overlap execute truly in parallel; plans with overlapping files execute sequentially with merge coordination
+  3. Worktree cleanup occurs automatically after plan completion (success or failure) — no orphaned worktrees left behind
+  4. Parallel execution produces the same final code state as sequential execution for the same set of plans
+**Research:** v0.30-07-RESEARCH.md (completed)
 
 ---
 

@@ -64,8 +64,8 @@
 - **CONVEN-01**: Project-specific convention extraction from git history
 - **CTXREL-01**: Context stack with relevance scoring (recency, citation count, topic relevance)
 - **FMREV-01**: Formal model re-verification on code change during execution
-- **PARA-01**: Worktree-isolated executor subagents (deferred from v0.30)
-- **PARA-02**: Parallel plan execution with merge orchestration (deferred from v0.30)
+- ~~**PARA-01**: Worktree-isolated executor subagents~~ (moved back to v0.30-07)
+- ~~**PARA-02**: Parallel plan execution with merge orchestration~~ (moved back to v0.30-07)
 
 ## Out of Scope
 
@@ -84,8 +84,10 @@
 |-------------|-------|--------|
 | LRNG-01 | Phase v0.30-08 (gap closure) | Complete |
 | LRNG-02 | Phase v0.30-08 (gap closure) | Complete |
-| LRNG-03 | Phase v0.30-08 (gap closure) | Complete |
+| LRNG-03 | Phase v0.30-09 (residual fix) | Complete |
 | LRNG-04 | Phase v0.30-08 (gap closure) | Complete |
+| PARA-01 | Phase v0.30-07 | Pending |
+| PARA-02 | Phase v0.30-07 | Pending |
 | PRIO-01 | Phase v0.31-01 | Complete |
 | VALID-01 | Phase v0.31-01 | Complete |
 | BRKR-01 | Phase v0.31-02 | Pending |
@@ -97,8 +99,8 @@
 
 **Coverage:**
 - v0.31 requirements: 8 total
-- v0.30 gap closure requirements: 4 total (LRNG-01..04)
-- Mapped to phases: 12
+- v0.30 gap closure requirements: 4 total (LRNG-01..04) + 2 reinstated (PARA-01..02)
+- Mapped to phases: 14
 - Unmapped: 0
 
 ---
