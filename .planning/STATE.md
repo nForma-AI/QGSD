@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 Phase: 2 of 3 (Runtime Safety Boundaries)
 Plan: 1 of 3 in current phase
 Status: Executing v0.31-02 plans
-Last activity: 2026-03-08 -- Completed v0.31-02-01 (cross-session oscillation evidence)
+Last activity: 2026-03-08 - Completed quick task 222: use those insights to recommend improvements to nforma
 
 Progress: [####░░░░░░] 43%
 
@@ -62,6 +62,12 @@ None yet.
 
 - v0.30-07 (Worktree Parallelization) was not completed in v0.30 -- deferred requirements PARA-01, PARA-02 listed in v0.32+ consideration
 - additionalContext token budget contention remains from v0.30 (multiple injection sources share ~4000 token ceiling)
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 222 | use those insights to recommend improvements to nforma | 2026-03-08 | 3d644a39 | Pending | [222-use-those-insights-to-recommend-improvem](./quick/222-use-those-insights-to-recommend-improvem/) |
 
 ## Session Continuity
 
