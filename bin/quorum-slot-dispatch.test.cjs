@@ -427,6 +427,59 @@ test('buildModeBPrompt includes requirements section when provided', () => {
     'Expected requirement ID in Mode B prompt');
 });
 
+// ── BEHAVIORAL TESTS — EXEC-01 review-only restriction ──────────────────────
+
+test('buildModeBPrompt with reviewOnly=true includes READ-ONLY restriction text', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.buildModeBPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Does it pass?',
+    traces: '=== test output ===',
+    reviewOnly: true,
+  });
+  assert.ok(result.includes('READ-ONLY review task'),
+    'Expected "READ-ONLY review task" restriction text when reviewOnly=true');
+  assert.ok(result.includes('Do NOT use Write, Edit, Bash(write)'),
+    'Expected explicit tool restriction in review-only mode');
+});
+
+test('buildModeBPrompt with reviewOnly=false does NOT include READ-ONLY restriction text', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.buildModeBPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Does it pass?',
+    traces: '=== test output ===',
+    reviewOnly: false,
+  });
+  assert.ok(!result.includes('READ-ONLY review task'),
+    'Expected NO "READ-ONLY review task" restriction when reviewOnly=false');
+});
+
+test('buildModeBPrompt with reviewOnly undefined does NOT include READ-ONLY restriction text', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.buildModeBPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Does it pass?',
+    traces: '=== test output ===',
+  });
+  assert.ok(!result.includes('READ-ONLY review task'),
+    'Expected NO "READ-ONLY review task" restriction when reviewOnly is undefined');
+});
+
+test('buildModeAPrompt does NOT include READ-ONLY restriction regardless of reviewOnly', () => {
+  assert.ok(mod, 'Module not available yet');
+  const result = mod.buildModeAPrompt({
+    round: 1,
+    repoDir: '/tmp/repo',
+    question: 'Is this good?',
+  });
+  assert.ok(!result.includes('READ-ONLY review task'),
+    'Mode A prompts must NOT contain review-only restriction text');
+});
+
 // ── BEHAVIORAL TESTS — enrichPromptWithRetrieval (ORCH-01) ──────────────────
 
 test('enrichPromptWithRetrieval export: enrichPromptWithRetrieval is exported as a function', () => {

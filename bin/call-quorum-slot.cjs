@@ -196,6 +196,7 @@ let timeoutMs = _timeoutArg !== null ? parseInt(_timeoutArg, 10) : null;
 if (timeoutMs !== null && (isNaN(timeoutMs) || timeoutMs <= 0)) timeoutMs = null;
 const roundNum  = getArg('--round');
 const spawnCwd  = getArg('--cwd') ?? process.cwd();
+const allowedTools = getArg('--allowed-tools'); // EXEC-01: e.g. "Read,Grep,Glob" for review-only slots
 
 if (!slot) {
   process.stderr.write('Usage: echo "<prompt>" | node call-quorum-slot.cjs --slot <name> [--timeout <ms>] [--cwd <dir>]\n');
@@ -242,8 +243,19 @@ function readStdin() {
 }
 
 // ─── Subprocess dispatch ───────────────────────────────────────────────────────
-function runSubprocess(provider, prompt, timeoutMs) {
+function runSubprocess(provider, prompt, timeoutMs, allowedToolsFlag) {
   const args = provider.args_template.map(a => (a === '{prompt}' ? prompt : a));
+
+  // EXEC-01: Inject --allowedTools for ccr-based slots when review-only
+  const isCcr = provider.display_type === 'claude-code-router' || (provider.cli && provider.cli.includes('ccr'));
+  if (allowedToolsFlag && isCcr) {
+    // Insert before the prompt argument (last arg after template substitution)
+    const promptIdx = args.findIndex(a => a === prompt);
+    if (promptIdx !== -1) {
+      args.splice(promptIdx, 0, '--allowedTools', allowedToolsFlag);
+    }
+  }
+
   const env  = { ...process.env, ...(provider.env ?? {}) };
 
   return new Promise((resolve, reject) => {
@@ -323,7 +335,7 @@ function spawnRotateCmd(cmdArray) {
   });
 }
 
-async function runSubprocessWithRotation(provider, prompt, timeoutMs) {
+async function runSubprocessWithRotation(provider, prompt, timeoutMs, allowedToolsFlag) {
   const rot      = provider.oauth_rotation;
   const max      = rot.max_retries ?? 3;
   const patterns = rot.retry_on_patterns ?? ['quota', 'resource_exhausted', 'unauthorized', '401', '403'];
@@ -337,7 +349,7 @@ async function runSubprocessWithRotation(provider, prompt, timeoutMs) {
     }
     try {
       // Wrap inner call with retry-with-backoff (each oauth attempt gets retry protection)
-      const retryResult = await retryWithBackoff(() => runSubprocess(provider, prompt, timeoutMs), provider.name);
+      const retryResult = await retryWithBackoff(() => runSubprocess(provider, prompt, timeoutMs, allowedToolsFlag), provider.name);
       const out = retryResult.result;
       totalRetryCount = attempt + retryResult.retryCount;
       if (matchesRotationPattern(out, patterns) && attempt < max) {
@@ -490,11 +502,11 @@ async function main() {
 
     if (provider.type === 'subprocess') {
       if (provider.oauth_rotation?.enabled) {
-        const retryResult = await runSubprocessWithRotation(provider, prompt, effectiveTimeout);
+        const retryResult = await runSubprocessWithRotation(provider, prompt, effectiveTimeout, allowedTools);
         result = retryResult.result;
         retryCount = retryResult.retryCount;
       } else {
-        const retryResult = await retryWithBackoff(() => runSubprocess(provider, prompt, effectiveTimeout), slot);
+        const retryResult = await retryWithBackoff(() => runSubprocess(provider, prompt, effectiveTimeout, allowedTools), slot);
         result = retryResult.result;
         retryCount = retryResult.retryCount;
       }

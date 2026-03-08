@@ -55,6 +55,7 @@ const getArg = (f) => {
   return i !== -1 && argv[i + 1] !== undefined ? argv[i + 1] : null;
 };
 const hasFlag = (f) => argv.includes(f);
+const reviewOnly = hasFlag('--review-only'); // EXEC-01: review-only tool restriction
 
 // ─── Requirements loading and matching functions ──────────────────────────────
 
@@ -451,13 +452,20 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
  * @param {string} [opts.reviewContext]
  * @param {string} [opts.priorPositions]   - Round 2+
  * @param {Array}  [opts.requirements]     - array of requirement objects to inject
+ * @param {boolean}[opts.reviewOnly]       - EXEC-01: inject read-only tool restriction
  * @returns {string}
  */
-function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements }) {
+function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, artifactContent, reviewContext, priorPositions, requirements, reviewOnly }) {
   const lines = [];
 
   // Header
   lines.push(`nForma Quorum — Execution Review (Round ${round})`);
+
+  // EXEC-01: Review-only tool restriction for Mode B prompts
+  if (reviewOnly) {
+    lines.push('');
+    lines.push('IMPORTANT: This is a READ-ONLY review task. You MUST NOT modify any files. Only use read operations (Read, Grep, Glob tools). Do NOT use Write, Edit, Bash(write), or any destructive commands.');
+  }
   lines.push('');
 
   // Repository + question
@@ -928,9 +936,12 @@ async function main() {
   const allRequirements = loadRequirements(repoDir);
   const matchedRequirements = matchRequirementsByKeywords(allRequirements, question, artifactPath);
 
+  // EXEC-01: Determine review mode — Mode B or explicit --review-only flag
+  const isReviewMode = mode === 'B' || reviewOnly;
+
   let prompt;
   if (mode === 'B') {
-    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements });
+    prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements, reviewOnly: isReviewMode });
   } else {
     prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements });
   }
@@ -948,11 +959,27 @@ async function main() {
   // Locate call-quorum-slot.cjs relative to this script
   const cqsPath = path.join(__dirname, 'call-quorum-slot.cjs');
 
+  // EXEC-01: Detect ccr-based slot to pass --allowed-tools for review-only restriction
+  const isCcrSlot = (() => {
+    try {
+      const pPath = path.join(__dirname, 'providers.json');
+      const providers = JSON.parse(fs.readFileSync(pPath, 'utf8')).providers || [];
+      const provider = providers.find(p => p.name === slot);
+      return provider && (provider.display_type === 'claude-code-router' || (provider.cli && provider.cli.includes('ccr')));
+    } catch { return false; }
+  })();
+
+  // Build spawn args — add --allowed-tools for ccr slots in review mode
+  const spawnArgs = [cqsPath, '--slot', slot, '--timeout', String(timeout), '--cwd', cwd];
+  if (isReviewMode && isCcrSlot) {
+    spawnArgs.push('--allowed-tools', 'Read,Grep,Glob');
+  }
+
   // Spawn call-quorum-slot.cjs as child process with stdin pipe
   const rawOutput = await new Promise((resolve) => {
     let child;
     try {
-      child = spawn(process.execPath, [cqsPath, '--slot', slot, '--timeout', String(timeout), '--cwd', cwd], {
+      child = spawn(process.execPath, spawnArgs, {
         stdio: ['pipe', 'pipe', 'pipe']
       });
     } catch (err) {
