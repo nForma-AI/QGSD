@@ -742,3 +742,15 @@ test('VHI-TC13: HOOK_INPUT_SCHEMAS exported and has expected event types', async
   assert.ok(HOOK_INPUT_SCHEMAS.SessionStart, 'must have SessionStart schema');
   assert.ok(HOOK_INPUT_SCHEMAS.SessionEnd, 'must have SessionEnd schema');
 });
+
+// TC-CRE: context_retrieval_enabled defaults to true when not specified in any config file
+test('TC-CRE: context_retrieval_enabled defaults to true when no config file present', async (t) => {
+  const tmpDir = path.join(os.tmpdir(), 'nf-test-cre-' + Date.now());
+  fs.mkdirSync(tmpDir, { recursive: true });
+  try {
+    const config = loadConfig(tmpDir);
+    assert.strictEqual(config.context_retrieval_enabled, true, 'context_retrieval_enabled must default to true');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});

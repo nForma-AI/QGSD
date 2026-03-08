@@ -158,6 +158,7 @@ const DEFAULT_CONFIG = {
   model_routing: {},  // per-complexity tier overrides, e.g. { simple: 'haiku' }
   smart_compact_threshold_pct: 65,  // Proactive compaction at 65% context (midpoint of 60-70% range from research)
   continuous_verify_enabled: true,  // Master switch for continuous verification in PostToolUse hook
+  context_retrieval_enabled: true,  // Master switch for context retrieval enrichment in quorum-slot-dispatch
 };
 
 // ─── Hook Input Schemas ──────────────────────────────────────────────────────

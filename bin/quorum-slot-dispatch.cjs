@@ -30,6 +30,23 @@
 const { spawn }  = require('child_process');
 const fs         = require('fs');
 const path       = require('path');
+const os         = require('os');
+
+// ─── Config-loader integration (two-layer merge for nf.json settings) ────────
+function loadNfConfig(cwd) {
+  const candidates = [
+    path.join(os.homedir(), '.claude', 'hooks', 'config-loader.js'),
+    path.join(__dirname, '..', 'hooks', 'dist', 'config-loader.js'),
+    path.join(__dirname, '..', 'hooks', 'config-loader.js'),
+  ];
+  for (const p of candidates) {
+    try {
+      const { loadConfig } = require(p);
+      return loadConfig(cwd);
+    } catch (_) {}
+  }
+  return {}; // fail-open: empty config uses defaults
+}
 
 // ─── Arg parsing (mirrors call-quorum-slot.cjs pattern) ───────────────────────
 const argv   = process.argv.slice(2);
@@ -919,16 +936,10 @@ async function main() {
   }
 
   // ── Context retrieval enrichment (ORCH-01) ──────────────────────────────────
-  // Check config kill switch: context_retrieval_enabled in .claude/nf.json.
-  // Fail-open: if config read fails, retrieval is ON (default enabled).
-  let retrievalEnabled = true;
-  try {
-    const nfConfigPath = path.join(cwd, '.claude', 'nf.json');
-    const nfConfig = JSON.parse(fs.readFileSync(nfConfigPath, 'utf8'));
-    if (nfConfig.context_retrieval_enabled === false) {
-      retrievalEnabled = false;
-    }
-  } catch { /* fail-open: config read failure → retrieval ON */ }
+  // Check config kill switch via two-layer config-loader merge (DEFAULT_CONFIG -> global -> project).
+  // Fail-open: if config load fails, retrieval is ON (default enabled).
+  const nfConfig = loadNfConfig(cwd);
+  const retrievalEnabled = nfConfig.context_retrieval_enabled !== false;
 
   if (retrievalEnabled) {
     prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
