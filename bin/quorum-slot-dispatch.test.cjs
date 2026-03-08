@@ -426,3 +426,54 @@ test('buildModeBPrompt includes requirements section when provided', () => {
   assert.ok(result.includes('[R-01]'),
     'Expected requirement ID in Mode B prompt');
 });
+
+// ── BEHAVIORAL TESTS — enrichPromptWithRetrieval (ORCH-01) ──────────────────
+
+test('enrichPromptWithRetrieval export: enrichPromptWithRetrieval is exported as a function', () => {
+  assert.ok(mod, 'Module not available yet');
+  assert.strictEqual(typeof mod.enrichPromptWithRetrieval, 'function',
+    'enrichPromptWithRetrieval must be exported from bin/quorum-slot-dispatch.cjs');
+});
+
+test('enrichPromptWithRetrieval — returns original prompt when no context needs detected', () => {
+  assert.ok(mod, 'Module not available yet');
+  const original = 'Test prompt content';
+  // Empty question + null artifactPath → no domains detected → no enrichment
+  const result = mod.enrichPromptWithRetrieval(original, '', null, '/nonexistent/path/xyz');
+  assert.ok(typeof result === 'string', 'enrichPromptWithRetrieval must return a string');
+  assert.strictEqual(result, original, 'Should return original prompt when no context needs detected');
+});
+
+test('enrichPromptWithRetrieval — appends RETRIEVED CONTEXT when context is found', () => {
+  assert.ok(mod, 'Module not available yet');
+  const original = 'Test prompt about testing';
+  // Use the real cwd which has .planning/formal/ files; 'test coverage verify' triggers test domain
+  const result = mod.enrichPromptWithRetrieval(original, 'test coverage verify', null, process.cwd());
+  if (result !== original) {
+    assert.ok(result.includes('=== RETRIEVED CONTEXT ==='),
+      'Expected "=== RETRIEVED CONTEXT ===" markers when context is retrieved');
+    assert.ok(result.startsWith(original),
+      'Enriched prompt must start with the original prompt');
+  }
+});
+
+test('enrichPromptWithRetrieval — fails open on errors (invalid cwd)', () => {
+  assert.ok(mod, 'Module not available yet');
+  const original = 'Test prompt content';
+  let result;
+  assert.doesNotThrow(() => {
+    result = mod.enrichPromptWithRetrieval(original, 'test query', 'some/path.js', '/nonexistent/invalid/path');
+  }, 'enrichPromptWithRetrieval must not throw on invalid cwd');
+  assert.ok(typeof result === 'string', 'enrichPromptWithRetrieval must return a string');
+});
+
+test('enrichPromptWithRetrieval — respects token budget', () => {
+  assert.ok(mod, 'Module not available yet');
+  const original = 'Test prompt';
+  const result = mod.enrichPromptWithRetrieval(original, 'formal verification alloy tla prism', null, process.cwd());
+  const retriever = require(path.resolve(__dirname, './context-retriever.cjs'));
+  const budget = retriever.TOKEN_BUDGET_CHARS;
+  const addedLength = result.length - original.length;
+  assert.ok(addedLength <= budget + 200,
+    'Added context (' + addedLength + ' chars) must be within TOKEN_BUDGET_CHARS (' + budget + ')');
+});

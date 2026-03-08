@@ -756,6 +756,91 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
   return lines.join('\n') + '\n';
 }
 
+// ─── Pre-dispatch context enrichment (ORCH-01) ───────────────────────────────
+//
+// ARCHITECTURAL RATIONALE (ORCH-01):
+// Pre-dispatch enrichment with up to 2 iterative retrieval rounds approximates
+// on-demand retrieval without requiring slot workers to have direct tool access.
+// This is architecturally necessary because slot workers dispatch to external
+// CLIs (codex, gemini, opencode, copilot) that lack Read/Grep/Glob tools --
+// they cannot perform retrieval themselves. By enriching the prompt BEFORE
+// dispatch, we satisfy ORCH-01's intent ("iterative retrieval") within Claude
+// Code's subagent constraints.
+//
+
+/**
+ * enrichPromptWithRetrieval — enriches a quorum prompt with domain-specific
+ * retrieved context from context-retriever.cjs and context-stack.cjs.
+ *
+ * Fail-open: on ANY error (missing modules, I/O failures, etc.), returns the
+ * original prompt unchanged. Retrieval errors never prevent quorum dispatch.
+ *
+ * @param {string} prompt      — the built prompt to enrich
+ * @param {string} question    — the question being asked
+ * @param {string|null} artifactPath — optional artifact path
+ * @param {string} cwd         — working directory
+ * @returns {string} — enriched prompt, or original prompt on error
+ */
+function enrichPromptWithRetrieval(prompt, question, artifactPath, cwd) {
+  try {
+    // Dual-path require for context-retriever.cjs
+    const retriever = (() => {
+      try { return require(path.join(__dirname, 'context-retriever.cjs')); }
+      catch { return null; }
+    })();
+    if (!retriever) return prompt;
+
+    // Dual-path require for context-stack.cjs (optional)
+    const contextStack = (() => {
+      try { return require(path.join(__dirname, 'context-stack.cjs')); }
+      catch { return null; }
+    })();
+
+    const charBudget = retriever.TOKEN_BUDGET_CHARS || 32000;
+    let additionalContext = '';
+    let existingContext = '';
+
+    // Iterative retrieval: up to MAX_ROUNDS (2) rounds
+    const maxRounds = retriever.MAX_ROUNDS || 2;
+    for (let round = 0; round < maxRounds; round++) {
+      const needs = retriever.analyzeContextNeeds(question, artifactPath, existingContext);
+      if (!needs || needs.length === 0) break;
+
+      const remainingBudget = charBudget - additionalContext.length;
+      if (remainingBudget <= 0) break;
+
+      const fetched = retriever.fetchContext(cwd, needs, remainingBudget);
+      if (!fetched) break;
+
+      additionalContext += fetched;
+      existingContext = additionalContext;
+    }
+
+    // Append context stack entries if available and within budget
+    if (contextStack) {
+      try {
+        const stackInjection = contextStack.formatInjection(cwd, 'current');
+        if (stackInjection) {
+          const remaining = charBudget - additionalContext.length;
+          if (stackInjection.length <= remaining) {
+            additionalContext += '\n' + stackInjection;
+          }
+        }
+      } catch { /* fail-open */ }
+    }
+
+    // Only append if we actually retrieved something
+    if (additionalContext.trim()) {
+      return prompt + '\n\n=== RETRIEVED CONTEXT ===\n' + additionalContext + '\n=========================\n';
+    }
+
+    return prompt;
+  } catch {
+    // Fail-open: retrieval errors never prevent quorum dispatch
+    return prompt;
+  }
+}
+
 // ─── Main (CLI entry point) ───────────────────────────────────────────────────
 
 async function main() {
@@ -831,6 +916,22 @@ async function main() {
     prompt = buildModeBPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, traces: traces || '', requirements: matchedRequirements });
   } else {
     prompt = buildModeAPrompt({ round, repoDir, question, artifactPath, artifactContent, reviewContext, priorPositions, requestImprovements, requirements: matchedRequirements });
+  }
+
+  // ── Context retrieval enrichment (ORCH-01) ──────────────────────────────────
+  // Check config kill switch: context_retrieval_enabled in .claude/nf.json.
+  // Fail-open: if config read fails, retrieval is ON (default enabled).
+  let retrievalEnabled = true;
+  try {
+    const nfConfigPath = path.join(cwd, '.claude', 'nf.json');
+    const nfConfig = JSON.parse(fs.readFileSync(nfConfigPath, 'utf8'));
+    if (nfConfig.context_retrieval_enabled === false) {
+      retrievalEnabled = false;
+    }
+  } catch { /* fail-open: config read failure → retrieval ON */ }
+
+  if (retrievalEnabled) {
+    prompt = enrichPromptWithRetrieval(prompt, question, artifactPath, cwd);
   }
 
   // Locate call-quorum-slot.cjs relative to this script
@@ -922,6 +1023,7 @@ if (typeof module !== 'undefined') {
     loadRequirements,
     matchRequirementsByKeywords,
     formatRequirementsSection,
+    enrichPromptWithRetrieval,
   };
 }
 
