@@ -17,6 +17,30 @@ const reset = '\x1b[0m';
 // Get version from package.json
 const pkg = require('../package.json');
 
+// Import hook priorities for deterministic ordering
+let DEFAULT_HOOK_PRIORITIES;
+try {
+  DEFAULT_HOOK_PRIORITIES = require('../hooks/config-loader').DEFAULT_HOOK_PRIORITIES;
+} catch {
+  // Fallback if config-loader not available during initial install
+  DEFAULT_HOOK_PRIORITIES = {
+    'nf-circuit-breaker': 1000,
+    'nf-stop': 1000,
+    'nf-prompt': 50,
+    'nf-precompact': 50,
+    'nf-session-start': 50,
+    'nf-session-end': 50,
+    'nf-check-update': 10,
+    'gsd-context-monitor': 50,
+    'nf-spec-regen': 10,
+    'nf-post-edit-format': 10,
+    'nf-console-guard': 10,
+    'nf-statusline': 10,
+    'nf-token-collector': 10,
+    'nf-slot-correlator': 10,
+  };
+}
+
 // Parse args
 const args = process.argv.slice(2);
 const hasGlobal = args.includes('--global') || args.includes('-g');
@@ -357,6 +381,37 @@ function readSettings(settingsPath) {
     }
   }
   return {};
+}
+
+/**
+ * Extracts the hook base name from a hook entry's command string.
+ * E.g., "node /Users/foo/.claude/hooks/nf-circuit-breaker.js" -> "nf-circuit-breaker"
+ * Returns empty string if no match.
+ */
+function extractHookName(hookEntry) {
+  const cmd = (hookEntry.hooks && hookEntry.hooks[0] && hookEntry.hooks[0].command) || '';
+  const match = cmd.match(/\/(nf-[a-z-]+|gsd-[a-z-]+)\.js/);
+  return match ? match[1] : '';
+}
+
+/**
+ * Sorts hook arrays in settings.hooks by priority (higher value = earlier position).
+ * Reads user overrides from nf.json hook_priorities merged with DEFAULT_HOOK_PRIORITIES.
+ * Hooks without a priority entry default to 50 (Normal).
+ */
+function sortHooksByPriority(settings, userPriorities) {
+  const priorities = { ...DEFAULT_HOOK_PRIORITIES, ...(userPriorities || {}) };
+
+  for (const eventType of Object.keys(settings.hooks || {})) {
+    if (!Array.isArray(settings.hooks[eventType])) continue;
+    settings.hooks[eventType].sort((a, b) => {
+      const aName = extractHookName(a);
+      const bName = extractHookName(b);
+      const aPrio = priorities[aName] || 50;
+      const bPrio = priorities[bName] || 50;
+      return bPrio - aPrio; // Higher priority first
+    });
+  }
 }
 
 /**
@@ -2171,6 +2226,18 @@ function finishInstall(settingsPath, settings, statuslineCommand, shouldInstallS
     };
     console.log(`  ${green}✓${reset} Configured statusline`);
   }
+
+  // PRIO-01: Sort hooks by priority for deterministic execution order
+  const nfConfig = (() => {
+    try {
+      const { loadConfig } = require('../hooks/config-loader');
+      return loadConfig(process.cwd());
+    } catch {
+      return { hook_priorities: {} };
+    }
+  })();
+  sortHooksByPriority(settings, nfConfig.hook_priorities);
+  console.log(`  ${green}✓${reset} Sorted hooks by priority (safety-critical first)`);
 
   // Always write settings
   writeSettings(settingsPath, settings);
