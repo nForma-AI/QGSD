@@ -41,10 +41,10 @@
 
 ### Governance & DX
 
-- [ ] **SHARD-01**: `.claude/rules/` files are tagged with relevance patterns (tool names, file globs, keywords) so only matching rules load per turn, measurably reducing per-turn token consumption
-- [ ] **ADAPT-01**: Config values are normalized through a bidirectional adapter (e.g., profile names, boolean strings, nested vs flat keys) so internal types never leak to config files and vice versa
+- [x] **SHARD-01**: `.claude/rules/` files are tagged with relevance patterns (tool names, file globs, keywords) so only matching rules load per turn, measurably reducing per-turn token consumption
+- [x] **ADAPT-01**: Config values are normalized through a bidirectional adapter (e.g., profile names, boolean strings, nested vs flat keys) so internal types never leak to config files and vice versa
 - [x] **VALID-01**: Hook stdin JSON is validated against lightweight schemas with structured error reporting; malformed input produces a diagnostic message on stderr before fail-open exit
-- [ ] **ADR-01**: Quorum debates in `.planning/quorum/debates/` follow a consistent template (Context, Question, Positions, Decision, Consequences) that downstream tools can parse
+- [x] **ADR-01**: Quorum debates in `.planning/quorum/debates/` follow a consistent template (Context, Question, Positions, Decision, Consequences) that downstream tools can parse
 
 ## v0.30 Gap Closure Requirements
 
@@ -93,9 +93,9 @@
 | BRKR-01 | Phase v0.31-02 | Complete |
 | LTCY-01 | Phase v0.31-02 | Complete |
 | EXEC-01 | Phase v0.31-02 | Complete |
-| SHARD-01 | Phase v0.31-03 | Pending |
-| ADAPT-01 | Phase v0.31-03 | Pending |
-| ADR-01 | Phase v0.31-03 | Pending |
+| SHARD-01 | Phase v0.31-03 | Complete |
+| ADAPT-01 | Phase v0.31-03 | Complete |
+| ADR-01 | Phase v0.31-03 | Complete |
 
 **Coverage:**
 - v0.31 requirements: 8 total

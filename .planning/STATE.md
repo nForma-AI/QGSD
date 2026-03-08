@@ -94,5 +94,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Milestone v0.31 complete -- all 3 phases finished, ready for /nf:audit-milestone v0.31
+Stopped at: Milestone v0.31 audit: passed (8/8 requirements). Ready for /nf:complete-milestone v0.31
 Resume file: None
