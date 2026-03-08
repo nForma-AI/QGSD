@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 Phase: Milestone boundary
 Plan: N/A
 Status: v0.30 and v0.31 milestones archived. Ready for /nf:new-milestone.
-Last activity: 2026-03-08 - Completed quick task 232: Fix token consumption display in nf:health
+Last activity: 2026-03-08 - Completed quick task 233: Implement insights-driven nForma improvements
 
 Progress: [##########] 100%
 
