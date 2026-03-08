@@ -632,9 +632,9 @@ function writeProvidersJson(data) {
 // ─── Update policy helper ────────────────────────────────────────────────────
 function writeUpdatePolicy(slotName, policy) {
   const nfCfg = readNfJson();
-  if (!nf.agent_config) nf.agent_config = {};
-  if (!nf.agent_config[slotName]) nf.agent_config[slotName] = {};
-  nf.agent_config[slotName].update_policy = policy;
+  if (!nfCfg.agent_config) nfCfg.agent_config = {};
+  if (!nfCfg.agent_config[slotName]) nfCfg.agent_config[slotName] = {};
+  nfCfg.agent_config[slotName].update_policy = policy;
   writeNfJson(nfCfg);
 }
 
@@ -789,11 +789,11 @@ function buildHeaderInfo() {
   let failMode = '—';
   try {
     const nfCfg   = readNfJson();
-    const defN   = nf.quorum?.maxSize;
-    const byProf = nf.quorum?.maxSizeByProfile || {};
+    const defN   = nfCfg.quorum?.maxSize;
+    const byProf = nfCfg.quorum?.maxSizeByProfile || {};
     const effN   = byProf[profile] ?? defN;
     if (effN != null) quorumN = String(effN) + (byProf[profile] != null ? '*' : '');
-    if (nf.fail_mode) failMode = nf.fail_mode;
+    if (nfCfg.fail_mode) failMode = nfCfg.fail_mode;
   } catch (_) {}
 
   // Key agent tiers — from core/references/model-profiles.md
@@ -911,11 +911,11 @@ function buildSettingsPaneContent() {
   const nfCfg    = readNfJson();
   const profile = cfg.model_profile || 'balanced';
   const ov      = cfg.model_overrides || {};
-  const defN    = nf.quorum?.maxSize ?? 3;
-  const byProf  = nf.quorum?.maxSizeByProfile || {};
+  const defN    = nfCfg.quorum?.maxSize ?? 3;
+  const byProf  = nfCfg.quorum?.maxSizeByProfile || {};
   const effN    = byProf[profile] ?? defN;
   const nStr    = String(effN) + (byProf[profile] != null ? '*' : '');
-  const failStr = nf.fail_mode || '—';
+  const failStr = nfCfg.fail_mode || '—';
 
   const D = '{#777777-fg}', V = '{#aaaaaa-fg}', A = '{#4a9090-fg}', Z = '{/}';
   const mTag = k => ov[k] ? `${A}${ov[k]}${Z}{#888888-fg}*${Z}` : `${V}${AGENT_TIERS[k]?.[profile] || '—'}${Z}`;
@@ -1341,13 +1341,13 @@ async function cloneSlotFlow() {
   // Copy nf.json agent_config metadata from source to cloned slot
   try {
     const nfCfg = readNfJson();
-    const sourceConfig = (nf.agent_config || {})[source.value];
+    const sourceConfig = (nfCfg.agent_config || {})[source.value];
     if (sourceConfig) {
-      if (!nf.agent_config) nf.agent_config = {};
-      nf.agent_config[newName] = JSON.parse(JSON.stringify(sourceConfig));
+      if (!nfCfg.agent_config) nfCfg.agent_config = {};
+      nfCfg.agent_config[newName] = JSON.parse(JSON.stringify(sourceConfig));
       // Clear key_status from clone (needs fresh probe)
-      if (nf.agent_config[newName].key_status) {
-        delete nf.agent_config[newName].key_status;
+      if (nfCfg.agent_config[newName].key_status) {
+        delete nfCfg.agent_config[newName].key_status;
       }
       writeNfJson(nfCfg);
     }
@@ -2237,8 +2237,8 @@ async function settingsFlow() {
     const cfg     = readProjectConfig();
     const nfCfg    = readNfJson();
     const profile = cfg.model_profile || 'balanced';
-    const defN    = nf.quorum?.maxSize ?? 3;
-    const byProf  = nf.quorum?.maxSizeByProfile || {};
+    const defN    = nfCfg.quorum?.maxSize ?? 3;
+    const byProf  = nfCfg.quorum?.maxSizeByProfile || {};
     const effN    = byProf[profile] ?? defN;
     const nStr    = String(effN) + (byProf[profile] != null ? '*' : '');
     const ovCount = Object.keys(cfg.model_overrides || {}).length;
@@ -2248,7 +2248,7 @@ async function settingsFlow() {
       picked = await promptList({ title: 'Settings', items: [
         { label: `  Profile          ${profile}`,              value: 'profile'   },
         { label: `  Quorum n         ${nStr}  →`,              value: 'n'         },
-        { label: `  Fail mode        ${nf.fail_mode || '—'}`,value: 'fail'      },
+        { label: `  Fail mode        ${nfCfg.fail_mode || '—'}`,value: 'fail'      },
         { label: `  Model overrides  ${ovCount ? `${ovCount} active` : 'none'}  →`, value: 'overrides' },
       ]});
     } catch (_) { return; }
@@ -2344,8 +2344,8 @@ async function modelOverridesFlow() {
 async function quorumNFlow() {
   while (true) {
     const nfCfg   = readNfJson();
-    const defN   = nf.quorum?.maxSize ?? 3;
-    const byProf = nf.quorum?.maxSizeByProfile || {};
+    const defN   = nfCfg.quorum?.maxSize ?? 3;
+    const byProf = nfCfg.quorum?.maxSizeByProfile || {};
     const fmt    = p => byProf[p] != null ? String(byProf[p]) : `${defN} (default)`;
 
     let picked;
@@ -2372,16 +2372,16 @@ async function quorumNFlow() {
     const n = parseInt(val.trim(), 10);
     if (isNaN(n) || n < 0) { toast('Invalid — enter a positive number or 0 to remove', true); continue; }
 
-    if (!nf.quorum) nf.quorum = {};
+    if (!nfCfg.quorum) nfCfg.quorum = {};
     if (picked.value === 'default') {
-      nf.quorum.maxSize = n;
+      nfCfg.quorum.maxSize = n;
     } else {
-      if (!nf.quorum.maxSizeByProfile) nf.quorum.maxSizeByProfile = {};
+      if (!nfCfg.quorum.maxSizeByProfile) nfCfg.quorum.maxSizeByProfile = {};
       if (n === 0) {
-        delete nf.quorum.maxSizeByProfile[picked.value];
-        if (!Object.keys(nf.quorum.maxSizeByProfile).length) delete nf.quorum.maxSizeByProfile;
+        delete nfCfg.quorum.maxSizeByProfile[picked.value];
+        if (!Object.keys(nfCfg.quorum.maxSizeByProfile).length) delete nfCfg.quorum.maxSizeByProfile;
       } else {
-        nf.quorum.maxSizeByProfile[picked.value] = n;
+        nfCfg.quorum.maxSizeByProfile[picked.value] = n;
       }
     }
     writeNfJson(nfCfg);
@@ -2444,7 +2444,7 @@ async function updatePolicyFlow() {
   if (!slots.length) { toast('No slots configured', true); return; }
 
   const nfCfg        = readNfJson();
-  const agentConfig = nf.agent_config || {};
+  const agentConfig = nfCfg.agent_config || {};
 
   const target = await promptList({ title: 'Update Policy — Pick slot',
     items: slots.map(s => ({
@@ -2876,6 +2876,19 @@ function solveBrowseFlow() {
       lines.push(`  {green-fg}${catLabels[key]}: 0 items{/}`);
     } else {
       lines.push(`  {yellow-fg}${catLabels[key]}: ${count} item(s){/}`);
+      // Show type breakdown for D→C
+      if (key === 'dtoc' && cat.items.length > 0) {
+        const byType = {};
+        const byCat = {};
+        for (const it of cat.items) {
+          byType[it.claimType || 'unknown'] = (byType[it.claimType || 'unknown'] || 0) + 1;
+          byCat[it.category || 'unknown'] = (byCat[it.category || 'unknown'] || 0) + 1;
+        }
+        const typeStr = Object.entries(byType).map(([k, v]) => `${k}: ${v}`).join(', ');
+        const catStr = Object.entries(byCat).map(([k, v]) => `${k}: ${v}`).join(', ');
+        lines.push(`    {gray-fg}by type: ${typeStr}{/}`);
+        lines.push(`    {gray-fg}by doc category: ${catStr}{/}`);
+      }
     }
   }
 
@@ -2930,16 +2943,17 @@ async function solveCategoryFlow(catKey) {
       const num = String(idx + 1).padStart(4) + '.';
 
       if (catKey === 'dtoc') {
-        lines.push(`  ${num} {yellow-fg}${(item.summary || '').slice(0, 50)}{/}`);
-        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}{/}${item.line ? ':' + item.line : ''}`);
-        if (item.reason) lines.push(`       {gray-fg}${item.reason}{/}`);
+        const typeTag = `[${item.claimType || item.type || '?'}]`;
+        lines.push(`  ${num} {yellow-fg}${typeTag}{/} ${(item.value || item.summary || '').slice(0, 60)}`);
+        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}${item.line ? ':' + item.line : ''}{/}  {red-fg}${item.reason || ''}{/}`);
+        lines.push(`       {gray-fg}category: ${item.category || 'N/A'}{/}`);
       } else if (catKey === 'ctor') {
         lines.push(`  ${num} {cyan-fg}${item.file || item.summary || 'N/A'}{/}`);
       } else if (catKey === 'ttor') {
         lines.push(`  ${num} {cyan-fg}${item.file || item.summary || 'N/A'}{/}`);
       } else if (catKey === 'dtor') {
-        lines.push(`  ${num} {yellow-fg}${(item.claim_text || item.summary || '').slice(0, 50)}{/}`);
-        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}{/}${item.line ? ':' + item.line : ''}`);
+        lines.push(`  ${num} {yellow-fg}${(item.claim_text || item.summary || '').slice(0, 70)}{/}`);
+        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}${item.line ? ':' + item.line : ''}{/}`);
       }
     }
 
@@ -2977,7 +2991,7 @@ async function showItemDetail(catKey, item, catLabel) {
 
   const lines = [];
   lines.push('{bold}Item Detail{/bold}');
-  lines.push('\u2500'.repeat(60));
+  lines.push('\u2500'.repeat(70));
   lines.push('');
 
   if (catKey === 'dtoc') {
@@ -2985,7 +2999,7 @@ async function showItemDetail(catKey, item, catLabel) {
     lines.push(`  {bold}Value:{/bold}     ${item.value || 'N/A'}`);
     lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.doc_file || 'N/A'}{/}`);
     lines.push(`  {bold}Line:{/bold}      ${item.line || 'N/A'}`);
-    lines.push(`  {bold}Reason:{/bold}    ${item.reason || 'N/A'}`);
+    lines.push(`  {bold}Reason:{/bold}    {yellow-fg}${item.reason || 'N/A'}{/}`);
     lines.push(`  {bold}Category:{/bold}  ${item.category || 'N/A'}`);
   } else if (catKey === 'ctor') {
     lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.file || 'N/A'}{/}`);
@@ -2996,6 +3010,43 @@ async function showItemDetail(catKey, item, catLabel) {
     lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.doc_file || 'N/A'}{/}`);
     lines.push(`  {bold}Line:{/bold}      ${item.line || 'N/A'}`);
   }
+
+  // Show file context around the item — the actual content you need to make decisions
+  const filePath = item.doc_file || item.file;
+  const targetLine = item.line;
+  if (filePath) {
+    lines.push('');
+    lines.push('\u2500'.repeat(70));
+    lines.push(`{bold}File Context:{/bold} {cyan-fg}${filePath}{/}`);
+    lines.push('');
+
+    const ctx = solveTui.readFileContext(filePath, targetLine, 5);
+    if (ctx.error) {
+      lines.push(`  {red-fg}Could not read file: ${ctx.error}{/}`);
+    } else if (ctx.lines.length > 0) {
+      // Show context around target line, or first 20 lines for items without a line number
+      const start = targetLine ? Math.max(0, targetLine - 6) : 0;
+      const end = targetLine ? Math.min(ctx.totalLines, targetLine + 5) : Math.min(20, ctx.totalLines);
+      for (let i = start; i < end; i++) {
+        const lineNum = String(i + 1).padStart(4);
+        const lineText = (ctx.lines[i] || '').slice(0, 100);
+        // Escape blessed markup in file content
+        const escaped = lineText.replace(/\{/g, '\\{').replace(/\}/g, '\\}');
+        if (targetLine && i === targetLine - 1) {
+          lines.push(`  {yellow-bg}{black-fg}${lineNum}  ${escaped}{/}`);
+        } else {
+          lines.push(`  {gray-fg}${lineNum}{/}  ${escaped}`);
+        }
+      }
+      if (end < ctx.totalLines) {
+        lines.push(`  {gray-fg}  ... (${ctx.totalLines - end} more lines){/}`);
+      }
+    }
+  }
+
+  lines.push('');
+  lines.push('\u2500'.repeat(70));
+  lines.push('{gray-fg}  Actions: Acknowledge as FP | Add Regex Suppression | Back{/}');
 
   setContent(`Solve - ${catLabel} - Detail`, lines.join('\n'));
 
