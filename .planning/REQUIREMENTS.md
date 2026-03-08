@@ -23,7 +23,7 @@
 
 - [x] **LRNG-01**: User benefits from automatic error resolution extraction — symptom-to-root-cause-to-fix patterns extracted into a searchable catalog at session boundaries
 - [x] **LRNG-02**: User corrections to Claude's approach are automatically recorded as learned patterns for future sessions
-- [ ] **LRNG-03**: User benefits from quorum-validated skill extraction — only patterns that multiple models agree are valuable get persisted as reusable skills
+- [x] **LRNG-03**: User benefits from quorum-validated skill extraction — only patterns that multiple models agree are valuable get persisted as reusable skills
 - [x] **LRNG-04**: User benefits from a failure catalog tracking failed approaches with confidence scores to prevent re-attempting dead ends
 
 ### Verification Loops
@@ -82,7 +82,7 @@
 | MEMP-04 | v0.30-03 | Complete |
 | LRNG-01 | v0.30-04 | Complete |
 | LRNG-02 | v0.30-04 | Complete |
-| LRNG-03 | v0.30-04 | Pending |
+| LRNG-03 | v0.30-04 | Complete |
 | LRNG-04 | v0.30-04 | Complete |
 | VERF-01 | v0.30-02 | Complete |
 | VERF-02 | v0.30-05 | Pending |
