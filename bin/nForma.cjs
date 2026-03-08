@@ -2579,6 +2579,12 @@ async function dispatch(action) {
     else if (action.startsWith('session-connect-')) {
       connectSession(parseInt(action.replace('session-connect-', ''), 10));
     }
+    else if (action === 'solve-browse')       solveBrowseFlow();
+    else if (action === 'solve-dtoc')         await solveCategoryFlow('dtoc');
+    else if (action === 'solve-ctor')         await solveCategoryFlow('ctor');
+    else if (action === 'solve-ttor')         await solveCategoryFlow('ttor');
+    else if (action === 'solve-dtor')         await solveCategoryFlow('dtor');
+    else if (action === 'solve-suppressions') solveSuppressionsFlow();
   } catch (err) {
     if (err.message !== 'cancelled') toast(err.message, true);
     menuList.focus();
@@ -2846,6 +2852,224 @@ function reqCoverageGapsFlow() {
   } catch (err) {
     setContent('Coverage Gaps', `{red-fg}Error: ${err.message}{/}`);
   }
+}
+
+// ─── Solve: Browse overview ──────────────────────────────────────────────────
+function solveBrowseFlow() {
+  const data = solveTui.loadSweepData();
+  const lines = [];
+  lines.push('{bold}Solve Items{/bold}');
+  lines.push('\u2500'.repeat(60));
+  lines.push('');
+
+  const catLabels = { dtoc: 'D->C Broken Claims', ctor: 'C->R Untraced Modules', ttor: 'T->R Orphan Tests', dtor: 'D->R Unbacked Claims' };
+  let totalCount = 0;
+
+  for (const key of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+    const cat = data[key];
+    if (!cat) { lines.push(`  {gray-fg}${catLabels[key]}: N/A{/}`); continue; }
+    const count = cat.items ? cat.items.length : 0;
+    totalCount += count;
+    if (cat.error) {
+      lines.push(`  {red-fg}${catLabels[key]}: ERROR - ${cat.error}{/}`);
+    } else if (count === 0) {
+      lines.push(`  {green-fg}${catLabels[key]}: 0 items{/}`);
+    } else {
+      lines.push(`  {yellow-fg}${catLabels[key]}: ${count} item(s){/}`);
+    }
+  }
+
+  lines.push('');
+  lines.push('\u2500'.repeat(60));
+  lines.push(`{bold}Total: ${totalCount} item(s) across 4 categories{/bold}`);
+  if (totalCount === 0) {
+    lines.push('');
+    lines.push('{green-fg}All clean! No human-gated items found.{/}');
+  }
+
+  setContent('Solve - Browse', lines.join('\n'));
+}
+
+// ─── Solve: Category drill-down ─────────────────────────────────────────────
+async function solveCategoryFlow(catKey) {
+  const PAGE_SIZE = 20;
+  const catLabels = { dtoc: 'D->C Broken Claims', ctor: 'C->R Untraced Modules', ttor: 'T->R Orphan Tests', dtor: 'D->R Unbacked Claims' };
+  const catLabel = catLabels[catKey] || catKey;
+
+  const data = solveTui.loadSweepData();
+  const cat = data[catKey];
+
+  if (!cat || cat.error) {
+    setContent(`Solve - ${catLabel}`, `{red-fg}Error: ${(cat && cat.error) || 'Category not found'}{/}`);
+    return;
+  }
+
+  const items = cat.items || [];
+  if (items.length === 0) {
+    setContent(`Solve - ${catLabel}`, '{gray-fg}No items found.{/}');
+    return;
+  }
+
+  // Build paginated display
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  let page = 0;
+
+  async function showPage() {
+    const start = page * PAGE_SIZE;
+    const end = Math.min(items.length, start + PAGE_SIZE);
+    const pageItems = items.slice(start, end);
+
+    const lines = [];
+    lines.push(`{bold}${catLabel}{/bold}  {gray-fg}(${items.length} item(s)){/}`);
+    lines.push('\u2500'.repeat(60));
+    lines.push('');
+
+    for (let i = 0; i < pageItems.length; i++) {
+      const idx = start + i;
+      const item = pageItems[i];
+      const num = String(idx + 1).padStart(4) + '.';
+
+      if (catKey === 'dtoc') {
+        lines.push(`  ${num} {yellow-fg}${(item.summary || '').slice(0, 50)}{/}`);
+        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}{/}${item.line ? ':' + item.line : ''}`);
+        if (item.reason) lines.push(`       {gray-fg}${item.reason}{/}`);
+      } else if (catKey === 'ctor') {
+        lines.push(`  ${num} {cyan-fg}${item.file || item.summary || 'N/A'}{/}`);
+      } else if (catKey === 'ttor') {
+        lines.push(`  ${num} {cyan-fg}${item.file || item.summary || 'N/A'}{/}`);
+      } else if (catKey === 'dtor') {
+        lines.push(`  ${num} {yellow-fg}${(item.claim_text || item.summary || '').slice(0, 50)}{/}`);
+        lines.push(`       {cyan-fg}${item.doc_file || 'N/A'}{/}${item.line ? ':' + item.line : ''}`);
+      }
+    }
+
+    lines.push('');
+    lines.push(`{gray-fg}Page ${page + 1}/${totalPages} | Select item to act...{/}`);
+    setContent(`Solve - ${catLabel}`, lines.join('\n'));
+
+    // Build promptList items
+    const listItems = pageItems.map((item, i) => {
+      const idx = start + i;
+      const label = `${idx + 1}. ${(item.summary || item.file || item.claim_text || '').slice(0, 40)}`;
+      return { label, value: idx };
+    });
+    if (page > 0) listItems.unshift({ label: '\u25c0 Previous Page', value: '__prev__' });
+    if (page < totalPages - 1) listItems.push({ label: '\u25b6 Next Page', value: '__next__' });
+    listItems.push({ label: '[Back]', value: '__back__' });
+
+    const choice = await promptList({ title: `${catLabel} (${items.length})`, items: listItems });
+
+    if (choice.value === '__back__') return;
+    if (choice.value === '__prev__') { page--; return showPage(); }
+    if (choice.value === '__next__') { page++; return showPage(); }
+
+    // Show item detail
+    await showItemDetail(catKey, items[choice.value], catLabel);
+    // After returning from detail, show page again
+    return showPage();
+  }
+
+  await showPage();
+}
+
+async function showItemDetail(catKey, item, catLabel) {
+  if (!item) return;
+
+  const lines = [];
+  lines.push('{bold}Item Detail{/bold}');
+  lines.push('\u2500'.repeat(60));
+  lines.push('');
+
+  if (catKey === 'dtoc') {
+    lines.push(`  {bold}Type:{/bold}      ${item.claimType || 'N/A'}`);
+    lines.push(`  {bold}Value:{/bold}     ${item.value || 'N/A'}`);
+    lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.doc_file || 'N/A'}{/}`);
+    lines.push(`  {bold}Line:{/bold}      ${item.line || 'N/A'}`);
+    lines.push(`  {bold}Reason:{/bold}    ${item.reason || 'N/A'}`);
+    lines.push(`  {bold}Category:{/bold}  ${item.category || 'N/A'}`);
+  } else if (catKey === 'ctor') {
+    lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.file || 'N/A'}{/}`);
+  } else if (catKey === 'ttor') {
+    lines.push(`  {bold}Test File:{/bold} {cyan-fg}${item.file || 'N/A'}{/}`);
+  } else if (catKey === 'dtor') {
+    lines.push(`  {bold}Claim:{/bold}     ${item.claim_text || 'N/A'}`);
+    lines.push(`  {bold}File:{/bold}      {cyan-fg}${item.doc_file || 'N/A'}{/}`);
+    lines.push(`  {bold}Line:{/bold}      ${item.line || 'N/A'}`);
+  }
+
+  setContent(`Solve - ${catLabel} - Detail`, lines.join('\n'));
+
+  // Action menu
+  const actionChoice = await promptList({ title: 'Item Actions', items: [
+    { label: 'Acknowledge as FP', value: 'ack' },
+    { label: 'Add Regex Suppression', value: 'regex' },
+    { label: 'Back', value: 'back' },
+  ] });
+
+  if (actionChoice.value === 'ack') {
+    const ok = solveTui.acknowledgeItem(item);
+    if (ok) {
+      toast('Acknowledged -- will be suppressed on next sweep');
+    } else {
+      toast('Error writing acknowledgment file', true);
+    }
+  } else if (actionChoice.value === 'regex') {
+    const regex = await promptInput({ title: 'Regex Suppression', prompt: 'Enter regex pattern:' });
+    if (regex) {
+      const reason = await promptInput({ title: 'Reason', prompt: 'Reason for suppression:', default: 'Added via nForma TUI' });
+      const ok = solveTui.addRegexPattern(item, regex, reason || 'Added via nForma TUI');
+      if (ok) {
+        toast('Pattern added -- will be applied on next sweep');
+      } else {
+        toast('Error writing pattern file', true);
+      }
+    }
+  }
+}
+
+// ─── Solve: Suppressions ────────────────────────────────────────────────────
+function solveSuppressionsFlow() {
+  const fpData = solveTui.readFPFile();
+  const lines = [];
+  lines.push('{bold}Acknowledged False Positives{/bold}');
+  lines.push('\u2500'.repeat(60));
+  lines.push('');
+
+  const entries = fpData.entries || [];
+  const patterns = fpData.patterns || [];
+
+  if (entries.length === 0 && patterns.length === 0) {
+    lines.push('{gray-fg}No suppressions configured.{/}');
+    setContent('Solve - Suppressions', lines.join('\n'));
+    return;
+  }
+
+  lines.push(`{bold}Entries ({entries.length}){/bold}`);
+  if (entries.length === 0) {
+    lines.push('  {gray-fg}None{/}');
+  } else {
+    for (const e of entries) {
+      lines.push(`  {yellow-fg}${e.type || e.source || 'unknown'}{/}  ${e.value || 'N/A'}`);
+      if (e.reason) lines.push(`    {gray-fg}Reason: ${e.reason}{/}`);
+      if (e.acknowledged_at) lines.push(`    {gray-fg}Date: ${e.acknowledged_at}{/}`);
+    }
+  }
+
+  lines.push('');
+  lines.push('\u2500'.repeat(40));
+  lines.push('');
+  lines.push(`{bold}Patterns ({patterns.length}){/bold}`);
+  if (patterns.length === 0) {
+    lines.push('  {gray-fg}None{/}');
+  } else {
+    for (const p of patterns) {
+      const enabled = p.enabled !== false ? '{green-fg}ON{/}' : '{red-fg}OFF{/}';
+      lines.push(`  ${enabled}  {yellow-fg}${p.type || 'general'}{/}  /${p.regex || ''}/`);
+      if (p.reason) lines.push(`    {gray-fg}Reason: ${p.reason}{/}`);
+    }
+  }
+
+  setContent('Solve - Suppressions', lines.join('\n'));
 }
 
 // ─── Key bindings ─────────────────────────────────────────────────────────────
