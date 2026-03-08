@@ -1248,6 +1248,18 @@ function uninstall(isGlobal, runtime = 'claude') {
       }
       if (settings.hooks.PreCompact.length === 0) delete settings.hooks.PreCompact;
     }
+    // Remove nf-session-end hook (uninstall path)
+    if (settings.hooks && settings.hooks.SessionEnd) {
+      const before = settings.hooks.SessionEnd.length;
+      settings.hooks.SessionEnd = settings.hooks.SessionEnd.filter(entry =>
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-session-end')))
+      );
+      if (settings.hooks.SessionEnd.length < before) {
+        settingsModified = true;
+        console.log(`  ${green}✓${reset} Removed nForma session-end hook`);
+      }
+      if (settings.hooks.SessionEnd.length === 0) delete settings.hooks.SessionEnd;
+    }
 
     // Clean up empty hooks object
     if (settings.hooks && Object.keys(settings.hooks).length === 0) {
@@ -2026,6 +2038,18 @@ function install(isGlobal, runtime = 'claude') {
         hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-slot-correlator.js'), async: true }]
       });
       console.log(`  ${green}✓${reset} Configured nForma slot correlator hook (SubagentStart)`);
+    }
+
+    // Register nForma session-end hook (SessionEnd — learning extraction + skill candidates)
+    if (!settings.hooks.SessionEnd) settings.hooks.SessionEnd = [];
+    const hasSessionEndHook = settings.hooks.SessionEnd.some(entry =>
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-session-end'))
+    );
+    if (!hasSessionEndHook) {
+      settings.hooks.SessionEnd.push({
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-session-end.js') }]
+      });
+      console.log(`  ${green}✓${reset} Configured nForma session-end hook (SessionEnd)`);
     }
 
     // Write nForma config — skip if exists unless --redetect-mcps flag set
