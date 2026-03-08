@@ -201,7 +201,7 @@ function getAvailableSlots(slots, cwd) {
         const ts = new Date(avail.available_at_iso).getTime();
         if (isNaN(ts)) return true; // malformed date: fail-open
         if (ts > now) {
-          console.error(`[nf-dispatch] AVAILABILITY EXCLUDE: ${s.slot} -- available_at_iso=${avail.available_at_iso} is in the future (now=${new Date().toISOString()})`);
+          process.stderr.write(`[nf-dispatch] AVAILABILITY EXCLUDE: ${s.slot} -- available_at_iso=${avail.available_at_iso} is in the future (now=${new Date().toISOString()})\n`);
           return false;
         }
         return true;
@@ -256,8 +256,8 @@ function sortBySuccessRate(slots, cwd) {
       return getRate(b.slot) - getRate(a.slot);
     });
 
-    console.error('[nf-dispatch] DISPATCH ORDER (flakiness,rate): [' +
-      sorted.map(s => `${s.slot}(f=${getFlakiness(s.slot).toFixed(2)},r=${getRate(s.slot).toFixed(3)})`).join(', ') + ']');
+    process.stderr.write('[nf-dispatch] DISPATCH ORDER (flakiness,rate): [' +
+      sorted.map(s => `${s.slot}(f=${getFlakiness(s.slot).toFixed(2)},r=${getRate(s.slot).toFixed(3)})`).join(', ') + ']\n');
     return sorted;
   } catch (_) { return [...slots]; } // fail-open: any error → return original order
 }
@@ -335,15 +335,21 @@ process.stdin.on('data', chunk => raw += chunk);
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
-    const _eventType = input.hook_event_name || input.hookEventName || 'UserPromptSubmit';
-    const _validation = validateHookInput(_eventType, input);
-    if (!_validation.valid) {
-      process.stderr.write('[nf] WARNING: nf-prompt: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+    const eventType = input.hook_event_name || input.hookEventName || 'UserPromptSubmit';
+    const validation = validateHookInput(eventType, input);
+    if (!validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-prompt: invalid input: ' + JSON.stringify(validation.errors) + '\n');
       process.exit(0); // Fail-open
     }
     const prompt    = (input.prompt || '').trim();
     const cwd       = input.cwd || process.cwd();
     const sessionId = input.session_id || null;
+
+    // Hoisted declarations (were var, now let at function scope)
+    let _nfClassification;
+    let _nfCacheKey = null;
+    let _nfCacheModule = null;
+    let _nfCacheDir = null;
 
     // ── Priority 1: Circuit breaker active → inject resolution workflow ──────
     if (isBreakerActive(cwd)) {
@@ -442,7 +448,7 @@ process.stdin.on('end', () => {
       // Guard: empty roster — no external agents configured at all
       if (orderedSlots.length === 0) {
         // Fail-open to solo mode: Claude is the only quorum participant
-        console.error('[nf-dispatch] WARNING: no external agents in roster — falling back to solo quorum');
+        process.stderr.write('[nf-dispatch] WARNING: no external agents in roster — falling back to solo quorum\n');
         instructions = `<!-- NF_SOLO_MODE -->\nSOLO MODE ACTIVE (empty roster): No external agents configured in providers.json or quorum_active. Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output. The Stop hook is informed.\n\nTo add agents, run /nf:mcp-setup or edit ~/.claude/nf.json quorum_active.\n`;
       } else {
         if (preferSub) {
@@ -498,7 +504,7 @@ process.stdin.on('end', () => {
         }
 
         // Store classification for thinking budget injection (after instructions are built)
-        var _nfClassification = recommendation;
+        _nfClassification = recommendation;
 
         // Write classification to task-classification.json for downstream consumers
         try {
@@ -550,15 +556,15 @@ process.stdin.on('end', () => {
         }
 
         // Cache miss — store key for embedding in instructions and pending entry write
-        var _nfCacheKey = cacheKey;
-        var _nfCacheModule = cacheModule;
-        var _nfCacheDir = cacheDir;
+        _nfCacheKey = cacheKey;
+        _nfCacheModule = cacheModule;
+        _nfCacheDir = cacheDir;
       } catch (cacheErr) {
         // Fail-open: cache errors never prevent normal quorum dispatch
         process.stderr.write('[nf] cache check failed (fail-open): ' + (cacheErr.message || cacheErr) + '\n');
-        var _nfCacheKey = null;
-        var _nfCacheModule = null;
-        var _nfCacheDir = null;
+        _nfCacheKey = null;
+        _nfCacheModule = null;
+        _nfCacheDir = null;
       }
 
       // SC-4: Graceful fallback — ensure at least one slot in dispatch list
@@ -569,7 +575,7 @@ process.stdin.on('end', () => {
         } else {
           cappedSlots = [orderedSlots[0]]; // last resort: any slot at all
         }
-        console.error(`[nf-dispatch] FALLBACK: all slots filtered, restored ${cappedSlots[0].slot}`);
+        process.stderr.write(`[nf-dispatch] FALLBACK: all slots filtered, restored ${cappedSlots[0].slot}\n`);
       }
 
       // Generate step list, with optional section headers when preferSub is on

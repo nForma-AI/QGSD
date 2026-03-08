@@ -620,15 +620,15 @@ function main() {
   process.stdin.on('end', async () => {
     try {
       const input = JSON.parse(raw);
-      const _eventType = input.hook_event_name || input.hookEventName || 'PreToolUse';
-      const _validation = validateHookInput(_eventType, input);
-      if (!_validation.valid) {
-        process.stderr.write('[nf] WARNING: nf-circuit-breaker: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      const eventType = input.hook_event_name || input.hookEventName || 'PreToolUse';
+      const validation = validateHookInput(eventType, input);
+      if (!validation.valid) {
+        process.stderr.write('[nf] WARNING: nf-circuit-breaker: invalid input: ' + JSON.stringify(validation.errors) + '\n');
         process.exit(0); // Fail-open
       }
       const cwd = input.cwd || process.cwd();
 
-      const hookEvent = input.hook_event_name || input.hookEventName || 'PreToolUse';
+      const hookEvent = eventType;
       const toolName = input.tool_name || input.toolName || '';
 
       // Get git root — shared by both handlers

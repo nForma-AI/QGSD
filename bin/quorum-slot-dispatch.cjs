@@ -1048,8 +1048,7 @@ async function main() {
 }
 
 // ─── Module exports ───────────────────────────────────────────────────────────
-if (typeof module !== 'undefined') {
-  module.exports = {
+module.exports = {
     buildModeAPrompt,
     buildModeBPrompt,
     parseVerdict,
@@ -1063,7 +1062,6 @@ if (typeof module !== 'undefined') {
     formatRequirementsSection,
     enrichPromptWithRetrieval,
   };
-}
 
 // ─── Entry point guard ────────────────────────────────────────────────────────
 if (require.main === module) {

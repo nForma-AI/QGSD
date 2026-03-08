@@ -90,22 +90,20 @@ function findProjectRoot() {
   return process.cwd();
 }
 
+function classifyErrorType(msg) {
+  if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(msg)) return 'CLI_SYNTAX';
+  if (/TIMEOUT/i.test(msg)) return 'TIMEOUT';
+  if (/401|403|unauthorized|forbidden/i.test(msg)) return 'AUTH';
+  if (/spawn error/i.test(msg)) return 'SPAWN_ERROR';
+  return 'UNKNOWN';
+}
+
 function writeFailureLog(slotName, errorMsg, stderrText) {
   try {
     const pp = require('./planning-paths.cjs');
     const logPath = pp.resolve(findProjectRoot(), 'quorum-failures');
 
-    // Classify error type
-    let error_type;
-    if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(errorMsg)) {
-      error_type = 'CLI_SYNTAX';
-    } else if (/TIMEOUT/i.test(errorMsg)) {
-      error_type = 'TIMEOUT';
-    } else if (/401|403|unauthorized|forbidden/i.test(errorMsg)) {
-      error_type = 'AUTH';
-    } else {
-      error_type = 'UNKNOWN';
-    }
+    const error_type = classifyErrorType(errorMsg);
 
     // Extract pattern: first 200 chars of stderrText or errorMsg, strip ANSI codes
     const rawPattern = (stderrText && stderrText.length > 0) ? stderrText : errorMsg;
@@ -158,15 +156,14 @@ function isRetryable(error) {
 }
 
 async function retryWithBackoff(fn, slotName, maxRetries = 2, delays = [1000, 3000]) {
-  const MAX_RETRIES = maxRetries;
   let retryAttempts = 0;
 
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const result = await fn();
       return { result, retryCount: retryAttempts };
     } catch (err) {
-      const isLastAttempt = attempt >= MAX_RETRIES;
+      const isLastAttempt = attempt >= maxRetries;
       const isNonRetryable = !isRetryable(err);
 
       // Fail immediately if non-retryable or no more retries
@@ -177,7 +174,7 @@ async function retryWithBackoff(fn, slotName, maxRetries = 2, delays = [1000, 30
       // Log retry attempt and sleep before next attempt
       const delayMs = delays[attempt] ?? 3000; // default to 3s if delay not specified
       retryAttempts++;
-      process.stderr.write(`[call-quorum-slot] retry ${attempt + 1}/${MAX_RETRIES} for slot ${slotName} after ${delayMs}ms\n`);
+      process.stderr.write(`[call-quorum-slot] retry ${attempt + 1}/${maxRetries} for slot ${slotName} after ${delayMs}ms\n`);
       await sleep(delayMs);
     }
   }
@@ -484,14 +481,11 @@ async function main() {
   if (latencyBudget !== null && latencyBudget > 0) {
     // LTCY-01: latency_budget_ms is the user-configured hard ceiling
     effectiveTimeout = latencyBudget;
+    process.stderr.write(`[call-quorum-slot] Using latency_budget_ms=${latencyBudget} for slot ${slot}\n`);
   } else if (timeoutMs !== null && providerCap !== null) {
     effectiveTimeout = Math.min(timeoutMs, providerCap);
   } else {
     effectiveTimeout = timeoutMs ?? providerCap ?? provider.timeout_ms ?? 30000;
-  }
-
-  if (latencyBudget !== null && latencyBudget > 0) {
-    process.stderr.write(`[call-quorum-slot] Using latency_budget_ms=${latencyBudget} for slot ${slot}\n`);
   }
 
   const startMs = Date.now();
@@ -538,17 +532,7 @@ async function main() {
     const latencyMs = Date.now() - startMs;
     const providerName = provider.provider || provider.name;
 
-    // Classify error type
-    let errorType = 'UNKNOWN';
-    if (/TIMEOUT/i.test(err.message)) {
-      errorType = 'TIMEOUT';
-    } else if (/401|403|unauthorized|forbidden/i.test(err.message)) {
-      errorType = 'AUTH';
-    } else if (/spawn error/i.test(err.message)) {
-      errorType = 'SPAWN_ERROR';
-    } else if (/usage:|unknown flag/i.test(err.message)) {
-      errorType = 'CLI_SYNTAX';
-    }
+    const errorType = classifyErrorType(err.message);
 
     recordTelemetry(slot, roundNum, 'FLAG', latencyMs, providerName, 'unavailable', 0, errorType);
 
