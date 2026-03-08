@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-08T08:38:36.746Z",
-  "content_hash": "aa2477d2e94ed32c",
+  "aggregated_at": "2026-03-08T16:05:34.454Z",
+  "content_hash": "e2ac14ec7681df41",
   "schema_version": "1",
   "requirements": [
     {
@@ -1210,6 +1210,18 @@
       "provenance": {
         "source_file": ".planning/quick/198-implement-ecc-best-practices-post-edit-a/198-PLAN.md",
         "milestone": "quick-198"
+      }
+    },
+    {
+      "id": "GUARD-02",
+      "text": "A PreToolUse hook (nf-destructive-git-guard) detects destructive git commands (stash, reset --hard, checkout --, clean -f) and emits a stderr warning when uncommitted changes exist, following the warn-only fail-open pattern without blocking tool execution.",
+      "category": "Code Quality Guardrails",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "15-session usage analysis revealed that git stash operations frequently reverted already-completed fixes, creating costly rework cycles. This hook and accompanying CLAUDE.md rules (commit-before-destructive-ops, validate-before-apply) provide automated early warning to prevent unintentional work loss.",
+      "provenance": {
+        "source_file": ".planning/quick/222-use-those-insights-to-recommend-improvem/222-PLAN.md",
+        "milestone": "quick-222"
       }
     },
     {
@@ -2988,30 +3000,6 @@
       ]
     },
     {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
-      }
-    },
-    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -3083,6 +3071,30 @@
       "provenance": {
         "source_file": ".planning/quick/221-refactor-nf-solve-into-sub-skills-to-red/221-PLAN.md",
         "milestone": "quick-221"
+      }
+    },
+    {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
       }
     },
     {
@@ -4026,6 +4038,6 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-08T08:38:36.747Z",
+  "frozen_at": "2026-03-08T16:05:34.527Z",
   "total": 283
 }
