@@ -1047,6 +1047,13 @@ function sweepFtoC() {
     stdio: ['pipe', 'ignore', 'pipe'],
   });
 
+  // Generate complexity profile from fresh check-results.ndjson + state-space data
+  try {
+    spawnTool('bin/model-complexity-profile.cjs', ['--quiet']);
+  } catch (e) {
+    // fail-open: profiler is informational
+  }
+
   // Non-zero exit is expected when checks fail — still parse check-results.ndjson.
   // Only bail on spawn errors (result.stderr without any ndjson output).
   if (!result.ok && result.stderr && !fs.existsSync(path.join(ROOT, '.planning', 'formal', 'check-results.ndjson'))) {
@@ -2730,6 +2737,38 @@ function formatReport(iterations, finalResidual, converged) {
     // fail-open: PRISM priority is informational
   }
 
+  // Model Complexity profile (informational)
+  try {
+    const profilePath = path.join(ROOT, '.planning', 'formal', 'model-complexity-profile.json');
+    if (fs.existsSync(profilePath)) {
+      const profile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+      lines.push('\u2500 Model Complexity \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+      const s = profile.summary || {};
+      lines.push('  Profiled: ' + (s.total_profiled || 0) + ' models');
+      const byClass = s.by_runtime_class || {};
+      lines.push('  Runtime: ' + (byClass.FAST || 0) + ' FAST, ' + (byClass.MODERATE || 0) + ' MOD, ' + (byClass.SLOW || 0) + ' SLOW, ' + (byClass.HEAVY || 0) + ' HEAVY');
+
+      // Show split candidates
+      const recs = profile.recommendations || {};
+      if (recs.split_candidates && recs.split_candidates.length > 0) {
+        lines.push('  Split candidates (' + recs.split_candidates.length + '):');
+        for (const sc of recs.split_candidates.slice(0, 5)) {
+          lines.push('    \u2197 ' + sc.check_id + ' \u2014 ' + sc.reason);
+        }
+      }
+
+      // Show merge candidates
+      if (recs.merge_candidates && recs.merge_candidates.length > 0) {
+        lines.push('  Merge candidates (' + recs.merge_candidates.length + '):');
+        for (const mc of recs.merge_candidates.slice(0, 5)) {
+          lines.push('    \u2198 ' + mc.model_a + ' + ' + mc.model_b + ' \u2014 ' + mc.reason);
+        }
+      }
+    }
+  } catch (e) {
+    // fail-open: complexity profile is informational
+  }
+
   // Combined total across all sections
   const grandTotal = (finalResidual.total || 0) + rdTotal + layerTotal;
   lines.push('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
@@ -3045,6 +3084,20 @@ function formatJSON(iterations, finalResidual, converged) {
 
   const truncatedResidual = truncateResidualDetail(finalResidual);
 
+  // Attach complexity profile summary if available
+  let complexityProfile = null;
+  try {
+    const profilePath = path.join(ROOT, '.planning', 'formal', 'model-complexity-profile.json');
+    if (fs.existsSync(profilePath)) {
+      const raw = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+      complexityProfile = {
+        summary: raw.summary,
+        split_candidates: (raw.recommendations || {}).split_candidates || [],
+        merge_candidates: (raw.recommendations || {}).merge_candidates || [],
+      };
+    }
+  } catch (e) { /* fail-open */ }
+
   return {
     solver_version: '1.2',
     generated_at: new Date().toISOString(),
@@ -3059,6 +3112,7 @@ function formatJSON(iterations, finalResidual, converged) {
       actions: it.actions || [],
     })),
     health: health,
+    complexity_profile: complexityProfile,
   };
 }
 
