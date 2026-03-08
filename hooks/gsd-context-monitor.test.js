@@ -395,3 +395,93 @@ test('double loadConfig bug is fixed: hook runs without error', () => {
   });
   assert.equal(exitCode, 0, 'Hook should exit cleanly (double const config bug fixed)');
 });
+
+// --- Continuous verification tests ---
+
+test('verification: hook does not crash on Write tool with verification enabled', () => {
+  const tmpDir = makeTmpDir();
+  writeNfConfig(tmpDir, { continuous_verify_enabled: true, context_monitor: { warn_pct: 99, critical_pct: 100 } });
+
+  // Create continuous-verify.json state
+  const planningDir = path.join(tmpDir, '.planning');
+  fs.mkdirSync(planningDir, { recursive: true });
+  fs.writeFileSync(path.join(planningDir, 'continuous-verify.json'), JSON.stringify({
+    version: 1, phase: 'test', max_runs: 3, runs_used: 0,
+    timeout_ms: 5000, accumulated_files: [], last_run: null, runs: [],
+  }), 'utf8');
+
+  const { exitCode } = runHook({
+    context_window: { remaining_percentage: 90 },
+    tool_name: 'Write',
+    tool_input: { file_path: '/tmp/foo.test.js' },
+    cwd: tmpDir,
+  });
+  assert.equal(exitCode, 0, 'Hook exits 0 with verification enabled on Write tool');
+});
+
+test('verification: skipped when budget exhausted', () => {
+  const tmpDir = makeTmpDir();
+  writeNfConfig(tmpDir, { continuous_verify_enabled: true, context_monitor: { warn_pct: 99, critical_pct: 100 } });
+
+  const planningDir = path.join(tmpDir, '.planning');
+  fs.mkdirSync(planningDir, { recursive: true });
+  fs.writeFileSync(path.join(planningDir, 'continuous-verify.json'), JSON.stringify({
+    version: 1, phase: 'test', max_runs: 3, runs_used: 3,
+    timeout_ms: 5000, accumulated_files: [], last_run: null, runs: [],
+  }), 'utf8');
+
+  const { exitCode, stdout } = runHook({
+    context_window: { remaining_percentage: 90 },
+    tool_name: 'Write',
+    tool_input: { file_path: '/tmp/foo.test.js' },
+    cwd: tmpDir,
+  });
+  assert.equal(exitCode, 0);
+  assert.ok(!stdout.includes('VERIFICATION'), 'No VERIFICATION when budget exhausted');
+});
+
+test('verification: skipped when disabled via config', () => {
+  const tmpDir = makeTmpDir();
+  writeNfConfig(tmpDir, { continuous_verify_enabled: false, context_monitor: { warn_pct: 99, critical_pct: 100 } });
+
+  const { exitCode, stdout } = runHook({
+    context_window: { remaining_percentage: 90 },
+    tool_name: 'Write',
+    tool_input: { file_path: '/tmp/foo.test.js' },
+    cwd: tmpDir,
+  });
+  assert.equal(exitCode, 0);
+  assert.ok(!stdout.includes('VERIFICATION'), 'No VERIFICATION when disabled');
+});
+
+test('verification: skipped for non-write tools', () => {
+  const tmpDir = makeTmpDir();
+  writeNfConfig(tmpDir, { continuous_verify_enabled: true, context_monitor: { warn_pct: 99, critical_pct: 100 } });
+
+  const planningDir = path.join(tmpDir, '.planning');
+  fs.mkdirSync(planningDir, { recursive: true });
+  fs.writeFileSync(path.join(planningDir, 'continuous-verify.json'), JSON.stringify({
+    version: 1, phase: 'test', max_runs: 3, runs_used: 0,
+    timeout_ms: 5000, accumulated_files: [], last_run: null, runs: [],
+  }), 'utf8');
+
+  const { exitCode, stdout } = runHook({
+    context_window: { remaining_percentage: 90 },
+    tool_name: 'Read',
+    cwd: tmpDir,
+  });
+  assert.equal(exitCode, 0);
+  assert.ok(!stdout.includes('VERIFICATION'), 'No VERIFICATION for Read tool');
+});
+
+test('verification: fail-open when continuous-verify.cjs not loadable (implicit)', () => {
+  // When running in tmpdir without the module, the dual-path require returns null
+  // and verification is skipped. This test verifies the hook still exits 0.
+  const { exitCode } = runHook({
+    context_window: { remaining_percentage: 90 },
+    tool_name: 'Write',
+    tool_input: { file_path: '/tmp/foo.test.js' },
+    cwd: os.tmpdir(),
+  });
+  assert.equal(exitCode, 0, 'Hook exits 0 even when continuous-verify not loadable');
+});

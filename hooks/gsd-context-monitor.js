@@ -18,6 +18,12 @@ const path = require('path');
 const fs = require('fs');
 const { loadConfig, shouldRunHook } = require('./config-loader');
 
+// Continuous verification integration (fail-open: null if module unavailable)
+const continuousVerify = (() => {
+  try { return require(path.join(__dirname, '..', 'bin', 'continuous-verify.cjs')); }
+  catch { return null; }
+})();
+
 // Append a conformance event to conformance-events.jsonl (fail-open)
 function appendConformanceEvent(event) {
   try {
@@ -177,8 +183,60 @@ process.stdin.on('end', () => {
       }
     }
 
+    // Continuous verification (advisory, never blocking)
+    let verifyMessage = null;
+    try {
+      if (continuousVerify && config.continuous_verify_enabled !== false) {
+        let verifyState = continuousVerify.getVerifyState(cwd);
+        if (!verifyState) {
+          // First call: initialize state
+          let phase = 'unknown';
+          try {
+            const progressPath = path.join(cwd, '.planning', 'execution-progress.json');
+            if (fs.existsSync(progressPath)) {
+              const prog = JSON.parse(fs.readFileSync(progressPath, 'utf8'));
+              phase = prog.phase || 'unknown';
+            }
+          } catch { /* fail-open */ }
+          verifyState = continuousVerify.initVerifyState(phase);
+          continuousVerify.saveVerifyState(cwd, verifyState);
+        }
+
+        const triggered = continuousVerify.shouldTriggerVerification(
+          input.tool_name, input.tool_input, verifyState
+        );
+
+        if (triggered) {
+          const runResult = continuousVerify.runChecks(
+            cwd, verifyState.accumulated_files, verifyState.timeout_ms || 5000
+          );
+          verifyState.runs_used += 1;
+          verifyState.runs.push(runResult);
+          verifyState.accumulated_files = [];
+          verifyState.last_run = new Date().toISOString();
+          continuousVerify.saveVerifyState(cwd, verifyState);
+
+          // Build warning message for failed checks
+          const failedChecks = (runResult.checks || []).filter(c => !c.pass);
+          if (failedChecks.length > 0 && verifyState.runs_used <= verifyState.max_runs) {
+            const issues = failedChecks.map(c => {
+              const out = (c.output || c.reason || '').slice(0, 200);
+              return `- ${c.type}: ${out}`;
+            }).join('\n');
+            verifyMessage = `VERIFICATION WARNING: ${failedChecks.length} issue(s) found in recent code changes.\n${issues}\nFix before completing this task. Budget: ${verifyState.runs_used}/${verifyState.max_runs} runs used.`;
+          }
+        } else {
+          // Save state even if not triggered (accumulated_files may have grown)
+          continuousVerify.saveVerifyState(cwd, verifyState);
+        }
+      }
+    } catch {
+      // Fail-open: never let verification errors crash the hook
+      verifyMessage = null;
+    }
+
     // Combine all messages
-    const messages = [contextMessage, budgetMessage, compactMessage].filter(Boolean);
+    const messages = [contextMessage, budgetMessage, compactMessage, verifyMessage].filter(Boolean);
     if (messages.length === 0) {
       process.exit(0);
     }
