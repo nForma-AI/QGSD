@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 ## Current Position
 
 Phase: 2 of 3 (Runtime Safety Boundaries)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: Executing v0.31-02 plans
-Last activity: 2026-03-08 - Completed quick task 222: use those insights to recommend improvements to nforma
+Last activity: 2026-03-08 - Completed v0.31-02-02 (per-slot latency budget)
 
-Progress: [####░░░░░░] 43%
+Progress: [######░░░░] 57%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3 (v0.31)
-- Average duration: 22min
-- Total execution time: 1.1 hours
+- Total plans completed: 4 (v0.31)
+- Average duration: 19min
+- Total execution time: 1.2 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | v0.31-01 | 2/2 | 38min | 19min |
-| v0.31-02 | 1/3 | 10min | 10min |
+| v0.31-02 | 2/3 | 17min | 8.5min |
 
 **Recent Trend:**
 - Last 5 plans: (from v0.30) 3min, 4min, 4min, 5min, 4min
@@ -36,6 +36,7 @@ Progress: [####░░░░░░] 43%
 
 *Updated after each plan completion*
 | Phase v0.30-07 P01 | 5min | 2 tasks | 5 files |
+| Phase v0.31-02 P02 | 7min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -54,6 +55,8 @@ Recent decisions affecting current work:
 - [v0.31-02-01]: Evidence file uses schema_version:1 envelope with signatures array for forward compatibility
 - [v0.31-02-01]: Preemptive check emits stderr warning only, never blocks tool calls (warn-only)
 - [v0.31-02-01]: Evidence cap at 50 entries sorted by last_seen descending, pruned on read
+- [v0.31-02-02]: latency_budget_ms takes priority over --timeout and quorum_timeout_ms when present
+- [v0.31-02-02]: latency_budget_ms=0 or negative treated as not set (backward compatible)
 - [Phase v0.30-07]: CONFLICT detection checks stdout+stderr+message (git outputs CONFLICT to stdout)
 - [Phase v0.30-07]: Worktree executors skip state_updates/final_commit -- orchestrator handles after merge
 - [Phase v0.30-07]: Executor completion uses structured JSON block for reliable orchestrator parsing
@@ -76,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.30-07-01-PLAN.md
+Stopped at: Completed v0.31-02-02-PLAN.md
 Resume file: None

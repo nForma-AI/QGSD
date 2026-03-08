@@ -137,5 +137,5 @@ v0.31-01 -> v0.31-02 -> v0.31-03
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.31-01. Hook Infrastructure Hardening | 2/2 | Complete    | 2026-03-08 |
-| v0.31-02. Runtime Safety Boundaries | 0/3 | Not started | - |
+| v0.31-02. Runtime Safety Boundaries | 2/3 | In Progress|  |
 | v0.31-03. Config & Governance DX | 0/TBD | Not started | - |
