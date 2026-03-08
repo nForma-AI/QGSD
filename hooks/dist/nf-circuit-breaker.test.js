@@ -648,7 +648,15 @@ test('CB-TC18: Project config oscillation_depth:2 triggers oscillation detection
 // --- Direct unit tests for buildBlockReason() (CB-TC-BR series) ---
 // These test buildBlockReason() directly via module.exports rather than via spawnSync.
 
-const { buildBlockReason } = require('../hooks/nf-circuit-breaker.js');
+const {
+  buildBlockReason,
+  writeEvidenceSignature,
+  checkPreemptiveEvidence,
+  markEvidenceResolved,
+  makeFileSetHash,
+  makePatternHash,
+  getEvidencePath,
+} = require('../hooks/nf-circuit-breaker.js');
 
 // Test CB-TC-BR1: Deny message includes commit graph when snapshot present
 test('CB-TC-BR1: Deny message includes commit graph when snapshot present', () => {
@@ -998,5 +1006,218 @@ test('CB-TC19: Project config commit_window:3 excludes commits beyond window fro
     assert(!fs.existsSync(statePath), 'state file must NOT be written — commit_window=3 excludes oldest file-A commit, so only 2 matches found (below depth=3)');
   } finally {
     fs.rmSync(repoDir, { recursive: true, force: true });
+  }
+});
+
+// ── Evidence persistence tests (oscillation-signatures.json) ──────────────────
+
+// Test CB-EV01: writeEvidenceSignature creates new file
+test('CB-EV01: writeEvidenceSignature creates new file with correct schema', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['app.js', 'config.js'];
+    const fileSets = [['app.js', 'config.js'], ['other.js'], ['app.js', 'config.js']];
+    const fsh = makeFileSetHash(fileSet);
+    const ph = makePatternHash(fileSets);
+
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+
+    const evidencePath = getEvidencePath(tempDir);
+    assert(fs.existsSync(evidencePath), 'evidence file must exist after write');
+    const data = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+    assert.strictEqual(data.schema_version, 1, 'schema_version must be 1');
+    assert.strictEqual(data.signatures.length, 1, 'must have exactly 1 signature');
+    const sig = data.signatures[0];
+    assert.strictEqual(sig.id, `sig_${fsh}`, 'id must follow sig_{hash} format');
+    assert.strictEqual(sig.file_set_hash, fsh, 'file_set_hash must match');
+    assert.strictEqual(sig.pattern_hash, ph, 'pattern_hash must match');
+    assert.deepStrictEqual(sig.files, ['app.js', 'config.js'], 'files must be sorted');
+    assert.strictEqual(sig.alternation_count, 1, 'alternation_count must start at 1');
+    assert.ok(sig.time_window.first_seen, 'must have first_seen');
+    assert.ok(sig.time_window.last_seen, 'must have last_seen');
+    assert.strictEqual(sig.resolved_at, null, 'resolved_at must be null');
+    assert.strictEqual(sig.resolved_by_commit, null, 'resolved_by_commit must be null');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV02: writeEvidenceSignature updates existing entry
+test('CB-EV02: writeEvidenceSignature updates existing entry with incremented count', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['app.js'];
+    const fileSets = [['app.js'], ['other.js'], ['app.js']];
+    const fsh = makeFileSetHash(fileSet);
+    const ph = makePatternHash(fileSets);
+
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+    const data1 = JSON.parse(fs.readFileSync(getEvidencePath(tempDir), 'utf8'));
+    const firstSeen = data1.signatures[0].time_window.first_seen;
+
+    // Write again with same fileSetHash
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+    const data2 = JSON.parse(fs.readFileSync(getEvidencePath(tempDir), 'utf8'));
+    assert.strictEqual(data2.signatures.length, 1, 'must still have exactly 1 signature (updated, not duplicated)');
+    assert.strictEqual(data2.signatures[0].alternation_count, 2, 'alternation_count must be incremented to 2');
+    assert.strictEqual(data2.signatures[0].time_window.first_seen, firstSeen, 'first_seen must not change');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV03: writeEvidenceSignature caps at 50 entries
+test('CB-EV03: writeEvidenceSignature caps at 50 entries sorted by last_seen', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    // Write 55 unique entries
+    for (let i = 0; i < 55; i++) {
+      const fileSet = [`file-${String(i).padStart(3, '0')}.js`];
+      const fsh = makeFileSetHash(fileSet);
+      const ph = `pattern_${i}`;
+      writeEvidenceSignature(tempDir, fileSet, [fileSet], fsh, ph);
+    }
+
+    const data = JSON.parse(fs.readFileSync(getEvidencePath(tempDir), 'utf8'));
+    assert.strictEqual(data.signatures.length, 50, 'must cap at 50 entries');
+    // Verify sorted by last_seen descending
+    for (let i = 1; i < data.signatures.length; i++) {
+      assert(data.signatures[i - 1].time_window.last_seen >= data.signatures[i].time_window.last_seen,
+        'signatures must be sorted by last_seen descending');
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV04: writeEvidenceSignature is fail-open on read-only dir
+test('CB-EV04: writeEvidenceSignature is fail-open on inaccessible dir', () => {
+  // Use a path that cannot be written to
+  const badDir = '/dev/null/nonexistent';
+  // Should not throw
+  writeEvidenceSignature(badDir, ['a.js'], [['a.js']], 'abc123', 'def456');
+  // If we got here without throwing, the test passes
+  assert.ok(true, 'writeEvidenceSignature must not throw on inaccessible dir');
+});
+
+// Test CB-EV05: checkPreemptiveEvidence returns match for unresolved signature
+test('CB-EV05: checkPreemptiveEvidence returns match for unresolved signature', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['app.js', 'util.js'];
+    const fileSets = [['app.js', 'util.js'], ['other.js'], ['app.js', 'util.js']];
+    const fsh = makeFileSetHash(fileSet);
+    const ph = makePatternHash(fileSets);
+
+    // Write an unresolved signature
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+
+    // Check with matching file sets
+    const match = checkPreemptiveEvidence(tempDir, fileSets);
+    assert.ok(match, 'must return a matching signature');
+    assert.strictEqual(match.file_set_hash, fsh, 'match must have correct file_set_hash');
+    assert.strictEqual(match.resolved_at, null, 'match must be unresolved');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV06: checkPreemptiveEvidence returns null for resolved signature
+test('CB-EV06: checkPreemptiveEvidence returns null for resolved signature', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['app.js'];
+    const fileSets = [['app.js'], ['other.js'], ['app.js']];
+    const fsh = makeFileSetHash(fileSet);
+    const ph = makePatternHash(fileSets);
+
+    // Write and then resolve
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+    markEvidenceResolved(tempDir, fsh, 'abc123');
+
+    // Check — should return null since it's resolved
+    const match = checkPreemptiveEvidence(tempDir, fileSets);
+    assert.strictEqual(match, null, 'must return null for resolved signature');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV07: checkPreemptiveEvidence returns null on missing file
+test('CB-EV07: checkPreemptiveEvidence returns null on missing file (fail-open)', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    // No evidence file exists
+    const result = checkPreemptiveEvidence(tempDir, [['app.js']]);
+    assert.strictEqual(result, null, 'must return null when evidence file does not exist');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV08: checkPreemptiveEvidence prunes entries older than 30 days
+test('CB-EV08: checkPreemptiveEvidence prunes entries older than 30 days', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['old.js'];
+    const fsh = makeFileSetHash(fileSet);
+
+    // Manually write evidence file with an old entry (40 days ago)
+    const evidencePath = getEvidencePath(tempDir);
+    fs.mkdirSync(path.dirname(evidencePath), { recursive: true });
+    const fortyDaysAgo = new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString();
+    const data = {
+      schema_version: 1,
+      signatures: [{
+        id: `sig_${fsh}`,
+        file_set_hash: fsh,
+        pattern_hash: 'old_pattern',
+        files: ['old.js'],
+        alternation_count: 1,
+        time_window: { first_seen: fortyDaysAgo, last_seen: fortyDaysAgo },
+        resolved_at: null,
+        resolved_by_commit: null,
+        session_id: null,
+      }],
+    };
+    fs.writeFileSync(evidencePath, JSON.stringify(data, null, 2), 'utf8');
+
+    // Call check — should prune the old entry
+    const match = checkPreemptiveEvidence(tempDir, [['old.js']]);
+    assert.strictEqual(match, null, 'must return null — old entry should be pruned');
+
+    // Verify the file was rewritten without the old entry
+    const updated = JSON.parse(fs.readFileSync(evidencePath, 'utf8'));
+    assert.strictEqual(updated.signatures.length, 0, 'old entry must be pruned from file');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// Test CB-EV09: markEvidenceResolved sets resolved_at and resolved_by_commit
+test('CB-EV09: markEvidenceResolved sets resolved_at and resolved_by_commit', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-ev-'));
+  try {
+    const fileSet = ['fix.js'];
+    const fileSets = [['fix.js'], ['other.js'], ['fix.js']];
+    const fsh = makeFileSetHash(fileSet);
+    const ph = makePatternHash(fileSets);
+
+    // Write unresolved
+    writeEvidenceSignature(tempDir, fileSet, fileSets, fsh, ph);
+
+    // Verify unresolved
+    const before = JSON.parse(fs.readFileSync(getEvidencePath(tempDir), 'utf8'));
+    assert.strictEqual(before.signatures[0].resolved_at, null, 'must be unresolved before mark');
+
+    // Mark resolved
+    markEvidenceResolved(tempDir, fsh, 'deadbeef');
+
+    // Verify resolved
+    const after = JSON.parse(fs.readFileSync(getEvidencePath(tempDir), 'utf8'));
+    assert.ok(after.signatures[0].resolved_at, 'resolved_at must be set');
+    assert.strictEqual(after.signatures[0].resolved_by_commit, 'deadbeef', 'resolved_by_commit must be set');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });
