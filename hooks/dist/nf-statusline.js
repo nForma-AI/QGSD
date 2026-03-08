@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { loadConfig, shouldRunHook } = require('./config-loader');
+const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 // Read JSON from stdin
 let input = '';
@@ -14,6 +14,12 @@ process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   try {
     const data = JSON.parse(input);
+    const _eventType = data.hook_event_name || data.hookEventName || 'Notification';
+    const _validation = validateHookInput(_eventType, data);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-statusline: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
 
     // Profile guard — exit early if this hook is not active for the current profile
     const config = loadConfig(data.workspace?.current_dir || process.cwd());
@@ -95,6 +101,9 @@ process.stdin.on('end', () => {
       process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     }
   } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-statusline: malformed JSON on stdin: ' + e.message + '\n');
+    }
     // Silent fail - don't break statusline on parse errors
   }
 });

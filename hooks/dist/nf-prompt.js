@@ -22,7 +22,7 @@ const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
 const { spawnSync } = require('child_process');
-const { loadConfig, slotToToolCall, shouldRunHook } = require('./config-loader');
+const { loadConfig, slotToToolCall, shouldRunHook, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
 const taskClassifier = (() => { try { return require(path.join(__dirname, '..', 'bin', 'task-classifier.cjs')); } catch { return null; } })();
 const contextStack = (() => { try { return require(path.join(__dirname, '..', 'bin', 'context-stack.cjs')); } catch { return null; } })();
@@ -335,6 +335,12 @@ process.stdin.on('data', chunk => raw += chunk);
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
+    const _eventType = input.hook_event_name || input.hookEventName || 'UserPromptSubmit';
+    const _validation = validateHookInput(_eventType, input);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-prompt: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
     const prompt    = (input.prompt || '').trim();
     const cwd       = input.cwd || process.cwd();
     const sessionId = input.session_id || null;
@@ -781,6 +787,9 @@ process.stdin.on('end', () => {
     process.exit(0);
 
   } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-prompt: malformed JSON on stdin: ' + e.message + '\n');
+    }
     process.exit(0); // Fail-open on any error
   }
 });

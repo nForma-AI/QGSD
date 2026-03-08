@@ -6,6 +6,28 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { spawn } = require('child_process');
+const { validateHookInput } = require('./config-loader');
+
+// Read stdin for hook input validation (SessionStart event)
+let _checkUpdateRaw = '';
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', chunk => { _checkUpdateRaw += chunk; });
+process.stdin.on('end', () => {
+  try {
+    if (_checkUpdateRaw.trim()) {
+      const _input = JSON.parse(_checkUpdateRaw);
+      const _eventType = _input.hook_event_name || _input.hookEventName || 'SessionStart';
+      const _validation = validateHookInput(_eventType, _input);
+      if (!_validation.valid) {
+        process.stderr.write('[nf] WARNING: nf-check-update: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      }
+    }
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-check-update: malformed JSON on stdin: ' + e.message + '\n');
+    }
+  }
+});
 
 const homeDir = os.homedir();
 const cwd = process.cwd();

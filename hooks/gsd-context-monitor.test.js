@@ -49,6 +49,7 @@ function writeNfConfig(dir, config) {
 
 test('below warn threshold: exits 0 with no stdout', () => {
   const { exitCode, stdout } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 40 }, // used = 60%, below default 70%
     cwd: os.tmpdir(),
   });
@@ -58,6 +59,7 @@ test('below warn threshold: exits 0 with no stdout', () => {
 
 test('exactly at warn boundary (used = 70%): emits WARNING', () => {
   const { exitCode, parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 30 }, // used = 70%
     cwd: os.tmpdir(),
   });
@@ -69,6 +71,7 @@ test('exactly at warn boundary (used = 70%): emits WARNING', () => {
 
 test('above warn threshold (used = 80%): emits WARNING message', () => {
   const { exitCode, parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 20 }, // used = 80%
     cwd: os.tmpdir(),
   });
@@ -85,6 +88,7 @@ test('above warn threshold (used = 80%): emits WARNING message', () => {
 
 test('at critical threshold (used = 90%): emits CRITICAL message', () => {
   const { exitCode, parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 10 }, // used = 90%
     cwd: os.tmpdir(),
   });
@@ -97,6 +101,7 @@ test('at critical threshold (used = 90%): emits CRITICAL message', () => {
 
 test('above critical threshold (used = 95%): emits CRITICAL', () => {
   const { exitCode, parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 5 }, // used = 95%
     cwd: os.tmpdir(),
   });
@@ -116,6 +121,7 @@ test('missing context_window field: exits 0, no output', () => {
 
 test('null remaining_percentage: exits 0, no output', () => {
   const { exitCode, stdout } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: null },
     cwd: os.tmpdir(),
   });
@@ -148,6 +154,7 @@ test('custom warn_pct=50 in config: warns at 55% used', () => {
   writeNfConfig(tmpDir, { context_monitor: { warn_pct: 50, critical_pct: 90 } });
 
   const { parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 45 }, // used = 55%
     cwd: tmpDir,
   });
@@ -160,6 +167,7 @@ test('custom critical_pct=80 in config: CRITICAL at 85% used', () => {
   writeNfConfig(tmpDir, { context_monitor: { warn_pct: 70, critical_pct: 80 } });
 
   const { parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 15 }, // used = 85%
     cwd: tmpDir,
   });
@@ -171,6 +179,7 @@ test('custom thresholds: below custom warn_pct=80 → no output', () => {
   writeNfConfig(tmpDir, { context_monitor: { warn_pct: 80, critical_pct: 95 } });
 
   const { stdout } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 25 }, // used = 75%, below custom 80%
     cwd: tmpDir,
   });
@@ -184,6 +193,7 @@ test('budget warning injected at 60% budget', () => {
   writeNfConfig(tmpDir, { budget: { session_limit_tokens: 200000, warn_pct: 60, downgrade_pct: 85 } });
 
   const { parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 40 }, // used = 60% => 120000 tokens => 60% of 200K budget
     cwd: tmpDir,
   });
@@ -200,6 +210,7 @@ test('budget downgrade message at 85% budget', () => {
   fs.writeFileSync(path.join(planningDir, 'config.json'), JSON.stringify({ model_profile: 'quality' }), 'utf8');
 
   const { parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 15 }, // used = 85% => 170000 tokens => 85% of 200K budget
     cwd: tmpDir,
   });
@@ -212,6 +223,7 @@ test('no budget message when disabled', () => {
   writeNfConfig(tmpDir, { budget: { session_limit_tokens: null }, context_monitor: { warn_pct: 99, critical_pct: 100 } });
 
   const { stdout } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 15 }, // used = 85% but budget disabled
     cwd: tmpDir,
   });
@@ -375,6 +387,7 @@ test('budget downgrade skipped when cooldown is active', () => {
   }), 'utf8');
 
   const { parsed } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 15 }, // used = 85% => triggers downgrade threshold
     cwd: tmpDir,
   });
@@ -390,6 +403,7 @@ test('budget downgrade skipped when cooldown is active', () => {
 
 test('double loadConfig bug is fixed: hook runs without error', () => {
   const { exitCode } = runHook({
+    tool_name: 'Bash',
     context_window: { remaining_percentage: 50 },
     cwd: os.tmpdir(),
   });
@@ -478,8 +492,8 @@ test('verification: fail-open when continuous-verify.cjs not loadable (implicit)
   // When running in tmpdir without the module, the dual-path require returns null
   // and verification is skipped. This test verifies the hook still exits 0.
   const { exitCode } = runHook({
-    context_window: { remaining_percentage: 90 },
     tool_name: 'Write',
+    context_window: { remaining_percentage: 90 },
     tool_input: { file_path: '/tmp/foo.test.js' },
     cwd: os.tmpdir(),
   });

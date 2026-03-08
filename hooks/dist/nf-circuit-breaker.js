@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { spawnSync } = require('child_process');
-const { loadConfig } = require('./config-loader');
+const { loadConfig, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
 
 // Read-only command regex: git log/diff/diff-tree/status/show/blame, grep, cat, ls, head, tail, find
@@ -481,6 +481,12 @@ function main() {
   process.stdin.on('end', async () => {
     try {
       const input = JSON.parse(raw);
+      const _eventType = input.hook_event_name || input.hookEventName || 'PreToolUse';
+      const _validation = validateHookInput(_eventType, input);
+      if (!_validation.valid) {
+        process.stderr.write('[nf] WARNING: nf-circuit-breaker: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+        process.exit(0); // Fail-open
+      }
       const cwd = input.cwd || process.cwd();
 
       const hookEvent = input.hook_event_name || input.hookEventName || 'PreToolUse';
@@ -682,7 +688,10 @@ req.end();
 
       // State written — exit silently on first detection (warning emitted on next call via active state path)
       process.exit(0);
-    } catch {
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        process.stderr.write('[nf] WARNING: nf-circuit-breaker: malformed JSON on stdin: ' + e.message + '\n');
+      }
       process.exit(0); // Fail-open on any error
     }
   });

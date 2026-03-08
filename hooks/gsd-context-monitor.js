@@ -16,7 +16,7 @@
 
 const path = require('path');
 const fs = require('fs');
-const { loadConfig, shouldRunHook } = require('./config-loader');
+const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 // Continuous verification integration (fail-open: null if module unavailable)
 const continuousVerify = (() => {
@@ -81,6 +81,12 @@ process.stdin.on('data', chunk => { raw += chunk; });
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
+    const _eventType = input.hook_event_name || input.hookEventName || 'PostToolUse';
+    const _validation = validateHookInput(_eventType, input);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: gsd-context-monitor: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
 
     // Profile guard — exit early if this hook is not active for the current profile
     const config = loadConfig(input.cwd || process.cwd());
@@ -252,6 +258,9 @@ process.stdin.on('end', () => {
     process.exit(0);
 
   } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: gsd-context-monitor: malformed JSON on stdin: ' + e.message + '\n');
+    }
     // Fail-open: never crash the user's session on any unexpected error
     process.exit(0);
   }

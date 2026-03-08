@@ -11,7 +11,7 @@ const path = require('path');
 const os   = require('os');
 const fs   = require('fs');
 
-const { loadConfig, shouldRunHook } = require('./config-loader');
+const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 // ─── Stdin accumulation (for hook input JSON containing cwd) ─────────────────
 // Only register stdin handler when run directly (not when require()'d by tests)
@@ -90,7 +90,20 @@ if (require.main === module) (async () => {
   // Resolve project cwd from hook input JSON
   await _stdinPromise;
   let _hookCwd = process.cwd();
-  try { _hookCwd = JSON.parse(_stdinRaw).cwd || process.cwd(); } catch (_) {}
+  let _parsedInput = null;
+  try { _parsedInput = JSON.parse(_stdinRaw); _hookCwd = _parsedInput.cwd || process.cwd(); } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-session-start: malformed JSON on stdin: ' + e.message + '\n');
+    }
+  }
+  if (_parsedInput) {
+    const _eventType = _parsedInput.hook_event_name || _parsedInput.hookEventName || 'SessionStart';
+    const _validation = validateHookInput(_eventType, _parsedInput);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-session-start: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
+  }
 
   // Profile guard — exit early if this hook is not active for the current profile
   const config = loadConfig(_hookCwd);

@@ -9,6 +9,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const { validateHookInput } = require('./config-loader');
 
 // Fail-open require of execution-progress module (VERF-01)
 const executionProgress = (() => {
@@ -184,6 +185,12 @@ process.stdin.on('data', chunk => { raw += chunk; });
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
+    const _eventType = input.hook_event_name || input.hookEventName || 'PreCompact';
+    const _validation = validateHookInput(_eventType, input);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-precompact: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
     const cwd = input.cwd || process.cwd();
 
     const statePath = path.join(cwd, '.planning', 'STATE.md');
@@ -297,7 +304,11 @@ process.stdin.on('end', () => {
     emitOutput(additionalContext);
 
   } catch (e) {
-    process.stderr.write('[nf-precompact] Fatal error: ' + e.message + '\n');
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-precompact: malformed JSON on stdin: ' + e.message + '\n');
+    } else {
+      process.stderr.write('[nf-precompact] Fatal error: ' + e.message + '\n');
+    }
     process.exit(0); // Fail open — never block compaction
   }
 });

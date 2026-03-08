@@ -51,6 +51,23 @@ function runHookWithEnv(stdinPayload, extraEnv) {
   };
 }
 
+// Helper: run the hook with a given stdin JSON payload, env vars, and cwd override
+// Used for profile guard tests to place nf.json config in a temp directory
+function runHookWithCwd(stdinPayload, hookCwd, extraEnv) {
+  const result = spawnSync('node', [HOOK_PATH], {
+    input: JSON.stringify(stdinPayload),
+    encoding: 'utf8',
+    timeout: 5000,
+    cwd: hookCwd,
+    env: { ...process.env, ...(extraEnv || {}) },
+  });
+  return {
+    stdout: result.stdout || '',
+    stderr: result.stderr || '',
+    exitCode: result.status,
+  };
+}
+
 // JSONL builder helpers
 function userLine(content, uuid = 'user-1') {
   return JSON.stringify({
@@ -1384,5 +1401,162 @@ test('TC-N-OVERRIDE-BLOCK: --n 3 requires 2 calls; 1 call blocks despite config 
   } finally {
     fs.unlinkSync(tmpFile);
     fs.unlinkSync(claudeJsonTmp);
+  }
+});
+
+// ── Profile Guard Tests ─────────────────────────────────────────────────────
+
+// TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal → nf-stop exits 0 with no output (profile guard)
+test('TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal exits 0 with no output', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stop-profile-'));
+  try {
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'minimal' }),
+      'utf8'
+    );
+
+    // Build a transcript that would normally trigger a block (planning command + no quorum)
+    const transcriptLines = [
+      userLine('/nf:plan-phase 03'),
+      assistantLine([
+        bashCommitBlock('node gsd-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
+      ]),
+    ];
+    const tmpFile = writeTempTranscript(transcriptLines);
+
+    try {
+      const { stdout, exitCode } = runHookWithCwd(
+        { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile },
+        tempDir
+      );
+      assert.strictEqual(exitCode, 0, 'exit code must be 0');
+      assert.strictEqual(stdout, '', 'stdout must be empty — minimal profile skips nf-stop entirely');
+    } finally {
+      fs.unlinkSync(tmpFile);
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-PROFILE-STANDARD-RUNS: hook_profile=standard → nf-stop proceeds normally (not exited by guard)
+test('TC-PROFILE-STANDARD-RUNS: hook_profile=standard does NOT exit early', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stop-std-'));
+  try {
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'standard' }),
+      'utf8'
+    );
+
+    // A planning command with decision marker but no quorum → would block if not guarded
+    const transcriptLines = [
+      userLine('/nf:plan-phase 03'),
+      assistantLine([
+        bashCommitBlock('node gsd-tools.cjs commit -m "docs: plan" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- GSD_DECISION -->' },
+      ]),
+    ];
+    const tmpFile = writeTempTranscript(transcriptLines);
+
+    try {
+      const { stdout, exitCode } = runHookWithCwd(
+        { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile },
+        tempDir
+      );
+      assert.strictEqual(exitCode, 0, 'exit code must be 0');
+      // Standard profile should proceed to quorum check and block (no quorum evidence)
+      assert.ok(stdout.length > 0, 'stdout must contain block output — standard profile proceeds normally');
+      const parsed = JSON.parse(stdout);
+      assert.strictEqual(parsed.decision, 'block', 'must block — no quorum evidence');
+    } finally {
+      fs.unlinkSync(tmpFile);
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-STRICT-NON-QUORUM-ENFORCED: hook_profile=strict → /nf:execute-phase (non-quorum command) IS enforced
+test('TC-STRICT-NON-QUORUM-ENFORCED: strict mode enforces quorum on non-quorum command /nf:execute-phase', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stop-strict-'));
+  try {
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'strict' }),
+      'utf8'
+    );
+
+    // /nf:execute-phase is NOT in the default quorum_commands list
+    // In strict mode, it should still be matched and enforced
+    const transcriptLines = [
+      userLine('/nf:execute-phase 03'),
+      assistantLine([
+        bashCommitBlock('node gsd-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- GSD_DECISION -->' },
+      ]),
+    ];
+    const tmpFile = writeTempTranscript(transcriptLines);
+
+    try {
+      const { stdout, exitCode } = runHookWithCwd(
+        { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile },
+        tempDir
+      );
+      assert.strictEqual(exitCode, 0, 'exit code must be 0');
+      // Strict mode should match /nf:execute-phase and enforce quorum → block
+      assert.ok(stdout.length > 0, 'stdout must contain block output — strict mode matches execute-phase');
+      const parsed = JSON.parse(stdout);
+      assert.strictEqual(parsed.decision, 'block', 'must block — strict mode enforces quorum on execute-phase');
+    } finally {
+      fs.unlinkSync(tmpFile);
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-STANDARD-NON-QUORUM-NOT-ENFORCED: hook_profile=standard → /nf:execute-phase is NOT enforced
+test('TC-STANDARD-NON-QUORUM-NOT-ENFORCED: standard mode does NOT enforce /nf:execute-phase', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-stop-stdnoq-'));
+  try {
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'standard' }),
+      'utf8'
+    );
+
+    // /nf:execute-phase is NOT in quorum_commands → standard mode should NOT match it
+    const transcriptLines = [
+      userLine('/nf:execute-phase 03'),
+      assistantLine([
+        bashCommitBlock('node gsd-tools.cjs commit -m "docs: exec" --files .planning/phases/03-PLAN.md'),
+        { type: 'text', text: '<!-- GSD_DECISION -->' },
+      ]),
+    ];
+    const tmpFile = writeTempTranscript(transcriptLines);
+
+    try {
+      const { stdout, exitCode } = runHookWithCwd(
+        { stop_hook_active: false, hook_event_name: 'Stop', transcript_path: tmpFile },
+        tempDir
+      );
+      assert.strictEqual(exitCode, 0, 'exit code must be 0');
+      // Standard mode should NOT match /nf:execute-phase → silent pass (no output)
+      assert.strictEqual(stdout, '', 'stdout must be empty — standard mode does not enforce execute-phase');
+    } finally {
+      fs.unlinkSync(tmpFile);
+    }
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
 });

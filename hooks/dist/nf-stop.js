@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const { loadConfig, DEFAULT_CONFIG, slotToToolCall, shouldRunHook } = require('./config-loader');
+const { loadConfig, DEFAULT_CONFIG, slotToToolCall, shouldRunHook, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
 
 // Cache module — fail-open: if require fails, all cache logic is skipped
@@ -491,6 +491,12 @@ function main() {
   process.stdin.on('end', () => {
     try {
       const input = JSON.parse(raw);
+      const _eventType = input.hook_event_name || input.hookEventName || 'Stop';
+      const _validation = validateHookInput(_eventType, input);
+      if (!_validation.valid) {
+        process.stderr.write('[nf] WARNING: nf-stop: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+        process.exit(0); // Fail-open
+      }
 
       // GUARD 1: Infinite loop prevention — MUST be first (STOP-02)
       if (input.stop_hook_active) {
@@ -677,7 +683,10 @@ function main() {
       });
       process.exit(0);
 
-    } catch {
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        process.stderr.write('[nf] WARNING: nf-stop: malformed JSON on stdin: ' + e.message + '\n');
+      }
       // Fail-open: never crash the user's session on any unexpected error
       process.exit(0);
     }

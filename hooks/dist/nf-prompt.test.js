@@ -300,7 +300,7 @@ test('TC-PROMPT-N-CAP: --n 3 caps injected slot list to N-1=2 external slots', (
     const { stdout } = runHook({ prompt: '/qgsd:plan-phase --n 3', cwd: tempDir });
     const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
     // Must announce the override
-    assert.ok(ctx.includes('QUORUM SIZE OVERRIDE (--n 3)'), 'must announce --n 3 override');
+    assert.ok(ctx.includes('--n 3') && ctx.includes('QUORUM REQUIRED'), 'must announce --n 3 override in QUORUM REQUIRED header');
     // Must cap to 2 numbered step Task lines (N-1 = 2). Regex matches numbered steps, not header prose.
     const taskLineCount = (ctx.match(/\d+\. Task\(subagent_type="nf-quorum-slot-worker"/g) || []).length;
     assert.strictEqual(taskLineCount, 2, '--n 3 must produce exactly 2 slot-worker Task lines (N-1=2)');
@@ -333,13 +333,13 @@ test('TC-PROMPT-SOLO: --n 1 injects SOLO MODE ACTIVE, no Task slot lines', () =>
 });
 
 // TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub slots appear before api slots
-test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub slots appear before api slots', () => {
+test('TC-PROMPT-PREFER-SUB-DEFAULT: preferSub=true reorders sub slots before api slots', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-psub-'));
   try {
     spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
     const claudeDir = path.join(tempDir, '.claude');
     fs.mkdirSync(claudeDir, { recursive: true });
-    // sub-1 listed AFTER api-1 in quorum_active — default preferSub must reorder
+    // sub-1 listed AFTER api-1 in quorum_active — preferSub must reorder
     fs.writeFileSync(
       path.join(claudeDir, 'nf.json'),
       JSON.stringify({
@@ -348,7 +348,7 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub s
           'api-slot-1': { auth_type: 'api' },
           'sub-slot-1': { auth_type: 'sub' },
         },
-        // No quorum.preferSub key → defaults to true
+        quorum: { preferSub: true },
       }),
       'utf8'
     );
@@ -358,7 +358,7 @@ test('TC-PROMPT-PREFER-SUB-DEFAULT: no preferSub config → defaults true, sub s
     const apiPos = ctx.indexOf('api-slot-1');
     assert.ok(subPos !== -1, 'sub-slot-1 must appear in step list');
     assert.ok(apiPos !== -1, 'api-slot-1 must appear in step list');
-    assert.ok(subPos < apiPos, 'sub slot must appear before api slot (preferSub default=true)');
+    assert.ok(subPos < apiPos, 'sub slot must appear before api slot (preferSub=true)');
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }
@@ -692,6 +692,112 @@ test('TC-PROMPT-FALLBACK-T2-EXCLUDES-PRIMARIES: api slots dispatched as primary 
     assert.ok(primaryLineMatch, 'Step 1 PRIMARY must be present');
     const primarySlots = primaryLineMatch[1].split(',').map(s => s.trim());
     assert.ok(primarySlots.includes('api-slot-A'), 'api-slot-A must appear in Step 1 PRIMARY');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG: when agent_config is {} (empty), all slots
+// default to auth_type='api'. This means t1Unused (sub-CLI slots) is always empty,
+// so the simple failover rule is used instead of FALLBACK-01 tiered sequence.
+// The test verifies: (a) no FALLBACK-01 label appears, (b) the simple failover rule
+// IS present, (c) T2 slot names are still enumerable in the output.
+test('TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG: empty agent_config → no T1, simple failover rule', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-emptyac-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    // quorum_active set with known slots but agent_config is empty {}
+    // All slots default to auth_type='api' — no sub slots → no T1 unused → simple rule
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({
+        quorum_active: ['codex-1', 'gemini-1', 'opencode-1', 'copilot-1'],
+        agent_config: {},
+      }),
+      'utf8'
+    );
+    const { stdout, exitCode } = runHook({ prompt: '/qgsd:plan-phase', cwd: tempDir });
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.length > 0, 'stdout must contain quorum injection');
+
+    const ctx = JSON.parse(stdout).hookSpecificOutput.additionalContext;
+
+    // (a) No FALLBACK-01 — because all slots are api, t1Unused is empty
+    assert.ok(!ctx.includes('FALLBACK-01'), 'Must NOT use FALLBACK-01 when agent_config is empty (all slots are api)');
+
+    // (b) Simple failover rule must be present
+    assert.ok(ctx.includes('Failover rule'), 'Simple Failover rule must appear when no T1 slots exist');
+    assert.ok(ctx.includes('do not count toward'), 'Failover rule must state errors do not count');
+
+    // (c) Dispatched slot names must appear in Task() lines
+    const taskLines = ctx.match(/Task\(subagent_type="nf-quorum-slot-worker"/g) || [];
+    assert.ok(taskLines.length > 0, 'At least one slot-worker Task must be dispatched');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// ── Profile Guard Tests ─────────────────────────────────────────────────────
+
+// TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal → nf-prompt exits 0 with no output
+test('TC-PROFILE-MINIMAL-EXIT: hook_profile=minimal exits 0 with no output', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-profile-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({ hook_profile: 'minimal' }),
+      'utf8'
+    );
+
+    // A planning command that would normally trigger quorum injection
+    const { stdout, exitCode } = runHook({
+      prompt: '/nf:plan-phase 03',
+      cwd: tempDir,
+    });
+
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.strictEqual(stdout, '', 'stdout must be empty — minimal profile skips nf-prompt entirely');
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+// TC-STRICT-QUORUM-ON-NON-QUORUM-CMD: hook_profile=strict → /nf:execute-phase gets quorum injection
+test('TC-STRICT-QUORUM-ON-NON-QUORUM-CMD: strict mode injects quorum for non-quorum command', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-prompt-strict-'));
+  try {
+    spawnSync('git', ['init'], { cwd: tempDir, encoding: 'utf8', timeout: 5000 });
+    const claudeDir = path.join(tempDir, '.claude');
+    fs.mkdirSync(claudeDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(claudeDir, 'nf.json'),
+      JSON.stringify({
+        hook_profile: 'strict',
+        quorum_active: ['codex-1', 'gemini-1'],
+      }),
+      'utf8'
+    );
+
+    // /nf:execute-phase is NOT in default quorum_commands list
+    // Strict mode should still inject quorum instructions
+    const { stdout, exitCode } = runHook({
+      prompt: '/nf:execute-phase 03',
+      cwd: tempDir,
+    });
+
+    assert.strictEqual(exitCode, 0, 'exit code must be 0');
+    assert.ok(stdout.length > 0, 'stdout must contain quorum injection — strict mode matches execute-phase');
+    const parsed = JSON.parse(stdout);
+    assert.ok(parsed.hookSpecificOutput, 'output must have hookSpecificOutput');
+    assert.ok(
+      parsed.hookSpecificOutput.additionalContext.includes('QUORUM REQUIRED'),
+      'additionalContext must include "QUORUM REQUIRED" for strict mode'
+    );
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

@@ -14,7 +14,7 @@
 
 const { spawnSync } = require('child_process');
 const fs = require('fs');
-const { loadConfig, shouldRunHook } = require('./config-loader');
+const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 const JS_TS_RE = /\.(js|ts|cjs|mjs|jsx|tsx)$/;
 const CONSOLE_LOG_RE = /^\s*console\.log\b/gm;
@@ -27,6 +27,12 @@ process.stdin.on('data', (chunk) => { raw += chunk; });
 process.stdin.on('end', () => {
   try {
     const input = JSON.parse(raw);
+    const _eventType = input.hook_event_name || input.hookEventName || 'Stop';
+    const _validation = validateHookInput(_eventType, input);
+    if (!_validation.valid) {
+      process.stderr.write('[nf] WARNING: nf-console-guard: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+      process.exit(0); // Fail-open
+    }
 
     // Profile guard — exit early if this hook is not active for the current profile
     const config = loadConfig(input.cwd || process.cwd());
@@ -98,6 +104,9 @@ process.stdin.on('end', () => {
 
     process.exit(0);
   } catch (e) {
+    if (e instanceof SyntaxError) {
+      process.stderr.write('[nf] WARNING: nf-console-guard: malformed JSON on stdin: ' + e.message + '\n');
+    }
     // Malformed JSON or unexpected error — fail-open, no output
     process.exit(0);
   }

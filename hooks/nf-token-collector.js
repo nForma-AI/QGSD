@@ -15,7 +15,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { loadConfig, shouldRunHook } = require('./config-loader');
+const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
 
 // Resolve slot name from correlation file or last_assistant_message preamble.
 // Order:
@@ -78,6 +78,12 @@ function main() {
   process.stdin.on('end', () => {
     try {
       const input = JSON.parse(raw);
+      const _eventType = input.hook_event_name || input.hookEventName || 'PostToolUse';
+      const _validation = validateHookInput(_eventType, input);
+      if (!_validation.valid) {
+        process.stderr.write('[nf] WARNING: nf-token-collector: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
+        process.exit(0); // Fail-open
+      }
 
       // Profile guard — exit early if this hook is not active for the current profile
       const config = loadConfig();
@@ -131,7 +137,10 @@ function main() {
       appendRecord(input, inputSum, outputSum, cacheCreateSum, cacheReadSum);
       process.exit(0);
 
-    } catch (_) {
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        process.stderr.write('[nf] WARNING: nf-token-collector: malformed JSON on stdin: ' + e.message + '\n');
+      }
       // Fail-open: never crash the session on any unexpected error
       process.exit(0);
     }
