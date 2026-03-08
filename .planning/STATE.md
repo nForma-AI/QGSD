@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.31-02 -- Runtime Safety Boundaries
+**Current focus:** Phase v0.31-03 -- Config & Governance DX
 
 ## Current Position
 
@@ -87,5 +87,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Completed v0.31-02-03-PLAN.md
+Stopped at: Phase v0.31-02 complete, ready to plan Phase v0.31-03
 Resume file: None
