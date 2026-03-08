@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-08T18:33:44.600Z",
-  "content_hash": "f7012d882656051f",
+  "aggregated_at": "2026-03-08T20:06:02.339Z",
+  "content_hash": "5062d0f2c64ff6bc",
   "schema_version": "1",
   "requirements": [
     {
@@ -3036,6 +3036,30 @@
       ]
     },
     {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
+      }
+    },
+    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -3110,27 +3134,15 @@
       }
     },
     {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "id": "SOLVE-15",
+      "text": "nf-solve ingests a model-complexity-profile combining per-model runtime classification (FAST/MODERATE/SLOW/HEAVY) with optional state-space estimates, and surfaces split/merge recommendations in both text and JSON report outputs, fail-open when profiler data is absent.",
       "category": "Solver Orchestration",
       "phase": "unknown",
       "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "background": "With 55+ formal models and growing, runtime varies from sub-second to 30+ seconds, but the solver had no visibility into which models are expensive. The complexity profiler correlates check-results.ndjson runtime data with state-space analysis to classify models and recommend structural changes.",
       "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
+        "source_file": ".planning/quick/226-track-formal-model-complexity-and-runtim/226-PLAN.md",
+        "milestone": "quick-226"
       }
     },
     {
@@ -4074,6 +4086,6 @@
       ]
     }
   ],
-  "frozen_at": "2026-03-08T18:33:44.601Z",
+  "frozen_at": "2026-03-08T20:06:02.340Z",
   "total": 283
 }
