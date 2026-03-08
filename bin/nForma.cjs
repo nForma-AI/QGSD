@@ -3046,36 +3046,101 @@ async function showItemDetail(catKey, item, catLabel) {
 
   lines.push('');
   lines.push('\u2500'.repeat(70));
-  lines.push('{gray-fg}  Actions: Acknowledge as FP | Add Regex Suppression | Back{/}');
+  const actionHint = (catKey === 'ctor' || catKey === 'ttor' || catKey === 'dtor')
+    ? 'Actions: Create Requirement | Acknowledge as FP | Add Regex Suppression | Back'
+    : (catKey === 'dtoc')
+      ? 'Actions: Create TODO | Acknowledge as FP | Add Regex Suppression | Back'
+      : 'Actions: Acknowledge as FP | Add Regex Suppression | Back';
+  lines.push(`{bold}  Press Enter: ${actionHint} | Scroll to read | ESC to go back{/}`);
 
   setContent(`Solve - ${catLabel} - Detail`, lines.join('\n'));
 
-  // Action menu
-  const actionChoice = await promptList({ title: 'Item Actions', items: [
-    { label: 'Acknowledge as FP', value: 'ack' },
-    { label: 'Add Regex Suppression', value: 'regex' },
-    { label: 'Back', value: 'back' },
-  ] });
+  // Focus contentBox so user can scroll and read the full page
+  contentBox.focus();
+  screen.render();
 
-  if (actionChoice.value === 'ack') {
-    const ok = solveTui.acknowledgeItem(item);
-    if (ok) {
-      toast('Acknowledged -- will be suppressed on next sweep');
-    } else {
-      toast('Error writing acknowledgment file', true);
-    }
-  } else if (actionChoice.value === 'regex') {
-    const regex = await promptInput({ title: 'Regex Suppression', prompt: 'Enter regex pattern:' });
-    if (regex) {
-      const reason = await promptInput({ title: 'Reason', prompt: 'Reason for suppression:', default: 'Added via nForma TUI' });
-      const ok = solveTui.addRegexPattern(item, regex, reason || 'Added via nForma TUI');
-      if (ok) {
-        toast('Pattern added -- will be applied on next sweep');
-      } else {
-        toast('Error writing pattern file', true);
+  // Wait for user to press Enter (open actions) or ESC (go back)
+  await new Promise((resolve) => {
+    function onKey(ch, key) {
+      if (key.name === 'return' || key.name === 'enter') {
+        contentBox.removeListener('keypress', onKey);
+        resolve('actions');
+      } else if (key.name === 'escape' || ch === 'q') {
+        contentBox.removeListener('keypress', onKey);
+        resolve('back');
       }
     }
-  }
+    contentBox.on('keypress', onKey);
+  }).then(async (result) => {
+    if (result === 'back') {
+      menuList.focus();
+      screen.render();
+      return;
+    }
+
+    // Build category-aware action menu
+    let actionItems;
+    if (catKey === 'ctor' || catKey === 'ttor' || catKey === 'dtor') {
+      actionItems = [
+        { label: 'Create Requirement', value: 'create-req' },
+        { label: 'Acknowledge as FP', value: 'ack' },
+        { label: 'Add Regex Suppression', value: 'regex' },
+        { label: 'Back', value: 'back' },
+      ];
+    } else if (catKey === 'dtoc') {
+      actionItems = [
+        { label: 'Create TODO', value: 'create-todo' },
+        { label: 'Acknowledge as FP', value: 'ack' },
+        { label: 'Add Regex Suppression', value: 'regex' },
+        { label: 'Back', value: 'back' },
+      ];
+    } else {
+      actionItems = [
+        { label: 'Acknowledge as FP', value: 'ack' },
+        { label: 'Add Regex Suppression', value: 'regex' },
+        { label: 'Back', value: 'back' },
+      ];
+    }
+
+    let actionChoice;
+    try {
+      actionChoice = await promptList({ title: 'Item Actions', items: actionItems });
+    } catch (_) { return; }
+
+    if (actionChoice.value === 'create-req') {
+      const result = solveTui.createRequirementFromItem(item, catKey);
+      if (result.ok) {
+        toast(`Requirement ${result.id} created in requirements.json`);
+      } else {
+        toast(`Error: ${result.reason}`, true);
+      }
+    } else if (actionChoice.value === 'create-todo') {
+      const result = solveTui.createTodoFromItem(item);
+      if (result.ok) {
+        toast(`TODO ${result.id} added to .planning/todos.json`);
+      } else {
+        toast('Error creating TODO', true);
+      }
+    } else if (actionChoice.value === 'ack') {
+      const ok = solveTui.acknowledgeItem(item);
+      if (ok) {
+        toast('Acknowledged -- will be suppressed on next sweep');
+      } else {
+        toast('Error writing acknowledgment file', true);
+      }
+    } else if (actionChoice.value === 'regex') {
+      const regex = await promptInput({ title: 'Regex Suppression', prompt: 'Enter regex pattern:' });
+      if (regex) {
+        const reason = await promptInput({ title: 'Reason', prompt: 'Reason for suppression:', default: 'Added via nForma TUI' });
+        const ok = solveTui.addRegexPattern(item, regex, reason || 'Added via nForma TUI');
+        if (ok) {
+          toast('Pattern added -- will be applied on next sweep');
+        } else {
+          toast('Error writing pattern file', true);
+        }
+      }
+    }
+  });
 }
 
 // ─── Solve: Suppressions ────────────────────────────────────────────────────

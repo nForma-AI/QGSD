@@ -404,8 +404,19 @@ function extractStructuralClaims(docContent, filePath) {
         type = 'file_path';
       }
       // Dependency: npm-style package name (lowercase, optional @scope/)
+      // Must be scoped (@scope/name) or contain a hyphen to qualify.
+      // Single bare words in docs are almost always concept references, not deps.
       else if (/^(@[a-z0-9-]+\/)?[a-z0-9][a-z0-9._-]*$/.test(value) && !value.includes('/')) {
-        type = 'dependency';
+        const isDep =
+          !value.includes('.') &&                               // config keys (quorum.active), filenames (nf-solve.cjs)
+          !value.includes('_') &&                               // snake_case identifiers (fail_mode, stop_hook_active)
+          !value.startsWith('mcp__') &&                         // MCP tool references
+          !['true','false','undefined','null','none','pass'].includes(value) && // JS/JSON keywords
+          (value.startsWith('@') || value.includes('-')) &&     // must be scoped or hyphenated (bare words are not deps)
+          !/^mcp-/.test(value) &&                               // nForma MCP commands (mcp-restart, mcp-status)
+          !/^(execute|plan|resume|run|new|export)-/.test(value) && // nForma skill/command names
+          !/-\d+$/.test(value);                                 // slot names (copilot-1, gemini-cli-1)
+        if (isDep) type = 'dependency';
       }
 
       if (type) {
@@ -1407,6 +1418,20 @@ function sweepDtoC() {
         if (acknowledgedFPs.has(claim.doc_file + ':' + claim.value)) {
           suppressedFpCount++;
           continue;
+        }
+
+        // Auto-suppress known rebrand patterns (qgsd->nf renames from quick-186)
+        const REBRAND_PATTERNS = [
+          /qgsd-core\//,          // old qgsd-core/ directory references
+          /qgsd[_-](?!.*\.md$)/,  // qgsd- or qgsd_ prefixes (not in .md filenames which are historical)
+          /\/qgsd\//,             // /qgsd/ path segments
+        ];
+        if (claim.type === 'file_path') {
+          const isRebrandArtifact = REBRAND_PATTERNS.some(rx => rx.test(claim.value));
+          if (isRebrandArtifact) {
+            suppressedFpCount++;
+            continue;
+          }
         }
 
         // Filter by pattern-based suppression rules
