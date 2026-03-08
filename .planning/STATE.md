@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 Phase: Milestone boundary
 Plan: N/A
 Status: v0.30 and v0.31 milestones archived. Ready for /nf:new-milestone.
-Last activity: 2026-03-08 - Completed quick task 228: Build interactive TUI for browsing and acting on human-gated solve items
+Last activity: 2026-03-08 - Completed quick task 229: Integrate solve-tui into nForma.cjs as F5 Solve module
 
 Progress: [##########] 100%
 
@@ -38,6 +38,7 @@ None.
 | 226 | Track formal model complexity and runtime; nf:solve ingests results to decide split/merge | 2026-03-08 | 86e2650b | Verified | [226-track-formal-model-complexity-and-runtim](./quick/226-track-formal-model-complexity-and-runtim/) |
 | 227 | Add missing action mappings to event-vocabulary.json for Gate A unmapped trace actions | 2026-03-08 | pending | Pending | [227-add-missing-action-mappings-to-event-voc](./quick/227-add-missing-action-mappings-to-event-voc/) |
 | 228 | Build interactive TUI for browsing and acting on human-gated solve items | 2026-03-08 | cc0c08d8 | Verified | [228-build-interactive-tui-for-browsing-and-a](./quick/228-build-interactive-tui-for-browsing-and-a/) |
+| 229 | Integrate solve-tui into nForma.cjs as F5 Solve module | 2026-03-08 | 8a51cbe0 | Pending | [229-integrate-solve-tui-into-nforma-cjs-as-a](./quick/229-integrate-solve-tui-into-nforma-cjs-as-a/) |
 
 ## Session Continuity
 
