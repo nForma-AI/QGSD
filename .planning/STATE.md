@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-08)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.31-03 -- Config & Governance DX
+**Current focus:** Milestone v0.31 complete -- all 3 phases finished
 
 ## Current Position
 
-Phase: 2 of 3 (Runtime Safety Boundaries)
-Plan: 3 of 3 in current phase
-Status: Phase v0.31-02 complete
-Last activity: 2026-03-08 - Completed v0.31-02-03 (review-only tool restriction)
+Phase: 3 of 3 (Config & Governance DX)
+Plan: 2 of 2 in current phase
+Status: Phase v0.31-03 complete -- milestone v0.31 complete
+Last activity: 2026-03-08 - Completed v0.31-03-02 (config write adapter)
 
-Progress: [########░░] 71%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4 (v0.31)
-- Average duration: 19min
-- Total execution time: 1.2 hours
+- Total plans completed: 7 (v0.31)
+- Average duration: 12min
+- Total execution time: 1.4 hours
 
 **By Phase:**
 
@@ -29,6 +29,7 @@ Progress: [########░░] 71%
 |-------|-------|-------|----------|
 | v0.31-01 | 2/2 | 38min | 19min |
 | v0.31-02 | 3/3 | 21min | 7min |
+| v0.31-03 | 2/2 | 7min | 3.5min |
 
 **Recent Trend:**
 - Last 5 plans: (from v0.30) 3min, 4min, 4min, 5min, 4min
@@ -63,6 +64,10 @@ Recent decisions affecting current work:
 - [v0.31-02-03]: Non-ccr slots get prompt-level READ-ONLY restriction (best-effort)
 - [v0.31-02-03]: Review mode triggered by Mode B dispatch OR explicit --review-only flag
 - [v0.31-02-03]: Verification commands (/nf:verify-work, /nf:check) inject REVIEW MODE instruction
+- [v0.31-03-01]: Used Claude Code native paths: frontmatter for rule scoping
+- [v0.31-03-01]: Debate formatter uses regex-based YAML parsing (no external deps)
+- [v0.31-03-02]: NESTED_TO_FLAT_MAP covers model_tier, smart_compact key conversions
+- [v0.31-03-02]: Flat keys take precedence over nested when both present
 - [Phase v0.30-07]: CONFLICT detection checks stdout+stderr+message (git outputs CONFLICT to stdout)
 - [Phase v0.30-07]: Worktree executors skip state_updates/final_commit -- orchestrator handles after merge
 - [Phase v0.30-07]: Executor completion uses structured JSON block for reliable orchestrator parsing
@@ -87,5 +92,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-08
-Stopped at: Phase v0.31-02 complete, ready to plan Phase v0.31-03
+Stopped at: Milestone v0.31 complete -- all 3 phases finished, ready for /nf:audit-milestone v0.31
 Resume file: None
