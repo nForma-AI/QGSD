@@ -67,7 +67,7 @@ None yet.
 
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
-| 222 | use those insights to recommend improvements to nforma | 2026-03-08 | 3d644a39 | Pending | [222-use-those-insights-to-recommend-improvem](./quick/222-use-those-insights-to-recommend-improvem/) |
+| 222 | use those insights to recommend improvements to nforma | 2026-03-08 | 3d644a39 | Verified | [222-use-those-insights-to-recommend-improvem](./quick/222-use-those-insights-to-recommend-improvem/) |
 
 ## Session Continuity
 
