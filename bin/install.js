@@ -2041,6 +2041,7 @@ function install(isGlobal, runtime = 'claude') {
       UserPromptSubmit: 'qgsd-prompt',
       Stop: 'qgsd-stop',
       PreToolUse: 'qgsd-circuit-breaker',
+      PostToolUse: ['qgsd-spec-regen', 'qgsd-context-monitor'],
       SessionStart: ['qgsd-check-update', 'qgsd-session-start'],
     };
     for (const [event, oldNames] of Object.entries(OLD_HOOK_MAP)) {

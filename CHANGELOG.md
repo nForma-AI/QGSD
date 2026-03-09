@@ -6,8 +6,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.31.2] - 2026-03-09
+
+### Fixed
+- **Orphan PostToolUse hook from rebrand** — The rebrand (quick-186) renamed `qgsd-spec-regen.js` → `nf-spec-regen.js` but `OLD_HOOK_MAP` in the installer only covered 4 hook events (UserPromptSubmit, Stop, PreToolUse, SessionStart). The PostToolUse event was missed, so the orphan `qgsd-spec-regen.js` entry persisted in `~/.claude/settings.json` — pointing to a file that no longer exists. Added `PostToolUse: ['qgsd-spec-regen', 'qgsd-context-monitor']` to `OLD_HOOK_MAP` so future installs automatically clean up any remaining pre-rebrand PostToolUse hooks.
+
+## [0.31.1] - 2026-03-09
+
 ### Changed
 - **BREAKING: checkpoint:human-verify quorum gate** — Auto-mode no longer auto-approves `checkpoint:human-verify` tasks. Instead, a quorum consensus gate requires 100% APPROVE from all available workers before proceeding. Falls back to user escalation on any BLOCK vote or quorum unavailability. Affects `core/workflows/execute-phase.md`, `agents/nf-executor.md`, `core/references/checkpoints.md`.
+- **TLA+ state space reduced ~65,000x** — Converted `QGSDSessionPersistence.tla` from SUBSET-based to counter-based tracking; all 4 safety invariants and liveness property preserved (quick-235)
+- **TLC metadir pinned** — Uses fixed `/tmp/tlc-metadir` to prevent 1.1TB state accumulation from per-run temp directories
+
+### Added
+- **Safety hooks hardening** — `nf-destructive-git-guard.js` emits `additionalContext` warnings; new `nf-mcp-dispatch-guard.js` warns on direct MCP calls violating R3.2 dispatch rules; `nf-executor.md` pre-flight checks PLAN.md existence (quick-233)
+- **Per-model gate maturity scoring** — `bin/compute-per-model-gates.cjs` evaluates which gates (A/B/C) each formal model passes with auto-promotion from ADVISORY to SOFT_GATE; wired into `nf-solve.cjs` as informational sweep layer (quick-234)
+- **Evidence-aware gate promotion** — Gate promotion considers evidence readiness scores (SOFT_GATE ≥1/5, HARD_GATE ≥3/5 evidence files); per-model gates runs as nonCritical step in `run-formal-verify` pipeline; `bin/refresh-evidence.cjs` runs 4 evidence generators before solve convergence (quick-236)
+- **Quorum debate trace persistence** — `emitResultBlock` enriched with `matched_requirement_ids`; per-slot debate traces auto-persisted to `.planning/quorum/debates/` with full frontmatter; fail-open on write failures (quick-237)
+- **Gate promotion feedback loops** — Always-on evidence refresh at session end via `nf-stop.js`; promotion/demotion changelog (`promotion-changelog.json`, 200-entry cap); automatic gate demotion with hysteresis (SOFT_GATE demotes at <0.8, HARD_GATE at <2.5); `bin/formalization-candidates.cjs` ranks uncovered files by churn × trace density; TUI shows recent gate changes color-coded (quick-238)
+- **Install-time path validation** — `validateHookPaths()` scans installed hooks for broken `path.join(__dirname, ...)` references; prints WARNINGs with "did you mean 'nf-bin'?" hints; fail-open (quick-239)
+
+### Fixed
+- **31 broken hook path references** — All `bin/` → `nf-bin/` path mismatches in installed hooks resolved
+- **Stop hook evidence refresh path** — Corrected `nf-bin` path (was `bin`) for `refresh-evidence.cjs` in `nf-stop.js` (quick-238)
+- **TLC metadir wired into all invokers** — Remaining TLC runners now use fixed metadir consistently
 
 ## [0.2.1] - 2026-03-03
 
