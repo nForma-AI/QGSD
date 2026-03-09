@@ -41,7 +41,7 @@
 - [x] **Phase v0.32-01: README Above-the-Fold Restructure** - Promote TUI hero, add value props, metrics, changelog, and nav to the top of README (completed 2026-03-09)
 - [x] **Phase v0.32-02: README Deep Sections** - Add architecture diagram, community section, rebalance Getting Started, fix broken table (completed 2026-03-09)
 - [x] **Phase v0.32-03: User Guide Overhaul** - Update User Guide with TUI screenshots and improved Getting Started walkthrough (completed 2026-03-09)
-- [ ] **Phase v0.32-04: Visual Asset Regeneration** - Regenerate all TUI screenshots and harden VHS tape for CI
+- [x] **Phase v0.32-04: Visual Asset Regeneration** - Regenerate all TUI screenshots and harden VHS tape for CI (completed 2026-03-09)
 
 ### Phase Details
 
@@ -91,7 +91,7 @@ Plans:
   1. All TUI screenshots embedded in README and User Guide are regenerated and match current TUI output
   2. VHS tape runs successfully with zsh shell, explicit PATH export, and CLAUDECODE unset
   3. Running the VHS tape twice produces identical screenshot output for static-content screenshots (health and session-claude excluded due to live data variance)
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] v0.32-04-01-PLAN.md — Harden VHS tape path resolution, regenerate all 11 TUI screenshots, verify determinism, clean up orphaned SVGs
 
@@ -102,7 +102,7 @@ Plans:
 | v0.32-01. README Above-the-Fold Restructure | 1/1 | Complete    | 2026-03-09 |
 | v0.32-02. README Deep Sections | 1/1 | Complete    | 2026-03-09 |
 | v0.32-03. User Guide Overhaul | 1/1 | Complete    | 2026-03-09 |
-| v0.32-04. Visual Asset Regeneration | 0/1 | Not started | - |
+| v0.32-04. Visual Asset Regeneration | 1/1 | Complete   | 2026-03-09 |
 
 ---
 *Roadmap created: 2026-03-09*
