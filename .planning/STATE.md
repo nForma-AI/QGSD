@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-03-08)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: v0.32-01 (README Above-the-Fold Restructure)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-03-09 — Milestone v0.32 started
+Status: Roadmap created, awaiting plan-phase
+Last activity: 2026-03-09 — Roadmap created for v0.32
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -54,6 +54,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-08
-Stopped at: Completed quick task 233: Insights-driven nForma improvements
+Last session: 2026-03-09
+Stopped at: Roadmap created for v0.32 — Documentation & README Overhaul
 Resume file: None

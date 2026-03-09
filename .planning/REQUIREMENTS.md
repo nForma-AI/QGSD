@@ -43,26 +43,26 @@ Requirements for README & Documentation Overhaul. Each maps to roadmap phases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| RDME-01 | TBD | Pending |
-| RDME-02 | TBD | Pending |
-| RDME-03 | TBD | Pending |
-| RDME-04 | TBD | Pending |
-| RDME-05 | TBD | Pending |
-| RDME-06 | TBD | Pending |
-| RDME-07 | TBD | Pending |
-| RDME-08 | TBD | Pending |
-| RDME-09 | TBD | Pending |
-| RDME-10 | TBD | Pending |
-| GUIDE-01 | TBD | Pending |
-| GUIDE-02 | TBD | Pending |
-| VIS-01 | TBD | Pending |
-| VIS-02 | TBD | Pending |
+| RDME-01 | v0.32-01 | Pending |
+| RDME-02 | v0.32-01 | Pending |
+| RDME-03 | v0.32-01 | Pending |
+| RDME-04 | v0.32-01 | Pending |
+| RDME-05 | v0.32-02 | Pending |
+| RDME-06 | v0.32-01 | Pending |
+| RDME-07 | v0.32-01 | Pending |
+| RDME-08 | v0.32-02 | Pending |
+| RDME-09 | v0.32-02 | Pending |
+| RDME-10 | v0.32-02 | Pending |
+| GUIDE-01 | v0.32-03 | Pending |
+| GUIDE-02 | v0.32-03 | Pending |
+| VIS-01 | v0.32-04 | Pending |
+| VIS-02 | v0.32-04 | Pending |
 
 **Coverage:**
 - v0.32 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after initial definition*
+*Last updated: 2026-03-09 after roadmap creation*

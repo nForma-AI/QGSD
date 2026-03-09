@@ -29,3 +29,73 @@
 - ✅ **v0.31 — Ruflo-Inspired Hardening** — Phases v0.31-01..v0.31-03 (shipped 2026-03-08)
 
 > **v0.2 through v0.31 phase details archived to respective milestone ROADMAP files in** `.planning/milestones/`
+
+---
+
+## v0.32 — Documentation & README Overhaul
+
+**Coverage:** 14/14 requirements mapped
+
+### Phases
+
+- [ ] **Phase v0.32-01: README Above-the-Fold Restructure** - Promote TUI hero, add value props, metrics, changelog, and nav to the top of README
+- [ ] **Phase v0.32-02: README Deep Sections** - Add architecture diagram, community section, rebalance Getting Started, fix broken table
+- [ ] **Phase v0.32-03: User Guide Overhaul** - Update User Guide with TUI screenshots and improved Getting Started walkthrough
+- [ ] **Phase v0.32-04: Visual Asset Regeneration** - Regenerate all TUI screenshots and harden VHS tape for CI
+
+### Phase Details
+
+#### Phase v0.32-01: README Above-the-Fold Restructure
+**Goal**: A visitor landing on the README immediately sees what nForma does, who it helps, how it compares, and what it looks like -- all without scrolling
+**Depends on**: Nothing (first phase)
+**Requirements**: RDME-01, RDME-02, RDME-03, RDME-04, RDME-06, RDME-07
+**Success Criteria** (what must be TRUE):
+  1. The TUI section with a hero screenshot is visible without expanding any collapsible element
+  2. "Who This Is For" lists 3-4 concrete problems (blind spots, context rot, oscillation, manual tracking) a reader can self-identify with
+  3. A "With vs. Without" comparison table appears directly after "Who This Is For" showing Claude Code alone vs. with nForma
+  4. A "By the Numbers" section shows at least 5 quantified metrics (agents, commands, requirements, hooks, milestones)
+  5. Nav bar contains anchor links for TUI, Configuration, and Star History sections
+**Plans**: TBD
+
+#### Phase v0.32-02: README Deep Sections
+**Goal**: The README's deeper sections are complete, well-structured, and free of rendering bugs
+**Depends on**: Phase v0.32-01
+**Requirements**: RDME-05, RDME-08, RDME-09, RDME-10
+**Success Criteria** (what must be TRUE):
+  1. "How It Works" contains a visible architecture/flow diagram showing prompt to dispatch to consensus to execute
+  2. A Community/Contributing section appears before Star History with Discord CTA and contribution guidelines
+  3. Getting Started shows install, quorum setup, and first command visible by default; advanced options are collapsed
+  4. The Observability section table renders correctly with no broken markdown (solve screenshot outside table rows)
+**Plans**: TBD
+
+#### Phase v0.32-03: User Guide Overhaul
+**Goal**: A new user can follow the User Guide from install to first successful quorum command using screenshots as visual anchors
+**Depends on**: Phase v0.32-01 (TUI section structure established)
+**Requirements**: GUIDE-01, GUIDE-02
+**Success Criteria** (what must be TRUE):
+  1. Each major User Guide feature section includes at least one TUI screenshot cross-referenced to the feature description
+  2. The Getting Started walkthrough proceeds step-by-step from install through first command with screenshots at each stage
+**Plans**: TBD
+
+#### Phase v0.32-04: Visual Asset Regeneration
+**Goal**: All TUI screenshots reflect the final state of README and User Guide content, generated reliably via automation
+**Depends on**: Phase v0.32-01, Phase v0.32-02, Phase v0.32-03
+**Requirements**: VIS-01, VIS-02
+**Success Criteria** (what must be TRUE):
+  1. All TUI screenshots embedded in README and User Guide are regenerated and match current TUI output
+  2. VHS tape runs successfully with zsh shell, explicit PATH export, and CLAUDECODE unset
+  3. Running the VHS tape twice produces identical screenshot output (deterministic)
+**Plans**: TBD
+
+### Progress
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| v0.32-01. README Above-the-Fold Restructure | 0/? | Not started | - |
+| v0.32-02. README Deep Sections | 0/? | Not started | - |
+| v0.32-03. User Guide Overhaul | 0/? | Not started | - |
+| v0.32-04. Visual Asset Regeneration | 0/? | Not started | - |
+
+---
+*Roadmap created: 2026-03-09*
+*Last updated: 2026-03-09*
