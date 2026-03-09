@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T02:31:45.752Z",
-  "content_hash": "2318ddb506fa3b7c0645190cc02c166bd441d2d74ff08018d1c1ab41ca99cd5e",
+  "aggregated_at": "2026-03-09T07:18:57.236Z",
+  "content_hash": "821fd5c18abec392",
   "schema_version": "1",
   "requirements": [
     {
@@ -3048,6 +3048,30 @@
       ]
     },
     {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
+      }
+    },
+    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -3218,30 +3242,6 @@
       }
     },
     {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
-      }
-    },
-    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -3309,6 +3309,18 @@
         "milestone": "quick-204"
       },
       "background": "Audit of 94 formal models (61 Alloy, 33 TLA+) revealed tautological assertions giving false verification confidence, unbounded TLA+ counters risking state space explosion, and Alloy check commands using overall scopes that under-explore signature combinations."
+    },
+    {
+      "id": "SPEC-07",
+      "text": "QGSDSessionPersistence TLA+ model uses counter-based state tracking (activeCount, persistedCount) instead of set-based tracking to keep TLC model-checking state space within practical bounds while preserving all safety invariants and liveness properties.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The original set-based model used SUBSET types producing 2^10 values per variable, creating billions of reachable states that made TLC model checking impractical. Counter abstraction reduces the state space by ~65,000x while preserving all invariant semantics since only cardinality matters for the session persistence properties.",
+      "provenance": {
+        "source_file": ".planning/quick/235-fix-tla-model-state-space-explosions-and/235-PLAN.md",
+        "milestone": "quick-235"
+      }
     },
     {
       "id": "STATE-01",
@@ -4183,5 +4195,5 @@
     }
   ],
   "total": 283,
-  "frozen_at": "2026-03-09T02:31:45.753Z"
+  "frozen_at": "2026-03-09T07:18:57.237Z"
 }
