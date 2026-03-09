@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T22:11:25.584Z",
+    "generated_at": "2026-03-09T22:12:18.393Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 102
+        "entry_count": 54
       },
       "unit_test_coverage": {
         "available": true,
@@ -54,8 +54,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "AddPreservesValidity",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:account-pool"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -66,8 +66,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "SwitchPreservesValidity",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:account-pool"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -78,8 +78,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "RemovePreservesValidity",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:account-pool"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -90,8 +90,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "SwitchPreservesPool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:account-pool"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -102,8 +102,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "RemoveShrinksPool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:account-pool"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -114,8 +114,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "ParseCorrect",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -135,8 +135,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "YearRolloverHandled",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -156,8 +156,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "FallbackIsNull",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -282,8 +282,8 @@
           "model_file": ".planning/formal/alloy/quorum-composition.als",
           "property_name": "AllRulesHold",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:quorum-composition"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -303,8 +303,8 @@
           "model_file": ".planning/formal/alloy/quorum-composition.als",
           "property_name": "AllRulesHold",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:quorum-composition"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -325,28 +325,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         }
       ],
       "unit_test_coverage": {
@@ -367,28 +367,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "check_id": "alloy:quorum-votes"
         }
       ],
       "unit_test_coverage": {
@@ -420,8 +420,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "VoteCode",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:scoreboard"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -441,8 +441,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "NoVoteLoss",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:scoreboard"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -462,8 +462,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "NoDoubleCounting",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:scoreboard"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -483,8 +483,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "TNplusScoreIsCorrect",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "alloy:scoreboard"
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -897,22 +897,22 @@
           "model_file": ".planning/formal/tla/NFDeliberation.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         }
       ]
     },
@@ -1158,22 +1158,22 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum_xstate.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -1193,15 +1193,15 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "QuorumCeilingMet",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "QuorumCeilingMet",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -1221,8 +1221,8 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "QuorumCeilingMet",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/multi-slot-structure.als",
@@ -1249,8 +1249,8 @@
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "QuorumCeilingMet",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -1270,15 +1270,15 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "AllTransitionsValid",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "AllTransitionsValid",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -10917,8 +10917,8 @@
         "CRED-07"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:account-pool"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/account-pool-structure.als::SwitchPreservesValidity": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10927,8 +10927,8 @@
         "CRED-08"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:account-pool"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/account-pool-structure.als::RemovePreservesValidity": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10937,8 +10937,8 @@
         "CRED-09"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:account-pool"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/account-pool-structure.als::SwitchPreservesPool": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10947,8 +10947,8 @@
         "CRED-10"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:account-pool"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/account-pool-structure.als::RemoveShrinksPool": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10957,8 +10957,8 @@
         "CRED-11"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:account-pool"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/availability-parsing.als::ParseCorrect": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10967,8 +10967,8 @@
         "CALIB-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/availability-parsing.als::YearRolloverHandled": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10977,8 +10977,8 @@
         "CALIB-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/availability-parsing.als::FallbackIsNull": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10987,8 +10987,8 @@
         "CALIB-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/install-scope.als::AllEquivalence": {
       "model_file": ".planning/formal/alloy/install-scope.als",
@@ -11048,8 +11048,8 @@
         "COMP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:quorum-composition"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/quorum-votes.als::ThresholdPasses": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11060,7 +11060,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "alloy:quorum-votes"
     },
     ".planning/formal/alloy/quorum-votes.als::BelowThresholdFails": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11071,7 +11071,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "alloy:quorum-votes"
     },
     ".planning/formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11090,8 +11090,8 @@
         "SCBD-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:scoreboard"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/scoreboard-recompute.als::NoVoteLoss": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11100,8 +11100,8 @@
         "SCBD-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:scoreboard"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/scoreboard-recompute.als::NoDoubleCounting": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11110,8 +11110,8 @@
         "SCBD-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:scoreboard"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/scoreboard-recompute.als::TNplusScoreIsCorrect": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11120,8 +11120,8 @@
         "SCBD-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "alloy:scoreboard"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/taxonomy-safety.als::NoInjection": {
       "model_file": ".planning/formal/alloy/taxonomy-safety.als",
@@ -11360,8 +11360,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -11500,8 +11500,8 @@
         "QUORUM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDQuorum.tla::UnanimityMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11512,7 +11512,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "alloy:quorum-votes"
     },
     ".planning/formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11522,8 +11522,8 @@
         "SLOT-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDQuorum.tla::AllTransitionsValid": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11532,8 +11532,8 @@
         "SAFE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDQuorum.tla::DeliberationBounded": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11552,8 +11552,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11573,8 +11573,8 @@
         "QUORUM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/NFRecruiting.tla::TypeOK": {
       "model_file": ".planning/formal/tla/NFRecruiting.tla",
@@ -16085,8 +16085,8 @@
         "QUORUM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/NFQuorum.tla::UnanimityMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16097,7 +16097,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "check_id": "alloy:quorum-votes"
     },
     ".planning/formal/tla/NFQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16107,8 +16107,8 @@
         "SLOT-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/NFQuorum.tla::AllTransitionsValid": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16117,8 +16117,8 @@
         "SAFE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/NFQuorum.tla::DeliberationBounded": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16137,8 +16137,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -21318,7 +21318,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T22:10:49.860Z",
+    "baseline_date": "2026-03-09T22:11:25.584Z",
     "requirements_checked": 341,
     "regressions": [],
     "summary": {

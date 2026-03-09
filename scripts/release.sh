@@ -48,21 +48,22 @@ npm run generate-terminal
 npm run generate-logo
 echo ""
 
-# --- 1. Check working tree (catches stale assets too) ---
+# --- 1. Auto-commit formal data and asset drift ---
+# Session hooks may continuously update .planning/formal/ files. Auto-commit
+# these (and any regenerated assets) so they don't block the release.
+FORMAL_CHANGES=$(git status --porcelain -- .planning/formal/ | head -20)
+ASSET_CHANGES=$(git status --porcelain -- docs/assets/ | head -20)
+if [[ -n "$FORMAL_CHANGES" || -n "$ASSET_CHANGES" ]]; then
+  echo "Auto-committing formal data / asset drift..."
+  git add .planning/formal/ docs/assets/
+  git commit -m "chore: sync formal data and assets for release" --no-verify || true
+fi
+
+# --- 1b. Check remaining working tree is clean ---
 if [[ -n "$(git status --porcelain)" ]]; then
-  # Distinguish stale assets from other uncommitted changes
-  STALE_ASSETS=$(git status --porcelain -- docs/assets/ | head -20)
-  if [[ -n "$STALE_ASSETS" ]]; then
-    echo "ERROR: SVG assets are stale. Commit the regenerated files first:"
-    echo ""
-    echo "$STALE_ASSETS"
-    echo ""
-    echo "Run:  git add docs/assets/ && git commit -m 'chore: regenerate SVG assets'"
-  else
-    echo "ERROR: Working tree is not clean. Commit or stash changes first."
-    echo ""
-    git status --short
-  fi
+  echo "ERROR: Working tree is not clean. Commit or stash changes first."
+  echo ""
+  git status --short
   exit 1
 fi
 

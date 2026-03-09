@@ -1,5 +1,5 @@
 {
-  "last_run": "2026-03-09T22:10:50.392Z",
+  "last_run": "2026-03-09T22:12:18.896Z",
   "converged": false,
   "iteration_count": 1,
   "final_residual_total": 122,
@@ -36,7 +36,7 @@
     },
     {
       "layer": "l1_to_l2",
-      "residual": 7
+      "residual": 8
     },
     {
       "layer": "l2_to_l3",
