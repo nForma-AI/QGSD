@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T13:52:49.548Z",
+  "generated": "2026-03-09T14:15:47.765Z",
   "methodology": "FMEA (IEC 60812)",
   "scoring_scale": {
     "severity": "1-10: 1=no impact, 2=cosmetic, 4=degraded, 6=stalled/interrupted, 8=incorrect verdict, 10=crash/data loss",
@@ -33,6 +33,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -60,6 +75,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -87,6 +117,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -114,6 +159,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -141,6 +201,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -168,6 +243,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -195,6 +285,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -222,6 +327,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -249,6 +369,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -276,6 +411,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -303,6 +453,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -330,6 +495,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -357,6 +537,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -384,6 +579,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCQGSDQuorum]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -411,6 +621,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     },
@@ -438,6 +663,21 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "alloy/quorum-votes.als",
+          "ref": "quorum vote counting model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "prism/quorum.pm",
+          "ref": "quorum probabilistic model"
+        },
+        {
+          "layer": "L2",
+          "artifact": "tla/NFQuorum.tla",
+          "ref": "quorum protocol TLA+ spec"
         }
       ]
     }
