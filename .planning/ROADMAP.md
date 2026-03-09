@@ -55,7 +55,9 @@
   3. A "With vs. Without" comparison table appears directly after "Who This Is For" showing Claude Code alone vs. with nForma
   4. A "By the Numbers" section shows at least 5 quantified metrics (agents, commands, requirements, hooks, milestones)
   5. Nav bar contains anchor links for TUI, Configuration, and Star History sections
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] v0.32-01-01-PLAN.md — Restructure README above-the-fold with TUI hero, value props, comparison table, metrics, changelog, and expanded nav bar
 
 #### Phase v0.32-02: README Deep Sections
 **Goal**: The README's deeper sections are complete, well-structured, and free of rendering bugs
@@ -91,7 +93,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.32-01. README Above-the-Fold Restructure | 0/? | Not started | - |
+| v0.32-01. README Above-the-Fold Restructure | 0/1 | Planning complete | - |
 | v0.32-02. README Deep Sections | 0/? | Not started | - |
 | v0.32-03. User Guide Overhaul | 0/? | Not started | - |
 | v0.32-04. Visual Asset Regeneration | 0/? | Not started | - |
