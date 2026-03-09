@@ -2746,6 +2746,38 @@ function autoClose(residual) {
     }
   }
 
+  // Evidence readiness check — inform whether evidence supports promotion
+  try {
+    const evidenceDir = path.join(ROOT, '.planning', 'formal', 'evidence');
+    const evidenceFiles = [
+      'instrumentation-map.json', 'state-candidates.json',
+      'failure-taxonomy.json', 'trace-corpus-stats.json', 'proposed-metrics.json'
+    ];
+    let ready = 0;
+    for (const ef of evidenceFiles) {
+      const efPath = path.join(evidenceDir, ef);
+      if (fs.existsSync(efPath)) {
+        try {
+          const data = JSON.parse(fs.readFileSync(efPath, 'utf8'));
+          // Check for non-empty primary array
+          const arrays = Object.values(data).filter(v => Array.isArray(v));
+          if (arrays.some(a => a.length > 0)) ready++;
+        } catch (e) { /* fail-open */ }
+      }
+    }
+    if (ready < 3) {
+      actions.push(
+        'Evidence readiness: ' + ready + '/5 files populated — ' +
+        'gate promotion blocked until >= 3 evidence files have content. ' +
+        'Run `node bin/refresh-evidence.cjs` to populate from traces.'
+      );
+    } else {
+      actions.push('Evidence readiness: ' + ready + '/5 — sufficient for gate promotion');
+    }
+  } catch (e) {
+    // fail-open: evidence check is informational
+  }
+
   return {
     actions_taken: actions,
     stubs_generated: residual.f_to_t.residual > 0 ? 1 : 0,
@@ -2978,8 +3010,9 @@ function formatReport(iterations, finalResidual, converged) {
     // fail-open: complexity profile is informational
   }
 
-  // Combined total across all sections
-  const grandTotal = (finalResidual.total || 0) + rdTotal + layerTotal;
+  // Combined total across all sections (heatmap is informational — not in convergence loop's prevTotal)
+  const hmTotal2 = finalResidual.heatmap_total || 0;
+  const grandTotal = (finalResidual.total || 0) + rdTotal + layerTotal + hmTotal2;
   lines.push('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
   lines.push('Grand total:             ' + grandTotal);
   lines.push('');
@@ -3334,6 +3367,14 @@ function main() {
   const iterations = [];
   let converged = false;
   let prevTotal = null;
+
+  // Refresh evidence files from recent traces before convergence loop
+  if (!reportOnly) {
+    const evResult = spawnTool('bin/refresh-evidence.cjs', ['--json']);
+    if (evResult.ok) {
+      process.stderr.write(TAG + ' Evidence refresh: ' + evResult.stdout.trim() + '\n');
+    }
+  }
 
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
