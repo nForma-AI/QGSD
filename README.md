@@ -25,7 +25,7 @@ npx @nforma.ai/nforma@latest
 
 <br>
 
-[Why nForma](#why-i-built-nforma) · [TUI](#terminal-ui) · [How It Works](#how-it-works) · [Features](#features) · [Commands](#commands) · [Configuration](#configuration-reference) · [Star History](#star-history) · [User Guide](docs/USER-GUIDE.md)
+[Why nForma](#why-i-built-nforma) · [TUI](#terminal-ui) · [How It Works](#how-it-works) · [Features](#features) · [Commands](#commands) · [Configuration](#configuration-reference) · [Community](#community) · [Star History](#star-history) · [User Guide](docs/USER-GUIDE.md)
 
 </div>
 
@@ -120,8 +120,7 @@ The installer prompts you to choose:
 
 Verify with `/nf:help` inside your chosen runtime.
 
-<details>
-<summary><strong>Setting Up Your Quorum</strong></summary>
+### Set Up Your Quorum
 
 The fastest path is the interactive wizard:
 
@@ -129,12 +128,11 @@ The fastest path is the interactive wizard:
 /nf:mcp-setup
 ```
 
-**First run:** linear onboarding — picks provider, configures API key (stored in system keychain), registers MCP server with Claude Code, verifies live connectivity via identity ping.
-
-**Re-run:** navigable agent menu — reconfigure any agent's key, provider, model, or toggle which agents participate in quorum (composition screen).
+**First run:** linear onboarding -- picks provider, configures API key, registers MCP server, verifies connectivity.
+**Re-run:** navigable agent menu -- reconfigure any agent's key, provider, model, or toggle quorum composition.
 
 <details>
-<summary>Manual setup (advanced)</summary>
+<summary><strong>Manual Setup (Advanced)</strong></summary>
 
 All quorum agents run through nForma's **unified MCP server** (`bin/unified-mcp-server.mjs`). There are two agent families:
 
@@ -182,8 +180,6 @@ npx @nforma.ai/nforma@latest --redetect-mcps
 ```
 
 This re-reads `~/.claude.json`, re-derives tool prefixes from your registered servers, and rewrites `~/.claude/nf.json`.
-
-</details>
 
 </details>
 
@@ -285,6 +281,19 @@ If you prefer granular permissions, add this to your project's `.claude/settings
 ---
 
 ## How It Works
+
+```mermaid
+flowchart LR
+    A["User Prompt"] --> B["Orchestrator"]
+    B --> C["Dispatch to\n5 Models"]
+    C --> D["Debate &\nConsensus"]
+    D --> E["Execute with\nFresh Context"]
+    E --> F["Atomic\nCommit"]
+
+    style A fill:#f9f,stroke:#333
+    style D fill:#bbf,stroke:#333
+    style F fill:#bfb,stroke:#333
+```
 
 > **Already have code?** Run `/nf:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/nf:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
 
@@ -759,10 +768,10 @@ Exit code 0 = all checks pass. Exit code 1 = at least one violation or configura
 | `/nf:triage` | Fetch and prioritize issues from GitHub, Sentry, or custom sources |
 | `/nf:solve` | Orchestrated diagnostic → remediation → reporting pipeline |
 | `/nf:session-insights` | Analyze recent session transcripts for friction patterns |
-
-![Solve Diagnostics](docs/assets/tui-solve.png)
 | `/nf:settings` | Configure model profile and workflow agents |
 | `/nf:set-profile <profile>` | Switch model profile (quality/balanced/budget) |
+
+![Solve Diagnostics](docs/assets/tui-solve.png)
 
 </details>
 
@@ -912,6 +921,20 @@ npx @nforma.ai/nforma --opencode --local --uninstall
 This removes all nForma commands, agents, hooks, and settings while preserving your other configurations.
 
 </details>
+
+---
+
+## Community
+
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/M8SevJEuZG)
+
+**Get involved:**
+
+- **Questions or ideas?** Start a [Discussion](https://github.com/nForma-AI/nForma/discussions)
+- **Found a bug?** File an [Issue](https://github.com/nForma-AI/nForma/issues)
+- **Want to contribute?** PRs welcome -- check out issues labeled [`good first issue`](https://github.com/nForma-AI/nForma/labels/good%20first%20issue)
+
+All contributions are welcome.
 
 ---
 
