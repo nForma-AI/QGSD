@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T10:17:54.614Z",
+  "generated": "2026-03-09T13:53:36.542Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -37,7 +37,7 @@
       "risk_context": {
         "severity_class": "degraded",
         "rpn": 160,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -82,7 +82,7 @@
       "risk_context": {
         "severity_class": "stalled",
         "rpn": 240,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -128,7 +128,7 @@
       "risk_context": {
         "severity_class": "stalled",
         "rpn": 240,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -173,7 +173,7 @@
       "risk_context": {
         "severity_class": "degraded",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -218,7 +218,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -263,7 +263,7 @@
       "risk_context": {
         "severity_class": "degraded",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -308,7 +308,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -353,7 +353,7 @@
       "risk_context": {
         "severity_class": "degraded",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -398,7 +398,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -443,7 +443,7 @@
       "risk_context": {
         "severity_class": "stalled",
         "rpn": 240,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -488,7 +488,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 240,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -534,7 +534,7 @@
       "risk_context": {
         "severity_class": "stalled",
         "rpn": 240,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -579,7 +579,7 @@
       "risk_context": {
         "severity_class": "degraded",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -624,7 +624,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 160,
-        "risk_tier": "high"
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -668,8 +668,8 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 144,
-        "risk_tier": "medium"
+        "rpn": 192,
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -714,8 +714,8 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 144,
-        "risk_tier": "medium"
+        "rpn": 192,
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -759,8 +759,8 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 192,
-        "risk_tier": "medium"
+        "rpn": 256,
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -805,8 +805,8 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 192,
-        "risk_tier": "medium"
+        "rpn": 256,
+        "risk_tier": "critical"
       },
       "derived_from": [
         {
@@ -895,7 +895,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 96,
+        "rpn": 64,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -940,7 +940,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 96,
+        "rpn": 64,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -1122,7 +1122,7 @@
       "risk_context": {
         "severity_class": "cosmetic",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1167,7 +1167,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1212,7 +1212,7 @@
       "risk_context": {
         "severity_class": "cosmetic",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1257,7 +1257,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1302,7 +1302,7 @@
       "risk_context": {
         "severity_class": "cosmetic",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1347,7 +1347,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1392,7 +1392,7 @@
       "risk_context": {
         "severity_class": "cosmetic",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1437,7 +1437,7 @@
       "risk_context": {
         "severity_class": "model_gap",
         "rpn": 80,
-        "risk_tier": "medium"
+        "risk_tier": "high"
       },
       "derived_from": [
         {
@@ -1461,9 +1461,10 @@
       "commission": 11
     },
     "by_risk_tier": {
-      "medium": 15,
-      "high": 16,
-      "low": 1
+      "high": 14,
+      "critical": 15,
+      "low": 1,
+      "medium": 2
     }
   }
 }
