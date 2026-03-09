@@ -21,7 +21,7 @@
 //   Traceability (3) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //                      check-coverage-guard.cjs (coverage regression guard vs baseline)
 //                      analyze-state-space.cjs (state-space risk classification per TLA+ model)
-//   Gates     (3)  — gate-a-grounding.cjs, gate-b-abstraction.cjs, gate-c-validation.cjs
+//   Gates     (1)  — compute-per-model-gates.cjs --aggregate
 //   Registry  (N)  — custom check commands from model-registry.json
 //   ─────────────────────────────────────────────────────────────
 //   Total:    37+ steps (dynamic — registry can add more)
