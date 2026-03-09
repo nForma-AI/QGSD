@@ -2374,7 +2374,7 @@ ${nudge}
   ${dim}TUI dashboard:${reset} ${cyan}npx @nforma.ai/nforma tui${reset}
   ${dim}Or install globally:${reset} ${cyan}npm install -g @nforma.ai/nforma${reset} → then run ${cyan}nforma${reset}
 
-  ${cyan}Join the community:${reset} https://discord.gg/5JJgD5svVS
+  ${cyan}Join the community:${reset} https://discord.gg/M8SevJEuZG
 `);
 
   // Best-effort formal tools — always runs after success banner, never blocks main install
