@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T12:18:39.335Z",
-  "content_hash": "e44122f8af573e11",
+  "aggregated_at": "2026-03-09T20:24:05.793Z",
+  "content_hash": "18c45f60098e6c59",
   "schema_version": "1",
   "requirements": [
     {
@@ -1997,6 +1997,18 @@
       "provenance": {
         "source_file": ".planning/quick/190-review-and-validate-session-persistence-/190-PLAN.md",
         "milestone": "quick-190"
+      }
+    },
+    {
+      "id": "NAV-05",
+      "text": "Browse Reqs view displays requirements in a two-level hierarchy with 8 principles as top-level groups and filtered specification lists under each, with live counts derived from requirements.json replacing hardcoded mock data.",
+      "category": "TUI Navigation",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The previous Browse Reqs view showed a flat list of 308 requirements with no logical grouping and hardcoded mock stats. A principle-based hierarchy lets users understand requirement coverage at a glance and navigate to specific specification subsets.",
+      "provenance": {
+        "source_file": ".planning/quick/249-fix-tui-requirements-view-to-show-two-le/249-PLAN.md",
+        "milestone": "quick-249"
       }
     },
     {
