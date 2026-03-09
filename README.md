@@ -112,6 +112,15 @@ The deeper goal: the first truly autonomous coding agent that only escalates to 
 
 ## Getting Started
 
+**Node.js support:**
+
+| Node.js | Status | CI tested |
+|---------|--------|-----------|
+| 22.x | Fully supported | Ubuntu + macOS |
+| 20.x | Fully supported | Ubuntu + macOS |
+| 18.x | Fully supported | Ubuntu + macOS |
+| < 18 | Not supported | — |
+
 ```bash
 npx @nforma.ai/nforma@latest
 ```

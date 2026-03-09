@@ -44,7 +44,7 @@
     "url": "https://github.com/nForma-AI/nForma/issues"
   },
   "engines": {
-    "node": ">=16.7.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@xterm/headless": "^5.5.0",
