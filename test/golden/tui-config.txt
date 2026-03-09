@@ -12,7 +12,7 @@
   [90m██▀[0m                               [37mworkflow.research[0m           [32mtrue[0m                                                    
   [90m█ █[0m                               [37mworkflow.plan_check[0m         [32mtrue[0m                                                    
    [90mF2[0m                              [37mworkflow.verifier[0m           [32mtrue[0m                                                    
-  [90m─────[0m                             [37mworkflow.auto_advance[0m       [90mfalse[0m                                                   
+  [90m─────[0m                             [37mworkflow.auto_advance[0m       [32mtrue[0m                                                    
                                     [37mparallelization.enabled[0m     [32mtrue[0m                                                    
   [36m▄▀▀[0m                               [37mnyquist_validation[0m          [32mtrue[0m                                                    
   [36m█  [0m                               [37mgit.branching_strategy[0m      [36mnone[0m                                                    

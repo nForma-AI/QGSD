@@ -1,26 +1,42 @@
 {
-  "last_run": "2026-03-09T18:33:23.077Z",
+  "last_run": "2026-03-09T21:35:25.848Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 23,
-  "reverse_discovery_total": 309,
-  "heatmap_total": 6205,
+  "final_residual_total": 151,
+  "reverse_discovery_total": 330,
+  "heatmap_total": 6238,
   "known_issues": [
+    {
+      "layer": "r_to_f",
+      "residual": 90
+    },
+    {
+      "layer": "f_to_t",
+      "residual": 5
+    },
+    {
+      "layer": "f_to_c",
+      "residual": 29
+    },
+    {
+      "layer": "r_to_d",
+      "residual": 4
+    },
     {
       "layer": "d_to_c",
       "residual": 23
     },
     {
       "layer": "c_to_r",
-      "residual": 122
+      "residual": 134
     },
     {
       "layer": "t_to_r",
-      "residual": 176
+      "residual": 175
     },
     {
       "layer": "d_to_r",
-      "residual": 11
+      "residual": 21
     },
     {
       "layer": "l1_to_l2",
@@ -36,7 +52,7 @@
     },
     {
       "layer": "git_heatmap",
-      "residual": 6205
+      "residual": 6238
     },
     {
       "layer": "git_history",
@@ -44,11 +60,11 @@
     },
     {
       "layer": "hazard_model",
-      "residual": 9
+      "residual": 3
     }
   ],
   "r_to_f_progress": {
-    "total": 308,
+    "total": 322,
     "covered": 0,
     "percentage": "0.0"
   }

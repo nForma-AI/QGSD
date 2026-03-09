@@ -543,6 +543,8 @@ function removePersistedSession(claudeSessionId) {
 let activeModuleIdx = 0;
 
 function switchModule(idx) {
+  // Dismiss any open modal (e.g. promptList) before switching
+  dismissActiveModal();
   // Hide active terminal when leaving Sessions module
   if (activeModuleIdx === 3 && activeSessionIdx >= 0 && activeSessionIdx < sessions.length) {
     sessions[activeSessionIdx].term.hide();
@@ -588,11 +590,15 @@ function switchModule(idx) {
     return;
   }
 
-  // Auto-show first item's content (skip separators, use view-only for interactive actions)
+  // Auto-show first item's content (skip interactive actions that open modals)
+  const interactive = new Set(['req-browse', 'req-traceability', 'req-aggregate']);
   const first = mod.items[0];
-  if (first && first.action !== 'sep') {
+  if (first && first.action !== 'sep' && !interactive.has(first.action)) {
     const viewAction = first.action === 'settings' ? 'settings-view' : first.action;
     dispatch(viewAction);
+  } else if (first && interactive.has(first.action)) {
+    // Show static overview instead of opening a modal
+    dispatch('req-coverage');
   }
 }
 
@@ -1052,27 +1058,19 @@ const header = blessed.box({
 });
 
 function renderHeader() {
-  const logo = ` {#f4956a-fg}{bold}n{/bold}{/}{#7dcfff-fg}{bold}Forma{/bold}{/} {#f4956a-fg}AI{/} {${S.dim}-fg}· agent manager{/}`;
   const A = S.accent;
-  const keys = `{${A}-fg}[F1]{/} Agt  {${A}-fg}[F2]{/} Req  {${A}-fg}[F3]{/} Cfg  {${A}-fg}[F4]{/} Ses  {${A}-fg}[F5]{/} Sol  {${A}-fg}[Tab]{/} cycle  {${A}-fg}[C-\\]{/} menu  {${A}-fg}[q]{/} quit `;
-  const w = screen.width || 120;
-  // Strip blessed tags to get actual visual widths
-  const stripTags = s => s.replace(/\{[^}]*\}/g, '');
-  const logoVis = stripTags(logo).length;
-  const keysVis = stripTags(keys).length;
-  const gap = Math.max(2, w - logoVis - keysVis - 2); // -2 for border
-  const line1 = logo + ' '.repeat(gap) + keys;
-
-  // Line 2: target path with edit hint
+  // Line 1: logo + module keys only (short — guarantees no wrap)
+  const line1 = ` {#f4956a-fg}{bold}n{/bold}{/}{#7dcfff-fg}{bold}Forma{/bold}{/} {#f4956a-fg}AI{/}  {${A}-fg}[F1]{/}Agt {${A}-fg}[F2]{/}Req {${A}-fg}[F3]{/}Cfg {${A}-fg}[F4]{/}Ses {${A}-fg}[F5]{/}Sol  {${A}-fg}[Tab]{/} {${A}-fg}[C-\\]{/} {${A}-fg}[q]{/}`;
+  // Line 2: target path
   const tp = getTargetPath();
   const home = os.homedir();
   const display = tp.startsWith(home) ? '~' + tp.slice(home.length) : tp;
-  const maxPathLen = Math.max(20, w - 22);
+  const iw = header.iwidth || (screen.width ? screen.width - 2 : 118);
+  const maxPathLen = Math.max(20, iw - 20);
   const truncated = display.length > maxPathLen
     ? '…' + display.slice(display.length - maxPathLen + 1)
     : display;
-  const line2 = ` {${S.dim}-fg}Target:{/} {${S.accent}-fg}${truncated}{/}  {${S.dim}-fg}[C-t] change{/}`;
-
+  const line2 = ` {${S.dim}-fg}Target path:{/} {${A}-fg}${truncated}{/}  {${S.dim}-fg}[ctrl-t] change{/}`;
   header.setContent(line1 + '\n' + line2);
   screen.render();
 }
@@ -1276,6 +1274,18 @@ function promptInput(opts) {
   });
 }
 
+let _activeModal = null;
+function dismissActiveModal() {
+  if (_activeModal) {
+    const m = _activeModal;
+    _activeModal = null;
+    try { screen.remove(m.box); } catch (_) {}
+    menuList.focus();
+    screen.render();
+    if (m.reject) m.reject(new Error('dismissed'));
+  }
+}
+
 function promptList(opts) {
   return new Promise((resolve, reject) => {
     const height = Math.min((opts.items || []).length + 4, 20);
@@ -1293,17 +1303,13 @@ function promptList(opts) {
       items: (opts.items || []).map(i => '  ' + i.label),
       shadow: true,
     });
+    _activeModal = { box, reject };
     screen.append(box);
     box.focus();
     screen.render();
-    box.on('select', (_, idx) => {
-      screen.remove(box); menuList.focus(); screen.render();
-      resolve(opts.items[idx]);
-    });
-    box.key(['escape', 'q'], () => {
-      screen.remove(box); menuList.focus(); screen.render();
-      reject(new Error('cancelled'));
-    });
+    const cleanup = () => { _activeModal = null; screen.remove(box); menuList.focus(); screen.render(); };
+    box.on('select', (_, idx) => { cleanup(); resolve(opts.items[idx]); });
+    box.key(['escape', 'q'], () => { cleanup(); reject(new Error('cancelled')); });
   });
 }
 
@@ -4093,35 +4099,13 @@ if (!process.env.NF_TEST_MODE) {
     refreshStatusBar();
   }
   renderList();
+  screen.on('resize', () => { renderHeader(); refreshStatusBar(); renderList(); });
   screen.render();
 
-  // ─── Startup target-path modal (if not set via --target) ──────────────────
+  // Default target path to cwd if not set via --target
   if (!targetPath) {
-    (async () => {
-      try {
-        const chosen = await promptInput({
-          title: 'Target Path',
-          prompt: 'Project working directory:',
-          default: process.cwd(),
-        });
-        if (chosen) {
-          const resolved = path.resolve(chosen);
-          if (fs.existsSync(resolved)) {
-            targetPath = resolved;
-          } else {
-            toast(`Path does not exist: ${resolved}`, true);
-            targetPath = process.cwd();
-          }
-        } else {
-          targetPath = process.cwd();
-        }
-      } catch (_) {
-        // User pressed Esc — default to cwd
-        targetPath = process.cwd();
-      }
-      renderHeader();
-      refreshStatusBar();
-    })();
+    targetPath = process.cwd();
+    renderHeader();
   }
 }
 

@@ -1,22 +1,605 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T18:29:47.766Z",
-  "total_failures": 0,
+  "generated": "2026-03-09T21:38:57.453Z",
+  "total_failures": 29,
   "categories": {
     "crash": [],
     "timeout": [],
-    "logic_violation": [],
-    "drift": [],
+    "logic_violation": [
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:44.006Z",
+        "check_id": "tla:mctuisessions",
+        "surface": "tla",
+        "property": "MCTUISessions",
+        "runtime_ms": 364,
+        "summary": "fail: MCTUISessions in 364ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCTUISessions"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUISessions in 364ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:44.208Z",
+        "check_id": "tla:mcp-environment",
+        "surface": "tla",
+        "property": "MCP environment — MCPEnvSafety, MCPEnvLiveness",
+        "runtime_ms": 256,
+        "summary": "fail: MCMCPEnv in 256ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "MCPENV-01",
+          "MCPENV-02",
+          "MCPENV-03"
+        ],
+        "metadata": {
+          "config": "MCMCPEnv"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCMCPEnv in 256ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:44.394Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 316,
+        "summary": "fail: MCaccount-manager in 316ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 316ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:44.632Z",
+        "check_id": "tla:mcqgsdquorum",
+        "surface": "tla",
+        "property": "MCQGSDQuorum",
+        "runtime_ms": 283,
+        "summary": "fail: MCQGSDQuorum in 283ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCQGSDQuorum"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCQGSDQuorum in 283ms"
+      },
+      {
+        "tool": "run-breaker-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:46.209Z",
+        "check_id": "tla:breaker",
+        "surface": "tla",
+        "property": "Circuit breaker state persistence and oscillation detection algorithm",
+        "runtime_ms": 218,
+        "summary": "fail: MCbreaker in 218ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-01",
+          "DETECT-02",
+          "DETECT-03"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker in 218ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:46.333Z",
+        "check_id": "tla:mctuinavigation",
+        "surface": "tla",
+        "property": "MCTUINavigation",
+        "runtime_ms": 232,
+        "summary": "fail: MCTUINavigation in 232ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCTUINavigation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUINavigation in 232ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:46.510Z",
+        "check_id": "tla:mccheckpointgate",
+        "surface": "tla",
+        "property": "MCcheckpointgate",
+        "runtime_ms": 228,
+        "summary": "fail: MCcheckpointgate in 228ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCcheckpointgate"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCcheckpointgate in 228ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:46.700Z",
+        "check_id": "tla:mctuisessions",
+        "surface": "tla",
+        "property": "MCTUISessions",
+        "runtime_ms": 246,
+        "summary": "fail: MCTUISessions in 246ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCTUISessions"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUISessions in 246ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:46.888Z",
+        "check_id": "tla:mcci-checks",
+        "surface": "tla",
+        "property": "MCci-checks",
+        "runtime_ms": 290,
+        "summary": "fail: MCci-checks in 290ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCci-checks"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCci-checks in 290ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:47.096Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 266,
+        "summary": "fail: MCaccount-manager in 266ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 266ms"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:47.264Z",
+        "check_id": "tla:convergence",
+        "surface": "tla",
+        "property": "Haiku convergence — OscillationConvergence liveness property",
+        "runtime_ms": 289,
+        "summary": "fail: MCconvergence in 289ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "ORES-01",
+          "ORES-02",
+          "ORES-03",
+          "ORES-04",
+          "ORES-05"
+        ],
+        "metadata": {
+          "config": "MCconvergence"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCconvergence in 289ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:47.487Z",
+        "check_id": "tla:mcactivity",
+        "surface": "tla",
+        "property": "MCactivity",
+        "runtime_ms": 260,
+        "summary": "fail: MCactivity in 260ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCactivity"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCactivity in 260ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:47.921Z",
+        "check_id": "tla:mcagent-prov",
+        "surface": "tla",
+        "property": "MCagent-prov",
+        "runtime_ms": 282,
+        "summary": "fail: MCagent-prov in 282ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCagent-prov"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCagent-prov in 282ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:48.332Z",
+        "check_id": "tla:mcbreaker-state",
+        "surface": "tla",
+        "property": "MCbreaker-state",
+        "runtime_ms": 281,
+        "summary": "fail: MCbreaker-state in 281ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCbreaker-state"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker-state in 281ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:48.530Z",
+        "check_id": "tla:mcdispatch",
+        "surface": "tla",
+        "property": "MCdispatch",
+        "runtime_ms": 338,
+        "summary": "fail: MCdispatch in 338ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdispatch"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCdispatch in 338ms"
+      },
+      {
+        "tool": "run-breaker-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:49.006Z",
+        "check_id": "tla:breaker",
+        "surface": "tla",
+        "property": "Circuit breaker state persistence and oscillation detection algorithm",
+        "runtime_ms": 530,
+        "summary": "fail: MCbreaker in 530ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-01",
+          "DETECT-02",
+          "DETECT-03"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker in 530ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:49.587Z",
+        "check_id": "tla:mcenforcement",
+        "surface": "tla",
+        "property": "MCenforcement",
+        "runtime_ms": 939,
+        "summary": "fail: MCenforcement in 939ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCenforcement"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCenforcement in 939ms"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:55.321Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 1492,
+        "summary": "fail: MCoscillation in 1492ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCoscillation in 1492ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:56.691Z",
+        "check_id": "tla:mcrecruiting-liveness",
+        "surface": "tla",
+        "property": "MCrecruiting-liveness",
+        "runtime_ms": 233,
+        "summary": "fail: MCrecruiting-liveness in 233ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCrecruiting-liveness"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCrecruiting-liveness in 233ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:56.823Z",
+        "check_id": "tla:quorum-liveness",
+        "surface": "tla",
+        "property": "Liveness — EventuallyDecided, EventuallyTerminates",
+        "runtime_ms": 267,
+        "summary": "fail: MCliveness in 267ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-04",
+          "RECV-01"
+        ],
+        "metadata": {
+          "config": "MCliveness"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCliveness in 267ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.027Z",
+        "check_id": "tla:mcrecruiting-safety",
+        "surface": "tla",
+        "property": "MCrecruiting-safety",
+        "runtime_ms": 247,
+        "summary": "fail: MCrecruiting-safety in 247ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCrecruiting-safety"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCrecruiting-safety in 247ms"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.232Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 270,
+        "summary": "fail: MCoscillation in 270ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCoscillation in 270ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.412Z",
+        "check_id": "tla:quorum-safety",
+        "surface": "tla",
+        "property": "Safety invariants — TypeInvariant, SafetyInvariant, no deadlock",
+        "runtime_ms": 307,
+        "summary": "fail: MCsafety in 307ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-01",
+          "QUORUM-02",
+          "QUORUM-03",
+          "SAFE-01",
+          "SAFE-02",
+          "SAFE-03",
+          "LOOP-01"
+        ],
+        "metadata": {
+          "config": "MCsafety"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCsafety in 307ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.597Z",
+        "check_id": "tla:mcportability",
+        "surface": "tla",
+        "property": "MCportability",
+        "runtime_ms": 237,
+        "summary": "fail: MCportability in 237ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCportability"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCportability in 237ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.772Z",
+        "check_id": "tla:mcsensitivity",
+        "surface": "tla",
+        "property": "MCsensitivity",
+        "runtime_ms": 283,
+        "summary": "fail: MCsensitivity in 283ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCsensitivity"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCsensitivity in 283ms"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:57.989Z",
+        "check_id": "tla:prefilter",
+        "surface": "tla",
+        "property": "R4 pre-filter protocol — max 3 rounds bounded termination",
+        "runtime_ms": 263,
+        "summary": "fail: MCprefilter in 263ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PLAN-03",
+          "PLAN-04",
+          "PLAN-05",
+          "PLAN-06",
+          "LOOP-03"
+        ],
+        "metadata": {
+          "config": "MCprefilter"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCprefilter in 263ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:58.140Z",
+        "check_id": "tla:mcspec-gen",
+        "surface": "tla",
+        "property": "MCspec-gen",
+        "runtime_ms": 295,
+        "summary": "fail: MCspec-gen in 295ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCspec-gen"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCspec-gen in 295ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:31:58.374Z",
+        "check_id": "tla:mcprompt-hook",
+        "surface": "tla",
+        "property": "MCprompt-hook",
+        "runtime_ms": 249,
+        "summary": "fail: MCprompt-hook in 249ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCprompt-hook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCprompt-hook in 249ms"
+      }
+    ],
+    "drift": [
+      {
+        "tool": "validate-traces",
+        "formalism": "trace",
+        "result": "fail",
+        "timestamp": "2026-03-09T21:33:08.691Z",
+        "check_id": "ci:conformance-traces",
+        "surface": "ci",
+        "property": "Conformance event replay through XState machine",
+        "runtime_ms": 18,
+        "summary": "fail: 1 divergence(s) in 1 traces (18ms)",
+        "triage_tags": [
+          "trace-divergence"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "divergences": 1,
+          "total": 1
+        },
+        "observation_window": {
+          "window_start": "2026-03-09T21:33:08.677Z",
+          "window_end": "2026-03-09T21:33:08.677Z",
+          "n_traces": 0,
+          "n_events": 1,
+          "window_days": 0
+        },
+        "category": "drift",
+        "classification_reason": "Trace divergence: 1 divergence(s) detected"
+      }
+    ],
     "degradation": []
   },
   "category_counts": {
     "crash": 0,
     "timeout": 0,
-    "logic_violation": 0,
-    "drift": 0,
+    "logic_violation": 28,
+    "drift": 1,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "0 failures classified: crash=0, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
+  "summary": "29 failures classified: crash=0, timeout=0, logic_violation=28, drift=1, degradation=0. 0 unclassified."
 }

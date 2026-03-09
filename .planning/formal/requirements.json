@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-09T20:24:05.793Z",
-  "content_hash": "18c45f60098e6c59",
-  "schema_version": "1",
+  "aggregated_at": "2026-03-09T21:28:34.707Z",
+  "content_hash": "sha256:679c22e1722e5531a2ba69bb64d999b2f6ff834f91263cb2881440bf00c17dc0",
+  "frozen_at": null,
   "requirements": [
     {
       "id": "ACT-01",
@@ -13,10 +13,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-02",
@@ -28,10 +28,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-03",
@@ -43,10 +43,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-04",
@@ -58,10 +58,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-05",
@@ -73,10 +73,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-06",
@@ -88,10 +88,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
     },
     {
       "id": "ACT-07",
@@ -103,10 +103,32 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Activity Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDActivityTracking.tla"
-      ]
+      ],
+      "category_raw": "Activity Tracking"
+    },
+    {
+      "id": "ADAPT-01",
+      "text": "Config values are normalized through a bidirectional adapter (e.g., profile names, boolean strings, nested vs flat keys) so internal types never leak to config files and vice versa",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "ADR-01",
+      "text": "Quorum debates in `.planning/quorum/debates/` follow a consistent template (Context, Question, Positions, Decision, Consequences) that downstream tools can parse",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
     },
     {
       "id": "AGENT-01",
@@ -118,10 +140,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Agent Roster",
       "formal_models": [
         ".planning/formal/tla/QGSDAgentProvisioning.tla"
-      ]
+      ],
+      "category_raw": "Agent Roster"
     },
     {
       "id": "AGENT-02",
@@ -133,10 +155,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Agent Roster",
       "formal_models": [
         ".planning/formal/tla/QGSDAgentProvisioning.tla"
-      ]
+      ],
+      "category_raw": "Agent Roster"
     },
     {
       "id": "AGENT-03",
@@ -149,21 +171,6 @@
         "milestone": "unknown"
       },
       "category_raw": "Agent Roster"
-    },
-    {
-      "id": "AGT-01",
-      "text": "Subagents spawned by QGSD skills MUST loop autonomously until a terminal condition is reached. Valid terminal conditions: (1) success — the goal is verifiably met, (2) iteration cap exhausted (default max 5), (3) unrecoverable — all available paths are low-confidence or unavailable. Returning a message instructing the user to \"run again\" or \"re-invoke\" instead of looping is a violation.",
-      "category": "Agent Behavior",
-      "phase": "unknown",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "unknown"
-      },
-      "category_raw": "Agent Behavior",
-      "formal_models": [
-        ".planning/formal/tla/QGSDAgentLoop.tla"
-      ]
     },
     {
       "id": "ANNOT-01",
@@ -227,7 +234,7 @@
     },
     {
       "id": "ARCH-01",
-      "text": "All formal models declared in `.planning/formal/model-registry.json` as single source of truth with provenance tracking",
+      "text": "All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking",
       "category": "Quorum & Dispatch",
       "phase": "v0.21-01",
       "status": "Complete",
@@ -235,10 +242,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Architecture",
       "formal_models": [
         ".planning/formal/alloy/architecture-registry.als"
-      ]
+      ],
+      "category_raw": "Architecture"
     },
     {
       "id": "ARCH-02",
@@ -250,10 +257,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Architecture",
       "formal_models": [
         ".planning/formal/alloy/architecture-registry.als"
-      ]
+      ],
+      "category_raw": "Architecture"
     },
     {
       "id": "ARCH-03",
@@ -270,20 +277,56 @@
     {
       "id": "ARCH-10",
       "text": "QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter",
-      "category": "Architecture",
-      "phase": "v0.26-01",
-      "status": "Pending",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.26-05",
+      "status": "Complete",
       "provenance": {
-        "source_file": "manual",
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
         "milestone": "v0.26"
       },
       "formal_models": [
         ".planning/formal/alloy/codebase-arch-constraints.als"
-      ]
+      ],
+      "category_raw": "Architecture"
+    },
+    {
+      "id": "BLD-01",
+      "text": "`hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 and GUARD 5 code from Phase 5",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Build & Test"
+    },
+    {
+      "id": "BLD-02",
+      "text": "`npm test` passes with 0 failures across all test suites (config-loader, stop hook, circuit breaker)",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Build & Test"
+    },
+    {
+      "id": "BRKR-01",
+      "text": "When circuit breaker fires, the oscillation trigger pattern (file set, alternation count, time window) is persisted to `.planning/formal/evidence/` so future sessions can preemptively avoid the same signature",
+      "category": "Quality Hardening",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
     },
     {
       "id": "CALIB-01",
-      "text": "`.planning/formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
+      "text": "`.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-02",
       "status": "Complete",
@@ -328,7 +371,7 @@
     },
     {
       "id": "CALIB-04",
-      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.planning/formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
+      "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
       "category": "Quorum & Dispatch",
       "phase": "v0.19-10",
       "status": "Complete",
@@ -336,20 +379,20 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Calibration Governance",
       "formal_models": [
         ".planning/formal/alloy/provider-failure.als"
-      ]
+      ],
+      "category_raw": "Calibration Governance"
     },
     {
       "id": "CI-01",
-      "text": "Automated test suite runs on every pull request and merge to main is blocked when tests fail",
+      "text": "Test suite runs on every commit",
       "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
@@ -357,13 +400,13 @@
     },
     {
       "id": "CI-02",
-      "text": "Linting and formatting checks run in CI and block merge on violations",
+      "text": "Lint and type checks run in CI",
       "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
@@ -371,32 +414,41 @@
     },
     {
       "id": "CI-03",
-      "text": "Type checking (if applicable to the language) runs in CI and blocks merge on type errors",
+      "text": "Build artifacts are reproducible",
       "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
       ]
     },
     {
-      "id": "CI-04",
-      "text": "Full-suite test fallback enumerates files via find (never raw globs), enforces --test-timeout=15000 per file and a 5-minute Bash timeout, and treats timeout as pass-with-warning when task-specific tests already passed.",
-      "category": "CI/CD",
+      "id": "CL-01",
+      "text": "CHANGELOG.md has a `[0.2.0]` entry covering all v0.2 changes: circuit breaker (Phases 6–8), GUARD 5 gap closure (Phase 5), QGSD rebranding, quorum scoring, quorum commands, debug flow, checkpoint:verify (quick tasks 1–12)",
+      "category": "Installer & CLI",
       "phase": "unknown",
       "status": "Complete",
-      "background": "Raw glob patterns passed to node --test cause zsh fatal errors when no files match, and the 373+ test file suite exceeds the default 2-minute Bash timeout, leading to hangs and retry loops. This requirement codifies find-based enumeration and layered timeouts as mandatory patterns in the quick workflow.",
       "provenance": {
-        "source_file": ".planning/quick/174-harden-test-runner-against-glob-failures/174-PLAN.md",
-        "milestone": "quick-174"
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
-      "formal_models": [
-        ".planning/formal/alloy/ci-test-fallback.als"
-      ]
+      "category_raw": "Changelog"
+    },
+    {
+      "id": "CL-02",
+      "text": "CHANGELOG.md `[Unreleased]` section is cleared after the `[0.2.0]` entry is finalized — clean slate for v0.3+",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Changelog"
     },
     {
       "id": "COMP-01",
@@ -423,10 +475,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config",
       "formal_models": [
         ".planning/formal/alloy/quorum-policy.als"
-      ]
+      ],
+      "category_raw": "Composition Config"
     },
     {
       "id": "COMP-03",
@@ -438,10 +490,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config",
       "formal_models": [
         ".planning/formal/alloy/quorum-policy.als"
-      ]
+      ],
+      "category_raw": "Composition Config"
     },
     {
       "id": "COMP-04",
@@ -453,10 +505,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Composition Config",
       "formal_models": [
         ".planning/formal/alloy/quorum-policy.als"
-      ]
+      ],
+      "category_raw": "Composition Config"
     },
     {
       "id": "CONF-01",
@@ -528,10 +580,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions",
       "formal_models": [
         ".planning/formal/alloy/config-two-layer.als"
-      ]
+      ],
+      "category_raw": "Config Extensions"
     },
     {
       "id": "CONF-07",
@@ -543,10 +595,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions",
       "formal_models": [
         ".planning/formal/alloy/config-two-layer.als"
-      ]
+      ],
+      "category_raw": "Config Extensions"
     },
     {
       "id": "CONF-08",
@@ -570,121 +622,49 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Config Extensions",
       "formal_models": [
         ".planning/formal/alloy/config-two-layer.als"
-      ]
-    },
-    {
-      "id": "CONF-10",
-      "text": "Configuration layer validates and gracefully degrades when providers.json contains zero providers, falling back to solo quorum mode with clear diagnostic messages",
-      "category": "Configuration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Empty roster (no MCP providers configured) previously caused undefined property access crashes in quorum dispatch, TUI scoreboard rendering, and probe tooling. This requirement ensures the system detects empty provider arrays at multiple entry points and provides safe fallback behavior with actionable error messages, making misconfiguration scenarios debuggable and enabling graceful single-agent operation.",
-      "provenance": {
-        "source_file": ".planning/quick/137-fix-empty-roster-handling-add-validation/137-PLAN.md",
-        "milestone": "quick-137"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/config-zero-providers.als"
-      ]
-    },
-    {
-      "id": "CONF-11",
-      "text": "Global polyrepo registry at ~/.claude/polyrepos/<name>.json and per-repo marker at .planning/polyrepo.json enable named groups of related repositories with cross-repo awareness support",
-      "category": "Configuration",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/147-add-polyrepo-config-support-global-confi/147-PLAN.md",
-        "milestone": "quick-147"
-      },
-      "category_raw": "Configuration",
-      "formal_models": [
-        ".planning/formal/alloy/polyrepo-config.als"
-      ]
-    },
-    {
-      "id": "CONF-12",
-      "text": "Per-repo marker at .planning/polyrepo.json supports an optional `docs` field with merge-semantic key-value pairs (user, developer, examples, or custom) identifying documentation and example locations relative to the repo root",
-      "category": "Configuration",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "bin/polyrepo.cjs",
-        "milestone": "quick-147"
-      },
-      "category_raw": "Configuration",
-      "formal_models": [
-        ".planning/formal/alloy/polyrepo-config.als"
-      ]
-    },
-    {
-      "id": "CONF-13",
-      "text": "Config audit script (bin/config-audit.cjs) cross-references providers.json against nf.json agent_config, detects the all-default auth_type=api anti-pattern that defeats FALLBACK-01 tiered quorum fallback, outputs structured JSON warnings, and is invoked fail-open in solve Step 0b.",
-      "category": "Configuration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "When agent_config is empty, all quorum slots default to auth_type=api, making the T1 (subscription-tier) set permanently empty and silently defeating FALLBACK-01 tiered fallback. The config audit detects this anti-pattern at solve startup and warns the operator, with a regression test (TC-PROMPT-FALLBACK-EMPTY-AGENTCONFIG) proving the simple failover rule is used instead of the tiered sequence.",
-      "provenance": {
-        "source_file": ".planning/quick/214-add-bin-config-audit-cjs-to-cross-refere/214-PLAN.md",
-        "milestone": "quick-214"
-      }
+      ],
+      "category_raw": "Config Extensions"
     },
     {
       "id": "CRED-01",
       "text": "User can rotate API keys across multiple slots in a single batch flow from the main menu",
       "category": "Configuration",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-02",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
       "formal_models": [
         ".planning/formal/tla/QGSDAccountManager.tla"
-      ],
-      "category_raw": "Credentials"
+      ]
     },
     {
       "id": "CRED-02",
       "text": "Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)",
       "category": "Configuration",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-02",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
       "formal_models": [
         ".planning/formal/tla/QGSDAccountManager.tla"
-      ],
-      "category_raw": "Credentials"
-    },
-    {
-      "id": "CRED-12",
-      "text": "Account and credential management modules (account-manager, CCR secure config/start, GitHub account rotation) SHALL have @requirement annotations and test tracing.",
-      "category": "Credentials & Account Management",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "4 credential management modules lack requirement tracing. Extends the existing CRED-* prefix to cover the full account management toolchain.",
-      "provenance": {
-        "source_file": "reverse-discovery",
-        "milestone": "solve-iteration-1"
-      }
+      ]
     },
     {
       "id": "DASH-01",
       "text": "User can open a live health dashboard from main menu showing all slots' provider, model, and health status",
       "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-04",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Dashboard",
       "formal_models": [
         ".planning/formal/tla/QGSDDashboard.tla"
       ]
@@ -693,13 +673,12 @@
       "id": "DASH-02",
       "text": "Dashboard refreshes on keypress (space / r) with a visible \"last updated\" timestamp shown at bottom",
       "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-04",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Dashboard",
       "formal_models": [
         ".planning/formal/tla/QGSDDashboard.tla"
       ]
@@ -708,27 +687,80 @@
       "id": "DASH-03",
       "text": "Dashboard exits cleanly on Q or Escape, returning to main menu with stdin fully restored (no character-swallowing)",
       "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-04",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Dashboard",
       "formal_models": [
         ".planning/formal/tla/QGSDDashboard.tla"
       ]
     },
     {
       "id": "DEBT-01",
-      "text": "The debt/observability subsystem (debt ledger, dedup, retention, state machine, drift fingerprinting) SHALL maintain requirement traceability via @requirement annotations in source and @req annotations in tests.",
-      "category": "Observability & Triage",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "7 debt/observability modules and their tests lack requirement tracing. This generalized requirement covers the entire debt subsystem rather than creating per-module requirements.",
+      "text": "`.formal/debt.json` stores debt entries with schema: id, fingerprint, title, occurrences, first_seen, last_seen, environments[], status, formal_ref, source_entries[]",
+      "category": "Debt Ledger",
+      "phase": "v0.27-01",
+      "status": "Pending",
       "provenance": {
-        "source_file": "reverse-discovery",
-        "milestone": "solve-iteration-1"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "DEBT-02",
+      "text": "Debt entries are deduplicated by fingerprint — new observations with matching fingerprints increment occurrence count and update last_seen instead of creating duplicates",
+      "category": "Debt Ledger",
+      "phase": "v0.27-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "DEBT-03",
+      "text": "Debt status follows a state machine: `open` → `acknowledged` → `resolving` → `resolved`, with only forward transitions allowed (no reopening resolved debt)",
+      "category": "Debt Ledger",
+      "phase": "v0.27-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "DEBT-04",
+      "text": "A retention policy limits debt.json growth: entries older than a configurable max_age (default 90 days) with status `resolved` are archived to `.formal/debt-archive.jsonl`",
+      "category": "Debt Ledger",
+      "phase": "v0.27-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "DEBT-05",
+      "text": "Each debt entry can link to a formal reference (model file, parameter key, requirement ID) via the `formal_ref` field",
+      "category": "Debt Ledger",
+      "phase": "v0.27-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "DEBT-06",
+      "text": "`/qgsd:observe` writes new or updated debt entries after each run; the human triage step sets status to `acknowledged` for entries the user selects to work on",
+      "category": "Debt Ledger",
+      "phase": "v0.27-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
@@ -753,10 +785,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness",
       "formal_models": [
         ".planning/formal/alloy/state-space-analysis.als"
-      ]
+      ],
+      "category_raw": "Decomposition Awareness"
     },
     {
       "id": "DECOMP-03",
@@ -768,10 +800,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness",
       "formal_models": [
         ".planning/formal/alloy/state-space-analysis.als"
-      ]
+      ],
+      "category_raw": "Decomposition Awareness"
     },
     {
       "id": "DECOMP-04",
@@ -783,20 +815,19 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Decomposition Awareness",
       "formal_models": [
         ".planning/formal/alloy/state-space-analysis.als"
-      ]
+      ],
+      "category_raw": "Decomposition Awareness"
     },
     {
       "id": "DECOMP-05",
       "text": "`analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge when combined TLC runtime < 5 minutes — or flags the interface contract needed when merge would exceed the time budget",
       "category": "Planning & Tracking",
-      "phase": "v0.26-01",
-      "status": "Pending",
-      "background": "If a bug or instability can cross the boundary of two models, those models should be merged — unless the merged model would be computationally infeasible (>5 min TLC budget). When merge is infeasible, explicit assume-guarantee interface contracts are required between the models.",
+      "phase": "v0.26-06",
+      "status": "Complete",
       "provenance": {
-        "source_file": "manual",
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
         "milestone": "v0.26"
       },
       "formal_models": [
@@ -879,16 +910,40 @@
       "category_raw": "Detection"
     },
     {
-      "id": "DETECT-06",
-      "text": "Oscillation detection requires at least one diff pair with net content removal (deletions > additions) before classifying a commit pattern as oscillation — pure zero-net substitution pairs are not treated as reversion evidence",
-      "category": "Hooks & Enforcement",
+      "id": "DIAG-01",
+      "text": "Conformance trace divergence rate reduced to <5% (ACHIEVED: 0% on mapped events; VERIFICATION.md missing)",
+      "category": "Observability & Diagnostics",
       "phase": "unknown",
-      "status": "Complete",
-      "background": "The hasReversionInHashes function previously used totalNetChange <= 0 as the sole oscillation signal, causing false positives during monotonic workflow progression (e.g., template placeholders replaced by real data). Adding a hasNegativePair guard ensures only true content reversions trigger the circuit breaker.",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/191-harden-circuit-breaker-to-prevent-false-/191-PLAN.md",
-        "milestone": "quick-191"
-      }
+        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Diagnostics"
+    },
+    {
+      "id": "DIAG-02",
+      "text": "`attribute-trace-divergence.cjs` walks XState guards to root-cause divergences (IMPLEMENTED; VERIFICATION.md missing)",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Diagnostics"
+    },
+    {
+      "id": "DIAG-03",
+      "text": "Pivot decision surfaced in `.formal/diff-report.md` with complete attribution (DELIVERED; VERIFICATION.md missing)",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Diagnostics"
     },
     {
       "id": "DISP-01",
@@ -900,10 +955,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability",
       "formal_models": [
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
+      ],
+      "category_raw": "Dispatch Reliability"
     },
     {
       "id": "DISP-02",
@@ -915,10 +970,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability",
       "formal_models": [
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
+      ],
+      "category_raw": "Dispatch Reliability"
     },
     {
       "id": "DISP-03",
@@ -930,10 +985,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability",
       "formal_models": [
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
+      ],
+      "category_raw": "Dispatch Reliability"
     },
     {
       "id": "DISP-04",
@@ -945,10 +1000,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability",
       "formal_models": [
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
+      ],
+      "category_raw": "Dispatch Reliability"
     },
     {
       "id": "DISP-05",
@@ -960,81 +1015,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Dispatch Reliability",
       "formal_models": [
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
-    },
-    {
-      "id": "DISP-06",
-      "text": "Quorum dispatch prompts inject a matched subset of formal requirements (from .planning/formal/requirements.json) based on keywords extracted from the question and artifact path, enabling agents to evaluate changes against concrete acceptance criteria.",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Quorum agents previously lacked knowledge of the 237 formal requirements and could not verify whether proposed changes satisfy specific acceptance criteria. By injecting a keyword-matched subset (capped at 20) into dispatch prompts, agents gain concrete context for evaluating design decisions against project constraints.",
-      "provenance": {
-        "source_file": ".planning/quick/170-inject-relevant-requirements-subset-into/170-PLAN.md",
-        "milestone": "quick-170"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/dispatch-formal-context.als"
-      ]
-    },
-    {
-      "id": "DISP-07",
-      "text": "Successful quorum slot dispatches persist a per-slot debate trace file to .planning/quorum/debates/ containing frontmatter with date, question, slot, round, mode, verdict, matched_requirement_ids, and artifact_path, using fail-open file I/O that never blocks dispatch.",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Quorum verdicts were ephemeral — once a dispatch completed, the reasoning and requirement linkage existed only in emitResultBlock YAML output with no durable record. Persisting per-slot debate traces creates an audit trail that enables post-hoc analysis of which requirements drive APPROVE/REJECT decisions across rounds.",
-      "provenance": {
-        "source_file": ".planning/quick/237-persist-quorum-debate-traces-with-matche/237-PLAN.md",
-        "milestone": "quick-237"
-      },
-      "category_raw": "Quorum & Dispatch",
-      "formal_models": []
-    },
-    {
-      "id": "DOC-01",
-      "text": "README.md capability claims (setup wizard, verification workflow, adaptive fan-out, model registry, branch config, CLI commands) SHALL be backed by traceable requirements in requirements.json.",
-      "category": "Documentation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "13 README.md claims describe user-facing capabilities without requirement backing. This generalized requirement ensures documentation claims are traceable to formal requirements rather than creating per-claim entries.",
-      "provenance": {
-        "source_file": "reverse-discovery",
-        "milestone": "solve-iteration-1"
-      }
-    },
-    {
-      "id": "DOC-02",
-      "text": "README.md Formal Verification section presents user-facing capabilities (what is guaranteed, how to run verification) without exposing internal model names, directory trees, or CI pipeline details",
-      "category": "Documentation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The original section listed 25+ internal formal-model identifiers and a directory tree, which is developer-internal content. Users need to understand what formal verification guarantees and how to run it, with full details available via VERIFICATION_TOOLS.md link.",
-      "provenance": {
-        "source_file": ".planning/quick/208-rewrite-readme-md-to-focus-on-user-facin/208-PLAN.md",
-        "milestone": "quick-208"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/doc-public-boundary.als"
-      ]
-    },
-    {
-      "id": "DOC-03",
-      "text": "nForma.cjs provides a `--screenshot <module>` CLI mode that renders each TUI module headlessly as synthetic ANSI output, and bin/generate-tui-assets.cjs converts that output to Tokyo Night-themed SVG files in docs/assets/ via the `npm run assets:tui` script.",
-      "category": "Documentation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "TUI documentation images previously required manual screenshots that drifted from the actual UI. This requirement ensures SVG assets are generated deterministically from live TUI module data, keeping documentation visuals in sync with the codebase.",
-      "provenance": {
-        "source_file": ".planning/quick/213-automate-tui-asset-generation-with-headl/213-PLAN.md",
-        "milestone": "quick-213"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/doc-presentation.als"
-      ]
+      ],
+      "category_raw": "Dispatch Reliability"
     },
     {
       "id": "DRIFT-01",
@@ -1046,10 +1030,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Enforcement Layer"
     },
     {
       "id": "DRIFT-02",
@@ -1061,10 +1045,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Enforcement Layer"
     },
     {
       "id": "ENFC-01",
@@ -1076,10 +1060,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement",
       "formal_models": [
         ".planning/formal/tla/QGSDEnforcement.tla"
-      ]
+      ],
+      "category_raw": "Enforcement"
     },
     {
       "id": "ENFC-02",
@@ -1091,10 +1075,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement",
       "formal_models": [
         ".planning/formal/tla/QGSDEnforcement.tla"
-      ]
+      ],
+      "category_raw": "Enforcement"
     },
     {
       "id": "ENFC-03",
@@ -1106,64 +1090,82 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Enforcement",
       "formal_models": [
         ".planning/formal/tla/QGSDEnforcement.tla"
-      ]
+      ],
+      "category_raw": "Enforcement"
     },
     {
       "id": "EVID-01",
-      "text": "`never_observed` path entries in `validate-traces.cjs` evidence output carry `confidence: low|medium|high` based on trace volume and window duration",
-      "category": "Formal Verification",
-      "phase": "v0.20-05",
+      "text": "Instrumentation map (`instrumentation-map.json`) catalogs every hook/handler emission point and maps to state variables with coverage percentages",
+      "category": "Evidence",
+      "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
-        "milestone": "v0.20"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       },
-      "category_raw": "Evidence Confidence",
       "formal_models": [
         ".planning/formal/alloy/evidence-triage.als"
       ]
     },
     {
       "id": "EVID-02",
-      "text": "`observation_window` metadata (window_start, window_end, n_traces, n_events, window_days) written to `check-results.ndjson` for evidence-driven checks",
-      "category": "Formal Verification",
-      "phase": "v0.20-05",
+      "text": "Trace corpus management indexes conformance events by session, action type, and state transition with queryable metadata",
+      "category": "Evidence",
+      "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
-        "milestone": "v0.20"
-      },
-      "category_raw": "Evidence Confidence"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
     },
     {
       "id": "EVID-03",
-      "text": "`bin/git-heatmap.cjs` mines git history for numerical adjustments, bugfix hotspots, and churn ranking, producing `.planning/formal/evidence/git-heatmap.json` with multiplicative priority scoring and formal-coverage cross-reference for uncovered hot zones",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "text": "Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-violation, drift, degradation)",
+      "category": "Evidence",
+      "phase": "v0.29-01",
       "status": "Complete",
-      "background": "High-churn and frequently-patched files without formal model coverage are blind spots for verification. This evidence artifact feeds nf:solve with empirical signal data so it can prioritize which files most need formal models.",
       "provenance": {
-        "source_file": ".planning/quick/193-build-bin-git-heatmap-cjs-mine-git-histo/193-PLAN.md",
-        "milestone": "quick-193"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       }
     },
     {
       "id": "EVID-04",
-      "text": "bin/git-history-evidence.cjs classifies every commit into one of seven categories (feat/fix/refactor/docs/test/build/chore), cross-references changed files against TLA+ specifications via model-registry.json, identifies drift candidates where code evolved after its formal spec, and produces .planning/formal/evidence/git-history-evidence.json consumed by the nf-solve sweep pipeline as an informational residual",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "text": "State candidate extractor mines traces to suggest state variables and transitions that hand-written models may have missed",
+      "category": "Evidence",
+      "phase": "v0.29-01",
       "status": "Complete",
-      "background": "The existing git-heatmap evidence provides churn and bugfix signals but does not classify commits by type or detect when source files drift ahead of their TLA+ formal specs. This tool closes that gap, enabling nf-solve to surface files where code changed but the corresponding formal model is stale.",
       "provenance": {
-        "source_file": ".planning/quick/218-build-git-history-evidence-extractor-wit/218-PLAN.md",
-        "milestone": "quick-218"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       },
       "formal_models": [
         ".planning/formal/alloy/git-history-evidence.als"
       ]
+    },
+    {
+      "id": "EVID-05",
+      "text": "Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers",
+      "category": "Evidence",
+      "phase": "v0.29-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "EXEC-01",
+      "text": "Quorum slot workers performing review-only tasks (verification, code review) run with restricted tool access (Read/Grep/Glob only), reducing blast radius of misbehaving agents",
+      "category": "Quality Hardening",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
     },
     {
       "id": "FAIL-01",
@@ -1191,60 +1193,75 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Failover & Recovery",
       "formal_models": [
         ".planning/formal/alloy/provider-failure.als"
-      ]
+      ],
+      "category_raw": "Failover & Recovery"
     },
     {
-      "id": "FVTOOL-01",
-      "text": "All formal verification tooling scripts (model generators, checkers, linkers, registry initializers in bin/) SHALL include @requirement annotations linking to the requirements they implement, and each SHALL have a corresponding test file with @req tracing.",
-      "category": "Testing & Quality",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "9 bin/ modules (formal-core, generate-formal-specs, check-liveness-fairness, etc.) and ~10 test files lack requirement tracing. This generalized requirement covers the entire formal verification toolchain rather than creating per-file requirements.",
+      "id": "FP-01",
+      "text": "Issues are fingerprinted using a hierarchical strategy: exception type → function name → message pattern hash, producing a stable fingerprint string",
+      "category": "Fingerprinting",
+      "phase": "v0.27-01",
+      "status": "Pending",
       "provenance": {
-        "source_file": "reverse-discovery",
-        "milestone": "solve-iteration-1"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
-      "id": "FVTOOL-02",
-      "text": "run-formal-check.cjs delegates all PRISM model-checking invocations to run-prism.cjs via subprocess spawn, inheriting properties file injection, scoreboard-based rate calibration, cold-start detection, and policy.yaml loading.",
-      "category": "Testing & Quality",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The inline PRISM invocation in run-formal-check.cjs duplicated a bare-bones spawnSync call that lacked features already implemented in run-prism.cjs. Centralizing through delegation eliminates the divergent code path and ensures all PRISM checks behave identically regardless of entry point.",
+      "id": "FP-02",
+      "text": "Drifts are fingerprinted by formal parameter key (e.g., `MCsafety.cfg:MaxDeliberation`) — identical parameter keys always map to the same fingerprint",
+      "category": "Fingerprinting",
+      "phase": "v0.27-01",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/225-centralize-prism-invocation-in-run-forma/225-PLAN.md",
-        "milestone": "quick-225"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/prism-delegation.als"
-      ]
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FP-03",
+      "text": "Cross-source deduplication uses fingerprint matching first, then Levenshtein similarity (configurable threshold, default 0.85) on titles for near-duplicates from different sources",
+      "category": "Fingerprinting",
+      "phase": "v0.27-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FP-04",
+      "text": "When two debt entries are merged by fingerprint, source_entries[] from both are preserved and the entry with higher occurrence count is kept as primary",
+      "category": "Fingerprinting",
+      "phase": "v0.27-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
     },
     {
       "id": "GATE-01",
-      "text": "gate-a-grounding.cjs accepts a --base-ref <sha> flag that scopes grounding analysis to actions from files changed since the given commit, enforcing the 80% target independently on the scoped subset while reporting the global score as informational",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "text": "Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces",
+      "category": "Gates",
+      "phase": "v0.29-02",
       "status": "Complete",
-      "background": "Without diff scoping, the global grounding score can mask poor coverage of newly introduced code. The --base-ref flag enables CI and nf:solve to validate that new or modified features independently meet the grounding target, with graceful degradation to global mode when the instrumentation map is unavailable or no changed files have emission points.",
       "provenance": {
-        "source_file": ".planning/quick/206-add-base-ref-to-gate-a-grounding-cjs-for/206-PLAN.md",
-        "milestone": "quick-206"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       }
     },
     {
       "id": "GATE-02",
-      "text": "AutoClose remediation steps SHALL produce observable signals (e.g., source_layer classification, semantic declaration detection) at the confidence level the scoring system already accepts. AutoClose SHALL NOT write gate_maturity directly; promotion follows from scoring functions independently evaluating accumulated signals.",
-      "category": "Formal Verification",
-      "phase": "v0.31-234",
-      "status": "Pending",
-      "background": "autoClose creates conditions for gate maturity promotion, not promotions themselves. Remediation produces heuristic/syntactic signals that match what evaluateGateA/B/C already trust. Quorum consensus reached 2026-03-09.",
+      "text": "Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards",
+      "category": "Gates",
+      "phase": "v0.29-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       },
       "formal_models": [
         ".planning/formal/alloy/autoclose-signals.als"
@@ -1252,66 +1269,47 @@
     },
     {
       "id": "GATE-03",
-      "text": "Gate promotion pipeline SHALL incorporate evidence-file readiness scoring, requiring minimum populated evidence thresholds per promotion level, with fail-open semantics for missing evidence and an operational bypass flag.",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "text": "Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario",
+      "category": "Gates",
+      "phase": "v0.29-04",
       "status": "Complete",
-      "background": "Evidence files (instrumentation-map, state-candidates, failure-taxonomy, trace-corpus-stats, proposed-metrics) were generated but never consumed by the promotion pipeline. This requirement closes that gap by wiring evidence readiness into gate transitions.",
       "provenance": {
-        "source_file": ".planning/quick/236-wire-evidence-files-into-gate-promotion-/236-PLAN.md",
-        "milestone": "quick-236"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       }
     },
     {
       "id": "GATE-04",
-      "text": "Gate lifecycle SHALL be self-maintaining: evidence collection runs at the end of every session, gate transitions (promotions and demotions) are logged to a structured changelog with bounded retention, demotion triggers automatically when evidence quality regresses below threshold using hysteresis to prevent oscillation, and formalization candidates are ranked by churn density to guide coverage expansion.",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "text": "Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)",
+      "category": "Gates",
+      "phase": "v0.29-03",
       "status": "Complete",
-      "background": "Without continuous evidence collection and automatic demotion, gate maturity levels can become stale. Closing these feedback loops ensures the gate system is self-correcting and surfaces the highest-priority formalization targets.",
       "provenance": {
-        "source_file": ".planning/quick/238-close-remaining-gate-promotion-feedback-/238-PLAN.md",
-        "milestone": "quick-238"
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
       }
     },
     {
-      "id": "GATE-05",
-      "text": "compute-per-model-gates.cjs --aggregate produces continuous 0-1 gate scores with diagnostic breakdowns matching the global gate JSON schemas, serving as the single gate-scoring entrypoint for all consumers (nf-solve.cjs sweeps, cross-layer-dashboard.cjs, run-formal-verify.cjs pipeline).",
-      "category": "Formal Verification",
-      "phase": "unknown",
+      "id": "GUIDE-01",
+      "text": "User Guide updated with TUI screenshots cross-referenced to feature descriptions",
+      "category": "User Guide",
+      "phase": "v0.32-03",
       "status": "Complete",
-      "background": "Three redundant global gate scripts (gate-a-grounding.cjs, gate-b-abstraction.cjs, gate-c-validation.cjs) duplicated logic already present in the per-model gate scorer. Consolidating into a single --aggregate mode eliminates six files, reduces pipeline spawn overhead from four entries to one, and establishes a single source of truth for gate scoring.",
       "provenance": {
-        "source_file": ".planning/quick/241-implement-the-migration-add-aggregate-to/241-PLAN.md",
-        "milestone": "quick-241"
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
-      "id": "GUARD-01",
-      "text": "The hook system provides three code-quality guardrails: a PostToolUse hook that auto-formats JS/TS files after Edit using prettier or biome (fail-open), a Stop hook that warns about leftover console.log statements in git-modified files without blocking, and a modular .claude/rules/ directory with project-specific convention files auto-loaded per session.",
-      "category": "Code Quality Guardrails",
-      "phase": "unknown",
+      "id": "GUIDE-02",
+      "text": "User Guide \"Getting Started\" walkthrough improved with step-by-step flow and screenshots",
+      "category": "User Guide",
+      "phase": "v0.32-03",
       "status": "Complete",
-      "background": "Adopted from everything-claude-code best practices to catch formatting drift at edit-time, debug logging at stop-time, and enforce project conventions automatically. All three mechanisms are fail-open and advisory.",
       "provenance": {
-        "source_file": ".planning/quick/198-implement-ecc-best-practices-post-edit-a/198-PLAN.md",
-        "milestone": "quick-198"
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
-    },
-    {
-      "id": "GUARD-02",
-      "text": "A PreToolUse hook (nf-destructive-git-guard) detects destructive git commands (stash, reset --hard, checkout --, clean -f) and emits a stderr warning when uncommitted changes exist, following the warn-only fail-open pattern without blocking tool execution.",
-      "category": "Code Quality Guardrails",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "15-session usage analysis revealed that git stash operations frequently reverted already-completed fixes, creating costly rework cycles. This hook and accompanying CLAUDE.md rules (commit-before-destructive-ops, validate-before-apply) provide automated early warning to prevent unintentional work loss.",
-      "provenance": {
-        "source_file": ".planning/quick/222-use-those-insights-to-recommend-improvem/222-PLAN.md",
-        "milestone": "quick-222"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-portability-guard.als"
-      ]
     },
     {
       "id": "HEAL-01",
@@ -1323,10 +1321,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Self-Healing",
       "formal_models": [
         ".planning/formal/prism/deliberation-healing.props"
-      ]
+      ],
+      "category_raw": "Self-Healing"
     },
     {
       "id": "HEAL-02",
@@ -1338,10 +1336,10 @@
         "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
         "milestone": "v0.24"
       },
-      "category_raw": "Self-Healing",
       "formal_models": [
         ".planning/formal/prism/deliberation-healing.props"
-      ]
+      ],
+      "category_raw": "Self-Healing"
     },
     {
       "id": "HLTH-01",
@@ -1353,10 +1351,10 @@
         "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
         "milestone": "v0.15"
       },
-      "category_raw": "Health Checker",
       "formal_models": [
         ".planning/formal/alloy/health-validation.als"
-      ]
+      ],
+      "category_raw": "Health Checker"
     },
     {
       "id": "HLTH-02",
@@ -1368,10 +1366,10 @@
         "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
         "milestone": "v0.15"
       },
-      "category_raw": "Health Checker",
       "formal_models": [
         ".planning/formal/alloy/health-validation.als"
-      ]
+      ],
+      "category_raw": "Health Checker"
     },
     {
       "id": "HLTH-03",
@@ -1386,23 +1384,56 @@
       "category_raw": "Health Checker"
     },
     {
-      "id": "INIT-01",
-      "text": "Load and filter baseline requirements by project profile (web/mobile/desktop/api/cli/library), present profile-filtered defaults during new-project and new-milestone workflows with opt-out controls, allowing users to deselect baseline requirements that don't apply",
-      "category": "Planning & Tracking",
-      "phase": "unknown",
+      "id": "IMPR-01",
+      "text": "R3.6 quorum enforcement reviewed and improvement areas identified",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.19-06",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/quick/151-wire-baseline-requirements-into-new-proj/151-PLAN.md",
-        "milestone": "quick-151"
+        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
+        "milestone": "v0.19"
       },
-      "category_raw": "Project Initialization",
-      "formal_models": [
-        ".planning/formal/alloy/baseline-requirements-filter.als"
-      ]
+      "category_raw": "R3.6 Improvement Iteration"
+    },
+    {
+      "id": "IMPR-02",
+      "text": "Quorum slot dispatch updated to parallel sibling Task calls (R3.2 requirement)",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.19-06",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
+        "milestone": "v0.19"
+      },
+      "category_raw": "R3.6 Improvement Iteration"
+    },
+    {
+      "id": "IMPR-03",
+      "text": "Slot worker protocol hardened against missing/malformed responses",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.19-06",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
+        "milestone": "v0.19"
+      },
+      "category_raw": "R3.6 Improvement Iteration"
+    },
+    {
+      "id": "IMPR-04",
+      "text": "Improvement validated with quorum test runs",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.19-06",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
+        "milestone": "v0.19"
+      },
+      "category_raw": "R3.6 Improvement Iteration"
     },
     {
       "id": "INST-01",
-      "text": "Installer detects no configured quorum agents and prompts user to run `/nf:mcp-setup`",
+      "text": "Installer detects no configured quorum agents and prompts user to run `/qgsd:mcp-setup`",
       "category": "Installer & CLI",
       "phase": "unknown",
       "status": "Complete",
@@ -1485,10 +1516,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer",
       "formal_models": [
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
-      ]
+      ],
+      "category_raw": "Installer"
     },
     {
       "id": "INST-07",
@@ -1500,10 +1531,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer",
       "formal_models": [
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
-      ]
+      ],
+      "category_raw": "Installer"
     },
     {
       "id": "INST-08",
@@ -1515,10 +1546,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions",
       "formal_models": [
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
-      ]
+      ],
+      "category_raw": "Installer Extensions"
     },
     {
       "id": "INST-09",
@@ -1530,10 +1561,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions",
       "formal_models": [
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
-      ]
+      ],
+      "category_raw": "Installer Extensions"
     },
     {
       "id": "INST-10",
@@ -1545,48 +1576,76 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Installer Extensions",
       "formal_models": [
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
-      ]
+      ],
+      "category_raw": "Installer Extensions"
     },
     {
-      "id": "INST-11",
-      "text": "Bin scripts resolve ROOT from process.cwd() (the invoking project directory) rather than __dirname (the script install location). __dirname resolves to ~/.claude/ when installed, breaking all .planning/formal/ and .planning/ path lookups. The --project-root= flag provides an explicit override but the default must be process.cwd().",
-      "category": "Installation & Toolchain",
-      "phase": "v0.26-quick",
+      "id": "INTG-01",
+      "text": "Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status",
+      "category": "Integration",
+      "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.26"
-      },
-      "background": "When scripts are installed to ~/.claude/bin/, __dirname becomes ~/.claude/bin/ and path.resolve(__dirname, ..) gives ~/.claude/ — not the users project directory. This caused R->F, F->T, and C->F layer transitions to report UNKNOWN in cross-repo usage.",
-      "formal_models": [
-        ".planning/formal/alloy/bin-path-resolution.als"
-      ]
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
     },
     {
-      "id": "INST-12",
-      "text": "Baseline requirements are merged into .planning/formal/requirements.json using an idempotent CLI tool that matches on text field to prevent duplicates and assigns next-available IDs per prefix namespace.",
-      "category": "Installation & Toolchain",
-      "phase": "unknown",
+      "id": "INTG-02",
+      "text": "`nf-solve` gains three new layer-transition sweeps (L1->L2, L2->L3, L3->TC) in its convergence loop",
+      "category": "Integration",
+      "phase": "v0.29-04",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/quick/153-create-bin-sync-baseline-requirements-cj/153-PLAN.md",
-        "milestone": "quick-153"
-      },
-      "background": "After baseline requirements are defined per project profile, the system needs a way to sync them into the formal requirements envelope without manual copy-paste and without creating duplicate entries on re-run.",
-      "formal_models": [
-        ".planning/formal/alloy/baseline-merge-idempotent.als"
-      ]
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
     },
     {
-      "id": "INST-13",
-      "text": "Installer scans installed hook files for path.join(__dirname, ...) patterns, resolves each reference relative to the installed location, and emits a warning for any target that does not exist on disk.",
-      "category": "Installer & CLI",
-      "phase": "unknown",
+      "id": "INTG-03",
+      "text": "`run-formal-verify` gains three new gate check step groups that produce alignment scores and gap reports",
+      "category": "Integration",
+      "phase": "v0.29-04",
       "status": "Complete",
-      "background": "Hooks are authored in a source repository but installed to a different directory, causing __dirname to change. Path references that work in the repo silently break after install because fail-open error handling suppresses the failures; install-time validation surfaces these broken paths early."
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "INTG-04",
+      "text": "Cross-layer alignment dashboard shows L1 coverage %, Gate A score, Gate B score, Gate C score in single terminal view",
+      "category": "Integration",
+      "phase": "v0.29-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "INTG-05",
+      "text": "Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model",
+      "category": "Integration",
+      "phase": "v0.29-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "INTG-06",
+      "text": "All existing 43+ formal models classified into layer architecture with maturity level (Level 0-3)",
+      "category": "Integration",
+      "phase": "v0.29-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
     },
     {
       "id": "KEY-01",
@@ -1598,10 +1657,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management",
       "formal_models": [
         ".planning/formal/tla/QGSDKeyManagement.tla"
-      ]
+      ],
+      "category_raw": "API Key Management"
     },
     {
       "id": "KEY-02",
@@ -1613,10 +1672,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management",
       "formal_models": [
         ".planning/formal/tla/QGSDKeyManagement.tla"
-      ]
+      ],
+      "category_raw": "API Key Management"
     },
     {
       "id": "KEY-03",
@@ -1628,10 +1687,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management",
       "formal_models": [
         ".planning/formal/tla/QGSDKeyManagement.tla"
-      ]
+      ],
+      "category_raw": "API Key Management"
     },
     {
       "id": "KEY-04",
@@ -1643,10 +1702,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "API Key Management",
       "formal_models": [
         ".planning/formal/tla/QGSDKeyManagement.tla"
-      ]
+      ],
+      "category_raw": "API Key Management"
     },
     {
       "id": "LIVE-01",
@@ -1658,10 +1717,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Liveness Lint",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Liveness Lint"
     },
     {
       "id": "LIVE-02",
@@ -1673,10 +1732,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Liveness Lint",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Liveness Lint"
     },
     {
       "id": "LOOP-01",
@@ -1735,10 +1794,65 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Feedback Loops",
       "formal_models": [
         ".planning/formal/tla/QGSDSpecGeneration.tla"
-      ]
+      ],
+      "category_raw": "Feedback Loops"
+    },
+    {
+      "id": "LRNG-01",
+      "text": "Auto error extraction at session end — install.js must register nf-session-end.js as SessionEnd hook so re-install does not silently drop it",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "LRNG-02",
+      "text": "User correction capture — SessionEnd hook persists user corrections to memory store on session close",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "LRNG-03",
+      "text": "Quorum-validated skill extraction — skill-extractor.cjs is invoked automatically by nf-session-end.js (not orphaned)",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "LRNG-04",
+      "text": "Failure catalog with confidence — failure entries persist across sessions via SessionEnd hook pipeline",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "LTCY-01",
+      "text": "User can set per-slot latency budgets in providers.json; slots exceeding their budget are cut off mid-dispatch instead of blocking the quorum pipeline indefinitely",
+      "category": "Quality Hardening",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
     },
     {
       "id": "MCP-01",
@@ -1786,10 +1900,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "MCP Server Detection",
       "formal_models": [
         ".planning/formal/alloy/mcp-detection.als"
-      ]
+      ],
+      "category_raw": "MCP Server Detection"
     },
     {
       "id": "MCP-05",
@@ -1813,14 +1927,14 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "MCP Server Detection",
       "formal_models": [
         ".planning/formal/alloy/mcp-detection.als"
-      ]
+      ],
+      "category_raw": "MCP Server Detection"
     },
     {
       "id": "MCPENV-01",
-      "text": "`.planning/formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
+      "text": "`.formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
       "category": "MCP & Agents",
       "phase": "v0.19-05",
       "status": "Complete",
@@ -1831,6 +1945,18 @@
       "formal_models": [
         ".planning/formal/tla/QGSDMCPEnv.tla"
       ],
+      "category_raw": "MCP Environment Model"
+    },
+    {
+      "id": "MCPENV-02",
+      "text": "`MCMCPEnv` added to `SURFACE_MAP` and `VALID_CONFIGS`; `invariants.md` created with EventualDecision fairness declarations; CI step added to `formal-verify.yml`",
+      "category": "MCP & Agents",
+      "phase": "v0.19-08",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
+        "milestone": "v0.19"
+      },
       "category_raw": "MCP Environment Model"
     },
     {
@@ -1865,6 +1991,50 @@
       "category_raw": "MCP Environment Model"
     },
     {
+      "id": "MEMP-01",
+      "text": "Decisions persist across compaction — memory-store.cjs JSONL append for decisions category injected by PreCompact hook",
+      "category": "Memory Persistence",
+      "phase": "v0.30-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "MEMP-02",
+      "text": "Proactive session reminders — SessionStart hook generates memory reminder from recent entries across all categories",
+      "category": "Memory Persistence",
+      "phase": "v0.30-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "MEMP-03",
+      "text": "Error resolution memory — error patterns persist to JSONL with queryable interface",
+      "category": "Memory Persistence",
+      "phase": "v0.30-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "MEMP-04",
+      "text": "Quorum decision memory — quorum verdicts persist to JSONL for cross-session learning",
+      "category": "Memory Persistence",
+      "phase": "v0.30-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
       "id": "META-01",
       "text": "GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user",
       "category": "Quorum & Dispatch",
@@ -1886,10 +2056,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Quorum-First Behavior (Meta",
       "formal_models": [
         ".planning/formal/alloy/architecture-registry.als"
-      ]
+      ],
+      "category_raw": "Quorum-First Behavior (Meta"
     },
     {
       "id": "META-03",
@@ -1925,10 +2095,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Multiple Slots",
       "formal_models": [
         ".planning/formal/alloy/multi-slot-structure.als"
-      ]
+      ],
+      "category_raw": "Multiple Slots"
     },
     {
       "id": "MULTI-03",
@@ -1943,143 +2113,71 @@
       "category_raw": "Multiple Slots"
     },
     {
-      "id": "NAV-01",
-      "text": "Main TUI menu is organized into 3 modules (Agents, Requirements, Config) with a 6-character activity bar sidebar showing icons, user switches modules via F1/F2/F3 hotkeys or Tab/Shift+Tab cycling, and only module-relevant menu items are displayed at any time.",
-      "category": "TUI Navigation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The flat 30+ item menu had become unwieldy and difficult to navigate. Grouping menu items into logical modules following the familiar VS Code activity bar pattern improves discoverability and reduces cognitive load when navigating the TUI.",
-      "provenance": {
-        "source_file": ".planning/quick/149-add-vs-code-style-activity-bar-to-tui-wi/149-PLAN.md",
-        "milestone": "quick-149"
-      },
-      "formal_models": [
-        ".planning/formal/tla/QGSDTUIModules.tla"
-      ]
-    },
-    {
-      "id": "NAV-02",
-      "text": "Sessions module (F4) in nForma TUI embeds interactive Claude Code terminal sessions via blessed-xterm, supporting creation, connection, and termination of multiple PTY-backed sessions with full focus management and module switching.",
-      "category": "TUI Navigation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Multi-session Claude Code management from within nForma requires an interactive terminal widget embedded in the TUI. blessed-xterm provides PTY-backed terminal embedding compatible with blessed widget system, enabling users to run multiple concurrent Claude Code sessions without leaving the TUI.",
-      "provenance": {
-        "source_file": ".planning/quick/156-add-sessions-module-to-nforma-with-bless/156-PLAN.md",
-        "milestone": "quick-156"
-      },
-      "formal_models": [
-        ".planning/formal/tla/QGSDTUISessions.tla"
-      ]
-    },
-    {
-      "id": "NAV-03",
-      "text": "Sessions terminal widget uses pure-JavaScript @xterm/headless terminal emulation with child_process.spawn, eliminating native addon dependencies and enabling compatibility across all Node.js versions",
-      "category": "TUI Navigation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The original blessed-xterm widget depends on node-pty, a native C++ addon causing ABI mismatch errors on Node.js upgrades. Replacing it with @xterm/headless (pure JavaScript ANSI/VT100 parser) and standard child_process.spawn eliminates the native addon requirement, making nforma portable across all Node versions without recompilation.",
-      "provenance": {
-        "source_file": ".planning/quick/161-replace-blessed-xterm-node-pty-with-pure/161-PLAN.md",
-        "milestone": "quick-161"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/terminal-emulation-purity.als"
-      ]
-    },
-    {
-      "id": "NAV-04",
-      "text": "Sessions module persists active sessions to sessions.json across TUI restarts, restores session ID counters from persisted data, validates CWD existence before resume with fallback to process.cwd(), and prevents unwanted modal dispatch when switching to Sessions module",
-      "category": "TUI Navigation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without persistence, all session state was lost on TUI restart, forcing users to manually recreate sessions. The CWD guard prevents crashes when a previously-persisted session directory has been removed, and the modal fix eliminates a spurious New Session prompt triggered by module switching.",
-      "provenance": {
-        "source_file": ".planning/quick/190-review-and-validate-session-persistence-/190-PLAN.md",
-        "milestone": "quick-190"
-      }
-    },
-    {
-      "id": "NAV-05",
-      "text": "Browse Reqs view displays requirements in a two-level hierarchy with 8 principles as top-level groups and filtered specification lists under each, with live counts derived from requirements.json replacing hardcoded mock data.",
-      "category": "TUI Navigation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The previous Browse Reqs view showed a flat list of 308 requirements with no logical grouping and hardcoded mock stats. A principle-based hierarchy lets users understand requirement coverage at a glance and navigate to specific specification subsets.",
-      "provenance": {
-        "source_file": ".planning/quick/249-fix-tui-requirements-view-to-show-two-le/249-PLAN.md",
-        "milestone": "quick-249"
-      }
-    },
-    {
       "id": "OBS-01",
-      "text": "Each quorum round emits structured telemetry (slot, round, verdict, latency_ms, provider status) to a per-session log file",
+      "text": "Key operations produce structured log output on stderr",
       "category": "Observability & Diagnostics",
-      "phase": "v0.24-03",
+      "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
-        "milestone": "v0.24"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
-      "category_raw": "Observability",
       "formal_models": [
         ".planning/formal/prism/observability-delivery.props"
-      ]
+      ],
+      "category_raw": "Observability"
     },
     {
       "id": "OBS-02",
-      "text": "Scoreboard tracks quorum delivery rate -- percentage of calls that achieved target vote count (3/3 vs degraded 2/3)",
-      "category": "Observability & Diagnostics",
-      "phase": "v0.24-03",
-      "status": "Complete",
+      "text": "Source types are pluggable — adding a new source type requires only a new fetch handler function and config entry, not changes to the observe orchestrator",
+      "category": "Observe Skill",
+      "phase": "v0.27-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
-        "milestone": "v0.24"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
-      "category_raw": "Observability",
       "formal_models": [
         ".planning/formal/prism/observability-delivery.props"
       ]
     },
     {
       "id": "OBS-03",
-      "text": "Each slot gets a flakiness score from recent UNAVAIL/timeout frequency; high-flakiness slots deprioritized in dispatch ordering",
-      "category": "Observability & Diagnostics",
-      "phase": "v0.24-03",
-      "status": "Complete",
+      "text": "`/qgsd:observe` supports `prometheus` source type that executes a PromQL query against a configured endpoint and maps results to the standard issue schema",
+      "category": "Observe Skill",
+      "phase": "v0.27-04",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.24-REQUIREMENTS.md",
-        "milestone": "v0.24"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
-      "category_raw": "Observability",
       "formal_models": [
         ".planning/formal/prism/observability-delivery.props"
       ]
     },
     {
       "id": "OBS-04",
-      "text": "Status shows recent UNAVAIL count per agent from quorum scoreboard",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
+      "text": "`/qgsd:observe` supports `grafana` source type that fetches active alerts from a configured Grafana instance",
+      "category": "Observe Skill",
+      "phase": "v0.27-04",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Observability",
       "formal_models": [
         ".planning/formal/prism/observability-delivery.props"
       ]
     },
     {
       "id": "OBS-05",
-      "text": "CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, output to stdout",
-      "category": "Observability",
-      "phase": "baseline",
+      "text": "`/qgsd:observe` supports `logstash` source type that runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue schema",
+      "category": "Observe Skill",
+      "phase": "v0.27-04",
       "status": "Pending",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/cli-exit-conventions.als"
@@ -2087,14 +2185,13 @@
     },
     {
       "id": "OBS-06",
-      "text": "Scan local project state for unfinished quick tasks, stale debug sessions, and unverified milestone phases; surface them as always-on issues in /nf:observe without requiring configuration.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Project housekeeping tasks—incomplete quick tasks, unresolved debug sessions, and active phases without verification—can fall through the cracks when only monitoring external sources (GitHub, Sentry). This requirement adds an internal work detector that automatically surfaces local consistency issues as observe issues, routing them to appropriate follow-up skills (/qgsd:quick, /qgsd:debug, /qgsd:solve) without manual configuration.",
+      "text": "`/qgsd:observe` presents two output tables: **Issues** (discrete events — errors, bugs, feedback) and **Drifts** (quantitative divergences — formal parameter vs production measurement)",
+      "category": "Observe Skill",
+      "phase": "v0.27-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/168-add-internal-work-detection-handler-to-o/168-PLAN.md",
-        "milestone": "quick-168"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/observability-analysis.als"
@@ -2102,14 +2199,13 @@
     },
     {
       "id": "OBS-07",
-      "text": "The analyze-assumptions CLI parses TLA+, Alloy, and PRISM formal models to extract assumptions, thresholds, and invariants, cross-references them against the debt ledger and observe handler registry, and outputs a gap report with proposed qgsd_-prefixed metrics and instrumentation snippets for every uncovered assumption.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Formal models encode critical system assumptions (e.g., max deliberation rounds, quorum thresholds) that must be monitored in production, but no mechanism existed to detect which assumptions lacked corresponding observe sources or debt entries. This script closes the observability loop by surfacing instrumentation gaps automatically.",
+      "text": "Observe config lives in `.planning/observe-sources.md` YAML frontmatter (replacing `triage-sources.md`), backward-compatible with existing triage config format",
+      "category": "Observe Skill",
+      "phase": "v0.27-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/172-build-assumption-to-instrumentation-anal/172-PLAN.md",
-        "milestone": "quick-172"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/observability-analysis.als"
@@ -2117,107 +2213,50 @@
     },
     {
       "id": "OBS-08",
-      "text": "The analyze-assumptions CLI classifies each extracted assumption into priority tiers (Tier 1: directly monitorable numeric constants, Tier 2: named invariants/assertions checkable via probes, Tier 3: structural constraints not runtime-observable), sorts gap reports by tier, supports --actionable filtering to Tier 1 only, and generates Prometheus gauge/histogram instrumentation snippets for Tier 1 assumptions.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Raw assumption lists from formal models are noisy — operators need to focus on the most actionable gaps first. Tiering by monitorability lets the observe skill prioritize numeric thresholds that can be directly instrumented with Prometheus metrics, while deferring structural constraints that require manual review.",
+      "text": "Each source fetch handler has a configurable timeout and fail-open behavior — one failing source does not block the others",
+      "category": "Observe Skill",
+      "phase": "v0.27-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/175-add-priority-tiering-and-actionable-filt/175-PLAN.md",
-        "milestone": "quick-175"
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/observability-analysis.als"
       ]
     },
     {
-      "id": "OBS-09",
-      "text": "Observe handlers return the standard schema { source_label, source_type, status: ok|error, issues: Array, error?: string } with all issue fields populated (id, title, severity, url, age, created_at, meta, source_type, issue_type). The dispatch layer validates the return shape before passing to the renderer.",
-      "category": "Observability",
-      "phase": "unknown",
+      "id": "ORCH-01",
+      "text": "Domain-specific context retrieval — context-retriever.cjs analyzes task domain and fetches relevant context artifacts",
+      "category": "Subagent Orchestration",
+      "phase": "v0.30-06",
       "status": "Complete",
-      "background": "Currently enforced by convention with no runtime validation. The renderer silently handles missing fields with fallbacks, which masks handler bugs. A schema check at dispatch catches issues before they reach the render pipeline.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-10",
-      "text": "Observe utility functions (formatAge, parseDuration, classifySeverity) are defined in a single canonical module and imported by all handlers. No handler duplicates these functions.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "formatAge is duplicated in 6 files with 3 different null-handling behaviors (unknown, empty string, new vs future). parseDuration is duplicated in 2 files. This drift already causes visual inconsistency in observe output.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-11",
-      "text": "Upstream changes surfaced by observe are evaluated against existing code before porting. The system compares overlapping areas and classifies each as SKIP (our implementation is equivalent or better), CANDIDATE (upstream introduces something we lack), or INCOMPATIBLE (conflicts with our architecture). No upstream change is ported without this evaluation.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Even for tight fork parents, nForma may have intentionally diverged with better implementations. Blindly porting upstream changes would regress quality. The evaluation routing in observe.md implements SKIP/CANDIDATE/INCOMPATIBLE comparison.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-12",
-      "text": "Observe handlers catch all errors internally and return status: error with a descriptive error string. No handler throws — the dispatch layer Promise.allSettled is a safety net, not the primary error boundary.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Already followed by all 8+ handlers and enforced at the dispatch layer via Promise.allSettled, but not formalized. Critical for handler authors to know when adding new source types.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-13",
-      "text": "A machine-readable inventory classifies every non-test bin/ script as wired (reachable from a skill command, hook, or workflow) or lone (unreferenced), with purpose, classification, suggested integration point, and transitive dependency chains documented for each entry.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "46% of bin/ scripts were not reachable from any user-facing /nf: command, representing orphaned tooling with no discovery path. The inventory enables systematic integration of high-value standalone tools and identification of dead code candidates.",
       "provenance": {
-        "source_file": ".planning/quick/201-survey-code-for-producer-without-consume/201-PLAN.md",
-        "milestone": "quick-201"
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
       }
     },
     {
-      "id": "OBS-14",
-      "text": "Observe handlers accept execFn and basePath options for dependency injection. All subprocess calls use the injected execFn (defaulting to execFileSync) and all filesystem paths resolve relative to basePath.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Planned",
-      "priority": "MEDIUM",
-      "background": "Handlers that shell out to git or read filesystem paths are hard to test in isolation without dependency injection. Accepting execFn and basePath as options enables unit tests to supply stubs and temporary directories.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-15",
-      "text": "Stateful observe handlers persist their cursor in .planning/ as JSON with a last_checked ISO8601 field. State writes use atomic write (write to temp file + rename) to prevent corruption.",
-      "category": "Observability",
-      "phase": "unknown",
-      "status": "Planned",
-      "priority": "LOW",
-      "background": "Handlers that track incremental state (e.g., upstream commit cursors) need a durable, corruption-resistant persistence mechanism. Atomic write-then-rename prevents partial writes from corrupting the cursor file on crash or interrupt.",
-      "source_file": ".planning/quick/188-review-upstream-and-deps-handler-impleme/188-PLAN.md",
-      "milestone": "quick-188"
-    },
-    {
-      "id": "OBS-16",
-      "text": "The observe handler surfaces nf:health diagnostic codes (E*/W*/I*) as observe issues with severity-mapped routing, gated to the QGSD source repo via core/bin/gsd-tools.cjs existence check.",
-      "category": "Observability",
-      "phase": "unknown",
+      "id": "ORCH-02",
+      "text": "Phase-to-phase context accumulation — context-stack.cjs maintains JSONL phase index for cross-phase context injection",
+      "category": "Subagent Orchestration",
+      "phase": "v0.30-06",
       "status": "Complete",
-      "background": "Health check problems previously required manual /nf:health runs to discover. Wiring health diagnostics into /nf:observe as Category 15 creates a self-development feedback loop where planning health issues appear automatically in observe output, but only when running inside the QGSD repo itself.",
       "provenance": {
-        "source_file": ".planning/quick/219-wire-nf-health-diagnostics-into-nf-obser/219-PLAN.md",
-        "milestone": "quick-219"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/health-diagnostic-routing.als"
-      ]
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "ORCH-03",
+      "text": "Specialized retrieval agents — quorum dispatch enriches prompts with domain-relevant context via enrichPromptWithRetrieval",
+      "category": "Subagent Orchestration",
+      "phase": "v0.30-06",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
     },
     {
       "id": "ORES-01",
@@ -2295,6 +2334,83 @@
       "category_raw": "Oscillation Resolution Mode"
     },
     {
+      "id": "PARA-01",
+      "text": "Worktree-isolated executor subagents — nf-worktree-executor agent runs plans in isolated git worktrees",
+      "category": "Parallel Execution",
+      "phase": "v0.30-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "PARA-02",
+      "text": "Parallel plan execution with merge orchestration — Pattern D in execute-plan.md dispatches independent plans to worktrees with merge queue coordination",
+      "category": "Parallel Execution",
+      "phase": "v0.30-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "PF-01",
+      "text": "`bin/qgsd-solve.cjs` includes a P->F (Production -> Formal) residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds",
+      "category": "Solve P->F Integration",
+      "phase": "v0.27-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "PF-02",
+      "text": "The P->F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values",
+      "category": "Solve P->F Integration",
+      "phase": "v0.27-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "PF-03",
+      "text": "Solve operates only on debt entries with status `acknowledged` — `open` entries are ignored until a human triages them",
+      "category": "Solve P->F Integration",
+      "phase": "v0.27-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "PF-04",
+      "text": "During a solve cycle, observations are frozen — new observe runs do not modify debt entries that are in `resolving` status",
+      "category": "Solve P->F Integration",
+      "phase": "v0.27-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "PF-05",
+      "text": "P->F remediation dispatches `/qgsd:quick` tasks to update formal model parameters when production reality has legitimately changed, or flags investigation when production has regressed",
+      "category": "Solve P->F Integration",
+      "phase": "v0.27-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.27-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "PLAN-01",
       "text": "`generate-proposed-changes.cjs` auto-synthesizes TLA+ deltas from PLAN.md truths",
       "category": "Planning & Tracking",
@@ -2340,78 +2456,48 @@
       "category_raw": "Planning Integration"
     },
     {
-      "id": "PLAN-04",
-      "text": "The list-phase-assumptions workflow grounds assumption analysis in formal artifacts (requirements, specs, traceability matrix, test coverage, model registry) via a ground_in_artifacts step before surfacing assumptions, tagging each as grounded or inferred.",
-      "category": "Planning & Tracking",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Phase assumption analysis previously relied entirely on Claude inference with no cross-reference to existing formal artifacts. The grounding step reads 6 artifacts across 3 tiers with fail-open handling, making assumptions transparent about whether they are backed by evidence or judgment.",
-      "provenance": {
-        "source_file": ".planning/quick/224-add-formal-grounding-step-to-list-phase-/224-PLAN.md",
-        "milestone": "quick-224"
-      }
-    },
-    {
-      "id": "PLAT-01",
-      "text": "QGSD installs and operates correctly on macOS, Ubuntu, and Windows without platform-specific workarounds",
-      "category": "Installation & Toolchain",
-      "phase": "v0.28-01",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.28"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/platform-install-compat.als"
-      ]
-    },
-    {
       "id": "PLCY-01",
       "text": "User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent",
       "category": "Configuration",
-      "phase": "v0.10-05",
-      "status": "Pending",
+      "phase": "v0.26-01",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Policy"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "PLCY-02",
       "text": "User can configure update policy per slot: auto / prompt / skip",
       "category": "Configuration",
-      "phase": "v0.10-05",
-      "status": "Pending",
+      "phase": "v0.26-01",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Policy"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "PLCY-03",
       "text": "Auto-update policy check runs on manage-agents startup for slots configured as `auto`",
       "category": "Configuration",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-01",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Policy"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "PORT-01",
       "text": "User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholders",
       "category": "Installer & CLI",
-      "phase": "v0.10-06",
-      "status": "Pending",
+      "phase": "v0.26-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Portability",
       "formal_models": [
         ".planning/formal/tla/QGSDConfigPortability.tla"
       ]
@@ -2420,13 +2506,12 @@
       "id": "PORT-02",
       "text": "User can import roster config from JSON file — validates schema, prompts to re-enter any redacted key, confirms before applying",
       "category": "Installer & CLI",
-      "phase": "v0.10-06",
-      "status": "Pending",
+      "phase": "v0.26-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Portability",
       "formal_models": [
         ".planning/formal/tla/QGSDConfigPortability.tla"
       ]
@@ -2435,52 +2520,25 @@
       "id": "PORT-03",
       "text": "Import creates a timestamped backup of `~/.claude.json` before applying any changes",
       "category": "Installer & CLI",
-      "phase": "v0.10-06",
-      "status": "Pending",
+      "phase": "v0.26-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
       },
-      "category_raw": "Portability",
       "formal_models": [
         ".planning/formal/tla/QGSDConfigPortability.tla"
       ]
     },
     {
-      "id": "PORT-04",
-      "text": "nForma hooks and agent guidelines SHALL improve Claude's behavior in any project where nForma is installed, not only the nForma source repository.",
-      "category": "Architecture Constraints",
+      "id": "PRIO-01",
+      "text": "User can configure hook execution priority in nf.json so safety hooks (circuit-breaker) always run before enhancement hooks (prompt injection), with deterministic ordering guaranteed",
+      "category": "Quality Hardening",
       "phase": "unknown",
       "status": "Complete",
-      "background": "nForma's value is portable — it improves Claude's behavior in any project, not just its own repo. Session insights revealed guidelines were placed in repo-local .claude/rules/ files instead of globally-installed agent definitions and hooks.",
       "provenance": {
-        "source_file": "agents/nf-executor.md, agents/nf-planner.md, hooks/nf-destructive-git-guard.js",
-        "milestone": "quick-222"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-portability-guard.als"
-      ]
-    },
-    {
-      "id": "PROJECT-01",
-      "text": "The project shall be referred to as 'nForma' in all user-facing contexts",
-      "category": "Project Identity",
-      "phase": "v0.28-00",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.28"
-      }
-    },
-    {
-      "id": "PROJECT-02",
-      "text": "All skill shortcuts shall use the 'nf:' prefix (e.g., nf:solve, nf:quick)",
-      "category": "Project Identity",
-      "phase": "v0.28-00",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.28"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       }
     },
     {
@@ -2493,10 +2551,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Provider Swap",
       "formal_models": [
         ".planning/formal/tla/QGSDAgentProvisioning.tla"
-      ]
+      ],
+      "category_raw": "Provider Swap"
     },
     {
       "id": "PROV-02",
@@ -2526,25 +2584,23 @@
       "id": "PRST-01",
       "text": "User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of manually typing a URL",
       "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Presets & Cloning"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "PRST-02",
       "text": "User can clone an existing slot — copies provider URL and model config, prompts for new slot name",
       "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Pending",
+      "phase": "v0.26-03",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Presets & Cloning"
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      }
     },
     {
       "id": "QUORUM-01",
@@ -2594,44 +2650,113 @@
       "category_raw": "Quorum Gates"
     },
     {
-      "id": "QUORUM-04",
-      "text": "A quorum round reaches consensus when all voting members return the same verdict AND none propose further improvements; no additional iteration is required once consensus is achieved",
-      "category": "Quorum & Dispatch",
-      "phase": "v0.27",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.27"
-      },
-      "formal_models": [
-        ".planning/formal/tla/QGSDQuorum.tla"
-      ]
-    },
-    {
-      "id": "QUORUM-05",
-      "text": "All quorum members (including Claude) MUST review prior-round positions from other voters and revise their own position before each deliberation round. No voter's position may be frozen across rounds — every participant re-evaluates after seeing peer arguments.",
-      "category": "Quorum & Dispatch",
-      "phase": "v0.27",
-      "status": "Pending",
-      "background": "Fixes a behavioral gap where Claude's position was frozen at Round 1 and never revised during deliberation, creating an asymmetry where Claude could not be persuaded by BLOCK reasoning. This led to Claude writing solo rebuttals to override BLOCKs instead of dispatching proper deliberation rounds with cross-pollination.",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.27"
-      },
-      "formal_models": [
-        ".planning/formal/tla/QGSDDeliberationRevision.tla"
-      ]
-    },
-    {
-      "id": "QUORUM-06",
-      "text": "checkpoint:human-verify in auto-mode triggers a quorum consensus gate requiring 100% APPROVE from all responding workers; any BLOCK vote or quorum unavailability escalates to the user instead of auto-approving.",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
+      "id": "RDME-01",
+      "text": "TUI section promoted from `<details>` to visible section with hero screenshot above the fold",
+      "category": "README Structure",
+      "phase": "v0.32-01",
       "status": "Complete",
-      "background": "Auto-mode previously auto-approved checkpoint:human-verify tasks, silently bypassing meaningful verification. The unanimous quorum gate closes this safety gap by requiring multi-model agreement that checkpoint criteria are met before proceeding, with fail-open escalation to the user.",
       "provenance": {
-        "source_file": ".planning/quick/210-replace-checkpoint-human-verify-auto-app/210-PLAN.md",
-        "milestone": "quick-210"
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-02",
+      "text": "\"Who This Is For\" expanded to 3-4 bullet points framing concrete problems nForma solves (single-model blind spots, context rot, oscillation loops, manual tracking)",
+      "category": "README Structure",
+      "phase": "v0.32-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-03",
+      "text": "\"With vs. Without\" comparison table added after \"Who This Is For\" showing Claude Code alone vs. with nForma",
+      "category": "README Structure",
+      "phase": "v0.32-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-04",
+      "text": "\"By the Numbers\" quantified metrics section added near top (agents, commands, requirements, hooks, formal models, milestones)",
+      "category": "README Structure",
+      "phase": "v0.32-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-05",
+      "text": "Architecture/quorum flow diagram added to \"How It Works\" intro showing prompt → dispatch → consensus → execute flow",
+      "category": "README Structure",
+      "phase": "v0.32-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-06",
+      "text": "\"What's New in v0.32\" changelog section added near top of README",
+      "category": "README Structure",
+      "phase": "v0.32-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-07",
+      "text": "Nav bar expanded with additional anchor links (TUI, Configuration, Star History)",
+      "category": "README Structure",
+      "phase": "v0.32-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-08",
+      "text": "Community/Contributing section added before Star History with Discord CTA and contribution guidelines",
+      "category": "README Structure",
+      "phase": "v0.32-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-09",
+      "text": "Getting Started collapsible sections rebalanced — critical path (install → quorum setup → first command) visible by default, advanced options collapsed",
+      "category": "README Structure",
+      "phase": "v0.32-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "RDME-10",
+      "text": "Broken table in Observability section fixed (solve screenshot moved outside table rows)",
+      "category": "README Structure",
+      "phase": "v0.32-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
@@ -2659,10 +2784,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Enforcement Layer"
     },
     {
       "id": "REDACT-02",
@@ -2674,10 +2799,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Enforcement Layer"
     },
     {
       "id": "REDACT-03",
@@ -2689,20 +2814,20 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Enforcement Layer",
       "formal_models": [
         ".planning/formal/tla/QGSDCIChecks.tla"
-      ]
+      ],
+      "category_raw": "Enforcement Layer"
     },
     {
       "id": "REL-01",
-      "text": "Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather than crashing",
+      "text": "Graceful degradation on dependency failure",
       "category": "Reliability",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/reliability-patterns.als"
@@ -2710,21 +2835,21 @@
     },
     {
       "id": "REL-02",
-      "text": "Long-running operations (file uploads, data processing, API calls >2s) show progress indication and can be cancelled by the user",
+      "text": "Structured error handling with fail-open pattern",
       "category": "Reliability",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/reliability-patterns.als"
       ]
     },
     {
-      "id": "REN-03",
-      "text": "All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files",
+      "id": "REN-01",
+      "text": "`git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved",
       "category": "Installer & CLI",
       "phase": "v0.9-05",
       "status": "Pending",
@@ -2732,10 +2857,148 @@
         "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
         "milestone": "v0.10"
       },
-      "category_raw": "Portability",
+      "category_raw": "Portability"
+    },
+    {
+      "id": "REN-02",
+      "text": "`bin/install.js` updated to read from `qgsd-core/` instead of `get-shit-done/` — `node bin/install.js --claude --global` succeeds",
+      "category": "Installer & CLI",
+      "phase": "v0.9-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
+        "milestone": "v0.10"
+      },
+      "category_raw": "Portability"
+    },
+    {
+      "id": "REN-03",
+      "text": "All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files",
+      "category": "Installer & CLI",
+      "phase": "v0.26-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.26-REQUIREMENTS.md",
+        "milestone": "v0.26"
+      },
       "formal_models": [
         ".planning/formal/alloy/codebase-arch-constraints.als"
       ]
+    },
+    {
+      "id": "REN-04",
+      "text": "`~/.claude/qgsd/` installed runtime is functionally identical before and after rename (verified by spot-check)",
+      "category": "Installer & CLI",
+      "phase": "v0.9-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
+        "milestone": "v0.10"
+      },
+      "category_raw": "Portability"
+    },
+    {
+      "id": "RLS-01",
+      "text": "`package.json` version field bumped from `0.1.0` to `0.2.0`",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Release"
+    },
+    {
+      "id": "RLS-02",
+      "text": "v0.2 milestone archived in `MILESTONES.md` — includes What Shipped, Phases (6–10), Requirements Satisfied (all 20 v0.2 requirements), Key Decisions Carried Forward",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Release"
+    },
+    {
+      "id": "RLS-03",
+      "text": "Git tag `v0.2.0` created at release commit and pushed to remote",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Release"
+    },
+    {
+      "id": "RLS-04",
+      "text": "`qgsd@0.2.0` published to npm registry — `npx qgsd@0.2.0` installs successfully",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Release"
+    },
+    {
+      "id": "RSN-01",
+      "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
+      "category": "Reasoning",
+      "phase": "v0.29-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "RSN-02",
+      "text": "Failure mode catalog enumerates concrete failure modes per L2 state/transition with effects and severity classification",
+      "category": "Reasoning",
+      "phase": "v0.29-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "RSN-03",
+      "text": "Risk heatmap produces ranked transition list (highest-risk-first) combining FMEA severity with coverage gap data",
+      "category": "Reasoning",
+      "phase": "v0.29-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "RSN-04",
+      "text": "Model-driven test generation produces test recipe JSON from L3 failure modes with input sequence, expected outcome, and oracle",
+      "category": "Reasoning",
+      "phase": "v0.29-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "RSN-05",
+      "text": "Design impact analysis traces a git diff through all three layers showing instrumentation, state, and hazard effects",
+      "category": "Reasoning",
+      "phase": "v0.29-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
     },
     {
       "id": "SAFE-01",
@@ -2751,6 +3014,18 @@
         ".planning/formal/tla/QGSDQuorum.tla",
         ".planning/formal/alloy/quorum-votes.als"
       ],
+      "category_raw": "Repair Safety"
+    },
+    {
+      "id": "SAFE-02",
+      "text": "Legacy pre-versioning numeric phase dirs 18-39 are archived to `.planning/archive/legacy/`",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
+        "milestone": "v0.15"
+      },
       "category_raw": "Repair Safety"
     },
     {
@@ -2808,10 +3083,22 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation",
       "formal_models": [
         ".planning/formal/alloy/schema-extensions.als"
-      ]
+      ],
+      "category_raw": "Schema Foundation"
+    },
+    {
+      "id": "SCHEMA-02",
+      "text": "`check-result.schema.json` gains a `requirement_ids` array (string[]) field; validation updated to accept the new field",
+      "category": "Formal Verification",
+      "phase": "v0.25-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
+        "milestone": "v0.25"
+      },
+      "category_raw": "Schema Foundation"
     },
     {
       "id": "SCHEMA-03",
@@ -2823,10 +3110,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation",
       "formal_models": [
         ".planning/formal/alloy/schema-extensions.als"
-      ]
+      ],
+      "category_raw": "Schema Foundation"
     },
     {
       "id": "SCHEMA-04",
@@ -2838,20 +3125,20 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Schema Foundation",
       "formal_models": [
         ".planning/formal/alloy/schema-extensions.als"
-      ]
+      ],
+      "category_raw": "Schema Foundation"
     },
     {
       "id": "SEC-01",
-      "text": "Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials",
+      "text": "Pre-commit hook runs secret scanning to block commits containing credentials",
       "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -2859,13 +3146,13 @@
     },
     {
       "id": "SEC-02",
-      "text": "CI pipeline runs deep secret scanning (e.g., TruffleHog) across full repo history on every PR",
+      "text": "CI pipeline runs deep secret scanning across full repo history on every PR",
       "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -2873,13 +3160,13 @@
     },
     {
       "id": "SEC-03",
-      "text": "All external input (user input, API request bodies, query parameters, file uploads) is validated and sanitized at system boundaries before processing",
+      "text": "All external input is validated and sanitized at system boundaries before processing",
       "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -2887,21 +3174,65 @@
     },
     {
       "id": "SEC-04",
-      "text": "Dependencies are scanned for known vulnerabilities in CI (e.g., npm audit, Dependabot, Snyk) and critical/high findings block merge",
+      "text": "Dependencies are scanned for known vulnerabilities in CI",
       "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
       ]
     },
     {
+      "id": "SEM-01",
+      "text": "Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog",
+      "category": "Semantics",
+      "phase": "v0.29-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "SEM-02",
+      "text": "Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status",
+      "category": "Semantics",
+      "phase": "v0.29-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "SEM-03",
+      "text": "Assumption register catalogs assumptions made when deriving L2 from L1 with validation status and linked L2 states",
+      "category": "Semantics",
+      "phase": "v0.29-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "SEM-04",
+      "text": "Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models",
+      "category": "Semantics",
+      "phase": "v0.29-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
+        "milestone": "v0.29"
+      }
+    },
+    {
       "id": "SENS-01",
-      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.planning/formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
+      "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2909,10 +3240,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis",
       "formal_models": [
         ".planning/formal/tla/QGSDSensitivity.tla"
-      ]
+      ],
+      "category_raw": "Sensitivity Analysis"
     },
     {
       "id": "SENS-02",
@@ -2924,14 +3255,14 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis",
       "formal_models": [
         ".planning/formal/tla/QGSDSensitivity.tla"
-      ]
+      ],
+      "category_raw": "Sensitivity Analysis"
     },
     {
       "id": "SENS-03",
-      "text": "`bin/sensitivity-report.cjs` generates `.planning/formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
+      "text": "`bin/sensitivity-report.cjs` generates `.formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
       "category": "Formal Verification",
       "phase": "v0.20-08",
       "status": "Complete",
@@ -2939,14 +3270,25 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Sensitivity Analysis",
       "formal_models": [
         ".planning/formal/tla/QGSDSensitivity.tla"
-      ]
+      ],
+      "category_raw": "Sensitivity Analysis"
+    },
+    {
+      "id": "SHARD-01",
+      "text": "`.claude/rules/` files are tagged with relevance patterns (tool names, file globs, keywords) so only matching rules load per turn, measurably reducing per-turn token consumption",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
     },
     {
       "id": "SIG-01",
-      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.planning/formal/coverage-gaps.md`",
+      "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.formal/coverage-gaps.md`",
       "category": "Observability & Diagnostics",
       "phase": "v0.21-06",
       "status": "Complete",
@@ -2954,10 +3296,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals",
       "formal_models": [
         ".planning/formal/alloy/signal-analysis-tools.als"
-      ]
+      ],
+      "category_raw": "Operational Signals"
     },
     {
       "id": "SIG-02",
@@ -2969,10 +3311,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals",
       "formal_models": [
         ".planning/formal/alloy/signal-analysis-tools.als"
-      ]
+      ],
+      "category_raw": "Operational Signals"
     },
     {
       "id": "SIG-03",
@@ -2996,10 +3338,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Operational Signals",
       "formal_models": [
         ".planning/formal/alloy/signal-analysis-tools.als"
-      ]
+      ],
+      "category_raw": "Operational Signals"
     },
     {
       "id": "SLOT-01",
@@ -3011,11 +3353,11 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Slot-based Naming",
       "formal_models": [
         ".planning/formal/alloy/multi-slot-structure.als",
         ".planning/formal/tla/QGSDQuorum.tla"
-      ]
+      ],
+      "category_raw": "Slot-based Naming"
     },
     {
       "id": "SLOT-02",
@@ -3030,6 +3372,18 @@
       "formal_models": [
         ".planning/formal/tla/QGSDRecruiting.tla"
       ],
+      "category_raw": "Slot-based Naming"
+    },
+    {
+      "id": "SLOT-03",
+      "text": "All QGSD source files (hooks, orchestrator, commands, scoreboard tooling) updated to use new slot names — no old names remain",
+      "category": "MCP & Agents",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
       "category_raw": "Slot-based Naming"
     },
     {
@@ -3048,341 +3402,6 @@
       "category_raw": "Slot-based Naming"
     },
     {
-      "id": "SOLVE-01",
-      "text": "Execute `/nf:solve` command to sweep all 7 layer transitions (Requirements→Formal, Formal→Tests, Code→Formal, Tests→Code, Formal→Code, Requirements→Docs, Docs→Code) and compute residual vectors showing gaps at each boundary, with optional auto-closing of gaps through iteration until convergence",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The consistency solver provides a single command for diagnosing and fixing all verification layer gaps across the Requirements→Formal→Tests→Code stack. It replaces the need to manually run individual verification tools and cross-reference their outputs.",
-      "provenance": {
-        "source_file": ".planning/quick/140-implement-qgsd-solve-consistency-solver-/140-PLAN.md",
-        "milestone": "quick-140"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-consistency.als"
-      ]
-    },
-    {
-      "id": "SOLVE-02",
-      "text": "Parse all Alloy default constants from newline-separated constraint blocks and clear formalTestSyncCache at each solver iteration to ensure fresh residual computation after file mutations",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The solver parseAlloyDefaults() was splitting constraint blocks on commas instead of newlines, missing 2 of 3 Alloy default constants. The formalTestSyncCache was never cleared between iterations, causing stale results after autoClose() mutations.",
-      "provenance": {
-        "source_file": ".planning/quick/141-fix-solver-loop-bugs-parsealloydefaults-/141-PLAN.md",
-        "milestone": "quick-141"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-consistency.als"
-      ]
-    },
-    {
-      "id": "SOLVE-03",
-      "text": "Solver discovers documentation files via config (docs_paths in .planning/config.json) with convention fallback (README.md, docs/**/*.md), checks R→D coverage by literal ID and keyword matching, and verifies D→C structural claims (file paths, CLI commands, dependencies) with false-positive filtering for template variables, example headings, home paths, and fenced code blocks",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The solver had zero visibility into documentation consistency. A README could list commands that don't exist, reference deleted files, or omit shipped features — and /qgsd:solve would report all-green. R→D gaps are now auto-remediable (via SOLVE-04); D→C remains a manual-review-only layer that surfaces documentation drift.",
-      "provenance": {
-        "source_file": ".planning/quick/143-add-r-to-d-and-d-to-c-layer-transitions-/143-PLAN.md",
-        "milestone": "quick-143"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-consistency.als",
-        ".planning/formal/alloy/solver-doc-layers.als"
-      ]
-    },
-    {
-      "id": "SOLVE-04",
-      "text": "Scope R→D gap detection to developer-category documentation files (docs/dev/) and automatically dispatch /nf:quick batches to generate requirement-to-documentation entries into docs/dev/requirements-coverage.md, while preserving user-controlled docs (docs/) as manual-only",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The solver previously treated R→D gaps as informational-only with manual review required, and did not distinguish between user-authored docs (docs/) and auto-generatable developer docs (docs/dev/). This enhancement enables autonomous closure of R→D gaps by auto-generating developer documentation entries from requirements and source code, while ensuring user documentation remains human-controlled. R→D is now part of automatable_residual.",
-      "provenance": {
-        "source_file": ".planning/quick/163-add-developer-doc-auto-generation-to-qgs/163-PLAN.md",
-        "milestone": "quick-163"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solver-doc-layers.als"
-      ]
-    },
-    {
-      "id": "SOLVE-05",
-      "text": "When qgsd:solve runs in another project, run-formal-verify.cjs discovers and verifies that project's formal models (from ROOT/.planning/formal/{tla,alloy,prism,petri}/) rather than hardcoding QGSD-internal model names. All child runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, and variants) must honor --project-root for spec file resolution, JAR/tool lookup, and NDJSON output. QGSD-specific checks (XState machine extraction, provider roster constants) are gracefully skipped when their prerequisites do not exist in the target project.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The formal verification harness is hardcoded to QGSD's own models. When /qgsd:solve runs in another repo, it tries to verify QGSD-internal TLA+, Alloy, and PRISM models that don't exist there, producing 21+ false failures. The harness should be project-agnostic — discovering models from the target project's .planning/formal/ directory.",
-      "provenance": {
-        "source_file": ".planning/quick/167-implement-solve-05-make-the-formal-verif/167-PLAN.md",
-        "milestone": "quick-167"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solver-portability.als"
-      ]
-    },
-    {
-      "id": "SOLVE-06",
-      "text": "qgsd-solve diagnostic engine provides reverse traceability sweeps (C→R, T→R, D→R) that discover implementation artifacts without requirement backing, assembled via deduplication and acknowledged-not-required filtering, presented through a two-step candidate-then-approve pattern that prevents unbounded requirement expansion",
-      "category": "Traceability & Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Forward traceability (R→F→T→C→D) ensures requirements are implemented, but does not catch code, tests, or doc claims that exist without any requirement backing. Reverse sweeps close this gap by surfacing untraced artifacts as candidates, gated by human approval to prevent automated feedback loops from inflating the requirement set.",
-      "provenance": {
-        "source_file": ".planning/quick/176-add-reverse-traceability-discovery-c-r-t/176-PLAN.md",
-        "milestone": "quick-176"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solver-portability.als"
-      ]
-    },
-    {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
-      }
-    },
-    {
-      "id": "SOLVE-09",
-      "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The full solve loop took 30+ minutes per iteration and surfaced hundreds of false positives from prose word matches and Category B reverse candidates requiring unnecessary human review. These five improvements reduce iteration time to sub-second for file-parsing layers, suppress pattern-matched false positives, eliminate manual Category B triage, and provide executors with ready-to-use absolute paths and test boilerplate in recipe sidecars.",
-      "provenance": {
-        "source_file": ".planning/quick/184-implement-5-solve-automation-improvement/184-PLAN.md",
-        "milestone": "quick-184"
-      }
-    },
-    {
-      "id": "SOLVE-10",
-      "text": "The T->C sweep collects line-level test coverage data and crossReferenceFormalCoverage() cross-references covered source files against formal-test-sync recipe source_files to identify false-green properties (tests pass but exercise zero implementing source files), surfacing an F->T->C coverage summary without altering residual scores, with coverage collection fail-open.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The T->C sweep previously only checked test pass/fail. Line-level coverage closes the full Formal->Test->Code traceability chain by detecting false greens — regardless of language or test framework.",
-      "provenance": {
-        "source_file": ".planning/quick/187-add-v8-line-level-coverage-to-t-c-sweep-/187-PLAN.md",
-        "milestone": "quick-187"
-      }
-    },
-    {
-      "id": "SOLVE-11",
-      "text": "The formal verification result schema SHALL distinguish infrastructure errors (binary not found, model missing, Java version wrong) from requirement violations (counterexample, divergence, property violation) using separate result values, and only requirement violations SHALL inflate the F->C residual.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/209-distinguish-fail-vs-error-in-formal-veri/209-PLAN.md",
-        "milestone": "quick-209"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/result-classification.als"
-      ]
-    },
-    {
-      "id": "SOLVE-12",
-      "text": "nf:solve autoClose phase upgrades generated TODO test stubs to implementation-aware tests using recipe metadata before convergence.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without auto-remediation, TODO stubs remain as assert.fail placeholders requiring manual intervention, leaving the formal-to-test gap unclosed after solve runs.",
-      "provenance": {
-        "source_file": ".planning/quick/207-improve-nf-solve-to-auto-remediate-todo-/207-PLAN.md",
-        "milestone": "quick-207"
-      }
-    },
-    {
-      "id": "SOLVE-13",
-      "text": "nf-solve persists a timestamped markdown session summary to .planning/formal/solve-sessions/ after every run, containing the full residual vector report, machine state JSON, and actions taken, with automatic pruning to retain only the 20 most recent session files",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Solve session outputs (actionable items, config changes, unmapped events, fairness gaps) previously existed only in conversation context and were lost on /clear or compaction. Persisting them to disk enables multi-session continuity for gap closure without re-running diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/220-nf-solve-should-auto-persist-its-session/220-PLAN.md",
-        "milestone": "quick-220"
-      }
-    },
-    {
-      "id": "SOLVE-14",
-      "text": "The nf:solve skill decomposes into three Agent-dispatched sub-skills (solve-diagnose, solve-remediate, solve-report) orchestrated by a thin dispatcher that retains only the convergence loop, report-only gate, and phase-routing logic.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The monolithic solve.md (971 lines) was loaded in full on every invocation, consuming excessive context. Decomposing into sub-skills reduces per-invocation context by 75-90% while preserving all diagnostic, remediation, and reporting logic via structured JSON input/output contracts with status-based branching.",
-      "provenance": {
-        "source_file": ".planning/quick/221-refactor-nf-solve-into-sub-skills-to-red/221-PLAN.md",
-        "milestone": "quick-221"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-decomposition.als"
-      ]
-    },
-    {
-      "id": "SOLVE-15",
-      "text": "nf-solve ingests a model-complexity-profile combining per-model runtime classification (FAST/MODERATE/SLOW/HEAVY) with optional state-space estimates, and surfaces split/merge recommendations in both text and JSON report outputs, fail-open when profiler data is absent.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "With 55+ formal models and growing, runtime varies from sub-second to 30+ seconds, but the solver had no visibility into which models are expensive. The complexity profiler correlates check-results.ndjson runtime data with state-space analysis to classify models and recommend structural changes.",
-      "provenance": {
-        "source_file": ".planning/quick/226-track-formal-model-complexity-and-runtim/226-PLAN.md",
-        "milestone": "quick-226"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-decomposition.als"
-      ]
-    },
-    {
-      "id": "SOLVE-16",
-      "text": "The solve TUI (bin/solve-tui.cjs) provides an interactive terminal interface for browsing human-gated sweep items across all four diagnostic categories (D->C, C->R, T->R, D->R) with 3-depth paginated navigation, inline false-positive acknowledgment, regex suppression pattern management, and file context viewing.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Solve sweep output was truncated in terminal reports, preventing full review of flagged items. The TUI enables browsable access to all items with inline actions to acknowledge false positives and add suppression patterns, reducing noise in subsequent sweep runs.",
-      "provenance": {
-        "source_file": ".planning/quick/228-build-interactive-tui-for-browsing-and-a/228-PLAN.md",
-        "milestone": "quick-228"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-tui-features.als"
-      ]
-    },
-    {
-      "id": "SOLVE-17",
-      "text": "The solve TUI provides category-aware action menus in item detail view: 'Create Requirement' for C->R, T->R, and D->R items (writing to requirements.json via addRequirement with duplicate detection and atomic writes), 'Create TODO' for D->C items (writing to todos.json), and automatic suppression of D->C items matching known rebrand path patterns (qgsd-core/, qgsd-, /qgsd/).",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The TUI Solve module could only acknowledge items as false positives or add regex suppressions, leaving no path to resolve flagged items by creating requirements or tracking work. These feedback loops complete the solver's human-gated workflow and reduce D->C noise from the completed rebrand.",
-      "provenance": {
-        "source_file": ".planning/quick/230-close-all-solver-feedback-loops-in-tui-s/230-PLAN.md",
-        "milestone": "quick-230"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/solve-tui-features.als"
-      ]
-    },
-    {
-      "id": "SOLVE-18",
-      "text": "Code module: bin/unified-mcp-server.mjs",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/unified-mcp-server.mjs",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/requirements-aggregation.als"
-      ]
-    },
-    {
-      "id": "SOLVE-19",
-      "text": "Code module: hooks/config-loader.js",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/config-loader.js",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-module-existence.als"
-      ]
-    },
-    {
-      "id": "SOLVE-20",
-      "text": "Code module: hooks/nf-circuit-breaker.js",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-circuit-breaker.js",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-module-existence.als"
-      ]
-    },
-    {
-      "id": "SOLVE-21",
-      "text": "Code module: hooks/nf-prompt.js",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-prompt.js",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-module-existence.als"
-      ]
-    },
-    {
-      "id": "SOLVE-22",
-      "text": "Code module: hooks/nf-stop.js",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-stop.js",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-module-existence.als"
-      ]
-    },
-    {
-      "id": "SOLVE-23",
-      "text": "Code module: hooks/nf-mcp-dispatch-guard.js",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-mcp-dispatch-guard.js",
-        "milestone": "solver-tui"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/hook-module-existence.als"
-      ]
-    },
-    {
-      "id": "SOLVE-24",
-      "text": "The nForma TUI binary (bin/nForma.cjs) SHALL provide a terminal-based solve dashboard with circuit breaker CLI controls, testable without a live terminal",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nForma.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-25",
-      "text": "The nForma diagnostic solver (bin/nf-solve.cjs) SHALL compute cross-layer residual vectors with health indicators, convergence logic, and structural claim sweeps, all exercised by automated tests",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nf-solve.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -3395,6 +3414,18 @@
       "formal_models": [
         ".planning/formal/tla/QGSDStopHook.tla"
       ],
+      "category_raw": "Spec Completeness"
+    },
+    {
+      "id": "SPEC-02",
+      "text": "`QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected",
+      "category": "Formal Verification",
+      "phase": "v0.21-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
       "category_raw": "Spec Completeness"
     },
     {
@@ -3422,49 +3453,10 @@
         "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Spec Completeness",
       "formal_models": [
         ".planning/formal/tla/QGSDSpecGeneration.tla"
-      ]
-    },
-    {
-      "id": "SPEC-05",
-      "text": "Formal scope scan uses per-module scope.json metadata with exact concept matching, source-file overlap, and module-name matching instead of substring-based keyword heuristics, and is centralized in bin/formal-scope-scan.cjs for all 4 workflow files",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/196-improve-formal-scope-scan-to-use-semanti/196-PLAN.md",
-        "milestone": "quick-196"
-      },
-      "background": "The previous inline keyword-substring matching in workflows produced false positives (e.g., session matching agent-loop, safety matching unrelated modules). Structured scope.json metadata per formal spec module with curated concepts enables precise semantic relevance matching without substring ambiguity."
-    },
-    {
-      "id": "SPEC-06",
-      "text": "All Alloy assertions verify non-tautological properties (no P=>P or x=x patterns), all TLA+ TypeOK variable domains use bounded ranges (no raw Nat/Int), and all Alloy check commands use per-sig scopes matching their signature hierarchy",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/204-audit-formal-models-for-state-space-expl/204-PLAN.md",
-        "milestone": "quick-204"
-      },
-      "background": "Audit of 94 formal models (61 Alloy, 33 TLA+) revealed tautological assertions giving false verification confidence, unbounded TLA+ counters risking state space explosion, and Alloy check commands using overall scopes that under-explore signature combinations."
-    },
-    {
-      "id": "SPEC-07",
-      "text": "QGSDSessionPersistence TLA+ model uses counter-based state tracking (activeCount, persistedCount) instead of set-based tracking to keep TLC model-checking state space within practical bounds while preserving all safety invariants and liveness properties.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The original set-based model used SUBSET types producing 2^10 values per variable, creating billions of reachable states that made TLC model checking impractical. Counter abstraction reduces the state space by ~65,000x while preserving all invariant semantics since only cardinality matters for the session persistence properties.",
-      "provenance": {
-        "source_file": ".planning/quick/235-fix-tla-model-state-space-explosions-and/235-PLAN.md",
-        "milestone": "quick-235"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/session-counter-tracking.als"
-      ]
+      ],
+      "category_raw": "Spec Completeness"
     },
     {
       "id": "STATE-01",
@@ -3476,10 +3468,10 @@
         "source_file": ".planning/milestones/v0.13-REQUIREMENTS.md",
         "milestone": "v0.13"
       },
-      "category_raw": "State Tracking",
       "formal_models": [
         ".planning/formal/tla/QGSDBreakerState.tla"
-      ]
+      ],
+      "category_raw": "State Tracking"
     },
     {
       "id": "STATE-02",
@@ -3491,10 +3483,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management",
       "formal_models": [
         ".planning/formal/tla/QGSDBreakerState.tla"
-      ]
+      ],
+      "category_raw": "State Management"
     },
     {
       "id": "STATE-03",
@@ -3506,10 +3498,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management",
       "formal_models": [
         ".planning/formal/tla/QGSDBreakerState.tla"
-      ]
+      ],
+      "category_raw": "State Management"
     },
     {
       "id": "STATE-04",
@@ -3521,34 +3513,22 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "State Management",
       "formal_models": [
         ".planning/formal/tla/QGSDBreakerState.tla"
-      ]
+      ],
+      "category_raw": "State Management"
     },
     {
-      "id": "STATE-05",
-      "text": "execute-plan Route C (all phases complete) chains into /nf:audit-milestone with gap-closure detection instead of suggesting /nf:complete-milestone directly, matching transition.md Route B logic for both yolo (auto-invoke) and interactive (suggest) modes.",
-      "category": "Planning & Tracking",
+      "id": "STD-02",
+      "text": "All 4 Gen1 MCP server repos (claude, codex, copilot, openhands) ported to Gen2 per-tool architecture (`*.tool.ts` + `registry.ts`) with Gen1 files (`definitions.ts`, `handlers.ts`) removed — all repos on main branch",
+      "category": "Testing & Quality",
       "phase": "unknown",
       "status": "Complete",
-      "background": "Previously, when the last plan of the last phase completed, execute-plan Route C suggested /nf:complete-milestone directly, bypassing the mandatory milestone audit step. Route C now mirrors transition.md Route B to ensure audits are always enforced.",
       "provenance": {
-        "source_file": ".planning/quick/192-fix-execute-plan-route-c-to-chain-into-t/192-PLAN.md",
-        "milestone": "quick-192"
-      }
-    },
-    {
-      "id": "STATE-06",
-      "text": "phase-complete falls back to ROADMAP.md heading parsing when no next-phase directory exists on disk, using segment-aware version comparison for versioned phase IDs (e.g., v0.28-01 vs v0.28-02), and sets is_last_phase=true only when the roadmap contains no higher-numbered phase",
-      "category": "Planning & Tracking",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Previously, phase-complete relied solely on disk directory scanning to detect the next phase, causing false is_last_phase=true when the next phase existed in ROADMAP.md but had no directory yet. This broke the auto-advance chain (Route A) by incorrectly triggering milestone-complete (Route B). The fix also replaces parseFloat-based comparison with segment-aware splitting, since parseFloat('0.28-01') and parseFloat('0.28-02') both yield 0.28.",
-      "provenance": {
-        "source_file": ".planning/quick/194-fix-gsd-tools-cjs-phase-complete-to-dete/194-PLAN.md",
-        "milestone": "quick-194"
-      }
+        "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
+        "milestone": "unknown"
+      },
+      "category_raw": "Standardization"
     },
     {
       "id": "STD-10",
@@ -3560,10 +3540,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Standardization",
       "formal_models": [
         ".planning/formal/alloy/codebase-arch-constraints.als"
-      ]
+      ],
+      "category_raw": "Standardization"
     },
     {
       "id": "STOP-01",
@@ -3672,7 +3652,7 @@
     },
     {
       "id": "STOP-08",
-      "text": "Block reason message format: \"QUORUM REQUIRED: Before completing this /nf:[command] response, call [tool1], [tool2], [tool3] with your current plan. Present their responses, then deliver your final output.\"",
+      "text": "Block reason message format: \"QUORUM REQUIRED: Before completing this /qgsd:[command] response, call [tool1], [tool2], [tool3] with your current plan. Present their responses, then deliver your final output.\"",
       "category": "Hooks & Enforcement",
       "phase": "unknown",
       "status": "Complete",
@@ -3710,10 +3690,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy",
       "formal_models": [
         ".planning/formal/alloy/gsd-sync-invariants.als"
-      ]
+      ],
+      "category_raw": "GSD Sync Strategy"
     },
     {
       "id": "SYNC-02",
@@ -3725,10 +3705,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy",
       "formal_models": [
         ".planning/formal/alloy/gsd-sync-invariants.als"
-      ]
+      ],
+      "category_raw": "GSD Sync Strategy"
     },
     {
       "id": "SYNC-03",
@@ -3752,14 +3732,58 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "GSD Sync Strategy",
       "formal_models": [
         ".planning/formal/alloy/gsd-sync-invariants.als"
-      ]
+      ],
+      "category_raw": "GSD Sync Strategy"
+    },
+    {
+      "id": "TOKN-01",
+      "text": "Auto-compaction at clean boundaries — PreCompact hook preserves execution state and memory across compaction events",
+      "category": "Token Optimization & Model Routing",
+      "phase": "v0.30-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "TOKN-02",
+      "text": "Thinking budget scaling per task type — task complexity classifier adjusts thinking budget directive based on plan vs research vs quick task",
+      "category": "Token Optimization & Model Routing",
+      "phase": "v0.30-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "TOKN-03",
+      "text": "Token usage dashboard — `/nf:tokens` displays per-slot and per-session token consumption from telemetry JSONL",
+      "category": "Token Optimization & Model Routing",
+      "phase": "v0.30-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "TOKN-04",
+      "text": "Task-complexity model routing — TIER_SLOT_MAP filters quorum slots by task complexity tier (T1/T2/T3)",
+      "category": "Token Optimization & Model Routing",
+      "phase": "v0.30-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
     },
     {
       "id": "TRACE-01",
-      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.planning/formal/traceability-matrix.json` with property-level links between requirements and formal properties",
+      "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.formal/traceability-matrix.json` with property-level links between requirements and formal properties",
       "category": "Formal Verification",
       "phase": "v0.25-03",
       "status": "Complete",
@@ -3779,10 +3803,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix",
       "formal_models": [
         ".planning/formal/alloy/traceability-annotations.als"
-      ]
+      ],
+      "category_raw": "Traceability Matrix"
     },
     {
       "id": "TRACE-03",
@@ -3806,10 +3830,10 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix",
       "formal_models": [
         ".planning/formal/alloy/traceability-annotations.als"
-      ]
+      ],
+      "category_raw": "Traceability Matrix"
     },
     {
       "id": "TRACE-05",
@@ -3821,77 +3845,14 @@
         "source_file": ".planning/milestones/v0.25-REQUIREMENTS.md",
         "milestone": "v0.25"
       },
-      "category_raw": "Traceability Matrix",
       "formal_models": [
         ".planning/formal/alloy/traceability-annotations.als"
-      ]
-    },
-    {
-      "id": "TRACE-06",
-      "text": "The /nf:formal-test-sync command cross-references formal model invariants with unit test coverage, validates formal constants against runtime config defaults, reports coverage gaps, generates test stubs, and integrates unit test coverage into the traceability matrix",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/139-implement-qgsd-formal-test-sync-command-/139-PLAN.md",
-        "milestone": "quick-139"
-      },
-      "category_raw": "Formal Verification",
-      "formal_models": [
-        ".planning/formal/alloy/formal-test-trace.als"
-      ]
-    },
-    {
-      "id": "TRACE-07",
-      "text": "Conformance tracing infrastructure (schema definition, divergence attribution, trace validation) SHALL be requirement-traced and have test coverage with @req annotations.",
-      "category": "Conformance & Traces",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "2 conformance tracing modules (conformance-schema, attribute-trace-divergence) and ~4 related test files lack requirement tracing. Generalizes coverage for the trace validation subsystem.",
-      "provenance": {
-        "source_file": "reverse-discovery",
-        "milestone": "solve-iteration-1"
-      }
-    },
-    {
-      "id": "TRACE-08",
-      "text": "mapToXStateEvent normalizes event identity via event.action || event.type fallback and handles quorum_fallback_t1_required, quorum_block_r3_2, and security_sweep actions — non-FSM actions in KNOWN_NON_FSM_ACTIONS are counted as valid (not divergent)",
-      "category": "Conformance & Traces",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The conformance trace validator reported 6373 false divergences because mapToXStateEvent only read event.action, but 5649 events used event.type instead, and two additional actions lacked switch cases.",
-      "provenance": {
-        "source_file": ".planning/quick/205-fix-conformance-traces-expand-maptoxstat/205-PLAN.md",
-        "milestone": "quick-205"
-      }
-    },
-    {
-      "id": "TRACE-09",
-      "text": "The formal proximity index builder reads all 12 formal artifact types and emits a bidirectional adjacency graph (proximity-index.json) with reverse edges for every forward edge, and the query CLI provides reach, path, neighbors, impact, coverage, proximity, and stats commands over that graph.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Isolated formal-to-code lookups required manual cross-referencing across 12 separate artifact files. The proximity index unifies these into a single bidirectional graph with BFS traversal and proximity scoring.",
-      "provenance": {
-        "source_file": ".planning/quick/217-build-formal-proximity-index-builder-and/217-PLAN.md",
-        "milestone": "quick-217"
-      }
-    },
-    {
-      "id": "TRACE-10",
-      "text": "sweepCtoR parses Requirements: header comments from the first 30 lines of source files as a fallback tracing mechanism, counting a file as traced when its declared IDs exist in the requirements envelope.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Many source files self-declare requirement links via // Requirements: ID1, ID2 header comments, but sweepCtoR only checked whether the requirements envelope text mentioned the filename. This inflated the untraced count by 9 files that were already linked.",
-      "provenance": {
-        "source_file": ".planning/quick/240-teach-sweepctor-to-read-requirements-hea/240-PLAN.md",
-        "milestone": "quick-240"
-      }
+      ],
+      "category_raw": "Traceability Matrix"
     },
     {
       "id": "TRIAGE-01",
-      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.planning/formal/diff-report.md` (per-check delta from last run) and `.planning/formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
+      "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.formal/diff-report.md` (per-check delta from last run) and `.formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
       "phase": "v0.20-06",
       "status": "Complete",
@@ -3899,10 +3860,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Triage Bundle",
       "formal_models": [
         ".planning/formal/alloy/evidence-triage.als"
-      ]
+      ],
+      "category_raw": "Triage Bundle"
     },
     {
       "id": "TRIAGE-02",
@@ -3926,10 +3887,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format",
       "formal_models": [
         ".planning/formal/alloy/unified-check-results.als"
-      ]
+      ],
+      "category_raw": "Unified Verdict Format"
     },
     {
       "id": "UNIF-02",
@@ -3953,10 +3914,10 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format",
       "formal_models": [
         ".planning/formal/alloy/unified-check-results.als"
-      ]
+      ],
+      "category_raw": "Unified Verdict Format"
     },
     {
       "id": "UNIF-04",
@@ -3968,14 +3929,14 @@
         "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
         "milestone": "v0.19"
       },
-      "category_raw": "Unified Verdict Format",
       "formal_models": [
         ".planning/formal/alloy/unified-check-results.als"
-      ]
+      ],
+      "category_raw": "Unified Verdict Format"
     },
     {
       "id": "UPPAAL-01",
-      "text": "A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
+      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
       "category": "Formal Verification",
       "phase": "v0.20-07",
       "status": "Complete",
@@ -3983,10 +3944,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "UPPAAL Timed Race Modeling",
       "formal_models": [
         ".planning/formal/alloy/uppaal-model-reqs.als"
-      ]
+      ],
+      "category_raw": "UPPAAL Timed Race Modeling"
     },
     {
       "id": "UPPAAL-02",
@@ -4010,10 +3971,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "UPPAAL Timed Race Modeling",
       "formal_models": [
         ".planning/formal/alloy/uppaal-model-reqs.als"
-      ]
+      ],
+      "category_raw": "UPPAAL Timed Race Modeling"
     },
     {
       "id": "UPS-01",
@@ -4025,10 +3986,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook",
       "formal_models": [
         ".planning/formal/tla/QGSDPromptHook.tla"
-      ]
+      ],
+      "category_raw": "UserPromptSubmit Hook"
     },
     {
       "id": "UPS-02",
@@ -4040,10 +4001,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook",
       "formal_models": [
         ".planning/formal/tla/QGSDPromptHook.tla"
-      ]
+      ],
+      "category_raw": "UserPromptSubmit Hook"
     },
     {
       "id": "UPS-03",
@@ -4055,10 +4016,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook",
       "formal_models": [
         ".planning/formal/tla/QGSDPromptHook.tla"
-      ]
+      ],
+      "category_raw": "UserPromptSubmit Hook"
     },
     {
       "id": "UPS-04",
@@ -4070,10 +4031,10 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook",
       "formal_models": [
         ".planning/formal/tla/QGSDPromptHook.tla"
-      ]
+      ],
+      "category_raw": "UserPromptSubmit Hook"
     },
     {
       "id": "UPS-05",
@@ -4085,20 +4046,20 @@
         "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "UserPromptSubmit Hook",
       "formal_models": [
         ".planning/formal/tla/QGSDPromptHook.tla"
-      ]
+      ],
+      "category_raw": "UserPromptSubmit Hook"
     },
     {
       "id": "UX-01",
-      "text": "Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message, navigation change, or visible state update)",
+      "text": "Every user-initiated action produces immediate feedback and completion feedback",
       "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
@@ -4106,13 +4067,13 @@
     },
     {
       "id": "UX-02",
-      "text": "Destructive actions (delete, reset, remove, overwrite) require explicit confirmation or provide undo within a reasonable window",
+      "text": "Destructive actions require explicit confirmation or provide undo",
       "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
@@ -4120,17 +4081,61 @@
     },
     {
       "id": "UX-03",
-      "text": "Error messages are human-readable, explain what went wrong, and suggest a next step or recovery action",
+      "text": "Error messages are human-readable, explain what went wrong, and suggest recovery",
       "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
+      "phase": "unknown",
+      "status": "Complete",
       "provenance": {
-        "source_file": "qgsd-baseline",
-        "milestone": "baseline"
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
       ]
+    },
+    {
+      "id": "VALID-01",
+      "text": "Hook stdin JSON is validated against lightweight schemas with structured error reporting; malformed input produces a diagnostic message on stderr before fail-open exit",
+      "category": "Governance & DX",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
+        "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "VERF-01",
+      "text": "File-based execution state — execution-progress.cjs tracks plan/task completion state to disk, survives compaction",
+      "category": "Verification & Execution State",
+      "phase": "v0.30-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "VERF-02",
+      "text": "Continuous test verification — PostToolUse hook triggers boundary-detection checks during execution with budget cap",
+      "category": "Verification & Execution State",
+      "phase": "v0.30-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
+    },
+    {
+      "id": "VERF-03",
+      "text": "Machine-verifiable completion — done_conditions in task schema enable automated evaluateAllConditions check",
+      "category": "Verification & Execution State",
+      "phase": "v0.30-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.30-REQUIREMENTS.md",
+        "milestone": "v0.30"
+      }
     },
     {
       "id": "VERIFY-01",
@@ -4142,10 +4147,10 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Verification Gate",
       "formal_models": [
         ".planning/formal/alloy/verification-integration.als"
-      ]
+      ],
+      "category_raw": "Verification Gate"
     },
     {
       "id": "VERIFY-02",
@@ -4157,65 +4162,39 @@
         "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
         "milestone": "v0.20"
       },
-      "category_raw": "Verification Gate",
       "formal_models": [
         ".planning/formal/alloy/verification-integration.als"
-      ]
-    },
-    {
-      "id": "VERIFY-03",
-      "text": "Formal model runners (Alloy, TLA+, PRISM, UPPAAL) MUST execute in headless mode — no GUI windows or AWT initialization. For Java-based tools, `-Djava.awt.headless=true` MUST be passed before `-jar`.",
-      "category": "Testing & Quality",
-      "phase": "v0.27",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.27"
-      },
-      "background": "On macOS, Java-based formal tools (especially Alloy) initialize AWT/Swing GUI even in CLI exec mode unless explicitly told not to. This causes unexpected GUI windows during automated qgsd:solve runs."
-    },
-    {
-      "id": "VERIFY-04",
-      "text": "All JVM-spawning formal model runners (TLC and Alloy) MUST include -Xms64m and -Xmx heap cap flags before -jar, defaulting to 512MB and configurable via QGSD_JAVA_HEAP_MAX env var, and run-formal-verify.cjs MUST execute tool groups sequentially by default with --concurrent opt-in.",
-      "category": "Testing & Quality",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The formal verification suite spawns up to 14 JVM processes across 5 tool groups. Without -Xmx caps each JVM claims ~25% of physical RAM, and concurrent execution via Promise.all causes 5+ JVMs competing for 125%+ RAM, leading to swap thrashing or OOM kills. Sequential-by-default execution with heap caps limits peak memory to one capped JVM at a time.",
-      "provenance": {
-        "source_file": ".planning/quick/181-cap-jvm-memory-in-formal-model-runners-a/181-PLAN.md",
-        "milestone": "quick-181"
-      }
-    },
-    {
-      "id": "VERIFY-05",
-      "text": "Planner agent includes a System Integration Awareness section that requires wiring tasks for new artifacts, and verifier agent includes a dedicated Orphaned Producer Check step (Step 5.5) that flags new files with no system-level consumer as verification gaps.",
-      "category": "Testing & Quality",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Plans could create new artifacts (bin/ scripts, hooks, workflows) with tests but no system-level consumer, leaving orphaned producers in the codebase. This requirement ensures planners explicitly plan wiring tasks and verifiers catch orphaned producers as first-class gaps.",
-      "provenance": {
-        "source_file": ".planning/quick/211-add-wiring-in-checks-to-planner-and-veri/211-PLAN.md",
-        "milestone": "quick-211"
-      }
+      ],
+      "category_raw": "Verification Gate"
     },
     {
       "id": "VIS-01",
-      "text": "`/nf:health` surfaces W008 warning when a quorum slot has ≥3 failures recorded in `quorum-failures.json`",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
+      "text": "All TUI screenshots regenerated via VHS tape automation after README structural changes",
+      "category": "Visual Assets",
+      "phase": "v0.32-04",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.15-REQUIREMENTS.md",
-        "milestone": "v0.15"
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
       },
-      "category_raw": "Visibility",
       "formal_models": [
         ".planning/formal/alloy/health-validation.als"
       ]
     },
     {
+      "id": "VIS-02",
+      "text": "VHS tape hardened for CI reliability (zsh shell, explicit PATH export, CLAUDECODE unset)",
+      "category": "Visual Assets",
+      "phase": "v0.32-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.32-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "WIZ-01",
-      "text": "User can run `/nf:mcp-setup` to start the MCP configuration wizard",
+      "text": "User can run `/qgsd:mcp-setup` to start the MCP configuration wizard",
       "category": "Installer & CLI",
       "phase": "unknown",
       "status": "Complete",
@@ -4223,10 +4202,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard UX"
     },
     {
       "id": "WIZ-02",
@@ -4238,10 +4217,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard UX"
     },
     {
       "id": "WIZ-03",
@@ -4253,10 +4232,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard UX"
     },
     {
       "id": "WIZ-04",
@@ -4268,10 +4247,10 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard UX"
     },
     {
       "id": "WIZ-05",
@@ -4283,14 +4262,14 @@
         "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard UX",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard UX"
     },
     {
       "id": "WIZ-08",
-      "text": "`/nf:mcp-setup` re-run menu includes an \"Edit Quorum Composition\" option",
+      "text": "`/qgsd:mcp-setup` re-run menu includes an \"Edit Quorum Composition\" option",
       "category": "Installer & CLI",
       "phase": "unknown",
       "status": "Complete",
@@ -4298,10 +4277,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard Composition Screen"
     },
     {
       "id": "WIZ-09",
@@ -4313,10 +4292,10 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
+      ],
+      "category_raw": "Wizard Composition Screen"
     },
     {
       "id": "WIZ-10",
@@ -4328,28 +4307,12 @@
         "source_file": ".planning/milestones/v0.7-REQUIREMENTS.md",
         "milestone": "unknown"
       },
-      "category_raw": "Wizard Composition Screen",
       "formal_models": [
         ".planning/formal/tla/QGSDSetupWizard.tla"
-      ]
-    },
-    {
-      "id": "WIZ-11",
-      "text": "User can run /nf:settings to access a guided project manager hub with state-aware dashboard (milestone, progress, phase, config summary) and categorized main menu (Continue Working, Project Management, Configuration, Quick Task) with smart routing and profile/baselines management",
-      "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The project manager hub unifies QGSD's core capabilities (status awareness, action routing, configuration) into a single entry point. Previously /qgsd:progress showed status and routing while /qgsd:settings showed only configuration; the hub merges both experiences with additional project profile and baseline management. The --config flag preserves backward compatibility.",
-      "provenance": {
-        "source_file": ".planning/quick/152-expand-qgsd-settings-into-guided-project/152-PLAN.md",
-        "milestone": "quick-152"
-      },
-      "category_raw": "Installer & CLI",
-      "formal_models": [
-        ".planning/formal/alloy/settings-hub.als"
-      ]
+      ],
+      "category_raw": "Wizard Composition Screen"
     }
   ],
-  "total": 283,
-  "frozen_at": "2026-03-09T12:18:39.336Z"
+  "schema_version": "1",
+  "source": ".planning/REQUIREMENTS.md"
 }

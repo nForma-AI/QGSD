@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T18:29:51.670Z",
+  "generated_at": "2026-03-09T21:39:00.681Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -88,15 +88,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/AGENT-03.stub.test.js",
           "test_name": "AGENT-03: QGSDAgentProvisioning.tla defines VerifyAgent action"
-        }
-      ]
-    },
-    "AGT-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/AGT-01.stub.test.js",
-          "test_name": "AGT-01: QGSDAgentLoop.tla defines TypeOK invariant with autonomous loop state space"
         }
       ]
     },
@@ -244,15 +235,6 @@
         }
       ]
     },
-    "CI-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CI-04.stub.test.js",
-          "test_name": "CI-04: test:ci enumerates test files explicitly, not via raw glob"
-        }
-      ]
-    },
     "COMP-01": {
       "covered": true,
       "test_cases": [
@@ -374,42 +356,6 @@
         }
       ]
     },
-    "CONF-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CONF-10.stub.test.js",
-          "test_name": "CONF-10: config-audit.cjs exists and is fail-open (exit 0)"
-        }
-      ]
-    },
-    "CONF-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CONF-11.stub.test.js",
-          "test_name": "CONF-11: polyrepo module exports POLYREPOS_DIR pointing to ~/.claude/polyrepos"
-        }
-      ]
-    },
-    "CONF-12": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CONF-12.stub.test.js",
-          "test_name": "CONF-12: writeMarker accepts optional docs parameter"
-        }
-      ]
-    },
-    "CONF-13": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CONF-13.stub.test.js",
-          "test_name": "CONF-13: config-audit outputs valid JSON with --json flag"
-        }
-      ]
-    },
     "CRED-01": {
       "covered": true,
       "test_cases": [
@@ -425,15 +371,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/CRED-02.stub.test.js",
           "test_name": "CRED-02: requirement-map.cjs maps tla:account-manager to include CRED-02"
-        }
-      ]
-    },
-    "CRED-12": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CRED-12.stub.test.js",
-          "test_name": "CRED-12: requirement-map.cjs maps prism:oauth-rotation to include CRED-12"
         }
       ]
     },
@@ -571,15 +508,6 @@
         }
       ]
     },
-    "DETECT-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DETECT-06.stub.test.js",
-          "test_name": "DETECT-06: hasReversionInHashes function is defined"
-        }
-      ]
-    },
     "DISP-01": {
       "covered": true,
       "test_cases": [
@@ -622,51 +550,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/DISP-05.stub.test.js",
           "test_name": "DISP-05: parseVerdict extracts APPROVE from Mode B output"
-        }
-      ]
-    },
-    "DISP-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
-          "test_name": "DISP-06: matchRequirementsByKeywords is exported as a function"
-        }
-      ]
-    },
-    "DISP-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DISP-07.stub.test.js",
-          "test_name": "DISP-07: quorum-slot-dispatch.cjs exists and contains debate trace persistence logic"
-        }
-      ]
-    },
-    "DOC-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DOC-01.stub.test.js",
-          "test_name": "DOC-01: README mentions quorum/consensus and requirements.json covers it"
-        }
-      ]
-    },
-    "DOC-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DOC-02.stub.test.js",
-          "test_name": "DOC-02: Formal Verification section exists in README"
-        }
-      ]
-    },
-    "DOC-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DOC-03.stub.test.js",
-          "test_name": "DOC-03 — nForma.cjs contains --screenshot CLI mode"
         }
       ]
     },
@@ -769,24 +652,6 @@
         }
       ]
     },
-    "FVTOOL-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/FVTOOL-01.stub.test.js",
-          "test_name": "FVTOOL-01: FV tooling scripts contain requirement tracing annotations"
-        }
-      ]
-    },
-    "FVTOOL-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/FVTOOL-02.stub.test.js",
-          "test_name": "FVTOOL-02 — Bool: structural verification"
-        }
-      ]
-    },
     "GATE-01": {
       "covered": true,
       "test_cases": [
@@ -820,33 +685,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
           "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
-        }
-      ]
-    },
-    "GATE-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
-          "test_name": "GATE-05 — Bool: behavioral verification"
-        }
-      ]
-    },
-    "GUARD-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/GUARD-01.stub.test.js",
-          "test_name": "GUARD-01: nf-console-guard.js Stop hook exists and warns about console.log"
-        }
-      ]
-    },
-    "GUARD-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/GUARD-02.stub.test.js",
-          "test_name": "GUARD-02 — Bool: structural verification"
         }
       ]
     },
@@ -892,15 +730,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/HLTH-03.stub.test.js",
           "test_name": "HLTH-03: W002 not emitted for versioned phase ref in STATE.md when dir exists"
-        }
-      ]
-    },
-    "INIT-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INIT-01.stub.test.js",
-          "test_name": "INIT-01 — Profile: loadBaselineRequirements function exists and accepts profile parameter"
         }
       ]
     },
@@ -991,33 +820,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/INST-10.stub.test.js",
           "test_name": "INST-10: install.js preserves user-modified circuit_breaker values on reinstall"
-        }
-      ]
-    },
-    "INST-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
-          "test_name": "INST-11: bin scripts resolve ROOT from process.cwd(), not __dirname"
-        }
-      ]
-    },
-    "INST-12": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INST-12.stub.test.js",
-          "test_name": "INST-12: sync-baseline-requirements uses text-based dedup for idempotent merge"
-        }
-      ]
-    },
-    "INST-13": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INST-13.stub.test.js",
-          "test_name": "INST-13 — Bool: structural verification"
         }
       ]
     },
@@ -1246,42 +1048,6 @@
         }
       ]
     },
-    "NAV-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/NAV-01.stub.test.js",
-          "test_name": "NAV-01 — nForma.cjs defines MODULES array with Agents, Reqs, Config"
-        }
-      ]
-    },
-    "NAV-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/NAV-02.stub.test.js",
-          "test_name": "NAV-02 — Sessions module is defined with F4 hotkey"
-        }
-      ]
-    },
-    "NAV-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/NAV-03.stub.test.js",
-          "test_name": "NAV-03 — @xterm/headless is declared as a dependency in package.json"
-        }
-      ]
-    },
-    "NAV-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/NAV-04.stub.test.js",
-          "test_name": "NAV-04 — nForma.cjs references sessions.json for persistence"
-        }
-      ]
-    },
     "OBS-01": {
       "covered": true,
       "test_cases": [
@@ -1351,78 +1117,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/OBS-08.stub.test.js",
           "test_name": "OBS-08: classifyTier is exported"
-        }
-      ]
-    },
-    "OBS-09": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
-          "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
-        }
-      ]
-    },
-    "OBS-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-10.stub.test.js",
-          "test_name": "OBS-10: observe-utils.cjs exports formatAge, parseDuration, classifySeverityFromLabels"
-        }
-      ]
-    },
-    "OBS-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-11.stub.test.js",
-          "test_name": "OBS-11: observe-handler-upstream.cjs exports classifyUpstreamOverlap"
-        }
-      ]
-    },
-    "OBS-12": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-12.stub.test.js",
-          "test_name": "OBS-12: each handler file has try/catch error handling"
-        }
-      ]
-    },
-    "OBS-13": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-13.stub.test.js",
-          "test_name": "OBS-13: machine-readable inventory file exists and is valid JSON"
-        }
-      ]
-    },
-    "OBS-14": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-14.stub.test.js",
-          "test_name": "OBS-14: observe-handlers.cjs accepts execFn option for DI"
-        }
-      ]
-    },
-    "OBS-15": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-15.stub.test.js",
-          "test_name": "OBS-15: observe-handler-upstream.cjs persists cursor with last_checked field"
-        }
-      ]
-    },
-    "OBS-16": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-16.stub.test.js",
-          "test_name": "OBS-16: observe-handler-internal.cjs gates health diagnostics via gsd-tools.cjs existence"
         }
       ]
     },
@@ -1498,24 +1192,6 @@
         }
       ]
     },
-    "PLAN-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/PLAN-04.stub.test.js",
-          "test_name": "PLAN-04: list-phase-assumptions workflow contains ground_in_artifacts step"
-        }
-      ]
-    },
-    "PLAT-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/PLAT-01.stub.test.js",
-          "test_name": "PLAT-01 — install.js exists and is loadable"
-        }
-      ]
-    },
     "PLCY-01": {
       "covered": true,
       "test_cases": [
@@ -1567,33 +1243,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/PORT-03.stub.test.js",
           "test_name": "PORT-03: buildBackupPath exists as a function"
-        }
-      ]
-    },
-    "PORT-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/PORT-04.stub.test.js",
-          "test_name": "PORT-04 — Bool: structural verification"
-        }
-      ]
-    },
-    "PROJECT-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/PROJECT-01.stub.test.js",
-          "test_name": "PROJECT-01: install.js banner contains nForma branding"
-        }
-      ]
-    },
-    "PROJECT-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/PROJECT-02.stub.test.js",
-          "test_name": "PROJECT-02: commands/nf/ directory exists for nf: prefixed skills"
         }
       ]
     },
@@ -1666,33 +1315,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/QUORUM-03.stub.test.js",
           "test_name": "QUORUM-03: QuorumCeilingMet invariant is defined in QGSDQuorum.tla"
-        }
-      ]
-    },
-    "QUORUM-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/QUORUM-04.stub.test.js",
-          "test_name": "QUORUM-04: EventualConsensus liveness property is defined in QGSDQuorum.tla"
-        }
-      ]
-    },
-    "QUORUM-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/QUORUM-05.stub.test.js",
-          "test_name": "QUORUM-05: RevisePosition action is defined in QGSDDeliberationRevision.tla"
-        }
-      ]
-    },
-    "QUORUM-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/QUORUM-06.stub.test.js",
-          "test_name": "QUORUM-06 — TypeOK: execute-phase workflow references checkpoint:human-verify"
         }
       ]
     },
@@ -1948,231 +1570,6 @@
         }
       ]
     },
-    "SOLVE-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
-          "test_name": "SOLVE-01: nf-solve.cjs exists and is loadable"
-        }
-      ]
-    },
-    "SOLVE-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-02.stub.test.js",
-          "test_name": "SOLVE-02: parseAlloyDefaults parses Alloy Defaults sig constraint block"
-        }
-      ]
-    },
-    "SOLVE-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-03.stub.test.js",
-          "test_name": "SOLVE-03: discoverDocFiles is exported from nf-solve.cjs"
-        }
-      ]
-    },
-    "SOLVE-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-04.stub.test.js",
-          "test_name": "SOLVE-04: solver-doc-layers.als defines Requirement sig"
-        }
-      ]
-    },
-    "SOLVE-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-05.stub.test.js",
-          "test_name": "SOLVE-05: run-formal-verify.cjs parses --project-root argument"
-        }
-      ]
-    },
-    "SOLVE-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-06.stub.test.js",
-          "test_name": "SOLVE-06: assembleReverseCandidates is exported from nf-solve.cjs"
-        }
-      ]
-    },
-    "SOLVE-7": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-7.stub.test.js",
-          "test_name": "SOLVE-7: formal-test-sync.cjs generateStubs produces recipe sidecar with pre-resolved context"
-        }
-      ]
-    },
-    "SOLVE-8": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-8.stub.test.js",
-          "test_name": "SOLVE-8: Alloy model solve-legacy-merge.als exists and defines Bool sig"
-        }
-      ]
-    },
-    "SOLVE-09": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-09.stub.test.js",
-          "test_name": "SOLVE-09: nf-solve.cjs parses --fast flag for fast-mode iteration"
-        }
-      ]
-    },
-    "SOLVE-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
-          "test_name": "SOLVE-10: nf-solve.cjs exports crossReferenceFormalCoverage function"
-        }
-      ]
-    },
-    "SOLVE-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-11.stub.test.js",
-          "test_name": "SOLVE-11: VALID_RESULTS includes both "
-        }
-      ]
-    },
-    "SOLVE-12": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-12.stub.test.js",
-          "test_name": "SOLVE-12: autoClosePtoF module exports autoClosePtoF function"
-        }
-      ]
-    },
-    "SOLVE-13": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-13.stub.test.js",
-          "test_name": "SOLVE-13: persistSessionSummary creates a timestamped .md file"
-        }
-      ]
-    },
-    "SOLVE-14": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-14.stub.test.js",
-          "test_name": "SOLVE-14 — Bool: structural verification"
-        }
-      ]
-    },
-    "SOLVE-15": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-15.stub.test.js",
-          "test_name": "SOLVE-15 — Bool: behavioral verification"
-        }
-      ]
-    },
-    "SOLVE-16": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-16.stub.test.js",
-          "test_name": "SOLVE-16: TUI source file exists"
-        }
-      ]
-    },
-    "SOLVE-17": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-17.stub.test.js",
-          "test_name": "SOLVE-17: TUI exports createRequirementFromItem (ReverseDiscoveryActions)"
-        }
-      ]
-    },
-    "SOLVE-18": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-18.stub.test.js",
-          "test_name": "SOLVE-18: aggregate-requirements exports parseRequirements function"
-        }
-      ]
-    },
-    "SOLVE-19": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-19.stub.test.js",
-          "test_name": "SOLVE-19: hooks/config-loader.js exists on disk"
-        }
-      ]
-    },
-    "SOLVE-20": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-20.stub.test.js",
-          "test_name": "SOLVE-20: hooks/nf-circuit-breaker.js exists on disk"
-        }
-      ]
-    },
-    "SOLVE-21": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-21.stub.test.js",
-          "test_name": "SOLVE-21: hooks/nf-prompt.js exists on disk"
-        }
-      ]
-    },
-    "SOLVE-22": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-22.stub.test.js",
-          "test_name": "SOLVE-22: hooks/nf-stop.js exists on disk"
-        }
-      ]
-    },
-    "SOLVE-23": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-23.stub.test.js",
-          "test_name": "SOLVE-23: hooks/nf-mcp-dispatch-guard.js exists on disk"
-        }
-      ]
-    },
-    "SOLVE-24": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-24.stub.test.js",
-          "test_name": "SOLVE-24 — Bool: structural verification"
-        }
-      ]
-    },
-    "SOLVE-25": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-25.stub.test.js",
-          "test_name": "SOLVE-25 — Bool: structural verification"
-        }
-      ]
-    },
     "SPEC-01": {
       "covered": true,
       "test_cases": [
@@ -2197,33 +1594,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/SPEC-04.stub.test.js",
           "test_name": "SPEC-04: QGSDSpecGeneration.tla exists and defines StartPhaseSpec"
-        }
-      ]
-    },
-    "SPEC-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SPEC-05.stub.test.js",
-          "test_name": "SPEC-05: evidence-scope-scan.als exists and defines ExactMatchRequiresConceptAndOverlap"
-        }
-      ]
-    },
-    "SPEC-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SPEC-06.stub.test.js",
-          "test_name": "SPEC-06: Alloy spec contains NoTautologicalAssertions fact"
-        }
-      ]
-    },
-    "SPEC-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SPEC-07.stub.test.js",
-          "test_name": "SPEC-07: QGSDSessionPersistence.tla uses counter-based tracking (activeCount, persistedCount)"
         }
       ]
     },
@@ -2434,51 +1804,6 @@
         }
       ]
     },
-    "TRACE-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
-          "test_name": "TRACE-06: formal-test-sync.cjs exists"
-        }
-      ]
-    },
-    "TRACE-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/TRACE-07.stub.test.js",
-          "test_name": "TRACE-07: conformance source files exist"
-        }
-      ]
-    },
-    "TRACE-08": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/TRACE-08.stub.test.js",
-          "test_name": "TRACE-08: validate-traces.cjs exports mapToXStateEvent"
-        }
-      ]
-    },
-    "TRACE-09": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/TRACE-09.stub.test.js",
-          "test_name": "TRACE-09: formal-proximity.cjs exports buildIndex"
-        }
-      ]
-    },
-    "TRACE-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/TRACE-10.stub.test.js",
-          "test_name": "TRACE-10 — Bool: structural verification"
-        }
-      ]
-    },
     "TRIAGE-01": {
       "covered": true,
       "test_cases": [
@@ -2650,33 +1975,6 @@
         }
       ]
     },
-    "VERIFY-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/VERIFY-03.stub.test.js",
-          "test_name": "VERIFY-03 — Bool: structural verification"
-        }
-      ]
-    },
-    "VERIFY-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/VERIFY-04.stub.test.js",
-          "test_name": "VERIFY-04: run-formal-verify.cjs defaults to sequential and supports --concurrent opt-in"
-        }
-      ]
-    },
-    "VERIFY-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/VERIFY-05.stub.test.js",
-          "test_name": "VERIFY-05: planner agent includes System Integration Awareness section"
-        }
-      ]
-    },
     "VIS-01": {
       "covered": true,
       "test_cases": [
@@ -2758,14 +2056,385 @@
         }
       ]
     },
-    "WIZ-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/WIZ-11.stub.test.js",
-          "test_name": "WIZ-11: settings.md exists and is readable"
-        }
-      ]
+    "IMPR-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MCPENV-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SAFE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SCHEMA-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SLOT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ADAPT-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ADR-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "BLD-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "BLD-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "BRKR-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CL-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CL-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DEBT-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DEBT-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DEBT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DEBT-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DEBT-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DIAG-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DIAG-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "DIAG-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "EVID-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "EXEC-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "FP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "GUIDE-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "GUIDE-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "IMPR-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "IMPR-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "IMPR-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INTG-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LRNG-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LRNG-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LRNG-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LRNG-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "LTCY-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MEMP-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MEMP-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MEMP-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "MEMP-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORCH-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORCH-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "ORCH-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PARA-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PARA-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PF-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PF-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PF-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PF-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PF-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "PRIO-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-07": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-08": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-09": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RDME-10": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REN-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REN-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "REN-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RLS-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RLS-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RLS-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RLS-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-05": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SEM-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SEM-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SEM-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SEM-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SHARD-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SPEC-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "STD-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TOKN-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TOKN-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TOKN-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "TOKN-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VALID-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERF-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERF-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERF-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VIS-02": {
+      "covered": false,
+      "test_cases": []
     }
   }
 }
