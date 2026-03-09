@@ -101,6 +101,16 @@ Create a function `computeEvidenceReadiness(evidenceFiles)` that returns a score
 
 Use fail-open: if a file is missing or malformed, it contributes 0. The function returns `{ score, total: 5, details: { [name]: boolean } }`.
 
+**`--skip-evidence` flag (quorum: opencode-1):**
+
+Add a `--skip-evidence` CLI flag (parsed alongside the existing `--json` and `--dry-run` flags). When set:
+- Skip all evidence file loading entirely
+- Set `evidence_readiness` to `{ score: 0, total: 5, skipped: true, details: {} }` in the output
+- Do NOT apply evidence-based promotion thresholds (treat as if evidence requirements are met)
+- Log `TAG + ' Evidence loading skipped (--skip-evidence)'` to stderr
+
+This provides operational flexibility for debugging scenarios where evidence loading might cause issues without affecting the core promotion logic. The flag is safe because it only relaxes evidence checks — it cannot promote a gate that wouldn't otherwise be promotable by source_layer + check-results criteria.
+
 Wire evidence readiness into auto-promotion logic:
 - For ADVISORY -> SOFT_GATE: require evidence_readiness.score >= 1 (at least one evidence file is populated). Add this as an additional condition at ~line 209 alongside `maturity >= 1`.
 - For SOFT_GATE -> HARD_GATE: require evidence_readiness.score >= 3. Add at ~line 224 alongside `maturity >= 3`.
@@ -125,8 +135,10 @@ This follows the exact pattern of the three gate steps above it.
   </action>
   <verify>
 Run `node bin/compute-per-model-gates.cjs --json --dry-run` and confirm output includes `evidence_readiness` field.
+Run `node bin/compute-per-model-gates.cjs --json --dry-run --skip-evidence` and confirm output includes `evidence_readiness.skipped: true` with score 0.
 Run `node bin/run-formal-verify.cjs --only=gates:per-model --dry-run 2>&1 | head -20` and confirm it finds and attempts to run the step.
 Grep: `grep 'evidence' bin/compute-per-model-gates.cjs` returns matches.
+Grep: `grep 'skip-evidence' bin/compute-per-model-gates.cjs` returns match for the flag.
 Grep: `grep 'per-model' bin/run-formal-verify.cjs` returns match.
   </verify>
   <done>
@@ -241,6 +253,7 @@ Git heatmap included in grand total display. Evidence files refreshed before con
 
 <verification>
 1. `node bin/compute-per-model-gates.cjs --json --dry-run` includes evidence_readiness in output
+1b. `node bin/compute-per-model-gates.cjs --json --dry-run --skip-evidence` shows skipped:true with score 0
 2. `grep 'per-model' bin/run-formal-verify.cjs` finds the STATIC_STEPS entry
 3. `node bin/refresh-evidence.cjs --json` runs all 4 evidence generators successfully
 4. `grep 'hmTotal\|heatmap_total' bin/nf-solve.cjs` shows heatmap in grand total
