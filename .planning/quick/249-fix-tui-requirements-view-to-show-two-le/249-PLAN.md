@@ -17,7 +17,7 @@ must_haves:
     - "TUI Requirements header shows live counts derived from requirements.json, not hardcoded mock data"
     - "TUI Browse Reqs view shows 8 principles as top-level groups, with specification counts under each"
     - "All 308 requirements are assigned to a principle — no orphans"
-    - "Unmapped categories (51 currently) are assigned to the closest principle via a fallback mapping"
+    - "Unmapped categories (27 total: 19 truly unmapped raw categories + 8 consolidated group names handled by step (a) of getCategoryPrinciple) are assigned to the closest principle via a fallback mapping"
   artifacts:
     - path: "bin/principle-mapping.cjs"
       provides: "GROUP_TO_PRINCIPLES map + getCategoryPrinciple() resolver"
@@ -84,7 +84,7 @@ Create `bin/principle-mapping.cjs` that exports:
 
 2. `GROUP_TO_PRINCIPLES` — object mapping each of the 9+ consolidated groups (from category-groups.json values) to one of the 8 principles above. Testing & Quality maps to "Formal Rigor".
 
-3. `UNMAPPED_FALLBACKS` — object mapping the 18 unmapped raw categories directly to principles:
+3. `UNMAPPED_FALLBACKS` — object mapping the 19 unmapped raw categories directly to principles:
    - "Agent Behavior" -> "Agent Ecosystem"
    - "CI/CD" -> "Installation Reliability"
    - "Credentials & Account Management" -> "Configuration Safety"
@@ -103,6 +103,7 @@ Create `bin/principle-mapping.cjs` that exports:
    - "Solver-Discovered" -> "Formal Rigor"
    - "Conformance & Traces" -> "Formal Rigor"
    - "UX Heuristics" -> "Operational Visibility"
+   - "Project Initialization" -> "Installation Reliability"
 
 4. `getCategoryPrinciple(rawCategory)` — resolves a raw category string to its principle:
    a. First check if rawCategory is itself a consolidated group key in GROUP_TO_PRINCIPLES
