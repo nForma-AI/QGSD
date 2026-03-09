@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T13:53:36.542Z",
+  "generated": "2026-03-09T14:17:55.695Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -1451,6 +1451,1656 @@
           "ref": "hazards[id=HAZARD-DECIDED-VOTES_COLLECTED]"
         }
       ]
+    },
+    {
+      "id": "TR-FM-ACT-OMISSION",
+      "failure_mode_id": "FM-ACT-OMISSION",
+      "title": "Test omission of ACT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "ACT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_act_capability",
+          "description": "Trigger ACT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "ACT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-AGENT-OMISSION",
+      "failure_mode_id": "FM-AGENT-OMISSION",
+      "title": "Test omission of AGENT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "AGENT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_agent_capability",
+          "description": "Trigger AGENT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "AGENT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-AGT-OMISSION",
+      "failure_mode_id": "FM-AGT-OMISSION",
+      "title": "Test omission of AGT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "AGT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_agt_capability",
+          "description": "Trigger AGT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "AGT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-ANNOT-OMISSION",
+      "failure_mode_id": "FM-ANNOT-OMISSION",
+      "title": "Test omission of ANNOT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "ANNOT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_annot_capability",
+          "description": "Trigger ANNOT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "ANNOT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-ARCH-OMISSION",
+      "failure_mode_id": "FM-ARCH-OMISSION",
+      "title": "Test omission of ARCH capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "ARCH module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_arch_capability",
+          "description": "Trigger ARCH functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "ARCH requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-CALIB-OMISSION",
+      "failure_mode_id": "FM-CALIB-OMISSION",
+      "title": "Test omission of CALIB capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "CALIB module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_calib_capability",
+          "description": "Trigger CALIB functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "CALIB requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-CI-OMISSION",
+      "failure_mode_id": "FM-CI-OMISSION",
+      "title": "Test omission of CI capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "CI module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_ci_capability",
+          "description": "Trigger CI functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "CI requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-CRED-OMISSION",
+      "failure_mode_id": "FM-CRED-OMISSION",
+      "title": "Test omission of CRED capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "CRED module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_cred_capability",
+          "description": "Trigger CRED functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "CRED requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DASH-OMISSION",
+      "failure_mode_id": "FM-DASH-OMISSION",
+      "title": "Test omission of DASH capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DASH module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_dash_capability",
+          "description": "Trigger DASH functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DASH requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DEBT-OMISSION",
+      "failure_mode_id": "FM-DEBT-OMISSION",
+      "title": "Test omission of DEBT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DEBT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_debt_capability",
+          "description": "Trigger DEBT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DEBT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DECOMP-OMISSION",
+      "failure_mode_id": "FM-DECOMP-OMISSION",
+      "title": "Test omission of DECOMP capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DECOMP module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_decomp_capability",
+          "description": "Trigger DECOMP functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DECOMP requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DETECT-OMISSION",
+      "failure_mode_id": "FM-DETECT-OMISSION",
+      "title": "Test omission of DETECT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DETECT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_detect_capability",
+          "description": "Trigger DETECT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DETECT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DOC-OMISSION",
+      "failure_mode_id": "FM-DOC-OMISSION",
+      "title": "Test omission of DOC capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DOC module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_doc_capability",
+          "description": "Trigger DOC functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DOC requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-DRIFT-OMISSION",
+      "failure_mode_id": "FM-DRIFT-OMISSION",
+      "title": "Test omission of DRIFT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "DRIFT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_drift_capability",
+          "description": "Trigger DRIFT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "DRIFT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-ENFC-OMISSION",
+      "failure_mode_id": "FM-ENFC-OMISSION",
+      "title": "Test omission of ENFC capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "ENFC module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_enfc_capability",
+          "description": "Trigger ENFC functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "ENFC requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-EVID-OMISSION",
+      "failure_mode_id": "FM-EVID-OMISSION",
+      "title": "Test omission of EVID capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "EVID module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_evid_capability",
+          "description": "Trigger EVID functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "EVID requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-FVTOOL-OMISSION",
+      "failure_mode_id": "FM-FVTOOL-OMISSION",
+      "title": "Test omission of FVTOOL capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "FVTOOL module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_fvtool_capability",
+          "description": "Trigger FVTOOL functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "FVTOOL requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-GATE-OMISSION",
+      "failure_mode_id": "FM-GATE-OMISSION",
+      "title": "Test omission of GATE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "GATE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_gate_capability",
+          "description": "Trigger GATE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "GATE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-GUARD-OMISSION",
+      "failure_mode_id": "FM-GUARD-OMISSION",
+      "title": "Test omission of GUARD capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "GUARD module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_guard_capability",
+          "description": "Trigger GUARD functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "GUARD requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-HLTH-OMISSION",
+      "failure_mode_id": "FM-HLTH-OMISSION",
+      "title": "Test omission of HLTH capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "HLTH module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_hlth_capability",
+          "description": "Trigger HLTH functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "HLTH requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-INIT-OMISSION",
+      "failure_mode_id": "FM-INIT-OMISSION",
+      "title": "Test omission of INIT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "INIT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_init_capability",
+          "description": "Trigger INIT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "INIT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-INST-OMISSION",
+      "failure_mode_id": "FM-INST-OMISSION",
+      "title": "Test omission of INST capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "INST module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_inst_capability",
+          "description": "Trigger INST functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "INST requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-KEY-OMISSION",
+      "failure_mode_id": "FM-KEY-OMISSION",
+      "title": "Test omission of KEY capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "KEY module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_key_capability",
+          "description": "Trigger KEY functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "KEY requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-LIVE-OMISSION",
+      "failure_mode_id": "FM-LIVE-OMISSION",
+      "title": "Test omission of LIVE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "LIVE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_live_capability",
+          "description": "Trigger LIVE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "LIVE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-LOOP-OMISSION",
+      "failure_mode_id": "FM-LOOP-OMISSION",
+      "title": "Test omission of LOOP capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "LOOP module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_loop_capability",
+          "description": "Trigger LOOP functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "LOOP requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-MCP-OMISSION",
+      "failure_mode_id": "FM-MCP-OMISSION",
+      "title": "Test omission of MCP capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "MCP module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_mcp_capability",
+          "description": "Trigger MCP functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "MCP requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-MCPENV-OMISSION",
+      "failure_mode_id": "FM-MCPENV-OMISSION",
+      "title": "Test omission of MCPENV capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "MCPENV module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_mcpenv_capability",
+          "description": "Trigger MCPENV functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "MCPENV requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-META-OMISSION",
+      "failure_mode_id": "FM-META-OMISSION",
+      "title": "Test omission of META capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "META module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_meta_capability",
+          "description": "Trigger META functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "META requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-MULTI-OMISSION",
+      "failure_mode_id": "FM-MULTI-OMISSION",
+      "title": "Test omission of MULTI capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "MULTI module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_multi_capability",
+          "description": "Trigger MULTI functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "MULTI requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-NAV-OMISSION",
+      "failure_mode_id": "FM-NAV-OMISSION",
+      "title": "Test omission of NAV capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "NAV module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_nav_capability",
+          "description": "Trigger NAV functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "NAV requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-OBS-OMISSION",
+      "failure_mode_id": "FM-OBS-OMISSION",
+      "title": "Test omission of OBS capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "OBS module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_obs_capability",
+          "description": "Trigger OBS functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "OBS requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-ORES-OMISSION",
+      "failure_mode_id": "FM-ORES-OMISSION",
+      "title": "Test omission of ORES capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "ORES module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_ores_capability",
+          "description": "Trigger ORES functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "ORES requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PLAN-OMISSION",
+      "failure_mode_id": "FM-PLAN-OMISSION",
+      "title": "Test omission of PLAN capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PLAN module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_plan_capability",
+          "description": "Trigger PLAN functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PLAN requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PLAT-OMISSION",
+      "failure_mode_id": "FM-PLAT-OMISSION",
+      "title": "Test omission of PLAT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PLAT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_plat_capability",
+          "description": "Trigger PLAT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PLAT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PLCY-OMISSION",
+      "failure_mode_id": "FM-PLCY-OMISSION",
+      "title": "Test omission of PLCY capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PLCY module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_plcy_capability",
+          "description": "Trigger PLCY functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PLCY requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PORT-OMISSION",
+      "failure_mode_id": "FM-PORT-OMISSION",
+      "title": "Test omission of PORT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PORT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_port_capability",
+          "description": "Trigger PORT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PORT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PROJECT-OMISSION",
+      "failure_mode_id": "FM-PROJECT-OMISSION",
+      "title": "Test omission of PROJECT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PROJECT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_project_capability",
+          "description": "Trigger PROJECT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PROJECT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PROV-OMISSION",
+      "failure_mode_id": "FM-PROV-OMISSION",
+      "title": "Test omission of PROV capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PROV module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_prov_capability",
+          "description": "Trigger PROV functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PROV requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-PRST-OMISSION",
+      "failure_mode_id": "FM-PRST-OMISSION",
+      "title": "Test omission of PRST capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "PRST module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_prst_capability",
+          "description": "Trigger PRST functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "PRST requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-QUORUM-OMISSION",
+      "failure_mode_id": "FM-QUORUM-OMISSION",
+      "title": "Test omission of QUORUM capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "QUORUM module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_quorum_capability",
+          "description": "Trigger QUORUM functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "QUORUM requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-RECV-OMISSION",
+      "failure_mode_id": "FM-RECV-OMISSION",
+      "title": "Test omission of RECV capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "RECV module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_recv_capability",
+          "description": "Trigger RECV functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "RECV requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-REDACT-OMISSION",
+      "failure_mode_id": "FM-REDACT-OMISSION",
+      "title": "Test omission of REDACT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "REDACT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_redact_capability",
+          "description": "Trigger REDACT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "REDACT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-REL-OMISSION",
+      "failure_mode_id": "FM-REL-OMISSION",
+      "title": "Test omission of REL capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "REL module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_rel_capability",
+          "description": "Trigger REL functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "REL requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-REN-OMISSION",
+      "failure_mode_id": "FM-REN-OMISSION",
+      "title": "Test omission of REN capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "REN module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_ren_capability",
+          "description": "Trigger REN functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "REN requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SAFE-OMISSION",
+      "failure_mode_id": "FM-SAFE-OMISSION",
+      "title": "Test omission of SAFE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SAFE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_safe_capability",
+          "description": "Trigger SAFE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SAFE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SCBD-OMISSION",
+      "failure_mode_id": "FM-SCBD-OMISSION",
+      "title": "Test omission of SCBD capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SCBD module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_scbd_capability",
+          "description": "Trigger SCBD functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SCBD requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SCHEMA-OMISSION",
+      "failure_mode_id": "FM-SCHEMA-OMISSION",
+      "title": "Test omission of SCHEMA capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SCHEMA module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_schema_capability",
+          "description": "Trigger SCHEMA functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SCHEMA requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SEC-OMISSION",
+      "failure_mode_id": "FM-SEC-OMISSION",
+      "title": "Test omission of SEC capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SEC module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_sec_capability",
+          "description": "Trigger SEC functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SEC requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SENS-OMISSION",
+      "failure_mode_id": "FM-SENS-OMISSION",
+      "title": "Test omission of SENS capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SENS module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_sens_capability",
+          "description": "Trigger SENS functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SENS requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SIG-OMISSION",
+      "failure_mode_id": "FM-SIG-OMISSION",
+      "title": "Test omission of SIG capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SIG module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_sig_capability",
+          "description": "Trigger SIG functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SIG requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SLOT-OMISSION",
+      "failure_mode_id": "FM-SLOT-OMISSION",
+      "title": "Test omission of SLOT capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SLOT module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_slot_capability",
+          "description": "Trigger SLOT functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SLOT requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SOLVE-OMISSION",
+      "failure_mode_id": "FM-SOLVE-OMISSION",
+      "title": "Test omission of SOLVE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SOLVE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_solve_capability",
+          "description": "Trigger SOLVE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SOLVE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SPEC-OMISSION",
+      "failure_mode_id": "FM-SPEC-OMISSION",
+      "title": "Test omission of SPEC capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SPEC module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_spec_capability",
+          "description": "Trigger SPEC functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SPEC requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-STATE-OMISSION",
+      "failure_mode_id": "FM-STATE-OMISSION",
+      "title": "Test omission of STATE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "STATE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_state_capability",
+          "description": "Trigger STATE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "STATE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-STD-OMISSION",
+      "failure_mode_id": "FM-STD-OMISSION",
+      "title": "Test omission of STD capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "STD module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_std_capability",
+          "description": "Trigger STD functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "STD requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-STOP-OMISSION",
+      "failure_mode_id": "FM-STOP-OMISSION",
+      "title": "Test omission of STOP capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "STOP module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_stop_capability",
+          "description": "Trigger STOP functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "STOP requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-SYNC-OMISSION",
+      "failure_mode_id": "FM-SYNC-OMISSION",
+      "title": "Test omission of SYNC capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "SYNC module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_sync_capability",
+          "description": "Trigger SYNC functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "SYNC requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-TRACE-OMISSION",
+      "failure_mode_id": "FM-TRACE-OMISSION",
+      "title": "Test omission of TRACE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "TRACE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_trace_capability",
+          "description": "Trigger TRACE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "TRACE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-TRIAGE-OMISSION",
+      "failure_mode_id": "FM-TRIAGE-OMISSION",
+      "title": "Test omission of TRIAGE capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "TRIAGE module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_triage_capability",
+          "description": "Trigger TRIAGE functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "TRIAGE requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-UNIF-OMISSION",
+      "failure_mode_id": "FM-UNIF-OMISSION",
+      "title": "Test omission of UNIF capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "UNIF module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_unif_capability",
+          "description": "Trigger UNIF functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "UNIF requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-UPPAAL-OMISSION",
+      "failure_mode_id": "FM-UPPAAL-OMISSION",
+      "title": "Test omission of UPPAAL capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "UPPAAL module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_uppaal_capability",
+          "description": "Trigger UPPAAL functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "UPPAAL requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-UPS-OMISSION",
+      "failure_mode_id": "FM-UPS-OMISSION",
+      "title": "Test omission of UPS capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "UPS module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_ups_capability",
+          "description": "Trigger UPS functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "UPS requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-UX-OMISSION",
+      "failure_mode_id": "FM-UX-OMISSION",
+      "title": "Test omission of UX capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "UX module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_ux_capability",
+          "description": "Trigger UX functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "UX requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-VERIFY-OMISSION",
+      "failure_mode_id": "FM-VERIFY-OMISSION",
+      "title": "Test omission of VERIFY capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "VERIFY module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_verify_capability",
+          "description": "Trigger VERIFY functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "VERIFY requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-VIS-OMISSION",
+      "failure_mode_id": "FM-VIS-OMISSION",
+      "title": "Test omission of VIS capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "VIS module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_vis_capability",
+          "description": "Trigger VIS functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "VIS requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
+    },
+    {
+      "id": "TR-FM-WIZ-OMISSION",
+      "failure_mode_id": "FM-WIZ-OMISSION",
+      "title": "Test omission of WIZ capabilities",
+      "setup": {
+        "initial_state": "system-ready",
+        "preconditions": [
+          "WIZ module is loaded"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "invoke_wiz_capability",
+          "description": "Trigger WIZ functionality to verify implementation"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "capability-active",
+        "assertions": [
+          "WIZ requirements are satisfied",
+          "No regression in related functionality"
+        ]
+      },
+      "risk_tier": "medium"
     }
   ],
   "summary": {
@@ -1466,5 +3116,6 @@
       "low": 1,
       "medium": 2
     }
-  }
+  },
+  "last_updated": "2026-03-09T14:20:08.331Z"
 }

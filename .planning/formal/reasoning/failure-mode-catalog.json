@@ -21,6 +21,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -43,6 +48,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -65,6 +75,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -87,6 +102,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -114,6 +134,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -136,6 +161,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -163,6 +193,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-IDLE-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -185,6 +220,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -212,6 +252,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -234,6 +279,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -261,6 +311,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -283,6 +338,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -305,6 +365,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -332,6 +397,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -354,6 +424,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -376,6 +451,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-COLLECTING_VOTES-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -398,6 +478,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -420,6 +505,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -442,6 +532,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -464,6 +559,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -491,6 +591,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -513,6 +618,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -540,6 +650,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -562,6 +677,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DELIBERATING-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -584,6 +704,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -611,6 +736,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-DECIDE]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -633,6 +763,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -660,6 +795,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-CIRCUIT_BREAK]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -682,6 +822,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -709,6 +854,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-QUORUM_START]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -731,6 +881,11 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
         }
       ]
     },
@@ -758,6 +913,935 @@
           "layer": "L3",
           "artifact": "reasoning/hazard-model.json",
           "ref": "hazards[id=HAZARD-DECIDED-VOTES_COLLECTED]"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DISP-01,DISP-02,DISP-03,DISP-04,DISP-05,DISP-06,DISP-07,COMP-01,COMP-02,COMP-03,COMP-04,CONF-03,CONF-04,HEAL-01,HEAL-02,FAIL-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-ACT-OMISSION",
+      "title": "ACT capability omission",
+      "description": "Failure to implement ACT requirements: `.planning/current-activity.json` is written atomically at every major workflow state transition (execute-phase, plan-ph",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ACT-01,ACT-02,ACT-03,ACT-04,ACT-05,ACT-06,ACT-07"
+        }
+      ]
+    },
+    {
+      "id": "FM-AGENT-OMISSION",
+      "title": "AGENT capability omission",
+      "description": "Failure to implement AGENT requirements: User can add a new claude-mcp-server instance (name, provider, model, key)",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "AGENT-01,AGENT-02,AGENT-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-AGT-OMISSION",
+      "title": "AGT capability omission",
+      "description": "Failure to implement AGT requirements: Subagents spawned by QGSD skills MUST loop autonomously until a terminal condition is reached. Valid terminal conditions",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "AGT-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-ANNOT-OMISSION",
+      "title": "ANNOT capability omission",
+      "description": "Failure to implement ANNOT requirements: All 11 TLA+ model files contain `@requirement` structured comments on each property/invariant, mapping it to specific re",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ANNOT-01,ANNOT-02,ANNOT-03,ANNOT-04,ANNOT-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-ARCH-OMISSION",
+      "title": "ARCH capability omission",
+      "description": "Failure to implement ARCH requirements: All formal models declared in `.planning/formal/model-registry.json` as single source of truth with provenance tracking",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ARCH-01,ARCH-02,ARCH-03,ARCH-10"
+        }
+      ]
+    },
+    {
+      "id": "FM-CALIB-OMISSION",
+      "title": "CALIB capability omission",
+      "description": "Failure to implement CALIB requirements: `.planning/formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "CALIB-01,CALIB-02,CALIB-03,CALIB-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-CI-OMISSION",
+      "title": "CI capability omission",
+      "description": "Failure to implement CI requirements: Automated test suite runs on every pull request and merge to main is blocked when tests fail",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "CI-01,CI-02,CI-03,CI-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-CRED-OMISSION",
+      "title": "CRED capability omission",
+      "description": "Failure to implement CRED requirements: User can rotate API keys across multiple slots in a single batch flow from the main menu",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "CRED-01,CRED-02,CRED-12"
+        }
+      ]
+    },
+    {
+      "id": "FM-DASH-OMISSION",
+      "title": "DASH capability omission",
+      "description": "Failure to implement DASH requirements: User can open a live health dashboard from main menu showing all slots' provider, model, and health status",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DASH-01,DASH-02,DASH-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-DEBT-OMISSION",
+      "title": "DEBT capability omission",
+      "description": "Failure to implement DEBT requirements: The debt/observability subsystem (debt ledger, dedup, retention, state machine, drift fingerprinting) SHALL maintain req",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DEBT-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-DECOMP-OMISSION",
+      "title": "DECOMP capability omission",
+      "description": "Failure to implement DECOMP requirements: `bin/analyze-state-space.cjs` reads TLA+ .cfg files and model variables to estimate state-space size per model and class",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DECOMP-01,DECOMP-02,DECOMP-03,DECOMP-04,DECOMP-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-DETECT-OMISSION",
+      "title": "DETECT capability omission",
+      "description": "Failure to implement DETECT requirements: PreToolUse hook intercepts Bash tool calls and checks whether the current context has an active circuit breaker before r",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DETECT-01,DETECT-02,DETECT-03,DETECT-04,DETECT-05,DETECT-06"
+        }
+      ]
+    },
+    {
+      "id": "FM-DOC-OMISSION",
+      "title": "DOC capability omission",
+      "description": "Failure to implement DOC requirements: README.md capability claims (setup wizard, verification workflow, adaptive fan-out, model registry, branch config, CLI c",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DOC-01,DOC-02,DOC-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-DRIFT-OMISSION",
+      "title": "DRIFT capability omission",
+      "description": "Failure to implement DRIFT requirements: `check-trace-schema-drift.cjs` detects schema drift and emits `check-results.ndjson`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "DRIFT-01,DRIFT-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-ENFC-OMISSION",
+      "title": "ENFC capability omission",
+      "description": "Failure to implement ENFC requirements: When circuit breaker is active, hook returns `hookSpecificOutput.permissionDecision:'deny'` blocking Bash execution",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ENFC-01,ENFC-02,ENFC-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-EVID-OMISSION",
+      "title": "EVID capability omission",
+      "description": "Failure to implement EVID requirements: `never_observed` path entries in `validate-traces.cjs` evidence output carry `confidence: low|medium|high` based on trac",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "EVID-01,EVID-02,EVID-03,EVID-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-FVTOOL-OMISSION",
+      "title": "FVTOOL capability omission",
+      "description": "Failure to implement FVTOOL requirements: All formal verification tooling scripts (model generators, checkers, linkers, registry initializers in bin/) SHALL inclu",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "FVTOOL-01,FVTOOL-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-GATE-OMISSION",
+      "title": "GATE capability omission",
+      "description": "Failure to implement GATE requirements: gate-a-grounding.cjs accepts a --base-ref <sha> flag that scopes grounding analysis to actions from files changed since ",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "GATE-01,GATE-02,GATE-03,GATE-04,GATE-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-GUARD-OMISSION",
+      "title": "GUARD capability omission",
+      "description": "Failure to implement GUARD requirements: The hook system provides three code-quality guardrails: a PostToolUse hook that auto-formats JS/TS files after Edit usin",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "GUARD-01,GUARD-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-HLTH-OMISSION",
+      "title": "HLTH capability omission",
+      "description": "Failure to implement HLTH requirements: `validate health` produces zero W005 false positives for versioned phase directories (`v0.X-YY-name` format)",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "HLTH-01,HLTH-02,HLTH-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-INIT-OMISSION",
+      "title": "INIT capability omission",
+      "description": "Failure to implement INIT requirements: Load and filter baseline requirements by project profile (web/mobile/desktop/api/cli/library), present profile-filtered ",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "INIT-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-INST-OMISSION",
+      "title": "INST capability omission",
+      "description": "Failure to implement INST requirements: Installer detects no configured quorum agents and prompts user to run `/nf:mcp-setup`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "INST-01,INST-02,INST-03,INST-04,INST-05,INST-06,INST-07,INST-08,INST-09,INST-10,INST-11,INST-12,INST-13"
+        }
+      ]
+    },
+    {
+      "id": "FM-KEY-OMISSION",
+      "title": "KEY capability omission",
+      "description": "Failure to implement KEY requirements: User can set or update the API key for any agent through the wizard",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "KEY-01,KEY-02,KEY-03,KEY-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-LIVE-OMISSION",
+      "title": "LIVE capability omission",
+      "description": "Failure to implement LIVE requirements: CI step detects liveness properties lacking a fairness declaration in `invariants.md` and emits `result=inconclusive` in",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "LIVE-01,LIVE-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-LOOP-OMISSION",
+      "title": "LOOP capability omission",
+      "description": "Failure to implement LOOP requirements: PRISM always uses current scoreboard rates via `export-prism-constants` pre-step calibration",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "LOOP-01,LOOP-02,LOOP-03,LOOP-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-MCP-OMISSION",
+      "title": "MCP capability omission",
+      "description": "Failure to implement MCP requirements: Installer reads `~/.claude.json` to auto-detect MCP server names for Codex, Gemini, OpenCode",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "MCP-01,MCP-02,MCP-03,MCP-04,MCP-05,MCP-06"
+        }
+      ]
+    },
+    {
+      "id": "FM-MCPENV-OMISSION",
+      "title": "MCPENV capability omission",
+      "description": "Failure to implement MCPENV requirements: `.planning/formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "MCPENV-01,MCPENV-03,MCPENV-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-META-OMISSION",
+      "title": "META capability omission",
+      "description": "Failure to implement META requirements: GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalati",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "META-01,META-02,META-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-MULTI-OMISSION",
+      "title": "MULTI capability omission",
+      "description": "Failure to implement MULTI requirements: User can have multiple `claude-*` slots (`claude-1` through `claude-N`) each running a different model or provider",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "MULTI-01,MULTI-02,MULTI-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-OMISSION",
+      "title": "NAV capability omission",
+      "description": "Failure to implement NAV requirements: Main TUI menu is organized into 3 modules (Agents, Requirements, Config) with a 6-character activity bar sidebar showing",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "NAV-01,NAV-02,NAV-03,NAV-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-OBS-OMISSION",
+      "title": "OBS capability omission",
+      "description": "Failure to implement OBS requirements: Each quorum round emits structured telemetry (slot, round, verdict, latency_ms, provider status) to a per-session log fi",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "OBS-01,OBS-02,OBS-03,OBS-04,OBS-05,OBS-06,OBS-07,OBS-08,OBS-09,OBS-10,OBS-11,OBS-12,OBS-13,OBS-14,OBS-15,OBS-16"
+        }
+      ]
+    },
+    {
+      "id": "FM-ORES-OMISSION",
+      "title": "ORES capability omission",
+      "description": "Failure to implement ORES requirements: When oscillation is detected and the oscillating file set contains only internal code files, Claude MUST enter oscillati",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ORES-01,ORES-02,ORES-03,ORES-04,ORES-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-PLAN-OMISSION",
+      "title": "PLAN capability omission",
+      "description": "Failure to implement PLAN requirements: `generate-proposed-changes.cjs` auto-synthesizes TLA+ deltas from PLAN.md truths",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PLAN-01,PLAN-02,PLAN-03,PLAN-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-PLAT-OMISSION",
+      "title": "PLAT capability omission",
+      "description": "Failure to implement PLAT requirements: QGSD installs and operates correctly on macOS, Ubuntu, and Windows without platform-specific workarounds",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PLAT-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-PLCY-OMISSION",
+      "title": "PLCY capability omission",
+      "description": "Failure to implement PLCY requirements: User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PLCY-01,PLCY-02,PLCY-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-PORT-OMISSION",
+      "title": "PORT capability omission",
+      "description": "Failure to implement PORT requirements: User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholder",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PORT-01,PORT-02,PORT-03,PORT-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-PROJECT-OMISSION",
+      "title": "PROJECT capability omission",
+      "description": "Failure to implement PROJECT requirements: The project shall be referred to as 'nForma' in all user-facing contexts",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PROJECT-01,PROJECT-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-PROV-OMISSION",
+      "title": "PROV capability omission",
+      "description": "Failure to implement PROV requirements: User can change the base URL (provider) for an existing agent",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PROV-01,PROV-02,PROV-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-PRST-OMISSION",
+      "title": "PRST capability omission",
+      "description": "Failure to implement PRST requirements: User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of ma",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PRST-01,PRST-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-QUORUM-OMISSION",
+      "title": "QUORUM capability omission",
+      "description": "Failure to implement QUORUM requirements: plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (re",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "QUORUM-01,QUORUM-02,QUORUM-03,QUORUM-04,QUORUM-05,QUORUM-06"
+        }
+      ]
+    },
+    {
+      "id": "FM-RECV-OMISSION",
+      "title": "RECV capability omission",
+      "description": "Failure to implement RECV requirements: `npx qgsd --reset-breaker` CLI flag clears `.claude/circuit-breaker-state.json` and logs confirmation — enables manual r",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "RECV-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-REDACT-OMISSION",
+      "title": "REDACT capability omission",
+      "description": "Failure to implement REDACT requirements: `check-trace-redaction.cjs` checks traces for PII/secret patterns and emits `check-results.ndjson`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "REDACT-01,REDACT-02,REDACT-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-REL-OMISSION",
+      "title": "REL capability omission",
+      "description": "Failure to implement REL requirements: Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application de",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "REL-01,REL-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-REN-OMISSION",
+      "title": "REN capability omission",
+      "description": "Failure to implement REN requirements: All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template ",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "REN-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-SAFE-OMISSION",
+      "title": "SAFE capability omission",
+      "description": "Failure to implement SAFE requirements: `--repair` cannot silently overwrite a rich STATE.md (>50 lines) without explicit `--force` flag; guard fires and repair",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SAFE-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-SCBD-OMISSION",
+      "title": "SCBD capability omission",
+      "description": "Failure to implement SCBD requirements: Scoreboard tracks performance by slot name (`claude-1`, `copilot-1`) — slot is the stable key",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SCBD-01,SCBD-02,SCBD-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-SCHEMA-OMISSION",
+      "title": "SCHEMA capability omission",
+      "description": "Failure to implement SCHEMA requirements: `model-registry.json` entries gain a `requirements` array (string[]) listing the requirement IDs each model covers; exis",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SCHEMA-01,SCHEMA-03,SCHEMA-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-SEC-OMISSION",
+      "title": "SEC capability omission",
+      "description": "Failure to implement SEC requirements: Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or creden",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SEC-01,SEC-02,SEC-03,SEC-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-SENS-OMISSION",
+      "title": "SENS capability omission",
+      "description": "Failure to implement SENS requirements: `bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout th",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SENS-01,SENS-02,SENS-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-SIG-OMISSION",
+      "title": "SIG capability omission",
+      "description": "Failure to implement SIG requirements: `detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.planning/formal/coverage-gaps.md`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SIG-01,SIG-02,SIG-03,SIG-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-SLOT-OMISSION",
+      "title": "SLOT capability omission",
+      "description": "Failure to implement SLOT requirements: User sees all quorum agents referred to by slot name (`claude-1`, `copilot-1`, `gemini-cli-1`, etc.) in all QGSD output ",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SLOT-01,SLOT-02,SLOT-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-SOLVE-OMISSION",
+      "title": "SOLVE capability omission",
+      "description": "Failure to implement SOLVE requirements: Execute `/nf:solve` command to sweep all 7 layer transitions (Requirements→Formal, Formal→Tests, Code→Formal, Tests→Code",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SOLVE-01,SOLVE-02,SOLVE-03,SOLVE-04,SOLVE-05,SOLVE-06,SOLVE-7,SOLVE-8,SOLVE-09,SOLVE-10,SOLVE-11,SOLVE-12,SOLVE-13,SOLVE-14,SOLVE-15,SOLVE-16,SOLVE-17,SOLVE-18,SOLVE-19,SOLVE-20,SOLVE-21,SOLVE-22,SOLVE-23,SOLVE-24,SOLVE-25"
+        }
+      ]
+    },
+    {
+      "id": "FM-SPEC-OMISSION",
+      "title": "SPEC capability omission",
+      "description": "Failure to implement SPEC requirements: Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SPEC-01,SPEC-03,SPEC-04,SPEC-05,SPEC-06,SPEC-07"
+        }
+      ]
+    },
+    {
+      "id": "FM-STATE-OMISSION",
+      "title": "STATE capability omission",
+      "description": "Failure to implement STATE requirements: audit-milestone updates STATE.md \"Stopped at\" and \"Current Position\" fields with the audit result (passed / gaps_found /",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "STATE-01,STATE-02,STATE-03,STATE-04,STATE-05,STATE-06"
+        }
+      ]
+    },
+    {
+      "id": "FM-STD-OMISSION",
+      "title": "STD capability omission",
+      "description": "Failure to implement STD requirements: gemini-mcp-server npm package name is unscoped (`gemini-mcp-server`, not `@tuannvm/gemini-mcp-server`) — `~/.claude.json",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "STD-10"
+        }
+      ]
+    },
+    {
+      "id": "FM-STOP-OMISSION",
+      "title": "STOP capability omission",
+      "description": "Failure to implement STOP requirements: Stop hook reads transcript JSONL for tool_use entries matching configured quorum model names",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "STOP-01,STOP-02,STOP-03,STOP-04,STOP-05,STOP-06,STOP-07,STOP-08,STOP-09"
+        }
+      ]
+    },
+    {
+      "id": "FM-SYNC-OMISSION",
+      "title": "SYNC capability omission",
+      "description": "Failure to implement SYNC requirements: QGSD ships as separate npm package (`qgsd` or `get-shit-done-quorum`) that wraps GSD",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "SYNC-01,SYNC-02,SYNC-03,SYNC-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-TRACE-OMISSION",
+      "title": "TRACE capability omission",
+      "description": "Failure to implement TRACE requirements: `bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.pl",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "TRACE-01,TRACE-02,TRACE-03,TRACE-04,TRACE-05,TRACE-06,TRACE-07,TRACE-08,TRACE-09,TRACE-10"
+        }
+      ]
+    },
+    {
+      "id": "FM-TRIAGE-OMISSION",
+      "title": "TRIAGE capability omission",
+      "description": "Failure to implement TRIAGE requirements: `bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.planning/formal/diff-report.md` (per-check de",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "TRIAGE-01,TRIAGE-02"
+        }
+      ]
+    },
+    {
+      "id": "FM-UNIF-OMISSION",
+      "title": "UNIF capability omission",
+      "description": "Failure to implement UNIF requirements: All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "UNIF-01,UNIF-02,UNIF-03,UNIF-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-UPPAAL-OMISSION",
+      "title": "UPPAAL capability omission",
+      "description": "Failure to implement UPPAAL requirements: A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the qu",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "UPPAAL-01,UPPAAL-02,UPPAAL-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-UPS-OMISSION",
+      "title": "UPS capability omission",
+      "description": "Failure to implement UPS requirements: UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "UPS-01,UPS-02,UPS-03,UPS-04,UPS-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-UX-OMISSION",
+      "title": "UX capability omission",
+      "description": "Failure to implement UX requirements: Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "UX-01,UX-02,UX-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-VERIFY-OMISSION",
+      "title": "VERIFY capability omission",
+      "description": "Failure to implement VERIFY requirements: `qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIF",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "VERIFY-01,VERIFY-02,VERIFY-03,VERIFY-04,VERIFY-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-VIS-OMISSION",
+      "title": "VIS capability omission",
+      "description": "Failure to implement VIS requirements: `/nf:health` surfaces W008 warning when a quorum slot has ≥3 failures recorded in `quorum-failures.json`",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "VIS-01"
+        }
+      ]
+    },
+    {
+      "id": "FM-WIZ-OMISSION",
+      "title": "WIZ capability omission",
+      "description": "Failure to implement WIZ requirements: User can run `/nf:mcp-setup` to start the MCP configuration wizard",
+      "type": "omission",
+      "severity": "medium",
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "WIZ-01,WIZ-02,WIZ-03,WIZ-04,WIZ-05,WIZ-08,WIZ-09,WIZ-10,WIZ-11"
         }
       ]
     }
@@ -776,5 +1860,6 @@
       "critical": 2,
       "cosmetic": 4
     }
-  }
+  },
+  "last_updated": "2026-03-09T14:20:08.330Z"
 }
