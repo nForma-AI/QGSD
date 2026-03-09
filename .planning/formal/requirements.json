@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T07:55:00.000Z",
-  "content_hash": "133d50304e7fe56b",
+  "aggregated_at": "2026-03-09T08:28:03.759Z",
+  "content_hash": "sha256:00b2e07d7a16393a9132ebbf3c5a26bb0845706ff66ad301e68f694b067854af",
   "schema_version": "1",
   "requirements": [
     {
@@ -981,6 +981,20 @@
       ]
     },
     {
+      "id": "DISP-07",
+      "text": "Successful quorum slot dispatches persist a per-slot debate trace file to .planning/quorum/debates/ containing frontmatter with date, question, slot, round, mode, verdict, matched_requirement_ids, and artifact_path, using fail-open file I/O that never blocks dispatch.",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quorum verdicts were ephemeral — once a dispatch completed, the reasoning and requirement linkage existed only in emitResultBlock YAML output with no durable record. Persisting per-slot debate traces creates an audit trail that enables post-hoc analysis of which requirements drive APPROVE/REJECT decisions across rounds.",
+      "provenance": {
+        "source_file": ".planning/quick/237-persist-quorum-debate-traces-with-matche/237-PLAN.md",
+        "milestone": "quick-237"
+      },
+      "category_raw": "Quorum & Dispatch",
+      "formal_models": []
+    },
+    {
       "id": "DOC-01",
       "text": "README.md capability claims (setup wizard, verification workflow, adaptive fan-out, model registry, branch config, CLI commands) SHALL be backed by traceable requirements in requirements.json.",
       "category": "Documentation",
@@ -1017,7 +1031,10 @@
       "provenance": {
         "source_file": ".planning/quick/213-automate-tui-asset-generation-with-headl/213-PLAN.md",
         "milestone": "quick-213"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/doc-presentation.als"
+      ]
     },
     {
       "id": "DRIFT-01",
@@ -1143,7 +1160,10 @@
       "provenance": {
         "source_file": ".planning/quick/218-build-git-history-evidence-extractor-wit/218-PLAN.md",
         "milestone": "quick-218"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/git-history-evidence.als"
+      ]
     },
     {
       "id": "FAIL-01",
@@ -1198,7 +1218,10 @@
       "provenance": {
         "source_file": ".planning/quick/225-centralize-prism-invocation-in-run-forma/225-PLAN.md",
         "milestone": "quick-225"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/prism-delegation.als"
+      ]
     },
     {
       "id": "GATE-01",
@@ -1222,7 +1245,10 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.31"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/autoclose-signals.als"
+      ]
     },
     {
       "id": "GATE-03",
@@ -1258,7 +1284,10 @@
       "provenance": {
         "source_file": ".planning/quick/222-use-those-insights-to-recommend-improvem/222-PLAN.md",
         "milestone": "quick-222"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-portability-guard.als"
+      ]
     },
     {
       "id": "HEAL-01",
@@ -2141,7 +2170,10 @@
       "provenance": {
         "source_file": ".planning/quick/219-wire-nf-health-diagnostics-into-nf-obser/219-PLAN.md",
         "milestone": "quick-219"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/health-diagnostic-routing.als"
+      ]
     },
     {
       "id": "ORES-01",
@@ -2380,7 +2412,10 @@
       "provenance": {
         "source_file": "agents/nf-executor.md, agents/nf-planner.md, hooks/nf-destructive-git-guard.js",
         "milestone": "quick-222"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-portability-guard.als"
+      ]
     },
     {
       "id": "PROJECT-01",
@@ -3060,30 +3095,6 @@
       ]
     },
     {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
-      "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
-      }
-    },
-    {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
-      "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
-      }
-    },
-    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -3155,7 +3166,10 @@
       "provenance": {
         "source_file": ".planning/quick/221-refactor-nf-solve-into-sub-skills-to-red/221-PLAN.md",
         "milestone": "quick-221"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solve-decomposition.als"
+      ]
     },
     {
       "id": "SOLVE-15",
@@ -3167,7 +3181,10 @@
       "provenance": {
         "source_file": ".planning/quick/226-track-formal-model-complexity-and-runtim/226-PLAN.md",
         "milestone": "quick-226"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solve-decomposition.als"
+      ]
     },
     {
       "id": "SOLVE-16",
@@ -3179,7 +3196,10 @@
       "provenance": {
         "source_file": ".planning/quick/228-build-interactive-tui-for-browsing-and-a/228-PLAN.md",
         "milestone": "quick-228"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solve-tui-features.als"
+      ]
     },
     {
       "id": "SOLVE-17",
@@ -3191,7 +3211,10 @@
       "provenance": {
         "source_file": ".planning/quick/230-close-all-solver-feedback-loops-in-tui-s/230-PLAN.md",
         "milestone": "quick-230"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/solve-tui-features.als"
+      ]
     },
     {
       "id": "SOLVE-18",
@@ -3201,7 +3224,10 @@
       "provenance": {
         "source_file": "bin/unified-mcp-server.mjs",
         "milestone": "solver-tui"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/requirements-aggregation.als"
+      ]
     },
     {
       "id": "SOLVE-19",
@@ -3211,7 +3237,10 @@
       "provenance": {
         "source_file": "hooks/config-loader.js",
         "milestone": "solver-tui"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-module-existence.als"
+      ]
     },
     {
       "id": "SOLVE-20",
@@ -3221,7 +3250,10 @@
       "provenance": {
         "source_file": "hooks/nf-circuit-breaker.js",
         "milestone": "solver-tui"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-module-existence.als"
+      ]
     },
     {
       "id": "SOLVE-21",
@@ -3231,7 +3263,10 @@
       "provenance": {
         "source_file": "hooks/nf-prompt.js",
         "milestone": "solver-tui"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-module-existence.als"
+      ]
     },
     {
       "id": "SOLVE-22",
@@ -3241,7 +3276,10 @@
       "provenance": {
         "source_file": "hooks/nf-stop.js",
         "milestone": "solver-tui"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-module-existence.als"
+      ]
     },
     {
       "id": "SOLVE-23",
@@ -3251,6 +3289,33 @@
       "provenance": {
         "source_file": "hooks/nf-mcp-dispatch-guard.js",
         "milestone": "solver-tui"
+      },
+      "formal_models": [
+        ".planning/formal/alloy/hook-module-existence.als"
+      ]
+    },
+    {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
       }
     },
     {
@@ -3332,7 +3397,10 @@
       "provenance": {
         "source_file": ".planning/quick/235-fix-tla-model-state-space-explosions-and/235-PLAN.md",
         "milestone": "quick-235"
-      }
+      },
+      "formal_models": [
+        ".planning/formal/alloy/session-counter-tracking.als"
+      ]
     },
     {
       "id": "STATE-01",
@@ -4207,5 +4275,5 @@
     }
   ],
   "total": 283,
-  "frozen_at": "2026-03-09T07:18:57.237Z"
+  "frozen_at": "2026-03-09T08:28:03.759Z"
 }
