@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T22:10:50.708Z",
+  "generated": "2026-03-09T22:29:33.256Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -68,24 +68,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-09T22:09:57.336Z",
-      "hash": "9e269013"
+      "mtime": "2026-03-09T22:29:33.086Z",
+      "hash": "b5332c9d"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-09T22:10:49.866Z",
-      "hash": "bbcbd2c1"
+      "mtime": "2026-03-09T22:18:38.667Z",
+      "hash": "bf6bfebc"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-09T21:39:00.683Z",
-      "hash": "9f7bba8c"
+      "mtime": "2026-03-09T22:29:33.030Z",
+      "hash": "8d38ba89"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-09T21:38:57.647Z",
-      "hash": "7e5c243c"
+      "mtime": "2026-03-09T22:29:31.136Z",
+      "hash": "de7dd24f"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -100,8 +100,8 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-09T22:09:55.760Z",
-      "hash": "8b83d590"
+      "mtime": "2026-03-09T22:19:09.677Z",
+      "hash": "f1b03d60"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
@@ -3433,6 +3433,11 @@
           "to": "invariant::ImprovementMonotone",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/IMPR-01.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -3514,6 +3519,11 @@
           "to": "invariant::NoSpuriousConsensus",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/MCPENV-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -4010,6 +4020,11 @@
           "to": "invariant::AllTransitionsValid",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SAFE-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -4129,6 +4144,11 @@
           "to": "invariant::PolledCeiling",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SLOT-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -6631,6 +6651,11 @@
           "to": "invariant::CheckResultsMatchRegistry",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SCHEMA-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -27728,6 +27753,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/IMPR-01.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/IMPR-01.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::IMPR-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/INST-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/INST-01.stub.test.js",
@@ -28020,6 +28056,17 @@
       "edges": [
         {
           "to": "requirement::MCPENV-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/MCPENV-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/MCPENV-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::MCPENV-02",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -28531,6 +28578,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/SAFE-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SAFE-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SAFE-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/SCBD-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/SCBD-01.stub.test.js",
@@ -28570,6 +28628,17 @@
       "edges": [
         {
           "to": "requirement::SCHEMA-01",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SCHEMA-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SCHEMA-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SCHEMA-02",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -28735,6 +28804,17 @@
       "edges": [
         {
           "to": "requirement::SLOT-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SLOT-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SLOT-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SLOT-03",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

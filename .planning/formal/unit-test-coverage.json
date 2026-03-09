@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T22:16:41.370Z",
+  "generated_at": "2026-03-09T22:29:33.233Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -733,6 +733,15 @@
         }
       ]
     },
+    "IMPR-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/IMPR-01.stub.test.js",
+          "test_name": "IMPR-01 — ImprovementMonotone: structural verification"
+        }
+      ]
+    },
     "INST-01": {
       "covered": true,
       "test_cases": [
@@ -973,6 +982,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/MCPENV-01.stub.test.js",
           "test_name": "MCPENV-01: mcp-calls spec directory exists with documentation"
+        }
+      ]
+    },
+    "MCPENV-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MCPENV-02.stub.test.js",
+          "test_name": "MCPENV-02 — NoSpuriousConsensus: structural verification"
         }
       ]
     },
@@ -1390,6 +1408,15 @@
         }
       ]
     },
+    "SAFE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SAFE-02.stub.test.js",
+          "test_name": "SAFE-02 — AllTransitionsValid: structural verification"
+        }
+      ]
+    },
     "SCBD-01": {
       "covered": true,
       "test_cases": [
@@ -1423,6 +1450,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/SCHEMA-01.stub.test.js",
           "test_name": "SCHEMA-01: model-registry.json exists and is valid JSON"
+        }
+      ]
+    },
+    "SCHEMA-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SCHEMA-02.stub.test.js",
+          "test_name": "SCHEMA-02 — Requirement: behavioral verification"
         }
       ]
     },
@@ -1558,6 +1594,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/SLOT-02.stub.test.js",
           "test_name": "SLOT-02: requirement-map maps tla:recruiting-safety to SLOT-02"
+        }
+      ]
+    },
+    "SLOT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SLOT-03.stub.test.js",
+          "test_name": "SLOT-03 — PolledCeiling: structural verification"
         }
       ]
     },
@@ -2055,26 +2100,6 @@
           "test_name": "WIZ-10: mcp-setup.md exists and is readable"
         }
       ]
-    },
-    "IMPR-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MCPENV-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SAFE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SCHEMA-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SLOT-03": {
-      "covered": false,
-      "test_cases": []
     },
     "ADAPT-01": {
       "covered": false,

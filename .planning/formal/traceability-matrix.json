@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T22:18:38.661Z",
+    "generated_at": "2026-03-09T22:33:17.496Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 131
+        "entry_count": 315
       },
       "unit_test_coverage": {
         "available": true,
@@ -325,28 +325,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -367,28 +367,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -928,8 +928,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/IMPR-01.stub.test.js",
+            "test_name": "IMPR-01 — ImprovementMonotone: structural verification"
+          }
+        ]
       }
     },
     "PLAN-02": {
@@ -965,8 +970,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/MCPENV-02.stub.test.js",
+            "test_name": "MCPENV-02 — NoSpuriousConsensus: structural verification"
+          }
+        ]
       }
     },
     "MCPENV-01": {
@@ -1282,8 +1292,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SAFE-02.stub.test.js",
+            "test_name": "SAFE-02 — AllTransitionsValid: structural verification"
+          }
+        ]
       }
     },
     "LOOP-01": {
@@ -1293,21 +1308,21 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ],
@@ -1328,21 +1343,21 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ]
@@ -1354,14 +1369,14 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ],
@@ -1408,8 +1423,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SLOT-03.stub.test.js",
+            "test_name": "SLOT-03 — PolledCeiling: structural verification"
+          }
+        ]
       }
     },
     "SLOT-04": {
@@ -3493,8 +3513,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SCHEMA-02.stub.test.js",
+            "test_name": "SCHEMA-02 — Requirement: behavioral verification"
+          }
+        ]
       }
     },
     "SCHEMA-03": {
@@ -4582,7 +4607,7 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4603,8 +4628,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -4624,14 +4649,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4652,8 +4677,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -4680,14 +4705,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "LivenessNeverFail",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4708,14 +4733,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -9063,28 +9088,28 @@
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=0 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         }
       ]
@@ -9096,14 +9121,14 @@
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         }
       ]
@@ -9115,28 +9140,28 @@
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "R{\"rounds\"}=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=10 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ]
@@ -11060,7 +11085,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::BelowThresholdFails": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11071,7 +11096,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11512,7 +11537,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -11542,7 +11567,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum.tla::DeliberationMonotone": {
@@ -11563,7 +11588,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum_xstate.tla::TypeOK": {
@@ -13341,8 +13366,8 @@
         "REDACT-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "ci:trace-redaction"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::CompleteLiveness": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -13352,7 +13377,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::RedactionNeverInconclusive": {
@@ -13372,7 +13397,7 @@
         "LIVE-01"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::AllChecksEventuallyRun": {
@@ -13384,7 +13409,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDSensitivity.tla::StartSweep": {
@@ -16097,7 +16122,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16127,7 +16152,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/NFQuorum.tla::DeliberationMonotone": {
@@ -16148,7 +16173,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/alloy/solve-automation-features.als::Bool": {
@@ -17709,7 +17734,7 @@
         "CRED-12"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=0 ]": {
@@ -17719,7 +17744,7 @@
         "PRM-AM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::R{\"rotations\"}=? [ F s<=1 ]": {
@@ -17729,7 +17754,7 @@
         "PRM-AM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/quorum.props::P=? [ F s=1 ]": {
@@ -17740,7 +17765,7 @@
         "QUORUM-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::R{\"rounds\"}=? [ F s=1 ]": {
@@ -17750,7 +17775,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=9 s=1 ]": {
@@ -17761,7 +17786,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=10 s=1 ]": {
@@ -17771,7 +17796,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/observability-delivery.props::S=? [ \"full_delivery\" ]": {
@@ -19584,7 +19609,7 @@
         "CRED-12"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.pm::(model-level)": {
@@ -21318,7 +21343,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T22:16:29.139Z",
+    "baseline_date": "2026-03-09T22:32:58.905Z",
     "requirements_checked": 341,
     "regressions": [],
     "summary": {
