@@ -2304,7 +2304,7 @@ function sweepGitHeatmap() {
 
   // Refresh evidence (skip in fast/report-only modes — too slow for git mining)
   if (!fastMode && !reportOnly) {
-    const refresh = spawnTool('bin/git-heatmap.cjs', []);
+    const refresh = spawnTool('bin/git-heatmap.cjs', ['--since=3.months.ago', '--max-commits=300']);
     if (!refresh.ok) {
       process.stderr.write(TAG + ' WARNING: git-heatmap.cjs failed; using stale evidence\n');
     }

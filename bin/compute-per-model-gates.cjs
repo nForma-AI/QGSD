@@ -15,6 +15,7 @@
  *   node bin/compute-per-model-gates.cjs --json        # machine-readable JSON
  *   node bin/compute-per-model-gates.cjs --dry-run     # compute but don't write
  *   node bin/compute-per-model-gates.cjs --json --dry-run
+ *   node bin/compute-per-model-gates.cjs --write-per-model  # persist per-model gate detail
  */
 
 const fs   = require('fs');
@@ -37,8 +38,10 @@ const JSON_FLAG       = process.argv.includes('--json');
 const DRY_RUN_FLAG    = process.argv.includes('--dry-run');
 const SKIP_EVIDENCE   = process.argv.includes('--skip-evidence');
 const AGGREGATE_FLAG  = process.argv.includes('--aggregate');
+const WRITE_PER_MODEL_FLAG = process.argv.includes('--write-per-model');
 
 const GATES_DIR = path.join(FORMAL, 'gates');
+const PER_MODEL_GATES_PATH = path.join(GATES_DIR, 'per-model-gates.json');
 
 const TAG = '[compute-per-model-gates]';
 
@@ -104,10 +107,10 @@ function loadJSON(filePath, label) {
 function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults) {
   // Path 1: layer-manifest shows has_semantic_declarations
   if (layerManifest) {
-    for (const layer of Object.values(layerManifest.layers || {})) {
+    for (const [layerName, layer] of Object.entries(layerManifest.layers || {})) {
       for (const entry of (Array.isArray(layer) ? layer : [])) {
         if (entry.path === modelPath && entry.grounding_status === 'has_semantic_declarations') {
-          return true;
+          return { pass: true, reason: 'semantic_declarations in layer-manifest (layer: ' + layerName + ')' };
         }
       }
     }
@@ -115,49 +118,53 @@ function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResult
 
   // Path 2: model has source_layer + requirements with passing trace checks
   const sourceLayer = model.source_layer || inferSourceLayer(modelPath);
-  if (!sourceLayer) return false;
+  if (!sourceLayer) return { pass: false, reason: 'no source_layer and could not infer from path' };
 
   const reqs = model.requirements || [];
-  if (reqs.length === 0) return false;
+  if (reqs.length === 0) return { pass: false, reason: 'no requirements mapped (source_layer: ' + sourceLayer + ')' };
 
-  if (!traceMatrix || !traceMatrix.requirements) return false;
+  if (!traceMatrix || !traceMatrix.requirements) return { pass: false, reason: 'traceability-matrix missing or has no requirements section' };
 
   for (const reqId of reqs) {
     const reqEntry = traceMatrix.requirements[reqId];
     if (!reqEntry || !reqEntry.properties) continue;
     for (const prop of reqEntry.properties) {
-      if (prop.latest_result === 'pass') return true;
-      // Also check check-results.ndjson for this requirement
+      if (prop.latest_result === 'pass') return { pass: true, reason: 'passing trace for req ' + reqId + ' (property: ' + (prop.name || prop.id || 'unnamed') + ')' };
       if (checkResults.some(cr => cr.result === 'pass' && cr.requirement_ids && cr.requirement_ids.includes(reqId))) {
-        return true;
+        return { pass: true, reason: 'passing check-result for req ' + reqId };
       }
     }
   }
 
-  return false;
+  return { pass: false, reason: 'no passing traces for reqs [' + reqs.join(', ') + ']' };
 }
 
 // ── Gate B: Abstraction (L2 → L3) ───────────────────────────────────────────
 
 function evaluateGateB(modelPath, model, hazardModel) {
   const sourceLayer = model.source_layer || inferSourceLayer(modelPath);
-  if (!sourceLayer) return false;
+  if (!sourceLayer) return { pass: false, reason: 'no source_layer and could not infer from path' };
 
   // Path 1: model referenced in hazard-model derived_from artifacts
   if (hazardModel && hazardModel.hazards) {
     for (const hazard of hazardModel.hazards) {
       for (const df of (hazard.derived_from || [])) {
-        if (df.artifact && modelPath.includes(df.artifact)) return true;
+        if (df.artifact && modelPath.includes(df.artifact)) {
+          return { pass: true, reason: 'referenced in hazard-model hazard "' + (hazard.id || hazard.name || 'unknown') + '" derived_from' };
+        }
       }
     }
   }
 
   // Path 2: model is L3 and has non-empty requirements
   if (sourceLayer === 'L3' && (model.requirements || []).length > 0) {
-    return true;
+    return { pass: true, reason: 'L3 model with ' + model.requirements.length + ' requirement(s)' };
   }
 
-  return false;
+  if (sourceLayer !== 'L3') {
+    return { pass: false, reason: 'source_layer is ' + sourceLayer + ' (needs L3 or hazard-model reference)' };
+  }
+  return { pass: false, reason: 'L3 but no requirements mapped' };
 }
 
 // ── Gate C: Validation (L3 → TC) ────────────────────────────────────────────
@@ -171,27 +178,33 @@ function evaluateGateC(modelPath, model, failureCatalog, testRecipes, checkResul
       (testRecipes.recipes || []).map(r => r.failure_mode_id)
     );
     for (const fm of (failureCatalog.failure_modes || [])) {
-      // Check if this failure mode's derived_from references overlap with model requirements
       const fmReqOverlap = (fm.derived_from || []).some(df =>
         df.ref && reqs.some(r => df.ref.includes(r))
       );
-      if (fmReqOverlap && recipeFailureModeIds.has(fm.id)) return true;
+      if (fmReqOverlap && recipeFailureModeIds.has(fm.id)) {
+        const matchedReq = reqs.find(r => (fm.derived_from || []).some(df => df.ref && df.ref.includes(r)));
+        return { pass: true, reason: 'failure-mode ' + fm.id + ' has test recipe (via req ' + (matchedReq || '?') + ')' };
+      }
     }
   }
 
   // Path 2: passing check-result matching the model path
   const modelLower = modelPath.toLowerCase();
-  if (checkResults.some(cr => {
-    if (cr.result !== 'pass') return false;
+  for (const cr of checkResults) {
+    if (cr.result !== 'pass') continue;
     const toolMatch = cr.tool && modelLower.includes(cr.tool.toLowerCase());
     const checkIdPart = cr.check_id ? (cr.check_id.split(':')[1] || '') : '';
     const checkIdMatch = checkIdPart && modelLower.includes(checkIdPart.toLowerCase());
-    return toolMatch || checkIdMatch;
-  })) {
-    return true;
+    if (toolMatch || checkIdMatch) {
+      return { pass: true, reason: 'passing check-result ' + (cr.check_id || cr.tool || 'unknown') };
+    }
   }
 
-  return false;
+  // Build specific failure reason
+  if (reqs.length === 0) return { pass: false, reason: 'no requirements mapped' };
+  if (!failureCatalog) return { pass: false, reason: 'failure-mode-catalog.json missing' };
+  if (!testRecipes) return { pass: false, reason: 'test-recipes.json missing' };
+  return { pass: false, reason: 'no failure-mode with test recipe for reqs [' + reqs.join(', ') + '], no matching check-results' };
 }
 
 // ── Evidence readiness ────────────────────────────────────────────────────────
@@ -253,9 +266,13 @@ function computeAggregate(perModelResults) {
   let gateAPass = 0, gateBPass = 0, gateCPass = 0;
   for (const k of keys) {
     const m = perModelResults[k];
-    if (m.gate_a) gateAPass++;
-    if (m.gate_b) gateBPass++;
-    if (m.gate_c) gateCPass++;
+    // Support both { pass, reason } objects and bare booleans (backward compat)
+    const aPass = typeof m.gate_a === 'object' ? m.gate_a.pass : m.gate_a;
+    const bPass = typeof m.gate_b === 'object' ? m.gate_b.pass : m.gate_b;
+    const cPass = typeof m.gate_c === 'object' ? m.gate_c.pass : m.gate_c;
+    if (aPass) gateAPass++;
+    if (bPass) gateBPass++;
+    if (cPass) gateCPass++;
   }
 
   const groundingScore = total > 0 ? gateAPass / total : 0;
@@ -330,6 +347,32 @@ function writeAggregateGateFiles(aggregate) {
   try { fs.writeFileSync(path.join(GATES_DIR, 'gate-c-validation.json'), JSON.stringify(gateCFile, null, 2) + '\n'); } catch (_) {}
 }
 
+/**
+ * Writes per-model gate detail to gates/per-model-gates.json.
+ * No-op during --dry-run.
+ */
+function writePerModelGateFile(perModelResults, evidenceReadiness) {
+  if (DRY_RUN_FLAG) return;
+
+  try {
+    if (!fs.existsSync(GATES_DIR)) fs.mkdirSync(GATES_DIR, { recursive: true });
+  } catch (_) { /* best effort */ }
+
+  const output = {
+    schema_version: '2',
+    generated: new Date().toISOString(),
+    total_models: Object.keys(perModelResults).length,
+    evidence_readiness: { score: evidenceReadiness.score, total: evidenceReadiness.total },
+    models: perModelResults,
+  };
+
+  try {
+    fs.writeFileSync(PER_MODEL_GATES_PATH, JSON.stringify(output, null, 2) + '\n');
+  } catch (e) {
+    process.stderr.write(TAG + ' WARNING: per-model-gates.json write failed: ' + e.message + '\n');
+  }
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -361,9 +404,13 @@ function main() {
   for (const modelPath of modelKeys) {
     const model = models[modelPath];
 
-    const gateA = evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults);
-    const gateB = evaluateGateB(modelPath, model, hazardModel);
-    const gateC = evaluateGateC(modelPath, model, failureCatalog, testRecipes, checkResults);
+    const gateAResult = evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults);
+    const gateBResult = evaluateGateB(modelPath, model, hazardModel);
+    const gateCResult = evaluateGateC(modelPath, model, failureCatalog, testRecipes, checkResults);
+
+    const gateA = gateAResult.pass;
+    const gateB = gateBResult.pass;
+    const gateC = gateCResult.pass;
 
     const maturity = (gateA ? 1 : 0) + (gateB ? 1 : 0) + (gateC ? 1 : 0);
 
@@ -459,13 +506,12 @@ function main() {
     }
 
     perModel[modelPath] = {
-      gate_a: gateA,
-      gate_b: gateB,
-      gate_c: gateC,
+      gate_a: { pass: gateA, reason: gateAResult.reason },
+      gate_b: { pass: gateB, reason: gateBResult.reason },
+      gate_c: { pass: gateC, reason: gateCResult.reason },
       layer_maturity: model.layer_maturity || maturity,
       gate_maturity: model.gate_maturity || 'ADVISORY',
       promoted,
-      evidence_readiness: evidenceReadiness,
     };
   }
 
@@ -479,6 +525,11 @@ function main() {
   if (AGGREGATE_FLAG) {
     aggregate = computeAggregate(perModel);
     writeAggregateGateFiles(aggregate);
+  }
+
+  // Persist per-model gate detail when --write-per-model is set
+  if (WRITE_PER_MODEL_FLAG) {
+    writePerModelGateFile(perModel, evidenceReadiness);
   }
 
   const avgMaturity = modelKeys.length > 0 ? +(totalMaturity / modelKeys.length).toFixed(2) : 0;
@@ -535,4 +586,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { computeAggregate };
+module.exports = { computeAggregate, writePerModelGateFile };

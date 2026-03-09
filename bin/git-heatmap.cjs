@@ -26,7 +26,7 @@ const { execFileSync } = require('child_process');
 // ── CLI parsing ────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
-  const args = { json: false, since: null, projectRoot: process.cwd() };
+  const args = { json: false, since: null, projectRoot: process.cwd(), maxCommits: 0 };
   for (const arg of argv.slice(2)) {
     if (arg === '--json') {
       args.json = true;
@@ -34,6 +34,8 @@ function parseArgs(argv) {
       args.since = arg.slice('--since='.length);
     } else if (arg.startsWith('--project-root=')) {
       args.projectRoot = arg.slice('--project-root='.length);
+    } else if (arg.startsWith('--max-commits=')) {
+      args.maxCommits = parseInt(arg.slice('--max-commits='.length), 10) || 0;
     }
   }
   return args;
@@ -41,7 +43,7 @@ function parseArgs(argv) {
 
 // ── Input validation ───────────────────────────────────────────────────────
 
-const SINCE_PATTERN = /^[\d\-\.TZ:]+$/;
+const SINCE_PATTERN = /^[\d\-\.TZ:a-z]+$/;
 
 function validateSince(since) {
   if (since && !SINCE_PATTERN.test(since)) {
@@ -221,10 +223,11 @@ function computeDriftDirection(values) {
   return 'oscillating';
 }
 
-function extractNumericalAdjustments(root, since, coverageMap) {
+function extractNumericalAdjustments(root, since, coverageMap, maxCommits) {
   // Pass 1: identify candidate files via numstat
   const numstatArgs = ['log', '--all', '--numstat', '--format=%H %aI'];
   if (since) numstatArgs.push(`--since=${since}`);
+  if (maxCommits > 0) numstatArgs.push(`--max-count=${maxCommits}`);
 
   const numstatOutput = gitExec(numstatArgs, root);
 
@@ -239,18 +242,21 @@ function extractNumericalAdjustments(root, since, coverageMap) {
   }
 
   // Filter to candidate files (numeric-heavy, config files, etc.)
+  // Exclude .planning/ — formal evidence files are auto-generated and produce enormous diffs
   const candidatePatterns = /\.(json|cjs|mjs|js|ts|config\.\w+|yml|yaml|toml)$/;
+  const excludePatterns = /^\.planning\//;
   const candidates = Object.entries(fileChurn)
-    .filter(([f]) => candidatePatterns.test(f))
+    .filter(([f]) => candidatePatterns.test(f) && !excludePatterns.test(f))
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 50)
+    .slice(0, 15)
     .map(([f]) => f);
 
   // Pass 2: targeted diff per candidate file
   const adjustmentMap = {}; // key: file+constant_name
 
   for (const file of candidates) {
-    const diffArgs = ['log', '-p', '--all', '--format=%H %aI', '--', file];
+    const perFileLimit = maxCommits > 0 ? Math.min(maxCommits, 50) : 50;
+    const diffArgs = ['log', '-p', '--all', `--max-count=${perFileLimit}`, '--format=%H %aI', '--', file];
     if (since) diffArgs.splice(2, 0, `--since=${since}`);
 
     let diffOutput;
@@ -320,9 +326,10 @@ function isBugfixCommit(message) {
   return BUGFIX_PATTERN.test(message);
 }
 
-function extractBugfixHotspots(root, since, coverageMap) {
+function extractBugfixHotspots(root, since, coverageMap, maxCommits) {
   const logArgs = ['log', '--all', '--oneline'];
   if (since) logArgs.push(`--since=${since}`);
+  if (maxCommits > 0) logArgs.push(`--max-count=${maxCommits}`);
 
   const logOutput = gitExec(logArgs, root);
   const lines = logOutput.trim().split('\n').filter(Boolean);
@@ -364,9 +371,10 @@ function extractBugfixHotspots(root, since, coverageMap) {
 
 // ── Signal 3: Churn Ranking ────────────────────────────────────────────────
 
-function extractChurnRanking(root, since) {
+function extractChurnRanking(root, since, maxCommits) {
   const logArgs = ['log', '--numstat', '--all', '--no-merges', '--format=%H'];
   if (since) logArgs.push(`--since=${since}`);
+  if (maxCommits > 0) logArgs.push(`--max-count=${maxCommits}`);
 
   const logOutput = gitExec(logArgs, root);
 
@@ -515,9 +523,9 @@ function main() {
 
   const coverageMap = buildCoverageMap(root);
 
-  const numericalAdj = extractNumericalAdjustments(root, args.since, coverageMap);
-  const bugfixHotspots = extractBugfixHotspots(root, args.since, coverageMap);
-  const churnRanking = extractChurnRanking(root, args.since);
+  const numericalAdj = extractNumericalAdjustments(root, args.since, coverageMap, args.maxCommits);
+  const bugfixHotspots = extractBugfixHotspots(root, args.since, coverageMap, args.maxCommits);
+  const churnRanking = extractChurnRanking(root, args.since, args.maxCommits);
   const uncoveredHotZones = buildUncoveredHotZones(numericalAdj, bugfixHotspots, churnRanking, coverageMap);
 
   const result = {
