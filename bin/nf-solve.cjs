@@ -2111,8 +2111,27 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
 // ── Layer alignment sweeps ────────────────────────────────────────────────────
 
 /**
+ * Memoized aggregate gate loader.
+ * Spawns compute-per-model-gates.cjs --aggregate --json once and caches the result.
+ * All three sweep functions (L1->L2, L2->L3, L3->TC) share this single call.
+ */
+let _aggregateCache = null;
+function getAggregateGates() {
+  if (_aggregateCache) return _aggregateCache;
+  const args = ['--aggregate', '--json'];
+  if (reportOnly) args.push('--dry-run');
+  const result = spawnTool('bin/compute-per-model-gates.cjs', args);
+  if (!result.ok && !result.stdout) return null;
+  try {
+    const data = JSON.parse(result.stdout);
+    _aggregateCache = data.aggregate;
+    return _aggregateCache;
+  } catch { return null; }
+}
+
+/**
  * L1->L2: Gate A grounding alignment score.
- * Spawns gate-a-grounding.cjs --json and computes normalized 0-10 residual.
+ * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
 function sweepL1toL2() {
@@ -2120,39 +2139,32 @@ function sweepL1toL2() {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
   }
 
-  const result = spawnTool('bin/gate-a-grounding.cjs', ['--json']);
-
-  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
-  // Only bail on spawn errors (no stdout to parse).
-  if (!result.ok && !result.stdout) {
-    return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+  const agg = getAggregateGates();
+  if (!agg || !agg.gate_a) {
+    return { residual: -1, detail: { error: true, stderr: 'aggregate gate data unavailable' } };
   }
 
-  try {
-    const data = JSON.parse(result.stdout);
-    const score = data.grounding_score || 0;
-    const residual = Math.ceil((1 - score) * 10);
-    return {
-      residual: residual,
-      detail: {
-        grounding_score: score,
-        target: 0.8,
-        gap: 0.8 - score,
-        unexplained_breakdown: {
-          instrumentation_bug: (data.unexplained_counts && data.unexplained_counts.instrumentation_bug) || 0,
-          model_gap: (data.unexplained_counts && data.unexplained_counts.model_gap) || 0,
-          genuine_violation: (data.unexplained_counts && data.unexplained_counts.genuine_violation) || 0,
-        },
+  const gateA = agg.gate_a;
+  const score = gateA.grounding_score || 0;
+  const residual = Math.ceil((1 - score) * 10);
+  return {
+    residual: residual,
+    detail: {
+      grounding_score: score,
+      target: 0.8,
+      gap: 0.8 - score,
+      unexplained_breakdown: {
+        instrumentation_bug: (gateA.unexplained_counts && gateA.unexplained_counts.instrumentation_bug) || 0,
+        model_gap: (gateA.unexplained_counts && gateA.unexplained_counts.model_gap) || 0,
+        genuine_violation: (gateA.unexplained_counts && gateA.unexplained_counts.genuine_violation) || 0,
       },
-    };
-  } catch (err) {
-    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
-  }
+    },
+  };
 }
 
 /**
  * L2->L3: Gate B traceability alignment score.
- * Spawns gate-b-abstraction.cjs --json and computes normalized 0-10 residual.
+ * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
 function sweepL2toL3() {
@@ -2160,36 +2172,29 @@ function sweepL2toL3() {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
   }
 
-  const result = spawnTool('bin/gate-b-abstraction.cjs', ['--json']);
-
-  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
-  // Only bail on spawn errors (no stdout to parse).
-  if (!result.ok && !result.stdout) {
+  const agg = getAggregateGates();
+  if (!agg || !agg.gate_b) {
     return { residual: -1, detail: { error: true } };
   }
 
-  try {
-    const data = JSON.parse(result.stdout);
-    const score = data.gate_b_score || 0;
-    const orphanedCount = data.orphaned_entries || 0;
-    const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
-    const residual = Math.min(rawResidual, 10);
-    return {
-      residual: residual,
-      detail: {
-        gate_b_score: score,
-        orphaned_count: orphanedCount,
-        residual_capped: rawResidual > 10,
-      },
-    };
-  } catch (err) {
-    return { residual: -1, detail: { error: true } };
-  }
+  const gateB = agg.gate_b;
+  const score = gateB.gate_b_score || 0;
+  const orphanedCount = gateB.orphaned_entries || 0;
+  const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
+  const residual = Math.min(rawResidual, 10);
+  return {
+    residual: residual,
+    detail: {
+      gate_b_score: score,
+      orphaned_count: orphanedCount,
+      residual_capped: rawResidual > 10,
+    },
+  };
 }
 
 /**
  * L3->TC: Gate C validation alignment score.
- * Spawns gate-c-validation.cjs --json and computes normalized 0-10 residual.
+ * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Checks test-recipes.json staleness before scoring.
  * Returns { residual: N, detail: {...} }
  */
@@ -2218,30 +2223,23 @@ function sweepL3toTC() {
     }
   }
 
-  const result = spawnTool('bin/gate-c-validation.cjs', ['--json']);
-
-  // Gate scripts exit 1 when target_met is false but still produce valid JSON.
-  // Only bail on spawn errors (no stdout to parse).
-  if (!result.ok && !result.stdout) {
-    return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+  const agg = getAggregateGates();
+  if (!agg || !agg.gate_c) {
+    return { residual: -1, detail: { error: true, stderr: 'aggregate gate data unavailable' } };
   }
 
-  try {
-    const data = JSON.parse(result.stdout);
-    const score = data.gate_c_score || 0;
-    const residual = Math.ceil((1 - score) * 10);
-    return {
-      residual: residual,
-      detail: {
-        gate_c_score: score,
-        unvalidated_count: data.unvalidated_entries || 0,
-        total_failure_modes: data.total_entries || 0,
-        total_recipes: data.validated_entries || 0,
-      },
-    };
-  } catch (err) {
-    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
-  }
+  const gateC = agg.gate_c;
+  const score = gateC.gate_c_score || 0;
+  const residual = Math.ceil((1 - score) * 10);
+  return {
+    residual: residual,
+    detail: {
+      gate_c_score: score,
+      unvalidated_count: gateC.unvalidated_entries || 0,
+      total_failure_modes: gateC.total_entries || 0,
+      total_recipes: gateC.validated_entries || 0,
+    },
+  };
 }
 
 // ── Per-Model Gate Maturity sweep ────────────────────────────────────────────
@@ -2257,7 +2255,7 @@ function sweepPerModelGates() {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
   }
 
-  const args = ['--json'];
+  const args = ['--aggregate', '--json'];
   if (reportOnly) args.push('--dry-run');
 
   const result = spawnTool('bin/compute-per-model-gates.cjs', args);

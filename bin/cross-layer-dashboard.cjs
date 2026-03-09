@@ -127,12 +127,29 @@ function collectMaturityData() {
 }
 
 function collectAll() {
-  const gateA = collectGateData('gate-a-grounding.cjs', 'gate-a-grounding.json');
-  const gateB = collectGateData('gate-b-abstraction.cjs', 'gate-b-abstraction.json');
-  const gateC = collectGateData('gate-c-validation.cjs', 'gate-c-validation.json');
+  let gateA = null, gateB = null, gateC = null;
+
+  if (CACHED_FLAG) {
+    // Read from cached gate files (written by --aggregate mode)
+    gateA = readJsonFile(path.join(GATES_DIR, 'gate-a-grounding.json'));
+    gateB = readJsonFile(path.join(GATES_DIR, 'gate-b-abstraction.json'));
+    gateC = readJsonFile(path.join(GATES_DIR, 'gate-c-validation.json'));
+  } else {
+    const result = spawnTool('compute-per-model-gates.cjs', ['--aggregate', '--json']);
+    if (result.ok || result.stdout) {
+      try {
+        const data = JSON.parse(result.stdout);
+        if (data.aggregate) {
+          gateA = data.aggregate.gate_a;
+          gateB = data.aggregate.gate_b;
+          gateC = data.aggregate.gate_c;
+        }
+      } catch { /* fall through with nulls */ }
+    }
+  }
+
   const l1Pct = collectL1Coverage();
   const maturity = collectMaturityData();
-
   return { gateA, gateB, gateC, l1Pct, maturity };
 }
 

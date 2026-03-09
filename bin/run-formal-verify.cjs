@@ -396,29 +396,11 @@ const STATIC_STEPS = [
     nonCritical: true,
   },
 
-  // ─ Gates — cross-layer alignment checks ───────────────────────────────────
+  // ─ Gates — cross-layer alignment checks (unified via --aggregate) ──────────
   {
-    tool: 'gates', id: 'gates:gate-a',
-    label: 'Gate A -- L1-L2 grounding alignment score',
-    type: 'node', script: 'gate-a-grounding.cjs', args: [],
-    nonCritical: true,
-  },
-  {
-    tool: 'gates', id: 'gates:gate-b',
-    label: 'Gate B -- L2-L3 traceability alignment score',
-    type: 'node', script: 'gate-b-abstraction.cjs', args: [],
-    nonCritical: true,
-  },
-  {
-    tool: 'gates', id: 'gates:gate-c',
-    label: 'Gate C -- L3-TC validation alignment score',
-    type: 'node', script: 'gate-c-validation.cjs', args: [],
-    nonCritical: true,
-  },
-  {
-    tool: 'gates', id: 'gates:per-model',
-    label: 'Per-model gate maturity scoring',
-    type: 'node', script: 'compute-per-model-gates.cjs', args: ['--json'],
+    tool: 'gates', id: 'gates:per-model-aggregate',
+    label: 'Per-model gate maturity + aggregate alignment scores',
+    type: 'node', script: 'compute-per-model-gates.cjs', args: ['--aggregate', '--json'],
     nonCritical: true,
   },
 ];
