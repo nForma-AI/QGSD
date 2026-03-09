@@ -12,6 +12,7 @@ const os   = require('os');
 const fs   = require('fs');
 
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // ─── Stdin accumulation (for hook input JSON containing cwd) ─────────────────
 // Only register stdin handler when run directly (not when require()'d by tests)
@@ -33,28 +34,12 @@ if (require.main === module) {
 // See bin/install.js line ~1679: binDest = path.join(targetDir, 'nf-bin')
 // where targetDir = os.homedir() + '/.claude'.
 function findSecrets() {
-  const candidates = [
-    path.join(os.homedir(), '.claude', 'nf-bin', 'secrets.cjs'),  // installed path
-    path.join(__dirname, '..', 'bin', 'secrets.cjs'),                 // local dev path
-  ];
-  for (const p of candidates) {
-    try {
-      return require(p);
-    } catch (_) {}
-  }
-  return null;
+  try { return require(resolveBin('secrets.cjs')); } catch (_) { return null; }
 }
 
-// Locate memory-store.cjs — try installed global path first, then local dev path.
+// Locate memory-store.cjs via resolveBin (nf-bin installed path, then repo bin/).
 function findMemoryStore() {
-  const candidates = [
-    path.join(os.homedir(), '.claude', 'nf-bin', 'memory-store.cjs'),
-    path.join(__dirname, '..', 'bin', 'memory-store.cjs'),
-  ];
-  for (const p of candidates) {
-    try { return require(p); } catch (_) {}
-  }
-  return null;
+  try { return require(resolveBin('memory-store.cjs')); } catch (_) { return null; }
 }
 
 // ─── State reminder parser ──────────────────────────────────────────────────
@@ -128,15 +113,8 @@ if (require.main === module) (async () => {
   try {
     const { execFileSync } = require('child_process');
     const nodeFsRef = require('fs');
-    const ccrCandidates = [
-      path.join(os.homedir(), '.claude', 'nf-bin', 'ccr-secure-config.cjs'),
-      path.join(__dirname, '..', 'bin', 'ccr-secure-config.cjs'),
-    ];
-    let ccrConfigPath = null;
-    for (const p of ccrCandidates) {
-      if (nodeFsRef.existsSync(p)) { ccrConfigPath = p; break; }
-    }
-    if (ccrConfigPath) {
+    const ccrConfigPath = resolveBin('ccr-secure-config.cjs');
+    if (nodeFsRef.existsSync(ccrConfigPath)) {
       execFileSync(process.execPath, [ccrConfigPath], { stdio: 'pipe', timeout: 10000 });
     }
   } catch (e) {
@@ -232,14 +210,8 @@ if (require.main === module) (async () => {
 
   // Memory staleness check — warn about outdated MEMORY.md entries
   try {
-    const validateMemoryCandidates = [
-      path.join(os.homedir(), '.claude', 'nf-bin', 'validate-memory.cjs'),
-      path.join(__dirname, '..', 'bin', 'validate-memory.cjs'),
-    ];
     let validateMemoryMod = null;
-    for (const p of validateMemoryCandidates) {
-      try { validateMemoryMod = require(p); break; } catch (_) {}
-    }
+    try { validateMemoryMod = require(resolveBin('validate-memory.cjs')); } catch (_) {}
     if (validateMemoryMod) {
       const { findings } = validateMemoryMod.validateMemory({ cwd: _hookCwd, quiet: true });
       if (findings.length > 0) {

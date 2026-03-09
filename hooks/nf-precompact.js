@@ -10,22 +10,23 @@
 const fs   = require('fs');
 const path = require('path');
 const { validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // Fail-open require of execution-progress module (VERF-01)
 const executionProgress = (() => {
-  try { return require(path.join(__dirname, '..', 'bin', 'execution-progress.cjs')); }
+  try { return require(resolveBin('execution-progress.cjs')); }
   catch { return null; }
 })();
 
 // Fail-open require of memory-store module (MEMP-01, MEMP-04)
 const memoryStore = (() => {
-  try { return require(path.join(__dirname, '..', 'bin', 'memory-store.cjs')); }
+  try { return require(resolveBin('memory-store.cjs')); }
   catch { return null; }
 })();
 
 // Fail-open require of context-stack module (ORCH-02)
 const contextStack = (() => {
-  try { return require(path.join(__dirname, '..', 'bin', 'context-stack.cjs')); }
+  try { return require(resolveBin('context-stack.cjs')); }
   catch { return null; }
 })();
 

@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // Hard timeout: never block session exit longer than 5 seconds
 const HARD_TIMEOUT = setTimeout(() => process.exit(0), 5000);
@@ -13,28 +14,14 @@ HARD_TIMEOUT.unref(); // do not keep process alive
  * Locate learning-extractor.cjs — try installed global path first, then local dev path.
  */
 function findLearningExtractor() {
-  const candidates = [
-    path.join(os.homedir(), '.claude', 'nf-bin', 'learning-extractor.cjs'),
-    path.join(__dirname, '..', 'bin', 'learning-extractor.cjs'),
-  ];
-  for (const p of candidates) {
-    try { return require(p); } catch (_) {}
-  }
-  return null;
+  try { return require(resolveBin('learning-extractor.cjs')); } catch (_) { return null; }
 }
 
 /**
- * Locate memory-store.cjs — try installed global path first, then local dev path.
+ * Locate memory-store.cjs via resolveBin (nf-bin installed path, then repo bin/).
  */
 function findMemoryStore() {
-  const candidates = [
-    path.join(os.homedir(), '.claude', 'nf-bin', 'memory-store.cjs'),
-    path.join(__dirname, '..', 'bin', 'memory-store.cjs'),
-  ];
-  for (const p of candidates) {
-    try { return require(p); } catch (_) {}
-  }
-  return null;
+  try { return require(resolveBin('memory-store.cjs')); } catch (_) { return null; }
 }
 
 let raw = '';
@@ -147,14 +134,7 @@ process.stdin.on('end', () => {
  * Locate skill-extractor.cjs — try installed global path first, then local dev path.
  */
 function findSkillExtractor() {
-  const candidates = [
-    path.join(os.homedir(), '.claude', 'nf-bin', 'skill-extractor.cjs'),
-    path.join(__dirname, '..', 'bin', 'skill-extractor.cjs'),
-  ];
-  for (const p of candidates) {
-    try { return require(p); } catch (_) {}
-  }
-  return null;
+  try { return require(resolveBin('skill-extractor.cjs')); } catch (_) { return null; }
 }
 
 // Export for unit testing

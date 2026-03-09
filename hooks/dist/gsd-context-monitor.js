@@ -17,10 +17,11 @@
 const path = require('path');
 const fs = require('fs');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // Continuous verification integration (fail-open: null if module unavailable)
 const continuousVerify = (() => {
-  try { return require(path.join(__dirname, '..', 'bin', 'continuous-verify.cjs')); }
+  try { return require(resolveBin('continuous-verify.cjs')); }
   catch { return null; }
 })();
 
@@ -29,7 +30,7 @@ function appendConformanceEvent(event) {
   try {
     let eventsPath;
     try {
-      const planningPaths = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+      const planningPaths = require(resolveBin('planning-paths.cjs'));
       eventsPath = planningPaths.resolveWithFallback(process.cwd(), 'conformance-events');
     } catch {
       eventsPath = path.join(process.cwd(), '.planning', 'telemetry', 'conformance-events.jsonl');
@@ -124,7 +125,7 @@ process.stdin.on('end', () => {
     // Budget tracking
     let budgetMessage = null;
     const budgetTracker = (() => {
-      try { return require(path.join(__dirname, '..', 'bin', 'budget-tracker.cjs')); }
+      try { return require(resolveBin('budget-tracker.cjs')); }
       catch { return null; }
     })();
 

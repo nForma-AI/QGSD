@@ -17,6 +17,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 function main() {
   let raw = '';
@@ -49,7 +50,7 @@ function main() {
         process.exit(0);
       }
 
-      const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+      const pp = require(resolveBin('planning-paths.cjs'));
       const corrPath = pp.resolve(process.cwd(), 'quorum-correlation', { agentId: input.agent_id });
 
       try {

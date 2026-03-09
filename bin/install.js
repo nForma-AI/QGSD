@@ -947,6 +947,10 @@ function cleanupOrphanedFiles(configDir) {
     'hooks/qgsd-session-start.js', // Renamed to nf-session-start.js in v0.2
     'hooks/qgsd-check-update.js',  // Renamed to nf-check-update.js in v0.2
     'hooks/qgsd-statusline.js',    // Renamed to nf-statusline.js in v0.2
+    'hooks/qgsd-precompact.js',    // Renamed to nf-precompact.js in v0.2
+    'hooks/qgsd-slot-correlator.js', // Renamed to nf-slot-correlator.js in v0.2
+    'hooks/qgsd-token-collector.js', // Renamed to nf-token-collector.js in v0.2
+    'hooks/qgsd-spec-regen.js',    // Removed — functionality merged into nf-solve
   ];
 
   for (const relPath of orphanedFiles) {

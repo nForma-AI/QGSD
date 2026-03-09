@@ -19,11 +19,12 @@ const os = require('os');
 
 const { loadConfig, DEFAULT_CONFIG, slotToToolCall, shouldRunHook, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
+const resolveBin = require('./nf-resolve-bin');
 
 // Cache module — fail-open: if require fails, all cache logic is skipped
 let cacheModule = null;
 try {
-  cacheModule = require(path.join(__dirname, '..', 'bin', 'quorum-cache.cjs'));
+  cacheModule = require(resolveBin('quorum-cache.cjs'));
 } catch (_) { /* fail-open: cache unavailable */ }
 
 // Appends a structured conformance event to .planning/conformance-events.jsonl.
@@ -32,7 +33,7 @@ try {
 // NEVER writes to stdout — stdout is the Claude Code hook decision channel.
 function appendConformanceEvent(event) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolve(process.cwd(), 'conformance-events');
     fs.appendFileSync(logPath, JSON.stringify(event) + '\n', 'utf8');
   } catch (err) {

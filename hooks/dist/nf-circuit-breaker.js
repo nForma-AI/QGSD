@@ -18,6 +18,7 @@ const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 const { loadConfig, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
+const resolveBin = require('./nf-resolve-bin');
 
 // Read-only command regex: git log/diff/diff-tree/status/show/blame, grep, cat, ls, head, tail, find
 const READ_ONLY_REGEX = /^\s*(git\s+(log|diff|diff-tree|status|show|blame)|grep|cat\s|ls(\s|$)|head|tail|find)\s*/;
@@ -533,7 +534,7 @@ function makePatternHash(fileSets) {
 // NEVER writes to stdout — stdout is the Claude Code hook decision channel.
 function appendConformanceEvent(event) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolve(process.cwd(), 'conformance-events');
     fs.appendFileSync(logPath, JSON.stringify(event) + '\n', 'utf8');
   } catch (err) {

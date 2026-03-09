@@ -24,8 +24,9 @@ const os   = require('os');
 const { spawnSync } = require('child_process');
 const { loadConfig, slotToToolCall, shouldRunHook, validateHookInput } = require('./config-loader');
 const { schema_version } = require('./conformance-schema.cjs');
-const taskClassifier = (() => { try { return require(path.join(__dirname, '..', 'bin', 'task-classifier.cjs')); } catch { return null; } })();
-const contextStack = (() => { try { return require(path.join(__dirname, '..', 'bin', 'context-stack.cjs')); } catch { return null; } })();
+const resolveBin = require('./nf-resolve-bin');
+const taskClassifier = (() => { try { return require(resolveBin('task-classifier.cjs')); } catch { return null; } })();
+const contextStack = (() => { try { return require(resolveBin('context-stack.cjs')); } catch { return null; } })();
 
 const DEFAULT_QUORUM_INSTRUCTIONS_FALLBACK = `QUORUM REQUIRED (structural enforcement — Stop hook will verify)
 
@@ -53,7 +54,7 @@ The Stop hook reads the transcript — skipping quorum will block your response.
 // NEVER writes to stdout — stdout is the Claude Code hook decision channel.
 function appendConformanceEvent(event) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolve(process.cwd(), 'conformance-events');
     fs.appendFileSync(logPath, JSON.stringify(event) + '\n', 'utf8');
   } catch (err) {
@@ -136,7 +137,7 @@ function mapRiskLevelToCount(riskLevel, maxSize) {
 // Reads quorum-failures.json written by call-quorum-slot.cjs on every failure.
 function getRecentlyTimedOutSlots(cwd, ttlMinutes = 30) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolveWithFallback(cwd, 'quorum-failures');
     if (!fs.existsSync(logPath)) return [];
     const records = JSON.parse(fs.readFileSync(logPath, 'utf8'));
@@ -150,17 +151,12 @@ function getRecentlyTimedOutSlots(cwd, ttlMinutes = 30) {
 
 // Locate providers.json from multiple search paths (borrowed from call-quorum-slot.cjs).
 function findProviders() {
-  const searchPaths = [
-    path.join(__dirname, '..', 'bin', 'providers.json'),
-    path.join(os.homedir(), '.claude', 'nf-bin', 'providers.json'),
-  ];
-  for (const p of searchPaths) {
-    try {
-      if (fs.existsSync(p)) {
-        return JSON.parse(fs.readFileSync(p, 'utf8')).providers;
-      }
-    } catch (_) { /* try next */ }
-  }
+  try {
+    const p = resolveBin('providers.json');
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, 'utf8')).providers;
+    }
+  } catch (_) { /* fail-open */ }
   return null;
 }
 
@@ -169,15 +165,8 @@ function findProviders() {
 // Fail-open: if spawn fails or times out, dispatch continues with stale/missing cache.
 function triggerHealthProbe() {
   try {
-    const searchPaths = [
-      path.join(__dirname, '..', 'bin', 'check-provider-health.cjs'),
-      path.join(os.homedir(), '.claude', 'nf-bin', 'check-provider-health.cjs'),
-    ];
-    let checkPath = null;
-    for (const p of searchPaths) {
-      if (fs.existsSync(p)) { checkPath = p; break; }
-    }
-    if (!checkPath) return; // no probe script found — fail-open
+    const checkPath = resolveBin('check-provider-health.cjs');
+    if (!fs.existsSync(checkPath)) return; // no probe script found — fail-open
     spawnSync('node', [checkPath, '--json'], { timeout: 3000, stdio: 'ignore' });
   } catch (_) { /* fail-open: probe failure does not block dispatch */ }
 }
@@ -188,7 +177,7 @@ function triggerHealthProbe() {
 // Fail-open: if scoreboard missing, malformed, or any error, returns all slots unchanged.
 function getAvailableSlots(slots, cwd) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const sbPath = pp.resolveWithFallback(cwd, 'quorum-scoreboard');
     if (!fs.existsSync(sbPath)) return slots;
     const scoreboard = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
@@ -221,7 +210,7 @@ function getAvailableSlots(slots, cwd) {
 // Fail-open: if scoreboard missing or any error, returns slots in original order.
 function sortBySuccessRate(slots, cwd) {
   try {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const sbPath = pp.resolveWithFallback(cwd, 'quorum-scoreboard');
     if (!fs.existsSync(sbPath)) return [...slots];
     const scoreboard = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
@@ -521,7 +510,7 @@ process.stdin.on('end', () => {
 
       // ── CACHE CHECK: Short-circuit quorum dispatch on valid cache hit ──────
       try {
-        const cacheModule = require(path.join(__dirname, '..', 'bin', 'quorum-cache.cjs'));
+        const cacheModule = require(resolveBin('quorum-cache.cjs'));
         const cacheDir = path.join(cwd, '.planning', '.quorum-cache');
         const cacheKey = cacheModule.computeCacheKey(prompt, contextYaml, cappedSlots, config.quorum_active, cacheModule.getGitHead());
 

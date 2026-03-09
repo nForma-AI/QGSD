@@ -16,6 +16,7 @@
 const fs   = require('fs');
 const path = require('path');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // Resolve slot name from correlation file, last_assistant_message, or transcript.
 // Order:
@@ -27,7 +28,7 @@ const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loade
 //   4. Fallback: return agent_id or 'unknown'
 function resolveSlot(input) {
   if (input.agent_id) {
-    const pp = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp = require(resolveBin('planning-paths.cjs'));
     const corrPath = pp.resolveWithFallback(process.cwd(), 'quorum-correlation', { agentId: input.agent_id });
     if (fs.existsSync(corrPath)) {
       try {
@@ -83,7 +84,7 @@ function appendRecord(input, inputTokens, outputTokens, cacheCreate, cacheRead) 
       cache_creation_input_tokens:   cacheCreate,
       cache_read_input_tokens:       cacheRead,
     });
-    const pp2 = require(path.join(__dirname, '..', 'bin', 'planning-paths.cjs'));
+    const pp2 = require(resolveBin('planning-paths.cjs'));
     const logPath = pp2.resolve(process.cwd(), 'token-usage');
     fs.appendFileSync(logPath, record + '\n', 'utf8');
   } catch (_) {} // observational — never fails
