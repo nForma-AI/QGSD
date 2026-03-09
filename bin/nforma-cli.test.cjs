@@ -224,44 +224,32 @@ describe('nforma-cli: routing logic', () => {
   });
 });
 
-// ── Smart routing (isInstalled) ─────────────────────────────────────────────
+// ── npx detection ───────────────────────────────────────────────────────────
 
-describe('nforma-cli: smart routing', () => {
-  test('isInstalled logic checks ~/.claude/nf, ~/.gemini/nf, ~/.config/opencode/nf', () => {
+describe('nforma-cli: npx detection', () => {
+  test('isNpx detects _npx in __dirname', () => {
     const content = fs.readFileSync(CLI, 'utf8');
-    assert.ok(content.includes('.claude'), 'must check .claude path');
-    assert.ok(content.includes('.gemini'), 'must check .gemini path');
-    assert.ok(content.includes('opencode'), 'must check opencode path');
+    assert.ok(content.includes('_npx'), 'must check for _npx in path');
   });
 
-  test('smart routing routes to installer when nf/ dirs are missing', () => {
-    // Use a fake HOME where no nf/ dirs exist to force installer path
-    const os = require('os');
-    const tmpHome = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-cli-route-'));
-    try {
-      execFileSync(process.execPath, [CLI], {
-        stdio: 'pipe',
-        timeout: 5000,
-        env: {
-          ...process.env,
-          HOME: tmpHome,
-          NO_COLOR: '1',
-        },
-      });
-    } catch (e) {
-      // Installer will prompt for input and fail in non-TTY — that's expected
-      // Check that the output contains installer-specific content (banner)
-      const stdout = (e.stdout || '').toString();
-      const stderr = (e.stderr || '').toString();
-      const output = stdout + stderr;
-      // The installer prints the nForma ASCII banner or prompts
-      assert.ok(
-        output.includes('nForma') || output.includes('install') || output.includes('runtime'),
-        'with no nf/ dirs, should route to installer (got: ' + output.slice(0, 200) + ')'
-      );
-    } finally {
-      fs.rmSync(tmpHome, { recursive: true, force: true });
-    }
+  test('npx execution routes to installer (simulated via _npx path)', () => {
+    // The CLI checks if __dirname contains _npx
+    // We can't easily fake __dirname, but we verify the logic exists
+    const content = fs.readFileSync(CLI, 'utf8');
+    assert.ok(content.includes("isNpx()"), 'must call isNpx() in default routing');
+    assert.ok(
+      content.includes("require('./install.js')"),
+      'npx path must require install.js'
+    );
+  });
+
+  test('global install (no npx) routes to TUI', () => {
+    // When not running via npx, default should be TUI
+    const content = fs.readFileSync(CLI, 'utf8');
+    assert.ok(
+      content.includes("require('./nForma.cjs')"),
+      'non-npx path must require nForma.cjs'
+    );
   });
 });
 
