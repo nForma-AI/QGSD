@@ -52,7 +52,7 @@ None.
 | 240 | Teach sweepCtoR to read Requirements header comments | 2026-03-09 | 9d9e87b7 | Verified | [240-teach-sweepctor-to-read-requirements-hea](./quick/240-teach-sweepctor-to-read-requirements-hea/) |
 | 241 | implement the migration (add --aggregate to compute-per-model-gates.cjs, migrate consumers, then delete global gates) | 2026-03-09 | 10064bbb | Verified | [241-implement-the-migration-add-aggregate-to](./quick/241-implement-the-migration-add-aggregate-to/) |
 | 242 | Add Gate Scoring page to TUI under Reqs (F2) module + fix Solve (F5) ASCII art from T to S shape | 2026-03-09 | 54c92a3b | Pending | [242-add-gate-scoring-page-to-tui-under-reqs-](./quick/242-add-gate-scoring-page-to-tui-under-reqs-/) |
-| 249 | Fix TUI requirements view to show two levels: principles and specifications | 2026-03-09 | 6dfc394c | Pending | [249-fix-tui-requirements-view-to-show-two-le](./quick/249-fix-tui-requirements-view-to-show-two-le/) |
+| 249 | Fix TUI requirements view to show two levels: principles and specifications | 2026-03-09 | 6dfc394c | Verified | [249-fix-tui-requirements-view-to-show-two-le](./quick/249-fix-tui-requirements-view-to-show-two-le/) |
 
 ## Session Continuity
 
