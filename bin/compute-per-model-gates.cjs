@@ -36,6 +36,9 @@ const TEST_RECIPES_PATH   = path.join(FORMAL, 'test-recipes', 'test-recipes.json
 const JSON_FLAG       = process.argv.includes('--json');
 const DRY_RUN_FLAG    = process.argv.includes('--dry-run');
 const SKIP_EVIDENCE   = process.argv.includes('--skip-evidence');
+const AGGREGATE_FLAG  = process.argv.includes('--aggregate');
+
+const GATES_DIR = path.join(FORMAL, 'gates');
 
 const TAG = '[compute-per-model-gates]';
 
@@ -234,6 +237,99 @@ function computeEvidenceReadiness() {
   return { score, total: 5, skipped: false, details };
 }
 
+// ── Aggregate score computation ───────────────────────────────────────────────
+
+/**
+ * Computes aggregate gate scores from per-model results.
+ * Exported for unit testing.
+ *
+ * @param {Object} perModelResults - Map of modelPath -> { gate_a, gate_b, gate_c, ... }
+ * @returns {Object} aggregate - { gate_a: {...}, gate_b: {...}, gate_c: {...} }
+ */
+function computeAggregate(perModelResults) {
+  const keys = Object.keys(perModelResults);
+  const total = keys.length;
+
+  let gateAPass = 0, gateBPass = 0, gateCPass = 0;
+  for (const k of keys) {
+    const m = perModelResults[k];
+    if (m.gate_a) gateAPass++;
+    if (m.gate_b) gateBPass++;
+    if (m.gate_c) gateCPass++;
+  }
+
+  const groundingScore = total > 0 ? gateAPass / total : 0;
+  const gateBScore = total > 0 ? gateBPass / total : 0;
+  const gateCScore = total > 0 ? gateCPass / total : 0;
+
+  return {
+    gate_a: {
+      grounding_score: groundingScore,
+      target: 0.8,
+      target_met: groundingScore >= 0.8,
+      explained: gateAPass,
+      total: total,
+      unexplained_counts: {
+        instrumentation_bug: 0,
+        model_gap: total - gateAPass,
+        genuine_violation: 0,
+      },
+    },
+    gate_b: {
+      gate_b_score: gateBScore,
+      total_entries: total,
+      grounded_entries: gateBPass,
+      orphaned_entries: total - gateBPass,
+      target: 1.0,
+      target_met: gateBScore >= 1.0,
+    },
+    gate_c: {
+      gate_c_score: gateCScore,
+      total_entries: total,
+      validated_entries: gateCPass,
+      unvalidated_entries: total - gateCPass,
+      target: 0.8,
+      target_met: gateCScore >= 0.8,
+    },
+  };
+}
+
+/**
+ * Writes aggregate gate results to .planning/formal/gates/ JSON files.
+ * Preserves backward compatibility for cached dashboard readers.
+ * No-op during --dry-run.
+ */
+function writeAggregateGateFiles(aggregate) {
+  if (DRY_RUN_FLAG) return;
+
+  try {
+    if (!fs.existsSync(GATES_DIR)) fs.mkdirSync(GATES_DIR, { recursive: true });
+  } catch (_) { /* best effort */ }
+
+  const ts = new Date().toISOString();
+
+  const gateAFile = {
+    schema_version: '1',
+    generated: ts,
+    ...aggregate.gate_a,
+    scope: { mode: 'per-model-aggregate' },
+  };
+  const gateBFile = {
+    schema_version: '1',
+    generated: ts,
+    ...aggregate.gate_b,
+  };
+  const gateCFile = {
+    schema_version: '1',
+    generated: ts,
+    ...aggregate.gate_c,
+  };
+
+  try { fs.writeFileSync(path.join(GATES_DIR, 'gate-a-grounding.json'), JSON.stringify(gateAFile, null, 2) + '\n'); } catch (_) {}
+  try { fs.writeFileSync(path.join(GATES_DIR, 'gate-b-abstraction.json'), JSON.stringify(gateBFile, null, 2) + '\n'); } catch (_) {}
+  try { fs.writeFileSync(path.join(GATES_DIR, 'gate-c-validation.json'), JSON.stringify(gateCFile, null, 2) + '\n'); } catch (_) {}
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -378,6 +474,13 @@ function main() {
     fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2) + '\n');
   }
 
+  // Compute aggregate gate scores when --aggregate is set
+  let aggregate = null;
+  if (AGGREGATE_FLAG) {
+    aggregate = computeAggregate(perModel);
+    writeAggregateGateFiles(aggregate);
+  }
+
   const avgMaturity = modelKeys.length > 0 ? +(totalMaturity / modelKeys.length).toFixed(2) : 0;
 
   const output = {
@@ -395,6 +498,10 @@ function main() {
     per_model: perModel,
   };
 
+  if (AGGREGATE_FLAG) {
+    output.aggregate = aggregate;
+  }
+
   if (JSON_FLAG) {
     process.stdout.write(JSON.stringify(output));
   } else {
@@ -410,10 +517,22 @@ function main() {
         console.log('    ' + p.model + ': ' + p.from + ' -> ' + p.to);
       }
     }
+    if (AGGREGATE_FLAG && aggregate) {
+      console.log('');
+      console.log('  Aggregate Gate Scores:');
+      console.log('    Gate A grounding_score: ' + aggregate.gate_a.grounding_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_a.target_met + ')');
+      console.log('    Gate B gate_b_score:    ' + aggregate.gate_b.gate_b_score.toFixed(4) + ' (target: 1.0, met: ' + aggregate.gate_b.target_met + ')');
+      console.log('    Gate C gate_c_score:    ' + aggregate.gate_c.gate_c_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_c.target_met + ')');
+    }
     if (DRY_RUN_FLAG) {
       console.log('  (dry-run: no changes written)');
     }
   }
 }
 
-main();
+// Export for unit testing when require()'d
+if (require.main === module) {
+  main();
+}
+
+module.exports = { computeAggregate };
