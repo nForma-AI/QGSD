@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/assets/nf-logo-2000-transparent.png" alt="nForma logo" width="200">
+
 # nForma — Consensus before code. Proof before production.
 
 **nForma orchestrates a quorum of diverse coding agents that debate a plan until they reach full consensus.<br>Then formal methods turn requirements into invariants and simulate the system ahead of time.<br>The result: fewer hallucinations, fewer blind spots, and systems designed to survive the future.**
@@ -282,17 +284,8 @@ If you prefer granular permissions, add this to your project's `.claude/settings
 
 ## How It Works
 
-```mermaid
-flowchart LR
-    A["User Prompt"] --> B["Orchestrator"]
-    B --> C["Dispatch to\n5 Models"]
-    C --> D["Debate &\nConsensus"]
-    D --> E["Execute with\nFresh Context"]
-    E --> F["Atomic\nCommit"]
-
-    style A fill:#f9f,stroke:#333
-    style D fill:#bbf,stroke:#333
-    style F fill:#bfb,stroke:#333
+```
+Prompt → Orchestrator → Quorum (5 models) → Consensus → Execute → Atomic Commit
 ```
 
 > **Already have code?** Run `/nf:map-codebase` first. It spawns parallel agents to analyze your stack, architecture, conventions, and concerns. Then `/nf:new-project` knows your codebase — questions focus on what you're adding, and planning automatically loads your patterns.
@@ -458,7 +451,7 @@ The orchestrator never does heavy lifting. It spawns agents, waits, integrates r
 
 **The result:** You can run an entire phase — deep research, multiple plans created and verified, thousands of lines of code written across parallel executors, automated verification against goals — and your main context window stays at 30-40%. The work happens in fresh subagent contexts. Your session stays fast and responsive.
 
-![Agent Health Dashboard](docs/assets/tui-agents-health.png)
+![Agent Manager — slot list with provider, model, and key status](docs/assets/tui-agents-health.png)
 
 </details>
 
@@ -756,6 +749,8 @@ Exit code 0 = all checks pass. Exit code 1 = at least one violation or configura
 | `/nf:review-requirements` | Flag quality issues in requirements |
 | `/nf:formal-test-sync` | Cross-reference formal invariants with test coverage |
 
+![Requirements coverage by category](docs/assets/tui-reqs-coverage.png)
+
 </details>
 
 <details>
@@ -808,11 +803,13 @@ All core GSD commands work with the `/gsd:` prefix for backward compatibility:
 
 nForma stores project settings in `.planning/config.json`. Configure during `/nf:new-project` or update later with `/nf:settings`. For the full config schema, see the [User Guide](docs/USER-GUIDE.md#configuration-reference).
 
+![Config TUI — model tiers and workflow toggles](docs/assets/tui-config.png)
+
 #### Core Settings
 
 | Setting | Options | Default | What it controls |
 |---------|---------|---------|------------------|
-| `mode` | `yolo`, `interactive` | `interactive` | Auto-approve vs confirm at each step |
+| `mode` | `yolo`, `interactive` | `yolo` | Auto-approve vs confirm at each step |
 | `depth` | `quick`, `standard`, `comprehensive` | `standard` | Planning thoroughness (phases × plans) |
 
 #### Model Profiles
@@ -832,7 +829,7 @@ Switch profiles: `/nf:set-profile budget`
 | `workflow.research` | `true` | Researches domain before planning each phase |
 | `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |
 | `workflow.verifier` | `true` | Confirms must-haves were delivered after execution |
-| `workflow.auto_advance` | `false` | Auto-chain discuss → plan → execute without stopping |
+| `workflow.auto_advance` | `true` | Auto-chain discuss → plan → execute without stopping |
 
 Override per-invocation: `/nf:plan-phase --skip-research` or `/nf:plan-phase --skip-verify`
 

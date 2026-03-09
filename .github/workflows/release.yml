@@ -28,6 +28,9 @@ jobs:
       - name: Run CI tests
         run: npm run test:ci
 
+      - name: Run install + TUI smoke tests
+        run: npm run test:install
+
       - name: Verify package contents
         run: |
           echo "=== Package dry-run ==="

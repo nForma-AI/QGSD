@@ -542,4 +542,91 @@ describe('virgin install: npm global simulation', () => {
       );
     }
   });
+
+  // ── TUI smoke: --screenshot from installed package ──────────────────
+  // The --screenshot mode renders static ANSI without blessed, so it
+  // validates that all require() paths resolve from the installed location.
+
+  test('TUI --screenshot agents runs without crash from installed package', () => {
+    const tuiScript = path.join(tmpDir, 'lib', 'node_modules', '@nforma.ai', 'nforma', 'bin', 'nForma.cjs');
+    const out = execFileSync(process.execPath, [tuiScript, '--screenshot', 'agents'], {
+      stdio: 'pipe',
+      timeout: 10000,
+    }).toString();
+    assert.ok(out.includes('nForma'), 'screenshot output must contain nForma branding');
+    assert.ok(out.includes('Agt'), 'screenshot output must contain Agt module hint');
+  });
+
+  test('TUI --screenshot reqs runs without crash from installed package', () => {
+    const tuiScript = path.join(tmpDir, 'lib', 'node_modules', '@nforma.ai', 'nforma', 'bin', 'nForma.cjs');
+    const out = execFileSync(process.execPath, [tuiScript, '--screenshot', 'reqs'], {
+      stdio: 'pipe',
+      timeout: 10000,
+    }).toString();
+    assert.ok(out.includes('Requirements'), 'screenshot output must contain Requirements heading');
+    assert.ok(out.includes('Category'), 'screenshot output must contain Category column');
+  });
+
+  test('TUI --screenshot config runs without crash from installed package', () => {
+    const tuiScript = path.join(tmpDir, 'lib', 'node_modules', '@nforma.ai', 'nforma', 'bin', 'nForma.cjs');
+    const out = execFileSync(process.execPath, [tuiScript, '--screenshot', 'config'], {
+      stdio: 'pipe',
+      timeout: 10000,
+    }).toString();
+    assert.ok(out.includes('Configuration'), 'screenshot output must contain Configuration heading');
+  });
+
+  test('TUI --screenshot sessions runs without crash from installed package', () => {
+    const tuiScript = path.join(tmpDir, 'lib', 'node_modules', '@nforma.ai', 'nforma', 'bin', 'nForma.cjs');
+    const out = execFileSync(process.execPath, [tuiScript, '--screenshot', 'sessions'], {
+      stdio: 'pipe',
+      timeout: 10000,
+    }).toString();
+    assert.ok(out.includes('Session'), 'screenshot output must contain Session heading');
+  });
+});
+
+// ── TUI data loading: real requirements.json ─────────────────────────────────
+// Validates that requirements-core.cjs can load real project data.
+// This catches regressions where the data file schema changes or paths break.
+
+describe('TUI data loading: requirements', () => {
+  test('readRequirementsJson returns non-empty requirements array', () => {
+    const reqCore = require('../bin/requirements-core.cjs');
+    const { envelope, requirements } = reqCore.readRequirementsJson();
+    assert.ok(requirements.length > 0, `requirements must be non-empty, got ${requirements.length}`);
+    assert.ok(envelope, 'envelope must exist');
+  });
+
+  test('every requirement has id, text, category, and status', () => {
+    const reqCore = require('../bin/requirements-core.cjs');
+    const { requirements } = reqCore.readRequirementsJson();
+    for (const r of requirements) {
+      assert.ok(r.id, `requirement must have id: ${JSON.stringify(r).slice(0, 80)}`);
+      assert.ok(r.text, `requirement ${r.id} must have text`);
+      assert.ok(r.category, `requirement ${r.id} must have category`);
+      assert.ok(r.status, `requirement ${r.id} must have status`);
+    }
+  });
+
+  test('computeCoverage produces valid stats', () => {
+    const reqCore = require('../bin/requirements-core.cjs');
+    const { requirements } = reqCore.readRequirementsJson();
+    const registry = reqCore.readModelRegistry();
+    const checkResults = reqCore.readCheckResults();
+    const cov = reqCore.computeCoverage(requirements, registry, checkResults);
+    assert.ok(cov.total > 0, 'total must be > 0');
+    assert.ok(cov.byStatus, 'byStatus must exist');
+    assert.ok(cov.byCategory, 'byCategory must exist');
+    assert.equal(cov.total, requirements.length, 'total must match requirements count');
+  });
+
+  test('requirement IDs follow expected format (PREFIX-NN)', () => {
+    const reqCore = require('../bin/requirements-core.cjs');
+    const { requirements } = reqCore.readRequirementsJson();
+    const idPattern = /^[A-Z]{1,10}-\d{1,4}$/;
+    const invalid = requirements.filter(r => !idPattern.test(r.id));
+    assert.equal(invalid.length, 0,
+      `all IDs must match PREFIX-NN format, invalid: ${invalid.map(r => r.id).join(', ')}`);
+  });
 });
