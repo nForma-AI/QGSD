@@ -1,0 +1,123 @@
+# Requirements: nForma v0.33 — Outer-Loop Convergence Guarantees
+
+**Defined:** 2026-03-09
+**Core Value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
+
+## Baseline Requirements
+
+*Included from nForma baseline defaults (profile: cli). Cross-cutting quality gates.*
+
+### UX Heuristics
+
+- [x] **UX-01**: Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message, navigation change, or visible state update)
+- [x] **UX-02**: Destructive actions (delete, reset, remove, overwrite) require explicit confirmation or provide undo within a reasonable window
+- [x] **UX-03**: Error messages are human-readable, explain what went wrong, and suggest a next step or recovery action
+
+### Security
+
+- [x] **SEC-01**: Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials
+- [x] **SEC-02**: CI pipeline runs deep secret scanning (e.g., TruffleHog) across full repo history on every PR
+- [x] **SEC-03**: All external input (user input, API request bodies, query parameters, file uploads) is validated and sanitized at system boundaries before processing
+- [x] **SEC-04**: Dependencies are scanned for known vulnerabilities in CI (e.g., npm audit, Dependabot, Snyk) and critical/high findings block merge
+
+### Reliability
+
+- [x] **REL-01**: Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather than crashing
+- [x] **REL-02**: Long-running operations (file uploads, data processing, API calls >2s) show progress indication and can be cancelled by the user
+
+### Observability
+
+- [x] **OBS-01**: CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, output to stdout
+
+### CI/CD
+
+- [x] **CI-01**: Automated test suite runs on every pull request and merge to main is blocked when tests fail
+- [x] **CI-02**: Linting and formatting checks run in CI and block merge on violations
+- [x] **CI-03**: Type checking (if applicable to the language) runs in CI and blocks merge on type errors
+
+## Milestone v0.33 Requirements
+
+### Cross-Session Tracking
+
+- [ ] **TRACK-01**: Each nf:solve run appends a snapshot to solve-trend.jsonl containing timestamp, iteration count, per-layer residuals (all 19 layers), total residual, converged boolean, and gate summary
+- [ ] **TRACK-02**: Per-layer trend detection runs Mann-Kendall non-parametric test on the last 20 entries and reports each layer as DECREASING, STABLE, INCREASING, or OSCILLATING (requires ≥5 data points before reporting)
+- [ ] **TRACK-03**: Convergence velocity estimation fits exponential decay to per-layer residual time series and reports estimated sessions-to-convergence (requires ≥10 data points)
+- [ ] **TRACK-04**: Scope-growth detection distinguishes new-requirement residual increases from regression by tracking requirement count alongside residuals — a residual increase concurrent with requirement count increase is flagged as SCOPE_GROWTH, not regression
+
+### Oscillation Detection
+
+- [ ] **OSC-01**: Layer oscillation breaker enforces Option C — if a layer's residual increases after a prior decrease within tracked history, one oscillation credit is consumed; second oscillation blocks automated remediation for that layer and triggers human escalation
+- [ ] **OSC-02**: Cascade-aware grace period allows temporary residual increases in downstream layers when an upstream layer was remediated in the same or prior session (e.g., fixing R→F may increase F→T)
+- [ ] **OSC-03**: Escalation classifier invokes Haiku reviewer when oscillation breaker fires, classifying root cause as GENUINE_REGRESSION, MEASUREMENT_NOISE, or INSUFFICIENT_EVIDENCE with structured context (layer, delta, git diff)
+
+### Predictive Power
+
+- [ ] **PRED-01**: Bug-to-property linking maintains bug-to-property.json mapping observed bugs (from GitHub issues, test failures, observe skill) to formal properties that could have caught them
+- [ ] **PRED-02**: Per-model recall score computes bugs_predicted / total_relevant_bugs per formal model, reported as an informational metric in the solve report (not used as a gate input)
+
+### Gate Stabilization
+
+- [ ] **STAB-01**: Flip-flop detection scans promotion-changelog.json for models with ≥3 direction changes (promote/demote alternations) and flags them as UNSTABLE in per-model-gates.json
+- [ ] **STAB-02**: Cooldown enforcement requires a configurable stabilization window (default: 3 consecutive solve sessions AND ≥1 hour wall time) of sustained gate score before re-promotion is allowed
+- [ ] **STAB-03**: Changelog deduplication fix removes duplicate promotion entries (same model, same transition, within 5-minute window) and prevents future duplicates via write-time guard
+
+### Formal Verification
+
+- [ ] **FV-01**: NFSolveConvergence.tla models the outer solve loop with cross-session state (bounded history of last N sessions), Option C blocking rule, and gate maturity transitions
+- [ ] **FV-02**: TLC verifies safety property: no layer oscillates more than once (`[](oscillation_count[layer] <= 1)` for all layers)
+- [ ] **FV-03**: TLC verifies liveness property: solve loop eventually converges (`<>(converged = TRUE)`) under fairness assumptions
+
+### Solve Integration
+
+- [ ] **INTG-01**: nf:solve pipeline calls --write-per-model by default during every run, persisting gate_a/b/c reasons to per-model-gates.json without requiring explicit flag
+- [ ] **INTG-02**: Solve report includes a convergence section showing per-layer trend sparklines, oscillation status, and top-3 action items derived from trend data
+
+## Future Requirements
+
+*Deferred to future milestones. Tracked but not in current scope.*
+
+- **VEL-01**: Convergence velocity triggers architectural intervention recommendation when estimated sessions > 50
+- **PRED-03**: Predictive power score becomes a gate input (soft gate) after ≥3 milestones of informational use
+- **DASH-01**: Cross-milestone trend comparison showing convergence progress across milestone boundaries
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Automatic oscillation resolution | Masks design conflicts; Option C exists specifically to escalate to humans |
+| Global convergence score (single number) | Collapses per-layer nuance; leads to gaming |
+| Real-time convergence dashboard | CLI tool with 30-120s solve runs; post-run ASCII sparklines suffice |
+| Automatic gate demotion on regression | Creates instability; stabilization gates prevent exactly this pattern |
+| Residual relaxation/dampening | Residuals are discrete counts, not continuous values |
+| Weighted layer importance | Subjective tuning obscures real convergence; all layers must converge independently |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| TRACK-01 | — | Pending |
+| TRACK-02 | — | Pending |
+| TRACK-03 | — | Pending |
+| TRACK-04 | — | Pending |
+| OSC-01 | — | Pending |
+| OSC-02 | — | Pending |
+| OSC-03 | — | Pending |
+| PRED-01 | — | Pending |
+| PRED-02 | — | Pending |
+| STAB-01 | — | Pending |
+| STAB-02 | — | Pending |
+| STAB-03 | — | Pending |
+| FV-01 | — | Pending |
+| FV-02 | — | Pending |
+| FV-03 | — | Pending |
+| INTG-01 | — | Pending |
+| INTG-02 | — | Pending |
+
+**Coverage:**
+- v0.33 requirements: 17 total
+- Mapped to phases: 0
+- Unmapped: 17 ⚠️
+
+---
+*Requirements defined: 2026-03-09*
+*Last updated: 2026-03-09 after milestone v0.33 definition*
