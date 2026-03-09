@@ -326,7 +326,7 @@ const pure = core._pure;
 const { readClaudeJson, writeClaudeJson, getGlobalMcpServers } = core;
 const {
   buildDashboardLines, probeAllSlots,
-  maskKey, deriveKeytarAccount,
+  maskKey, deriveSecretAccount,
   readNfJson, writeNfJson,
   buildExportData, validateImportSchema, buildBackupPath,
   buildTimeoutChoices, applyTimeoutUpdate,
@@ -965,11 +965,10 @@ function buildHeaderInfo() {
   return { version, profile, quorumN, failMode, models };
 }
 
-// ─── Terminal background detection (OSC 11) ──────────────────────────────────
-// Query the terminal's background color to auto-select dark or light palette.
-// Uses OSC 11 escape sequence — supported by iTerm2, WezTerm, Kitty, macOS
-// Terminal, Windows Terminal, Ghostty, and most modern terminal emulators.
-// Falls back to dark theme if the terminal doesn't respond within 150ms.
+// ─── Terminal background detection ───────────────────────────────────────────
+// Detect light/dark via env vars only. OSC 11 probes leak escape sequences
+// into blessed's input buffer, printing raw text like ^[]11;rgb:...^[\.
+// Use NF_THEME=light|dark to override, or COLORFGBG (set by most terminals).
 
 let _detectedLightMode = false;
 
@@ -977,46 +976,10 @@ if (process.env.NF_THEME === 'light') {
   _detectedLightMode = true;
 } else if (process.env.NF_THEME === 'dark') {
   _detectedLightMode = false;
-} else if (process.stdin.isTTY && process.stdout.isTTY) {
-  try {
-    // Send OSC 11 query and read response synchronously via raw mode
-    const fd = fs.openSync('/dev/tty', 'r+');
-    const tty = new (require('tty').ReadStream)(fd, { readable: true });
-    tty.setRawMode(true);
-
-    // Query: \e]11;?\a  — terminal responds with \e]11;rgb:RRRR/GGGG/BBBB\e\\
-    fs.writeSync(fd, '\x1b]11;?\x07');
-
-    const buf = Buffer.alloc(64);
-    let response = '';
-    const startMs = Date.now();
-    while (Date.now() - startMs < 150) {
-      try {
-        const n = fs.readSync(fd, buf, 0, buf.length);
-        if (n > 0) response += buf.toString('utf8', 0, n);
-        // Check if we got the full response (ends with BEL or ST)
-        if (response.includes('\x07') || response.includes('\x1b\\')) break;
-      } catch (_) { break; }
-    }
-
-    tty.setRawMode(false);
-    tty.destroy();
-    fs.closeSync(fd);
-
-    // Parse rgb:RRRR/GGGG/BBBB (16-bit per channel) or rgb:RR/GG/BB (8-bit)
-    const match = response.match(/rgb:([0-9a-fA-F]+)\/([0-9a-fA-F]+)\/([0-9a-fA-F]+)/);
-    if (match) {
-      const normalize = (hex) => hex.length <= 2 ? parseInt(hex, 16) : parseInt(hex.slice(0, 2), 16);
-      const r = normalize(match[1]);
-      const g = normalize(match[2]);
-      const b = normalize(match[3]);
-      // Relative luminance (ITU-R BT.709)
-      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      _detectedLightMode = luminance > 128;
-    }
-  } catch (_) {
-    // Detection failed — default to dark
-  }
+} else if (process.env.COLORFGBG) {
+  const parts = process.env.COLORFGBG.split(';');
+  const bg = parseInt(parts[parts.length - 1], 10);
+  if (!isNaN(bg)) _detectedLightMode = bg >= 7;
 }
 
 // ─── Screen setup ─────────────────────────────────────────────────────────────
@@ -1541,7 +1504,7 @@ async function addAgentFlow() {
 
   const secrets = loadSecrets();
   if (apiKey && secrets) {
-    await secrets.set('nforma', deriveKeytarAccount(slotName), apiKey);
+    await secrets.set('nforma', deriveSecretAccount(slotName), apiKey);
   } else if (apiKey) {
     env.ANTHROPIC_API_KEY = apiKey;
   }
@@ -1660,7 +1623,7 @@ async function editAgentFlow() {
           const val = await promptInput({ title: `Edit "${slotName}" — API Key`,
             prompt: 'ANTHROPIC_API_KEY (blank = remove):', isPassword: true });
           const secrets = loadSecrets();
-          const account = deriveKeytarAccount(slotName);
+          const account = deriveSecretAccount(slotName);
           if (val && secrets)      { await secrets.set('nforma', account, val); delete env.ANTHROPIC_API_KEY; }
           else if (val)             { env.ANTHROPIC_API_KEY = val; }
           else if (secrets)         { await secrets.delete('nforma', account); delete env.ANTHROPIC_API_KEY; }
@@ -1947,9 +1910,8 @@ async function loginAgentFlow() {
 async function renderProviderKeys() {
   const secrets = loadSecrets();
   if (!secrets) { setContent('Provider Keys', '{red-fg}secrets.cjs not found — nForma not installed.{/}'); return; }
-  const lines = ['{bold}Provider Keys (keytar){/bold}', '─'.repeat(40)];
+  const lines = ['{bold}Provider Keys{/bold}', '─'.repeat(40)];
   for (const { key, label } of PROVIDER_KEY_NAMES) {
-    // hasKey() reads local JSON index — no keychain prompt
     const display = secrets.hasKey(key) ? '{green-fg}✓ set{/}' : '{gray-fg}(not set){/}';
     lines.push(`  ${pad(label, 22)} ${display}`);
   }
@@ -1995,7 +1957,7 @@ async function providerKeysFlow() {
         const val = await promptInput({ title: `Set ${picked.label}`, prompt: `Value for ${picked.value}:`, isPassword: true });
         if (!val) { toast('Empty value — key not stored', true); continue; }
         await secrets.set('nforma', picked.value, val);
-        toast(`${picked.label} saved to keychain`);
+        toast(`${picked.label} saved`);
         await renderProviderKeys();
       } catch (_) { continue; }                                // ESC during value input → re-show key picker
     }
@@ -2007,7 +1969,7 @@ async function providerKeysFlow() {
  * Fire-and-forget post-rotation validation.
  * Probes each rotated slot and persists key_status to nf.json.
  * Does NOT block the caller -- called with .catch(() => {}).
- * Uses sequential for...of to avoid keychain concurrency (same pattern as rotation loop).
+ * Uses sequential for...of (same pattern as rotation loop).
  * Reuses probeAndPersistKey from manage-agents-core.cjs (DRY -- do not duplicate probe/classify/write logic).
  */
 async function validateRotatedKeys(rotatedSlots) {
@@ -2019,11 +1981,10 @@ async function validateRotatedKeys(rotatedSlots) {
     const env = cfg.env || {};
     if (!env.ANTHROPIC_BASE_URL) continue;
     let apiKey = env.ANTHROPIC_API_KEY || '';
-    // If keytar is available, try to read the key from secure storage
-    // Follow the SAME pattern as probeAllSlots (manage-agents-core.cjs line 620-627)
+    // Read the key from secrets store if available
     if (secretsLib) {
       try {
-        const account = deriveKeytarAccount(slotName);
+        const account = deriveSecretAccount(slotName);
         const k = await secretsLib.get('nforma', account);
         if (k) apiKey = k;
       } catch (_) {}
@@ -2048,7 +2009,7 @@ async function batchRotateFlow() {
   while (remaining.length) {
     const items = [
       ...remaining.map(s => {
-        const account = deriveKeytarAccount(s);
+        const account = deriveSecretAccount(s);
         const hasKey  = (secrets && secrets.hasKey(account)) || !!(servers[s].env || {}).ANTHROPIC_API_KEY;
         return { label: `${pad(s, 14)} ${hasKey ? '[key set]' : '[no key]'}`, value: s };
       }),
@@ -2070,7 +2031,7 @@ async function batchRotateFlow() {
     } catch (_) { continue; }                                   // ESC → skip slot, re-show picker
     if (!newKey) { toast('Empty value — skipped', true); continue; }
 
-    const account = deriveKeytarAccount(picked.value);
+    const account = deriveSecretAccount(picked.value);
     if (secrets) {
       await secrets.set('nforma', account, newKey);
     } else {
@@ -2744,7 +2705,7 @@ async function importFlow() {
             prompt: `API key for ${slotName} / ${envKey} (blank = skip):`, isPassword: true });
         } catch (_) { delete cfg.env[envKey]; continue; }       // ESC → skip key, move to next
         if (val) {
-          if (secrets) { await secrets.set('nforma', deriveKeytarAccount(slotName), val); delete cfg.env[envKey]; }
+          if (secrets) { await secrets.set('nforma', deriveSecretAccount(slotName), val); delete cfg.env[envKey]; }
           else          { cfg.env[envKey] = val; }
         } else {
           delete cfg.env[envKey];
@@ -3837,7 +3798,9 @@ function applyUpdateBadge(outdatedCount) {
 })();
 
 // ─── Start ────────────────────────────────────────────────────────────────────
-if (require.main === module) {
+// NF_TEST_MODE skips TUI startup in unit tests. Can't use require.main === module
+// because nforma-cli.js require()'s this file, making require.main the CLI, not us.
+if (!process.env.NF_TEST_MODE) {
   renderHeader();
   // Restore persisted session counter so IDs don't collide
   const _persisted = loadPersistedSessions();

@@ -97,7 +97,8 @@ before(() => {
     id: UPDATE_AGENTS_PATH, filename: UPDATE_AGENTS_PATH, loaded: true,
     exports: MOCK_UPDATE_AGENTS,
   };
-  // Now require the subject — require.main !== module, so startup code is skipped
+  // Skip TUI startup (blessed screen init, renderHeader, etc.) during tests
+  process.env.NF_TEST_MODE = '1';
   _pure = require('./nForma.cjs')._pure;
 });
 
