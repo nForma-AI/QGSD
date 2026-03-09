@@ -107,6 +107,30 @@
       "category": "B",
       "reason": "descriptive/documentation language only",
       "acknowledged_at": "2026-03-09T18:31:38.956Z"
+    },
+    {
+      "file_or_claim": "**Requirement:** Per-repo marker at .planning/polyrepo.json supports an optional `docs` field with merge-semantic key-va",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-09T22:11:25.822Z"
+    },
+    {
+      "file_or_claim": "**Requirement:** qgsd-solve diagnostic engine provides reverse traceability sweeps (C→R, T→R, D→R) that discover impleme",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-09T22:11:25.822Z"
+    },
+    {
+      "file_or_claim": "nForma provides commands for the full project lifecycle, from initialization through milestone completion. The commands ",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-09T22:11:25.822Z"
+    },
+    {
+      "file_or_claim": "When something goes wrong, the Solve module provides a diagnostic overview that surfaces formal verification gaps, circu",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-09T22:11:25.822Z"
     }
   ]
 }

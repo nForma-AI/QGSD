@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T22:09:39.465Z",
+    "generated_at": "2026-03-09T22:11:25.584Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 60
+        "entry_count": 102
       },
       "unit_test_coverage": {
         "available": true,
@@ -54,8 +54,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "AddPreservesValidity",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:account-pool"
         }
       ]
     },
@@ -66,8 +66,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "SwitchPreservesValidity",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:account-pool"
         }
       ]
     },
@@ -78,8 +78,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "RemovePreservesValidity",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:account-pool"
         }
       ]
     },
@@ -90,8 +90,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "SwitchPreservesPool",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:account-pool"
         }
       ]
     },
@@ -102,8 +102,8 @@
           "model_file": ".planning/formal/alloy/account-pool-structure.als",
           "property_name": "RemoveShrinksPool",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:account-pool"
         }
       ]
     },
@@ -114,8 +114,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "ParseCorrect",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:availability"
         }
       ],
       "unit_test_coverage": {
@@ -135,8 +135,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "YearRolloverHandled",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:availability"
         }
       ],
       "unit_test_coverage": {
@@ -156,8 +156,8 @@
           "model_file": ".planning/formal/alloy/availability-parsing.als",
           "property_name": "FallbackIsNull",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:availability"
         }
       ],
       "unit_test_coverage": {
@@ -282,8 +282,8 @@
           "model_file": ".planning/formal/alloy/quorum-composition.als",
           "property_name": "AllRulesHold",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:quorum-composition"
         }
       ],
       "unit_test_coverage": {
@@ -303,8 +303,8 @@
           "model_file": ".planning/formal/alloy/quorum-composition.als",
           "property_name": "AllRulesHold",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:quorum-composition"
         }
       ],
       "unit_test_coverage": {
@@ -420,8 +420,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "VoteCode",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:scoreboard"
         }
       ],
       "unit_test_coverage": {
@@ -441,8 +441,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "NoVoteLoss",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:scoreboard"
         }
       ],
       "unit_test_coverage": {
@@ -462,8 +462,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "NoDoubleCounting",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:scoreboard"
         }
       ],
       "unit_test_coverage": {
@@ -483,8 +483,8 @@
           "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
           "property_name": "TNplusScoreIsCorrect",
           "source": "annotation",
-          "latest_result": null,
-          "check_id": null
+          "latest_result": "pass",
+          "check_id": "alloy:scoreboard"
         }
       ]
     },
@@ -10917,8 +10917,8 @@
         "CRED-07"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:account-pool"
     },
     ".planning/formal/alloy/account-pool-structure.als::SwitchPreservesValidity": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10927,8 +10927,8 @@
         "CRED-08"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:account-pool"
     },
     ".planning/formal/alloy/account-pool-structure.als::RemovePreservesValidity": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10937,8 +10937,8 @@
         "CRED-09"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:account-pool"
     },
     ".planning/formal/alloy/account-pool-structure.als::SwitchPreservesPool": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10947,8 +10947,8 @@
         "CRED-10"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:account-pool"
     },
     ".planning/formal/alloy/account-pool-structure.als::RemoveShrinksPool": {
       "model_file": ".planning/formal/alloy/account-pool-structure.als",
@@ -10957,8 +10957,8 @@
         "CRED-11"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:account-pool"
     },
     ".planning/formal/alloy/availability-parsing.als::ParseCorrect": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10967,8 +10967,8 @@
         "CALIB-01"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:availability"
     },
     ".planning/formal/alloy/availability-parsing.als::YearRolloverHandled": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10977,8 +10977,8 @@
         "CALIB-02"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:availability"
     },
     ".planning/formal/alloy/availability-parsing.als::FallbackIsNull": {
       "model_file": ".planning/formal/alloy/availability-parsing.als",
@@ -10987,8 +10987,8 @@
         "CALIB-03"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:availability"
     },
     ".planning/formal/alloy/install-scope.als::AllEquivalence": {
       "model_file": ".planning/formal/alloy/install-scope.als",
@@ -11048,8 +11048,8 @@
         "COMP-01"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:quorum-composition"
     },
     ".planning/formal/alloy/quorum-votes.als::ThresholdPasses": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11090,8 +11090,8 @@
         "SCBD-01"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:scoreboard"
     },
     ".planning/formal/alloy/scoreboard-recompute.als::NoVoteLoss": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11100,8 +11100,8 @@
         "SCBD-02"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:scoreboard"
     },
     ".planning/formal/alloy/scoreboard-recompute.als::NoDoubleCounting": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11110,8 +11110,8 @@
         "SCBD-03"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:scoreboard"
     },
     ".planning/formal/alloy/scoreboard-recompute.als::TNplusScoreIsCorrect": {
       "model_file": ".planning/formal/alloy/scoreboard-recompute.als",
@@ -11120,8 +11120,8 @@
         "SCBD-04"
       ],
       "source": "annotation",
-      "latest_result": null,
-      "check_id": null
+      "latest_result": "pass",
+      "check_id": "alloy:scoreboard"
     },
     ".planning/formal/alloy/taxonomy-safety.als::NoInjection": {
       "model_file": ".planning/formal/alloy/taxonomy-safety.als",
@@ -21318,7 +21318,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T22:09:22.570Z",
+    "baseline_date": "2026-03-09T22:10:49.860Z",
     "requirements_checked": 341,
     "regressions": [],
     "summary": {
