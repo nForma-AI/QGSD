@@ -79,7 +79,9 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. Each major User Guide feature section includes at least one TUI screenshot cross-referenced to the feature description
   2. The Getting Started walkthrough proceeds step-by-step from install through first command with screenshots at each stage
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] v0.32-03-01-PLAN.md — Add Getting Started walkthrough with screenshots and embed TUI screenshots in feature sections
 
 #### Phase v0.32-04: Visual Asset Regeneration
 **Goal**: All TUI screenshots reflect the final state of README and User Guide content, generated reliably via automation
@@ -97,7 +99,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | v0.32-01. README Above-the-Fold Restructure | 1/1 | Complete    | 2026-03-09 |
 | v0.32-02. README Deep Sections | 1/1 | Complete    | 2026-03-09 |
-| v0.32-03. User Guide Overhaul | 0/? | Not started | - |
+| v0.32-03. User Guide Overhaul | 0/1 | Not started | - |
 | v0.32-04. Visual Asset Regeneration | 0/? | Not started | - |
 
 ---
