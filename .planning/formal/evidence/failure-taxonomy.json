@@ -1,51 +1,22 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T10:17:37.801Z",
-  "total_failures": 1,
+  "generated": "2026-03-09T18:29:47.766Z",
+  "total_failures": 0,
   "categories": {
     "crash": [],
     "timeout": [],
     "logic_violation": [],
-    "drift": [
-      {
-        "tool": "validate-traces",
-        "formalism": "trace",
-        "result": "fail",
-        "timestamp": "2026-03-09T10:17:25.253Z",
-        "check_id": "ci:conformance-traces",
-        "surface": "ci",
-        "property": "Conformance event replay through XState machine",
-        "runtime_ms": 14,
-        "summary": "fail: 1 divergence(s) in 1 traces (14ms)",
-        "triage_tags": [
-          "trace-divergence"
-        ],
-        "requirement_ids": [],
-        "metadata": {
-          "divergences": 1,
-          "total": 1
-        },
-        "observation_window": {
-          "window_start": "2026-03-09T10:17:25.243Z",
-          "window_end": "2026-03-09T10:17:25.244Z",
-          "n_traces": 0,
-          "n_events": 1,
-          "window_days": 0
-        },
-        "category": "drift",
-        "classification_reason": "Trace divergence: 1 divergence(s) detected"
-      }
-    ],
+    "drift": [],
     "degradation": []
   },
   "category_counts": {
     "crash": 0,
     "timeout": 0,
     "logic_violation": 0,
-    "drift": 1,
+    "drift": 0,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "1 failures classified: crash=0, timeout=0, logic_violation=0, drift=1, degradation=0. 0 unclassified."
+  "summary": "0 failures classified: crash=0, timeout=0, logic_violation=0, drift=0, degradation=0. 0 unclassified."
 }

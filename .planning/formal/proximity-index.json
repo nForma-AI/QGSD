@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T10:17:46.650Z",
+  "generated": "2026-03-09T18:31:33.501Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -68,40 +68,40 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-09T10:17:44.166Z",
-      "hash": "ab35fab6"
+      "mtime": "2026-03-09T18:31:16.840Z",
+      "hash": "97100748"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-09T10:16:23.036Z",
-      "hash": "eb6ef0e0"
+      "mtime": "2026-03-09T18:31:32.455Z",
+      "hash": "f157de63"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-09T10:17:46.276Z",
-      "hash": "8dc8c23b"
+      "mtime": "2026-03-09T18:29:51.672Z",
+      "hash": "b943a100"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-09T10:17:39.026Z",
-      "hash": "e9d02a46"
+      "mtime": "2026-03-09T18:29:48.162Z",
+      "hash": "209c29f1"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-06T14:02:53.426Z",
-      "hash": "e1ab7067"
+      "mtime": "2026-03-09T13:51:21.572Z",
+      "hash": "620b3643"
     },
     "risk-heatmap.json": {
-      "mtime": "2026-03-06T16:38:09.486Z",
-      "hash": "4034739e"
+      "mtime": "2026-03-09T13:52:46.371Z",
+      "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-09T10:16:39.395Z",
-      "hash": "5f02aa64"
+      "mtime": "2026-03-09T18:30:05.840Z",
+      "hash": "d76bceb6"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
@@ -2068,8 +2068,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-13": {
       "type": "requirement",
@@ -2502,7 +2502,9 @@
     "formal_model::.planning/formal/alloy/quorum-votes.als": {
       "type": "formal_model",
       "id": ".planning/formal/alloy/quorum-votes.als",
-      "edges": []
+      "edges": [],
+      "source_layer": "L2",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/scoreboard-recompute.als": {
       "type": "formal_model",
@@ -4541,13 +4543,6 @@
           "source": "traceability-matrix"
         }
       ]
-    },
-    "formal_model::../../../../tmp/promote-test/.formal/tla/QGSDQuorum.tla": {
-      "type": "formal_model",
-      "id": "../../../../tmp/promote-test/.formal/tla/QGSDQuorum.tla",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/QGSDActivityTracking.tla": {
       "type": "formal_model",
@@ -11663,7 +11658,9 @@
     "formal_model::.planning/formal/tla/NFQuorum.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFQuorum.tla",
-      "edges": []
+      "edges": [],
+      "source_layer": "L2",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/solve-automation-features.als": {
       "type": "formal_model",
@@ -12960,7 +12957,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "requirement::GATE-01": {
@@ -13044,8 +13041,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SPEC-06": {
       "type": "requirement",
@@ -13128,8 +13125,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::TRACE-08": {
       "type": "requirement",
@@ -13212,7 +13209,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/prism/oauth-rotation.props": {
@@ -13230,7 +13227,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/prism/quorum.props": {
@@ -13253,7 +13250,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "requirement::PRM-01": {
@@ -13312,8 +13309,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/prism/deliberation-healing.props": {
       "type": "formal_model",
@@ -13330,7 +13327,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/config-audit.als": {
@@ -13343,8 +13340,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::CONF-13": {
       "type": "requirement",
@@ -13412,8 +13409,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-11": {
       "type": "requirement",
@@ -13512,8 +13509,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::TRACE-09": {
       "type": "requirement",
@@ -13571,8 +13568,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::VERIFY-05": {
       "type": "requirement",
@@ -13625,8 +13622,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::QUORUM-06": {
       "type": "requirement",
@@ -13679,8 +13676,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::DOC-02": {
       "type": "requirement",
@@ -13769,8 +13766,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::EVID-04": {
       "type": "requirement",
@@ -13838,8 +13835,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::OBS-16": {
       "type": "requirement",
@@ -13917,8 +13914,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::GUARD-02": {
       "type": "requirement",
@@ -14012,8 +14009,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::FVTOOL-02": {
       "type": "requirement",
@@ -14076,8 +14073,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-18": {
       "type": "requirement",
@@ -14170,8 +14167,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-14": {
       "type": "requirement",
@@ -14285,8 +14282,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-16": {
       "type": "requirement",
@@ -14420,8 +14417,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SOLVE-19": {
       "type": "requirement",
@@ -14638,7 +14635,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "requirement::GATE-02": {
@@ -14717,8 +14714,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::SPEC-07": {
       "type": "requirement",
@@ -14791,8 +14788,8 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
-      "gate_maturity": "ADVISORY"
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::DISP-07": {
       "type": "requirement",
@@ -14860,7 +14857,7 @@
           "source": "model-registry"
         }
       ],
-      "source_layer": "L2",
+      "source_layer": "L3",
       "gate_maturity": "SOFT_GATE"
     },
     "requirement::GATE-03": {
@@ -14950,6 +14947,185 @@
         },
         {
           "to": "test_file::.planning/formal/generated-stubs/GATE-04.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/gate-scoring-traces.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/gate-scoring-traces.als",
+      "edges": [
+        {
+          "to": "requirement::GATE-05",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::TRACE-10",
+          "rel": "models",
+          "source": "model-registry"
+        }
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
+    },
+    "requirement::GATE-05": {
+      "type": "requirement",
+      "id": "GATE-05",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-scoring-traces.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::SingleEntrypoint",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/GATE-05.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "requirement::TRACE-10": {
+      "type": "requirement",
+      "id": "TRACE-10",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/gate-scoring-traces.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::HeaderCommentFallback",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/TRACE-10.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/installer-path-validation.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/installer-path-validation.als",
+      "edges": [
+        {
+          "to": "requirement::INST-13",
+          "rel": "models",
+          "source": "model-registry"
+        }
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
+    },
+    "requirement::INST-13": {
+      "type": "requirement",
+      "id": "INST-13",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/installer-path-validation.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ScanAllHookFiles",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/INST-13.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/solve-diagnostics-tui.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/solve-diagnostics-tui.als",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-24",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::SOLVE-25",
+          "rel": "models",
+          "source": "model-registry"
+        }
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
+    },
+    "requirement::SOLVE-24": {
+      "type": "requirement",
+      "id": "SOLVE-24",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/solve-diagnostics-tui.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::TUIRequirements",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-24.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "requirement::SOLVE-25": {
+      "type": "requirement",
+      "id": "SOLVE-25",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/solve-diagnostics-tui.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::DiagnosticCompleteness",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/SOLVE-25.stub.test.js",
           "rel": "tested_by",
           "source": "unit-test-coverage"
         }
@@ -18130,6 +18306,31 @@
         },
         {
           "to": "requirement::GATE-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::GATE-05",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::TRACE-10",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::INST-13",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SOLVE-24",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::SOLVE-25",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -26954,6 +27155,61 @@
         }
       ]
     },
+    "invariant::SingleEntrypoint": {
+      "type": "invariant",
+      "id": "SingleEntrypoint",
+      "edges": [
+        {
+          "to": "requirement::GATE-05",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::HeaderCommentFallback": {
+      "type": "invariant",
+      "id": "HeaderCommentFallback",
+      "edges": [
+        {
+          "to": "requirement::TRACE-10",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::ScanAllHookFiles": {
+      "type": "invariant",
+      "id": "ScanAllHookFiles",
+      "edges": [
+        {
+          "to": "requirement::INST-13",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::TUIRequirements": {
+      "type": "invariant",
+      "id": "TUIRequirements",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-24",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::DiagnosticCompleteness": {
+      "type": "invariant",
+      "id": "DiagnosticCompleteness",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-25",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/ACT-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/ACT-01.stub.test.js",
@@ -27977,6 +28233,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/GATE-05.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::GATE-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/GUARD-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/GUARD-01.stub.test.js",
@@ -28192,6 +28459,17 @@
       "edges": [
         {
           "to": "requirement::INST-12",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/INST-13.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/INST-13.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::INST-13",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -29396,6 +29674,28 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/SOLVE-7.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-7.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-7",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/SOLVE-8.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/SOLVE-8.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::SOLVE-8",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/SOLVE-09.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/SOLVE-09.stub.test.js",
@@ -29561,23 +29861,23 @@
         }
       ]
     },
-    "test_file::.planning/formal/generated-stubs/SOLVE-7.stub.test.js": {
+    "test_file::.planning/formal/generated-stubs/SOLVE-24.stub.test.js": {
       "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-7.stub.test.js",
+      "id": ".planning/formal/generated-stubs/SOLVE-24.stub.test.js",
       "edges": [
         {
-          "to": "requirement::SOLVE-7",
+          "to": "requirement::SOLVE-24",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
       ]
     },
-    "test_file::.planning/formal/generated-stubs/SOLVE-8.stub.test.js": {
+    "test_file::.planning/formal/generated-stubs/SOLVE-25.stub.test.js": {
       "type": "test_file",
-      "id": ".planning/formal/generated-stubs/SOLVE-8.stub.test.js",
+      "id": ".planning/formal/generated-stubs/SOLVE-25.stub.test.js",
       "edges": [
         {
-          "to": "requirement::SOLVE-8",
+          "to": "requirement::SOLVE-25",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -29941,6 +30241,17 @@
       "edges": [
         {
           "to": "requirement::TRACE-09",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/TRACE-10.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRACE-10.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRACE-10",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -30844,12 +31155,12 @@
           "source": "risk-heatmap"
         },
         {
-          "to": "risk_transition::IDLE-QUORUM_START-COLLECTING_VOTES",
+          "to": "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING",
           "rel": "scored_by",
           "source": "risk-heatmap"
         },
         {
-          "to": "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING",
+          "to": "risk_transition::IDLE-QUORUM_START-COLLECTING_VOTES",
           "rel": "scored_by",
           "source": "risk-heatmap"
         }
@@ -30936,17 +31247,17 @@
           "source": "observed-fsm"
         },
         {
-          "to": "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
-          "rel": "scored_by",
-          "source": "risk-heatmap"
-        },
-        {
           "to": "risk_transition::DELIBERATING-DECIDE-DECIDED",
           "rel": "scored_by",
           "source": "risk-heatmap"
         },
         {
           "to": "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING",
+          "rel": "scored_by",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
           "rel": "scored_by",
           "source": "risk-heatmap"
         },
@@ -31043,86 +31354,8 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 180,
-      "risk_tier": "high"
-    },
-    "risk_transition::IDLE-CIRCUIT_BREAK-IDLE": {
-      "type": "risk_transition",
-      "id": "IDLE-CIRCUIT_BREAK-IDLE",
-      "edges": [
-        {
-          "to": "fsm_state::IDLE",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 120,
-      "risk_tier": "high"
-    },
-    "risk_transition::IDLE-DECIDE-IDLE": {
-      "type": "risk_transition",
-      "id": "IDLE-DECIDE-IDLE",
-      "edges": [
-        {
-          "to": "fsm_state::IDLE",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 120,
-      "risk_tier": "high"
-    },
-    "risk_transition::IDLE-VOTES_COLLECTED-IDLE": {
-      "type": "risk_transition",
-      "id": "IDLE-VOTES_COLLECTED-IDLE",
-      "edges": [
-        {
-          "to": "fsm_state::IDLE",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 120,
-      "risk_tier": "high"
-    },
-    "risk_transition::COLLECTING_VOTES-QUORUM_START-COLLECTING_VOTES": {
-      "type": "risk_transition",
-      "id": "COLLECTING_VOTES-QUORUM_START-COLLECTING_VOTES",
-      "edges": [
-        {
-          "to": "fsm_state::COLLECTING_VOTES",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 120,
-      "risk_tier": "high"
-    },
-    "risk_transition::COLLECTING_VOTES-DECIDE-COLLECTING_VOTES": {
-      "type": "risk_transition",
-      "id": "COLLECTING_VOTES-DECIDE-COLLECTING_VOTES",
-      "edges": [
-        {
-          "to": "fsm_state::COLLECTING_VOTES",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 120,
-      "risk_tier": "high"
-    },
-    "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING": {
-      "type": "risk_transition",
-      "id": "DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
-      "edges": [
-        {
-          "to": "fsm_state::DELIBERATING",
-          "rel": "scores",
-          "source": "risk-heatmap"
-        }
-      ],
-      "risk_score": 108,
-      "risk_tier": "high"
+      "risk_score": 360,
+      "risk_tier": "critical"
     },
     "risk_transition::DELIBERATING-DECIDE-DECIDED": {
       "type": "risk_transition",
@@ -31139,26 +31372,73 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 96,
-      "risk_tier": "medium"
+      "risk_score": 256,
+      "risk_tier": "critical"
     },
-    "risk_transition::IDLE-QUORUM_START-COLLECTING_VOTES": {
+    "risk_transition::IDLE-CIRCUIT_BREAK-IDLE": {
       "type": "risk_transition",
-      "id": "IDLE-QUORUM_START-COLLECTING_VOTES",
+      "id": "IDLE-CIRCUIT_BREAK-IDLE",
       "edges": [
         {
           "to": "fsm_state::IDLE",
           "rel": "scores",
           "source": "risk-heatmap"
-        },
+        }
+      ],
+      "risk_score": 240,
+      "risk_tier": "critical"
+    },
+    "risk_transition::IDLE-DECIDE-IDLE": {
+      "type": "risk_transition",
+      "id": "IDLE-DECIDE-IDLE",
+      "edges": [
+        {
+          "to": "fsm_state::IDLE",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        }
+      ],
+      "risk_score": 240,
+      "risk_tier": "critical"
+    },
+    "risk_transition::IDLE-VOTES_COLLECTED-IDLE": {
+      "type": "risk_transition",
+      "id": "IDLE-VOTES_COLLECTED-IDLE",
+      "edges": [
+        {
+          "to": "fsm_state::IDLE",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        }
+      ],
+      "risk_score": 240,
+      "risk_tier": "critical"
+    },
+    "risk_transition::COLLECTING_VOTES-QUORUM_START-COLLECTING_VOTES": {
+      "type": "risk_transition",
+      "id": "COLLECTING_VOTES-QUORUM_START-COLLECTING_VOTES",
+      "edges": [
         {
           "to": "fsm_state::COLLECTING_VOTES",
           "rel": "scores",
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 80,
-      "risk_tier": "medium"
+      "risk_score": 240,
+      "risk_tier": "critical"
+    },
+    "risk_transition::COLLECTING_VOTES-DECIDE-COLLECTING_VOTES": {
+      "type": "risk_transition",
+      "id": "COLLECTING_VOTES-DECIDE-COLLECTING_VOTES",
+      "edges": [
+        {
+          "to": "fsm_state::COLLECTING_VOTES",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        }
+      ],
+      "risk_score": 240,
+      "risk_tier": "critical"
     },
     "risk_transition::COLLECTING_VOTES-VOTES_COLLECTED-DELIBERATING": {
       "type": "risk_transition",
@@ -31175,12 +31455,30 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 72,
-      "risk_tier": "medium"
+      "risk_score": 192,
+      "risk_tier": "high"
     },
-    "risk_transition::DELIBERATING-QUORUM_START-DELIBERATING": {
+    "risk_transition::IDLE-QUORUM_START-COLLECTING_VOTES": {
       "type": "risk_transition",
-      "id": "DELIBERATING-QUORUM_START-DELIBERATING",
+      "id": "IDLE-QUORUM_START-COLLECTING_VOTES",
+      "edges": [
+        {
+          "to": "fsm_state::IDLE",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        },
+        {
+          "to": "fsm_state::COLLECTING_VOTES",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        }
+      ],
+      "risk_score": 160,
+      "risk_tier": "high"
+    },
+    "risk_transition::DELIBERATING-CIRCUIT_BREAK-DELIBERATING": {
+      "type": "risk_transition",
+      "id": "DELIBERATING-CIRCUIT_BREAK-DELIBERATING",
       "edges": [
         {
           "to": "fsm_state::DELIBERATING",
@@ -31188,8 +31486,8 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 72,
-      "risk_tier": "medium"
+      "risk_score": 144,
+      "risk_tier": "high"
     },
     "risk_transition::DECIDED-DECIDE-DECIDED": {
       "type": "risk_transition",
@@ -31201,8 +31499,8 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 60,
-      "risk_tier": "medium"
+      "risk_score": 120,
+      "risk_tier": "high"
     },
     "risk_transition::DECIDED-CIRCUIT_BREAK-DECIDED": {
       "type": "risk_transition",
@@ -31214,8 +31512,8 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 60,
-      "risk_tier": "medium"
+      "risk_score": 120,
+      "risk_tier": "high"
     },
     "risk_transition::DECIDED-QUORUM_START-DECIDED": {
       "type": "risk_transition",
@@ -31227,8 +31525,8 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 60,
-      "risk_tier": "medium"
+      "risk_score": 120,
+      "risk_tier": "high"
     },
     "risk_transition::DECIDED-VOTES_COLLECTED-DECIDED": {
       "type": "risk_transition",
@@ -31240,7 +31538,20 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 60,
+      "risk_score": 120,
+      "risk_tier": "high"
+    },
+    "risk_transition::DELIBERATING-QUORUM_START-DELIBERATING": {
+      "type": "risk_transition",
+      "id": "DELIBERATING-QUORUM_START-DELIBERATING",
+      "edges": [
+        {
+          "to": "fsm_state::DELIBERATING",
+          "rel": "scores",
+          "source": "risk-heatmap"
+        }
+      ],
+      "risk_score": 96,
       "risk_tier": "medium"
     },
     "risk_transition::DELIBERATING-VOTES_COLLECTED-DELIBERATING": {
@@ -31253,7 +31564,7 @@
           "source": "risk-heatmap"
         }
       ],
-      "risk_score": 16,
+      "risk_score": 32,
       "risk_tier": "low"
     }
   }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T10:17:46.273Z",
+  "generated_at": "2026-03-09T18:29:51.670Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -823,6 +823,15 @@
         }
       ]
     },
+    "GATE-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+          "test_name": "GATE-05 — Bool: behavioral verification"
+        }
+      ]
+    },
     "GUARD-01": {
       "covered": true,
       "test_cases": [
@@ -1000,6 +1009,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/INST-12.stub.test.js",
           "test_name": "INST-12: sync-baseline-requirements uses text-based dedup for idempotent merge"
+        }
+      ]
+    },
+    "INST-13": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INST-13.stub.test.js",
+          "test_name": "INST-13 — Bool: structural verification"
         }
       ]
     },
@@ -1984,6 +2002,24 @@
         }
       ]
     },
+    "SOLVE-7": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-7.stub.test.js",
+          "test_name": "SOLVE-7: formal-test-sync.cjs generateStubs produces recipe sidecar with pre-resolved context"
+        }
+      ]
+    },
+    "SOLVE-8": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-8.stub.test.js",
+          "test_name": "SOLVE-8: Alloy model solve-legacy-merge.als exists and defines Bool sig"
+        }
+      ]
+    },
     "SOLVE-09": {
       "covered": true,
       "test_cases": [
@@ -2119,21 +2155,21 @@
         }
       ]
     },
-    "SOLVE-7": {
+    "SOLVE-24": {
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-7.stub.test.js",
-          "test_name": "SOLVE-7: formal-test-sync.cjs generateStubs produces recipe sidecar with pre-resolved context"
+          "test_file": ".planning/formal/generated-stubs/SOLVE-24.stub.test.js",
+          "test_name": "SOLVE-24 — Bool: structural verification"
         }
       ]
     },
-    "SOLVE-8": {
+    "SOLVE-25": {
       "covered": true,
       "test_cases": [
         {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-8.stub.test.js",
-          "test_name": "SOLVE-8: Alloy model solve-legacy-merge.als exists and defines Bool sig"
+          "test_file": ".planning/formal/generated-stubs/SOLVE-25.stub.test.js",
+          "test_name": "SOLVE-25 — Bool: structural verification"
         }
       ]
     },
@@ -2434,6 +2470,15 @@
         }
       ]
     },
+    "TRACE-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACE-10.stub.test.js",
+          "test_name": "TRACE-10 — Bool: structural verification"
+        }
+      ]
+    },
     "TRIAGE-01": {
       "covered": true,
       "test_cases": [
@@ -2721,18 +2766,6 @@
           "test_name": "WIZ-11: settings.md exists and is readable"
         }
       ]
-    },
-    "SOLVE-24": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SOLVE-25": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INST-13": {
-      "covered": false,
-      "test_cases": []
     }
   }
 }

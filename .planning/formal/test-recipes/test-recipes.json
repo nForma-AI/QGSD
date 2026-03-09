@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T14:17:55.695Z",
+  "generated": "2026-03-09T18:29:57.533Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -1455,1667 +1455,2328 @@
     {
       "id": "TR-FM-ACT-OMISSION",
       "failure_mode_id": "FM-ACT-OMISSION",
-      "title": "Test omission of ACT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "ACT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_act_capability",
-          "description": "Trigger ACT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "ACT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ACT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-AGENT-OMISSION",
       "failure_mode_id": "FM-AGENT-OMISSION",
-      "title": "Test omission of AGENT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "AGENT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_agent_capability",
-          "description": "Trigger AGENT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "AGENT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-AGENT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-AGT-OMISSION",
       "failure_mode_id": "FM-AGT-OMISSION",
-      "title": "Test omission of AGT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "AGT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_agt_capability",
-          "description": "Trigger AGT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "AGT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-AGT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-ANNOT-OMISSION",
       "failure_mode_id": "FM-ANNOT-OMISSION",
-      "title": "Test omission of ANNOT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "ANNOT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_annot_capability",
-          "description": "Trigger ANNOT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "ANNOT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ANNOT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-ARCH-OMISSION",
       "failure_mode_id": "FM-ARCH-OMISSION",
-      "title": "Test omission of ARCH capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "ARCH module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_arch_capability",
-          "description": "Trigger ARCH functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "ARCH requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ARCH-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-CALIB-OMISSION",
       "failure_mode_id": "FM-CALIB-OMISSION",
-      "title": "Test omission of CALIB capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "CALIB module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_calib_capability",
-          "description": "Trigger CALIB functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "CALIB requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-CALIB-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-CI-OMISSION",
       "failure_mode_id": "FM-CI-OMISSION",
-      "title": "Test omission of CI capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "CI module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_ci_capability",
-          "description": "Trigger CI functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "CI requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-CI-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-CRED-OMISSION",
       "failure_mode_id": "FM-CRED-OMISSION",
-      "title": "Test omission of CRED capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "CRED module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_cred_capability",
-          "description": "Trigger CRED functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "CRED requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-CRED-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DASH-OMISSION",
       "failure_mode_id": "FM-DASH-OMISSION",
-      "title": "Test omission of DASH capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DASH module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_dash_capability",
-          "description": "Trigger DASH functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DASH requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DASH-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DEBT-OMISSION",
       "failure_mode_id": "FM-DEBT-OMISSION",
-      "title": "Test omission of DEBT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DEBT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_debt_capability",
-          "description": "Trigger DEBT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DEBT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DEBT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DECOMP-OMISSION",
       "failure_mode_id": "FM-DECOMP-OMISSION",
-      "title": "Test omission of DECOMP capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DECOMP module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_decomp_capability",
-          "description": "Trigger DECOMP functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DECOMP requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DECOMP-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DETECT-OMISSION",
       "failure_mode_id": "FM-DETECT-OMISSION",
-      "title": "Test omission of DETECT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DETECT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_detect_capability",
-          "description": "Trigger DETECT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DETECT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DETECT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DOC-OMISSION",
       "failure_mode_id": "FM-DOC-OMISSION",
-      "title": "Test omission of DOC capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DOC module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_doc_capability",
-          "description": "Trigger DOC functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DOC requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DOC-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-DRIFT-OMISSION",
       "failure_mode_id": "FM-DRIFT-OMISSION",
-      "title": "Test omission of DRIFT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "DRIFT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_drift_capability",
-          "description": "Trigger DRIFT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "DRIFT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-DRIFT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-ENFC-OMISSION",
       "failure_mode_id": "FM-ENFC-OMISSION",
-      "title": "Test omission of ENFC capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "ENFC module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_enfc_capability",
-          "description": "Trigger ENFC functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "ENFC requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ENFC-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-EVID-OMISSION",
       "failure_mode_id": "FM-EVID-OMISSION",
-      "title": "Test omission of EVID capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "EVID module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_evid_capability",
-          "description": "Trigger EVID functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "EVID requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-EVID-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-FVTOOL-OMISSION",
       "failure_mode_id": "FM-FVTOOL-OMISSION",
-      "title": "Test omission of FVTOOL capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "FVTOOL module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_fvtool_capability",
-          "description": "Trigger FVTOOL functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "FVTOOL requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-FVTOOL-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-GATE-OMISSION",
       "failure_mode_id": "FM-GATE-OMISSION",
-      "title": "Test omission of GATE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "GATE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_gate_capability",
-          "description": "Trigger GATE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "GATE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-GATE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-GUARD-OMISSION",
       "failure_mode_id": "FM-GUARD-OMISSION",
-      "title": "Test omission of GUARD capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "GUARD module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_guard_capability",
-          "description": "Trigger GUARD functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "GUARD requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-GUARD-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-HLTH-OMISSION",
       "failure_mode_id": "FM-HLTH-OMISSION",
-      "title": "Test omission of HLTH capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "HLTH module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_hlth_capability",
-          "description": "Trigger HLTH functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "HLTH requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-HLTH-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-INIT-OMISSION",
       "failure_mode_id": "FM-INIT-OMISSION",
-      "title": "Test omission of INIT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "INIT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_init_capability",
-          "description": "Trigger INIT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "INIT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-INIT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-INST-OMISSION",
       "failure_mode_id": "FM-INST-OMISSION",
-      "title": "Test omission of INST capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "INST module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_inst_capability",
-          "description": "Trigger INST functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "INST requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-INST-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-KEY-OMISSION",
       "failure_mode_id": "FM-KEY-OMISSION",
-      "title": "Test omission of KEY capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "KEY module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_key_capability",
-          "description": "Trigger KEY functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "KEY requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-KEY-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-LIVE-OMISSION",
       "failure_mode_id": "FM-LIVE-OMISSION",
-      "title": "Test omission of LIVE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "LIVE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_live_capability",
-          "description": "Trigger LIVE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "LIVE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-LIVE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-LOOP-OMISSION",
       "failure_mode_id": "FM-LOOP-OMISSION",
-      "title": "Test omission of LOOP capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "LOOP module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_loop_capability",
-          "description": "Trigger LOOP functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "LOOP requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-LOOP-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-MCP-OMISSION",
       "failure_mode_id": "FM-MCP-OMISSION",
-      "title": "Test omission of MCP capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "MCP module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_mcp_capability",
-          "description": "Trigger MCP functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "MCP requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-MCP-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-MCPENV-OMISSION",
       "failure_mode_id": "FM-MCPENV-OMISSION",
-      "title": "Test omission of MCPENV capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "MCPENV module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_mcpenv_capability",
-          "description": "Trigger MCPENV functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "MCPENV requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-MCPENV-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-META-OMISSION",
       "failure_mode_id": "FM-META-OMISSION",
-      "title": "Test omission of META capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "META module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_meta_capability",
-          "description": "Trigger META functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "META requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-META-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-MULTI-OMISSION",
       "failure_mode_id": "FM-MULTI-OMISSION",
-      "title": "Test omission of MULTI capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "MULTI module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_multi_capability",
-          "description": "Trigger MULTI functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "MULTI requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-MULTI-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-NAV-OMISSION",
       "failure_mode_id": "FM-NAV-OMISSION",
-      "title": "Test omission of NAV capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "NAV module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_nav_capability",
-          "description": "Trigger NAV functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "NAV requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-NAV-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-OBS-OMISSION",
       "failure_mode_id": "FM-OBS-OMISSION",
-      "title": "Test omission of OBS capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "OBS module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_obs_capability",
-          "description": "Trigger OBS functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "OBS requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-OBS-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-ORES-OMISSION",
       "failure_mode_id": "FM-ORES-OMISSION",
-      "title": "Test omission of ORES capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "ORES module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_ores_capability",
-          "description": "Trigger ORES functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "ORES requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ORES-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PLAN-OMISSION",
       "failure_mode_id": "FM-PLAN-OMISSION",
-      "title": "Test omission of PLAN capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PLAN module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_plan_capability",
-          "description": "Trigger PLAN functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PLAN requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PLAN-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PLAT-OMISSION",
       "failure_mode_id": "FM-PLAT-OMISSION",
-      "title": "Test omission of PLAT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PLAT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_plat_capability",
-          "description": "Trigger PLAT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PLAT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PLAT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PLCY-OMISSION",
       "failure_mode_id": "FM-PLCY-OMISSION",
-      "title": "Test omission of PLCY capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PLCY module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_plcy_capability",
-          "description": "Trigger PLCY functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PLCY requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PLCY-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PORT-OMISSION",
       "failure_mode_id": "FM-PORT-OMISSION",
-      "title": "Test omission of PORT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PORT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_port_capability",
-          "description": "Trigger PORT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PORT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PORT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PROJECT-OMISSION",
       "failure_mode_id": "FM-PROJECT-OMISSION",
-      "title": "Test omission of PROJECT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PROJECT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_project_capability",
-          "description": "Trigger PROJECT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PROJECT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PROJECT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PROV-OMISSION",
       "failure_mode_id": "FM-PROV-OMISSION",
-      "title": "Test omission of PROV capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PROV module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_prov_capability",
-          "description": "Trigger PROV functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PROV requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PROV-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-PRST-OMISSION",
       "failure_mode_id": "FM-PRST-OMISSION",
-      "title": "Test omission of PRST capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "PRST module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_prst_capability",
-          "description": "Trigger PRST functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "PRST requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PRST-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-QUORUM-OMISSION",
       "failure_mode_id": "FM-QUORUM-OMISSION",
-      "title": "Test omission of QUORUM capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "QUORUM module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_quorum_capability",
-          "description": "Trigger QUORUM functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "QUORUM requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-QUORUM-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-RECV-OMISSION",
       "failure_mode_id": "FM-RECV-OMISSION",
-      "title": "Test omission of RECV capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "RECV module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_recv_capability",
-          "description": "Trigger RECV functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "RECV requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-RECV-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-REDACT-OMISSION",
       "failure_mode_id": "FM-REDACT-OMISSION",
-      "title": "Test omission of REDACT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "REDACT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_redact_capability",
-          "description": "Trigger REDACT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "REDACT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REDACT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-REL-OMISSION",
       "failure_mode_id": "FM-REL-OMISSION",
-      "title": "Test omission of REL capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "REL module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_rel_capability",
-          "description": "Trigger REL functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "REL requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REL-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-REN-OMISSION",
       "failure_mode_id": "FM-REN-OMISSION",
-      "title": "Test omission of REN capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "REN module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_ren_capability",
-          "description": "Trigger REN functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "REN requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-REN-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SAFE-OMISSION",
       "failure_mode_id": "FM-SAFE-OMISSION",
-      "title": "Test omission of SAFE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SAFE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_safe_capability",
-          "description": "Trigger SAFE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SAFE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SAFE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SCBD-OMISSION",
       "failure_mode_id": "FM-SCBD-OMISSION",
-      "title": "Test omission of SCBD capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SCBD module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_scbd_capability",
-          "description": "Trigger SCBD functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SCBD requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SCBD-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SCHEMA-OMISSION",
       "failure_mode_id": "FM-SCHEMA-OMISSION",
-      "title": "Test omission of SCHEMA capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SCHEMA module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_schema_capability",
-          "description": "Trigger SCHEMA functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SCHEMA requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SCHEMA-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SEC-OMISSION",
       "failure_mode_id": "FM-SEC-OMISSION",
-      "title": "Test omission of SEC capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SEC module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_sec_capability",
-          "description": "Trigger SEC functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SEC requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SEC-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SENS-OMISSION",
       "failure_mode_id": "FM-SENS-OMISSION",
-      "title": "Test omission of SENS capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SENS module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_sens_capability",
-          "description": "Trigger SENS functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SENS requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SENS-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SIG-OMISSION",
       "failure_mode_id": "FM-SIG-OMISSION",
-      "title": "Test omission of SIG capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SIG module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_sig_capability",
-          "description": "Trigger SIG functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SIG requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SIG-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SLOT-OMISSION",
       "failure_mode_id": "FM-SLOT-OMISSION",
-      "title": "Test omission of SLOT capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SLOT module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_slot_capability",
-          "description": "Trigger SLOT functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SLOT requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SLOT-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SOLVE-OMISSION",
       "failure_mode_id": "FM-SOLVE-OMISSION",
-      "title": "Test omission of SOLVE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SOLVE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_solve_capability",
-          "description": "Trigger SOLVE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SOLVE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SOLVE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SPEC-OMISSION",
       "failure_mode_id": "FM-SPEC-OMISSION",
-      "title": "Test omission of SPEC capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SPEC module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_spec_capability",
-          "description": "Trigger SPEC functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SPEC requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SPEC-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-STATE-OMISSION",
       "failure_mode_id": "FM-STATE-OMISSION",
-      "title": "Test omission of STATE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "STATE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_state_capability",
-          "description": "Trigger STATE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "STATE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-STATE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-STD-OMISSION",
       "failure_mode_id": "FM-STD-OMISSION",
-      "title": "Test omission of STD capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "STD module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_std_capability",
-          "description": "Trigger STD functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "STD requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-STD-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-STOP-OMISSION",
       "failure_mode_id": "FM-STOP-OMISSION",
-      "title": "Test omission of STOP capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "STOP module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_stop_capability",
-          "description": "Trigger STOP functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "STOP requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-STOP-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-SYNC-OMISSION",
       "failure_mode_id": "FM-SYNC-OMISSION",
-      "title": "Test omission of SYNC capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "SYNC module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_sync_capability",
-          "description": "Trigger SYNC functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "SYNC requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-SYNC-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-TRACE-OMISSION",
       "failure_mode_id": "FM-TRACE-OMISSION",
-      "title": "Test omission of TRACE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "TRACE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_trace_capability",
-          "description": "Trigger TRACE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "TRACE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TRACE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-TRIAGE-OMISSION",
       "failure_mode_id": "FM-TRIAGE-OMISSION",
-      "title": "Test omission of TRIAGE capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "TRIAGE module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_triage_capability",
-          "description": "Trigger TRIAGE functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "TRIAGE requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TRIAGE-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-UNIF-OMISSION",
       "failure_mode_id": "FM-UNIF-OMISSION",
-      "title": "Test omission of UNIF capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "UNIF module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_unif_capability",
-          "description": "Trigger UNIF functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "UNIF requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-UNIF-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-UPPAAL-OMISSION",
       "failure_mode_id": "FM-UPPAAL-OMISSION",
-      "title": "Test omission of UPPAAL capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "UPPAAL module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_uppaal_capability",
-          "description": "Trigger UPPAAL functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "UPPAAL requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-UPPAAL-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-UPS-OMISSION",
       "failure_mode_id": "FM-UPS-OMISSION",
-      "title": "Test omission of UPS capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "UPS module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_ups_capability",
-          "description": "Trigger UPS functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "UPS requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-UPS-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-UX-OMISSION",
       "failure_mode_id": "FM-UX-OMISSION",
-      "title": "Test omission of UX capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "UX module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_ux_capability",
-          "description": "Trigger UX functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "UX requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-UX-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-VERIFY-OMISSION",
       "failure_mode_id": "FM-VERIFY-OMISSION",
-      "title": "Test omission of VERIFY capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "VERIFY module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_verify_capability",
-          "description": "Trigger VERIFY functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "VERIFY requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-VERIFY-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-VIS-OMISSION",
       "failure_mode_id": "FM-VIS-OMISSION",
-      "title": "Test omission of VIS capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "VIS module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_vis_capability",
-          "description": "Trigger VIS functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "VIS requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-VIS-OMISSION]"
+        }
+      ]
     },
     {
       "id": "TR-FM-WIZ-OMISSION",
       "failure_mode_id": "FM-WIZ-OMISSION",
-      "title": "Test omission of WIZ capabilities",
+      "title": "Test undefined of undefined --[undefined]--> undefined",
       "setup": {
-        "initial_state": "system-ready",
         "preconditions": [
-          "WIZ module is loaded"
+          "Machine is in undefined state"
         ]
       },
       "input_sequence": [
         {
-          "event": "invoke_wiz_capability",
-          "description": "Trigger WIZ functionality to verify implementation"
+          "description": "Send undefined event to machine in undefined state"
         }
       ],
       "expected_outcome": {
-        "final_state": "capability-active",
-        "assertions": [
-          "WIZ requirements are satisfied",
-          "No regression in related functionality"
-        ]
+        "assertions": []
       },
-      "risk_tier": "medium"
+      "oracle": {
+        "type": "unknown",
+        "check": "",
+        "failure_indicates": ""
+      },
+      "risk_context": {
+        "severity_class": null,
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-WIZ-OMISSION]"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_recipes": 32,
+    "total_recipes": 98,
     "by_failure_mode": {
       "omission": 16,
       "corruption": 5,
-      "commission": 11
+      "commission": 11,
+      "unknown": 66
     },
     "by_risk_tier": {
       "high": 14,
       "critical": 15,
       "low": 1,
-      "medium": 2
+      "medium": 2,
+      "unclassified": 66
     }
-  },
-  "last_updated": "2026-03-09T14:20:08.331Z"
+  }
 }

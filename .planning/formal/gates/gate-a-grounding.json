@@ -1,39 +1,17 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T10:30:49.568Z",
-  "grounding_score": 1,
+  "generated": "2026-03-09T19:10:57.302Z",
+  "grounding_score": 0.30708661417322836,
   "target": 0.8,
-  "target_met": true,
-  "explained": 62269,
-  "total": 62269,
+  "target_met": false,
+  "explained": 39,
+  "total": 127,
   "unexplained_counts": {
     "instrumentation_bug": 0,
-    "model_gap": 0,
+    "model_gap": 88,
     "genuine_violation": 0
   },
-  "unexplained_summary": {
-    "instrumentation_bug": {
-      "top_actions": [],
-      "total": 0
-    },
-    "model_gap": {
-      "top_mismatches": [],
-      "total": 0
-    },
-    "genuine_violation": {
-      "violated_invariants": [],
-      "total": 0
-    }
-  },
-  "methodology": {
-    "explains_definition": "vocabulary_mapped AND (xstate_valid OR methodology_skip OR non_fsm_classification)",
-    "h1_methodology_skips": 18877,
-    "non_fsm_skips": 16,
-    "xstate_validated": 43376,
-    "vocabulary_mapped": 62269
-  },
-  "warnings": [],
   "scope": {
-    "mode": "global"
+    "mode": "per-model-aggregate"
   }
 }

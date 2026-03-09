@@ -1,22 +1,22 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T10:30:20.777Z",
+    "generated_at": "2026-03-09T18:33:22.587Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
-        "file_count": 118,
-        "property_count": 846
+        "file_count": 121,
+        "property_count": 854
       },
       "model_registry": {
-        "file_count": 125,
+        "file_count": 127,
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 353
+        "entry_count": 218
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 301
+        "requirements_matched": 306
       }
     }
   },
@@ -334,28 +334,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -376,28 +376,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -906,22 +906,22 @@
           "model_file": ".planning/formal/tla/NFDeliberation.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "tla:deliberation"
+          "latest_result": "pass",
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "tla:deliberation"
+          "latest_result": "pass",
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "inconclusive",
-          "check_id": "tla:deliberation"
+          "latest_result": "pass",
+          "check_id": "tla:quorum-safety"
         }
       ]
     },
@@ -965,7 +965,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "NoSpuriousConsensus",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ]
@@ -977,7 +977,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "TypeInvariantHolds",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -998,7 +998,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "EventualDecision",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -1308,21 +1308,21 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationBounded",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ],
@@ -1343,21 +1343,21 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ],
@@ -1378,14 +1378,14 @@
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "EventualConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ],
@@ -1472,7 +1472,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1493,7 +1493,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1514,7 +1514,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1535,7 +1535,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant2",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1556,7 +1556,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant3",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1577,7 +1577,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty1",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1598,7 +1598,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty2",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1619,7 +1619,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty3",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -4598,7 +4598,7 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4619,8 +4619,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -4640,14 +4640,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4668,8 +4668,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -4696,14 +4696,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "LivenessNeverFail",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -4724,14 +4724,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -9148,78 +9148,78 @@
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "Bool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "Action",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "GroundingRun",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "ScopedSubsetIsChangedFiles",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "NoBaseRefMeansAllActions",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "ScopedTargetEnforced",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "GlobalIsInformational",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "NoBaseRefGlobalEnforced",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "ScopedSubsetCorrect",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "GlobalNeverEnforcedWithBaseRef",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-a-scoping.als",
           "property_name": "ScopedAlwaysEnforcedWithBaseRef",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-a:grounding-score"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -9484,28 +9484,28 @@
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=0 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "R{\"rotations\"}=? [ F s<=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         }
       ]
@@ -9517,14 +9517,14 @@
           "model_file": ".planning/formal/prism/oauth-rotation.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         },
         {
           "model_file": ".planning/formal/prism/oauth-rotation.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:oauth-rotation"
         }
       ],
@@ -9545,28 +9545,28 @@
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "R{\"rounds\"}=? [ F s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=9 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         },
         {
           "model_file": ".planning/formal/prism/quorum.props",
           "property_name": "P=? [ F<=10 s=1 ]",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "error",
           "check_id": "prism:quorum"
         }
       ]
@@ -11076,71 +11076,71 @@
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "Bool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "SignalType",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "AutoCloseStep",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "ProducesObservableSignals",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "NeverWritesGateMaturity",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "ScoringFunction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "PromotionViaScoringOnly",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "SignalAlignment",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "AutoCloseNeverWritesMaturity",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/autoclose-signals.als",
           "property_name": "AllStepsProduceSignals",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-b:abstraction-score"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -11300,50 +11300,50 @@
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "Bool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "GateEntry",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "PromotionRequiresEvidence",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "FailOpenForMissingEvidence",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "BypassOverridesChecks",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "NoPromotionWithoutEvidence",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "BypassAllowsAnyLevel",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -11363,8 +11363,8 @@
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
           "property_name": "Bool",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "gate-c:recipe-coverage"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -11401,6 +11401,146 @@
           {
             "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
             "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
+          }
+        ]
+      }
+    },
+    "GATE-05": {
+      "id": "GATE-05",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+          "property_name": "SingleEntrypoint",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+            "test_name": "GATE-05 — Bool: behavioral verification"
+          }
+        ]
+      }
+    },
+    "TRACE-10": {
+      "id": "TRACE-10",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+          "property_name": "HeaderCommentFallback",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TRACE-10.stub.test.js",
+            "test_name": "TRACE-10 — Bool: structural verification"
+          }
+        ]
+      }
+    },
+    "INST-13": {
+      "id": "INST-13",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/installer-path-validation.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/installer-path-validation.als",
+          "property_name": "ScanAllHookFiles",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INST-13.stub.test.js",
+            "test_name": "INST-13 — Bool: structural verification"
+          }
+        ]
+      }
+    },
+    "SOLVE-24": {
+      "id": "SOLVE-24",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+          "property_name": "TUIRequirements",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-24.stub.test.js",
+            "test_name": "SOLVE-24 — Bool: structural verification"
+          }
+        ]
+      }
+    },
+    "SOLVE-25": {
+      "id": "SOLVE-25",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+          "property_name": "DiagnosticCompleteness",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SOLVE-25.stub.test.js",
+            "test_name": "SOLVE-25 — Bool: structural verification"
           }
         ]
       }
@@ -11611,7 +11751,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::BelowThresholdFails": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11622,7 +11762,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -11911,8 +12051,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "tla:deliberation"
+      "latest_result": "pass",
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -11941,7 +12081,7 @@
         "MCPENV-02"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::TypeInvariantHolds": {
@@ -11951,7 +12091,7 @@
         "MCPENV-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::EventualDecision": {
@@ -11961,7 +12101,7 @@
         "MCPENV-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/NFOscillation.tla::TypeOK": {
@@ -12063,7 +12203,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -12093,7 +12233,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum.tla::DeliberationMonotone": {
@@ -12103,8 +12243,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "tla:deliberation"
+      "latest_result": "pass",
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -12114,7 +12254,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/QGSDQuorum_xstate.tla::TypeOK": {
@@ -12174,7 +12314,7 @@
         "STOP-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant1": {
@@ -12185,7 +12325,7 @@
         "SPEC-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant2": {
@@ -12195,7 +12335,7 @@
         "STOP-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant3": {
@@ -12205,7 +12345,7 @@
         "STOP-04"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty1": {
@@ -12215,7 +12355,7 @@
         "STOP-05"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty2": {
@@ -12225,7 +12365,7 @@
         "STOP-06"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty3": {
@@ -12235,7 +12375,7 @@
         "STOP-07"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/TUINavigation.tla::TypeOK": {
@@ -13892,8 +14032,8 @@
         "REDACT-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "ci:trace-redaction"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::CompleteLiveness": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -13903,7 +14043,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::RedactionNeverInconclusive": {
@@ -13923,7 +14063,7 @@
         "LIVE-01"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::AllChecksEventuallyRun": {
@@ -13935,7 +14075,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDSensitivity.tla::StartSweep": {
@@ -16648,7 +16788,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16678,7 +16818,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/tla/NFQuorum.tla::DeliberationMonotone": {
@@ -16688,8 +16828,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
-      "check_id": "tla:deliberation"
+      "latest_result": "pass",
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -16699,7 +16839,7 @@
         "RECV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/alloy/solve-automation-features.als::Bool": {
@@ -17908,8 +18048,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::Action": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17918,8 +18058,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::GroundingRun": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17928,8 +18068,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::ScopedSubsetIsChangedFiles": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17938,8 +18078,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::NoBaseRefMeansAllActions": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17948,8 +18088,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::ScopedTargetEnforced": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17958,8 +18098,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::GlobalIsInformational": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17968,8 +18108,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::NoBaseRefGlobalEnforced": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17978,8 +18118,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::ScopedSubsetCorrect": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17988,8 +18128,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::GlobalNeverEnforcedWithBaseRef": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -17998,8 +18138,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-a-scoping.als::ScopedAlwaysEnforcedWithBaseRef": {
       "model_file": ".planning/formal/alloy/gate-a-scoping.als",
@@ -18008,8 +18148,8 @@
         "GATE-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-a:grounding-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/spec-quality-guardrails.als::Bool": {
       "model_file": ".planning/formal/alloy/spec-quality-guardrails.als",
@@ -18260,7 +18400,7 @@
         "CRED-12"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=0 ]": {
@@ -18270,7 +18410,7 @@
         "PRM-AM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/oauth-rotation.props::R{\"rotations\"}=? [ F s<=1 ]": {
@@ -18280,7 +18420,7 @@
         "PRM-AM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/quorum.props::P=? [ F s=1 ]": {
@@ -18291,7 +18431,7 @@
         "QUORUM-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::R{\"rounds\"}=? [ F s=1 ]": {
@@ -18301,7 +18441,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=9 s=1 ]": {
@@ -18312,7 +18452,7 @@
         "LOOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/quorum.props::P=? [ F<=10 s=1 ]": {
@@ -18322,7 +18462,7 @@
         "PRM-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:quorum"
     },
     ".planning/formal/prism/observability-delivery.props::S=? [ \"full_delivery\" ]": {
@@ -19670,8 +19810,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::SignalType": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19680,8 +19820,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::AutoCloseStep": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19690,8 +19830,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::ProducesObservableSignals": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19700,8 +19840,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::NeverWritesGateMaturity": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19710,8 +19850,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::ScoringFunction": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19720,8 +19860,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::PromotionViaScoringOnly": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19730,8 +19870,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::SignalAlignment": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19740,8 +19880,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::AutoCloseNeverWritesMaturity": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19750,8 +19890,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/autoclose-signals.als::AllStepsProduceSignals": {
       "model_file": ".planning/formal/alloy/autoclose-signals.als",
@@ -19760,8 +19900,8 @@
         "GATE-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-b:abstraction-score"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/session-counter-tracking.als::Bool": {
       "model_file": ".planning/formal/alloy/session-counter-tracking.als",
@@ -19931,8 +20071,8 @@
         "GATE-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::GateEntry": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -19941,8 +20081,8 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::PromotionRequiresEvidence": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -19951,8 +20091,8 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::FailOpenForMissingEvidence": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -19961,8 +20101,8 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::BypassOverridesChecks": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -19971,8 +20111,8 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::DemotionWithHysteresis": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -20011,8 +20151,8 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::BypassAllowsAnyLevel": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
@@ -20021,14 +20161,96 @@
         "GATE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "gate-c:recipe-coverage"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als::ChangelogBounded": {
       "model_file": ".planning/formal/alloy/gate-promotion-lifecycle.als",
       "property_name": "ChangelogBounded",
       "requirement_ids": [
         "GATE-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/gate-scoring-traces.als::Bool": {
+      "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "GATE-05",
+        "TRACE-10"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/gate-scoring-traces.als::SingleEntrypoint": {
+      "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+      "property_name": "SingleEntrypoint",
+      "requirement_ids": [
+        "GATE-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/gate-scoring-traces.als::HeaderCommentFallback": {
+      "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+      "property_name": "HeaderCommentFallback",
+      "requirement_ids": [
+        "TRACE-10"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/installer-path-validation.als::Bool": {
+      "model_file": ".planning/formal/alloy/installer-path-validation.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "INST-13"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/installer-path-validation.als::ScanAllHookFiles": {
+      "model_file": ".planning/formal/alloy/installer-path-validation.als",
+      "property_name": "ScanAllHookFiles",
+      "requirement_ids": [
+        "INST-13"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/solve-diagnostics-tui.als::Bool": {
+      "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "SOLVE-24",
+        "SOLVE-25"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/solve-diagnostics-tui.als::DiagnosticCompleteness": {
+      "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+      "property_name": "DiagnosticCompleteness",
+      "requirement_ids": [
+        "SOLVE-25"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/solve-diagnostics-tui.als::TUIRequirements": {
+      "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+      "property_name": "TUIRequirements",
+      "requirement_ids": [
+        "SOLVE-24"
       ],
       "source": "annotation",
       "latest_result": null,
@@ -20053,7 +20275,7 @@
         "CRED-12"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
+      "latest_result": "error",
       "check_id": "prism:oauth-rotation"
     },
     ".planning/formal/prism/observability-delivery.pm::(model-level)": {
@@ -20093,15 +20315,10 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 307,
-    "covered_count": 303,
-    "coverage_percentage": 98.7,
-    "uncovered_requirements": [
-      "INST-13",
-      "SOLVE-24",
-      "SOLVE-25",
-      "TRACE-10"
-    ],
+    "total_requirements": 308,
+    "covered_count": 308,
+    "coverage_percentage": 100,
+    "uncovered_requirements": [],
     "orphan_properties": []
   },
   "bidirectional_validation": {
@@ -20797,6 +21014,36 @@
         "detail": "model-registry lists GATE-04 for .planning/formal/alloy/gate-promotion-lifecycle.als but requirements.json GATE-04 does not list .planning/formal/alloy/gate-promotion-lifecycle.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+        "requirement_id": "GATE-05",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists GATE-05 for .planning/formal/alloy/gate-scoring-traces.als but requirements.json GATE-05 does not list .planning/formal/alloy/gate-scoring-traces.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/gate-scoring-traces.als",
+        "requirement_id": "TRACE-10",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists TRACE-10 for .planning/formal/alloy/gate-scoring-traces.als but requirements.json TRACE-10 does not list .planning/formal/alloy/gate-scoring-traces.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/installer-path-validation.als",
+        "requirement_id": "INST-13",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists INST-13 for .planning/formal/alloy/installer-path-validation.als but requirements.json INST-13 does not list .planning/formal/alloy/installer-path-validation.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+        "requirement_id": "SOLVE-24",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-24 for .planning/formal/alloy/solve-diagnostics-tui.als but requirements.json SOLVE-24 does not list .planning/formal/alloy/solve-diagnostics-tui.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/solve-diagnostics-tui.als",
+        "requirement_id": "SOLVE-25",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SOLVE-25 for .planning/formal/alloy/solve-diagnostics-tui.als but requirements.json SOLVE-25 does not list .planning/formal/alloy/solve-diagnostics-tui.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/alloy/doc-public-boundary.als",
         "requirement_id": "DOC-02",
         "direction": "requirement_claims_model",
@@ -21141,8 +21388,8 @@
       }
     ],
     "summary": {
-      "total_checked": 383,
-      "asymmetric_count": 121,
+      "total_checked": 388,
+      "asymmetric_count": 126,
       "stale_count": 61,
       "clean": false
     }
@@ -21533,8 +21780,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T10:30:10.106Z",
-    "requirements_checked": 336,
+    "baseline_date": "2026-03-09T18:33:05.793Z",
+    "requirements_checked": 341,
     "regressions": [],
     "summary": {
       "total_regressions": 0,
