@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T10:30:08.112Z",
-  "content_hash": "8bc6b93edeea3903",
+  "aggregated_at": "2026-03-09T12:18:39.335Z",
+  "content_hash": "e44122f8af573e11",
   "schema_version": "1",
   "requirements": [
     {
@@ -1275,6 +1275,18 @@
       }
     },
     {
+      "id": "GATE-05",
+      "text": "compute-per-model-gates.cjs --aggregate produces continuous 0-1 gate scores with diagnostic breakdowns matching the global gate JSON schemas, serving as the single gate-scoring entrypoint for all consumers (nf-solve.cjs sweeps, cross-layer-dashboard.cjs, run-formal-verify.cjs pipeline).",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Three redundant global gate scripts (gate-a-grounding.cjs, gate-b-abstraction.cjs, gate-c-validation.cjs) duplicated logic already present in the per-model gate scorer. Consolidating into a single --aggregate mode eliminates six files, reduces pipeline spawn overhead from four entries to one, and establishes a single source of truth for gate scoring.",
+      "provenance": {
+        "source_file": ".planning/quick/241-implement-the-migration-add-aggregate-to/241-PLAN.md",
+        "milestone": "quick-241"
+      }
+    },
+    {
       "id": "GUARD-01",
       "text": "The hook system provides three code-quality guardrails: a PostToolUse hook that auto-formats JS/TS files after Edit using prettier or biome (fail-open), a Stop hook that warns about leftover console.log statements in git-modified files without blocking, and a modular .claude/rules/ directory with project-specific convention files auto-loaded per session.",
       "category": "Code Quality Guardrails",
@@ -1567,6 +1579,14 @@
       "formal_models": [
         ".planning/formal/alloy/baseline-merge-idempotent.als"
       ]
+    },
+    {
+      "id": "INST-13",
+      "text": "Installer scans installed hook files for path.join(__dirname, ...) patterns, resolves each reference relative to the installed location, and emits a warning for any target that does not exist on disk.",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Hooks are authored in a source repository but installed to a different directory, causing __dirname to change. Path references that work in the repo silently break after install because fail-open error handling suppresses the failures; install-time validation surfaces these broken paths early."
     },
     {
       "id": "KEY-01",
@@ -3107,6 +3127,30 @@
       ]
     },
     {
+      "id": "SOLVE-7",
+      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
+      "category": "solve",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "provenance": {
+        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
+        "milestone": "quick-182"
+      }
+    },
+    {
+      "id": "SOLVE-8",
+      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
+      "category": "Solver Orchestration",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "provenance": {
+        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
+        "milestone": "quick-183"
+      }
+    },
+    {
       "id": "SOLVE-09",
       "text": "The solve diagnostic engine provides fast-mode iteration (--fast skips F->C and T->C layers), pattern-based D->C false-positive suppression via acknowledged-false-positives.json regex rules, auto-acknowledgement of Category B reverse discovery candidates, and recipe sidecars with absolute paths and pre-classified test templates.",
       "category": "Solver Orchestration",
@@ -3307,27 +3351,23 @@
       ]
     },
     {
-      "id": "SOLVE-7",
-      "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
-      "category": "solve",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Without pre-resolved context, F->T executors produce empty stubs (assert.fail TODO). Pre-resolving context at stub generation time eliminates redundant codebase scanning across batch dispatches.",
+      "id": "SOLVE-24",
+      "text": "The nForma TUI binary (bin/nForma.cjs) SHALL provide a terminal-based solve dashboard with circuit breaker CLI controls, testable without a live terminal",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
       "provenance": {
-        "source_file": ".planning/quick/182-add-test-recipe-generation-to-formal-tes/182-PLAN.md",
-        "milestone": "quick-182"
+        "source_file": "bin/nForma.test.cjs",
+        "milestone": "solver-tui"
       }
     },
     {
-      "id": "SOLVE-8",
-      "text": "The solve orchestrator detects a legacy root-level .formal/ directory before the diagnostic sweep (Step 0), merges its contents into .planning/formal/ with canonical-wins conflict resolution, and proceeds fail-open if the migration script is missing or errors.",
-      "category": "Solver Orchestration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Projects that adopted formal verification before the .planning/formal/ consolidation may retain a root-level .formal/ directory. Without migration, the solver silently misses models and artifacts stored in the old location, causing incomplete diagnostics.",
+      "id": "SOLVE-25",
+      "text": "The nForma diagnostic solver (bin/nf-solve.cjs) SHALL compute cross-layer residual vectors with health indicators, convergence logic, and structural claim sweeps, all exercised by automated tests",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
       "provenance": {
-        "source_file": ".planning/quick/183-add-legacy-formal-migration-step-to-qgsd/183-PLAN.md",
-        "milestone": "quick-183"
+        "source_file": "bin/nf-solve.test.cjs",
+        "milestone": "solver-tui"
       }
     },
     {
@@ -3826,6 +3866,18 @@
       }
     },
     {
+      "id": "TRACE-10",
+      "text": "sweepCtoR parses Requirements: header comments from the first 30 lines of source files as a fallback tracing mechanism, counting a file as traced when its declared IDs exist in the requirements envelope.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Many source files self-declare requirement links via // Requirements: ID1, ID2 header comments, but sweepCtoR only checked whether the requirements envelope text mentioned the filename. This inflated the untraced count by 9 files that were already linked.",
+      "provenance": {
+        "source_file": ".planning/quick/240-teach-sweepctor-to-read-requirements-hea/240-PLAN.md",
+        "milestone": "quick-240"
+      }
+    },
+    {
       "id": "TRIAGE-01",
       "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.planning/formal/diff-report.md` (per-check delta from last run) and `.planning/formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
@@ -4284,47 +4336,8 @@
       "formal_models": [
         ".planning/formal/alloy/settings-hub.als"
       ]
-    },
-    {
-      "id": "SOLVE-24",
-      "text": "The nForma TUI binary (bin/nForma.cjs) SHALL provide a terminal-based solve dashboard with circuit breaker CLI controls, testable without a live terminal",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nForma.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-25",
-      "text": "The nForma diagnostic solver (bin/nf-solve.cjs) SHALL compute cross-layer residual vectors with health indicators, convergence logic, and structural claim sweeps, all exercised by automated tests",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nf-solve.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "INST-13",
-      "text": "Installer scans installed hook files for path.join(__dirname, ...) patterns, resolves each reference relative to the installed location, and emits a warning for any target that does not exist on disk.",
-      "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Hooks are authored in a source repository but installed to a different directory, causing __dirname to change. Path references that work in the repo silently break after install because fail-open error handling suppresses the failures; install-time validation surfaces these broken paths early."
-    },
-    {
-      "id": "TRACE-10",
-      "text": "sweepCtoR parses Requirements: header comments from the first 30 lines of source files as a fallback tracing mechanism, counting a file as traced when its declared IDs exist in the requirements envelope.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Many source files self-declare requirement links via // Requirements: ID1, ID2 header comments, but sweepCtoR only checked whether the requirements envelope text mentioned the filename. This inflated the untraced count by 9 files that were already linked.",
-      "provenance": {
-        "source_file": ".planning/quick/240-teach-sweepctor-to-read-requirements-hea/240-PLAN.md",
-        "milestone": "quick-240"
-      }
     }
   ],
-  "total": 283
+  "total": 283,
+  "frozen_at": "2026-03-09T12:18:39.336Z"
 }
