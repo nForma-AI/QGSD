@@ -1561,6 +1561,71 @@ function verifyFileInstalled(filePath, description) {
 }
 
 /**
+ * Scan installed hook files for path.join(__dirname, ...) patterns and warn
+ * about any that resolve to non-existent targets.  Fail-open: never blocks
+ * installation, only prints warnings.
+ *
+ * @param {string} hooksDest  - Absolute path to the installed hooks directory
+ * @param {string} targetDir  - Absolute path to the install target root (e.g. ~/.claude)
+ * @returns {Array<{file: string, pattern: string, resolved: string, suggestion: string|null}>}
+ */
+function validateHookPaths(hooksDest, targetDir) {
+  const warnings = [];
+  let entries;
+  try {
+    entries = fs.readdirSync(hooksDest);
+  } catch {
+    return warnings;
+  }
+
+  const jsFiles = entries.filter(e => e.endsWith('.js') && !e.endsWith('.test.js'));
+  const pathJoinRe = /path\.join\(\s*__dirname\s*,\s*((?:['"][^'"]*['"]\s*,?\s*)+)\)/g;
+
+  for (const file of jsFiles) {
+    const filePath = path.join(hooksDest, file);
+    let content;
+    try {
+      content = fs.readFileSync(filePath, 'utf8');
+    } catch {
+      continue;
+    }
+
+    let match;
+    while ((match = pathJoinRe.exec(content)) !== null) {
+      const argsStr = match[1];
+      const args = [];
+      const localArgRe = /['"]([^'"]*)['"]/g;
+      let argMatch;
+      while ((argMatch = localArgRe.exec(argsStr)) !== null) {
+        args.push(argMatch[1]);
+      }
+      if (args.length === 0) continue;
+
+      const resolved = path.resolve(hooksDest, ...args);
+      if (!fs.existsSync(resolved)) {
+        const argsDisplay = args.map(a => `'${a}'`).join(', ');
+        let suggestion = null;
+        // Check if path contains /bin/ but not /nf-bin/ — common mistake
+        if (/\/bin\//.test(resolved) && !/\/nf-bin\//.test(resolved)) {
+          suggestion = "Hint: did you mean 'nf-bin' instead of 'bin'? Hooks run from ~/.claude/hooks/, not the repo.";
+        }
+        console.log(`  ${yellow}\u26A0${reset} ${file}: path.join(__dirname, ${argsDisplay}) resolves to ${resolved} \u2014 not found`);
+        if (suggestion) {
+          console.log(`    ${suggestion}`);
+        }
+        warnings.push({ file, pattern: argsDisplay, resolved, suggestion });
+      }
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.log(`  ${yellow}${warnings.length} broken path reference(s) found in hooks${reset} (install continues)`);
+  }
+
+  return warnings;
+}
+
+/**
  * Install to the specified directory for a specific runtime
  * @param {boolean} isGlobal - Whether to install globally or locally
  * @param {string} runtime - Target runtime ('claude', 'opencode', 'gemini')
@@ -1886,6 +1951,12 @@ function install(isGlobal, runtime = 'claude') {
       }
     }
     console.log(`  ${green}✓${reset} Installed nf-bin scripts`);
+  }
+
+  // Validate hook path references point to real targets
+  const hooksDestValidation = path.join(targetDir, 'hooks');
+  if (fs.existsSync(hooksDestValidation)) {
+    validateHookPaths(hooksDestValidation, targetDir);
   }
 
   if (failures.length > 0) {
@@ -2639,4 +2710,9 @@ if (hasGlobal && hasLocal) {
       promptLocation(runtimes);
     });
   }
+}
+
+// Export for testing (only when required as a library, not when run directly)
+if (require.main !== module) {
+  module.exports = { validateHookPaths };
 }
