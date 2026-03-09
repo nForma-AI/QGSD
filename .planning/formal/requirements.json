@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T09:35:29.611Z",
-  "content_hash": "dcb6f7dcc2af41b1",
+  "aggregated_at": "2026-03-09T10:30:08.112Z",
+  "content_hash": "8bc6b93edeea3903",
   "schema_version": "1",
   "requirements": [
     {
@@ -4312,6 +4312,18 @@
       "phase": "unknown",
       "status": "Complete",
       "background": "Hooks are authored in a source repository but installed to a different directory, causing __dirname to change. Path references that work in the repo silently break after install because fail-open error handling suppresses the failures; install-time validation surfaces these broken paths early."
+    },
+    {
+      "id": "TRACE-10",
+      "text": "sweepCtoR parses Requirements: header comments from the first 30 lines of source files as a fallback tracing mechanism, counting a file as traced when its declared IDs exist in the requirements envelope.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Many source files self-declare requirement links via // Requirements: ID1, ID2 header comments, but sweepCtoR only checked whether the requirements envelope text mentioned the filename. This inflated the untraced count by 9 files that were already linked.",
+      "provenance": {
+        "source_file": ".planning/quick/240-teach-sweepctor-to-read-requirements-hea/240-PLAN.md",
+        "milestone": "quick-240"
+      }
     }
   ],
   "total": 283

@@ -416,8 +416,8 @@ test('MENU_ITEMS: exit is present in Config module section', () => {
 // 6.5. MODULES — structural contract (activity bar)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test('MODULES: exactly 4 modules defined', () => {
-  assert.strictEqual(_pure.MODULES.length, 4);
+test('MODULES: exactly 5 modules defined', () => {
+  assert.strictEqual(_pure.MODULES.length, 5);
 });
 
 test('MODULES: each module has name, icon, key, and items array', () => {
@@ -430,14 +430,14 @@ test('MODULES: each module has name, icon, key, and items array', () => {
   });
 });
 
-test('MODULES: module names are Agents, Reqs, Config, Sessions', () => {
+test('MODULES: module names are Agents, Reqs, Config, Sessions, Solve', () => {
   const names = _pure.MODULES.map(m => m.name);
-  assert.deepStrictEqual(names, ['Agents', 'Reqs', 'Config', 'Sessions']);
+  assert.deepStrictEqual(names, ['Agents', 'Reqs', 'Config', 'Sessions', 'Solve']);
 });
 
-test('MODULES: hotkeys are f1, f2, f3, f4', () => {
+test('MODULES: hotkeys are f1, f2, f3, f4, f5', () => {
   const keys = _pure.MODULES.map(m => m.key);
-  assert.deepStrictEqual(keys, ['f1', 'f2', 'f3', 'f4']);
+  assert.deepStrictEqual(keys, ['f1', 'f2', 'f3', 'f4', 'f5']);
 });
 
 test('MODULES: Agents module contains agent management actions', () => {
@@ -519,9 +519,9 @@ test('Sessions: MENU_ITEMS includes session-new', () => {
     'MENU_ITEMS must include session-new action from Sessions module');
 });
 
-test('Sessions: tab cycling covers all 4 modules (0→1→2→3→0)', () => {
+test('Sessions: tab cycling covers all 5 modules (0→1→2→3→4→0)', () => {
   const len = _pure.MODULES.length;
-  assert.strictEqual(len, 4);
+  assert.strictEqual(len, 5);
   // Simulate tab cycling: each step is (current + 1) % length
   const sequence = [];
   let idx = 0;
@@ -529,7 +529,7 @@ test('Sessions: tab cycling covers all 4 modules (0→1→2→3→0)', () => {
     sequence.push(idx);
     idx = (idx + 1) % len;
   }
-  assert.deepStrictEqual(sequence, [0, 1, 2, 3, 0]);
+  assert.deepStrictEqual(sequence, [0, 1, 2, 3, 4, 0]);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

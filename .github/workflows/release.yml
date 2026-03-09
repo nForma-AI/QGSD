@@ -1,4 +1,4 @@
-name: Create Release on Tag
+name: Release & Publish
 
 on:
   push:
@@ -6,8 +6,54 @@ on:
       - 'v[0-9]+.[0-9]+*'
 
 jobs:
+  test:
+    name: Pre-release tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CI tests
+        run: npm run test:ci
+
+      - name: Build hooks
+        run: npm run build:hooks
+
+      - name: Verify package contents
+        run: |
+          echo "=== Package dry-run ==="
+          npm pack --dry-run 2>&1 | grep -E 'total files|package size|📦'
+          echo ""
+          echo "=== Checking for test files ==="
+          count=$(npm pack --dry-run 2>&1 | grep -c '\.test\.' || true)
+          if [ "$count" -gt 0 ]; then
+            echo "ERROR: $count test files found in package"
+            exit 1
+          fi
+          echo "OK: 0 test files in package"
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "ERROR: Tag version ($TAG_VERSION) does not match package.json ($PKG_VERSION)"
+            exit 1
+          fi
+          echo "OK: Tag v${TAG_VERSION} matches package.json ${PKG_VERSION}"
+
   release:
     name: Create GitHub Release
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -28,7 +74,6 @@ jobs:
         env:
           TAG_NAME: ${{ steps.tag_info.outputs.tag_name }}
         run: |
-          # Extract annotated tag subject and body
           TITLE=$(git tag -l --format='%(contents:subject)' "$TAG_NAME")
           BODY=$(git tag -l --format='%(contents:body)' "$TAG_NAME")
 
@@ -39,10 +84,8 @@ jobs:
             BODY="Release $TAG_NAME"
           fi
 
-          # Write title for later use
           echo "$TITLE" > /tmp/release-title.txt
 
-          # Build release notes from tag body + install instructions
           {
             echo "$BODY"
             echo ""
@@ -64,3 +107,39 @@ jobs:
           gh release create "$TAG_NAME" \
             --title "$TITLE" \
             --notes-file /tmp/release-notes.md
+
+  publish:
+    name: Publish to npm
+    needs: test
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@nforma.ai'
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build hooks
+        run: npm run build:hooks
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

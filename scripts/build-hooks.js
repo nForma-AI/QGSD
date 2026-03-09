@@ -25,7 +25,9 @@ const HOOKS_TO_COPY = [
   'nf-post-edit-format.js',  // nForma: PostToolUse edit formatting
   'nf-console-guard.js',     // nForma: Stop console guard
   'nf-destructive-git-guard.js', // nForma: PreToolUse destructive git ops warning
+  'nf-mcp-dispatch-guard.js',    // nForma: PreToolUse MCP dispatch warning
   'nf-session-end.js',       // nForma: SessionEnd learning extraction
+  'nf-resolve-bin.js',       // shared nf-bin path resolver (required by multiple hooks)
   'config-loader.js',       // shared config loader (required by multiple hooks)
   'conformance-schema.cjs', // shared conformance schema (required by nf-prompt, nf-stop, nf-circuit-breaker)
 ];

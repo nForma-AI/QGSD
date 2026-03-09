@@ -19,6 +19,7 @@
     "!scripts/generate-terminal-svg.js",
     "!scripts/lint-isolation.js",
     "!scripts/publish.sh",
+    "!scripts/release.sh",
     "templates"
   ],
   "keywords": [
@@ -77,6 +78,7 @@
     "check:tui": "node bin/check-tui-assets-stale.cjs",
     "generate-assets": "npm run generate-terminal && npm run generate-logo && npm run assets:tui",
     "publish:npm": "bash scripts/publish.sh",
+    "release": "bash scripts/release.sh",
     "prepublishOnly": "npm run build:hooks",
     "xstate-to-tla": "node bin/xstate-to-tla.cjs",
     "formal-verify": "node bin/run-formal-verify.cjs",
