@@ -31,6 +31,7 @@ const { spawn }  = require('child_process');
 const fs         = require('fs');
 const path       = require('path');
 const os         = require('os');
+const planningPaths = require('./planning-paths.cjs');
 
 // ─── Config-loader integration (two-layer merge for nf.json settings) ────────
 function loadNfConfig(cwd) {
@@ -734,7 +735,7 @@ function parseImprovements(rawOutput) {
  * @param {string} [opts.unavailMessage]
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, rawOutput, isUnavail, unavailMessage }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, unavailMessage }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
@@ -761,6 +762,10 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
       lines.push(`  - suggestion: "${imp.suggestion}"`);
       lines.push(`    rationale: "${imp.rationale}"`);
     }
+  }
+
+  if (matched_requirement_ids && matched_requirement_ids.length > 0) {
+    lines.push(`matched_requirement_ids: [${matched_requirement_ids.join(', ')}]`);
   }
 
   if (isUnavail && unavailMessage) {
@@ -1030,6 +1035,7 @@ async function main() {
     const reasoning    = parseReasoning(output) || output.slice(0, 400);
     const citations    = parseCitations(output);
     const improvements = requestImprovements ? parseImprovements(output) : [];
+    const matchedReqIds = matchedRequirements.map(r => r.id).filter(Boolean);
 
     result = emitResultBlock({
       slot,
@@ -1038,8 +1044,42 @@ async function main() {
       reasoning,
       citations,
       improvements: improvements.length > 0 ? improvements : undefined,
+      matched_requirement_ids: matchedReqIds,
       rawOutput: output
     });
+
+    // Auto-persist debate trace file (fail-open)
+    try {
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const slug = question.replace(/[^a-z0-9]+/gi, '-').slice(0, 50).toLowerCase().replace(/-+$/, '');
+      const traceFilename = `${dateStr}-${slot}-${slug}.md`;
+      const debatePath = planningPaths.resolve(cwd, 'quorum-debate', { filename: traceFilename });
+      const traceContent = [
+        '---',
+        `date: ${dateStr}`,
+        `question: "${question.replace(/"/g, '\\"')}"`,
+        `slot: ${slot}`,
+        `round: ${round}`,
+        `mode: "${mode || 'unknown'}"`,
+        `verdict: ${verdict}`,
+        `matched_requirement_ids: [${matchedReqIds.join(', ')}]`,
+        `artifact_path: "${artifactPath || ''}"`,
+        '---',
+        '',
+        `# Debate Trace: ${slot} on round ${round}`,
+        '',
+        '## Reasoning',
+        reasoning || '(none)',
+        '',
+        '## Citations',
+        citations || '(none)',
+        ''
+      ].join('\n');
+      fs.mkdirSync(path.dirname(debatePath), { recursive: true });
+      fs.writeFileSync(debatePath, traceContent, 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] debate trace write failed: ${e.message}\n`);
+    }
   }
 
   process.stdout.write(result);
