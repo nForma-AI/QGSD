@@ -1,337 +1,404 @@
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Agents ───────────────┐┌─ Agents (10) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  List Agents           ││#    Slot              Provider       Model                                   Key       Timeout                                                                              │
-│ ▄█▄   ││  Add Agent             ││1    codex-1           subprocess     gpt-5.4                                 ● sub   30000ms                                                                                │
-│ █ █   ││  Clone Slot            ││     codex-cli                                                                                                                                                               │
-│ █▀█   ││  Edit Agent            ││                                                                                                                                                                             │
-│  F1   ││  Remove Agent          ││2    gemini-1          subprocess     gemini-3-pro-preview                    ● sub   30000ms                                                                                │
-│ ───── ││  Reorder Agents        ││     gemini-cli                                                                                                                                                              │
-│       ││  Check Agent Health    ││                                                                                                                                                                             │
-│ █▀█   ││  Login / Auth          ││3    opencode-1        subprocess     grok-code-fast-1                        ● sub   30000ms                                                                                │
-│ ██▀   ││ ─────────────────      ││     opencode-cli                                                                                                                                                            │
-│ █ █   ││  Provider Keys         ││                                                                                                                                                                             │
-│  F2   ││ ─────────────────      ││4    copilot-1         subprocess     gpt-4.1                                 ● sub   30000ms                                                                                │
-│ ───── ││  Batch Rotate Keys     ││     copilot-cli                                                                                                                                                             │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ ▄▀▀   ││  Live Health           ││5    claude-1          AkashML        deepseek-ai/DeepSeek-V3.2               ● set   30000ms                                                                                │
-│ █     ││  Scoreboard            ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│ ▀▄▄   ││ ─────────────────      ││                                                                                                                                                                             │
-│  F3   ││  Update Agents  (1↑)   ││6    claude-2          AkashML        MiniMaxAI/MiniMax-M2.5                  ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▄   ││                        ││7    claude-3          Together.xyz   Qwen/Qwen3-Coder-480B-A35B-Instruct-FP  ● set   30000ms                                                                                │
-│ █▀▀   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F4   ││                        ││8    claude-4          Fireworks      accounts/fireworks/models/kimi-k2p5     ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││9    claude-5          Together.xyz   meta-llama/Llama-4-Maverick-17B-128E-I  ● set   30000ms                                                                                │
-│  ▀▄   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││10   claude-6          Fireworks      accounts/fireworks/models/glm-5         ● set   30000ms                                                                                │
-│       ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [u] update   ⚑ 1 update available — press [u]                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Agents ───────────────┐┌─ Agents (10) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  List Agents           ││#    Slot              Provider       Model                                   Key       Timeout                                                                              │
-│ ▄█▄   ││  Add Agent             ││1    codex-1           subprocess     gpt-5.4                                 ● sub   30000ms                                                                                │
-│ █ █   ││  Clone Slot            ││     codex-cli                                                                                                                                                               │
-│ █▀█   ││  Edit Agent            ││                                                                                                                                                                             │
-│  F1   ││  Remove Agent          ││2    gemini-1          subprocess     gemini-3-pro-preview                    ● sub   30000ms                                                                                │
-│ ───── ││  Reorder Agents        ││     gemini-cli                                                                                                                                                              │
-│       ││  Check Agent Health    ││                                                                                                                                                                             │
-│ █▀█   ││  Login / Auth          ││3    opencode-1        subprocess     grok-code-fast-1                        ● sub   30000ms                                                                                │
-│ ██▀   ││ ─────────────────      ││     opencode-cli                                                                                                                                                            │
-│ █ █   ││  Provider Keys         ││                                                                                                                                                                             │
-│  F2   ││ ─────────────────      ││4    copilot-1         subprocess     gpt-4.1                                 ● sub   30000ms                                                                                │
-│ ───── ││  Batch Rotate Keys     ││     copilot-cli                                                                                                                                                             │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ ▄▀▀   ││  Live Health           ││5    claude-1          AkashML        deepseek-ai/DeepSeek-V3.2               ● set   30000ms                                                                                │
-│ █     ││  Scoreboard            ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│ ▀▄▄   ││ ─────────────────      ││                                                                                                                                                                             │
-│  F3   ││  Update Agents  (1↑)   ││6    claude-2          AkashML        MiniMaxAI/MiniMax-M2.5                  ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▄   ││                        ││7    claude-3          Together.xyz   Qwen/Qwen3-Coder-480B-A35B-Instruct-FP  ● set   30000ms                                                                                │
-│ █▀▀   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F4   ││                        ││8    claude-4          Fireworks      accounts/fireworks/models/kimi-k2p5     ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││9    claude-5          Together.xyz   meta-llama/Llama-4-Maverick-17B-128E-I  ● set   30000ms                                                                                │
-│  ▀▄   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││10   claude-6          Fireworks      accounts/fireworks/models/glm-5         ● set   30000ms                                                                                │
-│       ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [u] update   ⚑ 1 update available — press [u]                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Agents ───────────────┐┌─ Agents (10) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  List Agents           ││#    Slot              Provider       Model                                   Key       Timeout                                                                              │
-│ ▄█▄   ││  Add Agent             ││1    codex-1           subprocess     gpt-5.4                                 ● sub   30000ms                                                                                │
-│ █ █   ││  Clone Slot            ││     codex-cli                                                                                                                                                               │
-│ █▀█   ││  Edit Agent            ││                                                                                                                                                                             │
-│  F1   ││  Remove Agent          ││2    gemini-1          subprocess     gemini-3-pro-preview                    ● sub   30000ms                                                                                │
-│ ───── ││  Reorder Agents        ││     gemini-cli                                                                                                                                                              │
-│       ││  Check Agent Health    ││                                                                                                                                                                             │
-│ █▀█   ││  Login / Auth          ││3    opencode-1        subprocess     grok-code-fast-1                        ● sub   30000ms                                                                                │
-│ ██▀   ││ ─────────────────      ││     opencode-cli                                                                                                                                                            │
-│ █ █   ││  Provider Keys         ││                                                                                                                                                                             │
-│  F2   ││ ─────────────────      ││4    copilot-1         subprocess     gpt-4.1                                 ● sub   30000ms                                                                                │
-│ ───── ││  Batch Rotate Keys     ││     copilot-cli                                                                                                                                                             │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ ▄▀▀   ││  Live Health           ││5    claude-1          AkashML        deepseek-ai/DeepSeek-V3.2               ● set   30000ms                                                                                │
-│ █     ││  Scoreboard            ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│ ▀▄▄   ││ ─────────────────      ││                                                                                                                                                                             │
-│  F3   ││  Update Agents  (1↑)   ││6    claude-2          AkashML        MiniMaxAI/MiniMax-M2.5                  ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▄   ││                        ││7    claude-3          Together.xyz   Qwen/Qwen3-Coder-480B-A35B-Instruct-FP  ● set   30000ms                                                                                │
-│ █▀▀   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F4   ││                        ││8    claude-4          Fireworks      accounts/fireworks/models/kimi-k2p5     ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││9    claude-5          Together.xyz   meta-llama/Llama-4-Maverick-17B-128E-I  ● set   30000ms                                                                                │
-│  ▀▄   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││10   claude-6          Fireworks      accounts/fireworks/models/glm-5         ● set   30000ms                                                                                │
-│       ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [u] update   ⚑ 1 update available — press [u]                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Agents ───────────────┐┌─ Agents (10) ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  List Agents           ││#    Slot              Provider       Model                                   Key       Timeout                                                                              │
-│ ▄█▄   ││  Add Agent             ││1    codex-1           subprocess     gpt-5.4                                 ● sub   30000ms                                                                                │
-│ █ █   ││  Clone Slot            ││     codex-cli                                                                                                                                                               │
-│ █▀█   ││  Edit Agent            ││                                                                                                                                                                             │
-│  F1   ││  Remove Agent          ││2    gemini-1          subprocess     gemini-3-pro-preview                    ● sub   30000ms                                                                                │
-│ ───── ││  Reorder Agents        ││     gemini-cli                                                                                                                                                              │
-│       ││  Check Agent Health    ││                                                                                                                                                                             │
-│ █▀█   ││  Login / Auth          ││3    opencode-1        subprocess     grok-code-fast-1                        ● sub   30000ms                                                                                │
-│ ██▀   ││ ─────────────────      ││     opencode-cli                                                                                                                                                            │
-│ █ █   ││  Provider Keys         ││                                                                                                                                                                             │
-│  F2   ││ ─────────────────      ││4    copilot-1         subprocess     gpt-4.1                                 ● sub   30000ms                                                                                │
-│ ───── ││  Batch Rotate Keys     ││     copilot-cli                                                                                                                                                             │
-│       ││ ─────────────────      ││                                                                                                                                                                             │
-│ ▄▀▀   ││  Live Health           ││5    claude-1          AkashML        deepseek-ai/DeepSeek-V3.2               ● set   30000ms                                                                                │
-│ █     ││  Scoreboard            ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│ ▀▄▄   ││ ─────────────────      ││                                                                                                                                                                             │
-│  F3   ││  Update Agents  (1↑)   ││6    claude-2          AkashML        MiniMaxAI/MiniMax-M2.5                  ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.akashml.com/v1                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▄   ││                        ││7    claude-3          Together.xyz   Qwen/Qwen3-Coder-480B-A35B-Instruct-FP  ● set   30000ms                                                                                │
-│ █▀▀   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▀▄▄   ││                        ││                                                                                                                                                                             │
-│  F4   ││                        ││8    claude-4          Fireworks      accounts/fireworks/models/kimi-k2p5     ● set   30000ms                                                                                │
-│ ───── ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│ ▄▀▀   ││                        ││9    claude-5          Together.xyz   meta-llama/Llama-4-Maverick-17B-128E-I  ● set   30000ms                                                                                │
-│  ▀▄   ││                        ││     claude-code-router   https://api.together.xyz/v1                                                                                                                        │
-│ ▄▄▀   ││                        ││                                                                                                                                                                             │
-│  F5   ││                        ││10   claude-6          Fireworks      accounts/fireworks/models/glm-5         ● set   30000ms                                                                                │
-│       ││                        ││     claude-code-router   https://api.fireworks.ai/inference/v1                                                                                                              │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [u] update   ⚑ 1 update available — press [u]                                                                                                            │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Coverage ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements Coverage                                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││────────────────────────────────────────────────────────────                                                                                                                 │
-│ █ █   ││  Traceability          ││                                                                                                                                                                             │
-│ █▀█   ││  Aggregate             ││  Total:    322                                                                                                                                                              │
-│  F1   ││  Coverage Gaps         ││  Complete: 293 (91.0%)                                                                                                                                                      │
-│ ───── ││  Gate Scoring          ││  Pending:  29 (9.0%)                                                                                                                                                        │
-│       ││                        ││                                                                                                                                                                             │
-│ █▀█   ││                        ││By Category                                                                                                                                                                  │
-│ ██▀   ││                        ││  Group                               Reqs  Complete  Includes                                                                                                               │
-│ █ █   ││                        ││  ────────────────────────────────────────────────────────────────────────────────────                                                                                       │
-│  F2   ││                        ││  Hooks & Enforcement                 34    34 (100%  Detection, Enforcement, Enforcement Layer, Oscillation Resolution Mode, Self-Healing...                                │
-│ ───── ││                        ││  Installer & CLI                     33    29 (88%)  Changelog, Install Integration, Installer, Installer Extensions, Portability...                                        │
-│       ││                        ││  Planning & Tracking                 27    27 (100%  Activity Tracking, Decomposition Awareness, Feedback Loops, GSD Sync Strategy, Planning Integration...                 │
-│ ▄▀▀   ││                        ││  Quorum & Dispatch                   27    27 (100%  Architecture, Calibration Governance, Dispatch Reliability, Quorum Gates, Quorum-First Behavior (Meta...               │
-│ █     ││                        ││  MCP & Agents                        26    26 (100%  Agent Roster, Health Checker, MCP Environment Model, MCP Server Detection, Multiple Slots...                           │
-│ ▀▄▄   ││                        ││  Formal Verification                 26    26 (100%  Liveness Lint, Property Annotations, Schema Foundation, Sensitivity Analysis, Spec Completeness...                     │
-│  F3   ││                        ││  Configuration                       22    22 (100%  API Key Management, Composition Config, Config Extensions, Config System                                               │
-│ ───── ││                        ││  Observability & Diagnostics         16    13 (81%)  Diagnostics, Observability, Operational Signals, Scoreboard Slot Tracking, Triage Bundle                               │
-│       ││                        ││  Testing & Quality                   11    11 (100%  Build & Test, Failover & Recovery, Recovery, Repair Safety, Standardization...                                         │
-│ ▄▀▄   ││                        ││  README Structure                    10    10 (100%                                                                                                                         │
-│ █▀▀   ││                        ││  Governance & DX                     8     8 (100%)                                                                                                                         │
-│ ▀▄▄   ││                        ││  Observe Skill                       7     0 (0%)                                                                                                                           │
-│  F4   ││                        ││  Debt Ledger                         6     0 (0%)                                                                                                                           │
-│ ───── ││                        ││  Integration                         6     6 (100%)                                                                                                                         │
-│       ││                        ││  Evidence                            5     5 (100%)                                                                                                                         │
-│ ▄▀▀   ││                        ││  Solve P->F Integration              5     0 (0%)                                                                                                                           │
-│  ▀▄   ││                        ││  Reasoning                           5     5 (100%)                                                                                                                         │
-│ ▄▄▀   ││                        ││  Quality Hardening                   4     4 (100%)                                                                                                                         │
-│  F5   ││                        ││  Fingerprinting                      4     0 (0%)                                                                                                                           │
-│       ││                        ││  Gates                               4     4 (100%)                                                                                                                         │
-│       ││                        ││  Memory Persistence                  4     4 (100%)                                                                                                                         │
-│       ││                        ││  Security                            4     4 (100%)                                                                                                                         │
-│       ││                        ││  Semantics                           4     4 (100%)                                                                                                                         │
-│       ││                        ││  Token Optimization & Model Routing  4     4 (100%)                                                                                                                         │
-│       ││                        ││  CI/CD                               3     3 (100%)                                                                                                                         │
-│       ││                        ││  Subagent Orchestration              3     3 (100%)                                                                                                                         │
-│       ││                        ││  UX Heuristics                       3     3 (100%)                                                                                                                         │
-│       ││                        ││  Verification & Execution State      3     3 (100%)                                                                                                                         │
-│       ││                        ││  User Guide                          2     2 (100%)                                                                                                                         │
-│       ││                        ││  Parallel Execution                  2     2 (100%)                                                                                                                         │
-│       ││                        ││  Reliability                         2     2 (100%)                                                                                                                         │
-│       ││                        ││  Visual Assets                       2     2 (100%)                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Formal Verification                                                                                                                                                          │
-│       ││                        ││  Models:     127 formal models registered                                                                                                                                   │
-│       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Envelope                                                                                                                                                                     │
-│       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
-│       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────
+> cd /Users/jonathanborduas/code/QGSD && node bin/nForma.cjs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ────────────────────────────────────────────────────────────────────────────────
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
@@ -367,11 +434,11 @@
 │  ▀▄   ││                        ││  Reasoning                           5    │  Operational Visibility (19 specs)               │                                                                              │
 │ ▄▄▀   ││                        ││  Quality Hardening                   4    │  Agent Ecosystem (26 specs)                      │                                                                              │
 │  F5   ││                        ││  Fingerprinting                      4    │  Configuration Safety (26 specs)                 │                                                                              │
-│       ││                        ││  Gates                               4    │  Installation Reliability (36 specs)                                                                                            │
-│       ││                        ││  Memory Persistence                  4     4 (100%)                                                                                                                         │
-│       ││                        ││  Security                            4     4 (100%)                                                                                                                         │
-│       ││                        ││  Semantics                           4     4 (100%)                                                                                                                         │
-│       ││                        ││  Token Optimization & Model Routing  4     4 (100%)                                                                                                                         │
+│       ││                        ││  Gates                               4    │  Installation Reliability (36 specs)             │                                                                              │
+│       ││                        ││  Memory Persistence                  4    │  Planning Discipline (115 specs)                 │                                                                              │
+│       ││                        ││  Security                            4    │                                                  │                                                                              │
+│       ││                        ││  Semantics                           4    │                                                  │                                                                              │
+│       ││                        ││  Token Optimization & Model Routing  4    └──────────────────────────────────────────────────┘                                                                              │
 │       ││                        ││  CI/CD                               3     3 (100%)                                                                                                                         │
 │       ││                        ││  Subagent Orchestration              3     3 (100%)                                                                                                                         │
 │       ││                        ││  UX Heuristics                       3     3 (100%)                                                                                                                         │
@@ -386,15 +453,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -453,15 +520,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -520,15 +587,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -587,15 +654,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -654,15 +721,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -721,15 +788,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
@@ -788,82 +855,15 @@
 │       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
+│       ││                        ││  Linked:     52/322 requirements have check results (16.1%)                                                                                                                 │
+│       ││                        ││  error          7                                                                                                                                                           │
+│       ││                        ││  fail           89                                                                                                                                                          │
+│       ││                        ││  inconclusive   1                                                                                                                                                           │
+│       ││                        ││  pass           18                                                                                                                                                          │
 │       ││                        ││                                                                                                                                                                             │
 │       ││                        ││Envelope                                                                                                                                                                     │
 │       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
 │       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││                                                                                                                                                                             │
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-────────────────────────────────────────────────────────────────────────────────
-┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ nForma AI  [F1]Agt [F2]Req [F3]Cfg [F4]Ses [F5]Sol  [Tab] [C-\] [q]                                                                                                                                            │
-│ Target path: ~/code/QGSD  [ctrl-t] change                                                                                                                                                                      │
-└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-┌───────┐┌─ Reqs ─────────────────┐┌─ Reqs — Coverage ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│       ││  Browse Reqs           ││Requirements Coverage                                                                                                                                                        │
-│ ▄█▄   ││  Coverage              ││────────────────────────────────────────────────────────────                                                                                                                 │
-│ █ █   ││  Traceability          ││                                                                                                                                                                             │
-│ █▀█   ││  Aggregate             ││  Total:    322                                                                                                                                                              │
-│  F1   ││  Coverage Gaps         ││  Complete: 293 (91.0%)                                                                                                                                                      │
-│ ───── ││  Gate Scoring          ││  Pending:  29 (9.0%)                                                                                                                                                        │
-│       ││                        ││                                                                                                                                                                             │
-│ █▀█   ││                        ││By Category                                                                                                                                                                  │
-│ ██▀   ││                        ││  Group                               Reqs  Complete  Includes                                                                                                               │
-│ █ █   ││                        ││  ────────────────────────────────────────────────────────────────────────────────────                                                                                       │
-│  F2   ││                        ││  Hooks & Enforcement                 34    34 (100%  Detection, Enforcement, Enforcement Layer, Oscillation Resolution Mode, Self-Healing...                                │
-│ ───── ││                        ││  Installer & CLI                     33    29 (88%)  Changelog, Install Integration, Installer, Installer Extensions, Portability...                                        │
-│       ││                        ││  Planning & Tracking                 27    27 (100%  Activity Tracking, Decomposition Awareness, Feedback Loops, GSD Sync Strategy, Planning Integration...                 │
-│ ▄▀▀   ││                        ││  Quorum & Dispatch                   27    27 (100%  Architecture, Calibration Governance, Dispatch Reliability, Quorum Gates, Quorum-First Behavior (Meta...               │
-│ █     ││                        ││  MCP & Agents                        26    26 (100%  Agent Roster, Health Checker, MCP Environment Model, MCP Server Detection, Multiple Slots...                           │
-│ ▀▄▄   ││                        ││  Formal Verification                 26    26 (100%  Liveness Lint, Property Annotations, Schema Foundation, Sensitivity Analysis, Spec Completeness...                     │
-│  F3   ││                        ││  Configuration                       22    22 (100%  API Key Management, Composition Config, Config Extensions, Config System                                               │
-│ ───── ││                        ││  Observability & Diagnostics         16    13 (81%)  Diagnostics, Observability, Operational Signals, Scoreboard Slot Tracking, Triage Bundle                               │
-│       ││                        ││  Testing & Quality                   11    11 (100%  Build & Test, Failover & Recovery, Recovery, Repair Safety, Standardization...                                         │
-│ ▄▀▄   ││                        ││  README Structure                    10    10 (100%                                                                                                                         │
-│ █▀▀   ││                        ││  Governance & DX                     8     8 (100%)                                                                                                                         │
-│ ▀▄▄   ││                        ││  Observe Skill                       7     0 (0%)                                                                                                                           │
-│  F4   ││                        ││  Debt Ledger                         6    ┌─ Browse by Principle ────────────────────────────┐                                                                              │
-│ ───── ││                        ││  Integration                         6    │  Protocol Integrity (36 specs)                   │                                                                              │
-│       ││                        ││  Evidence                            5    │  Quorum Governance (27 specs)                    │                                                                              │
-│ ▄▀▀   ││                        ││  Solve P->F Integration              5    │  Formal Rigor (37 specs)                         │                                                                              │
-│  ▀▄   ││                        ││  Reasoning                           5    │  Operational Visibility (19 specs)               │                                                                              │
-│ ▄▄▀   ││                        ││  Quality Hardening                   4    │  Agent Ecosystem (26 specs)                      │                                                                              │
-│  F5   ││                        ││  Fingerprinting                      4    │  Configuration Safety (26 specs)                 │                                                                              │
-│       ││                        ││  Gates                               4    │  Installation Reliability (36 specs)             │                                                                              │
-│       ││                        ││  Memory Persistence                  4    │  Planning Discipline (115 specs)                 │                                                                              │
-│       ││                        ││  Security                            4    │                                                  │                                                                              │
-│       ││                        ││  Semantics                           4    │                                                  │                                                                              │
-│       ││                        ││  Token Optimization & Model Routing  4    └──────────────────────────────────────────────────┘                                                                              │
-│       ││                        ││  CI/CD                               3     3 (100%)                                                                                                                         │
-│       ││                        ││  Subagent Orchestration              3     3 (100%)                                                                                                                         │
-│       ││                        ││  UX Heuristics                       3     3 (100%)                                                                                                                         │
-│       ││                        ││  Verification & Execution State      3     3 (100%)                                                                                                                         │
-│       ││                        ││  User Guide                          2     2 (100%)                                                                                                                         │
-│       ││                        ││  Parallel Execution                  2     2 (100%)                                                                                                                         │
-│       ││                        ││  Reliability                         2     2 (100%)                                                                                                                         │
-│       ││                        ││  Visual Assets                       2     2 (100%)                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Formal Verification                                                                                                                                                          │
-│       ││                        ││  Models:     127 formal models registered                                                                                                                                   │
-│       ││                        ││  Coverage:   232/322 requirements have formal models (72.0%)                                                                                                                │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Check Results                                                                                                                                                                │
-│       ││                        ││  Linked:     60/322 requirements have check results (18.6%)                                                                                                                 │
-│       ││                        ││  fail           29                                                                                                                                                          │
-│       ││                        ││  inconclusive   7                                                                                                                                                           │
-│       ││                        ││  pass           602                                                                                                                                                         │
-│       ││                        ││                                                                                                                                                                             │
-│       ││                        ││Envelope                                                                                                                                                                     │
-│       ││                        ││  Aggregated: 2026-03-09T21:28:34.707Z                                                                                                                                       │
-│       ││                        ││  Hash:       sha256:679c22e1722e5…                                                                                                                                          │
-│       ││                        ││                                                                                                                                                                             │
 │       ││                        ││                                                                                                                                                                             │
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ Reqs 322  293✓  29…  (91%)   Formal 72%   [/] filter  [↑↓] scroll                                                                                                                                              │
