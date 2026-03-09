@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T08:28:03.759Z",
-  "content_hash": "sha256:00b2e07d7a16393a9132ebbf3c5a26bb0845706ff66ad301e68f694b067854af",
+  "aggregated_at": "2026-03-09T09:00:00.000Z",
+  "content_hash": "5235a610e88bb3a0",
   "schema_version": "1",
   "requirements": [
     {
@@ -1260,6 +1260,18 @@
       "provenance": {
         "source_file": ".planning/quick/236-wire-evidence-files-into-gate-promotion-/236-PLAN.md",
         "milestone": "quick-236"
+      }
+    },
+    {
+      "id": "GATE-04",
+      "text": "Gate lifecycle SHALL be self-maintaining: evidence collection runs at the end of every session, gate transitions (promotions and demotions) are logged to a structured changelog with bounded retention, demotion triggers automatically when evidence quality regresses below threshold using hysteresis to prevent oscillation, and formalization candidates are ranked by churn density to guide coverage expansion.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Without continuous evidence collection and automatic demotion, gate maturity levels can become stale. Closing these feedback loops ensures the gate system is self-correcting and surfaces the highest-priority formalization targets.",
+      "provenance": {
+        "source_file": ".planning/quick/238-close-remaining-gate-promotion-feedback-/238-PLAN.md",
+        "milestone": "quick-238"
       }
     },
     {
