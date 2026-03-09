@@ -81,11 +81,17 @@ function runPhaseTlc(specPath, cfgPath, options) {
 
   // Invoke TLC via spawnSync (no shell -- safe subprocess)
   const startMs = Date.now();
+  // Use a fixed metadir so TLC overwrites state files instead of creating timestamped dirs
+  const metaDir = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'states', 'current');
+  fs.rmSync(metaDir, { recursive: true, force: true });
+  fs.mkdirSync(metaDir, { recursive: true });
+
   process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
   const tlcResult = spawnSync(javaExe, [
     '-XX:+UseParallelGC',
     '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
     '-jar', tla2toolsPath,
+    '-metadir', metaDir,
     '-workers', '1',
     '-config', cfgPath,
     specPath,

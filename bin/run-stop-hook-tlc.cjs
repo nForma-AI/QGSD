@@ -130,11 +130,17 @@ process.stdout.write('[run-stop-hook-tlc] Spec:   ' + specPath + '\n');
 process.stdout.write('[run-stop-hook-tlc] Cfg:    ' + cfgPath + '\n');
 
 const _startMs = Date.now();
+// Use a fixed metadir so TLC overwrites state files instead of creating timestamped dirs
+const metaDir = path.join(ROOT, '.planning', 'formal', 'tla', 'states', 'current');
+fs.rmSync(metaDir, { recursive: true, force: true });
+fs.mkdirSync(metaDir, { recursive: true });
+
 process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
 const tlcResult = spawnSync(javaExe, [
   '-XX:+UseParallelGC',
   '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
   '-jar', jarPath,
+  '-metadir', metaDir,
   '-workers', workers,
   '-config', cfgPath,
   specPath,
