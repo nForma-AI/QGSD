@@ -178,25 +178,33 @@ if (cliArgs.includes('--screenshot')) {
       `  ${DIM}Quorum active:${RESET} ${TEAL}codex-1${RESET} ${TEAL}gemini-1${RESET} ${TEAL}copilot-1${RESET} ${TEAL}claude-1${RESET}`,
       `  ${DIM}Claude is always the 5th voting member.${RESET}`,
     ],
-    reqs: [
-      `${WHITE}${BOLD} Requirements${RESET}  ${DIM}287 total · 8 principles · 9 categories${RESET}`,
-      ` ${DIM}${'─'.repeat(CW - 3)}${RESET}`,
-      ``,
-      `  ${DIM}Category                Count    Covered   Formal${RESET}`,
-      `  ${DIM}${'─'.repeat(CW - 5)}${RESET}`,
-      `  ${WHITE}Core Protocol${RESET}            42      ${GREEN}42/42${RESET}     ${GREEN}38/42${RESET}`,
-      `  ${WHITE}Quorum Enforcement${RESET}       31      ${GREEN}31/31${RESET}     ${GREEN}29/31${RESET}`,
-      `  ${WHITE}Circuit Breaker${RESET}          28      ${GREEN}28/28${RESET}     ${GREEN}26/28${RESET}`,
-      `  ${WHITE}Context Engineering${RESET}      35      ${GREEN}35/35${RESET}     ${YELLOW}22/35${RESET}`,
-      `  ${WHITE}Formal Verification${RESET}      24      ${GREEN}24/24${RESET}     ${GREEN}24/24${RESET}`,
-      `  ${WHITE}Token Efficiency${RESET}         19      ${GREEN}19/19${RESET}     ${YELLOW}12/19${RESET}`,
-      `  ${WHITE}Agent Management${RESET}         38      ${GREEN}38/38${RESET}     ${YELLOW}18/38${RESET}`,
-      `  ${WHITE}Security${RESET}                 31      ${GREEN}31/31${RESET}     ${GREEN}28/31${RESET}`,
-      `  ${WHITE}Workflow Automation${RESET}      39      ${GREEN}39/39${RESET}     ${YELLOW}24/39${RESET}`,
-      ``,
-      `  ${DIM}${'─'.repeat(CW - 5)}${RESET}`,
-      `  ${GREEN}287/287${RESET} ${DIM}covered${RESET}  ${YELLOW}221/287${RESET} ${DIM}formally verified${RESET}  ${GREEN}77%${RESET} ${DIM}formal coverage${RESET}`,
-    ],
+    reqs: (() => {
+      try {
+        const _rc = require('./requirements-core.cjs');
+        const _pm = require('./principle-mapping.cjs');
+        const { requirements: _reqs } = _rc.readRequirementsJson();
+        const _grouped = _rc.groupByPrinciple(_reqs);
+        const _total = _reqs.length;
+        const _cats = new Set(_reqs.map(r => r.category || 'Uncategorized'));
+        const _lines = [
+          `${WHITE}${BOLD} Requirements${RESET}  ${DIM}${_total} total · 8 principles · ${_cats.size} categories${RESET}`,
+          ` ${DIM}${'─'.repeat(CW - 3)}${RESET}`,
+          ``,
+          `  ${DIM}Principle                      Specs${RESET}`,
+          `  ${DIM}${'─'.repeat(CW - 5)}${RESET}`,
+        ];
+        for (const p of _pm.PRINCIPLES) {
+          const g = _grouped[p];
+          _lines.push(`  ${WHITE}${p.padEnd(30)}${RESET} ${TEAL}${String(g.count).padStart(4)}${RESET}`);
+        }
+        _lines.push(``);
+        _lines.push(`  ${DIM}${'─'.repeat(CW - 5)}${RESET}`);
+        _lines.push(`  ${GREEN}${_total}${RESET} ${DIM}total requirements across${RESET} ${TEAL}8${RESET} ${DIM}principles${RESET}`);
+        return _lines;
+      } catch (_) {
+        return [`${WHITE}${BOLD} Requirements${RESET}  ${DIM}(data unavailable)${RESET}`];
+      }
+    })(),
     config: [
       `${WHITE}${BOLD} Configuration${RESET}`,
       ` ${DIM}${'─'.repeat(CW - 3)}${RESET}`,
@@ -359,6 +367,7 @@ const {
 
 const { updateAgents, getUpdateStatuses } = require('./update-agents.cjs');
 const reqCore = require('./requirements-core.cjs');
+const principleMapping = require('./principle-mapping.cjs');
 
 // ─── File paths ───────────────────────────────────────────────────────────────
 const CLAUDE_JSON_PATH   = path.join(os.homedir(), '.claude.json');
@@ -2906,12 +2915,42 @@ function renderReqCoverage() {
 async function reqBrowseFlow() {
   const { requirements } = reqCore.readRequirementsJson();
   if (!requirements.length) { setContent('Browse Reqs', 'No requirements found.'); return; }
-  renderReqList(requirements, {});
+
+  const grouped = reqCore.groupByPrinciple(requirements);
+
+  // Show principle picker in a loop; ESC from picker returns to menu
+  while (true) {
+    const items = principleMapping.PRINCIPLES.map(p => ({
+      label: `${p} (${grouped[p].count} specs)`,
+      value: p,
+    }));
+
+    let selected;
+    try {
+      selected = await promptList({ title: 'Browse by Principle', items });
+    } catch (_) {
+      // ESC pressed — return to menu
+      return;
+    }
+
+    // Show specifications for the selected principle
+    const principle = selected.value;
+    const reqs = grouped[principle].requirements;
+    renderReqList(reqs, { principle });
+    // Wait for user to press ESC to go back to principle picker
+    await new Promise(resolve => {
+      contentBox.key(['escape'], function handler() {
+        contentBox.unkey(['escape'], handler);
+        resolve();
+      });
+    });
+  }
 }
 
 function renderReqList(reqs, filters) {
   const lines = [];
   const filterDesc = [];
+  if (filters.principle) filterDesc.push(filters.principle);
   if (filters.category) filterDesc.push(`category=${filters.category}`);
   if (filters.status)   filterDesc.push(`status=${filters.status}`);
   if (filters.search)   filterDesc.push(`search="${filters.search}"`);
