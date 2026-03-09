@@ -7,7 +7,7 @@
       "has_file_access": true,
       "description": "Execute Codex CLI agent non-interactively (slot 1)",
       "mainTool": "codex",
-      "model": "gpt-5.3-codex",
+      "model": "gpt-5.4",
       "model_detect": {
         "file": "~/.codex/config.toml",
         "pattern": "^model = \"([^\"]+)\""
@@ -47,7 +47,7 @@
       "has_file_access": true,
       "description": "Execute Codex CLI agent non-interactively (slot 2)",
       "mainTool": "codex",
-      "model": "gpt-5.3-codex",
+      "model": "gpt-5.4",
       "model_detect": {
         "file": "~/.codex/config.toml",
         "pattern": "^model = \"([^\"]+)\""

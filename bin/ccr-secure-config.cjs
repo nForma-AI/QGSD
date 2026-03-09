@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // bin/ccr-secure-config.cjs
-// Reads the 3 CCR provider API keys from keytar (nforma service) and writes them
+// Reads the 3 CCR provider API keys from the nForma secrets store and writes them
 // into ~/.claude-code-router/config.json with chmod 600.
-// Designed to be called at session start and on-demand. Fail-silent when keytar
-// is unavailable or keys are not yet stored.
+// Designed to be called at session start and on-demand. Fail-silent when secrets
+// store is unavailable or keys are not yet stored.
 
 'use strict';
 
@@ -43,12 +43,12 @@ async function main() {
     togetherKey = await secrets.get('nforma', 'TOGETHER_API_KEY');
     fireworksKey = await secrets.get('nforma', 'FIREWORKS_API_KEY');
   } catch (e) {
-    process.stderr.write('[ccr-secure-config] keytar unavailable: ' + e.message + '\n');
+    process.stderr.write('[ccr-secure-config] secrets store unavailable: ' + e.message + '\n');
     process.exit(0);
   }
 
   if (!akashKey && !togetherKey && !fireworksKey) {
-    process.stderr.write('[ccr-secure-config] No CCR provider keys found in keytar — run manage-agents (option 9) to set them\n');
+    process.stderr.write('[ccr-secure-config] No CCR provider keys found in secrets store — run manage-agents (option 9) to set them\n');
     process.exit(0);
   }
 

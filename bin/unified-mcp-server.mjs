@@ -689,24 +689,26 @@ async function handleRequest(req) {
   }
 }
 
-// ─── Main entry point (async for keytar bootstrap) ────────────────────────────
+// ─── Main entry point ─────────────────────────────────────────────────────────
 async function main() {
-  // ─── Keytar API key bootstrap ─────────────────────────────────────────────────
-  // If running in PROVIDER_SLOT mode, load the slot's API key from keytar at
-  // startup (one keychain access per process — no repeated prompts).
-  // Falls back to ANTHROPIC_API_KEY already in process.env (backward-compat).
+  // ─── API key bootstrap ────────────────────────────────────────────────────────
+  // If running in PROVIDER_SLOT mode, load the slot's API key from the local
+  // secrets store at startup. Falls back to ANTHROPIC_API_KEY already in
+  // process.env (backward-compat).
   if (SLOT && !process.env.ANTHROPIC_API_KEY) {
-    const keytarAccount = 'ANTHROPIC_API_KEY_' + SLOT.toUpperCase().replace(/-/g, '_');
+    const secretsAccount = 'ANTHROPIC_API_KEY_' + SLOT.toUpperCase().replace(/-/g, '_');
     try {
-      const { default: keytar } = await import('keytar');
-      const secret = await keytar.getPassword('nforma', keytarAccount);
+      const { createRequire } = await import('module');
+      const require = createRequire(import.meta.url);
+      const secrets = require('./secrets.cjs');
+      const secret = await secrets.get('nforma', secretsAccount);
       if (secret) {
         process.env.ANTHROPIC_API_KEY = secret;
-        process.stderr.write(`[unified-mcp-server] Loaded API key for slot ${SLOT} from keychain\n`);
+        process.stderr.write(`[unified-mcp-server] Loaded API key for slot ${SLOT} from secrets store\n`);
       }
     } catch (e) {
-      // keytar unavailable or no entry — continue without it
-      process.stderr.write(`[unified-mcp-server] keytar unavailable for slot ${SLOT}: ${e.message}\n`);
+      // secrets store unavailable or no entry — continue without it
+      process.stderr.write(`[unified-mcp-server] secrets unavailable for slot ${SLOT}: ${e.message}\n`);
     }
   }
 

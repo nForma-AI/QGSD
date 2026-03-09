@@ -141,17 +141,17 @@ test('exits 0 with diagnostic when secrets.cjs is not found', () => {
   );
 });
 
-// ─── Test 2: keytar throws → exits 0, stderr mentions keytar ─────────────────
+// ─── Test 2: secrets.get throws → exits 0, stderr mentions store ──────────────
 
-test('exits 0 with diagnostic when keytar (secrets.get) throws', () => {
+test('exits 0 with diagnostic when secrets.get throws', () => {
   const tmpDir = makeTmpDir();
   installCli(tmpDir);
-  plantSecrets(tmpDir, { throwMessage: 'keytar native addon not found' });
+  plantSecrets(tmpDir, { throwMessage: 'secrets store error' });
   const { exitCode, stderr } = run(tmpDir);
-  assert.equal(exitCode, 0, 'should exit 0 when keytar is unavailable');
+  assert.equal(exitCode, 0, 'should exit 0 when secrets store is unavailable');
   assert.ok(
-    stderr.includes('keytar unavailable'),
-    `expected "keytar unavailable" in stderr, got: ${stderr}`
+    stderr.includes('secrets store unavailable'),
+    `expected "secrets store unavailable" in stderr, got: ${stderr}`
   );
 });
 
@@ -505,12 +505,12 @@ test('produces no stdout output when exiting 0 because no keys found', () => {
   assert.equal(stdout.trim(), '', `expected empty stdout, got: ${stdout}`);
 });
 
-// ─── Test 20: stderr prefix on keytar error ──────────────────────────────────
+// ─── Test 20: stderr prefix on secrets store error ────────────────────────────
 
-test('stderr keytar-unavailable message carries [ccr-secure-config] prefix', () => {
+test('stderr store-unavailable message carries [ccr-secure-config] prefix', () => {
   const tmpDir = makeTmpDir();
   installCli(tmpDir);
-  plantSecrets(tmpDir, { throwMessage: 'simulated keytar error' });
+  plantSecrets(tmpDir, { throwMessage: 'simulated store error' });
 
   const { stderr } = run(tmpDir);
   assert.ok(
@@ -518,7 +518,7 @@ test('stderr keytar-unavailable message carries [ccr-secure-config] prefix', () 
     `expected [ccr-secure-config] prefix in stderr, got: ${stderr}`
   );
   assert.ok(
-    stderr.includes('simulated keytar error'),
+    stderr.includes('simulated store error'),
     `expected the thrown message text in stderr, got: ${stderr}`
   );
 });

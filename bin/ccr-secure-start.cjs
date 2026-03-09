@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // bin/ccr-secure-start.cjs
 // Wrapper script for claude-code-router that:
-//   1. Populates ~/.claude-code-router/config.json from keytar before starting CCR
+//   1. Populates ~/.claude-code-router/config.json from secrets store before starting CCR
 //   2. Spawns CCR with the provided args
 //   3. Wipes all provider api_key fields from config.json on exit or signal
 //
@@ -45,7 +45,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Step 1: Populate config.json from keytar
+  // Step 1: Populate config.json from secrets store
   try {
     execFileSync(process.execPath, [SECURE_CONFIG], { stdio: 'inherit' });
   } catch (e) {

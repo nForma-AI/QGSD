@@ -356,13 +356,13 @@ function writeUpdatePolicy(slotName, policy, filePath) {
 // Pure transformation functions
 // ---------------------------------------------------------------------------
 
-function deriveKeytarAccount(slotName) {
+function deriveSecretAccount(slotName) {
   return 'ANTHROPIC_API_KEY_' + slotName.toUpperCase().replace(/-/g, '_');
 }
 
 function buildKeyStatus(authType, slotName, secretsLib) {
   if (authType === 'sub') return '\x1b[36m[sub]\x1b[0m';
-  const account = deriveKeytarAccount(slotName);
+  const account = deriveSecretAccount(slotName);
   if (secretsLib && secretsLib.hasKey(account)) return '\x1b[32m[key \u2713]\x1b[0m';
   return '\x1b[90m[no key]\x1b[0m';
 }
@@ -388,15 +388,15 @@ function buildAgentChoiceLabel(name, cfg, providerMap, agentCfg, secretsLib) {
   return `${name.padEnd(14)} ${model.slice(0, 36).padEnd(36)} ${keyStatus}`;
 }
 
-function applyKeyUpdate(updates, keytarAccount, newEnv, secretsLib) {
+function applyKeyUpdate(updates, secretAccount, newEnv, secretsLib) {
   if (!('apiKey' in updates)) return newEnv;
   if (updates.apiKey === '__REMOVE__') {
     delete newEnv.ANTHROPIC_API_KEY;
-    if (secretsLib) secretsLib.delete('nforma', keytarAccount);
+    if (secretsLib) secretsLib.delete('nforma', secretAccount);
   } else {
     delete newEnv.ANTHROPIC_API_KEY;
     if (secretsLib) {
-      secretsLib.set('nforma', keytarAccount, updates.apiKey);
+      secretsLib.set('nforma', secretAccount, updates.apiKey);
     } else {
       newEnv.ANTHROPIC_API_KEY = updates.apiKey;
     }
@@ -638,7 +638,7 @@ async function probeAllSlots(mcpServers, slots, secretsLib) {
     if (!env.ANTHROPIC_BASE_URL) {
       return [slotName, { healthy: null, latencyMs: 0, statusCode: null, error: 'subprocess' }];
     }
-    const account = deriveKeytarAccount(slotName);
+    const account = deriveSecretAccount(slotName);
     let apiKey = env.ANTHROPIC_API_KEY || '';
     if (secretsLib) {
       try {
@@ -771,7 +771,7 @@ async function liveDashboard() {
 module.exports = { readClaudeJson, writeClaudeJson, getGlobalMcpServers };
 
 module.exports._pure = {
-  deriveKeytarAccount,
+  deriveSecretAccount,
   maskKey,
   buildKeyStatus,
   buildAgentChoiceLabel,

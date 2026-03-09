@@ -17,7 +17,7 @@ function run(...args) {
   const result = spawnSync(process.execPath, [CLI, ...args], {
     encoding: 'utf8',
     timeout: 5000,
-    // Prevent actual keychain writes by ensuring keytar fails fast.
+    // Prevent actual writes — arg-validation exit happens before any async code.
     // The arg-validation exit happens before any async code, so no env tricks needed.
   });
   return {

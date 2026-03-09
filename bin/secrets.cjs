@@ -4,65 +4,58 @@ const fs = require('fs');
 const path = require('path');
 const SERVICE = 'nforma';
 
-const INDEX_PATH = path.join(os.homedir(), '.claude', 'nf-key-index.json');
+const SECRETS_PATH = path.join(os.homedir(), '.claude', 'nf-secrets.json');
+// Legacy index path — readIndex still checks this for backward compat migration
+const LEGACY_INDEX_PATH = path.join(os.homedir(), '.claude', 'nf-key-index.json');
 
-// Read the key index (no keychain access needed — just a JSON file)
-function readIndex() {
+// Read the secrets store (plaintext JSON file)
+function readStore() {
   try {
-    return new Set(JSON.parse(fs.readFileSync(INDEX_PATH, 'utf8')).accounts || []);
+    return JSON.parse(fs.readFileSync(SECRETS_PATH, 'utf8')) || {};
   } catch (_) {
-    return new Set();
+    return {};
   }
 }
 
-function writeIndex(accounts) {
-  fs.mkdirSync(path.dirname(INDEX_PATH), { recursive: true });
-  fs.writeFileSync(INDEX_PATH, JSON.stringify({ accounts: [...accounts] }, null, 2));
+function writeStore(store) {
+  fs.mkdirSync(path.dirname(SECRETS_PATH), { recursive: true });
+  fs.writeFileSync(SECRETS_PATH, JSON.stringify(store, null, 2));
 }
 
-// Check if a key exists — no keychain prompt, reads local index only
+// Check if a key exists — reads local JSON store
 function hasKey(key) {
-  return readIndex().has(key);
+  const store = readStore();
+  return Object.prototype.hasOwnProperty.call(store, key) && store[key] != null;
 }
 
-// Lazy-load keytar with a graceful error if the native addon is missing
-function getKeytar() {
-  try {
-    return require('keytar');
-  } catch (e) {
-    throw new Error(
-      'keytar native addon not found. Run `npm install keytar` (requires libsecret-dev on Linux).\n' +
-      'Original error: ' + e.message
-    );
-  }
+async function set(_service, key, value) {
+  const store = readStore();
+  store[key] = value;
+  writeStore(store);
 }
 
-async function set(service, key, value) {
-  await getKeytar().setPassword(service, key, value);
-  const idx = readIndex();
-  idx.add(key);
-  writeIndex(idx);
+async function get(_service, key) {
+  const store = readStore();
+  return store[key] || null;
 }
 
-async function get(service, key) {
-  return getKeytar().getPassword(service, key);
+async function del(_service, key) {
+  const store = readStore();
+  const existed = Object.prototype.hasOwnProperty.call(store, key);
+  delete store[key];
+  writeStore(store);
+  return existed;
 }
 
-async function del(service, key) {
-  const result = await getKeytar().deletePassword(service, key);
-  const idx = readIndex();
-  idx.delete(key);
-  writeIndex(idx);
-  return result;
-}
-
-async function list(service) {
-  return getKeytar().findCredentials(service);
-  // returns [{account, password}]
+async function list(_service) {
+  const store = readStore();
+  return Object.entries(store)
+    .filter(([, v]) => v != null)
+    .map(([account, password]) => ({ account, password }));
 }
 
 /**
- * Reads all secrets stored under `service` from the keychain,
+ * Reads all secrets from the local store,
  * then patches matching env keys in every mcpServers entry in ~/.claude.json.
  *
  * Algorithm:
@@ -73,7 +66,7 @@ async function list(service) {
  *      overwrite `env[account]` with the credential's password.
  *   4. Write the patched JSON back to ~/.claude.json with 2-space indent.
  */
-async function syncToClaudeJson(service) {
+async function syncToClaudeJson(_service) {
   const os = require('os');
   const fs = require('fs');
   const path = require('path');
@@ -82,9 +75,9 @@ async function syncToClaudeJson(service) {
 
   let credentials;
   try {
-    credentials = await list(service);
+    credentials = await list(_service);
   } catch (e) {
-    process.stderr.write('[nf-secrets] keytar unavailable: ' + e.message + '\n');
+    process.stderr.write('[nf-secrets] secrets store unavailable: ' + e.message + '\n');
     return;
   }
 

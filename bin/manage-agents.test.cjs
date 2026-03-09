@@ -2,7 +2,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { _pure } = require('./manage-agents-core.cjs');
-const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
+const { deriveSecretAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, applyKeyUpdate, applyCcrProviderUpdate,
         readNfJson, writeNfJson, slotToFamily, getWlDisplay, readCcrConfigSafe, getCcrProviderForSlot, getKeyInvalidBadge,
         findPresetForUrl, buildCloneEntry,
         classifyProbeResult, writeKeyStatus,
@@ -14,23 +14,23 @@ const { deriveKeytarAccount, maskKey, buildKeyStatus, buildAgentChoiceLabel, app
         liveDashboard } = _pure;
 
 // ---------------------------------------------------------------------------
-// deriveKeytarAccount
+// deriveSecretAccount
 // ---------------------------------------------------------------------------
 
-test('deriveKeytarAccount: claude-7 -> ANTHROPIC_API_KEY_CLAUDE_7', () => {
-  assert.strictEqual(deriveKeytarAccount('claude-7'), 'ANTHROPIC_API_KEY_CLAUDE_7');
+test('deriveSecretAccount: claude-7 -> ANTHROPIC_API_KEY_CLAUDE_7', () => {
+  assert.strictEqual(deriveSecretAccount('claude-7'), 'ANTHROPIC_API_KEY_CLAUDE_7');
 });
 
-test('deriveKeytarAccount: deepseek -> ANTHROPIC_API_KEY_DEEPSEEK', () => {
-  assert.strictEqual(deriveKeytarAccount('deepseek'), 'ANTHROPIC_API_KEY_DEEPSEEK');
+test('deriveSecretAccount: deepseek -> ANTHROPIC_API_KEY_DEEPSEEK', () => {
+  assert.strictEqual(deriveSecretAccount('deepseek'), 'ANTHROPIC_API_KEY_DEEPSEEK');
 });
 
-test('deriveKeytarAccount: my-agent-2 -> ANTHROPIC_API_KEY_MY_AGENT_2', () => {
-  assert.strictEqual(deriveKeytarAccount('my-agent-2'), 'ANTHROPIC_API_KEY_MY_AGENT_2');
+test('deriveSecretAccount: my-agent-2 -> ANTHROPIC_API_KEY_MY_AGENT_2', () => {
+  assert.strictEqual(deriveSecretAccount('my-agent-2'), 'ANTHROPIC_API_KEY_MY_AGENT_2');
 });
 
-test('deriveKeytarAccount: UPPER -> ANTHROPIC_API_KEY_UPPER (already uppercase)', () => {
-  assert.strictEqual(deriveKeytarAccount('UPPER'), 'ANTHROPIC_API_KEY_UPPER');
+test('deriveSecretAccount: UPPER -> ANTHROPIC_API_KEY_UPPER (already uppercase)', () => {
+  assert.strictEqual(deriveSecretAccount('UPPER'), 'ANTHROPIC_API_KEY_UPPER');
 });
 
 // ---------------------------------------------------------------------------
@@ -441,7 +441,7 @@ test('buildCloneEntry: sets PROVIDER_SLOT to newName', () => {
   assert.strictEqual(entry.env.PROVIDER_SLOT, 'claude-7');
 });
 
-test('buildCloneEntry: does NOT copy ANTHROPIC_API_KEY (keytar isolation)', () => {
+test('buildCloneEntry: does NOT copy ANTHROPIC_API_KEY (secrets isolation)', () => {
   const sourceCfg = {
     type: 'stdio',
     command: 'node',
