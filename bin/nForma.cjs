@@ -1056,7 +1056,11 @@ function renderHeader() {
   const A = S.accent;
   const keys = `{${A}-fg}[F1]{/} Agt  {${A}-fg}[F2]{/} Req  {${A}-fg}[F3]{/} Cfg  {${A}-fg}[F4]{/} Ses  {${A}-fg}[F5]{/} Sol  {${A}-fg}[Tab]{/} cycle  {${A}-fg}[C-\\]{/} menu  {${A}-fg}[q]{/} quit `;
   const w = screen.width || 120;
-  const gap = Math.max(2, w - 25 - 74);
+  // Strip blessed tags to get actual visual widths
+  const stripTags = s => s.replace(/\{[^}]*\}/g, '');
+  const logoVis = stripTags(logo).length;
+  const keysVis = stripTags(keys).length;
+  const gap = Math.max(2, w - logoVis - keysVis - 2); // -2 for border
   const line1 = logo + ' '.repeat(gap) + keys;
 
   // Line 2: target path with edit hint
