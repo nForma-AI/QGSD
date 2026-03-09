@@ -120,6 +120,9 @@ states/
 *.png
 !docs/assets/*.png
 
+# VHS SVG byproducts (keep PNGs in docs/assets/ instead)
+tui-*.svg
+
 # STATE.md backups (legacy + new paths)
 .planning/STATE.md.bak-*
 .planning/archive/state-backups/
