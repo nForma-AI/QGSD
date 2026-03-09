@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Phase: v0.32-03 (User Guide Overhaul)
+Phase: v0.32-04 (Visual Asset Regeneration)
 Plan: 1 of 1 complete
 Status: Phase complete
-Last activity: 2026-03-09 — Completed v0.32-03-01 (User Guide overhaul with screenshots and Getting Started)
+Last activity: 2026-03-09 — Completed v0.32-04-01 (VHS tape hardening + 11 TUI screenshots regenerated)
 
 Progress: [██████████] 100%
 
@@ -24,6 +24,7 @@ Decisions logged in PROJECT.md Key Decisions table.
 - [Phase v0.32-01]: Used HTML img tag with width=720 for TUI hero screenshot; added manual anchor for configuration-reference details block
 - [Phase v0.32-02]: Used flowchart LR Mermaid for architecture diagram; extracted /nf:mcp-setup into visible subsection; moved solve screenshot after Observability table
 - [Phase v0.32-03]: 10 screenshots total (5 Getting Started, 5 feature sections) with width=600; ToC slug validation test; introductory paragraphs before screenshots in Command Reference and Troubleshooting
+- [Phase v0.32-04]: Dynamic VHS path resolution via ls -d glob; tui-sessions.png excluded from determinism check (timestamp variance); health view shows pre-existing nf error
 
 ### Pending Todos
 
