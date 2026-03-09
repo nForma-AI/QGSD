@@ -2224,6 +2224,50 @@ function sweepL3toTC() {
   }
 }
 
+// ── Per-Model Gate Maturity sweep ────────────────────────────────────────────
+
+/**
+ * Per-model gate maturity sweep.
+ * Spawns compute-per-model-gates.cjs --json (in mutation mode)
+ * or --json --dry-run (in report-only mode) and returns summary as residual.
+ * Residual = number of models still at layer_maturity 0.
+ */
+function sweepPerModelGates() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  const args = ['--json'];
+  if (reportOnly) args.push('--dry-run');
+
+  const result = spawnTool('bin/compute-per-model-gates.cjs', args);
+
+  if (!result.ok && !result.stdout) {
+    return { residual: -1, detail: { error: true, stderr: (result.stderr || '').slice(0, 500) } };
+  }
+
+  try {
+    const data = JSON.parse(result.stdout);
+    const totalModels = data.total_models || 0;
+    const avgMaturity = (data.scores && data.scores.avg_layer_maturity) || 0;
+    const zeroMaturityCount = Object.values(data.per_model || {})
+      .filter(m => m.layer_maturity === 0).length;
+    return {
+      residual: zeroMaturityCount,
+      detail: {
+        total_models: totalModels,
+        avg_layer_maturity: avgMaturity,
+        gate_a_pass: (data.scores && data.scores.gate_a_pass) || 0,
+        gate_b_pass: (data.scores && data.scores.gate_b_pass) || 0,
+        gate_c_pass: (data.scores && data.scores.gate_c_pass) || 0,
+        promotions: (data.promotions || []).length,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'JSON parse failed: ' + err.message } };
+  }
+}
+
 // ── Git Heatmap sweep ────────────────────────────────────────────────────────
 
 /**
@@ -2438,6 +2482,9 @@ function computeResidual() {
   const l2_to_l3 = fastMode ? skipLayer : sweepL2toL3();
   const l3_to_tc = fastMode ? skipLayer : sweepL3toTC();
 
+  // Per-model gate maturity (informational — not added to layer_total)
+  const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
+
   const layer_total =
     (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
     (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
@@ -2471,6 +2518,7 @@ function computeResidual() {
     l1_to_l2,
     l2_to_l3,
     l3_to_tc,
+    per_model_gates,
     git_heatmap,
     git_history,
     formal_lint,
@@ -2722,6 +2770,24 @@ function formatReport(iterations, finalResidual, converged) {
 
   const layerTotal = finalResidual.layer_total || 0;
   lines.push('  Alignment subtotal:    ' + layerTotal);
+
+  // Per-Model Gate Maturity section (informational)
+  lines.push('\u2500 Per-Model Gates (maturity) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+  const pmgResidual = finalResidual.per_model_gates ? finalResidual.per_model_gates.residual : -1;
+  lines.push(renderRow('PMG (Per-Model Gates)', pmgResidual));
+
+  if (finalResidual.per_model_gates && finalResidual.per_model_gates.detail && !finalResidual.per_model_gates.detail.skipped) {
+    const pmgd = finalResidual.per_model_gates.detail;
+    lines.push('  Models: ' + (pmgd.total_models || 0) +
+      ', Avg maturity: ' + (pmgd.avg_layer_maturity || 0) +
+      ', Gate A: ' + (pmgd.gate_a_pass || 0) +
+      ', B: ' + (pmgd.gate_b_pass || 0) +
+      ', C: ' + (pmgd.gate_c_pass || 0));
+    if (pmgd.promotions > 0) {
+      lines.push('  Promotions: ' + pmgd.promotions);
+    }
+  }
 
   // Git Heatmap section (informational)
   lines.push('\u2500 Git Heatmap (risk signals) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
@@ -3133,7 +3199,7 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc', 'git_heatmap', 'git_history', 'formal_lint', 'hazard_model']) {
+  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc', 'per_model_gates', 'git_heatmap', 'git_history', 'formal_lint', 'hazard_model']) {
     const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
@@ -3365,6 +3431,7 @@ module.exports = {
   sweepL1toL2,
   sweepL2toL3,
   sweepL3toTC,
+  sweepPerModelGates,
   sweepGitHeatmap,
   sweepGitHistoryEvidence,
   sweepFormalLint,

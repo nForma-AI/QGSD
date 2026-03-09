@@ -201,14 +201,15 @@ function main() {
     process.exit(1);
   }
 
-  const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
+  const registryFile = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
+  const registry = registryFile.models || registryFile;
   const checkResults = loadCheckResults();
 
   if (CHECK_FLAG) {
     const result = checkAllModels(registry, checkResults, FIX_FLAG);
 
     if (FIX_FLAG && result.demotions.length > 0) {
-      fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2) + '\n');
+      fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registryFile, null, 2) + '\n');
     }
 
     if (JSON_FLAG) {
@@ -250,7 +251,7 @@ function main() {
   const result = promoteModel(registry, modelPath, targetLevel, checkResults);
 
   if (result.success) {
-    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2) + '\n');
+    fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registryFile, null, 2) + '\n');
 
     if (JSON_FLAG) {
       process.stdout.write(JSON.stringify(result));
