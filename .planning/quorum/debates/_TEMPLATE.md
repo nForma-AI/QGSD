@@ -5,6 +5,9 @@ consensus: PENDING
 rounds: 0
 participants: []
 tags: []
+mode: ""
+requirement_ids: []
+artifact_path: ""
 ---
 
 # Quorum Debate: [Question Title]

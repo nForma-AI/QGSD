@@ -80,7 +80,15 @@ function validateDebate(content) {
     return { valid: false, errors };
   }
 
-  return { valid: true, frontmatter };
+  const warnings = [];
+  const optionalFields = ['slot', 'round', 'verdict', 'mode', 'matched_requirement_ids', 'artifact_path'];
+  for (const field of optionalFields) {
+    if (frontmatter[field] === undefined) {
+      warnings.push(`Optional field missing: ${field}`);
+    }
+  }
+
+  return { valid: true, frontmatter, warnings };
 }
 
 // CLI mode
