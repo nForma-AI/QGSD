@@ -90,7 +90,7 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. All TUI screenshots embedded in README and User Guide are regenerated and match current TUI output
   2. VHS tape runs successfully with zsh shell, explicit PATH export, and CLAUDECODE unset
-  3. Running the VHS tape twice produces identical screenshot output (deterministic)
+  3. Running the VHS tape twice produces identical screenshot output for static-content screenshots (health and session-claude excluded due to live data variance)
 **Plans:** 1 plan
 Plans:
 - [ ] v0.32-04-01-PLAN.md — Harden VHS tape path resolution, regenerate all 11 TUI screenshots, verify determinism, clean up orphaned SVGs
