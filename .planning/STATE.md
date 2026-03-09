@@ -9,9 +9,10 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 
 ## Current Position
 
-Milestone: v0.32 — Documentation & README Overhaul (SHIPPED 2026-03-09)
-Status: Milestone complete — 14/14 requirements, 4/4 phases, audit PASSED
-Next: Run `/nf:new-milestone` to start next milestone
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-09 — Milestone v0.33 started
 
 ## Accumulated Context
 

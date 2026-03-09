@@ -10,6 +10,18 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.33 — Outer-Loop Convergence Guarantees
+
+**Goal:** Provably guarantee that repeated nf:solve → test → nf:solve cycles make meaningful progress toward formal models that can pinpoint bugs.
+
+**Target features:**
+- Cross-session residual trend tracker — append time series across solve runs, detect per-layer trending
+- Layer oscillation breaker (Option C) — no individual layer oscillates more than once; fix→break→fix blocked with human escalation
+- Predictive power feedback loop — link test failures back to formal properties; score bugs_predicted / total_bugs per model
+- Gate maturity stabilization gates — require stabilization period before re-promotion; detect flip-flop in promotion-changelog
+- NFSolveConvergence TLA+ spec — formal model of the outer loop proving convergence under Option C assumptions
+- Per-model gate persistence — wire --write-per-model with reasons into solve pipeline
+
 ## Shipped: v0.32 — Documentation & README Overhaul (2026-03-09)
 
 **Goal:** Complete documentation overhaul — README restructured for immediate value communication, User Guide rebuilt with visual walkthrough, all screenshots regenerated via automation.
