@@ -55,9 +55,26 @@ function classifyModel(modelPath) {
  */
 function computeLayerMaturity(modelPath, specModules) {
   const normalized = modelPath.replace(/\\/g, '/');
-  // Check if any spec module name appears in the model path
+  const normalizedLower = normalized.toLowerCase();
+  // Strip hyphens/underscores for fuzzy matching (e.g., "account-manager" -> "accountmanager"
+  // matches "NFAccountManager.tla" -> "nfaccountmanager.tla")
+  const strippedPath = normalizedLower.replace(/[-_]/g, '');
+
   for (const mod of specModules) {
-    if (normalized.toLowerCase().includes(mod.toLowerCase())) {
+    const modLower = mod.toLowerCase();
+    // Path 1: exact substring match (original behavior)
+    if (normalizedLower.includes(modLower)) {
+      return 1;
+    }
+    // Path 2: stripped match — remove hyphens/underscores from both sides
+    const strippedMod = modLower.replace(/[-_]/g, '');
+    if (strippedPath.includes(strippedMod)) {
+      return 1;
+    }
+    // Path 3: all hyphen-parts present in path (order-independent)
+    // e.g., "tui-nav" -> ["tui","nav"] both in "tuinavigation"
+    const parts = modLower.split('-').filter(p => p.length > 1);
+    if (parts.length > 1 && parts.every(p => strippedPath.includes(p))) {
       return 1;
     }
   }
