@@ -1929,3 +1929,44 @@
 
 **Status:** Complete
 
+
+## RDME-01: TUI section promoted from `<details>` to visible section with hero screenshot ab
+
+**Requirement:** TUI section promoted from `<details>` to visible section with hero screenshot above the fold
+
+**Category:** README Structure
+
+**Implementation:** README structure requirement implemented directly in README.md content organization and formatting.
+
+**Source files:** README.md
+
+## RLS-01: `package.json` version field bumped from `0.1.0` to `0.2.0`
+
+**Requirement:** `package.json` version field bumped from `0.1.0` to `0.2.0`
+
+**Category:** Installer & CLI
+
+**Implementation:** Release process requirement tracked via package.json version field, MILESTONES.md archive, and git tagging workflow.
+
+**Source files:** package.json, MILESTONES.md
+
+## SAFE-02: Legacy pre-versioning numeric phase dirs 18-39 are archived to `.planning/archiv
+
+**Requirement:** Legacy pre-versioning numeric phase dirs 18-39 are archived to `.planning/archive/legacy/`
+
+**Category:** Testing & Quality
+
+**Implementation:** Safety requirement enforced by bin/install.js archive logic for legacy numeric phase directories.
+
+**Source files:** bin/install.js
+
+## SPEC-02: `QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detec
+
+**Requirement:** `QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected
+
+**Category:** Formal Verification
+
+**Implementation:** Specification audit requirement verified by formal verification pipeline comparing TLA+ models against source code.
+
+**Source files:** .planning/formal/tla/NFOscillation.tla, hooks/nf-circuit-breaker.js
+

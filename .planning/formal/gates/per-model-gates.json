@@ -1,0 +1,2170 @@
+{
+  "schema_version": "2",
+  "generated": "2026-03-09T23:10:23.548Z",
+  "total_models": 127,
+  "evidence_readiness": {
+    "score": 2,
+    "total": 5
+  },
+  "models": {
+    ".planning/formal/alloy/solve-session-persistence.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-13)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/account-pool-structure.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req CRED-07 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [CRED-07, CRED-08, CRED-09, CRED-10, CRED-11], no matching check-results"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/availability-parsing.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req CALIB-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CALIB-OMISSION has test recipe (via req CALIB-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/install-scope.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req INST-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/quorum-composition.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req COMP-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/quorum-votes.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no requirements mapped"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/scoreboard-recompute.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req SCBD-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SCBD-OMISSION has test recipe (via req SCBD-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/taxonomy-safety.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [SCBD-05, SCBD-06, SCBD-07], no matching check-results"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/transcript-scan.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req STOP-08 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-STOP-OMISSION has test recipe (via req STOP-08)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/mcp-availability.pm": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req MCPENV-04 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req FAIL-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/oauth-rotation.pm": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req PRM-AM-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CRED-OMISSION has test recipe (via req CRED-12)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/quorum.pm": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "no source_layer and could not infer from path"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no requirements mapped"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "ADVISORY",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFAccountManager.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 6 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CRED-OMISSION has test recipe (via req CRED-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFCircuitBreaker.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DETECT-OMISSION has test recipe (via req DETECT-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFConvergence.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ORES-OMISSION has test recipe (via req ORES-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFDeliberation.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-02)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDMCPEnv.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req MCPENV-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-MCPENV-OMISSION has test recipe (via req MCPENV-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFOscillation.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DETECT-OMISSION has test recipe (via req DETECT-04)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFPreFilter.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-03)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDQuorum.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 10 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDQuorum_xstate.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFRecruiting.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SLOT-OMISSION has test recipe (via req SLOT-02)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFStopHook.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 8 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/TUINavigation.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 6 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [TUI-01, TUI-02, TUI-03, TUI-04, TUI-05, TUI-06], no matching check-results"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDActivityTracking.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [ACT-01, ACT-02, ACT-03, ACT-04, ACT-05, ACT-06, ACT-07]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 7 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ACT-OMISSION has test recipe (via req ACT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDSetupWizard.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [WIZ-01, WIZ-02, WIZ-03, WIZ-04, WIZ-05, WIZ-08, WIZ-09, WIZ-10]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 8 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-WIZ-OMISSION has test recipe (via req WIZ-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDPromptHook.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [UPS-01, UPS-02, UPS-03, UPS-04, UPS-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-UPS-OMISSION has test recipe (via req UPS-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDDispatchPipeline.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DISP-01, DISP-02, DISP-03, DISP-04, DISP-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDEnforcement.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [ENFC-01, ENFC-02, ENFC-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ENFC-OMISSION has test recipe (via req ENFC-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDInstallerIdempotency.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-06)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDBreakerState.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-STATE-OMISSION has test recipe (via req STATE-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDKeyManagement.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [KEY-01, KEY-02, KEY-03, KEY-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-KEY-OMISSION has test recipe (via req KEY-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDAgentProvisioning.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [AGENT-01, AGENT-02, AGENT-03, PROV-01, PROV-02, PROV-03, PRST-01, PRST-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 8 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-AGENT-OMISSION has test recipe (via req AGENT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDConfigPortability.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [PORT-01, PORT-02, PORT-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-PORT-OMISSION has test recipe (via req PORT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/config-two-layer.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CONF-01, CONF-02, CONF-03, CONF-04, CONF-05, CONF-06, CONF-07, CONF-08, CONF-09]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 9 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req CONF-03)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/mcp-detection.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [MCP-01, MCP-02, MCP-03, MCP-04, MCP-05, MCP-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 6 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-MCP-OMISSION has test recipe (via req MCP-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/schema-extensions.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SCHEMA-01, SCHEMA-02, SCHEMA-03, SCHEMA-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SCHEMA-OMISSION has test recipe (via req SCHEMA-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/unified-check-results.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [UNIF-01, UNIF-02, UNIF-03, UNIF-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-UNIF-OMISSION has test recipe (via req UNIF-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/multi-slot-structure.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req SLOT-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-MULTI-OMISSION has test recipe (via req MULTI-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/quorum-policy.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 6 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req COMP-02)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/architecture-registry.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [ARCH-01, ARCH-02, ARCH-03, META-01, META-02, META-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 6 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ARCH-OMISSION has test recipe (via req ARCH-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/traceability-annotations.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [TRACE-01, TRACE-02, TRACE-03, TRACE-04, TRACE-05, ANNOT-01, ANNOT-02, ANNOT-03, ANNOT-04, ANNOT-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 10 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ANNOT-OMISSION has test recipe (via req ANNOT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/observability-delivery.pm": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-01, OBS-02, OBS-03, OBS-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/deliberation-healing.pm": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req HEAL-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDDashboard.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DASH-01, DASH-02, DASH-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DASH-OMISSION has test recipe (via req DASH-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDCIChecks.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req DRIFT-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 7 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DRIFT-OMISSION has test recipe (via req DRIFT-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDSensitivity.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SENS-01, SENS-02, SENS-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SENS-OMISSION has test recipe (via req SENS-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDSpecGeneration.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SPEC-04, LOOP-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-04)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/state-space-analysis.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DECOMP-01, DECOMP-02, DECOMP-03, DECOMP-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DECOMP-OMISSION has test recipe (via req DECOMP-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/evidence-triage.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [EVID-01, EVID-02, TRIAGE-01, TRIAGE-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/uppaal-model-reqs.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [UPPAAL-01, UPPAAL-02, UPPAAL-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-UPPAAL-OMISSION has test recipe (via req UPPAAL-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/signal-analysis-tools.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SIG-01, SIG-02, SIG-03, SIG-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SIG-OMISSION has test recipe (via req SIG-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/gsd-sync-invariants.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SYNC-01, SYNC-02, SYNC-03, SYNC-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SYNC-OMISSION has test recipe (via req SYNC-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/health-validation.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [HLTH-01, HLTH-02, HLTH-03, VIS-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-HLTH-OMISSION has test recipe (via req HLTH-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/verification-integration.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [VERIFY-01, VERIFY-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/provider-failure.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [FAIL-02, CALIB-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CALIB-OMISSION has test recipe (via req CALIB-04)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/codebase-arch-constraints.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [ARCH-10, REN-03, STD-10]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-ARCH-OMISSION has test recipe (via req ARCH-10)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-consistency.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-01, SOLVE-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/config-zero-providers.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CONF-10]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [CONF-10], no matching check-results"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/decomp-cross-model.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DECOMP-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DECOMP-OMISSION has test recipe (via req DECOMP-05)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/formal-test-trace.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [TRACE-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-06)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/ci-pipeline-gates.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CI-01, CI-02, CI-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CI-OMISSION has test recipe (via req CI-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/polyrepo-config.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CONF-11, CONF-12]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [CONF-11, CONF-12], no matching check-results"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDAgentLoop.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-AGT-OMISSION has test recipe (via req AGT-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/security-scanning.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SEC-01, SEC-02, SEC-03, SEC-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SEC-OMISSION has test recipe (via req SEC-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/reliability-patterns.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [REL-01, REL-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-REL-OMISSION has test recipe (via req REL-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/ux-feedback-safety.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-UX-OMISSION has test recipe (via req UX-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/platform-install-compat.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [PLAT-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-PLAT-OMISSION has test recipe (via req PLAT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/cli-exit-conventions.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-05)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solver-doc-layers.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-03, SOLVE-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-03)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/bin-path-resolution.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [INST-11]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-11)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/baseline-merge-idempotent.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [INST-12]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-12)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/baseline-requirements-filter.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [INIT-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INIT-OMISSION has test recipe (via req INIT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDTUIModules.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [NAV-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDTUISessions.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [NAV-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-02)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/terminal-emulation-purity.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [NAV-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-03)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDDeliberationRevision.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-05)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/settings-hub.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [WIZ-11]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-WIZ-OMISSION has test recipe (via req WIZ-11)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/ci-test-fallback.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CI-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CI-OMISSION has test recipe (via req CI-04)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/dispatch-formal-context.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DISP-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-06)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/observability-analysis.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-06, OBS-07, OBS-08]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-06)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solver-portability.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-05, SOLVE-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-05)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/NFQuorum.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no requirements mapped"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-automation-features.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-09]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-09)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-legacy-merge.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-8]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-8)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-ft-recipe.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-7]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-7)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/headless-execution.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [VERIFY-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-03)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/jvm-heap-sequential.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [VERIFY-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-04)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/traceability-obligations.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DEBT-01, FVTOOL-01, TRACE-07]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DEBT-OMISSION has test recipe (via req DEBT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/project-identity.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [PROJECT-01, PROJECT-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-PROJECT-OMISSION has test recipe (via req PROJECT-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/doc-claims-backing.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DOC-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DOC-OMISSION has test recipe (via req DOC-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-tc-coverage.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-10]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-10)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/observability-handlers.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-09, OBS-10, OBS-11, OBS-12]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-09)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/evidence-scope-scan.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [EVID-03, SPEC-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-03)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/code-quality-guardrails.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GUARD-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GUARD-OMISSION has test recipe (via req GUARD-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDPlanningState.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-STATE-OMISSION has test recipe (via req STATE-05)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDSessionPersistence.tla": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-04)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/observability-handler-arch.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-13, OBS-14, OBS-15]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-13)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/gate-a-scoping.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GATE-01]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/spec-quality-guardrails.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SPEC-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-06)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/trace-event-normalization.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [TRACE-08]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-08)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/mcp-availability.props": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req FAIL-01 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req FAIL-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/oauth-rotation.props": {
+      "gate_a": {
+        "pass": true,
+        "reason": "passing trace for req CRED-12 (property: unnamed)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-CRED-OMISSION has test recipe (via req CRED-12)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/quorum.props": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/observability-delivery.props": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-01, OBS-02, OBS-03, OBS-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 4 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-01)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/prism/deliberation-healing.props": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req HEAL-01)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/config-audit.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CONF-13]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [CONF-13], no matching check-results"
+      },
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-result-schema.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-11, SOLVE-12]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-11)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/proximity-index.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [TRACE-09]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-09)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/wiring-awareness.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [VERIFY-05]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-05)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/tla/QGSDCheckpointGate.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [QUORUM-06]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-06)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/doc-presentation.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DOC-02, DOC-03]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-DOC-OMISSION has test recipe (via req DOC-02)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/git-history-evidence.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [EVID-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-04)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/health-diagnostic-routing.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [OBS-16]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-16)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/hook-portability-guard.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GUARD-02, PORT-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GUARD-OMISSION has test recipe (via req GUARD-02)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/prism-delegation.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [FVTOOL-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-FVTOOL-OMISSION has test recipe (via req FVTOOL-02)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/requirements-aggregation.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-18]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-18)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-decomposition.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-14, SOLVE-15]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-14)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-tui-features.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-16, SOLVE-17]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-16)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/hook-module-existence.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-19, SOLVE-20, SOLVE-21, SOLVE-22, SOLVE-23]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 5 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-19)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/autoclose-signals.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GATE-02]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-02)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/session-counter-tracking.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SPEC-07]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-07)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/debate-trace-persistence.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DISP-07]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-07)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/gate-promotion-lifecycle.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GATE-03, GATE-04]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-03)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/gate-scoring-traces.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [GATE-05, TRACE-10]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-05)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/installer-path-validation.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 1 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-13)"
+      },
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    },
+    ".planning/formal/alloy/solve-diagnostics-tui.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [SOLVE-24, SOLVE-25]"
+      },
+      "gate_b": {
+        "pass": true,
+        "reason": "L3 model with 2 requirement(s)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-24)"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false
+    }
+  }
+}

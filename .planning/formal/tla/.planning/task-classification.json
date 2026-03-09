@@ -1,0 +1,10 @@
+{
+  "ts": "2026-03-09T23:29:25.518Z",
+  "complexity": "moderate",
+  "tier": "sonnet",
+  "thinking_budget": 16000,
+  "filtered_slots": [
+    "codex-1",
+    "gemini-1"
+  ]
+}

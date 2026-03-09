@@ -1,29 +1,21 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T22:48:47.953Z",
+    "generated_at": "2026-03-09T23:26:58.384Z",
     "generator": "model-complexity-profile",
     "version": "1.0"
   },
   "profiles": {
-    "tla:mctuinavigation": {
-      "formalism": "tla",
-      "runtime_ms": 674,
-      "estimated_states": 8,
-      "risk_level": "MINIMAL",
-      "variable_count": 2,
-      "runtime_class": "FAST"
-    },
-    "alloy:quorum-votes": {
-      "formalism": "alloy",
-      "runtime_ms": 4092,
+    "ci:trace-redaction": {
+      "formalism": "redaction",
+      "runtime_ms": 1,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "MODERATE"
+      "runtime_class": "FAST"
     },
     "ci:trace-schema-drift": {
       "formalism": "trace",
-      "runtime_ms": 26,
+      "runtime_ms": 21,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -31,39 +23,15 @@
     },
     "ci:liveness-fairness-lint": {
       "formalism": "tla",
-      "runtime_ms": 1,
+      "runtime_ms": 9,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
     },
-    "tla:prefilter": {
-      "formalism": "tla",
-      "runtime_ms": 713,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:mcbreaker-state": {
-      "formalism": "tla",
-      "runtime_ms": 691,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mctuimodules": {
-      "formalism": "tla",
-      "runtime_ms": 729,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mctuisessions": {
-      "formalism": "tla",
-      "runtime_ms": 774,
+    "ci:conformance-traces": {
+      "formalism": "trace",
+      "runtime_ms": 692,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -71,15 +39,103 @@
     },
     "tla:mcagentloop": {
       "formalism": "tla",
-      "runtime_ms": 679,
+      "runtime_ms": 275,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
     },
-    "tla:mcprompt-hook": {
+    "tla:mcdeliberationrevision": {
       "formalism": "tla",
-      "runtime_ms": 865,
+      "runtime_ms": 464,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcp-environment": {
+      "formalism": "tla",
+      "runtime_ms": 273,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcqgsdquorum": {
+      "formalism": "tla",
+      "runtime_ms": 264,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcsessionpersistence": {
+      "formalism": "tla",
+      "runtime_ms": 278,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:stop-hook": {
+      "formalism": "tla",
+      "runtime_ms": 264,
+      "estimated_states": 24,
+      "risk_level": "MINIMAL",
+      "variable_count": 4,
+      "runtime_class": "FAST"
+    },
+    "tla:mctuimodules": {
+      "formalism": "tla",
+      "runtime_ms": 256,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mctuinavigation": {
+      "formalism": "tla",
+      "runtime_ms": 255,
+      "estimated_states": 8,
+      "risk_level": "MINIMAL",
+      "variable_count": 2,
+      "runtime_class": "FAST"
+    },
+    "tla:mctuisessions": {
+      "formalism": "tla",
+      "runtime_ms": 258,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:account-manager": {
+      "formalism": "tla",
+      "runtime_ms": 301,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 2,
+      "runtime_class": "FAST"
+    },
+    "tla:mcactivity": {
+      "formalism": "tla",
+      "runtime_ms": 262,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcagent-prov": {
+      "formalism": "tla",
+      "runtime_ms": 355,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcbreaker-state": {
+      "formalism": "tla",
+      "runtime_ms": 271,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -87,63 +143,15 @@
     },
     "tla:breaker": {
       "formalism": "tla",
-      "runtime_ms": 704,
+      "runtime_ms": 255,
       "estimated_states": 4,
       "risk_level": "MINIMAL",
       "variable_count": 2,
       "runtime_class": "FAST"
     },
-    "alloy:availability": {
-      "formalism": "alloy",
-      "runtime_ms": 3149,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "tla:account-manager": {
-      "formalism": "tla",
-      "runtime_ms": 680,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 2,
-      "runtime_class": "FAST"
-    },
-    "tla:mcdeliberationrevision": {
-      "formalism": "tla",
-      "runtime_ms": 642,
-      "estimated_states": null,
-      "risk_level": "MODERATE",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcrecruiting-liveness": {
-      "formalism": "tla",
-      "runtime_ms": 664,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
     "tla:mccheckpointgate": {
       "formalism": "tla",
-      "runtime_ms": 664,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcactivity": {
-      "formalism": "tla",
-      "runtime_ms": 670,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcp-environment": {
-      "formalism": "tla",
-      "runtime_ms": 716,
+      "runtime_ms": 262,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -151,23 +159,15 @@
     },
     "tla:mcci-checks": {
       "formalism": "tla",
-      "runtime_ms": 676,
+      "runtime_ms": 257,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
     },
-    "tla:mcrecruiting-safety": {
+    "tla:mcconfigloader": {
       "formalism": "tla",
-      "runtime_ms": 762,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:mcagent-prov": {
-      "formalism": "tla",
-      "runtime_ms": 704,
+      "runtime_ms": 254,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -175,55 +175,23 @@
     },
     "tla:convergence": {
       "formalism": "tla",
-      "runtime_ms": 557,
+      "runtime_ms": 255,
       "estimated_states": null,
       "risk_level": "MODERATE",
       "variable_count": 3,
       "runtime_class": "FAST"
     },
-    "tla:mcqgsdquorum": {
-      "formalism": "tla",
-      "runtime_ms": 757,
-      "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
-    "tla:quorum-safety": {
-      "formalism": "tla",
-      "runtime_ms": 622,
-      "estimated_states": 160,
-      "risk_level": "MINIMAL",
-      "variable_count": 3,
-      "runtime_class": "FAST"
-    },
     "tla:mcdashboard": {
       "formalism": "tla",
-      "runtime_ms": 599,
+      "runtime_ms": 267,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
       "runtime_class": "FAST"
     },
-    "tla:mcsessionpersistence": {
+    "tla:mcdebtledger": {
       "formalism": "tla",
-      "runtime_ms": 620,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcsensitivity": {
-      "formalism": "tla",
-      "runtime_ms": 611,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
-    "tla:mcspec-gen": {
-      "formalism": "tla",
-      "runtime_ms": 423,
+      "runtime_ms": 252,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -231,31 +199,15 @@
     },
     "tla:deliberation": {
       "formalism": "tla",
-      "runtime_ms": 587,
+      "runtime_ms": 286,
       "estimated_states": null,
       "risk_level": "MODERATE",
       "variable_count": 3,
       "runtime_class": "FAST"
     },
-    "tla:stop-hook": {
-      "formalism": "tla",
-      "runtime_ms": 642,
-      "estimated_states": 24,
-      "risk_level": "MINIMAL",
-      "variable_count": 4,
-      "runtime_class": "FAST"
-    },
-    "tla:mcwizard": {
-      "formalism": "tla",
-      "runtime_ms": 553,
-      "estimated_states": null,
-      "risk_level": null,
-      "variable_count": null,
-      "runtime_class": "FAST"
-    },
     "tla:mcdispatch": {
       "formalism": "tla",
-      "runtime_ms": 589,
+      "runtime_ms": 259,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -263,7 +215,15 @@
     },
     "tla:mcenforcement": {
       "formalism": "tla",
-      "runtime_ms": 590,
+      "runtime_ms": 278,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcimprovement": {
+      "formalism": "tla",
+      "runtime_ms": 272,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -271,7 +231,7 @@
     },
     "tla:mcinstaller": {
       "formalism": "tla",
-      "runtime_ms": 548,
+      "runtime_ms": 253,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -279,7 +239,175 @@
     },
     "tla:mckey-mgmt": {
       "formalism": "tla",
-      "runtime_ms": 582,
+      "runtime_ms": 253,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mclearning": {
+      "formalism": "tla",
+      "runtime_ms": 244,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:quorum-liveness": {
+      "formalism": "tla",
+      "runtime_ms": 290,
+      "estimated_states": 160,
+      "risk_level": "MINIMAL",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcmemorypersist": {
+      "formalism": "tla",
+      "runtime_ms": 249,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcorchestration": {
+      "formalism": "tla",
+      "runtime_ms": 239,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:oscillation": {
+      "formalism": "tla",
+      "runtime_ms": 1238,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 6,
+      "runtime_class": "MODERATE"
+    },
+    "tla:mcpolicy": {
+      "formalism": "tla",
+      "runtime_ms": 245,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcportability": {
+      "formalism": "tla",
+      "runtime_ms": 256,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:prefilter": {
+      "formalism": "tla",
+      "runtime_ms": 253,
+      "estimated_states": null,
+      "risk_level": "MODERATE",
+      "variable_count": 4,
+      "runtime_class": "FAST"
+    },
+    "tla:mcprompt-hook": {
+      "formalism": "tla",
+      "runtime_ms": 249,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcreasoning": {
+      "formalism": "tla",
+      "runtime_ms": 248,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcrecruiting-liveness": {
+      "formalism": "tla",
+      "runtime_ms": 253,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcrecruiting-safety": {
+      "formalism": "tla",
+      "runtime_ms": 256,
+      "estimated_states": null,
+      "risk_level": "HIGH",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:quorum-safety": {
+      "formalism": "tla",
+      "runtime_ms": 279,
+      "estimated_states": 160,
+      "risk_level": "MINIMAL",
+      "variable_count": 3,
+      "runtime_class": "FAST"
+    },
+    "tla:mcsensitivity": {
+      "formalism": "tla",
+      "runtime_ms": 258,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcsolve-orchestrator": {
+      "formalism": "tla",
+      "runtime_ms": 385,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcsolve-report-only": {
+      "formalism": "tla",
+      "runtime_ms": 198,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcsolvep2f": {
+      "formalism": "tla",
+      "runtime_ms": 266,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcspec-gen": {
+      "formalism": "tla",
+      "runtime_ms": 266,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mctokenopt": {
+      "formalism": "tla",
+      "runtime_ms": 247,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcverification": {
+      "formalism": "tla",
+      "runtime_ms": 244,
+      "estimated_states": null,
+      "risk_level": null,
+      "variable_count": null,
+      "runtime_class": "FAST"
+    },
+    "tla:mcwizard": {
+      "formalism": "tla",
+      "runtime_ms": 251,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -287,31 +415,23 @@
     },
     "alloy:account-pool": {
       "formalism": "alloy",
-      "runtime_ms": 3914,
+      "runtime_ms": 709,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "MODERATE"
-    },
-    "tla:quorum-liveness": {
-      "formalism": "tla",
-      "runtime_ms": 577,
-      "estimated_states": 160,
-      "risk_level": "MINIMAL",
-      "variable_count": 3,
       "runtime_class": "FAST"
     },
-    "tla:oscillation": {
-      "formalism": "tla",
-      "runtime_ms": 630,
+    "alloy:quorum-votes": {
+      "formalism": "alloy",
+      "runtime_ms": 924,
       "estimated_states": null,
-      "risk_level": "HIGH",
-      "variable_count": 6,
+      "risk_level": null,
+      "variable_count": null,
       "runtime_class": "FAST"
     },
-    "tla:mcportability": {
-      "formalism": "tla",
-      "runtime_ms": 504,
+    "alloy:availability": {
+      "formalism": "alloy",
+      "runtime_ms": 681,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -319,7 +439,7 @@
     },
     "alloy:install-scope": {
       "formalism": "alloy",
-      "runtime_ms": 905,
+      "runtime_ms": 670,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -327,7 +447,7 @@
     },
     "alloy:quorum-composition": {
       "formalism": "alloy",
-      "runtime_ms": 893,
+      "runtime_ms": 660,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -335,15 +455,15 @@
     },
     "alloy:scoreboard": {
       "formalism": "alloy",
-      "runtime_ms": 1098,
+      "runtime_ms": 969,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
-      "runtime_class": "MODERATE"
+      "runtime_class": "FAST"
     },
     "alloy:taxonomy-safety": {
       "formalism": "alloy",
-      "runtime_ms": 916,
+      "runtime_ms": 643,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -351,7 +471,7 @@
     },
     "alloy:transcript": {
       "formalism": "alloy",
-      "runtime_ms": 923,
+      "runtime_ms": 724,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -359,7 +479,7 @@
     },
     "prism:deliberation-healing": {
       "formalism": "prism",
-      "runtime_ms": 339,
+      "runtime_ms": 376,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -367,7 +487,7 @@
     },
     "prism:mcp-availability": {
       "formalism": "prism",
-      "runtime_ms": 313,
+      "runtime_ms": 330,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -383,7 +503,7 @@
     },
     "prism:observability-delivery": {
       "formalism": "prism",
-      "runtime_ms": 323,
+      "runtime_ms": 315,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -391,7 +511,7 @@
     },
     "prism:quorum": {
       "formalism": "prism",
-      "runtime_ms": 301,
+      "runtime_ms": 343,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -399,7 +519,7 @@
     },
     "uppaal:quorum-races": {
       "formalism": "uppaal",
-      "runtime_ms": 97,
+      "runtime_ms": 75,
       "estimated_states": null,
       "risk_level": null,
       "variable_count": null,
@@ -579,10 +699,10 @@
     "merge_candidates": []
   },
   "summary": {
-    "total_profiled": 71,
+    "total_profiled": 86,
     "by_runtime_class": {
-      "FAST": 67,
-      "MODERATE": 4,
+      "FAST": 85,
+      "MODERATE": 1,
       "SLOW": 0,
       "HEAVY": 0
     },

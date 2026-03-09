@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T22:44:55.818Z",
+  "generated": "2026-03-09T23:18:52.106Z",
   "emission_points": [
     {
       "file": "hooks/nf-prompt.js",

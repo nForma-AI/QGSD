@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T22:44:53.754Z",
-  "total_proposed": 64,
+  "generated": "2026-03-09T23:18:50.967Z",
+  "total_proposed": 79,
   "implemented": 0,
   "partial": 0,
-  "outstanding": 64,
+  "outstanding": 79,
   "metrics": [
     {
       "metric_name": "nf_maxdeliberationrounds__tla",
@@ -283,7 +283,7 @@
       "status": "proposed"
     },
     {
-      "metric_name": "nf_maxiterations",
+      "metric_name": "nf_maxiterations__tla",
       "metric_type": "gauge",
       "tier": 1,
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCAgentLoop.cfg",
@@ -291,7 +291,7 @@
       "assumption_type": "constant",
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCAgentLoop.cfg:MaxIterations",
-      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations Monitors MaxIterations from tla model\n# TYPE nf_maxiterations gauge\nconst nf_maxiterations = new Gauge({\n  name: 'nf_maxiterations',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCAgentLoop.cfg' }, 5);",
+      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations__tla Monitors MaxIterations from tla model\n# TYPE nf_maxiterations__tla gauge\nconst nf_maxiterations__tla = new Gauge({\n  name: 'nf_maxiterations__tla',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCAgentLoop.cfg' }, 5);",
       "status": "proposed"
     },
     {
@@ -451,6 +451,30 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxentries",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg",
+      "assumption_name": "MaxEntries",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg:MaxEntries",
+      "instrumentation_snippet": "// Prometheus gauge for MaxEntries (tla/constant)\n# HELP nf_maxentries Monitors MaxEntries from tla model\n# TYPE nf_maxentries gauge\nconst nf_maxentries = new Gauge({\n  name: 'nf_maxentries',\n  help: 'Monitors MaxEntries from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxentries.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxage",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg",
+      "assumption_name": "MaxAge",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg:MaxAge",
+      "instrumentation_snippet": "// Prometheus gauge for MaxAge (tla/constant)\n# HELP nf_maxage Monitors MaxAge from tla model\n# TYPE nf_maxage gauge\nconst nf_maxage = new Gauge({\n  name: 'nf_maxage',\n  help: 'Monitors MaxAge from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxage.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_maxdeliberationrounds__tla",
       "metric_type": "gauge",
       "tier": 1,
@@ -475,6 +499,18 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCimprovement.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCimprovement.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCimprovement.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_maxinstalls",
       "metric_type": "gauge",
       "tier": 1,
@@ -484,6 +520,18 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCinstaller.cfg:MaxInstalls",
       "instrumentation_snippet": "// Prometheus gauge for MaxInstalls (tla/constant)\n# HELP nf_maxinstalls Monitors MaxInstalls from tla model\n# TYPE nf_maxinstalls gauge\nconst nf_maxinstalls = new Gauge({\n  name: 'nf_maxinstalls',\n  help: 'Monitors MaxInstalls from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxinstalls.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCinstaller.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MClearning.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MClearning.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MClearning.cfg' }, 4);",
       "status": "proposed"
     },
     {
@@ -511,6 +559,30 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCmemorypersist.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCmemorypersist.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCmemorypersist.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCorchestration.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCorchestration.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCorchestration.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_depth__tla",
       "metric_type": "gauge",
       "tier": 1,
@@ -535,6 +607,18 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCpolicy.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCpolicy.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCpolicy.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_maxfilterrounds__tla",
       "metric_type": "gauge",
       "tier": 1,
@@ -544,6 +628,18 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCprefilter.cfg:MaxFilterRounds",
       "instrumentation_snippet": "// Prometheus gauge for MaxFilterRounds (tla/constant)\n# HELP nf_maxfilterrounds__tla Monitors MaxFilterRounds from tla model\n# TYPE nf_maxfilterrounds__tla gauge\nconst nf_maxfilterrounds__tla = new Gauge({\n  name: 'nf_maxfilterrounds__tla',\n  help: 'Monitors MaxFilterRounds from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxfilterrounds__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCprefilter.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCreasoning.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCreasoning.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCreasoning.cfg' }, 4);",
       "status": "proposed"
     },
     {
@@ -592,6 +688,90 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsafety.cfg:MaxSize",
       "instrumentation_snippet": "// Prometheus gauge for MaxSize (tla/constant)\n# HELP nf_maxsize__tla Monitors MaxSize from tla model\n# TYPE nf_maxsize__tla gauge\nconst nf_maxsize__tla = new Gauge({\n  name: 'nf_maxsize__tla',\n  help: 'Monitors MaxSize from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsize__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsafety.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxiterations__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg",
+      "assumption_name": "MaxIterations",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg:MaxIterations",
+      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations__tla Monitors MaxIterations from tla model\n# TYPE nf_maxiterations__tla gauge\nconst nf_maxiterations__tla = new Gauge({\n  name: 'nf_maxiterations__tla',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxresidual__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg",
+      "assumption_name": "MaxResidual",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg:MaxResidual",
+      "instrumentation_snippet": "// Prometheus gauge for MaxResidual (tla/constant)\n# HELP nf_maxresidual__tla Monitors MaxResidual from tla model\n# TYPE nf_maxresidual__tla gauge\nconst nf_maxresidual__tla = new Gauge({\n  name: 'nf_maxresidual__tla',\n  help: 'Monitors MaxResidual from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxresidual__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg' }, 5);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxiterations__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg",
+      "assumption_name": "MaxIterations",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg:MaxIterations",
+      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations__tla Monitors MaxIterations from tla model\n# TYPE nf_maxiterations__tla gauge\nconst nf_maxiterations__tla = new Gauge({\n  name: 'nf_maxiterations__tla',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg' }, 3);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxresidual__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg",
+      "assumption_name": "MaxResidual",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg:MaxResidual",
+      "instrumentation_snippet": "// Prometheus gauge for MaxResidual (tla/constant)\n# HELP nf_maxresidual__tla Monitors MaxResidual from tla model\n# TYPE nf_maxresidual__tla gauge\nconst nf_maxresidual__tla = new Gauge({\n  name: 'nf_maxresidual__tla',\n  help: 'Monitors MaxResidual from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxresidual__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg' }, 5);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolvep2f.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolvep2f.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolvep2f.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCtokenopt.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCtokenopt.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCtokenopt.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCverification.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCverification.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCverification.cfg' }, 4);",
       "status": "proposed"
     },
     {

@@ -1,31 +1,29 @@
 # Formal Verification Diff Report
 
-**Generated:** 2026-03-09T22:47:01.829Z
-**Current Run:** 3 pass, 2 fail
-**Previous Run:** 0 transitions, 2 new, 5 removed
-**Overall Status:** fail
+**Generated:** 2026-03-09T23:31:36.804Z
+**Current Run:** 3 pass, 0 fail, 1 warn/inconclusive
+**Previous Run:** 1 transitions, 2 new, 0 removed
+**Overall Status:** inconclusive
+
+## Transitioned Checks
+
+| Check | Previous | Current | Summary |
+|-------|----------|---------|---------|
+| ci:liveness-fairness-lint | pass | inconclusive | inconclusive: fairness declarations missing — MCconvergence: |
 
 ## New Checks
 
 | Check | Result | Summary |
 |-------|--------|---------|
-| tla:mctuinavigation | fail | fail: MCTUINavigation in 599ms |
-| tla:prefilter | fail | fail: MCprefilter in 713ms |
-
-## Removed Checks
-
-- tla:mcdispatch: no longer run
-- tla:mcagentloop: no longer run
-- alloy:account-pool: no longer run
-- ci:conformance-traces: no longer run
-- tla:stop-hook: no longer run
+| ci:trace-redaction | pass | pass: ci:trace-redaction in 0ms |
+| ci:conformance-traces | pass | pass: 65191/65191 traces valid (411ms) |
 
 ## Unchanged Checks
 
-3 check(s) unchanged from previous run — no action needed.
+1 check(s) unchanged from previous run — no action needed.
 
 ## Previous Run (for next comparison)
 
 ```json
-{"tla:mctuinavigation":"fail","alloy:quorum-votes":"pass","ci:trace-schema-drift":"pass","ci:liveness-fairness-lint":"pass","tla:prefilter":"fail"}
+{"ci:trace-redaction":"pass","ci:trace-schema-drift":"pass","ci:liveness-fairness-lint":"inconclusive","ci:conformance-traces":"pass"}
 ```

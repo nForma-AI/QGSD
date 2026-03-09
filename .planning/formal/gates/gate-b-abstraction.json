@@ -1,9 +1,9 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T22:48:48.120Z",
-  "gate_b_score": 0.9763779527559056,
-  "total_entries": 127,
-  "grounded_entries": 124,
+  "generated": "2026-03-09T23:31:36.865Z",
+  "gate_b_score": 0.98,
+  "total_entries": 150,
+  "grounded_entries": 147,
   "orphaned_entries": 3,
   "target": 1,
   "target_met": false

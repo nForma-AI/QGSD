@@ -131,6 +131,12 @@
       "category": "B",
       "reason": "descriptive/documentation language only",
       "acknowledged_at": "2026-03-09T22:11:25.822Z"
+    },
+    {
+      "file_or_claim": "When something breaks — tests fail, planning state drifts, requirements go stale — the `/nf:solve` pipeline handles it e",
+      "category": "B",
+      "reason": "descriptive/documentation language only",
+      "acknowledged_at": "2026-03-09T23:02:42.905Z"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-09T22:47:01.578Z",
+  "last_sync": "2026-03-09T23:32:58.938Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/solve-session-persistence.als": {
@@ -85,15 +85,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 5667,
-      "last_updated": "2026-03-09T22:48:44.643Z",
+      "version": 5778,
+      "last_updated": "2026-03-09T23:32:58.936Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 2,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L2"
+      "description": ""
     },
     ".planning/formal/alloy/scoreboard-recompute.als": {
       "version": 1,
@@ -176,13 +173,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 5665,
-      "last_updated": "2026-03-09T22:48:44.644Z",
+      "version": 5776,
+      "last_updated": "2026-03-09T23:32:58.938Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 2
+      "description": ""
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
@@ -1345,15 +1341,12 @@
       "layer_maturity": 2
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 4417,
-      "last_updated": "2026-03-09T22:48:44.653Z",
+      "version": 4528,
+      "last_updated": "2026-03-09T23:32:58.935Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 2,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L2"
+      "description": ""
     },
     ".planning/formal/alloy/solve-automation-features.als": {
       "version": 1,
@@ -2000,6 +1993,724 @@
       "source_layer": "L3",
       "gate_maturity": "SOFT_GATE",
       "layer_maturity": 2
+    },
+    ".planning/formal/alloy/readme-structure.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "README structural constraints — section ordering, visibility, and content requirements",
+      "requirements": [
+        "RDME-01",
+        "RDME-02",
+        "RDME-03",
+        "RDME-04",
+        "RDME-05",
+        "RDME-06",
+        "RDME-07",
+        "RDME-08",
+        "RDME-09",
+        "RDME-10"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/changelog-release.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Changelog and release lifecycle — version bumps, archive, npm publish",
+      "requirements": [
+        "CL-01",
+        "CL-02",
+        "RLS-01",
+        "RLS-02",
+        "RLS-03",
+        "RLS-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/rename-migration.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Directory rename migration — git mv, installer update, runtime identity preservation",
+      "requirements": [
+        "REN-01",
+        "REN-02",
+        "REN-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/governance-dx.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Governance and DX — config adapters, ADR templates, learning hooks, rule sharding, validation",
+      "requirements": [
+        "ADAPT-01",
+        "ADR-01",
+        "LRNG-01",
+        "LRNG-02",
+        "LRNG-03",
+        "LRNG-04",
+        "SHARD-01",
+        "VALID-01"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/debt-lifecycle.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Debt ledger lifecycle — dedup, state machine, retention, formal refs",
+      "requirements": [
+        "DEBT-02",
+        "DEBT-03",
+        "DEBT-04",
+        "DEBT-05",
+        "DEBT-06"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/solve-pf-layer.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Solve P->F integration — production vs formal parameter comparison",
+      "requirements": [
+        "PF-01",
+        "PF-02",
+        "PF-03",
+        "PF-04",
+        "PF-05"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/reasoning-fmea.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Reasoning layer — FMEA hazard model, failure modes, risk heatmap, test recipes",
+      "requirements": [
+        "RSN-01",
+        "RSN-02",
+        "RSN-03",
+        "RSN-04",
+        "RSN-05"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/quality-hardening.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Quality hardening — breaker persistence, restricted access, latency budgets, hook priority",
+      "requirements": [
+        "BRKR-01",
+        "EXEC-01",
+        "LTCY-01",
+        "PRIO-01"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/fingerprinting-dedup.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Fingerprinting — hierarchical strategy, cross-source dedup, merge preservation",
+      "requirements": [
+        "FP-01",
+        "FP-02",
+        "FP-03",
+        "FP-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/memory-persistence.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Memory persistence — decisions, reminders, errors, quorum verdicts across sessions",
+      "requirements": [
+        "MEMP-01",
+        "MEMP-02",
+        "MEMP-03",
+        "MEMP-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/semantics-operational.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Semantics — invariant catalog, mismatch register, assumption register, FSM derivation",
+      "requirements": [
+        "SEM-01",
+        "SEM-02",
+        "SEM-03",
+        "SEM-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/token-optimization.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Token optimization — auto-compaction, thinking budgets, dashboard, complexity routing",
+      "requirements": [
+        "TOKN-01",
+        "TOKN-02",
+        "TOKN-03",
+        "TOKN-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/quorum-improvements.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Quorum dispatch improvements — parallel tasks, worker hardening, validation",
+      "requirements": [
+        "IMPR-02",
+        "IMPR-03",
+        "IMPR-04"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/build-test-quality.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Build and test quality — hooks/dist rebuild, npm test, MCP server porting",
+      "requirements": [
+        "BLD-01",
+        "BLD-02",
+        "STD-02"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/subagent-orchestration.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Subagent orchestration — context retrieval, phase accumulation, retrieval agents",
+      "requirements": [
+        "ORCH-01",
+        "ORCH-02",
+        "ORCH-03"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/verification-execution.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Verification and execution state — progress tracking, continuous verification, done conditions",
+      "requirements": [
+        "VERF-01",
+        "VERF-02",
+        "VERF-03"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/user-guide.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "User guide structure — TUI screenshots, getting started walkthrough",
+      "requirements": [
+        "GUIDE-01",
+        "GUIDE-02"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/parallel-execution.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Parallel execution — worktree isolation, merge orchestration",
+      "requirements": [
+        "PARA-01",
+        "PARA-02"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/integration-layers.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:28:28.339Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Integration layers — layer manifest, gate sweeps, alignment dashboard, model registry extensions",
+      "requirements": [
+        "INTG-01",
+        "INTG-02",
+        "INTG-03",
+        "INTG-04",
+        "INTG-05",
+        "INTG-06"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/spec-audit.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Formal spec audit — oscillation TLA+ vs circuit-breaker drift check",
+      "requirements": [
+        "SPEC-02"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/event-vocabulary.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Evidence layer event vocabulary — canonical event names preventing schema drift",
+      "requirements": [
+        "EVID-05"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/vhs-ci-hardening.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "VHS tape CI reliability — shell hardening",
+      "requirements": [
+        "VIS-02"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/diagnostics-verification.als": {
+      "version": 1,
+      "last_updated": "2026-03-09T23:27:56.337Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Diagnostics — conformance divergence, attribution, pivot decision surfacing",
+      "requirements": [
+        "DIAG-01",
+        "DIAG-02",
+        "DIAG-03"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
     }
+  },
+  ".planning/formal/tla/NFDebtLedger.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Debt ledger state machine — lifecycle, dedup, retention",
+    "requirements": [
+      "DEBT-01",
+      "DEBT-02",
+      "DEBT-03",
+      "DEBT-04",
+      "DEBT-05",
+      "DEBT-06"
+    ]
+  },
+  ".planning/formal/tla/NFConfigLoader.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Configuration loading — global/project merge, fail-open, validation",
+    "requirements": [
+      "CONF-01",
+      "CONF-02",
+      "CONF-03",
+      "CONF-04",
+      "CONF-05",
+      "CONF-08"
+    ]
+  },
+  ".planning/formal/tla/NFSolveP2F.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "P->F solve residual layer — observation freeze, debt remediation",
+    "requirements": [
+      "PF-01",
+      "PF-02",
+      "PF-03",
+      "PF-04",
+      "PF-05"
+    ]
+  },
+  ".planning/formal/tla/NFTokenOpt.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Token optimization — compaction, budget scaling, routing",
+    "requirements": [
+      "TOKN-01",
+      "TOKN-02",
+      "TOKN-03",
+      "TOKN-04"
+    ]
+  },
+  ".planning/formal/tla/NFLearning.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Learning pipeline — error extraction, correction capture, skill extraction",
+    "requirements": [
+      "LRNG-01",
+      "LRNG-02",
+      "LRNG-03",
+      "LRNG-04"
+    ]
+  },
+  ".planning/formal/tla/NFMemoryPersist.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Memory persistence — decisions, reminders, error patterns, quorum memory",
+    "requirements": [
+      "MEMP-01",
+      "MEMP-02",
+      "MEMP-03",
+      "MEMP-04"
+    ]
+  },
+  ".planning/formal/tla/NFReasoning.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Reasoning layer — FMEA hazard model, failure modes, risk heatmap, test recipes",
+    "requirements": [
+      "RSN-01",
+      "RSN-02",
+      "RSN-03",
+      "RSN-04",
+      "RSN-05"
+    ]
+  },
+  ".planning/formal/tla/NFImprovement.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Improvement pipeline — review, dispatch update, hardening, validation",
+    "requirements": [
+      "IMPR-01",
+      "IMPR-02",
+      "IMPR-03",
+      "IMPR-04"
+    ]
+  },
+  ".planning/formal/tla/NFOrchestration.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Subagent orchestration — context retrieval, accumulation, specialized agents",
+    "requirements": [
+      "ORCH-01",
+      "ORCH-02",
+      "ORCH-03"
+    ]
+  },
+  ".planning/formal/tla/NFPolicy.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Policy configuration — timeout, update policy, auto-update check",
+    "requirements": [
+      "PLCY-01",
+      "PLCY-02",
+      "PLCY-03"
+    ]
+  },
+  ".planning/formal/tla/NFVerification.tla": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Verification & execution state — progress tracking, continuous verify, machine-verifiable",
+    "requirements": [
+      "VERF-01",
+      "VERF-02",
+      "VERF-03"
+    ]
+  },
+  ".planning/formal/alloy/fingerprinting.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Issue fingerprinting — hierarchical strategy, drift detection, cross-source dedup",
+    "requirements": [
+      "FP-01",
+      "FP-02",
+      "FP-03",
+      "FP-04"
+    ]
+  },
+  ".planning/formal/alloy/integration-layers.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Layer integration — manifest, sweeps, gate checks, dashboard, registry extension",
+    "requirements": [
+      "INTG-01",
+      "INTG-02",
+      "INTG-03",
+      "INTG-04",
+      "INTG-05",
+      "INTG-06"
+    ]
+  },
+  ".planning/formal/alloy/gate-architecture.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Gate architecture — grounding score, validation mapping, progressive maturity",
+    "requirements": [
+      "GATE-01",
+      "GATE-03",
+      "GATE-04"
+    ]
+  },
+  ".planning/formal/alloy/semantics-layer.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Semantics layer — invariant catalog, mismatch register, assumption register, FSM derivation",
+    "requirements": [
+      "SEM-01",
+      "SEM-02",
+      "SEM-03",
+      "SEM-04"
+    ]
+  },
+  ".planning/formal/alloy/evidence-layer.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Evidence layer — trace corpus, failure taxonomy, event vocabulary",
+    "requirements": [
+      "EVID-02",
+      "EVID-03",
+      "EVID-05"
+    ]
+  },
+  ".planning/formal/alloy/diagnostics.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Diagnostics — divergence rate, attribution, pivot decision",
+    "requirements": [
+      "DIAG-01",
+      "DIAG-02",
+      "DIAG-03"
+    ]
+  },
+  ".planning/formal/alloy/traceability.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Traceability matrix generation and verify integration",
+    "requirements": [
+      "TRACE-01",
+      "TRACE-03"
+    ]
+  },
+  ".planning/formal/alloy/parallel-exec.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Parallel execution — worktree isolation, merge orchestration",
+    "requirements": [
+      "PARA-01",
+      "PARA-02"
+    ]
+  },
+  ".planning/formal/alloy/provider-wizard.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Provider wizard — curated list, config update, presets, cloning",
+    "requirements": [
+      "PROV-02",
+      "PROV-03",
+      "PRST-01",
+      "PRST-02"
+    ]
+  },
+  ".planning/formal/alloy/multi-slot.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Multi-slot support — multiple claude slots, adding new slots",
+    "requirements": [
+      "MULTI-01",
+      "MULTI-03"
+    ]
+  },
+  ".planning/formal/alloy/meta-resolve.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Meta resolution — auto-resolve planning commands, assumption presentation",
+    "requirements": [
+      "META-01",
+      "META-03"
+    ]
+  },
+  ".planning/formal/alloy/misc-behavioral.als": {
+    "version": 1,
+    "last_updated": "2026-03-09T23:12:20.014Z",
+    "update_source": "generate",
+    "source_id": "close-formal-gaps",
+    "session_id": null,
+    "description": "Miscellaneous behavioral requirements — adapter, agent wizard, debug invariants, etc.",
+    "requirements": [
+      "ADAPT-01",
+      "AGENT-03",
+      "ARCH-03",
+      "BRKR-01",
+      "DECOMP-01",
+      "EXEC-01",
+      "HLTH-03",
+      "LTCY-01",
+      "MCPENV-02",
+      "PRIO-01",
+      "SCHEMA-02",
+      "SHARD-01",
+      "SIG-03",
+      "TRIAGE-02",
+      "UNIF-02",
+      "UPPAAL-02",
+      "VALID-01"
+    ]
   }
 }

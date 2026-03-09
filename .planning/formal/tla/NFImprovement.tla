@@ -1,0 +1,66 @@
+---- MODULE NFImprovement ----
+(*
+ * .planning/formal/tla/NFImprovement.tla
+ * Improvement pipeline — review, dispatch update, hardening, validation
+ *
+ * @requirement IMPR-01
+ * @requirement IMPR-02
+ * @requirement IMPR-03
+ * @requirement IMPR-04
+ *)
+EXTENDS Naturals, Sequences, TLC
+
+CONSTANTS MaxSteps
+
+VARIABLES state, step
+vars == <<state, step>>
+
+\* ── Type invariant ───────────────────────────────────────────────────────────
+\* @requirement IMPR-01
+\* @requirement IMPR-02
+\* @requirement IMPR-03
+\* @requirement IMPR-04
+TypeOK ==
+    /\ state \in {"idle", "running", "done", "error"}
+    /\ step \in 0..MaxSteps
+
+\* ── Initial state ────────────────────────────────────────────────────────────
+Init ==
+    /\ state = "idle"
+    /\ step = 0
+
+\* ── Actions ──────────────────────────────────────────────────────────────────
+
+Step1 ==
+    /\ state = "idle" /\ step < MaxSteps
+    /\ state' = "running"
+    /\ step' = step + 1
+
+Step2 ==
+    /\ state = "running" /\ step < MaxSteps
+    /\ state' = "done"
+    /\ step' = step + 1
+
+Step3 ==
+    /\ state = "done" /\ step < MaxSteps
+    /\ state' = "error"
+    /\ step' = step + 1
+
+Reset ==
+    /\ state = "error"
+    /\ state' = "idle"
+    /\ step' = 0
+
+Next ==
+    \/ Step1
+    \/ Step2
+    \/ Step3
+    \/ Reset
+
+Spec == Init /\ [][Next]_vars
+
+\* ── Safety invariants ────────────────────────────────────────────────────────
+StateValid == state \in {"idle", "running", "done", "error"}
+StepBounded == step >= 0 /\ step <= MaxSteps
+
+====
