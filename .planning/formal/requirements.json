@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-08T21:48:52.183Z",
-  "content_hash": "9c92e8d0e831a2bd",
+  "aggregated_at": "2026-03-09T02:31:45.752Z",
+  "content_hash": "2318ddb506fa3b7c0645190cc02c166bd441d2d74ff08018d1c1ab41ca99cd5e",
   "schema_version": "1",
   "requirements": [
     {
@@ -1210,6 +1210,18 @@
       "provenance": {
         "source_file": ".planning/quick/206-add-base-ref-to-gate-a-grounding-cjs-for/206-PLAN.md",
         "milestone": "quick-206"
+      }
+    },
+    {
+      "id": "GATE-02",
+      "text": "AutoClose remediation steps SHALL produce observable signals (e.g., source_layer classification, semantic declaration detection) at the confidence level the scoring system already accepts. AutoClose SHALL NOT write gate_maturity directly; promotion follows from scoring functions independently evaluating accumulated signals.",
+      "category": "Formal Verification",
+      "phase": "v0.31-234",
+      "status": "Pending",
+      "background": "autoClose creates conditions for gate maturity promotion, not promotions themselves. Remediation produces heuristic/syntactic signals that match what evaluateGateA/B/C already trust. Quorum consensus reached 2026-03-09.",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.31"
       }
     },
     {
@@ -3146,6 +3158,66 @@
       }
     },
     {
+      "id": "SOLVE-18",
+      "text": "Code module: bin/unified-mcp-server.mjs",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/unified-mcp-server.mjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-19",
+      "text": "Code module: hooks/config-loader.js",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "hooks/config-loader.js",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-20",
+      "text": "Code module: hooks/nf-circuit-breaker.js",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "hooks/nf-circuit-breaker.js",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-21",
+      "text": "Code module: hooks/nf-prompt.js",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "hooks/nf-prompt.js",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-22",
+      "text": "Code module: hooks/nf-stop.js",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "hooks/nf-stop.js",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-23",
+      "text": "Code module: hooks/nf-mcp-dispatch-guard.js",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "hooks/nf-mcp-dispatch-guard.js",
+        "milestone": "solver-tui"
+      }
+    },
+    {
       "id": "SOLVE-7",
       "text": "The solve F->T remediation pipeline SHALL provide pre-resolved context (requirement text, formal property definition, source file hints) alongside each test stub so executors can generate meaningful tests without codebase-wide search.",
       "category": "solve",
@@ -4111,5 +4183,5 @@
     }
   ],
   "total": 283,
-  "frozen_at": "2026-03-08T21:48:52.185Z"
+  "frozen_at": "2026-03-09T02:31:45.753Z"
 }

@@ -2659,6 +2659,93 @@ function autoClose(residual) {
     );
   }
 
+  // Per-model gate maturity: create conditions for promotion (GATE-02)
+  // Produces observable signals — never writes gate_maturity directly.
+  if (residual.per_model_gates && residual.per_model_gates.residual > 0) {
+    try {
+      const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+      const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
+      const registryFile = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+      const models = registryFile.models || registryFile;
+      const modelKeys = Object.keys(models).filter(k => k.startsWith('.'));
+
+      // Import inferSourceLayer from promote-gate-maturity.cjs
+      const { inferSourceLayer: inferLayer } = require('./promote-gate-maturity.cjs');
+
+      // Signal 1: fill missing source_layer via inferSourceLayer heuristic
+      let layersFilled = 0;
+      for (const modelPath of modelKeys) {
+        const model = models[modelPath];
+        if (!model.source_layer) {
+          const inferred = inferLayer(modelPath);
+          if (inferred) {
+            model.source_layer = inferred;
+            model.last_updated = new Date().toISOString();
+            layersFilled++;
+          }
+        }
+      }
+
+      // Signal 2: scan model files for semantic declarations
+      const DECL_PATTERNS = {
+        '.als': /\b(sig|pred|fact|assert|fun)\b/,
+        '.tla': /\b(VARIABLE|CONSTANT|Init|Next|Spec)\b/,
+        '.pm':  /\b(module|rewards|endmodule)\b/,
+        '.props': /\b(P\s*=|filter|Pmax|Pmin)\b/,
+      };
+
+      let manifest = null;
+      if (fs.existsSync(manifestPath)) {
+        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      }
+
+      let declsDetected = 0;
+      for (const modelPath of modelKeys) {
+        const ext = path.extname(modelPath);
+        const pattern = DECL_PATTERNS[ext];
+        if (!pattern) continue;
+
+        const fullPath = path.join(ROOT, modelPath);
+        if (!fs.existsSync(fullPath)) continue;
+
+        try {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          if (pattern.test(content)) {
+            // Update layer-manifest if model is currently ungrounded
+            if (manifest) {
+              for (const layer of Object.values(manifest.layers || {})) {
+                for (const entry of (Array.isArray(layer) ? layer : [])) {
+                  if (entry.path === modelPath && entry.grounding_status === 'ungrounded') {
+                    entry.grounding_status = 'has_semantic_declarations';
+                    declsDetected++;
+                  }
+                }
+              }
+            }
+          }
+        } catch (e) {
+          // fail-open: skip unreadable files
+        }
+      }
+
+      // Write back only if changes were made
+      if (layersFilled > 0) {
+        fs.writeFileSync(registryPath, JSON.stringify(registryFile, null, 2) + '\n');
+        actions.push('Filled source_layer for ' + layersFilled + ' model(s) via inferSourceLayer');
+      }
+      if (declsDetected > 0 && manifest) {
+        fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+        actions.push('Detected semantic declarations in ' + declsDetected + ' model(s) — updated layer-manifest');
+      }
+      if (layersFilled === 0 && declsDetected === 0) {
+        actions.push(residual.per_model_gates.residual + ' model(s) at maturity 0 — no auto-fixable signals found');
+      }
+    } catch (e) {
+      // fail-open: per-model gate remediation is best-effort
+      actions.push('Per-model gate remediation failed: ' + e.message);
+    }
+  }
+
   return {
     actions_taken: actions,
     stubs_generated: residual.f_to_t.residual > 0 ? 1 : 0,
