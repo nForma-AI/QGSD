@@ -564,7 +564,7 @@ describe('virgin install: npm global simulation', () => {
       timeout: 10000,
     }).toString();
     assert.ok(out.includes('Requirements'), 'screenshot output must contain Requirements heading');
-    assert.ok(out.includes('Category'), 'screenshot output must contain Category column');
+    assert.ok(out.includes('Principle'), 'screenshot output must contain Principle column');
   });
 
   test('TUI --screenshot config runs without crash from installed package', () => {

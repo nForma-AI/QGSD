@@ -6,6 +6,33 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-03-09 — Documentation & README Overhaul
+
+### Added
+- **TUI hierarchical requirements view** — Browse Reqs page now shows two-level hierarchy (principles → specifications) with principle-mapping module and groupByPrinciple
+- **TUI configurable target path** — Target path selector with 53 unit tests
+- **TUI Gate Scoring page** — Visualize per-model gate pass/fail in the Reqs module
+- **Asset pipeline CI check** — `check-assets-stale.cjs` catches stale SVG assets in CI; integrated into both CI and release workflows
+- **Solve sweep functions** — Export all 19 sweep functions from `nf-solve.cjs`
+- **NAV-05 requirement** — New navigation requirement added
+
+### Changed
+- **README above-the-fold restructure** — TUI hero image, value props, comparison table, and metrics
+- **README deep sections** — Expanded documentation for architecture, commands, and configuration
+- **User Guide overhaul** — Getting Started walkthrough with embedded TUI screenshots
+- **Asset output paths** — SVG generators now write to `docs/assets/` (was `assets/`); logo names rebranded from `gsd-` to `nf-`
+- **Node engine floor** — Bumped to `>=18` with Node support table in README
+- **VHS tape hardening** — Regenerated all 11 TUI screenshots with deterministic paths
+
+### Fixed
+- **TUI header gap calculation** — Target path line was hidden by line1 overflow
+- **TUI auto-unfreeze** — Envelope unfreezes on Aggregate; Gate Scoring cwd fixed
+- **TUI startup** — Removed OSC 11 probe leak; fixed startup via `nforma-cli`
+- **CLI smart routing** — Installer on first run, TUI if already installed; `npx` routes to installer, global install routes to TUI
+- **Gate A/B/C repairs** — Improved spec-module matching, fixed orphaned models, expanded failure mode catalog
+- **Discord invite links** — Corrected to proper server URL
+- **npm package** — Include `core/` in package (fixes ENOENT crash on install)
+
 ## [0.31.2] - 2026-03-09
 
 ### Fixed
