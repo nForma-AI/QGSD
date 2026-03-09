@@ -45,7 +45,7 @@ None.
 | 233 | Implement insights-driven nForma improvements (git safety, MCP guard, verify, preflight) | 2026-03-08 | 31c5ba8e | Verified | [233-implement-insights-driven-nforma-improve](./quick/233-implement-insights-driven-nforma-improve/) |
 | 235 | Fix TLA+ model state space explosions and config bugs | 2026-03-09 | b5baea94 | Verified | [235-fix-tla-model-state-space-explosions-and](./quick/235-fix-tla-model-state-space-explosions-and/) |
 | 236 | Wire evidence files into gate promotion pipeline — fix all 5 gaps | 2026-03-09 | a770ac15 | Verified | [236-wire-evidence-files-into-gate-promotion-](./quick/236-wire-evidence-files-into-gate-promotion-/) |
-| 237 | Persist quorum debate traces with matched requirement IDs | 2026-03-09 | b8a98931 | Pending | [237-persist-quorum-debate-traces-with-matche](./quick/237-persist-quorum-debate-traces-with-matche/) |
+| 237 | Persist quorum debate traces with matched requirement IDs | 2026-03-09 | b8a98931 | Verified | [237-persist-quorum-debate-traces-with-matche](./quick/237-persist-quorum-debate-traces-with-matche/) |
 
 ## Session Continuity
 
