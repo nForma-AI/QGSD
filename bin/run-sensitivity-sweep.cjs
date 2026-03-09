@@ -63,10 +63,16 @@ function runTLCSweep(maxSize) {
   fs.writeFileSync(tmpCfg, overrideCfg, 'utf8');
 
   const tlaFile = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'NFQuorum.tla');
+  // Use a fixed metadir so TLC overwrites state files instead of creating timestamped dirs
+  const metaDir = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'states', 'current');
+  fs.rmSync(metaDir, { recursive: true, force: true });
+  fs.mkdirSync(metaDir, { recursive: true });
+
   process.stderr.write('[heap] Xms=64m Xmx=' + JAVA_HEAP_MAX + '\n');
   const javaResult = spawnSync('java', [
     '-Xms64m', '-Xmx' + JAVA_HEAP_MAX,
     '-jar', tlcJar,
+    '-metadir', metaDir,
     '-config', tmpCfg,
     tlaFile,
   ], { encoding: 'utf8', timeout: 120000 });

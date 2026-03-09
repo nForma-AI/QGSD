@@ -182,9 +182,13 @@ function runCheck(module, checkDef, javaExe, cwd) {
   const startMs = Date.now();
 
   if (tool === 'tlc') {
-    // TLC check
+    // TLC check — use fixed metadir to avoid timestamped state accumulation
+    const metaDir = path.join(cwd, '.planning', 'formal', 'tla', 'states', 'current');
+    fs.rmSync(metaDir, { recursive: true, force: true });
+    fs.mkdirSync(metaDir, { recursive: true });
+
     const cmd = checkDef.cmd[0];
-    const args = checkDef.cmd.slice(1);
+    const args = [...checkDef.cmd.slice(1), '-metadir', metaDir];
 
     const result = spawnSync(cmd, args, {
       cwd,
