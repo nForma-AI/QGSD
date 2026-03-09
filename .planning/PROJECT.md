@@ -669,4 +669,4 @@ nForma v0.31 shipped 2026-03-08 (8/8 requirements, 3 phases). 31 milestones comp
 - Fix broken table formatting in Observability section
 
 ---
-*Last updated: 2026-03-09 after v0.32 milestone start*
+*Last updated: 2026-03-09 after Phase v0.32-03*

@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.32-03 — User Guide Overhaul
+**Current focus:** v0.32-04 — Visual Asset Regeneration
 
 ## Current Position
 
@@ -58,5 +58,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-09
-Stopped at: Completed v0.32-03-01-PLAN.md
+Stopped at: Phase v0.32-03 complete, ready to plan Phase v0.32-04
 Resume file: None
