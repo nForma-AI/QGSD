@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-09T09:09:01.517Z",
+  "last_sync": "2026-03-09T10:30:48.362Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/solve-session-persistence.als": {
@@ -85,8 +85,8 @@
       "layer_maturity": 3
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 5223,
-      "last_updated": "2026-03-09T09:09:02.757Z",
+      "version": 5271,
+      "last_updated": "2026-03-09T10:30:49.726Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -176,8 +176,8 @@
       "layer_maturity": 3
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 5220,
-      "last_updated": "2026-03-09T09:09:02.758Z",
+      "version": 5269,
+      "last_updated": "2026-03-09T10:30:49.727Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -1357,8 +1357,8 @@
       "layer_maturity": 2
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 3975,
-      "last_updated": "2026-03-09T09:09:02.760Z",
+      "version": 4022,
+      "last_updated": "2026-03-09T10:30:49.729Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -1631,7 +1631,7 @@
     },
     ".planning/formal/prism/mcp-availability.props": {
       "version": 1,
-      "last_updated": "2026-03-09T09:09:02.761Z",
+      "last_updated": "2026-03-09T10:22:24.164Z",
       "update_source": "annotation-sync",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -1641,12 +1641,12 @@
         "MCPENV-04"
       ],
       "layer_maturity": 2,
-      "gate_maturity": "ADVISORY",
+      "gate_maturity": "SOFT_GATE",
       "source_layer": "L2"
     },
     ".planning/formal/prism/oauth-rotation.props": {
       "version": 1,
-      "last_updated": "2026-03-09T08:56:33.932Z",
+      "last_updated": "2026-03-09T10:22:24.165Z",
       "update_source": "annotation-sync",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -1656,7 +1656,7 @@
         "PRM-AM-01"
       ],
       "layer_maturity": 2,
-      "gate_maturity": "ADVISORY",
+      "gate_maturity": "SOFT_GATE",
       "source_layer": "L2"
     },
     ".planning/formal/prism/quorum.props": {
@@ -1677,7 +1677,7 @@
     },
     ".planning/formal/prism/observability-delivery.props": {
       "version": 1,
-      "last_updated": "2026-03-09T08:55:02.395Z",
+      "last_updated": "2026-03-09T10:30:49.729Z",
       "update_source": "annotation-sync",
       "source_id": "close-formal-gaps",
       "session_id": null,

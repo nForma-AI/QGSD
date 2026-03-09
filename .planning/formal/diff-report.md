@@ -1,26 +1,19 @@
 # Formal Verification Diff Report
 
-**Generated:** 2026-03-09T09:09:02.293Z
+**Generated:** 2026-03-09T10:30:49.217Z
 **Current Run:** 3 pass, 0 fail, 1 warn/inconclusive
-**Previous Run:** 1 transitions, 2 new, 0 removed
+**Previous Run:** 0 transitions, 0 new, 3 removed
 **Overall Status:** inconclusive
 
-## Transitioned Checks
+## Removed Checks
 
-| Check | Previous | Current | Summary |
-|-------|----------|---------|---------|
-| ci:liveness-fairness-lint | pass | inconclusive | inconclusive: fairness declarations missing — MCconvergence: |
-
-## New Checks
-
-| Check | Result | Summary |
-|-------|--------|---------|
-| ci:trace-redaction | pass | pass: ci:trace-redaction in 1ms |
-| ci:conformance-traces | pass | pass: 61489/61489 traces valid (372ms) |
+- tla:mckey-mgmt: no longer run
+- tla:quorum-liveness: no longer run
+- tla:oscillation: no longer run
 
 ## Unchanged Checks
 
-1 check(s) unchanged from previous run — no action needed.
+4 check(s) unchanged from previous run — no action needed.
 
 ## Previous Run (for next comparison)
 

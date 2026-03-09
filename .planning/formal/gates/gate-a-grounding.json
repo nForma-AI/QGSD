@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T09:09:02.608Z",
+  "generated": "2026-03-09T10:30:49.568Z",
   "grounding_score": 1,
   "target": 0.8,
   "target_met": true,
-  "explained": 61489,
-  "total": 61489,
+  "explained": 62269,
+  "total": 62269,
   "unexplained_counts": {
     "instrumentation_bug": 0,
     "model_gap": 0,
@@ -27,10 +27,10 @@
   },
   "methodology": {
     "explains_definition": "vocabulary_mapped AND (xstate_valid OR methodology_skip OR non_fsm_classification)",
-    "h1_methodology_skips": 18605,
+    "h1_methodology_skips": 18877,
     "non_fsm_skips": 16,
-    "xstate_validated": 42868,
-    "vocabulary_mapped": 61489
+    "xstate_validated": 43376,
+    "vocabulary_mapped": 62269
   },
   "warnings": [],
   "scope": {

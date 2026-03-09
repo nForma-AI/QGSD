@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T09:10:23.411Z",
+    "generated_at": "2026-03-09T10:30:20.777Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 131
+        "entry_count": 353
       },
       "unit_test_coverage": {
         "available": true,
@@ -906,22 +906,22 @@
           "model_file": ".planning/formal/tla/NFDeliberation.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "tla:quorum-safety"
+          "latest_result": "inconclusive",
+          "check_id": "tla:deliberation"
         }
       ]
     },
@@ -965,7 +965,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "NoSpuriousConsensus",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:mcp-environment"
         }
       ]
@@ -977,7 +977,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "TypeInvariantHolds",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -998,7 +998,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "EventualDecision",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -1472,7 +1472,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "TypeOK",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1493,7 +1493,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1514,7 +1514,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1535,7 +1535,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant2",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1556,7 +1556,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "SafetyInvariant3",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1577,7 +1577,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty1",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1598,7 +1598,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty2",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -1619,7 +1619,7 @@
           "model_file": ".planning/formal/tla/NFStopHook.tla",
           "property_name": "LivenessProperty3",
           "source": "annotation",
-          "latest_result": "pass",
+          "latest_result": "fail",
           "check_id": "tla:stop-hook"
         }
       ],
@@ -11911,8 +11911,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -11941,7 +11941,7 @@
         "MCPENV-02"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::TypeInvariantHolds": {
@@ -11951,7 +11951,7 @@
         "MCPENV-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::EventualDecision": {
@@ -11961,7 +11961,7 @@
         "MCPENV-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/NFOscillation.tla::TypeOK": {
@@ -12103,8 +12103,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -12174,7 +12174,7 @@
         "STOP-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant1": {
@@ -12185,7 +12185,7 @@
         "SPEC-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant2": {
@@ -12195,7 +12195,7 @@
         "STOP-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::SafetyInvariant3": {
@@ -12205,7 +12205,7 @@
         "STOP-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty1": {
@@ -12215,7 +12215,7 @@
         "STOP-05"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty2": {
@@ -12225,7 +12225,7 @@
         "STOP-06"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/NFStopHook.tla::LivenessProperty3": {
@@ -12235,7 +12235,7 @@
         "STOP-07"
       ],
       "source": "annotation",
-      "latest_result": "pass",
+      "latest_result": "fail",
       "check_id": "tla:stop-hook"
     },
     ".planning/formal/tla/TUINavigation.tla::TypeOK": {
@@ -16688,8 +16688,8 @@
         "SAFE-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "tla:quorum-safety"
+      "latest_result": "inconclusive",
+      "check_id": "tla:deliberation"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -20093,10 +20093,15 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 303,
+    "total_requirements": 307,
     "covered_count": 303,
-    "coverage_percentage": 100,
-    "uncovered_requirements": [],
+    "coverage_percentage": 98.7,
+    "uncovered_requirements": [
+      "INST-13",
+      "SOLVE-24",
+      "SOLVE-25",
+      "TRACE-10"
+    ],
     "orphan_properties": []
   },
   "bidirectional_validation": {
@@ -21528,7 +21533,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T09:09:01.264Z",
+    "baseline_date": "2026-03-09T10:30:10.106Z",
     "requirements_checked": 336,
     "regressions": [],
     "summary": {

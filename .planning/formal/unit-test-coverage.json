@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T09:03:48.893Z",
+  "generated_at": "2026-03-09T10:17:46.273Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -2721,6 +2721,18 @@
           "test_name": "WIZ-11: settings.md exists and is readable"
         }
       ]
+    },
+    "SOLVE-24": {
+      "covered": false,
+      "test_cases": []
+    },
+    "SOLVE-25": {
+      "covered": false,
+      "test_cases": []
+    },
+    "INST-13": {
+      "covered": false,
+      "test_cases": []
     }
   }
 }
