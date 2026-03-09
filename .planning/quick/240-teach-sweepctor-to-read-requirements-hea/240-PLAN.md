@@ -16,6 +16,8 @@ must_haves:
     - "sweepCtoR counts a source file as traced when it has a Requirements: header comment with valid IDs"
     - "sweepCtoR still counts files as traced via the existing filename-based check"
     - "Files with Requirements: headers containing IDs not in the envelope remain untraced"
+    - "Head read uses line-based slicing (first 30 lines) not byte-based slicing"
+    - "Malformed requirement entries without an id field are filtered out during reqIdSet construction"
     - "Existing tests still pass after the change"
   artifacts:
     - path: "bin/nf-solve.cjs"
@@ -67,11 +69,11 @@ Specific changes inside the `for (const file of sourceFiles)` loop, replacing th
   let headerTraced = false;
   try {
     const absFile = path.join(ROOT, file);
-    const head = fs.readFileSync(absFile, 'utf8').slice(0, 3000); // ~30 lines
+    const head = fs.readFileSync(absFile, 'utf8').split('\n').slice(0, 30).join('\n');
     const match = head.match(/(?:\/\/|\/?\*)\s*Requirements:\s*(.+)/);
     if (match) {
       const declaredIds = match[1].split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
-      const reqIdSet = new Set(requirements.map(r => r.id));
+      const reqIdSet = new Set(requirements.filter(r => r.id).map(r => r.id));
       headerTraced = declaredIds.some(id => reqIdSet.has(id));
     }
   } catch (e) {
@@ -85,7 +87,9 @@ Specific changes inside the `for (const file of sourceFiles)` loop, replacing th
 }
 ```
 
-Performance note: The `reqIdSet` Set construction happens inside the loop which is suboptimal. Hoist it above the loop — create `const reqIdSet = new Set(requirements.map(r => r.id));` right after the `allReqText` construction (around line 1566), then reference it inside the loop. This avoids rebuilding the Set for every untraced file.
+Performance note: The `reqIdSet` Set construction happens inside the loop which is suboptimal. Hoist it above the loop — create `const reqIdSet = new Set(requirements.filter(r => r.id).map(r => r.id));` right after the `allReqText` construction (around line 1566), then reference it inside the loop. This avoids rebuilding the Set for every untraced file. The `.filter(r => r.id)` guard ensures malformed entries without an `id` field don't cause errors.
+
+Known limitation: The regex matches only single-line `Requirements:` headers. Multi-line headers spanning multiple comment lines (e.g., `// Requirements:` followed by `//   GATE-01, GATE-02` on the next line) will only capture content on the same line as the `Requirements:` keyword. This is acceptable for the current codebase where all headers are single-line.
 
 The regex `(?:\/\/|\/?\*)\s*Requirements:\s*(.+)` handles:
 - `// Requirements: X, Y` (single-line comment)
@@ -132,6 +136,13 @@ Add new test cases to the `sweepCtoR` describe block in bin/sweep-reverse.test.c
 
 3. **Test: "traced + untraced still equals total_modules"**
    - This invariant should already be tested, but add an explicit assertion post-header-parsing to confirm the math still holds
+
+4. **Test: "header parsing works on a known temp file"** (deterministic unit test)
+   - Create a temp file in `os.tmpdir()` with a known `// Requirements: GATE-01` header
+   - Directly test the header-parsing logic (read first 30 lines via `split('\n').slice(0, 30).join('\n')`, run the regex, check extracted IDs against a mock reqIdSet)
+   - This test is self-contained and not coupled to which files exist in the repo
+   - Clean up the temp file in an `after()` hook
+   - Validates that the regex, line-based head read, and ID extraction all work correctly in isolation
 
 Place these tests after the existing "excludes test files from scan" test (around line 63).
   </action>
