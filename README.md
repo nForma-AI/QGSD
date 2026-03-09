@@ -19,7 +19,7 @@
 npx @nforma.ai/nforma@latest
 ```
 
-**Works on Mac, Windows, and Linux.**
+**Works on macOS and Linux.**
 
 <br>
 
