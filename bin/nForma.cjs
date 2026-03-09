@@ -4363,4 +4363,10 @@ module.exports._pure = {
   getTargetPath,
   get targetPath() { return targetPath; },
   set targetPath(v) { targetPath = v; },
+  // Async solve worker wrappers (for testing)
+  sweepAsync,
+  loadSweepDataAsync,
+  classifyAsync,
+  batchSweepAsync,
+  SOLVE_WORKER_PATH,
 };
