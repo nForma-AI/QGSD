@@ -14,9 +14,9 @@ requirements: [DISP-06]
 
 must_haves:
   truths:
-    - "emitResultBlock YAML output includes matched_requirement_ids field when IDs are available"
+    - "emitResultBlock YAML output includes matched_requirement_ids field for successful dispatches only (not UNAVAIL)"
     - "Each successful slot dispatch writes a per-slot debate trace file to .planning/quorum/debates/"
-    - "Debate trace files contain frontmatter with date, question, slot, round, verdict, matched_requirement_ids, artifact_path"
+    - "Debate trace files contain frontmatter with date, question, slot, round, verdict, mode, matched_requirement_ids, artifact_path"
     - "File write failures do not block dispatch (fail-open)"
   artifacts:
     - path: "bin/quorum-slot-dispatch.cjs"
@@ -72,9 +72,10 @@ Two changes in quorum-slot-dispatch.cjs:
     lines.push(`matched_requirement_ids: [${matched_requirement_ids.join(', ')}]`);
   }
   ```
-- Update both `emitResultBlock()` call sites (lines ~1019 and ~1034) to pass `matched_requirement_ids`:
+- Update the success `emitResultBlock()` call site (line ~1034) to pass `matched_requirement_ids`:
   - Extract IDs from matchedRequirements before the spawn: `const matchedReqIds = matchedRequirements.map(r => r.id).filter(Boolean);`
-  - Add `matched_requirement_ids: matchedReqIds` to both the UNAVAIL and success result block calls
+  - Add `matched_requirement_ids: matchedReqIds` to the success result block call only
+  - Do NOT add `matched_requirement_ids` to the UNAVAIL call site — `matchedRequirements` may be empty at that point, and trace files are not written for UNAVAIL results, so including IDs there adds noise and confusion
 
 **Layer 2 — Auto-persist debate trace file (after line ~1042, after the success emitResultBlock):**
 - Add a require for planning-paths at the top of the file (near other requires): `const planningPaths = require('./planning-paths.cjs');`
@@ -89,6 +90,7 @@ Two changes in quorum-slot-dispatch.cjs:
        `question: "${question.replace(/"/g, '\\"')}"`,
        `slot: ${slot}`,
        `round: ${round}`,
+       `mode: "${mode || 'unknown'}"`,
        `verdict: ${verdict}`,
        `matched_requirement_ids: [${matchedReqIds.join(', ')}]`,
        `artifact_path: "${artifactPath || ''}"`,
@@ -104,8 +106,9 @@ Two changes in quorum-slot-dispatch.cjs:
        ''
      ].join('\n');
      ```
-  4. Writes atomically: `fs.writeFileSync(debatePath, traceContent, 'utf8');`
-  5. The catch block logs to stderr and continues (fail-open): `process.stderr.write(\`[quorum-slot-dispatch] debate trace write failed: ${e.message}\n\`);`
+  4. Ensures the target directory exists: `fs.mkdirSync(require('path').dirname(debatePath), { recursive: true });`
+  5. Writes atomically: `fs.writeFileSync(debatePath, traceContent, 'utf8');`
+  6. The catch block logs to stderr and continues (fail-open): `process.stderr.write(\`[quorum-slot-dispatch] debate trace write failed: ${e.message}\n\`);`
 
 - Do NOT write trace files for UNAVAIL results (only for successful slot responses).
 
@@ -119,7 +122,7 @@ Run: `grep 'quorum-debate' bin/quorum-slot-dispatch.cjs` — confirms planning-p
 Run: `grep 'debate trace write failed' bin/quorum-slot-dispatch.cjs` — confirms fail-open error handling.
   </verify>
   <done>
-emitResultBlock emits matched_requirement_ids in YAML output. Successful slot dispatches auto-write a debate trace markdown file to .planning/quorum/debates/ with frontmatter containing date, question, slot, round, verdict, matched_requirement_ids, artifact_path. Write failures are caught and logged to stderr without blocking dispatch.
+emitResultBlock emits matched_requirement_ids in YAML output for successful dispatches only (not UNAVAIL). Successful slot dispatches auto-write a debate trace markdown file to .planning/quorum/debates/ with frontmatter containing date, question, slot, round, mode, verdict, matched_requirement_ids, artifact_path. The debates directory is created with mkdirSync recursive if absent. Write failures are caught and logged to stderr without blocking dispatch.
   </done>
 </task>
 
@@ -133,7 +136,7 @@ emitResultBlock emits matched_requirement_ids in YAML output. Successful slot di
 - After the existing validation (line ~83), add a `warnings` array to the return object that flags when expected-but-optional fields are missing from per-slot traces:
   ```
   const warnings = [];
-  const optionalFields = ['slot', 'round', 'verdict', 'matched_requirement_ids', 'artifact_path'];
+  const optionalFields = ['slot', 'round', 'verdict', 'mode', 'matched_requirement_ids', 'artifact_path'];
   for (const field of optionalFields) {
     if (frontmatter[field] === undefined) {
       warnings.push(`Optional field missing: ${field}`);
@@ -153,6 +156,7 @@ emitResultBlock emits matched_requirement_ids in YAML output. Successful slot di
   rounds: 0
   participants: []
   tags: []
+  mode: ""
   requirement_ids: []
   artifact_path: ""
   ---
@@ -167,7 +171,7 @@ Run: `node -e "const d = require('./bin/debate-formatter.cjs'); const r = d.vali
 Run: `grep 'requirement_ids' .planning/quorum/debates/_TEMPLATE.md` — confirms template updated.
   </verify>
   <done>
-debate-formatter validates new optional fields (slot, round, verdict, matched_requirement_ids, artifact_path) with warnings for missing ones. Existing debate files without new fields still validate as valid (backward compatible). Template includes requirement_ids and artifact_path fields.
+debate-formatter validates new optional fields (slot, round, verdict, mode, matched_requirement_ids, artifact_path) with warnings for missing ones. Existing debate files without new fields still validate as valid (backward compatible). Template includes requirement_ids and artifact_path fields.
   </done>
 </task>
 
@@ -183,7 +187,8 @@ debate-formatter validates new optional fields (slot, round, verdict, matched_re
 <success_criteria>
 - emitResultBlock YAML output includes matched_requirement_ids when requirement IDs exist
 - Successful dispatches auto-persist debate trace files to .planning/quorum/debates/
-- Trace files have complete frontmatter (date, question, slot, round, verdict, matched_requirement_ids, artifact_path)
+- Trace files have complete frontmatter (date, question, slot, round, mode, verdict, matched_requirement_ids, artifact_path)
+- Debates directory is created automatically if it does not exist (mkdirSync recursive)
 - File write failures are fail-open (stderr log, no dispatch blocking)
 - debate-formatter accepts new fields without breaking old debate files
 - Template reflects new schema
