@@ -8,7 +8,6 @@
   },
   "files": [
     "bin",
-    "!**/*.test.*",
     "commands",
     "core",
     "get-shit-done",
@@ -21,7 +20,10 @@
     "!scripts/lint-isolation.js",
     "!scripts/publish.sh",
     "!scripts/release.sh",
-    "templates"
+    "templates",
+    "!**/*.test.*",
+    "!**/*.test.cjs",
+    "!**/*.test.js"
   ],
   "keywords": [
     "claude",
