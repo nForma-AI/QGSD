@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T09:00:00.000Z",
-  "content_hash": "5235a610e88bb3a0",
+  "aggregated_at": "2026-03-09T09:35:29.611Z",
+  "content_hash": "dcb6f7dcc2af41b1",
   "schema_version": "1",
   "requirements": [
     {
@@ -4284,8 +4284,35 @@
       "formal_models": [
         ".planning/formal/alloy/settings-hub.als"
       ]
+    },
+    {
+      "id": "SOLVE-24",
+      "text": "The nForma TUI binary (bin/nForma.cjs) SHALL provide a terminal-based solve dashboard with circuit breaker CLI controls, testable without a live terminal",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/nForma.test.cjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-25",
+      "text": "The nForma diagnostic solver (bin/nf-solve.cjs) SHALL compute cross-layer residual vectors with health indicators, convergence logic, and structural claim sweeps, all exercised by automated tests",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "bin/nf-solve.test.cjs",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "INST-13",
+      "text": "Installer scans installed hook files for path.join(__dirname, ...) patterns, resolves each reference relative to the installed location, and emits a warning for any target that does not exist on disk.",
+      "category": "Installer & CLI",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Hooks are authored in a source repository but installed to a different directory, causing __dirname to change. Path references that work in the repo silently break after install because fail-open error handling suppresses the failures; install-time validation surfaces these broken paths early."
     }
   ],
-  "total": 283,
-  "frozen_at": "2026-03-09T08:28:03.759Z"
+  "total": 283
 }
