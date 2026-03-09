@@ -1,6 +1,7 @@
 # VHS tape for capturing nForma TUI screenshots
 # Usage: vhs scripts/tui-screenshot.tape
 # Captures 11 screenshots across all modules, sub-views, and modals.
+# Output: docs/assets/tui-*.png
 # Note: VHS does not support F1-F5 keys, so we use Tab to cycle modules.
 # Module order: Agents(0) → Reqs(1) → Config(2) → Sessions(3) → Solve(4)
 

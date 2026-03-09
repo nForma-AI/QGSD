@@ -99,7 +99,7 @@ if (require.main === module) (async () => {
 
   const secrets = findSecrets();
   if (!secrets) {
-    // silently skip — nForma may not be installed yet or keytar absent
+    // silently skip — nForma may not be installed yet or secrets store absent
     process.exit(0);
   }
   try {
@@ -109,7 +109,7 @@ if (require.main === module) (async () => {
     process.stderr.write('[nf-session-start] sync error: ' + e.message + '\n');
   }
 
-  // Populate CCR config from keytar (fail-silent — CCR may not be installed)
+  // Populate CCR config from secrets store (fail-silent — CCR may not be installed)
   try {
     const { execFileSync } = require('child_process');
     const nodeFsRef = require('fs');

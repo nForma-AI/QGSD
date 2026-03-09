@@ -1,5 +1,5 @@
 {
-  "mode": "interactive",
+  "mode": "yolo",
   "depth": "standard",
   "workflow": {
     "research": true,

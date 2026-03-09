@@ -8,7 +8,7 @@ allowed-tools:
 
 <objective>
 Configure nForma quorum agents in `~/.claude.json`. Detects whether any MCP servers are configured and routes to the appropriate flow:
-- **First-run** (zero configured entries): linear onboarding — select agent templates, collect API keys via keytar, write batch changes with backup, restart agents
+- **First-run** (zero configured entries): linear onboarding — select agent templates, collect API keys via secrets store, write batch changes with backup, restart agents
 - **Re-run** (existing entries): live-status agent roster menu — view model/provider/key status, select agent, choose action (set key / swap provider / remove)
 </objective>
 
@@ -99,7 +99,7 @@ Resolve agent name, provider name, base URL, and model from the selection using 
 
 Use AskUserQuestion:
 - header: "API Key — {agent-name}"
-- question: "Enter your {provider-name} API key.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."
+- question: "Enter your {provider-name} API key.\n\nThe key will be stored in your secrets store (secrets store). It will not appear in any log or plain-text file."
 - options:
   - "Continue (I have my key ready)"
   - "Skip this agent"
@@ -123,7 +123,7 @@ const apiKey   = process.env.API_KEY;
   try {
     const keyName = 'ANTHROPIC_API_KEY_' + agentKey.toUpperCase().replace(/-/g,'_');
     await set(SERVICE, keyName, apiKey);
-    process.stdout.write(JSON.stringify({ stored: true, method: 'keytar', keyName }) + '\n');
+    process.stdout.write(JSON.stringify({ stored: true, method: 'secrets store', keyName }) + '\n');
   } catch (e) {
     process.stdout.write(JSON.stringify({ stored: false, error: e.message }) + '\n');
   }
@@ -132,8 +132,8 @@ const apiKey   = process.env.API_KEY;
 ```
 
 Parse KEY_RESULT:
-- `stored: true` — mark agent as `method: keytar` in pending batch
-- `stored: false` (keytar unavailable) — handle fallback below
+- `stored: true` — mark agent as `method: secrets store` in pending batch
+- `stored: false` (secrets store unavailable) — handle fallback below
 
 **Keytar unavailable fallback:**
 
@@ -153,7 +153,7 @@ mkdir -p ~/.claude/debug
 node -e "
 const fs = require('fs');
 const ts = new Date().toISOString();
-const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+const msg = ts + ' nForma mcp-setup: secrets store unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
 fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
 " AGENT_KEY="{agent-name}"
 ```
@@ -192,7 +192,7 @@ Display pending summary:
 Agents to add to ~/.claude.json:
 
   ◆ {agent-name}  →  {provider}  ({base-url})
-    Key: {stored in system keychain | stored in env block (unencrypted)}
+    Key: {stored in secrets store | stored in env block (unencrypted)}
   [repeat for each pending agent]
 
 Skipped:
@@ -273,7 +273,7 @@ try { claudeJson = JSON.parse(fs.readFileSync(claudeJsonPath, 'utf8')); } catch 
 if (!claudeJson.mcpServers) claudeJson.mcpServers = {};
 
 // pendingAgents is an array of { name, baseUrl, model, method, apiKey }
-// where method is 'keytar' or 'env_block'
+// where method is 'secrets store' or 'env_block'
 const pendingAgents = JSON.parse(process.env.PENDING_AGENTS_JSON);
 const mcpPath = process.env.CLAUDE_MCP_PATH || '';
 
@@ -294,7 +294,7 @@ process.stdout.write(JSON.stringify({ written: true, count: pendingAgents.length
 " PENDING_AGENTS_JSON='...' CLAUDE_MCP_PATH="$CLAUDE_MCP_PATH"
 ```
 
-### Step 3d: Sync keytar secrets to env blocks
+### Step 3d: Sync secrets store secrets to env blocks
 
 ```bash
 node -e "
@@ -337,7 +337,7 @@ Run /nf:mcp-status to verify agent health.
 ```
 
 **Utility tools available during setup:**
-- `node bin/set-secret.cjs <agent-name> <key>` — CLI secret setter (wraps secrets.cjs keytar integration)
+- `node bin/set-secret.cjs <agent-name> <key>` — CLI secret setter (wraps secrets.cjs secrets store integration)
 - `node bin/gh-account-rotate.cjs` — Rotate gh auth accounts for copilot slots (useful when setting up copilot-1 agent)
 
 ---
@@ -477,7 +477,7 @@ Native CLI second-slot resolver (options 6–9):
 
 Use AskUserQuestion:
 - header: "API Key — {agent-name}"
-- question: `"Enter your {provider-name} API key.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."`
+- question: `"Enter your {provider-name} API key.\n\nThe key will be stored in your secrets store (secrets store). It will not appear in any log or plain-text file."`
 - options:
   - "Continue (I have my key ready)"
   - "Cancel"
@@ -504,7 +504,7 @@ const apiKey   = process.env.API_KEY;
   try {
     const keyName = 'ANTHROPIC_API_KEY_' + agentKey.toUpperCase().replace(/-/g,'_');
     await set(SERVICE, keyName, apiKey);
-    process.stdout.write(JSON.stringify({ stored: true, method: 'keytar', keyName }) + '\n');
+    process.stdout.write(JSON.stringify({ stored: true, method: 'secrets store', keyName }) + '\n');
   } catch (e) {
     process.stdout.write(JSON.stringify({ stored: false, error: e.message }) + '\n');
   }
@@ -514,7 +514,7 @@ const apiKey   = process.env.API_KEY;
 
 Parse KEY_RESULT:
 - `stored: true` — proceed to Step C
-- `stored: false` — keytar unavailable fallback:
+- `stored: false` — secrets store unavailable fallback:
 
   Use AskUserQuestion:
   - header: "Keychain Unavailable"
@@ -531,7 +531,7 @@ Parse KEY_RESULT:
   node -e "
   const fs = require('fs');
   const ts = new Date().toISOString();
-  const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+  const msg = ts + ' nForma mcp-setup: secrets store unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
   fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
   " AGENT_KEY="{agent-name}"
   ```
@@ -546,7 +546,7 @@ Show pending summary:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   ◆ {agent-name}  →  {provider-name}  ({base-url})
-    Key: {stored in system keychain | stored in env block (unencrypted)}
+    Key: {stored in secrets store | stored in env block (unencrypted)}
 ```
 
 Use AskUserQuestion:
@@ -627,7 +627,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 " AGENT_NAME="{agent-name}" BASE_URL="{base-url}" MODEL="{model}" MCP_PATH="$CLAUDE_MCP_PATH" API_KEY_ENV="{api-key-if-env-block-method}"
 ```
 
-4. Sync keytar secrets to ~/.claude.json:
+4. Sync secrets store secrets to ~/.claude.json:
 ```bash
 node -e "
 const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
@@ -923,7 +923,7 @@ Use AskUserQuestion:
 
 **Step A — Check existing key status**
 
-Run an inline node script to check whether a key is already stored in keytar for the selected agent:
+Run an inline node script to check whether a key is already stored in secrets store for the selected agent:
 
 ```bash
 KEY_CHECK_RESULT=$(node -e "
@@ -934,7 +934,7 @@ const { get, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
     const keyName   = 'ANTHROPIC_API_KEY_' + agentName.toUpperCase().replace(/-/g,'_');
     const stored    = await get(SERVICE, keyName);
     if (stored) {
-      process.stdout.write(JSON.stringify({ hasKey: true, method: 'keytar' }) + '\n');
+      process.stdout.write(JSON.stringify({ hasKey: true, method: 'secrets store' }) + '\n');
     } else {
       // Check env block fallback
       const fs = require('fs'), path = require('path'), os = require('os');
@@ -956,16 +956,16 @@ const { get, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 " AGENT_NAME="{agent-name}")
 ```
 
-Parse KEY_CHECK_RESULT for: `hasKey` (boolean), `method` ('keytar'|'env_block'|'none').
+Parse KEY_CHECK_RESULT for: `hasKey` (boolean), `method` ('secrets store'|'env_block'|'none').
 
 **Step B — Prompt user with key-status hint**
 
 Use AskUserQuestion:
 - header: "Set API Key — {agent-name}"
 - question: one of:
-  - If `hasKey` is true and `method` is `keytar`: `"API key already stored in system keychain (key stored). Enter a new key to overwrite it, or skip.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."`
-  - If `method` is `env_block`: `"API key currently stored in ~/.claude.json env block. Enter a new key to move it to the system keychain, or skip.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."`
-  - If `method` is `none`: `"No API key configured for {agent-name}. Enter a key to store it in your system keychain.\n\nThe key will be stored in your system keychain (keytar). It will not appear in any log or plain-text file."`
+  - If `hasKey` is true and `method` is `secrets store`: `"API key already stored in secrets store (key stored). Enter a new key to overwrite it, or skip.\n\nThe key will be stored in your secrets store (secrets store). It will not appear in any log or plain-text file."`
+  - If `method` is `env_block`: `"API key currently stored in ~/.claude.json env block. Enter a new key to move it to the secrets store, or skip.\n\nThe key will be stored in your secrets store (secrets store). It will not appear in any log or plain-text file."`
+  - If `method` is `none`: `"No API key configured for {agent-name}. Enter a key to store it in your secrets store.\n\nThe key will be stored in your secrets store (secrets store). It will not appear in any log or plain-text file."`
 - options:
   - "Continue (I have my key ready)"
   - "Skip — back to agent menu"
@@ -983,7 +983,7 @@ Use a second AskUserQuestion to receive the actual key:
 
 If "Cancel": display "No changes made." Return to Agent Sub-Menu.
 
-**Step D — Store in keytar**
+**Step D — Store in secrets store**
 
 Run inline node script using `set()` from `bin/secrets.cjs`. Pass key via environment variable only — never interpolate into the script body:
 
@@ -996,7 +996,7 @@ const { set, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
     const apiKey    = process.env.API_KEY;
     const keyName   = 'ANTHROPIC_API_KEY_' + agentName.toUpperCase().replace(/-/g,'_');
     await set(SERVICE, keyName, apiKey);
-    process.stdout.write(JSON.stringify({ stored: true, method: 'keytar', keyName }) + '\n');
+    process.stdout.write(JSON.stringify({ stored: true, method: 'secrets store', keyName }) + '\n');
   } catch (e) {
     process.stdout.write(JSON.stringify({ stored: false, error: e.message }) + '\n');
   }
@@ -1006,7 +1006,7 @@ const { set, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
 
 Parse KEY_STORE_RESULT:
 - `stored: true` — continue to Step E
-- `stored: false` — handle keytar fallback:
+- `stored: false` — handle secrets store fallback:
 
   Use AskUserQuestion:
   - header: "Keychain Unavailable"
@@ -1023,7 +1023,7 @@ Parse KEY_STORE_RESULT:
   node -e "
   const fs = require('fs');
   const ts = new Date().toISOString();
-  const msg = ts + ' nForma mcp-setup: keytar unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
+  const msg = ts + ' nForma mcp-setup: secrets store unavailable for ' + process.env.AGENT_KEY + ' — API key stored unencrypted in env block\n';
   fs.appendFileSync(require('os').homedir() + '/.claude/debug/mcp-setup-audit.log', msg);
   " AGENT_KEY="{agent-name}"
   ```
@@ -1037,7 +1037,7 @@ Show pending summary using the existing "Confirm + Apply + Restart Flow" pattern
  nForma ► REVIEW PENDING CHANGES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  ◆ {agent-name} — API key updated (stored in system keychain)
+  ◆ {agent-name} — API key updated (stored in secrets store)
 ```
 
 Use AskUserQuestion:
@@ -1076,7 +1076,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 " AGENT_NAME="{agent-name}" API_KEY="{user-entered-key}"
 ```
 
-3. Sync all keytar secrets back to ~/.claude.json:
+3. Sync all secrets store secrets back to ~/.claude.json:
 ```bash
 node -e "
 const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
@@ -1205,7 +1205,7 @@ process.stdout.write(JSON.stringify({ written: true }) + '\n');
 " AGENT_NAME="{agent-name}" NEW_URL="{new-url}"
 ```
 
-3. Sync keytar secrets to ~/.claude.json:
+3. Sync secrets store secrets to ~/.claude.json:
 ```bash
 node -e "
 const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
@@ -1330,7 +1330,7 @@ cp ~/.claude.json ~/.claude.json.backup-$(date +%Y-%m-%d-%H%M%S) 2>/dev/null || 
 
 2. Write changes to `~/.claude.json` (inline node — read current, apply patch, write with 2-space indent).
 
-3. Sync keytar secrets:
+3. Sync secrets store secrets:
 ```bash
 node -e "
 const { syncToClaudeJson, SERVICE } = require('~/.claude/nf-bin/secrets.cjs');
@@ -1366,14 +1366,14 @@ The following scripts are available for advanced configuration tasks:
 </process>
 
 <success_criteria>
-- First-run (no mcpServers): welcome banner + agent template list + key collection (keytar/fallback) + batch-write + backup + restart + summary
+- First-run (no mcpServers): welcome banner + agent template list + key collection (secrets store/fallback) + batch-write + backup + restart + summary
 - Re-run (existing entries): numbered agent roster with model/provider/key-status columns
 - Sub-menu per agent: full API key set/update flow (Option 1), full provider swap flow (Option 2), full remove-agent flow (Option 3)
 - Add-agent flow (roster menu): template select (filtered) → key collection → mcpServers write → syncToClaudeJson → restart → identity ping
 - Remove-agent flow (Option 3): confirm → backup → delete mcpServers[agent] entry → write
-- Option 1 API key flow: key-status check → "(key stored)" hint → key input → keytar store → confirm → backup → patch ~/.claude.json → syncToClaudeJson → mcp-restart
+- Option 1 API key flow: key-status check → "(key stored)" hint → key input → secrets store store → confirm → backup → patch ~/.claude.json → syncToClaudeJson → mcp-restart
 - Option 2 provider swap flow: current provider display → curated list (AkashML/Together.xyz/Fireworks) + Custom URL → confirm → backup → patch ANTHROPIC_BASE_URL → mcp-restart
-- Confirm+apply+restart: backup then write then sync keytar then mcp-restart per agent then confirmation
+- Confirm+apply+restart: backup then write then sync secrets store then mcp-restart per agent then confirmation
 - No changes applied without explicit user confirmation
 - Keytar failure: warning + Linux hint + confirmation before env-block fallback + audit log
 - Key value never appears in displayed text, log output, or shell history (passed via env var only)

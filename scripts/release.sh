@@ -88,7 +88,10 @@ echo ""
 echo "=== Running tests ==="
 npm run test:ci
 echo ""
-echo "=== Tests passed ==="
+echo "=== Running install + TUI smoke tests ==="
+npm run test:install
+echo ""
+echo "=== All tests passed ==="
 echo ""
 
 # --- 7. Extract changelog section for tag body ---
