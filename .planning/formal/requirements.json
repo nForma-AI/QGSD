@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-09T07:18:57.236Z",
-  "content_hash": "821fd5c18abec392",
+  "aggregated_at": "2026-03-09T07:55:00.000Z",
+  "content_hash": "133d50304e7fe56b",
   "schema_version": "1",
   "requirements": [
     {
@@ -1222,6 +1222,18 @@
       "provenance": {
         "source_file": "manual",
         "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "GATE-03",
+      "text": "Gate promotion pipeline SHALL incorporate evidence-file readiness scoring, requiring minimum populated evidence thresholds per promotion level, with fail-open semantics for missing evidence and an operational bypass flag.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Evidence files (instrumentation-map, state-candidates, failure-taxonomy, trace-corpus-stats, proposed-metrics) were generated but never consumed by the promotion pipeline. This requirement closes that gap by wiring evidence readiness into gate transitions.",
+      "provenance": {
+        "source_file": ".planning/quick/236-wire-evidence-files-into-gate-promotion-/236-PLAN.md",
+        "milestone": "quick-236"
       }
     },
     {
