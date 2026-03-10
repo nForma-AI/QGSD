@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: 5 of 6 (TLA+ Meta-Verification)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-03-10 — Phase v0.33-04 complete, transitioning to v0.33-05
+Last activity: 2026-03-10 - Completed quick task 253: Guard run-formal-verify.cjs static steps
 
 Progress: [██████░░░░] 67%
 
@@ -84,6 +84,7 @@ None.
 | 249 | Fix TUI requirements view to show two levels: principles and specifications | 2026-03-09 | 6dfc394c | Verified | [249-fix-tui-requirements-view-to-show-two-le](./quick/249-fix-tui-requirements-view-to-show-two-le/) |
 | 250 | Review full README as team and propose improvement plan | 2026-03-09 | b183ff22 | Verified | [250-review-full-readme-as-team-and-propose-i](./quick/250-review-full-readme-as-team-and-propose-i/) |
 | 252 | Add focus/topic filter to nf:solve | 2026-03-10 | 04b3c923 | Verified | [252-add-focus-topic-filter-to-nf-solve](./quick/252-add-focus-topic-filter-to-nf-solve/) |
+| 253 | Guard run-formal-verify.cjs static steps — prevent cross-repo contamination | 2026-03-10 | pending | Pending | [253-guard-run-formal-verify-cjs-static-steps](./quick/253-guard-run-formal-verify-cjs-static-steps/) |
 
 ## Session Continuity
 
