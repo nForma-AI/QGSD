@@ -280,7 +280,32 @@ function isArchived(item) {
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
     : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
     : item.file || item.summary;
-  return archiveData.entries.some(e => e.key === key);
+  const entry = archiveData.entries.find(e => e.key === key);
+  if (!entry) return false;
+
+  // Staleness check: if archived >30 days ago AND underlying file modified since, re-surface
+  const STALE_DAYS = 30;
+  const archivedAt = entry.archived_at ? new Date(entry.archived_at).getTime() : 0;
+  const now = Date.now();
+  const isOldEnough = (now - archivedAt) > (STALE_DAYS * 24 * 60 * 60 * 1000);
+
+  if (isOldEnough) {
+    // Determine the underlying file path to check mtime
+    const filePath = item.file || item.doc_file;
+    if (filePath) {
+      try {
+        const absPath = path.isAbsolute(filePath) ? filePath : path.join(ROOT, filePath);
+        const stat = fs.statSync(absPath);
+        if (stat.mtimeMs > archivedAt) {
+          return false; // stale archive — re-surface
+        }
+      } catch (_) {
+        // File doesn't exist anymore — keep archived
+      }
+    }
+  }
+
+  return true;
 }
 
 // ── File context reader ───────────────────────────────────────────────────────

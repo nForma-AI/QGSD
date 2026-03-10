@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: -
 Plan: -
 Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed quick task 256: Fix solve subagent cwd/path bugs
+Last activity: 2026-03-10 - Completed quick task 257: Fix solve/resolve data disconnect
 
 Progress: Milestone complete
 
@@ -90,6 +90,7 @@ None.
 | 253 | Guard run-formal-verify.cjs static steps — prevent cross-repo contamination | 2026-03-10 | a9cc952c | Verified | [253-guard-run-formal-verify-cjs-static-steps](./quick/253-guard-run-formal-verify-cjs-static-steps/) |
 | 254 | Review observe-pipeline extraction and README per-model gates section | 2026-03-10 | f367ddc8 | Verified | [254-review-observe-pipeline-extraction-and-r](./quick/254-review-observe-pipeline-extraction-and-r/) |
 | 256 | Fix solve subagent cwd/path bugs that create junk files in project root | 2026-03-10 | 3305c8fc | Verified | [256-fix-solve-subagent-cwd-path-bugs-that-cr](./quick/256-fix-solve-subagent-cwd-path-bugs-that-cr/) |
+| 257 | Fix solve/resolve data disconnect | 2026-03-10 | TBD | Pending | [257-fix-solve-resolve-data-disconnect-add-tr](./quick/257-fix-solve-resolve-data-disconnect-add-tr/) |
 
 ## Session Continuity
 

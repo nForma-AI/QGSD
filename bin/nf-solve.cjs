@@ -2896,6 +2896,69 @@ function healthIndicator(residual) {
 // ── Report formatting ────────────────────────────────────────────────────────
 
 /**
+ * Compute triage breakdown (FP, archived, actionable counts) for a category's items.
+ * Reads solve-classifications.json and archived-solve-items.json.
+ * catKey: 'dtoc', 'ctor', 'ttor', 'dtor'
+ * items: array of item objects with structure matching solve-tui.cjs
+ */
+function computeTriageBreakdown(catKey, items) {
+  const classPath = path.join(ROOT, '.planning', 'formal', 'solve-classifications.json');
+  const archivePath = path.join(ROOT, '.planning', 'formal', 'archived-solve-items.json');
+
+  let classifications = {};
+  let archiveEntries = [];
+
+  try {
+    const classData = JSON.parse(fs.readFileSync(classPath, 'utf8'));
+    classifications = classData.classifications?.[catKey] || {};
+  } catch (_) {
+    // graceful fallback
+  }
+
+  try {
+    const archiveData = JSON.parse(fs.readFileSync(archivePath, 'utf8'));
+    archiveEntries = archiveData.entries || [];
+  } catch (_) {
+    // graceful fallback
+  }
+
+  let fp_count = 0;
+  let archived_count = 0;
+  let actionable_count = 0;
+
+  for (const item of items) {
+    // Compute key using same logic as solve-tui.cjs itemKey()
+    let key = '';
+    if (catKey === 'dtoc') {
+      key = `${item.doc_file}:${item.value}`;
+    } else if (catKey === 'ctor') {
+      key = item.file || item;
+    } else if (catKey === 'ttor') {
+      key = (typeof item === 'string' ? item : item.file) || item;
+    } else if (catKey === 'dtor') {
+      key = `${item.doc_file}:${item.line}`;
+    } else {
+      continue;
+    }
+
+    // Check if FP-classified
+    if (classifications[key] === 'fp') {
+      fp_count++;
+    }
+    // Check if archived
+    else if (archiveEntries.some(e => e.key === key)) {
+      archived_count++;
+    }
+    // Otherwise actionable
+    else {
+      actionable_count++;
+    }
+  }
+
+  return { fp_count, archived_count, actionable_count, total: items.length };
+}
+
+/**
  * Formats human-readable report.
  */
 function formatReport(iterations, finalResidual, converged) {
@@ -2933,12 +2996,21 @@ function formatReport(iterations, finalResidual, converged) {
     { label: 'T -> C (Test->Code)', residual: finalResidual.t_to_c.residual },
     { label: 'F -> C (Formal->Code)', residual: finalResidual.f_to_c.residual },
     { label: 'R -> D (Req->Docs)', residual: finalResidual.r_to_d.residual },
-    { label: 'D -> C (Docs->Code)', residual: finalResidual.d_to_c.residual },
+    { label: 'D -> C (Docs->Code)', residual: finalResidual.d_to_c.residual, catKey: 'dtoc', detail: finalResidual.d_to_c?.detail?.broken_claims },
     { label: 'P -> F (Prod->Formal)', residual: finalResidual.p_to_f ? finalResidual.p_to_f.residual : -1 },
   ];
 
   for (const row of forwardRows) {
     lines.push(renderRow(row.label, row.residual));
+
+    // Add triage breakdown for D->C row
+    if (row.label === 'D -> C (Docs->Code)' && row.detail && !finalResidual.d_to_c?.detail?.skipped) {
+      const items = row.detail || [];
+      const triage = computeTriageBreakdown('dtoc', items);
+      if (triage.total > 0) {
+        lines.push('\x1b[2m  (' + triage.fp_count + ' FP, ' + triage.archived_count + ' archived, ' + triage.actionable_count + ' actionable)\x1b[0m');
+      }
+    }
   }
   lines.push('  Forward subtotal:      ' + finalResidual.total);
 
@@ -2946,13 +3018,26 @@ function formatReport(iterations, finalResidual, converged) {
   lines.push('\u2500 Reverse Discovery (human-gated) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
   const reverseRows = [
-    { label: 'C -> R (Code->Req)', residual: finalResidual.c_to_r ? finalResidual.c_to_r.residual : -1 },
-    { label: 'T -> R (Test->Req)', residual: finalResidual.t_to_r ? finalResidual.t_to_r.residual : -1 },
-    { label: 'D -> R (Docs->Req)', residual: finalResidual.d_to_r ? finalResidual.d_to_r.residual : -1 },
+    { label: 'C -> R (Code->Req)', residual: finalResidual.c_to_r ? finalResidual.c_to_r.residual : -1, catKey: 'ctor', detail: finalResidual.c_to_r?.detail?.untraced_modules },
+    { label: 'T -> R (Test->Req)', residual: finalResidual.t_to_r ? finalResidual.t_to_r.residual : -1, catKey: 'ttor', detail: finalResidual.t_to_r?.detail?.orphan_tests },
+    { label: 'D -> R (Docs->Req)', residual: finalResidual.d_to_r ? finalResidual.d_to_r.residual : -1, catKey: 'dtor', detail: finalResidual.d_to_r?.detail?.unbacked_claims },
   ];
 
   for (const row of reverseRows) {
     lines.push(renderRow(row.label, row.residual));
+
+    // Add triage breakdown if detail is available and not skipped
+    if (row.detail && !finalResidual[row.catKey === 'ctor' ? 'c_to_r' : row.catKey === 'ttor' ? 't_to_r' : 'd_to_r']?.detail?.skipped) {
+      let items = row.detail || [];
+      // Normalize items: for ttor, strings become {file: item}
+      if (row.catKey === 'ttor') {
+        items = items.map(item => typeof item === 'string' ? { file: item } : item);
+      }
+      const triage = computeTriageBreakdown(row.catKey, items);
+      if (triage.total > 0) {
+        lines.push('\x1b[2m  (' + triage.fp_count + ' FP, ' + triage.archived_count + ' archived, ' + triage.actionable_count + ' actionable)\x1b[0m');
+      }
+    }
   }
 
   const rdTotal = finalResidual.reverse_discovery_total || 0;
