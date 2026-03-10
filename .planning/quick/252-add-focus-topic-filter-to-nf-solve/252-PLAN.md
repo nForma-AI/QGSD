@@ -44,6 +44,10 @@ must_haves:
       to: ".planning/formal/category-groups.json"
       via: "fs.readFileSync to load category group mapping"
       pattern: "category-groups\\.json"
+    - from: "commands/nf/solve.md"
+      to: "commands/nf/solve-report.md"
+      via: "Phase 4 Agent call passes focus metadata in input JSON"
+      pattern: "focus"
 ---
 
 <objective>
@@ -189,8 +193,18 @@ focus: focusPhrase || null,
    ```
    ## Flag Extraction
    Parse all CLI flags from the user's invocation. Extract `--focus="<phrase>"` if present.
-   Store as `focus_flag` for forwarding to sub-skills and bin/nf-solve.cjs.
+   Store as `focusPhrase` variable (string or null) for forwarding to sub-skills and bin/nf-solve.cjs.
+   Initialize at the very start of the process block:
+     - If args contain `--focus="X"` or `--focus=X`, set `focusPhrase = X`
+     - Otherwise, set `focusPhrase = null`
+   Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
    ```
+
+3. In Phase 4 (Report Agent call), update the input JSON passed to solve-report.md to include focus metadata. Find the JSON object passed to the Agent call and add:
+   ```
+   "focus": focusPhrase ? { "phrase": focusPhrase } : null
+   ```
+   This ensures solve-report.md receives the focus metadata needed to render the "(focused: <phrase>)" header.
 
 **G. commands/nf/solve-diagnose.md:**
 
@@ -200,10 +214,18 @@ focus: focusPhrase || null,
 
 **H. commands/nf/solve-report.md:**
 
-Read `commands/nf/solve-report.md` first. In the report output formatting section, add logic to display "(focused: <phrase>)" in the report header when focus metadata is present in the input JSON. Add to the report header line:
-```
-If input JSON contains `focus.phrase`, prepend to the report title: "(focused: {phrase})"
-```
+Read `commands/nf/solve-report.md` first. Two changes:
+
+1. **Update input_contract**: Add the focus field to the input_contract documentation at the top of solve-report.md:
+   ```
+   "focus": null | { "phrase": string }
+   ```
+
+2. **Add conditional header in Step 6 (Before/After Summary)**: At the start of the table output in Step 6, add a conditional line. If `input.focus` is non-null and `input.focus.phrase` is truthy, prepend to the table title:
+   ```
+   **(focused: {focus.phrase})**
+   ```
+   This goes immediately before the Before/After table heading so it appears as the first line of the summary output.
 
 IMPORTANT: The `focusSet` and `focusPhrase` variables must be module-level in nf-solve.cjs (not inside a function) so they are accessible from sweepRtoF() and sweepRtoD(). Place them right after the existing CLI parsing block.
   </action>
@@ -215,7 +237,9 @@ IMPORTANT: The `focusSet` and `focusPhrase` variables must be module-level in nf
 5. `grep '\-\-focus' commands/nf/solve-diagnose.md` confirms sub-skill documents the flag
 6. `node bin/nf-solve.cjs --json --report-only --focus="quorum" 2>/dev/null | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log(d.iterations?.[0]?.residual?.focus?.phrase || 'MISSING')"` prints "quorum"
 7. `node bin/nf-solve.cjs --json --report-only 2>/dev/null | node -e "const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')); console.log(d.iterations?.[0]?.residual?.focus)"` prints "null" (no regression)
-8. Existing test suite: `npm test 2>&1 | tail -5` -- no new failures
+8. `grep 'focus' commands/nf/solve-report.md` confirms input_contract documents focus field and Step 6 has conditional header
+9. `grep 'focus' commands/nf/solve.md | grep -i 'phase 4\|report\|json'` confirms Phase 4 Agent call passes focus in input JSON
+10. Existing test suite: `npm test 2>&1 | tail -5` -- no new failures
   </verify>
   <done>
 The --focus flag is parsed in nf-solve.cjs, filters are applied in sweepRtoF and sweepRtoD, focus metadata appears in JSON output, the orchestrator and sub-skill .md files document and forward the flag, and existing behavior without --focus is unchanged.

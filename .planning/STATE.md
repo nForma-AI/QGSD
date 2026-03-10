@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 Phase: 3 of 6 (Gate Stabilization)
 Plan: 2 of 2 in current phase
 Status: All plans complete — awaiting verification
-Last activity: 2026-03-10 — Phase v0.33-03 plans executed (gate-stability module + promotion pipeline integration + --write-per-model default)
+Last activity: 2026-03-10 - Completed quick task 252: Add focus/topic filter to nf:solve
 
 Progress: [█████░░░░░] 50%
 
@@ -80,6 +80,7 @@ None.
 | 242 | Add Gate Scoring page to TUI under Reqs (F2) module + fix Solve (F5) ASCII art from T to S shape | 2026-03-09 | 54c92a3b | Pending | [242-add-gate-scoring-page-to-tui-under-reqs-](./quick/242-add-gate-scoring-page-to-tui-under-reqs-/) |
 | 249 | Fix TUI requirements view to show two levels: principles and specifications | 2026-03-09 | 6dfc394c | Verified | [249-fix-tui-requirements-view-to-show-two-le](./quick/249-fix-tui-requirements-view-to-show-two-le/) |
 | 250 | Review full README as team and propose improvement plan | 2026-03-09 | b183ff22 | Verified | [250-review-full-readme-as-team-and-propose-i](./quick/250-review-full-readme-as-team-and-propose-i/) |
+| 252 | Add focus/topic filter to nf:solve | 2026-03-10 | 04b3c923 | Pending | [252-add-focus-topic-filter-to-nf-solve](./quick/252-add-focus-topic-filter-to-nf-solve/) |
 
 ## Session Continuity
 
