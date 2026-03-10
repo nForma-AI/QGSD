@@ -48,6 +48,7 @@ const TAG = '[compute-per-model-gates]';
 const EVIDENCE_DIR = path.join(FORMAL, 'evidence');
 const CHANGELOG_PATH = path.join(FORMAL, 'promotion-changelog.json');
 const CHANGELOG_MAX_ENTRIES = 200;
+const DEDUP_WINDOW_MS = 5 * 60 * 1000;
 
 /**
  * Appends a structured entry to promotion-changelog.json.
@@ -67,6 +68,21 @@ function appendChangelog(entry) {
         changelog = [];
       }
     }
+    // Write-time dedup guard: reject if a matching entry exists within 5-minute window
+    const entryTime = new Date(entry.timestamp).getTime();
+    for (let i = changelog.length - 1; i >= 0; i--) {
+      const existing = changelog[i];
+      const existingTime = new Date(existing.timestamp).getTime();
+      // Once we're past the window, stop scanning (entries are chronological)
+      if (Math.abs(entryTime - existingTime) >= DEDUP_WINDOW_MS) break;
+      if (existing.model === entry.model &&
+          existing.from_level === entry.from_level &&
+          existing.to_level === entry.to_level) {
+        process.stderr.write(TAG + ' DEDUP: skipping duplicate changelog entry for ' + entry.model + ' (' + entry.from_level + ' -> ' + entry.to_level + ')\n');
+        return;
+      }
+    }
+
     changelog.push(entry);
     // Retention: trim from front to keep last 200 entries
     if (changelog.length > CHANGELOG_MAX_ENTRIES) {
