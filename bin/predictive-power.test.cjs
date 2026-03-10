@@ -11,6 +11,10 @@ const {
   writeBugToProperty,
   computePerModelRecall,
   formatRecallSummary,
+  fitExponentialDecay,
+  computeConvergenceVelocity,
+  updatePredictivePower,
+  formatPredictivePowerSummary,
 } = require('./predictive-power.cjs');
 
 // ── Test Helpers ─────────────────────────────────────────────────────────────
@@ -330,5 +334,160 @@ describe('formatRecallSummary', () => {
   it('returns "no data" message for null', () => {
     const summary = formatRecallSummary(null);
     assert.ok(summary.includes('No recall data'));
+  });
+});
+
+// ── fitExponentialDecay ──────────────────────────────────────────────────────
+
+describe('fitExponentialDecay', () => {
+  it('returns CONVERGING for synthetic decreasing series', () => {
+    // Geometric decay: 100 * 0.8^t
+    const values = [];
+    for (let i = 0; i < 15; i++) values.push(100 * Math.pow(0.8, i));
+    const result = fitExponentialDecay(values);
+    assert.strictEqual(result.status, 'CONVERGING');
+    assert.ok(result.lambda > 0);
+    assert.ok(result.sessions_to_convergence > 0);
+  });
+
+  it('returns INSUFFICIENT_DATA for less than 10 values', () => {
+    const result = fitExponentialDecay([10, 8, 6, 4, 3, 2, 1]);
+    assert.strictEqual(result.status, 'INSUFFICIENT_DATA');
+  });
+
+  it('returns STABLE for all same values', () => {
+    const values = Array(15).fill(5);
+    const result = fitExponentialDecay(values);
+    assert.strictEqual(result.status, 'STABLE');
+    assert.strictEqual(result.lambda, 0);
+  });
+
+  it('returns NOT_CONVERGING for increasing series', () => {
+    const values = [];
+    for (let i = 0; i < 15; i++) values.push(1 + i * 2);
+    const result = fitExponentialDecay(values);
+    assert.strictEqual(result.status, 'NOT_CONVERGING');
+    assert.ok(result.lambda <= 0);
+  });
+
+  it('filters zeros and fits remaining points', () => {
+    const values = [];
+    for (let i = 0; i < 20; i++) {
+      values.push(i % 3 === 0 ? 0 : 50 * Math.pow(0.85, i));
+    }
+    const result = fitExponentialDecay(values);
+    // Should still have enough valid points (20 - ~7 zeros = ~13)
+    assert.ok(result.status !== 'INSUFFICIENT_DATA');
+  });
+
+  it('filters -1 values (fast-mode skipped)', () => {
+    const values = [];
+    for (let i = 0; i < 20; i++) {
+      values.push(i % 4 === 0 ? -1 : 80 * Math.pow(0.9, i));
+    }
+    const result = fitExponentialDecay(values);
+    assert.ok(result.status !== 'INSUFFICIENT_DATA');
+  });
+
+  it('returns CONVERGED when current residual <= 0.5', () => {
+    // Values that decay to below threshold
+    const values = [];
+    for (let i = 0; i < 15; i++) values.push(100 * Math.pow(0.5, i));
+    // Last value: 100 * 0.5^14 = very small
+    const result = fitExponentialDecay(values);
+    assert.strictEqual(result.status, 'CONVERGED');
+    assert.strictEqual(result.sessions_to_convergence, 0);
+  });
+});
+
+// ── computeConvergenceVelocity ───────────────────────────────────────────────
+
+describe('computeConvergenceVelocity', () => {
+  it('returns per-layer status from mock JSONL file', () => {
+    // Create a JSONL file with 12 entries
+    const lines = [];
+    for (let i = 0; i < 12; i++) {
+      const layers = {};
+      layers['r_to_f'] = 50 * Math.pow(0.85, i);
+      layers['f_to_t'] = 30 * Math.pow(0.9, i);
+      lines.push(JSON.stringify({ session: i, layers }));
+    }
+    const trendPath = path.join(tmpDir, 'trend-vel.jsonl');
+    fs.writeFileSync(trendPath, lines.join('\n'));
+
+    const result = computeConvergenceVelocity(trendPath);
+    // r_to_f should have 12 valid points
+    assert.ok(result.r_to_f.status === 'CONVERGING' || result.r_to_f.status === 'CONVERGED');
+    assert.ok(result.f_to_t.status === 'CONVERGING' || result.f_to_t.status === 'CONVERGED');
+  });
+
+  it('returns INSUFFICIENT_DATA for layer with < 10 entries', () => {
+    const lines = [];
+    for (let i = 0; i < 5; i++) {
+      const layers = {};
+      layers['r_to_f'] = 10 - i;
+      lines.push(JSON.stringify({ session: i, layers }));
+    }
+    const trendPath = path.join(tmpDir, 'trend-short.jsonl');
+    fs.writeFileSync(trendPath, lines.join('\n'));
+
+    const result = computeConvergenceVelocity(trendPath);
+    assert.strictEqual(result.r_to_f.status, 'INSUFFICIENT_DATA');
+  });
+
+  it('returns all INSUFFICIENT_DATA when JSONL file is missing', () => {
+    const result = computeConvergenceVelocity('/nonexistent/solve-trend.jsonl');
+    assert.strictEqual(result.r_to_f.status, 'INSUFFICIENT_DATA');
+    assert.strictEqual(result.f_to_t.status, 'INSUFFICIENT_DATA');
+    assert.strictEqual(result.c_to_f.status, 'INSUFFICIENT_DATA');
+  });
+});
+
+// ── updatePredictivePower ────────────────────────────────────────────────────
+
+describe('updatePredictivePower', () => {
+  it('returns { linking, recall, velocity } structure with mock files', () => {
+    const formalDir = path.join(tmpDir, 'upd-test', '.planning', 'formal');
+    fs.mkdirSync(formalDir, { recursive: true });
+    fs.writeFileSync(path.join(formalDir, 'debt.json'), JSON.stringify({ debt_entries: [] }));
+    fs.writeFileSync(path.join(formalDir, 'model-registry.json'), JSON.stringify({ models: {} }));
+
+    const result = updatePredictivePower({ root: path.join(tmpDir, 'upd-test') });
+    assert.ok(result.linking);
+    assert.ok(result.recall !== undefined);
+    assert.ok(result.velocity);
+    assert.strictEqual(result.linking.total_bugs, 0);
+  });
+
+  it('handles first-run with no solve-trend.jsonl gracefully', () => {
+    const formalDir = path.join(tmpDir, 'upd-first', '.planning', 'formal');
+    fs.mkdirSync(formalDir, { recursive: true });
+    fs.writeFileSync(path.join(formalDir, 'debt.json'), JSON.stringify({ debt_entries: [] }));
+    fs.writeFileSync(path.join(formalDir, 'model-registry.json'), JSON.stringify({ models: {} }));
+
+    const result = updatePredictivePower({ root: path.join(tmpDir, 'upd-first') });
+    assert.ok(result.velocity);
+    assert.strictEqual(result.velocity.r_to_f.status, 'INSUFFICIENT_DATA');
+  });
+});
+
+// ── formatPredictivePowerSummary ─────────────────────────────────────────────
+
+describe('formatPredictivePowerSummary', () => {
+  it('produces "--- Predictive Power ---" header for non-empty results', () => {
+    const results = {
+      linking: { total_bugs: 5, total_linked: 3 },
+      recall: { '.m/a.als': { relevant: 3, predicted: 2, recall: 0.6667 } },
+      velocity: { r_to_f: { status: 'CONVERGING', lambda: 0.1, sessions_to_convergence: 5 } },
+    };
+    const summary = formatPredictivePowerSummary(results);
+    assert.ok(summary.includes('--- Predictive Power ---'));
+    assert.ok(summary.includes('Bugs: 5'));
+  });
+
+  it('returns graceful output for null results', () => {
+    const summary = formatPredictivePowerSummary(null);
+    assert.ok(summary.includes('--- Predictive Power ---'));
+    assert.ok(summary.includes('No data'));
   });
 });
