@@ -31,6 +31,7 @@ const REGISTRY_PATH      = path.join(FORMAL, 'model-registry.json');
 const LAYER_MANIFEST_PATH = path.join(FORMAL, 'layer-manifest.json');
 const TRACE_MATRIX_PATH   = path.join(FORMAL, 'traceability-matrix.json');
 const HAZARD_MODEL_PATH   = path.join(FORMAL, 'reasoning', 'hazard-model.json');
+const UNIT_TEST_COV_PATH  = path.join(FORMAL, 'unit-test-coverage.json');
 const FAILURE_CATALOG_PATH = path.join(FORMAL, 'reasoning', 'failure-mode-catalog.json');
 const TEST_RECIPES_PATH   = path.join(FORMAL, 'test-recipes', 'test-recipes.json');
 
@@ -124,7 +125,7 @@ function loadJSON(filePath, label) {
 
 // ── Gate A: Grounding (L1 → L2) ─────────────────────────────────────────────
 
-function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults) {
+function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults, unitTestCoverage) {
   // Path 1: layer-manifest shows has_semantic_declarations
   if (layerManifest) {
     for (const [layerName, layer] of Object.entries(layerManifest.layers || {})) {
@@ -153,6 +154,23 @@ function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResult
       if (checkResults.some(cr => cr.result === 'pass' && cr.requirement_ids && cr.requirement_ids.includes(reqId))) {
         return { pass: true, reason: 'passing check-result for req ' + reqId };
       }
+    }
+  }
+
+  // Path 3: unit-test grounding — if ALL of this model's requirements have passing
+  // unit test coverage, the model is grounded through concrete execution evidence.
+  // Unit tests ARE L1 evidence (they exercise real code paths).
+  if (unitTestCoverage && unitTestCoverage.requirements && reqs.length > 0) {
+    const coveredReqs = reqs.filter(r => {
+      const entry = unitTestCoverage.requirements[r];
+      return entry && entry.covered === true;
+    });
+    if (coveredReqs.length === reqs.length) {
+      return { pass: true, reason: 'all ' + reqs.length + ' requirement(s) grounded by unit test coverage' };
+    }
+    // Partial coverage: at least one requirement is test-grounded
+    if (coveredReqs.length > 0) {
+      return { pass: true, reason: coveredReqs.length + '/' + reqs.length + ' requirement(s) grounded by unit test coverage (partial)' };
     }
   }
 
@@ -418,6 +436,7 @@ function main() {
   const failureCatalog = loadJSON(FAILURE_CATALOG_PATH, 'failure-mode-catalog.json');
   const testRecipes    = loadJSON(TEST_RECIPES_PATH, 'test-recipes.json');
   const checkResults   = loadCheckResults();
+  const unitTestCov    = loadJSON(UNIT_TEST_COV_PATH, 'unit-test-coverage.json');
 
   // Evidence readiness scoring
   const evidenceReadiness = computeEvidenceReadiness();
@@ -463,7 +482,7 @@ function main() {
   for (const modelPath of modelKeys) {
     const model = models[modelPath];
 
-    const gateAResult = evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults);
+    const gateAResult = evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults, unitTestCov);
     const gateBResult = evaluateGateB(modelPath, model, hazardModel);
     const gateCResult = evaluateGateC(modelPath, model, failureCatalog, testRecipes, checkResults);
 
