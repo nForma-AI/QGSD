@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-10T16:09:44.871Z",
-  "content_hash": "b308dbb4040c5529",
+  "aggregated_at": "2026-03-10T16:46:12.428Z",
+  "content_hash": "355dbb73baf59f35",
   "schema_version": "1",
   "requirements": [
     {
@@ -3623,6 +3623,18 @@
       }
     },
     {
+      "id": "SOLVE-08",
+      "text": "The solve engine SHALL compute and persist net_residual counts for human-gated layers (d_to_c, c_to_r, t_to_r, d_to_r) by subtracting Haiku false-positive classifications and archived items from raw sweep residuals",
+      "category": "Solver-Discovered",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Raw residual counts in solve-state.json overstate actionable work because they include items already classified as false positives by Haiku or archived through /nf:resolve. Downstream consumers (TUI, skill-overview) require accurate residual counts to report correct progress. Net residual provides the true actionable item count for each layer.",
+      "provenance": {
+        "source_file": ".planning/quick/259-refresh-solve-state-residuals-to-subtrac/259-PLAN.md",
+        "milestone": "quick-259"
+      }
+    },
+    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -4567,5 +4579,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-10T16:09:44.872Z"
+  "frozen_at": "2026-03-10T16:46:12.429Z"
 }
