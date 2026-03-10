@@ -134,6 +134,18 @@ node ~/.claude/nf-bin/state-candidates.cjs --json 2>/dev/null || node bin/state-
 
 If the script produces output, display a summary of unmodeled state candidates: count of unmapped actions and suggested missing transitions. These are informational — they feed into the next `/nf:solve` iteration if new formal models are created. Fail-open: if the script is not found or errors, skip silently.
 
+### Step 6.5: Convergence Report
+
+Display the convergence section showing trend sparklines, oscillation status, and action items:
+
+```bash
+node ~/.claude/nf-bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || node bin/convergence-report.cjs --project-root=$(pwd) 2>/dev/null || true
+```
+
+If `~/.claude/nf-bin/convergence-report.cjs` exists, prefer the installed path. Falls back to `bin/convergence-report.cjs` (CWD-relative).
+
+This section is only meaningful after 5+ solve sessions (per MIN_POINTS threshold). On early runs, it displays a brief note indicating more sessions are needed. Fail-open: if the script errors, skip silently and continue to Step 7.
+
 ## Step 7: Full Formal Verification Detail Table
 
 **ALWAYS display this table** — it shows every individual check from `run-formal-verify.cjs`, not just the solver-tracked layer residuals. The solver layer table (Step 6) can show all-green while real formal model failures hide underneath.
