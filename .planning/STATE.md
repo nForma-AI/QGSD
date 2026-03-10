@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.33 Phase v0.33-02: Oscillation Detection — complete
+**Current focus:** v0.33 Phase v0.33-03: Gate Stabilization — complete
 
 ## Current Position
 
-Phase: 2 of 6 (Oscillation Detection)
+Phase: 3 of 6 (Gate Stabilization)
 Plan: 2 of 2 in current phase
 Status: All plans complete — awaiting verification
-Last activity: 2026-03-10 — Phase v0.33-02 plans executed (Mann-Kendall detector + autoClose gating + report enrichment)
+Last activity: 2026-03-10 — Phase v0.33-03 plans executed (gate-stability module + promotion pipeline integration + --write-per-model default)
 
-Progress: [████░░░░░░] 33%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -45,6 +45,8 @@ Decisions logged in PROJECT.md Key Decisions table.
 - [v0.33 Roadmap]: Mann-Kendall for trend detection (non-parametric, outlier-resistant per REQUIREMENTS.md TRACK-02)
 - [v0.33-01]: Extracted solve-trend-helpers.cjs as separate module (Option A) for testability rather than inline exports
 - [v0.33-01]: Missing/skipped layers recorded as -1 (not 0) to distinguish from zero residual in JSONL entries
+- [v0.33-03]: Extracted gate-stability.cjs as separate module (matches solve-trend-helpers.cjs pattern) for testability
+- [v0.33-03]: --write-per-model added only to sweepPerModelGates (not getAggregateGates) to avoid double-write
 
 ### Pending Todos
 
@@ -82,5 +84,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: Phase v0.33-02 complete, ready to verify and plan Phase v0.33-03
+Stopped at: Phase v0.33-03 complete, ready to verify and plan Phase v0.33-04
 Resume file: None
