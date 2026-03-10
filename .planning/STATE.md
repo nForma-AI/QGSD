@@ -5,24 +5,44 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Planning next milestone
+**Current focus:** v0.33 Phase v0.33-01: Time Series Foundation
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-09 — Milestone v0.33 started
+Phase: 1 of 6 (Time Series Foundation)
+Plan: 0 of 2 in current phase
+Status: Ready to plan
+Last activity: 2026-03-09 — v0.33 roadmap created (6 phases, 17 requirements)
+
+Progress: [░░░░░░░░░░] 0%
+
+## Performance Metrics
+
+**Velocity:**
+- Total plans completed: 0
+- Average duration: -
+- Total execution time: 0 hours
+
+**By Phase:**
+
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| - | - | - | - |
+
+**Recent Trend:**
+- Last 5 plans: -
+- Trend: -
+
+*Updated after each plan completion*
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions logged in PROJECT.md Key Decisions table.
-- [Phase v0.32-01]: Used HTML img tag with width=720 for TUI hero screenshot; added manual anchor for configuration-reference details block
-- [Phase v0.32-02]: Used flowchart LR Mermaid for architecture diagram; extracted /nf:mcp-setup into visible subsection; moved solve screenshot after Observability table
-- [Phase v0.32-03]: 10 screenshots total (5 Getting Started, 5 feature sections) with width=600; ToC slug validation test; introductory paragraphs before screenshots in Command Reference and Troubleshooting
-- [Phase v0.32-04]: Dynamic VHS path resolution via ls -d glob; tui-sessions.png excluded from determinism check (timestamp variance); health view shows pre-existing nf error
+- [v0.33 Roadmap]: 6-phase build order driven by data dependencies -- measurement (Phase 1) before enforcement (Phase 2-3) before scoring (Phase 4) before proof (Phase 5)
+- [v0.33 Roadmap]: Outer-loop state lives in separate files (solve-trend.jsonl, oscillation-verdicts.json) -- never modifies solve-state.json or promotion-changelog.json format
+- [v0.33 Roadmap]: Mann-Kendall for trend detection (non-parametric, outlier-resistant per REQUIREMENTS.md TRACK-02)
 
 ### Pending Todos
 
@@ -32,6 +52,7 @@ None.
 
 - additionalContext token budget contention (multiple injection sources share ~4000 token ceiling)
 - Token dashboard path mismatch: token-dashboard.cjs defaults to legacy path (Low severity)
+- Promotion-changelog.json has 4+ duplicate entries that must be fixed in Phase 1 before any convergence analysis
 
 ## Quick Tasks Completed
 
@@ -58,7 +79,6 @@ None.
 
 ## Session Continuity
 
-Last activity: 2026-03-09 - Completed quick task 250: Review full README as team and propose improvement plan
 Last session: 2026-03-09
-Stopped at: Completed quick-249
+Stopped at: v0.33 roadmap created -- 6 phases, 17 requirements mapped
 Resume file: None

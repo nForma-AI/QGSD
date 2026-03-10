@@ -95,29 +95,29 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TRACK-01 | — | Pending |
-| TRACK-02 | — | Pending |
-| TRACK-03 | — | Pending |
-| TRACK-04 | — | Pending |
-| OSC-01 | — | Pending |
-| OSC-02 | — | Pending |
-| OSC-03 | — | Pending |
-| PRED-01 | — | Pending |
-| PRED-02 | — | Pending |
-| STAB-01 | — | Pending |
-| STAB-02 | — | Pending |
-| STAB-03 | — | Pending |
-| FV-01 | — | Pending |
-| FV-02 | — | Pending |
-| FV-03 | — | Pending |
-| INTG-01 | — | Pending |
-| INTG-02 | — | Pending |
+| TRACK-01 | v0.33-01 | Pending |
+| TRACK-02 | v0.33-02 | Pending |
+| TRACK-03 | v0.33-04 | Pending |
+| TRACK-04 | v0.33-01 | Pending |
+| OSC-01 | v0.33-02 | Pending |
+| OSC-02 | v0.33-02 | Pending |
+| OSC-03 | v0.33-06 | Pending |
+| PRED-01 | v0.33-04 | Pending |
+| PRED-02 | v0.33-04 | Pending |
+| STAB-01 | v0.33-03 | Pending |
+| STAB-02 | v0.33-03 | Pending |
+| STAB-03 | v0.33-01 | Pending |
+| FV-01 | v0.33-05 | Pending |
+| FV-02 | v0.33-05 | Pending |
+| FV-03 | v0.33-05 | Pending |
+| INTG-01 | v0.33-03 | Pending |
+| INTG-02 | v0.33-06 | Pending |
 
 **Coverage:**
 - v0.33 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 ⚠️
+- Mapped to phases: 17/17
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-09*
-*Last updated: 2026-03-09 after milestone v0.33 definition*
+*Last updated: 2026-03-09 after v0.33 roadmap creation*
