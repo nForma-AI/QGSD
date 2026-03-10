@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T23:30:09.011Z",
+  "generated": "2026-03-10T00:37:21.106Z",
   "total_unmapped_events": 0,
   "candidates": [],
   "missing_transitions": [
@@ -85,7 +85,7 @@
     {
       "from_action": "security_sweep",
       "to_action": "circuit_break",
-      "count": 6,
+      "count": 7,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
@@ -99,7 +99,13 @@
       "to_action": "security_sweep",
       "count": 2,
       "note": "XState mapping missing: from=[object Object], to=null"
+    },
+    {
+      "from_action": "circuit_break",
+      "to_action": "security_sweep",
+      "count": 1,
+      "note": "XState mapping missing: from=[object Object], to=null"
     }
   ],
-  "summary": "0 unmapped events found. 0 candidate(s): . 16 potentially missing transitions."
+  "summary": "0 unmapped events found. 0 candidate(s): . 17 potentially missing transitions."
 }

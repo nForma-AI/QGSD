@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T23:18:50.874Z",
+  "generated": "2026-03-10T00:31:33.727Z",
   "layers": {
     "L1": [],
     "L2": [],
@@ -639,6 +639,141 @@
         "path": ".planning/formal/alloy/solve-diagnostics-tui.als",
         "description": "Solver cross-layer residual vectors with health indicators and TUI solve dashboard with breaker controls",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/readme-structure.als",
+        "description": "README structural constraints — section ordering, visibility, and content requirements",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/changelog-release.als",
+        "description": "Changelog and release lifecycle — version bumps, archive, npm publish",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/rename-migration.als",
+        "description": "Directory rename migration — git mv, installer update, runtime identity preservation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/governance-dx.als",
+        "description": "Governance and DX — config adapters, ADR templates, learning hooks, rule sharding, validation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/debt-lifecycle.als",
+        "description": "Debt ledger lifecycle — dedup, state machine, retention, formal refs",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-pf-layer.als",
+        "description": "Solve P->F integration — production vs formal parameter comparison",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/reasoning-fmea.als",
+        "description": "Reasoning layer — FMEA hazard model, failure modes, risk heatmap, test recipes",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/quality-hardening.als",
+        "description": "Quality hardening — breaker persistence, restricted access, latency budgets, hook priority",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/fingerprinting-dedup.als",
+        "description": "Fingerprinting — hierarchical strategy, cross-source dedup, merge preservation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/memory-persistence.als",
+        "description": "Memory persistence — decisions, reminders, errors, quorum verdicts across sessions",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/semantics-operational.als",
+        "description": "Semantics — invariant catalog, mismatch register, assumption register, FSM derivation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/token-optimization.als",
+        "description": "Token optimization — auto-compaction, thinking budgets, dashboard, complexity routing",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/quorum-improvements.als",
+        "description": "Quorum dispatch improvements — parallel tasks, worker hardening, validation",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/build-test-quality.als",
+        "description": "Build and test quality — hooks/dist rebuild, npm test, MCP server porting",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/subagent-orchestration.als",
+        "description": "Subagent orchestration — context retrieval, phase accumulation, retrieval agents",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/verification-execution.als",
+        "description": "Verification and execution state — progress tracking, continuous verification, done conditions",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/user-guide.als",
+        "description": "User guide structure — TUI screenshots, getting started walkthrough",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/parallel-execution.als",
+        "description": "Parallel execution — worktree isolation, merge orchestration",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/integration-layers.als",
+        "description": "Integration layers — layer manifest, gate sweeps, alignment dashboard, model registry extensions",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/spec-audit.als",
+        "description": "Formal spec audit — oscillation TLA+ vs circuit-breaker drift check",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/event-vocabulary.als",
+        "description": "Evidence layer event vocabulary — canonical event names preventing schema drift",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/vhs-ci-hardening.als",
+        "description": "VHS tape CI reliability — shell hardening",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/diagnostics-verification.als",
+        "description": "Diagnostics — conformance divergence, attribution, pivot decision surfacing",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-quality-gates.als",
+        "description": "CI quality gates: linting/formatting and type checking block merge on violations",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/security-hardening.als",
+        "description": "Security hardening: pre-commit secret scanning, CI deep scanning, input validation, dependency vulnerability scanning",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/reliability-hardening.als",
+        "description": "Reliability hardening: graceful degradation for external failures, progress indication with cancellation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ux-interaction-safety.als",
+        "description": "UX interaction safety: immediate feedback, destructive action confirmation/undo, actionable error messages",
+        "grounding_status": "has_semantic_declarations"
       }
     ]
   },
@@ -660,13 +795,13 @@
     }
   },
   "summary": {
-    "total_models": 127,
+    "total_models": 154,
     "L1_count": 0,
     "L2_count": 0,
-    "L3_count": 127,
+    "L3_count": 154,
     "maturity_distribution": {
-      "0": 98,
-      "1": 29
+      "0": 123,
+      "1": 31
     },
     "spec_modules_with_invariants": 17
   }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-09T23:29:30.851Z",
+  "generated_at": "2026-03-10T00:31:38.538Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -61,6 +61,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/ACT-07.stub.test.js",
           "test_name": "ACT-07: QGSDActivityTracking.tla defines ClearActivity action"
+        }
+      ]
+    },
+    "ADAPT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ADAPT-01.stub.test.js",
+          "test_name": "ADAPT-01 — Requirement: constant verification"
+        }
+      ]
+    },
+    "ADR-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ADR-01.stub.test.js",
+          "test_name": "ADR-01 — Requirement: structural verification"
         }
       ]
     },
@@ -172,6 +190,33 @@
         }
       ]
     },
+    "BLD-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BLD-01.stub.test.js",
+          "test_name": "BLD-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "BLD-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BLD-02.stub.test.js",
+          "test_name": "BLD-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "BRKR-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/BRKR-01.stub.test.js",
+          "test_name": "BRKR-01 — Requirement: structural verification"
+        }
+      ]
+    },
     "CALIB-01": {
       "covered": true,
       "test_cases": [
@@ -232,6 +277,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/CI-03.stub.test.js",
           "test_name": "CI-03: project has TypeScript configuration for type checking"
+        }
+      ]
+    },
+    "CL-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CL-01.stub.test.js",
+          "test_name": "CL-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "CL-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CL-02.stub.test.js",
+          "test_name": "CL-02 — Requirement: structural verification"
         }
       ]
     },
@@ -410,6 +473,51 @@
         }
       ]
     },
+    "DEBT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-02.stub.test.js",
+          "test_name": "DEBT-02 — Requirement: constant verification"
+        }
+      ]
+    },
+    "DEBT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-03.stub.test.js",
+          "test_name": "DEBT-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "DEBT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-04.stub.test.js",
+          "test_name": "DEBT-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "DEBT-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-05.stub.test.js",
+          "test_name": "DEBT-05 — Requirement: structural verification"
+        }
+      ]
+    },
+    "DEBT-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DEBT-06.stub.test.js",
+          "test_name": "DEBT-06 — Requirement: structural verification"
+        }
+      ]
+    },
     "DECOMP-01": {
       "covered": true,
       "test_cases": [
@@ -505,6 +613,33 @@
         {
           "test_file": "bin/run-oscillation-tlc.test.cjs",
           "test_name": "exits non-zero and prints clear error when JAVA_HOME points to nonexistent path"
+        }
+      ]
+    },
+    "DIAG-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-01.stub.test.js",
+          "test_name": "DIAG-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "DIAG-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-02.stub.test.js",
+          "test_name": "DIAG-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "DIAG-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-03.stub.test.js",
+          "test_name": "DIAG-03 — Requirement: structural verification"
         }
       ]
     },
@@ -634,6 +769,24 @@
         }
       ]
     },
+    "EVID-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/EVID-05.stub.test.js",
+          "test_name": "EVID-05 — Requirement: structural verification"
+        }
+      ]
+    },
+    "EXEC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/EXEC-01.stub.test.js",
+          "test_name": "EXEC-01 — Requirement: structural verification"
+        }
+      ]
+    },
     "FAIL-01": {
       "covered": true,
       "test_cases": [
@@ -649,6 +802,42 @@
         {
           "test_file": ".planning/formal/generated-stubs/FAIL-02.stub.test.js",
           "test_name": "FAIL-02: providers.json exists and is valid JSON with providers array"
+        }
+      ]
+    },
+    "FP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FP-01.stub.test.js",
+          "test_name": "FP-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "FP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FP-02.stub.test.js",
+          "test_name": "FP-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "FP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FP-03.stub.test.js",
+          "test_name": "FP-03 — Requirement: constant verification"
+        }
+      ]
+    },
+    "FP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FP-04.stub.test.js",
+          "test_name": "FP-04 — Requirement: structural verification"
         }
       ]
     },
@@ -685,6 +874,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
           "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
+        }
+      ]
+    },
+    "GUIDE-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/GUIDE-01.stub.test.js",
+          "test_name": "GUIDE-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "GUIDE-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/GUIDE-02.stub.test.js",
+          "test_name": "GUIDE-02 — Requirement: structural verification"
         }
       ]
     },
@@ -739,6 +946,33 @@
         {
           "test_file": ".planning/formal/generated-stubs/IMPR-01.stub.test.js",
           "test_name": "IMPR-01 — ImprovementMonotone: structural verification"
+        }
+      ]
+    },
+    "IMPR-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/IMPR-02.stub.test.js",
+          "test_name": "IMPR-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "IMPR-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/IMPR-03.stub.test.js",
+          "test_name": "IMPR-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "IMPR-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/IMPR-04.stub.test.js",
+          "test_name": "IMPR-04 — Requirement: structural verification"
         }
       ]
     },
@@ -832,6 +1066,60 @@
         }
       ]
     },
+    "INTG-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-01.stub.test.js",
+          "test_name": "INTG-01 — Layer: structural verification"
+        }
+      ]
+    },
+    "INTG-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-02.stub.test.js",
+          "test_name": "INTG-02 — Layer: structural verification"
+        }
+      ]
+    },
+    "INTG-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-03.stub.test.js",
+          "test_name": "INTG-03 — Layer: structural verification"
+        }
+      ]
+    },
+    "INTG-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-04.stub.test.js",
+          "test_name": "INTG-04 — Layer: structural verification"
+        }
+      ]
+    },
+    "INTG-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-05.stub.test.js",
+          "test_name": "INTG-05 — Layer: structural verification"
+        }
+      ]
+    },
+    "INTG-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/INTG-06.stub.test.js",
+          "test_name": "INTG-06 — Layer: structural verification"
+        }
+      ]
+    },
     "KEY-01": {
       "covered": true,
       "test_cases": [
@@ -922,6 +1210,51 @@
         }
       ]
     },
+    "LRNG-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/LRNG-01.stub.test.js",
+          "test_name": "LRNG-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "LRNG-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/LRNG-02.stub.test.js",
+          "test_name": "LRNG-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "LRNG-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/LRNG-03.stub.test.js",
+          "test_name": "LRNG-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "LRNG-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/LRNG-04.stub.test.js",
+          "test_name": "LRNG-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "LTCY-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/LTCY-01.stub.test.js",
+          "test_name": "LTCY-01 — Requirement: structural verification"
+        }
+      ]
+    },
     "MCP-01": {
       "covered": true,
       "test_cases": [
@@ -1009,6 +1342,42 @@
         {
           "test_file": ".planning/formal/generated-stubs/MCPENV-04.stub.test.js",
           "test_name": "MCPENV-04: readMCPAvailabilityRates exported from run-prism.cjs"
+        }
+      ]
+    },
+    "MEMP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MEMP-01.stub.test.js",
+          "test_name": "MEMP-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "MEMP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MEMP-02.stub.test.js",
+          "test_name": "MEMP-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "MEMP-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MEMP-03.stub.test.js",
+          "test_name": "MEMP-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "MEMP-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MEMP-04.stub.test.js",
+          "test_name": "MEMP-04 — Requirement: structural verification"
         }
       ]
     },
@@ -1138,6 +1507,33 @@
         }
       ]
     },
+    "ORCH-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ORCH-01.stub.test.js",
+          "test_name": "ORCH-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "ORCH-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ORCH-02.stub.test.js",
+          "test_name": "ORCH-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "ORCH-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/ORCH-03.stub.test.js",
+          "test_name": "ORCH-03 — Requirement: structural verification"
+        }
+      ]
+    },
     "ORES-01": {
       "covered": true,
       "test_cases": [
@@ -1180,6 +1576,69 @@
         {
           "test_file": ".planning/formal/generated-stubs/ORES-05.stub.test.js",
           "test_name": "ORES-05: ConvergenceEventuallyResolves — circuit breaker has resolution path"
+        }
+      ]
+    },
+    "PARA-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PARA-01.stub.test.js",
+          "test_name": "PARA-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PARA-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PARA-02.stub.test.js",
+          "test_name": "PARA-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PF-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PF-01.stub.test.js",
+          "test_name": "PF-01 — Requirement: constant verification"
+        }
+      ]
+    },
+    "PF-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PF-02.stub.test.js",
+          "test_name": "PF-02 — Requirement: constant verification"
+        }
+      ]
+    },
+    "PF-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PF-03.stub.test.js",
+          "test_name": "PF-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PF-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PF-04.stub.test.js",
+          "test_name": "PF-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PF-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PF-05.stub.test.js",
+          "test_name": "PF-05 — Requirement: structural verification"
         }
       ]
     },
@@ -1264,6 +1723,15 @@
         }
       ]
     },
+    "PRIO-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PRIO-01.stub.test.js",
+          "test_name": "PRIO-01 — Requirement: structural verification"
+        }
+      ]
+    },
     "PROV-01": {
       "covered": true,
       "test_cases": [
@@ -1336,6 +1804,96 @@
         }
       ]
     },
+    "RDME-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-01.stub.test.js",
+          "test_name": "RDME-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-02.stub.test.js",
+          "test_name": "RDME-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-03.stub.test.js",
+          "test_name": "RDME-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-04.stub.test.js",
+          "test_name": "RDME-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-05.stub.test.js",
+          "test_name": "RDME-05 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-06.stub.test.js",
+          "test_name": "RDME-06 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-07.stub.test.js",
+          "test_name": "RDME-07 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-08.stub.test.js",
+          "test_name": "RDME-08 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-09.stub.test.js",
+          "test_name": "RDME-09 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RDME-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RDME-10.stub.test.js",
+          "test_name": "RDME-10 — Requirement: structural verification"
+        }
+      ]
+    },
     "RECV-01": {
       "covered": true,
       "test_cases": [
@@ -1390,12 +1948,120 @@
         }
       ]
     },
+    "REN-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REN-01.stub.test.js",
+          "test_name": "REN-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "REN-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REN-02.stub.test.js",
+          "test_name": "REN-02 — Requirement: structural verification"
+        }
+      ]
+    },
     "REN-03": {
       "covered": true,
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/REN-03.stub.test.js",
           "test_name": "REN-03: core/bin/gsd-tools.cjs has no get-shit-done/ path strings"
+        }
+      ]
+    },
+    "REN-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REN-04.stub.test.js",
+          "test_name": "REN-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RLS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RLS-01.stub.test.js",
+          "test_name": "RLS-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RLS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RLS-02.stub.test.js",
+          "test_name": "RLS-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RLS-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RLS-03.stub.test.js",
+          "test_name": "RLS-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RLS-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RLS-04.stub.test.js",
+          "test_name": "RLS-04 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RSN-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-01.stub.test.js",
+          "test_name": "RSN-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RSN-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-02.stub.test.js",
+          "test_name": "RSN-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RSN-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-03.stub.test.js",
+          "test_name": "RSN-03 — Requirement: behavioral verification"
+        }
+      ]
+    },
+    "RSN-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-04.stub.test.js",
+          "test_name": "RSN-04 — Requirement: behavioral verification"
+        }
+      ]
+    },
+    "RSN-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-05.stub.test.js",
+          "test_name": "RSN-05 — Requirement: structural verification"
         }
       ]
     },
@@ -1516,6 +2182,42 @@
         }
       ]
     },
+    "SEM-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEM-01.stub.test.js",
+          "test_name": "SEM-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "SEM-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEM-02.stub.test.js",
+          "test_name": "SEM-02 — Requirement: constant verification"
+        }
+      ]
+    },
+    "SEM-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEM-03.stub.test.js",
+          "test_name": "SEM-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "SEM-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEM-04.stub.test.js",
+          "test_name": "SEM-04 — Requirement: behavioral verification"
+        }
+      ]
+    },
     "SENS-01": {
       "covered": true,
       "test_cases": [
@@ -1540,6 +2242,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/SENS-03.stub.test.js",
           "test_name": "SENS-03 — GenerateReport: sensitivity-report.cjs exists"
+        }
+      ]
+    },
+    "SHARD-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SHARD-01.stub.test.js",
+          "test_name": "SHARD-01 — Requirement: constant verification"
         }
       ]
     },
@@ -1624,6 +2335,15 @@
         }
       ]
     },
+    "SPEC-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SPEC-02.stub.test.js",
+          "test_name": "SPEC-02 — Requirement: structural verification"
+        }
+      ]
+    },
     "SPEC-03": {
       "covered": true,
       "test_cases": [
@@ -1675,6 +2395,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/STATE-04.stub.test.js",
           "test_name": "STATE-04: writeState creates directory silently with mkdirSync recursive"
+        }
+      ]
+    },
+    "STD-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STD-02.stub.test.js",
+          "test_name": "STD-02 — Requirement: structural verification"
         }
       ]
     },
@@ -1801,6 +2530,42 @@
         {
           "test_file": ".planning/formal/generated-stubs/SYNC-04.stub.test.js",
           "test_name": "SYNC-04: run-account-pool-alloy.cjs exists as a separate file"
+        }
+      ]
+    },
+    "TOKN-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TOKN-01.stub.test.js",
+          "test_name": "TOKN-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "TOKN-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TOKN-02.stub.test.js",
+          "test_name": "TOKN-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "TOKN-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TOKN-03.stub.test.js",
+          "test_name": "TOKN-03 — Requirement: structural verification"
+        }
+      ]
+    },
+    "TOKN-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TOKN-04.stub.test.js",
+          "test_name": "TOKN-04 — Requirement: structural verification"
         }
       ]
     },
@@ -2002,6 +2767,42 @@
         }
       ]
     },
+    "VALID-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VALID-01.stub.test.js",
+          "test_name": "VALID-01 — Requirement: behavioral verification"
+        }
+      ]
+    },
+    "VERF-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERF-01.stub.test.js",
+          "test_name": "VERF-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "VERF-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERF-02.stub.test.js",
+          "test_name": "VERF-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "VERF-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERF-03.stub.test.js",
+          "test_name": "VERF-03 — Requirement: structural verification"
+        }
+      ]
+    },
     "VERIFY-01": {
       "covered": true,
       "test_cases": [
@@ -2026,6 +2827,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/VIS-01.stub.test.js",
           "test_name": "VIS-01: health check reads quorum-failures.json for failure counts"
+        }
+      ]
+    },
+    "VIS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VIS-02.stub.test.js",
+          "test_name": "VIS-02 — Requirement: structural verification"
         }
       ]
     },
@@ -2101,365 +2911,122 @@
         }
       ]
     },
-    "ADAPT-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ADR-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "BLD-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "BLD-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "BRKR-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CL-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CL-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DEBT-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DEBT-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DEBT-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DEBT-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DEBT-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "EVID-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "EXEC-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "FP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "GUIDE-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "GUIDE-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "IMPR-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "IMPR-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "IMPR-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "INTG-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LRNG-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LRNG-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LRNG-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LRNG-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "LTCY-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MEMP-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MEMP-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MEMP-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MEMP-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORCH-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORCH-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "ORCH-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PARA-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PARA-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PF-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PF-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PF-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PF-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PF-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "PRIO-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RDME-10": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REN-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REN-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "REN-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RLS-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RLS-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RLS-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RLS-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-05": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SEM-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SEM-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SEM-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SEM-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SHARD-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "SPEC-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "STD-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TOKN-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TOKN-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TOKN-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TOKN-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VALID-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERF-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERF-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERF-03": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VIS-02": {
-      "covered": false,
-      "test_cases": []
+    "UX-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-04.stub.test.js",
+          "test_name": "UX-04: Alloy model enforces AllActionsProduceFeedback fact"
+        }
+      ]
+    },
+    "UX-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-05.stub.test.js",
+          "test_name": "UX-05: Alloy model enforces DestructiveActionsRequireProtection fact"
+        }
+      ]
+    },
+    "UX-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UX-06.stub.test.js",
+          "test_name": "UX-06: Alloy model enforces ErrorOutputsAreActionable fact"
+        }
+      ]
+    },
+    "SEC-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-05.stub.test.js",
+          "test_name": "SEC-05: Alloy model defines PreCommitSecretScan with blocking constraint"
+        }
+      ]
+    },
+    "SEC-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-06.stub.test.js",
+          "test_name": "SEC-06: Alloy model defines CIHistoryScan with PR blocking constraint"
+        }
+      ]
+    },
+    "SEC-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-07.stub.test.js",
+          "test_name": "SEC-07: Alloy model enforces InputValidatedAtBoundary fact"
+        }
+      ]
+    },
+    "SEC-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEC-08.stub.test.js",
+          "test_name": "SEC-08: Alloy model defines DepVulnScan with severity-based blocking"
+        }
+      ]
+    },
+    "REL-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REL-03.stub.test.js",
+          "test_name": "REL-03: Alloy model enforces ExternalFailuresHandled fact"
+        }
+      ]
+    },
+    "REL-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/REL-04.stub.test.js",
+          "test_name": "REL-04: Alloy model enforces LongOpsProgressAndCancel fact"
+        }
+      ]
+    },
+    "OBS-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
+          "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
+        }
+      ]
+    },
+    "CI-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-04.stub.test.js",
+          "test_name": "CI-04: test:ci enumerates test files explicitly, not via raw glob"
+        }
+      ]
+    },
+    "CI-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-05.stub.test.js",
+          "test_name": "CI-05: Alloy model defines LintFormatGate with merge-blocking constraint"
+        }
+      ]
+    },
+    "CI-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-06.stub.test.js",
+          "test_name": "CI-06: Alloy model defines TypeCheckGate with merge-blocking constraint"
+        }
+      ]
     }
   }
 }

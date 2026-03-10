@@ -1,8 +1,8 @@
 # Formal Verification Diff Report
 
-**Generated:** 2026-03-09T23:31:36.804Z
+**Generated:** 2026-03-10T00:38:16.032Z
 **Current Run:** 3 pass, 0 fail, 1 warn/inconclusive
-**Previous Run:** 1 transitions, 2 new, 0 removed
+**Previous Run:** 1 transitions, 1 new, 0 removed
 **Overall Status:** inconclusive
 
 ## Transitioned Checks
@@ -15,12 +15,11 @@
 
 | Check | Result | Summary |
 |-------|--------|---------|
-| ci:trace-redaction | pass | pass: ci:trace-redaction in 0ms |
-| ci:conformance-traces | pass | pass: 65191/65191 traces valid (411ms) |
+| ci:trace-redaction | pass | pass: ci:trace-redaction in 1ms |
 
 ## Unchanged Checks
 
-1 check(s) unchanged from previous run — no action needed.
+2 check(s) unchanged from previous run — no action needed.
 
 ## Previous Run (for next comparison)
 

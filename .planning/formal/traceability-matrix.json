@@ -1,22 +1,22 @@
 {
   "metadata": {
-    "generated_at": "2026-03-09T23:33:33.444Z",
+    "generated_at": "2026-03-10T00:40:09.814Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
-        "file_count": 144,
-        "property_count": 963
+        "file_count": 148,
+        "property_count": 994
       },
       "model_registry": {
-        "file_count": 150,
+        "file_count": 154,
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 184
+        "entry_count": 182
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 322
+        "requirements_matched": 335
       }
     }
   },
@@ -7374,7 +7374,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CI-04.stub.test.js",
+            "test_name": "CI-04: test:ci enumerates test files explicitly, not via raw glob"
+          }
+        ]
+      }
     },
     "DISP-06": {
       "id": "DISP-06",
@@ -8156,7 +8165,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
+            "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
+          }
+        ]
+      }
     },
     "OBS-10": {
       "id": "OBS-10",
@@ -10898,8 +10916,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-01.stub.test.js",
+            "test_name": "RDME-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-02": {
@@ -10921,8 +10944,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-02.stub.test.js",
+            "test_name": "RDME-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-03": {
@@ -10944,8 +10972,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-03.stub.test.js",
+            "test_name": "RDME-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-04": {
@@ -10967,8 +11000,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-04.stub.test.js",
+            "test_name": "RDME-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-05": {
@@ -10990,8 +11028,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-05.stub.test.js",
+            "test_name": "RDME-05 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-06": {
@@ -11013,8 +11056,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-06.stub.test.js",
+            "test_name": "RDME-06 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-07": {
@@ -11036,8 +11084,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-07.stub.test.js",
+            "test_name": "RDME-07 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-08": {
@@ -11059,8 +11112,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-08.stub.test.js",
+            "test_name": "RDME-08 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-09": {
@@ -11082,8 +11140,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-09.stub.test.js",
+            "test_name": "RDME-09 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RDME-10": {
@@ -11105,8 +11168,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RDME-10.stub.test.js",
+            "test_name": "RDME-10 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "CL-01": {
@@ -11128,8 +11196,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CL-01.stub.test.js",
+            "test_name": "CL-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "CL-02": {
@@ -11151,8 +11224,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CL-02.stub.test.js",
+            "test_name": "CL-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RLS-01": {
@@ -11174,8 +11252,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RLS-01.stub.test.js",
+            "test_name": "RLS-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RLS-02": {
@@ -11197,8 +11280,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RLS-02.stub.test.js",
+            "test_name": "RLS-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RLS-03": {
@@ -11220,8 +11308,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RLS-03.stub.test.js",
+            "test_name": "RLS-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RLS-04": {
@@ -11243,8 +11336,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RLS-04.stub.test.js",
+            "test_name": "RLS-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "REN-01": {
@@ -11266,8 +11364,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/REN-01.stub.test.js",
+            "test_name": "REN-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "REN-02": {
@@ -11289,8 +11392,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/REN-02.stub.test.js",
+            "test_name": "REN-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "REN-04": {
@@ -11312,8 +11420,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/REN-04.stub.test.js",
+            "test_name": "REN-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "ADAPT-01": {
@@ -11335,8 +11448,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ADAPT-01.stub.test.js",
+            "test_name": "ADAPT-01 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "ADR-01": {
@@ -11358,8 +11476,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ADR-01.stub.test.js",
+            "test_name": "ADR-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "LRNG-01": {
@@ -11381,8 +11504,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/LRNG-01.stub.test.js",
+            "test_name": "LRNG-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "LRNG-02": {
@@ -11404,8 +11532,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/LRNG-02.stub.test.js",
+            "test_name": "LRNG-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "LRNG-03": {
@@ -11427,8 +11560,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/LRNG-03.stub.test.js",
+            "test_name": "LRNG-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "LRNG-04": {
@@ -11450,8 +11588,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/LRNG-04.stub.test.js",
+            "test_name": "LRNG-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "SHARD-01": {
@@ -11473,8 +11616,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SHARD-01.stub.test.js",
+            "test_name": "SHARD-01 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "VALID-01": {
@@ -11496,8 +11644,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VALID-01.stub.test.js",
+            "test_name": "VALID-01 — Requirement: behavioral verification"
+          }
+        ]
       }
     },
     "DEBT-02": {
@@ -11519,8 +11672,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DEBT-02.stub.test.js",
+            "test_name": "DEBT-02 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "DEBT-03": {
@@ -11542,8 +11700,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DEBT-03.stub.test.js",
+            "test_name": "DEBT-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DEBT-04": {
@@ -11565,8 +11728,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DEBT-04.stub.test.js",
+            "test_name": "DEBT-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DEBT-05": {
@@ -11588,8 +11756,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DEBT-05.stub.test.js",
+            "test_name": "DEBT-05 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DEBT-06": {
@@ -11611,8 +11784,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DEBT-06.stub.test.js",
+            "test_name": "DEBT-06 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PF-01": {
@@ -11634,8 +11812,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PF-01.stub.test.js",
+            "test_name": "PF-01 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "PF-02": {
@@ -11657,8 +11840,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PF-02.stub.test.js",
+            "test_name": "PF-02 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "PF-03": {
@@ -11680,8 +11868,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PF-03.stub.test.js",
+            "test_name": "PF-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PF-04": {
@@ -11703,8 +11896,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PF-04.stub.test.js",
+            "test_name": "PF-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PF-05": {
@@ -11726,8 +11924,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PF-05.stub.test.js",
+            "test_name": "PF-05 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RSN-01": {
@@ -11749,8 +11952,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-01.stub.test.js",
+            "test_name": "RSN-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RSN-02": {
@@ -11772,8 +11980,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-02.stub.test.js",
+            "test_name": "RSN-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "RSN-03": {
@@ -11795,8 +12008,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-03.stub.test.js",
+            "test_name": "RSN-03 — Requirement: behavioral verification"
+          }
+        ]
       }
     },
     "RSN-04": {
@@ -11818,8 +12036,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-04.stub.test.js",
+            "test_name": "RSN-04 — Requirement: behavioral verification"
+          }
+        ]
       }
     },
     "RSN-05": {
@@ -11841,8 +12064,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-05.stub.test.js",
+            "test_name": "RSN-05 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "BRKR-01": {
@@ -11864,8 +12092,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BRKR-01.stub.test.js",
+            "test_name": "BRKR-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "EXEC-01": {
@@ -11887,8 +12120,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/EXEC-01.stub.test.js",
+            "test_name": "EXEC-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "LTCY-01": {
@@ -11910,8 +12148,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/LTCY-01.stub.test.js",
+            "test_name": "LTCY-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PRIO-01": {
@@ -11933,8 +12176,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PRIO-01.stub.test.js",
+            "test_name": "PRIO-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "FP-01": {
@@ -11956,8 +12204,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/FP-01.stub.test.js",
+            "test_name": "FP-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "FP-02": {
@@ -11979,8 +12232,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/FP-02.stub.test.js",
+            "test_name": "FP-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "FP-03": {
@@ -12002,8 +12260,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/FP-03.stub.test.js",
+            "test_name": "FP-03 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "FP-04": {
@@ -12025,8 +12288,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/FP-04.stub.test.js",
+            "test_name": "FP-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "MEMP-01": {
@@ -12048,8 +12316,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/MEMP-01.stub.test.js",
+            "test_name": "MEMP-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "MEMP-02": {
@@ -12071,8 +12344,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/MEMP-02.stub.test.js",
+            "test_name": "MEMP-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "MEMP-03": {
@@ -12094,8 +12372,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/MEMP-03.stub.test.js",
+            "test_name": "MEMP-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "MEMP-04": {
@@ -12117,8 +12400,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/MEMP-04.stub.test.js",
+            "test_name": "MEMP-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "SEM-01": {
@@ -12140,8 +12428,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEM-01.stub.test.js",
+            "test_name": "SEM-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "SEM-02": {
@@ -12163,8 +12456,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEM-02.stub.test.js",
+            "test_name": "SEM-02 — Requirement: constant verification"
+          }
+        ]
       }
     },
     "SEM-03": {
@@ -12186,8 +12484,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEM-03.stub.test.js",
+            "test_name": "SEM-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "SEM-04": {
@@ -12209,8 +12512,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEM-04.stub.test.js",
+            "test_name": "SEM-04 — Requirement: behavioral verification"
+          }
+        ]
       }
     },
     "TOKN-01": {
@@ -12232,8 +12540,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TOKN-01.stub.test.js",
+            "test_name": "TOKN-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "TOKN-02": {
@@ -12255,8 +12568,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TOKN-02.stub.test.js",
+            "test_name": "TOKN-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "TOKN-03": {
@@ -12278,8 +12596,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TOKN-03.stub.test.js",
+            "test_name": "TOKN-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "TOKN-04": {
@@ -12301,8 +12624,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TOKN-04.stub.test.js",
+            "test_name": "TOKN-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "IMPR-02": {
@@ -12324,8 +12652,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/IMPR-02.stub.test.js",
+            "test_name": "IMPR-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "IMPR-03": {
@@ -12347,8 +12680,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/IMPR-03.stub.test.js",
+            "test_name": "IMPR-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "IMPR-04": {
@@ -12370,8 +12708,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/IMPR-04.stub.test.js",
+            "test_name": "IMPR-04 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "BLD-01": {
@@ -12393,8 +12736,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BLD-01.stub.test.js",
+            "test_name": "BLD-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "BLD-02": {
@@ -12416,8 +12764,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/BLD-02.stub.test.js",
+            "test_name": "BLD-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "STD-02": {
@@ -12439,8 +12792,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/STD-02.stub.test.js",
+            "test_name": "STD-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "ORCH-01": {
@@ -12462,8 +12820,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ORCH-01.stub.test.js",
+            "test_name": "ORCH-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "ORCH-02": {
@@ -12485,8 +12848,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ORCH-02.stub.test.js",
+            "test_name": "ORCH-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "ORCH-03": {
@@ -12508,8 +12876,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/ORCH-03.stub.test.js",
+            "test_name": "ORCH-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "VERF-01": {
@@ -12531,8 +12904,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VERF-01.stub.test.js",
+            "test_name": "VERF-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "VERF-02": {
@@ -12554,8 +12932,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VERF-02.stub.test.js",
+            "test_name": "VERF-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "VERF-03": {
@@ -12577,8 +12960,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VERF-03.stub.test.js",
+            "test_name": "VERF-03 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "GUIDE-01": {
@@ -12600,8 +12988,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/GUIDE-01.stub.test.js",
+            "test_name": "GUIDE-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "GUIDE-02": {
@@ -12623,8 +13016,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/GUIDE-02.stub.test.js",
+            "test_name": "GUIDE-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PARA-01": {
@@ -12646,8 +13044,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PARA-01.stub.test.js",
+            "test_name": "PARA-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "PARA-02": {
@@ -12669,8 +13072,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/PARA-02.stub.test.js",
+            "test_name": "PARA-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "INTG-01": {
@@ -12692,8 +13100,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-01.stub.test.js",
+            "test_name": "INTG-01 — Layer: structural verification"
+          }
+        ]
       }
     },
     "INTG-02": {
@@ -12708,8 +13121,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-02.stub.test.js",
+            "test_name": "INTG-02 — Layer: structural verification"
+          }
+        ]
       }
     },
     "INTG-03": {
@@ -12724,8 +13142,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-03.stub.test.js",
+            "test_name": "INTG-03 — Layer: structural verification"
+          }
+        ]
       }
     },
     "INTG-04": {
@@ -12740,8 +13163,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-04.stub.test.js",
+            "test_name": "INTG-04 — Layer: structural verification"
+          }
+        ]
       }
     },
     "INTG-05": {
@@ -12763,8 +13191,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-05.stub.test.js",
+            "test_name": "INTG-05 — Layer: structural verification"
+          }
+        ]
       }
     },
     "INTG-06": {
@@ -12779,8 +13212,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/INTG-06.stub.test.js",
+            "test_name": "INTG-06 — Layer: structural verification"
+          }
+        ]
       }
     },
     "SPEC-02": {
@@ -12802,8 +13240,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SPEC-02.stub.test.js",
+            "test_name": "SPEC-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "EVID-05": {
@@ -12825,8 +13268,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/EVID-05.stub.test.js",
+            "test_name": "EVID-05 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "VIS-02": {
@@ -12848,8 +13296,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VIS-02.stub.test.js",
+            "test_name": "VIS-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DIAG-01": {
@@ -12871,8 +13324,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-01.stub.test.js",
+            "test_name": "DIAG-01 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DIAG-02": {
@@ -12894,8 +13352,13 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-02.stub.test.js",
+            "test_name": "DIAG-02 — Requirement: structural verification"
+          }
+        ]
       }
     },
     "DIAG-03": {
@@ -12917,8 +13380,440 @@
         }
       ],
       "unit_test_coverage": {
-        "covered": false,
-        "test_cases": []
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-03.stub.test.js",
+            "test_name": "DIAG-03 — Requirement: structural verification"
+          }
+        ]
+      }
+    },
+    "CI-05": {
+      "id": "CI-05",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "GateStatus",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "LintFormatGate",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "MergeRequiresQualityGates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "LintViolationBlocksMerge",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "FormatViolationBlocksMerge",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CI-05.stub.test.js",
+            "test_name": "CI-05: Alloy model defines LintFormatGate with merge-blocking constraint"
+          }
+        ]
+      }
+    },
+    "CI-06": {
+      "id": "CI-06",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "GateStatus",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "TypeCheckGate",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "MergeRequiresQualityGates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+          "property_name": "TypeErrorBlocksMerge",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CI-06.stub.test.js",
+            "test_name": "CI-06: Alloy model defines TypeCheckGate with merge-blocking constraint"
+          }
+        ]
+      }
+    },
+    "SEC-05": {
+      "id": "SEC-05",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "ScanResult",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "PreCommitSecretScan",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "SecretInCommitBlocked",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEC-05.stub.test.js",
+            "test_name": "SEC-05: Alloy model defines PreCommitSecretScan with blocking constraint"
+          }
+        ]
+      }
+    },
+    "SEC-06": {
+      "id": "SEC-06",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "ScanResult",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "CIHistoryScan",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "HistorySecretsBlockPR",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEC-06.stub.test.js",
+            "test_name": "SEC-06: Alloy model defines CIHistoryScan with PR blocking constraint"
+          }
+        ]
+      }
+    },
+    "SEC-07": {
+      "id": "SEC-07",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "ScanResult",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "ExternalInput",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "InputValidatedAtBoundary",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "NoUnvalidatedInput",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "NoProcessingBeforeValidation",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEC-07.stub.test.js",
+            "test_name": "SEC-07: Alloy model enforces InputValidatedAtBoundary fact"
+          }
+        ]
+      }
+    },
+    "SEC-08": {
+      "id": "SEC-08",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "ScanResult",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "DepVulnScan",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "CriticalDepsBlockMerge",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/security-hardening.als",
+          "property_name": "HighDepsBlockMerge",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/SEC-08.stub.test.js",
+            "test_name": "SEC-08: Alloy model defines DepVulnScan with severity-based blocking"
+          }
+        ]
+      }
+    },
+    "REL-03": {
+      "id": "REL-03",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "ExternalServiceCall",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "ExternalFailuresHandled",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/REL-03.stub.test.js",
+            "test_name": "REL-03: Alloy model enforces ExternalFailuresHandled fact"
+          }
+        ]
+      }
+    },
+    "REL-04": {
+      "id": "REL-04",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "Operation",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/reliability-hardening.als",
+          "property_name": "LongOpsProgressAndCancel",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/REL-04.stub.test.js",
+            "test_name": "REL-04: Alloy model enforces LongOpsProgressAndCancel fact"
+          }
+        ]
+      }
+    },
+    "UX-04": {
+      "id": "UX-04",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "UserInitiatedAction",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "AllActionsProduceFeedback",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UX-04.stub.test.js",
+            "test_name": "UX-04: Alloy model enforces AllActionsProduceFeedback fact"
+          }
+        ]
+      }
+    },
+    "UX-05": {
+      "id": "UX-05",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "ActionKind",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "DestructiveActionsRequireProtection",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UX-05.stub.test.js",
+            "test_name": "UX-05: Alloy model enforces DestructiveActionsRequireProtection fact"
+          }
+        ]
+      }
+    },
+    "UX-06": {
+      "id": "UX-06",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "ErrorOutput",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+          "property_name": "ErrorOutputsAreActionable",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/UX-06.stub.test.js",
+            "test_name": "UX-06: Alloy model enforces ErrorOutputsAreActionable fact"
+          }
+        ]
       }
     },
     "STATE-05": {
@@ -22789,6 +23684,324 @@
       "latest_result": null,
       "check_id": null
     },
+    ".planning/formal/alloy/ci-quality-gates.als::GateStatus": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "GateStatus",
+      "requirement_ids": [
+        "CI-05",
+        "CI-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::LintFormatGate": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "LintFormatGate",
+      "requirement_ids": [
+        "CI-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::TypeCheckGate": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "TypeCheckGate",
+      "requirement_ids": [
+        "CI-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::MergeRequiresQualityGates": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "MergeRequiresQualityGates",
+      "requirement_ids": [
+        "CI-05",
+        "CI-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::LintViolationBlocksMerge": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "LintViolationBlocksMerge",
+      "requirement_ids": [
+        "CI-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::FormatViolationBlocksMerge": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "FormatViolationBlocksMerge",
+      "requirement_ids": [
+        "CI-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ci-quality-gates.als::TypeErrorBlocksMerge": {
+      "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+      "property_name": "TypeErrorBlocksMerge",
+      "requirement_ids": [
+        "CI-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::ScanResult": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "ScanResult",
+      "requirement_ids": [
+        "SEC-05",
+        "SEC-06",
+        "SEC-07",
+        "SEC-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::PreCommitSecretScan": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "PreCommitSecretScan",
+      "requirement_ids": [
+        "SEC-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::CIHistoryScan": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "CIHistoryScan",
+      "requirement_ids": [
+        "SEC-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::ExternalInput": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "ExternalInput",
+      "requirement_ids": [
+        "SEC-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::InputValidatedAtBoundary": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "InputValidatedAtBoundary",
+      "requirement_ids": [
+        "SEC-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::DepVulnScan": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "DepVulnScan",
+      "requirement_ids": [
+        "SEC-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::SecretInCommitBlocked": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "SecretInCommitBlocked",
+      "requirement_ids": [
+        "SEC-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::HistorySecretsBlockPR": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "HistorySecretsBlockPR",
+      "requirement_ids": [
+        "SEC-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::NoUnvalidatedInput": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "NoUnvalidatedInput",
+      "requirement_ids": [
+        "SEC-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::NoProcessingBeforeValidation": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "NoProcessingBeforeValidation",
+      "requirement_ids": [
+        "SEC-07"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::CriticalDepsBlockMerge": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "CriticalDepsBlockMerge",
+      "requirement_ids": [
+        "SEC-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/security-hardening.als::HighDepsBlockMerge": {
+      "model_file": ".planning/formal/alloy/security-hardening.als",
+      "property_name": "HighDepsBlockMerge",
+      "requirement_ids": [
+        "SEC-08"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/reliability-hardening.als::Bool": {
+      "model_file": ".planning/formal/alloy/reliability-hardening.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "REL-03",
+        "REL-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/reliability-hardening.als::ExternalServiceCall": {
+      "model_file": ".planning/formal/alloy/reliability-hardening.als",
+      "property_name": "ExternalServiceCall",
+      "requirement_ids": [
+        "REL-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/reliability-hardening.als::ExternalFailuresHandled": {
+      "model_file": ".planning/formal/alloy/reliability-hardening.als",
+      "property_name": "ExternalFailuresHandled",
+      "requirement_ids": [
+        "REL-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/reliability-hardening.als::Operation": {
+      "model_file": ".planning/formal/alloy/reliability-hardening.als",
+      "property_name": "Operation",
+      "requirement_ids": [
+        "REL-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/reliability-hardening.als::LongOpsProgressAndCancel": {
+      "model_file": ".planning/formal/alloy/reliability-hardening.als",
+      "property_name": "LongOpsProgressAndCancel",
+      "requirement_ids": [
+        "REL-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::Bool": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "UX-04",
+        "UX-05",
+        "UX-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::UserInitiatedAction": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "UserInitiatedAction",
+      "requirement_ids": [
+        "UX-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::AllActionsProduceFeedback": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "AllActionsProduceFeedback",
+      "requirement_ids": [
+        "UX-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::ActionKind": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "ActionKind",
+      "requirement_ids": [
+        "UX-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::DestructiveActionsRequireProtection": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "DestructiveActionsRequireProtection",
+      "requirement_ids": [
+        "UX-05"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::ErrorOutput": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "ErrorOutput",
+      "requirement_ids": [
+        "UX-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ux-interaction-safety.als::ErrorOutputsAreActionable": {
+      "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+      "property_name": "ErrorOutputsAreActionable",
+      "requirement_ids": [
+        "UX-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
     ".planning/formal/prism/mcp-availability.pm::(model-level)": {
       "model_file": ".planning/formal/prism/mcp-availability.pm",
       "property_name": "(model-level)",
@@ -22848,8 +24061,8 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 322,
-    "covered_count": 322,
+    "total_requirements": 335,
+    "covered_count": 335,
     "coverage_percentage": 100,
     "uncovered_requirements": [],
     "orphan_properties": []
@@ -23313,10 +24526,22 @@
         "detail": "model-registry lists HLTH-03 for .planning/formal/alloy/health-validation.als but requirements.json HLTH-03 does not list .planning/formal/alloy/health-validation.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/ci-test-fallback.als",
+        "requirement_id": "CI-04",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CI-04 for .planning/formal/alloy/ci-test-fallback.als but requirements.json CI-04 does not list .planning/formal/alloy/ci-test-fallback.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/alloy/traceability-obligations.als",
         "requirement_id": "DEBT-01",
         "direction": "model_claims_requirement",
         "detail": "model-registry lists DEBT-01 for .planning/formal/alloy/traceability-obligations.als but requirements.json DEBT-01 does not list .planning/formal/alloy/traceability-obligations.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/observability-handlers.als",
+        "requirement_id": "OBS-09",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists OBS-09 for .planning/formal/alloy/observability-handlers.als but requirements.json OBS-09 does not list .planning/formal/alloy/observability-handlers.als in formal_models"
       },
       {
         "model_file": ".planning/formal/alloy/evidence-scope-scan.als",
@@ -23883,6 +25108,72 @@
         "detail": "model-registry lists DIAG-03 for .planning/formal/alloy/diagnostics-verification.als but requirements.json DIAG-03 does not list .planning/formal/alloy/diagnostics-verification.als in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+        "requirement_id": "CI-05",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CI-05 for .planning/formal/alloy/ci-quality-gates.als but requirements.json CI-05 does not list .planning/formal/alloy/ci-quality-gates.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/ci-quality-gates.als",
+        "requirement_id": "CI-06",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CI-06 for .planning/formal/alloy/ci-quality-gates.als but requirements.json CI-06 does not list .planning/formal/alloy/ci-quality-gates.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/security-hardening.als",
+        "requirement_id": "SEC-05",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SEC-05 for .planning/formal/alloy/security-hardening.als but requirements.json SEC-05 does not list .planning/formal/alloy/security-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/security-hardening.als",
+        "requirement_id": "SEC-06",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SEC-06 for .planning/formal/alloy/security-hardening.als but requirements.json SEC-06 does not list .planning/formal/alloy/security-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/security-hardening.als",
+        "requirement_id": "SEC-07",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SEC-07 for .planning/formal/alloy/security-hardening.als but requirements.json SEC-07 does not list .planning/formal/alloy/security-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/security-hardening.als",
+        "requirement_id": "SEC-08",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists SEC-08 for .planning/formal/alloy/security-hardening.als but requirements.json SEC-08 does not list .planning/formal/alloy/security-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/reliability-hardening.als",
+        "requirement_id": "REL-03",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists REL-03 for .planning/formal/alloy/reliability-hardening.als but requirements.json REL-03 does not list .planning/formal/alloy/reliability-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/reliability-hardening.als",
+        "requirement_id": "REL-04",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists REL-04 for .planning/formal/alloy/reliability-hardening.als but requirements.json REL-04 does not list .planning/formal/alloy/reliability-hardening.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+        "requirement_id": "UX-04",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists UX-04 for .planning/formal/alloy/ux-interaction-safety.als but requirements.json UX-04 does not list .planning/formal/alloy/ux-interaction-safety.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+        "requirement_id": "UX-05",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists UX-05 for .planning/formal/alloy/ux-interaction-safety.als but requirements.json UX-05 does not list .planning/formal/alloy/ux-interaction-safety.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/ux-interaction-safety.als",
+        "requirement_id": "UX-06",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists UX-06 for .planning/formal/alloy/ux-interaction-safety.als but requirements.json UX-06 does not list .planning/formal/alloy/ux-interaction-safety.als in formal_models"
+      },
+      {
         "model_file": ".planning/formal/prism/quorum.pm",
         "requirement_id": "LOOP-01",
         "direction": "requirement_claims_model",
@@ -24154,11 +25445,6 @@
       },
       {
         "type": "unknown_requirement_id",
-        "reference": "CI-04",
-        "referenced_by": "model-registry .planning/formal/alloy/ci-test-fallback.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
         "reference": "DISP-06",
         "referenced_by": "model-registry .planning/formal/alloy/dispatch-formal-context.als requirements"
       },
@@ -24226,11 +25512,6 @@
         "type": "unknown_requirement_id",
         "reference": "SOLVE-10",
         "referenced_by": "model-registry .planning/formal/alloy/solve-tc-coverage.als requirements"
-      },
-      {
-        "type": "unknown_requirement_id",
-        "reference": "OBS-09",
-        "referenced_by": "model-registry .planning/formal/alloy/observability-handlers.als requirements"
       },
       {
         "type": "unknown_requirement_id",
@@ -24599,9 +25880,9 @@
       }
     ],
     "summary": {
-      "total_checked": 475,
-      "asymmetric_count": 174,
-      "stale_count": 139,
+      "total_checked": 486,
+      "asymmetric_count": 187,
+      "stale_count": 137,
       "clean": false
     }
   },
@@ -24991,8 +26272,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-09T23:31:35.710Z",
-    "requirements_checked": 431,
+    "baseline_date": "2026-03-10T00:38:14.993Z",
+    "requirements_checked": 442,
     "regressions": [],
     "summary": {
       "total_regressions": 0,
