@@ -46,6 +46,7 @@ const { appendTrendEntry, readGateSummary } = require('./solve-trend-helpers.cjs
 const { updateVerdicts } = require('./oscillation-detector.cjs');
 const { filterRequirementsByFocus } = require('./solve-focus-filter.cjs');
 const { updatePredictivePower, formatPredictivePowerSummary } = require('./predictive-power.cjs');
+const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -3593,8 +3594,40 @@ function main() {
 
   // Update oscillation verdicts after trend entry is written
   if (!reportOnly) {
+    // OSC-03: Read previous verdicts before update for newly-blocked detection
+    let prevVerdictsLayers = null;
     try {
-      updateVerdicts({ root: ROOT });
+      const vPath = path.join(ROOT, '.planning', 'formal', 'oscillation-verdicts.json');
+      if (fs.existsSync(vPath)) {
+        prevVerdictsLayers = JSON.parse(fs.readFileSync(vPath, 'utf8')).layers || null;
+      }
+    } catch (_) { /* fail-open */ }
+
+    try {
+      const currVerdicts = updateVerdicts({ root: ROOT });
+
+      // OSC-03: Escalation classification when oscillation breaker fires
+      const newlyBlocked = detectNewlyBlocked(prevVerdictsLayers, currVerdicts && currVerdicts.layers);
+      if (newlyBlocked.length > 0) {
+        for (const layer of newlyBlocked) {
+          try {
+            const classResult = spawnSync(process.execPath, [
+              path.join(__dirname, 'escalation-classifier.cjs'),
+              '--layer=' + layer,
+              '--project-root=' + ROOT,
+            ], { encoding: 'utf8', timeout: 15000 });
+
+            if (classResult.status === 0 && classResult.stdout) {
+              const parsed = JSON.parse(classResult.stdout);
+              process.stderr.write(TAG + ' Escalation: ' + layer + ' -> ' +
+                parsed.classification + ' (confidence: ' + parsed.confidence + ')\n');
+            }
+          } catch (classErr) {
+            process.stderr.write(TAG + ' WARNING: escalation classification failed for ' +
+              layer + ': ' + classErr.message + '\n');
+          }
+        }
+      }
     } catch (e) {
       process.stderr.write(TAG + ' WARNING: oscillation verdict update failed: ' + e.message + '\n');
     }
