@@ -11,14 +11,15 @@ describe('clusterErrors', () => {
     assert.deepStrictEqual(clusterErrors(undefined), []);
   });
 
-  it('returns single cluster for single entry', () => {
+  it('returns single cluster for single entry (rolled into Other)', () => {
     const entries = [
       { symptom: 'Error: ENOENT: no such file /tmp/foo', ts: new Date().toISOString(), confidence: 'high' }
     ];
     const clusters = clusterErrors(entries);
     assert.equal(clusters.length, 1);
     assert.equal(clusters[0].count, 1);
-    assert.equal(clusters[0].errorType, 'ENOENT');
+    // Single entry gets rolled into Other bucket
+    assert.equal(clusters[0].errorType, 'Other');
   });
 
   it('groups shell escaping errors into one cluster', () => {
@@ -38,15 +39,16 @@ describe('clusterErrors', () => {
   it('groups ENOENT errors separately from shell escaping', () => {
     const entries = [
       { symptom: 'if (x \\\\!== y) SyntaxError', ts: new Date().toISOString() },
+      { symptom: 'if (z \\\\!== w) SyntaxError', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /tmp/a', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /tmp/b', ts: new Date().toISOString() },
     ];
     const clusters = clusterErrors(entries);
     const shellClusters = clusters.filter(c => c.errorType === 'ShellEscaping');
     const enoentClusters = clusters.filter(c => c.errorType === 'ENOENT');
-    assert.equal(shellClusters.length, 1);
-    assert.equal(enoentClusters.length, 1);
-    assert.equal(shellClusters[0].count, 1);
+    assert.equal(shellClusters.length, 1, 'Shell escaping should be one consolidated cluster');
+    assert.equal(enoentClusters.length, 1, 'ENOENT should be one consolidated cluster');
+    assert.equal(shellClusters[0].count, 2);
     assert.equal(enoentClusters[0].count, 2);
   });
 
@@ -60,24 +62,29 @@ describe('clusterErrors', () => {
       { symptom: 'TypeError: Cannot read properties of undefined', ts: new Date().toISOString() },
     ];
     const clusters = clusterErrors(entries);
-    assert.ok(clusters.length >= 3, `Expected >= 3 clusters, got ${clusters.length}`);
+    // ShellEscaping (3 entries consolidated), ENOENT (2 consolidated), TypeError (1 → Other)
+    assert.equal(clusters.length, 3, `Expected 3 clusters (Shell, ENOENT, Other), got ${clusters.length}`);
     const types = new Set(clusters.map(c => c.errorType));
     assert.ok(types.has('ShellEscaping'));
     assert.ok(types.has('ENOENT'));
-    assert.ok(types.has('TypeError'));
+    assert.ok(types.has('Other'), 'Singleton TypeError should roll into Other');
   });
 
-  it('sub-clusters within type when symptoms are dissimilar', () => {
+  it('sub-clusters within non-consolidated type when symptoms are dissimilar', () => {
+    // Use RuntimeError (not in CONSOLIDATE_TYPES) to test Levenshtein sub-clustering
     const entries = [
-      { symptom: 'TypeError: Cannot read properties of undefined (reading "map")', ts: new Date().toISOString() },
-      { symptom: 'TypeError: Cannot read properties of undefined (reading "map")', ts: new Date().toISOString() },
-      { symptom: 'TypeError: x.toUpperCase is not a function on line 42 of some very different code path', ts: new Date().toISOString() },
+      { symptom: 'Deadlock reached in state machine alpha controller', ts: new Date().toISOString() },
+      { symptom: 'Deadlock reached in state machine alpha controller', ts: new Date().toISOString() },
+      { symptom: 'Deadlock completely different: throw new Error in unrelated beta module far away', ts: new Date().toISOString() },
     ];
-    // The first two are identical (sim=1.0), third is very different
     const clusters = clusterErrors(entries, { threshold: 0.7 });
-    const typeClusters = clusters.filter(c => c.errorType === 'TypeError');
-    // Should have 2 sub-clusters: one with 2 identical entries, one with the different one
-    assert.ok(typeClusters.length >= 2, `Expected >= 2 TypeError sub-clusters, got ${typeClusters.length}`);
+    const runtimeClusters = clusters.filter(c => c.errorType === 'RuntimeError');
+    // First two identical → one sub-cluster (count=2). Third is different → singleton → Other.
+    assert.equal(runtimeClusters.length, 1, 'Identical pair should form one RuntimeError cluster');
+    assert.equal(runtimeClusters[0].count, 2, 'RuntimeError cluster should have 2 entries');
+    // The dissimilar third entry becomes a singleton and rolls into Other
+    const otherClusters = clusters.filter(c => c.errorType === 'Other');
+    assert.equal(otherClusters.length, 1, 'Dissimilar singleton should roll into Other');
   });
 
   it('detects stale clusters (all entries older than 7 days)', () => {

@@ -26,6 +26,13 @@ const ERROR_TYPE_PATTERNS = [
   { regex: /throw\s/, type: 'RuntimeError' },
 ];
 
+// Types where primary grouping IS the cluster — skip Levenshtein sub-clustering.
+// These error types share the same root cause regardless of symptom text.
+const CONSOLIDATE_TYPES = new Set([
+  'ShellEscaping', 'ENOENT', 'CannotFindModule', 'TypeError',
+  'ReferenceError', 'ToolError'
+]);
+
 /**
  * Extract error type keyword from a symptom string.
  * @param {string} symptom
@@ -67,28 +74,36 @@ function clusterErrors(entries, options = {}) {
     typeGroups.get(errorType).push(entry);
   }
 
-  // Phase 2: Levenshtein sub-clustering within each type group
-  const allClusters = [];
+  // Phase 2: Sub-clustering within each type group
+  // For CONSOLIDATE_TYPES, skip Levenshtein and emit one cluster per type.
+  // For others, apply Levenshtein sub-clustering.
+  const rawClusters = [];
 
   for (const [errorType, group] of typeGroups) {
-    const subClusters = []; // each: { representative: entry, members: entry[] }
+    let subClusters; // each: { representative: entry, members: entry[] }
 
-    for (const entry of group) {
-      const symptom = (entry.symptom || '').toLowerCase();
-      let merged = false;
+    if (CONSOLIDATE_TYPES.has(errorType)) {
+      // Single cluster for the whole type group
+      subClusters = [{ representative: group[0], members: [...group] }];
+    } else {
+      subClusters = [];
+      for (const entry of group) {
+        const symptom = (entry.symptom || '').toLowerCase();
+        let merged = false;
 
-      for (const sc of subClusters) {
-        const repSymptom = (sc.representative.symptom || '').toLowerCase();
-        const sim = levenshteinSimilarity(symptom, repSymptom);
-        if (sim >= threshold) {
-          sc.members.push(entry);
-          merged = true;
-          break;
+        for (const sc of subClusters) {
+          const repSymptom = (sc.representative.symptom || '').toLowerCase();
+          const sim = levenshteinSimilarity(symptom, repSymptom);
+          if (sim >= threshold) {
+            sc.members.push(entry);
+            merged = true;
+            break;
+          }
         }
-      }
 
-      if (!merged) {
-        subClusters.push({ representative: entry, members: [entry] });
+        if (!merged) {
+          subClusters.push({ representative: entry, members: [entry] });
+        }
       }
     }
 
@@ -125,10 +140,10 @@ function clusterErrors(entries, options = {}) {
 
       const label = (bestEntry.symptom || 'Unknown error').slice(0, 80);
 
-      allClusters.push({
-        clusterId: `${errorType}-${i}`,
-        label,
+      rawClusters.push({
         errorType,
+        subIndex: i,
+        label,
         count: members.length,
         entries: members,
         representative: bestEntry,
@@ -136,6 +151,68 @@ function clusterErrors(entries, options = {}) {
         avgConfidence,
       });
     }
+  }
+
+  // Phase 3: Roll up singleton clusters (count === 1) into an "Other" bucket
+  // to further reduce noise. Multi-entry clusters pass through.
+  const multiClusters = [];
+  const singletonEntries = [];
+
+  for (const c of rawClusters) {
+    if (c.count === 1) {
+      singletonEntries.push(...c.entries);
+    } else {
+      multiClusters.push(c);
+    }
+  }
+
+  // Build final clusters with stable IDs
+  const allClusters = [];
+  for (let i = 0; i < multiClusters.length; i++) {
+    const c = multiClusters[i];
+    allClusters.push({
+      clusterId: `${c.errorType}-${c.subIndex}`,
+      label: c.label,
+      errorType: c.errorType,
+      count: c.count,
+      entries: c.entries,
+      representative: c.representative,
+      stale: c.stale,
+      avgConfidence: c.avgConfidence,
+    });
+  }
+
+  // Add "Other" bucket for singletons (if any)
+  if (singletonEntries.length > 0) {
+    const CONF_ORDER = { high: 3, medium: 2, low: 1 };
+    let bestEntry = singletonEntries[0];
+    let bestScore = CONF_ORDER[bestEntry.confidence] || 0;
+    for (let j = 1; j < singletonEntries.length; j++) {
+      const score = CONF_ORDER[singletonEntries[j].confidence] || 0;
+      if (score > bestScore) { bestEntry = singletonEntries[j]; bestScore = score; }
+    }
+
+    const stale = singletonEntries.every(e => {
+      if (!e.ts) return false;
+      return new Date(e.ts) < staleCutoff;
+    });
+
+    let avgConfidence = 'low';
+    for (const e of singletonEntries) {
+      if (e.confidence === 'high') { avgConfidence = 'high'; break; }
+      if (e.confidence === 'medium') avgConfidence = 'medium';
+    }
+
+    allClusters.push({
+      clusterId: 'Other-0',
+      label: `${singletonEntries.length} miscellaneous errors`,
+      errorType: 'Other',
+      count: singletonEntries.length,
+      entries: singletonEntries,
+      representative: bestEntry,
+      stale,
+      avgConfidence,
+    });
   }
 
   return allClusters;
