@@ -20,6 +20,10 @@ const ERROR_TYPE_PATTERNS = [
   { regex: /Error:\s*Cannot find module/, type: 'CannotFindModule' },
   { regex: /Output too large/i, type: 'ToolError' },
   { regex: /class not found/i, type: 'ToolError' },
+  { regex: /exceeds maximum/i, type: 'ToolError' },
+  { regex: /Exit code \d/i, type: 'ExitCode' },
+  { regex: /Deadlock/i, type: 'RuntimeError' },
+  { regex: /throw\s/, type: 'RuntimeError' },
 ];
 
 /**

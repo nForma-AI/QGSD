@@ -23,9 +23,9 @@ describe('clusterErrors', () => {
 
   it('groups shell escaping errors into one cluster', () => {
     const entries = [
-      { symptom: 'if (x \\!== y) causes SyntaxError in shell', ts: new Date().toISOString() },
-      { symptom: 'if (z \\!== w) causes SyntaxError in shell', ts: new Date().toISOString() },
-      { symptom: '\\!fs.existsSync(p) fails in bash', ts: new Date().toISOString() },
+      { symptom: 'if (x \\\\!== y) causes SyntaxError in shell', ts: new Date().toISOString() },
+      { symptom: 'if (z \\\\!== w) causes SyntaxError in shell', ts: new Date().toISOString() },
+      { symptom: '\\\\!fs.existsSync(p) fails in bash', ts: new Date().toISOString() },
     ];
     const clusters = clusterErrors(entries);
     // All have \\! so all get ShellEscaping type
@@ -37,7 +37,7 @@ describe('clusterErrors', () => {
 
   it('groups ENOENT errors separately from shell escaping', () => {
     const entries = [
-      { symptom: 'if (x \\!== y) SyntaxError', ts: new Date().toISOString() },
+      { symptom: 'if (x \\\\!== y) SyntaxError', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /tmp/a', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /tmp/b', ts: new Date().toISOString() },
     ];
@@ -52,9 +52,9 @@ describe('clusterErrors', () => {
 
   it('produces multiple clusters for mixed error types', () => {
     const entries = [
-      { symptom: 'if (x \\!== y) shell error', ts: new Date().toISOString() },
-      { symptom: 'if (z \\!== w) shell error', ts: new Date().toISOString() },
-      { symptom: '\\!fs.existsSync shell error', ts: new Date().toISOString() },
+      { symptom: 'if (x \\\\!== y) shell error', ts: new Date().toISOString() },
+      { symptom: 'if (z \\\\!== w) shell error', ts: new Date().toISOString() },
+      { symptom: '\\\\!fs.existsSync shell error', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /a', ts: new Date().toISOString() },
       { symptom: 'Error: ENOENT: no such file /b', ts: new Date().toISOString() },
       { symptom: 'TypeError: Cannot read properties of undefined', ts: new Date().toISOString() },
