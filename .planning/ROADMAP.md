@@ -54,11 +54,11 @@
   1. After running nf:solve, a new JSONL entry appears in solve-trend.jsonl containing timestamp, iteration count, per-layer residuals, total residual, converged boolean, and gate summary
   2. When a user adds new requirements between sessions, the resulting residual increase is tagged as SCOPE_GROWTH (not regression) because requirement count is tracked alongside residuals
   3. The promotion-changelog.json contains no duplicate entries (same model, same transition within 5-minute window), and the write-time guard prevents future duplicates
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.33-01-01: TBD
-- [ ] v0.33-01-02: TBD
+- [ ] v0.33-01-01-PLAN.md — JSONL trend append with scope-growth detection
+- [ ] v0.33-01-02-PLAN.md — Changelog deduplication and write-time guard
 
 ### Phase v0.33-02: Oscillation Detection
 **Goal**: The solve loop detects per-layer oscillation and enforces Option C -- no layer oscillates more than once before human escalation
@@ -138,7 +138,7 @@ Note: v0.33-02 and v0.33-03 both depend only on v0.33-01 and could run in parall
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.33-01. Time Series Foundation | 0/2 | Not started | - |
+| v0.33-01. Time Series Foundation | 0/2 | Planning complete | - |
 | v0.33-02. Oscillation Detection | 0/2 | Not started | - |
 | v0.33-03. Gate Stabilization | 0/2 | Not started | - |
 | v0.33-04. Predictive Power | 0/2 | Not started | - |
@@ -147,4 +147,4 @@ Note: v0.33-02 and v0.33-03 both depend only on v0.33-01 and could run in parall
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-09 after v0.33 roadmap creation*
+*Last updated: 2026-03-10 after v0.33-01 phase planning*
