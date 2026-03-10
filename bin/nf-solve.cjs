@@ -466,6 +466,20 @@ function extractStructuralClaims(docContent, filePath) {
  * Called at the top of main() before the iteration loop.
  */
 function preflight() {
+  // Guard: validate ROOT looks like a project root before creating directories.
+  // Prevents creating .planning/ inside bin/ or other wrong locations when
+  // subagents run with incorrect cwd.
+  const rootMarkers = ['package.json', '.planning', 'CLAUDE.md'].map(m => path.join(ROOT, m));
+  const hasMarker = rootMarkers.some(m => fs.existsSync(m));
+  if (!hasMarker) {
+    process.stderr.write(
+      '[nf-solve] WARNING: ROOT does not look like a project root ' +
+      '(no package.json, .planning/, or CLAUDE.md at ' + ROOT + '). ' +
+      'Skipping directory creation. Pass --project-root= to specify the correct path.\n'
+    );
+    return;
+  }
+
   const formalDir = path.join(ROOT, '.planning', 'formal');
   const subdirs = ['tla', 'alloy', 'generated-stubs'];
   let created = false;
@@ -2290,6 +2304,12 @@ function sweepL3toTC() {
 function sweepPerModelGates() {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  // Pre-flight: check registry exists before spawning child process
+  const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+  if (!fs.existsSync(registryPath)) {
+    return { residual: -1, detail: { skipped: true, reason: 'model-registry.json not found' } };
   }
 
   const args = ['--aggregate', '--write-per-model', '--json'];

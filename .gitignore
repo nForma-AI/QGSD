@@ -129,3 +129,9 @@ tui-*.svg
 
 # Worktree isolation (parallel execution)
 .claude/worktrees/
+
+# Solve agent debris (cwd bugs — subagents writing to wrong directories)
+/=
+/1
+/readme-structure/
+bin/.planning/
