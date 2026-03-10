@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: -
 Plan: -
 Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed quick task 264: Fix 123 Gate A model gaps via unit-test grounding
+Last activity: 2026-03-10 - Completed quick task 265: Fix 3 orphaned L3 Gate B entries
 
 Progress: Milestone complete
 
@@ -99,9 +99,10 @@ None.
 | 262 | Fix 27 orphaned L3 reasoning entries for Gate B | 2026-03-10 | adf35419 | Pending | [262-fix-27-orphaned-l3-reasoning-entries-for](./quick/262-fix-27-orphaned-l3-reasoning-entries-for/) |
 | 263 | Generate test recipes for 9 uncovered L3 failure modes for Gate C | 2026-03-10 | 1aa0bd26 | Pending | [263-generate-test-recipes-for-9-uncovered-l3](./quick/263-generate-test-recipes-for-9-uncovered-l3/) |
 | 264 | Fix 123 XState model gaps identified by Gate A grounding check | 2026-03-10 | 228fa696 | Pending | [264-fix-123-xstate-model-gaps-identified-by-](./quick/264-fix-123-xstate-model-gaps-identified-by-/) |
+| 265 | Fix 3 orphaned L3 Gate B entries — add requirement mappings | 2026-03-10 | pending | Pending | [265-fix-3-orphaned-l3-gate-b-entries-add-req](./quick/265-fix-3-orphaned-l3-gate-b-entries-add-req/) |
 
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: 2026-03-10 - Completed quick task 264: Fix 123 Gate A model gaps via unit-test grounding
+Stopped at: 2026-03-10 - Completed quick task 265: Fix 3 orphaned L3 Gate B entries
 Resume file: None
