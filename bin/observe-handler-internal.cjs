@@ -810,32 +810,39 @@ function handleInternal(sourceConfig, options) {
     }
 
     // Category 16: Accumulated error patterns from errors.jsonl (nForma repo only)
+    // Uses smart clustering to reduce ~22 individual errors to ~3-5 actionable clusters
     try {
       const memoryStorePath = path.join(projectRoot, 'bin', 'memory-store.cjs');
       if (fs.existsSync(memoryStorePath)) {
         const { readLastN } = require(memoryStorePath);
+        const { clusterErrors } = require(path.join(projectRoot, 'bin', 'error-clusterer.cjs'));
         const limit = options.limitOverride || 20;
         const recentErrors = readLastN(projectRoot, 'errors', limit);
 
-        for (let idx = 0; idx < recentErrors.length; idx++) {
-          const entry = recentErrors[idx];
-          // Filter: must have non-empty root_cause OR non-empty fix
-          if (!(entry.root_cause || entry.fix)) continue;
+        // Filter entries that have actionable content
+        const actionableErrors = recentErrors.filter(e => e.root_cause || e.fix);
 
-          const severity = (entry.confidence === 'high') ? 'warning' : 'info';
-          const symptomPreview = (entry.symptom || '').slice(0, 80);
+        // Cluster instead of emitting individually
+        const clusters = clusterErrors(actionableErrors);
+
+        for (const cluster of clusters) {
+          const severity = cluster.stale ? 'info' : 'warning';
+          const rep = cluster.representative;
 
           issues.push({
-            id: `internal-error-${idx}`,
-            title: `Error pattern: ${symptomPreview}`,
+            id: `internal-error-cluster-${cluster.clusterId}`,
+            title: `Error cluster (${cluster.count}): ${cluster.label}`,
             severity,
             url: '',
-            age: entry.ts ? formatAgeFromMtime(new Date(entry.ts)) : '',
-            created_at: entry.ts || new Date().toISOString(),
-            meta: entry.fix ? `Fix: ${(entry.fix || '').slice(0, 100)}` : `Cause: ${(entry.root_cause || '').slice(0, 100)}`,
+            age: rep.ts ? formatAgeFromMtime(new Date(rep.ts)) : '',
+            created_at: rep.ts || new Date().toISOString(),
+            meta: rep.fix
+              ? `Fix: ${(rep.fix || '').slice(0, 100)}`
+              : `Cause: ${(rep.root_cause || '').slice(0, 100)}`,
             source_type: 'internal',
             issue_type: 'issue',
-            _route: '/nf:solve'
+            _route: '/nf:solve',
+            _cluster_count: cluster.count
           });
         }
       }
