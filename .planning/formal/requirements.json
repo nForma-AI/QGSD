@@ -3109,6 +3109,18 @@
       "category_raw": "Repair Safety"
     },
     {
+      "id": "SAFE-03",
+      "text": "Formal verification in target repos uses only the target repo's own models; nForma-internal model generators and checkers are excluded from cross-repo execution",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/quick/253-guard-run-formal-verify-cjs-static-steps/253-PLAN.md",
+        "milestone": "quick-253"
+      },
+      "background": "When /nf:solve runs in target repos, nForma-internal formal models should not be generated into or checked against external repos. Only the target repo's own models (discovered dynamically from .planning/formal/) are verified."
+    },
+    {
       "id": "SCBD-01",
       "text": "Scoreboard tracks performance by slot name (`claude-1`, `copilot-1`) — slot is the stable key",
       "category": "Observability & Diagnostics",
