@@ -89,7 +89,7 @@ None.
 | 252 | Add focus/topic filter to nf:solve | 2026-03-10 | 04b3c923 | Verified | [252-add-focus-topic-filter-to-nf-solve](./quick/252-add-focus-topic-filter-to-nf-solve/) |
 | 253 | Guard run-formal-verify.cjs static steps — prevent cross-repo contamination | 2026-03-10 | a9cc952c | Verified | [253-guard-run-formal-verify-cjs-static-steps](./quick/253-guard-run-formal-verify-cjs-static-steps/) |
 | 254 | Review observe-pipeline extraction and README per-model gates section | 2026-03-10 | f367ddc8 | Verified | [254-review-observe-pipeline-extraction-and-r](./quick/254-review-observe-pipeline-extraction-and-r/) |
-| 256 | Fix solve subagent cwd/path bugs that create junk files in project root | 2026-03-10 | pending | Pending | [256-fix-solve-subagent-cwd-path-bugs-that-cr](./quick/256-fix-solve-subagent-cwd-path-bugs-that-cr/) |
+| 256 | Fix solve subagent cwd/path bugs that create junk files in project root | 2026-03-10 | 3305c8fc | Verified | [256-fix-solve-subagent-cwd-path-bugs-that-cr](./quick/256-fix-solve-subagent-cwd-path-bugs-that-cr/) |
 
 ## Session Continuity
 
