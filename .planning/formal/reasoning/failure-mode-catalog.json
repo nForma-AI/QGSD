@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-09T13:52:46.266Z",
+  "generated": "2026-03-10T20:35:17.324Z",
   "failure_modes": [
     {
       "id": "FM-IDLE-QUORUM_START-OMISSION",
@@ -1842,6 +1842,204 @@
           "layer": "L2",
           "artifact": "formal/requirements.json",
           "ref": "WIZ-01,WIZ-02,WIZ-03,WIZ-04,WIZ-05,WIZ-08,WIZ-09,WIZ-10,WIZ-11"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-OMISSION",
+      "state": "TUI",
+      "event": "TUI_CHECK",
+      "to_state": "TUI_VERIFIED",
+      "failure_mode": "omission",
+      "description": "TUI navigation fails to transition between modules correctly",
+      "effect": "System requirement TUI-01, TUI-02, TUI-03, TUI-04, TUI-05, TUI-06 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/TUINavigation.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "TUI-01,TUI-02,TUI-03,TUI-04,TUI-05,TUI-06"
+        }
+      ]
+    },
+    {
+      "id": "FM-PF-OMISSION",
+      "state": "PF",
+      "event": "PF_CHECK",
+      "to_state": "PF_VERIFIED",
+      "failure_mode": "omission",
+      "description": "P->F residual computation fails to count acknowledged debt entries correctly",
+      "effect": "System requirement PF-01, PF-02, PF-03, PF-04, PF-05 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFSolveP2F.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "PF-01,PF-02,PF-03,PF-04,PF-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-TOKN-OMISSION",
+      "state": "TOKN",
+      "event": "TOKN_CHECK",
+      "to_state": "TOKN_VERIFIED",
+      "failure_mode": "omission",
+      "description": "Token budget scaling fails to adjust based on task complexity tier",
+      "effect": "System requirement TOKN-01, TOKN-02, TOKN-03, TOKN-04 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFTokenOpt.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "TOKN-01,TOKN-02,TOKN-03,TOKN-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-LRNG-OMISSION",
+      "state": "LRNG",
+      "event": "LRNG_CHECK",
+      "to_state": "LRNG_VERIFIED",
+      "failure_mode": "omission",
+      "description": "Session-end error extraction fails to persist failure entries",
+      "effect": "System requirement LRNG-01, LRNG-02, LRNG-03, LRNG-04 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFLearning.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "LRNG-01,LRNG-02,LRNG-03,LRNG-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-MEMP-OMISSION",
+      "state": "MEMP",
+      "event": "MEMP_CHECK",
+      "to_state": "MEMP_VERIFIED",
+      "failure_mode": "omission",
+      "description": "Memory store fails to persist decisions across compaction boundaries",
+      "effect": "System requirement MEMP-01, MEMP-02, MEMP-03, MEMP-04 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFMemoryPersist.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "MEMP-01,MEMP-02,MEMP-03,MEMP-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-RSN-OMISSION",
+      "state": "RSN",
+      "event": "RSN_CHECK",
+      "to_state": "RSN_VERIFIED",
+      "failure_mode": "omission",
+      "description": "FMEA hazard scoring fails to compute correct RPN from severity/occurrence/detection",
+      "effect": "System requirement RSN-01, RSN-02, RSN-03, RSN-04, RSN-05 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFReasoning.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "RSN-01,RSN-02,RSN-03,RSN-04,RSN-05"
+        }
+      ]
+    },
+    {
+      "id": "FM-IMPR-OMISSION",
+      "state": "IMPR",
+      "event": "IMPR_CHECK",
+      "to_state": "IMPR_VERIFIED",
+      "failure_mode": "omission",
+      "description": "R3.6 improvement loop fails to incorporate quorum suggestions into plan revision",
+      "effect": "System requirement IMPR-01, IMPR-02, IMPR-03, IMPR-04 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFImprovement.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "IMPR-01,IMPR-02,IMPR-03,IMPR-04"
+        }
+      ]
+    },
+    {
+      "id": "FM-ORCH-OMISSION",
+      "state": "ORCH",
+      "event": "ORCH_CHECK",
+      "to_state": "ORCH_VERIFIED",
+      "failure_mode": "omission",
+      "description": "Context retriever fails to fetch domain-relevant context for task dispatch",
+      "effect": "System requirement ORCH-01, ORCH-02, ORCH-03 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFOrchestration.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "ORCH-01,ORCH-02,ORCH-03"
+        }
+      ]
+    },
+    {
+      "id": "FM-VERF-OMISSION",
+      "state": "VERF",
+      "event": "VERF_CHECK",
+      "to_state": "VERF_VERIFIED",
+      "failure_mode": "omission",
+      "description": "Execution progress tracker fails to persist plan/task completion state to disk",
+      "effect": "System requirement VERF-01, VERF-02, VERF-03 not satisfied",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "formal/tla/NFVerification.tla",
+          "ref": "model_spec"
+        },
+        {
+          "layer": "L2",
+          "artifact": "formal/requirements.json",
+          "ref": "VERF-01,VERF-02,VERF-03"
         }
       ]
     }

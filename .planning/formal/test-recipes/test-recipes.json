@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-10T14:15:55.554Z",
+  "generated": "2026-03-10T20:35:24.200Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -3761,12 +3761,372 @@
           "ref": "failure_modes[id=FM-WIZ-OMISSION]"
         }
       ]
+    },
+    {
+      "id": "TR-FM-TUI-OMISSION",
+      "failure_mode_id": "FM-TUI-OMISSION",
+      "title": "Test omission of TUI --[TUI_CHECK]--> TUI_VERIFIED",
+      "setup": {
+        "initial_state": "TUI",
+        "preconditions": [
+          "Machine is in TUI state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "TUI_CHECK",
+          "description": "Send TUI_CHECK event to machine in TUI state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "TUI_VERIFIED",
+        "assertions": [
+          "Machine transitions to TUI_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'TUI_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-PF-OMISSION",
+      "failure_mode_id": "FM-PF-OMISSION",
+      "title": "Test omission of PF --[PF_CHECK]--> PF_VERIFIED",
+      "setup": {
+        "initial_state": "PF",
+        "preconditions": [
+          "Machine is in PF state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "PF_CHECK",
+          "description": "Send PF_CHECK event to machine in PF state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "PF_VERIFIED",
+        "assertions": [
+          "Machine transitions to PF_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'PF_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-PF-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TOKN-OMISSION",
+      "failure_mode_id": "FM-TOKN-OMISSION",
+      "title": "Test omission of TOKN --[TOKN_CHECK]--> TOKN_VERIFIED",
+      "setup": {
+        "initial_state": "TOKN",
+        "preconditions": [
+          "Machine is in TOKN state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "TOKN_CHECK",
+          "description": "Send TOKN_CHECK event to machine in TOKN state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "TOKN_VERIFIED",
+        "assertions": [
+          "Machine transitions to TOKN_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'TOKN_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TOKN-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-LRNG-OMISSION",
+      "failure_mode_id": "FM-LRNG-OMISSION",
+      "title": "Test omission of LRNG --[LRNG_CHECK]--> LRNG_VERIFIED",
+      "setup": {
+        "initial_state": "LRNG",
+        "preconditions": [
+          "Machine is in LRNG state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "LRNG_CHECK",
+          "description": "Send LRNG_CHECK event to machine in LRNG state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "LRNG_VERIFIED",
+        "assertions": [
+          "Machine transitions to LRNG_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'LRNG_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-LRNG-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-MEMP-OMISSION",
+      "failure_mode_id": "FM-MEMP-OMISSION",
+      "title": "Test omission of MEMP --[MEMP_CHECK]--> MEMP_VERIFIED",
+      "setup": {
+        "initial_state": "MEMP",
+        "preconditions": [
+          "Machine is in MEMP state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "MEMP_CHECK",
+          "description": "Send MEMP_CHECK event to machine in MEMP state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "MEMP_VERIFIED",
+        "assertions": [
+          "Machine transitions to MEMP_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'MEMP_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-MEMP-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-RSN-OMISSION",
+      "failure_mode_id": "FM-RSN-OMISSION",
+      "title": "Test omission of RSN --[RSN_CHECK]--> RSN_VERIFIED",
+      "setup": {
+        "initial_state": "RSN",
+        "preconditions": [
+          "Machine is in RSN state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "RSN_CHECK",
+          "description": "Send RSN_CHECK event to machine in RSN state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "RSN_VERIFIED",
+        "assertions": [
+          "Machine transitions to RSN_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'RSN_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-RSN-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-IMPR-OMISSION",
+      "failure_mode_id": "FM-IMPR-OMISSION",
+      "title": "Test omission of IMPR --[IMPR_CHECK]--> IMPR_VERIFIED",
+      "setup": {
+        "initial_state": "IMPR",
+        "preconditions": [
+          "Machine is in IMPR state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "IMPR_CHECK",
+          "description": "Send IMPR_CHECK event to machine in IMPR state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "IMPR_VERIFIED",
+        "assertions": [
+          "Machine transitions to IMPR_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'IMPR_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-IMPR-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-ORCH-OMISSION",
+      "failure_mode_id": "FM-ORCH-OMISSION",
+      "title": "Test omission of ORCH --[ORCH_CHECK]--> ORCH_VERIFIED",
+      "setup": {
+        "initial_state": "ORCH",
+        "preconditions": [
+          "Machine is in ORCH state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "ORCH_CHECK",
+          "description": "Send ORCH_CHECK event to machine in ORCH state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "ORCH_VERIFIED",
+        "assertions": [
+          "Machine transitions to ORCH_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'ORCH_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-ORCH-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-VERF-OMISSION",
+      "failure_mode_id": "FM-VERF-OMISSION",
+      "title": "Test omission of VERF --[VERF_CHECK]--> VERF_VERIFIED",
+      "setup": {
+        "initial_state": "VERF",
+        "preconditions": [
+          "Machine is in VERF state"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "VERF_CHECK",
+          "description": "Send VERF_CHECK event to machine in VERF state"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERF_VERIFIED",
+        "assertions": [
+          "Machine transitions to VERF_VERIFIED"
+        ]
+      },
+      "oracle": {
+        "type": "state_assertion",
+        "check": "machine.state === 'VERF_VERIFIED'",
+        "failure_indicates": "Omission: transition did not fire"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": null,
+        "risk_tier": null
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-VERF-OMISSION]"
+        }
+      ]
     }
   ],
   "summary": {
-    "total_recipes": 98,
+    "total_recipes": 107,
     "by_failure_mode": {
-      "omission": 16,
+      "omission": 25,
       "corruption": 5,
       "commission": 11,
       "unknown": 66
@@ -3776,7 +4136,7 @@
       "critical": 15,
       "low": 1,
       "medium": 2,
-      "unclassified": 66
+      "unclassified": 75
     }
   }
 }

@@ -406,7 +406,7 @@
     },
     ".planning/formal/tla/TUINavigation.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T09:12:22.700Z",
+      "last_updated": "2026-03-10T20:35:29.415Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -421,7 +421,7 @@
       ],
       "source_layer": "L3",
       "gate_maturity": "SOFT_GATE",
-      "layer_maturity": 2
+      "layer_maturity": 3
     },
     ".planning/formal/tla/QGSDActivityTracking.tla": {
       "version": 1,
@@ -2534,7 +2534,7 @@
     },
     ".planning/formal/tla/NFSolveP2F.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.302Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2547,12 +2547,12 @@
         "PF-05"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFTokenOpt.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.303Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2564,12 +2564,12 @@
         "TOKN-04"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFLearning.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.303Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2581,12 +2581,12 @@
         "LRNG-04"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFMemoryPersist.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.303Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2598,12 +2598,12 @@
         "MEMP-04"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFReasoning.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.304Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2616,12 +2616,12 @@
         "RSN-05"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFImprovement.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.304Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2632,13 +2632,13 @@
         "IMPR-03",
         "IMPR-04"
       ],
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
     ".planning/formal/tla/NFOrchestration.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.304Z",
+      "last_updated": "2026-03-10T20:35:29.422Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2649,7 +2649,7 @@
         "ORCH-03"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFPolicy.tla": {
@@ -2670,7 +2670,7 @@
     },
     ".planning/formal/tla/NFVerification.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T20:32:10.304Z",
+      "last_updated": "2026-03-10T20:35:29.423Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2681,7 +2681,7 @@
         "VERF-03"
       ],
       "source_layer": "L3",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/alloy/fingerprinting.als": {
