@@ -92,7 +92,7 @@ None.
 | 256 | Fix solve subagent cwd/path bugs that create junk files in project root | 2026-03-10 | 3305c8fc | Verified | [256-fix-solve-subagent-cwd-path-bugs-that-cr](./quick/256-fix-solve-subagent-cwd-path-bugs-that-cr/) |
 | 257 | Fix solve/resolve data disconnect | 2026-03-10 | d5f6644f | Verified | [257-fix-solve-resolve-data-disconnect-add-tr](./quick/257-fix-solve-resolve-data-disconnect-add-tr/) |
 | 258 | Bridge errors.jsonl into solve debt pipeline and clean up error extraction quality | 2026-03-10 | e7275919 | Verified | [258-bridge-errors-jsonl-into-solve-debt-pipe](./quick/258-bridge-errors-jsonl-into-solve-debt-pipe/) |
-| 259 | Refresh solve-state residuals to subtract FP and archived items | 2026-03-10 | e48fb407 | Pending | [259-refresh-solve-state-residuals-to-subtrac](./quick/259-refresh-solve-state-residuals-to-subtrac/) |
+| 259 | Refresh solve-state residuals to subtract FP and archived items | 2026-03-10 | e48fb407 | Verified | [259-refresh-solve-state-residuals-to-subtrac](./quick/259-refresh-solve-state-residuals-to-subtrac/) |
 
 ## Session Continuity
 
