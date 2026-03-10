@@ -25,7 +25,17 @@ const fs   = require('fs');
 const os   = require('os');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+let ROOT = path.join(__dirname, '..');
+for (const arg of process.argv) {
+  if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+}
+
+// ── nForma repo guard ────────────────────────────────────────────────────────
+// This script verifies XState ↔ formal spec sync — only meaningful in the nForma repo.
+if (!fs.existsSync(path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts'))) {
+  process.stdout.write('[check-spec-sync] Not an nForma repo — skipping.\n');
+  process.exit(0);
+}
 
 // ── CLI overrides (for fixture-based drift injection tests) ───────────────────
 // These allow tests to substitute temp fixture files without modifying the repo.

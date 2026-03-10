@@ -31,6 +31,14 @@ for (const arg of process.argv) {
 }
 const DRY  = process.argv.includes('--dry');
 
+// ── nForma repo guard ────────────────────────────────────────────────────────
+// This script generates from the XState machine — only meaningful in the nForma repo.
+const MACHINE_PATH = path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
+if (!fs.existsSync(MACHINE_PATH)) {
+  process.stderr.write('[generate-formal-specs] Not an nForma repo (src/machines/nf-workflow.machine.ts not found) — skipping.\n');
+  process.exit(0);
+}
+
 // ── Model registry update helper ──────────────────────────────────────────────
 // Updates .planning/formal/model-registry.json after each spec write (ARCH-01 wiring).
 // Fail-open: if registry does not exist (not yet initialized), warns and skips.

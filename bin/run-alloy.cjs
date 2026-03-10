@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 'use strict';
 // bin/run-alloy.cjs
-// Invokes Alloy 6 JAR headless for the nForma vote-counting model.
+// Generic Alloy 6 runner — invokes any .als spec headless.
 // Requirements: ALY-02
 //
 // Usage:
-//   node bin/run-alloy.cjs
+//   node bin/run-alloy.cjs                        # default: quorum-votes
+//   node bin/run-alloy.cjs --spec=AccessControl   # run AccessControl.als
 //
 // Prerequisites:
 //   - Java >=17 (https://adoptium.net/)
@@ -20,8 +21,32 @@ const { getRequirementIds } = require('./requirement-map.cjs');
 
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
+let specName = 'quorum-votes'; // default for backward compat
 for (const arg of process.argv) {
   if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
+  if (arg.startsWith('--spec=')) specName = arg.slice('--spec='.length);
+}
+
+const checkId = 'alloy:' + specName;
+const alsFile = specName + '.als';
+
+// Helper: write a check result with the current spec's context
+function emitResult(result, runtimeMs, extraSummary, extraTags) {
+  const reqIds = getRequirementIds(checkId);
+  try {
+    writeCheckResult({
+      tool: 'run-alloy', formalism: 'alloy', result,
+      check_id: checkId, surface: 'alloy',
+      property: 'Alloy assertions for ' + specName,
+      runtime_ms: runtimeMs,
+      summary: result + ': ' + checkId + (extraSummary ? ' (' + extraSummary + ')' : '') + (runtimeMs ? ' in ' + runtimeMs + 'ms' : ''),
+      triage_tags: (extraTags || []).concat(runtimeMs > 60000 ? ['timeout-risk'] : []),
+      requirement_ids: reqIds,
+      metadata: {},
+    });
+  } catch (e) {
+    process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n');
+  }
 }
 
 // ── 1. Locate Java ───────────────────────────────────────────────────────────
@@ -35,7 +60,7 @@ if (JAVA_HOME) {
       '[run-alloy] JAVA_HOME is set but java binary not found at: ' + javaExe + '\n' +
       '[run-alloy] Unset JAVA_HOME or fix the path.\n'
     );
-    try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (Java not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+    emitResult('error', 0, 'Java not found');
     process.exit(1);
   }
 } else {
@@ -46,7 +71,7 @@ if (JAVA_HOME) {
       '[run-alloy] Java not found. Install Java >=17 and set JAVA_HOME.\n' +
       '[run-alloy] Download: https://adoptium.net/\n'
     );
-    try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (Java not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+    emitResult('error', 0, 'Java not found');
     process.exit(1);
   }
   javaExe = 'java';
@@ -56,11 +81,10 @@ if (JAVA_HOME) {
 const versionResult = spawnSync(javaExe, ['--version'], { encoding: 'utf8' });
 if (versionResult.error || versionResult.status !== 0) {
   process.stderr.write('[run-alloy] Failed to run: ' + javaExe + ' --version\n');
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (version check failed)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('error', 0, 'version check failed');
   process.exit(1);
 }
 const versionOutput = versionResult.stdout + versionResult.stderr;
-// Java version string varies: "openjdk 17.0.1 ..." or "java version \"17.0.1\""
 const versionMatch = versionOutput.match(/(?:openjdk\s+|java version\s+[""]?)(\d+)/i);
 const javaMajor    = versionMatch ? parseInt(versionMatch[1], 10) : 0;
 if (javaMajor < 17) {
@@ -68,31 +92,38 @@ if (javaMajor < 17) {
     '[run-alloy] Java >=17 required. Found: ' + versionOutput.split('\n')[0] + '\n' +
     '[run-alloy] Download Java 17+: https://adoptium.net/\n'
   );
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (Java < 17)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('error', 0, 'Java < 17');
   process.exit(1);
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-if (!fs.existsSync(jarPath)) {
+// Check project-local first, then fall back to ~/.claude/.planning/formal/alloy/
+const jarCandidates = [
+  path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+  path.join(process.env.HOME || '', '.claude', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+];
+const jarPath = jarCandidates.find(p => fs.existsSync(p));
+if (!jarPath) {
   process.stderr.write(
-    '[run-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
+    '[run-alloy] org.alloytools.alloy.dist.jar not found.\n' +
+    '[run-alloy] Searched:\n' +
+    jarCandidates.map(p => '  - ' + p).join('\n') + '\n' +
     '[run-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
     '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
   );
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('error', 0, 'JAR not found');
   process.exit(1);
 }
 
-// ── 4. Locate .planning/formal/alloy/quorum-votes.als ──────────────────────────────────
-const alsPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'quorum-votes.als');
+// ── 4. Locate the .als spec file ─────────────────────────────────────────────
+const alsPath = path.join(ROOT, '.planning', 'formal', 'alloy', alsFile);
 if (!fs.existsSync(alsPath)) {
   process.stderr.write(
-    '[run-alloy] quorum-votes.als not found at: ' + alsPath + '\n' +
-    '[run-alloy] This file should exist in the repository. Check your git status.\n'
+    '[run-alloy] ' + alsFile + ' not found at: ' + alsPath + '\n' +
+    '[run-alloy] Check that the Alloy spec exists in .planning/formal/alloy/\n'
   );
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: 0, summary: 'error: alloy:quorum-votes (ALS not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('error', 0, 'ALS not found');
   process.exit(1);
 }
 
@@ -117,8 +148,7 @@ const alloyResult = spawnSync(javaExe, [
 
 if (alloyResult.error) {
   process.stderr.write('[run-alloy] Alloy invocation failed: ' + alloyResult.error.message + '\n');
-  const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: _runtimeMs, summary: 'error: alloy:quorum-votes (invocation failed)', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('error', Date.now() - _startMs, 'invocation failed');
   process.exit(1);
 }
 
@@ -133,21 +163,17 @@ if (stderr) { process.stderr.write(stderr); }
 
 if (/Counterexample/i.test(stdout)) {
   process.stderr.write(
-    '[run-alloy] WARNING: Counterexample found in quorum-votes.als assertions\n' +
-    '[run-alloy] (ThresholdPasses / BelowThresholdFails / ZeroApprovalsFail).\n' +
-    '[run-alloy] This indicates a spec violation — review quorum-votes.als.\n'
+    '[run-alloy] WARNING: Counterexample found in ' + alsFile + ' assertions.\n' +
+    '[run-alloy] This indicates a spec violation — review ' + alsFile + '.\n'
   );
-  const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'fail', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: _runtimeMs, summary: 'fail: alloy:quorum-votes in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('fail', Date.now() - _startMs);
   process.exit(1);
 }
 
 if (alloyResult.status !== 0) {
-  const _runtimeMs = Date.now() - _startMs;
-  try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'fail', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: _runtimeMs, summary: 'fail: alloy:quorum-votes in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+  emitResult('fail', Date.now() - _startMs);
   process.exit(alloyResult.status || 1);
 }
 
-const _runtimeMs = Date.now() - _startMs;
-try { writeCheckResult({ tool: 'run-alloy', formalism: 'alloy', result: 'pass', check_id: 'alloy:quorum-votes', surface: 'alloy', property: 'Vote counting correctness — no vote loss, no double counting, unanimous agreement invariants', runtime_ms: _runtimeMs, summary: 'pass: alloy:quorum-votes in ' + _runtimeMs + 'ms', triage_tags: _runtimeMs > 60000 ? ['timeout-risk'] : [], requirement_ids: getRequirementIds('alloy:quorum-votes'), metadata: {} }); } catch (e) { process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
+emitResult('pass', Date.now() - _startMs);
 process.exit(0);
