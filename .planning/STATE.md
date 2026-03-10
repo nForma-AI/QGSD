@@ -88,9 +88,10 @@ None.
 | 250 | Review full README as team and propose improvement plan | 2026-03-09 | b183ff22 | Verified | [250-review-full-readme-as-team-and-propose-i](./quick/250-review-full-readme-as-team-and-propose-i/) |
 | 252 | Add focus/topic filter to nf:solve | 2026-03-10 | 04b3c923 | Verified | [252-add-focus-topic-filter-to-nf-solve](./quick/252-add-focus-topic-filter-to-nf-solve/) |
 | 253 | Guard run-formal-verify.cjs static steps — prevent cross-repo contamination | 2026-03-10 | a9cc952c | Verified | [253-guard-run-formal-verify-cjs-static-steps](./quick/253-guard-run-formal-verify-cjs-static-steps/) |
+| 254 | Review observe-pipeline extraction and README per-model gates section | 2026-03-10 | pending | Completed | [254-review-observe-pipeline-extraction-and-r](./quick/254-review-observe-pipeline-extraction-and-r/) |
 
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: All v0.33 phases complete — milestone ready for /nf:complete-milestone
+Stopped at: 2026-03-10 - Completed quick task 254: review observe-pipeline extraction and readme per-model-gates section
 Resume file: None
