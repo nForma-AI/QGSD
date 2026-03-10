@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-10T21:25:51.194Z",
+  "generated": "2026-03-10T21:29:01.184Z",
   "total_models": 180,
   "unstable_models": 7,
   "evidence_readiness": {
@@ -114,14 +114,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "L3 but no requirements mapped"
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:quorum-votes"
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -234,14 +234,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "L3 but no requirements mapped"
+        "pass": true,
+        "reason": "L3 model with 3 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no requirements mapped"
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1674,14 +1674,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "L3 but no requirements mapped"
+        "pass": true,
+        "reason": "L3 model with 7 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no requirements mapped"
+        "pass": true,
+        "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3127,10 +3127,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 10,
       "cooldown": {
-        "consecutive_stable_sessions": 19,
+        "consecutive_stable_sessions": 20,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.192Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.181Z"
       },
       "flagged_at": "2026-03-10T10:57:59.707Z"
     },
@@ -3293,10 +3293,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 17,
       "cooldown": {
-        "consecutive_stable_sessions": 18,
+        "consecutive_stable_sessions": 19,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.192Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.182Z"
       },
       "flagged_at": "2026-03-10T14:20:26.825Z"
     },
@@ -3379,10 +3379,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 18,
       "cooldown": {
-        "consecutive_stable_sessions": 14,
+        "consecutive_stable_sessions": 15,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.182Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
@@ -3425,10 +3425,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 12,
       "cooldown": {
-        "consecutive_stable_sessions": 12,
+        "consecutive_stable_sessions": 13,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.182Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
@@ -3471,10 +3471,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 14,
       "cooldown": {
-        "consecutive_stable_sessions": 17,
+        "consecutive_stable_sessions": 18,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.182Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
@@ -3517,10 +3517,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 10,
       "cooldown": {
-        "consecutive_stable_sessions": 13,
+        "consecutive_stable_sessions": 14,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.182Z"
       },
       "flagged_at": "2026-03-10T12:34:59.661Z"
     },
@@ -3643,10 +3643,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 5,
       "cooldown": {
-        "consecutive_stable_sessions": 12,
+        "consecutive_stable_sessions": 13,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
+        "last_session_timestamp": "2026-03-10T21:29:01.183Z"
       },
       "flagged_at": "2026-03-10T19:07:01.291Z"
     }
