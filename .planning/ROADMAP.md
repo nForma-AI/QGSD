@@ -83,11 +83,11 @@ Plans:
   1. Models with 3 or more promote/demote alternations in promotion-changelog.json are flagged as UNSTABLE in per-model-gates.json
   2. Re-promotion of a flagged model is blocked until the configurable stabilization window passes (default: 3 consecutive solve sessions AND 1 hour wall time of sustained gate score)
   3. nf:solve runs --write-per-model by default during every run, persisting gate reasons to per-model-gates.json without requiring an explicit flag
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.33-03-01: TBD
-- [ ] v0.33-03-02: TBD
+- [ ] v0.33-03-01-PLAN.md — Gate stability module with flip-flop detection and cooldown logic
+- [ ] v0.33-03-02-PLAN.md — Integration into compute-per-model-gates.cjs and --write-per-model default
 
 ### Phase v0.33-04: Predictive Power
 **Goal**: Formal models are scored on their ability to predict real bugs, providing a feedback loop between observed failures and formal verification effectiveness
@@ -147,4 +147,4 @@ Note: v0.33-02 and v0.33-03 both depend only on v0.33-01 and could run in parall
 
 ---
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-10 after v0.33-01 phase planning*
+*Last updated: 2026-03-10 after v0.33-03 phase planning*
