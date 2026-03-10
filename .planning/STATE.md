@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: -
 Plan: -
 Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed quick task 259: Refresh solve-state residuals to subtract FP and archived items
+Last activity: 2026-03-10 - Completed quick task 260: Smart error clustering for Category 16
 
 Progress: Milestone complete
 
@@ -53,6 +53,7 @@ Decisions logged in PROJECT.md Key Decisions table.
 - [v0.33-05]: Grace periods removed from TLA+ spec -- proving the stronger property (convergence without grace subsumes convergence with grace)
 - [v0.33-05]: RunSession split into ProgressSession (WF, fair) + RegressSession (no fairness) for correct liveness proof
 - [v0.33-05]: DownstreamOf defined as spec operator (not CONSTANT) -- TLC config parser cannot handle :> @@ expressions
+- [Phase quick-260]: Two-phase error clustering (regex type extraction + Levenshtein sub-clustering) for observe pipeline Category 16
 
 ### Pending Todos
 
@@ -93,9 +94,10 @@ None.
 | 257 | Fix solve/resolve data disconnect | 2026-03-10 | d5f6644f | Verified | [257-fix-solve-resolve-data-disconnect-add-tr](./quick/257-fix-solve-resolve-data-disconnect-add-tr/) |
 | 258 | Bridge errors.jsonl into solve debt pipeline and clean up error extraction quality | 2026-03-10 | e7275919 | Verified | [258-bridge-errors-jsonl-into-solve-debt-pipe](./quick/258-bridge-errors-jsonl-into-solve-debt-pipe/) |
 | 259 | Refresh solve-state residuals to subtract FP and archived items | 2026-03-10 | e48fb407 | Verified | [259-refresh-solve-state-residuals-to-subtrac](./quick/259-refresh-solve-state-residuals-to-subtrac/) |
+| 260 | Smart error clustering for Category 16 | 2026-03-10 | b5c4ce71 | Verified | [260-smart-error-clustering-for-category-16](./quick/260-smart-error-clustering-for-category-16/) |
 
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: 2026-03-10 - Completed quick task 259: Refresh solve-state residuals to subtract FP and archived items
+Stopped at: 2026-03-10 - Completed quick task 260: Smart error clustering for Category 16
 Resume file: None
