@@ -1377,6 +1377,45 @@ function readClassificationCache() {
   } catch (_) { return {}; }
 }
 
+// ── Live residual computation ─────────────────────────────────────────────────
+
+/**
+ * Returns known_issues from solve-state.json with net_residual recomputed live
+ * from current FP classifications and archive state. This avoids stale snapshots
+ * when items are triaged via /nf:resolve between /nf:solve runs.
+ */
+function getLiveKnownIssues() {
+  let solveState;
+  try {
+    solveState = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-state.json'), 'utf8'));
+  } catch (_) { return []; }
+
+  const issues = solveState.known_issues || [];
+  if (issues.length === 0) return issues;
+
+  // Load current sweep data (already applies Haiku FP filtering)
+  const sweepData = loadSweepData();
+
+  const LAYER_TO_CAT = {
+    d_to_c: 'dtoc',
+    c_to_r: 'ctor',
+    t_to_r: 'ttor',
+    d_to_r: 'dtor',
+  };
+
+  return issues.map(issue => {
+    const catKey = LAYER_TO_CAT[issue.layer];
+    if (!catKey) return issue; // non-human-gated layer, return as-is
+
+    const cat = sweepData[catKey];
+    if (!cat || !cat.items) return { ...issue, net_residual: 0 };
+
+    // Count items that survive both FP filter (already done by loadSweepData) AND archive
+    const live = cat.items.filter(i => !isArchived(i));
+    return { ...issue, net_residual: live.length };
+  });
+}
+
 // ── Exports ───────────────────────────────────────────────────────────────────
 
 if (require.main === module) {
@@ -1384,6 +1423,7 @@ if (require.main === module) {
 } else {
   module.exports = {
     loadSweepData,
+    getLiveKnownIssues,
     readFPFile,
     writeFPFile,
     acknowledgeItem,
