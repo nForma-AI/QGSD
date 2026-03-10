@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-10T13:42:55.787Z",
+  "last_sync": "2026-03-10T14:02:14.407Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/solve-session-persistence.als": {
@@ -85,15 +85,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 6404,
-      "last_updated": "2026-03-10T13:42:56.697Z",
+      "version": 6405,
+      "last_updated": "2026-03-10T14:02:14.405Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 1,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L2"
+      "description": ""
     },
     ".planning/formal/alloy/scoreboard-recompute.als": {
       "version": 1,
@@ -176,13 +173,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 6401,
-      "last_updated": "2026-03-10T13:42:56.697Z",
+      "version": 6402,
+      "last_updated": "2026-03-10T14:02:14.407Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 1
+      "description": ""
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
@@ -1361,15 +1357,12 @@
       "layer_maturity": 2
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 5155,
-      "last_updated": "2026-03-10T13:42:56.701Z",
+      "version": 5156,
+      "last_updated": "2026-03-10T14:02:14.402Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "",
-      "layer_maturity": 1,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L2"
+      "description": ""
     },
     ".planning/formal/alloy/solve-automation-features.als": {
       "version": 1,
