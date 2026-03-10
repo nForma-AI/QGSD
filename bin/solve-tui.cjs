@@ -19,10 +19,27 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const readline = require('readline');
 const { execFileSync } = require('child_process');
 
 const ROOT = process.cwd();
+
+// ── Claude CLI binary resolver ──────────────────────────────────────────────
+// Claude Code installs versioned binaries at ~/.local/share/claude/versions/X.Y.Z
+// and does NOT place them on PATH. Resolve the latest version dynamically.
+function resolveClaudeCLI() {
+  const versionsDir = path.join(os.homedir(), '.local', 'share', 'claude', 'versions');
+  if (!fs.existsSync(versionsDir)) return 'claude'; // fallback to PATH lookup
+  const versions = fs.readdirSync(versionsDir)
+    .filter(f => /^\d+\.\d+\.\d+$/.test(f) && fs.statSync(path.join(versionsDir, f)).isFile())
+    .sort((a, b) => {
+      const ap = a.split('.').map(Number), bp = b.split('.').map(Number);
+      for (let i = 0; i < 3; i++) { if (ap[i] !== bp[i]) return bp[i] - ap[i]; }
+      return 0;
+    });
+  return versions.length > 0 ? path.join(versionsDir, versions[0]) : 'claude';
+}
 
 // ── Global error handlers — prevent silent crashes ──────────────────────────
 process.on('uncaughtException', (err) => {
@@ -1279,10 +1296,12 @@ Respond with ONLY a JSON object mapping index to verdict. Example: {"0":"fp","1"
 No explanation, no markdown, just the JSON object.`;
 
       try {
+        const cleanEnv = { ...process.env };
+        delete cleanEnv.CLAUDECODE; // Prevent "cannot launch inside another session" block
         const result = execFileSync(
-          'claude',
+          resolveClaudeCLI(),
           ['-p', prompt, '--model', 'claude-haiku-4-5-20251001'],
-          { encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
+          { env: cleanEnv, encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
         ).trim();
 
         const jsonMatch = result.match(/\{[\s\S]*\}/);

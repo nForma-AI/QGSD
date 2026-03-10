@@ -23,6 +23,20 @@ const os   = require('os');
 
 const args       = process.argv.slice(2);
 const getArg     = (f) => { const i = args.indexOf(f); return i !== -1 && args[i+1] ? args[i+1] : null; };
+
+// Resolve Claude CLI binary — not on PATH, lives at ~/.local/share/claude/versions/X.Y.Z
+function resolveClaudeCLI() {
+  const versionsDir = path.join(os.homedir(), '.local', 'share', 'claude', 'versions');
+  if (!fs.existsSync(versionsDir)) return 'claude';
+  const versions = fs.readdirSync(versionsDir)
+    .filter(f => /^\d+\.\d+\.\d+$/.test(f) && fs.statSync(path.join(versionsDir, f)).isFile())
+    .sort((a, b) => {
+      const ap = a.split('.').map(Number), bp = b.split('.').map(Number);
+      for (let i = 0; i < 3; i++) { if (ap[i] !== bp[i]) return bp[i] - ap[i]; }
+      return 0;
+    });
+  return versions.length > 0 ? path.join(versionsDir, versions[0]) : 'claude';
+}
 const hasFlag    = (f) => args.includes(f);
 const TIMEOUT_MS = parseInt(getArg('--timeout-ms') ?? '12000', 10);
 const JSON_OUT   = hasFlag('--json');
@@ -69,7 +83,8 @@ for (const { name, env } of targets) {
   // This tests the same path that the MCP tool would use.
   try {
     const envForCall = { ...process.env, ...env };
-    const result = execFileSync('claude', [
+    delete envForCall.CLAUDECODE; // Prevent nested-session block
+    const result = execFileSync(resolveClaudeCLI(), [
       '-p', 'Reply with exactly one word: ok',
       '--output-format', 'json',
       '--max-turns', '1',
