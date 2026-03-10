@@ -1,14 +1,14 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-10T20:35:29.424Z",
-  "grounding_score": 0.31666666666666665,
+  "generated": "2026-03-10T21:26:40.416Z",
+  "grounding_score": 0.9888888888888889,
   "target": 0.8,
-  "target_met": false,
-  "explained": 57,
+  "target_met": true,
+  "explained": 178,
   "total": 180,
   "unexplained_counts": {
     "instrumentation_bug": 0,
-    "model_gap": 123,
+    "model_gap": 2,
     "genuine_violation": 0
   },
   "scope": {

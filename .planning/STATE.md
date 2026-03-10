@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: -
 Plan: -
 Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed quick task 265: Fix 3 orphaned L3 Gate B entries
+Last activity: 2026-03-10 - Completed quick task 267: Fix 41 Gate A model gaps
 
 Progress: Milestone complete
 
@@ -102,8 +102,10 @@ None.
 | 265 | Fix 3 orphaned L3 Gate B entries — add requirement mappings | 2026-03-10 | pending | Pending | [265-fix-3-orphaned-l3-gate-b-entries-add-req](./quick/265-fix-3-orphaned-l3-gate-b-entries-add-req/) |
 | 266 | Add smart branch management to quick workflow | 2026-03-10 | 30a5a72c | Verified | [266-add-smart-branch-management-to-quick-wor](./quick/266-add-smart-branch-management-to-quick-wor/) |
 
+| 267 | Fix 41 Gate A model gaps — add requirement_ids to requirement-map.cjs | 2026-03-10 | pending | Pending | [267-fix-41-xstate-model-gaps-identified-by-g](./quick/267-fix-41-xstate-model-gaps-identified-by-g/) |
+
 ## Session Continuity
 
 Last session: 2026-03-10
-Stopped at: 2026-03-10 - Completed quick task 266: Add smart branch management to quick workflow
+Stopped at: 2026-03-10 - Completed quick task 267: Fix 41 Gate A model gaps
 Resume file: None

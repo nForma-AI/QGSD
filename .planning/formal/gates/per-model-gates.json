@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-10T20:32:10.307Z",
+  "generated": "2026-03-10T21:25:51.194Z",
   "total_models": 180,
   "unstable_models": 7,
   "evidence_readiness": {
@@ -114,14 +114,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "L3 model with 1 requirement(s)"
+        "pass": false,
+        "reason": "L3 but no requirements mapped"
       },
       "gate_c": {
         "pass": true,
-        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-03)"
+        "reason": "passing check-result alloy:quorum-votes"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -191,7 +191,7 @@
     ".planning/formal/prism/mcp-availability.pm": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req MCPENV-04 (property: unnamed)"
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -210,8 +210,8 @@
     },
     ".planning/formal/prism/oauth-rotation.pm": {
       "gate_a": {
-        "pass": true,
-        "reason": "passing trace for req PRM-AM-01 (property: unnamed)"
+        "pass": false,
+        "reason": "no passing traces for reqs [PRM-AM-01, CRED-12]"
       },
       "gate_b": {
         "pass": true,
@@ -234,16 +234,16 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "L3 model with 1 requirement(s)"
+        "pass": false,
+        "reason": "L3 but no requirements mapped"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-03)"
+        "pass": false,
+        "reason": "no requirements mapped"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -498,10 +498,10 @@
         "reason": "L3 model with 6 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [TUI-01, TUI-02, TUI-03, TUI-04, TUI-05, TUI-06], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-TUI-OMISSION has test recipe (via req TUI-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -510,8 +510,8 @@
     },
     ".planning/formal/tla/QGSDActivityTracking.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [ACT-01, ACT-02, ACT-03, ACT-04, ACT-05, ACT-06, ACT-07]"
+        "pass": true,
+        "reason": "all 7 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -521,7 +521,7 @@
         "pass": true,
         "reason": "failure-mode FM-ACT-OMISSION has test recipe (via req ACT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -530,8 +530,8 @@
     },
     ".planning/formal/tla/QGSDSetupWizard.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [WIZ-01, WIZ-02, WIZ-03, WIZ-04, WIZ-05, WIZ-08, WIZ-09, WIZ-10]"
+        "pass": true,
+        "reason": "all 8 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -541,7 +541,7 @@
         "pass": true,
         "reason": "failure-mode FM-WIZ-OMISSION has test recipe (via req WIZ-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -550,8 +550,8 @@
     },
     ".planning/formal/tla/QGSDPromptHook.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [UPS-01, UPS-02, UPS-03, UPS-04, UPS-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -561,7 +561,7 @@
         "pass": true,
         "reason": "failure-mode FM-UPS-OMISSION has test recipe (via req UPS-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -570,8 +570,8 @@
     },
     ".planning/formal/tla/QGSDDispatchPipeline.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DISP-01, DISP-02, DISP-03, DISP-04, DISP-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -581,7 +581,7 @@
         "pass": true,
         "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -590,8 +590,8 @@
     },
     ".planning/formal/tla/QGSDEnforcement.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [ENFC-01, ENFC-02, ENFC-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -601,7 +601,7 @@
         "pass": true,
         "reason": "failure-mode FM-ENFC-OMISSION has test recipe (via req ENFC-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -650,8 +650,8 @@
     },
     ".planning/formal/tla/QGSDKeyManagement.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [KEY-01, KEY-02, KEY-03, KEY-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -661,7 +661,7 @@
         "pass": true,
         "reason": "failure-mode FM-KEY-OMISSION has test recipe (via req KEY-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -690,8 +690,8 @@
     },
     ".planning/formal/tla/QGSDConfigPortability.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PORT-01, PORT-02, PORT-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -701,7 +701,7 @@
         "pass": true,
         "reason": "failure-mode FM-PORT-OMISSION has test recipe (via req PORT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -710,8 +710,8 @@
     },
     ".planning/formal/alloy/config-two-layer.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CONF-01, CONF-02, CONF-03, CONF-04, CONF-05, CONF-06, CONF-07, CONF-08, CONF-09]"
+        "pass": true,
+        "reason": "all 9 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -721,7 +721,7 @@
         "pass": true,
         "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req CONF-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -730,8 +730,8 @@
     },
     ".planning/formal/alloy/mcp-detection.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [MCP-01, MCP-02, MCP-03, MCP-04, MCP-05, MCP-06]"
+        "pass": true,
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -741,7 +741,7 @@
         "pass": true,
         "reason": "failure-mode FM-MCP-OMISSION has test recipe (via req MCP-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -850,8 +850,8 @@
     },
     ".planning/formal/alloy/traceability-annotations.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TRACE-01, TRACE-02, TRACE-03, TRACE-04, TRACE-05, ANNOT-01, ANNOT-02, ANNOT-03, ANNOT-04, ANNOT-05]"
+        "pass": true,
+        "reason": "all 10 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -861,7 +861,7 @@
         "pass": true,
         "reason": "failure-mode FM-ANNOT-OMISSION has test recipe (via req ANNOT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -870,8 +870,8 @@
     },
     ".planning/formal/prism/observability-delivery.pm": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-01, OBS-02, OBS-03, OBS-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -881,7 +881,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -910,8 +910,8 @@
     },
     ".planning/formal/tla/QGSDDashboard.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DASH-01, DASH-02, DASH-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -921,7 +921,7 @@
         "pass": true,
         "reason": "failure-mode FM-DASH-OMISSION has test recipe (via req DASH-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -950,8 +950,8 @@
     },
     ".planning/formal/tla/QGSDSensitivity.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SENS-01, SENS-02, SENS-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -961,7 +961,7 @@
         "pass": true,
         "reason": "failure-mode FM-SENS-OMISSION has test recipe (via req SENS-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -970,8 +970,8 @@
     },
     ".planning/formal/tla/QGSDSpecGeneration.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SPEC-04, LOOP-04]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -981,7 +981,7 @@
         "pass": true,
         "reason": "failure-mode FM-LOOP-OMISSION has test recipe (via req LOOP-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1070,8 +1070,8 @@
     },
     ".planning/formal/alloy/gsd-sync-invariants.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SYNC-01, SYNC-02, SYNC-03, SYNC-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1081,7 +1081,7 @@
         "pass": true,
         "reason": "failure-mode FM-SYNC-OMISSION has test recipe (via req SYNC-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1110,8 +1110,8 @@
     },
     ".planning/formal/alloy/verification-integration.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERIFY-01, VERIFY-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1121,7 +1121,7 @@
         "pass": true,
         "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1130,8 +1130,8 @@
     },
     ".planning/formal/alloy/provider-failure.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [FAIL-02, CALIB-04]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1141,7 +1141,7 @@
         "pass": true,
         "reason": "failure-mode FM-CALIB-OMISSION has test recipe (via req CALIB-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1150,8 +1150,8 @@
     },
     ".planning/formal/alloy/codebase-arch-constraints.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [ARCH-10, REN-03, STD-10]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1161,7 +1161,7 @@
         "pass": true,
         "reason": "failure-mode FM-ARCH-OMISSION has test recipe (via req ARCH-10)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1170,8 +1170,8 @@
     },
     ".planning/formal/alloy/solve-consistency.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-01, SOLVE-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1181,7 +1181,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1190,8 +1190,8 @@
     },
     ".planning/formal/alloy/config-zero-providers.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CONF-10]"
+        "pass": true,
+        "reason": "passing trace for req CONF-10 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1201,7 +1201,7 @@
         "pass": true,
         "reason": "passing check-result alloy:config-zero-providers"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1210,8 +1210,8 @@
     },
     ".planning/formal/alloy/decomp-cross-model.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DECOMP-05]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1221,7 +1221,7 @@
         "pass": true,
         "reason": "failure-mode FM-DECOMP-OMISSION has test recipe (via req DECOMP-05)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1230,8 +1230,8 @@
     },
     ".planning/formal/alloy/formal-test-trace.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TRACE-06]"
+        "pass": true,
+        "reason": "passing trace for req TRACE-06 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1241,7 +1241,7 @@
         "pass": true,
         "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1250,8 +1250,8 @@
     },
     ".planning/formal/alloy/ci-pipeline-gates.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CI-01, CI-02, CI-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1261,7 +1261,7 @@
         "pass": true,
         "reason": "failure-mode FM-CI-OMISSION has test recipe (via req CI-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1270,8 +1270,8 @@
     },
     ".planning/formal/alloy/polyrepo-config.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CONF-11, CONF-12]"
+        "pass": true,
+        "reason": "passing trace for req CONF-11 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1281,7 +1281,7 @@
         "pass": true,
         "reason": "passing check-result alloy:polyrepo-config"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1310,8 +1310,8 @@
     },
     ".planning/formal/alloy/security-scanning.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SEC-01, SEC-02, SEC-03, SEC-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1321,7 +1321,7 @@
         "pass": true,
         "reason": "failure-mode FM-SEC-OMISSION has test recipe (via req SEC-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1330,8 +1330,8 @@
     },
     ".planning/formal/alloy/reliability-patterns.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [REL-01, REL-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1341,7 +1341,7 @@
         "pass": true,
         "reason": "failure-mode FM-REL-OMISSION has test recipe (via req REL-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1370,8 +1370,8 @@
     },
     ".planning/formal/alloy/platform-install-compat.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PLAT-01]"
+        "pass": true,
+        "reason": "passing trace for req PLAT-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1381,7 +1381,7 @@
         "pass": true,
         "reason": "failure-mode FM-PLAT-OMISSION has test recipe (via req PLAT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1390,8 +1390,8 @@
     },
     ".planning/formal/alloy/cli-exit-conventions.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-05]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1401,7 +1401,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-05)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1410,8 +1410,8 @@
     },
     ".planning/formal/alloy/solver-doc-layers.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-03, SOLVE-04]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1421,7 +1421,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1430,8 +1430,8 @@
     },
     ".planning/formal/alloy/bin-path-resolution.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [INST-11]"
+        "pass": true,
+        "reason": "passing trace for req INST-11 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1441,7 +1441,7 @@
         "pass": true,
         "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-11)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1450,8 +1450,8 @@
     },
     ".planning/formal/alloy/baseline-merge-idempotent.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [INST-12]"
+        "pass": true,
+        "reason": "passing trace for req INST-12 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1461,7 +1461,7 @@
         "pass": true,
         "reason": "failure-mode FM-INST-OMISSION has test recipe (via req INST-12)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1470,8 +1470,8 @@
     },
     ".planning/formal/alloy/baseline-requirements-filter.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [INIT-01]"
+        "pass": true,
+        "reason": "passing trace for req INIT-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1481,7 +1481,7 @@
         "pass": true,
         "reason": "failure-mode FM-INIT-OMISSION has test recipe (via req INIT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1490,8 +1490,8 @@
     },
     ".planning/formal/tla/QGSDTUIModules.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [NAV-01]"
+        "pass": true,
+        "reason": "passing trace for req NAV-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1501,7 +1501,7 @@
         "pass": true,
         "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1510,8 +1510,8 @@
     },
     ".planning/formal/tla/QGSDTUISessions.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [NAV-02]"
+        "pass": true,
+        "reason": "passing trace for req NAV-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1521,7 +1521,7 @@
         "pass": true,
         "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1530,8 +1530,8 @@
     },
     ".planning/formal/alloy/terminal-emulation-purity.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [NAV-03]"
+        "pass": true,
+        "reason": "passing trace for req NAV-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1541,7 +1541,7 @@
         "pass": true,
         "reason": "failure-mode FM-NAV-OMISSION has test recipe (via req NAV-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1570,8 +1570,8 @@
     },
     ".planning/formal/alloy/settings-hub.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [WIZ-11]"
+        "pass": true,
+        "reason": "passing trace for req WIZ-11 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1581,7 +1581,7 @@
         "pass": true,
         "reason": "failure-mode FM-WIZ-OMISSION has test recipe (via req WIZ-11)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1590,8 +1590,8 @@
     },
     ".planning/formal/alloy/ci-test-fallback.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CI-04]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1601,7 +1601,7 @@
         "pass": true,
         "reason": "failure-mode FM-CI-OMISSION has test recipe (via req CI-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1610,8 +1610,8 @@
     },
     ".planning/formal/alloy/dispatch-formal-context.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DISP-06]"
+        "pass": true,
+        "reason": "passing trace for req DISP-06 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1621,7 +1621,7 @@
         "pass": true,
         "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1630,8 +1630,8 @@
     },
     ".planning/formal/alloy/observability-analysis.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-06, OBS-07, OBS-08]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1641,7 +1641,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1650,8 +1650,8 @@
     },
     ".planning/formal/alloy/solver-portability.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-05, SOLVE-06]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1661,7 +1661,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-05)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1674,14 +1674,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "L3 model with 1 requirement(s)"
+        "pass": false,
+        "reason": "L3 but no requirements mapped"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-03)"
+        "pass": false,
+        "reason": "no requirements mapped"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1690,8 +1690,8 @@
     },
     ".planning/formal/alloy/solve-automation-features.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-09]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-09 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1701,7 +1701,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-09)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1710,8 +1710,8 @@
     },
     ".planning/formal/alloy/solve-legacy-merge.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-8]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-8 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1721,7 +1721,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-8)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1730,8 +1730,8 @@
     },
     ".planning/formal/alloy/solve-ft-recipe.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-7]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-7 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1741,7 +1741,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-7)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1750,8 +1750,8 @@
     },
     ".planning/formal/alloy/headless-execution.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERIFY-03]"
+        "pass": true,
+        "reason": "passing trace for req VERIFY-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1761,7 +1761,7 @@
         "pass": true,
         "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1770,8 +1770,8 @@
     },
     ".planning/formal/alloy/jvm-heap-sequential.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERIFY-04]"
+        "pass": true,
+        "reason": "passing trace for req VERIFY-04 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1781,7 +1781,7 @@
         "pass": true,
         "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1790,8 +1790,8 @@
     },
     ".planning/formal/alloy/traceability-obligations.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DEBT-01, FVTOOL-01, TRACE-07]"
+        "pass": true,
+        "reason": "1/3 requirement(s) grounded by unit test coverage (partial)"
       },
       "gate_b": {
         "pass": true,
@@ -1801,7 +1801,7 @@
         "pass": true,
         "reason": "failure-mode FM-DEBT-OMISSION has test recipe (via req DEBT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1810,8 +1810,8 @@
     },
     ".planning/formal/alloy/project-identity.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PROJECT-01, PROJECT-02]"
+        "pass": true,
+        "reason": "passing trace for req PROJECT-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1821,7 +1821,7 @@
         "pass": true,
         "reason": "failure-mode FM-PROJECT-OMISSION has test recipe (via req PROJECT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1830,8 +1830,8 @@
     },
     ".planning/formal/alloy/doc-claims-backing.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DOC-01]"
+        "pass": true,
+        "reason": "passing trace for req DOC-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1841,7 +1841,7 @@
         "pass": true,
         "reason": "failure-mode FM-DOC-OMISSION has test recipe (via req DOC-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1850,8 +1850,8 @@
     },
     ".planning/formal/alloy/solve-tc-coverage.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-10]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-10 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1861,7 +1861,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-10)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1870,8 +1870,8 @@
     },
     ".planning/formal/alloy/observability-handlers.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-09, OBS-10, OBS-11, OBS-12]"
+        "pass": true,
+        "reason": "2/4 requirement(s) grounded by unit test coverage (partial)"
       },
       "gate_b": {
         "pass": true,
@@ -1881,7 +1881,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-09)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1890,8 +1890,8 @@
     },
     ".planning/formal/alloy/evidence-scope-scan.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [EVID-03, SPEC-05]"
+        "pass": true,
+        "reason": "1/2 requirement(s) grounded by unit test coverage (partial)"
       },
       "gate_b": {
         "pass": true,
@@ -1901,7 +1901,7 @@
         "pass": true,
         "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1910,8 +1910,8 @@
     },
     ".planning/formal/alloy/code-quality-guardrails.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GUARD-01]"
+        "pass": true,
+        "reason": "passing trace for req GUARD-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1921,7 +1921,7 @@
         "pass": true,
         "reason": "failure-mode FM-GUARD-OMISSION has test recipe (via req GUARD-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1970,8 +1970,8 @@
     },
     ".planning/formal/alloy/observability-handler-arch.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-13, OBS-14, OBS-15]"
+        "pass": true,
+        "reason": "passing trace for req OBS-13 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1981,7 +1981,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-13)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -1990,8 +1990,8 @@
     },
     ".planning/formal/alloy/gate-a-scoping.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GATE-01]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2010,8 +2010,8 @@
     },
     ".planning/formal/alloy/spec-quality-guardrails.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SPEC-06]"
+        "pass": true,
+        "reason": "passing trace for req SPEC-06 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2021,7 +2021,7 @@
         "pass": true,
         "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2030,8 +2030,8 @@
     },
     ".planning/formal/alloy/trace-event-normalization.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TRACE-08]"
+        "pass": true,
+        "reason": "passing trace for req TRACE-08 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2041,7 +2041,7 @@
         "pass": true,
         "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-08)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2051,7 +2051,7 @@
     ".planning/formal/prism/mcp-availability.props": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req FAIL-01 (property: unnamed)"
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2070,8 +2070,8 @@
     },
     ".planning/formal/prism/oauth-rotation.props": {
       "gate_a": {
-        "pass": true,
-        "reason": "passing trace for req CRED-12 (property: unnamed)"
+        "pass": false,
+        "reason": "no passing traces for reqs [CRED-12, PRM-AM-01]"
       },
       "gate_b": {
         "pass": true,
@@ -2110,8 +2110,8 @@
     },
     ".planning/formal/prism/observability-delivery.props": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-01, OBS-02, OBS-03, OBS-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2121,7 +2121,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2150,8 +2150,8 @@
     },
     ".planning/formal/alloy/config-audit.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CONF-13]"
+        "pass": true,
+        "reason": "passing trace for req CONF-13 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2161,7 +2161,7 @@
         "pass": true,
         "reason": "passing check-result alloy:config-audit"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2170,8 +2170,8 @@
     },
     ".planning/formal/alloy/solve-result-schema.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-11, SOLVE-12]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-11 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2181,7 +2181,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-11)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2190,8 +2190,8 @@
     },
     ".planning/formal/alloy/proximity-index.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TRACE-09]"
+        "pass": true,
+        "reason": "passing trace for req TRACE-09 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2201,7 +2201,7 @@
         "pass": true,
         "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-09)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2210,8 +2210,8 @@
     },
     ".planning/formal/alloy/wiring-awareness.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERIFY-05]"
+        "pass": true,
+        "reason": "passing trace for req VERIFY-05 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2221,7 +2221,7 @@
         "pass": true,
         "reason": "failure-mode FM-VERIFY-OMISSION has test recipe (via req VERIFY-05)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2230,8 +2230,8 @@
     },
     ".planning/formal/tla/QGSDCheckpointGate.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [QUORUM-06]"
+        "pass": true,
+        "reason": "passing trace for req QUORUM-06 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2241,7 +2241,7 @@
         "pass": true,
         "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2250,8 +2250,8 @@
     },
     ".planning/formal/alloy/doc-presentation.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DOC-02, DOC-03]"
+        "pass": true,
+        "reason": "passing trace for req DOC-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2261,7 +2261,7 @@
         "pass": true,
         "reason": "failure-mode FM-DOC-OMISSION has test recipe (via req DOC-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2270,8 +2270,8 @@
     },
     ".planning/formal/alloy/git-history-evidence.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [EVID-04]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2281,7 +2281,7 @@
         "pass": true,
         "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2290,8 +2290,8 @@
     },
     ".planning/formal/alloy/health-diagnostic-routing.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [OBS-16]"
+        "pass": true,
+        "reason": "passing trace for req OBS-16 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2301,7 +2301,7 @@
         "pass": true,
         "reason": "failure-mode FM-OBS-OMISSION has test recipe (via req OBS-16)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2310,8 +2310,8 @@
     },
     ".planning/formal/alloy/hook-portability-guard.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GUARD-02, PORT-04]"
+        "pass": true,
+        "reason": "passing trace for req GUARD-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2321,7 +2321,7 @@
         "pass": true,
         "reason": "failure-mode FM-GUARD-OMISSION has test recipe (via req GUARD-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2330,8 +2330,8 @@
     },
     ".planning/formal/alloy/prism-delegation.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [FVTOOL-02]"
+        "pass": true,
+        "reason": "passing trace for req FVTOOL-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2341,7 +2341,7 @@
         "pass": true,
         "reason": "failure-mode FM-FVTOOL-OMISSION has test recipe (via req FVTOOL-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2350,8 +2350,8 @@
     },
     ".planning/formal/alloy/requirements-aggregation.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-18]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-18 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2361,7 +2361,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-18)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2370,8 +2370,8 @@
     },
     ".planning/formal/alloy/solve-decomposition.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-14, SOLVE-15]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-14 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2381,7 +2381,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-14)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2390,8 +2390,8 @@
     },
     ".planning/formal/alloy/solve-tui-features.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-16, SOLVE-17]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-16 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2401,7 +2401,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-16)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2410,8 +2410,8 @@
     },
     ".planning/formal/alloy/hook-module-existence.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-19, SOLVE-20, SOLVE-21, SOLVE-22, SOLVE-23]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-19 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2421,7 +2421,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-19)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2430,8 +2430,8 @@
     },
     ".planning/formal/alloy/autoclose-signals.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GATE-02]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2450,8 +2450,8 @@
     },
     ".planning/formal/alloy/session-counter-tracking.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SPEC-07]"
+        "pass": true,
+        "reason": "passing trace for req SPEC-07 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2461,7 +2461,7 @@
         "pass": true,
         "reason": "failure-mode FM-SPEC-OMISSION has test recipe (via req SPEC-07)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2470,8 +2470,8 @@
     },
     ".planning/formal/alloy/debate-trace-persistence.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DISP-07]"
+        "pass": true,
+        "reason": "passing trace for req DISP-07 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2481,7 +2481,7 @@
         "pass": true,
         "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req DISP-07)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2490,8 +2490,8 @@
     },
     ".planning/formal/alloy/gate-promotion-lifecycle.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GATE-03, GATE-04]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2510,8 +2510,8 @@
     },
     ".planning/formal/alloy/gate-scoring-traces.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GATE-05, TRACE-10]"
+        "pass": true,
+        "reason": "passing trace for req GATE-05 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2521,7 +2521,7 @@
         "pass": true,
         "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-05)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2550,8 +2550,8 @@
     },
     ".planning/formal/alloy/solve-diagnostics-tui.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-24, SOLVE-25]"
+        "pass": true,
+        "reason": "passing trace for req SOLVE-24 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2561,7 +2561,7 @@
         "pass": true,
         "reason": "failure-mode FM-SOLVE-OMISSION has test recipe (via req SOLVE-24)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2570,8 +2570,8 @@
     },
     ".planning/formal/alloy/readme-structure.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [RDME-01, RDME-02, RDME-03, RDME-04, RDME-05, RDME-06, RDME-07, RDME-08, RDME-09, RDME-10]"
+        "pass": true,
+        "reason": "all 10 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2581,7 +2581,7 @@
         "pass": true,
         "reason": "passing check-result alloy:readme-structure"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2590,8 +2590,8 @@
     },
     ".planning/formal/alloy/changelog-release.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CL-01, CL-02, RLS-01, RLS-02, RLS-03, RLS-04]"
+        "pass": true,
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2601,7 +2601,7 @@
         "pass": true,
         "reason": "passing check-result alloy:changelog-release"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2610,8 +2610,8 @@
     },
     ".planning/formal/alloy/rename-migration.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [REN-01, REN-02, REN-04]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2621,7 +2621,7 @@
         "pass": true,
         "reason": "passing check-result alloy:rename-migration"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2639,7 +2639,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:governance-dx"
+        "reason": "failure-mode FM-LRNG-OMISSION has test recipe (via req LRNG-01)"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -2650,8 +2650,8 @@
     },
     ".planning/formal/alloy/debt-lifecycle.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DEBT-02, DEBT-03, DEBT-04, DEBT-05, DEBT-06]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2661,7 +2661,7 @@
         "pass": true,
         "reason": "passing check-result alloy:debt-lifecycle"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2670,8 +2670,8 @@
     },
     ".planning/formal/alloy/solve-pf-layer.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PF-01, PF-02, PF-03, PF-04, PF-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2679,9 +2679,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:solve-pf-layer"
+        "reason": "failure-mode FM-PF-OMISSION has test recipe (via req PF-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2690,8 +2690,8 @@
     },
     ".planning/formal/alloy/reasoning-fmea.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [RSN-01, RSN-02, RSN-03, RSN-04, RSN-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2699,9 +2699,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:reasoning-fmea"
+        "reason": "failure-mode FM-RSN-OMISSION has test recipe (via req RSN-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2730,8 +2730,8 @@
     },
     ".planning/formal/alloy/fingerprinting-dedup.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [FP-01, FP-02, FP-03, FP-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2741,7 +2741,7 @@
         "pass": true,
         "reason": "passing check-result alloy:fingerprinting-dedup"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2750,8 +2750,8 @@
     },
     ".planning/formal/alloy/memory-persistence.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [MEMP-01, MEMP-02, MEMP-03, MEMP-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2759,9 +2759,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:memory-persistence"
+        "reason": "failure-mode FM-MEMP-OMISSION has test recipe (via req MEMP-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2770,8 +2770,8 @@
     },
     ".planning/formal/alloy/semantics-operational.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SEM-01, SEM-02, SEM-03, SEM-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2781,7 +2781,7 @@
         "pass": true,
         "reason": "passing check-result alloy:semantics-operational"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2790,8 +2790,8 @@
     },
     ".planning/formal/alloy/token-optimization.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TOKN-01, TOKN-02, TOKN-03, TOKN-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2799,9 +2799,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:token-optimization"
+        "reason": "failure-mode FM-TOKN-OMISSION has test recipe (via req TOKN-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2819,7 +2819,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:quorum-improvements"
+        "reason": "failure-mode FM-IMPR-OMISSION has test recipe (via req IMPR-02)"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -2830,8 +2830,8 @@
     },
     ".planning/formal/alloy/build-test-quality.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [BLD-01, BLD-02, STD-02]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2841,7 +2841,7 @@
         "pass": true,
         "reason": "passing check-result alloy:build-test-quality"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2850,8 +2850,8 @@
     },
     ".planning/formal/alloy/subagent-orchestration.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [ORCH-01, ORCH-02, ORCH-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2859,9 +2859,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:subagent-orchestration"
+        "reason": "failure-mode FM-ORCH-OMISSION has test recipe (via req ORCH-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2870,8 +2870,8 @@
     },
     ".planning/formal/alloy/verification-execution.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERF-01, VERF-02, VERF-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2879,9 +2879,9 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:verification-execution"
+        "reason": "failure-mode FM-VERF-OMISSION has test recipe (via req VERF-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2890,8 +2890,8 @@
     },
     ".planning/formal/alloy/user-guide.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GUIDE-01, GUIDE-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2901,7 +2901,7 @@
         "pass": true,
         "reason": "passing check-result alloy:user-guide"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2910,8 +2910,8 @@
     },
     ".planning/formal/alloy/parallel-execution.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PARA-01, PARA-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2921,7 +2921,7 @@
         "pass": true,
         "reason": "passing check-result alloy:parallel-exec"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2930,8 +2930,8 @@
     },
     ".planning/formal/alloy/integration-layers.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [INTG-01, INTG-02, INTG-03, INTG-04, INTG-05, INTG-06]"
+        "pass": true,
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2941,7 +2941,7 @@
         "pass": true,
         "reason": "passing check-result alloy:integration-layers"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2950,8 +2950,8 @@
     },
     ".planning/formal/alloy/spec-audit.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SPEC-02]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2961,7 +2961,7 @@
         "pass": true,
         "reason": "passing check-result alloy:spec-audit"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2970,8 +2970,8 @@
     },
     ".planning/formal/alloy/event-vocabulary.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [EVID-05]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2981,7 +2981,7 @@
         "pass": true,
         "reason": "passing check-result alloy:event-vocabulary"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2990,8 +2990,8 @@
     },
     ".planning/formal/alloy/vhs-ci-hardening.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VIS-02]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3001,7 +3001,7 @@
         "pass": true,
         "reason": "passing check-result alloy:vhs-ci-hardening"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3010,8 +3010,8 @@
     },
     ".planning/formal/alloy/diagnostics-verification.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DIAG-01, DIAG-02, DIAG-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3021,7 +3021,7 @@
         "pass": true,
         "reason": "passing check-result alloy:diagnostics-verification"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3030,8 +3030,8 @@
     },
     ".planning/formal/alloy/ci-quality-gates.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CI-05, CI-06]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3041,7 +3041,7 @@
         "pass": true,
         "reason": "passing check-result alloy:ci-quality-gates"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3050,8 +3050,8 @@
     },
     ".planning/formal/alloy/security-hardening.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SEC-05, SEC-06, SEC-07, SEC-08]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3061,7 +3061,7 @@
         "pass": true,
         "reason": "passing check-result alloy:security-hardening"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3070,8 +3070,8 @@
     },
     ".planning/formal/alloy/reliability-hardening.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [REL-03, REL-04]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3081,7 +3081,7 @@
         "pass": true,
         "reason": "passing check-result alloy:reliability-hardening"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3110,8 +3110,8 @@
     },
     ".planning/formal/alloy/focus-topic-filter.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DIAG-04]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3121,23 +3121,23 @@
         "pass": true,
         "reason": "passing check-result alloy:focus-topic-filter"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "UNSTABLE",
       "direction_changes": 10,
       "cooldown": {
-        "consecutive_stable_sessions": 11,
+        "consecutive_stable_sessions": 19,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.302Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.192Z"
       },
       "flagged_at": "2026-03-10T10:57:59.707Z"
     },
     ".planning/formal/tla/NFDebtLedger.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DEBT-01, DEBT-02, DEBT-03, DEBT-04, DEBT-05, DEBT-06]"
+        "pass": true,
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3147,7 +3147,7 @@
         "pass": true,
         "reason": "failure-mode FM-DEBT-OMISSION has test recipe (via req DEBT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3156,8 +3156,8 @@
     },
     ".planning/formal/tla/NFConfigLoader.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [CONF-01, CONF-02, CONF-03, CONF-04, CONF-05, CONF-08]"
+        "pass": true,
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3167,7 +3167,7 @@
         "pass": true,
         "reason": "failure-mode FM-IDLE-QUORUM_START-OMISSION has test recipe (via req CONF-03)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3176,100 +3176,100 @@
     },
     ".planning/formal/tla/NFSolveP2F.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PF-01, PF-02, PF-03, PF-04, PF-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 5 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [PF-01, PF-02, PF-03, PF-04, PF-05], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-PF-OMISSION has test recipe (via req PF-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/tla/NFTokenOpt.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TOKN-01, TOKN-02, TOKN-03, TOKN-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 4 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [TOKN-01, TOKN-02, TOKN-03, TOKN-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-TOKN-OMISSION has test recipe (via req TOKN-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/tla/NFLearning.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [LRNG-01, LRNG-02, LRNG-03, LRNG-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 4 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [LRNG-01, LRNG-02, LRNG-03, LRNG-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-LRNG-OMISSION has test recipe (via req LRNG-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/tla/NFMemoryPersist.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [MEMP-01, MEMP-02, MEMP-03, MEMP-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 4 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [MEMP-01, MEMP-02, MEMP-03, MEMP-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-MEMP-OMISSION has test recipe (via req MEMP-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/tla/NFReasoning.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [RSN-01, RSN-02, RSN-03, RSN-04, RSN-05]"
+        "pass": true,
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 5 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [RSN-01, RSN-02, RSN-03, RSN-04, RSN-05], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-RSN-OMISSION has test recipe (via req RSN-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3284,46 +3284,46 @@
         "reason": "L3 model with 4 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [IMPR-01, IMPR-02, IMPR-03, IMPR-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-IMPR-OMISSION has test recipe (via req IMPR-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "UNSTABLE",
       "direction_changes": 17,
       "cooldown": {
-        "consecutive_stable_sessions": 10,
+        "consecutive_stable_sessions": 18,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.304Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.192Z"
       },
       "flagged_at": "2026-03-10T14:20:26.825Z"
     },
     ".planning/formal/tla/NFOrchestration.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [ORCH-01, ORCH-02, ORCH-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 3 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [ORCH-01, ORCH-02, ORCH-03], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-ORCH-OMISSION has test recipe (via req ORCH-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/tla/NFPolicy.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PLCY-01, PLCY-02, PLCY-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3333,7 +3333,7 @@
         "pass": true,
         "reason": "failure-mode FM-PLCY-OMISSION has test recipe (via req PLCY-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3342,28 +3342,28 @@
     },
     ".planning/formal/tla/NFVerification.tla": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [VERF-01, VERF-02, VERF-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
         "reason": "L3 model with 3 requirement(s)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [VERF-01, VERF-02, VERF-03], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-VERF-OMISSION has test recipe (via req VERF-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
     },
     ".planning/formal/alloy/fingerprinting.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [FP-01, FP-02, FP-03, FP-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3373,23 +3373,23 @@
         "pass": true,
         "reason": "passing check-result alloy:fingerprinting"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "UNSTABLE",
-      "direction_changes": 19,
+      "direction_changes": 18,
       "cooldown": {
-        "consecutive_stable_sessions": 6,
+        "consecutive_stable_sessions": 14,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.305Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
     ".planning/formal/alloy/gate-architecture.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [GATE-01, GATE-03, GATE-04]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3399,7 +3399,7 @@
         "pass": true,
         "reason": "failure-mode FM-GATE-OMISSION has test recipe (via req GATE-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3408,8 +3408,8 @@
     },
     ".planning/formal/alloy/semantics-layer.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SEM-01, SEM-02, SEM-03, SEM-04]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3419,23 +3419,23 @@
         "pass": true,
         "reason": "passing check-result alloy:semantics-layer"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "UNSTABLE",
-      "direction_changes": 13,
+      "direction_changes": 12,
       "cooldown": {
-        "consecutive_stable_sessions": 4,
+        "consecutive_stable_sessions": 12,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.305Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
     ".planning/formal/alloy/evidence-layer.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [EVID-02, EVID-03, EVID-05]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3445,7 +3445,7 @@
         "pass": true,
         "reason": "failure-mode FM-EVID-OMISSION has test recipe (via req EVID-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3454,8 +3454,8 @@
     },
     ".planning/formal/alloy/diagnostics.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [DIAG-01, DIAG-02, DIAG-03]"
+        "pass": true,
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3465,23 +3465,23 @@
         "pass": true,
         "reason": "passing check-result alloy:diagnostics"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "UNSTABLE",
-      "direction_changes": 16,
+      "direction_changes": 14,
       "cooldown": {
-        "consecutive_stable_sessions": 9,
+        "consecutive_stable_sessions": 17,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.305Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
       },
       "flagged_at": "2026-03-10T12:37:27.712Z"
     },
     ".planning/formal/alloy/traceability.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [TRACE-01, TRACE-03]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3491,7 +3491,7 @@
         "pass": true,
         "reason": "failure-mode FM-TRACE-OMISSION has test recipe (via req TRACE-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3500,8 +3500,8 @@
     },
     ".planning/formal/alloy/parallel-exec.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PARA-01, PARA-02]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3511,23 +3511,23 @@
         "pass": true,
         "reason": "passing check-result alloy:parallel-exec"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "UNSTABLE",
       "direction_changes": 10,
       "cooldown": {
-        "consecutive_stable_sessions": 5,
+        "consecutive_stable_sessions": 13,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.305Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
       },
       "flagged_at": "2026-03-10T12:34:59.661Z"
     },
     ".planning/formal/alloy/provider-wizard.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [PROV-02, PROV-03, PRST-01, PRST-02]"
+        "pass": true,
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3537,7 +3537,7 @@
         "pass": true,
         "reason": "failure-mode FM-PROV-OMISSION has test recipe (via req PROV-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3546,8 +3546,8 @@
     },
     ".planning/formal/alloy/multi-slot.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [MULTI-01, MULTI-03]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3557,7 +3557,7 @@
         "pass": true,
         "reason": "failure-mode FM-MULTI-OMISSION has test recipe (via req MULTI-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3566,8 +3566,8 @@
     },
     ".planning/formal/alloy/meta-resolve.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [META-01, META-03]"
+        "pass": true,
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3577,7 +3577,7 @@
         "pass": true,
         "reason": "failure-mode FM-META-OMISSION has test recipe (via req META-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3606,8 +3606,8 @@
     },
     ".planning/formal/alloy/solve-triage-display.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-07]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3626,8 +3626,8 @@
     },
     ".planning/formal/alloy/solve-net-residual.als": {
       "gate_a": {
-        "pass": false,
-        "reason": "no passing traces for reqs [SOLVE-08]"
+        "pass": true,
+        "reason": "all 1 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3637,16 +3637,16 @@
         "pass": true,
         "reason": "passing check-result alloy:solve-net-residual"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "UNSTABLE",
-      "direction_changes": 4,
+      "direction_changes": 5,
       "cooldown": {
-        "consecutive_stable_sessions": 4,
+        "consecutive_stable_sessions": 12,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-10T20:32:10.306Z"
+        "last_session_timestamp": "2026-03-10T21:25:51.193Z"
       },
       "flagged_at": "2026-03-10T19:07:01.291Z"
     }
