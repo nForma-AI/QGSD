@@ -43,6 +43,7 @@ const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
 const { appendTrendEntry, readGateSummary } = require('./solve-trend-helpers.cjs');
+const { updateVerdicts } = require('./oscillation-detector.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -2566,8 +2567,25 @@ function computeResidual() {
 function autoClose(residual) {
   const actions = [];
 
+  // Read oscillation verdicts for layer gating (fail-open)
+  let verdicts = {};
+  try {
+    const verdictsPath = path.join(ROOT, '.planning', 'formal', 'oscillation-verdicts.json');
+    if (fs.existsSync(verdictsPath)) {
+      const raw = JSON.parse(fs.readFileSync(verdictsPath, 'utf8'));
+      verdicts = raw.layers || {};
+    }
+  } catch (_) { /* fail-open */ }
+
+  function isLayerBlocked(layerKey) {
+    const v = verdicts[layerKey];
+    return v && v.blocked === true;
+  }
+
   // F->T gaps: generate test stubs
-  if (residual.f_to_t.residual > 0) {
+  if (isLayerBlocked('f_to_t')) {
+    actions.push('OSCILLATION BLOCKED: f_to_t \u2014 automated remediation suspended, human review required');
+  } else if (residual.f_to_t.residual > 0) {
     const result = spawnTool('bin/formal-test-sync.cjs', []);
     if (result.ok) {
       actions.push(
@@ -2654,7 +2672,9 @@ function autoClose(residual) {
   }
 
   // P->F divergence: dispatch parameter updates or flag investigations
-  if (residual.p_to_f && residual.p_to_f.residual > 0) {
+  if (isLayerBlocked('p_to_f')) {
+    actions.push('OSCILLATION BLOCKED: p_to_f \u2014 automated remediation suspended, human review required');
+  } else if (residual.p_to_f && residual.p_to_f.residual > 0) {
     const result = autoClosePtoF(residual.p_to_f, {
       spawnTool: spawnTool,
     });
@@ -2686,7 +2706,9 @@ function autoClose(residual) {
 
   // Per-model gate maturity: create conditions for promotion (GATE-02)
   // Produces observable signals — never writes gate_maturity directly.
-  if (residual.per_model_gates && residual.per_model_gates.residual > 0) {
+  if (isLayerBlocked('per_model_gates')) {
+    actions.push('OSCILLATION BLOCKED: per_model_gates \u2014 automated remediation suspended, human review required');
+  } else if (residual.per_model_gates && residual.per_model_gates.residual > 0) {
     try {
       const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
       const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
@@ -3059,6 +3081,31 @@ function formatReport(iterations, finalResidual, converged) {
   lines.push('Grand total:             ' + grandTotal);
   lines.push('');
 
+  // Oscillation status (from oscillation verdicts)
+  try {
+    const verdictsPath = path.join(ROOT, '.planning', 'formal', 'oscillation-verdicts.json');
+    if (fs.existsSync(verdictsPath)) {
+      const verdictData = JSON.parse(fs.readFileSync(verdictsPath, 'utf8'));
+      const vLayers = verdictData.layers || {};
+      const blockedLayers = Object.entries(vLayers).filter(([_, v]) => v.blocked);
+      const oscillatingLayers = Object.entries(vLayers).filter(([_, v]) => v.trend === 'OSCILLATING');
+
+      if (blockedLayers.length > 0 || oscillatingLayers.length > 0) {
+        lines.push('## Oscillation Status');
+        lines.push('');
+        for (const [name, v] of blockedLayers) {
+          lines.push('  BLOCKED: ' + name + ' (credits exhausted, trend: ' + v.trend + ')');
+        }
+        for (const [name, v] of oscillatingLayers) {
+          if (!v.blocked) {
+            lines.push('  WARNING: ' + name + ' oscillating (credits: ' + v.credits_remaining + ')');
+          }
+        }
+        lines.push('');
+      }
+    }
+  } catch (_) { /* fail-open */ }
+
   // Per-layer detail sections (only non-zero)
   if (finalResidual.r_to_f.residual > 0) {
     lines.push('## R -> F (Requirements -> Formal)');
@@ -3382,6 +3429,19 @@ function formatJSON(iterations, finalResidual, converged) {
     }
   } catch (e) { /* fail-open */ }
 
+  // Attach oscillation verdict data if available
+  let oscillation = null;
+  try {
+    const verdictsPath = path.join(ROOT, '.planning', 'formal', 'oscillation-verdicts.json');
+    if (fs.existsSync(verdictsPath)) {
+      const verdictData = JSON.parse(fs.readFileSync(verdictsPath, 'utf8'));
+      oscillation = {
+        entry_count: verdictData.entry_count || 0,
+        layers: verdictData.layers || {},
+      };
+    }
+  } catch (_) { /* fail-open */ }
+
   return {
     solver_version: '1.2',
     generated_at: new Date().toISOString(),
@@ -3397,6 +3457,7 @@ function formatJSON(iterations, finalResidual, converged) {
     })),
     health: health,
     complexity_profile: complexityProfile,
+    oscillation: oscillation,
   };
 }
 
@@ -3499,6 +3560,15 @@ function main() {
     root: ROOT,
     fastMode: fastMode,
   });
+
+  // Update oscillation verdicts after trend entry is written
+  if (!reportOnly) {
+    try {
+      updateVerdicts({ root: ROOT });
+    } catch (e) {
+      process.stderr.write(TAG + ' WARNING: oscillation verdict update failed: ' + e.message + '\n');
+    }
+  }
 
   // Pre-compute both outputs for session persistence (avoid redundant formatting)
   const reportText = formatReport(iterations, finalResidual, converged);
@@ -3623,6 +3693,7 @@ module.exports = {
   persistSessionSummary,
   appendTrendEntry,
   readGateSummary,
+  updateVerdicts,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
