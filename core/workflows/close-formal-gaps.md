@@ -12,8 +12,12 @@ or targeted mode (specific requirement IDs).
 ## Step 1 — Detect Coverage Gaps
 
 Read `.planning/formal/requirements.json` and `.planning/formal/model-registry.json`.
-Build the set of covered requirement IDs (from both registry `requirements` arrays
+Build the set of covered requirement IDs (from both registry `models` object `requirements` arrays
 and requirement-level `formal_models` fields).
+
+**IMPORTANT**: All model entries live under `registry.models` (the nested object).
+Do NOT iterate top-level keys of the registry — only `registry.models` contains model entries.
+Top-level keys are metadata only: `version`, `last_sync`, `search_dirs`, `models`.
 
 Compute uncovered requirements grouped by category. Display a summary table:
 
