@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 Phase: -
 Plan: -
 Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed milestone v0.33: Outer-Loop Convergence Guarantees
+Last activity: 2026-03-10 - Completed quick task 256: Fix solve subagent cwd/path bugs
 
 Progress: Milestone complete
 
@@ -88,7 +88,8 @@ None.
 | 250 | Review full README as team and propose improvement plan | 2026-03-09 | b183ff22 | Verified | [250-review-full-readme-as-team-and-propose-i](./quick/250-review-full-readme-as-team-and-propose-i/) |
 | 252 | Add focus/topic filter to nf:solve | 2026-03-10 | 04b3c923 | Verified | [252-add-focus-topic-filter-to-nf-solve](./quick/252-add-focus-topic-filter-to-nf-solve/) |
 | 253 | Guard run-formal-verify.cjs static steps — prevent cross-repo contamination | 2026-03-10 | a9cc952c | Verified | [253-guard-run-formal-verify-cjs-static-steps](./quick/253-guard-run-formal-verify-cjs-static-steps/) |
-| 254 | Review observe-pipeline extraction and README per-model gates section | 2026-03-10 | pending | Completed | [254-review-observe-pipeline-extraction-and-r](./quick/254-review-observe-pipeline-extraction-and-r/) |
+| 254 | Review observe-pipeline extraction and README per-model gates section | 2026-03-10 | f367ddc8 | Verified | [254-review-observe-pipeline-extraction-and-r](./quick/254-review-observe-pipeline-extraction-and-r/) |
+| 256 | Fix solve subagent cwd/path bugs that create junk files in project root | 2026-03-10 | pending | Pending | [256-fix-solve-subagent-cwd-path-bugs-that-cr](./quick/256-fix-solve-subagent-cwd-path-bugs-that-cr/) |
 
 ## Session Continuity
 
