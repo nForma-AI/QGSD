@@ -63,6 +63,12 @@ for (const arg of process.argv.slice(2)) {
   }
 }
 
+// ── nForma repo detection ─────────────────────────────────────────────────────
+// The XState machine file is the canonical marker for the nForma repo.
+// Steps marked nformaOnly are skipped when running in external/target repos
+// to prevent cross-repo contamination of nForma-internal formal models.
+const isNformaRepo = fs.existsSync(path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts'));
+
 // ── Runner picker maps ─────────────────────────────────────────────────────────
 // Maps known nForma model names to their specialized runners. Unknown models
 // fall back to generic runners (run-tlc.cjs, run-alloy.cjs, run-prism.cjs).
@@ -332,11 +338,13 @@ const STATIC_STEPS = [
     label: 'Generate TLA+ spec (NFQuorum_xstate.tla) + TLC model config from XState machine (xstate-to-tla)',
     type: 'node', script: 'xstate-to-tla.cjs',
     args: ['src/machines/nf-workflow.machine.ts', '--module=NFQuorum', '--config=.planning/formal/tla/guards/nf-workflow.json'],
+    nformaOnly: true,
   },
   {
     tool: 'generate', id: 'generate:alloy-prism-specs',
     label: 'Generate Alloy + PRISM models from XState machine (generate-formal-specs)',
     type: 'node', script: 'generate-formal-specs.cjs', args: [],
+    nformaOnly: true,
   },
 
   // ─ Petri net generator (produces DOT files — discovery handles rendering) ──
@@ -344,6 +352,7 @@ const STATIC_STEPS = [
     tool: 'petri', id: 'petri:quorum',
     label: 'Petri quorum — generate DOT + render SVG',
     type: 'node', script: 'generate-petri-net.cjs', args: [],
+    nformaOnly: true,
   },
 
   // ─ CI enforcement — redaction + schema drift ──────────────────────────────
@@ -351,11 +360,13 @@ const STATIC_STEPS = [
     tool: 'ci', id: 'ci:trace-redaction',
     label: 'Trace redaction enforcement (check-trace-redaction.cjs)',
     type: 'node', script: 'check-trace-redaction.cjs', args: [],
+    nformaOnly: true,
   },
   {
     tool: 'ci', id: 'ci:trace-schema-drift',
     label: 'Trace schema drift guard (check-trace-schema-drift.cjs)',
     type: 'node', script: 'check-trace-schema-drift.cjs', args: [],
+    nformaOnly: true,
   },
   {
     tool: 'ci', id: 'ci:liveness-fairness-lint',
@@ -366,6 +377,7 @@ const STATIC_STEPS = [
     tool: 'ci', id: 'ci:conformance-traces',
     label: 'Conformance trace validation — XState machine replay with evidence confidence (EVID-01, EVID-02)',
     type: 'node', script: 'validate-traces.cjs', args: [],
+    nformaOnly: true,
   },
 
   // ─ Triage bundle ─────────────────────────────────────────────────────────
@@ -412,7 +424,20 @@ const dynamicSteps = discoverModels(ROOT);
 const staticIds = new Set(STATIC_STEPS.map(s => s.id));
 const uniqueDynamicSteps = dynamicSteps.filter(s => !staticIds.has(s.id));
 
-const STEPS = [...STATIC_STEPS, ...uniqueDynamicSteps];
+let STEPS = [...STATIC_STEPS, ...uniqueDynamicSteps];
+
+// Filter out nForma-only steps when running in external repos
+if (!isNformaRepo) {
+  const before = STEPS.length;
+  const skipped = STEPS.filter(s => s.nformaOnly);
+  STEPS = STEPS.filter(s => !s.nformaOnly);
+  if (skipped.length > 0) {
+    process.stdout.write(TAG + ' Non-nForma repo detected — skipping ' + skipped.length + ' nForma-internal step(s)\n');
+    for (const s of skipped) {
+      process.stdout.write(TAG + '   skip: ' + s.id + ' (' + s.label + ')\n');
+    }
+  }
+}
 
 process.stdout.write(TAG + ' Static steps: ' + STATIC_STEPS.length + '\n');
 process.stdout.write(TAG + ' Discovered models: ' + uniqueDynamicSteps.length + '\n');
