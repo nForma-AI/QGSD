@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.33 Phase v0.33-03: Gate Stabilization — complete
+**Current focus:** v0.33 Phase v0.33-04: Predictive Power — all plans complete, awaiting verification
 
 ## Current Position
 
-Phase: 3 of 6 (Gate Stabilization)
+Phase: 4 of 6 (Predictive Power)
 Plan: 2 of 2 in current phase
 Status: All plans complete — awaiting verification
-Last activity: 2026-03-10 - Completed quick task 252: Add focus/topic filter to nf:solve
+Last activity: 2026-03-10 — Phase v0.33-04 plans executed (predictive-power module + nf-solve integration)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
@@ -47,6 +47,9 @@ Decisions logged in PROJECT.md Key Decisions table.
 - [v0.33-01]: Missing/skipped layers recorded as -1 (not 0) to distinguish from zero residual in JSONL entries
 - [v0.33-03]: Extracted gate-stability.cjs as separate module (matches solve-trend-helpers.cjs pattern) for testability
 - [v0.33-03]: --write-per-model added only to sweepPerModelGates (not getAggregateGates) to avoid double-write
+- [v0.33-04]: Requirement ID overlap (formal_refs JOIN model requirements) as bug-to-property matching mechanism
+- [v0.33-04]: Linearized OLS on log-transformed data for exponential decay fit -- no npm dependencies
+- [v0.33-04]: Predictive power is INFORMATIONAL ONLY -- not wired as gate input (PRED-03 deferred)
 
 ### Pending Todos
 
