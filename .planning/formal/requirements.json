@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-11T19:16:40.351Z",
-  "content_hash": "198f00c892b85a14",
+  "aggregated_at": "2026-03-11T20:50:07.816Z",
+  "content_hash": "4d251ce619114b75632b21283e1d48682e14200e912fdb3eabeb426314fe8679",
   "schema_version": "1",
   "requirements": [
     {
@@ -1015,6 +1015,18 @@
       "provenance": {
         "source_file": ".planning/quick/273-create-nf-proximity-skill-and-extend-nf-/273-PLAN.md",
         "milestone": "quick-273"
+      }
+    },
+    {
+      "id": "DIAG-07",
+      "text": "Proximity skill Step 4 attempts semantic evaluation via haiku-semantic-eval.cjs script first, then falls back to inline Haiku sub-agent evaluation on script failure, producing identical verdict/confidence/reasoning output schema in both paths.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Inside Claude Code, the subprocess environment lacks ANTHROPIC_API_KEY, causing haiku-semantic-eval.cjs to fail. The sub-agent fallback uses Task(model='haiku') which works via the user's Claude subscription, ensuring /nf:proximity completes evaluation steps even when direct API access is unavailable.",
+      "provenance": {
+        "source_file": ".planning/quick/275-replace-haiku-api-eval-with-sub-agent-in/275-PLAN.md",
+        "milestone": "quick-275"
       }
     },
     {
@@ -4639,5 +4651,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-11T19:16:40.355Z"
+  "frozen_at": "2026-03-11T20:50:07.817Z"
 }
