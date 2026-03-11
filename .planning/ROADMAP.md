@@ -95,7 +95,9 @@
   1. nf-solve.cjs invokes compute-semantic-scores.cjs after gate computation
   2. compute-per-model-gates.cjs preserves semantic_score fields (schema v3) instead of overwriting to v2
   3. After a full solve cycle, gate JSON files contain both wiring_score and semantic_score fields
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.34-04-01-PLAN.md — Schema v3 preservation + pipeline wiring (compute-per-model-gates.cjs + nf-solve.cjs)
 
 ### Phase v0.34-05: Auto-Promotion State Initialization
 **Goal**: consecutive_clean_sessions is properly initialized and checkCleanSession() correctly evaluates semantic_score from enriched gates
@@ -129,11 +131,11 @@ Phases execute in sequence: v0.34-01 -> v0.34-02 -> v0.34-03 -> v0.34-04 -> v0.3
 | v0.34-01. Gate Renaming | 2/2 | Complete    | 2026-03-11 |
 | v0.34-02. Semantic Scoring | 0/TBD | Complete    | 2026-03-11 |
 | v0.34-03. Pairing & Auto-Promotion | 0/TBD | Not started | - |
-| v0.34-04. Semantic Scoring Pipeline Wiring | 0/TBD | Not started | - |
+| v0.34-04. Semantic Scoring Pipeline Wiring | 0/1 | Not started | - |
 | v0.34-05. Auto-Promotion State Initialization | 0/TBD | Not started | - |
 | v0.34-06. E2E Integration Test | 0/TBD | Not started | - |
 
 ---
 
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-11 after v0.34 roadmap creation*
+*Last updated: 2026-03-11 after v0.34-04 planning*
