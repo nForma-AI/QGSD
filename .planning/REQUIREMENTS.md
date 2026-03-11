@@ -64,17 +64,17 @@ Requirements for Semantic Gate Validation & Auto-Promotion. Each maps to roadmap
 | NAME-04 | v0.34-01 | Complete |
 | SEM-01 | v0.34-02 | Pending |
 | SEM-02 | v0.34-02 | Pending |
-| SEM-03 | v0.34-02 | Pending |
-| SEM-04 | v0.34-02 | Pending |
+| SEM-03 | v0.34-04 | Pending |
+| SEM-04 | v0.34-04 | Pending |
 | SEM-05 | v0.34-02 | Pending |
 | PAIR-01 | v0.34-03 | Pending |
 | PAIR-02 | v0.34-03 | Pending |
 | PAIR-03 | v0.34-03 | Pending |
 | PAIR-04 | v0.34-03 | Pending |
 | PROMO-01 | v0.34-03 | Pending |
-| PROMO-02 | v0.34-03 | Pending |
-| PROMO-03 | v0.34-03 | Pending |
-| PROMO-04 | v0.34-03 | Pending |
+| PROMO-02 | v0.34-05 | Pending |
+| PROMO-03 | v0.34-05 | Pending |
+| PROMO-04 | v0.34-05 | Pending |
 | PROMO-05 | v0.34-03 | Pending |
 
 **Coverage:**

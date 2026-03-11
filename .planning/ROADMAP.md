@@ -29,7 +29,7 @@
 - ✅ **v0.31 — Ruflo-Inspired Hardening** — Phases v0.31-01..v0.31-03 (shipped 2026-03-08)
 - ✅ **v0.32 — Documentation & README Overhaul** — Phases v0.32-01..v0.32-04 (shipped 2026-03-09)
 - ✅ **v0.33 — Outer-Loop Convergence Guarantees** — Phases v0.33-01..v0.33-06 (shipped 2026-03-10)
-- [ ] **v0.34 — Semantic Gate Validation & Auto-Promotion** — Phases v0.34-01..v0.34-03 (in progress)
+- [ ] **v0.34 — Semantic Gate Validation & Auto-Promotion** — Phases v0.34-01..v0.34-06 (in progress)
 
 > **v0.2 through v0.33 phase details archived to respective milestone ROADMAP files in** `.planning/milestones/`
 
@@ -44,6 +44,9 @@
 - [x] **Phase v0.34-01: Gate Renaming** - Rename Gate A/B/C to Wiring:Evidence/Purpose/Coverage with backward-compatible migration (completed 2026-03-11)
 - [x] **Phase v0.34-02: Semantic Scoring** - Graph BFS candidate discovery + Haiku evaluation producing per-gate semantic_score (completed 2026-03-11)
 - [ ] **Phase v0.34-03: Pairing & Auto-Promotion** - N:N candidate pairing workflow + solve-cycle auto-promotion with flip-flop protection
+- [ ] **Phase v0.34-04: Semantic Scoring Pipeline Wiring** - Wire compute-semantic-scores.cjs into solve pipeline; fix gate schema v3 preservation (gap closure)
+- [ ] **Phase v0.34-05: Auto-Promotion State Initialization** - Initialize consecutive_clean_sessions; fix checkCleanSession semantic_score dependency (gap closure)
+- [ ] **Phase v0.34-06: E2E Integration Test** - Integration test validating full semantic -> promotion pipeline (gap closure)
 
 ## Phase Details
 
@@ -83,16 +86,52 @@
   5. All promotions are logged to promotion-changelog.json and flip-flop detection prevents re-promotion of unstable models
 **Plans**: TBD
 
+### Phase v0.34-04: Semantic Scoring Pipeline Wiring
+**Goal**: compute-semantic-scores.cjs is called in the nf-solve pipeline and gate JSON files retain schema v3 semantic_score fields across solve cycles
+**Depends on**: Phase v0.34-02, Phase v0.34-03
+**Requirements**: SEM-03, SEM-04
+**Gap Closure**: Closes gaps from audit — integration issues #1, #2, #5; flow "Semantic validation pipeline"
+**Success Criteria** (what must be TRUE):
+  1. nf-solve.cjs invokes compute-semantic-scores.cjs after gate computation
+  2. compute-per-model-gates.cjs preserves semantic_score fields (schema v3) instead of overwriting to v2
+  3. After a full solve cycle, gate JSON files contain both wiring_score and semantic_score fields
+**Plans**: TBD
+
+### Phase v0.34-05: Auto-Promotion State Initialization
+**Goal**: consecutive_clean_sessions is properly initialized and checkCleanSession() correctly evaluates semantic_score from enriched gates
+**Depends on**: Phase v0.34-04
+**Requirements**: PROMO-02, PROMO-03, PROMO-04
+**Gap Closure**: Closes gaps from audit — integration issue #3, #4; flow "Auto-promotion pipeline"
+**Success Criteria** (what must be TRUE):
+  1. solve-state.json contains consecutive_clean_sessions field initialized to 0
+  2. checkCleanSession() reads semantic_score from enriched gates (not always 0) and correctly evaluates >= 0.8 threshold
+  3. After 3 consecutive clean sessions, auto-promotion fires and logs to promotion-changelog.json
+**Plans**: TBD
+
+### Phase v0.34-06: E2E Integration Test
+**Goal**: Integration test validates the complete semantic scoring -> gate enrichment -> auto-promotion pipeline end-to-end
+**Depends on**: Phase v0.34-04, Phase v0.34-05
+**Requirements**: (validation of SEM-03, SEM-04, PROMO-02, PROMO-03, PROMO-04)
+**Gap Closure**: Closes E2E flow gaps from audit
+**Success Criteria** (what must be TRUE):
+  1. Test runs compute-semantic-scores, verifies gate files contain semantic_score
+  2. Test simulates 3 clean sessions and verifies auto-promotion triggers
+  3. Test verifies promotion-changelog.json is written with correct fields
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in sequence: v0.34-01 -> v0.34-02 -> v0.34-03
+Phases execute in sequence: v0.34-01 -> v0.34-02 -> v0.34-03 -> v0.34-04 -> v0.34-05 -> v0.34-06
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.34-01. Gate Renaming | 2/2 | Complete    | 2026-03-11 |
 | v0.34-02. Semantic Scoring | 0/TBD | Complete    | 2026-03-11 |
 | v0.34-03. Pairing & Auto-Promotion | 0/TBD | Not started | - |
+| v0.34-04. Semantic Scoring Pipeline Wiring | 0/TBD | Not started | - |
+| v0.34-05. Auto-Promotion State Initialization | 0/TBD | Not started | - |
+| v0.34-06. E2E Integration Test | 0/TBD | Not started | - |
 
 ---
 
