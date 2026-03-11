@@ -10,6 +10,17 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.34 — Semantic Gate Validation & Auto-Promotion
+
+**Goal:** Evolve gate scoring from structural wiring checks to semantic correctness validation using graph-based proximity discovery and LLM-judged candidate pairing, then wire auto-promotion into the solve cycle.
+
+**Target features:**
+- Rename gates A/B/C to descriptive wiring names (Evidence/Purpose/Coverage)
+- Add graph-based semantic scoring using proximity-index BFS + Haiku candidate evaluation for N:N model-requirement pairing
+- Gate files carry both wiring_score and semantic_score
+- Auto-promotion in solve Step 8a: SOFT_GATE → HARD_GATE when wiring ≥ 1.0 + semantic ≥ 0.8 sustained across N consecutive clean sessions
+- Promotion logging to promotion-changelog.json with flip-flop detection
+
 ## Shipped: v0.33 — Outer-Loop Convergence Guarantees (2026-03-10)
 
 **Goal:** Provably guarantee that repeated nf:solve cycles make meaningful progress toward formal models that can pinpoint bugs.

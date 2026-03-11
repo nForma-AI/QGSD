@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.33 shipped — planning next milestone
+**Current focus:** v0.34 — Semantic Gate Validation & Auto-Promotion
 
 ## Current Position
 
-Phase: -
-Plan: -
-Status: Milestone v0.33 completed and archived
-Last activity: 2026-03-10 - Completed quick task 267: Fix 41 Gate A model gaps
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-11 — Milestone v0.34 started
 
 Progress: Milestone complete
 
