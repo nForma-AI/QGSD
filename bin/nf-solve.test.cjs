@@ -730,7 +730,7 @@ test('TC-LAYER-1: sweepL1toL2 returns normalized residual from gate-a JSON', () 
   assert.ok(result.residual >= -1 && result.residual <= 10,
     'residual should be -1 to 10, got ' + result.residual);
   if (result.residual >= 0) {
-    assert.ok('grounding_score' in result.detail, 'detail should have grounding_score');
+    assert.ok('wiring_evidence_score' in result.detail, 'detail should have wiring_evidence_score');
     assert.ok('target' in result.detail, 'detail should have target');
     assert.ok('gap' in result.detail, 'detail should have gap');
   }
@@ -743,7 +743,7 @@ test('TC-LAYER-2: sweepL2toL3 returns normalized residual capped at 10', () => {
   assert.ok(result.residual >= -1 && result.residual <= 10,
     'residual should be -1 to 10, got ' + result.residual);
   if (result.residual >= 0) {
-    assert.ok('gate_b_score' in result.detail, 'detail should have gate_b_score');
+    assert.ok('wiring_purpose_score' in result.detail, 'detail should have wiring_purpose_score');
     assert.ok('orphaned_count' in result.detail, 'detail should have orphaned_count');
     assert.ok('residual_capped' in result.detail, 'detail should have residual_capped');
   }
@@ -756,7 +756,7 @@ test('TC-LAYER-3: sweepL3toTC returns normalized residual from gate-c JSON', () 
   assert.ok(result.residual >= -1 && result.residual <= 10,
     'residual should be -1 to 10, got ' + result.residual);
   if (result.residual >= 0) {
-    assert.ok('gate_c_score' in result.detail, 'detail should have gate_c_score');
+    assert.ok('wiring_coverage_score' in result.detail, 'detail should have wiring_coverage_score');
     assert.ok('unvalidated_count' in result.detail, 'detail should have unvalidated_count');
     assert.ok('total_failure_modes' in result.detail, 'detail should have total_failure_modes');
     assert.ok('total_recipes' in result.detail, 'detail should have total_recipes');

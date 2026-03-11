@@ -2196,12 +2196,12 @@ function sweepL1toL2() {
   }
 
   const gateA = agg.gate_a;
-  const score = gateA.grounding_score || 0;
+  const score = gateA.wiring_evidence_score || gateA.grounding_score || 0;
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
     detail: {
-      grounding_score: score,
+      wiring_evidence_score: score,
       target: 0.8,
       gap: 0.8 - score,
       unexplained_breakdown: {
@@ -2229,14 +2229,14 @@ function sweepL2toL3() {
   }
 
   const gateB = agg.gate_b;
-  const score = gateB.gate_b_score || 0;
+  const score = gateB.wiring_purpose_score || gateB.gate_b_score || 0;
   const orphanedCount = gateB.orphaned_entries || 0;
   const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
   const residual = Math.min(rawResidual, 10);
   return {
     residual: residual,
     detail: {
-      gate_b_score: score,
+      wiring_purpose_score: score,
       orphaned_count: orphanedCount,
       residual_capped: rawResidual > 10,
     },
@@ -2280,12 +2280,12 @@ function sweepL3toTC() {
   }
 
   const gateC = agg.gate_c;
-  const score = gateC.gate_c_score || 0;
+  const score = gateC.wiring_coverage_score || gateC.gate_c_score || 0;
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
     detail: {
-      gate_c_score: score,
+      wiring_coverage_score: score,
       unvalidated_count: gateC.unvalidated_entries || 0,
       total_failure_modes: gateC.total_entries || 0,
       total_recipes: gateC.validated_entries || 0,
