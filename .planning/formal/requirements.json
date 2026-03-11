@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-11T01:47:25.071Z",
-  "content_hash": "9c9bc1ddf2732761",
+  "aggregated_at": "2026-03-11T19:16:40.351Z",
+  "content_hash": "198f00c892b85a14",
   "schema_version": "1",
   "requirements": [
     {
@@ -1006,6 +1006,18 @@
       }
     },
     {
+      "id": "DIAG-06",
+      "text": "Proximity graph orchestration skills — /nf:proximity runs the 5-step proximity pipeline (graph build, candidate discovery, Haiku evaluation, semantic scoring, pairing generation) with progress reporting and summary dashboard; /nf:resolve auto-detects and triages proximity pairings alongside solve items with confirm/reject/skip actions and batch-confirmation mode (--auto-confirm-yes/--auto-reject-no).",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The v0.34 proximity graph pipeline scripts existed in bin/ but lacked a user-facing skill to invoke them. This requirement unifies proximity graph analysis with the existing solve item triage workflow by providing two complementary skills.",
+      "provenance": {
+        "source_file": ".planning/quick/273-create-nf-proximity-skill-and-extend-nf-/273-PLAN.md",
+        "milestone": "quick-273"
+      }
+    },
+    {
       "id": "DISP-01",
       "text": "qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from DISPATCH_LIST",
       "category": "Quorum & Dispatch",
@@ -1347,6 +1359,18 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
         "milestone": "v0.29"
+      }
+    },
+    {
+      "id": "GUARD-01",
+      "text": "Context payload size guardrail — All data passed through LLM agent context (Bash output, inter-agent JSON, skill output contracts) MUST stay under 128KB. Scripts producing large outputs MUST write to disk and pass only summaries or file-path references through the agent chain. Violations cause silent freezes with no error signal.",
+      "category": "Reliability",
+      "phase": "unassigned",
+      "status": "Draft",
+      "background": "Discovered when git-heatmap.cjs --json produced 2.9MB of output that froze the solve-diagnose agent.",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.35"
       }
     },
     {
@@ -2318,6 +2342,18 @@
       "provenance": {
         "source_file": ".planning/quick/258-bridge-errors-jsonl-into-solve-debt-pipe/258-PLAN.md",
         "milestone": "quick-258"
+      }
+    },
+    {
+      "id": "OBS-11",
+      "text": "Agent payload size monitoring — All scripts invoked by LLM-facing skills that produce machine-readable output (--json mode) MUST be auditable for output size. A pre-flight check or CI validation SHOULD flag any script whose stdout output exceeds 128KB when invoked from an agent context. Complements GUARD-01 (context payload size guardrail) with automated detection.",
+      "category": "Observability & Diagnostics",
+      "phase": "unassigned",
+      "status": "Draft",
+      "background": "Without monitoring, GUARD-01 violations are only discovered when an agent freezes. This requirement ensures violations are caught proactively.",
+      "provenance": {
+        "source_file": "manual",
+        "milestone": "v0.35"
       }
     },
     {
@@ -4603,5 +4639,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-11T01:47:25.072Z"
+  "frozen_at": "2026-03-11T19:16:40.355Z"
 }
