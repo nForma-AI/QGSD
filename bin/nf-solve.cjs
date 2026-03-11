@@ -2560,6 +2560,15 @@ function computeResidual() {
   // Per-model gate maturity (informational — not added to layer_total)
   const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
 
+  // Enrich gate files with semantic scores (SEM-03, SEM-04)
+  if (!fastMode && !reportOnly) {
+    process.stderr.write(TAG + ' Enriching gates with semantic scores\n');
+    const semResult = spawnTool('bin/compute-semantic-scores.cjs', ['--json']);
+    if (!semResult.ok) {
+      process.stderr.write(TAG + ' WARNING: semantic scoring failed; gates lack semantic_score (continue)\n');
+    }
+  }
+
   const layer_total =
     (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
     (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
