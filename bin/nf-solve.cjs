@@ -3629,6 +3629,12 @@ function checkCleanSession() {
       const gateData = JSON.parse(fs.readFileSync(path.join(gatesDir, cfg.file), 'utf8'));
       wiring[label] = gateData[cfg.wiringKey] != null ? gateData[cfg.wiringKey] : 0;
       semantic[label] = gateData.semantic_score != null ? gateData.semantic_score : 0;
+      // PROMO-03 diagnostic: log whether semantic_score was loaded or defaulted
+      if (gateData.semantic_score == null) {
+        process.stderr.write(TAG + ' checkCleanSession: gate ' + label + ' semantic_score defaulted to 0 (field missing)\n');
+      } else {
+        process.stderr.write(TAG + ' checkCleanSession: gate ' + label + ' semantic_score=' + gateData.semantic_score + ' (from file)\n');
+      }
     } catch (_) {
       wiring[label] = 0;
       semantic[label] = 0;
@@ -3677,6 +3683,15 @@ function main() {
   try {
     existingSolveState = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-state.json'), 'utf8'));
   } catch (_) { /* first run or corrupt file */ }
+
+  // Ensure consecutive_clean_sessions is initialized (PROMO-02)
+  // The || 0 fallback at line ~3816 already handles missing field safely.
+  // This explicit guard makes the initialization contract visible at preflight time
+  // and prevents edge cases where other code reads existingSolveState.consecutive_clean_sessions
+  // before the persistence block.
+  if (existingSolveState.consecutive_clean_sessions == null) {
+    existingSolveState.consecutive_clean_sessions = 0;
+  }
 
   const iterations = [];
   let converged = false;
