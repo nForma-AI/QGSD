@@ -18,9 +18,9 @@
 //   T->R: Test files with no @req annotation or formal-test-sync mapping
 //   D->R: Doc capability claims without requirement backing
 // Layer alignment (cross-layer gate checks):
-//   L1->L2: Gate A grounding alignment score
-//   L2->L3: Gate B traceability alignment score
-//   L3->TC: Gate C validation alignment score
+//   L1->L2: Wiring:Evidence alignment score
+//   L2->L3: Wiring:Purpose alignment score
+//   L3->TC: Wiring:Coverage alignment score
 // Evidence & maturity:
 //   F->G: Formal models at gate maturity 0 (not yet promoted through gates)
 //   C->E: High-churn code files (git heatmap) lacking formal coverage
@@ -2181,7 +2181,7 @@ function getAggregateGates() {
 }
 
 /**
- * L1->L2: Gate A grounding alignment score.
+ * L1->L2: Wiring:Evidence alignment score.
  * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
@@ -2214,7 +2214,7 @@ function sweepL1toL2() {
 }
 
 /**
- * L2->L3: Gate B traceability alignment score.
+ * L2->L3: Wiring:Purpose alignment score.
  * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
@@ -2244,7 +2244,7 @@ function sweepL2toL3() {
 }
 
 /**
- * L3->TC: Gate C validation alignment score.
+ * L3->TC: Wiring:Coverage alignment score.
  * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Checks test-recipes.json staleness before scoring.
  * Returns { residual: N, detail: {...} }
@@ -3060,9 +3060,9 @@ function formatReport(iterations, finalResidual, converged) {
   lines.push('\u2500 Layer Alignment (cross-layer gates) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
   const layerRows = [
-    { label: 'L1 -> L2 (Gate A)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
-    { label: 'L2 -> L3 (Gate B)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
-    { label: 'L3 -> TC (Gate C)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
+    { label: 'L1 -> L2 (Wiring:Evidence)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
+    { label: 'L2 -> L3 (Wiring:Purpose)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
+    { label: 'L3 -> TC (Wiring:Coverage)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
   ];
 
   for (const row of layerRows) {
@@ -3082,9 +3082,9 @@ function formatReport(iterations, finalResidual, converged) {
     const pmgd = finalResidual.per_model_gates.detail;
     lines.push('  Models: ' + (pmgd.total_models || 0) +
       ', Avg maturity: ' + (pmgd.avg_layer_maturity || 0) +
-      ', Gate A: ' + (pmgd.gate_a_pass || 0) +
-      ', B: ' + (pmgd.gate_b_pass || 0) +
-      ', C: ' + (pmgd.gate_c_pass || 0));
+      ', Wiring:Evidence: ' + (pmgd.gate_a_pass || 0) +
+      ', Wiring:Purpose: ' + (pmgd.gate_b_pass || 0) +
+      ', Wiring:Coverage: ' + (pmgd.gate_c_pass || 0));
     if (pmgd.promotions > 0) {
       lines.push('  Promotions: ' + pmgd.promotions);
     }

@@ -123,7 +123,7 @@ function loadJSON(filePath, label) {
   }
 }
 
-// ── Gate A: Grounding (L1 → L2) ─────────────────────────────────────────────
+// ── Wiring:Evidence (Grounding L1 → L2) ─────────────────────────────────────
 
 function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults, unitTestCoverage) {
   // Path 1: layer-manifest shows has_semantic_declarations
@@ -177,7 +177,7 @@ function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResult
   return { pass: false, reason: 'no passing traces for reqs [' + reqs.join(', ') + ']' };
 }
 
-// ── Gate B: Abstraction (L2 → L3) ───────────────────────────────────────────
+// ── Wiring:Purpose (Abstraction L2 → L3) ────────────────────────────────────
 
 function evaluateGateB(modelPath, model, hazardModel) {
   const sourceLayer = model.source_layer || inferSourceLayer(modelPath);
@@ -205,7 +205,7 @@ function evaluateGateB(modelPath, model, hazardModel) {
   return { pass: false, reason: 'L3 but no requirements mapped' };
 }
 
-// ── Gate C: Validation (L3 → TC) ────────────────────────────────────────────
+// ── Wiring:Coverage (Validation L3 → TC) ────────────────────────────────────
 
 function evaluateGateC(modelPath, model, failureCatalog, testRecipes, checkResults) {
   const reqs = model.requirements || [];
@@ -730,9 +730,9 @@ function main() {
   } else {
     console.log('Per-Model Gate Maturity Scoring');
     console.log('  Total models: ' + modelKeys.length);
-    console.log('  Gate A (grounding) pass: ' + gateACount);
-    console.log('  Gate B (abstraction) pass: ' + gateBCount);
-    console.log('  Gate C (validation) pass: ' + gateCCount);
+    console.log('  Wiring:Evidence pass: ' + gateACount);
+    console.log('  Wiring:Purpose pass: ' + gateBCount);
+    console.log('  Wiring:Coverage pass: ' + gateCCount);
     console.log('  Avg layer_maturity: ' + avgMaturity);
     if (promotions.length > 0) {
       console.log('  Promotions:');
@@ -743,9 +743,9 @@ function main() {
     if (AGGREGATE_FLAG && aggregate) {
       console.log('');
       console.log('  Aggregate Gate Scores:');
-      console.log('    Gate A wiring_evidence_score: ' + aggregate.gate_a.wiring_evidence_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_a.target_met + ')');
-      console.log('    Gate B wiring_purpose_score:  ' + aggregate.gate_b.wiring_purpose_score.toFixed(4) + ' (target: 1.0, met: ' + aggregate.gate_b.target_met + ')');
-      console.log('    Gate C wiring_coverage_score: ' + aggregate.gate_c.wiring_coverage_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_c.target_met + ')');
+      console.log('    Wiring:Evidence score: ' + aggregate.gate_a.wiring_evidence_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_a.target_met + ')');
+      console.log('    Wiring:Purpose score:  ' + aggregate.gate_b.wiring_purpose_score.toFixed(4) + ' (target: 1.0, met: ' + aggregate.gate_b.target_met + ')');
+      console.log('    Wiring:Coverage score: ' + aggregate.gate_c.wiring_coverage_score.toFixed(4) + ' (target: 0.8, met: ' + aggregate.gate_c.target_met + ')');
     }
     if (DRY_RUN_FLAG) {
       console.log('  (dry-run: no changes written)');
