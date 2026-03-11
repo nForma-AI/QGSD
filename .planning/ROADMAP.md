@@ -67,7 +67,9 @@
   2. Strong candidates are evaluated by Haiku and receive a yes/no/maybe verdict stored with the candidate record
   3. Gate JSON files contain both wiring_score and semantic_score fields after a scoring run
   4. Running semantic scoring twice on the same graph state and model text produces identical results (idempotent)
-**Plans**: TBD
+**Plans**: 2 plans
+  - [ ] v0.34-02-01-PLAN.md — Graph BFS candidate discovery (candidate-discovery.cjs + tests)
+  - [ ] v0.34-02-02-PLAN.md — Haiku semantic evaluation + gate score aggregation (haiku-semantic-eval.cjs + compute-semantic-scores.cjs + tests)
 
 ### Phase v0.34-03: Pairing & Auto-Promotion
 **Goal**: Graph-discovered candidate pairings flow through human confirmation into model-registry, and the solve cycle auto-promotes stable models from SOFT_GATE to HARD_GATE
