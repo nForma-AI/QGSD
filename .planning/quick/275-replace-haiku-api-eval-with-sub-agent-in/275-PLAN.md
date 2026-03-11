@@ -11,7 +11,8 @@ formal_artifacts: none
 must_haves:
   truths:
     - "Running /nf:proximity without ANTHROPIC_API_KEY still completes Step 4 evaluation via sub-agent fallback"
-    - "Sub-agent evaluation produces the same output schema as haiku-semantic-eval.cjs: verdict (yes/no/maybe), confidence (0-100), reasoning (string)"
+    - "Sub-agent evaluation produces the same output schema as haiku-semantic-eval.cjs: verdict (yes/no/maybe), confidence (0.0-1.0 decimal), reasoning (string)"
+    - "Step 4 output indicates which evaluation path ran (script vs sub-agent fallback) for debugging visibility"
     - "The script haiku-semantic-eval.cjs is attempted first; sub-agent fallback only triggers on script failure (exit non-zero)"
     - "Steps 5-6 consume candidates.json identically regardless of which evaluation path ran"
   artifacts:
@@ -64,7 +65,7 @@ Otherwise, attempt the script first:
 
 **4a. Try script:**
 - Run: `node bin/haiku-semantic-eval.cjs` via Bash
-- If exit code is 0: display verdict distribution from stderr output ("yes: X, no: Y, maybe: Z") and continue to Step 5. Done.
+- If exit code is 0: display verdict distribution from stderr output ("Evaluation complete (via: script). yes: X, no: Y, maybe: Z") and continue to Step 5. Done.
 - If exit code is non-zero: log the error, then proceed to 4b (sub-agent fallback).
 
 **4b. Sub-agent fallback:**
@@ -79,15 +80,25 @@ You are evaluating whether a formal model semantically satisfies a requirement.
 Model path: {candidate.model}
 Requirement ID: {candidate.requirement}
 Does this model address the intent of this requirement? Consider both direct coverage and transitive coverage through related models.
-Respond ONLY with valid JSON: {"verdict":"yes"|"no"|"maybe","confidence":0.0-1.0,"reasoning":"..."}
+Respond ONLY with valid JSON: {"verdict":"yes"|"no"|"maybe","confidence":<decimal 0.0-1.0>,"reasoning":"..."}
+Note: confidence MUST be a decimal between 0.0 and 1.0 (NOT 0-100).
 ```
 
-- Parse each sub-agent response as JSON. If parsing fails, default to `{"verdict":"maybe","confidence":0.0,"reasoning":"unparseable response"}`.
+- Parse each sub-agent response as JSON. On any parse failure OR missing/invalid fields, fill defaults: `verdict="maybe"`, `confidence=0.0`, `reasoning=""`. Concretely: if JSON.parse throws, use all defaults; if JSON is valid but `verdict` is missing/invalid, default that field; if `confidence` is missing/non-numeric, default to `0.0`; if `reasoning` is missing, default to `""`.
 - Normalize verdict: only "yes", "no", or "maybe" are valid; anything else becomes "maybe".
 - Set on each candidate: `verdict`, `confidence`, `reasoning`, and `evaluation_timestamp` (ISO 8601).
-- If candidate count exceeds 10, note in the skill instructions to batch into groups of 10 to avoid context overload, processing each batch sequentially.
+- If candidate count exceeds 10, batch into groups of 10 and process each batch sequentially. Pseudo-code for the skill text:
+  ```
+  batches = chunk(unevaluatedCandidates, 10)
+  for each batch in batches:
+    for each candidate in batch:
+      dispatch Haiku sub-agent with prompt (as above)
+      parse response, apply defaults on failure
+      set verdict/confidence/reasoning/evaluation_timestamp on candidate
+    log "Batch {i}/{len(batches)} complete"
+  ```
 - After all candidates are evaluated, write the full candidates.json back to `.planning/formal/candidates.json` (preserving metadata, updating only the candidates array entries).
-- Display verdict distribution: "yes: X, no: Y, maybe: Z"
+- Display verdict distribution AND which eval path ran: "Evaluation complete (via: script|sub-agent fallback). yes: X, no: Y, maybe: Z"
 
 **Important details to include in the skill text:**
 - The `allowed-tools` frontmatter already includes Read and Bash, which is sufficient. The sub-agent dispatch uses Task() which does not need to be in allowed-tools (it is always available).
@@ -127,7 +138,8 @@ Respond ONLY with valid JSON: {"verdict":"yes"|"no"|"maybe","confidence":0.0-1.0
 <success_criteria>
 - proximity.md Step 4 tries the script first, falls back to sub-agent on failure
 - Sub-agent prompt matches haiku-semantic-eval.cjs prompt format exactly
-- Output schema is identical: verdict (yes/no/maybe), confidence (0-1), reasoning (string), evaluation_timestamp
+- Output schema is identical: verdict (yes/no/maybe), confidence (0.0-1.0 decimal), reasoning (string), evaluation_timestamp
+- Step 4 output line includes which eval path ran (script vs sub-agent fallback)
 - Write tool added to allowed-tools frontmatter
 - Steps 5-6 remain unchanged
 - haiku-semantic-eval.cjs is NOT modified

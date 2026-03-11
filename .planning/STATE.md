@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
 **Current focus:** v0.34 milestone SHIPPED — planning next milestone
-**Last activity:** 2026-03-11 — Completed quick task 274: add a --top N flag to /nf:proximity
+**Last activity:** 2026-03-11 — Completed quick task 275: Replace Haiku API eval with sub-agent in /nf:proximity
 
 ## Current Position
 
@@ -64,9 +64,10 @@ None.
 | 272 | Implement OBS-11 agent payload size audit | 2026-03-11 | 2d8c1e35 | Verified | [272-implement-obs-11-agent-payload-size-audi](./quick/272-implement-obs-11-agent-payload-size-audi/) |
 | 273 | Create /nf:proximity skill and extend /nf:resolve with auto-detected pairings source | 2026-03-11 | e3613d7e | Verified | [273-create-nf-proximity-skill-and-extend-nf-](./quick/273-create-nf-proximity-skill-and-extend-nf-/) |
 | 274 | add a --top N flag to /nf:proximity | 2026-03-11 | b34aa191 | Verified | [274-add-a-top-n-flag-to-nf-proximity](./quick/274-add-a-top-n-flag-to-nf-proximity/) |
+| 275 | Replace Haiku API eval with sub-agent in /nf:proximity | 2026-03-11 | 7ae0f57e | Verified | [275-replace-haiku-api-eval-with-sub-agent-in](./quick/275-replace-haiku-api-eval-with-sub-agent-in/) |
 
 ## Session Continuity
 
 Last session: 2026-03-11
-Stopped at: Completed quick task 272: Implement OBS-11 agent payload size audit
+Stopped at: Completed quick task 275: Replace Haiku API eval with sub-agent in /nf:proximity
 Resume file: None
