@@ -70,20 +70,22 @@ Modify `bin/candidate-discovery.cjs` with these changes:
 
 **B. After the main BFS loop (after line 77), add non-neighbor discovery block:**
 - Collect all (modelPath, reqId) pairs where proximity_score was 0 OR proximity() returned null/NaN (i.e., no graph path). Track these during the BFS loop by recording zero-score pairs into a `zeroPairs` array.
-- Implementation detail: inside the existing BFS loop, when score is 0 or null/NaN (and pair was not skipped for being already linked), push `{ model: modelPath, requirement: reqId }` to `zeroPairs`.
+- Implementation detail: inside the existing BFS loop, when score is 0 or null/NaN (and pair was not skipped for being already linked), push `{ model: modelPath, requirement: reqId }` to `zeroPairs` ONLY IF the pair does not already exist in the `candidates` array (i.e., not already discovered by BFS). This ensures non-neighbor discovery complements rather than duplicates graph-based discovery.
 - After the BFS loop, compute coverage-gap heuristic for each zero pair:
   - `modelCoverage` = count of reqs linked to this model (from `linkedReqs` set for that model) + count of BFS candidates already found for this model (filter `candidates` by `.model === modelPath`)
   - `reqCoverage` = count of models linked to this req (scan all models in modelRegistry to count how many have this reqId in their requirements array) + count of BFS candidates already found for this req (filter `candidates` by `.requirement === reqId`)
   - `priority = 1/(modelCoverage+1) + 1/(reqCoverage+1)`
+- **Guard clause:** If `nonNeighborTop <= 0`, skip the entire zero-pair collection and ranking block, and set `non_neighbor_count = 0` in metadata. This allows users to disable the feature via `--non-neighbor-top 0`.
 - Sort zeroPairs by priority descending, take top `nonNeighborTop`
+- **Deduplication guard:** Before pushing each non-neighbor candidate, verify the (model, requirement) pair does not already exist in `candidates`. Skip if duplicate found. This is a defensive check to prevent accidental duplicates even though the zeroPairs collection already filters.
 - Push each selected pair into `candidates` array with `{ model, requirement, proximity_score: 0.0, source: "non_neighbor", priority: <rounded to 4 decimals> }`
 
 **C. Update metadata object:**
 - Add `non_neighbor_count: <number of non-neighbor candidates added>`
 - Add `non_neighbor_top: nonNeighborTop`
 
-**D. Pre-compute reqCoverage lookup (optimization):**
-- Before the non-neighbor ranking loop, build a `reqModelCount` map: for each reqId, count how many models in modelRegistry have that reqId in their requirements array. This avoids O(N*M) scanning inside the loop.
+**D. Pre-compute reqModelCount (REQUIRED step, not optional optimization):**
+- Before entering the non-neighbor ranking loop, you MUST build a `Map<reqId, count>` by iterating `modelRegistry.models` once and counting how many models reference each reqId in their requirements array. This is mandatory to avoid O(N*M) scanning inside the ranking loop and must be computed before any priority calculations.
 
 **E. Update `parseArgs()`:**
 - Add `--non-neighbor-top` flag parsing (same pattern as `--max-hops`): `args.nonNeighborTop = 20` default, parse integer value.
@@ -95,10 +97,10 @@ Modify `bin/candidate-discovery.cjs` with these changes:
 - Pass `nonNeighborTop: args.nonNeighborTop` into `discoverCandidates()` opts.
 - After the score histogram block, add a stderr log for non-neighbor count: `[candidate-discovery] Added N non-neighbor candidates (top ${nonNeighborTop} by coverage gap)`
 
-**H. Update histogram to handle score=0:**
-- Add a `'0.0'` bucket to the histogram for non-neighbor candidates (or a `'non-neighbor'` bucket). Display separately from the 0.6-1.0 buckets.
+**H. Update histogram to handle non-neighbor candidates:**
+- Add an explicit `'non_neighbor'` bucket label (NOT `'0.0'`) to the histogram for non-neighbor candidates. This bucket is distinct from the 0.6-1.0 graph candidate buckets. Display it as a separate line in the histogram output.
 
-**Export:** `discoverCandidates` is already exported — no change needed, but ensure the new `nonNeighborTop` param is documented in the JSDoc.
+**Export:** `discoverCandidates` is already exported — no change needed. Update the existing JSDoc for `discoverCandidates()` to document: (a) the new `nonNeighborTop` parameter (type: number, default: 20, description: max non-neighbor pairs to include), and (b) that returned candidates now include a `source` field with values `'graph'` or `'non_neighbor'`.
   </action>
   <verify>
 Run: `node bin/candidate-discovery.cjs --help` — confirm `--non-neighbor-top` appears in help output.

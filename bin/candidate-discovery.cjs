@@ -17,12 +17,13 @@ const OUTPUT_PATH = path.join(FORMAL_DIR, 'candidates.json');
 
 /**
  * Discover unlinked (model, requirement) pairs within maxHops of the
- * proximity graph with score above threshold.
+ * proximity graph with score above threshold, plus top-N zero-path pairs
+ * ranked by coverage-gap heuristic.
  *
  * @param {object} proximityIndex - The full proximity-index.json object
  * @param {object} modelRegistry  - The full model-registry.json object
  * @param {Array}  requirements   - Array of requirement objects with .id
- * @param {object} opts           - { threshold, maxHops }
+ * @param {object} opts           - { threshold, maxHops, nonNeighborTop }
  * @returns {{ metadata: object, candidates: Array }}
  */
 function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = {}) {
@@ -30,6 +31,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
 
   const threshold = opts.threshold != null ? opts.threshold : 0.6;
   const maxHops = opts.maxHops != null ? opts.maxHops : 3;
+  const nonNeighborTop = opts.nonNeighborTop != null ? opts.nonNeighborTop : 20;
 
   // Compute SHA256 hash of the proximity index for idempotency tracking
   const indexContent = JSON.stringify(proximityIndex);
@@ -39,6 +41,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
   const reqIds = requirements.map(r => r.id);
 
   const candidates = [];
+  const zeroPairs = []; // Pairs with score 0 (no graph path)
   let totalPairsChecked = 0;
 
   for (const modelPath of modelPaths) {
@@ -71,7 +74,66 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
           model: modelPath,
           requirement: reqId,
           proximity_score: Math.round(score * 10000) / 10000, // 4 decimal places
+          source: 'graph',
         });
+      } else if (score === 0) {
+        // Track zero-path pairs for non-neighbor discovery
+        zeroPairs.push({ model: modelPath, requirement: reqId });
+      }
+    }
+  }
+
+  // Non-neighbor discovery: rank zero-path pairs by coverage-gap heuristic
+  let nonNeighborCount = 0;
+  if (nonNeighborTop > 0 && zeroPairs.length > 0) {
+    // Pre-compute reqModelCount: Map<reqId, count of models that have this req in their requirements>
+    const reqModelCount = new Map();
+    for (const modelInfo of Object.values(modelRegistry.models || {})) {
+      if (Array.isArray(modelInfo.requirements)) {
+        for (const reqId of modelInfo.requirements) {
+          reqModelCount.set(reqId, (reqModelCount.get(reqId) || 0) + 1);
+        }
+      }
+    }
+
+    // Compute priority for each zero pair
+    const rankedPairs = [];
+    for (const pair of zeroPairs) {
+      // Check if this pair is already in candidates (shouldn't be, but defensive)
+      const alreadyFound = candidates.some(c => c.model === pair.model && c.requirement === pair.requirement);
+      if (alreadyFound) continue;
+
+      // modelCoverage = linked reqs + BFS candidates already found for this model
+      const modelInfo = modelRegistry.models[pair.model];
+      const linkedCount = (modelInfo.requirements || []).length;
+      const bfsCount = candidates.filter(c => c.model === pair.model).length;
+      const modelCoverage = linkedCount + bfsCount;
+
+      // reqCoverage = models linked to req + BFS candidates already found for this req
+      const linkedModelCount = reqModelCount.get(pair.requirement) || 0;
+      const bfsCandidateCount = candidates.filter(c => c.requirement === pair.requirement).length;
+      const reqCoverage = linkedModelCount + bfsCandidateCount;
+
+      // priority = 1/(modelCoverage+1) + 1/(reqCoverage+1)
+      const priority = 1 / (modelCoverage + 1) + 1 / (reqCoverage + 1);
+      rankedPairs.push({ ...pair, priority });
+    }
+
+    // Sort by priority descending and take top N
+    rankedPairs.sort((a, b) => b.priority - a.priority);
+    for (let i = 0; i < Math.min(nonNeighborTop, rankedPairs.length); i++) {
+      const pair = rankedPairs[i];
+      // Defensive check: verify pair doesn't already exist in candidates
+      const exists = candidates.some(c => c.model === pair.model && c.requirement === pair.requirement);
+      if (!exists) {
+        candidates.push({
+          model: pair.model,
+          requirement: pair.requirement,
+          proximity_score: 0.0,
+          source: 'non_neighbor',
+          priority: Math.round(pair.priority * 10000) / 10000,
+        });
+        nonNeighborCount++;
       }
     }
   }
@@ -92,6 +154,8 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
       max_hops: maxHops,
       total_pairs_checked: totalPairsChecked,
       candidates_found: candidates.length,
+      non_neighbor_count: nonNeighborCount,
+      non_neighbor_top: nonNeighborTop,
     },
     candidates,
   };
@@ -102,7 +166,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
 // ─────────────────────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
-  const args = { minScore: 0.6, maxHops: 3, top: null, json: false, help: false };
+  const args = { minScore: 0.6, maxHops: 3, nonNeighborTop: 20, top: null, json: false, help: false };
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--json') args.json = true;
     else if (argv[i] === '--help' || argv[i] === '-h') args.help = true;
@@ -112,6 +176,9 @@ function parseArgs(argv) {
     } else if (argv[i].startsWith('--max-hops')) {
       const val = argv[i].includes('=') ? argv[i].split('=')[1] : argv[++i];
       args.maxHops = parseInt(val, 10);
+    } else if (argv[i].startsWith('--non-neighbor-top')) {
+      const val = argv[i].includes('=') ? argv[i].split('=')[1] : argv[++i];
+      args.nonNeighborTop = parseInt(val, 10);
     } else if (argv[i].startsWith('--top')) {
       const val = argv[i].includes('=') ? argv[i].split('=')[1] : argv[++i];
       args.top = parseInt(val, 10);
@@ -124,11 +191,12 @@ function printHelp() {
   console.log(`Usage: node bin/candidate-discovery.cjs [options]
 
 Options:
-  --min-score <n>  Minimum proximity score threshold (default: 0.6)
-  --max-hops <n>   Maximum BFS hop count (default: 3)
-  --top <n>        Return only top N candidates by score (default: all)
-  --json           Print summary to stdout as JSON (for piping)
-  --help           Show this help message
+  --min-score <n>        Minimum proximity score threshold (default: 0.6)
+  --max-hops <n>         Maximum BFS hop count (default: 3)
+  --non-neighbor-top <n> Include top N non-neighboring pairs by coverage gap (default: 20)
+  --top <n>              Return only top N candidates by score (default: all)
+  --json                 Print summary to stdout as JSON (for piping)
+  --help                 Show this help message
 
 Discovers unlinked (model, requirement) pairs within the proximity graph.
 Writes .planning/formal/candidates.json.
@@ -170,13 +238,15 @@ function main() {
   const result = discoverCandidates(proximityIndex, modelRegistry, requirements, {
     threshold: args.minScore,
     maxHops: args.maxHops,
+    nonNeighborTop: args.nonNeighborTop,
   });
 
   // Log histogram of candidate scores to stderr (BEFORE truncation)
   if (result.candidates.length > 0) {
-    const buckets = { '0.6-0.7': 0, '0.7-0.8': 0, '0.8-0.9': 0, '0.9-1.0': 0 };
+    const buckets = { '0.6-0.7': 0, '0.7-0.8': 0, '0.8-0.9': 0, '0.9-1.0': 0, 'non_neighbor': 0 };
     for (const c of result.candidates) {
-      if (c.proximity_score < 0.7) buckets['0.6-0.7']++;
+      if (c.source === 'non_neighbor') buckets['non_neighbor']++;
+      else if (c.proximity_score < 0.7) buckets['0.6-0.7']++;
       else if (c.proximity_score < 0.8) buckets['0.7-0.8']++;
       else if (c.proximity_score < 0.9) buckets['0.8-0.9']++;
       else buckets['0.9-1.0']++;
@@ -185,6 +255,11 @@ function main() {
     for (const [range, count] of Object.entries(buckets)) {
       if (count > 0) process.stderr.write(`  ${range}: ${count}\n`);
     }
+  }
+
+  // Log non-neighbor discovery count
+  if (result.metadata.non_neighbor_count > 0) {
+    process.stderr.write(`[candidate-discovery] Added ${result.metadata.non_neighbor_count} non-neighbor candidates (top ${result.metadata.non_neighbor_top} by coverage gap)\n`);
   }
 
   // Apply --top N truncation if specified

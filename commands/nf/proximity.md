@@ -1,7 +1,7 @@
 ---
 name: nf:proximity
 description: Run the proximity graph pipeline — build graph, discover unlinked pairs, evaluate semantically, generate pairings
-argument-hint: "[--rebuild] [--min-score N] [--max-hops N] [--top N] [--skip-eval] [--resolve]"
+argument-hint: "[--rebuild] [--min-score N] [--max-hops N] [--top N] [--non-neighbor-top N] [--skip-eval] [--resolve]"
 allowed-tools:
   - Read
   - Bash
@@ -27,6 +27,7 @@ Extract from `$ARGUMENTS`:
 - `--min-score <N>` → minimum proximity score threshold (default: 0.6)
 - `--max-hops <N>` → maximum graph hops for candidate discovery (default: 3)
 - `--top <N>` → return only top N candidates by proximity score (default: 10, enforced by this skill — the underlying script defaults to no limit)
+- `--non-neighbor-top <N>` → include top N non-neighboring pairs by coverage gap (default: 20)
 - `--skip-eval` → skip Haiku semantic evaluation step
 - `--resolve` → suggest /nf:resolve at end of pipeline
 
@@ -45,11 +46,13 @@ Progress line: `[1/6] Building proximity graph...`
 
 ## Step 3: Discover candidates
 
-Run: `node bin/candidate-discovery.cjs --min-score <val> --max-hops <val> --top <val> --json`
+Run: `node bin/candidate-discovery.cjs --min-score <val> --max-hops <val> --top <val> --non-neighbor-top <val> --json`
 
 - Pass `--min-score` and `--max-hops` from parsed arguments
 - If `--top` not specified by user, pass `--top 10` as default
-- Display candidate count: "Found N candidates" (or "Showing top N of M candidates" when top is active)
+- Pass `--non-neighbor-top` from parsed arguments (default: 20)
+- Display candidate count breakdown: Read metadata to extract `non_neighbor_count`. Show "Found N graph candidates + M non-neighbor candidates" when non-neighbor count > 0, otherwise "Found N candidates"
+- When non-neighbor count > 0, add a line: "Non-neighbor pairs ranked by coverage gap (top <non_neighbor_top>)"
 - Display score distribution histogram (5 buckets: <0.4, 0.4-0.6, 0.6-0.8, 0.8-0.95, >=0.95)
 - **On error:** Halt and display error message
 
@@ -126,7 +129,7 @@ Consolidate all metrics into a formatted summary table:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
  Graph             │  N nodes, E edges, U orphans
- Candidates        │  C total (score histogram)
+ Candidates        │  C total (G graph + N non-neighbor)
  Evaluation        │  yes/no/maybe counts (or SKIPPED)
  Semantic Scores   │  Gate A/B/C ranges
  Pairings          │  P pending, Q confirmed, R rejected
@@ -150,6 +153,7 @@ Progress line: `[6/6] Generating summary...`
 - The `--skip-eval` flag is useful when Haiku quota is exhausted or you want to rebuild without re-evaluating.
 - The `--resolve` flag is a convenience — it suggests the exact /nf:resolve command to triage results.
 - The `--top` flag defaults to 10 (enforced by this skill, not the script). The script itself defaults to no limit. Pass `--top 0` to bypass the skill default and see all candidates.
+- The `--non-neighbor-top` flag controls how many zero-path pairs are included based on coverage-gap ranking (default: 20). Pass `--non-neighbor-top 0` to disable non-neighbor discovery.
 - All pipeline scripts are expected to exist in bin/ and produce JSON output (when --json is passed).
 - Step 4 tries the haiku-semantic-eval.cjs script first (works with ANTHROPIC_API_KEY in the environment). If the script fails, it falls back to inline Haiku sub-agent evaluation via Task(model='haiku'). Both paths produce identical output in candidates.json (verdict, confidence, reasoning, evaluation_timestamp fields).
 </notes>
