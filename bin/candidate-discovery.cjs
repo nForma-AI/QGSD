@@ -72,7 +72,7 @@ function keywordOverlap(modelPath, reqText) {
  * @returns {{ metadata: object, candidates: Array }}
  */
 function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = {}) {
-  const { proximity } = require('./formal-proximity.cjs');
+  const { proximity, ENSEMBLE_METHODS } = require('./formal-proximity.cjs');
 
   // Load category-groups for domain gating
   const CATEGORY_GROUPS_PATH = path.join(process.cwd(), '.planning', 'formal', 'category-groups.json');
@@ -118,6 +118,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
   const modelPaths = Object.keys(modelRegistry.models || {});
   const reqIds = requirements.map(r => r.id);
 
+  const methods = ENSEMBLE_METHODS;
   const candidates = [];
   const zeroPairs = []; // Pairs with score 0 (no graph path)
   let totalPairsChecked = 0;
@@ -135,11 +136,14 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
       totalPairsChecked++;
       const reqKey = `requirement::${reqId}`;
 
-      let score;
       const req = requirements.find(r => r.id === reqId);
       const reqText = req ? req.text : '';
+
+      // Ensemble scoring: score with primary method (first in ENSEMBLE_METHODS).
+      // Secondary methods are used in the top-N union pass after this loop.
+      let score;
       try {
-        score = proximity(proximityIndex, modelKey, reqKey, maxHops, { reqsData: requirements, reqText });
+        score = proximity(proximityIndex, modelKey, reqKey, maxHops, { method: methods[0], reqsData: requirements, reqText });
       } catch {
         process.stderr.write(`[candidate-discovery] WARN: proximity() failed for ${modelPath} <-> ${reqId}, skipping\n`);
         continue;
@@ -199,6 +203,105 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
         // Track zero-path pairs for non-neighbor discovery
         zeroPairs.push({ model: modelPath, requirement: reqId });
       }
+    }
+  }
+
+  // Ensemble union pass: run secondary methods on all model-requirement pairs,
+  // add their top candidates that the primary method missed.
+  // Each secondary method finds different true positives (validated by Haiku benchmark).
+  // Candidates go through the same pre-filters as primary to control noise.
+  if (methods.length > 1) {
+    const existingPairs = new Set(candidates.map(c => `${c.model}|${c.requirement}`));
+    const secondaryCandidates = [];
+
+    for (let mi = 1; mi < methods.length; mi++) {
+      const method = methods[mi];
+      const methodCandidates = [];
+
+      for (const modelPath of modelPaths) {
+        const modelInfo = modelRegistry.models[modelPath];
+        const linkedReqs = new Set(modelInfo.requirements || []);
+        const modelKey = `formal_model::${modelPath}`;
+
+        for (const reqId of reqIds) {
+          if (linkedReqs.has(reqId)) continue;
+          const pairKey = `${modelPath}|${reqId}`;
+          if (existingPairs.has(pairKey)) continue;
+
+          const reqKey = `requirement::${reqId}`;
+          const req = requirements.find(r => r.id === reqId);
+          const reqText = req ? req.text : '';
+
+          let score;
+          try {
+            score = proximity(proximityIndex, modelKey, reqKey, maxHops, { method, reqsData: requirements, reqText });
+          } catch { continue; }
+
+          if (score == null || isNaN(score) || score <= threshold) continue;
+
+          // Apply same pre-filters as primary method
+          let dominated = false;
+
+          // Domain gating
+          const mGroups = modelCategoryGroups.get(modelPath);
+          const rGroup = reqCategoryGroup.get(reqId);
+          if (mGroups && mGroups.size === 1 && rGroup) {
+            if ([...mGroups][0] !== rGroup && score <= 0.95) dominated = true;
+          }
+
+          // Already-covered check
+          if (!dominated && reqAlreadyCovered.get(reqId) && score <= 0.95) dominated = true;
+
+          // Keyword pre-screen
+          if (!dominated && !keywordOverlap(modelPath, reqText)) dominated = true;
+
+          if (!dominated) {
+            methodCandidates.push({
+              model: modelPath,
+              requirement: reqId,
+              proximity_score: Math.round(score * 10000) / 10000,
+              source: 'ensemble',
+              scoring_method: method,
+            });
+          }
+        }
+      }
+
+      // Apply diversity round-robin within this method's candidates too
+      methodCandidates.sort((a, b) => b.proximity_score - a.proximity_score);
+      const perMethodLimit = 20; // generous: --top controls final output size
+      const byModel = new Map();
+      for (const c of methodCandidates) {
+        if (!byModel.has(c.model)) byModel.set(c.model, []);
+        byModel.get(c.model).push(c);
+      }
+      const modelGrps = [...byModel.entries()].sort((a, b) => b[1][0].proximity_score - a[1][0].proximity_score);
+      const selected = [];
+      const cursors = new Map(modelGrps.map(([m]) => [m, 0]));
+      while (selected.length < perMethodLimit) {
+        let picked = false;
+        for (const [model, group] of modelGrps) {
+          if (selected.length >= perMethodLimit) break;
+          const idx = cursors.get(model);
+          if (idx < group.length) {
+            const c = group[idx];
+            if (!existingPairs.has(`${c.model}|${c.requirement}`)) {
+              selected.push(c);
+              existingPairs.add(`${c.model}|${c.requirement}`);
+            }
+            cursors.set(model, idx + 1);
+            picked = true;
+          }
+        }
+        if (!picked) break;
+      }
+      secondaryCandidates.push(...selected);
+    }
+
+    // Merge secondary candidates into main list
+    candidates.push(...secondaryCandidates);
+    if (secondaryCandidates.length > 0) {
+      process.stderr.write(`[candidate-discovery] Ensemble: added ${secondaryCandidates.length} candidates from ${methods.length - 1} secondary method(s)\n`);
     }
   }
 

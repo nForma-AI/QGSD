@@ -65,34 +65,31 @@ const EDGE_WEIGHTS = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Scoring method: "typed" — only traverse semantically strong edge types
-// ─────────────────────────────────────────────────────────────────────────────
-const TYPED_ALLOWED_RELS = new Set([
-  'verifies', 'verified_by', 'models', 'modeled_by',
-  'tests', 'tested_by', 'declares', 'declared_in',
-  'emits', 'emitted_by', 'maps_to', 'mapped_from',
-  'triggers', 'triggered_by',
-]);
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Scoring methods registry
 // ─────────────────────────────────────────────────────────────────────────────
 const SCORING_METHODS = {
-  legacy:   { weights: EDGE_WEIGHTS,    hubDampen: false, typeFilter: null,               tfidf: false, categoryBoost: false },
-  semantic: { weights: SEMANTIC_WEIGHTS, hubDampen: false, typeFilter: null,               tfidf: false, categoryBoost: false },
-  hub:      { weights: EDGE_WEIGHTS,    hubDampen: true,  typeFilter: null,               tfidf: false, categoryBoost: false },
-  typed:    { weights: SEMANTIC_WEIGHTS, hubDampen: false, typeFilter: TYPED_ALLOWED_RELS, tfidf: false, categoryBoost: false },
-  tfidf:    { weights: EDGE_WEIGHTS,    hubDampen: false, typeFilter: null,               tfidf: true,  categoryBoost: false },
-  category: { weights: EDGE_WEIGHTS,    hubDampen: false, typeFilter: null,               tfidf: false, categoryBoost: true  },
+  legacy:   { weights: EDGE_WEIGHTS,    hubDampen: false, tfidf: false, categoryBoost: false },
+  semantic: { weights: SEMANTIC_WEIGHTS, hubDampen: false, tfidf: false, categoryBoost: false },
+  hub:      { weights: EDGE_WEIGHTS,    hubDampen: true,  tfidf: false, categoryBoost: false },
+  tfidf:    { weights: EDGE_WEIGHTS,    hubDampen: false, tfidf: true,  categoryBoost: false },
+  category: { weights: EDGE_WEIGHTS,    hubDampen: false, tfidf: false, categoryBoost: true  },
   // Combos
-  'semantic+hub':       { weights: SEMANTIC_WEIGHTS, hubDampen: true,  typeFilter: null,               tfidf: false, categoryBoost: false },
-  'typed+hub':          { weights: SEMANTIC_WEIGHTS, hubDampen: true,  typeFilter: TYPED_ALLOWED_RELS, tfidf: false, categoryBoost: false },
-  'semantic+hub+tfidf': { weights: SEMANTIC_WEIGHTS, hubDampen: true,  typeFilter: null,               tfidf: true,  categoryBoost: false },
-  'semantic+hub+cat':   { weights: SEMANTIC_WEIGHTS, hubDampen: true,  typeFilter: null,               tfidf: false, categoryBoost: true  },
-  full:                 { weights: SEMANTIC_WEIGHTS, hubDampen: true,  typeFilter: TYPED_ALLOWED_RELS, tfidf: true,  categoryBoost: true  },
+  'semantic+tfidf':     { weights: SEMANTIC_WEIGHTS, hubDampen: false, tfidf: true,  categoryBoost: false },
+  'semantic+hub':       { weights: SEMANTIC_WEIGHTS, hubDampen: true,  tfidf: false, categoryBoost: false },
+  'semantic+hub+tfidf': { weights: SEMANTIC_WEIGHTS, hubDampen: true, tfidf: true,  categoryBoost: false },
+  'semantic+hub+cat':   { weights: SEMANTIC_WEIGHTS, hubDampen: true, tfidf: false, categoryBoost: true  },
+  full:                 { weights: SEMANTIC_WEIGHTS, hubDampen: true, tfidf: true,  categoryBoost: true  },
 };
 
-const DEFAULT_SCORING_METHOD = 'semantic+hub';
+const DEFAULT_SCORING_METHOD = 'semantic+hub+tfidf';
+
+// Ensemble: complementary methods whose union maximizes true-positive recall.
+// Benchmark (93 candidates, Haiku verdicts) showed each method finds different TPs:
+//   sem+hub+tfidf → CI-06       (hub dampening + keyword granularity, best noise rejection)
+//   sem+tfidf     → TRACE-01, LTCY-01 (keyword similarity catches pairs hub dampening penalizes)
+// Legacy (no hub dampening) was dropped: finds same TPs as sem+tfidf but with 85% false positive rate.
+const ENSEMBLE_METHODS = ['semantic+hub+tfidf', 'semantic+tfidf'];
 
 // Forward -> reverse relationship mapping
 const REVERSE_RELS = {
@@ -689,11 +686,11 @@ function proximity(index, nodeKeyA, nodeKeyB, maxDepth, opts) {
   if (nodeKeyA === nodeKeyB) return 1.0;
   if (!index.nodes[nodeKeyA] || !index.nodes[nodeKeyB]) return 0;
 
-  const methodName = (opts && opts.method) || DEFAULT_SCORING_METHOD;
-  const config = SCORING_METHODS[methodName] || SCORING_METHODS[DEFAULT_SCORING_METHOD];
+  const config = (opts && opts.methodConfig) ||
+    SCORING_METHODS[(opts && opts.method) || DEFAULT_SCORING_METHOD] ||
+    SCORING_METHODS[DEFAULT_SCORING_METHOD];
   const weights = config.weights;
   const useHubDampen = config.hubDampen;
-  const typeFilter = config.typeFilter;
   const useTfidf = config.tfidf;
   const useCategoryBoost = config.categoryBoost;
 
@@ -720,9 +717,6 @@ function proximity(index, nodeKeyA, nodeKeyB, maxDepth, opts) {
     if (!node) continue;
 
     for (const edge of node.edges) {
-      // Type filter: skip disallowed edge types
-      if (typeFilter && !typeFilter.has(edge.rel)) continue;
-
       let edgeWeight = weights[edge.rel] || 0.1;
 
       // Hub dampening: penalize traversal through high-degree nodes
@@ -817,4 +811,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { buildIndex, proximity, EDGE_WEIGHTS, SEMANTIC_WEIGHTS, REVERSE_RELS, SCORING_METHODS, DEFAULT_SCORING_METHOD, tfidfSimilarity };
+module.exports = { buildIndex, proximity, EDGE_WEIGHTS, SEMANTIC_WEIGHTS, REVERSE_RELS, SCORING_METHODS, DEFAULT_SCORING_METHOD, ENSEMBLE_METHODS, tfidfSimilarity };
