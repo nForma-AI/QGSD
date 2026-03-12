@@ -237,6 +237,93 @@ function buildActiveSlots() {
   return [];
 }
 
+// Ensures all provider slots from providers.json have corresponding MCP entries in ~/.claude.json.
+// Only adds missing entries (never modifies existing ones).
+// Fail-open: errors are logged but do not abort install.
+// MULTI-03 dependency: must run BEFORE buildActiveSlots() is called in install flow,
+// so that discovered MCP entries are available for quorum_active population.
+function ensureMcpSlotsFromProviders() {
+  const claudeJsonPath = path.join(os.homedir(), '.claude.json');
+  const providersJsonPath = path.join(__dirname, 'providers.json');
+  const unifiedMcpPath = path.join(__dirname, 'unified-mcp-server.mjs');
+
+  try {
+    // Step 1: Read providers.json
+    let providersData;
+    try {
+      providersData = JSON.parse(fs.readFileSync(providersJsonPath, 'utf8'));
+    } catch (e) {
+      console.warn(`  ${yellow}⚠${reset} Could not read providers.json: ${e.message}`);
+      return;
+    }
+
+    const providers = providersData.providers || [];
+    if (providers.length === 0) {
+      return; // No providers to sync
+    }
+
+    // Step 2: Read ~/.claude.json (or create minimal structure if missing)
+    let claudeConfig = { mcpServers: {} };
+    try {
+      if (fs.existsSync(claudeJsonPath)) {
+        const fileContent = fs.readFileSync(claudeJsonPath, 'utf8');
+        const parsed = JSON.parse(fileContent);
+        claudeConfig = parsed;
+        // Normalize: ensure mcpServers is an object
+        if (!claudeConfig.mcpServers || typeof claudeConfig.mcpServers !== 'object') {
+          claudeConfig.mcpServers = {};
+        }
+      }
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        console.warn(`  ${yellow}⚠${reset} Could not parse ~/.claude.json: ${e.message}. Consider manual edit.`);
+        return;
+      } else {
+        console.warn(`  ${yellow}⚠${reset} Could not read ~/.claude.json: ${e.message}`);
+        return;
+      }
+    }
+
+    // Step 3: Verify unified-mcp-server.mjs exists (hard fail if missing)
+    if (!fs.existsSync(unifiedMcpPath)) {
+      console.error(`  ${yellow}✗${reset} ERROR: unified-mcp-server.mjs not found at ${unifiedMcpPath}. MCP slots would be non-functional. Stopping.`);
+      return;
+    }
+
+    // Step 4: For each provider, add missing MCP entry
+    let addedCount = 0;
+    for (const provider of providers) {
+      const providerName = provider.name;
+      if (!claudeConfig.mcpServers.hasOwnProperty(providerName)) {
+        // Create entry for this provider
+        claudeConfig.mcpServers[providerName] = {
+          type: 'stdio',
+          command: 'node',
+          args: [unifiedMcpPath],
+          env: { PROVIDER_SLOT: providerName }
+        };
+        addedCount++;
+        console.log(`  ${green}✓${reset} Added MCP entry for ${providerName}`);
+      } else {
+        console.log(`  ${dim}↳ MCP entry for ${providerName} already exists (skipped)${reset}`);
+      }
+    }
+
+    // Step 5: Write back if any entries were added
+    if (addedCount > 0) {
+      try {
+        fs.writeFileSync(claudeJsonPath, JSON.stringify(claudeConfig, null, 2) + '\n', 'utf8');
+        console.log(`  ${green}✓${reset} Synced ${addedCount} provider slot(s) to ~/.claude.json`);
+      } catch (e) {
+        console.warn(`  ${yellow}⚠${reset} Could not write ~/.claude.json: ${e.message}. Consider backup and manual edit.`);
+      }
+    }
+  } catch (e) {
+    // Outer catch for any unexpected errors
+    console.warn(`  ${yellow}⚠${reset} Unexpected error in ensureMcpSlotsFromProviders: ${e.message}`);
+  }
+}
+
 // Generates quorum_instructions text from detected required_models.
 // Uses detected tool_prefix values so behavioral instructions (UserPromptSubmit injection)
 // name the same tools as the structural enforcement (Stop hook), preventing mismatch
@@ -2229,6 +2316,11 @@ function install(isGlobal, runtime = 'claude') {
       });
       console.log(`  ${green}✓${reset} Configured nForma session-end hook (SessionEnd)`);
     }
+
+    // MULTI-03: ensureMcpSlotsFromProviders() MUST run before buildActiveSlots() because
+    // buildActiveSlots() discovers slots from existing mcpServers keys in ~/.claude.json.
+    // This ensures codex-2, gemini-2, and all other provider slots have MCP entries before quorum_active discovery.
+    ensureMcpSlotsFromProviders();
 
     // Write nForma config — skip if exists unless --redetect-mcps flag set
     const nfConfigPath = path.join(targetDir, 'nf.json');
