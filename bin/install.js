@@ -1620,6 +1620,39 @@ function configureOpencodePermissions(isGlobal = true) {
 }
 
 /**
+ * Auto-rebuild hooks/dist/ if missing by running scripts/build-hooks.js.
+ * Preserves idempotency: if dist/ already exists, returns immediately.
+ * @param {string} hooksDir - path to hooks/ source directory
+ * @param {string} distDir - path to hooks/dist/ output directory
+ * @returns {{ rebuilt: boolean, success: boolean, error?: string }}
+ */
+function buildHooksIfMissing(hooksDir, distDir) {
+  if (fs.existsSync(distDir)) {
+    return { rebuilt: false, success: true };
+  }
+
+  const buildScript = path.join(path.dirname(hooksDir), 'scripts', 'build-hooks.js');
+  if (!fs.existsSync(buildScript)) {
+    return { rebuilt: false, success: false, error: `build script not found: ${buildScript}` };
+  }
+
+  try {
+    const { execFileSync } = require('child_process');
+    execFileSync(process.execPath, [buildScript], {
+      stdio: 'pipe',
+      timeout: 30000,
+    });
+  } catch (err) {
+    return { rebuilt: false, success: false, error: `build-hooks.js failed: ${err.message}` };
+  }
+
+  if (fs.existsSync(distDir)) {
+    return { rebuilt: true, success: true };
+  }
+  return { rebuilt: false, success: false, error: 'build-hooks.js completed but hooks/dist/ still missing' };
+}
+
+/**
  * Verify a directory exists and contains files
  */
 function verifyInstalled(dirPath, description) {
@@ -2000,6 +2033,22 @@ function install(isGlobal, runtime = 'claude') {
   const pkgJsonDest = path.join(targetDir, 'package.json');
   fs.writeFileSync(pkgJsonDest, '{"type":"commonjs"}\n');
   console.log(`  ${green}✓${reset} Wrote package.json (CommonJS mode)`);
+
+  // Auto-rebuild hooks/dist/ if missing (fresh source clone support)
+  const hooksDir = path.join(src, 'hooks');
+  const distDir = path.join(src, 'hooks', 'dist');
+  const rebuildResult = buildHooksIfMissing(hooksDir, distDir);
+  if (!rebuildResult.success) {
+    const errMsg = rebuildResult.error || 'unknown error';
+    process.stderr.write(
+      `\nError: hooks/dist/ missing and rebuild failed:\n  ${errMsg}\n\n` +
+      `To fix, run from the nForma source directory:\n` +
+      `  npm run build:hooks\n\n` +
+      `Then try install again:\n` +
+      `  node bin/install.js --claude --global\n\n`
+    );
+    failures.push('hooks');
+  }
 
   // Copy hooks from dist/ (bundled with dependencies)
   // Template paths for the target runtime (replaces '.claude' with correct config dir)
