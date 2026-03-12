@@ -38,7 +38,12 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "codex-cli"
+      "display_type": "codex-cli",
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "codex-2",
@@ -77,7 +82,12 @@
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
-      "env": {}
+      "env": {},
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "gemini-1",
@@ -106,7 +116,12 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "gemini-cli"
+      "display_type": "gemini-cli",
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "gemini-2",
@@ -134,7 +149,12 @@
       "timeout_ms": 300000,
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
-      "env": {}
+      "env": {},
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "opencode-1",
@@ -171,7 +191,12 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "opencode-cli"
+      "display_type": "opencode-cli",
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "copilot-1",
@@ -224,7 +249,12 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "copilot-cli"
+      "display_type": "copilot-cli",
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-1",
@@ -253,7 +283,17 @@
       "quorum_timeout_ms": 20000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-2",
@@ -282,7 +322,17 @@
       "quorum_timeout_ms": 20000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-3",
@@ -311,7 +361,17 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-4",
@@ -340,7 +400,17 @@
       "quorum_timeout_ms": 30000,
       "latency_budget_ms": null,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-5",
@@ -369,7 +439,17 @@
       "quorum_timeout_ms": 10000,
       "latency_budget_ms": 15000,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     },
     {
       "name": "claude-6",
@@ -398,7 +478,17 @@
       "quorum_timeout_ms": 8000,
       "latency_budget_ms": 15000,
       "env": {},
-      "display_type": "claude-code-router"
+      "display_type": "claude-code-router",
+      "service": {
+        "start": ["ccr", "start"],
+        "stop": ["ccr", "stop"],
+        "status": ["ccr", "status"]
+      },
+      "deep_probe": {
+        "prompt": "respond with: PROBE_OK",
+        "expect": "PROBE_OK",
+        "timeout_ms": 20000
+      }
     }
   ]
 }
