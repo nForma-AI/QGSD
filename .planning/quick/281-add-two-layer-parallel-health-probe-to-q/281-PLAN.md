@@ -18,6 +18,11 @@ must_haves:
     - "Binary probe detects missing CLI binaries and marks slot unhealthy"
     - "Upstream API probe hits GET /models for ccr-backed slots and marks unhealthy on timeout/error"
     - "Both probe layers run in parallel across all slots, total time under 5s"
+    - "Base URLs are normalized (strip trailing slash, lowercase host, normalize port) before dedup grouping to prevent duplicate probes"
+    - "Layer 2 response includes cacheAge field indicating 'fresh' or 'cached' with TTL remaining"
+    - "When ANTHROPIC_BASE_URL is missing for a ccr slot, layer2 is skipped with warning reason, not treated as failure"
+    - "saveCache() auto-creates cache file and parent directory if missing"
+    - "Test covers missing/malformed ~/.claude.json gracefully (no crash, slots marked layer2 skipped)"
   artifacts:
     - path: "bin/quorum-preflight.cjs"
       provides: "Two-layer health probe behind --probe flag"
@@ -71,10 +76,11 @@ Add the --probe flag support to quorum-preflight.cjs. When --all --probe is pass
 For each provider entry from providers.json, spawn `provider.cli` with `provider.health_check_args` (e.g., `codex --version`) using child_process.spawn. Timeout: 3000ms. Success = exit code 0. Failure = non-zero exit, timeout, or ENOENT (binary not found). Run all slots in parallel via Promise.all.
 
 **Layer 2 — Upstream API probe (ccr/HTTP slots only):**
-For slots where `display_type === "claude-code-router"`, read ~/.claude.json to find the matching MCP server entry (match by slot name) and extract ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY from its env. Hit GET `${ANTHROPIC_BASE_URL}/models` with a 5000ms timeout. Reuse the TTL cache pattern from check-provider-health.cjs (cache file: `~/.claude/nf-provider-cache.json`, UP=3min TTL, DOWN=5min TTL). Success = HTTP 200/401/403/404/422. Group by base URL to avoid duplicate probes for slots sharing the same provider URL (e.g., claude-1 and claude-2 both hit akashml).
+For slots where `display_type === "claude-code-router"`, read ~/.claude.json to find the matching MCP server entry (match by slot name) and extract ANTHROPIC_BASE_URL + ANTHROPIC_API_KEY from its env. If ANTHROPIC_BASE_URL is missing for a ccr slot, skip layer2 with `{ ok: true, skipped: true, reason: "ANTHROPIC_BASE_URL not configured" }` (treat as warning, not failure). Hit GET `${ANTHROPIC_BASE_URL}/models` with a 5000ms timeout. Reuse the TTL cache pattern from check-provider-health.cjs (cache file: `~/.claude/nf-provider-cache.json`, UP=3min TTL, DOWN=5min TTL). Success = HTTP 200/401/403/404/422. Normalize base URLs before dedup grouping: strip trailing slash, lowercase the host component, normalize default ports (`:443` for https, `:80` for http) — this prevents duplicate probes when the same provider is configured with minor URL formatting differences (e.g., `https://API.akashml.com/v1/` vs `https://api.akashml.com/v1`).
 
 **Implementation approach:**
-- Add a `probeHealth(providers)` async function that returns `Map<slotName, { healthy, layer1: {ok, reason}, layer2: {ok, reason, skipped?} }>`.
+- Add a `normalizeBaseUrl(url)` helper: `new URL(url)` → lowercase host, strip trailing slash from pathname, remove default port (443/80). Use this before grouping URLs for dedup.
+- Add a `probeHealth(providers)` async function that returns `Map<slotName, { healthy, layer1: {ok, reason}, layer2: {ok, reason, skipped?, cacheAge?} }>`.
 - Layer 1 and Layer 2 run in parallel for each slot (Promise.all at the slot level, both layers also in parallel within each slot).
 - For non-ccr slots (codex, gemini, opencode, copilot), layer2 is `{ ok: true, skipped: true, reason: "no upstream API" }`.
 - A slot is healthy only if layer1.ok AND layer2.ok.
@@ -86,7 +92,7 @@ For slots where `display_type === "claude-code-router"`, read ~/.claude.json to 
   "max_quorum_size": 3,
   "team": { ... },
   "health": {
-    "slotName": { "healthy": true, "layer1": { "ok": true, "reason": "exit 0" }, "layer2": { "ok": true, "reason": "HTTP 200", "latencyMs": 150 } }
+    "slotName": { "healthy": true, "layer1": { "ok": true, "reason": "exit 0" }, "layer2": { "ok": true, "reason": "HTTP 200", "latencyMs": 150, "cacheAge": "fresh" } }
   },
   "available_slots": ["codex-1", "gemini-1", ...],
   "unavailable_slots": [{ "name": "claude-5", "reason": "layer2: timeout after 5000ms" }]
@@ -100,7 +106,8 @@ For slots where `display_type === "claude-code-router"`, read ~/.claude.json to 
 - For the binary spawn, use `{ timeout: 3000 }` option and listen for 'error' event (ENOENT).
 - For the HTTP probe, reuse the exact probeUrl pattern from check-provider-health.cjs (copy the function, don't require it — these are standalone scripts).
 - Load ~/.claude.json MCP server env to get ANTHROPIC_BASE_URL per slot. Match slot name to mcpServers key. Only probe unique base URLs (dedup).
-- Cache: reuse loadCache/saveCache/getCachedResult from check-provider-health.cjs pattern. Same cache file so probes from either script share results.
+- Cache: reuse loadCache/saveCache/getCachedResult from check-provider-health.cjs pattern. Same cache file so probes from either script share results. saveCache() must auto-create the cache file and parent directory (`~/.claude/`) if they don't exist (use `fs.mkdirSync(dir, { recursive: true })` before writing). When returning a cached result, set `cacheAge: "cached"` with the remaining TTL; for fresh probes set `cacheAge: "fresh"`.
+- Wrap ~/.claude.json reading in try/catch: if the file is missing or contains malformed JSON, log a warning and treat all ccr slots as layer2-skipped (do not crash).
   </action>
   <verify>
 Run `node bin/quorum-preflight.cjs --all` (no --probe) and confirm output is unchanged JSON with quorum_active, max_quorum_size, team keys only.
@@ -129,10 +136,14 @@ Create test/quorum-preflight-probe.test.cjs using the project's test pattern (No
 
 5. **Execution time:** Measure wallclock time of --all --probe invocation. Assert it completes in under 8s (generous for CI, target is 5s).
 
+6. **Missing/malformed ~/.claude.json:** Temporarily rename ~/.claude.json (if it exists) to ~/.claude.json.bak, run `node bin/quorum-preflight.cjs --all --probe`, parse output. Assert it doesn't crash (exit 0), and all ccr slots have layer2.skipped === true. Restore the file in a finally block. If ~/.claude.json doesn't exist, skip the rename and just verify the no-crash behavior.
+
+7. **cacheAge field present:** For each layer2 entry in the health object (that isn't skipped), assert it has a `cacheAge` field that is either "fresh" or "cached".
+
 Use `const { execSync } = require('child_process')` to invoke the script. Set `{ timeout: 15000, encoding: 'utf8' }`.
   </action>
   <verify>Run `node --test test/quorum-preflight-probe.test.cjs` and confirm all tests pass.</verify>
-  <done>All 5 test cases pass. Backward compatibility verified. Probe output shape validated. Layer2 skip logic confirmed for non-ccr slots.</done>
+  <done>All 7 test cases pass. Backward compatibility verified. Probe output shape validated. Layer2 skip logic confirmed for non-ccr slots. Missing ~/.claude.json handled gracefully. cacheAge field validated.</done>
 </task>
 
 </tasks>
@@ -147,9 +158,14 @@ Use `const { execSync } = require('child_process')` to invoke the script. Set `{
 <success_criteria>
 - --all --probe returns JSON with health map, available_slots, unavailable_slots
 - Each health entry shows layer1 (binary) and layer2 (upstream API) results
+- Layer2 includes cacheAge field ("fresh" or "cached") for non-skipped entries
 - Non-ccr slots skip layer2 with skipped: true
+- ccr slots with missing ANTHROPIC_BASE_URL skip layer2 with warning (not failure)
+- Base URLs are normalized before dedup grouping (no duplicate probes for same provider)
+- saveCache() auto-creates cache file and parent directory if missing
+- Missing/malformed ~/.claude.json does not crash — ccr slots get layer2 skipped
 - Backward compatibility: --all without --probe is unchanged
-- All unit tests pass
+- All unit tests pass (7 cases)
 </success_criteria>
 
 <output>
