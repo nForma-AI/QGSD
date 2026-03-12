@@ -65,7 +65,7 @@ None.
 | 273 | Create /nf:proximity skill and extend /nf:resolve with auto-detected pairings source | 2026-03-11 | e3613d7e | Verified | [273-create-nf-proximity-skill-and-extend-nf-](./quick/273-create-nf-proximity-skill-and-extend-nf-/) |
 | 274 | add a --top N flag to /nf:proximity | 2026-03-11 | b34aa191 | Verified | [274-add-a-top-n-flag-to-nf-proximity](./quick/274-add-a-top-n-flag-to-nf-proximity/) |
 | 275 | Replace Haiku API eval with sub-agent in /nf:proximity | 2026-03-11 | 7ae0f57e | Verified | [275-replace-haiku-api-eval-with-sub-agent-in](./quick/275-replace-haiku-api-eval-with-sub-agent-in/) |
-| 276 | Add top-N non-neighboring pair discovery to nf:proximity pipeline | 2026-03-12 | ccac5a64 | Pending | [276-add-top-n-non-neighboring-pair-discovery](./quick/276-add-top-n-non-neighboring-pair-discovery/) |
+| 276 | Add top-N non-neighboring pair discovery to nf:proximity pipeline | 2026-03-12 | ccac5a64 | Verified | [276-add-top-n-non-neighboring-pair-discovery](./quick/276-add-top-n-non-neighboring-pair-discovery/) |
 
 ## Session Continuity
 
