@@ -35,5 +35,73 @@
 
 ---
 
+## v0.35 — Install & Setup Bug Fixes
+
+**Milestone Goal:** Fix four user-facing bugs (GitHub #4-#7) that break install, setup, cross-platform paths, and TUI agent configuration.
+
+### Phases
+
+- [ ] **Phase v0.35-01: Install hooks/dist rebuild** - Auto-rebuild hooks/dist on source checkout so install works without manual build step
+- [ ] **Phase v0.35-02: MCP Setup slot classification** - Fix slot type detection to use auth_type from providers.json instead of name-prefix inference
+- [ ] **Phase v0.35-03: Cross-platform provider paths** - Replace hardcoded /opt/homebrew/bin/ with runtime CLI resolution for macOS, Linux, and WSL
+- [ ] **Phase v0.35-04: TUI CLI Agent MCP entry** - Fix TUI "Add Agent" to generate correct MCP entries matching mcp-setup output
+
+### Phase Details
+
+#### Phase v0.35-01: Install hooks/dist rebuild
+**Goal**: Users can install nForma from a source checkout without manually running `npm run build:hooks` first
+**Depends on**: Nothing (first phase)
+**Requirements**: INST-01, INST-02
+**Success Criteria** (what must be TRUE):
+  1. Running `node bin/install.js --claude --global` on a fresh clone (no hooks/dist/) succeeds without error
+  2. If hooks/dist/ is missing or stale, install either auto-rebuilds it or prints a clear actionable message telling the user exactly what command to run
+  3. After install completes, all hooks in `~/.claude/hooks/` are functional (not empty or stale copies)
+**Plans**: TBD
+
+#### Phase v0.35-02: MCP Setup slot classification
+**Goal**: `/nf:mcp-setup` correctly identifies all slot types including native CLI agents like codex-1
+**Depends on**: Nothing (independent)
+**Requirements**: SETUP-01, SETUP-02
+**Success Criteria** (what must be TRUE):
+  1. Running `/nf:mcp-setup` re-run shows codex-1 classified as "subscription" (CLI agent), not "api" or "provider-backed"
+  2. Slot classification reads `auth_type` field from providers.json for every slot, not inferring type from the slot name prefix
+  3. All slot types in providers.json (subscription CLI, API-backed, provider-hosted) display their correct category in the setup wizard menu
+**Plans**: TBD
+
+#### Phase v0.35-03: Cross-platform provider paths
+**Goal**: Provider CLI binary paths resolve correctly on macOS, Linux, and WSL without manual user configuration
+**Depends on**: Nothing (independent)
+**Requirements**: XPLAT-01, XPLAT-02
+**Success Criteria** (what must be TRUE):
+  1. Provider definitions no longer contain hardcoded `/opt/homebrew/bin/` paths anywhere in the codebase
+  2. CLI binary paths are resolved at runtime using `which`/`resolve-cli.cjs` or equivalent path discovery
+  3. A user on Linux (apt/snap installed CLIs) or WSL can run nForma without manually editing provider paths
+**Plans**: TBD
+
+#### Phase v0.35-04: TUI CLI Agent MCP entry
+**Goal**: TUI "Add Agent -> CLI Agent" produces working MCP configuration entries that match what mcp-setup generates
+**Depends on**: Phase v0.35-03 (uses resolved CLI paths)
+**Requirements**: TUI-01, TUI-02
+**Success Criteria** (what must be TRUE):
+  1. TUI "Add Agent -> CLI Agent" for any supported slot type (Codex, Gemini, OpenCode, Copilot) generates an MCP entry with the correct binary path and args
+  2. The generated MCP entry format is identical to what `/nf:mcp-setup` wizard produces for the same slot type
+  3. After adding a CLI agent via TUI, the agent responds to an identity ping without manual config edits
+**Plans**: TBD
+
+### Progress
+
+**Execution Order:**
+Phases execute in sequence: v0.35-01 -> v0.35-02 -> v0.35-03 -> v0.35-04
+(v0.35-01 and v0.35-02 are independent; v0.35-04 depends on v0.35-03)
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| v0.35-01. Install hooks/dist rebuild | 0/? | Not started | - |
+| v0.35-02. MCP Setup slot classification | 0/? | Not started | - |
+| v0.35-03. Cross-platform provider paths | 0/? | Not started | - |
+| v0.35-04. TUI CLI Agent MCP entry | 0/? | Not started | - |
+
+---
+
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-11 after v0.34 milestone completion*
+*Last updated: 2026-03-12 after v0.35 roadmap creation*

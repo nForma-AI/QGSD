@@ -32,20 +32,20 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INST-01 | — | Pending |
-| INST-02 | — | Pending |
-| SETUP-01 | — | Pending |
-| SETUP-02 | — | Pending |
-| XPLAT-01 | — | Pending |
-| XPLAT-02 | — | Pending |
-| TUI-01 | — | Pending |
-| TUI-02 | — | Pending |
+| INST-01 | v0.35-01 | Pending |
+| INST-02 | v0.35-01 | Pending |
+| SETUP-01 | v0.35-02 | Pending |
+| SETUP-02 | v0.35-02 | Pending |
+| XPLAT-01 | v0.35-03 | Pending |
+| XPLAT-02 | v0.35-03 | Pending |
+| TUI-01 | v0.35-04 | Pending |
+| TUI-02 | v0.35-04 | Pending |
 
 **Coverage:**
 - v0.35 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 (pending roadmap)
+- Mapped to phases: 8
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after milestone v0.35 start*
+*Last updated: 2026-03-12 after v0.35 roadmap creation*

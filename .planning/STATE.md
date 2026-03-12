@@ -2,18 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-11)
+See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.35 — Install & Setup Bug Fixes
-**Last activity:** 2026-03-12 — Milestone v0.35 started
+**Current focus:** v0.35 — Install & Setup Bug Fixes, Phase v0.35-01
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-12 — Milestone v0.35 started
+Phase: v0.35-01 of 4 (Install hooks/dist rebuild)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-03-12 — Roadmap created for v0.35
+
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -39,14 +40,10 @@ Last activity: 2026-03-12 — Milestone v0.35 started
 ### Decisions
 
 Decisions logged in PROJECT.md Key Decisions table.
-- [v0.34 Roadmap]: 3-phase structure: Gate Renaming (NAME) -> Semantic Scoring (SEM) -> Pairing + Auto-Promotion (PAIR + PROMO)
-- [v0.34 Roadmap]: PAIR and PROMO combined into single phase — both consume semantic scores, no dependency between them
-- [v0.34 Roadmap]: Existing infrastructure reused: formal-proximity.cjs (BFS), promote-gate-maturity.cjs (promotion), gate-stability.cjs (flip-flop)
-- [v0.34-01-01]: Schema version bumped to '2' in gate output files; consumer fallback: prefer wiring_*_score, fall back to legacy field names, then 0
-- [v0.34-01-01]: gate_a/gate_b/gate_c object keys left unchanged — only score field names renamed
-- [v0.34-01-02]: Generic "Recent Gate Changes" label in solve-tui.cjs left unchanged — it's generic, not Gate A/B/C specific
-- [v0.34-01-02]: Pre-existing exit code test failure in cross-layer-dashboard.test.cjs is system-state-dependent (gate score targets), not related to label renaming
-- [Phase quick-278]: Orphan models/requirements separated from candidates[] into dedicated orphans object; structural exclusion from Haiku eval
+Recent decisions affecting current work:
+
+- [v0.35 scope]: 4 GitHub issues (#4-#7) mapped to 4 phases; Windows support (#3) explicitly out of scope
+- [v0.35 roadmap]: Phase v0.35-04 depends on v0.35-03 (TUI entries use resolved CLI paths)
 
 ### Pending Todos
 
@@ -77,5 +74,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed quick task 283: Fix GSD collisions
+Stopped at: Roadmap created for v0.35, ready to plan Phase v0.35-01
 Resume file: None
