@@ -2838,5 +2838,5 @@ if (hasGlobal && hasLocal) {
 
 // Export for testing (only when required as a library, not when run directly)
 if (require.main !== module) {
-  module.exports = { validateHookPaths };
+  module.exports = { validateHookPaths, fileHash, generateManifest, saveLocalPatches, reportLocalPatches, PATCHES_DIR_NAME, MANIFEST_NAME };
 }
