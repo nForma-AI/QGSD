@@ -68,7 +68,9 @@ Plans:
   1. Running `/nf:mcp-setup` re-run shows codex-1 classified as "subscription" (CLI agent), not "api" or "provider-backed"
   2. Slot classification reads `auth_type` field from providers.json for every slot, not inferring type from the slot name prefix
   3. All slot types in providers.json (subscription CLI, API-backed, provider-hosted) display their correct category in the setup wizard menu
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.35-02-01-PLAN.md -- Add auth_type to providers.json and wire through mcp-setup workflow
 
 #### Phase v0.35-03: Cross-platform provider paths
 **Goal**: Provider CLI binary paths resolve correctly on macOS, Linux, and WSL without manual user configuration
@@ -99,11 +101,11 @@ Phases execute in sequence: v0.35-01 -> v0.35-02 -> v0.35-03 -> v0.35-04
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.35-01. Install hooks/dist rebuild | 1/1 | Complete   | 2026-03-12 |
-| v0.35-02. MCP Setup slot classification | 0/? | Not started | - |
+| v0.35-02. MCP Setup slot classification | 0/1 | Planned | - |
 | v0.35-03. Cross-platform provider paths | 0/? | Not started | - |
 | v0.35-04. TUI CLI Agent MCP entry | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-12 after v0.35-01 planning*
+*Last updated: 2026-03-12 after v0.35-02 planning*
