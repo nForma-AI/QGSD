@@ -5,16 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.34 milestone SHIPPED — planning next milestone
-**Last activity:** 2026-03-12 — Completed quick task 283: Fix GSD collisions
+**Current focus:** v0.35 — Install & Setup Bug Fixes
+**Last activity:** 2026-03-12 — Milestone v0.35 started
 
 ## Current Position
 
-Milestone: v0.34 — Semantic Gate Validation & Auto-Promotion (SHIPPED 2026-03-11)
-Status: Milestone complete, archived. Ready for next milestone.
-Last activity: 2026-03-11 — v0.34 milestone completed and archived
-
-Progress: [██████████] 100% (milestone shipped)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-12 — Milestone v0.35 started
 
 ## Performance Metrics
 

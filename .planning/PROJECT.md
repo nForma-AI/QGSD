@@ -10,6 +10,16 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: v0.35 — Install & Setup Bug Fixes
+
+**Goal:** Fix 4 GitHub-reported bugs in installer, MCP setup, provider paths, and TUI agent creation that affect first-run and cross-platform users.
+
+**Target features:**
+- Fix hooks/dist rebuild requirement on source checkout installs (#7)
+- Fix mcp-setup re-run flow treating codex-1 as API slot instead of sub CLI agent (#6)
+- Replace hardcoded Homebrew binary paths in provider definitions with cross-platform resolution (#5)
+- Fix TUI "Add Agent → CLI Agent" writing non-working MCP entries for native CLI slots (#4)
+
 ## Shipped: v0.34 — Semantic Gate Validation & Auto-Promotion (2026-03-11)
 
 **Goal:** Evolve gate scoring from structural wiring checks to semantic correctness validation using graph-based proximity discovery and LLM-judged candidate pairing, then wire auto-promotion into the solve cycle.
