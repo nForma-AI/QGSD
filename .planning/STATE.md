@@ -47,6 +47,7 @@ Decisions logged in PROJECT.md Key Decisions table.
 - [v0.34-01-01]: gate_a/gate_b/gate_c object keys left unchanged — only score field names renamed
 - [v0.34-01-02]: Generic "Recent Gate Changes" label in solve-tui.cjs left unchanged — it's generic, not Gate A/B/C specific
 - [v0.34-01-02]: Pre-existing exit code test failure in cross-layer-dashboard.test.cjs is system-state-dependent (gate score targets), not related to label renaming
+- [Phase quick-278]: Orphan models/requirements separated from candidates[] into dedicated orphans object; structural exclusion from Haiku eval
 
 ### Pending Todos
 
