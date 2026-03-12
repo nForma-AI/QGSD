@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
 **Current focus:** v0.34 milestone SHIPPED — planning next milestone
-**Last activity:** 2026-03-12 — Completed quick task 282: Add service lifecycle and deep inference probe
+**Last activity:** 2026-03-12 — Completed quick task 283: Fix GSD collisions
 
 ## Current Position
 
@@ -73,9 +73,10 @@ None.
 | 280 | Deduplicate quorum slots sharing the same model for LLM diversity | 2026-03-12 | cef38375 | Verified | [280-deduplicate-quorum-slots-sharing-the-sam](./quick/280-deduplicate-quorum-slots-sharing-the-sam/) |
 | 281 | Add two-layer parallel health probe to quorum-preflight.cjs | 2026-03-12 | c9427b7e | Verified | [281-add-two-layer-parallel-health-probe-to-q](./quick/281-add-two-layer-parallel-health-probe-to-q/) |
 | 282 | Add service lifecycle and deep inference probe | 2026-03-12 | 9851c5dd | Pending | [282-add-service-lifecycle-and-deep-inference](./quick/282-add-service-lifecycle-and-deep-inference/) |
+| 283 | Fix GSD collisions: rename gsd-local-patches and gsd-context-monitor | 2026-03-12 | 7f03a5af | Pending | [283-fix-gsd-collisions-rename-gsd-local-patc](./quick/283-fix-gsd-collisions-rename-gsd-local-patc/) |
 
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed quick task 282: Add service lifecycle and deep inference probe
+Stopped at: Completed quick task 283: Fix GSD collisions
 Resume file: None
