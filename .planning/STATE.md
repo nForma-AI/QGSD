@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
 **Current focus:** v0.34 milestone SHIPPED — planning next milestone
-**Last activity:** 2026-03-12 — Completed quick task 279: Wire dual-subscription slots (codex-2, gemini-2) to MCP
+**Last activity:** 2026-03-12 — Completed quick task 280: Deduplicate quorum slots sharing the same model for LLM diversity
 
 ## Current Position
 
@@ -70,9 +70,10 @@ None.
 | 277 | Option C: Multi-layer false positive reduction for proximity pipeline | 2026-03-12 | f42636a3 | Verified | [277-option-c-multi-layer-false-positive-redu](./quick/277-option-c-multi-layer-false-positive-redu/) |
 | 278 | Formalize orphan separation in proximity pipeline | 2026-03-12 | 757d4093 | Verified | [278-formalize-orphan-separation-in-proximity](./quick/278-formalize-orphan-separation-in-proximity/) |
 | 279 | Wire dual-subscription slots (codex-2, gemini-2) to MCP | 2026-03-12 | aa3b3a3b | Verified | [279-wire-dual-subscription-slots-add-codex-2](./quick/279-wire-dual-subscription-slots-add-codex-2/) |
+| 280 | Deduplicate quorum slots sharing the same model for LLM diversity | 2026-03-12 | TBD | Verified | [280-deduplicate-quorum-slots-sharing-the-sam](./quick/280-deduplicate-quorum-slots-sharing-the-sam/) |
 
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed quick task 278: Formalize orphan separation in proximity pipeline
+Stopped at: Completed quick task 280: Deduplicate quorum slots sharing the same model for LLM diversity
 Resume file: None

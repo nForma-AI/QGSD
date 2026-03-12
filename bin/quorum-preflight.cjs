@@ -59,7 +59,7 @@ function buildTeam(providers, active) {
   const team = {};
   for (const p of providers) {
     if (active.length > 0 && !active.includes(p.name)) continue;
-    team[p.name] = { model: p.model };
+    team[p.name] = { model: p.model, display_provider: p.display_provider || p.provider };
   }
   return team;
 }
