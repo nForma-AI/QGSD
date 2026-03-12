@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-12T07:53:06.639Z",
-  "content_hash": "7c800de7d825293e",
+  "aggregated_at": "2026-03-12T07:53:35.231Z",
+  "content_hash": "32ce2c154b8a2792",
   "schema_version": "1",
   "requirements": [
     {
@@ -1039,6 +1039,18 @@
       "provenance": {
         "source_file": ".planning/quick/277-option-c-multi-layer-false-positive-redu/277-PLAN.md",
         "milestone": "quick-277"
+      }
+    },
+    {
+      "id": "DIAG-09",
+      "text": "Non-neighbor pair discovery surfaces zero-path (model, requirement) pairs ranked by coverage-gap heuristic, identifying under-covered blind spots via top-N selection with configurable limit.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The proximity pipeline previously discovered only graph-reachable pairs via BFS. Coverage-gap ranking exposes candidates ranked by how under-covered each model and requirement are, surfacing diagnostically relevant blind spots.",
+      "provenance": {
+        "source_file": ".planning/quick/276-add-top-n-non-neighboring-pair-discovery/276-PLAN.md",
+        "milestone": "quick-276"
       }
     },
     {
@@ -4675,5 +4687,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-12T07:53:06.639Z"
+  "frozen_at": "2026-03-12T07:53:35.231Z"
 }
