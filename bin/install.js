@@ -31,7 +31,7 @@ try {
     'nf-session-start': 50,
     'nf-session-end': 50,
     'nf-check-update': 10,
-    'gsd-context-monitor': 50,
+    'nf-context-monitor': 50,
     'nf-spec-regen': 10,
     'nf-post-edit-format': 10,
     'nf-console-guard': 10,
@@ -1351,7 +1351,7 @@ function uninstall(isGlobal, runtime = 'claude') {
     if (settings.hooks && settings.hooks.PostToolUse) {
       const before = settings.hooks.PostToolUse.length;
       settings.hooks.PostToolUse = settings.hooks.PostToolUse.filter(entry =>
-        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-context-monitor')))
+        !(entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-context-monitor')))
       );
       if (settings.hooks.PostToolUse.length < before) {
         settingsModified = true;
@@ -1726,7 +1726,7 @@ function validateHookPaths(hooksDest, targetDir) {
 // Local Patch Persistence
 // ──────────────────────────────────────────────────────
 
-const PATCHES_DIR_NAME = 'gsd-local-patches';
+const PATCHES_DIR_NAME = 'nf-local-patches';
 const MANIFEST_NAME = 'nf-file-manifest.json';
 
 /**
@@ -1790,7 +1790,7 @@ function writeManifest(configDir) {
 
 /**
  * Detect user-modified GSD files by comparing against install manifest.
- * Backs up modified files to gsd-local-patches/ for reapply after update.
+ * Backs up modified files to nf-local-patches/ for reapply after update.
  */
 function saveLocalPatches(configDir) {
   const manifestPath = path.join(configDir, MANIFEST_NAME);
@@ -2141,7 +2141,7 @@ function install(isGlobal, runtime = 'claude') {
       UserPromptSubmit: 'qgsd-prompt',
       Stop: 'qgsd-stop',
       PreToolUse: 'qgsd-circuit-breaker',
-      PostToolUse: ['qgsd-spec-regen', 'qgsd-context-monitor'],
+      PostToolUse: ['qgsd-spec-regen', 'qgsd-context-monitor', 'gsd-context-monitor'],
       SessionStart: ['qgsd-check-update', 'qgsd-session-start'],
     };
     for (const [event, oldNames] of Object.entries(OLD_HOOK_MAP)) {
@@ -2233,11 +2233,11 @@ function install(isGlobal, runtime = 'claude') {
     // Register nForma context monitor hook (PostToolUse — context window warnings)
     if (!settings.hooks.PostToolUse) settings.hooks.PostToolUse = [];
     const hasContextMonitorHook = settings.hooks.PostToolUse.some(entry =>
-      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('gsd-context-monitor'))
+      entry.hooks && entry.hooks.some(h => h.command && h.command.includes('nf-context-monitor'))
     );
     if (!hasContextMonitorHook) {
       settings.hooks.PostToolUse.push({
-        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'gsd-context-monitor.js') }]
+        hooks: [{ type: 'command', command: buildHookCommand(targetDir, 'nf-context-monitor.js') }]
       });
       console.log(`  ${green}✓${reset} Configured nForma context monitor hook (PostToolUse)`);
     }
