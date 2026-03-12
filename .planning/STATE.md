@@ -6,7 +6,7 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
 **Current focus:** v0.34 milestone SHIPPED — planning next milestone
-**Last activity:** 2026-03-12 — Completed quick task 281: Add two-layer parallel health probe to quorum-preflight.cjs
+**Last activity:** 2026-03-12 — Completed quick task 282: Add service lifecycle and deep inference probe
 
 ## Current Position
 
@@ -72,9 +72,10 @@ None.
 | 279 | Wire dual-subscription slots (codex-2, gemini-2) to MCP | 2026-03-12 | aa3b3a3b | Verified | [279-wire-dual-subscription-slots-add-codex-2](./quick/279-wire-dual-subscription-slots-add-codex-2/) |
 | 280 | Deduplicate quorum slots sharing the same model for LLM diversity | 2026-03-12 | cef38375 | Verified | [280-deduplicate-quorum-slots-sharing-the-sam](./quick/280-deduplicate-quorum-slots-sharing-the-sam/) |
 | 281 | Add two-layer parallel health probe to quorum-preflight.cjs | 2026-03-12 | c9427b7e | Verified | [281-add-two-layer-parallel-health-probe-to-q](./quick/281-add-two-layer-parallel-health-probe-to-q/) |
+| 282 | Add service lifecycle and deep inference probe | 2026-03-12 | 9851c5dd | Pending | [282-add-service-lifecycle-and-deep-inference](./quick/282-add-service-lifecycle-and-deep-inference/) |
 
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed quick task 281: Add two-layer parallel health probe to quorum-preflight.cjs
+Stopped at: Completed quick task 282: Add service lifecycle and deep inference probe
 Resume file: None

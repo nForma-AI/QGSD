@@ -132,7 +132,7 @@ Add this inside both the `subprocess` and `ccr` type blocks (after health_check)
 
 **2. Implement `runDeepHealthCheck(provider)` function:**
 
-Add a new async function after `runSubprocessHealthCheck()` (~line 539):
+Add a new async function after `runSubprocessHealthCheck()` (~line 539). NOTE: `runSubprocessWithArgs(provider, args, timeoutMs)` already exists at line 274 of unified-mcp-server.mjs — use it directly, do NOT create a new helper.
 
 ```javascript
 async function runDeepHealthCheck(provider) {
@@ -150,13 +150,22 @@ async function runDeepHealthCheck(provider) {
     return JSON.stringify({ healthy: false, latencyMs: 0, layer: 'BINARY_MISSING', error: `CLI not found: ${provider.cli}` });
   }
 
-  // Step 2: If service config exists, check service status
+  // Step 2: If service config exists, check service status (with 3s timeout to prevent hangs)
   if (provider.service?.status) {
-    const statusOutput = await runSubprocessWithArgs(
-      { cli: provider.service.status[0], env: provider.env ?? {} },
-      provider.service.status.slice(1),
-      5000
-    );
+    let statusOutput;
+    try {
+      statusOutput = await Promise.race([
+        runSubprocessWithArgs(
+          { cli: provider.service.status[0], env: provider.env ?? {} },
+          provider.service.status.slice(1),
+          5000
+        ),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('status check hung')), 3000))
+      ]);
+    } catch (_) {
+      // Status command itself hung — treat as SERVICE_DOWN
+      return JSON.stringify({ healthy: false, latencyMs: 0, layer: 'SERVICE_DOWN', error: 'Service status command timed out (3s)' });
+    }
     // If status command indicates service is not running, report SERVICE_DOWN
     const down = statusOutput.toLowerCase().includes('not running') ||
                  statusOutput.toLowerCase().includes('stopped') ||
@@ -181,20 +190,36 @@ async function runDeepHealthCheck(provider) {
   }
 
   const lower = output.toLowerCase();
-  if (lower.includes('401') || lower.includes('unauthorized') || lower.includes('auth') && lower.includes('expired')) {
+  if (lower.includes('401') || lower.includes('unauthorized') || (lower.includes('auth') && lower.includes('expired'))) {
     return JSON.stringify({ healthy: false, latencyMs, layer: 'AUTH_EXPIRED', error: output.slice(0, 300) });
   }
   if (lower.includes('429') || lower.includes('rate limit') || lower.includes('quota')) {
     return JSON.stringify({ healthy: false, latencyMs, layer: 'QUOTA_EXCEEDED', error: output.slice(0, 300) });
   }
 
+  // Check for expected probe response
   if (output.includes(probe.expect)) {
     return JSON.stringify({ healthy: true, latencyMs, layer: 'INFERENCE_OK', error: null });
   }
 
-  // Got a response but it doesn't contain the expected string — still inference worked
-  // This is common when models add extra text around PROBE_OK
-  // Be lenient: if we got substantial output without error indicators, call it OK
+  // Fallback: got output but no expected string — re-check ALL error keywords before declaring OK
+  // This catches cases where models add extra text but the response still contains error signals
+  const ERROR_KEYWORDS = ['401', '429', 'unauthorized', 'quota', 'rate limit', 'auth', 'expired', 'forbidden', '403'];
+  const hasErrorSignal = ERROR_KEYWORDS.some(kw => lower.includes(kw));
+  if (hasErrorSignal) {
+    // Determine which error layer based on the keyword found
+    if (lower.includes('401') || lower.includes('unauthorized') || lower.includes('forbidden') || lower.includes('403')) {
+      return JSON.stringify({ healthy: false, latencyMs, layer: 'AUTH_EXPIRED', error: output.slice(0, 300) });
+    }
+    if (lower.includes('429') || lower.includes('rate limit') || lower.includes('quota')) {
+      return JSON.stringify({ healthy: false, latencyMs, layer: 'QUOTA_EXCEEDED', error: output.slice(0, 300) });
+    }
+    if (lower.includes('auth') && lower.includes('expired')) {
+      return JSON.stringify({ healthy: false, latencyMs, layer: 'AUTH_EXPIRED', error: output.slice(0, 300) });
+    }
+  }
+
+  // No error keywords AND we got substantial output — inference worked, model just didn't echo PROBE_OK exactly
   if (output.length > 5 && !output.startsWith('[')) {
     return JSON.stringify({ healthy: true, latencyMs, layer: 'INFERENCE_OK', error: null });
   }
@@ -227,8 +252,11 @@ Then verify the tool is registered by searching for `deep_health_check` in the f
 
 Verify existing health_check is untouched:
 `grep -c 'runSubprocessHealthCheck' bin/unified-mcp-server.mjs` — expect same count as before (2: definition + call).
+
+Verify `runSubprocessWithArgs` is used (not a new helper):
+`grep -c 'runSubprocessWithArgs' bin/unified-mcp-server.mjs` — expect count increased by 2 (service status call + probe call) from the pre-existing count of ~4.
   </verify>
-  <done>deep_health_check MCP tool registered in slot mode for all provider types (subprocess, ccr, http). Function runDeepHealthCheck implements 3-step probe: binary check, service status check, inference probe with classification into BINARY_MISSING/SERVICE_DOWN/AUTH_EXPIRED/QUOTA_EXCEEDED/INFERENCE_TIMEOUT/INFERENCE_OK layers. Existing health_check tool unchanged.</done>
+  <done>deep_health_check MCP tool registered in slot mode for all provider types (subprocess, ccr, http). Function runDeepHealthCheck uses existing runSubprocessWithArgs helper (line 274). Implements 3-step probe: binary check, service status check (with 3s timeout to prevent hangs), inference probe with classification into BINARY_MISSING/SERVICE_DOWN/AUTH_EXPIRED/QUOTA_EXCEEDED/INFERENCE_TIMEOUT/INFERENCE_OK layers. Fallback path re-checks all error keywords before declaring INFERENCE_OK. Existing health_check tool unchanged.</done>
 </task>
 
 <task type="auto">
@@ -284,24 +312,50 @@ console.log(JSON.stringify(result));
 If any service reports not-running/stopped, classify as SERVICE_DOWN and attempt auto-start:
 
 ```bash
-# For each SERVICE_DOWN slot, run the start command
+# For each SERVICE_DOWN slot, run the start command then poll status
 node -e '
 var cp = require("child_process");
 var cmd = <service.start array>;
+console.log("Restarting <slot>...");
 try {
   cp.execFileSync(cmd[0], cmd.slice(1), {encoding:"utf8", timeout: 10000});
-  console.log("started");
 } catch(e) {
-  console.log("start failed: " + e.message);
+  console.log("Restarting <slot>... FAILED: " + e.message);
+  process.exit(1);
 }
+// Poll status every 1s, up to 10s total
+var ok = false;
+for (var i = 0; i < 10; i++) {
+  cp.execFileSync("sleep", ["1"]);
+  try {
+    var status = cp.execFileSync(<service.status>[0], <service.status>.slice(1), {encoding:"utf8", timeout: 3000});
+    if (!status.toLowerCase().includes("not running") && !status.toLowerCase().includes("stopped")) {
+      ok = true;
+      break;
+    }
+  } catch(e) { /* continue polling */ }
+}
+console.log("Restarting <slot>... " + (ok ? "OK" : "FAILED"));
 '
 ```
 
-Wait 3 seconds after start, then re-check status.
+**Step 2c — Deep probe:** For all slots that passed shallow check (or were just auto-started), invoke `deep_health_check` via the Task() sub-agent pattern. Update the Task() sub-agent JSON in Step 1 to also call `deep_health_check` for each slot. Specifically:
 
-**Step 2c — Deep probe:** For all slots that passed shallow check (or were just auto-started), invoke `deep_health_check` via the Task() sub-agent pattern. Add `mcp__<slot>__deep_health_check` calls to the sub-agent prompt, collecting results as `$DEEP_STATE`.
+In the existing sub-agent prompt (Step 1), add items 21-30 to the numbered call list:
+```
+21. Call mcp__codex-1__deep_health_check({})   — store as codex_1_deep
+22. Call mcp__gemini-1__deep_health_check({})   — store as gemini_1_deep
+...
+30. Call mcp__claude-6__deep_health_check({})   — store as claude_6_deep
+```
 
-Update the Task() sub-agent prompt in Step 1 to also call deep_health_check for each slot (items 21-30 in the call list), storing results as `<slot>_deep`. Update the return JSON structure to include `"deep": <slot_deep or null>` alongside identity and hc.
+Update the sub-agent's return JSON structure — for each slot object, add a `"deep"` field:
+```json
+{
+  "codex-1": { "identity": <codex_1_id or null>, "hc": <codex_1_hc or null>, "deep": <codex_1_deep or null> },
+  ...
+}
+```
 
 **Step 2d — Final classification:** Use the combined results:
 
@@ -316,8 +370,10 @@ Update the Task() sub-agent prompt in Step 1 to also call deep_health_check for 
 
 **3. Update Step 4 (Auto-repair):** Add service auto-start logic alongside the existing pkill restart. If a slot is classified as `service-down` and has `service.start` in providers.json:
 
+- Print "Restarting <slot>..." to the user
 - Run `service.start` command
-- Wait 3 seconds
+- Poll status every 1s, up to 10s total (do NOT use a hardcoded sleep)
+- Print "Restarting <slot>... OK" or "Restarting <slot>... FAILED" based on poll result
 - Re-run deep_health_check to verify
 
 Keep the existing pkill restart for `mcp-down` slots that don't have service config.
@@ -332,8 +388,10 @@ Verify the updated mcp-repair.md:
 - `grep -c 'service' commands/nf/mcp-repair.md` — expect at least 3 occurrences for service lifecycle references
 - `grep 'allowed-tools' -A 40 commands/nf/mcp-repair.md | grep -c 'deep_health_check'` — expect 10 (one per slot)
 - Verify the 4-step flow is documented: `grep -c 'Step 2[abcd]' commands/nf/mcp-repair.md` — expect 4
+- Verify polling pattern present (not hardcoded sleep): `grep -c 'poll' commands/nf/mcp-repair.md` — expect at least 1
+- Verify auto-start logging present: `grep -c 'Restarting' commands/nf/mcp-repair.md` — expect at least 2
   </verify>
-  <done>MCP repair skill updated with 4-step diagnostic: (1) shallow health_check, (2) service status check with auto-start for SERVICE_DOWN, (3) deep inference probe via deep_health_check tool, (4) combined classification. Frontmatter includes all deep_health_check tool permissions. Diagnosis table includes Layer column. Auto-start logic uses service.start from providers.json for ccr-based slots.</done>
+  <done>MCP repair skill updated with 4-step diagnostic: (1) shallow health_check, (2) service status check with polling-based auto-start for SERVICE_DOWN (prints "Restarting <slot>... OK/FAILED"), (3) deep inference probe via deep_health_check tool with results in sub-agent JSON under "deep" field, (4) combined classification. Frontmatter includes all deep_health_check tool permissions. Diagnosis table includes Layer column. Auto-start uses polling loop (1s interval, 10s max) instead of hardcoded sleep. Sub-agent return JSON updated to include deep field per slot.</done>
 </task>
 
 </tasks>
@@ -345,14 +403,19 @@ Verify the updated mcp-repair.md:
 4. `grep -c 'deep_health_check' bin/unified-mcp-server.mjs` — at least 5
 5. `grep -c 'deep_health_check' commands/nf/mcp-repair.md` — at least 5
 6. `grep -c 'runSubprocessHealthCheck' bin/unified-mcp-server.mjs` — unchanged (2)
-7. Node can load the server without syntax errors
+7. `grep -c 'runSubprocessWithArgs' bin/unified-mcp-server.mjs` — increased from baseline (confirms reuse, not new helper)
+8. Node can load the server without syntax errors
 </verification>
 
 <success_criteria>
 - providers.json has deep_probe on all 12 slots, service on claude-1..6 only
 - unified-mcp-server.mjs exposes deep_health_check tool in slot mode returning { healthy, latencyMs, layer, error }
 - deep_health_check classifies into exactly 6 layers: BINARY_MISSING, SERVICE_DOWN, AUTH_EXPIRED, QUOTA_EXCEEDED, INFERENCE_TIMEOUT, INFERENCE_OK
-- mcp-repair.md uses 4-step diagnostic with service auto-start
+- Service status check wrapped with 3s timeout to prevent hangs (classifies as SERVICE_DOWN if hung)
+- Fallback classification re-checks all error keywords before declaring INFERENCE_OK
+- mcp-repair.md uses 4-step diagnostic with polling-based service auto-start (1s interval, 10s max)
+- Auto-start prints "Restarting <slot>... OK/FAILED" for user visibility
+- Sub-agent return JSON includes "deep" field per slot
 - Existing health_check tool completely unchanged
 - No mcp-calls invariant violations (deep_health_check is observational, outside quorum decision path)
 </success_criteria>
