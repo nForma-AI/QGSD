@@ -10,8 +10,8 @@
 - [x] **INST-02**: Install detects missing hooks/dist files and either rebuilds or warns with clear instructions
 
 ### MCP Setup
-- [ ] **SETUP-01**: `/nf:mcp-setup` re-run correctly identifies codex-1 (and other native CLI slots) as subscription agents, not API/provider-backed slots
-- [ ] **SETUP-02**: Slot type classification uses `auth_type` from providers.json rather than inferring from slot name prefix
+- [x] **SETUP-01**: `/nf:mcp-setup` re-run correctly identifies codex-1 (and other native CLI slots) as subscription agents, not API/provider-backed slots
+- [x] **SETUP-02**: Slot type classification uses `auth_type` from providers.json rather than inferring from slot name prefix
 
 ### Cross-Platform
 - [ ] **XPLAT-01**: Provider definitions use runtime CLI path resolution (`resolve-cli.cjs` or `which`) instead of hardcoded `/opt/homebrew/bin/` paths
@@ -34,8 +34,8 @@
 |-------------|-------|--------|
 | INST-01 | v0.35-01 | Complete |
 | INST-02 | v0.35-01 | Complete |
-| SETUP-01 | v0.35-02 | Pending |
-| SETUP-02 | v0.35-02 | Pending |
+| SETUP-01 | v0.35-02 | Complete |
+| SETUP-02 | v0.35-02 | Complete |
 | XPLAT-01 | v0.35-03 | Pending |
 | XPLAT-02 | v0.35-03 | Pending |
 | TUI-01 | v0.35-04 | Pending |

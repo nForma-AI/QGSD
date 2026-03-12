@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.35 — Install & Setup Bug Fixes, Phase v0.35-01
+**Current focus:** v0.35 — Install & Setup Bug Fixes, Phase v0.35-03
 
 ## Current Position
 
-Phase: v0.35-01 of 4 (Install hooks/dist rebuild)
+Phase: v0.35-02 of 4 (MCP setup slot classification)
 Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase v0.35-01 complete, ready for v0.35-02
-Last activity: 2026-03-12 — Completed v0.35-01-01-PLAN.md
+Status: Phase v0.35-02 complete, ready for v0.35-03
+Last activity: 2026-03-12 — Completed v0.35-02-01-PLAN.md
 
-Progress: [██░░░░░░░░] 25%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -35,6 +35,7 @@ Progress: [██░░░░░░░░] 25%
 
 *Updated after each plan completion*
 | Phase v0.35-01 P01 | 2min | 2 tasks | 2 files |
+| Phase v0.35-02 P01 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -46,6 +47,7 @@ Recent decisions affecting current work:
 - [v0.35 scope]: 4 GitHub issues (#4-#7) mapped to 4 phases; Windows support (#3) explicitly out of scope
 - [v0.35 roadmap]: Phase v0.35-04 depends on v0.35-03 (TUI entries use resolved CLI paths)
 - [Phase v0.35-01]: Auto-rebuild hooks/dist via execFileSync to scripts/build-hooks.js (zero code duplication)
+- [Phase v0.35-02]: auth_type uses "sub"/"api" values; re-run flow syncs ALL configured agents for existing installs
 
 ### Pending Todos
 
@@ -76,5 +78,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed v0.35-01-01-PLAN.md
+Stopped at: Completed v0.35-02-01-PLAN.md
 Resume file: None
