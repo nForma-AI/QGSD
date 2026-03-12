@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-11T20:50:07.816Z",
-  "content_hash": "4d251ce619114b75632b21283e1d48682e14200e912fdb3eabeb426314fe8679",
+  "aggregated_at": "2026-03-12T07:53:06.639Z",
+  "content_hash": "7c800de7d825293e",
   "schema_version": "1",
   "requirements": [
     {
@@ -1030,6 +1030,18 @@
       }
     },
     {
+      "id": "DIAG-08",
+      "text": "Proximity pipeline pre-filters false positive candidates using category-domain gating, coverage checks, keyword overlap, and type-aware scoring penalties before Haiku evaluation.",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The proximity graph produces high false positive rates because weak paths accumulate into inflated scores. This reduces FPs at multiple layers before expensive Haiku evaluation.",
+      "provenance": {
+        "source_file": ".planning/quick/277-option-c-multi-layer-false-positive-redu/277-PLAN.md",
+        "milestone": "quick-277"
+      }
+    },
+    {
       "id": "DISP-01",
       "text": "qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from DISPATCH_LIST",
       "category": "Quorum & Dispatch",
@@ -1103,6 +1115,18 @@
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
       ],
       "category_raw": "Dispatch Reliability"
+    },
+    {
+      "id": "DISPATCH-01",
+      "text": "Quorum prompts MUST be delivered to slot CLIs without shell interpretation, character escaping, or content modification. The dispatched prompt must be byte-identical to the composed prompt.",
+      "category": "Quorum & Dispatch",
+      "phase": "v0.34-quick",
+      "status": "Complete",
+      "background": "Fix for SHELL-ESCAPE-01 bug where ccr slots using shell:true internally caused backticks and $ in prompts to be interpreted by /bin/sh. Fixed by piping prompts via stdin for ccr-based slots.",
+      "provenance": {
+        "source_file": "bin/call-quorum-slot.cjs",
+        "milestone": "v0.34"
+      }
     },
     {
       "id": "DRIFT-01",
@@ -4651,5 +4675,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-11T20:50:07.817Z"
+  "frozen_at": "2026-03-12T07:53:06.639Z"
 }
