@@ -47,7 +47,7 @@ const HOOK_PROFILE_MAP = {
     'nf-precompact',
     'nf-prompt',
     'nf-stop',
-    'gsd-context-monitor',
+    'nf-context-monitor',
     'nf-spec-regen',
     'nf-token-collector',
     'nf-slot-correlator',
@@ -65,7 +65,7 @@ const HOOK_PROFILE_MAP = {
     'nf-precompact',
     'nf-prompt',
     'nf-stop',
-    'gsd-context-monitor',
+    'nf-context-monitor',
     'nf-spec-regen',
     'nf-token-collector',
     'nf-slot-correlator',
@@ -92,7 +92,7 @@ const DEFAULT_HOOK_PRIORITIES = {
   'nf-session-start':     50,  // Normal — secret sync
   'nf-session-end':       50,  // Normal — session cleanup
   'nf-check-update':      10,  // Low — update check
-  'gsd-context-monitor':  50,  // Normal — context warnings
+  'nf-context-monitor':  50,  // Normal — context warnings
   'nf-spec-regen':        10,  // Low — spec regeneration
   'nf-post-edit-format':  10,  // Low — formatting
   'nf-console-guard':     10,  // Low — console.log warning
