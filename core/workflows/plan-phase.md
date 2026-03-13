@@ -395,7 +395,7 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
   "{\"activity\":\"plan_phase\",\"sub_activity\":\"quorum\",\"phase\":${PHASE_NUMBER},\"quorum_round\":${improvement_iteration + 1}}"
 ```
 
-Form your own position on the current plan files first (CLAUDE.md R3.2): do they correctly address the phase goal, requirement IDs, and user decisions from CONTEXT.md? State your vote as APPROVE or BLOCK with 1-2 sentence rationale.
+Form your ADVISORY analysis on the current plan files first (per CE-1 from quorum.md — not a vote in the tally): do they correctly address the phase goal, requirement IDs, and user decisions from CONTEXT.md? State your analysis as 1-2 sentences to share with external voters.
 
 Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — pure question (reviewers read artifact directly)

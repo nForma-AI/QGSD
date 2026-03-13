@@ -26,7 +26,7 @@ Extract from `$ARGUMENTS`:
 - `--rebuild` → force graph rebuild (delete existing proximity-index.json)
 - `--min-score <N>` → minimum proximity score threshold (default: 0.6)
 - `--max-hops <N>` → maximum graph hops for candidate discovery (default: 3)
-- `--top <N>` → return only top N candidates by proximity score (default: 10, enforced by this skill — the underlying script defaults to no limit)
+- `--top <N>` → return only top N candidates by proximity score (default: 0 = no limit — let the ensemble + Haiku evaluation handle filtering)
 - `--non-neighbor-top <N>` → include top N non-neighboring pairs by coverage gap (default: 20)
 - `--skip-eval` → skip Haiku semantic evaluation step
 - `--resolve` → suggest /nf:resolve at end of pipeline
@@ -49,7 +49,7 @@ Progress line: `[1/6] Building proximity graph...`
 Run: `node bin/candidate-discovery.cjs --min-score <val> --max-hops <val> --top <val> --non-neighbor-top <val> --json`
 
 - Pass `--min-score` and `--max-hops` from parsed arguments
-- If `--top` not specified by user, pass `--top 10` as default
+- If `--top` not specified by user, pass `--top 0` (no limit — ensemble naturally caps at ~100 candidates)
 - Pass `--non-neighbor-top` from parsed arguments (default: 20)
 - Display candidate count: "Found N graph candidates. Orphans: X models, Y requirements" (read `orphan_models_count` and `orphan_requirements_count` from metadata, or count from `orphans.models` and `orphans.requirements` arrays)
 - Display score distribution histogram (5 buckets: <0.4, 0.4-0.6, 0.6-0.8, 0.8-0.95, >=0.95)
@@ -152,7 +152,7 @@ Progress line: `[6/6] Generating summary...`
 - Steps display progress indicators before each script invocation.
 - The `--skip-eval` flag is useful when Haiku quota is exhausted or you want to rebuild without re-evaluating.
 - The `--resolve` flag is a convenience — it suggests the exact /nf:resolve command to triage results.
-- The `--top` flag defaults to 10 (enforced by this skill, not the script). The script itself defaults to no limit. Pass `--top 0` to bypass the skill default and see all candidates.
+- The `--top` flag defaults to 0 (no limit). The ensemble naturally caps at ~100 secondary candidates. Haiku evaluation handles precision filtering.
 - The `--non-neighbor-top` flag controls how many orphan models and requirements are surfaced based on coverage-gap ranking (default: 20). Pass `--non-neighbor-top 0` to disable orphan discovery.
 - All pipeline scripts are expected to exist in bin/ and produce JSON output (when --json is passed).
 - Step 4 tries the haiku-semantic-eval.cjs script first (works with ANTHROPIC_API_KEY in the environment). If the script fails, it falls back to inline Haiku sub-agent evaluation via Task(model='haiku'). Both paths produce identical output in candidates.json (verdict, confidence, reasoning, evaluation_timestamp fields).

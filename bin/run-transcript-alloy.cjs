@@ -20,6 +20,7 @@ const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
+const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
@@ -93,13 +94,11 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-if (!fs.existsSync(jarPath)) {
+const jarPath = resolveAlloyJar(ROOT);
+if (!jarPath) {
   process.stderr.write(
-    '[run-transcript-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
-    '[run-transcript-alloy] Download Alloy 6.2.0:\n' +
-    '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '[run-transcript-alloy] org.alloytools.alloy.dist.jar not found.\n' +
+    '[run-transcript-alloy] Install: node bin/install-formal-tools.cjs\n'
   );
   try { writeCheckResult({ tool: 'run-transcript-alloy', formalism: 'alloy', result: 'error', check_id: 'alloy:transcript', surface: 'alloy', property: 'Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement', runtime_ms: 0, summary: 'error: alloy:transcript (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds('alloy:transcript'), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-transcript-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);

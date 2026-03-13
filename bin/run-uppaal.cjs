@@ -80,22 +80,12 @@ function readTimingBounds() {
  * Returns null if not found (caller handles graceful degradation).
  */
 function locateVerifyta() {
-  const envBin = process.env.VERIFYTA_BIN;
-  if (envBin) {
-    return fs.existsSync(envBin) ? envBin : null;
+  const { resolveVerifyta } = require('./resolve-formal-tools.cjs');
+  const resolved = resolveVerifyta(ROOT);
+  if (resolved) {
+    process.stderr.write(TAG + ' Using verifyta: ' + resolved + '\n');
   }
-  // Check local install from install-formal-tools.cjs
-  const localPath = path.join(ROOT, '.planning', 'formal', 'uppaal', 'bin', 'verifyta');
-  if (fs.existsSync(localPath)) {
-    process.stderr.write(TAG + ' Using local verifyta: ' + localPath + '\n');
-    return localPath;
-  }
-  // Try 'verifyta' on PATH via which
-  const which = spawnSync('which', ['verifyta'], { encoding: 'utf8' });
-  if (which.status === 0 && which.stdout.trim()) {
-    return which.stdout.trim();
-  }
-  return null;
+  return resolved;
 }
 
 function main() {

@@ -29,6 +29,7 @@ const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { detectLivenessProperties } = require('./run-tlc.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
+const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
 
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
@@ -110,13 +111,11 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate tla2tools.jar ──────────────────────────────────────────────────
-const jarPath = path.join(ROOT, '.planning', 'formal', 'tla', 'tla2tools.jar');
-if (!fs.existsSync(jarPath)) {
+const jarPath = resolveTlaJar(ROOT);
+if (!jarPath) {
   process.stderr.write(
-    '[run-account-manager-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
-    '[run-account-manager-tlc] Download v1.8.0:\n' +
-    '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-    '       -o .planning/formal/tla/tla2tools.jar\n'
+    '[run-account-manager-tlc] tla2tools.jar not found.\n' +
+    '[run-account-manager-tlc] Install: node bin/install-formal-tools.cjs\n'
   );
   const _startMs = Date.now();
   const _runtimeMs = 0;

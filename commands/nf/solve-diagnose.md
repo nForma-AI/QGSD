@@ -45,7 +45,7 @@ At the end of execution, emit a compact JSON result to stdout:
   "reason": null | "zero_residual" | "diagnostic_script_failed" | "...",
   "baseline_residual": { /* full residual_vector from nf-solve.cjs */ },
   "open_debt": [ /* array from readOpenDebt */ ],
-  "heatmap": { /* from git-heatmap.cjs */ },
+  "heatmap": { "top_files": [ /* top 20 from summary output */ ], "full_path": ".planning/formal/evidence/git-heatmap.json" },
   "issues": { /* from issue-classifier.cjs */ },
   "targets": null | { /* from observe-solve-pipe.cjs */ }
 }
@@ -209,10 +209,10 @@ Health status: GREEN (0), YELLOW (1-3), RED (4+), or UNKNOWN (error).
 Run git heatmap analysis to identify files with high recent churn:
 
 ```bash
-node bin/git-heatmap.cjs --json 2>/dev/null || true
+node bin/git-heatmap.cjs 2>/dev/null || true
 ```
 
-Produces a ranked list of files by commit frequency and recency-weighted churn. Files at the top of the heatmap are likely candidates for the current issue. Feed heatmap results into the diagnostic context for targeted investigation.
+This refreshes `git-heatmap.json` on disk (full data for machine consumers) and prints a human-readable summary (~3KB). Do NOT use `--json` here — the full JSON output is ~3MB and will overflow the agent context. Other scripts can read the on-disk file directly.
 
 ### Issue Classification (operational priority ranking)
 

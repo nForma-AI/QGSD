@@ -220,7 +220,7 @@ Run quorum validation on the 4 key mapper documents before finalizing.
 - Blind spots — what parallel agents may have missed by working in isolation
 - Concern triage — which items in CONCERNS.md should block new work vs be deferred
 
-Form your own position first: read the 4 documents and assess consistency, completeness, and blind spots. State your vote as APPROVE (no significant issues) or BLOCK (issues found) with 1-2 sentence rationale.
+Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): read the 4 documents and assess consistency, completeness, and blind spots. State your analysis as 1-2 sentences to share with external voters.
 
 Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode B — artifact review

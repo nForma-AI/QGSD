@@ -19,6 +19,7 @@ function run(...args) {
     encoding: 'utf8',
     cwd: path.join(__dirname, '..'),
     timeout: 30000,
+    maxBuffer: 10 * 1024 * 1024,
   });
 }
 
@@ -30,6 +31,7 @@ function getAnnotations() {
     encoding: 'utf8',
     cwd: path.join(__dirname, '..'),
     timeout: 30000,
+    maxBuffer: 10 * 1024 * 1024,
   });
   return JSON.parse(result.stdout);
 }
@@ -108,14 +110,14 @@ describe('metadata', () => {
 // ── Annotation-sourced Properties ───────────────────────────────────────────
 
 describe('annotation-sourced properties', () => {
-  test('QGSDStopHook TypeOK has source annotation and STOP-01', () => {
+  test('NFStopHook TypeOK has source annotation and STOP-01', () => {
     const matrix = getMatrix();
-    const key = '.planning/formal/tla/QGSDStopHook.tla::TypeOK';
+    const key = '.planning/formal/tla/NFStopHook.tla::TypeOK';
     const prop = matrix.properties[key];
     assert.ok(prop, key + ' should exist in properties');
     assert.strictEqual(prop.source, 'annotation');
     assert.deepStrictEqual(prop.requirement_ids, ['STOP-01']);
-    assert.strictEqual(prop.model_file, '.planning/formal/tla/QGSDStopHook.tla');
+    assert.strictEqual(prop.model_file, '.planning/formal/tla/NFStopHook.tla');
     assert.strictEqual(prop.property_name, 'TypeOK');
   });
 

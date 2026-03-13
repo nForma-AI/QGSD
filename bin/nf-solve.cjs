@@ -514,9 +514,8 @@ function preflight() {
 
   // Check formal tool installation (install-formal-tools.cjs)
   try {
-    const tlaJar = path.join(ROOT, '.planning', 'formal', 'tla', 'tla2tools.jar');
-    const alloyJar = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-    if (!fs.existsSync(tlaJar) || !fs.existsSync(alloyJar)) {
+    const { resolveTlaJar, resolveAlloyJar } = require('./resolve-formal-tools.cjs');
+    if (!resolveTlaJar(ROOT) || !resolveAlloyJar(ROOT)) {
       process.stderr.write(TAG + ' Formal tools missing — running install-formal-tools.cjs\n');
       spawnTool('bin/install-formal-tools.cjs', []);
     }

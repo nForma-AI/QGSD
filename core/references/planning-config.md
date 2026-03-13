@@ -11,7 +11,9 @@ Configuration options for `.planning/` directory behavior.
 "git": {
   "branching_strategy": "none",
   "phase_branch_template": "gsd/phase-{phase}-{slug}",
-  "milestone_branch_template": "gsd/{milestone}-{slug}"
+  "milestone_branch_template": "gsd/{milestone}-{slug}",
+  "additional_protected_branches": [],
+  "quick_branch_template": "nf/quick-{number}-{slug}"
 }
 ```
 
@@ -22,6 +24,8 @@ Configuration options for `.planning/` directory behavior.
 | `git.branching_strategy` | `"none"` | Git branching approach: `"none"`, `"phase"`, or `"milestone"` |
 | `git.phase_branch_template` | `"gsd/phase-{phase}-{slug}"` | Branch template for phase strategy |
 | `git.milestone_branch_template` | `"gsd/{milestone}-{slug}"` | Branch template for milestone strategy |
+| `git.additional_protected_branches` | `[]` | Extra branches to protect (supports `*` globs like `release/*`) |
+| `git.quick_branch_template` | `"nf/quick-{number}-{slug}"` | Branch name template for quick tasks |
 </config_schema>
 
 <commit_docs_behavior>
@@ -192,5 +196,74 @@ Squash merge is recommended — keeps main branch history clean while preserving
 | `milestone` | Release branches, staging environments, PR per version |
 
 </branching_strategy_behavior>
+
+<smart_branching_behavior>
+
+**Quick Task Smart Branching:**
+
+The quick workflow automatically detects whether the current branch is protected and acts accordingly:
+
+**Protected Branch Detection:**
+
+- Remote default branch is detected via `git symbolic-ref refs/remotes/origin/HEAD` (no network call — uses local tracking)
+- Fallback: if remote HEAD unknown, uses `['main', 'master']` as defaults
+- Custom protected branches added via `git.additional_protected_branches` config array
+- Patterns support glob matching with `*` (e.g., `release/*`, `hotfix/*`)
+
+**Branching Behavior:**
+
+| Scenario | Behavior |
+|----------|----------|
+| On protected branch, `--no-branch` not set | Auto-create feature branch using `git.quick_branch_template`, checkout to it |
+| On protected branch, `--no-branch` set | Skip branching, commit directly (user override) |
+| On feature branch (non-protected) | Commit directly, no branch creation needed |
+
+**Template Variables:**
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{number}` | Next quick task number (incremented from existing tasks) | `268` |
+| `{slug}` | Task description slug (lowercase, hyphenated, max 40 chars) | `test-branch-detection` |
+
+**Configuration Examples:**
+
+**Default (main/master only):**
+```json
+{
+  "git": {
+    "additional_protected_branches": [],
+    "quick_branch_template": "nf/quick-{number}-{slug}"
+  }
+}
+```
+
+**Custom protected branches:**
+```json
+{
+  "git": {
+    "additional_protected_branches": ["develop", "release/*"],
+    "quick_branch_template": "nf/quick-{number}-{slug}"
+  }
+}
+```
+
+**Custom branch naming:**
+```json
+{
+  "git": {
+    "additional_protected_branches": [],
+    "quick_branch_template": "feature/task-{number}-{slug}"
+  }
+}
+```
+
+**Escape hatch:** Use `--no-branch` flag to skip branch creation:
+```bash
+/nf:quick "Add feature" --no-branch
+```
+
+This allows quick tasks to commit directly to protected branches when necessary (e.g., hotfixes).
+
+</smart_branching_behavior>
 
 </planning_config>

@@ -113,7 +113,7 @@ Nice-to-have gaps deferred automatically (auto mode). Include manually if desire
 
 Before updating ROADMAP.md, submit the proposed phases to R3 quorum for approval.
 
-Form your own position first: are the proposed phases correctly scoped to close all identified gaps? State your vote as APPROVE or BLOCK with 1-2 sentence rationale.
+Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): are the proposed phases correctly scoped to close all identified gaps? State your analysis as 1-2 sentences to share with external voters.
 
 Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — pure question

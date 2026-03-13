@@ -97,12 +97,8 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-// Check project-local first, then fall back to ~/.claude/.planning/formal/alloy/
-const jarCandidates = [
-  path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
-  path.join(process.env.HOME || '', '.claude', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
-];
-const jarPath = jarCandidates.find(p => fs.existsSync(p));
+const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
+const jarPath = resolveAlloyJar(ROOT);
 if (!jarPath) {
   process.stderr.write(
     '[run-alloy] org.alloytools.alloy.dist.jar not found.\n' +

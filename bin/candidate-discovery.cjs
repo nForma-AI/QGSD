@@ -209,7 +209,8 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
   // Ensemble union pass: run secondary methods on all model-requirement pairs,
   // add their top candidates that the primary method missed.
   // Each secondary method finds different true positives (validated by Haiku benchmark).
-  // Candidates go through the same pre-filters as primary to control noise.
+  // Domain gating and already-covered filters apply; keyword filter is skipped
+  // because ensemble candidates are valued precisely for non-obvious textual matches.
   if (methods.length > 1) {
     const existingPairs = new Set(candidates.map(c => `${c.model}|${c.requirement}`));
     const secondaryCandidates = [];
@@ -237,9 +238,11 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
             score = proximity(proximityIndex, modelKey, reqKey, maxHops, { method, reqsData: requirements, reqText });
           } catch { continue; }
 
-          if (score == null || isNaN(score) || score <= threshold) continue;
+          // Ensemble uses a higher floor (0.6) since secondary methods produce
+          // large candidate sets; the primary threshold may be much lower.
+          const ensembleFloor = Math.max(threshold, 0.6);
+          if (score == null || isNaN(score) || score <= ensembleFloor) continue;
 
-          // Apply same pre-filters as primary method
           let dominated = false;
 
           // Domain gating
@@ -252,8 +255,9 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
           // Already-covered check
           if (!dominated && reqAlreadyCovered.get(reqId) && score <= 0.95) dominated = true;
 
-          // Keyword pre-screen
-          if (!dominated && !keywordOverlap(modelPath, reqText)) dominated = true;
+          // Keyword pre-screen SKIPPED for ensemble candidates:
+          // The ensemble exists to find non-obvious pairs that lack textual similarity
+          // but have graph proximity. Keyword filtering defeats this purpose.
 
           if (!dominated) {
             methodCandidates.push({
@@ -267,35 +271,19 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
         }
       }
 
-      // Apply diversity round-robin within this method's candidates too
+      // Take top candidates by score. No round-robin here — the final --top
+      // round-robin handles diversity across the merged set.
+      // Limit to 100 to avoid flooding the pipeline with noise.
       methodCandidates.sort((a, b) => b.proximity_score - a.proximity_score);
-      const perMethodLimit = 20; // generous: --top controls final output size
-      const byModel = new Map();
+      let added = 0;
       for (const c of methodCandidates) {
-        if (!byModel.has(c.model)) byModel.set(c.model, []);
-        byModel.get(c.model).push(c);
-      }
-      const modelGrps = [...byModel.entries()].sort((a, b) => b[1][0].proximity_score - a[1][0].proximity_score);
-      const selected = [];
-      const cursors = new Map(modelGrps.map(([m]) => [m, 0]));
-      while (selected.length < perMethodLimit) {
-        let picked = false;
-        for (const [model, group] of modelGrps) {
-          if (selected.length >= perMethodLimit) break;
-          const idx = cursors.get(model);
-          if (idx < group.length) {
-            const c = group[idx];
-            if (!existingPairs.has(`${c.model}|${c.requirement}`)) {
-              selected.push(c);
-              existingPairs.add(`${c.model}|${c.requirement}`);
-            }
-            cursors.set(model, idx + 1);
-            picked = true;
-          }
+        if (added >= 100) break;
+        if (!existingPairs.has(`${c.model}|${c.requirement}`)) {
+          secondaryCandidates.push(c);
+          existingPairs.add(`${c.model}|${c.requirement}`);
+          added++;
         }
-        if (!picked) break;
       }
-      secondaryCandidates.push(...selected);
     }
 
     // Merge secondary candidates into main list

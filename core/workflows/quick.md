@@ -13,6 +13,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 
 Parse `$ARGUMENTS` for:
 - `--full` flag → store as `$FULL_MODE` (true/false)
+- `--no-branch` flag → store as `$NO_BRANCH` (default: false)
 - Remaining text → use as `$DESCRIPTION` if non-empty
 
 If `$DESCRIPTION` is empty after parsing, prompt user interactively:
@@ -46,11 +47,23 @@ If `$FULL_MODE`:
 INIT=$(node ~/.claude/nf/bin/gsd-tools.cjs init quick "$DESCRIPTION")
 ```
 
-Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
+Parse JSON for: `planner_model`, `executor_model`, `checker_model`, `verifier_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`, `current_branch`, `is_protected`, `quick_branch_name`, `protected_branches`.
 
 **If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/nf:new-project` first.
 
 Quick tasks can run mid-phase - validation only checks ROADMAP.md exists, not phase status.
+
+---
+
+**Step 2.5: Handle branching (smart default)**
+
+Parse from init JSON: `current_branch`, `is_protected`, `quick_branch_name`, `protected_branches`.
+
+**Branching logic:**
+
+- If `$NO_BRANCH` is true: skip branching. Report "Branch creation skipped (--no-branch)."
+- If `is_protected` is true AND `$NO_BRANCH` is false: run `git checkout -b "${quick_branch_name}"`. Report with a `::` prefix showing the protected branch and the created branch name. Store `$CREATED_BRANCH = quick_branch_name`.
+- If `is_protected` is false: report "On feature branch ${current_branch} -- committing here." Store `$CREATED_BRANCH = null`.
 
 ---
 
@@ -307,14 +320,27 @@ Initialize: `improvement_iteration = 0`
 
 **LOOP** (while `improvement_iteration <= 10`):
 
-Form your own position on the current plan: does it correctly address the task description? Are tasks atomic and safe? State your vote as 1-2 sentences (APPROVE or BLOCK with rationale).
+Form your ADVISORY position on the current plan (per CE-1 from quorum.md, your position is context for external voters — NOT a vote in the tally). State your analysis as 1-2 sentences. This is shared with external voters to inform their independent decisions.
+
+**Quorum preflight (use scripts — do NOT write inline `node -e` commands):**
+
+```bash
+# Get all quorum config in one call
+PREFLIGHT=$(node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all)
+# → { "quorum_active": [...], "max_quorum_size": 3, "team": { "slot-name": { "model": "..." }, ... } }
+```
+
+Parse `PREFLIGHT` JSON to get `$MAX_QUORUM_SIZE` and the list of active slot names (keys of `team` object).
+
+For quick tasks without a task envelope, use `RISK_LEVEL="medium"` (default). Then compute fan-out:
+- `medium` → `FAN_OUT_COUNT=3`
+- Apply cap: `$DISPATCH_LIST` = first `FAN_OUT_COUNT - 1` slot names from `team` keys.
 
 Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — artifact review (plan is pre-execution; no traces to pass)
 - artifact_path: `${QUICK_DIR}/${next_num}-PLAN.md`
 - review_context: "This is a pre-execution task plan. The code does not exist yet. Evaluate whether the task breakdown is atomic, safe to execute, and correctly addresses the objective — not whether the implementation already exists."
 - request_improvements: true          ← R3.6 signal infrastructure
-- Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
 
@@ -336,7 +362,7 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
 **Route:**
 
-- **BLOCKED** → Report the blocker to the user. Do not execute. **Break loop.**
+- **BLOCKED** → Report the blocker to the user. A BLOCK from any external voter is absolute (CE-2) — do NOT override or rationalize it away. Do not execute. **Break loop.**
 - **ESCALATED** → Present the escalation to the user. Do not execute until resolved. **Break loop.**
 
 - **APPROVED AND ($QUORUM_IMPROVEMENTS is empty OR improvement_iteration >= 10)**:
@@ -484,6 +510,8 @@ Quick Task ${next_num}: ${DESCRIPTION}
 
 Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Commit: ${commit_hash}
+Branch: ${CREATED_BRANCH || current_branch}
+${CREATED_BRANCH ? '-> Ready for PR' : ''}
 
 ---
 
@@ -608,14 +636,14 @@ Display:
 ◆ Running quorum review of VERIFICATION.md...
 ```
 
-Form your own position: does VERIFICATION.md confirm all must_haves are met and no invariants violated? State your vote as APPROVE or BLOCK with 1-2 sentences.
+Form your ADVISORY analysis (per CE-1 — not a vote in the tally): does VERIFICATION.md confirm all must_haves are met and no invariants violated? State your analysis as 1-2 sentences to share with external voters.
 
 Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — artifact review
 - artifact_path: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
 - review_context: "Review this VERIFICATION.md and answer: (1) Are all must_haves confirmed met? (2) Are any invariants from the formal context violated? Vote APPROVE if verification is sound and complete. Vote BLOCK if must_haves are not confirmed or invariants are violated."
 - request_improvements: false
-- Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
+- Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope)
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 
 Fail-open: if all slots are UNAVAIL, keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
@@ -633,13 +661,13 @@ Route on quorum result:
 
 1. Read the full `human_verification` section from `${QUICK_DIR}/${next_num}-VERIFICATION.md`.
 
-2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely requires human eyes) with 1-2 sentence rationale per item.
+2. Form your ADVISORY analysis (per CE-1 — not a vote in the tally): can each item be verified via available tools (grep, file reads, quorum-test)? State your analysis as 1-2 sentences to share with external voters.
 
 3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
    - Mode A — pure question
    - Question: "Can each human_needed item from quick task ${next_num} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
-   - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
+   - Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
    Fail-open: if all slots error, treat as BLOCK (escalate to user).
@@ -809,6 +837,8 @@ Summary: ${QUICK_DIR}/${next_num}-SUMMARY.md
 Verification: ${QUICK_DIR}/${next_num}-VERIFICATION.md (${VERIFICATION_STATUS})
 ${DRAFT_REQ ? 'Requirement: ' + DRAFT_REQ.id + ' (elevated to .planning/formal/requirements.json)' : ''}
 Commit: ${commit_hash}
+Branch: ${CREATED_BRANCH || current_branch}
+${CREATED_BRANCH ? '-> Ready for PR' : ''}
 
 ---
 

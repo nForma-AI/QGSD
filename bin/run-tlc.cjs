@@ -267,13 +267,12 @@ if (require.main === module) {
   }
 
   // ── 3. Locate tla2tools.jar ────────────────────────────────────────────────
-  const jarPath = path.join(ROOT, '.planning', 'formal', 'tla', 'tla2tools.jar');
-  if (!fs.existsSync(jarPath)) {
+  const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
+  const jarPath = resolveTlaJar(ROOT);
+  if (!jarPath) {
     process.stderr.write(
-      '[run-tlc] tla2tools.jar not found at: ' + jarPath + '\n' +
-      '[run-tlc] Download v1.8.0:\n' +
-      '  curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \\\n' +
-      '       -o .planning/formal/tla/tla2tools.jar\n'
+      '[run-tlc] tla2tools.jar not found.\n' +
+      '[run-tlc] Install: node bin/install-formal-tools.cjs\n'
     );
     const _startMs = Date.now();
     const _runtimeMs = 0;

@@ -1,7 +1,7 @@
 ---
 name: nf:resolve
 description: Guided triage wizard — walk through solve items one-by-one with enriched context, brainstorm ambiguous cases, and take action
-argument-hint: "[--category dtoc|ctor|ttor|dtor] [--verdict genuine|review|unclassified] [--limit N]"
+argument-hint: "[--source solve|pairings|orphans (restrict to one class)] [--category dtoc|ctor|ttor|dtor] [--verdict genuine|review|unclassified] [--limit N] [--auto-confirm-yes] [--auto-reject-no]"
 allowed-tools:
   - Read
   - Bash
@@ -10,6 +10,7 @@ allowed-tools:
   - Write
   - Edit
   - AskUserQuestion
+  - Agent
 ---
 
 <objective>
@@ -42,6 +43,8 @@ When batching similar items, still use AskUserQuestion to confirm the batch acti
 Write this to /private/tmp/nf-resolve-load.cjs and run it:
 ```javascript
 const st = require("<PROJECT_ROOT>/bin/solve-tui.cjs");
+const path = require('path');
+const fs = require('fs');
 const data = st.loadSweepData();
 const cache = st.readClassificationCache();
 const archive = st.readArchiveFile();
@@ -62,40 +65,104 @@ for (const catKey of ["dtoc", "ctor", "ttor", "dtor"]) {
     unclassified: classified.filter(i => i.verdict === "unclassified").length,
   };
 }
-console.log(JSON.stringify({ summary, archived: archive.entries.length }));
+
+// Load pairings if file exists
+const PAIRINGS_PATH = path.join(process.cwd(), '.planning', 'formal', 'candidate-pairings.json');
+let pairingSummary = { total: 0, pending: 0, confirmed: 0, rejected: 0, byVerdict: {} };
+if (fs.existsSync(PAIRINGS_PATH)) {
+  const pd = JSON.parse(fs.readFileSync(PAIRINGS_PATH, 'utf8'));
+  const pending = pd.pairings.filter(p => p.status === 'pending');
+  const byVerdict = { yes: 0, no: 0, maybe: 0 };
+  for (const p of pending) byVerdict[p.verdict || 'maybe']++;
+  pairingSummary = { total: pd.pairings.length, pending: pending.length,
+    confirmed: pd.metadata.confirmed, rejected: pd.metadata.rejected, byVerdict };
+}
+
+// Load orphans from candidates.json if file exists
+const CANDIDATES_PATH = path.join(process.cwd(), '.planning', 'formal', 'candidates.json');
+let orphanSummary = { models: 0, requirements: 0 };
+if (fs.existsSync(CANDIDATES_PATH)) {
+  const cd = JSON.parse(fs.readFileSync(CANDIDATES_PATH, 'utf8'));
+  if (cd.orphans) {
+    orphanSummary = {
+      models: (cd.orphans.models || []).length,
+      requirements: (cd.orphans.requirements || []).length,
+    };
+  }
+}
+
+console.log(JSON.stringify({ summary, archived: archive.entries.length, pairings: pairingSummary, orphans: orphanSummary }));
 ```
 
 Parse `$ARGUMENTS` for:
-- `--category <catKey>` → filter to one category (default: all, prioritized dtoc → dtor → ctor → ttor)
-- `--verdict <verdict>` → filter to items with this Haiku classification (default: genuine first, then review, then unclassified; skip fp)
+- `--source <source>` → restrict to one class of issue only (solve|pairings|orphans). Without this flag, ALL classes are processed: solve items, pairings, and orphans.
+- `--category <catKey>` → restrict to one solve category only (dtoc|ctor|ttor|dtor). Without this flag, all categories are processed in priority order: dtoc → dtor → ctor → ttor.
+- `--verdict <verdict>` → restrict to items with this Haiku classification only (genuine|review|unclassified). Without this flag, process in order: genuine → review → unclassified; skip fp.
 - `--limit <N>` → max items to process (default: 10)
+- `--auto-confirm-yes` → batch-confirm all yes-verdict pairings
+- `--auto-reject-no` → batch-reject all no-verdict pairings
 
-Display overview:
+Display overview showing all sections. If `--source` restricts to one class, show only that section:
+
+**Solve section:**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- nForma ► RESOLVE: N items to triage (M archived)
+ nForma ► RESOLVE: N items + P pairings to triage
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+ -- Solve Items --
  D→C Broken Claims:   X genuine, Y review, Z unclassified
  C→R Untraced:        ...
  T→R Orphan Tests:    ...
  D→R Unbacked Claims: ...
+
+ -- Proximity Pairings --
+ Pending:  P (X yes, Y maybe, Z no)
+ Resolved: Q confirmed, R rejected
+
+ -- Orphans (no graph coverage) --
+ Models:       X (need requirement annotations)
+ Requirements: Y (need new formal models)
 ```
+
+If `--source` restricts to one class, only show that section.
+
+## Step 1b: Batch mode (if --auto-confirm-yes or --auto-reject-no)
+
+If `--auto-confirm-yes` or `--auto-reject-no` flags are present AND source includes pairings:
+- Shell out: `node bin/resolve-pairings.cjs --auto-confirm-yes` (or `--auto-reject-no`)
+- Display result counts from output
+- Track pairings confirmed/rejected in session counters
+- If solve items remain, continue to interactive loop (Step 3)
+- If only pairings were processed, skip to Step 4 (session summary)
 
 ## Step 2: Build prioritized queue
 
 Write to /private/tmp/nf-resolve-queue.cjs and run it. This script should:
-1. Load sweep data and classifications
+1. Load sweep data, classifications, candidate-pairings.json, and candidates.json (orphans)
 2. Filter out archived and FP items
-3. Sort: genuine → review → unclassified, then by category: dtoc → dtor → ctor → ttor
-4. For each item, gather evidence:
-   - **dtoc**: check if file exists (normalize .formal/ → .planning/formal/), find similar files, check for generator scripts, read full claim context
-   - **ctor**: check if infrastructure/utility, check for test file, read purpose from comments
-   - **ttor**: check if source module exists, read test describes
-   - **dtor**: extract action verbs, search requirements.json for keyword matches
-5. Output JSON array of enriched items (capped at --limit)
+3. If `--source` is specified, include only that class. Otherwise include all three classes.
+4. **Solve items** (unless `--source` excludes them):
+   - Sort: genuine → review → unclassified, then by category: dtoc → dtor → ctor → ttor
+   - For each item, gather evidence:
+     - **dtoc**: check if file exists (normalize .formal/ → .planning/formal/), find similar files, check for generator scripts, read full claim context
+     - **ctor**: check if infrastructure/utility, check for test file, read purpose from comments
+     - **ttor**: check if source module exists, read test describes
+     - **dtor**: extract action verbs, search requirements.json for keyword matches
+5. **Pairings** (unless `--source` excludes them):
+   - Load candidate-pairings.json, filter to pending status
+   - Convert to queue items with `_source: 'pairing'`, include model, requirement, proximity_score, verdict, confidence, reasoning
+   - Sort within pairings: yes → maybe → no, by proximity_score desc within each verdict group
+6. **Orphans** (unless `--source` excludes them):
+   - Load candidates.json, read orphans.models[] and orphans.requirements[]
+   - Convert orphan models to queue items with `_source: 'orphan_model'`, include path, zeroPairCount
+   - Convert orphan requirements to queue items with `_source: 'orphan_requirement'`, include id, zeroPairCount
+   - Sort by zeroPairCount descending (most isolated first)
+   - For each orphan model: read the model file, extract its `module` description if available
+   - For each orphan requirement: look up the requirement text from requirements.json
+7. Output JSON array of enriched items (capped at --limit)
 
-Apply `--category` and `--verdict` filters if specified. Take up to `--limit` items.
+Apply `--category` and `--verdict` filters if specified. Take up to `--limit` items. Order: solve items first, pairings second, orphans last.
 
 ## Step 3: Present items one at a time (interactive loop)
 
@@ -109,7 +176,7 @@ Before presenting item-by-item, scan the queue for groups of 3+ items sharing th
 
 #### Step 3a: Display the evidence
 
-Present using this format:
+**For solve items**, present using this format:
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  Item N/Total — <Category Label>
@@ -124,6 +191,66 @@ Present using this format:
 
 ── Full Claim / Context ──────────────────────────────
  [word-wrapped claim text or file purpose]
+```
+
+**For proximity pairings**, present using this format:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Item N/Total — Proximity Pairing
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Model:       [item.model basename]
+ Requirement: [item.requirement] — "[requirement description from requirements.json]"
+ Proximity:   [item.proximity_score]  |  Verdict: [item.verdict]
+ Confidence:  [item.confidence]%
+ Reasoning:   [item.reasoning]
+
+── Recommendation ──────────────────────────────────
+ Haiku says [VERDICT] with proximity [SCORE]
+ → [Confirm if yes+high score / Review if maybe / Likely reject if no]
+
+   [c] Confirm  [n] Reject  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
+```
+
+**For orphan models** (when `item._source === 'orphan_model'`), present using this format:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Item N/Total — Orphan Model
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Model:        [item.path basename]
+ Full Path:    [item.path]
+ Zero Pairs:   [item.zeroPairCount] (requirements with no graph path to this model)
+ Linked Reqs:  0
+
+── Context ──────────────────────────────────────────
+ [First 10-15 lines of the model file, or "File not readable"]
+
+── Recommendation ──────────────────────────────────
+ This model has no linked requirements. It either:
+ (a) covers requirements that haven't been annotated yet, or
+ (b) is an unused/obsolete model that can be archived.
+
+   [w] Write requirement annotation  [a] Archive  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
+```
+
+**For orphan requirements** (when `item._source === 'orphan_requirement'`), present using this format:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ Item N/Total — Orphan Requirement
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Requirement:  [item.id] — "[requirement text from requirements.json]"
+ Category:     [requirement category]
+ Zero Pairs:   [item.zeroPairCount] (models with no graph path to this requirement)
+ Formal Models: [] (none)
+
+── Recommendation ──────────────────────────────────
+ This requirement has no formal model coverage. It either:
+ (a) needs a new Alloy/TLA+/PRISM model to be created, or
+ (b) is covered by existing models that aren't properly linked.
+
+   [m] Create formal model (TODO)  [l] Link to existing model  [s] Skip  [q] Quorum  [r] Revision  [x] Exit
 ```
 
 #### Step 3b: Assess confidence
@@ -147,7 +274,8 @@ Append recommendation. **When the recommended action is "Requirement"**, you MUS
  Default:     "[mechanical text from proposeRequirementText]"
  Recommended: "[your opinionated, descriptive text based on evidence]"
 
-   [y] Yes (use recommended)  [d] Use default  [e] Edit  [a] Archive  [f] FP  [s] Skip  [q] Quit
+   [y] Yes (use recommended)  [d] Use default  [e] Edit  [a] Archive  [f] FP  [s] Skip
+   [q] Quorum  [r] Revision  [x] Exit
 ```
 
 For batches of requirements, show a numbered table with both default and recommended texts for every item. The user can approve all, edit by number, or override individually.
@@ -164,7 +292,7 @@ Append questions:
  [Numbered probing questions with trade-offs]
 
  What do you think? (describe your reasoning, or pick:
- [t]odo / [a]rchive / [f]p / [r]equirement / [s]kip / [q]uit)
+ [t]odo / [a]rchive / [f]p / [w]rite req / [s]kip / [q]uorum / [r]evision / e[x]it)
 ```
 
 #### Step 3c: WAIT FOR USER INPUT
@@ -173,20 +301,91 @@ Append questions:
 
 #### Step 3d: Process the response
 
-- Single letter (`y`, `f`, `a`, `s`, `q`, `t`, `r`): execute corresponding action
+- Action keys: `y`, `d`, `e`, `f`, `a`, `s`, `t`, `w`, `c`, `n` — execute corresponding action (Step 3e)
+- `q`: trigger quorum review (Step 3f)
+- `r`: trigger revision / deeper solo review (Step 3g)
+- `x`: jump to Step 4 (session summary)
 - Free text: the user is reasoning through the item. Engage with their analysis, provide additional context if helpful, then re-present the action choices and AskUserQuestion again
-- `q`: jump to Step 4 (session summary)
 
 #### Step 3e: Execute the chosen action
 
-Write action scripts to /private/tmp/nf-resolve-action.cjs:
+**For solve items**, write action scripts to /private/tmp/nf-resolve-action.cjs:
 
 - **TODO**: `st.createTodoFromItem(item)` → confirm TODO ID
 - **FP**: `st.acknowledgeItem(item)` → confirm suppression
 - **Archive**: `st.archiveItem(item)` → confirm archival
-- **Requirement**: First show proposed text using `st.proposeRequirementText(item, catKey)`. Display it clearly so the user can review/edit. If the user provides custom text, pass it as the third argument: `st.createRequirementFromItem(item, catKey, customText)`. If the user approves the default, call `st.createRequirementFromItem(item, catKey)`. For batches, show ALL proposed texts in a numbered list before confirming, and let the user edit individual entries by number.
+- **Write Requirement (w)**: First show proposed text using `st.proposeRequirementText(item, catKey)`. Display it clearly so the user can review/edit. If the user provides custom text, pass it as the third argument: `st.createRequirementFromItem(item, catKey, customText)`. If the user approves the default, call `st.createRequirementFromItem(item, catKey)`. For batches, show ALL proposed texts in a numbered list before confirming, and let the user edit individual entries by number.
+
+**For proximity pairings** (when `item._source === 'pairing'`), write action scripts to /private/tmp/nf-resolve-action.cjs:
+
+- **Confirm (c)**: Load bin/resolve-pairings.cjs, call `confirmPairing(pairing)` with model, requirement, and current pairing object. Load candidate-pairings.json, find matching pairing, update status to 'confirmed', write file back. Also update model-registry.json if confirmPairing exports indicate registry updates.
+- **Reject (n)**: Load bin/resolve-pairings.cjs, call `rejectPairing(pairing)`. Load candidate-pairings.json, find matching pairing, update status to 'rejected', write file back.
+- **Skip (s)**: No-op, continue to next item.
+- **Exit (x)**: Jump to Step 4 (session summary).
+
+**For orphan models** (when `item._source === 'orphan_model'`):
+
+- **Write requirement annotation (w)**: Search requirements.json for requirements whose text matches the model's domain. Present top 3 candidate requirements to link. If user selects one, update model-registry.json to add that requirement to the model's requirements array.
+- **Archive (a)**: Note the model as "no coverage needed" — add to acknowledged-false-positives.json with reason "orphan_model_archived".
+- **Skip (s)**: No-op, continue to next item.
+- **Exit (x)**: Jump to Step 4 (session summary).
+
+**For orphan requirements** (when `item._source === 'orphan_requirement'`):
+
+- **Create formal model TODO (m)**: Create a TODO item noting that a new formal model needs to be created for this requirement. Use `st.createTodoFromItem()` with a synthetic item.
+- **Link to existing model (l)**: Search model-registry.json for models whose domain overlaps with the requirement. Present top 3 candidate models. If user selects one, update model-registry.json to add the requirement to that model's requirements array.
+- **Skip (s)**: No-op, continue to next item.
+- **Exit (x)**: Jump to Step 4 (session summary).
 
 Display one-line confirmation, then loop to next item.
+
+#### Step 3f: Quorum review (q)
+
+When the user picks `q`, dispatch the current item to the quorum for multi-model consensus:
+
+1. Format a quorum prompt summarizing the item:
+   - For solve items: category, key, reason, verdict, and all gathered evidence
+   - For pairings: model, requirement, proximity score, verdict, confidence, reasoning
+   - End with: "Should this item be: acknowledged as FP, archived, turned into a TODO, turned into a requirement, or skipped? Provide your verdict and reasoning."
+
+2. Dispatch to quorum slots using parallel `Agent(subagent_type="nf-quorum-slot-worker")` calls per R3.2:
+   - Load active slots from `bin/providers.json`
+   - Launch one Task per slot with the formatted prompt
+   - Collect responses
+
+3. Present the quorum consensus:
+```
+── Quorum Review ─────────────────────────────────
+ [slot-name]: [verdict] — [one-line reasoning]
+ [slot-name]: [verdict] — [one-line reasoning]
+ ...
+ Consensus: [majority verdict] (N/M agree)
+──────────────────────────────────────────────────
+```
+
+4. Re-present the action choices (unchanged) and call AskUserQuestion again. The quorum opinion is advisory — the user still decides.
+
+#### Step 3g: Revision / deeper solo review (r)
+
+When the user picks `r`, the main agent performs a deeper investigation of the current item without dispatching to external models:
+
+1. **For solve items**: Read the actual files referenced (source, test, requirement), check `git log --oneline -5` for recent changes, examine surrounding code for context, and search for related patterns in the codebase.
+
+2. **For pairings**: Read the model file and requirement in full, check if the model's behavior actually implements the requirement's intent (not just keyword overlap), and look for indirect coverage through related models.
+
+3. Present an updated assessment:
+```
+── Revised Assessment ────────────────────────────
+ Original confidence: [HIGH/LOW]
+ After review:        [revised confidence with reasoning]
+
+ [2-4 bullet points of new evidence or nuance found]
+
+ Revised recommendation: [action] — [reasoning]
+──────────────────────────────────────────────────
+```
+
+4. Re-present the action choices and call AskUserQuestion again. The user still decides.
 
 ## Step 4: Session summary
 
@@ -203,7 +402,21 @@ After all items processed or user quits:
  ✓ Reqs created:      W
  ○ Skipped:           S
 
+ -- Pairings --
+ ✓ Confirmed:        A
+ ✓ Rejected:         B
+ ○ Skipped:          C
+
+ -- Orphans --
+ ✓ Models annotated:  D
+ ✓ Models archived:   E
+ ✓ Reqs TODO'd:       F
+ ✓ Reqs linked:       G
+ ○ Skipped:           H
+
  Remaining: R items (run /nf:resolve to continue)
 ```
+
+Track pairing counters (pairingsConfirmed, pairingsRejected, pairingsSkipped) and orphan counters (orphanModelsAnnotated, orphanModelsArchived, orphanReqsTodod, orphanReqsLinked, orphansSkipped) alongside existing solve counters throughout the interactive loop.
 
 </process>

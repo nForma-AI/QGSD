@@ -657,6 +657,10 @@ Quick commands:
 - /nf:plan-phase --research — force research
 - /nf:plan-phase --skip-research — skip research
 - /nf:plan-phase --skip-verify — skip plan check
+
+Advanced git config (set in .planning/config.json):
+- git.additional_protected_branches: ["develop", "release/*"]
+- git.quick_branch_template: "nf/quick-{number}-{slug}"
 ```
 </step>
 

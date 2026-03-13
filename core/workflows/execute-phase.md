@@ -230,7 +230,7 @@ AUTO_CFG=$(node ~/.claude/nf/bin/gsd-tools.cjs config-get workflow.auto_advance 
 When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 - **human-verify** → Run quorum consensus gate:
   1. Extract checkpoint details: `what-built` and `how-to-verify` from the checkpoint task XML. These MUST be included verbatim in the quorum question so workers have sufficient context for informed decisions.
-  2. Form your own position: can each verification criterion be confirmed via available tools (grep, file reads, test runs, curl)? Vote APPROVE or BLOCK with rationale.
+  2. Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): can each verification criterion be confirmed via available tools? State your analysis as 1-2 sentences to share with external voters.
   3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
      - Mode A — pure question
      - Question: "Checkpoint verification for auto-mode: [what-built]. Criteria: [how-to-verify]. Can each criterion be confirmed programmatically using available tools (grep, file inspection, test output, curl)? Vote APPROVE if all criteria are verifiable and met, or BLOCK if any criterion genuinely requires human eyes."
@@ -238,7 +238,7 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
      - risk_level: Use `medium` (yielding FAN_OUT_COUNT=3) unless the task envelope specifies a different risk_level, in which case inherit it. This gives 2 external workers + Claude for a 3-way consensus.
      - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Dispatch as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
      - Synthesize results inline, deliberate up to 10 rounds per R3.3
-     - **Unanimous gate: 100% APPROVE required.** Unlike standard quorum majority, ALL responding workers must vote APPROVE.
+     - **Unanimous gate (CE-3): 100% of valid external voters must vote APPROVE. Claude's advisory analysis is excluded from the tally. A BLOCK from any external voter is absolute (CE-2) — escalate to user.**
      Fail-open: if all slots error or no slots respond, treat as BLOCK (escalate to user).
   4. Route on quorum_result:
      - **APPROVED (unanimous)** → Log `⚡ Quorum-approved checkpoint: [what-built]`. Spawn continuation agent with `{user_response}` = `"approved"`.
@@ -480,7 +480,7 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
 
 1. Read the full `human_verification` section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`.
 
-2. Form your own position: can each item be verified via available tools (grep, file reads, quorum-test)? State your vote as APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes) with 1-2 sentence rationale.
+2. Form your ADVISORY analysis (per CE-1 — not a vote in the tally): can each item be verified via available tools (grep, file reads, quorum-test)? State your analysis as 1-2 sentences to share with external voters.
 
 3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
    - Mode A — pure question
@@ -511,7 +511,7 @@ All automated checks passed. Quorum attempted resolution but could not fully ver
 
 Read the gaps section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`. Extract each gap as a 1-sentence summary (keep compact — orchestrator context budget is ~10-15%).
 
-Form your own position: are these gaps auto-resolvable via plan-phase --gaps, or do they require human review? State your vote APPROVE (auto-resolvable) or BLOCK (needs human) with 1-2 sentence rationale.
+Form your ADVISORY analysis (per CE-1 — not a vote in the tally): are these gaps auto-resolvable? State your analysis as 1-2 sentences to share with external voters.
 
 Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
 - Mode A — compact prompt to preserve context budget
@@ -690,8 +690,25 @@ The cleanup report is informational only. Do NOT fail the phase or block update_
 **Mark phase complete and update all tracking files:**
 
 ```bash
-COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}")
+COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}" 2>&1)
+COMPLETION_EXIT=$?
 ```
+
+**If `COMPLETION_EXIT` is non-zero and output contains "VERIFICATION.md":**
+
+The CLI's verification gate blocked completion because `verify_phase_goal` was skipped or failed. Auto-recover by spawning the verifier now:
+
+1. Log: `⚡ Verification gate triggered — spawning nf-verifier before phase completion`
+2. Run the full `verify_phase_goal` step (above) — formal check + nf-verifier Task spawn + status routing.
+3. If verifier produces VERIFICATION.md with `status: passed` → retry `phase complete`:
+   ```bash
+   COMPLETION=$(node ~/.claude/nf/bin/gsd-tools.cjs phase complete "${PHASE_NUMBER}")
+   ```
+4. If verifier produces `gaps_found` or `human_needed` → route through existing `verify_phase_goal` handlers (do NOT retry `phase complete`).
+
+This ensures the verifier always runs, even if earlier steps were skipped due to context limits or workflow version mismatch.
+
+**If `COMPLETION_EXIT` is non-zero for any other reason:** Report the error and stop.
 
 The CLI handles:
 - Marking phase checkbox `[x]` with completion date

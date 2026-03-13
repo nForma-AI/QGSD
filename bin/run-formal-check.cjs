@@ -177,7 +177,7 @@ function checkJarExists(jarPath) {
 }
 
 // ── Helper: Run a single check ──────────────────────────────────────────────
-function runCheck(module, checkDef, javaExe, cwd) {
+function runCheck(module, checkDef, javaExe, cwd, tlcJarPath, alloyJarPath) {
   const tool = checkDef.tool;
   const startMs = Date.now();
 
@@ -187,8 +187,12 @@ function runCheck(module, checkDef, javaExe, cwd) {
     fs.rmSync(metaDir, { recursive: true, force: true });
     fs.mkdirSync(metaDir, { recursive: true });
 
-    const cmd = checkDef.cmd[0];
-    const args = [...checkDef.cmd.slice(1), '-metadir', metaDir];
+    // Substitute resolved jar path into cmd (replaces hardcoded project-local path)
+    const resolvedCmd = checkDef.cmd.map(arg =>
+      arg === '.planning/formal/tla/tla2tools.jar' ? tlcJarPath : arg
+    );
+    const cmd = resolvedCmd[0];
+    const args = [...resolvedCmd.slice(1), '-metadir', metaDir];
 
     const result = spawnSync(cmd, args, {
       cwd,
@@ -215,9 +219,12 @@ function runCheck(module, checkDef, javaExe, cwd) {
 
     return { module, tool, status, detail, runtimeMs };
   } else if (tool === 'alloy') {
-    // Alloy check
-    const cmd = checkDef.cmd[0];
-    const args = checkDef.cmd.slice(1);
+    // Alloy check — substitute resolved jar path
+    const resolvedAlloyCmd = checkDef.cmd.map(arg =>
+      arg === '.planning/formal/alloy/org.alloytools.alloy.dist.jar' ? alloyJarPath : arg
+    );
+    const cmd = resolvedAlloyCmd[0];
+    const args = resolvedAlloyCmd.slice(1);
 
     const result = spawnSync(cmd, args, {
       cwd,
@@ -330,9 +337,10 @@ if (require.main === module) {
     process.exit(0);
   }
 
-  // Check jar files (fail-open on missing)
-  const tlcJarPath = path.join(cwd, '.planning', 'formal', 'tla', 'tla2tools.jar');
-  const alloyJarPath = path.join(cwd, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  // Check jar files (fail-open on missing) — resolve system-wide first, then project-local
+  const { resolveTlaJar, resolveAlloyJar } = require('./resolve-formal-tools.cjs');
+  const tlcJarPath = resolveTlaJar(cwd) || path.join(cwd, '.planning', 'formal', 'tla', 'tla2tools.jar');
+  const alloyJarPath = resolveAlloyJar(cwd) || path.join(cwd, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
 
   const tlcJarExists = checkJarExists(tlcJarPath);
   const alloyJarExists = checkJarExists(alloyJarPath);
@@ -366,7 +374,7 @@ if (require.main === module) {
           runtimeMs: 0
         });
       } else {
-        const result = runCheck(module, checkDef, javaExe, cwd);
+        const result = runCheck(module, checkDef, javaExe, cwd, tlcJarPath, alloyJarPath);
         allResults.push(result);
       }
     }

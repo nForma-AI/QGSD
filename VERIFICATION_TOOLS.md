@@ -1,6 +1,6 @@
 # VERIFICATION_TOOLS.md — Formal Verification Prerequisites
 
-This file documents installation and usage for all QGSD formal verification tools.
+This file documents installation and usage for all nForma formal verification tools.
 
 ## Prerequisites
 
@@ -26,7 +26,7 @@ and follow the per-tool instructions below.
 
 ---
 
-## TLA+ (QGSDQuorum.tla)
+## TLA+ (NFQuorum.tla)
 
 **Download tla2tools.jar** (one-time, gitignored):
 

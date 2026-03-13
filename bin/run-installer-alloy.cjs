@@ -21,6 +21,7 @@ const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
+const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
@@ -107,13 +108,11 @@ if (javaMajor < 17) {
 }
 
 // ── 3. Locate org.alloytools.alloy.dist.jar ──────────────────────────────────
-const jarPath = path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
-if (!fs.existsSync(jarPath)) {
+const jarPath = resolveAlloyJar(ROOT);
+if (!jarPath) {
   process.stderr.write(
-    '[run-installer-alloy] org.alloytools.alloy.dist.jar not found at: ' + jarPath + '\n' +
-    '[run-installer-alloy] Download Alloy 6.2.0:\n' +
-    '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
-    '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
+    '[run-installer-alloy] org.alloytools.alloy.dist.jar not found.\n' +
+    '[run-installer-alloy] Install: node bin/install-formal-tools.cjs\n'
   );
   try { writeCheckResult({ tool: 'run-installer-alloy', formalism: 'alloy', result: 'error', check_id: check_id, surface: 'alloy', property: property, runtime_ms: 0, summary: 'error: ' + check_id + ' (JAR not found)', triage_tags: [], requirement_ids: getRequirementIds(check_id), metadata: { spec: specName } }); } catch (e) { process.stderr.write('[run-installer-alloy] Warning: failed to write check result: ' + e.message + '\n'); }
   process.exit(1);

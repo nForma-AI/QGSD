@@ -5,10 +5,10 @@
  * install-formal-tools.cjs
  *
  * Cross-platform installer for nForma formal verification tools:
- *   TLA+    — downloads tla2tools.jar into .planning/formal/tla/
- *   Alloy   — downloads org.alloytools.alloy.dist.jar into .planning/formal/alloy/
+ *   TLA+    — downloads tla2tools.jar into ~/.local/share/nf-formal/tla/
+ *   Alloy   — downloads org.alloytools.alloy.dist.jar into ~/.local/share/nf-formal/alloy/
  *   PRISM   — downloads and installs platform-specific binary
- *   UPPAAL  — downloads verifyta binary into .planning/formal/uppaal/bin/
+ *   UPPAAL  — downloads verifyta binary into ~/.local/share/nf-formal/uppaal/bin/
  *   Petri   — no install needed (bundled via npm)
  *
  * Usage:
@@ -119,6 +119,9 @@ function checkJava() {
   }
 }
 
+// ─── System-wide install directory (XDG-compliant) ────────────────────────
+const NF_FORMAL_HOME = path.join(os.homedir(), '.local', 'share', 'nf-formal');
+
 // ─── Main ──────────────────────────────────────────────────────────────────
 
 (async () => {
@@ -127,10 +130,12 @@ function checkJava() {
   // Java check (soft warning, never blocks)
   checkJava();
   process.stdout.write('\n');
+  info('Install target: ' + NF_FORMAL_HOME);
+  process.stdout.write('\n');
 
   // ── TLA+ ──────────────────────────────────────────────────────────────
 
-  const tlaDest = path.join(process.cwd(), '.planning', 'formal', 'tla', 'tla2tools.jar');
+  const tlaDest = path.join(NF_FORMAL_HOME, 'tla', 'tla2tools.jar');
   const tlaUrl = 'https://github.com/tlaplus/tlaplus/releases/latest/download/tla2tools.jar';
 
   if (fs.existsSync(tlaDest)) {
@@ -141,7 +146,7 @@ function checkJava() {
     try {
       fs.mkdirSync(path.dirname(tlaDest), { recursive: true });
       await downloadFile(tlaUrl, tlaDest);
-      ok('TLA+ tla2tools.jar downloaded');
+      ok('TLA+ tla2tools.jar installed → ' + tlaDest);
       results.push({ name: 'TLA+', status: 'ok' });
     } catch (err) {
       fail(`TLA+ download failed: ${err.message}`);
@@ -151,7 +156,7 @@ function checkJava() {
 
   // ── Alloy ─────────────────────────────────────────────────────────────
 
-  const alloyDest = path.join(process.cwd(), '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar');
+  const alloyDest = path.join(NF_FORMAL_HOME, 'alloy', 'org.alloytools.alloy.dist.jar');
   const alloyUrl = 'https://github.com/AlloyTools/org.alloytools.alloy/releases/latest/download/org.alloytools.alloy.dist.jar';
 
   if (fs.existsSync(alloyDest)) {
@@ -162,7 +167,7 @@ function checkJava() {
     try {
       fs.mkdirSync(path.dirname(alloyDest), { recursive: true });
       await downloadFile(alloyUrl, alloyDest);
-      ok('Alloy org.alloytools.alloy.dist.jar downloaded');
+      ok('Alloy org.alloytools.alloy.dist.jar installed → ' + alloyDest);
       results.push({ name: 'Alloy', status: 'ok' });
     } catch (err) {
       fail(`Alloy download failed: ${err.message}`);
@@ -248,7 +253,7 @@ function checkJava() {
 
   // ── UPPAAL ──────────────────────────────────────────────────────────
 
-  const uppaalDest = path.join(process.cwd(), '.planning', 'formal', 'uppaal', 'bin', 'verifyta');
+  const uppaalDest = path.join(NF_FORMAL_HOME, 'uppaal', 'bin', 'verifyta');
 
   if (fs.existsSync(uppaalDest)) {
     skip('UPPAAL verifyta already present — skipping');
@@ -309,7 +314,7 @@ function checkJava() {
 
         // Determine the bin directory containing verifyta (to copy sibling libs)
         const srcBinDir = path.dirname(verifytaSrc);
-        const destBinDir = path.join(process.cwd(), '.planning', 'formal', 'uppaal', 'bin');
+        const destBinDir = path.join(NF_FORMAL_HOME, 'uppaal', 'bin');
         fs.mkdirSync(destBinDir, { recursive: true });
 
         // Copy verifyta binary
@@ -350,6 +355,19 @@ function checkJava() {
 
         ok('UPPAAL verifyta installed');
         info(`Path: ${uppaalDest}`);
+
+        // Create symlink in ~/.local/bin/ for PATH access
+        try {
+          const localBin = path.join(os.homedir(), '.local', 'bin');
+          fs.mkdirSync(localBin, { recursive: true });
+          const symlink = path.join(localBin, 'verifyta');
+          try { fs.unlinkSync(symlink); } catch (_) { /* doesn't exist yet */ }
+          fs.symlinkSync(uppaalDest, symlink);
+          info(`Symlink: ${symlink} → ${uppaalDest}`);
+        } catch (e) {
+          info(`Could not create symlink in ~/.local/bin/: ${e.message}`);
+        }
+
         results.push({ name: 'UPPAAL', status: 'ok' });
       }
     } catch (err) {

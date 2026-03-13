@@ -178,6 +178,8 @@ function loadConfig(cwd) {
     branching_strategy: 'none',
     phase_branch_template: 'gsd/phase-{phase}-{slug}',
     milestone_branch_template: 'gsd/{milestone}-{slug}',
+    additional_protected_branches: [],
+    quick_branch_template: 'nf/quick-{number}-{slug}',
     research: true,
     plan_checker: true,
     verifier: true,
@@ -215,6 +217,8 @@ function loadConfig(cwd) {
       branching_strategy: get('branching_strategy', { section: 'git', field: 'branching_strategy' }) ?? defaults.branching_strategy,
       phase_branch_template: get('phase_branch_template', { section: 'git', field: 'phase_branch_template' }) ?? defaults.phase_branch_template,
       milestone_branch_template: get('milestone_branch_template', { section: 'git', field: 'milestone_branch_template' }) ?? defaults.milestone_branch_template,
+      additional_protected_branches: get('additional_protected_branches', { section: 'git', field: 'additional_protected_branches' }) ?? defaults.additional_protected_branches,
+      quick_branch_template: get('quick_branch_template', { section: 'git', field: 'quick_branch_template' }) ?? defaults.quick_branch_template,
       research: get('research', { section: 'workflow', field: 'research' }) ?? defaults.research,
       plan_checker: get('plan_checker', { section: 'workflow', field: 'plan_check' }) ?? defaults.plan_checker,
       verifier: get('verifier', { section: 'workflow', field: 'verifier' }) ?? defaults.verifier,
@@ -2484,11 +2488,18 @@ function cmdVerifyPhaseCompleteness(cwd, phase, raw) {
     warnings.push(`Summaries without plans: ${orphanSummaries.join(', ')}`);
   }
 
+  // VERIFICATION.md check — phases must be verified before completion
+  const hasVerification = files.some(f => f.match(/-VERIFICATION\.md$/i));
+  if (!hasVerification) {
+    errors.push('Missing VERIFICATION.md — verifier must run before phase completion');
+  }
+
   output({
     complete: errors.length === 0,
     phase: phaseInfo.phase_number,
     plan_count: plans.length,
     summary_count: summaries.length,
+    has_verification: hasVerification,
     incomplete_plans: incompletePlans,
     orphan_summaries: orphanSummaries,
     errors,
@@ -3398,6 +3409,19 @@ function cmdPhaseComplete(cwd, phaseNum, raw) {
   const planCount = phaseInfo.plans.length;
   const summaryCount = phaseInfo.summaries.length;
 
+  // Hard gate: VERIFICATION.md must exist before phase can be marked complete.
+  // This is structural enforcement — even if the workflow forgets to spawn nf-verifier,
+  // the CLI refuses to advance. Use --skip-verification only for retroactive backfills.
+  const skipVerification = process.argv.includes('--skip-verification');
+  const hasVerification = phaseInfo.has_verification;
+  if (!hasVerification && !skipVerification) {
+    error(
+      `Phase ${phaseNum} has no VERIFICATION.md. ` +
+      `The verifier must run before a phase can be marked complete. ` +
+      `If backfilling retroactively, pass --skip-verification.`
+    );
+  }
+
   // Update ROADMAP.md: mark phase complete
   if (fs.existsSync(roadmapPath)) {
     let roadmapContent = fs.readFileSync(roadmapPath, 'utf-8');
@@ -3567,6 +3591,8 @@ function cmdPhaseComplete(cwd, phaseNum, raw) {
     completed_phase: phaseNum,
     phase_name: phaseInfo.phase_name,
     plans_executed: `${summaryCount}/${planCount}`,
+    verification_present: hasVerification,
+    verification_skipped: skipVerification && !hasVerification,
     next_phase: nextPhaseNum,
     next_phase_name: nextPhaseName,
     is_last_phase: isLastPhase,
@@ -4800,6 +4826,56 @@ function cmdInitQuick(cwd, description, raw) {
     }
   } catch {}
 
+  // Branch detection: detect current branch
+  let currentBranch = 'unknown';
+  try {
+    currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { cwd, encoding: 'utf-8' }).trim();
+  } catch {}
+
+  // Detect remote default branch
+  let defaultBranch = null;
+  try {
+    const refLine = execSync('git symbolic-ref refs/remotes/origin/HEAD', { cwd, encoding: 'utf-8' }).trim();
+    defaultBranch = refLine.replace('refs/remotes/origin/', '');
+  } catch {}
+
+  // Build protected branches set
+  const protectedBranchList = defaultBranch ? [defaultBranch] : ['main', 'master'];
+  if (config.additional_protected_branches && Array.isArray(config.additional_protected_branches)) {
+    protectedBranchList.push(...config.additional_protected_branches);
+  }
+  const protectedBranches = Array.from(new Set(protectedBranchList));
+
+  // Check if current branch is protected
+  let isProtected = false;
+  for (const pattern of protectedBranches) {
+    if (pattern.includes('*')) {
+      // Convert glob pattern to regex
+      const regexPattern = pattern.replace(/\*/g, '.*');
+      const regex = new RegExp(`^${regexPattern}$`);
+      if (regex.test(currentBranch)) {
+        isProtected = true;
+        break;
+      }
+    } else {
+      // Exact string match
+      if (currentBranch === pattern) {
+        isProtected = true;
+        break;
+      }
+    }
+  }
+
+  // Compute quick branch name
+  let quickBranchName = null;
+  if (isProtected) {
+    const number = String(nextNum);
+    const taskSlug = slug || 'task';
+    quickBranchName = config.quick_branch_template
+      .replace('{number}', number)
+      .replace('{slug}', taskSlug);
+  }
+
   const result = {
     // Models
     planner_model: resolveModelInternal(cwd, 'gsd-planner'),
@@ -4827,6 +4903,11 @@ function cmdInitQuick(cwd, description, raw) {
     roadmap_exists: pathExistsInternal(cwd, '.planning/ROADMAP.md'),
     planning_exists: pathExistsInternal(cwd, '.planning'),
 
+    // Branch detection
+    current_branch: currentBranch,
+    is_protected: isProtected,
+    quick_branch_name: quickBranchName,
+    protected_branches: protectedBranches,
   };
 
   output(result, raw);

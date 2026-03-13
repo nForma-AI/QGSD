@@ -34,11 +34,12 @@ function runPhaseTlc(specPath, cfgPath, options) {
   options = options || {};
 
   // Check tla2tools.jar existence
-  const tla2toolsPath = options.jarOverride || path.join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
-  if (!fs.existsSync(tla2toolsPath)) {
+  const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
+  const tla2toolsPath = options.jarOverride || resolveTlaJar();
+  if (!tla2toolsPath) {
     return {
       passed: false,
-      violations: ['tla2tools.jar not found at ' + tla2toolsPath + ' -- run: curl -L https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -o .planning/formal/tla/tla2tools.jar'],
+      violations: ['tla2tools.jar not found -- run: node bin/install-formal-tools.cjs'],
       output: '',
       runtimeMs: 0,
     };

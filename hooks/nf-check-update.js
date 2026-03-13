@@ -9,6 +9,7 @@ const { spawn } = require('child_process');
 const { validateHookInput } = require('./config-loader');
 
 // Read stdin for hook input validation (SessionStart event)
+// NOTE: Never write to process.stderr — Claude Code treats any stderr as a hook error.
 let _checkUpdateRaw = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => { _checkUpdateRaw += chunk; });
@@ -17,15 +18,11 @@ process.stdin.on('end', () => {
     if (_checkUpdateRaw.trim()) {
       const _input = JSON.parse(_checkUpdateRaw);
       const _eventType = _input.hook_event_name || _input.hookEventName || 'SessionStart';
-      const _validation = validateHookInput(_eventType, _input);
-      if (!_validation.valid) {
-        process.stderr.write('[nf] WARNING: nf-check-update: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
-      }
+      validateHookInput(_eventType, _input);
+      // Validation failures are non-fatal — fail-open
     }
   } catch (e) {
-    if (e instanceof SyntaxError) {
-      process.stderr.write('[nf] WARNING: nf-check-update: malformed JSON on stdin: ' + e.message + '\n');
-    }
+    // Fail-open: malformed JSON or validation errors are non-fatal
   }
 });
 

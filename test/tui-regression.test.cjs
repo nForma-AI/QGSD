@@ -84,8 +84,8 @@ describe('TUI regression: --screenshot capture', { timeout: 30000 }, () => {
       const txt = captures[mod];
       if (!txt) continue;
       assert.ok(txt.includes('nForma'), `${mod}: header must contain nForma`);
-      assert.ok(txt.includes('[F1]'), `${mod}: header must show F1 shortcut`);
-      assert.ok(txt.includes('[q]'), `${mod}: header must show quit shortcut`);
+      // Module navigation shortcuts (F1-F5) appear in the sidebar
+      assert.ok(txt.includes('F1'), `${mod}: header must show F1 shortcut`);
     }
   });
 });

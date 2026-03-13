@@ -26,8 +26,8 @@ const REPORT_PATH = process.env.SENSITIVITY_REPORT_PATH ||
 // ── Tool location helpers ────────────────────────────────────────────────────
 
 function locateTLC() {
-  const jar = path.join(__dirname, '..', '.planning', 'formal', 'tla', 'tla2tools.jar');
-  return fs.existsSync(jar) ? jar : null;
+  const { resolveTlaJar } = require('./resolve-formal-tools.cjs');
+  return resolveTlaJar();
 }
 
 const { resolvePrismBin: locatePRISM } = require('./resolve-prism-bin.cjs');

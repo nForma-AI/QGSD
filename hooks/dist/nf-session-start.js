@@ -76,16 +76,14 @@ if (require.main === module) (async () => {
   await _stdinPromise;
   let _hookCwd = process.cwd();
   let _parsedInput = null;
+  // NOTE: Never write to process.stderr in hooks — Claude Code treats any stderr as a hook error.
   try { _parsedInput = JSON.parse(_stdinRaw); _hookCwd = _parsedInput.cwd || process.cwd(); } catch (e) {
-    if (e instanceof SyntaxError) {
-      process.stderr.write('[nf] WARNING: nf-session-start: malformed JSON on stdin: ' + e.message + '\n');
-    }
+    // Fail-open: malformed JSON is non-fatal
   }
   if (_parsedInput) {
     const _eventType = _parsedInput.hook_event_name || _parsedInput.hookEventName || 'SessionStart';
     const _validation = validateHookInput(_eventType, _parsedInput);
     if (!_validation.valid) {
-      process.stderr.write('[nf] WARNING: nf-session-start: invalid input: ' + JSON.stringify(_validation.errors) + '\n');
       process.exit(0); // Fail-open
     }
   }
@@ -105,8 +103,7 @@ if (require.main === module) (async () => {
   try {
     await secrets.syncToClaudeJson(secrets.SERVICE);
   } catch (e) {
-    // Non-fatal — write to stderr for debug logs, but never block session start
-    process.stderr.write('[nf-session-start] sync error: ' + e.message + '\n');
+    // Non-fatal — fail silently (never write to stderr; Claude Code treats it as hook error)
   }
 
   // Populate CCR config from secrets store (fail-silent — CCR may not be installed)
@@ -118,7 +115,7 @@ if (require.main === module) (async () => {
       execFileSync(process.execPath, [ccrConfigPath], { stdio: 'pipe', timeout: 10000 });
     }
   } catch (e) {
-    process.stderr.write('[nf-session-start] CCR config error: ' + e.message + '\n');
+    // Non-fatal — fail silently (never write to stderr; Claude Code treats it as hook error)
   }
 
   // Collect all additionalContext pieces — write once at the end
@@ -201,14 +198,8 @@ if (require.main === module) (async () => {
     }
   } catch (_) {}
 
-  // Write combined additionalContext output (once)
-  if (_contextPieces.length > 0) {
-    process.stdout.write(JSON.stringify({
-      hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: _contextPieces.join('\n\n') }
-    }));
-  }
-
-  // Memory staleness check — warn about outdated MEMORY.md entries
+  // Memory staleness check — surface outdated MEMORY.md entries via additionalContext
+  // NOTE: Do NOT write to stderr here — Claude Code treats any stderr as a hook error.
   try {
     let validateMemoryMod = null;
     try { validateMemoryMod = require(resolveBin('validate-memory.cjs')); } catch (_) {}
@@ -218,10 +209,17 @@ if (require.main === module) (async () => {
         const summary = findings
           .map(f => '[memory-check] ' + f.message)
           .join('\n');
-        process.stderr.write(summary + '\n');
+        _contextPieces.push(summary);
       }
     }
   } catch (_) {}
+
+  // Write combined additionalContext output (once)
+  if (_contextPieces.length > 0) {
+    process.stdout.write(JSON.stringify({
+      hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: _contextPieces.join('\n\n') }
+    }));
+  }
 
   process.exit(0);
 })();

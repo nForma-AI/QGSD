@@ -116,7 +116,7 @@ test('Auth-type sort order: first slot in orderedSlots wins', () => {
 
 // ── TEST 5: Unknown model (missing agentCfg entry) ───────────────────────
 
-test('Unknown model: slot not in agentCfg treated as unique', () => {
+test('Unknown model: slots not in agentCfg all treated as unique (no dedup)', () => {
   const slots = [
     { slot: 'codex-1', authType: 'sub' },
     { slot: 'unknown-slot-1', authType: 'api' },
@@ -125,9 +125,9 @@ test('Unknown model: slot not in agentCfg treated as unique', () => {
 
   const result = deduplicateByModel(slots, mockCfg);
 
-  // Both unknown slots should have model='unknown', so second one should be demoted
-  assert.strictEqual(result.unique.length, 2, 'codex-1 and unknown-slot-1 kept');
-  assert.strictEqual(result.duplicates.length, 1, 'unknown-slot-2 demoted');
+  // Unknown-model slots are never deduplicated — we can't assert they're duplicates
+  assert.strictEqual(result.unique.length, 3, 'all three slots kept as unique');
+  assert.strictEqual(result.duplicates.length, 0, 'no duplicates for unknown models');
 });
 
 // ─── TEST CASES FOR buildFalloverRule WITH modelDedupSlots ───────────────────
