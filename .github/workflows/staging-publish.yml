@@ -1,0 +1,103 @@
+name: Staging Publish
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  test:
+    name: Pre-publish tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build artifacts
+        run: npm run build:hooks && npm run build:machines
+
+      - name: Check assets not stale
+        run: npm run check:assets
+
+      - name: Lint (isolation check)
+        run: npm run lint:isolation
+
+      - name: Run CI tests
+        run: npm run test:ci
+
+      - name: Run TUI unit tests
+        run: npm run test:tui
+
+      - name: Verify package contents
+        run: |
+          echo "=== Package dry-run ==="
+          npm pack --dry-run 2>&1 | grep -E 'total files|package size|📦'
+          echo ""
+          echo "=== Checking for test files ==="
+          count=$(npm pack --dry-run 2>&1 | grep -c '\.test\.' || true)
+          if [ "$count" -gt 0 ]; then
+            echo "ERROR: $count test files found in package"
+            exit 1
+          fi
+          echo "OK: 0 test files in package"
+
+  publish:
+    name: Publish to npm (staging)
+    needs: test
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@nforma.ai'
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build hooks
+        run: npm run build:hooks
+
+      - name: Set staging version
+        run: |
+          BASE_VERSION=$(node -p "require('./package.json').version.replace(/-.*/, '')")
+          TIMESTAMP=$(date +%s)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          STAGING_VERSION="${BASE_VERSION}-staging.${TIMESTAMP}.${SHORT_SHA}"
+          echo "Publishing staging version: ${STAGING_VERSION}"
+          npm version "$STAGING_VERSION" --no-git-tag-version
+
+      - name: Publish to npm with staging tag
+        run: npm publish --access public --provenance --tag staging
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Print install command
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo ""
+          echo "=== Published staging version ==="
+          echo "  npx @nforma.ai/nforma@staging"
+          echo "  npx @nforma.ai/nforma@${VERSION}"
