@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.35-01",
+  "created_at": "2026-03-12T22:18:32.674Z",
+  "risk_level": "low",
+  "research": {
+    "objective": "Auto-rebuild hooks/dist on source checkout",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.35-01-install-hooks-dist-rebuild/v0.35-01-01-PLAN.md",
+    "key_decisions": []
+  }
+}

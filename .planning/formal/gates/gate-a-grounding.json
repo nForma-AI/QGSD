@@ -1,11 +1,11 @@
 {
-  "schema_version": "3",
-  "generated": "2026-03-11T03:48:25.339Z",
+  "schema_version": "2",
+  "generated": "2026-03-13T13:30:24.712Z",
   "wiring_evidence_score": 1,
   "target": 0.8,
   "target_met": true,
-  "explained": 180,
-  "total": 180,
+  "explained": 182,
+  "total": 182,
   "unexplained_counts": {
     "instrumentation_bug": 0,
     "model_gap": 0,
@@ -13,13 +13,5 @@
   },
   "scope": {
     "mode": "per-model-aggregate"
-  },
-  "semantic_score": 1,
-  "semantic_metadata": {
-    "evaluated_candidates": 46,
-    "confirmed": 46,
-    "rejected": 0,
-    "maybe": 0,
-    "computed": "2026-03-11T08:11:00.985Z"
   }
 }

@@ -1,0 +1,16 @@
+{
+  "schema_version": "1",
+  "phase": "v0.35-02",
+  "created_at": "2026-03-12T22:53:07.187Z",
+  "risk_level": "low",
+  "research": {
+    "objective": "Fix slot type detection to use auth_type from providers.json",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  },
+  "plan": {
+    "plan_path": ".planning/phases/v0.35-02-mcp-setup-slot-classification/v0.35-02-01-PLAN.md",
+    "key_decisions": []
+  }
+}

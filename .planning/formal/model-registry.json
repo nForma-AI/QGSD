@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-11T03:46:18.702Z",
+  "last_sync": "2026-03-13T13:53:42.938Z",
   "search_dirs": [],
   "models": {
     ".planning/formal/alloy/solve-session-persistence.als": {
@@ -85,15 +85,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 7119,
-      "last_updated": "2026-03-11T03:48:25.329Z",
+      "version": 8010,
+      "last_updated": "2026-03-13T13:53:42.937Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "Quorum vote-counting model — unanimity predicate verification",
-      "layer_maturity": 2,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "description": "Quorum vote-counting model — unanimity predicate verification"
     },
     ".planning/formal/alloy/scoreboard-recompute.als": {
       "version": 1,
@@ -176,15 +173,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 7116,
-      "last_updated": "2026-03-11T03:48:25.329Z",
+      "version": 8007,
+      "last_updated": "2026-03-13T13:53:42.938Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "Quorum convergence DTMC model — state transition probabilities",
-      "layer_maturity": 2,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "description": "Quorum convergence DTMC model — state transition probabilities"
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
@@ -1387,15 +1381,12 @@
       "layer_maturity": 3
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 5870,
-      "last_updated": "2026-03-11T03:48:25.333Z",
+      "version": 6761,
+      "last_updated": "2026-03-13T13:53:42.935Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": "Quorum workflow TLA+ model — state machine with unanimity and deliberation guards",
-      "layer_maturity": 2,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "description": "Quorum workflow TLA+ model — state machine with unanimity and deliberation guards"
     },
     ".planning/formal/alloy/solve-automation-features.als": {
       "version": 1,
@@ -1536,7 +1527,6 @@
       "requirements": [
         "OBS-09",
         "OBS-10",
-        "OBS-11",
         "OBS-12"
       ],
       "source_layer": "L3",
@@ -1560,7 +1550,7 @@
     },
     ".planning/formal/alloy/code-quality-guardrails.als": {
       "version": 1,
-      "last_updated": "2026-03-10T21:23:11.665Z",
+      "last_updated": "2026-03-13T08:31:49.030Z",
       "update_source": "generate",
       "source_id": "close-formal-gaps",
       "session_id": null,
@@ -2937,6 +2927,35 @@
       "source_layer": "L3",
       "gate_maturity": "SOFT_GATE",
       "layer_maturity": 3
+    },
+    ".planning/formal/alloy/mcp-repair-lifecycle.als": {
+      "version": 1,
+      "last_updated": "2026-03-11T12:49:36.565Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "MCP repair lifecycle — diagnose/classify/repair/guide/verify invariants for quorum slot connectivity",
+      "requirements": [
+        "DIAG-05"
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE",
+      "layer_maturity": 3
+    },
+    ".planning/formal/alloy/agent-context-payload.als": {
+      "version": 1,
+      "last_updated": "2026-03-11T18:57:29.712Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Agent context payload safety: 128KB size guardrail and automated size monitoring for LLM-facing scripts",
+      "requirements": [
+        "GUARD-01",
+        "OBS-11"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     }
   }
 }

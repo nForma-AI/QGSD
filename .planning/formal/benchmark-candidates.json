@@ -1,0 +1,730 @@
+{
+  "combos": {
+    "baseline": [
+      ".planning/formal/tla/QGSDMCPEnv.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ARCH-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|BRKR-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|EXEC-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|HLTH-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|LTCY-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|PRIO-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SCHEMA-02",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SHARD-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SIG-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|UPPAAL-02",
+      ".planning/formal/tla/QGSDMCPEnv.tla|VALID-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|ARCH-03",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|BRKR-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|EXEC-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|HLTH-03",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|LTCY-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|META-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|META-03"
+    ],
+    "sem": [
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-01",
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-03",
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-04",
+      ".planning/formal/alloy/solve-session-persistence.als|HLTH-03",
+      ".planning/formal/alloy/solve-session-persistence.als|SIG-03",
+      ".planning/formal/alloy/solve-session-persistence.als|SOLVE-05",
+      ".planning/formal/alloy/solve-session-persistence.als|UPPAAL-02",
+      ".planning/formal/tla/NFAccountManager.tla|CONF-05",
+      ".planning/formal/tla/NFAccountManager.tla|CONF-08",
+      ".planning/formal/tla/NFCircuitBreaker.tla|CONF-05",
+      ".planning/formal/tla/NFCircuitBreaker.tla|CONF-08",
+      ".planning/formal/tla/NFConvergence.tla|CONF-05",
+      ".planning/formal/tla/NFConvergence.tla|CONF-08",
+      ".planning/formal/tla/NFDeliberation.tla|CONF-05",
+      ".planning/formal/tla/NFDeliberation.tla|CONF-08",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-02",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-03",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-04",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ARCH-03"
+    ],
+    "hub": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/misc-behavioral.als|EVID-02"
+    ],
+    "sem+hub": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/misc-behavioral.als|EVID-02"
+    ],
+    "tfidf": [
+      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
+      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
+      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
+      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
+      ".planning/formal/alloy/evidence-layer.als|BRKR-01",
+      ".planning/formal/alloy/token-optimization.als|LTCY-01",
+      ".planning/formal/alloy/evidence-triage.als|BRKR-01",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|PRIO-01",
+      ".planning/formal/alloy/quorum-improvements.als|EXEC-01",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|VALID-01",
+      ".planning/formal/alloy/requirements-aggregation.als|BRKR-01",
+      ".planning/formal/alloy/spec-audit.als|BRKR-01",
+      ".planning/formal/alloy/evidence-layer.als|ARCH-03",
+      ".planning/formal/alloy/event-vocabulary.als|BRKR-01",
+      ".planning/formal/tla/NFDebtLedger.tla|BRKR-01",
+      ".planning/formal/alloy/diagnostics.als|BRKR-01",
+      ".planning/formal/alloy/parallel-exec.als|BRKR-01",
+      ".planning/formal/alloy/meta-resolve.als|BRKR-01",
+      ".planning/formal/alloy/parallel-execution.als|BRKR-01"
+    ],
+    "sem+tfidf": [
+      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
+      ".planning/formal/alloy/memory-persistence.als|TOKN-01",
+      ".planning/formal/alloy/formal-test-trace.als|UPPAAL-02",
+      ".planning/formal/alloy/memory-persistence.als|LRNG-04",
+      ".planning/formal/tla/NFDebtLedger.tla|PF-03",
+      ".planning/formal/alloy/spec-quality-guardrails.als|UPPAAL-02",
+      ".planning/formal/alloy/solve-result-schema.als|UPPAAL-02",
+      ".planning/formal/tla/NFDebtLedger.tla|PF-02",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
+      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
+      ".planning/formal/alloy/debt-lifecycle.als|PF-03",
+      ".planning/formal/alloy/architecture-registry.als|TRACE-01",
+      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
+      ".planning/formal/alloy/traceability-obligations.als|DEBT-05",
+      ".planning/formal/alloy/multi-slot-structure.als|PROV-03",
+      ".planning/formal/alloy/decomp-cross-model.als|UPPAAL-02",
+      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
+      ".planning/formal/alloy/jvm-heap-sequential.als|UPPAAL-02",
+      ".planning/formal/tla/NFSolveP2F.tla|DEBT-05",
+      ".planning/formal/alloy/evidence-layer.als|BRKR-01"
+    ],
+    "hub+tfidf": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/traceability.als|ANNOT-02",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01"
+    ],
+    "sem+hub+tfidf": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/traceability.als|ANNOT-02"
+    ],
+    "cat": [
+      ".planning/formal/tla/QGSDMCPEnv.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ARCH-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|BRKR-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|EXEC-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|HLTH-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|LTCY-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|PRIO-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SCHEMA-02",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SHARD-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|SIG-03",
+      ".planning/formal/tla/QGSDMCPEnv.tla|UPPAAL-02",
+      ".planning/formal/tla/QGSDMCPEnv.tla|VALID-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|ARCH-03",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|BRKR-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|EXEC-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|HLTH-03",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|LTCY-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|META-01",
+      ".planning/formal/tla/QGSDAgentProvisioning.tla|META-03"
+    ],
+    "sem+cat": [
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-01",
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-03",
+      ".planning/formal/alloy/solve-session-persistence.als|GATE-04",
+      ".planning/formal/alloy/solve-session-persistence.als|HLTH-03",
+      ".planning/formal/alloy/solve-session-persistence.als|SIG-03",
+      ".planning/formal/alloy/solve-session-persistence.als|SOLVE-05",
+      ".planning/formal/alloy/solve-session-persistence.als|UPPAAL-02",
+      ".planning/formal/tla/NFAccountManager.tla|CONF-05",
+      ".planning/formal/tla/NFAccountManager.tla|CONF-08",
+      ".planning/formal/tla/NFCircuitBreaker.tla|CONF-05",
+      ".planning/formal/tla/NFCircuitBreaker.tla|CONF-08",
+      ".planning/formal/tla/NFConvergence.tla|CONF-05",
+      ".planning/formal/tla/NFConvergence.tla|CONF-08",
+      ".planning/formal/tla/NFDeliberation.tla|CONF-05",
+      ".planning/formal/tla/NFDeliberation.tla|CONF-08",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-02",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-03",
+      ".planning/formal/tla/NFDeliberation.tla|IMPR-04",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ADAPT-01",
+      ".planning/formal/tla/QGSDMCPEnv.tla|ARCH-03"
+    ],
+    "hub+cat": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/misc-behavioral.als|EVID-02"
+    ],
+    "sem+hub+cat": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/misc-behavioral.als|EVID-02"
+    ],
+    "tfidf+cat": [
+      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
+      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
+      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
+      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
+      ".planning/formal/alloy/evidence-layer.als|BRKR-01",
+      ".planning/formal/alloy/token-optimization.als|LTCY-01",
+      ".planning/formal/alloy/evidence-triage.als|BRKR-01",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|PRIO-01",
+      ".planning/formal/alloy/quorum-improvements.als|EXEC-01",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|VALID-01",
+      ".planning/formal/alloy/requirements-aggregation.als|BRKR-01",
+      ".planning/formal/alloy/spec-audit.als|BRKR-01",
+      ".planning/formal/alloy/evidence-layer.als|ARCH-03",
+      ".planning/formal/alloy/event-vocabulary.als|BRKR-01",
+      ".planning/formal/tla/NFDebtLedger.tla|BRKR-01",
+      ".planning/formal/alloy/diagnostics.als|BRKR-01",
+      ".planning/formal/alloy/parallel-exec.als|BRKR-01",
+      ".planning/formal/alloy/meta-resolve.als|BRKR-01",
+      ".planning/formal/alloy/parallel-execution.als|BRKR-01"
+    ],
+    "sem+tfidf+cat": [
+      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
+      ".planning/formal/alloy/memory-persistence.als|TOKN-01",
+      ".planning/formal/alloy/formal-test-trace.als|UPPAAL-02",
+      ".planning/formal/alloy/memory-persistence.als|LRNG-04",
+      ".planning/formal/tla/NFDebtLedger.tla|PF-03",
+      ".planning/formal/alloy/spec-quality-guardrails.als|UPPAAL-02",
+      ".planning/formal/alloy/solve-result-schema.als|UPPAAL-02",
+      ".planning/formal/tla/NFDebtLedger.tla|PF-02",
+      ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
+      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
+      ".planning/formal/alloy/debt-lifecycle.als|PF-03",
+      ".planning/formal/alloy/architecture-registry.als|TRACE-01",
+      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
+      ".planning/formal/alloy/traceability-obligations.als|DEBT-05",
+      ".planning/formal/alloy/multi-slot-structure.als|PROV-03",
+      ".planning/formal/alloy/decomp-cross-model.als|UPPAAL-02",
+      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
+      ".planning/formal/alloy/jvm-heap-sequential.als|UPPAAL-02",
+      ".planning/formal/tla/NFSolveP2F.tla|DEBT-05",
+      ".planning/formal/alloy/evidence-layer.als|BRKR-01"
+    ],
+    "hub+tfidf+cat": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/traceability.als|ANNOT-02",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01"
+    ],
+    "sem+hub+tfidf+cat": [
+      ".planning/formal/alloy/ci-pipeline-gates.als|CI-06",
+      ".planning/formal/alloy/ci-quality-gates.als|CI-03",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-01",
+      ".planning/formal/tla/QGSDQuorum.tla|MULTI-03",
+      ".planning/formal/alloy/security-hardening.als|SEC-03",
+      ".planning/formal/alloy/security-scanning.als|SEC-07",
+      ".planning/formal/alloy/misc-behavioral.als|TRIAGE-01",
+      ".planning/formal/tla/NFDeliberation.tla|QUORUM-02",
+      ".planning/formal/tla/NFDeliberation.tla|SAFE-01",
+      ".planning/formal/prism/quorum.props|QUORUM-02",
+      ".planning/formal/alloy/misc-behavioral.als|UNIF-03",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|SAFE-01",
+      ".planning/formal/tla/QGSDQuorum_xstate.tla|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|QUORUM-02",
+      ".planning/formal/alloy/multi-slot-structure.als|SAFE-01",
+      ".planning/formal/prism/quorum.props|SAFE-01",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-03",
+      ".planning/formal/alloy/misc-behavioral.als|PROV-02",
+      ".planning/formal/alloy/misc-behavioral.als|PRST-01",
+      ".planning/formal/alloy/traceability.als|ANNOT-02"
+    ]
+  },
+  "uniqueCandidates": [
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "ADAPT-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "ARCH-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "EXEC-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "HLTH-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "LTCY-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "PRIO-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "SCHEMA-02"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "SHARD-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "SIG-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
+      "requirement": "VALID-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "ADAPT-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "ARCH-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "EXEC-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "HLTH-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "LTCY-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "META-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+      "requirement": "META-03"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "GATE-01"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "GATE-03"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "GATE-04"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "HLTH-03"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "SIG-03"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "SOLVE-05"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-session-persistence.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/tla/NFAccountManager.tla",
+      "requirement": "CONF-05"
+    },
+    {
+      "model": ".planning/formal/tla/NFAccountManager.tla",
+      "requirement": "CONF-08"
+    },
+    {
+      "model": ".planning/formal/tla/NFCircuitBreaker.tla",
+      "requirement": "CONF-05"
+    },
+    {
+      "model": ".planning/formal/tla/NFCircuitBreaker.tla",
+      "requirement": "CONF-08"
+    },
+    {
+      "model": ".planning/formal/tla/NFConvergence.tla",
+      "requirement": "CONF-05"
+    },
+    {
+      "model": ".planning/formal/tla/NFConvergence.tla",
+      "requirement": "CONF-08"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "CONF-05"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "CONF-08"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "IMPR-02"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "IMPR-03"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "IMPR-04"
+    },
+    {
+      "model": ".planning/formal/alloy/ci-pipeline-gates.als",
+      "requirement": "CI-06"
+    },
+    {
+      "model": ".planning/formal/alloy/ci-quality-gates.als",
+      "requirement": "CI-03"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDQuorum.tla",
+      "requirement": "MULTI-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDQuorum.tla",
+      "requirement": "MULTI-03"
+    },
+    {
+      "model": ".planning/formal/alloy/security-scanning.als",
+      "requirement": "SEC-07"
+    },
+    {
+      "model": ".planning/formal/alloy/security-hardening.als",
+      "requirement": "SEC-03"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "TRIAGE-01"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "UNIF-03"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "QUORUM-02"
+    },
+    {
+      "model": ".planning/formal/tla/NFDeliberation.tla",
+      "requirement": "SAFE-01"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDQuorum_xstate.tla",
+      "requirement": "QUORUM-02"
+    },
+    {
+      "model": ".planning/formal/tla/QGSDQuorum_xstate.tla",
+      "requirement": "SAFE-01"
+    },
+    {
+      "model": ".planning/formal/alloy/multi-slot-structure.als",
+      "requirement": "QUORUM-02"
+    },
+    {
+      "model": ".planning/formal/alloy/multi-slot-structure.als",
+      "requirement": "SAFE-01"
+    },
+    {
+      "model": ".planning/formal/prism/quorum.props",
+      "requirement": "QUORUM-02"
+    },
+    {
+      "model": ".planning/formal/prism/quorum.props",
+      "requirement": "SAFE-01"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "PROV-02"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "PROV-03"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "PRST-01"
+    },
+    {
+      "model": ".planning/formal/alloy/misc-behavioral.als",
+      "requirement": "EVID-02"
+    },
+    {
+      "model": ".planning/formal/alloy/unified-check-results.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/baseline-merge-idempotent.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/schema-extensions.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/evidence-triage.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/architecture-registry.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/evidence-layer.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/token-optimization.als",
+      "requirement": "LTCY-01"
+    },
+    {
+      "model": ".planning/formal/alloy/evidence-triage.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/baseline-merge-idempotent.als",
+      "requirement": "PRIO-01"
+    },
+    {
+      "model": ".planning/formal/alloy/quorum-improvements.als",
+      "requirement": "EXEC-01"
+    },
+    {
+      "model": ".planning/formal/alloy/baseline-merge-idempotent.als",
+      "requirement": "VALID-01"
+    },
+    {
+      "model": ".planning/formal/alloy/requirements-aggregation.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/spec-audit.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/evidence-layer.als",
+      "requirement": "ARCH-03"
+    },
+    {
+      "model": ".planning/formal/alloy/event-vocabulary.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/tla/NFDebtLedger.tla",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/diagnostics.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/parallel-exec.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/meta-resolve.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/parallel-execution.als",
+      "requirement": "BRKR-01"
+    },
+    {
+      "model": ".planning/formal/alloy/memory-persistence.als",
+      "requirement": "TOKN-01"
+    },
+    {
+      "model": ".planning/formal/alloy/formal-test-trace.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/memory-persistence.als",
+      "requirement": "LRNG-04"
+    },
+    {
+      "model": ".planning/formal/tla/NFDebtLedger.tla",
+      "requirement": "PF-03"
+    },
+    {
+      "model": ".planning/formal/alloy/spec-quality-guardrails.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/solve-result-schema.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/tla/NFDebtLedger.tla",
+      "requirement": "PF-02"
+    },
+    {
+      "model": ".planning/formal/alloy/debt-lifecycle.als",
+      "requirement": "PF-03"
+    },
+    {
+      "model": ".planning/formal/alloy/architecture-registry.als",
+      "requirement": "TRACE-01"
+    },
+    {
+      "model": ".planning/formal/alloy/traceability-obligations.als",
+      "requirement": "DEBT-05"
+    },
+    {
+      "model": ".planning/formal/alloy/multi-slot-structure.als",
+      "requirement": "PROV-03"
+    },
+    {
+      "model": ".planning/formal/alloy/decomp-cross-model.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/alloy/jvm-heap-sequential.als",
+      "requirement": "UPPAAL-02"
+    },
+    {
+      "model": ".planning/formal/tla/NFSolveP2F.tla",
+      "requirement": "DEBT-05"
+    },
+    {
+      "model": ".planning/formal/alloy/traceability.als",
+      "requirement": "ANNOT-02"
+    }
+  ]
+}

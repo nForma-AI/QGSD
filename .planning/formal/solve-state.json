@@ -1,64 +1,69 @@
 {
-  "last_run": "2026-03-10T16:36:14.098Z",
+  "last_run": "2026-03-12T14:51:42.136Z",
   "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 32,
-  "reverse_discovery_total": 349,
-  "heatmap_total": 6419,
+  "final_residual_total": 355,
+  "reverse_discovery_total": 368,
+  "heatmap_total": 6537,
   "known_issues": [
     {
+      "layer": "r_to_f",
+      "residual": 7
+    },
+    {
+      "layer": "f_to_c",
+      "residual": 315
+    },
+    {
       "layer": "d_to_c",
-      "residual": 32,
+      "residual": 33,
       "net_residual": 0
     },
     {
       "layer": "c_to_r",
-      "residual": 139,
-      "net_residual": 0
+      "residual": 145,
+      "net_residual": 3
     },
     {
       "layer": "t_to_r",
-      "residual": 186,
-      "net_residual": 0
+      "residual": 200,
+      "net_residual": 10
     },
     {
       "layer": "d_to_r",
-      "residual": 24,
+      "residual": 23,
       "net_residual": 0
     },
     {
       "layer": "l1_to_l2",
-      "residual": 8
+      "residual": 2
     },
     {
       "layer": "l2_to_l3",
-      "residual": 10
+      "residual": 5
     },
     {
       "layer": "l3_to_tc",
-      "residual": 1
-    },
-    {
-      "layer": "per_model_gates",
-      "residual": 7
+      "residual": 5
     },
     {
       "layer": "git_heatmap",
-      "residual": 6419
+      "residual": 6537
     },
     {
       "layer": "git_history",
-      "residual": 42
+      "residual": 43
     },
     {
       "layer": "hazard_model",
-      "residual": 6
+      "residual": 3
     }
   ],
   "r_to_f_progress": {
-    "total": 345,
+    "total": 358,
     "covered": 0,
     "percentage": "0.0"
   },
-  "focus": null
+  "focus": null,
+  "consecutive_clean_sessions": 0
 }

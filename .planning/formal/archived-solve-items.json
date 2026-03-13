@@ -3352,6 +3352,174 @@
       "summary": "bin/observe-pipeline.test.cjs",
       "file": "bin/observe-pipeline.test.cjs",
       "archived_at": "2026-03-10T12:09:51.172Z"
+    },
+    {
+      "key": "README.md:370",
+      "type": "dtor",
+      "summary": "Verifies — Checks plans against requirements, loops until they pass",
+      "doc_file": "README.md",
+      "line": 370,
+      "archived_at": "2026-03-10T16:05:56.044Z"
+    },
+    {
+      "key": "README.md:389",
+      "type": "dtor",
+      "summary": "Verifies against goals — Checks the codebase delivers what the phase promised",
+      "doc_file": "README.md",
+      "line": 389,
+      "archived_at": "2026-03-10T16:05:56.046Z"
+    },
+    {
+      "key": "README.md:606",
+      "type": "dtor",
+      "summary": "Planning | Validates, manages iteration",
+      "doc_file": "README.md",
+      "line": 606,
+      "archived_at": "2026-03-10T16:05:56.047Z"
+    },
+    {
+      "key": "README.md:818",
+      "type": "dtor",
+      "summary": "/nf:quick [--full] | Ad-hoc task with nForma guarantees",
+      "doc_file": "README.md",
+      "line": 818,
+      "archived_at": "2026-03-10T16:05:56.048Z"
+    },
+    {
+      "key": "README.md:952",
+      "type": "dtor",
+      "summary": "workflow.plan_check | true | Verifies plans achieve phase goals",
+      "doc_file": "README.md",
+      "line": 952,
+      "archived_at": "2026-03-10T16:05:56.050Z"
+    },
+    {
+      "key": "README.md:581",
+      "type": "dtor",
+      "summary": "Remediate (/nf:solve-remediate) — Dispatches 13 remediation layers",
+      "doc_file": "README.md",
+      "line": 581,
+      "archived_at": "2026-03-10T16:05:56.051Z"
+    },
+    {
+      "key": "README.md:582",
+      "type": "dtor",
+      "summary": "Report (/nf:solve-report) — Generates before/after summary",
+      "doc_file": "README.md",
+      "line": 582,
+      "archived_at": "2026-03-10T16:05:56.052Z"
+    },
+    {
+      "key": "README.md:689",
+      "type": "dtor",
+      "summary": "Ping-Pong Commit Loop Breaker — Detects and breaks structural coupling loops",
+      "doc_file": "README.md",
+      "line": 689,
+      "archived_at": "2026-03-10T16:05:56.053Z"
+    },
+    {
+      "key": "README.md:724",
+      "type": "dtor",
+      "summary": "Quick Mode — Ad-hoc tasks with nForma guarantees",
+      "doc_file": "README.md",
+      "line": 724,
+      "archived_at": "2026-03-10T16:05:56.054Z"
+    },
+    {
+      "key": "README.md:730",
+      "type": "dtor",
+      "summary": "Quick mode gives you nForma guarantees (atomic commits, state tracking)",
+      "doc_file": "README.md",
+      "line": 730,
+      "archived_at": "2026-03-10T16:05:56.055Z"
+    },
+    {
+      "key": "README.md:94",
+      "type": "dtor",
+      "summary": "Outer-loop convergence guarantees — TLA+ verified",
+      "doc_file": "README.md",
+      "line": 94,
+      "archived_at": "2026-03-10T16:05:56.055Z"
+    },
+    {
+      "key": "README.md:484",
+      "type": "dtor",
+      "summary": "Formal verification is entirely optional for using nForma",
+      "doc_file": "README.md",
+      "line": 484,
+      "archived_at": "2026-03-10T16:05:56.056Z"
+    },
+    {
+      "key": "README.md:774",
+      "type": "dtor",
+      "summary": "PostToolUse | nf-context-monitor.js | Monitors context usage",
+      "doc_file": "README.md",
+      "line": 774,
+      "archived_at": "2026-03-10T16:05:56.057Z"
+    },
+    {
+      "key": "test/error-clusterer.test.cjs",
+      "type": "ttor",
+      "summary": "test/error-clusterer.test.cjs",
+      "file": "test/error-clusterer.test.cjs",
+      "archived_at": "2026-03-10T20:16:30.164Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/error-clusterer.cjs",
+      "type": "ctor",
+      "summary": "bin/error-clusterer.cjs",
+      "file": "bin/error-clusterer.cjs",
+      "archived_at": "2026-03-10T20:18:26.020Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/candidate-discovery.cjs",
+      "type": "ctor",
+      "summary": "bin/candidate-discovery.cjs",
+      "file": "bin/candidate-discovery.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/candidate-pairings.cjs",
+      "type": "ctor",
+      "summary": "bin/candidate-pairings.cjs",
+      "file": "bin/candidate-pairings.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/resolve-pairings.cjs",
+      "type": "ctor",
+      "summary": "bin/resolve-pairings.cjs",
+      "file": "bin/resolve-pairings.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/compute-semantic-scores.test.cjs",
+      "type": "ttor",
+      "summary": "bin/compute-semantic-scores.test.cjs",
+      "file": "bin/compute-semantic-scores.test.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/gate-field-compatibility.test.cjs",
+      "type": "ttor",
+      "summary": "bin/gate-field-compatibility.test.cjs",
+      "file": "bin/gate-field-compatibility.test.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/haiku-semantic-eval.test.cjs",
+      "type": "ttor",
+      "summary": "bin/haiku-semantic-eval.test.cjs",
+      "file": "bin/haiku-semantic-eval.test.cjs",
+      "archived_at": "2026-03-11T12:28:01.568Z",
+      "auto_classified": "fp"
     }
   ]
 }

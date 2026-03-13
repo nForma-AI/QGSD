@@ -139,6 +139,203 @@
       "value": "| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |",
       "reason": "Acknowledged via TUI",
       "acknowledged_at": "2026-03-10T11:24:03.207Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:23.680Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:23.681Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:23.682Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:23.682Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:23.682Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:45.440Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:45.442Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:45.442Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:45.442Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:04:45.442Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:05:08.837Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:05:08.838Z"
+    },
+    {
+      "source": "D->R",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-10T16:05:08.853Z"
+    },
+    {
+      "source": "C->R",
+      "value": "bin/audit-agent-payloads.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T21:45:32.250Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/candidate-discovery.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:20:04.722Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/candidate-pairings.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:20:04.724Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/resolve-pairings.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:20:04.725Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/auto-promotion-integration.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:20:04.725Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/e2e-semantic-promotion-pipeline.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:20:04.725Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/audit-agent-payloads.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:24:15.325Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/fallback-01-regression.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:24:15.327Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/shell-escape-01.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-11T22:24:15.327Z"
+    },
+    {
+      "source": "C->R",
+      "value": "bin/audit-agent-payloads.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T14:19:34.624Z"
+    },
+    {
+      "source": "C->R",
+      "value": "bin/benchmark-32-combos.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T14:19:34.626Z"
+    },
+    {
+      "source": "C->R",
+      "value": "bin/benchmark-scoring.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T14:19:34.626Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/audit-agent-payloads.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:16:21.110Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/fallback-01-regression.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:16:21.112Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/model-dedup.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:16:21.113Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/quorum-preflight-probe.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:16:21.113Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/shell-escape-01.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:16:21.113Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/candidate-discovery.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:37:41.658Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/candidate-pairings.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:37:41.660Z"
+    },
+    {
+      "source": "T->R",
+      "value": "bin/resolve-pairings.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:37:41.661Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/auto-promotion-integration.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:51:44.842Z"
+    },
+    {
+      "source": "T->R",
+      "value": "test/e2e-semantic-promotion-pipeline.test.cjs",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-12T15:51:44.845Z"
     }
   ],
   "patterns": [

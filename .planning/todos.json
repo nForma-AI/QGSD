@@ -10,6 +10,30 @@
       "id": "TODO-1773014430742",
       "source": "solver-dtoc",
       "created_at": "2026-03-09T00:00:30.742Z"
+    },
+    {
+      "id": "TODO-1773341396592",
+      "source": "solver-dtoc",
+      "reason": "Create formal model for shell-safe prompt delivery (stdin piping, no escaping)",
+      "created_at": "2026-03-12T18:49:56.591Z"
+    },
+    {
+      "id": "TODO-1773341396593",
+      "source": "solver-dtoc",
+      "reason": "Create formal model for quorum slot model deduplication (diversity guarantee)",
+      "created_at": "2026-03-12T18:49:56.593Z"
+    },
+    {
+      "id": "TODO-1773341472480",
+      "source": "solver-dtoc",
+      "reason": "Create formal model for net_residual computation (FP subtraction from raw sweep residuals)",
+      "created_at": "2026-03-12T18:51:12.479Z"
+    },
+    {
+      "id": "TODO-1773341472481",
+      "source": "solver-dtoc",
+      "reason": "Create formal model for solve convergence layer-transition sweeps (L1->L2, L2->L3, L3->TC)",
+      "created_at": "2026-03-12T18:51:12.481Z"
     }
   ]
 }

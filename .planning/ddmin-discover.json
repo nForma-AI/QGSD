@@ -1,0 +1,12 @@
+{
+  "runners": [],
+  "test_files": [],
+  "total_count": 0,
+  "by_runner": {},
+  "warnings": [
+    {
+      "runner": null,
+      "error": "No test framework config files detected"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-10T14:15:35.370Z",
+  "generated": "2026-03-12T14:46:19.527Z",
   "layers": {
     "L1": [],
     "L2": [],
@@ -32,7 +32,7 @@
       },
       {
         "path": ".planning/formal/alloy/quorum-votes.als",
-        "description": "",
+        "description": "Quorum vote-counting model — unanimity predicate verification",
         "grounding_status": "has_semantic_declarations"
       },
       {
@@ -62,7 +62,7 @@
       },
       {
         "path": ".planning/formal/prism/quorum.pm",
-        "description": "",
+        "description": "Quorum convergence DTMC model — state transition probabilities",
         "grounding_status": "has_semantic_declarations"
       },
       {
@@ -422,7 +422,7 @@
       },
       {
         "path": ".planning/formal/tla/NFQuorum.tla",
-        "description": "",
+        "description": "Quorum workflow TLA+ model — state machine with unanimity and deliberation guards",
         "grounding_status": "has_semantic_declarations"
       },
       {
@@ -894,6 +894,26 @@
         "path": ".planning/formal/alloy/misc-behavioral.als",
         "description": "Miscellaneous behavioral requirements — adapter, agent wizard, debug invariants, etc.",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-triage-display.als",
+        "description": "Solve report triage breakdown display and stale archive resurfacing",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-net-residual.als",
+        "description": "Net residual computation for human-gated layers (subtracts FP + archived from raw)",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/mcp-repair-lifecycle.als",
+        "description": "MCP repair lifecycle — diagnose/classify/repair/guide/verify invariants for quorum slot connectivity",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/agent-context-payload.als",
+        "description": "Agent context payload safety: 128KB size guardrail and automated size monitoring for LLM-facing scripts",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -915,12 +935,12 @@
     }
   },
   "summary": {
-    "total_models": 178,
+    "total_models": 182,
     "L1_count": 0,
     "L2_count": 0,
-    "L3_count": 178,
+    "L3_count": 182,
     "maturity_distribution": {
-      "0": 146,
+      "0": 150,
       "1": 32
     },
     "spec_modules_with_invariants": 18
