@@ -27,7 +27,7 @@
 const fs              = require('fs');
 const path            = require('path');
 const os              = require('os');
-const { spawn }       = require('child_process');
+const { spawn, execFileSync } = require('child_process');
 const https           = require('https');
 const http            = require('http');
 
@@ -314,6 +314,72 @@ async function probeHealth(providers) {
   return health;
 }
 
+// ─── Service auto-start (pre-probe) ─────────────────────────────────────────
+function ensureServices(providers) {
+  // Deduplicate by unique service.status command
+  const checked = new Set();
+
+  for (const p of providers) {
+    if (!p.service || !p.service.status || !p.service.start) continue;
+
+    const key = JSON.stringify(p.service.status);
+    if (checked.has(key)) continue;
+    checked.add(key);
+
+    const [statusCmd, ...statusArgs] = p.service.status;
+    const [startCmd, ...startArgs] = p.service.start;
+
+    // Check if service is running
+    let needsStart = false;
+    try {
+      const out = execFileSync(statusCmd, statusArgs, { encoding: 'utf8', timeout: 5000 });
+      if (/not running|stopped/i.test(out)) {
+        needsStart = true;
+      }
+    } catch (_) {
+      // Status check failed — skip this service (fail-open)
+      process.stderr.write(`[preflight] Service ${statusCmd} ${statusArgs.join(' ')} status check failed, skipping\n`);
+      continue;
+    }
+
+    if (!needsStart) continue;
+
+    // Auto-start the service
+    process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} is down, starting...\n`);
+    try {
+      execFileSync(startCmd, startArgs, { encoding: 'utf8', timeout: 10000 });
+    } catch (e) {
+      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} start command failed: ${e.message}\n`);
+      continue;
+    }
+
+    // Poll for readiness: 1s interval, up to 10 iterations
+    let started = false;
+    const pollStart = Date.now();
+    for (let i = 0; i < 10; i++) {
+      try {
+        execFileSync('sleep', ['1']);
+      } catch (_) {}
+      try {
+        const out = execFileSync(statusCmd, statusArgs, { encoding: 'utf8', timeout: 5000 });
+        if (!/not running|stopped/i.test(out)) {
+          started = true;
+          break;
+        }
+      } catch (_) {
+        // Poll check failed — continue polling
+      }
+    }
+
+    const elapsed = Math.round((Date.now() - pollStart) / 1000);
+    if (started) {
+      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} started (${elapsed}s)\n`);
+    } else {
+      process.stderr.write(`[preflight] Service ${startCmd} ${startArgs.join(' ')} failed to start after ${elapsed}s\n`);
+    }
+  }
+}
+
 // ─── Main ───────────────────────────────────────────────────────────────────
 async function main() {
   const mode = process.argv[2] || '--all';
@@ -341,6 +407,7 @@ async function main() {
         ? providers.filter(p => active.includes(p.name))
         : providers;
 
+      ensureServices(activeProviders);
       const health = await probeHealth(activeProviders);
 
       output.health = health;
