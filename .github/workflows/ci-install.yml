@@ -2,7 +2,7 @@ name: CI Install Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - 'bin/install.js'
       - 'hooks/dist/**'
@@ -12,7 +12,7 @@ on:
       - 'test/install-virgin.test.cjs'
       - '.github/workflows/ci-install.yml'
   pull_request:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - 'bin/install.js'
       - 'hooks/dist/**'
