@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/formal-proximity.cjs", "bin/formal-query.cjs"],
+  "concepts": ["proximity-index", "graph-traversal", "reachability", "adjacency-list", "decay-scoring"],
+  "requirements": []
+}

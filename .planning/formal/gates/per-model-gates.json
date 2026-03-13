@@ -1,8 +1,8 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-13T08:47:09.392Z",
-  "total_models": 182,
-  "unstable_models": 1,
+  "generated": "2026-03-13T19:57:20.811Z",
+  "total_models": 186,
+  "unstable_models": 3,
   "evidence_readiness": {
     "score": 2,
     "total": 5
@@ -119,7 +119,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:quorum"
+        "reason": "passing check-result alloy:quorum-votes"
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
@@ -199,7 +199,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:mcp-availability"
+        "reason": "passing check-result alloy:availability"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -331,7 +331,7 @@
     ".planning/formal/tla/QGSDMCPEnv.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req MCPENV-01 (property: unnamed)"
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -671,7 +671,7 @@
     ".planning/formal/tla/QGSDAgentProvisioning.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req AGENT-03 (property: unnamed)"
+        "reason": "all 8 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -751,7 +751,7 @@
     ".planning/formal/alloy/schema-extensions.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req SCHEMA-02 (property: unnamed)"
+        "reason": "all 12 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -771,7 +771,7 @@
     ".planning/formal/alloy/unified-check-results.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req UNIF-02 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -831,7 +831,7 @@
     ".planning/formal/alloy/architecture-registry.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ARCH-03 (property: unnamed)"
+        "reason": "all 16 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -899,7 +899,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:deliberation-healing"
+        "reason": "passing check-result tla:deliberation"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -991,7 +991,7 @@
     ".planning/formal/alloy/state-space-analysis.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req DECOMP-01 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1011,7 +1011,7 @@
     ".planning/formal/alloy/evidence-triage.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req TRIAGE-02 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1031,7 +1031,7 @@
     ".planning/formal/alloy/uppaal-model-reqs.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req UPPAAL-02 (property: unnamed)"
+        "reason": "all 5 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1051,7 +1051,7 @@
     ".planning/formal/alloy/signal-analysis-tools.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req SIG-03 (property: unnamed)"
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1091,7 +1091,7 @@
     ".planning/formal/alloy/health-validation.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req HLTH-03 (property: unnamed)"
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1927,10 +1927,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 5,
       "cooldown": {
-        "consecutive_stable_sessions": 14,
+        "consecutive_stable_sessions": 20,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-13T08:47:09.386Z"
+        "last_session_timestamp": "2026-03-13T19:57:20.776Z"
       },
       "flagged_at": "2026-03-11T19:09:49.446Z"
     },
@@ -2065,7 +2065,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:mcp-availability"
+        "reason": "passing check-result alloy:availability"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -2145,7 +2145,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:deliberation-healing"
+        "reason": "passing check-result tla:deliberation"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -2637,7 +2637,7 @@
     ".planning/formal/alloy/governance-dx.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
+        "reason": "all 14 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2717,7 +2717,7 @@
     ".planning/formal/alloy/quality-hardening.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req BRKR-01 (property: unnamed)"
+        "reason": "all 9 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2825,7 +2825,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:quorum"
+        "reason": "passing check-result alloy:quorum-improvements"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -3557,7 +3557,7 @@
     ".planning/formal/alloy/misc-behavioral.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
+        "reason": "all 18 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3648,6 +3648,98 @@
         "reason": "passing check-result alloy:agent-context-payload"
       },
       "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "promoted": false,
+      "stability_status": "STABLE",
+      "direction_changes": 0,
+      "cooldown": null
+    },
+    ".planning/formal/tla/NFDispatch.tla": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DISPATCH-01, DISPATCH-02]"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [DISPATCH-01, DISPATCH-02], no matching check-results"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "ADVISORY",
+      "promoted": false,
+      "stability_status": "STABLE",
+      "direction_changes": 0,
+      "cooldown": null
+    },
+    ".planning/formal/alloy/proximity-pipeline.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [DIAG-06, DIAG-07, DIAG-08, DIAG-09]"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "passing check-result alloy:proximity-pipeline"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "ADVISORY",
+      "promoted": false,
+      "stability_status": "UNSTABLE",
+      "direction_changes": 4,
+      "cooldown": {
+        "consecutive_stable_sessions": 1,
+        "required_sessions": 3,
+        "required_wall_time_ms": 3600000,
+        "last_session_timestamp": "2026-03-13T19:57:20.809Z"
+      },
+      "flagged_at": "2026-03-13T19:50:36.232Z"
+    },
+    ".planning/formal/alloy/ci-matrix.als": {
+      "gate_a": {
+        "pass": false,
+        "reason": "no passing traces for reqs [CI-07]"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "passing check-result alloy:ci-matrix"
+      },
+      "layer_maturity": 2,
+      "gate_maturity": "ADVISORY",
+      "promoted": false,
+      "stability_status": "UNSTABLE",
+      "direction_changes": 4,
+      "cooldown": {
+        "consecutive_stable_sessions": 1,
+        "required_sessions": 3,
+        "required_wall_time_ms": 3600000,
+        "last_session_timestamp": "2026-03-13T19:57:20.809Z"
+      },
+      "flagged_at": "2026-03-13T19:50:36.232Z"
+    },
+    ".planning/formal/alloy/installer-sync.als": {
+      "gate_a": {
+        "pass": true,
+        "reason": "semantic_declarations in layer-manifest (layer: L3)"
+      },
+      "gate_b": {
+        "pass": false,
+        "reason": "source_layer is L2 (needs L3 or hazard-model reference)"
+      },
+      "gate_c": {
+        "pass": true,
+        "reason": "passing check-result alloy:installer-sync"
+      },
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-12T14:46:19.527Z",
+  "generated": "2026-03-13T19:50:51.875Z",
   "layers": {
     "L1": [],
     "L2": [],
@@ -914,6 +914,26 @@
         "path": ".planning/formal/alloy/agent-context-payload.als",
         "description": "Agent context payload safety: 128KB size guardrail and automated size monitoring for LLM-facing scripts",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFDispatch.tla",
+        "description": "Quorum dispatch integrity: prompt fidelity and slot deduplication",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/proximity-pipeline.als",
+        "description": "Proximity graph orchestration pipeline structure and evaluation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-matrix.als",
+        "description": "CI/CD workflow configuration: branch triggers, Node matrix, npm integrity",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/installer-sync.als",
+        "description": "Installer auto-sync of provider slots from providers.json to claude.json",
+        "grounding_status": "has_semantic_declarations"
       }
     ]
   },
@@ -935,13 +955,13 @@
     }
   },
   "summary": {
-    "total_models": 182,
+    "total_models": 186,
     "L1_count": 0,
     "L2_count": 0,
-    "L3_count": 182,
+    "L3_count": 186,
     "maturity_distribution": {
-      "0": 150,
-      "1": 32
+      "0": 153,
+      "1": 33
     },
     "spec_modules_with_invariants": 18
   }

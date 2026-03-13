@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/nf-solve.cjs", "bin/run-quorum.cjs"],
+  "concepts": ["solve-convergence", "eventual-convergence", "progress-session", "residual-layers", "oscillation-blocking"],
+  "requirements": []
+}

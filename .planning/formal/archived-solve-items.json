@@ -3520,6 +3520,122 @@
       "file": "bin/haiku-semantic-eval.test.cjs",
       "archived_at": "2026-03-11T12:28:01.568Z",
       "auto_classified": "fp"
+    },
+    {
+      "key": "bin/audit-agent-payloads.cjs",
+      "type": "ctor",
+      "summary": "bin/audit-agent-payloads.cjs",
+      "file": "bin/audit-agent-payloads.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/benchmark-32-combos.cjs",
+      "type": "ctor",
+      "summary": "bin/benchmark-32-combos.cjs",
+      "file": "bin/benchmark-32-combos.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/benchmark-scoring.cjs",
+      "type": "ctor",
+      "summary": "bin/benchmark-scoring.cjs",
+      "file": "bin/benchmark-scoring.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/resolve-formal-tools.cjs",
+      "type": "ctor",
+      "summary": "bin/resolve-formal-tools.cjs",
+      "file": "bin/resolve-formal-tools.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/audit-agent-payloads.test.cjs",
+      "type": "ttor",
+      "summary": "bin/audit-agent-payloads.test.cjs",
+      "file": "bin/audit-agent-payloads.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "test/install-fresh-clone.test.cjs",
+      "type": "ttor",
+      "summary": "test/install-fresh-clone.test.cjs",
+      "file": "test/install-fresh-clone.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "test/install-guided-providers.test.cjs",
+      "type": "ttor",
+      "summary": "test/install-guided-providers.test.cjs",
+      "file": "test/install-guided-providers.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "test/install-patch-persistence.test.cjs",
+      "type": "ttor",
+      "summary": "test/install-patch-persistence.test.cjs",
+      "file": "test/install-patch-persistence.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "test/mcp-setup-auth-type.test.cjs",
+      "type": "ttor",
+      "summary": "test/mcp-setup-auth-type.test.cjs",
+      "file": "test/mcp-setup-auth-type.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "test/shell-escape-01.test.cjs",
+      "type": "ttor",
+      "summary": "test/shell-escape-01.test.cjs",
+      "file": "test/shell-escape-01.test.cjs",
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:486",
+      "type": "dtor",
+      "summary": "> **Note:** Formal verification is entirely optional for using nForma. You don't need Java or any formal tools installed",
+      "doc_file": "README.md",
+      "line": 486,
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:574",
+      "type": "dtor",
+      "summary": "When something breaks — tests fail, planning state drifts, requirements go stale — the `/nf:solve` pipeline handles it e",
+      "doc_file": "README.md",
+      "line": 574,
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:608",
+      "type": "dtor",
+      "summary": "| Planning | Validates, manages iteration | Planner creates plans, checker verifies, loop until pass |",
+      "doc_file": "README.md",
+      "line": 608,
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:776",
+      "type": "dtor",
+      "summary": "| PostToolUse | nf-context-monitor.js | After every tool execution | Monitors context usage; injects WARNING at 70%, CRI",
+      "doc_file": "README.md",
+      "line": 776,
+      "archived_at": "2026-03-13T19:21:59.095Z",
+      "auto_classified": "fp"
     }
   ]
 }

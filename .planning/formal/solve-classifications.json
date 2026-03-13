@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-03-11T12:28:24.786Z",
+  "updated_at": "2026-03-13T19:21:59.093Z",
   "classifications": {
     "dtoc": {
       "docs/triage-sources.example.md:sentry-feedback": "fp",
@@ -205,7 +205,13 @@
       "hooks/nf-resolve-bin.js": "fp",
       "bin/candidate-discovery.cjs": "fp",
       "bin/candidate-pairings.cjs": "fp",
-      "bin/resolve-pairings.cjs": "fp"
+      "bin/resolve-pairings.cjs": "fp",
+      "bin/audit-agent-payloads.cjs": "fp",
+      "bin/benchmark-32-combos.cjs": "fp",
+      "bin/benchmark-scoring.cjs": "fp",
+      "bin/resolve-formal-tools.cjs": "fp",
+      "hooks/nf-context-monitor.js": "review",
+      "hooks/nf-node-eval-guard.js": "review"
     },
     "ttor": {
       "bin/accept-debug-invariant.test.cjs": "fp",
@@ -406,7 +412,18 @@
       "bin/haiku-semantic-eval.test.cjs": "fp",
       "bin/resolve-pairings.test.cjs": "genuine",
       "test/auto-promotion-integration.test.cjs": "genuine",
-      "test/e2e-semantic-promotion-pipeline.test.cjs": "genuine"
+      "test/e2e-semantic-promotion-pipeline.test.cjs": "genuine",
+      "bin/audit-agent-payloads.test.cjs": "fp",
+      "test/fallback-01-regression.test.cjs": "review",
+      "test/install-fresh-clone.test.cjs": "fp",
+      "test/install-guided-providers.test.cjs": "fp",
+      "test/install-patch-persistence.test.cjs": "fp",
+      "test/mcp-setup-auth-type.test.cjs": "fp",
+      "test/model-dedup.test.cjs": "review",
+      "test/quorum-preflight-probe.test.cjs": "review",
+      "test/resolve-cli-integration.test.cjs": "review",
+      "test/shell-escape-01.test.cjs": "fp",
+      "test/tui-cli-agent-resolve.test.cjs": "review"
     },
     "dtor": {
       "README.md:68": "fp",
@@ -443,7 +460,21 @@
       "docs/dev/requirements-coverage.md:1826": "fp",
       "docs/dev/requirements-coverage.md:1864": "fp",
       "docs/USER-GUIDE.md:290": "genuine",
-      "docs/USER-GUIDE.md:337": "fp"
+      "docs/USER-GUIDE.md:337": "fp",
+      "README.md:96": "genuine",
+      "README.md:372": "genuine",
+      "README.md:391": "genuine",
+      "README.md:486": "fp",
+      "README.md:574": "fp",
+      "README.md:583": "genuine",
+      "README.md:584": "genuine",
+      "README.md:608": "fp",
+      "README.md:691": "genuine",
+      "README.md:726": "genuine",
+      "README.md:732": "genuine",
+      "README.md:776": "fp",
+      "README.md:820": "genuine",
+      "README.md:954": "genuine"
     }
   }
 }

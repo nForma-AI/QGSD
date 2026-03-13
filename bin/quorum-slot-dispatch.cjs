@@ -383,6 +383,8 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
     lines.push('');
     lines.push('Given the above, do you maintain your answer or revise it? State your updated position');
     lines.push('clearly (2\u20134 sentences).');
+    lines.push('');
+    lines.push('IMPORTANT: Keep your TOTAL response under 3000 characters.');
 
     // Improvements block (Round 2+, when requestImprovements)
     if (requestImprovements) {
@@ -417,6 +419,9 @@ function buildModeAPrompt({ round, repoDir, question, artifactPath, artifactCont
     lines.push('You are one AI model in a multi-model quorum. Your peer reviewers are other AI language');
     lines.push('models \u2014 not human experts. Give your honest answer with reasoning. Be concise (3\u20136');
     lines.push('sentences). Do not defer to peer models.');
+    lines.push('');
+    lines.push('IMPORTANT: Keep your TOTAL response under 3000 characters. Do not include lengthy code');
+    lines.push('excerpts, full file contents, or verbose explanations. Summarize findings concisely.');
 
     // Improvements block (Round 1, when requestImprovements)
     if (requestImprovements) {
@@ -542,6 +547,10 @@ function buildModeBPrompt({ round, repoDir, question, traces, artifactPath, arti
   lines.push('APPROVE if output clearly shows the question is satisfied.');
   lines.push('REJECT if output shows it is NOT satisfied.');
   lines.push('FLAG if output is ambiguous or requires human judgment.');
+  lines.push('');
+  lines.push('IMPORTANT: Keep your TOTAL response under 3000 characters. Do not reproduce full');
+  lines.push('trace output — summarize key findings concisely.');
+  lines.push('');
   lines.push('If your verdict references specific lines from the execution traces or files, record');
   lines.push('them in a citations: field (optional \u2014 only when you directly cite output lines or');
   lines.push('file content).');
@@ -998,17 +1007,31 @@ async function main() {
 
     let stdout = '';
     let stderr = '';
-    const MAX_BUF = 10 * 1024 * 1024;
+    // Cap subprocess output to 50KB — prevents 100K+ responses from overflowing
+    // Claude Code's MCP result size limit when emitted via emitResultBlock.
+    // The emitResultBlock rawOutput field is already truncated to 5K (line ~780),
+    // but capping here avoids buffering megabytes of unused data in memory.
+    const MAX_BUF = 50 * 1024;
+    let truncated = false;
 
     child.stdout.on('data', d => {
-      if (stdout.length < MAX_BUF) stdout += d.toString().slice(0, MAX_BUF - stdout.length);
+      if (!truncated) {
+        const chunk = d.toString();
+        if (stdout.length + chunk.length > MAX_BUF) {
+          stdout += chunk.slice(0, MAX_BUF - stdout.length);
+          truncated = true;
+        } else {
+          stdout += chunk;
+        }
+      }
     });
     child.stderr.on('data', d => {
       stderr += d.toString().slice(0, 4096);
     });
 
     child.on('close', (code) => {
-      resolve({ exitCode: code, output: stdout || stderr || '(no output)' });
+      const suffix = truncated ? '\n\n[OUTPUT TRUNCATED at 50KB by quorum-slot-dispatch]' : '';
+      resolve({ exitCode: code, output: (stdout || stderr || '(no output)') + suffix });
     });
 
     child.on('error', (err) => {

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-12T14:46:42.695Z",
+  "generated_at": "2026-03-13T19:51:00.964Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -3171,6 +3171,10 @@
           "test_name": "WIZ-10: mcp-setup.md exists and is readable"
         }
       ]
+    },
+    "CI-07": {
+      "covered": false,
+      "test_cases": []
     },
     "DIAG-06": {
       "covered": false,

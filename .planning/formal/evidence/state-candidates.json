@@ -1,13 +1,13 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-12T14:48:05.588Z",
+  "generated": "2026-03-13T19:52:28.223Z",
   "total_unmapped_events": 0,
   "candidates": [],
   "missing_transitions": [
     {
       "from_action": "circuit_break",
       "to_action": "undefined",
-      "count": 1638,
+      "count": 1639,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
@@ -19,13 +19,13 @@
     {
       "from_action": "undefined",
       "to_action": "quorum_start",
-      "count": 4723,
+      "count": 4747,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "quorum_start",
       "to_action": "undefined",
-      "count": 3197,
+      "count": 3218,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
@@ -73,37 +73,37 @@
     {
       "from_action": "quorum_block",
       "to_action": "security_sweep",
-      "count": 78,
+      "count": 84,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "security_sweep",
-      "count": 71,
+      "count": 78,
       "note": "XState mapping missing: from=null, to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "circuit_break",
-      "count": 109,
+      "count": 118,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "security_sweep",
       "to_action": "quorum_start",
-      "count": 22,
+      "count": 23,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "quorum_start",
       "to_action": "security_sweep",
-      "count": 34,
+      "count": 37,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "circuit_break",
       "to_action": "security_sweep",
-      "count": 25,
+      "count": 28,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
@@ -121,7 +121,7 @@
     {
       "from_action": "security_sweep",
       "to_action": "undefined",
-      "count": 1,
+      "count": 3,
       "note": "XState mapping missing: from=null, to=null"
     }
   ],

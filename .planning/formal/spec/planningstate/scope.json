@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/nForma.cjs"],
+  "concepts": ["planning-state", "phase-resolution", "liveness", "fairness", "route-c", "audit-milestone"],
+  "requirements": []
+}

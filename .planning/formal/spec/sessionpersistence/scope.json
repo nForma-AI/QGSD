@@ -1,0 +1,5 @@
+{
+  "source_files": ["bin/nForma.cjs"],
+  "concepts": ["session-persistence", "session-restore", "tui-restart", "file-io"],
+  "requirements": []
+}
