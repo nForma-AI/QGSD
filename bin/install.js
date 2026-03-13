@@ -2914,13 +2914,11 @@ function promptProviders(callback) {
       let idx = 0;
       function askNext() {
         if (idx >= foundClis.length) {
-          // Done with primaries, now ask about dual-subscription
-          askDualSlots(rl, selected, classified.dualSubscription, () => {
-            answered = true;
-            rl.close();
-            selectedProviderSlots = selected;
-            callback();
-          });
+          // Dual-subscription slots skipped — most users have 1 sub per CLI.
+          answered = true;
+          rl.close();
+          selectedProviderSlots = selected;
+          callback();
           return;
         }
         const cli = foundClis[idx];
@@ -2939,13 +2937,11 @@ function promptProviders(callback) {
       for (const cli of foundClis) {
         selected.push(cli.name);
       }
-      // Ask about dual-subscription slots
-      askDualSlots(rl, selected, classified.dualSubscription, () => {
-        answered = true;
-        rl.close();
-        selectedProviderSlots = selected;
-        callback();
-      });
+      // Dual-subscription slots skipped by default (most users have 1 sub).
+      answered = true;
+      rl.close();
+      selectedProviderSlots = selected;
+      callback();
     }
   });
 }

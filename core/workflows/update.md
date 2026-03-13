@@ -44,12 +44,34 @@ Running fresh install...
 Proceed to install step (treat as version 0.0.0 for comparison).
 </step>
 
-<step name="check_latest_version">
-Check npm for latest version:
+<step name="detect_channel">
+Detect whether the installed version is on the staging channel:
 
 ```bash
-node bin/install.js --version 2>/dev/null
+# $INSTALLED_VERSION from previous step
+if echo "$INSTALLED_VERSION" | grep -q '\-staging'; then
+  CHANNEL="staging"
+else
+  CHANNEL="latest"
+fi
+echo "Channel: $CHANNEL"
 ```
+
+Store `$CHANNEL` for use in subsequent steps.
+</step>
+
+<step name="check_latest_version">
+Check npm for the latest version on the detected channel:
+
+```bash
+if [ "$CHANNEL" = "staging" ]; then
+  npm view @nforma.ai/nforma dist-tags.staging 2>/dev/null
+else
+  node bin/install.js --version 2>/dev/null
+fi
+```
+
+Store result as `$LATEST_VERSION`.
 
 **If npm check fails:**
 ```
@@ -76,7 +98,7 @@ You're already on the latest version.
 
 Exit.
 
-**If installed > latest:**
+**If installed > latest (and CHANNEL is "latest"):**
 ```
 ## GSD Update
 
@@ -84,6 +106,18 @@ Exit.
 **Latest:** A.B.C
 
 You're ahead of the latest release (development version?).
+```
+
+Exit.
+
+**If CHANNEL is "staging" and installed == latest:**
+```
+## GSD Update (staging channel)
+
+**Installed:** X.Y.Z-staging.N
+**Latest staging:** X.Y.Z-staging.N
+
+You're on the latest staging version.
 ```
 
 Exit.
@@ -100,7 +134,7 @@ Exit.
 ## GSD Update Available
 
 **Installed:** 1.5.10
-**Latest:** 1.5.15
+**Latest${CHANNEL === 'staging' ? ' (staging)' : ''}:** 1.5.15
 
 ### What's New
 ────────────────────────────────────────────────────────────
@@ -143,7 +177,28 @@ Use AskUserQuestion:
 </step>
 
 <step name="run_update">
-Run the update using the install type detected in step 1:
+Run the update using the install type and channel detected earlier:
+
+**If CHANNEL is "staging":**
+
+First, update the npm package to the staging tag:
+```bash
+npm install -g @nforma.ai/nforma@staging 2>/dev/null || true
+```
+
+Then run the installer:
+
+**If LOCAL install:**
+```bash
+node bin/install.js --claude --local
+```
+
+**If GLOBAL install (or unknown):**
+```bash
+node bin/install.js --claude --global
+```
+
+**If CHANNEL is "latest":**
 
 **If LOCAL install:**
 ```bash

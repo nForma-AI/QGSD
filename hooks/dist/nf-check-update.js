@@ -59,15 +59,22 @@ const child = spawn(process.execPath, ['-e', `
     }
   } catch (e) {}
 
+  // Detect staging channel: if installed version contains '-staging', check staging dist-tag
+  const isStaging = installed.includes('-staging');
+  const npmCmd = isStaging
+    ? 'npm view @nforma.ai/nforma dist-tags.staging'
+    : 'npm view @nforma.ai/nforma version';
+
   let latest = null;
   try {
-    latest = execSync('npm view @nforma.ai/nforma version', { encoding: 'utf8', timeout: 10000, windowsHide: true }).trim();
+    latest = execSync(npmCmd, { encoding: 'utf8', timeout: 10000, windowsHide: true }).trim();
   } catch (e) {}
 
   const result = {
     update_available: latest && installed !== latest,
     installed,
     latest: latest || 'unknown',
+    channel: isStaging ? 'staging' : 'latest',
     checked: Math.floor(Date.now() / 1000)
   };
 
