@@ -80,7 +80,9 @@ Plans:
   1. Provider definitions no longer contain hardcoded `/opt/homebrew/bin/` paths anywhere in the codebase
   2. CLI binary paths are resolved at runtime using `which`/`resolve-cli.cjs` or equivalent path discovery
   3. A user on Linux (apt/snap installed CLIs) or WSL can run nForma without manually editing provider paths
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.35-03-01-PLAN.md -- Wire resolveCli into unified-mcp-server and call-quorum-slot dispatch pipelines
 
 #### Phase v0.35-04: TUI CLI Agent MCP entry
 **Goal**: TUI "Add Agent -> CLI Agent" produces working MCP configuration entries that match what mcp-setup generates
@@ -102,10 +104,10 @@ Phases execute in sequence: v0.35-01 -> v0.35-02 -> v0.35-03 -> v0.35-04
 |-------|----------------|--------|-----------|
 | v0.35-01. Install hooks/dist rebuild | 1/1 | Complete   | 2026-03-12 |
 | v0.35-02. MCP Setup slot classification | 1/1 | Complete   | 2026-03-12 |
-| v0.35-03. Cross-platform provider paths | 0/? | Not started | - |
+| v0.35-03. Cross-platform provider paths | 0/1 | Planning   | - |
 | v0.35-04. TUI CLI Agent MCP entry | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-12 after v0.35-02 planning*
+*Last updated: 2026-03-13 after v0.35-03 planning*
