@@ -10,15 +10,17 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.35 — Install & Setup Bug Fixes
+## Shipped: v0.35 — Install & Setup Bug Fixes (2026-03-13)
 
-**Goal:** Fix 4 GitHub-reported bugs in installer, MCP setup, provider paths, and TUI agent creation that affect first-run and cross-platform users.
+**Goal:** Fix 4 GitHub-reported bugs (GitHub #4-#7) in installer, MCP setup, provider paths, and TUI agent creation.
 
-**Target features:**
-- Fix hooks/dist rebuild requirement on source checkout installs (#7)
-- Fix mcp-setup re-run flow treating codex-1 as API slot instead of sub CLI agent (#6)
-- Replace hardcoded Homebrew binary paths in provider definitions with cross-platform resolution (#5)
-- Fix TUI "Add Agent → CLI Agent" writing non-working MCP entries for native CLI slots (#4)
+**Shipped:** 8/8 requirements satisfied across 4 phases, 4 plans. Audit: PASSED.
+
+**Key features shipped:**
+- Auto-rebuild hooks/dist on fresh clone install via buildHooksIfMissing() with actionable error messages
+- Declarative auth_type slot classification in providers.json replacing name-prefix inference for T1/T2 dispatch
+- Cross-platform CLI path resolution via resolveCli() multi-strategy discovery (which, Homebrew, npm, system paths)
+- TUI CLI Agent MCP entry parity — resolves paths, validates executability, matches mcp-setup format
 
 ## Shipped: v0.34 — Semantic Gate Validation & Auto-Promotion (2026-03-11)
 
@@ -715,4 +717,4 @@ nForma v0.32 shipped 2026-03-09 (14/14 requirements, 4 phases). 32 milestones co
 v0.32 shipped. 32 milestones completed (v0.1–v0.32). Next milestone TBD — run `/nf:new-milestone` to start.
 
 ---
-*Last updated: 2026-03-09 after v0.32 milestone*
+*Last updated: 2026-03-13 after v0.35 milestone*

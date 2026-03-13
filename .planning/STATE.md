@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-12)
+See: .planning/PROJECT.md (updated 2026-03-13)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** v0.35 — Install & Setup Bug Fixes, Phase v0.35-03
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: v0.35-04 of 4 (TUI CLI Agent MCP Entry)
-Plan: 1 of 1 in current phase (COMPLETE)
-Status: Phase v0.35-04 complete, ready for v0.35-05 (or phase completion)
-Last activity: 2026-03-13 — Completed v0.35-04-01-PLAN.md
+Milestone: v0.35 — Install & Setup Bug Fixes — SHIPPED 2026-03-13
+Status: Complete, archived to `.planning/milestones/`
+Last activity: 2026-03-13 — Milestone v0.35 completed and archived
+Next: `/nf:new-milestone`
 
-Progress: [███████████] 100%
+Progress: Between milestones
 
 ## Performance Metrics
 

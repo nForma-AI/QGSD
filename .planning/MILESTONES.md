@@ -573,3 +573,23 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.35 Install & Setup Bug Fixes (Shipped: 2026-03-13)
+
+**Phases:** v0.35-01..v0.35-04 (4 phases, 4 plans, 8 tasks)
+**Requirements:** 8/8 satisfied (INST-01/02, SETUP-01/02, XPLAT-01/02, TUI-01/02)
+**Timeline:** ~2 days (2026-03-12 → 2026-03-13)
+
+**Delivered:** Fixed four user-facing bugs (GitHub #4-#7) affecting install, setup, cross-platform paths, and TUI agent configuration.
+
+**Key accomplishments:**
+- Auto-rebuild hooks/dist on fresh clone install — buildHooksIfMissing() delegates to scripts/build-hooks.js with actionable error messages on failure
+- Declarative auth_type slot classification in providers.json — replaces name-prefix inference for T1/T2 tiered dispatch; wired into mcp-setup first-run and re-run flows
+- Cross-platform CLI path resolution via resolveCli() — multi-strategy discovery (which, Homebrew, npm global, system paths) replaces hardcoded /opt/homebrew/bin/ paths in unified-mcp-server.mjs and call-quorum-slot.cjs
+- TUI CLI Agent MCP entry parity — "Add Agent → CLI Agent" resolves paths via resolveCli(), validates executability via fs.accessSync, and writes MCP entries matching mcp-setup format
+
+**Audit:** PASSED — 8/8 requirements, 37/37 tests, integration clean
+**Archive:** `.planning/milestones/v0.35-MILESTONE-AUDIT.md`
+
+---
+
