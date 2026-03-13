@@ -245,6 +245,15 @@ function buildTools() {
 
 // ─── Subprocess execution ──────────────────────────────────────────────────────
 const MAX_BUFFER = 10 * 1024 * 1024; // 10MB
+const MAX_RESPONSE = 25 * 1024; // 25KB — MCP result size safety net
+
+function truncateResponse(text) {
+  if (text !== null && text !== undefined && typeof text !== 'string') text = JSON.stringify(text);
+  if (typeof text !== 'string' || text.length <= MAX_RESPONSE) return text;
+  const originalLen = text.length;
+  const suffix = `\n\n[TRUNCATED by unified-mcp-server: ${originalLen} chars -> ${MAX_RESPONSE} chars]`;
+  return text.slice(0, MAX_RESPONSE - suffix.length) + suffix;
+}
 
 async function runProvider(provider, toolArgs) {
   const prompt = toolArgs.prompt;
@@ -843,7 +852,7 @@ async function handleRequest(req) {
         });
       } else {
         sendResult(id, {
-          content: [{ type: 'text', text: typeof output === 'string' ? output : JSON.stringify(output) }],
+          content: [{ type: 'text', text: truncateResponse(output) }],
           isError: false,
         });
       }
@@ -866,7 +875,7 @@ async function handleRequest(req) {
         ? await runHttpProvider(provider, toolArgs)
         : await runProvider(provider, toolArgs);
       sendResult(id, {
-        content: [{ type: 'text', text: output }],
+        content: [{ type: 'text', text: truncateResponse(output) }],
         isError: false,
       });
     } catch (err) {
