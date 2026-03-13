@@ -2,7 +2,7 @@ name: Formal Verification
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - 'src/machines/qgsd-workflow.machine.ts'
       - '.formal/tla/**'
@@ -72,17 +72,21 @@ jobs:
       - name: Install dev dependencies
         run: npm ci
 
+      - name: Create tool directories
+        run: mkdir -p .formal/tla .formal/alloy
+
       - name: Cache TLA+ tools JAR
         id: cache-tla
         uses: actions/cache@v4
         with:
           path: .formal/tla/tla2tools.jar
           key: tla2tools-v1.8.0
+          restore-keys: tla2tools-
 
       - name: Download tla2tools.jar
         if: steps.cache-tla.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL \
+          curl -fsSL --retry 3 --retry-delay 5 \
             https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar \
             -o .formal/tla/tla2tools.jar
 
@@ -92,11 +96,12 @@ jobs:
         with:
           path: .formal/alloy/org.alloytools.alloy.dist.jar
           key: alloy-v6.2.0
+          restore-keys: alloy-
 
       - name: Download Alloy 6.2.0 JAR
         if: steps.cache-alloy.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL \
+          curl -fsSL --retry 3 --retry-delay 5 \
             https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \
             -o .formal/alloy/org.alloytools.alloy.dist.jar
 
@@ -124,14 +129,15 @@ jobs:
         with:
           path: /tmp/prism
           key: prism-v4.10-linux64
+          restore-keys: prism-
 
       - name: Download and extract PRISM 4.10 (Linux)
         if: steps.cache-prism.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL \
+          mkdir -p /tmp/prism
+          curl -fsSL --retry 3 --retry-delay 5 \
             https://github.com/prismmodelchecker/prism/releases/download/v4.10/prism-4.10-linux64.tar.gz \
             -o /tmp/prism-4.10-linux64.tar.gz
-          mkdir -p /tmp/prism
           tar -xzf /tmp/prism-4.10-linux64.tar.gz -C /tmp/prism --strip-components=1
           chmod +x /tmp/prism/bin/prism
 
