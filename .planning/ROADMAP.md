@@ -93,7 +93,9 @@ Plans:
   1. TUI "Add Agent -> CLI Agent" for any supported slot type (Codex, Gemini, OpenCode, Copilot) generates an MCP entry with the correct binary path and args
   2. The generated MCP entry format is identical to what `/nf:mcp-setup` wizard produces for the same slot type
   3. After adding a CLI agent via TUI, the agent responds to an identity ping without manual config edits
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] v0.35-04-01-PLAN.md -- Integrate resolveCli into TUI CLI Agent handler with validation and format parity tests
 
 ### Progress
 
