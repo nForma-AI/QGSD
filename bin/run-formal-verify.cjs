@@ -413,7 +413,7 @@ const STATIC_STEPS = [
     tool: 'gates', id: 'gates:per-model-aggregate',
     label: 'Per-model gate maturity + aggregate alignment scores',
     type: 'node', script: 'compute-per-model-gates.cjs', args: ['--aggregate', '--json'],
-    nonCritical: true,
+    nonCritical: true, timeoutMs: 30_000,
   },
 ];
 
@@ -481,11 +481,12 @@ function runNodeStep(step) {
   }
   const stepTimeout = step.timeoutMs || 120_000; // 2 min default per step
   const result = spawnSync(process.execPath, [scriptPath, ...childArgs], {
-    stdio: 'inherit',
+    stdio: step.nonCritical ? ['ignore', 'pipe', 'inherit'] : 'inherit',
     encoding: 'utf8',
     cwd: ROOT,
     env: { ...process.env, CHECK_RESULTS_ROOT: ROOT },
     timeout: stepTimeout,
+    maxBuffer: 10 * 1024 * 1024, // 10 MB
   });
   if (result.error) {
     const msg = result.signal === 'SIGTERM'
