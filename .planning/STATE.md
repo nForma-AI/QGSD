@@ -11,7 +11,7 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 
 Milestone: v0.35 — Install & Setup Bug Fixes — SHIPPED 2026-03-13
 Status: Complete, archived to `.planning/milestones/`
-Last activity: 2026-03-13 - Completed quick task 286: Add service auto-start to quorum-preflight.cjs
+Last activity: 2026-03-13 - Completed quick task 287: Add MAX_RESPONSE truncation safety net in unified-mcp-server.mjs runProvider()
 Next: `/nf:new-milestone`
 
 Progress: Between milestones
@@ -81,6 +81,7 @@ None.
 | 284 | Guided installer: auto-detect external CLIs, prompt user, default to CCR | 2026-03-13 | d3462311 | Verified | [284-guided-installer-auto-detect-external-cl](./quick/284-guided-installer-auto-detect-external-cl/) |
 | 285 | Improve CI/CD testing: add staging triggers, npm pack, Node matrix, staging-publish | 2026-03-13 | b18e97d5 | Verified | [285-improve-ci-cd-testing-add-staging-trigge](./quick/285-improve-ci-cd-testing-add-staging-trigge/) |
 | 286 | Add service auto-start to quorum-preflight.cjs | 2026-03-13 | 877aa29c | Pending | [286-add-service-auto-start-to-quorum-preflig](./quick/286-add-service-auto-start-to-quorum-preflig/) |
+| 287 | Add MAX_RESPONSE truncation safety net in unified-mcp-server.mjs runProvider() | 2026-03-13 | db2511bc | Pending | [287-add-max-response-truncation-safety-net-i](./quick/287-add-max-response-truncation-safety-net-i/) |
 
 ## Session Continuity
 
