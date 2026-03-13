@@ -14,6 +14,14 @@ const yellow = '\x1b[33m';
 const dim = '\x1b[2m';
 const reset = '\x1b[0m';
 
+// Install hints for external CLIs (shown when not detected)
+const CLI_INSTALL_HINTS = {
+  codex:    'npm i -g @openai/codex',
+  gemini:   'npm i -g @google/gemini-cli',
+  opencode: 'npm i -g opencode',
+  copilot:  'npm i -g @githubnext/github-copilot-cli',
+};
+
 // Get version from package.json
 const pkg = require('../package.json');
 
@@ -57,6 +65,10 @@ const hasDisableBreaker = args.includes('--disable-breaker');
 const hasEnableBreaker = args.includes('--enable-breaker');
 const hasMigrateSlots = args.includes('--migrate-slots');
 const hasFormal = args.includes('--formal');
+const hasAllProviders = args.includes('--all-providers');
+
+// Provider slot filter: null = all (backward compat), array = filtered
+let selectedProviderSlots = null;
 
 // Runtime selection - can be set by flags or interactive prompt
 let selectedRuntimes = [];
@@ -235,6 +247,46 @@ function buildActiveSlots() {
     console.warn(`  ${yellow}⚠${reset} Could not read ~/.claude.json for quorum_active: ${e.message}`);
   }
   return [];
+}
+
+/**
+ * Classify providers into tiers: ccr (Claude Code Router), externalPrimary, dualSubscription.
+ * @param {Array} providers - providers array from providers.json
+ * @returns {{ ccr: Array, externalPrimary: Array, dualSubscription: Array }}
+ */
+function classifyProviders(providers) {
+  const ccr = [];
+  const externalPrimary = [];
+  const dualSubscription = [];
+
+  for (const p of providers) {
+    const cliBase = path.basename(p.cli || '');
+    if (cliBase === 'ccr') {
+      ccr.push({ ...p });
+    } else if (p.name.endsWith('-2')) {
+      const bareCli = cliBase || p.mainTool;
+      dualSubscription.push({ ...p, parent: p.name.replace(/-2$/, '-1'), bareCli });
+    } else {
+      const bareCli = cliBase || p.mainTool;
+      externalPrimary.push({ ...p, bareCli });
+    }
+  }
+
+  return { ccr, externalPrimary, dualSubscription };
+}
+
+/**
+ * Detect which external CLIs are installed on the system via resolveCli.
+ * @param {Array} externalPrimary - externalPrimary array from classifyProviders
+ * @returns {Array} enriched array with found/resolvedPath fields
+ */
+function detectExternalClis(externalPrimary) {
+  const { resolveCli } = require('./resolve-cli.cjs');
+  return externalPrimary.map(p => {
+    const result = resolveCli(p.bareCli);
+    const found = result !== p.bareCli;
+    return { ...p, found, resolvedPath: found ? result : null };
+  });
 }
 
 // Ensures all provider slots from providers.json have corresponding MCP entries in ~/.claude.json.
@@ -2887,5 +2939,5 @@ if (hasGlobal && hasLocal) {
 
 // Export for testing (only when required as a library, not when run directly)
 if (require.main !== module) {
-  module.exports = { validateHookPaths, fileHash, generateManifest, saveLocalPatches, reportLocalPatches, PATCHES_DIR_NAME, MANIFEST_NAME };
+  module.exports = { validateHookPaths, fileHash, generateManifest, saveLocalPatches, reportLocalPatches, PATCHES_DIR_NAME, MANIFEST_NAME, classifyProviders, detectExternalClis };
 }
