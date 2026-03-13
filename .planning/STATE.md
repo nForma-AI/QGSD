@@ -79,9 +79,10 @@ None.
 | 282 | Add service lifecycle and deep inference probe | 2026-03-12 | 9851c5dd | Pending | [282-add-service-lifecycle-and-deep-inference](./quick/282-add-service-lifecycle-and-deep-inference/) |
 | 283 | Fix GSD collisions: rename gsd-local-patches and gsd-context-monitor | 2026-03-12 | 7f03a5af | Pending | [283-fix-gsd-collisions-rename-gsd-local-patc](./quick/283-fix-gsd-collisions-rename-gsd-local-patc/) |
 | 284 | Guided installer: auto-detect external CLIs, prompt user, default to CCR | 2026-03-13 | d3462311 | Verified | [284-guided-installer-auto-detect-external-cl](./quick/284-guided-installer-auto-detect-external-cl/) |
+| 285 | Improve CI/CD testing: add staging triggers, npm pack, Node matrix, staging-publish | 2026-03-13 | b18e97d5 | Pending | [285-improve-ci-cd-testing-add-staging-trigge](./quick/285-improve-ci-cd-testing-add-staging-trigge/) |
 
 ## Session Continuity
 
 Last session: 2026-03-13
-Stopped at: Completed v0.35-04-01-PLAN.md
+Stopped at: Completed quick task 285: Improve CI/CD testing
 Resume file: None
