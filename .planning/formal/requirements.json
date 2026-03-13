@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-12T11:41:07.523Z",
-  "content_hash": "7f5b2c997db4c3ef",
+  "aggregated_at": "2026-03-13T16:26:48.920Z",
+  "content_hash": "8beb346693524100",
   "schema_version": "1",
   "requirements": [
     {
@@ -457,6 +457,18 @@
       "provenance": {
         "source_file": "nf-baseline",
         "milestone": "baseline"
+      }
+    },
+    {
+      "id": "CI-07",
+      "text": "CI/CD workflows trigger and test on both main and staging branches, run tests across Node 18/20/22 matrix, verify npm package integrity, and auto-publish @staging dist-tag to npm on staging push",
+      "category": "CI/CD",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Staging branch requires the same CI protection and testing rigor as main to catch issues before production. Expanding the Node version matrix ensures compatibility across all supported versions. Automated staging releases with @staging dist-tag enable pre-release testing without affecting the stable npm latest tag.",
+      "provenance": {
+        "source_file": ".planning/quick/285-improve-ci-cd-testing-add-staging-trigge/285-PLAN.md",
+        "milestone": "quick-285"
       }
     },
     {
@@ -4723,5 +4735,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-12T11:41:07.523Z"
+  "frozen_at": "2026-03-13T16:26:48.921Z"
 }
