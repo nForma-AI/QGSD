@@ -57,6 +57,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # needed by check-trace-schema-drift (git diff HEAD~1)
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -71,6 +73,9 @@ jobs:
 
       - name: Install dev dependencies
         run: npm ci
+
+      - name: Build XState machine (needed by validate-traces)
+        run: npm run build:machines
 
       - name: Create tool directories
         run: mkdir -p .planning/formal/tla .planning/formal/alloy
