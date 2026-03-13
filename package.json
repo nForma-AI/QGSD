@@ -1,7 +1,7 @@
 {
   "name": "@nforma.ai/nforma",
   "version": "0.33.1",
-  "description": "nForma — Quorum Gets Shit Done. Multi-model quorum enforcement for GSD planning commands via Claude Code hooks.",
+  "description": "nForma — Multi-agent coding orchestrator with quorum consensus and formal verification (TLA+, Alloy, PRISM). Consensus before code, proof before production.",
   "bin": {
     "nforma": "bin/nforma-cli.js",
     "get-shit-done-cc": "bin/install.js"
@@ -29,11 +29,21 @@
     "claude",
     "claude-code",
     "ai",
+    "ai-agent",
+    "multi-agent",
+    "quorum",
+    "formal-verification",
+    "tla-plus",
+    "alloy",
+    "mcp",
     "meta-prompting",
     "context-engineering",
     "spec-driven-development",
+    "autonomous-agent",
+    "devtools",
     "gemini",
-    "gemini-cli"
+    "gemini-cli",
+    "opencode"
   ],
   "author": "nForma AI",
   "license": "MIT",
