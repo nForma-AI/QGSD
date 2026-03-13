@@ -12,5 +12,6 @@
     "early_escalation_threshold": 0.1,
     "maxDeliberation": 9
   },
-  "granularity": "standard"
+  "granularity": "standard",
+  "suppress_warnings": ["W005"]
 }
