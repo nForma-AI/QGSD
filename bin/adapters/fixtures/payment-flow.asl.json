@@ -1,0 +1,37 @@
+{
+  "Comment": "Payment processing workflow",
+  "StartAt": "ValidateCard",
+  "States": {
+    "ValidateCard": {
+      "Type": "Task",
+      "Next": "CheckFraud"
+    },
+    "CheckFraud": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.fraudScore",
+          "NumericGreaterThan": 80,
+          "Next": "RejectPayment"
+        },
+        {
+          "Variable": "$.fraudScore",
+          "NumericLessThanEquals": 80,
+          "Next": "ChargeCard"
+        }
+      ],
+      "Default": "ChargeCard"
+    },
+    "ChargeCard": {
+      "Type": "Task",
+      "Next": "SendReceipt"
+    },
+    "SendReceipt": {
+      "Type": "Task",
+      "End": true
+    },
+    "RejectPayment": {
+      "Type": "Fail"
+    }
+  }
+}

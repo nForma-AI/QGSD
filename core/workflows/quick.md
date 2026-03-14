@@ -452,6 +452,7 @@ Execute quick task ${next_num}.
 
 <constraints>
 - Execute all tasks in the plan
+- When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library — match complexity to the problem per .claude/rules/state-machine-bias.md. State machines are auto-transpiled to TLA+ via bin/fsm-to-tla.cjs
 - Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
 - If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .planning/formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit

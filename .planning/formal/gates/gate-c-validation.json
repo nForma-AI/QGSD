@@ -1,12 +1,12 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-14T09:59:39.189Z",
-  "wiring_coverage_score": 0.9354838709677419,
-  "total_entries": 186,
-  "validated_entries": 174,
-  "unvalidated_entries": 12,
+  "generated": "2026-03-14T18:36:14.655Z",
+  "wiring_coverage_score": 0,
+  "total_entries": 189,
+  "validated_entries": 0,
+  "unvalidated_entries": 189,
   "target": 0.8,
-  "target_met": true,
+  "target_met": false,
   "semantic_score": 0.02,
   "semantic_metadata": {
     "evaluated_candidates": 50,

@@ -4568,8 +4568,30 @@ function generateSlugInternal(text) {
 }
 
 function getMilestoneInfo(cwd) {
+  // 1. Try STATE.md — authoritative source for current milestone
+  try {
+    const state = fs.readFileSync(path.join(cwd, '.planning', 'STATE.md'), 'utf-8');
+    // "**Current focus:** v28.0 Provider-Agnostic E2E Testing"
+    const focusMatch = state.match(/\*\*Current focus:\*\*\s*v(\d+\.\d+)\s+([^\n]+)/);
+    if (focusMatch) {
+      return { version: 'v' + focusMatch[1], name: focusMatch[2].trim() };
+    }
+    // "Milestone: v0.35 — Install & Setup Bug Fixes — SHIPPED ..."
+    const milestoneMatch = state.match(/Milestone:\s*v(\d+\.\d+)\s*[—–-]\s*([^—–\-\n]+)/);
+    if (milestoneMatch) {
+      return { version: 'v' + milestoneMatch[1], name: milestoneMatch[2].trim() };
+    }
+  } catch {}
+
+  // 2. Fallback to ROADMAP.md — use LAST listed milestone (not first)
   try {
     const roadmap = fs.readFileSync(path.join(cwd, '.planning', 'ROADMAP.md'), 'utf-8');
+    const allVersions = [...roadmap.matchAll(/\*\*v(\d+\.\d+)\s+([^*]+)\*\*/g)];
+    if (allVersions.length > 0) {
+      const last = allVersions[allVersions.length - 1];
+      return { version: 'v' + last[1], name: last[2].trim() };
+    }
+    // Bare fallback — first v#.# found
     const versionMatch = roadmap.match(/v(\d+\.\d+)/);
     const nameMatch = roadmap.match(/## .*v\d+\.\d+[:\s]+([^\n(]+)/);
     return {

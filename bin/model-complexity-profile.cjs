@@ -60,9 +60,11 @@ function classifyRuntime(runtimeMs) {
 // ── Formalism prefix to directory map ───────────────────────────────────────
 
 const FORMALISM_DIR_MAP = {
-  tla:   '.planning/formal/tla/',
-  alloy: '.planning/formal/alloy/',
-  prism: '.planning/formal/prism/',
+  tla:    '.planning/formal/tla/',
+  alloy:  '.planning/formal/alloy/',
+  prism:  '.planning/formal/prism/',
+  uppaal: '.planning/formal/uppaal/',
+  petri:  '.planning/formal/petri/',
 };
 
 /**
@@ -228,7 +230,7 @@ function main() {
       if (!alreadyCovered) {
         const syntheticId = 'static:' + (modelData.module_name || path.basename(modelPath, path.extname(modelPath)));
         profiles[syntheticId] = {
-          formalism: modelPath.includes('/tla/') ? 'tla' : modelPath.includes('/alloy/') ? 'alloy' : modelPath.includes('/prism/') ? 'prism' : 'unknown',
+          formalism: modelPath.includes('/tla/') ? 'tla' : modelPath.includes('/alloy/') ? 'alloy' : modelPath.includes('/prism/') ? 'prism' : modelPath.includes('/uppaal/') ? 'uppaal' : modelPath.includes('/petri/') ? 'petri' : 'unknown',
           runtime_ms: null,
           estimated_states: modelData.estimated_states || null,
           risk_level: modelData.risk_level || null,

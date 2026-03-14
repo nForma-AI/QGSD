@@ -49,6 +49,25 @@ function loadNfConfig(cwd) {
   return {}; // fail-open: empty config uses defaults
 }
 
+// ─── classifyDispatchError — classify UNAVAIL output into a human-readable type ──────────────
+/**
+ * Classify the raw output/error string from a failed dispatch into a concise error type.
+ * Mirrors the classifyErrorType logic from call-quorum-slot.cjs.
+ *
+ * @param {string} output — combined stdout/stderr from the failed child process
+ * @returns {'TIMEOUT'|'AUTH'|'QUOTA'|'SPAWN_ERROR'|'CLI_SYNTAX'|'UNKNOWN'}
+ */
+function classifyDispatchError(output) {
+  const s = String(output || '');
+  if (/TIMEOUT/i.test(s)) return 'TIMEOUT';
+  if (/402|quota|rate.?limit|resource.?exhausted/i.test(s)) return 'QUOTA';
+  if (/401|403|unauthorized|forbidden/i.test(s)) return 'AUTH';
+  if (/service not running|service.?down|not.?started/i.test(s)) return 'SERVICE_DOWN';
+  if (/spawn error/i.test(s)) return 'SPAWN_ERROR';
+  if (/usage:|unknown flag|unknown option|invalid flag|unrecognized/i.test(s)) return 'CLI_SYNTAX';
+  return 'UNKNOWN';
+}
+
 // ─── Arg parsing (mirrors call-quorum-slot.cjs pattern) ───────────────────────
 const argv   = process.argv.slice(2);
 const getArg = (f) => {
@@ -741,15 +760,19 @@ function parseImprovements(rawOutput) {
  * @param {Array}  [opts.improvements]
  * @param {string} [opts.rawOutput]
  * @param {boolean}[opts.isUnavail]
+ * @param {string} [opts.error_type] — classified error type for UNAVAIL results (TIMEOUT/AUTH/QUOTA/SPAWN_ERROR/CLI_SYNTAX/UNKNOWN)
  * @param {string} [opts.unavailMessage]
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, unavailMessage }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, unavailMessage }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
   lines.push(`round: ${round}`);
   lines.push(`verdict: ${verdict}`);
+  if (error_type) {
+    lines.push(`error_type: ${error_type}`);
+  }
 
   if (reasoning) {
     lines.push(`reasoning: ${reasoning}`);
@@ -1048,9 +1071,10 @@ async function main() {
       slot,
       round,
       verdict: 'UNAVAIL',
-      reasoning: 'Bash call failed or timed out.',
+      reasoning: `UNAVAIL (${classifyDispatchError(output)}): ${output.slice(0, 200).replace(/\n/g, ' ')}`,
       rawOutput: output,
       isUnavail: true,
+      error_type: classifyDispatchError(output),
       unavailMessage: output.slice(0, 500)
     });
   } else {
@@ -1124,6 +1148,7 @@ module.exports = {
     matchRequirementsByKeywords,
     formatRequirementsSection,
     enrichPromptWithRetrieval,
+    classifyDispatchError,
   };
 
 // ─── Entry point guard ────────────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-14T13:59:59.983Z",
-  "content_hash": "9d0be4c5913f6ebd",
+  "aggregated_at": "2026-03-14T18:18:59.077Z",
+  "content_hash": "efa72b6beba31764",
   "schema_version": "1",
   "requirements": [
     {
@@ -1063,6 +1063,18 @@
       "provenance": {
         "source_file": ".planning/quick/276-add-top-n-non-neighboring-pair-discovery/276-PLAN.md",
         "milestone": "quick-276"
+      }
+    },
+    {
+      "id": "DIAG-10",
+      "text": "Statusline hook detects context window size (200K, 1M, or unknown) from explicit context_window_size property or model display_name and scales token-usage color thresholds proportionally to detected context tier",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The statusline previously assumed a hardcoded 1M context size, causing 200K sessions to display incorrect token estimates and misleading color indicators. This requirement implements context tier detection via a cascading fallback (explicit property > display_name parsing > unknown) and proportional threshold scaling so that 200K sessions show appropriate green/yellow/orange/red boundaries (20K/40K/70K) while 1M sessions preserve exact historical behavior (100K/200K/350K).",
+      "provenance": {
+        "source_file": ".planning/quick/293-implement-context-window-size-detection-/293-PLAN.md",
+        "milestone": "quick-293"
       }
     },
     {
@@ -3848,6 +3860,18 @@
       "category_raw": "Spec Completeness"
     },
     {
+      "id": "SPEC-05",
+      "text": "Multi-adapter FSM-to-TLA+ transpiler supports 10 state machine frameworks (XState v5/v4, javascript-state-machine, Robot, AWS Step Functions, Stately, Python transitions, sismic, looplab/fsm, qmuntal/stateless) through a plugin architecture with shared MachineIR intermediate representation.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Quick task 292 generalized the monolithic xstate-to-tla.cjs into a plugin-based transpiler to enable formal verification of state machines from any framework, not just XState.",
+      "provenance": {
+        "source_file": ".planning/quick/292-multi-adapter-fsm-to-tla-transpiler-gene/292-PLAN.md",
+        "milestone": "quick-292"
+      }
+    },
+    {
       "id": "STATE-01",
       "text": "audit-milestone updates STATE.md \"Stopped at\" and \"Current Position\" fields with the audit result (passed / gaps_found / tech_debt) after writing the MILESTONE-AUDIT.md artifact",
       "category": "Planning & Tracking",
@@ -4378,6 +4402,18 @@
       }
     },
     {
+      "id": "UPPAAL-05",
+      "text": "The model registry (model-registry.json) and complexity profiler (model-complexity-profile.cjs) scan and process UPPAAL (.xml) and Petri (.dot) models at feature parity with TLA+, Alloy, and PRISM, enabling requirement traceability and state-space profiling for all five formalisms.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "UPPAAL and Petri net models exist on disk and are discoverable by run-formal-verify.cjs, but initialize-model-registry.cjs and model-complexity-profile.cjs only handled TLA+, Alloy, and PRISM. Extending both tools to cover UPPAAL and Petri formalisms integrates them into the requirement traceability lifecycle and enables complexity analysis across all formal verification formalisms.",
+      "provenance": {
+        "source_file": ".planning/quick/290-bring-uppaal-and-petri-nets-to-full-pari/290-PLAN.md",
+        "milestone": "quick-290"
+      }
+    },
+    {
       "id": "UPS-01",
       "text": "UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",
       "category": "Hooks & Enforcement",
@@ -4747,5 +4783,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-14T13:59:59.983Z"
+  "frozen_at": "2026-03-14T18:18:59.077Z"
 }

@@ -293,6 +293,10 @@ ${FORMAL_SPEC_CONTEXT.length > 0 ? FORMAL_SPEC_CONTEXT.map(f => `- ${f.path} (Fo
 **Project instructions:** Follow project-specific guidelines from CLAUDE.md context (already loaded)
 **Project skills:** Check .agents/skills/ directory (if exists) — read SKILL.md files, plans should account for project skill rules
 
+<state_machine_bias>
+When the phase involves implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library over ad-hoc if/else chains. Match complexity to the problem: flat FSMs get lightweight libraries (javascript-state-machine, transitions, looplab/fsm), complex workflows get statechart libraries (XState, sismic, Spring Statemachine). State machines can be auto-transpiled to TLA+ via bin/fsm-to-tla.cjs (28 frameworks across 13 languages). See .claude/rules/state-machine-bias.md for the full framework selection table. If the plan introduces state-transition logic, include a task to define the state machine and a follow-up task to run bin/fsm-to-tla.cjs for formal verification.
+</state_machine_bias>
+
 <formal_context>
 ${FORMAL_SPEC_CONTEXT.length > 0 ?
 `Relevant formal modules identified: ${FORMAL_SPEC_CONTEXT.map(f => f.module).join(', ')}

@@ -133,9 +133,11 @@ function mapRiskLevelToCount(riskLevel, maxSize) {
   return n;
 }
 
-// Returns slot names that have timed out within the last ttlMinutes.
+// Returns slot names that have failed within the last ttlMinutes.
 // Reads quorum-failures.json written by call-quorum-slot.cjs on every failure.
-function getRecentlyTimedOutSlots(cwd, ttlMinutes = 30) {
+// Covers ALL error types (TIMEOUT, AUTH, QUOTA, SPAWN_ERROR, CLI_SYNTAX, UNKNOWN).
+// The 30-minute TTL ensures transient failures self-heal without operator intervention.
+function getRecentlyFailedSlots(cwd, ttlMinutes = 30) {
   try {
     const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolveWithFallback(cwd, 'quorum-failures');
@@ -144,8 +146,8 @@ function getRecentlyTimedOutSlots(cwd, ttlMinutes = 30) {
     if (!Array.isArray(records)) return [];
     const cutoff = Date.now() - ttlMinutes * 60 * 1000;
     return records
-      .filter(r => r.error_type === 'TIMEOUT' && new Date(r.last_seen).getTime() > cutoff)
-      .map(r => r.slot);
+      .filter(r => new Date(r.last_seen).getTime() > cutoff)
+      .map(r => ({ slot: r.slot, error_type: r.error_type, pattern: r.pattern }));
   } catch (_) { return []; }
 }
 
@@ -160,15 +162,50 @@ function findProviders() {
   return null;
 }
 
-// Triggers a fresh health probe before reading the cache.
-// Runs check-provider-health.cjs with a 3s timeout via spawnSync.
-// Fail-open: if spawn fails or times out, dispatch continues with stale/missing cache.
-function triggerHealthProbe() {
+// Runs quorum-preflight.cjs --all to probe CLI-backed slots (Layer 1 + Layer 2).
+// Returns { filteredSlots, allDown, unavailableSlots } based on probe results.
+// Fail-open on any error: returns { filteredSlots: slots, allDown: false, unavailableSlots: [] }.
+// CLI-backed slots (e.g., codex-1, gemini-1, opencode-1, copilot-1) are filtered by
+// the probe results. Unprobed slots (e.g., claude-*) pass through unconditionally.
+// Set NF_SKIP_PREFLIGHT=1 to bypass probes (used in tests to avoid real CLI invocations).
+function runPreflightFilter(slots) {
+  const failOpen = { filteredSlots: slots, allDown: false, unavailableSlots: [] };
+  // NF_SKIP_PREFLIGHT=1 disables probing entirely (test isolation, fast-path CI)
+  if (process.env.NF_SKIP_PREFLIGHT === '1') return failOpen;
   try {
-    const checkPath = resolveBin('check-provider-health.cjs');
-    if (!fs.existsSync(checkPath)) return; // no probe script found — fail-open
-    spawnSync('node', [checkPath, '--json'], { timeout: 3000, stdio: 'ignore' });
-  } catch (_) { /* fail-open: probe failure does not block dispatch */ }
+    const preflightPath = resolveBin('quorum-preflight.cjs');
+    if (!preflightPath || !fs.existsSync(preflightPath)) return failOpen;
+    const result = spawnSync('node', [preflightPath, '--all'], {
+      timeout: 6000,
+      encoding: 'utf8',
+    });
+    if (result.status !== 0 || !result.stdout) return failOpen;
+    let preflight;
+    try { preflight = JSON.parse(result.stdout); } catch (_) { return failOpen; }
+    if (!preflight || !Array.isArray(preflight.available_slots) || !Array.isArray(preflight.unavailable_slots)) {
+      return failOpen;
+    }
+
+    const availableSet = new Set(preflight.available_slots);
+    const unavailableSet = new Set(preflight.unavailable_slots.map(u => u.name));
+
+    // Keep a slot if it is in available_slots, OR if preflight did not probe it at all.
+    const filteredSlots = slots.filter(s => {
+      if (availableSet.has(s.slot)) return true;    // explicitly probed and UP
+      if (unavailableSet.has(s.slot)) return false; // explicitly probed and DOWN
+      return true;  // unknown to preflight (e.g., claude-* slots) — pass through
+    });
+
+    // allDown only if at least one slot was in the input AND none survived filtering.
+    const allDown = slots.length > 0 && filteredSlots.length === 0;
+
+    process.stderr.write(
+      `[nf-dispatch] PREFLIGHT: available=[${preflight.available_slots.join(', ')}], ` +
+      `unavailable=[${preflight.unavailable_slots.map(u => u.name).join(', ')}]\n`
+    );
+
+    return { filteredSlots, allDown, unavailableSlots: preflight.unavailable_slots };
+  } catch (_) { return failOpen; }
 }
 
 // Filters slots by availability window from scoreboard.
@@ -249,58 +286,6 @@ function sortBySuccessRate(slots, cwd) {
       sorted.map(s => `${s.slot}(f=${getFlakiness(s.slot).toFixed(2)},r=${getRate(s.slot).toFixed(3)})`).join(', ') + ']\n');
     return sorted;
   } catch (_) { return [...slots]; } // fail-open: any error → return original order
-}
-
-// Returns slot names whose backing provider is DOWN (probed unhealthy).
-// Reads ~/.claude/nf-provider-cache.json and matches providers from providers.json.
-// When a provider's endpoint is DOWN, ALL slots backed by that provider are skipped.
-function getDownProviderSlots() {
-  try {
-    const cachePath = path.join(os.homedir(), '.claude', 'nf-provider-cache.json');
-    if (!fs.existsSync(cachePath)) return [];
-    const cache = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
-    if (!cache || !cache.entries) return [];
-
-    const providers = findProviders();
-    if (!providers) return [];
-
-    // Extract hostnames from DOWN cache entries.
-    // Cache keys are baseUrls like "https://api.akashml.com/v1".
-    // Extract hostname and strip common domain suffixes to get a match key (e.g., "akashml").
-    const downHostnames = [];
-    const now = Date.now();
-    for (const [baseUrl, entry] of Object.entries(cache.entries)) {
-      // Match TTL used by check-provider-health.cjs: 180s healthy, 300s unhealthy
-      const ttl = entry.healthy ? 180000 : 300000;
-      if (now - entry.cachedAt >= ttl) continue; // expired cache entry — ignore
-      if (entry.healthy) continue; // provider is UP — not skipping
-
-      try {
-        // Extract hostname and normalize to match provider field values in providers.json
-        const hostname = new URL(baseUrl).hostname; // e.g., "api.akashml.com"
-        let normalized = hostname.replace(/^api\./, ''); // remove "api." prefix
-        normalized = normalized.replace(/\.(com|ai|xyz|io)$/, ''); // remove TLD
-        downHostnames.push(normalized);
-      } catch (_) { /* malformed URL — skip this entry */ }
-    }
-
-    if (downHostnames.length === 0) return [];
-
-    // Find all slots backed by DOWN providers.
-    // Match provider field against each down hostname.
-    const skipSlots = [];
-    for (const provider of providers) {
-      if (!provider.provider) continue;
-      for (const downHostname of downHostnames) {
-        // Match: provider field contains or is contained by downHostname (e.g., "akashml" == "akashml")
-        if (provider.provider.includes(downHostname) || downHostname.includes(provider.provider)) {
-          skipSlots.push(provider.name);
-          break;
-        }
-      }
-    }
-    return skipSlots;
-  } catch (_) { return []; } // fail-open: any error → proceed with no provider skips
 }
 
 // Deduplicates slots that share the same underlying model.
@@ -524,14 +509,29 @@ process.stdin.on('end', () => {
         const externalSlotCap = fanOutCount - 1;
         let cappedSlots = orderedSlots.slice(0, externalSlotCap);
 
-      // DISP-01: Trigger fresh health probe before reading cache
-      triggerHealthProbe();
+      // DISP-01: Preflight filter — probe CLI-backed slots using quorum-preflight.cjs --all.
+      // Covers Layer 1 (binary probe) + Layer 2 (upstream API probe).
+      // Fail-open: preflight failures never block dispatch.
+      const preflightResult = runPreflightFilter(cappedSlots);
+      cappedSlots = preflightResult.filteredSlots;
 
-      // Filter out slots backed by DOWN providers before building dynamic steps.
-      const recentTimeouts = getRecentlyTimedOutSlots(cwd);
-      const providerSkips = getDownProviderSlots();
-      const allSkipSlots = [...new Set([...recentTimeouts, ...providerSkips])];
-      const skipSet = new Set(allSkipSlots);
+      // SHORT-CIRCUIT: If preflight reports all slots down, skip full dispatch and inject a
+      // minimal "all slots unavailable" message so Claude can proceed without quorum overhead.
+      if (preflightResult.allDown && orderedSlots.length > 0) {
+        const unavailList = preflightResult.unavailableSlots.map(u => u.name + ': ' + u.reason).join('; ');
+        const allDownInstructions = `<!-- NF_ALL_SLOTS_DOWN -->\nAll quorum slots are currently unavailable (preflight probe failed for: ${unavailList}). Proceeding without quorum — Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output.`;
+        process.stdout.write(JSON.stringify({
+          hookSpecificOutput: {
+            hookEventName: 'UserPromptSubmit',
+            additionalContext: allDownInstructions,
+          }
+        }));
+        process.exit(0);
+      }
+
+      // Filter out recently failed slots (all error types, not just TIMEOUT).
+      const recentFailures = getRecentlyFailedSlots(cwd);
+      const skipSet = new Set(recentFailures.map(f => f.slot));
       cappedSlots = cappedSlots.filter(s => !skipSet.has(s.slot));
 
       // DISP-02: Filter by availability window (exclude cooling-down slots)
@@ -666,12 +666,14 @@ process.stdin.on('end', () => {
       // Compute T1 unused sub-CLI slots: sub agents cut by the fan-out cap.
       // These are the preferred replacement tier when a dispatched slot returns UNAVAIL.
       // They must be tried before any T2 ccr/api slots (claude-1..6).
+      // IMPORTANT: Apply skipSet to fallback tiers too — a slot that failed recently
+      // should not be dispatched as a fallback either (prevents cascading UNAVAIL waste).
       const cappedSlotNames = new Set(uniqueSlots.map(s => s.slot));
       const t1Unused = orderedSlots
-        .filter(s => s.authType === 'sub' && !cappedSlotNames.has(s.slot))
+        .filter(s => s.authType === 'sub' && !cappedSlotNames.has(s.slot) && !skipSet.has(s.slot))
         .map(s => s.slot);
       const t2Slots = orderedSlots
-        .filter(s => s.authType !== 'sub' && !cappedSlotNames.has(s.slot))
+        .filter(s => s.authType !== 'sub' && !cappedSlotNames.has(s.slot) && !skipSet.has(s.slot))
         .map(s => s.slot);
 
       const tModelDedup = modelDedupSlots.map(s => s.slot);
@@ -710,18 +712,40 @@ process.stdin.on('end', () => {
         minNote = ` (--n ${fanOutCount})`;
       }
 
+      // Build health dashboard and skip notes for Claude's context
+      let healthDashboard = '';
+      const totalSlots = orderedSlots.length;
+      const dispatchCount = uniqueSlots.length;
+      const skippedSlots = [];
+
       let skipNote = '';
-      if (recentTimeouts.length > 0) {
-        skipNote += `SKIP (TIMEOUT < 30min ago): [${recentTimeouts.join(', ')}] — do NOT dispatch these slots.\n`;
+      if (recentFailures.length > 0) {
+        const failureDetail = recentFailures.map(f => `${f.slot} (${f.error_type}: ${(f.pattern || '').slice(0, 40)})`).join('; ');
+        skipNote += `SKIP (FAILED < 30min ago): [${failureDetail}] — do NOT dispatch these slots in ANY tier.\n`;
+        skippedSlots.push(...recentFailures.map(f => ({ slot: f.slot, reason: f.error_type })));
       }
-      if (providerSkips.length > 0) {
-        skipNote += `SKIP (PROVIDER DOWN): [${providerSkips.join(', ')}] — entire provider unreachable, skip all backed slots.\n`;
+      if (preflightResult.unavailableSlots && preflightResult.unavailableSlots.length > 0) {
+        const preflightDown = preflightResult.unavailableSlots.map(u => u.name + ': ' + u.reason).join('; ');
+        skipNote += `SKIP (PREFLIGHT DOWN): [${preflightDown}] — preflight probe confirmed unavailable.\n`;
+        for (const u of preflightResult.unavailableSlots) {
+          if (!skippedSlots.some(s => s.slot === u.name)) {
+            skippedSlots.push({ slot: u.name, reason: u.reason });
+          }
+        }
       }
       if (availabilitySkips.length > 0) {
         skipNote += `SKIP (COOLING DOWN): [${availabilitySkips.join(', ')}] — available_at in future, skipping.\n`;
+        skippedSlots.push(...availabilitySkips.map(s => ({ slot: s, reason: 'cooling down' })));
+      }
+
+      // Build compact health dashboard when there are skipped slots
+      if (skippedSlots.length > 0) {
+        healthDashboard = `SLOT HEALTH: ${dispatchCount} dispatching, ${skippedSlots.length} skipped of ${totalSlots} total\n` +
+          skippedSlots.map(s => `  ✗ ${s.slot}: ${s.reason}`).join('\n') + '\n\n';
       }
 
       instructions = `QUORUM REQUIRED${minNote} (structural enforcement — Stop hook will verify)\n\n` +
+        healthDashboard +
         `Run the full R3 quorum protocol inline (dispatch_pattern from commands/nf/quorum.md):\n` +
         `Dispatch ALL active slots as parallel sibling nf-quorum-slot-worker Tasks in ONE message turn.\n` +
         `NEVER call mcp__*__* tools directly — use Task(subagent_type="nf-quorum-slot-worker") ONLY:\n` +
