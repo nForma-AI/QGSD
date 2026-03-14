@@ -1,0 +1,23 @@
+statechart:
+  name: traffic-light
+  root:
+    initial: green
+    states:
+      - name: green
+        transitions:
+          - event: timer
+            target: yellow
+      - name: yellow
+        transitions:
+          - event: timer
+            target: red
+      - name: red
+        transitions:
+          - event: timer
+            target: green
+          - event: emergency
+            target: flashing
+      - name: flashing
+        transitions:
+          - event: reset
+            target: red
