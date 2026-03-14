@@ -62,6 +62,50 @@ test('LOOP-02: nf-spec-regen.js exits 0 for Write to nf-workflow.machine.ts and 
   }
 });
 
+test('LOOP-02: nf-spec-regen.js auto-detects Python transitions file and runs fsm-to-tla', () => {
+  const fixturePath = path.join(process.cwd(), 'bin', 'adapters', 'fixtures', 'order-pipeline.py');
+  const result = runHook({
+    tool_name: 'Write',
+    tool_input: { file_path: fixturePath },
+    tool_response: {},
+    cwd: process.cwd(),
+    context_window: {}
+  });
+  assert.strictEqual(result.status, 0, 'hook must exit 0');
+  if (result.stdout && result.stdout.trim()) {
+    const parsed = JSON.parse(result.stdout);
+    assert.ok(
+      parsed.hookSpecificOutput && parsed.hookSpecificOutput.additionalContext,
+      'should produce additionalContext for detected FSM file'
+    );
+    assert.ok(
+      parsed.hookSpecificOutput.additionalContext.includes('fsm-to-tla'),
+      'should mention fsm-to-tla in the output'
+    );
+  }
+});
+
+test('LOOP-02: nf-spec-regen.js exits 0 and is a no-op for non-FSM Python file', () => {
+  const fs = require('fs');
+  const os = require('os');
+  const tmpFile = path.join(os.tmpdir(), 'not-a-fsm-' + Date.now() + '.py');
+  fs.writeFileSync(tmpFile, 'print("hello world")\nx = 42\n', 'utf8');
+  try {
+    const result = runHook({
+      tool_name: 'Write',
+      tool_input: { file_path: tmpFile },
+      tool_response: {},
+      cwd: process.cwd(),
+      context_window: {}
+    });
+    assert.strictEqual(result.status, 0, 'hook must exit 0');
+    // Should produce no output — not a state machine
+    assert.ok(!result.stdout || !result.stdout.trim(), 'should produce no output for non-FSM Python file');
+  } finally {
+    try { fs.unlinkSync(tmpFile); } catch (_) {}
+  }
+});
+
 test('LOOP-02: nf-spec-regen.js exits 0 (fail-open) on malformed stdin JSON', () => {
   const hookPath = path.join(__dirname, 'nf-spec-regen.js');
   const result = spawnSync(process.execPath, [hookPath], {

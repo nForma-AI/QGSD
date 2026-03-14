@@ -46,7 +46,7 @@ process.stdin.on('end', () => {
       process.exit(0); // No-op — not a Write tool call
     }
 
-    // Check against configurable patterns (default: ['*.machine.ts'] preserves old behavior)
+    // Gate 1: check against configurable patterns (default: ['*.machine.ts'] preserves old behavior)
     const patterns = config.spec_regen_patterns || ['*.machine.ts'];
     const basename = path.basename(filePath);
     const matchesPattern = patterns.some(function(pat) {
@@ -55,8 +55,26 @@ process.stdin.on('end', () => {
       // Exact filename match
       return basename === pat || filePath.includes(pat);
     });
+
+    // Gate 2: if no pattern match, try auto-detection on the file content.
+    // This enables all 10 supported FSM frameworks without explicit config.
+    let detectedFramework = null;
     if (!matchesPattern) {
-      process.exit(0); // No-op — file does not match any pattern
+      try {
+        const detectMod = require(path.join(cwd, 'bin', 'adapters', 'detect.cjs'));
+        const fileContent = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+        if (fileContent) {
+          const detection = detectMod.detectFramework(filePath, fileContent);
+          if (detection && detection.confidence >= 60) {
+            detectedFramework = detection.adapter.id;
+          }
+        }
+      } catch (_) {
+        // detect.cjs not available (external project) — fail-open
+      }
+      if (!detectedFramework) {
+        process.exit(0); // No-op — not a recognized state machine file
+      }
     }
 
     const cwd = input.cwd || process.cwd();
@@ -83,11 +101,14 @@ process.stdin.on('end', () => {
       }
     }
 
-    // Run fsm-to-tla.cjs for the matched file (auto-detect framework)
+    // Run fsm-to-tla.cjs for the matched file
     const fsmToTla = path.join(cwd, 'bin', 'fsm-to-tla.cjs');
     if (fs.existsSync(fsmToTla)) {
-      // For nf-workflow.machine.ts, pass --config and --module for backward compat
       const fsmArgs = [fsmToTla, filePath];
+      // Pass --framework when we already detected, to skip redundant re-detection
+      if (detectedFramework) {
+        fsmArgs.push('--framework=' + detectedFramework);
+      }
       if (filePath.includes('nf-workflow.machine.ts')) {
         const guardsConfig = path.join(cwd, '.planning', 'formal', 'tla', 'guards', 'nf-workflow.json');
         if (fs.existsSync(guardsConfig)) {
