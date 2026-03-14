@@ -13,11 +13,12 @@ const name = 'XState v4';
 const extensions = ['.ts', '.js', '.tsx', '.jsx'];
 
 function detect(filePath, content) {
-  // v4: Machine({ states: ... }) without .config wrapper
-  if ((/Machine\s*\(/.test(content) || /createMachine\s*\(/.test(content)) &&
-      /states\s*:/.test(content) && !/\.config\.states/.test(content) &&
+  // v4 uses Machine() (not createMachine which is v5).
+  // Key differentiator: v4 had `Machine({` while v5 has `createMachine({`
+  const hasMachineFn = /\bMachine\s*\(/.test(content) && !/createMachine/.test(content);
+  if (hasMachineFn && /states\s*:/.test(content) &&
       /from\s+['"]xstate['"]/.test(content)) return 85;
-  if (/Machine\s*\(/.test(content) && /from\s+['"]xstate['"]/.test(content)) return 60;
+  if (hasMachineFn && /from\s+['"]xstate['"]/.test(content)) return 60;
   return 0;
 }
 
