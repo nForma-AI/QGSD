@@ -147,6 +147,7 @@ Agent(
   prompt="First resolve the sub-skill path: try $HOME/.claude/commands/nf/solve-report.md, fall back to commands/nf/solve-report.md if not found. Read and follow it end-to-end.
 Input context (JSON):
 {\"baseline_residual\": ..., \"post_residual\": ..., \"iteration_count\": N, \"flags\": {\"verbose\": bool, \"json\": bool}, \"focus\": focusPhrase ? {\"phrase\": focusPhrase} : null}
+Note: baseline_residual is the session-start snapshot. The report sub-skill independently re-snapshots at report time for baseline drift detection (CONV-04) via Step 6.2.
 Display all tables and reports as described in the process section."
 )
 ```

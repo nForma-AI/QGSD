@@ -3718,6 +3718,7 @@ function formatJSON(iterations, finalResidual, converged) {
     complexity_profile: complexityProfile,
     oscillation: oscillation,
     capped_layers: [],
+    baseline_drift: { detected: false, layers: [], warning: null },
   };
 }
 
@@ -3896,6 +3897,7 @@ function main() {
     },
     focus: focusPhrase || null,
     capped_layers: [],
+    baseline_drift: { detected: false, layers: [], warning: null },
   };
   // Collect known issues from non-zero non-error layers
   // -- Load classification cache and archive data for net_residual computation --
