@@ -2769,9 +2769,8 @@ function handleStatusline(settings, isInteractive, callback) {
   }
 
   if (!isInteractive) {
-    console.log(`  ${yellow}⚠${reset} Skipping statusline (already configured)`);
-    console.log(`    Use ${cyan}--force-statusline${reset} to replace\n`);
-    callback(false);
+    // Default: overwrite with nForma statusline
+    callback(true);
     return;
   }
 
@@ -2792,14 +2791,14 @@ function handleStatusline(settings, isInteractive, callback) {
     • Current task (from todo list)
     • Context window usage (color-coded)
 
-  ${cyan}1${reset}) Keep existing
-  ${cyan}2${reset}) Replace with nForma statusline
+  ${cyan}1${reset}) Replace with nForma statusline
+  ${cyan}2${reset}) Keep existing
 `);
 
   rl.question(`  Choice ${dim}[1]${reset}: `, (answer) => {
     rl.close();
     const choice = answer.trim() || '1';
-    callback(choice === '2');
+    callback(choice === '1');
   });
 }
 
