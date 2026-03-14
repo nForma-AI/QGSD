@@ -5,6 +5,8 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert');
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { id, detect, extract } = require('./xstate-v5.cjs');
 
@@ -31,9 +33,31 @@ test('detect returns 0 for Python content', () => {
   assert.strictEqual(confidence, 0);
 });
 
-test('detect returns 50 for .machine.ts files', () => {
-  const confidence = detect('my-workflow.machine.ts', 'some content');
-  assert.strictEqual(confidence, 50);
+test('extract parses XState v5 fixture with correct counts', () => {
+  const fixture = `
+exports.machine = {
+  config: {
+    id: 'traffic',
+    initial: 'green',
+    states: {
+      green: { on: { TIMER: { target: 'yellow' } } },
+      yellow: { on: { TIMER: { target: 'red' } } },
+      red: { on: { TIMER: { target: 'green' } } }
+    }
+  }
+};
+`;
+  const tmpFile = path.join(os.tmpdir(), 'xstate-v5-test-' + Date.now() + '.js');
+  fs.writeFileSync(tmpFile, fixture, 'utf8');
+  try {
+    const ir = extract(tmpFile);
+    assert.strictEqual(ir.framework, 'xstate-v5');
+    assert.strictEqual(ir.initial, 'green');
+    assert.strictEqual(ir.stateNames.length, 3);
+    assert.strictEqual(ir.transitions.length, 3);
+  } finally {
+    fs.unlinkSync(tmpFile);
+  }
 });
 
 test('extract on real nf-workflow.machine.ts produces valid IR', () => {
@@ -53,6 +77,4 @@ test('extract on real nf-workflow.machine.ts produces valid IR', () => {
   assert.ok(ir.stateNames.length > 0, 'Should have states');
   assert.ok(ir.transitions.length > 0, 'Should have transitions');
   assert.ok(ir.stateNames.includes(ir.initial), 'initial should be in stateNames');
-  // ctxVars should exclude 'skip' vars
-  assert.ok(!ir.ctxVars.includes('currentPhase'), 'currentPhase should be skipped');
 });

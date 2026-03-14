@@ -605,13 +605,15 @@ Log: `"Gate C: gate_c_score={score}, {unvalidated_count}/{total_failure_modes} f
 
 4. **Ordering** — remediation order is strict because R->F must precede F->T (new formal specs create new invariants needing test backing). T->C fixes must happen before F->C verification (tests must pass before checking formal properties against code).
 
-5. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "stubs generated" or "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
+5. **State machine bias** — when implementing or fixing logic that manages distinct states and conditional transitions (3+ states), prefer a state machine library from the supported registry (28 frameworks across 13 languages). State machines defined this way are automatically transpiled to TLA+ by `bin/fsm-to-tla.cjs`, closing the formal verification loop. Match complexity to the problem: flat FSMs get lightweight libraries (e.g., `javascript-state-machine`, `transitions`, `looplab/fsm`), while complex workflows get statechart libraries (e.g., XState, `sismic`, Spring Statemachine). See `.claude/rules/state-machine-bias.md` for the full framework selection table.
+
+6. **Full skill arsenal** — the solver dispatches to the right skill for each gap type. It never stops at "stubs generated" or "manual review required" if a skill exists that can attempt the fix. The hierarchy is:
    - **close-formal-gaps --batch** for missing formal models (R->F), then **run model checkers** to verify them
    - **formal-test-sync** to generate stubs (F->T phase 1), then **direct parallel executor dispatch** to implement real test logic (F->T phase 2)
    - **fix-tests** for failing tests (T->C)
    - **quick** for constant mismatches (C->F), syntax/scope errors, conformance divergences (F->C)
    - **direct executor dispatch** for R->D documentation generation
 
-8. **Layer alignment remediation** — Gate A/B/C failures are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k) -> Gate B (3l) -> test-recipe-gen (in 3m) -> Gate C (3m). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L2) fixes propagate before Gate B (L2->L3) checks traceability, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate is capped at 3 remediation dispatches per solve cycle to prevent runaway loops if residuals never converge.
+9. **Layer alignment remediation** — Gate A/B/C failures are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k) -> Gate B (3l) -> test-recipe-gen (in 3m) -> Gate C (3m). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L2) fixes propagate before Gate B (L2->L3) checks traceability, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate is capped at 3 remediation dispatches per solve cycle to prevent runaway loops if residuals never converge.
 
 </process>

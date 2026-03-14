@@ -18,6 +18,10 @@ test('detect returns high confidence for JSM content', () => {
   assert.ok(detect('traffic.js', content) >= 85);
 });
 
+test('detect returns 0 for unrelated content', () => {
+  assert.strictEqual(detect('app.py', 'from transitions import Machine'), 0);
+});
+
 test('extract parses JSM fixture', () => {
   const fixture = `module.exports = { init: "green", transitions: [ { name: "warn", from: "green", to: "yellow" }, { name: "stop", from: "yellow", to: "red" }, { name: "go", from: "red", to: "green" } ] };`;
   const tmpFile = path.join(os.tmpdir(), 'jsm-test-' + Date.now() + '.js');

@@ -41,6 +41,8 @@ These guidelines apply to all repos where nForma agents execute:
 3. **Verify refactors preserve extraction**: When refactoring previously-extracted modules, confirm the new code imports from the extracted location rather than re-inlining the content. Run grep to verify import paths.
 
 4. **Pre-flight checks before pipelines**: Before running test suites, build scripts, or deployments, verify input files exist and match expected formats.
+
+5. **State machine bias**: When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library over ad-hoc if/else chains. Match complexity to the problem per `.claude/rules/state-machine-bias.md`. State machines defined with a supported library can be auto-transpiled to TLA+ via `bin/fsm-to-tla.cjs` (28 frameworks across 13 languages).
 </safety_guidelines>
 
 <execution_flow>

@@ -98,13 +98,13 @@ Unlike single-model coding assistants (GitHub Copilot Chat, Cursor, Cline) or au
 |---|---|
 | **5+** quorum agents | **56** slash commands |
 | **5** formal methods tools (TLA+, Alloy, PRISM, UPPAAL, Petri) | **7** lifecycle hook types |
-| **10** state machine frameworks transpiled to TLA+ | **33** milestones shipped |
+| **28** state machine frameworks transpiled to TLA+ | **33** milestones shipped |
 
 ---
 
 ## What's New
 
-- **State machine to TLA+ transpiler** -- Point `fsm-to-tla` at any state machine in your codebase and get a formal TLA+ spec. Supports 10 frameworks across 4 languages — [details below](#state-machine-transpiler)
+- **State machine to TLA+ transpiler** -- Point `fsm-to-tla` at any state machine in your codebase and get a formal TLA+ spec. Supports 28 frameworks across 13 languages — [details below](#state-machine-transpiler)
 - **Cross-repo support** -- `--repo` flag lets you run nForma commands against any project in your workspace
 - **Formal spec generation** -- `/nf:close-formal-gaps` auto-generates TLA+, Alloy, or PRISM specs from your project requirements
 - **Pre-quorum auth checks** -- Detects unauthenticated agents before dispatch, no more 30s timeouts
@@ -548,19 +548,38 @@ node bin/fsm-to-tla.cjs workflow.json --framework=asl
 node bin/fsm-to-tla.cjs src/fsm.py --scaffold-config > guards.json
 ```
 
-**10 frameworks supported across 4 languages:**
+**28 frameworks supported across 13 languages:**
 
 | Language | Framework | How it works |
 |----------|-----------|--------------|
 | **JS/TS** | XState v5, XState v4 | Compiles via esbuild, introspects machine config |
 | **JS/TS** | javascript-state-machine | Compiles via esbuild, extracts `transitions` array |
 | **JS/TS** | Robot | Regex extraction of functional `state()`/`transition()` API |
+| **JS/TS** | Machina.js | Regex extraction of `initialState` + `states` block |
+| **JS/TS** | jssm | Parses DSL arrow notation `a -> b -> c` from template literals |
+| **JS/TS** | useStateMachine | Regex extraction of React hook config `{ initial, states }` |
 | **JSON** | AWS Step Functions (ASL) | Parses `States` directly — Choice branches become guarded transitions |
-| **JSON** | Stately (SCXML-JSON) | Parses Stately.ai editor exports |
+| **JSON/YAML** | Stately (SCXML-JSON) | Parses Stately.ai editor exports |
 | **Python** | transitions | Regex extraction of `Machine(states=[], transitions=[])` |
-| **Python** | sismic | YAML statechart parsing |
+| **Python** | sismic | YAML statechart parsing with recursive state collection |
+| **Python** | django-fsm | Regex extraction of `@transition` decorators + `FSMField` |
+| **Python** | python-statemachine | Regex extraction of `State()` declarations + `.to()` transitions |
 | **Go** | looplab/fsm | Regex extraction of `fsm.NewFSM()` + `fsm.Events{}` |
 | **Go** | qmuntal/stateless | Regex extraction of `.Configure().Permit()` chains |
+| **Java** | Spring Statemachine | Regex extraction of `.withStates().initial()` + `.source().target().event()` |
+| **Java** | Squirrel Foundation | Regex extraction of `@Transit` annotations + builder pattern |
+| **Java** | stateless4j | Regex extraction of `.configure().permit()` chains |
+| **Kotlin** | kstatemachine | Regex extraction of `addInitialState()` + `transition<Event>` DSL |
+| **C#** | Stateless (.NET) | Regex extraction of `.Configure().Permit()` — the original Stateless |
+| **C#** | Automatonymous (MassTransit) | Regex extraction of `During()`/`When()`/`TransitionTo()` saga pattern |
+| **Ruby** | AASM | Do/end depth-counting parser for `event`/`transitions` DSL |
+| **Ruby** | state_machines | Regex extraction of `state_machine do` + `transition` DSL |
+| **Rust** | rust-fsm | Brace-depth parser for `state_machine!` macro blocks |
+| **Rust** | statig | Regex extraction of `#[state_machine]` + `#[transition]` attributes |
+| **Erlang** | gen_statem | Regex extraction of `handle_event` clauses + `{next_state, ...}` |
+| **Elixir** | gen_statem (Elixir) | Regex extraction of `def handle_event` + `{:next_state, ...}` |
+| **Elixir** | Machinery | Regex extraction of `states:` list + `transitions: %{}` map |
+| **Swift** | SwiftState | Regex extraction of `StateMachine<>` + `addRoute(.a => .b)` |
 
 Every adapter produces a shared **MachineIR** (states, transitions, guards, context variables), then a single TLA+ emitter generates the spec. The `--scaffold-config` flag generates a starter JSON file where you annotate guards with TLA+ predicates and variables with update expressions — bridging the semantic gap between your code and the formal model.
 
@@ -654,7 +673,7 @@ When something breaks — tests fail, planning state drifts, requirements go sta
 The solve loop runs three phases:
 
 1. **Diagnose** (`/nf:solve-diagnose`) — Runs legacy migration checks, config audits, observation sweeps, and surfaces every issue with structured severity
-2. **Remediate** (`/nf:solve-remediate`) — Dispatches 13 remediation layers across 3 severity tiers (critical → warning → info), each with targeted fix logic
+2. **Remediate** (`/nf:solve-remediate`) — Dispatches 13 remediation layers across 3 severity tiers (critical → warning → info), each with targeted fix logic. Implementations favor state machine patterns when the logic involves distinct states and transitions — any of the [28 supported frameworks](#state-machine-transpiler) can be auto-transpiled to TLA+ for formal verification
 3. **Report** (`/nf:solve-report`) — Generates before/after summary with full formal verification pass, so you can see exactly what changed
 
 The TUI's Solve module (F5) gives you an interactive view of all diagnostics and lets you drill into any issue:
@@ -829,7 +848,7 @@ Point `fsm-to-tla` at a state machine definition in your codebase and get a TLA+
 node bin/fsm-to-tla.cjs src/machines/order.machine.ts --dry
 ```
 
-Works with **10 frameworks** across JavaScript, TypeScript, JSON, Python, and Go. Auto-detects the framework from file content. For JS/TS frameworks, compiles via esbuild and introspects the machine object. For Python and Go, uses regex extraction — no runtime needed.
+Works with **28 frameworks** across JavaScript, TypeScript, Python, Go, Java, Kotlin, C#, Ruby, Rust, Erlang, Elixir, Swift, JSON, and YAML. Auto-detects the framework from file content. For JS/TS frameworks, compiles via esbuild and introspects the machine object. For all other languages, uses regex or brace-depth parsing — no runtime needed.
 
 The transpiler generates VARIABLES, Init, type invariants, action definitions with guard mappings, Next (with fairness), and a TLC config. Use `--scaffold-config` to generate a starter guard/variable annotation file for your machine.
 

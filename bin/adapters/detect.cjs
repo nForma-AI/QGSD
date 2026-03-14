@@ -3,29 +3,75 @@
 // Auto-detection registry — runs all adapters to identify the framework of a source file.
 
 const ADAPTER_IDS = [
+  // JS/TS
   'xstate-v5',
   'xstate-v4',
   'jsm',
   'robot',
+  'machina',
+  'jssm',
+  'use-state-machine',
+  // JSON
   'asl',
   'stately',
+  // Python
   'python-transitions',
   'sismic',
+  'django-fsm',
+  'python-statemachine',
+  // Go
   'looplab-fsm',
   'qmuntal-stateless',
+  // Java/Kotlin
+  'spring-statemachine',
+  'squirrel',
+  'stateless4j',
+  'kstatemachine',
+  // C#/.NET
+  'dotnet-stateless',
+  'automatonymous',
+  // Ruby
+  'aasm',
+  'ruby-state-machines',
+  // Rust
+  'rust-fsm',
+  'statig',
+  // Elixir/Erlang
+  'gen-statem',
+  'machinery',
+  // Swift
+  'swift-state',
 ];
 
 const ADAPTER_FILES = {
-  'xstate-v5':         './xstate-v5.cjs',
-  'xstate-v4':         './xstate-v4.cjs',
-  'jsm':               './jsm.cjs',
-  'robot':             './robot.cjs',
-  'asl':               './asl.cjs',
-  'stately':           './stately.cjs',
-  'python-transitions':'./python-transitions.cjs',
-  'sismic':            './sismic.cjs',
-  'looplab-fsm':       './looplab-fsm.cjs',
-  'qmuntal-stateless': './qmuntal-stateless.cjs',
+  'xstate-v5':          './xstate-v5.cjs',
+  'xstate-v4':          './xstate-v4.cjs',
+  'jsm':                './jsm.cjs',
+  'robot':              './robot.cjs',
+  'machina':            './machina.cjs',
+  'jssm':               './jssm.cjs',
+  'use-state-machine':  './use-state-machine.cjs',
+  'asl':                './asl.cjs',
+  'stately':            './stately.cjs',
+  'python-transitions': './python-transitions.cjs',
+  'sismic':             './sismic.cjs',
+  'django-fsm':         './django-fsm.cjs',
+  'python-statemachine':'./python-statemachine.cjs',
+  'looplab-fsm':        './looplab-fsm.cjs',
+  'qmuntal-stateless':  './qmuntal-stateless.cjs',
+  'spring-statemachine':'./spring-statemachine.cjs',
+  'squirrel':           './squirrel.cjs',
+  'stateless4j':        './stateless4j.cjs',
+  'kstatemachine':      './kstatemachine.cjs',
+  'dotnet-stateless':   './dotnet-stateless.cjs',
+  'automatonymous':     './automatonymous.cjs',
+  'aasm':               './aasm.cjs',
+  'ruby-state-machines':'./ruby-state-machines.cjs',
+  'rust-fsm':           './rust-fsm.cjs',
+  'statig':             './statig.cjs',
+  'gen-statem':         './gen-statem.cjs',
+  'machinery':          './machinery.cjs',
+  'swift-state':        './swift-state.cjs',
 };
 
 /**
