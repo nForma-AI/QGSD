@@ -379,11 +379,15 @@ const NF_FORMAL_HOME = path.join(os.homedir(), '.local', 'share', 'nf-formal');
 
   // ── Petri nets ────────────────────────────────────────────────────────
 
-  try {
-    require.resolve('@hpcc-js/wasm-graphviz');
-    skip('Petri nets — @hpcc-js/wasm-graphviz found');
+  // Check node_modules in cwd and script directory
+  const petriPaths = [
+    path.join(process.cwd(), 'node_modules', '@hpcc-js', 'wasm-graphviz'),
+    path.join(__dirname, '..', 'node_modules', '@hpcc-js', 'wasm-graphviz'),
+  ];
+  if (petriPaths.some(p => fs.existsSync(p))) {
+    skip('Petri nets — @hpcc-js/wasm-graphviz already present — skipping');
     results.push({ name: 'Petri', status: 'skip' });
-  } catch (_) {
+  } else {
     process.stdout.write('  Installing @hpcc-js/wasm-graphviz…\n');
     const npmInstall = spawnSync('npm', ['install', '--save', '@hpcc-js/wasm-graphviz'], {
       cwd: process.cwd(), stdio: 'pipe'
