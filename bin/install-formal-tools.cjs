@@ -386,7 +386,7 @@ const NF_FORMAL_HOME = path.join(os.homedir(), '.local', 'share', 'nf-formal');
   } catch (_) {
     process.stdout.write('  Installing @hpcc-js/wasm-graphviz…\n');
     const npmInstall = spawnSync('npm', ['install', '--save', '@hpcc-js/wasm-graphviz'], {
-      cwd: targetDir, stdio: 'pipe'
+      cwd: process.cwd(), stdio: 'pipe'
     });
     if (npmInstall.status === 0) {
       ok('Petri nets — @hpcc-js/wasm-graphviz installed');
