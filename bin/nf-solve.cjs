@@ -2256,11 +2256,12 @@ function getAggregateGates() {
 }
 
 /**
- * L1->L2: Wiring:Evidence alignment score.
+ * L1->L3: Wiring:Evidence alignment score (L2 collapsed — STRUCT-01).
+ * Gate A now evaluates L1 evidence directly against L3 reasoning models.
  * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
-function sweepL1toL2() {
+function sweepL1toL3() {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
   }
@@ -2289,36 +2290,8 @@ function sweepL1toL2() {
   };
 }
 
-/**
- * L2->L3: Wiring:Purpose alignment score.
- * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
- * Returns { residual: N, detail: {...} }
- */
-function sweepL2toL3() {
-  if (fastMode) {
-    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  }
-
-  const agg = getAggregateGates();
-  if (!agg || !agg.gate_b) {
-    return { residual: -1, detail: { error: true } };
-  }
-
-  const gateB = agg.gate_b;
-  const score = resolveGateScore(gateB, 'b');
-  const orphanedCount = gateB.orphaned_entries || 0;
-  const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
-  const residual = Math.min(rawResidual, 10);
-  return {
-    residual: residual,
-    detail: {
-      wiring_purpose_score: score,
-      orphaned_count: orphanedCount,
-      residual_capped: rawResidual > 10,
-      scoped: focusSet ? false : undefined,
-    },
-  };
-}
+// sweepL2toL3 removed — L2 (Semantics) layer collapsed (STRUCT-01).
+// Gate B purpose check is now folded into l1_to_l3 via compute-per-model-gates.cjs.
 
 /**
  * L3->TC: Wiring:Coverage alignment score.
@@ -2636,8 +2609,7 @@ function computeResidual() {
 
   // Layer alignment sweeps (cross-layer gate checks) — skip in fast mode
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  const l1_to_l2 = fastMode ? skipLayer : sweepL1toL2();
-  const l2_to_l3 = fastMode ? skipLayer : sweepL2toL3();
+  const l1_to_l3 = fastMode ? skipLayer : sweepL1toL3();
   const l3_to_tc = fastMode ? skipLayer : sweepL3toTC();
 
   // Per-model gate maturity (informational — not added to layer_total)
@@ -2656,8 +2628,7 @@ function computeResidual() {
   }
 
   const layer_total =
-    (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
-    (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
+    (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
 
   // Git heatmap sweep (informational — not added to forward total)
@@ -2681,8 +2652,7 @@ function computeResidual() {
     (t_to_c.residual >= 0 ? t_to_c.residual : 0) +
     (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
     (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
-    (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
-    (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
+    (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
 
   const manual =
@@ -2711,8 +2681,7 @@ function computeResidual() {
     c_to_r,
     t_to_r,
     d_to_r,
-    l1_to_l2,
-    l2_to_l3,
+    l1_to_l3,
     l3_to_tc,
     per_model_gates,
     git_heatmap,
@@ -2737,8 +2706,10 @@ function computeResidual() {
 /**
  * Attempts to fix gaps found by the sweep.
  * Returns { actions_taken: [...], stubs_generated: N }
+ * @param {Object} residual - residual object from computeResidual()
+ * @param {Set<string>} [oscillatingSet] - layer keys detected as oscillating by CycleDetector
  */
-function autoClose(residual) {
+function autoClose(residual, oscillatingSet) {
   const actions = [];
 
   // Read oscillation verdicts for layer gating (fail-open)
@@ -2753,7 +2724,10 @@ function autoClose(residual) {
 
   function isLayerBlocked(layerKey) {
     const v = verdicts[layerKey];
-    return v && v.blocked === true;
+    if (v && v.blocked === true) return true;
+    // Also block layers detected as oscillating by CycleDetector (CONV-01)
+    if (oscillatingSet && oscillatingSet.has(layerKey)) return true;
+    return false;
   }
 
   // F->T gaps: generate test stubs
@@ -2777,7 +2751,7 @@ function autoClose(residual) {
   }
 
   // F->T stubs upgrade: implement TODO stubs with real test logic
-  if (residual.f_to_t.residual > 0) {
+  if (!isLayerBlocked('f_to_t') && residual.f_to_t.residual > 0) {
     const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
     if (fs.existsSync(implPath)) {
       const implResult = spawnSync(process.execPath, [implPath], {
@@ -3184,8 +3158,7 @@ function formatReport(iterations, finalResidual, converged) {
   lines.push('\u2500 Layer Alignment (cross-layer gates) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
   const layerRows = [
-    { label: 'L1 -> L2 (Wiring:Evidence)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
-    { label: 'L2 -> L3 (Wiring:Purpose)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
+    { label: 'L1 -> L3 (Wiring:Evidence)', residual: finalResidual.l1_to_l3 ? finalResidual.l1_to_l3.residual : -1 },
     { label: 'L3 -> TC (Wiring:Coverage)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
   ];
 
@@ -3844,39 +3817,51 @@ function main() {
     cycleDetector.record(i, perLayerResiduals);
     const oscillatingLayers = cycleDetector.detectOscillating();
     if (oscillatingLayers.length > 0) {
-      process.stderr.write(TAG + ' Oscillating layers detected: ' + oscillatingLayers.join(', ') + ' — excluding from dispatch\n');
+      process.stderr.write(TAG + ' Oscillating layers detected: ' + oscillatingLayers.join(', ') + ' — excluding from convergence check and dispatch\n');
     }
 
-    // Check convergence: total residual unchanged from previous iteration
-    if (prevTotal !== null && residual.total === prevTotal) {
+    // Compute effectiveTotal excluding oscillating layers (CONV-01)
+    const oscillatingSet = new Set(oscillatingLayers);
+    let oscillatingSum = 0;
+    for (const layer of oscillatingLayers) {
+      if (residual[layer] && typeof residual[layer].residual === 'number' && residual[layer].residual > 0) {
+        oscillatingSum += residual[layer].residual;
+      }
+    }
+    const effectiveTotal = residual.total - oscillatingSum;
+
+    // Check convergence: effective residual unchanged from previous iteration
+    if (prevTotal !== null && effectiveTotal === prevTotal) {
       converged = true;
       process.stderr.write(
         TAG +
           ' Converged at iteration ' +
           i +
-          ' (residual stable at ' +
-          residual.total +
+          ' (effective residual stable at ' +
+          effectiveTotal +
+          (oscillatingLayers.length > 0 ? ', excluding oscillating: ' + oscillatingLayers.join(', ') : '') +
           ')\n'
       );
       break;
     }
 
     // Check if already at zero
-    if (residual.total === 0) {
+    if (effectiveTotal === 0) {
       converged = true;
-      process.stderr.write(TAG + ' All layers clean — residual is 0\n');
+      process.stderr.write(TAG + ' All non-oscillating layers clean — effective residual is 0' +
+        (oscillatingLayers.length > 0 ? ' (oscillating: ' + oscillatingLayers.join(', ') + ')' : '') + '\n');
       break;
     }
 
     // Auto-close if not report-only and not last iteration
     if (!reportOnly) {
-      const closeResult = autoClose(residual);
+      const closeResult = autoClose(residual, oscillatingSet);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
     } else {
       break; // report-only = single sweep, no loop
     }
 
-    prevTotal = residual.total;
+    prevTotal = effectiveTotal;
   }
 
   const finalResidual = iterations[iterations.length - 1].residual;
@@ -4172,8 +4157,7 @@ module.exports = {
   sweepCtoR,
   sweepTtoR,
   sweepDtoR,
-  sweepL1toL2,
-  sweepL2toL3,
+  sweepL1toL3,
   sweepL3toTC,
   sweepPerModelGates,
   sweepGitHeatmap,
