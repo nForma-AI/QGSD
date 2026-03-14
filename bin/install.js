@@ -2853,11 +2853,11 @@ function promptProviders(callback) {
   const classified = classifyProviders(provs);
   const detected = detectExternalClis(classified.externalPrimary);
 
-  // CCR slots always included
-  const selected = classified.ccr.map(p => p.name);
+  // CCR slots not included by default — users enable via /nf:mcp-setup
+  const selected = [];
 
   console.log(`\n  ${yellow}Quorum agent setup:${reset}`);
-  console.log(`  Claude slots (claude-1..6) are installed by default.\n`);
+  console.log(`  Run /nf:mcp-setup after install to configure Claude slots (claude-1..6).\n`);
 
   // Print detection results
   for (const d of detected) {
@@ -2873,7 +2873,7 @@ function promptProviders(callback) {
   const foundClis = detected.filter(d => d.found);
 
   if (foundClis.length === 0) {
-    console.log(`  No external CLIs detected. Installing Claude slots only.\n`);
+    console.log(`  No external CLIs detected. Run /nf:mcp-setup to configure quorum agents.\n`);
     selectedProviderSlots = selected;
     callback();
     return;
@@ -2914,13 +2914,11 @@ function promptProviders(callback) {
       let idx = 0;
       function askNext() {
         if (idx >= foundClis.length) {
-          // Done with primaries, now ask about dual-subscription
-          askDualSlots(rl, selected, classified.dualSubscription, () => {
-            answered = true;
-            rl.close();
-            selectedProviderSlots = selected;
-            callback();
-          });
+          // Dual-subscription slots skipped — most users have 1 sub per CLI.
+          answered = true;
+          rl.close();
+          selectedProviderSlots = selected;
+          callback();
           return;
         }
         const cli = foundClis[idx];
@@ -2939,13 +2937,11 @@ function promptProviders(callback) {
       for (const cli of foundClis) {
         selected.push(cli.name);
       }
-      // Ask about dual-subscription slots
-      askDualSlots(rl, selected, classified.dualSubscription, () => {
-        answered = true;
-        rl.close();
-        selectedProviderSlots = selected;
-        callback();
-      });
+      // Dual-subscription slots skipped by default (most users have 1 sub).
+      answered = true;
+      rl.close();
+      selectedProviderSlots = selected;
+      callback();
     }
   });
 }
@@ -3210,7 +3206,7 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders && selectedRuntimes.includes('claude')) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = classified.ccr.map(p => p.name);
+      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
       if (foundNames.length > 0) {
@@ -3239,7 +3235,7 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = classified.ccr.map(p => p.name);
+      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
       if (foundNames.length > 0) {
