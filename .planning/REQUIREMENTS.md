@@ -25,7 +25,7 @@ Requirements for Solve Loop Convergence & Correctness overhaul. Each maps to roa
 
 ### Performance
 
-- [ ] **PERF-01**: Solve remediation dispatches layers in dependency-ordered waves (max 6 waves) instead of 13 sequential steps — independent layers (R→F, R→D, T→C) run in parallel within the same wave
+- [x] **PERF-01**: Solve remediation dispatches layers in dependency-ordered waves (max 6 waves) instead of 13 sequential steps — independent layers (R→F, R→D, T→C) run in parallel within the same wave
 - [x] **PERF-02**: Diagnostic engine clears `_aggregateCache` after `per_model_gates` writes per-model gate files — preventing stale aggregate data in subsequent alignment layer reads
 
 ### Structure
@@ -71,7 +71,7 @@ Requirements for Solve Loop Convergence & Correctness overhaul. Each maps to roa
 | CONV-02 | v0.36-03 | Complete |
 | CONV-03 | v0.36-03 | Complete |
 | CONV-04 | v0.36-03 | Complete |
-| PERF-01 | v0.36-04 | Pending |
+| PERF-01 | v0.36-04 | Complete |
 | PERF-02 | v0.36-01 | Complete |
 | STRUCT-01 | v0.36-04 | Pending |
 | STRUCT-02 | v0.36-01 | Complete |

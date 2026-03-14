@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.36-03 complete (all 4 CONV requirements); v0.36-04 next
+**Current focus:** Phase v0.36-04 in progress (architecture parallelism); plan 02 complete
 
 ## Current Position
 
-Phase: 3 of 5 (Convergence Intelligence)
-Plan: v0.36-03-02-PLAN.md (2/2 plans complete)
+Phase: 4 of 5 (Architecture & Parallelism)
+Plan: v0.36-04-02-PLAN.md (2/2 plans complete)
 Status: Complete
-Last activity: 2026-03-14 — Phase v0.36-03-02 executed (gate cap reporting + baseline drift detection)
+Last activity: 2026-03-14 — Phase v0.36-04-02 executed (wave-parallel remediation dispatch)
 
-Progress: [########░░] 80%
+Progress: [########░░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 10min
-- Total execution time: 49min
+- Total plans completed: 6
+- Average duration: 9min
+- Total execution time: 53min
 
 **By Phase:**
 
@@ -30,9 +30,10 @@ Progress: [########░░] 80%
 | v0.36-01 | 1/1 | 12min | 12min |
 | v0.36-02 | 2/2 | 17min | 9min |
 | v0.36-03 | 2/2 | 20min | 10min |
+| v0.36-04 | 2/2 | TBD | TBD |
 
 **Recent Trend:**
-- Last 5 plans: v0.36-01-01 (12min), v0.36-02-02 (6min), v0.36-02-01 (11min), v0.36-03-01 (16min), v0.36-03-02 (4min)
+- Last 5 plans: v0.36-02-01 (11min), v0.36-03-01 (16min), v0.36-03-02 (4min), v0.36-04-01 (TBD), v0.36-04-02 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -41,6 +42,7 @@ Progress: [########░░] 80%
 | Phase v0.36-02 P01 | 11min | 4 tasks | 3 files |
 | Phase v0.36-03 P01 | 16min | 4 tasks | 7 files |
 | Phase v0.36-03 P02 | 4min | 3 tasks | 6 files |
+| Phase v0.36-04 P02 | 4min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -66,6 +68,9 @@ Recent decisions affecting current work:
 - [v0.36-03-02]: Drift threshold uses 10% relative change for non-zero baselines, absolute >2 for zero baselines
 - [v0.36-03-02]: capped_layers populated only when gate dispatch counter reaches max-3, not for partial dispatches
 - [v0.36-03-02]: baseline_drift defaults to {detected:false} in nf-solve.cjs; overwritten by report sub-skill
+- [v0.36-04-02]: Sequential chain compaction merges consecutive single-layer waves into one wave with sequential:true flag
+- [v0.36-04-02]: Gate chain (hazard_model -> l1_to_l3 -> l3_to_tc -> per_model_gates) runs sequentially within a single compacted wave
+- [v0.36-04-02]: Uses l1_to_l3 (not l1_to_l2/l2_to_l3) per STRUCT-01 collapse in the wave DAG
 
 ### Pending Todos
 
@@ -85,5 +90,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed v0.36-03-02-PLAN.md (gate cap reporting + baseline drift detection); v0.36-03 phase complete, v0.36-04 next
+Stopped at: Completed v0.36-04-02-PLAN.md (wave-parallel remediation dispatch); v0.36-04 phase complete, v0.36-05 next
 Resume file: None
