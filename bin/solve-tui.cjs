@@ -25,6 +25,16 @@ const { execFileSync } = require('child_process');
 
 const ROOT = process.cwd();
 
+// STRUCT-04: Configurable Haiku model
+const HAIKU_MODEL_DEFAULT = 'claude-haiku-4-5-20251001';
+function getHaikuModel() {
+  try {
+    const cfgPath = path.join(process.env.HOME || '', '.claude', 'nf.json');
+    const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+    return (cfg.classify && cfg.classify.haiku_model) || HAIKU_MODEL_DEFAULT;
+  } catch { return HAIKU_MODEL_DEFAULT; }
+}
+
 // ── Claude CLI binary resolver ──────────────────────────────────────────────
 // Claude Code installs versioned binaries at ~/.local/share/claude/versions/X.Y.Z
 // and does NOT place them on PATH. Resolve the latest version dynamically.
@@ -1300,7 +1310,7 @@ No explanation, no markdown, just the JSON object.`;
         delete cleanEnv.CLAUDECODE; // Prevent "cannot launch inside another session" block
         const result = execFileSync(
           resolveClaudeCLI(),
-          ['-p', prompt, '--model', 'claude-haiku-4-5-20251001'],
+          ['-p', prompt, '--model', getHaikuModel()],
           { env: cleanEnv, encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
         ).trim();
 
