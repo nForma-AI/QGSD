@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-13T19:57:30.067Z",
+    "generated_at": "2026-03-14T09:59:38.877Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,7 +12,7 @@
         "used_as_fallback": 5
       },
       "check_results": {
-        "entry_count": 854
+        "entry_count": 193
       },
       "unit_test_coverage": {
         "available": true,
@@ -981,14 +981,14 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "NoSpuriousConsensus",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         },
         {
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -1009,7 +1009,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "TypeInvariantHolds",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -1030,7 +1030,7 @@
           "model_file": ".planning/formal/tla/QGSDMCPEnv.tla",
           "property_name": "EventualDecision",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -2865,7 +2865,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3681,7 +3681,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -3828,7 +3828,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -4353,7 +4353,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -5242,7 +5242,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -5508,7 +5508,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -5592,7 +5592,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -5739,7 +5739,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -6033,7 +6033,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12009,7 +12009,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12212,7 +12212,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12247,7 +12247,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12807,7 +12807,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12842,7 +12842,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12877,7 +12877,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -12912,7 +12912,7 @@
           "model_file": ".planning/formal/alloy/misc-behavioral.als",
           "property_name": "MCPServer",
           "source": "annotation",
-          "latest_result": "fail",
+          "latest_result": "pass",
           "check_id": "tla:mcp-environment"
         }
       ],
@@ -15837,7 +15837,7 @@
         "MCPENV-02"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::TypeInvariantHolds": {
@@ -15847,7 +15847,7 @@
         "MCPENV-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/QGSDMCPEnv.tla::EventualDecision": {
@@ -15857,7 +15857,7 @@
         "MCPENV-03"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/tla/NFOscillation.tla::TypeOK": {
@@ -26042,7 +26042,7 @@
         "VALID-01"
       ],
       "source": "annotation",
-      "latest_result": "fail",
+      "latest_result": "pass",
       "check_id": "tla:mcp-environment"
     },
     ".planning/formal/alloy/misc-behavioral.als::AutoDetect": {
@@ -29863,7 +29863,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-13T19:57:20.260Z",
+    "baseline_date": "2026-03-14T09:57:15.661Z",
     "requirements_checked": 456,
     "regressions": [],
     "summary": {

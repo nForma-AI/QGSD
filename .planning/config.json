@@ -13,5 +13,7 @@
     "maxDeliberation": 9
   },
   "granularity": "standard",
-  "suppress_warnings": ["W005"]
+  "suppress_warnings": [
+    "W005"
+  ]
 }

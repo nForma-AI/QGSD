@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-13T19:57:20.811Z",
+  "generated": "2026-03-14T09:59:39.190Z",
   "total_models": 186,
   "unstable_models": 3,
   "evidence_readiness": {
@@ -331,7 +331,7 @@
     ".planning/formal/tla/QGSDMCPEnv.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "all 3 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req MCPENV-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -671,7 +671,7 @@
     ".planning/formal/tla/QGSDAgentProvisioning.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "all 8 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req AGENT-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -751,7 +751,7 @@
     ".planning/formal/alloy/schema-extensions.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 12 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req SCHEMA-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -771,7 +771,7 @@
     ".planning/formal/alloy/unified-check-results.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 4 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req UNIF-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -831,7 +831,7 @@
     ".planning/formal/alloy/architecture-registry.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 16 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req ARCH-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -991,7 +991,7 @@
     ".planning/formal/alloy/state-space-analysis.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 4 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req DECOMP-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1011,7 +1011,7 @@
     ".planning/formal/alloy/evidence-triage.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 4 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req TRIAGE-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1031,7 +1031,7 @@
     ".planning/formal/alloy/uppaal-model-reqs.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 5 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req UPPAAL-02 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1051,7 +1051,7 @@
     ".planning/formal/alloy/signal-analysis-tools.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 6 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req SIG-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1091,7 +1091,7 @@
     ".planning/formal/alloy/health-validation.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 6 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req HLTH-03 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -1927,10 +1927,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 5,
       "cooldown": {
-        "consecutive_stable_sessions": 20,
+        "consecutive_stable_sessions": 28,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-13T19:57:20.776Z"
+        "last_session_timestamp": "2026-03-14T09:59:39.179Z"
       },
       "flagged_at": "2026-03-11T19:09:49.446Z"
     },
@@ -2637,7 +2637,7 @@
     ".planning/formal/alloy/governance-dx.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 14 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2717,7 +2717,7 @@
     ".planning/formal/alloy/quality-hardening.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 9 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req BRKR-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -3557,7 +3557,7 @@
     ".planning/formal/alloy/misc-behavioral.als": {
       "gate_a": {
         "pass": true,
-        "reason": "all 18 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -3691,12 +3691,12 @@
       "gate_maturity": "ADVISORY",
       "promoted": false,
       "stability_status": "UNSTABLE",
-      "direction_changes": 4,
+      "direction_changes": 6,
       "cooldown": {
-        "consecutive_stable_sessions": 1,
+        "consecutive_stable_sessions": 3,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-13T19:57:20.809Z"
+        "last_session_timestamp": "2026-03-14T09:59:39.188Z"
       },
       "flagged_at": "2026-03-13T19:50:36.232Z"
     },
@@ -3719,10 +3719,10 @@
       "stability_status": "UNSTABLE",
       "direction_changes": 4,
       "cooldown": {
-        "consecutive_stable_sessions": 1,
+        "consecutive_stable_sessions": 3,
         "required_sessions": 3,
         "required_wall_time_ms": 3600000,
-        "last_session_timestamp": "2026-03-13T19:57:20.809Z"
+        "last_session_timestamp": "2026-03-14T09:59:39.188Z"
       },
       "flagged_at": "2026-03-13T19:50:36.232Z"
     },

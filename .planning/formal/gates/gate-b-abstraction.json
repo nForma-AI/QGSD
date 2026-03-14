@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-13T20:07:12.794Z",
+  "generated": "2026-03-14T09:59:39.189Z",
   "wiring_purpose_score": 0.9623655913978495,
   "total_entries": 186,
   "grounded_entries": 179,
@@ -13,6 +13,6 @@
     "confirmed": 0,
     "rejected": 48,
     "maybe": 2,
-    "computed": "2026-03-13T19:51:55.931Z"
+    "computed": "2026-03-14T09:59:39.239Z"
   }
 }

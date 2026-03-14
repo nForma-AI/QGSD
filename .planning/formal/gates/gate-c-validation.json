@@ -1,18 +1,18 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-13T20:07:12.794Z",
-  "wiring_coverage_score": 0.4032258064516129,
+  "generated": "2026-03-14T09:59:39.189Z",
+  "wiring_coverage_score": 0.9354838709677419,
   "total_entries": 186,
-  "validated_entries": 75,
-  "unvalidated_entries": 111,
+  "validated_entries": 174,
+  "unvalidated_entries": 12,
   "target": 0.8,
-  "target_met": false,
+  "target_met": true,
   "semantic_score": 0.02,
   "semantic_metadata": {
     "evaluated_candidates": 50,
     "confirmed": 0,
     "rejected": 48,
     "maybe": 2,
-    "computed": "2026-03-13T19:51:55.932Z"
+    "computed": "2026-03-14T09:59:39.239Z"
   }
 }
