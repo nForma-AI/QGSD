@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-14T13:59:59.983Z",
-  "content_hash": "9d0be4c5913f6ebd",
+  "aggregated_at": "2026-03-14T16:40:33.847Z",
+  "content_hash": "c2ca8a703a7f2ad8",
   "schema_version": "1",
   "requirements": [
     {
@@ -4378,6 +4378,18 @@
       }
     },
     {
+      "id": "UPPAAL-05",
+      "text": "The model registry (model-registry.json) and complexity profiler (model-complexity-profile.cjs) scan and process UPPAAL (.xml) and Petri (.dot) models at feature parity with TLA+, Alloy, and PRISM, enabling requirement traceability and state-space profiling for all five formalisms.",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "UPPAAL and Petri net models exist on disk and are discoverable by run-formal-verify.cjs, but initialize-model-registry.cjs and model-complexity-profile.cjs only handled TLA+, Alloy, and PRISM. Extending both tools to cover UPPAAL and Petri formalisms integrates them into the requirement traceability lifecycle and enables complexity analysis across all formal verification formalisms.",
+      "provenance": {
+        "source_file": ".planning/quick/290-bring-uppaal-and-petri-nets-to-full-pari/290-PLAN.md",
+        "milestone": "quick-290"
+      }
+    },
+    {
       "id": "UPS-01",
       "text": "UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",
       "category": "Hooks & Enforcement",
@@ -4747,5 +4759,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-14T13:59:59.983Z"
+  "frozen_at": "2026-03-14T16:40:33.848Z"
 }
