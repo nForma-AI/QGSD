@@ -83,7 +83,7 @@ None.
 | 286 | Add service auto-start to quorum-preflight.cjs | 2026-03-13 | 877aa29c | Pending | [286-add-service-auto-start-to-quorum-preflig](./quick/286-add-service-auto-start-to-quorum-preflig/) |
 | 287 | Add MAX_RESPONSE truncation safety net in unified-mcp-server.mjs runProvider() | 2026-03-13 | 42b6839e | Verified | [287-add-max-response-truncation-safety-net-i](./quick/287-add-max-response-truncation-safety-net-i/) |
 | 288 | Fix statusline 0K token count | 2026-03-14 | 6408e839 | Verified | [288-fix-statusline-0k-token-count-derive-tok](./quick/288-fix-statusline-0k-token-count-derive-tok/) |
-| 289 | Wire UPPAAL and Petri net support into close-formal-gaps | 2026-03-14 | (pending) | Verified | [289-wire-uppaal-and-petri-net-support-into-c](./quick/289-wire-uppaal-and-petri-net-support-into-c/) |
+| 289 | Wire UPPAAL and Petri net support into close-formal-gaps | 2026-03-14 | 34c7bbcc | Verified | [289-wire-uppaal-and-petri-net-support-into-c](./quick/289-wire-uppaal-and-petri-net-support-into-c/) |
 
 ## Session Continuity
 
