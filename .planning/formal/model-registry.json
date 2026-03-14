@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-14T16:27:21.197Z",
+  "last_sync": "2026-03-14T18:35:46.970Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -412,19 +412,25 @@
     },
     ".planning/formal/alloy/installer-path-validation.als": {
       "version": 1,
-      "last_updated": "2026-03-09T13:44:40.227Z",
+      "last_updated": "2026-03-14T17:50:05.472Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/installer-sync.als": {
       "version": 1,
-      "last_updated": "2026-03-13T20:37:42.078Z",
+      "last_updated": "2026-03-14T17:50:05.472Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/integration-layers.als": {
       "version": 1,
@@ -612,35 +618,47 @@
     },
     ".planning/formal/alloy/quorum-composition.als": {
       "version": 1,
-      "last_updated": "2026-03-05T09:11:49.868Z",
+      "last_updated": "2026-03-14T17:50:05.473Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/quorum-improvements.als": {
       "version": 1,
-      "last_updated": "2026-03-09T23:27:56.337Z",
+      "last_updated": "2026-03-14T17:50:05.473Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/quorum-policy.als": {
       "version": 1,
-      "last_updated": "2026-03-05T12:11:46.861Z",
+      "last_updated": "2026-03-14T17:50:05.473Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 1,
-      "last_updated": "2026-03-14T09:57:38.950Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 23,
+      "last_updated": "2026-03-14T18:36:14.653Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/readme-structure.als": {
       "version": 1,
@@ -844,11 +862,14 @@
     },
     ".planning/formal/alloy/solve-session-persistence.als": {
       "version": 1,
-      "last_updated": "2026-03-08T07:54:38.349Z",
+      "last_updated": "2026-03-14T17:50:05.474Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/solve-tc-coverage.als": {
       "version": 1,
@@ -924,11 +945,14 @@
     },
     ".planning/formal/alloy/taxonomy-safety.als": {
       "version": 1,
-      "last_updated": "2026-03-05T09:11:49.873Z",
+      "last_updated": "2026-03-14T17:50:05.474Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/terminal-emulation-purity.als": {
       "version": 1,
@@ -1020,19 +1044,25 @@
     },
     ".planning/formal/alloy/ux-feedback-safety.als": {
       "version": 1,
-      "last_updated": "2026-03-05T12:11:46.863Z",
+      "last_updated": "2026-03-14T17:50:05.475Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/ux-interaction-safety.als": {
       "version": 1,
-      "last_updated": "2026-03-10T00:11:19.772Z",
+      "last_updated": "2026-03-14T17:50:05.475Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/alloy/verification-execution.als": {
       "version": 1,
@@ -1084,11 +1114,14 @@
     },
     ".planning/formal/prism/deliberation-healing.pm": {
       "version": 1,
-      "last_updated": "2026-03-07T16:27:50.869Z",
+      "last_updated": "2026-03-14T17:50:05.475Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/prism/mcp-availability.pm": {
       "version": 1,
@@ -1115,28 +1148,37 @@
       "description": ""
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 1,
-      "last_updated": "2026-03-14T09:57:38.951Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 23,
+      "last_updated": "2026-03-14T18:36:14.654Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.526Z",
+      "last_updated": "2026-03-14T17:50:05.476Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFCircuitBreaker.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.526Z",
+      "last_updated": "2026-03-14T17:50:05.476Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFConfigLoader.tla": {
       "version": 1,
@@ -1148,11 +1190,14 @@
     },
     ".planning/formal/tla/NFConvergence.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.527Z",
+      "last_updated": "2026-03-14T17:50:05.476Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFDebtLedger.tla": {
       "version": 1,
@@ -1164,11 +1209,14 @@
     },
     ".planning/formal/tla/NFDeliberation.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.527Z",
+      "last_updated": "2026-03-14T17:50:05.476Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFDispatch.tla": {
       "version": 1,
@@ -1212,11 +1260,14 @@
     },
     ".planning/formal/tla/NFOscillation.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.527Z",
+      "last_updated": "2026-03-14T17:50:05.477Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFPolicy.tla": {
       "version": 1,
@@ -1228,25 +1279,31 @@
     },
     ".planning/formal/tla/NFPreFilter.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.528Z",
+      "last_updated": "2026-03-14T17:50:05.477Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 1,
-      "last_updated": "2026-03-14T09:57:38.949Z",
-      "update_source": "manual",
-      "source_id": null,
+      "version": 23,
+      "last_updated": "2026-03-14T18:36:14.654Z",
+      "update_source": "generate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 1,
-      "last_updated": "2026-03-14T09:57:38.901Z",
+      "version": 16,
+      "last_updated": "2026-03-14T18:35:46.970Z",
       "update_source": "generate",
-      "source_id": "generate:tla-from-xstate",
+      "source_id": "generate:formal-specs",
       "session_id": null,
       "description": ""
     },
@@ -1260,19 +1317,25 @@
     },
     ".planning/formal/tla/NFRecruiting.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.528Z",
+      "last_updated": "2026-03-14T17:50:05.477Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFSolveConvergence.tla": {
       "version": 1,
-      "last_updated": "2026-03-10T09:17:44.824Z",
+      "last_updated": "2026-03-14T17:50:05.478Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFSolveOrchestrator.tla": {
       "version": 1,
@@ -1292,11 +1355,14 @@
     },
     ".planning/formal/tla/NFStopHook.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T15:19:43.522Z",
+      "last_updated": "2026-03-14T17:50:05.478Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/NFTokenOpt.tla": {
       "version": 1,
@@ -1324,11 +1390,14 @@
     },
     ".planning/formal/tla/QGSDAgentLoop.tla": {
       "version": 1,
-      "last_updated": "2026-03-05T12:11:46.865Z",
+      "last_updated": "2026-03-14T17:50:05.478Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDAgentProvisioning.tla": {
       "version": 1,
@@ -1340,11 +1409,14 @@
     },
     ".planning/formal/tla/QGSDBreakerState.tla": {
       "version": 1,
-      "last_updated": "2026-03-05T12:11:46.865Z",
+      "last_updated": "2026-03-14T17:50:05.478Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDCIChecks.tla": {
       "version": 1,
@@ -1380,11 +1452,14 @@
     },
     ".planning/formal/tla/QGSDDeliberationRevision.tla": {
       "version": 1,
-      "last_updated": "2026-03-05T12:11:46.866Z",
+      "last_updated": "2026-03-14T17:50:05.479Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDDispatchPipeline.tla": {
       "version": 1,
@@ -1404,11 +1479,14 @@
     },
     ".planning/formal/tla/QGSDInstallerIdempotency.tla": {
       "version": 1,
-      "last_updated": "2026-03-07T12:29:15.007Z",
+      "last_updated": "2026-03-14T17:50:05.479Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDKeyManagement.tla": {
       "version": 1,
@@ -1436,19 +1514,25 @@
     },
     ".planning/formal/tla/QGSDQuorum.tla": {
       "version": 1,
-      "last_updated": "2026-03-05T21:42:46.915Z",
+      "last_updated": "2026-03-14T17:50:05.479Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDQuorum_xstate.tla": {
       "version": 1,
-      "last_updated": "2026-03-06T16:38:09.487Z",
+      "last_updated": "2026-03-14T17:50:05.479Z",
       "update_source": "generate",
       "source_id": "generate:tla-from-xstate",
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDSensitivity.tla": {
       "version": 1,
@@ -1460,11 +1544,14 @@
     },
     ".planning/formal/tla/QGSDSessionPersistence.tla": {
       "version": 1,
-      "last_updated": "2026-03-09T00:13:12.295Z",
+      "last_updated": "2026-03-14T17:50:05.479Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/tla/QGSDSetupWizard.tla": {
       "version": 1,
@@ -1500,11 +1587,14 @@
     },
     ".planning/formal/tla/TUINavigation.tla": {
       "version": 1,
-      "last_updated": "2026-03-05T09:11:49.856Z",
+      "last_updated": "2026-03-14T17:50:05.480Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
-      "description": ""
+      "description": "",
+      "layer_maturity": 1,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     },
     ".planning/formal/uppaal/quorum-races.xml": {
       "version": 1,
