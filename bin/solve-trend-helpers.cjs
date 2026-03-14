@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { LAYER_KEYS } = require('./layer-constants.cjs');
+const { resolveGateScore } = require('./gate-score-utils.cjs');
 
 const DEDUP_WINDOW_MS = 5 * 60 * 1000;
 
@@ -28,19 +29,19 @@ function readGateSummary(root) {
   // Gate A: prefers wiring_evidence_score (schema v2), falls back to grounding_score (schema v1)
   try {
     const raw = JSON.parse(fs.readFileSync(path.join(gatesDir, 'gate-a-grounding.json'), 'utf8'));
-    result.a = { score: raw.wiring_evidence_score || raw.grounding_score, target_met: raw.target_met };
+    result.a = { score: resolveGateScore(raw, 'a'), target_met: raw.target_met };
   } catch (_) { /* fail-open */ }
 
   // Gate B: prefers wiring_purpose_score (schema v2), falls back to gate_b_score (schema v1)
   try {
     const raw = JSON.parse(fs.readFileSync(path.join(gatesDir, 'gate-b-abstraction.json'), 'utf8'));
-    result.b = { score: raw.wiring_purpose_score || raw.gate_b_score, target_met: raw.target_met };
+    result.b = { score: resolveGateScore(raw, 'b'), target_met: raw.target_met };
   } catch (_) { /* fail-open */ }
 
   // Gate C: prefers wiring_coverage_score (schema v2), falls back to gate_c_score (schema v1)
   try {
     const raw = JSON.parse(fs.readFileSync(path.join(gatesDir, 'gate-c-validation.json'), 'utf8'));
-    result.c = { score: raw.wiring_coverage_score || raw.gate_c_score, target_met: raw.target_met };
+    result.c = { score: resolveGateScore(raw, 'c'), target_met: raw.target_met };
   } catch (_) { /* fail-open */ }
 
   return result;

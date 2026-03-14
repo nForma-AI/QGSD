@@ -19,6 +19,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { resolveGateScore } = require('./gate-score-utils.cjs');
 
 const ROOT = process.env.PROJECT_ROOT
   || (process.argv.find(a => a.startsWith('--project-root=')) || '').replace('--project-root=', '')
@@ -162,21 +163,21 @@ function buildResult(data) {
     generated: new Date().toISOString(),
     l1_coverage_pct: l1Pct != null ? l1Pct : null,
     gate_a: gateA ? {
-      score: gateA.wiring_evidence_score || gateA.grounding_score,
+      score: resolveGateScore(gateA, 'a'),
       target: gateA.target,
       target_met: gateA.target_met,
       explained: gateA.explained,
       total: gateA.total,
     } : null,
     gate_b: gateB ? {
-      score: gateB.wiring_purpose_score || gateB.gate_b_score,
+      score: resolveGateScore(gateB, 'b'),
       target: gateB.target,
       target_met: gateB.target_met,
       grounded_entries: gateB.grounded_entries,
       total_entries: gateB.total_entries,
     } : null,
     gate_c: gateC ? {
-      score: gateC.wiring_coverage_score || gateC.gate_c_score,
+      score: resolveGateScore(gateC, 'c'),
       target: gateC.target,
       target_met: gateC.target_met,
       validated_entries: gateC.validated_entries,

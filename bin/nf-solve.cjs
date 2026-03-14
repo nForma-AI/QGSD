@@ -45,6 +45,7 @@ const os = require('os');
 const { spawnSync } = require('child_process');
 const { appendTrendEntry, readGateSummary } = require('./solve-trend-helpers.cjs');
 const { LAYER_KEYS } = require('./layer-constants.cjs');
+const { resolveGateScore } = require('./gate-score-utils.cjs');
 const { updateVerdicts } = require('./oscillation-detector.cjs');
 const { filterRequirementsByFocus } = require('./solve-focus-filter.cjs');
 const { updatePredictivePower, formatPredictivePowerSummary } = require('./predictive-power.cjs');
@@ -2224,7 +2225,7 @@ function sweepL1toL2() {
   }
 
   const gateA = agg.gate_a;
-  const score = gateA.wiring_evidence_score || gateA.grounding_score || 0;
+  const score = resolveGateScore(gateA, 'a');
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
@@ -2257,7 +2258,7 @@ function sweepL2toL3() {
   }
 
   const gateB = agg.gate_b;
-  const score = gateB.wiring_purpose_score || gateB.gate_b_score || 0;
+  const score = resolveGateScore(gateB, 'b');
   const orphanedCount = gateB.orphaned_entries || 0;
   const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
   const residual = Math.min(rawResidual, 10);
@@ -2308,7 +2309,7 @@ function sweepL3toTC() {
   }
 
   const gateC = agg.gate_c;
-  const score = gateC.wiring_coverage_score || gateC.gate_c_score || 0;
+  const score = resolveGateScore(gateC, 'c');
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
