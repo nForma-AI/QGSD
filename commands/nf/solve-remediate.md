@@ -636,6 +636,35 @@ Log: `"Gate C: gate_c_score={score}, {unvalidated_count}/{total_failure_modes} f
 
 Before emitting the output JSON, collate all `capped_layers` entries accumulated during Gate A (3k), Gate B (3l), and Gate C (3m) into the `remediation_report.capped_layers` array. If no gate hit its cap, emit an empty array. Initialize `capped_layers = []` at the start of remediation dispatch, and each gate section appends to it when the max-3 cap is reached.
 
+## Wave Timing and Performance Comparison
+
+After all waves complete, compute and log the timing comparison:
+
+1. Sum all wave durations for total wall-clock time (`total_wall_ms`)
+2. Sum all individual layer durations as if they ran one at a time (`sequential_estimate_ms`) — this is the estimated sequential time
+3. Compute speedup ratio: `sequential_estimate_ms / total_wall_ms`
+4. Add to the output JSON:
+   ```json
+   "performance": {
+     "total_wall_ms": 45000,
+     "sequential_estimate_ms": 120000,
+     "speedup_ratio": 2.67,
+     "waves_executed": 6,
+     "layers_dispatched": 14
+   }
+   ```
+5. Log a summary line: `"Remediation: {M} layers in {N} waves, {total_wall_ms}ms wall (est. {sequential_estimate_ms}ms sequential, {speedup_ratio}x speedup)"`
+
+The `wave_timing` array in the remediation report captures per-wave detail:
+```json
+"wave_timing": [
+  { "wave": 1, "layers": ["r_to_f", "r_to_d", "t_to_c"], "start_ms": 0, "duration_ms": 12000 },
+  { "wave": 2, "layers": ["f_to_t", "c_to_f", "p_to_f"], "start_ms": 12000, "duration_ms": 8000 }
+]
+```
+
+Each wave records: the wave number, layer keys dispatched, start offset from remediation begin, and wall-clock duration. For parallel waves, `duration_ms` is the time of the slowest layer. For sequential waves, it is the sum of all layer durations within the wave.
+
 ## Important Constraints
 
 4. **Ordering** — Remediation order is enforced by the dependency DAG in `bin/solve-wave-dag.cjs`. Within each wave, layers run in parallel. Cross-wave dependencies are respected. R->F must precede F->T (new formal specs create new invariants needing test backing). T->C fixes must happen before F->C verification (tests must pass before checking formal properties against code).
