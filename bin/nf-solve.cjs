@@ -2673,6 +2673,32 @@ function computeResidual() {
   // Hazard model sweep (informational — not added to forward total)
   const hazard_model = sweepHazardModel();
 
+  // CONV-02: Split residual into three distinct buckets
+  const automatable =
+    (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
+    (f_to_t.residual >= 0 ? f_to_t.residual : 0) +
+    (c_to_f.residual >= 0 ? c_to_f.residual : 0) +
+    (t_to_c.residual >= 0 ? t_to_c.residual : 0) +
+    (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
+    (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
+    (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
+    (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
+    (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
+
+  const manual =
+    (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
+    (c_to_r.residual >= 0 ? c_to_r.residual : 0) +
+    (t_to_r.residual >= 0 ? t_to_r.residual : 0) +
+    (d_to_r.residual >= 0 ? d_to_r.residual : 0);
+
+  const informational =
+    (git_heatmap.residual >= 0 ? git_heatmap.residual : 0) +
+    (git_history.residual >= 0 ? git_history.residual : 0) +
+    (formal_lint.residual >= 0 ? formal_lint.residual : 0) +
+    (hazard_model.residual >= 0 ? hazard_model.residual : 0) +
+    (per_model_gates.residual >= 0 ? per_model_gates.residual : 0) +
+    (p_to_f.residual >= 0 ? p_to_f.residual : 0);
+
   return {
     r_to_f,
     f_to_t,
@@ -2695,6 +2721,9 @@ function computeResidual() {
     hazard_model,
     assembled_candidates,
     total,
+    automatable,
+    manual,
+    informational,
     layer_total,
     reverse_discovery_total,
     heatmap_total,
