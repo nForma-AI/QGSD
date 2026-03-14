@@ -24,17 +24,37 @@ const path = require('path');
  */
 function resolvePrismBin() {
   const prismBin = process.env.PRISM_BIN;
-  if (!prismBin) return null;
+  if (prismBin) {
+    // Expand ~ to home directory
+    const resolved = prismBin.startsWith('~')
+      ? path.join(require('os').homedir(), prismBin.slice(1))
+      : prismBin;
 
-  // Expand ~ to home directory
-  const resolved = prismBin.startsWith('~')
-    ? path.join(require('os').homedir(), prismBin.slice(1))
-    : prismBin;
+    try {
+      if (fs.existsSync(resolved)) return resolved;
+    } catch (_) {
+      // fail-open
+    }
+  }
 
-  try {
-    if (fs.existsSync(resolved)) return resolved;
-  } catch (_) {
-    // fail-open
+  // Check well-known install locations (tmpdir extraction paths)
+  const os = require('os');
+  const tmpDir = os.tmpdir();
+  const candidates = [
+    // macOS
+    path.join(tmpDir, 'prism-4.10-mac64-arm', 'bin', 'prism'),
+    path.join(tmpDir, 'prism-4.10-mac64-x86', 'bin', 'prism'),
+    // Linux
+    path.join(tmpDir, 'prism-4.10-linux64-arm', 'bin', 'prism'),
+    path.join(tmpDir, 'prism-4.10-linux64-x86', 'bin', 'prism'),
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      if (fs.existsSync(candidate)) return candidate;
+    } catch (_) {
+      // fail-open
+    }
   }
 
   return null;

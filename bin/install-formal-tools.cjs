@@ -379,8 +379,23 @@ const NF_FORMAL_HOME = path.join(os.homedir(), '.local', 'share', 'nf-formal');
 
   // ── Petri nets ────────────────────────────────────────────────────────
 
-  skip('Petri nets — no install needed, bundled via @hpcc-js/wasm-graphviz npm');
-  results.push({ name: 'Petri', status: 'skip' });
+  try {
+    require.resolve('@hpcc-js/wasm-graphviz');
+    skip('Petri nets — @hpcc-js/wasm-graphviz found');
+    results.push({ name: 'Petri', status: 'skip' });
+  } catch (_) {
+    process.stdout.write('  Installing @hpcc-js/wasm-graphviz…\n');
+    const npmInstall = spawnSync('npm', ['install', '--save', '@hpcc-js/wasm-graphviz'], {
+      cwd: targetDir, stdio: 'pipe'
+    });
+    if (npmInstall.status === 0) {
+      ok('Petri nets — @hpcc-js/wasm-graphviz installed');
+      results.push({ name: 'Petri', status: 'ok' });
+    } else {
+      warn('Petri nets — failed to install @hpcc-js/wasm-graphviz');
+      results.push({ name: 'Petri', status: 'warn' });
+    }
+  }
 
   // ── Summary table ─────────────────────────────────────────────────────
 
