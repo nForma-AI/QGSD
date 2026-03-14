@@ -1100,8 +1100,8 @@ function sweepFtoC() {
 
   if (!fs.existsSync(verifyScript)) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'run-formal-verify.cjs not found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: run-formal-verify.cjs' },
     };
   }
 
@@ -1141,8 +1141,8 @@ function sweepFtoC() {
 
   if (!fs.existsSync(checkResultsPath)) {
     return {
-      residual: 0,
-      detail: { note: 'No check-results.ndjson generated' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: check-results.ndjson' },
     };
   }
 
@@ -1278,8 +1278,8 @@ function sweepRtoD() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'requirements.json not found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: requirements.json' },
     };
   }
 
@@ -1288,8 +1288,8 @@ function sweepRtoD() {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'requirements.json parse error: ' + e.message },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')' },
     };
   }
 
@@ -1302,8 +1302,8 @@ function sweepRtoD() {
   const docFiles = developerDocs.length > 0 ? developerDocs : allDiscovered;
   if (docFiles.length === 0) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'no doc files found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: doc files' },
     };
   }
 
@@ -1391,8 +1391,8 @@ function sweepDtoC() {
   const docFiles = discoverDocFiles();
   if (docFiles.length === 0) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'no doc files found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: doc files' },
     };
   }
 
@@ -1656,14 +1656,14 @@ const MAX_REVERSE_CANDIDATES = 200;
 function sweepCtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
   }
 
   // Flatten requirements
@@ -1807,7 +1807,7 @@ function sweepTtoR() {
   }
 
   if (testFiles.length === 0) {
-    return { residual: 0, detail: { orphan_tests: [], total_tests: 0, mapped: 0 } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: test files', orphan_tests: [], total_tests: 0, mapped: 0 } };
   }
 
   // Load formal-test-sync data for mapping info
@@ -1871,14 +1871,14 @@ function sweepTtoR() {
 function sweepDtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
   }
 
   // Flatten requirements and extract keywords per requirement
@@ -1903,7 +1903,7 @@ function sweepDtoR() {
   // Discover doc files
   const docFiles = discoverDocFiles();
   if (docFiles.length === 0) {
-    return { residual: 0, detail: { skipped: true, reason: 'no doc files found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: doc files' } };
   }
 
   // Action verbs that indicate capability claims
