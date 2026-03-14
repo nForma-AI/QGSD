@@ -64,29 +64,29 @@ Requirements for Solve Loop Convergence & Correctness overhaul. Each maps to roa
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DIAG-01 | TBD | Pending |
-| DIAG-02 | TBD | Pending |
-| CLASS-01 | TBD | Pending |
-| CONV-01 | TBD | Pending |
-| CONV-02 | TBD | Pending |
-| CONV-03 | TBD | Pending |
-| CONV-04 | TBD | Pending |
-| PERF-01 | TBD | Pending |
-| PERF-02 | TBD | Pending |
-| STRUCT-01 | TBD | Pending |
-| STRUCT-02 | TBD | Pending |
-| STRUCT-03 | TBD | Pending |
-| STRUCT-04 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| TEST-03 | TBD | Pending |
-| TEST-04 | TBD | Pending |
+| DIAG-01 | v0.36-02 | Pending |
+| DIAG-02 | v0.36-02 | Pending |
+| CLASS-01 | v0.36-02 | Pending |
+| CONV-01 | v0.36-03 | Pending |
+| CONV-02 | v0.36-03 | Pending |
+| CONV-03 | v0.36-03 | Pending |
+| CONV-04 | v0.36-03 | Pending |
+| PERF-01 | v0.36-04 | Pending |
+| PERF-02 | v0.36-01 | Pending |
+| STRUCT-01 | v0.36-04 | Pending |
+| STRUCT-02 | v0.36-01 | Pending |
+| STRUCT-03 | v0.36-01 | Pending |
+| STRUCT-04 | v0.36-01 | Pending |
+| TEST-01 | v0.36-05 | Pending |
+| TEST-02 | v0.36-05 | Pending |
+| TEST-03 | v0.36-05 | Pending |
+| TEST-04 | v0.36-05 | Pending |
 
 **Coverage:**
 - v0.36 requirements: 17 total
-- Mapped to phases: 0
-- Unmapped: 17 (pending roadmap)
+- Mapped to phases: 17
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-14*
-*Last updated: 2026-03-14 after initial definition*
+*Last updated: 2026-03-14 after roadmap creation — traceability populated*
