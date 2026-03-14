@@ -2589,6 +2589,9 @@ function computeResidual() {
   // Per-model gate maturity (informational — not added to layer_total)
   const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
 
+  // PERF-02: Clear aggregate cache after per_model_gates writes new files
+  if (!fastMode) _aggregateCache = null;
+
   // Enrich gate files with semantic scores (SEM-03, SEM-04)
   if (!fastMode && !reportOnly) {
     process.stderr.write(TAG + ' Enriching gates with semantic scores\n');
