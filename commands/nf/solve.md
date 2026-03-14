@@ -117,6 +117,7 @@ Parse `post_residual` from the JSON output.
 - If `post_residual.total == 0`: log convergence, break
 - Compute `automatable_residual` = sum of r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, l1_to_l2, l2_to_l3, l3_to_tc (exclude d_to_c which is manual-only; include gate residuals)
 - If `automatable_residual == 0` OR no automatable layer changed since last iteration: break
+- **Cycle detection (CONV-01):** Layers exhibiting A-B-A-B oscillation patterns (detected by `bin/solve-cycle-detector.cjs`) are excluded from the "any automatable layer changed" condition. This prevents the loop from continuing solely because oscillating layers keep flip-flopping. The solver reports detected oscillating layers in its JSON output as `oscillating_layers`.
 - Else: update `residual_vector = post_residual`, continue loop
 
 **Cascade-aware convergence:** Do NOT use total residual for the loop condition. Fixing R->F creates F->T gaps (total goes UP), but the system is making progress. Use per-layer change detection: if ANY automatable layer changed (up or down), there is still work to do. Only stop when all automatable layers are stable or at zero.

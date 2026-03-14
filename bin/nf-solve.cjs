@@ -50,6 +50,7 @@ const { updateVerdicts } = require('./oscillation-detector.cjs');
 const { filterRequirementsByFocus } = require('./solve-focus-filter.cjs');
 const { updatePredictivePower, formatPredictivePowerSummary } = require('./predictive-power.cjs');
 const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
+const { CycleDetector } = require('./solve-cycle-detector.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -3790,6 +3791,8 @@ function main() {
     }
   }
 
+  const cycleDetector = new CycleDetector();
+
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
 
@@ -3799,6 +3802,19 @@ function main() {
     const residual = computeResidual();
     const actions = [];
     iterations.push({ iteration: i, residual: residual, actions: actions });
+
+    // Record per-layer residuals for cycle detection (CONV-01)
+    const perLayerResiduals = {};
+    for (const key of LAYER_KEYS) {
+      if (residual[key] && typeof residual[key].residual === 'number') {
+        perLayerResiduals[key] = residual[key].residual;
+      }
+    }
+    cycleDetector.record(i, perLayerResiduals);
+    const oscillatingLayers = cycleDetector.detectOscillating();
+    if (oscillatingLayers.length > 0) {
+      process.stderr.write(TAG + ' Oscillating layers detected: ' + oscillatingLayers.join(', ') + ' — excluding from dispatch\n');
+    }
 
     // Check convergence: total residual unchanged from previous iteration
     if (prevTotal !== null && residual.total === prevTotal) {
@@ -4014,7 +4030,9 @@ function main() {
   if (predictivePowerResults) {
     reportText += '\n' + formatPredictivePowerSummary(predictivePowerResults);
   }
-  const jsonText = JSON.stringify(formatJSON(iterations, finalResidual, converged), null, 2);
+  const jsonObj = formatJSON(iterations, finalResidual, converged);
+  jsonObj.oscillating_layers = cycleDetector.detectOscillating();
+  const jsonText = JSON.stringify(jsonObj, null, 2);
 
   // Persist session summary before stdout/exit
   persistSessionSummary(reportText, jsonText, converged, iterations);
