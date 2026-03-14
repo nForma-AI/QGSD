@@ -123,7 +123,7 @@ function loadJSON(filePath, label) {
   }
 }
 
-// ── Wiring:Evidence (Grounding L1 → L2) ─────────────────────────────────────
+// ── Wiring:Evidence (Grounding L1 → L3, L2 collapsed — STRUCT-01) ───────────
 
 function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResults, unitTestCoverage) {
   // Path 1: layer-manifest shows has_semantic_declarations
@@ -177,32 +177,17 @@ function evaluateGateA(modelPath, model, layerManifest, traceMatrix, checkResult
   return { pass: false, reason: 'no passing traces for reqs [' + reqs.join(', ') + ']' };
 }
 
-// ── Wiring:Purpose (Abstraction L2 → L3) ────────────────────────────────────
+// ── Wiring:Purpose (L3 models have requirement backing — L2 collapsed, STRUCT-01) ──
 
 function evaluateGateB(modelPath, model, hazardModel) {
-  const sourceLayer = model.source_layer || inferSourceLayer(modelPath);
-  if (!sourceLayer) return { pass: false, reason: 'no source_layer and could not infer from path' };
-
-  // Path 1: model referenced in hazard-model derived_from artifacts
-  if (hazardModel && hazardModel.hazards) {
-    for (const hazard of hazardModel.hazards) {
-      for (const df of (hazard.derived_from || [])) {
-        if (df.artifact && modelPath.includes(df.artifact)) {
-          return { pass: true, reason: 'referenced in hazard-model hazard "' + (hazard.id || hazard.name || 'unknown') + '" derived_from' };
-        }
-      }
-    }
+  // Path 1 (primary): any model with non-empty requirements passes Gate B.
+  // This is the "purpose" check — the model has a reason to exist.
+  const reqs = model.requirements || [];
+  if (reqs.length > 0) {
+    return { pass: true, reason: 'model has ' + reqs.length + ' requirement(s) (purpose check)' };
   }
 
-  // Path 2: model is L3 and has non-empty requirements
-  if (sourceLayer === 'L3' && (model.requirements || []).length > 0) {
-    return { pass: true, reason: 'L3 model with ' + model.requirements.length + ' requirement(s)' };
-  }
-
-  if (sourceLayer !== 'L3') {
-    return { pass: false, reason: 'source_layer is ' + sourceLayer + ' (needs L3 or hazard-model reference)' };
-  }
-  return { pass: false, reason: 'L3 but no requirements mapped' };
+  return { pass: false, reason: 'no requirements mapped (no purpose backing)' };
 }
 
 // ── Wiring:Coverage (Validation L3 → TC) ────────────────────────────────────
