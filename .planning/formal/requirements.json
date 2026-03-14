@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-14T16:40:33.847Z",
-  "content_hash": "c2ca8a703a7f2ad8",
+  "aggregated_at": "2026-03-14T17:47:52.493Z",
+  "content_hash": "892bd04e3f89e338af7d894f4b5ec406a414a2a56662a7b7525d3e0771074de1",
   "schema_version": "1",
   "requirements": [
     {
@@ -1063,6 +1063,18 @@
       "provenance": {
         "source_file": ".planning/quick/276-add-top-n-non-neighboring-pair-discovery/276-PLAN.md",
         "milestone": "quick-276"
+      }
+    },
+    {
+      "id": "DIAG-10",
+      "text": "Statusline hook detects context window size (200K, 1M, or unknown) from explicit context_window_size property or model display_name and scales token-usage color thresholds proportionally to detected context tier",
+      "category": "Observability & Diagnostics",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The statusline previously assumed a hardcoded 1M context size, causing 200K sessions to display incorrect token estimates and misleading color indicators. This requirement implements context tier detection via a cascading fallback (explicit property > display_name parsing > unknown) and proportional threshold scaling so that 200K sessions show appropriate green/yellow/orange/red boundaries (20K/40K/70K) while 1M sessions preserve exact historical behavior (100K/200K/350K).",
+      "provenance": {
+        "source_file": ".planning/quick/293-implement-context-window-size-detection-/293-PLAN.md",
+        "milestone": "quick-293"
       }
     },
     {
@@ -4759,5 +4771,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-14T16:40:33.848Z"
+  "frozen_at": "2026-03-14T17:47:52.493Z"
 }
