@@ -45,7 +45,8 @@ process.stdin.on('end', () => {
 
       // Token-based color thresholds (quality degrades well before 1M limit)
       // 0-100K green | 100-200K yellow | 200-350K orange | 350K+ red blink
-      const inputTokens = data.context_window?.current_usage?.input_tokens ?? 0;
+      const inputTokens = data.context_window?.current_usage?.input_tokens
+        ?? Math.round((used / 100) * 1_000_000);
       const tokensK = Math.round(inputTokens / 1000);
       const tokenLabel = tokensK >= 1000 ? `${(tokensK / 1000).toFixed(1)}M` : `${tokensK}K`;
 

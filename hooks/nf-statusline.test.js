@@ -66,6 +66,18 @@ test('TC2: context at 100% remaining shows all-empty bar at 0%', () => {
   assert.ok(stdout.includes('0%'), 'stdout must include 0%');
 });
 
+// TC2b: 85% remaining (15% used) with no current_usage → estimated 150K, yellow
+test('TC2b: 15% used without current_usage shows estimated 150K in yellow', () => {
+  const { stdout, exitCode } = runHook({
+    model: { display_name: 'M' },
+    context_window: { remaining_percentage: 85 },
+  });
+  assert.strictEqual(exitCode, 0, 'exit code must be 0');
+  assert.ok(stdout.includes('15%'), 'stdout must include 15%');
+  assert.ok(stdout.includes('150K'), 'stdout must include estimated token count 150K');
+  assert.ok(stdout.includes('\x1b[33m'), 'stdout must include yellow ANSI code for 150K tokens');
+});
+
 // TC3: 80% used (20% remaining) with 400K tokens → blinking red (>350K)
 test('TC3: 80% used with 400K tokens shows blinking red', () => {
   const { stdout, exitCode } = runHook({
