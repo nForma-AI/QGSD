@@ -1154,3 +1154,53 @@ test('TC-PROMO-SEMANTIC-6: counterexample in check-results.ndjson = NOT CLEAN', 
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+// ── TC-CLASS: Classification Cache Key Tests (CLASS-01) ──────────────────────
+
+const { itemKey } = require('./solve-tui.cjs');
+
+test('TC-CLASS-1: dtoc key is a 16-char hex string', () => {
+  const key = itemKey('dtoc', { doc_file: 'README.md', value: 'bin/foo.cjs', reason: 'file not found' });
+  assert.equal(key.length, 16, 'dtoc key should be 16 chars');
+  assert.match(key, /^[0-9a-f]{16}$/, 'dtoc key should be hex');
+});
+
+test('TC-CLASS-2: dtoc key stability (same input = same key)', () => {
+  const a = itemKey('dtoc', { doc_file: 'README.md', value: 'bin/foo.cjs', reason: 'file not found' });
+  const b = itemKey('dtoc', { doc_file: 'README.md', value: 'bin/foo.cjs', reason: 'file not found' });
+  assert.equal(a, b, 'Same input should produce identical key');
+});
+
+test('TC-CLASS-3: dtoc key differentiation (different reason = different key)', () => {
+  const a = itemKey('dtoc', { doc_file: 'README.md', value: 'bin/foo.cjs', reason: 'file not found' });
+  const b = itemKey('dtoc', { doc_file: 'README.md', value: 'bin/foo.cjs', reason: 'not in package.json' });
+  assert.notEqual(a, b, 'Different reasons should produce different keys');
+});
+
+test('TC-CLASS-4: dtor key is content-based (same text + different line = same key)', () => {
+  const a = itemKey('dtor', { doc_file: 'README.md', line: 10, claim_text: 'supports quorum dispatch' });
+  const b = itemKey('dtor', { doc_file: 'README.md', line: 20, claim_text: 'supports quorum dispatch' });
+  assert.equal(a, b, 'Same content at different lines should produce same key');
+});
+
+test('TC-CLASS-5: dtor key differentiation (different text = different key)', () => {
+  const a = itemKey('dtor', { doc_file: 'README.md', line: 10, claim_text: 'supports quorum dispatch' });
+  const b = itemKey('dtor', { doc_file: 'README.md', line: 10, claim_text: 'enables parallel execution' });
+  assert.notEqual(a, b, 'Different content should produce different keys');
+});
+
+test('TC-CLASS-6: dtor key is a 16-char hex string', () => {
+  const key = itemKey('dtor', { doc_file: 'README.md', line: 5, claim_text: 'test claim' });
+  assert.equal(key.length, 16, 'dtor key should be 16 chars');
+  assert.match(key, /^[0-9a-f]{16}$/, 'dtor key should be hex');
+});
+
+test('TC-CLASS-7: ctor key remains as file path', () => {
+  const key = itemKey('ctor', { file: 'bin/foo.cjs' });
+  assert.equal(key, 'bin/foo.cjs', 'ctor key should be file path');
+});
+
+test('TC-CLASS-8: ttor key remains as file path', () => {
+  const key = itemKey('ttor', { file: 'test/bar.test.cjs' });
+  assert.equal(key, 'test/bar.test.cjs', 'ttor key should be file path');
+});
