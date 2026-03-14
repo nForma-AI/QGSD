@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.36-04 in progress (architecture parallelism); plan 02 complete
+**Current focus:** Phase v0.36-04 complete (architecture parallelism); both plans done, v0.36-05 next
 
 ## Current Position
 
 Phase: 4 of 5 (Architecture & Parallelism)
 Plan: v0.36-04-02-PLAN.md (2/2 plans complete)
 Status: Complete
-Last activity: 2026-03-14 — Phase v0.36-04-02 executed (wave-parallel remediation dispatch)
+Last activity: 2026-03-14 — Phase v0.36-04-01 executed (L2 layer collapse to 2-layer architecture)
 
 Progress: [########░░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 7
 - Average duration: 9min
-- Total execution time: 53min
+- Total execution time: 65min
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [########░░] 90%
 | v0.36-01 | 1/1 | 12min | 12min |
 | v0.36-02 | 2/2 | 17min | 9min |
 | v0.36-03 | 2/2 | 20min | 10min |
-| v0.36-04 | 2/2 | TBD | TBD |
+| v0.36-04 | 2/2 | 16min | 8min |
 
 **Recent Trend:**
-- Last 5 plans: v0.36-02-01 (11min), v0.36-03-01 (16min), v0.36-03-02 (4min), v0.36-04-01 (TBD), v0.36-04-02 (4min)
+- Last 5 plans: v0.36-02-01 (11min), v0.36-03-01 (16min), v0.36-03-02 (4min), v0.36-04-01 (12min), v0.36-04-02 (4min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -42,6 +42,7 @@ Progress: [########░░] 90%
 | Phase v0.36-02 P01 | 11min | 4 tasks | 3 files |
 | Phase v0.36-03 P01 | 16min | 4 tasks | 7 files |
 | Phase v0.36-03 P02 | 4min | 3 tasks | 6 files |
+| Phase v0.36-04 P01 | 12min | 7 tasks | 12 files |
 | Phase v0.36-04 P02 | 4min | 3 tasks | 2 files |
 
 ## Accumulated Context
@@ -63,7 +64,7 @@ Recent decisions affecting current work:
 - [v0.36-02-01]: scoped flag pattern: non-filterable sweep functions use `scoped: focusSet ? false : undefined`
 - [v0.36-02-01]: missing: prefix pattern for all residual:-1 reason strings enables downstream parsing
 - [v0.36-03-01]: CycleDetector uses sliding 4-point window for A-B-A-B detection (values[i]===values[i-2] for 2 consecutive pairs)
-- [v0.36-03-01]: Bucket assignments: 9 automatable, 4 manual, 6 informational — all 19 LAYER_KEYS covered with no overlap
+- [v0.36-03-01]: Bucket assignments: 8 automatable, 4 manual, 6 informational — all 18 LAYER_KEYS covered with no overlap (updated by STRUCT-01)
 - [v0.36-03-01]: Convergence report backward-compatible: pre-CONV-02 trend data shows graceful fallback message
 - [v0.36-03-02]: Drift threshold uses 10% relative change for non-zero baselines, absolute >2 for zero baselines
 - [v0.36-03-02]: capped_layers populated only when gate dispatch counter reaches max-3, not for partial dispatches
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [v0.36-04-02]: Sequential chain compaction merges consecutive single-layer waves into one wave with sequential:true flag
 - [v0.36-04-02]: Gate chain (hazard_model -> l1_to_l3 -> l3_to_tc -> per_model_gates) runs sequentially within a single compacted wave
 - [v0.36-04-02]: Uses l1_to_l3 (not l1_to_l2/l2_to_l3) per STRUCT-01 collapse in the wave DAG
+- [v0.36-04-01]: Gate B simplified to pure purpose check: any model with non-empty requirements passes (L2 collapsed)
+- [v0.36-04-01]: L2 classification rules retained in build-layer-manifest for forward compatibility
+- [v0.36-04-01]: layer-manifest.json schema_version 2 with collapsed_layers metadata
 
 ### Pending Todos
 
@@ -90,5 +94,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-14
-Stopped at: Completed v0.36-04-02-PLAN.md (wave-parallel remediation dispatch); v0.36-04 phase complete, v0.36-05 next
+Stopped at: Completed v0.36-04-01-PLAN.md (L2 layer collapse); v0.36-04 phase complete, v0.36-05 next
 Resume file: None

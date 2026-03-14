@@ -30,7 +30,7 @@ Requirements for Solve Loop Convergence & Correctness overhaul. Each maps to roa
 
 ### Structure
 
-- [ ] **STRUCT-01**: L2 (Semantics) layer is either populated with at least 3 semantic models OR collapsed to a 2-layer architecture with Gate A evaluating L1→L3 directly — unblocking Gate B from permanent zero score
+- [x] **STRUCT-01**: L2 (Semantics) layer is either populated with at least 3 semantic models OR collapsed to a 2-layer architecture with Gate A evaluating L1→L3 directly — unblocking Gate B from permanent zero score
 - [x] **STRUCT-02**: LAYER_KEYS extracted to a shared `bin/layer-constants.cjs` module imported by solve-trend-helpers, oscillation-detector, and convergence-report — single source of truth for the 19-layer key set
 - [x] **STRUCT-03**: Gate score field resolution extracted to shared `resolveGateScore(gateData)` utility used by nf-solve.cjs, solve-trend-helpers.cjs, and cross-layer-dashboard.cjs — eliminating duplicated v1/v2 fallback chains
 - [x] **STRUCT-04**: Haiku model version for classification reads from `nf.json` config with fallback to `claude-haiku-4-5-20251001` — no more hardcoded model ID in solve-tui.cjs
@@ -73,7 +73,7 @@ Requirements for Solve Loop Convergence & Correctness overhaul. Each maps to roa
 | CONV-04 | v0.36-03 | Complete |
 | PERF-01 | v0.36-04 | Complete |
 | PERF-02 | v0.36-01 | Complete |
-| STRUCT-01 | v0.36-04 | Pending |
+| STRUCT-01 | v0.36-04 | Complete |
 | STRUCT-02 | v0.36-01 | Complete |
 | STRUCT-03 | v0.36-01 | Complete |
 | STRUCT-04 | v0.36-01 | Complete |
