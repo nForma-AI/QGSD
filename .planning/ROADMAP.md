@@ -46,7 +46,7 @@
 - [x] **Phase v0.36-02: Diagnostic Correctness** - Fix focus filter propagation, missing-file false pass, and classification cache keying (completed 2026-03-14)
 - [x] **Phase v0.36-03: Convergence Intelligence** - Add cycle detection, split residual buckets, capped-layer reporting, and baseline drift detection (completed 2026-03-14)
 - [x] **Phase v0.36-04: Architecture & Parallelism** - Resolve L2 layer structural decision and implement wave-parallel remediation dispatch (completed 2026-03-14)
-- [ ] **Phase v0.36-05: Test Harness** - End-to-end convergence tests, cascade effect tests, focus filter tests, and classification golden set
+- [x] **Phase v0.36-05: Test Harness** - End-to-end convergence tests, cascade effect tests, focus filter tests, and classification golden set (completed 2026-03-15)
 
 ## Phase Details
 
@@ -112,10 +112,10 @@ v0.36-01 -> v0.36-02 / v0.36-03 (parallel after 01) -> v0.36-04 (after 01 + 02) 
 | v0.36-01. Shared Infrastructure | 1/1 | Complete    | 2026-03-14 |
 | v0.36-02. Diagnostic Correctness | 2/2 | Complete    | 2026-03-14 |
 | v0.36-03. Convergence Intelligence | 2/2 | Complete    | 2026-03-14 |
-| v0.36-04. Architecture & Parallelism | 1/2 | Complete    | 2026-03-14 |
-| v0.36-05. Test Harness | 1/2 | In progress | - |
+| v0.36-04. Architecture & Parallelism | 2/2 | Complete    | 2026-03-14 |
+| v0.36-05. Test Harness | 2/2 | Complete    | 2026-03-15 |
 
 ---
 
 *Roadmap created: 2026-02-20*
-*Last updated: 2026-03-14 after v0.36-03 phase completion*
+*Last updated: 2026-03-15 after v0.36-05 phase completion (v0.36 milestone complete)*

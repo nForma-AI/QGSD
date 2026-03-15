@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-14)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Phase v0.36-05 in progress (test harness); plan 01 complete, plan 02 next
+**Current focus:** Phase v0.36-05 complete (test harness); all plans done, v0.36 milestone complete
 
 ## Current Position
 
 Phase: 5 of 5 (Test Harness)
-Plan: v0.36-05-01-PLAN.md (1/2 plans complete)
-Status: In Progress
-Last activity: 2026-03-14 — Plan v0.36-05-01 executed (convergence e2e + cascade effect tests)
+Plan: v0.36-05-02-PLAN.md (2/2 plans complete)
+Status: Complete
+Last activity: 2026-03-15 — Plan v0.36-05-02 executed (focus filter completeness + classification golden set)
 
-Progress: [#########░] 95%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 8min
-- Total execution time: 67min
+- Total plans completed: 9
+- Average duration: 10min
+- Total execution time: 96min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [#########░] 95%
 | v0.36-02 | 2/2 | 17min | 9min |
 | v0.36-03 | 2/2 | 20min | 10min |
 | v0.36-04 | 2/2 | 16min | 8min |
-| v0.36-05 | 1/2 | 2min | 2min |
+| v0.36-05 | 2/2 | 31min | 16min |
 
 **Recent Trend:**
-- Last 5 plans: v0.36-03-01 (16min), v0.36-03-02 (4min), v0.36-04-01 (12min), v0.36-04-02 (4min), v0.36-05-01 (2min)
+- Last 5 plans: v0.36-03-02 (4min), v0.36-04-01 (12min), v0.36-04-02 (4min), v0.36-05-01 (2min), v0.36-05-02 (29min)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -46,6 +46,7 @@ Progress: [#########░] 95%
 | Phase v0.36-04 P01 | 12min | 7 tasks | 12 files |
 | Phase v0.36-04 P02 | 4min | 3 tasks | 2 files |
 | Phase v0.36-05 P01 | 2min | 2 tasks | 2 files |
+| Phase v0.36-05 P02 | 29min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [v0.36-04-01]: layer-manifest.json schema_version 2 with collapsed_layers metadata
 - [v0.36-05-01]: Fixture data models real cascade scenario: r_to_f=5 -> r_to_f=0+f_to_t=7 -> f_to_t=2
 - [v0.36-05-01]: detectsProgressNotRegression helper validates that any residual increase has upstream decrease explanation
+- [v0.36-05-02]: Used --fast mode for focus filter integration test (1.3s vs 7min) with source-pattern verification for skipped layers
+- [v0.36-05-02]: File-based stdio redirect for nf-solve JSON output to avoid spawnSync 64KB buffer truncation
+- [v0.36-05-02]: dtoc golden set reason fields made unique to ensure unique itemKey content-hash keys
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-14
-Stopped at: Completed v0.36-05-01-PLAN.md (convergence e2e + cascade effect tests); plan 02 next
+Last session: 2026-03-15
+Stopped at: Completed v0.36-05-02-PLAN.md (focus filter completeness + classification golden set); v0.36-05 phase complete, v0.36 milestone complete
 Resume file: None
