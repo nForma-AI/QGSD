@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-11T13:04:45.891Z",
+  "generated": "2026-03-15T08:17:45.841Z",
   "failure_modes": [
     {
       "id": "FM-IDLE-QUORUM_START-OMISSION",
@@ -2040,6 +2040,116 @@
           "layer": "L2",
           "artifact": "requirements.json",
           "ref": "requirements[id=VERF-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-CONF-OMISSION",
+      "state": "CONFIG_LOAD",
+      "event": "LOAD_CONFIG",
+      "to_state": "CONFIG_LOADED",
+      "failure_mode": "omission",
+      "description": "Config loader fails to merge global and per-project config layers, or fails to validate and fall back to defaults on malformed config",
+      "effect": "System requirements CONF-01 through CONF-08 not satisfied — config may be incomplete or invalid without fallback",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFConfigLoader.tla",
+          "ref": "NFConfigLoader specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=CONF-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-DISPATCH-OMISSION",
+      "state": "DISPATCH",
+      "event": "DISPATCH_QUORUM",
+      "to_state": "DISPATCHED",
+      "failure_mode": "omission",
+      "description": "Quorum dispatch fails to deliver prompts without shell interpretation or fails to deduplicate slots sharing the same underlying model",
+      "effect": "System requirements DISPATCH-01, DISPATCH-02 not satisfied — quorum prompts corrupted or duplicate slots waste resources",
+      "severity_class": "stalled",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFDispatch.tla",
+          "ref": "NFDispatch specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=DISPATCH-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-RECRUITING-OMISSION",
+      "state": "RECRUITING",
+      "event": "MIGRATE_SLOTS",
+      "to_state": "SLOTS_MIGRATED",
+      "failure_mode": "omission",
+      "description": "Slot recruiting fails to migrate existing mcpServers entries from model-based to slot-based naming, or fails to update source file references",
+      "effect": "System requirements SLOT-02 through SLOT-04 not satisfied — legacy slot names persist, causing dispatch failures",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFRecruiting.tla",
+          "ref": "NFRecruiting specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=SLOT-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-INSTALLER-OMISSION",
+      "state": "INSTALL",
+      "event": "RUN_INSTALLER",
+      "to_state": "INSTALLED",
+      "failure_mode": "omission",
+      "description": "Installer fails to be idempotent — re-running does not update hooks/config, or overwrites existing per-project overrides, or fails to register circuit breaker hook",
+      "effect": "System requirements INST-06 through INST-10 not satisfied — install state inconsistent after re-run",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/QGSDInstallerIdempotency.tla",
+          "ref": "QGSDInstallerIdempotency specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=INST-06]"
+        }
+      ]
+    },
+    {
+      "id": "FM-SPECGEN-OMISSION",
+      "state": "SPEC_GEN",
+      "event": "GENERATE_SPEC",
+      "to_state": "SPEC_GENERATED",
+      "failure_mode": "omission",
+      "description": "Phase spec generation fails to translate PLAN.md must_haves to TLA+ PROPERTY blocks, or debug invariant proposer fails to mine TLA+ candidates from debug sessions",
+      "effect": "System requirements SPEC-04, LOOP-04 not satisfied — formal specs incomplete or debug invariants not discovered",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/QGSDSpecGeneration.tla",
+          "ref": "QGSDSpecGeneration specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=SPEC-04]"
         }
       ]
     }
