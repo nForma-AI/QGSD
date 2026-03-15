@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-14T18:18:59.077Z",
-  "content_hash": "efa72b6beba31764",
+  "aggregated_at": "2026-03-15T13:19:51.287Z",
+  "content_hash": "57a0b10fdff7dedc",
   "schema_version": "1",
   "requirements": [
     {
@@ -4151,6 +4151,18 @@
       "category_raw": "GSD Sync Strategy"
     },
     {
+      "id": "TC-01",
+      "text": "Digest V8 coverage at collection time in sweepTtoC, converting raw ~96MB coverage blobs to lightweight Map<absolutePath, {covered, uncovered line sets}> format (~50KB, 99.5% compression).",
+      "category": "Testing & Quality",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "V8 runtime coverage data collected during solve execution consumed 96MB per run, bloating solve output and increasing serialization time. Digesting coverage into a minimal line-number-based format at collection time eliminates this overhead while preserving traceability for false-positive detection and test recipe generation.",
+      "provenance": {
+        "source_file": ".planning/quick/298-digest-v8-coverage-at-collection-time-in/298-PLAN.md",
+        "milestone": "quick-298"
+      }
+    },
+    {
       "id": "TOKN-01",
       "text": "Auto-compaction at clean boundaries — PreCompact hook preserves execution state and memory across compaction events",
       "category": "Token Optimization & Model Routing",
@@ -4783,5 +4795,5 @@
       "category_raw": "Wizard Composition Screen"
     }
   ],
-  "frozen_at": "2026-03-14T18:18:59.077Z"
+  "frozen_at": "2026-03-15T13:19:51.288Z"
 }
