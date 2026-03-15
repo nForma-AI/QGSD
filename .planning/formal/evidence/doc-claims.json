@@ -1,10 +1,31 @@
 {
-  "generated": "2026-03-15T20:38:07.049Z",
+  "generated": "2026-03-15T21:43:42.496Z",
   "total_claims_checked": 86,
   "doc_files_scanned": 6,
-  "raw_broken_count": 0,
-  "weighted_residual": 0,
+  "raw_broken_count": 2,
+  "weighted_residual": 2,
   "suppressed_fp_count": 10,
-  "category_breakdown": {},
-  "broken_claims": []
+  "category_breakdown": {
+    "developer": 2
+  },
+  "broken_claims": [
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 454,
+      "type": "file_path",
+      "value": ".planning/formal/uppaal/quorum-races.xml",
+      "reason": "file not found",
+      "category": "developer",
+      "weight": 1
+    },
+    {
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 462,
+      "type": "file_path",
+      "value": "bin/run-uppaal.cjs",
+      "reason": "file not found",
+      "category": "developer",
+      "weight": 1
+    }
+  ]
 }

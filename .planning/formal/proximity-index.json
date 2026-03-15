@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T20:38:06.401Z",
+  "generated": "2026-03-15T21:43:41.039Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,24 +84,24 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-15T20:36:07.423Z",
-      "hash": "cd979b95"
+      "mtime": "2026-03-15T21:43:40.413Z",
+      "hash": "244cfeb5"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-15T20:35:21.610Z",
-      "hash": "defc809a"
+      "mtime": "2026-03-15T21:43:40.366Z",
+      "hash": "89bd2fa2"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-15T20:27:44.063Z",
-      "hash": "de45b86c"
+      "mtime": "2026-03-15T21:42:06.588Z",
+      "hash": "69d14bd8"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-15T20:28:44.051Z",
-      "hash": "524575d7"
+      "mtime": "2026-03-15T21:43:04.557Z",
+      "hash": "59374ec6"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
@@ -116,8 +116,8 @@
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-15T20:29:06.881Z",
-      "hash": "05ad0bc0"
+      "mtime": "2026-03-15T21:43:31.711Z",
+      "hash": "4101f05d"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
@@ -9112,29 +9112,9 @@
           "source": "traceability-matrix"
         },
         {
-          "to": "invariant::Bool",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::UppaalRunner",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::RunnerProducesResult",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
           "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
         }
       ]
     },
@@ -11186,9 +11166,7 @@
     "formal_model::.planning/formal/alloy/quorum-votes.als": {
       "type": "formal_model",
       "id": ".planning/formal/alloy/quorum-votes.als",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -15913,34 +15891,9 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::UppaalModel",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::EmpiricalTiming",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::AllConstraintsEmpirical",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
           "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
         }
       ]
     },
@@ -15959,34 +15912,9 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Bool",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::AnnotatedProperty",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::BothMeasurements",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::BothMeasurementsPresent",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
           "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
         }
       ]
     },
@@ -17114,9 +17042,7 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -18090,16 +18016,12 @@
     "formal_model::.planning/formal/tla/NFQuorum.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFQuorum.tla",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFQuorum_xstate.tla",
-      "edges": [],
-      "source_layer": "L3",
-      "gate_maturity": "SOFT_GATE"
+      "edges": []
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -21464,59 +21386,9 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Formalism",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::TLAPlus",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::RealTimeConstraint",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::Requirement",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::selectionHeuristics",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::GenerationTemplate",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::completeTemplates",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::realTimeSelectsUPPAAL",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::concurrentSelectsPetri",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::allFormalismsHaveTemplates",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-04.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
         }
       ]
     },
@@ -21543,69 +21415,9 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::Formalism",
+          "to": "invariant::(model-level)",
           "rel": "verified_by",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::TLAPlus",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::TlaExt",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::Scanning",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::FormalismSupport",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::featureParity",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::ModelFile",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::registryScanCompleteness",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::registeredModelsGetProfiling",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::identicalCapabilities",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::allFormalismsRepresented",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::completeExtensionMapping",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "test_file::.planning/formal/generated-stubs/UPPAAL-05.stub.test.js",
-          "rel": "tested_by",
-          "source": "unit-test-coverage"
         }
       ]
     },
@@ -24702,11 +24514,6 @@
           "source": "traceability-matrix"
         },
         {
-          "to": "requirement::UPPAAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
           "to": "requirement::OBS-06",
           "rel": "verifies",
           "source": "traceability-matrix"
@@ -24928,16 +24735,6 @@
         },
         {
           "to": "requirement::TRACE-07",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-03",
           "rel": "verifies",
           "source": "traceability-matrix"
         },
@@ -25864,11 +25661,6 @@
         },
         {
           "to": "requirement::VIS-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-04",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -30267,28 +30059,6 @@
         }
       ]
     },
-    "invariant::UppaalRunner": {
-      "type": "invariant",
-      "id": "UppaalRunner",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::RunnerProducesResult": {
-      "type": "invariant",
-      "id": "RunnerProducesResult",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
     "invariant::(model-level)": {
       "type": "invariant",
       "id": "(model-level)",
@@ -30365,6 +30135,16 @@
         },
         {
           "to": "requirement::OBS-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-05",
           "rel": "verifies",
           "source": "traceability-matrix"
         },
@@ -33917,16 +33697,6 @@
           "to": "requirement::SPEC-06",
           "rel": "verifies",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -34530,11 +34300,6 @@
           "to": "requirement::TRACE-05",
           "rel": "verifies",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -34951,72 +34716,6 @@
       "edges": [
         {
           "to": "requirement::UNIF-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::UppaalModel": {
-      "type": "invariant",
-      "id": "UppaalModel",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::EmpiricalTiming": {
-      "type": "invariant",
-      "id": "EmpiricalTiming",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::AllConstraintsEmpirical": {
-      "type": "invariant",
-      "id": "AllConstraintsEmpirical",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::AnnotatedProperty": {
-      "type": "invariant",
-      "id": "AnnotatedProperty",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::BothMeasurements": {
-      "type": "invariant",
-      "id": "BothMeasurements",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::BothMeasurementsPresent": {
-      "type": "invariant",
-      "id": "BothMeasurementsPresent",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-03",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -37155,198 +36854,6 @@
       "edges": [
         {
           "to": "requirement::DIAG-10",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::TLAPlus": {
-      "type": "invariant",
-      "id": "TLAPlus",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::RealTimeConstraint": {
-      "type": "invariant",
-      "id": "RealTimeConstraint",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::selectionHeuristics": {
-      "type": "invariant",
-      "id": "selectionHeuristics",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::GenerationTemplate": {
-      "type": "invariant",
-      "id": "GenerationTemplate",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::completeTemplates": {
-      "type": "invariant",
-      "id": "completeTemplates",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::realTimeSelectsUPPAAL": {
-      "type": "invariant",
-      "id": "realTimeSelectsUPPAAL",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::concurrentSelectsPetri": {
-      "type": "invariant",
-      "id": "concurrentSelectsPetri",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::allFormalismsHaveTemplates": {
-      "type": "invariant",
-      "id": "allFormalismsHaveTemplates",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::TlaExt": {
-      "type": "invariant",
-      "id": "TlaExt",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::Scanning": {
-      "type": "invariant",
-      "id": "Scanning",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::FormalismSupport": {
-      "type": "invariant",
-      "id": "FormalismSupport",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::featureParity": {
-      "type": "invariant",
-      "id": "featureParity",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::registryScanCompleteness": {
-      "type": "invariant",
-      "id": "registryScanCompleteness",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::registeredModelsGetProfiling": {
-      "type": "invariant",
-      "id": "registeredModelsGetProfiling",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::identicalCapabilities": {
-      "type": "invariant",
-      "id": "identicalCapabilities",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::allFormalismsRepresented": {
-      "type": "invariant",
-      "id": "allFormalismsRepresented",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "invariant::completeExtensionMapping": {
-      "type": "invariant",
-      "id": "completeExtensionMapping",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -41211,61 +40718,6 @@
       "edges": [
         {
           "to": "requirement::UNIF-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/UPPAAL-01.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/UPPAAL-02.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-02",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/UPPAAL-03.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-03",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/UPPAAL-04.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/UPPAAL-04.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/UPPAAL-05.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/UPPAAL-05.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-05",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-15T20:27:35.642Z",
+  "generated": "2026-03-15T21:41:56.974Z",
   "layers": {
     "L1": [
       {
@@ -993,7 +993,7 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-15T20:27:35.642Z"
+      "collapsed_at": "2026-03-15T21:41:56.974Z"
     }
   },
   "summary": {

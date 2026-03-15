@@ -146,11 +146,6 @@ describe('getRequirementIds — PRISM and UPPAAL runners', () => {
     assert.ok(ids.includes('FAIL-01'),   'should include FAIL-01');
   });
 
-  it('uppaal:quorum-races returns timing race requirements', () => {
-    const ids = getRequirementIds('uppaal:quorum-races');
-    assert.ok(ids.includes('UPPAAL-01'), 'should include UPPAAL-01');
-    assert.ok(ids.includes('UPPAAL-03'), 'should include UPPAAL-03');
-  });
 });
 
 // ── 6. CI runner check_ids ─────────────────────────────────────────────────────

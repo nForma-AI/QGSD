@@ -16,7 +16,6 @@
 //   PRISM      (3)  — quorum, oauth-rotation, mcp-availability
 //   CI enforce (4)  — check-trace-redaction.cjs, check-trace-schema-drift.cjs, check-liveness-fairness.cjs,
 //                     validate-traces.cjs
-//   UPPAAL     (1)  — run-uppaal.cjs (quorum-races.xml, empirical timing bounds)
 //   Triage     (1)  — generate-triage-bundle.cjs (diff-report.md + suspects.md)
 //   Traceability (3) — generate-traceability-matrix.cjs (requirements <-> properties matrix)
 //                      check-coverage-guard.cjs (coverage regression guard vs baseline)
@@ -24,7 +23,7 @@
 //   Gates     (1)  — compute-per-model-gates.cjs --aggregate
 //   Registry  (N)  — custom check commands from model-registry.json
 //   ─────────────────────────────────────────────────────────────
-//   Total:    37+ steps (dynamic — registry can add more)
+//   Total:    36+ steps (dynamic — registry can add more)
 //
 // Usage:
 //   node bin/run-formal-verify.cjs                    # all 28 steps
@@ -36,7 +35,6 @@
 //   node bin/run-formal-verify.cjs --only=prism       # PRISM only (3 steps)
 //   node bin/run-formal-verify.cjs --only=petri       # Petri only (2 steps)
 //   node bin/run-formal-verify.cjs --only=ci          # CI enforcement only (4 steps)
-//   node bin/run-formal-verify.cjs --only=uppaal      # UPPAAL only (1 step)
 //
 // Behaviour:
 //   - Runs steps sequentially; streams child output to stdout/stderr.
@@ -116,7 +114,7 @@ function pickPrismArgs(modelName) {
 }
 
 // ── Dynamic model discovery ───────────────────────────────────────────────────
-// Scans ROOT/.planning/formal/{tla,alloy,prism,petri,uppaal}/ and builds step entries.
+// Scans ROOT/.planning/formal/{tla,alloy,prism,petri}/ and builds step entries.
 // Also reads ROOT/.planning/formal/model-registry.json for:
 //   - search_dirs: additional directories to scan for formal model files
 //   - models[].check.command: custom shell commands producing type:shell steps
@@ -189,23 +187,6 @@ function discoverModels(root) {
         type: 'wasm-dot',
         dot: dot,
         svg: dot.replace('.dot', '.svg'),
-      });
-    }
-  }
-
-  // UPPAAL: scan for *.xml files in .planning/formal/uppaal/
-  const uppaalDir = path.join(formalDir, 'uppaal');
-  if (fs.existsSync(uppaalDir)) {
-    const xmlFiles = fs.readdirSync(uppaalDir).filter(f => f.endsWith('.xml'));
-    for (const xml of xmlFiles) {
-      discovered.push({
-        tool: 'uppaal',
-        id: 'uppaal:' + xml.replace('.xml', ''),
-        label: 'UPPAAL ' + xml.replace('.xml', ''),
-        type: 'node',
-        script: 'run-uppaal.cjs',
-        args: [],
-        nonCritical: true,
       });
     }
   }
@@ -286,19 +267,6 @@ function discoverModels(root) {
         });
       }
 
-      // UPPAAL: *.xml
-      for (const f of files.filter(f => f.endsWith('.xml'))) {
-        const stepId = ('uppaal:' + path.join(dir, f.replace('.xml', '')).replace(/\\/g, '/')).toLowerCase();
-        discovered.push({
-          tool: 'uppaal',
-          id: stepId,
-          label: 'UPPAAL ' + dir + '/' + f.replace('.xml', ''),
-          type: 'node',
-          script: 'run-uppaal.cjs',
-          args: [],
-          nonCritical: true,
-        });
-      }
     }
   }
 
@@ -330,7 +298,7 @@ function discoverModels(root) {
 //                    via @hpcc-js/wasm-graphviz (async)
 //
 // STATIC_STEPS: always run (generate, CI enforcement, triage, traceability).
-// Dynamic steps are discovered from ROOT/.planning/formal/{tla,alloy,prism,petri,uppaal}/.
+// Dynamic steps are discovered from ROOT/.planning/formal/{tla,alloy,prism,petri}/.
 const STATIC_STEPS = [
   // ─ Source extraction — must run first so generated specs are fresh ──────────
   {
@@ -461,7 +429,7 @@ const steps = only
 if (only && steps.length === 0) {
   process.stderr.write(
     TAG + ' Unknown --only value: ' + only + '\n' +
-    TAG + ' Valid values: tla, alloy, prism, petri, generate, ci, uppaal, gates, registry, or a step id\n'
+    TAG + ' Valid values: tla, alloy, prism, petri, generate, ci, gates, registry, or a step id\n'
   );
   process.exit(1);
 }

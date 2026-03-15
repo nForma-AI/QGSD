@@ -5,11 +5,10 @@
 // All runners should use these helpers instead of hardcoding paths.
 //
 // Resolution order (consistent across all tools):
-//   1. Environment variable override (VERIFYTA_BIN, PRISM_BIN, etc.)
+//   1. Environment variable override (PRISM_BIN, etc.)
 //   2. System-wide install: ~/.local/share/nf-formal/
 //   3. Project-local (legacy): .planning/formal/
 //   4. Legacy ~/.claude/ fallback (Alloy only)
-//   5. PATH lookup (UPPAAL only)
 
 const fs = require('fs');
 const path = require('path');
@@ -46,34 +45,4 @@ function resolveAlloyJar(projectRoot) {
   return candidates.find(p => fs.existsSync(p)) || null;
 }
 
-/**
- * Resolve UPPAAL verifyta binary.
- * @param {string} [projectRoot] - Project root directory (defaults to __dirname/..)
- * @returns {string|null} Absolute path to verifyta, or null if not found.
- */
-function resolveVerifyta(projectRoot) {
-  const root = projectRoot || path.join(__dirname, '..');
-
-  // 1. Env var override
-  const envBin = process.env.VERIFYTA_BIN;
-  if (envBin && fs.existsSync(envBin)) return envBin;
-
-  // 2. System-wide
-  const systemPath = path.join(NF_FORMAL_HOME, 'uppaal', 'bin', 'verifyta');
-  if (fs.existsSync(systemPath)) return systemPath;
-
-  // 3. Project-local (legacy)
-  const localPath = path.join(root, '.planning', 'formal', 'uppaal', 'bin', 'verifyta');
-  if (fs.existsSync(localPath)) return localPath;
-
-  // 4. PATH lookup
-  try {
-    const { spawnSync } = require('child_process');
-    const which = spawnSync('which', ['verifyta'], { encoding: 'utf8' });
-    if (which.status === 0 && which.stdout.trim()) return which.stdout.trim();
-  } catch (_) { /* fail-open */ }
-
-  return null;
-}
-
-module.exports = { resolveTlaJar, resolveAlloyJar, resolveVerifyta, NF_FORMAL_HOME };
+module.exports = { resolveTlaJar, resolveAlloyJar, NF_FORMAL_HOME };

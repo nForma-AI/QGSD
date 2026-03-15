@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-15T20:27:44.049Z",
+  "generated_at": "2026-03-15T21:42:06.585Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -2992,51 +2992,6 @@
         }
       ]
     },
-    "UPPAAL-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
-          "test_name": "UPPAAL-01: uppaal:quorum-races check_id maps to UPPAAL-01 requirement"
-        }
-      ]
-    },
-    "UPPAAL-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
-          "test_name": "UPPAAL-02: uppaal:quorum-races maps to UPPAAL-02 requirement"
-        }
-      ]
-    },
-    "UPPAAL-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
-          "test_name": "UPPAAL-03: run-uppaal.cjs defines DEFAULT_MIN_GAP_MS (minimum inter-slot gap)"
-        }
-      ]
-    },
-    "UPPAAL-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-04.stub.test.js",
-          "test_name": "UPPAAL-04 — Formalism: structural verification"
-        }
-      ]
-    },
-    "UPPAAL-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-05.stub.test.js",
-          "test_name": "UPPAAL-05 — Formalism: structural verification"
-        }
-      ]
-    },
     "UPS-01": {
       "covered": true,
       "test_cases": [
@@ -3280,7 +3235,31 @@
         }
       ]
     },
+    "UPPAAL-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "H2M-01": {
+      "covered": false,
+      "test_cases": []
+    },
     "TC-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-01": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-03": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "UPPAAL-05": {
       "covered": false,
       "test_cases": []
     }

@@ -1,37 +1,30 @@
 -- .planning/formal/alloy/formalism-selection.als
 -- Models the close-formal-gaps formalism selection heuristics.
--- When requirements specify real-time constraints, UPPAAL timed automata are selected.
 -- When requirements specify concurrent workflows, Petri nets are selected.
 -- Source: core/workflows/close-formal-gaps.md, bin/requirement-map.cjs
---
--- @requirement UPPAAL-04
 
 module formalism_selection
 
 -- Available formalisms
 abstract sig Formalism {}
--- @requirement UPPAAL-04
-one sig TLAPlus, Alloy, PRISM, UPPAAL, PetriNet extends Formalism {}
+one sig TLAPlus, Alloy, PRISM, PetriNet extends Formalism {}
 
 -- Requirement characteristics that drive formalism selection
 abstract sig RequirementCharacteristic {}
--- @requirement UPPAAL-04
 one sig RealTimeConstraint, ConcurrentWorkflow, SafetyInvariant,
         DataStructure, ProbabilisticBehavior extends RequirementCharacteristic {}
 
 -- A requirement to be formalized
--- @requirement UPPAAL-04
 sig Requirement {
   characteristics: set RequirementCharacteristic,
   selectedFormalism: one Formalism
 }
 
 -- Formalism selection heuristics (priority-ordered)
--- @requirement UPPAAL-04
 fact selectionHeuristics {
   all r: Requirement {
-    -- Real-time constraints -> UPPAAL timed automata
-    RealTimeConstraint in r.characteristics implies r.selectedFormalism = UPPAAL
+    -- Real-time constraints -> TLA+ (discrete step timing invariants)
+    RealTimeConstraint in r.characteristics implies r.selectedFormalism = TLAPlus
     -- Concurrent workflows (without real-time) -> Petri nets
     (ConcurrentWorkflow in r.characteristics and
      RealTimeConstraint not in r.characteristics) implies r.selectedFormalism = PetriNet
@@ -54,7 +47,6 @@ fact selectionHeuristics {
 }
 
 -- Steps 3-6 integration: generation templates exist for each formalism
--- @requirement UPPAAL-04
 sig GenerationTemplate {
   formalism: one Formalism,
   hasStepThree: one Bool,   -- requirement clustering
@@ -67,7 +59,6 @@ abstract sig Bool {}
 one sig True, False extends Bool {}
 
 -- Every formalism has a complete generation template (steps 3-6)
--- @requirement UPPAAL-04
 fact completeTemplates {
   all f: Formalism | some t: GenerationTemplate | t.formalism = f
   all t: GenerationTemplate {
@@ -78,16 +69,14 @@ fact completeTemplates {
   }
 }
 
--- Real-time constraints always select UPPAAL
--- @requirement UPPAAL-04
-assert realTimeSelectsUPPAAL {
+-- Real-time constraints select TLA+
+assert realTimeSelectsTLAPlus {
   all r: Requirement |
-    RealTimeConstraint in r.characteristics implies r.selectedFormalism = UPPAAL
+    RealTimeConstraint in r.characteristics implies r.selectedFormalism = TLAPlus
 }
-check realTimeSelectsUPPAAL for 6
+check realTimeSelectsTLAPlus for 6
 
 -- Concurrent workflows (non-realtime) always select Petri nets
--- @requirement UPPAAL-04
 assert concurrentSelectsPetri {
   all r: Requirement |
     (ConcurrentWorkflow in r.characteristics and
@@ -97,7 +86,6 @@ assert concurrentSelectsPetri {
 check concurrentSelectsPetri for 6
 
 -- All formalisms have generation templates
--- @requirement UPPAAL-04
 assert allFormalismsHaveTemplates {
   all f: Formalism | some t: GenerationTemplate | t.formalism = f
 }
