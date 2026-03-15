@@ -2184,14 +2184,19 @@
     },
     ".planning/formal/prism/quorum.pm": {
       "version": 470,
-      "last_updated": "2026-03-15T08:50:08.857Z",
+      "last_updated": "2026-03-15T09:02:15.908Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "source_layer": "L3",
+      "requirements": [
+        "QUORUM-01",
+        "QUORUM-02",
+        "QUORUM-03"
+      ]
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
@@ -2436,25 +2441,35 @@
     },
     ".planning/formal/tla/NFQuorum.tla": {
       "version": 470,
-      "last_updated": "2026-03-15T08:50:08.858Z",
+      "last_updated": "2026-03-15T09:02:15.910Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "source_layer": "L3",
+      "requirements": [
+        "QUORUM-01",
+        "QUORUM-02",
+        "QUORUM-03"
+      ]
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
       "version": 341,
-      "last_updated": "2026-03-15T08:42:29.439Z",
+      "last_updated": "2026-03-15T09:02:15.910Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "source_layer": "L3",
+      "requirements": [
+        "QUORUM-01",
+        "QUORUM-02",
+        "QUORUM-03"
+      ]
     },
     ".planning/formal/tla/NFReasoning.tla": {
       "version": 1,
@@ -2620,12 +2635,12 @@
     },
     ".planning/formal/tla/QGSDAgentLoop.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.630Z",
+      "last_updated": "2026-03-15T09:02:15.910Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
@@ -2692,7 +2707,7 @@
     },
     ".planning/formal/tla/QGSDCheckpointGate.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.631Z",
+      "last_updated": "2026-03-15T09:02:15.910Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2701,7 +2716,7 @@
         "QUORUM-06"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/QGSDConfigPortability.tla": {
@@ -2908,12 +2923,12 @@
     },
     ".planning/formal/tla/QGSDSessionPersistence.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.635Z",
+      "last_updated": "2026-03-15T09:02:15.911Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
@@ -2958,7 +2973,7 @@
     },
     ".planning/formal/tla/QGSDTUIModules.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.636Z",
+      "last_updated": "2026-03-15T09:02:15.911Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2967,12 +2982,12 @@
         "NAV-01"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/QGSDTUISessions.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.636Z",
+      "last_updated": "2026-03-15T09:02:15.911Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2981,17 +2996,17 @@
         "NAV-02"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/TUINavigation.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.637Z",
+      "last_updated": "2026-03-15T09:02:15.911Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [

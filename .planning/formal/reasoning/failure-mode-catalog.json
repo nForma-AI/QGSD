@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T08:17:45.841Z",
+  "generated": "2026-03-15T09:01:42.051Z",
   "failure_modes": [
     {
       "id": "FM-IDLE-QUORUM_START-OMISSION",
@@ -2150,6 +2150,248 @@
           "layer": "L2",
           "artifact": "requirements.json",
           "ref": "requirements[id=SPEC-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-AGT-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "DoIteration",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Agent loop iteration cap exceeded or goal not reached",
+      "effect": "Formal property DoIteration, NeverExceedsCap, GoalImpliesSuccess violated in QGSDAgentLoop.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDAgentLoop.tla",
+          "ref": "DoIteration, NeverExceedsCap, GoalImpliesSuccess"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=AGT-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-QUORUM-06-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "BlockVotePreventsApproval",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Checkpoint gate allows approval despite block vote or all-unavailable",
+      "effect": "Formal property BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity violated in QGSDCheckpointGate.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDCheckpointGate.tla",
+          "ref": "BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=QUORUM-06]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "HotkeySwitch",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI module switching fails via hotkey or tab navigation",
+      "effect": "Formal property HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules violated in QGSDTUIModules.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDTUIModules.tla",
+          "ref": "HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-02-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "CreateSession",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Session create/connect/terminate lifecycle violation",
+      "effect": "Formal property CreateSession, ConnectSession, TerminateSession violated in QGSDTUISessions.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDTUISessions.tla",
+          "ref": "CreateSession, ConnectSession, TerminateSession"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-04-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "SaveSessions",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Session persistence save/restore integrity failure",
+      "effect": "Formal property SaveSessions, RestoreFromDisk, PersistenceIntegrity violated in QGSDSessionPersistence.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDSessionPersistence.tla",
+          "ref": "SaveSessions, RestoreFromDisk, PersistenceIntegrity"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "TypeOK",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation type invariant violation",
+      "effect": "Formal property TypeOK violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "TypeOK"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-02-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "NoDeadlock",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation deadlock — no available transitions",
+      "effect": "Formal property NoDeadlock violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "NoDeadlock"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-03-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "DepthBounded",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation depth exceeds bound",
+      "effect": "Formal property DepthBounded violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "DepthBounded"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-03]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-04-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "EscapeProgress",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Escape key does not make progress toward exit",
+      "effect": "Formal property EscapeProgress violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "EscapeProgress"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-05-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "EventuallyExits",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI does not eventually exit",
+      "effect": "Formal property EventuallyExits violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "EventuallyExits"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-05]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-06-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "MainMenuReachable",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Main menu not reachable from current state",
+      "effect": "Formal property MainMenuReachable violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "MainMenuReachable"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-06]"
         }
       ]
     }

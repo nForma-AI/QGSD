@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T08:18:15.522Z",
+  "generated": "2026-03-15T09:01:42.052Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -578,7 +578,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -623,7 +623,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -668,7 +668,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 192,
+        "rpn": 96,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -714,7 +714,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 192,
+        "rpn": 96,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -759,7 +759,7 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 256,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -805,7 +805,7 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 256,
+        "rpn": 128,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -850,7 +850,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 32,
+        "rpn": 16,
         "risk_tier": "low"
       },
       "derived_from": [
@@ -4125,247 +4125,714 @@
     {
       "id": "TR-FM-CONF-OMISSION",
       "failure_mode_id": "FM-CONF-OMISSION",
-      "title": "Test config loader two-layer merge and fail-open defaults",
+      "title": "Test omission of CONFIG_LOAD --[LOAD_CONFIG]--> CONFIG_LOADED",
       "setup": {
         "initial_state": "CONFIG_LOAD",
         "preconditions": [
-          "Global config at ~/.claude/nf.json exists or is absent",
-          "Per-project config at .claude/nf.json may override"
+          "Machine is in CONFIG_LOAD state"
         ]
       },
       "input_sequence": [
         {
           "event": "LOAD_CONFIG",
-          "description": "Invoke config-loader.js loadConfig() with both global and project paths"
+          "description": "Send LOAD_CONFIG event to machine in CONFIG_LOAD state"
         }
       ],
       "expected_outcome": {
         "final_state": "CONFIG_LOADED",
         "assertions": [
-          "Global config values present when no project override",
-          "Project override values take precedence over global",
-          "Malformed config falls back to hardcoded defaults",
-          "Circuit breaker config values validated on load"
+          "Machine transitions to CONFIG_LOADED"
         ]
       },
       "oracle": {
         "type": "state_assertion",
-        "check": "loadConfig() returns merged config with expected keys",
-        "failure_indicates": "Omission: config merge or validation did not work correctly"
+        "check": "machine.state === 'CONFIG_LOADED'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 0,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
           "layer": "L3",
           "artifact": "reasoning/failure-mode-catalog.json",
           "ref": "failure_modes[id=FM-CONF-OMISSION]"
-        },
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=CONF-01]"
         }
       ]
     },
     {
       "id": "TR-FM-DISPATCH-OMISSION",
       "failure_mode_id": "FM-DISPATCH-OMISSION",
-      "title": "Test quorum dispatch shell-safety and slot deduplication",
+      "title": "Test omission of DISPATCH --[DISPATCH_QUORUM]--> DISPATCHED",
       "setup": {
         "initial_state": "DISPATCH",
         "preconditions": [
-          "Quorum slots configured in providers.json",
-          "At least one slot healthy"
+          "Machine is in DISPATCH state"
         ]
       },
       "input_sequence": [
         {
           "event": "DISPATCH_QUORUM",
-          "description": "Dispatch quorum prompt to slot CLIs via call-quorum-slot.cjs"
+          "description": "Send DISPATCH_QUORUM event to machine in DISPATCH state"
         }
       ],
       "expected_outcome": {
         "final_state": "DISPATCHED",
         "assertions": [
-          "Prompts delivered without shell interpretation or character escaping",
-          "Duplicate slots sharing same model are deduplicated"
+          "Machine transitions to DISPATCHED"
         ]
       },
       "oracle": {
         "type": "state_assertion",
-        "check": "Dispatch produces unique slot invocations with unmangled prompts",
-        "failure_indicates": "Omission: dispatch corrupted prompts or allowed duplicate slots"
+        "check": "machine.state === 'DISPATCHED'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 0,
-        "risk_tier": "high"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
           "layer": "L3",
           "artifact": "reasoning/failure-mode-catalog.json",
           "ref": "failure_modes[id=FM-DISPATCH-OMISSION]"
-        },
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=DISPATCH-01]"
         }
       ]
     },
     {
       "id": "TR-FM-RECRUITING-OMISSION",
       "failure_mode_id": "FM-RECRUITING-OMISSION",
-      "title": "Test slot migration from model-based to slot-based naming",
+      "title": "Test omission of RECRUITING --[MIGRATE_SLOTS]--> SLOTS_MIGRATED",
       "setup": {
         "initial_state": "RECRUITING",
         "preconditions": [
-          "Legacy model-based mcpServers entries exist in ~/.claude.json"
+          "Machine is in RECRUITING state"
         ]
       },
       "input_sequence": [
         {
           "event": "MIGRATE_SLOTS",
-          "description": "Run migration script to rename model-based entries to slot-based names"
+          "description": "Send MIGRATE_SLOTS event to machine in RECRUITING state"
         }
       ],
       "expected_outcome": {
         "final_state": "SLOTS_MIGRATED",
         "assertions": [
-          "Legacy entries renamed to slot-based naming",
-          "Source files updated to use slot names",
-          "MCP commands accept and display slot-based names"
+          "Machine transitions to SLOTS_MIGRATED"
         ]
       },
       "oracle": {
         "type": "state_assertion",
-        "check": "All mcpServers entries use slot-based naming after migration",
-        "failure_indicates": "Omission: migration did not rename legacy entries"
+        "check": "machine.state === 'SLOTS_MIGRATED'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 0,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
           "layer": "L3",
           "artifact": "reasoning/failure-mode-catalog.json",
           "ref": "failure_modes[id=FM-RECRUITING-OMISSION]"
-        },
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=SLOT-02]"
         }
       ]
     },
     {
       "id": "TR-FM-INSTALLER-OMISSION",
       "failure_mode_id": "FM-INSTALLER-OMISSION",
-      "title": "Test installer idempotency and config preservation",
+      "title": "Test omission of INSTALL --[RUN_INSTALLER]--> INSTALLED",
       "setup": {
         "initial_state": "INSTALL",
         "preconditions": [
-          "Previous install exists with per-project overrides and circuit_breaker config"
+          "Machine is in INSTALL state"
         ]
       },
       "input_sequence": [
         {
           "event": "RUN_INSTALLER",
-          "description": "Run npx qgsd@latest (or node bin/install.js) over existing install"
+          "description": "Send RUN_INSTALLER event to machine in INSTALL state"
         }
       ],
       "expected_outcome": {
         "final_state": "INSTALLED",
         "assertions": [
-          "Hooks and config updated on re-run",
-          "Per-project overrides preserved",
-          "Circuit breaker hook registered in settings.json",
-          "Default circuit_breaker config block written on first install",
-          "Reinstall adds missing circuit_breaker without overwriting existing"
+          "Machine transitions to INSTALLED"
         ]
       },
       "oracle": {
         "type": "state_assertion",
-        "check": "Post-reinstall state matches expected: hooks updated, overrides preserved, circuit_breaker config present",
-        "failure_indicates": "Omission: installer not idempotent or overwrote existing config"
+        "check": "machine.state === 'INSTALLED'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 0,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
           "layer": "L3",
           "artifact": "reasoning/failure-mode-catalog.json",
           "ref": "failure_modes[id=FM-INSTALLER-OMISSION]"
-        },
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=INST-06]"
         }
       ]
     },
     {
       "id": "TR-FM-SPECGEN-OMISSION",
       "failure_mode_id": "FM-SPECGEN-OMISSION",
-      "title": "Test phase spec generation from PLAN.md must_haves and debug invariant mining",
+      "title": "Test omission of SPEC_GEN --[GENERATE_SPEC]--> SPEC_GENERATED",
       "setup": {
         "initial_state": "SPEC_GEN",
         "preconditions": [
-          "PLAN.md with must_haves.truths section exists",
-          "Debug session logs available"
+          "Machine is in SPEC_GEN state"
         ]
       },
       "input_sequence": [
         {
           "event": "GENERATE_SPEC",
-          "description": "Run generate-phase-spec.cjs on a PLAN.md with must_haves, then propose-debug-invariants.cjs on debug logs"
+          "description": "Send GENERATE_SPEC event to machine in SPEC_GEN state"
         }
       ],
       "expected_outcome": {
         "final_state": "SPEC_GENERATED",
         "assertions": [
-          "TLA+ PROPERTY blocks generated from must_haves truths",
-          "Debug invariant candidates mined from session logs"
+          "Machine transitions to SPEC_GENERATED"
         ]
       },
       "oracle": {
         "type": "state_assertion",
-        "check": "Generated spec contains PROPERTY blocks; invariant candidates list is non-empty",
-        "failure_indicates": "Omission: spec generation or invariant mining failed"
+        "check": "machine.state === 'SPEC_GENERATED'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 0,
-        "risk_tier": "low"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
           "layer": "L3",
           "artifact": "reasoning/failure-mode-catalog.json",
           "ref": "failure_modes[id=FM-SPECGEN-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-AGT-01-OMISSION",
+      "failure_mode_id": "FM-AGT-01-OMISSION",
+      "title": "Test Agent loop iteration cap exceeded or goal not reached",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model QGSDAgentLoop.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property DoIteration holds in QGSDAgentLoop.tla"
         },
         {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=SPEC-04]"
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property NeverExceedsCap holds in QGSDAgentLoop.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property GoalImpliesSuccess holds in QGSDAgentLoop.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property DoIteration holds without counterexample",
+          "Property NeverExceedsCap holds without counterexample",
+          "Property GoalImpliesSuccess holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for DoIteration, NeverExceedsCap, GoalImpliesSuccess",
+        "failure_indicates": "Omission: Agent loop iteration cap exceeded or goal not reached"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-AGT-01-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-QUORUM-06-OMISSION",
+      "failure_mode_id": "FM-QUORUM-06-OMISSION",
+      "title": "Test Checkpoint gate allows approval despite block vote or all-unavailable",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model QGSDCheckpointGate.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property BlockVotePreventsApproval holds in QGSDCheckpointGate.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property AllUnavailPreventsApproval holds in QGSDCheckpointGate.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property ApprovedRequiresUnanimity holds in QGSDCheckpointGate.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property BlockVotePreventsApproval holds without counterexample",
+          "Property AllUnavailPreventsApproval holds without counterexample",
+          "Property ApprovedRequiresUnanimity holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity",
+        "failure_indicates": "Omission: Checkpoint gate allows approval despite block vote or all-unavailable"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-QUORUM-06-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-NAV-01-OMISSION",
+      "failure_mode_id": "FM-NAV-01-OMISSION",
+      "title": "Test TUI module switching fails via hotkey or tab navigation",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model QGSDTUIModules.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property HotkeySwitch holds in QGSDTUIModules.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property TabForward holds in QGSDTUIModules.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property TabBackward holds in QGSDTUIModules.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property ExactlyThreeModules holds in QGSDTUIModules.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property HotkeySwitch holds without counterexample",
+          "Property TabForward holds without counterexample",
+          "Property TabBackward holds without counterexample",
+          "Property ExactlyThreeModules holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules",
+        "failure_indicates": "Omission: TUI module switching fails via hotkey or tab navigation"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-NAV-01-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-NAV-02-OMISSION",
+      "failure_mode_id": "FM-NAV-02-OMISSION",
+      "title": "Test Session create/connect/terminate lifecycle violation",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model QGSDTUISessions.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property CreateSession holds in QGSDTUISessions.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property ConnectSession holds in QGSDTUISessions.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property TerminateSession holds in QGSDTUISessions.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property CreateSession holds without counterexample",
+          "Property ConnectSession holds without counterexample",
+          "Property TerminateSession holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for CreateSession, ConnectSession, TerminateSession",
+        "failure_indicates": "Omission: Session create/connect/terminate lifecycle violation"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-NAV-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-NAV-04-OMISSION",
+      "failure_mode_id": "FM-NAV-04-OMISSION",
+      "title": "Test Session persistence save/restore integrity failure",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model QGSDSessionPersistence.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property SaveSessions holds in QGSDSessionPersistence.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property RestoreFromDisk holds in QGSDSessionPersistence.tla"
+        },
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property PersistenceIntegrity holds in QGSDSessionPersistence.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property SaveSessions holds without counterexample",
+          "Property RestoreFromDisk holds without counterexample",
+          "Property PersistenceIntegrity holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for SaveSessions, RestoreFromDisk, PersistenceIntegrity",
+        "failure_indicates": "Omission: Session persistence save/restore integrity failure"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-NAV-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-01-OMISSION",
+      "failure_mode_id": "FM-TUI-01-OMISSION",
+      "title": "Test TUI navigation type invariant violation",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property TypeOK holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property TypeOK holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for TypeOK",
+        "failure_indicates": "Omission: TUI navigation type invariant violation"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-01-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-02-OMISSION",
+      "failure_mode_id": "FM-TUI-02-OMISSION",
+      "title": "Test TUI navigation deadlock — no available transitions",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property NoDeadlock holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property NoDeadlock holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for NoDeadlock",
+        "failure_indicates": "Omission: TUI navigation deadlock — no available transitions"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-02-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-03-OMISSION",
+      "failure_mode_id": "FM-TUI-03-OMISSION",
+      "title": "Test TUI navigation depth exceeds bound",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property DepthBounded holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property DepthBounded holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for DepthBounded",
+        "failure_indicates": "Omission: TUI navigation depth exceeds bound"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-03-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-04-OMISSION",
+      "failure_mode_id": "FM-TUI-04-OMISSION",
+      "title": "Test Escape key does not make progress toward exit",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property EscapeProgress holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property EscapeProgress holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for EscapeProgress",
+        "failure_indicates": "Omission: Escape key does not make progress toward exit"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-04-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-05-OMISSION",
+      "failure_mode_id": "FM-TUI-05-OMISSION",
+      "title": "Test TUI does not eventually exit",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property EventuallyExits holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property EventuallyExits holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for EventuallyExits",
+        "failure_indicates": "Omission: TUI does not eventually exit"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-05-OMISSION]"
+        }
+      ]
+    },
+    {
+      "id": "TR-FM-TUI-06-OMISSION",
+      "failure_mode_id": "FM-TUI-06-OMISSION",
+      "title": "Test Main menu not reachable from current state",
+      "setup": {
+        "initial_state": "SPEC_PROPERTY",
+        "preconditions": [
+          "Model TUINavigation.tla loaded",
+          "TLC model checker available"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "CHECK_PROPERTY",
+          "description": "Verify property MainMenuReachable holds in TUINavigation.tla"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "VERIFIED",
+        "assertions": [
+          "Property MainMenuReachable holds without counterexample"
+        ]
+      },
+      "oracle": {
+        "type": "formal_verification",
+        "check": "TLC check passes for MainMenuReachable",
+        "failure_indicates": "Omission: Main menu not reachable from current state"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 60,
+        "risk_tier": "medium"
+      },
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "reasoning/failure-mode-catalog.json",
+          "ref": "failure_modes[id=FM-TUI-06-OMISSION]"
         }
       ]
     }
   ],
   "summary": {
-    "total_recipes": 107,
+    "total_recipes": 112,
     "by_failure_mode": {
-      "omission": 25,
+      "omission": 30,
       "corruption": 5,
       "commission": 11,
       "unknown": 66
@@ -4375,7 +4842,7 @@
       "critical": 15,
       "low": 1,
       "medium": 2,
-      "unclassified": 75
+      "unclassified": 80
     }
   }
 }

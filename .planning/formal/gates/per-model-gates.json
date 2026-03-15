@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-15T08:57:35.549Z",
+  "generated": "2026-03-15T09:02:15.913Z",
   "total_models": 192,
   "unstable_models": 0,
   "evidence_readiness": {
@@ -2794,14 +2794,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "no requirements mapped (no purpose backing)"
+        "pass": true,
+        "reason": "model has 3 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no requirements mapped"
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3094,14 +3094,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "no requirements mapped (no purpose backing)"
+        "pass": true,
+        "reason": "model has 3 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no requirements mapped"
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3114,14 +3114,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "no requirements mapped (no purpose backing)"
+        "pass": true,
+        "reason": "model has 3 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no requirements mapped"
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
       },
-      "layer_maturity": 1,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3318,10 +3318,10 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [AGT-01], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-AGT-01-OMISSION has test recipe (via req AGT-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3398,10 +3398,10 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [QUORUM-06], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-QUORUM-06-OMISSION has test recipe (via req QUORUM-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3658,10 +3658,10 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [NAV-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-NAV-04-OMISSION has test recipe (via req NAV-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3718,10 +3718,10 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [NAV-01], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-NAV-01-OMISSION has test recipe (via req NAV-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3738,10 +3738,10 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [NAV-02], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-NAV-02-OMISSION has test recipe (via req NAV-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3758,10 +3758,10 @@
         "reason": "model has 6 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [TUI-01, TUI-02, TUI-03, TUI-04, TUI-05, TUI-06], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-TUI-01-OMISSION has test recipe (via req TUI-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
