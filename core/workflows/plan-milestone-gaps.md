@@ -115,10 +115,21 @@ Before updating ROADMAP.md, submit the proposed phases to R3 quorum for approval
 
 Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): are the proposed phases correctly scoped to close all identified gaps? State your analysis as 1-2 sentences to share with external voters.
 
-Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
+Run R3 quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
 - Mode A — pure question
 - Question: "Are these gap closure phases correctly scoped and complete to close the identified milestone gaps? Proposed phases: {summary — 1 line per proposed phase showing phase name, requirements it closes, and task count}"
 - Include the proposed phases markdown from the presentation block above as context
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: "Are these gap closure phases correctly scoped and complete..."
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks — do NOT dispatch slots outside `$DISPATCH_LIST`
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
