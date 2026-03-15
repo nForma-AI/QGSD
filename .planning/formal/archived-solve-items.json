@@ -3743,6 +3743,24 @@
       "line": 928,
       "archived_at": "2026-03-15T15:41:40.441Z",
       "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:109",
+      "type": "dtor",
+      "summary": "- **Formal spec generation** -- `/nf:close-formal-gaps` auto-generates TLA+, Alloy, or PRISM specs from your project req",
+      "doc_file": "README.md",
+      "line": 109,
+      "archived_at": "2026-03-15T23:26:03.312Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:523",
+      "type": "dtor",
+      "summary": "> **Note:** Formal verification is entirely optional. You don't need Java or any formal tools installed to use nForma. B",
+      "doc_file": "README.md",
+      "line": 523,
+      "archived_at": "2026-03-15T23:26:03.312Z",
+      "auto_classified": "fp"
     }
   ]
 }

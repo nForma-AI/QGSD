@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-15T22:15:57.719Z",
+  "generated": "2026-03-15T23:19:22.798Z",
   "layers": {
     "L1": [
       {
@@ -10,11 +10,6 @@
       },
       {
         "path": ".planning/formal/petri/quorum-petri-net.dot",
-        "description": "",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/uppaal/quorum-races.xml",
         "description": "",
         "grounding_status": "has_semantic_declarations"
       }
@@ -647,11 +642,6 @@
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/alloy/uppaal-model-reqs.als",
-        "description": "",
-        "grounding_status": "ungrounded"
-      },
-      {
         "path": ".planning/formal/alloy/user-guide.als",
         "description": "",
         "grounding_status": "ungrounded"
@@ -998,17 +988,17 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-15T22:15:57.719Z"
+      "collapsed_at": "2026-03-15T23:19:22.798Z"
     }
   },
   "summary": {
-    "total_models": 194,
-    "L1_count": 3,
+    "total_models": 192,
+    "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 191,
+    "L3_count": 190,
     "maturity_distribution": {
-      "0": 160,
-      "1": 34
+      "0": 159,
+      "1": 33
     },
     "spec_modules_with_invariants": 18
   }

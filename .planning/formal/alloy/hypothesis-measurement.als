@@ -25,7 +25,7 @@ one sig CONFIRMED, VIOLATED, UNMEASURABLE extends Verdict {}
 
 -- A tier-1 assumption from a formal model
 sig Assumption {
-  assumptionName: one String,
+  assumptionName: one Name,
   formalValue: one Int,
   sourceModel: one FormalModel
 } {
@@ -89,8 +89,8 @@ fact AllRecorded {
 abstract sig Bool {}
 one sig True, False extends Bool {}
 
--- String type placeholder for assumption names
-sig String {}
+-- Name type placeholder for assumption names
+sig Name {}
 
 -- PROPERTY 1: Every tier-1 assumption produces exactly one verdict
 assert CompleteVerdicts {

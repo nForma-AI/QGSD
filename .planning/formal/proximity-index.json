@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T22:26:09.423Z",
+  "generated": "2026-03-15T23:37:10.652Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,40 +84,40 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-15T22:24:29.901Z",
-      "hash": "01ef3d63"
+      "mtime": "2026-03-15T23:35:01.579Z",
+      "hash": "d3928dc1"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-15T22:24:56.368Z",
-      "hash": "e957a836"
+      "mtime": "2026-03-15T23:34:33.124Z",
+      "hash": "61091184"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-15T22:24:29.907Z",
-      "hash": "67e10cbd"
+      "mtime": "2026-03-15T23:19:47.628Z",
+      "hash": "1b20e168"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-15T22:17:06.064Z",
-      "hash": "f675ceb4"
+      "mtime": "2026-03-15T23:20:46.302Z",
+      "hash": "ee13f3df"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-15T22:01:28.197Z",
-      "hash": "d13f77df"
+      "mtime": "2026-03-15T23:09:03.789Z",
+      "hash": "e75614af"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-15T22:17:27.812Z",
-      "hash": "f499fd20"
+      "mtime": "2026-03-15T23:24:43.943Z",
+      "hash": "bb501f94"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
@@ -9095,6 +9095,11 @@
           "to": "formal_model::.planning/formal/alloy/misc-behavioral.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::MCPServer",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         }
       ]
     },
@@ -21284,6 +21289,11 @@
           "to": "formal_model::.planning/formal/alloy/formalism-selection.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::(model-level)",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         }
       ]
     },
@@ -21308,6 +21318,11 @@
           "to": "formal_model::.planning/formal/alloy/model-registry-parity.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::(model-level)",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         }
       ]
     },
@@ -25762,6 +25777,11 @@
         },
         {
           "to": "requirement::UNIF-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-02",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -31584,6 +31604,16 @@
         },
         {
           "to": "requirement::OBS-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::UPPAAL-05",
           "rel": "verifies",
           "source": "traceability-matrix"
         },
