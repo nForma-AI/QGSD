@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 Phase: 5 of 5 (Test Harness)
 Plan: v0.36-05-02-PLAN.md (2/2 plans complete)
 Status: Complete
-Last activity: 2026-03-15 - Completed quick task 297: Generate test recipes for 9 uncovered L3 failure modes (Gate C)
+Last activity: 2026-03-15 - Completed quick task 298: Digest V8 coverage at collection time in sweepTtoC
 
 Progress: [##########] 100%
 
@@ -102,9 +102,10 @@ None.
 | 295 | Generate test recipes for 15 uncovered L3 failure modes (Gate C) | 2026-03-15 | 9467c0d0 | Pending | [295-generate-test-recipes-for-15-uncovered-l](./quick/295-generate-test-recipes-for-15-uncovered-l/) |
 | 296 | Fix 1 XState model gap identified by Gate A grounding check | 2026-03-15 | ab4c635d | Pending | [296-fix-1-xstate-model-gap-identified-by-gat](./quick/296-fix-1-xstate-model-gap-identified-by-gat/) |
 | 297 | Generate test recipes for 9 uncovered L3 failure modes (Gate C) | 2026-03-15 | 0747c695 | Pending | [297-generate-test-recipes-for-9-uncovered-l3](./quick/297-generate-test-recipes-for-9-uncovered-l3/) |
+| 298 | Digest V8 coverage at collection time in sweepTtoC | 2026-03-15 | 804a96e0 | Pending | [298-digest-v8-coverage-at-collection-time-in](./quick/298-digest-v8-coverage-at-collection-time-in/) |
 
 ## Session Continuity
 
 Last session: 2026-03-15
-Stopped at: Completed v0.36-05-02-PLAN.md (focus filter completeness + classification golden set); v0.36-05 phase complete, v0.36 milestone complete
+Stopped at: Completed quick task 298: Digest V8 coverage at collection time in sweepTtoC
 Resume file: None
