@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-14T09:38:09.121Z",
+  "generated": "2026-03-15T20:36:05.353Z",
   "total_unmapped_events": 0,
   "candidates": [],
   "missing_transitions": [
@@ -73,49 +73,49 @@
     {
       "from_action": "quorum_block",
       "to_action": "security_sweep",
-      "count": 85,
+      "count": 121,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "security_sweep",
-      "count": 79,
+      "count": 151,
       "note": "XState mapping missing: from=null, to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "circuit_break",
-      "count": 119,
+      "count": 197,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "security_sweep",
       "to_action": "quorum_start",
-      "count": 24,
+      "count": 38,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "quorum_start",
       "to_action": "security_sweep",
-      "count": 37,
+      "count": 63,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "circuit_break",
       "to_action": "security_sweep",
-      "count": 29,
+      "count": 64,
       "note": "XState mapping missing: from=[object Object], to=null"
     },
     {
       "from_action": "security_sweep",
       "to_action": "quorum_complete",
-      "count": 1,
+      "count": 3,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
       "from_action": "security_sweep",
       "to_action": "quorum_block",
-      "count": 3,
+      "count": 9,
       "note": "XState mapping missing: from=null, to=[object Object]"
     },
     {
@@ -123,7 +123,13 @@
       "to_action": "undefined",
       "count": 3,
       "note": "XState mapping missing: from=null, to=null"
+    },
+    {
+      "from_action": "quorum_complete",
+      "to_action": "security_sweep",
+      "count": 3,
+      "note": "XState mapping missing: from=[object Object], to=null"
     }
   ],
-  "summary": "0 unmapped events found. 0 candidate(s): . 20 potentially missing transitions."
+  "summary": "0 unmapped events found. 0 candidate(s): . 21 potentially missing transitions."
 }

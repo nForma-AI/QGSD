@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-15T09:02:15.913Z",
+  "generated": "2026-03-15T15:56:31.260Z",
   "total_models": 192,
   "unstable_models": 0,
   "evidence_readiness": {
@@ -71,7 +71,7 @@
     ".planning/formal/alloy/architecture-registry.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ARCH-03 (property: unnamed)"
+        "reason": "all 6 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -671,7 +671,7 @@
     ".planning/formal/alloy/evidence-triage.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req TRIAGE-02 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -871,7 +871,7 @@
     ".planning/formal/alloy/governance-dx.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
+        "reason": "all 8 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -951,7 +951,7 @@
     ".planning/formal/alloy/health-validation.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req HLTH-03 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1191,7 +1191,7 @@
     ".planning/formal/alloy/misc-behavioral.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req ADAPT-01 (property: unnamed)"
+        "reason": "all 19 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1511,7 +1511,7 @@
     ".planning/formal/alloy/quality-hardening.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req BRKR-01 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1751,7 +1751,7 @@
     ".planning/formal/alloy/schema-extensions.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req SCHEMA-02 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -1911,7 +1911,7 @@
     ".planning/formal/alloy/signal-analysis-tools.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req SIG-03 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2271,7 +2271,7 @@
     ".planning/formal/alloy/state-space-analysis.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req DECOMP-01 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2491,7 +2491,7 @@
     ".planning/formal/alloy/unified-check-results.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req UNIF-02 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2511,7 +2511,7 @@
     ".planning/formal/alloy/uppaal-model-reqs.als": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req UPPAAL-02 (property: unnamed)"
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2674,14 +2674,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L1)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "no requirements mapped (no purpose backing)"
+        "pass": true,
+        "reason": "model has 2 requirement(s) (purpose check)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result petri:account-manager-petri-net"
+        "reason": "failure-mode FM-CRED-OMISSION has test recipe (via req CRED-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2694,14 +2694,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L1)"
       },
       "gate_b": {
-        "pass": false,
-        "reason": "no requirements mapped (no purpose backing)"
+        "pass": true,
+        "reason": "model has 2 requirement(s) (purpose check)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result petri:quorum-petri-net"
+        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2719,7 +2719,7 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result tla:deliberation"
+        "reason": "passing check-result prism:deliberation-healing"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -2731,7 +2731,7 @@
     ".planning/formal/prism/mcp-availability.pm": {
       "gate_a": {
         "pass": true,
-        "reason": "all 2 requirement(s) grounded by unit test coverage"
+        "reason": "passing trace for req MCPENV-04 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2751,7 +2751,7 @@
     ".planning/formal/prism/oauth-rotation.pm": {
       "gate_a": {
         "pass": true,
-        "reason": "passing check-result for req CRED-01"
+        "reason": "passing trace for req CRED-01 (property: unnamed)"
       },
       "gate_b": {
         "pass": true,
@@ -2794,14 +2794,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "model has 3 requirement(s) (purpose check)"
+        "pass": false,
+        "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
+        "reason": "passing check-result prism:quorum"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -2951,7 +2951,7 @@
     ".planning/formal/tla/NFImprovement.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req IMPR-01 (property: unnamed)"
+        "reason": "all 4 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3094,14 +3094,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "model has 3 requirement(s) (purpose check)"
+        "pass": false,
+        "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
+        "reason": "passing check-result prism:quorum"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3114,14 +3114,14 @@
         "reason": "semantic_declarations in layer-manifest (layer: L3)"
       },
       "gate_b": {
-        "pass": true,
-        "reason": "model has 3 requirement(s) (purpose check)"
+        "pass": false,
+        "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "failure-mode FM-QUORUM-OMISSION has test recipe (via req QUORUM-01)"
+        "reason": "passing check-result prism:quorum"
       },
-      "layer_maturity": 3,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "promoted": false,
       "stability_status": "STABLE",
@@ -3178,8 +3178,8 @@
         "reason": "model has 3 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "passing check-result tla:convergence"
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [FV-01, FV-02, FV-03], no matching check-results"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -3331,7 +3331,7 @@
     ".planning/formal/tla/QGSDAgentProvisioning.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req AGENT-03 (property: unnamed)"
+        "reason": "all 8 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3391,7 +3391,7 @@
     ".planning/formal/tla/QGSDCheckpointGate.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req QUORUM-06 (property: unnamed)"
+        "reason": "passing check-result for req QUORUM-06"
       },
       "gate_b": {
         "pass": true,
@@ -3458,8 +3458,8 @@
         "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "passing check-result tla:deliberation"
+        "pass": false,
+        "reason": "no failure-mode with test recipe for reqs [QUORUM-05], no matching check-results"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
@@ -3551,7 +3551,7 @@
     ".planning/formal/tla/QGSDMCPEnv.tla": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req MCPENV-02 (property: unnamed)"
+        "reason": "all 3 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -3710,8 +3710,8 @@
     },
     ".planning/formal/tla/QGSDTUIModules.tla": {
       "gate_a": {
-        "pass": true,
-        "reason": "passing trace for req NAV-01 (property: unnamed)"
+        "pass": false,
+        "reason": "no passing traces for reqs [NAV-01]"
       },
       "gate_b": {
         "pass": true,
@@ -3730,8 +3730,8 @@
     },
     ".planning/formal/tla/QGSDTUISessions.tla": {
       "gate_a": {
-        "pass": true,
-        "reason": "passing trace for req NAV-02 (property: unnamed)"
+        "pass": false,
+        "reason": "no passing traces for reqs [NAV-02]"
       },
       "gate_b": {
         "pass": true,

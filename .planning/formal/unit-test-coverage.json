@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-14T10:00:02.406Z",
+  "generated_at": "2026-03-15T20:27:44.049Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -304,6 +304,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/CI-06.stub.test.js",
           "test_name": "CI-06: Alloy model defines TypeCheckGate with merge-blocking constraint"
+        }
+      ]
+    },
+    "CI-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CI-07.stub.test.js",
+          "test_name": "CI-07 — Branch: structural verification"
         }
       ]
     },
@@ -688,6 +697,51 @@
         }
       ]
     },
+    "DIAG-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
+          "test_name": "DIAG-06 — PipelineStep: structural verification"
+        }
+      ]
+    },
+    "DIAG-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-07.stub.test.js",
+          "test_name": "DIAG-07 — PipelineStep: structural verification"
+        }
+      ]
+    },
+    "DIAG-08": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-08.stub.test.js",
+          "test_name": "DIAG-08 — PipelineStep: structural verification"
+        }
+      ]
+    },
+    "DIAG-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-09.stub.test.js",
+          "test_name": "DIAG-09 — PipelineStep: structural verification"
+        }
+      ]
+    },
+    "DIAG-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-10.stub.test.js",
+          "test_name": "DIAG-10 — ContextTier: constant verification"
+        }
+      ]
+    },
     "DISP-01": {
       "covered": true,
       "test_cases": [
@@ -739,6 +793,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
           "test_name": "DISP-06: matchRequirementsByKeywords is exported as a function"
+        }
+      ]
+    },
+    "DISPATCH-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DISPATCH-01.stub.test.js",
+          "test_name": "DISPATCH-01 — DispatchToSlot: structural verification"
+        }
+      ]
+    },
+    "DISPATCH-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DISPATCH-02.stub.test.js",
+          "test_name": "DISPATCH-02 — PrimaryModelUniqueness: structural verification"
         }
       ]
     },
@@ -1504,6 +1576,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/MULTI-03.stub.test.js",
           "test_name": "MULTI-03 — install.js references mcpServers config for slot management"
+        }
+      ]
+    },
+    "MULTI-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/MULTI-04.stub.test.js",
+          "test_name": "MULTI-04 — SlotName: structural verification"
         }
       ]
     },
@@ -2596,6 +2677,15 @@
         }
       ]
     },
+    "SPEC-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SPEC-05.stub.test.js",
+          "test_name": "SPEC-05: evidence-scope-scan.als exists and defines ExactMatchRequiresConceptAndOverlap"
+        }
+      ]
+    },
     "STATE-01": {
       "covered": true,
       "test_cases": [
@@ -2929,6 +3019,24 @@
         }
       ]
     },
+    "UPPAAL-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-04.stub.test.js",
+          "test_name": "UPPAAL-04 — Formalism: structural verification"
+        }
+      ]
+    },
+    "UPPAAL-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/UPPAAL-05.stub.test.js",
+          "test_name": "UPPAAL-05 — Formalism: structural verification"
+        }
+      ]
+    },
     "UPS-01": {
       "covered": true,
       "test_cases": [
@@ -3172,35 +3280,7 @@
         }
       ]
     },
-    "CI-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-07": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DISPATCH-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DISPATCH-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MULTI-04": {
+    "TC-01": {
       "covered": false,
       "test_cases": []
     }

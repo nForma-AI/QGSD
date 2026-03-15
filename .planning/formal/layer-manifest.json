@@ -1,17 +1,48 @@
 {
-  "schema_version": "1",
-  "generated": "2026-03-14T09:36:49.920Z",
+  "schema_version": "2",
+  "generated": "2026-03-15T20:27:35.642Z",
   "layers": {
-    "L1": [],
-    "L2": [],
-    "L3": [
+    "L1": [
       {
-        "path": ".planning/formal/alloy/solve-session-persistence.als",
-        "description": "Session persistence and pruning (MAX_SESSION_FILES=20) for nf-solve",
+        "path": ".planning/formal/petri/account-manager-petri-net.dot",
+        "description": "",
         "grounding_status": "has_semantic_declarations"
       },
       {
+        "path": ".planning/formal/petri/quorum-petri-net.dot",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/uppaal/quorum-races.xml",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      }
+    ],
+    "L2": [],
+    "L3": [
+      {
         "path": ".planning/formal/alloy/account-pool-structure.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/agent-context-payload.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/annotation-extraction.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/architecture-registry.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/autoclose-signals.als",
         "description": "",
         "grounding_status": "ungrounded"
       },
@@ -21,22 +52,547 @@
         "grounding_status": "ungrounded"
       },
       {
+        "path": ".planning/formal/alloy/baseline-merge-idempotent.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/baseline-requirements-filter.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/bin-path-resolution.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/build-test-quality.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/changelog-release.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-matrix.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-pipeline-gates.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-quality-gates.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ci-test-fallback.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/cli-exit-conventions.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/code-quality-guardrails.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/codebase-arch-constraints.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/config-audit.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/config-two-layer.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/config-zero-providers.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/debate-trace-persistence.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/debt-lifecycle.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/decomp-cross-model.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/diagnostics-verification.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/diagnostics.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/dispatch-formal-context.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/doc-claims-backing.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/doc-presentation.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/doc-public-boundary.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/event-vocabulary.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/evidence-layer.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/evidence-scope-scan.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/evidence-triage.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/fingerprinting-dedup.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/fingerprinting.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/focus-topic-filter.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/formal-test-trace.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-a-scoping.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-architecture.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-promotion-lifecycle.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-scoring-traces.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/git-history-evidence.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/governance-dx.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gsd-sync-invariants.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/headless-execution.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/health-diagnostic-routing.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/health-validation.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/hook-module-existence.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/hook-portability-guard.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/alloy/install-scope.als",
         "description": "",
         "grounding_status": "ungrounded"
       },
       {
+        "path": ".planning/formal/alloy/installer-path-validation.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/installer-sync.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/integration-layers.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/jvm-heap-sequential.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/mcp-detection.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/mcp-repair-lifecycle.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/memory-persistence.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/meta-resolve.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/misc-behavioral.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/multi-slot-structure.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/multi-slot.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/observability-analysis.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/observability-handler-arch.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/observability-handlers.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/parallel-exec.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/parallel-execution.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/platform-install-compat.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/polyrepo-config.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/prism-delegation.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/project-identity.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/provider-failure.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/provider-wizard.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/proximity-index.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/proximity-pipeline.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/quality-hardening.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/alloy/quorum-composition.als",
-        "description": "SPEC-03: Quorum composition selection rules — no empty selection, high-risk full fan-out, solo mode single slot",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/quorum-improvements.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/quorum-policy.als",
+        "description": "",
         "grounding_status": "has_semantic_declarations"
       },
       {
         "path": ".planning/formal/alloy/quorum-votes.als",
-        "description": "Quorum vote-counting model — unanimity predicate verification",
+        "description": "",
         "grounding_status": "has_semantic_declarations"
       },
       {
+        "path": ".planning/formal/alloy/readme-structure.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/reasoning-fmea.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/reliability-hardening.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/reliability-patterns.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/rename-migration.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/requirements-aggregation.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/result-classification.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/schema-extensions.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/alloy/scoreboard-recompute.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/security-hardening.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/security-scanning.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/semantics-layer.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/semantics-operational.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/session-counter-tracking.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/settings-hub.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/signal-analysis-tools.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-automation-features.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-consistency.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-decomposition.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-diagnostics-tui.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-ft-recipe.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-legacy-merge.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-net-residual.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-pf-layer.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-result-schema.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-session-persistence.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-tc-coverage.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-triage-display.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-tui-features.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solver-doc-layers.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solver-portability.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/spec-audit.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/spec-quality-guardrails.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/state-space-analysis.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/subagent-orchestration.als",
         "description": "",
         "grounding_status": "ungrounded"
       },
@@ -46,9 +602,94 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
+        "path": ".planning/formal/alloy/terminal-emulation-purity.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/token-optimization.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/trace-coverage-matrix.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/trace-event-normalization.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/traceability-annotations.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/traceability-obligations.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/traceability.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/alloy/transcript-scan.als",
         "description": "",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/unified-check-results.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/uppaal-model-reqs.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/user-guide.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ux-feedback-safety.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/ux-interaction-safety.als",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/verification-execution.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/verification-integration.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/vhs-ci-hardening.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/wiring-awareness.als",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/prism/deliberation-healing.pm",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
       },
       {
         "path": ".planning/formal/prism/mcp-availability.pm",
@@ -57,12 +698,17 @@
       },
       {
         "path": ".planning/formal/prism/oauth-rotation.pm",
+        "description": "OAuth rotation success probability — DTMC model for credential rotation within max_retries",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/prism/observability-delivery.pm",
         "description": "",
         "grounding_status": "ungrounded"
       },
       {
         "path": ".planning/formal/prism/quorum.pm",
-        "description": "Quorum convergence DTMC model — state transition probabilities",
+        "description": "",
         "grounding_status": "has_semantic_declarations"
       },
       {
@@ -76,9 +722,19 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
+        "path": ".planning/formal/tla/NFConfigLoader.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/tla/NFConvergence.tla",
         "description": "",
         "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFDebtLedger.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
       },
       {
         "path": ".planning/formal/tla/NFDeliberation.tla",
@@ -86,7 +742,27 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
-        "path": ".planning/formal/tla/QGSDMCPEnv.tla",
+        "path": ".planning/formal/tla/NFDispatch.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFImprovement.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFLearning.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFMemoryPersist.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFOrchestration.tla",
         "description": "",
         "grounding_status": "ungrounded"
       },
@@ -96,9 +772,139 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
+        "path": ".planning/formal/tla/NFPolicy.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
         "path": ".planning/formal/tla/NFPreFilter.tla",
         "description": "",
         "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFQuorum.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFQuorum_xstate.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFReasoning.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFRecruiting.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveConvergence.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveOrchestrator.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveP2F.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFStopHook.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/NFTokenOpt.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFVerification.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDActivityTracking.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDAgentLoop.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDAgentProvisioning.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDBreakerState.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDCIChecks.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDCheckpointGate.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDConfigPortability.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDDashboard.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDDeliberationRevision.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDDispatchPipeline.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDEnforcement.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDInstallerIdempotency.tla",
+        "description": "",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDKeyManagement.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDMCPEnv.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDPromptHook.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
       },
       {
         "path": ".planning/formal/tla/QGSDQuorum.tla",
@@ -111,19 +917,34 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
-        "path": ".planning/formal/tla/NFRecruiting.tla",
+        "path": ".planning/formal/tla/QGSDSensitivity.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDSessionPersistence.tla",
         "description": "",
         "grounding_status": "has_semantic_declarations"
       },
       {
-        "path": ".planning/formal/tla/NFSolveConvergence.tla",
-        "description": "Outer nf:solve loop convergence under Option C — cross-session state, oscillation blocking, gate maturity",
-        "grounding_status": "has_semantic_declarations"
+        "path": ".planning/formal/tla/QGSDSetupWizard.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/NFStopHook.tla",
-        "description": "SPEC-01: Stop hook decision logic — HasPlanningCommand ∧ ¬HasQuorumEvidence ⟹ BLOCK",
-        "grounding_status": "has_semantic_declarations"
+        "path": ".planning/formal/tla/QGSDSpecGeneration.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDTUIModules.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/QGSDTUISessions.tla",
+        "description": "",
+        "grounding_status": "ungrounded"
       },
       {
         "path": ".planning/formal/tla/TUINavigation.tla",
@@ -131,822 +952,37 @@
         "grounding_status": "has_semantic_declarations"
       },
       {
-        "path": ".planning/formal/tla/QGSDActivityTracking.tla",
-        "description": "Activity tracking lifecycle — current-activity.json state machine",
+        "path": ".planning/formal/alloy/statusline-context-tiers.als",
+        "description": "Context window tier detection and threshold scaling for statusline hook",
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/QGSDSetupWizard.tla",
-        "description": "Setup wizard screen flow — start through confirm to done",
+        "path": ".planning/formal/alloy/formalism-selection.als",
+        "description": "Formalism selection heuristics for close-formal-gaps workflow",
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/QGSDPromptHook.tla",
-        "description": "UserPromptSubmit hook — quorum injection for planning commands",
+        "path": ".planning/formal/alloy/model-registry-parity.als",
+        "description": "Model registry and complexity profiler feature parity across 5 formalisms",
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/tla/QGSDDispatchPipeline.tla",
-        "description": "Quorum dispatch pipeline — probe/filter/sort/build/parse narrowing",
+        "path": ".planning/formal/alloy/v8-coverage-digest.als",
+        "description": "V8 coverage digest structural invariants: disjointness, compression, URL filtering, positive line numbers",
         "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDEnforcement.tla",
-        "description": "PreToolUse enforcement — block/allow decision logic",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDInstallerIdempotency.tla",
-        "description": "Installer idempotency — hooks, breaker, config preservation",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDBreakerState.tla",
-        "description": "Circuit breaker state file lifecycle",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDKeyManagement.tla",
-        "description": "API key management lifecycle — keytar storage, env block write, restart",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDAgentProvisioning.tla",
-        "description": "Agent provisioning — add/remove/clone/change provider with verification",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDConfigPortability.tla",
-        "description": "Config export/import with backup and key redaction",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/config-two-layer.als",
-        "description": "Two-layer config merge — global + project override with fallback",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/mcp-detection.als",
-        "description": "MCP server auto-detection and prefix matching",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/schema-extensions.als",
-        "description": "Schema extensions — registry requirements, check-result IDs, bidirectional links",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/unified-check-results.als",
-        "description": "Unified check results — NDJSON pipeline, triage, CI enforcement",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/multi-slot-structure.als",
-        "description": "Multi-slot agent structure — families, naming, wizard support",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/quorum-policy.als",
-        "description": "Quorum policy — timeout, update policy, active composition from config",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/architecture-registry.als",
-        "description": "Architecture registry — promotion, debug acceptance, meta-decisioning",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/traceability-annotations.als",
-        "description": "Traceability matrix and @requirement annotation system",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/observability-delivery.pm",
-        "description": "Observability — delivery rate, flakiness scoring, per-slot unavailability",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/deliberation-healing.pm",
-        "description": "Deliberation healing — convergence probability, early escalation",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDDashboard.tla",
-        "description": "Dashboard state machine — open/refresh/exit with stdin restoration",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDCIChecks.tla",
-        "description": "CI verification checks pipeline — drift, redaction, liveness-fairness-lint",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDSensitivity.tla",
-        "description": "Sensitivity sweep pipeline — parameter variation, context injection, report generation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDSpecGeneration.tla",
-        "description": "Formal spec generation — PLAN.md truth translation and debug invariant mining",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/state-space-analysis.als",
-        "description": "State-space analysis — risk classification, unbounded detection, split preservation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/evidence-triage.als",
-        "description": "Evidence confidence and triage bundle structure",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/uppaal-model-reqs.als",
-        "description": "UPPAAL timed automaton — empirical timing, runner integration, measurement points",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/signal-analysis-tools.als",
-        "description": "Signal analysis tools — coverage gaps, Petri net, PRISM priority, consensus gate",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/gsd-sync-invariants.als",
-        "description": "GSD/QGSD sync — package wrapping, command tracking, source isolation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/health-validation.als",
-        "description": "Health validation — W005/W007/W002 false positive elimination, W008 failure surfacing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/verification-integration.als",
-        "description": "Verification integration — verifier agent, VERIFICATION.md template structure",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/provider-failure.als",
-        "description": "Provider failure handling — DOWN→skip all slots, policy.yaml→PRISM wiring",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/codebase-arch-constraints.als",
-        "description": "Codebase architecture — no LLM SDKs, no hardcoded paths, unscoped gemini package",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-consistency.als",
-        "description": "Models the consistency solver's layer transition sweep structure",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/config-zero-providers.als",
-        "description": "Models graceful degradation when providers.json has zero providers",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/decomp-cross-model.als",
-        "description": "Models cross-model decomposition analysis for state-space reduction",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/formal-test-trace.als",
-        "description": "Models the formal-test-sync cross-referencing structure",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ci-pipeline-gates.als",
-        "description": "CI/CD pipeline gate structure: tests, lint, typecheck must pass before merge",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/polyrepo-config.als",
-        "description": "Polyrepo configuration structure: global registry + per-repo markers",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDAgentLoop.tla",
-        "description": "Autonomous looping behavior required of QGSD subagents",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/security-scanning.als",
-        "description": "Security scanning pipeline: pre-commit Gitleaks, CI TruffleHog, input validation, dependency audit",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/reliability-patterns.als",
-        "description": "Reliability patterns: external service failure handling, progress indicators",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ux-feedback-safety.als",
-        "description": "UX safety: immediate feedback, destructive action confirmation, human-readable errors",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/platform-install-compat.als",
-        "description": "Platform compatibility: macOS, Ubuntu, Windows install/operate without platform-specific failures",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/cli-exit-conventions.als",
-        "description": "CLI tools exit code conventions: 0=success, non-zero=failure, stderr for errors",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solver-doc-layers.als",
-        "description": "Solver R->D and D->C layer gap detection scoped to docs/dev/",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/bin-path-resolution.als",
-        "description": "Bin scripts resolve ROOT from process.cwd() not __dirname",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/baseline-merge-idempotent.als",
-        "description": "Baseline requirements merge is idempotent",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/baseline-requirements-filter.als",
-        "description": "Baseline requirements filtered by project profile",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDTUIModules.tla",
-        "description": "TUI module navigation with 3-module structure and shortcut keys",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDTUISessions.tla",
-        "description": "TUI Sessions module lifecycle: create, connect, terminate PTY-backed sessions",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/terminal-emulation-purity.als",
-        "description": "Pure-JS terminal emulation: no native addons, @xterm/headless + child_process.spawn",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDDeliberationRevision.tla",
-        "description": "Deliberation position revision: all voters review peers and revise before each round",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/settings-hub.als",
-        "description": "Settings hub: state-aware dashboard with categorized menu and smart routing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ci-test-fallback.als",
-        "description": "CI test fallback: find enumeration, per-file/global timeout, timeout-as-pass logic",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/dispatch-formal-context.als",
-        "description": "Quorum dispatch prompt injection of matched formal requirements by keyword/artifact",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/observability-analysis.als",
-        "description": "Observability: local state scanning, assumption analysis CLI, tier classification",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solver-portability.als",
-        "description": "Solver cross-project portability and reverse traceability sweeps (C→R, T→R, D→R)",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFQuorum.tla",
-        "description": "Quorum workflow TLA+ model — state machine with unanimity and deliberation guards",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-automation-features.als",
-        "description": "Solve diagnostic engine automation: fast mode, FP suppression, Category B auto-ack, recipe sidecars",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-legacy-merge.als",
-        "description": "Legacy .formal/ directory migration and merge behavior",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-ft-recipe.als",
-        "description": "F->T recipe sidecar pre-resolved context",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/headless-execution.als",
-        "description": "Headless execution constraint for JVM-based formal runners",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/jvm-heap-sequential.als",
-        "description": "JVM heap cap flags and sequential execution constraints",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/traceability-obligations.als",
-        "description": "Traceability annotation obligations for debt, FV tooling, conformance subsystems",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/project-identity.als",
-        "description": "Project naming and skill prefix constraints",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/doc-claims-backing.als",
-        "description": "README capability claims must be backed by requirements",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-tc-coverage.als",
-        "description": "T->C false-green detection via cross-referenced coverage",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/observability-handlers.als",
-        "description": "Observability handler contract: return schema, canonical utility module, upstream comparison, error containment",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/evidence-scope-scan.als",
-        "description": "Git heatmap evidence production and formal scope scan metadata matching",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/code-quality-guardrails.als",
-        "description": "Hook system code-quality guardrails: post-edit format, console.log guard, modular rules",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDPlanningState.tla",
-        "description": "Execute-plan Route C audit chaining and phase-complete ROADMAP.md heading fallback",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDSessionPersistence.tla",
-        "description": "TUI session persistence across restarts with ID counter restoration",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/observability-handler-arch.als",
-        "description": "Observability handler architecture: script inventory, DI contracts, cursor persistence",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/gate-a-scoping.als",
-        "description": "Models --base-ref scoping behavior of gate-a-grounding.cjs",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/spec-quality-guardrails.als",
-        "description": "Models formal spec quality guardrails: no tautologies, bounded domains, per-sig scopes",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/trace-event-normalization.als",
-        "description": "Models mapToXStateEvent normalization with action||type fallback and non-FSM action handling",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/mcp-availability.props",
-        "description": "Auto-registered from @requirement annotations",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/oauth-rotation.props",
-        "description": "Auto-registered from @requirement annotations",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/quorum.props",
-        "description": "Auto-registered from @requirement annotations",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/prism/observability-delivery.props",
-        "description": "Auto-registered from @requirement annotations",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/prism/deliberation-healing.props",
-        "description": "Auto-registered from @requirement annotations",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/config-audit.als",
-        "description": "Config audit cross-referencing: auth_type anti-pattern detection",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-result-schema.als",
-        "description": "Solver result classification schema and stub upgrade behavior",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/proximity-index.als",
-        "description": "Formal proximity index bidirectional adjacency graph",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/wiring-awareness.als",
-        "description": "Planner wiring-awareness and verifier orphan-check invariants",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/QGSDCheckpointGate.tla",
-        "description": "Checkpoint:human-verify 100% APPROVE consensus gate",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/doc-presentation.als",
-        "description": "Documentation presentation: README formal verification section and TUI asset generation pipeline",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/git-history-evidence.als",
-        "description": "Git history evidence commit classification and drift candidate detection",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/health-diagnostic-routing.als",
-        "description": "Observe handler diagnostic code routing with severity mapping",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/hook-portability-guard.als",
-        "description": "Destructive git guard hook and cross-project portability constraint",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/prism-delegation.als",
-        "description": "PRISM model-checking delegation via run-prism.cjs subprocess spawn",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/requirements-aggregation.als",
-        "description": "Solver-discovered code module: unified MCP server",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-decomposition.als",
-        "description": "Solver sub-skill decomposition and model complexity profiling",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-tui-features.als",
-        "description": "Solve TUI interactive terminal interface and category-aware action menus",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/hook-module-existence.als",
-        "description": "Structural existence of solver-discovered hook and config modules",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/autoclose-signals.als",
-        "description": "AutoClose remediation signal production constraint — no direct gate_maturity writes",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/session-counter-tracking.als",
-        "description": "Session persistence TLA+ model uses counter-based state tracking for practical TLC bounds",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/debate-trace-persistence.als",
-        "description": "Quorum debate trace persistence with fail-open I/O and required frontmatter fields",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/gate-promotion-lifecycle.als",
-        "description": "Gate promotion pipeline with evidence readiness scoring, fail-open semantics, bypass, auto-demotion with hysteresis, and churn density ranking",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/gate-scoring-traces.als",
-        "description": "Gate scoring pipeline (continuous 0-1 scores) and reverse trace sweeping (Requirements: header parsing)",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/installer-path-validation.als",
-        "description": "Installer scans hook files for path.join(__dirname,...) patterns and warns on missing targets",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-diagnostics-tui.als",
-        "description": "Solver cross-layer residual vectors with health indicators and TUI solve dashboard with breaker controls",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/readme-structure.als",
-        "description": "README structural constraints — section ordering, visibility, and content requirements",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/changelog-release.als",
-        "description": "Changelog and release lifecycle — version bumps, archive, npm publish",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/rename-migration.als",
-        "description": "Directory rename migration — git mv, installer update, runtime identity preservation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/governance-dx.als",
-        "description": "Governance and DX — config adapters, ADR templates, learning hooks, rule sharding, validation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/debt-lifecycle.als",
-        "description": "Debt ledger lifecycle — dedup, state machine, retention, formal refs",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-pf-layer.als",
-        "description": "Solve P->F integration — production vs formal parameter comparison",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/reasoning-fmea.als",
-        "description": "Reasoning layer — FMEA hazard model, failure modes, risk heatmap, test recipes",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/quality-hardening.als",
-        "description": "Quality hardening — breaker persistence, restricted access, latency budgets, hook priority",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/fingerprinting-dedup.als",
-        "description": "Fingerprinting — hierarchical strategy, cross-source dedup, merge preservation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/memory-persistence.als",
-        "description": "Memory persistence — decisions, reminders, errors, quorum verdicts across sessions",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/semantics-operational.als",
-        "description": "Semantics — invariant catalog, mismatch register, assumption register, FSM derivation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/token-optimization.als",
-        "description": "Token optimization — auto-compaction, thinking budgets, dashboard, complexity routing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/quorum-improvements.als",
-        "description": "Quorum dispatch improvements — parallel tasks, worker hardening, validation",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/build-test-quality.als",
-        "description": "Build and test quality — hooks/dist rebuild, npm test, MCP server porting",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/subagent-orchestration.als",
-        "description": "Subagent orchestration — context retrieval, phase accumulation, retrieval agents",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/verification-execution.als",
-        "description": "Verification and execution state — progress tracking, continuous verification, done conditions",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/user-guide.als",
-        "description": "User guide structure — TUI screenshots, getting started walkthrough",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/parallel-execution.als",
-        "description": "Parallel execution — worktree isolation, merge orchestration",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/integration-layers.als",
-        "description": "Integration layers — layer manifest, gate sweeps, alignment dashboard, model registry extensions",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/spec-audit.als",
-        "description": "Formal spec audit — oscillation TLA+ vs circuit-breaker drift check",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/event-vocabulary.als",
-        "description": "Evidence layer event vocabulary — canonical event names preventing schema drift",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/vhs-ci-hardening.als",
-        "description": "VHS tape CI reliability — shell hardening",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/diagnostics-verification.als",
-        "description": "Diagnostics — conformance divergence, attribution, pivot decision surfacing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ci-quality-gates.als",
-        "description": "CI quality gates: linting/formatting and type checking block merge on violations",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/security-hardening.als",
-        "description": "Security hardening: pre-commit secret scanning, CI deep scanning, input validation, dependency vulnerability scanning",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/reliability-hardening.als",
-        "description": "Reliability hardening: graceful degradation for external failures, progress indication with cancellation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ux-interaction-safety.als",
-        "description": "UX interaction safety: immediate feedback, destructive action confirmation/undo, actionable error messages",
-        "grounding_status": "has_semantic_declarations"
-      },
-      {
-        "path": ".planning/formal/alloy/focus-topic-filter.als",
-        "description": "Focus topic filter — tokenization, weighted multi-field scoring, requirement filtering for --focus flag",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFDebtLedger.tla",
-        "description": "Debt ledger state machine — lifecycle, dedup, retention",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFConfigLoader.tla",
-        "description": "Configuration loading — global/project merge, fail-open, validation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFSolveP2F.tla",
-        "description": "P->F solve residual layer — observation freeze, debt remediation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFTokenOpt.tla",
-        "description": "Token optimization — compaction, budget scaling, routing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFLearning.tla",
-        "description": "Learning pipeline — error extraction, correction capture, skill extraction",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFMemoryPersist.tla",
-        "description": "Memory persistence — decisions, reminders, error patterns, quorum memory",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFReasoning.tla",
-        "description": "Reasoning layer — FMEA hazard model, failure modes, risk heatmap, test recipes",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFImprovement.tla",
-        "description": "Improvement pipeline — review, dispatch update, hardening, validation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFOrchestration.tla",
-        "description": "Subagent orchestration — context retrieval, accumulation, specialized agents",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFPolicy.tla",
-        "description": "Policy configuration — timeout, update policy, auto-update check",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFVerification.tla",
-        "description": "Verification & execution state — progress tracking, continuous verify, machine-verifiable",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/fingerprinting.als",
-        "description": "Issue fingerprinting — hierarchical strategy, drift detection, cross-source dedup",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/gate-architecture.als",
-        "description": "Gate architecture — grounding score, validation mapping, progressive maturity",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/semantics-layer.als",
-        "description": "Semantics layer — invariant catalog, mismatch register, assumption register, FSM derivation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/evidence-layer.als",
-        "description": "Evidence layer — trace corpus, failure taxonomy, event vocabulary",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/diagnostics.als",
-        "description": "Diagnostics — divergence rate, attribution, pivot decision",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/traceability.als",
-        "description": "Traceability matrix generation and verify integration",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/parallel-exec.als",
-        "description": "Parallel execution — worktree isolation, merge orchestration",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/provider-wizard.als",
-        "description": "Provider wizard — curated list, config update, presets, cloning",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/multi-slot.als",
-        "description": "Multi-slot support — multiple claude slots, adding new slots",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/meta-resolve.als",
-        "description": "Meta resolution — auto-resolve planning commands, assumption presentation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/misc-behavioral.als",
-        "description": "Miscellaneous behavioral requirements — adapter, agent wizard, debug invariants, etc.",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-triage-display.als",
-        "description": "Solve report triage breakdown display and stale archive resurfacing",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/solve-net-residual.als",
-        "description": "Net residual computation for human-gated layers (subtracts FP + archived from raw)",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/mcp-repair-lifecycle.als",
-        "description": "MCP repair lifecycle — diagnose/classify/repair/guide/verify invariants for quorum slot connectivity",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/agent-context-payload.als",
-        "description": "Agent context payload safety: 128KB size guardrail and automated size monitoring for LLM-facing scripts",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/tla/NFDispatch.tla",
-        "description": "Quorum dispatch integrity: prompt fidelity and slot deduplication",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/proximity-pipeline.als",
-        "description": "Proximity graph orchestration pipeline structure and evaluation",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/ci-matrix.als",
-        "description": "CI/CD workflow configuration: branch triggers, Node matrix, npm integrity",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/installer-sync.als",
-        "description": "Installer auto-sync of provider slots from providers.json to claude.json",
-        "grounding_status": "has_semantic_declarations"
       }
     ]
   },
   "gate_relationships": {
     "A": {
       "from": "L1",
-      "to": "L2",
-      "description": "Evidence grounds semantic declarations"
+      "to": "L3",
+      "description": "Evidence grounds reasoning models (L2 collapsed)"
     },
     "B": {
-      "from": "L2",
-      "to": "L3",
-      "description": "Semantic declarations trace to reasoning models"
+      "from": "L3",
+      "to": "purpose",
+      "description": "Reasoning models have requirement backing"
     },
     "C": {
       "from": "L3",
@@ -954,14 +990,20 @@
       "description": "Reasoning models prove traceability completeness"
     }
   },
+  "collapsed_layers": {
+    "L2": {
+      "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
+      "collapsed_at": "2026-03-15T20:27:35.642Z"
+    }
+  },
   "summary": {
-    "total_models": 186,
-    "L1_count": 0,
+    "total_models": 193,
+    "L1_count": 3,
     "L2_count": 0,
-    "L3_count": 186,
+    "L3_count": 190,
     "maturity_distribution": {
-      "0": 153,
-      "1": 33
+      "0": 159,
+      "1": 34
     },
     "spec_modules_with_invariants": 18
   }

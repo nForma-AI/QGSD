@@ -1,10 +1,10 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-15T09:02:15.912Z",
-  "wiring_purpose_score": 0.984375,
-  "total_entries": 192,
+  "generated": "2026-03-15T20:38:31.254Z",
+  "wiring_purpose_score": 0.9792746113989638,
+  "total_entries": 193,
   "grounded_entries": 189,
-  "orphaned_entries": 3,
+  "orphaned_entries": 4,
   "target": 1,
   "target_met": false
 }

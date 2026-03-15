@@ -3636,6 +3636,113 @@
       "line": 776,
       "archived_at": "2026-03-13T19:21:59.095Z",
       "auto_classified": "fp"
+    },
+    {
+      "key": "bin/run-petri.cjs",
+      "type": "ctor",
+      "summary": "bin/run-petri.cjs",
+      "file": "bin/run-petri.cjs",
+      "archived_at": "2026-03-14T20:17:46.422Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/fsm-to-tla.test.cjs",
+      "type": "ttor",
+      "summary": "bin/fsm-to-tla.test.cjs",
+      "file": "bin/fsm-to-tla.test.cjs",
+      "archived_at": "2026-03-14T20:17:46.422Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/run-petri.test.cjs",
+      "type": "ttor",
+      "summary": "bin/run-petri.test.cjs",
+      "file": "bin/run-petri.test.cjs",
+      "archived_at": "2026-03-14T20:17:46.422Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/baseline-drift.cjs",
+      "type": "ctor",
+      "summary": "bin/baseline-drift.cjs",
+      "file": "bin/baseline-drift.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/gate-score-utils.cjs",
+      "type": "ctor",
+      "summary": "bin/gate-score-utils.cjs",
+      "file": "bin/gate-score-utils.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/layer-constants.cjs",
+      "type": "ctor",
+      "summary": "bin/layer-constants.cjs",
+      "file": "bin/layer-constants.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/solve-cycle-detector.cjs",
+      "type": "ctor",
+      "summary": "bin/solve-cycle-detector.cjs",
+      "file": "bin/solve-cycle-detector.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/solve-wave-dag.cjs",
+      "type": "ctor",
+      "summary": "bin/solve-wave-dag.cjs",
+      "file": "bin/solve-wave-dag.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/gate-score-utils.test.cjs",
+      "type": "ttor",
+      "summary": "bin/gate-score-utils.test.cjs",
+      "file": "bin/gate-score-utils.test.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/layer-constants.test.cjs",
+      "type": "ttor",
+      "summary": "bin/layer-constants.test.cjs",
+      "file": "bin/layer-constants.test.cjs",
+      "archived_at": "2026-03-15T08:04:03.904Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:667",
+      "type": "dtor",
+      "summary": "When something breaks — tests fail, planning state drifts, requirements go stale — the `/nf:solve` pipeline handles it e",
+      "doc_file": "README.md",
+      "line": 667,
+      "archived_at": "2026-03-15T15:41:40.441Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:819",
+      "type": "dtor",
+      "summary": "<summary><strong>Quick Mode</strong> — Ad-hoc tasks with nForma guarantees</summary>",
+      "doc_file": "README.md",
+      "line": 819,
+      "archived_at": "2026-03-15T15:41:40.441Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "README.md:928",
+      "type": "dtor",
+      "summary": "| `/nf:quick [--full]` | Ad-hoc task with nForma guarantees (`--full` adds plan-checking and verification) |",
+      "doc_file": "README.md",
+      "line": 928,
+      "archived_at": "2026-03-15T15:41:40.441Z",
+      "auto_classified": "fp"
     }
   ]
 }

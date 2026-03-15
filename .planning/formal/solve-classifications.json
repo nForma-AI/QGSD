@@ -1,34 +1,8 @@
 {
-  "updated_at": "2026-03-13T19:21:59.093Z",
+  "updated_at": "2026-03-15T15:41:40.439Z",
   "classifications": {
     "dtoc": {
-      "docs/triage-sources.example.md:sentry-feedback": "fp",
-      "docs/triage-sources.example.md:sentry-cli": "fp",
-      "README.md:.planning/quick/001-add-dark-mode-toggle/PLAN.md": "fp",
-      "README.md:valid-skip": "fp",
-      "README.md:real-bug": "fp",
-      "README.md:.planning/token-usage.jsonl": "fp",
-      "docs/dev/requirements-coverage.md:.claude/qgsd.json": "fp",
-      "docs/dev/requirements-coverage.md:.formal/sensitivity-report.ndjson": "fp",
-      "docs/dev/requirements-coverage.md:.formal/sensitivity-report.md": "genuine",
-      "docs/dev/requirements-coverage.md:.formal/traceability-matrix.json": "genuine",
-      "docs/dev/requirements-coverage.md:.formal/uppaal/quorum-races.xml": "fp",
-      "docs/dev/requirements-coverage.md:bin/gsd-tools.cjs": "fp",
-      "docs/dev/requirements-coverage.md:.formal/coverage-gaps.md": "genuine",
-      "docs/dev/requirements-coverage.md:.formal/diff-report.md": "genuine",
-      "docs/dev/requirements-coverage.md:.formal/suspects.md": "genuine",
-      "docs/dev/requirements-coverage.md:.planning/current-activity.json": "fp",
-      "docs/dev/requirements-coverage.md:activity-clear": "fp",
-      "docs/dev/requirements-coverage.md:circuit-breaker": "fp",
-      "docs/dev/requirements-coverage.md:get-shit-done-quorum": "fp",
-      "docs/dev/requirements-coverage.md:.formal/model-registry.json": "genuine",
-      "docs/dev/requirements-coverage.md:.formal/policy.yaml": "fp",
-      "docs/dev/requirements-coverage.md:.planning/formal/sensitivity-report.md": "genuine",
-      "README.md:evidence/instrumentation-map.json": "fp",
-      "README.md:evidence/state-candidates.json": "fp",
-      "README.md:evidence/proposed-metrics.json": "fp",
-      "README.md:gates/per-model-gates.json": "fp",
-      "README.md:gates/gate-a-grounding.json": "fp"
+      "affcf4c8d293c17f": "genuine"
     },
     "ctor": {
       "bin/aggregate-requirements.cjs": "fp",
@@ -211,7 +185,13 @@
       "bin/benchmark-scoring.cjs": "fp",
       "bin/resolve-formal-tools.cjs": "fp",
       "hooks/nf-context-monitor.js": "review",
-      "hooks/nf-node-eval-guard.js": "review"
+      "hooks/nf-node-eval-guard.js": "review",
+      "bin/run-petri.cjs": "fp",
+      "bin/baseline-drift.cjs": "fp",
+      "bin/gate-score-utils.cjs": "fp",
+      "bin/layer-constants.cjs": "fp",
+      "bin/solve-cycle-detector.cjs": "fp",
+      "bin/solve-wave-dag.cjs": "fp"
     },
     "ttor": {
       "bin/accept-debug-invariant.test.cjs": "fp",
@@ -423,7 +403,19 @@
       "test/quorum-preflight-probe.test.cjs": "review",
       "test/resolve-cli-integration.test.cjs": "review",
       "test/shell-escape-01.test.cjs": "fp",
-      "test/tui-cli-agent-resolve.test.cjs": "review"
+      "test/tui-cli-agent-resolve.test.cjs": "review",
+      "bin/fsm-to-tla.test.cjs": "fp",
+      "bin/run-petri.test.cjs": "fp",
+      "bin/gate-score-utils.test.cjs": "fp",
+      "bin/layer-constants.test.cjs": "fp",
+      "test/baseline-drift.test.cjs": "review",
+      "test/classification-golden-set.test.cjs": "review",
+      "test/residual-buckets.test.cjs": "review",
+      "test/solve-cascade-effects.test.cjs": "review",
+      "test/solve-convergence-e2e.test.cjs": "review",
+      "test/solve-cycle-detector.test.cjs": "review",
+      "test/solve-focus-completeness.test.cjs": "review",
+      "test/solve-oscillation-exclusion.test.cjs": "review"
     },
     "dtor": {
       "README.md:68": "fp",
@@ -474,7 +466,28 @@
       "README.md:732": "genuine",
       "README.md:776": "fp",
       "README.md:820": "genuine",
-      "README.md:954": "genuine"
+      "README.md:954": "genuine",
+      "ed0c79780491f602": "genuine",
+      "5d7ff7cc8312db4f": "genuine",
+      "111b9ef63d874fb7": "genuine",
+      "7ab1ed566fb26e59": "fp",
+      "c2867b71d5a9ba54": "genuine",
+      "263362fa66cfa03f": "genuine",
+      "69a61fc1d5803594": "genuine",
+      "1e87ef8638400298": "fp",
+      "3a25d26471d2efe1": "genuine",
+      "af907e7e3d53d06f": "genuine",
+      "129fcdb3ca594ea0": "genuine",
+      "8a611fec452b664f": "fp",
+      "284d741d35164066": "genuine",
+      "a9608a0dee182f4a": "fp",
+      "b90a725c04197b98": "fp",
+      "1e4aafa33803d981": "fp",
+      "2e3c574a016a5455": "review",
+      "92f15d8f4ed92c6d": "fp",
+      "1d5ca16df1952000": "fp",
+      "e6eca5e6932d066a": "genuine",
+      "d88544c5f0f6dd5c": "fp"
     }
   }
 }

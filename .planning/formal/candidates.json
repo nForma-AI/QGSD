@@ -1,671 +1,180 @@
 {
   "metadata": {
-    "generated": "2026-03-12T11:37:33.889Z",
-    "proximity_index_hash": "7f5f3c43",
+    "generated": "2026-03-14T20:28:24.625Z",
+    "proximity_index_hash": "2922a074",
     "threshold": 0.6,
     "max_hops": 5,
-    "total_pairs_checked": 64473,
-    "candidates_found": 50,
+    "total_pairs_checked": 69696,
+    "candidates_found": 0,
     "candidates_filtered": 0,
-    "orphan_models_count": 4,
+    "orphan_models_count": 20,
     "orphan_requirements_count": 20,
-    "non_neighbor_top": 20,
-    "candidates_before_top": 101,
-    "top": 50,
-    "top_strategy": "diversity_round_robin",
-    "models_represented": 63
+    "non_neighbor_top": 20
   },
-  "candidates": [
-    {
-      "model": ".planning/formal/alloy/unified-check-results.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.634,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "unified-check-results.als covers UNIF-01/02/03/04, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/memory-persistence.als",
-      "requirement": "TOKN-01",
-      "proximity_score": 0.6296,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "memory-persistence.als covers MEMP-01-04, not TOKN-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/formal-test-trace.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6263,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "formal-test-trace.als covers TRACE-06, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/tla/NFDebtLedger.tla",
-      "requirement": "PF-03",
-      "proximity_score": 0.6239,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "NFDebtLedger.tla covers DEBT-01-06, not PF-03 (solve-layer requirement)",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-result-schema.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6235,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "solve-result-schema.als covers SOLVE-11/12, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/spec-quality-guardrails.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6235,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "spec-quality-guardrails.als covers SPEC-06, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/baseline-merge-idempotent.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6229,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "baseline-merge-idempotent.als covers INST-12, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/schema-extensions.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.622,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "schema-extensions.als covers SCHEMA-01-04, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/debt-lifecycle.als",
-      "requirement": "PF-03",
-      "proximity_score": 0.6217,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "debt-lifecycle.als covers DEBT-02-06, not PF-03",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/architecture-registry.als",
-      "requirement": "TRACE-01",
-      "proximity_score": 0.6216,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 1,
-      "reasoning": "architecture-registry.als does not cover TRACE-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/evidence-triage.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6211,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.85,
-      "reasoning": "evidence-triage.als models evidence structure, not UPPAAL execution",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/traceability-obligations.als",
-      "requirement": "DEBT-05",
-      "proximity_score": 0.6211,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "traceability-obligations.als lacks debt entry structures for DEBT-05",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/multi-slot-structure.als",
-      "requirement": "PROV-03",
-      "proximity_score": 0.6208,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "multi-slot-structure.als covers MULTI-01/02/03, not PROV-03",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/decomp-cross-model.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6203,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "decomp-cross-model.als covers DECOMP-05, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/jvm-heap-sequential.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.62,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "jvm-heap-sequential.als covers VERIFY-04, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/tla/NFSolveP2F.tla",
-      "requirement": "DEBT-05",
-      "proximity_score": 0.62,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "NFSolveP2F.tla covers PF-01-05, not DEBT-05",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/evidence-layer.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6197,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "evidence-layer.als covers EVID-02/03/05, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/token-optimization.als",
-      "requirement": "VERF-01",
-      "proximity_score": 0.6193,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "token-optimization.als covers TOKN-01-04, not VERF-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/multi-slot.als",
-      "requirement": "PRST-02",
-      "proximity_score": 0.619,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "multi-slot.als covers MULTI-01/03, not PRST-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/prism-delegation.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.619,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "prism-delegation.als covers FVTOOL-02, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/solver-portability.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.619,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "solver-portability.als covers SOLVE-05/06, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/ci-test-fallback.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6189,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "ci-test-fallback.als models CI test fallback, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/tla/NFReasoning.tla",
-      "requirement": "DEBT-05",
-      "proximity_score": 0.6188,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "NFReasoning.tla covers RSN-01-05, not DEBT-05",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/autoclose-signals.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.618,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "autoclose-signals.als covers GATE-02, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/provider-wizard.als",
-      "requirement": "MULTI-01",
-      "proximity_score": 0.6178,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.85,
-      "reasoning": "provider-wizard.als covers PROV/PRST, not MULTI-01 directly",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/quorum-improvements.als",
-      "requirement": "EXEC-01",
-      "proximity_score": 0.6178,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "quorum-improvements.als covers IMPR-02/03/04, not EXEC-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/requirements-aggregation.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6176,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "requirements-aggregation.als covers SOLVE-18, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/headless-execution.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6174,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "headless-execution.als covers VERIFY-03, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-pf-layer.als",
-      "requirement": "DEBT-03",
-      "proximity_score": 0.6174,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.9,
-      "reasoning": "solve-pf-layer.als covers PF-01-05, not DEBT-03 state machine",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/verification-integration.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6167,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "verification-integration.als covers VERIFY-01/02, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/spec-audit.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6164,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "spec-audit.als covers SPEC-02, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/config-audit.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6163,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.98,
-      "reasoning": "config-audit.als covers CONF-13, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/settings-hub.als",
-      "requirement": "SOLVE-05",
-      "proximity_score": 0.6163,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "maybe",
-      "confidence": 0.5,
-      "reasoning": "settings-hub.als has partial dashboard overlap with SOLVE-05 but targets WIZ-11",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-ft-recipe.als",
-      "requirement": "GATE-03",
-      "proximity_score": 0.6162,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "maybe",
-      "confidence": 0.45,
-      "reasoning": "solve-ft-recipe.als has partial formal-to-test overlap with GATE-03 but targets SOLVE-7",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/reasoning-fmea.als",
-      "requirement": "PF-01",
-      "proximity_score": 0.616,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "reasoning-fmea.als covers RSN-01-05, not PF-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/observability-analysis.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6159,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.98,
-      "reasoning": "observability-analysis.als covers OBS-06-08, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/event-vocabulary.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6158,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.96,
-      "reasoning": "event-vocabulary.als covers EVID-05, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/subagent-orchestration.als",
-      "requirement": "IMPR-02",
-      "proximity_score": 0.6156,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.94,
-      "reasoning": "subagent-orchestration.als covers ORCH-01-03, not IMPR-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/diagnostics.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6154,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.96,
-      "reasoning": "diagnostics.als covers DIAG-01-03, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/meta-resolve.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6154,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.95,
-      "reasoning": "meta-resolve.als covers META-01/03, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/parallel-exec.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6154,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.98,
-      "reasoning": "parallel-exec.als covers PARA-01/02, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-tc-coverage.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6154,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "solve-tc-coverage.als covers SOLVE-10, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/observability-handlers.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6152,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "observability-handlers.als covers OBS-09-12, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/parallel-execution.als",
-      "requirement": "BRKR-01",
-      "proximity_score": 0.6152,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.98,
-      "reasoning": "parallel-execution.als covers PARA-01/02, not BRKR-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/verification-execution.als",
-      "requirement": "TOKN-01",
-      "proximity_score": 0.615,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.97,
-      "reasoning": "verification-execution.als covers VERF-01-03, not TOKN-01",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/dispatch-formal-context.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6148,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "dispatch-formal-context.als covers DISP-06, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/doc-presentation.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6148,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "doc-presentation.als covers DOC-02/03, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/git-history-evidence.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6147,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "git-history-evidence.als covers EVID-04, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/tla/NFMemoryPersist.tla",
-      "requirement": "IMPR-02",
-      "proximity_score": 0.6145,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.97,
-      "reasoning": "NFMemoryPersist.tla covers MEMP-01-04, not IMPR-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    },
-    {
-      "model": ".planning/formal/alloy/state-space-analysis.als",
-      "requirement": "UPPAAL-02",
-      "proximity_score": 0.6143,
-      "source": "ensemble",
-      "scoring_method": "semantic+tfidf",
-      "verdict": "no",
-      "confidence": 0.99,
-      "reasoning": "state-space-analysis.als covers DECOMP-01-04, not UPPAAL-02",
-      "evaluation_timestamp": "2026-03-12T11:40:38.147Z"
-    }
-  ],
+  "candidates": [],
   "orphans": {
     "models": [
       {
-        "path": ".planning/formal/alloy/code-quality-guardrails.als",
-        "zeroPairCount": 159
+        "path": ".planning/formal/petri/account-manager-petri-net.dot",
+        "zeroPairCount": 292
       },
       {
-        "path": ".planning/formal/prism/quorum.pm",
-        "zeroPairCount": 129
+        "path": ".planning/formal/petri/quorum-petri-net.dot",
+        "zeroPairCount": 292
       },
       {
-        "path": ".planning/formal/alloy/quorum-votes.als",
-        "zeroPairCount": 123
+        "path": ".planning/formal/alloy/diagnostics.als",
+        "zeroPairCount": 286
       },
       {
-        "path": ".planning/formal/tla/NFQuorum.tla",
-        "zeroPairCount": 87
+        "path": ".planning/formal/alloy/gate-architecture.als",
+        "zeroPairCount": 282
+      },
+      {
+        "path": ".planning/formal/alloy/fingerprinting.als",
+        "zeroPairCount": 272
+      },
+      {
+        "path": ".planning/formal/alloy/semantics-layer.als",
+        "zeroPairCount": 266
+      },
+      {
+        "path": ".planning/formal/alloy/evidence-layer.als",
+        "zeroPairCount": 258
+      },
+      {
+        "path": ".planning/formal/tla/NFDebtLedger.tla",
+        "zeroPairCount": 249
+      },
+      {
+        "path": ".planning/formal/alloy/reliability-hardening.als",
+        "zeroPairCount": 246
+      },
+      {
+        "path": ".planning/formal/alloy/vhs-ci-hardening.als",
+        "zeroPairCount": 243
+      },
+      {
+        "path": ".planning/formal/alloy/integration-layers.als",
+        "zeroPairCount": 242
+      },
+      {
+        "path": ".planning/formal/alloy/traceability.als",
+        "zeroPairCount": 241
+      },
+      {
+        "path": ".planning/formal/alloy/parallel-exec.als",
+        "zeroPairCount": 239
+      },
+      {
+        "path": ".planning/formal/tla/NFTokenOpt.tla",
+        "zeroPairCount": 239
+      },
+      {
+        "path": ".planning/formal/alloy/meta-resolve.als",
+        "zeroPairCount": 238
+      },
+      {
+        "path": ".planning/formal/alloy/parallel-execution.als",
+        "zeroPairCount": 238
+      },
+      {
+        "path": ".planning/formal/tla/NFConfigLoader.tla",
+        "zeroPairCount": 238
+      },
+      {
+        "path": ".planning/formal/tla/NFPolicy.tla",
+        "zeroPairCount": 238
+      },
+      {
+        "path": ".planning/formal/tla/NFVerification.tla",
+        "zeroPairCount": 238
+      },
+      {
+        "path": ".planning/formal/tla/NFLearning.tla",
+        "zeroPairCount": 237
       }
     ],
     "requirements": [
       {
-        "id": "DIAG-06",
-        "zeroPairCount": 182
+        "id": "RLS-03",
+        "zeroPairCount": 184
       },
       {
-        "id": "DIAG-07",
-        "zeroPairCount": 182
+        "id": "REL-03",
+        "zeroPairCount": 177
       },
       {
-        "id": "DIAG-08",
-        "zeroPairCount": 182
+        "id": "RDME-01",
+        "zeroPairCount": 173
       },
       {
-        "id": "DIAG-09",
-        "zeroPairCount": 182
+        "id": "TOKN-03",
+        "zeroPairCount": 173
       },
       {
-        "id": "DISPATCH-01",
-        "zeroPairCount": 182
+        "id": "GUIDE-02",
+        "zeroPairCount": 168
       },
       {
-        "id": "DISPATCH-02",
-        "zeroPairCount": 182
+        "id": "RDME-10",
+        "zeroPairCount": 166
       },
       {
-        "id": "MULTI-04",
-        "zeroPairCount": 182
+        "id": "VIS-02",
+        "zeroPairCount": 166
+      },
+      {
+        "id": "PARA-01",
+        "zeroPairCount": 165
+      },
+      {
+        "id": "REN-01",
+        "zeroPairCount": 165
+      },
+      {
+        "id": "RDME-06",
+        "zeroPairCount": 164
       },
       {
         "id": "INST-11",
-        "zeroPairCount": 156
-      },
-      {
-        "id": "SOLVE-08",
-        "zeroPairCount": 149
-      },
-      {
-        "id": "INTG-04",
-        "zeroPairCount": 148
-      },
-      {
-        "id": "INTG-02",
-        "zeroPairCount": 142
-      },
-      {
-        "id": "SEC-08",
-        "zeroPairCount": 135
-      },
-      {
-        "id": "SEC-05",
-        "zeroPairCount": 133
-      },
-      {
-        "id": "CI-06",
-        "zeroPairCount": 112
-      },
-      {
-        "id": "DIAG-05",
-        "zeroPairCount": 111
-      },
-      {
-        "id": "SEC-06",
-        "zeroPairCount": 108
-      },
-      {
-        "id": "SEC-07",
-        "zeroPairCount": 107
+        "zeroPairCount": 163
       },
       {
         "id": "PROV-02",
-        "zeroPairCount": 106
+        "zeroPairCount": 163
+      },
+      {
+        "id": "RDME-07",
+        "zeroPairCount": 163
+      },
+      {
+        "id": "GATE-01",
+        "zeroPairCount": 163
+      },
+      {
+        "id": "GUIDE-01",
+        "zeroPairCount": 160
+      },
+      {
+        "id": "MEMP-03",
+        "zeroPairCount": 160
       },
       {
         "id": "PRST-01",
-        "zeroPairCount": 102
+        "zeroPairCount": 159
       },
       {
-        "id": "RLS-03",
-        "zeroPairCount": 95
+        "id": "RDME-08",
+        "zeroPairCount": 159
+      },
+      {
+        "id": "EVID-03",
+        "zeroPairCount": 157
+      },
+      {
+        "id": "META-03",
+        "zeroPairCount": 156
       }
     ]
   }

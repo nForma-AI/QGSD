@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T09:01:42.052Z",
+  "generated": "2026-03-15T20:28:11.673Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -36,7 +36,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -172,7 +172,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -217,7 +217,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -262,7 +262,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -307,7 +307,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -352,7 +352,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -397,7 +397,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -578,7 +578,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -623,7 +623,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 80,
+        "rpn": 160,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -668,7 +668,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 96,
+        "rpn": 192,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -714,7 +714,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 96,
+        "rpn": 192,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -759,7 +759,7 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 128,
+        "rpn": 256,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -805,7 +805,7 @@
       },
       "risk_context": {
         "severity_class": "critical",
-        "rpn": 128,
+        "rpn": 256,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -850,7 +850,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 16,
+        "rpn": 32,
         "risk_tier": "low"
       },
       "derived_from": [
@@ -895,7 +895,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 32,
+        "rpn": 64,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -940,7 +940,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 32,
+        "rpn": 64,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -4325,45 +4325,34 @@
     {
       "id": "TR-FM-AGT-01-OMISSION",
       "failure_mode_id": "FM-AGT-01-OMISSION",
-      "title": "Test Agent loop iteration cap exceeded or goal not reached",
+      "title": "Test omission of SPEC_PROPERTY --[DoIteration]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model QGSDAgentLoop.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property DoIteration holds in QGSDAgentLoop.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property NeverExceedsCap holds in QGSDAgentLoop.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property GoalImpliesSuccess holds in QGSDAgentLoop.tla"
+          "event": "DoIteration",
+          "description": "Send DoIteration event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property DoIteration holds without counterexample",
-          "Property NeverExceedsCap holds without counterexample",
-          "Property GoalImpliesSuccess holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for DoIteration, NeverExceedsCap, GoalImpliesSuccess",
-        "failure_indicates": "Omission: Agent loop iteration cap exceeded or goal not reached"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4376,45 +4365,34 @@
     {
       "id": "TR-FM-QUORUM-06-OMISSION",
       "failure_mode_id": "FM-QUORUM-06-OMISSION",
-      "title": "Test Checkpoint gate allows approval despite block vote or all-unavailable",
+      "title": "Test omission of SPEC_PROPERTY --[BlockVotePreventsApproval]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model QGSDCheckpointGate.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property BlockVotePreventsApproval holds in QGSDCheckpointGate.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property AllUnavailPreventsApproval holds in QGSDCheckpointGate.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property ApprovedRequiresUnanimity holds in QGSDCheckpointGate.tla"
+          "event": "BlockVotePreventsApproval",
+          "description": "Send BlockVotePreventsApproval event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property BlockVotePreventsApproval holds without counterexample",
-          "Property AllUnavailPreventsApproval holds without counterexample",
-          "Property ApprovedRequiresUnanimity holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity",
-        "failure_indicates": "Omission: Checkpoint gate allows approval despite block vote or all-unavailable"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4427,50 +4405,34 @@
     {
       "id": "TR-FM-NAV-01-OMISSION",
       "failure_mode_id": "FM-NAV-01-OMISSION",
-      "title": "Test TUI module switching fails via hotkey or tab navigation",
+      "title": "Test omission of SPEC_PROPERTY --[HotkeySwitch]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model QGSDTUIModules.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property HotkeySwitch holds in QGSDTUIModules.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property TabForward holds in QGSDTUIModules.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property TabBackward holds in QGSDTUIModules.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property ExactlyThreeModules holds in QGSDTUIModules.tla"
+          "event": "HotkeySwitch",
+          "description": "Send HotkeySwitch event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property HotkeySwitch holds without counterexample",
-          "Property TabForward holds without counterexample",
-          "Property TabBackward holds without counterexample",
-          "Property ExactlyThreeModules holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules",
-        "failure_indicates": "Omission: TUI module switching fails via hotkey or tab navigation"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4483,45 +4445,34 @@
     {
       "id": "TR-FM-NAV-02-OMISSION",
       "failure_mode_id": "FM-NAV-02-OMISSION",
-      "title": "Test Session create/connect/terminate lifecycle violation",
+      "title": "Test omission of SPEC_PROPERTY --[CreateSession]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model QGSDTUISessions.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property CreateSession holds in QGSDTUISessions.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property ConnectSession holds in QGSDTUISessions.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property TerminateSession holds in QGSDTUISessions.tla"
+          "event": "CreateSession",
+          "description": "Send CreateSession event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property CreateSession holds without counterexample",
-          "Property ConnectSession holds without counterexample",
-          "Property TerminateSession holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for CreateSession, ConnectSession, TerminateSession",
-        "failure_indicates": "Omission: Session create/connect/terminate lifecycle violation"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4534,45 +4485,34 @@
     {
       "id": "TR-FM-NAV-04-OMISSION",
       "failure_mode_id": "FM-NAV-04-OMISSION",
-      "title": "Test Session persistence save/restore integrity failure",
+      "title": "Test omission of SPEC_PROPERTY --[SaveSessions]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model QGSDSessionPersistence.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property SaveSessions holds in QGSDSessionPersistence.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property RestoreFromDisk holds in QGSDSessionPersistence.tla"
-        },
-        {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property PersistenceIntegrity holds in QGSDSessionPersistence.tla"
+          "event": "SaveSessions",
+          "description": "Send SaveSessions event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property SaveSessions holds without counterexample",
-          "Property RestoreFromDisk holds without counterexample",
-          "Property PersistenceIntegrity holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for SaveSessions, RestoreFromDisk, PersistenceIntegrity",
-        "failure_indicates": "Omission: Session persistence save/restore integrity failure"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4585,35 +4525,34 @@
     {
       "id": "TR-FM-TUI-01-OMISSION",
       "failure_mode_id": "FM-TUI-01-OMISSION",
-      "title": "Test TUI navigation type invariant violation",
+      "title": "Test omission of SPEC_PROPERTY --[TypeOK]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property TypeOK holds in TUINavigation.tla"
+          "event": "TypeOK",
+          "description": "Send TypeOK event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property TypeOK holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for TypeOK",
-        "failure_indicates": "Omission: TUI navigation type invariant violation"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4626,35 +4565,34 @@
     {
       "id": "TR-FM-TUI-02-OMISSION",
       "failure_mode_id": "FM-TUI-02-OMISSION",
-      "title": "Test TUI navigation deadlock — no available transitions",
+      "title": "Test omission of SPEC_PROPERTY --[NoDeadlock]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property NoDeadlock holds in TUINavigation.tla"
+          "event": "NoDeadlock",
+          "description": "Send NoDeadlock event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property NoDeadlock holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for NoDeadlock",
-        "failure_indicates": "Omission: TUI navigation deadlock — no available transitions"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4667,35 +4605,34 @@
     {
       "id": "TR-FM-TUI-03-OMISSION",
       "failure_mode_id": "FM-TUI-03-OMISSION",
-      "title": "Test TUI navigation depth exceeds bound",
+      "title": "Test omission of SPEC_PROPERTY --[DepthBounded]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property DepthBounded holds in TUINavigation.tla"
+          "event": "DepthBounded",
+          "description": "Send DepthBounded event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property DepthBounded holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for DepthBounded",
-        "failure_indicates": "Omission: TUI navigation depth exceeds bound"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4708,35 +4645,34 @@
     {
       "id": "TR-FM-TUI-04-OMISSION",
       "failure_mode_id": "FM-TUI-04-OMISSION",
-      "title": "Test Escape key does not make progress toward exit",
+      "title": "Test omission of SPEC_PROPERTY --[EscapeProgress]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property EscapeProgress holds in TUINavigation.tla"
+          "event": "EscapeProgress",
+          "description": "Send EscapeProgress event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property EscapeProgress holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for EscapeProgress",
-        "failure_indicates": "Omission: Escape key does not make progress toward exit"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4749,35 +4685,34 @@
     {
       "id": "TR-FM-TUI-05-OMISSION",
       "failure_mode_id": "FM-TUI-05-OMISSION",
-      "title": "Test TUI does not eventually exit",
+      "title": "Test omission of SPEC_PROPERTY --[EventuallyExits]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property EventuallyExits holds in TUINavigation.tla"
+          "event": "EventuallyExits",
+          "description": "Send EventuallyExits event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property EventuallyExits holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for EventuallyExits",
-        "failure_indicates": "Omission: TUI does not eventually exit"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4790,35 +4725,34 @@
     {
       "id": "TR-FM-TUI-06-OMISSION",
       "failure_mode_id": "FM-TUI-06-OMISSION",
-      "title": "Test Main menu not reachable from current state",
+      "title": "Test omission of SPEC_PROPERTY --[MainMenuReachable]--> VIOLATION",
       "setup": {
         "initial_state": "SPEC_PROPERTY",
         "preconditions": [
-          "Model TUINavigation.tla loaded",
-          "TLC model checker available"
+          "Machine is in SPEC_PROPERTY state"
         ]
       },
       "input_sequence": [
         {
-          "event": "CHECK_PROPERTY",
-          "description": "Verify property MainMenuReachable holds in TUINavigation.tla"
+          "event": "MainMenuReachable",
+          "description": "Send MainMenuReachable event to machine in SPEC_PROPERTY state"
         }
       ],
       "expected_outcome": {
-        "final_state": "VERIFIED",
+        "final_state": "VIOLATION",
         "assertions": [
-          "Property MainMenuReachable holds without counterexample"
+          "Machine transitions to VIOLATION"
         ]
       },
       "oracle": {
-        "type": "formal_verification",
-        "check": "TLC check passes for MainMenuReachable",
-        "failure_indicates": "Omission: Main menu not reachable from current state"
+        "type": "state_assertion",
+        "check": "machine.state === 'VIOLATION'",
+        "failure_indicates": "Omission: transition did not fire"
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 60,
-        "risk_tier": "medium"
+        "rpn": null,
+        "risk_tier": null
       },
       "derived_from": [
         {
@@ -4830,9 +4764,9 @@
     }
   ],
   "summary": {
-    "total_recipes": 112,
+    "total_recipes": 123,
     "by_failure_mode": {
-      "omission": 30,
+      "omission": 41,
       "corruption": 5,
       "commission": 11,
       "unknown": 66
@@ -4842,7 +4776,7 @@
       "critical": 15,
       "low": 1,
       "medium": 2,
-      "unclassified": 80
+      "unclassified": 91
     }
   }
 }

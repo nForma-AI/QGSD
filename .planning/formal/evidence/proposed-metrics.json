@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-14T09:37:31.081Z",
-  "total_proposed": 1320,
+  "generated": "2026-03-15T20:28:25.366Z",
+  "total_proposed": 1344,
   "implemented": 0,
   "partial": 0,
-  "outstanding": 1320,
+  "outstanding": 1344,
   "metrics": [
     {
       "metric_name": "nf_maxdeliberationrounds__tla",
@@ -8023,6 +8023,66 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_selectionheuristics",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als",
+      "assumption_name": "selectionHeuristics",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:selectionHeuristics",
+      "instrumentation_snippet": "// Observe handler for selectionHeuristics (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_selectionheuristics\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_selectionheuristics\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:selectionHeuristics\",\n    \"threshold\": null,\n    \"description\": \"Monitors selectionHeuristics from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_completetemplates",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als",
+      "assumption_name": "completeTemplates",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:completeTemplates",
+      "instrumentation_snippet": "// Observe handler for completeTemplates (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_completetemplates\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_completetemplates\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:completeTemplates\",\n    \"threshold\": null,\n    \"description\": \"Monitors completeTemplates from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_realtimeselectsuppaal",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als",
+      "assumption_name": "realTimeSelectsUPPAAL",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:realTimeSelectsUPPAAL",
+      "instrumentation_snippet": "// Observe handler for realTimeSelectsUPPAAL (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_realtimeselectsuppaal\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_realtimeselectsuppaal\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:realTimeSelectsUPPAAL\",\n    \"description\": \"Counts violations of realTimeSelectsUPPAAL\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_concurrentselectspetri",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als",
+      "assumption_name": "concurrentSelectsPetri",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:concurrentSelectsPetri",
+      "instrumentation_snippet": "// Observe handler for concurrentSelectsPetri (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_concurrentselectspetri\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_concurrentselectspetri\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:concurrentSelectsPetri\",\n    \"description\": \"Counts violations of concurrentSelectsPetri\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_allformalismshavetemplates",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als",
+      "assumption_name": "allFormalismsHaveTemplates",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:allFormalismsHaveTemplates",
+      "instrumentation_snippet": "// Observe handler for allFormalismsHaveTemplates (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_allformalismshavetemplates\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_allformalismshavetemplates\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/formalism-selection.als:allFormalismsHaveTemplates\",\n    \"description\": \"Counts violations of allFormalismsHaveTemplates\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_scopedsubsetischangedfiles",
       "metric_type": "gauge",
       "tier": 2,
@@ -9568,6 +9628,78 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/misc-behavioral.als:DetectedWrittenToConfig",
       "instrumentation_snippet": "// Observe handler for DetectedWrittenToConfig (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_detectedwrittentoconfig\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_detectedwrittentoconfig\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/misc-behavioral.als:DetectedWrittenToConfig\",\n    \"description\": \"Counts violations of DetectedWrittenToConfig\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_featureparity",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "featureParity",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:featureParity",
+      "instrumentation_snippet": "// Observe handler for featureParity (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_featureparity\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_featureparity\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:featureParity\",\n    \"threshold\": null,\n    \"description\": \"Monitors featureParity from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_registryscancompleteness",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "registryScanCompleteness",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:registryScanCompleteness",
+      "instrumentation_snippet": "// Observe handler for registryScanCompleteness (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_registryscancompleteness\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_registryscancompleteness\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:registryScanCompleteness\",\n    \"threshold\": null,\n    \"description\": \"Monitors registryScanCompleteness from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_registeredmodelsgetprofiling",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "registeredModelsGetProfiling",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:registeredModelsGetProfiling",
+      "instrumentation_snippet": "// Observe handler for registeredModelsGetProfiling (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_registeredmodelsgetprofiling\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_registeredmodelsgetprofiling\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:registeredModelsGetProfiling\",\n    \"threshold\": null,\n    \"description\": \"Monitors registeredModelsGetProfiling from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_identicalcapabilities",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "identicalCapabilities",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:identicalCapabilities",
+      "instrumentation_snippet": "// Observe handler for identicalCapabilities (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_identicalcapabilities\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_identicalcapabilities\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:identicalCapabilities\",\n    \"description\": \"Counts violations of identicalCapabilities\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_allformalismsrepresented__alloy",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "allFormalismsRepresented",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:allFormalismsRepresented",
+      "instrumentation_snippet": "// Observe handler for allFormalismsRepresented (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_allformalismsrepresented__alloy\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_allformalismsrepresented__alloy\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:allFormalismsRepresented\",\n    \"description\": \"Counts violations of allFormalismsRepresented\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_completeextensionmapping",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als",
+      "assumption_name": "completeExtensionMapping",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:completeExtensionMapping",
+      "instrumentation_snippet": "// Observe handler for completeExtensionMapping (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_completeextensionmapping\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_completeextensionmapping\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/model-registry-parity.als:completeExtensionMapping\",\n    \"description\": \"Counts violations of completeExtensionMapping\"\n  }\n}",
       "status": "proposed"
     },
     {
@@ -13723,6 +13855,66 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_detectionpriority",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als",
+      "assumption_name": "detectionPriority",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:detectionPriority",
+      "instrumentation_snippet": "// Observe handler for detectionPriority (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_detectionpriority\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_detectionpriority\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:detectionPriority\",\n    \"threshold\": null,\n    \"description\": \"Monitors detectionPriority from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_thresholdscaling",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als",
+      "assumption_name": "thresholdScaling",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:thresholdScaling",
+      "instrumentation_snippet": "// Observe handler for thresholdScaling (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_thresholdscaling\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_thresholdscaling\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:thresholdScaling\",\n    \"threshold\": null,\n    \"description\": \"Monitors thresholdScaling from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_proportionalscaling",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als",
+      "assumption_name": "proportionalScaling",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:proportionalScaling",
+      "instrumentation_snippet": "// Observe handler for proportionalScaling (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_proportionalscaling\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_proportionalscaling\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:proportionalScaling\",\n    \"description\": \"Counts violations of proportionalScaling\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_detectiondeterminism",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als",
+      "assumption_name": "detectionDeterminism",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:detectionDeterminism",
+      "instrumentation_snippet": "// Observe handler for detectionDeterminism (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_detectiondeterminism\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_detectiondeterminism\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:detectionDeterminism\",\n    \"description\": \"Counts violations of detectionDeterminism\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_explicitwins",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als",
+      "assumption_name": "explicitWins",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:explicitWins",
+      "instrumentation_snippet": "// Observe handler for explicitWins (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_explicitwins\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_explicitwins\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/statusline-context-tiers.als:explicitWins\",\n    \"description\": \"Counts violations of explicitWins\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_allsatisfiable__alloy",
       "metric_type": "gauge",
       "tier": 2,
@@ -14791,6 +14983,102 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_coverageclassification",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "coverageClassification",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:coverageClassification",
+      "instrumentation_snippet": "// Observe handler for coverageClassification (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_coverageclassification\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_coverageclassification\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:coverageClassification\",\n    \"threshold\": null,\n    \"description\": \"Monitors coverageClassification from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_digestboundedbyinput",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "digestBoundedByInput",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:digestBoundedByInput",
+      "instrumentation_snippet": "// Observe handler for digestBoundedByInput (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_digestboundedbyinput\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_digestboundedbyinput\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:digestBoundedByInput\",\n    \"threshold\": null,\n    \"description\": \"Monitors digestBoundedByInput from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_onlyfileurls",
+      "metric_type": "gauge",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "onlyFileURLs",
+      "assumption_type": "fact",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:onlyFileURLs",
+      "instrumentation_snippet": "// Observe handler for onlyFileURLs (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_onlyfileurls\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_onlyfileurls\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:onlyFileURLs\",\n    \"threshold\": null,\n    \"description\": \"Monitors onlyFileURLs from alloy model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_structuralcompleteness",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "structuralCompleteness",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:structuralCompleteness",
+      "instrumentation_snippet": "// Observe handler for structuralCompleteness (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_structuralcompleteness\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_structuralcompleteness\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:structuralCompleteness\",\n    \"description\": \"Counts violations of structuralCompleteness\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_covereduncovereddisjoint",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "coveredUncoveredDisjoint",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:coveredUncoveredDisjoint",
+      "instrumentation_snippet": "// Observe handler for coveredUncoveredDisjoint (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_covereduncovereddisjoint\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_covereduncovereddisjoint\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:coveredUncoveredDisjoint\",\n    \"description\": \"Counts violations of coveredUncoveredDisjoint\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_nointernalurls",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "noInternalURLs",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:noInternalURLs",
+      "instrumentation_snippet": "// Observe handler for noInternalURLs (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_nointernalurls\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_nointernalurls\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:noInternalURLs\",\n    \"description\": \"Counts violations of noInternalURLs\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_positivelinenumbers",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "positiveLineNumbers",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:positiveLineNumbers",
+      "instrumentation_snippet": "// Observe handler for positiveLineNumbers (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_positivelinenumbers\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_positivelinenumbers\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:positiveLineNumbers\",\n    \"description\": \"Counts violations of positiveLineNumbers\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_compressionreduction",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als",
+      "assumption_name": "compressionReduction",
+      "assumption_type": "assert",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:compressionReduction",
+      "instrumentation_snippet": "// Observe handler for compressionReduction (alloy/assert)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_compressionreduction\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_compressionreduction\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/v8-coverage-digest.als:compressionReduction\",\n    \"description\": \"Counts violations of compressionReduction\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_allsatisfiable__alloy",
       "metric_type": "gauge",
       "tier": 2,
@@ -14851,7 +15139,7 @@
       "status": "proposed"
     },
     {
-      "metric_name": "nf_allformalismsrepresented",
+      "metric_name": "nf_allformalismsrepresented__alloy",
       "metric_type": "gauge",
       "tier": 2,
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/verification-integration.als",
@@ -14859,7 +15147,7 @@
       "assumption_type": "fact",
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/verification-integration.als:AllFormalismsRepresented",
-      "instrumentation_snippet": "// Observe handler for AllFormalismsRepresented (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_allformalismsrepresented\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_allformalismsrepresented\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/verification-integration.als:AllFormalismsRepresented\",\n    \"threshold\": null,\n    \"description\": \"Monitors AllFormalismsRepresented from alloy model\"\n  }\n}",
+      "instrumentation_snippet": "// Observe handler for AllFormalismsRepresented (alloy/fact)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_allformalismsrepresented__alloy\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_allformalismsrepresented__alloy\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/verification-integration.als:AllFormalismsRepresented\",\n    \"threshold\": null,\n    \"description\": \"Monitors AllFormalismsRepresented from alloy model\"\n  }\n}",
       "status": "proposed"
     },
     {

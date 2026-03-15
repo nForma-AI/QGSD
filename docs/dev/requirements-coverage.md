@@ -97,9 +97,9 @@
 
 **Status:** Complete
 
-### CONF-02: Per-project override at `.claude/qgsd.json` — merged with global, project values
+### CONF-02: Per-project override at `.claude/nf.json` — merged with global, project values
 
-**Requirement:** Per-project override at `.claude/qgsd.json` — merged with global, project values take precedence
+**Requirement:** Per-project override at `.claude/nf.json` — merged with global, project values take precedence
 
 **Status:** Complete
 
@@ -307,7 +307,7 @@
 
 ### SENS-01: `bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum 
 
-**Requirement:** `bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.
+**Requirement:** `bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.planning/formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.
 
 **Formal models:** .planning/formal/tla/QGSDSensitivity.tla
 
@@ -449,9 +449,9 @@
 
 **Status:** Complete
 
-### UPPAAL-01: A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the 
+### UPPAAL-01: A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the 
 
-**Requirement:** A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.
+**Requirement:** A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.
 
 **Formal models:** .planning/formal/alloy/uppaal-model-reqs.als
 
@@ -821,9 +821,9 @@
 
 **Status:** Complete
 
-### INST-07: Installer respects existing per-project `.claude/qgsd.json` overrides during upd
+### INST-07: Installer respects existing per-project `.claude/nf.json` overrides during upd
 
-**Requirement:** Installer respects existing per-project `.claude/qgsd.json` overrides during updates
+**Requirement:** Installer respects existing per-project `.claude/nf.json` overrides during updates
 
 **Formal models:** .planning/formal/tla/QGSDInstallerIdempotency.tla
 
@@ -1513,9 +1513,9 @@
 
 **Status:** Complete
 
-### CALIB-01: `.formal/policy.yaml` is the single authoritative source for PRISM calibration p
+### CALIB-01: `.planning/formal/policy.yaml` is the single authoritative source for PRISM calibration p
 
-**Requirement:** `.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters
+**Requirement:** `.planning/formal/policy.yaml` is the single authoritative source for PRISM calibration parameters
 
 **Formal models:** .planning/formal/alloy/availability-parsing.als
 
@@ -1539,7 +1539,7 @@
 
 ### CALIB-04: `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` fr
 
-**Requirement:** `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)
+**Requirement:** `policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.planning/formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)
 
 **Formal models:** .planning/formal/alloy/provider-failure.als
 
