@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-15T22:23:27.862Z",
+    "generated_at": "2026-03-15T22:28:34.309Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -8,15 +8,15 @@
         "property_count": 1128
       },
       "model_registry": {
-        "file_count": 194,
-        "used_as_fallback": 12
+        "file_count": 192,
+        "used_as_fallback": 10
       },
       "check_results": {
-        "entry_count": 955
+        "entry_count": 197
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 365
+        "requirements_matched": 360
       }
     }
   },
@@ -5731,6 +5731,18 @@
           }
         ]
       }
+    },
+    "UPPAAL-02": {
+      "id": "UPPAAL-02",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/misc-behavioral.als",
+          "property_name": "MCPServer",
+          "source": "annotation",
+          "latest_result": "pass",
+          "check_id": "tla:mcp-environment"
+        }
+      ]
     },
     "MULTI-01": {
       "id": "MULTI-01",
@@ -15440,29 +15452,29 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"min_quorum_available\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"majority_available\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -15482,15 +15494,15 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -15659,6 +15671,30 @@
           "source": "annotation",
           "latest_result": "error",
           "check_id": "prism:quorum"
+        }
+      ]
+    },
+    "UPPAAL-04": {
+      "id": "UPPAAL-04",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/formalism-selection.als",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
+        }
+      ]
+    },
+    "UPPAAL-05": {
+      "id": "UPPAAL-05",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/model-registry-parity.als",
+          "property_name": "(model-level)",
+          "source": "model-registry",
+          "latest_result": null,
+          "check_id": null
         }
       ]
     },
@@ -19620,6 +19656,7 @@
         "SIG-03",
         "TRIAGE-02",
         "UNIF-02",
+        "UPPAAL-02",
         "VALID-01"
       ],
       "source": "annotation",
@@ -27139,8 +27176,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"total_outage\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -27150,8 +27187,8 @@
         "FAIL-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"majority_available\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -27160,8 +27197,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=1 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -27327,8 +27364,8 @@
         "FAIL-01"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/oauth-rotation.pm::(model-level)": {
       "model_file": ".planning/formal/prism/oauth-rotation.pm",
@@ -27356,7 +27393,9 @@
     ".planning/formal/alloy/formalism-selection.als::(model-level)": {
       "model_file": ".planning/formal/alloy/formalism-selection.als",
       "property_name": "(model-level)",
-      "requirement_ids": [],
+      "requirement_ids": [
+        "UPPAAL-04"
+      ],
       "source": "model-registry",
       "latest_result": null,
       "check_id": null
@@ -27364,7 +27403,9 @@
     ".planning/formal/alloy/model-registry-parity.als::(model-level)": {
       "model_file": ".planning/formal/alloy/model-registry-parity.als",
       "property_name": "(model-level)",
-      "requirement_ids": [],
+      "requirement_ids": [
+        "UPPAAL-05"
+      ],
       "source": "model-registry",
       "latest_result": null,
       "check_id": null
@@ -27391,8 +27432,8 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 365,
-    "covered_count": 365,
+    "total_requirements": 360,
+    "covered_count": 360,
     "coverage_percentage": 100,
     "uncovered_requirements": [],
     "orphan_properties": []
@@ -29565,6 +29606,11 @@
       },
       {
         "type": "unknown_requirement_id",
+        "reference": "UPPAAL-02",
+        "referenced_by": "model-registry .planning/formal/alloy/misc-behavioral.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
         "reference": "OBS-13",
         "referenced_by": "model-registry .planning/formal/alloy/observability-handler-arch.als requirements"
       },
@@ -29899,6 +29945,16 @@
         "referenced_by": "model-registry .planning/formal/tla/TUINavigation.tla requirements"
       },
       {
+        "type": "unknown_requirement_id",
+        "reference": "UPPAAL-04",
+        "referenced_by": "model-registry .planning/formal/alloy/formalism-selection.als requirements"
+      },
+      {
+        "type": "unknown_requirement_id",
+        "reference": "UPPAAL-05",
+        "referenced_by": "model-registry .planning/formal/alloy/model-registry-parity.als requirements"
+      },
+      {
         "type": "missing_model_file",
         "reference": ".planning/formal/tla/QGSDAccountManager.tla",
         "referenced_by": "requirements.json CRED-01 formal_models"
@@ -30035,9 +30091,9 @@
       }
     ],
     "summary": {
-      "total_checked": 620,
-      "asymmetric_count": 344,
-      "stale_count": 122,
+      "total_checked": 614,
+      "asymmetric_count": 337,
+      "stale_count": 125,
       "clean": false
     }
   },
@@ -30597,8 +30653,8 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-15T22:23:25.238Z",
-    "requirements_checked": 457,
+    "baseline_date": "2026-03-15T22:23:27.862Z",
+    "requirements_checked": 452,
     "regressions": [],
     "summary": {
       "total_regressions": 0,

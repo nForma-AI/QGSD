@@ -1,9 +1,9 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-15T22:18:15.221Z",
-  "wiring_coverage_score": 0.4587628865979381,
-  "total_entries": 194,
-  "validated_entries": 89,
+  "generated": "2026-03-15T22:26:11.550Z",
+  "wiring_coverage_score": 0.453125,
+  "total_entries": 192,
+  "validated_entries": 87,
   "unvalidated_entries": 105,
   "target": 0.8,
   "target_met": false

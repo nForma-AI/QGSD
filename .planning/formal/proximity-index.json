@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T22:17:39.517Z",
+  "generated": "2026-03-15T22:26:09.423Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,20 +84,20 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-15T22:17:33.767Z",
-      "hash": "83cfdb46"
+      "mtime": "2026-03-15T22:24:29.901Z",
+      "hash": "01ef3d63"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-15T22:17:39.348Z",
-      "hash": "aa07c266"
+      "mtime": "2026-03-15T22:24:56.368Z",
+      "hash": "e957a836"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-15T22:16:06.578Z",
-      "hash": "f61fe6a0"
+      "mtime": "2026-03-15T22:24:29.907Z",
+      "hash": "67e10cbd"
     },
     "instrumentation-map.json": {
       "mtime": "2026-03-15T22:17:06.064Z",
@@ -9095,26 +9095,6 @@
           "to": "formal_model::.planning/formal/alloy/misc-behavioral.als",
           "rel": "modeled_by",
           "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/alloy/uppaal-model-reqs.als",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/uppaal/quorum-races.xml",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "invariant::MCPServer",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "invariant::(model-level)",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -11166,7 +11146,9 @@
     "formal_model::.planning/formal/alloy/quorum-votes.als": {
       "type": "formal_model",
       "id": ".planning/formal/alloy/quorum-votes.als",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -15853,48 +15835,6 @@
         }
       ]
     },
-    "requirement::UPPAAL-01": {
-      "type": "requirement",
-      "id": "UPPAAL-01",
-      "edges": [
-        {
-          "to": "formal_model::.planning/formal/alloy/uppaal-model-reqs.als",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/uppaal/quorum-races.xml",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "invariant::(model-level)",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
-    "requirement::UPPAAL-03": {
-      "type": "requirement",
-      "id": "UPPAAL-03",
-      "edges": [
-        {
-          "to": "formal_model::.planning/formal/alloy/uppaal-model-reqs.als",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "formal_model::.planning/formal/uppaal/quorum-races.xml",
-          "rel": "modeled_by",
-          "source": "model-registry"
-        },
-        {
-          "to": "invariant::(model-level)",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
     "formal_model::.planning/formal/alloy/user-guide.als": {
       "type": "formal_model",
       "id": ".planning/formal/alloy/user-guide.als",
@@ -17019,7 +16959,9 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -17993,12 +17935,16 @@
     "formal_model::.planning/formal/tla/NFQuorum.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFQuorum.tla",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
       "id": ".planning/formal/tla/NFQuorum_xstate.tla",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -21338,11 +21284,6 @@
           "to": "formal_model::.planning/formal/alloy/formalism-selection.als",
           "rel": "modeled_by",
           "source": "model-registry"
-        },
-        {
-          "to": "invariant::(model-level)",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -21367,11 +21308,6 @@
           "to": "formal_model::.planning/formal/alloy/model-registry-parity.als",
           "rel": "modeled_by",
           "source": "model-registry"
-        },
-        {
-          "to": "invariant::(model-level)",
-          "rel": "verified_by",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -25828,11 +25764,6 @@
           "to": "requirement::UNIF-02",
           "rel": "verifies",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -30042,107 +29973,6 @@
         }
       ]
     },
-    "invariant::(model-level)": {
-      "type": "invariant",
-      "id": "(model-level)",
-      "edges": [
-        {
-          "to": "requirement::UPPAAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::CRED-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::CRED-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::QUORUM-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::QUORUM-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::HEAL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::HEAL-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::MCPENV-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::FAIL-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::OBS-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::OBS-02",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::OBS-03",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::OBS-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-04",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::UPPAAL-05",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::TC-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::H2M-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        }
-      ]
-    },
     "invariant::AgentFamily": {
       "type": "invariant",
       "id": "AgentFamily",
@@ -31688,6 +31518,82 @@
         },
         {
           "to": "requirement::SAFE-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::(model-level)": {
+      "type": "invariant",
+      "id": "(model-level)",
+      "edges": [
+        {
+          "to": "requirement::CRED-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CRED-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::QUORUM-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::QUORUM-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::HEAL-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::HEAL-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::MCPENV-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::FAIL-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::OBS-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::OBS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::OBS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::OBS-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::TC-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::H2M-01",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
