@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-15T08:05:17.729Z",
+  "last_sync": "2026-03-15T08:50:07.594Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -1257,8 +1257,8 @@
       ]
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 411,
-      "last_updated": "2026-03-15T08:08:51.231Z",
+      "version": 470,
+      "last_updated": "2026-03-15T08:55:56.624Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2183,8 +2183,8 @@
       ]
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 411,
-      "last_updated": "2026-03-15T08:05:18.726Z",
+      "version": 470,
+      "last_updated": "2026-03-15T08:50:08.857Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2230,7 +2230,7 @@
     },
     ".planning/formal/tla/NFConfigLoader.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.623Z",
+      "last_updated": "2026-03-15T08:18:20.315Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2244,7 +2244,7 @@
         "CONF-08"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFConvergence.tla": {
@@ -2304,7 +2304,7 @@
     },
     ".planning/formal/tla/NFDispatch.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.624Z",
+      "last_updated": "2026-03-15T08:18:20.316Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2314,7 +2314,7 @@
         "DISPATCH-02"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/NFImprovement.tla": {
@@ -2435,8 +2435,8 @@
       ]
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 411,
-      "last_updated": "2026-03-15T08:05:18.727Z",
+      "version": 470,
+      "last_updated": "2026-03-15T08:50:08.858Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2446,8 +2446,8 @@
       "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 303,
-      "last_updated": "2026-03-15T07:54:40.158Z",
+      "version": 341,
+      "last_updated": "2026-03-15T08:42:29.439Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2476,12 +2476,12 @@
     },
     ".planning/formal/tla/NFRecruiting.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.628Z",
+      "last_updated": "2026-03-15T08:18:20.316Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
@@ -2786,12 +2786,12 @@
     },
     ".planning/formal/tla/QGSDInstallerIdempotency.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.633Z",
+      "last_updated": "2026-03-15T08:18:20.317Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
@@ -2943,7 +2943,7 @@
     },
     ".planning/formal/tla/QGSDSpecGeneration.tla": {
       "version": 1,
-      "last_updated": "2026-03-14T23:19:55.636Z",
+      "last_updated": "2026-03-15T08:18:20.317Z",
       "update_source": "manual",
       "source_id": null,
       "session_id": null,
@@ -2953,7 +2953,7 @@
         "LOOP-04"
       ],
       "source_layer": "L3",
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE"
     },
     ".planning/formal/tla/QGSDTUIModules.tla": {

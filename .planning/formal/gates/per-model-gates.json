@@ -1,6 +1,6 @@
 {
   "schema_version": "3",
-  "generated": "2026-03-14T23:19:55.640Z",
+  "generated": "2026-03-15T08:57:35.549Z",
   "total_models": 192,
   "unstable_models": 0,
   "evidence_readiness": {
@@ -23,7 +23,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -43,7 +43,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -63,7 +63,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -83,7 +83,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -103,7 +103,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -123,7 +123,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -143,7 +143,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -163,7 +163,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -183,7 +183,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -203,7 +203,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -223,7 +223,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -243,7 +243,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -263,7 +263,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -283,7 +283,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -303,7 +303,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -323,7 +323,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -343,7 +343,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -363,7 +363,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -383,7 +383,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -399,11 +399,11 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:config-two-layer"
+        "reason": "failure-mode FM-CONF-OMISSION has test recipe (via req CONF-01)"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -423,7 +423,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -443,7 +443,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -463,7 +463,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -483,7 +483,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -503,7 +503,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -523,7 +523,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -543,7 +543,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -563,7 +563,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -583,7 +583,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -603,7 +603,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -623,7 +623,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -643,7 +643,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -663,7 +663,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -683,7 +683,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -703,7 +703,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -723,7 +723,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -743,7 +743,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -763,7 +763,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -783,7 +783,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -803,7 +803,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -823,7 +823,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -843,7 +843,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -863,7 +863,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -883,7 +883,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -903,7 +903,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -923,7 +923,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -943,7 +943,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -963,7 +963,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -983,7 +983,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1003,7 +1003,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1023,7 +1023,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1043,7 +1043,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1063,7 +1063,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1083,7 +1083,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1103,7 +1103,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1123,7 +1123,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1143,7 +1143,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1163,7 +1163,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1183,7 +1183,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1203,7 +1203,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1223,7 +1223,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1243,7 +1243,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1263,7 +1263,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1283,7 +1283,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1303,7 +1303,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1323,7 +1323,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1343,7 +1343,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1363,7 +1363,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1383,7 +1383,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1403,7 +1403,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1423,7 +1423,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1443,7 +1443,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1463,7 +1463,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1483,7 +1483,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1503,7 +1503,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1523,7 +1523,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1543,7 +1543,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1563,7 +1563,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1583,7 +1583,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1603,7 +1603,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1623,7 +1623,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1643,7 +1643,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1663,7 +1663,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1683,7 +1683,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1703,7 +1703,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1723,7 +1723,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1743,7 +1743,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1763,7 +1763,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1783,7 +1783,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1803,7 +1803,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1823,7 +1823,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1843,7 +1843,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1863,7 +1863,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1883,7 +1883,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1903,7 +1903,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1923,7 +1923,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1943,7 +1943,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1963,7 +1963,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1983,7 +1983,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -1999,11 +1999,11 @@
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result alloy:solve-diagnostics-tui"
+        "reason": "passing check-result alloy:diagnostics"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2023,7 +2023,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2043,7 +2043,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2063,7 +2063,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2083,7 +2083,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2103,7 +2103,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2123,7 +2123,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2143,7 +2143,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2163,7 +2163,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2183,7 +2183,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2203,7 +2203,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2223,7 +2223,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2243,7 +2243,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2263,7 +2263,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2283,7 +2283,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2303,7 +2303,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2323,7 +2323,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2343,7 +2343,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2363,7 +2363,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2383,7 +2383,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2403,7 +2403,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2423,7 +2423,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2443,7 +2443,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2463,7 +2463,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2483,7 +2483,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2503,7 +2503,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2523,7 +2523,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2543,7 +2543,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2563,7 +2563,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2583,7 +2583,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2603,7 +2603,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2623,7 +2623,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2643,7 +2643,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2663,7 +2663,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2683,7 +2683,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2703,7 +2703,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2723,7 +2723,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2731,7 +2731,7 @@
     ".planning/formal/prism/mcp-availability.pm": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req MCPENV-04 (property: unnamed)"
+        "reason": "all 2 requirement(s) grounded by unit test coverage"
       },
       "gate_b": {
         "pass": true,
@@ -2743,7 +2743,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2751,19 +2751,19 @@
     ".planning/formal/prism/oauth-rotation.pm": {
       "gate_a": {
         "pass": true,
-        "reason": "passing trace for req PRM-AM-01 (property: unnamed)"
+        "reason": "passing check-result for req CRED-01"
       },
       "gate_b": {
         "pass": true,
-        "reason": "model has 2 requirement(s) (purpose check)"
+        "reason": "model has 1 requirement(s) (purpose check)"
       },
       "gate_c": {
         "pass": true,
-        "reason": "passing check-result prism:oauth-rotation"
+        "reason": "failure-mode FM-CRED-OMISSION has test recipe (via req CRED-01)"
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2783,7 +2783,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2798,12 +2798,12 @@
         "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "passing check-result prism:quorum"
+        "pass": false,
+        "reason": "no requirements mapped"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2823,7 +2823,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2843,7 +2843,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2858,12 +2858,12 @@
         "reason": "model has 6 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [CONF-01, CONF-02, CONF-03, CONF-04, CONF-05, CONF-08], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-CONF-OMISSION has test recipe (via req CONF-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2883,7 +2883,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2903,7 +2903,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2923,7 +2923,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2938,12 +2938,12 @@
         "reason": "model has 2 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [DISPATCH-01, DISPATCH-02], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-DISPATCH-OMISSION has test recipe (via req DISPATCH-01)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2963,7 +2963,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -2983,7 +2983,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3003,7 +3003,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3023,7 +3023,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3043,7 +3043,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3063,7 +3063,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3083,7 +3083,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3098,12 +3098,12 @@
         "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "passing check-result prism:quorum"
+        "pass": false,
+        "reason": "no requirements mapped"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3118,12 +3118,12 @@
         "reason": "no requirements mapped (no purpose backing)"
       },
       "gate_c": {
-        "pass": true,
-        "reason": "passing check-result prism:quorum"
+        "pass": false,
+        "reason": "no requirements mapped"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3143,7 +3143,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3158,12 +3158,12 @@
         "reason": "model has 4 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [SLOT-02, SLOT-03, SLOT-04, SLOT-05], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-RECRUITING-OMISSION has test recipe (via req SLOT-02)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3183,7 +3183,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3203,7 +3203,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3223,7 +3223,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3243,7 +3243,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3263,7 +3263,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3283,7 +3283,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3303,7 +3303,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3323,7 +3323,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3343,7 +3343,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3363,7 +3363,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3383,7 +3383,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3403,7 +3403,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3423,7 +3423,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3443,7 +3443,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3463,7 +3463,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3483,7 +3483,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3503,7 +3503,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3518,12 +3518,12 @@
         "reason": "model has 5 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [INST-06, INST-07, INST-08, INST-09, INST-10], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-INSTALLER-OMISSION has test recipe (via req INST-06)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3543,7 +3543,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3563,7 +3563,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3583,7 +3583,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3603,7 +3603,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3623,7 +3623,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3643,7 +3643,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3663,7 +3663,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3683,7 +3683,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3698,12 +3698,12 @@
         "reason": "model has 2 requirement(s) (purpose check)"
       },
       "gate_c": {
-        "pass": false,
-        "reason": "no failure-mode with test recipe for reqs [SPEC-04, LOOP-04], no matching check-results"
+        "pass": true,
+        "reason": "failure-mode FM-SPECGEN-OMISSION has test recipe (via req SPEC-04)"
       },
-      "layer_maturity": 2,
+      "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3723,7 +3723,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3743,7 +3743,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3763,7 +3763,7 @@
       },
       "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3783,7 +3783,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3803,7 +3803,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3823,7 +3823,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
@@ -3843,7 +3843,7 @@
       },
       "layer_maturity": 3,
       "gate_maturity": "SOFT_GATE",
-      "promoted": true,
+      "promoted": false,
       "stability_status": "STABLE",
       "direction_changes": 0,
       "cooldown": null
