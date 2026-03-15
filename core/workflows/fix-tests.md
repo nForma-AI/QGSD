@@ -113,24 +113,42 @@ Print: `nForma fix-tests: Signatures computed for {N} failing tests`
 
 ### Step 1.5: Flakiness Pre-Filter (N=10 reruns)
 
-Before running ddmin, classify each failing test as STABLE (fail rate >= 8/10) or FLAKY (fail rate < 8/10). Only STABLE tests proceed to ddmin.
+Before running ddmin, classify each failing test into one of three categories based on isolation fail rate AND baseline full-suite behavior:
+
+| Category | Isolation Fail Rate | Full-Suite Fail? | Action |
+|----------|-------------------|------------------|--------|
+| `independent_failure` | High (8-10/10) | Yes | ddmin (or skip ddmin if 10/10 — see Step 1.6) |
+| `pollution_victim` | Low (0-2/10) | Yes | ddmin (test passes alone but fails in suite) |
+| `true_flaky` | Medium (3-7/10) | Sometimes | Skip ddmin |
 
 Write an inline Python script to `/tmp/flakiness-filter.py` using the Write tool. The script:
 1. Reads the list of failing tests from `.planning/ddmin-signatures.json`
 2. For each failing test, reruns it 10 times in isolation using `run-batch` with a single-test manifest
-3. Counts fail_count out of 10
-4. Classifies: if `fail_count >= 8` → STABLE; else → FLAKY
-5. Writes `.planning/ddmin-flakiness.json`:
+3. Counts `fail_count` out of 10
+4. Classifies using three-way logic:
+   - If `fail_count >= 8` → `independent_failure` (stable in isolation — fails on its own)
+   - If `fail_count <= 2` → `pollution_victim` (passes in isolation — a co-runner pollutes it)
+   - If `3 <= fail_count <= 7` → `true_flaky` (non-deterministic — skip ddmin)
+5. Both `independent_failure` and `pollution_victim` tests proceed to ddmin. Only `true_flaky` tests are excluded.
+6. Writes `.planning/ddmin-flakiness.json`:
 
 ```json
 {
-  "stable": ["path/to/stable.test.js"],
+  "stable": ["path/to/independent.test.js", "path/to/victim.test.js"],
   "flaky": ["path/to/flaky.test.js"],
+  "pollution_victims": ["path/to/victim.test.js"],
+  "independent_failures": ["path/to/independent.test.js"],
   "details": {
-    "path/to/test.test.js": {"rerun_count": 10, "fail_count": 7, "is_flaky": true}
+    "path/to/test.test.js": {
+      "rerun_count": 10,
+      "fail_count": 7,
+      "category": "true_flaky|independent_failure|pollution_victim"
+    }
   }
 }
 ```
+
+Note: `stable` is the union of `independent_failures` + `pollution_victims` (all tests proceeding to ddmin). This preserves backward compatibility with Step 1.6 which reads `stable`.
 
 Script uses the same `BASELINE_SEED` for all single-test reruns. The GSD_TOOLS path is `/Users/jonathanborduas/.claude/nf/bin/gsd-tools.cjs`. Each single-test rerun invocation MUST include `--timeout 60` to prevent hung runners from stalling the flakiness loop indefinitely.
 
@@ -138,19 +156,39 @@ Script uses the same `BASELINE_SEED` for all single-test reruns. The GSD_TOOLS p
 python3 /tmp/flakiness-filter.py
 ```
 
-Read `.planning/ddmin-flakiness.json`. Extract `stable` (list of tests proceeding to ddmin) and `flaky` (list skipped from ddmin).
+Read `.planning/ddmin-flakiness.json`. Extract `stable` (list of tests proceeding to ddmin), `flaky` (list skipped), `pollution_victims`, and `independent_failures`.
 
-Print: `nForma fix-tests: Flakiness filter — {stable_count} stable (→ ddmin), {flaky_count} flaky (→ skipped)`
+Print: `nForma fix-tests: Flakiness filter — {independent_count} independent, {victim_count} pollution victims (→ ddmin), {flaky_count} true flaky (→ skipped)`
 
 ### Step 1.6: ddmin Per Failing Test
 
-For each test in `stable` from Step 1.5, run ddmin. **Cap: if `stable` has more than 100 tests, process only the first 100 and flag the rest as `unanalyzed` in state.** (Scope bound to prevent runaway execution time.)
+For each test in `stable` from Step 1.5, run ddmin — **unless the test fails 10/10 in isolation**, in which case skip ddmin and classify directly as `independent_failure` with `polluter_set: []`. A test that fails 100% in isolation has no pollution dependency; ddmin would always return an empty polluter set, wasting subprocess overhead.
+
+**Cap: if `stable` has more than 100 tests, process only the first 100 and flag the rest as `unanalyzed` in state.** (Scope bound to prevent runaway execution time.)
 
 Write a Python orchestration script to `/tmp/ddmin-orchestrator.py`. The script:
 
 1. Reads `.planning/ddmin-manifest.json` (the pinned-order full-suite manifest) to get the ordered list of all tests.
-2. Reads `.planning/ddmin-flakiness.json` to get the `stable` list.
+2. Reads `.planning/ddmin-flakiness.json` to get the `stable` list and `details` (with per-test `fail_count`).
 3. For each failing test in `stable` (up to 100):
+
+   **Short-circuit for 10/10 independent failures:**
+   ```python
+   details = flakiness_data['details'][test]
+   if details['fail_count'] == 10:
+       # Test fails 100% in isolation — no pollution possible, skip ddmin
+       results.append({
+           "failing_test": test,
+           "polluter_set": [],
+           "ddmin_ran": False,
+           "runs_performed": 0,
+           "reason": "independent_failure_confirmed_by_flakiness_filter",
+           "run_cap_reached": False
+       })
+       continue
+   ```
+
+   **For all other tests (pollution victims with 0-2/10, or borderline 8-9/10), run ddmin:**
 
    a. Build a candidates list: ALL tests from the pinned manifest EXCEPT the target failing test, preserving the original seed order. This is critical — same order as baseline.
 
