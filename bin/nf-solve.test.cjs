@@ -36,6 +36,7 @@ const {
   sweepL3toTC,
   sweepGitHeatmap,
   computeResidual,
+  digestV8Coverage,
   crossReferenceFormalCoverage,
   autoClose,
   persistSessionSummary,
@@ -715,6 +716,83 @@ test('TC-COV-5: sweepTtoC detail contains v8_coverage field', () => {
   const result = sweepTtoC();
   assert.ok(result.detail, 'sweepTtoC should return detail');
   assert.ok('v8_coverage' in result.detail, 'detail should have v8_coverage key');
+});
+
+// ── DIGEST: digestV8Coverage Tests ─────────────────────────────────────────────
+
+test('DIGEST-1: digestV8Coverage returns null-safe on null/undefined input', () => {
+  const nullResult = digestV8Coverage(null);
+  assert.strictEqual(nullResult, null);
+  const undefinedResult = digestV8Coverage(undefined);
+  assert.strictEqual(undefinedResult, null);
+  const emptyArrayResult = digestV8Coverage([]);
+  assert.strictEqual(emptyArrayResult, null);
+});
+
+test('DIGEST-2: digestV8Coverage extracts file paths from V8 format', () => {
+  const mock = [{
+    result: [{
+      url: 'file:///abs/path/to/file.js',
+      source: 'line1\nline2\nline3\n',
+      functions: [{
+        ranges: [
+          { startOffset: 0, endOffset: 5, count: 1 },  // covered
+          { startOffset: 6, endOffset: 11, count: 0 }  // uncovered
+        ]
+      }]
+    }]
+  }];
+  const result = digestV8Coverage(mock);
+  assert.ok(result, 'should return digest object');
+  assert.ok(result.files, 'should have files property');
+  const filePath = '/abs/path/to/file.js';
+  assert.ok(result.files[filePath], 'should have file entry for ' + filePath);
+  const fileEntry = result.files[filePath];
+  assert.ok(Array.isArray(fileEntry.covered), 'covered should be array');
+  assert.ok(Array.isArray(fileEntry.uncovered), 'uncovered should be array');
+});
+
+test('DIGEST-3: digestV8Coverage output is dramatically smaller than input', () => {
+  // Create mock with large source text repeated many times
+  const mock = [{
+    result: Array.from({ length: 100 }, (_, i) => ({
+      url: `file:///path/to/file${i}.js`,
+      source: 'x'.repeat(10000) + '\n',
+      functions: [{
+        ranges: [{ startOffset: 0, endOffset: 5000, count: 1 }]
+      }]
+    }))
+  }];
+
+  const digestResult = digestV8Coverage(mock);
+  assert.ok(digestResult, 'digest should not be null');
+
+  const rawSize = JSON.stringify(mock).length;
+  const digestSize = JSON.stringify(digestResult).length;
+
+  // Digest should be < 1% of raw size (99% compression)
+  const ratio = digestSize / rawSize;
+  assert.ok(ratio < 0.01, `Digest size ratio ${ratio.toFixed(4)} should be < 0.01 (less than 1% of raw)`);
+});
+
+test('DIGEST-4: crossReferenceFormalCoverage works with digest format', () => {
+  const digest = {
+    files: {
+      '/some/file.js': { covered: [1, 2, 3], uncovered: [4, 5] }
+    }
+  };
+  const result = crossReferenceFormalCoverage(digest);
+  assert.equal(result.available, true, 'should be available with digest format');
+});
+
+test('DIGEST-5: sweepTtoC v8_coverage is digest format (not raw array)', () => {
+  const result = sweepTtoC();
+  const v8coverage = result.detail && result.detail.v8_coverage;
+  if (v8coverage) {
+    assert.ok(!Array.isArray(v8coverage), 'v8_coverage should not be array (legacy format)');
+    assert.ok(v8coverage.files, 'v8_coverage should have files property (digest format)');
+    assert.strictEqual(typeof v8coverage.files, 'object', 'files should be an object');
+  }
 });
 
 // ── TC-LAYER: Layer Alignment Sweep Tests ─────────────────────────────────────

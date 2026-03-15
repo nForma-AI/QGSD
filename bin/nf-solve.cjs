@@ -973,6 +973,11 @@ function sweepTtoC() {
     } catch (e) { /* ignore cleanup errors */ }
   }
 
+  // Digest V8 coverage: replace raw array with lightweight format
+  if (coverageData) {
+    coverageData = digestV8Coverage(coverageData);
+  }
+
   // Scope-based auto-detection: if scope is "generated-stubs-only", check if all failures
   // are outside .planning/formal/generated-stubs/
   if (tToCConfig.runner === 'node-test' && tToCConfig.scope === 'generated-stubs-only' && failCount > 0) {
@@ -1011,9 +1016,117 @@ function sweepTtoC() {
 }
 
 /**
+ * Digest V8 coverage data: convert raw coverage array to a lightweight per-file format.
+ * Input: array of V8 coverage entries (each with .result[] containing .url, .functions[], .source)
+ * Output: { files: { [absolutePath]: { covered: number[], uncovered: number[] } } }
+ *
+ * Purpose: Reduce raw ~96MB V8 JSON to ~50KB by storing only file paths and covered/uncovered line sets.
+ * Fail-open: If any entry throws, skip it and continue.
+ */
+function digestV8Coverage(coverageData) {
+  if (!coverageData || !Array.isArray(coverageData)) return null;
+
+  const files = {};
+
+  try {
+    for (const entry of coverageData) {
+      const results = entry.result || [];
+
+      for (const r of results) {
+        if (!r.url) continue;
+
+        // Skip internal node: URLs
+        if (r.url.startsWith('node:')) continue;
+
+        try {
+          // Extract and resolve file path
+          const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
+          const absolutePath = path.resolve(filePath);
+
+          // Initialize file entry if not present
+          if (!files[absolutePath]) {
+            files[absolutePath] = { covered: [], uncovered: [] };
+          }
+
+          // Get source text to build line offset array
+          const source = r.source;
+          if (!source) {
+            // Fallback: if no source, use file-level granularity (boolean)
+            // If ANY function range has count > 0, mark file as covered
+            const hasCoverage = (r.functions || []).some(fn =>
+              (fn.ranges || []).some(range => range.count > 0)
+            );
+            if (hasCoverage) {
+              files[absolutePath].covered = [true];  // boolean marker
+            } else {
+              files[absolutePath].uncovered = [true];  // boolean marker
+            }
+            continue;
+          }
+
+          // Build line offset array from source text
+          const lineOffsets = [0];  // First line starts at offset 0
+          for (let i = 0; i < source.length; i++) {
+            if (source[i] === '\n') {
+              lineOffsets.push(i + 1);
+            }
+          }
+
+          // Map ranges to line numbers
+          const coveredLines = new Set();
+          const uncoveredLines = new Set();
+
+          for (const fn of (r.functions || [])) {
+            for (const range of (fn.ranges || [])) {
+              const startOffset = range.startOffset;
+              const endOffset = range.endOffset;
+              const count = range.count || 0;
+
+              // Find line numbers that this range covers
+              let startLine = lineOffsets.findIndex(offset => offset > startOffset);
+              if (startLine === -1) startLine = lineOffsets.length - 1;
+              else startLine = Math.max(0, startLine - 1);
+
+              let endLine = lineOffsets.findIndex(offset => offset >= endOffset);
+              if (endLine === -1) endLine = lineOffsets.length - 1;
+
+              // Add lines to appropriate set (1-indexed for output)
+              for (let lineIdx = startLine; lineIdx < endLine && lineIdx < lineOffsets.length; lineIdx++) {
+                const lineNum = lineIdx + 1;
+                if (count > 0) {
+                  coveredLines.add(lineNum);
+                } else {
+                  uncoveredLines.add(lineNum);
+                }
+              }
+            }
+          }
+
+          // Update file entry with deduplicated, sorted line arrays
+          files[absolutePath].covered = Array.from(coveredLines).sort((a, b) => a - b);
+          files[absolutePath].uncovered = Array.from(uncoveredLines).filter(
+            l => !coveredLines.has(l)
+          ).sort((a, b) => a - b);
+
+        } catch (entryErr) {
+          // Fail-open: skip this result entry
+          continue;
+        }
+      }
+    }
+  } catch (err) {
+    // Fail-open: return whatever we've collected so far
+  }
+
+  return Object.keys(files).length > 0 ? { files } : null;
+}
+
+/**
  * Cross-reference V8 coverage data against formal-test-sync recipe source_files.
  * Identifies "false green" properties: tests pass but exercise none of the implementing source files.
  * Returns { available: false } when coverage data is null/undefined.
+ *
+ * Handles both digest format (new: { files: {...} }) and legacy raw array format.
  */
 function crossReferenceFormalCoverage(v8CoverageData) {
   if (!v8CoverageData) return { available: false };
@@ -1024,17 +1137,31 @@ function crossReferenceFormalCoverage(v8CoverageData) {
 
     // Build set of covered absolute file paths from V8 data
     const coveredFiles = new Set();
-    for (const entry of v8CoverageData) {
-      const results = entry.result || [];
-      for (const r of results) {
-        if (!r.url) continue;
-        const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
-        const resolved = path.resolve(filePath);
-        // A file is "covered" if ANY function range has count > 0
-        const hasCoverage = (r.functions || []).some(fn =>
-          (fn.ranges || []).some(range => range.count > 0)
-        );
-        if (hasCoverage) coveredFiles.add(resolved);
+
+    // Detect format: digest format has .files property; legacy is array
+    if (v8CoverageData.files && typeof v8CoverageData.files === 'object') {
+      // Digest format: files are keys in the .files object
+      for (const absolutePath of Object.keys(v8CoverageData.files)) {
+        const fileEntry = v8CoverageData.files[absolutePath];
+        // If any covered lines exist (non-empty array), mark file as covered
+        if (fileEntry && fileEntry.covered && Array.isArray(fileEntry.covered) && fileEntry.covered.length > 0) {
+          coveredFiles.add(path.resolve(absolutePath));
+        }
+      }
+    } else if (Array.isArray(v8CoverageData)) {
+      // Legacy raw array format: parse V8 entries
+      for (const entry of v8CoverageData) {
+        const results = entry.result || [];
+        for (const r of results) {
+          if (!r.url) continue;
+          const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
+          const resolved = path.resolve(filePath);
+          // A file is "covered" if ANY function range has count > 0
+          const hasCoverage = (r.functions || []).some(fn =>
+            (fn.ranges || []).some(range => range.count > 0)
+          );
+          if (hasCoverage) coveredFiles.add(resolved);
+        }
       }
     }
 
@@ -4166,6 +4293,7 @@ module.exports = {
   sweepHazardModel,
   assembleReverseCandidates,
   classifyCandidate,
+  digestV8Coverage,
   crossReferenceFormalCoverage,
   persistSessionSummary,
   appendTrendEntry,
