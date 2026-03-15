@@ -51,6 +51,7 @@ const { filterRequirementsByFocus } = require('./solve-focus-filter.cjs');
 const { updatePredictivePower, formatPredictivePowerSummary } = require('./predictive-power.cjs');
 const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
 const { CycleDetector } = require('./solve-cycle-detector.cjs');
+const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -2693,6 +2694,37 @@ function sweepHazardModel() {
   }
 }
 
+// ── Hypothesis measurement sweep ─────────────────────────────────────────────
+
+/**
+ * Runs hypothesis-measure.cjs measureHypotheses() and returns H->M summary.
+ * Informational — not added to the forward total.
+ */
+function sweepHtoM() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  try {
+    const result = measureHypotheses(ROOT);
+    if (!result) {
+      return { residual: -1, detail: { error: true, stderr: 'sweepHtoM failed: measureHypotheses returned null' } };
+    }
+    return {
+      residual: result.verdicts.VIOLATED,
+      detail: {
+        total: result.total_measured,
+        confirmed: result.verdicts.CONFIRMED,
+        violated: result.verdicts.VIOLATED,
+        unmeasurable: result.verdicts.UNMEASURABLE,
+        measurements_path: '.planning/formal/evidence/hypothesis-measurements.json',
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'sweepHtoM failed: ' + err.message } };
+  }
+}
+
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
@@ -2779,6 +2811,9 @@ function computeResidual() {
   // Hazard model sweep (informational — not added to forward total)
   const hazard_model = sweepHazardModel();
 
+  // Hypothesis measurement sweep (informational — not added to forward total)
+  const h_to_m = sweepHtoM();
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -2801,6 +2836,7 @@ function computeResidual() {
     (git_history.residual >= 0 ? git_history.residual : 0) +
     (formal_lint.residual >= 0 ? formal_lint.residual : 0) +
     (hazard_model.residual >= 0 ? hazard_model.residual : 0) +
+    (h_to_m.residual >= 0 ? h_to_m.residual : 0) +
     (per_model_gates.residual >= 0 ? per_model_gates.residual : 0) +
     (p_to_f.residual >= 0 ? p_to_f.residual : 0);
 
@@ -2823,6 +2859,7 @@ function computeResidual() {
     git_history,
     formal_lint,
     hazard_model,
+    h_to_m,
     assembled_candidates,
     total,
     automatable,
@@ -4299,6 +4336,7 @@ module.exports = {
   sweepGitHistoryEvidence,
   sweepFormalLint,
   sweepHazardModel,
+  sweepHtoM,
   assembleReverseCandidates,
   classifyCandidate,
   digestV8Coverage,

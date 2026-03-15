@@ -34,6 +34,7 @@ const LAYER_DEPS = {
   l1_to_l3:        ['hazard_model'],
   l3_to_tc:        ['l1_to_l3'],
   per_model_gates: ['l1_to_l3', 'l3_to_tc'],
+  h_to_m: [],  // No dependencies — hypothesis measurement is independent
 };
 
 const MAX_PER_WAVE = 3;
