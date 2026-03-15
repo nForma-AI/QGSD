@@ -137,8 +137,7 @@ describe('getRequirementIds — PRISM and UPPAAL runners', () => {
 
   it('prism:oauth-rotation returns rotation requirements', () => {
     const ids = getRequirementIds('prism:oauth-rotation');
-    assert.ok(ids.includes('PRM-AM-01'), 'should include PRM-AM-01');
-    assert.ok(ids.includes('CRED-12'),   'should include CRED-12');
+    assert.ok(ids.includes('CRED-01'), 'should include CRED-01');
   });
 
   it('prism:mcp-availability returns MCP requirements', () => {

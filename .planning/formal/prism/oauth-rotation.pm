@@ -4,7 +4,7 @@
 //         bin/providers.json (oauth_rotation.max_retries)
 //
 // OAuth Rotation Success — DTMC Model
-// Requirements: PRM-AM-01
+// Requirements: CRED-01
 //
 // Models the probability that at least one sequential OAuth rotation attempt
 // succeeds within max_retries tries. Accounts are tried one by one; on failure

@@ -2,7 +2,7 @@
 'use strict';
 // bin/run-oauth-rotation-prism.cjs
 // Invokes PRISM model checker against .planning/formal/prism/oauth-rotation.pm.
-// Requirements: PRM-AM-01
+// Requirements: CRED-01
 //
 // Usage:
 //   node bin/run-oauth-rotation-prism.cjs                           # all 3 properties
