@@ -13,15 +13,17 @@
 const fs = require('fs');
 const path = require('path');
 const { loadConfig, shouldRunHook, validateHookInput } = require('./config-loader');
+const resolveBin = require('./nf-resolve-bin');
 
 // Dynamically discover quorum slot families from bin/providers.json
+// Uses resolveBin for dual-path resolution (installed: ~/.claude/nf-bin/, dev: bin/)
 function loadKnownFamilies() {
   try {
-    const providersPath = path.resolve(__dirname, '..', 'bin', 'providers.json');
+    const providersPath = resolveBin('providers.json');
     const providersJson = JSON.parse(fs.readFileSync(providersPath, 'utf8'));
 
     if (!Array.isArray(providersJson.providers)) {
-      process.stderr.write('[nf] WARNING: nf-mcp-dispatch-guard: providers.json missing .providers array, fail-open\n');
+      process.stderr.write('[nf] WARNING: nf-mcp-dispatch-guard: providers.json missing .providers array at ' + providersPath + ', fail-open\n');
       return new Set();
     }
 
@@ -36,8 +38,8 @@ function loadKnownFamilies() {
 
     return families;
   } catch (e) {
-    const providersPath = path.resolve(__dirname, '..', 'bin', 'providers.json');
-    process.stderr.write('[nf] WARNING: nf-mcp-dispatch-guard: failed to load providers.json from ' + providersPath + ', fail-open\n');
+    const providersPath = resolveBin('providers.json');
+    process.stderr.write('[nf] WARNING: nf-mcp-dispatch-guard: failed to load ' + providersPath + ', fail-open\n');
     return new Set();
   }
 }
