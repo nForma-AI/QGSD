@@ -107,9 +107,10 @@ None.
 | 301 | Isolate TLC metadir per-config to fix 31 in-pipeline F→C failures | 2026-03-15 | fc0141ff | Verified | [301-isolate-tlc-metadir-per-config-to-fix-31](./quick/301-isolate-tlc-metadir-per-config-to-fix-31/) |
 | 302 | Create canonical quorum dispatch snippet and wire into all 8 workflows | 2026-03-15 | a1f7ccda | Verified | [302-create-canonical-quorum-dispatch-snippet](./quick/302-create-canonical-quorum-dispatch-snippet/) |
 | 303 | Add hypothesis measurement collection step to solve-diagnose (Step 0e) | 2026-03-15 | ed9a347f | Verified | [303-add-hypothesis-measurement-collection-st](./quick/303-add-hypothesis-measurement-collection-st/) |
+| 304 | Eliminate sweep false positives via code-trace-index | 2026-03-16 | 1b499527 | Verified | [304-eliminate-sweep-false-positives-via-code](./quick/304-eliminate-sweep-false-positives-via-code/) |
 
 ## Session Continuity
 
-Last session: 2026-03-15
-Stopped at: Completed quick task 303: Add hypothesis measurement H->M layer
+Last session: 2026-03-16
+Stopped at: Completed quick task 304: Eliminate sweep false positives via code-trace-index
 Resume file: None
