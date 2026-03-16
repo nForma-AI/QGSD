@@ -61,7 +61,11 @@
   3. T->R scanner output includes an annotation coverage percentage alongside the orphan test count
   4. C->R scanner consulting proximity-index.json suppresses flagging for code-requirement pairs with score >= 0.6
   5. `@requirement` annotations in source files (bin/*.cjs) create direct edges in the proximity graph builder output
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] v0.37-01-01-PLAN.md — Proximity graph source annotation edges + C->R scanner suppression (CLINK-01, CLINK-02)
+- [ ] v0.37-01-02-PLAN.md — T->R scanner annotation recognition + coverage reporting (TLINK-01, TLINK-03)
+- [ ] v0.37-01-03-PLAN.md — annotate-tests.cjs suggestion tool (TLINK-02)
 
 ### Phase v0.37-02: Gate Auto-Promotion
 **Goal**: Gates self-promote when models demonstrate sustained correctness, removing manual promotion overhead
@@ -110,11 +114,11 @@ Phases execute in sequence: v0.37-01 -> v0.37-02 -> v0.37-03 -> v0.37-04 -> v0.3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.37-01. Annotation Back-Linking | 0/TBD | Not started | - |
+| v0.37-01. Annotation Back-Linking | 0/3 | Planning complete | - |
 | v0.37-02. Gate Auto-Promotion | 0/TBD | Not started | - |
 | v0.37-03. Scanner FP Tuning | 0/TBD | Not started | - |
 | v0.37-04. Quorum Precedents | 0/TBD | Not started | - |
 | v0.37-05. Hypothesis Targeting | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-03-16 after v0.37 roadmap creation*
+*Last updated: 2026-03-16 after v0.37-01 phase planning*
