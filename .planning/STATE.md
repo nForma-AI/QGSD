@@ -18,6 +18,7 @@ See: .planning/PROJECT.md
 
 ## Session Log
 
+- 2026-03-16: Phase v0.37-05 (Hypothesis Targeting) complete — 1/1 plans, all 2 SCs verified, milestone v0.37 complete
 - 2026-03-16: Phase v0.37-04 (Quorum Precedents) complete — 2/2 plans, all 3 SCs verified, formal check 3/3, auto-advancing
 - 2026-03-16: Completed quick task 318: Replace fixed wall-clock quorum timeout with idle-based timeout
 - 2026-03-16: Phase v0.37-03 (Scanner FP Tuning) complete — 1/1 plans, all 3 SCs verified, auto-advancing
