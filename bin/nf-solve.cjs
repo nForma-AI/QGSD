@@ -1952,6 +1952,36 @@ function sweepCtoR() {
     }
   }
 
+  // Enrich untraced items with proximity nearest_req (fail-open)
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && untraced.length > 0) {
+      const { reach: reachFn } = require('./formal-query.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        for (const item of untraced) {
+          const nodeKey = 'code_file::' + item.file;
+          if (!pi.nodes[nodeKey]) continue;
+          const reachable = reachFn(pi, nodeKey, 2, ['requirement']);
+          for (const nodes of Object.values(reachable)) {
+            if (nodes.length > 0) {
+              item.nearest_req = nodes[0].key.split('::').slice(1).join('::');
+              break;
+            }
+          }
+          if (!item.nearest_req) {
+            const broader = reachFn(pi, nodeKey, 3, null);
+            const ctx = [];
+            for (const nodes of Object.values(broader)) {
+              for (const n of nodes) ctx.push(n.key);
+            }
+            if (ctx.length > 0) item.proximity_context = ctx.slice(0, 5);
+          }
+        }
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
   return {
     residual: untraced.length,
     detail: {
@@ -2050,10 +2080,41 @@ function sweepTtoR() {
     }
   }
 
+  // Convert orphans to objects and enrich with proximity nearest_req (fail-open)
+  let orphanItems = orphans.map(f => ({ file: f }));
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && orphanItems.length > 0) {
+      const { reach: reachFn } = require('./formal-query.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        for (const item of orphanItems) {
+          const nodeKey = 'code_file::' + item.file;
+          if (!pi.nodes[nodeKey]) continue;
+          const reachable = reachFn(pi, nodeKey, 2, ['requirement']);
+          for (const nodes of Object.values(reachable)) {
+            if (nodes.length > 0) {
+              item.nearest_req = nodes[0].key.split('::').slice(1).join('::');
+              break;
+            }
+          }
+          if (!item.nearest_req) {
+            const broader = reachFn(pi, nodeKey, 3, null);
+            const ctx = [];
+            for (const nodes of Object.values(broader)) {
+              for (const n of nodes) ctx.push(n.key);
+            }
+            if (ctx.length > 0) item.proximity_context = ctx.slice(0, 5);
+          }
+        }
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
   return {
-    residual: orphans.length,
+    residual: orphanItems.length,
     detail: {
-      orphan_tests: orphans,
+      orphan_tests: orphanItems,
       total_tests: testFiles.length,
       mapped: mapped,
       scoped: focusSet ? false : undefined,
@@ -2244,9 +2305,92 @@ function classifyCandidate(candidate) {
 }
 
 /**
+ * Proximity pre-filter: suppress reverse-scanner items that are reachable to a
+ * requirement node within BFS depth 2 in the proximity-index graph.
+ * Fail-open: if proximity-index.json is missing or malformed, all items pass through.
+ * @param {Array} candidates - array of {file_or_claim, type, ...}
+ * @returns {{ filtered: Array, suppressed: Array, stats: {total, suppressed, passed} }}
+ */
+function proximityPreFilter(candidates) {
+  const empty = { filtered: [...candidates], suppressed: [], stats: { total: candidates.length, suppressed: 0, passed: candidates.length } };
+  if (!candidates || candidates.length === 0) {
+    return { filtered: [], suppressed: [], stats: { total: 0, suppressed: 0, passed: 0 } };
+  }
+
+  try {
+    const indexPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (!fs.existsSync(indexPath)) return empty;
+
+    const { reach } = require('./formal-query.cjs');
+    const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    if (!index || !index.nodes) return empty;
+
+    const filtered = [];
+    const suppressed = [];
+
+    for (const c of candidates) {
+      // Only module and test types have code_file nodes; claims skip proximity filter
+      if (c.type === 'claim') {
+        filtered.push(c);
+        continue;
+      }
+
+      const nodeKey = 'code_file::' + c.file_or_claim;
+
+      // Check if node exists in proximity graph
+      if (!index.nodes[nodeKey]) {
+        filtered.push(c);
+        continue;
+      }
+
+      // BFS depth 2 for requirement nodes
+      const reachable = reach(index, nodeKey, 2, ['requirement']);
+      const reqNodes = [];
+      for (const nodes of Object.values(reachable)) {
+        for (const n of nodes) reqNodes.push(n);
+      }
+
+      if (reqNodes.length > 0) {
+        // Suppress: requirement reachable within depth 2
+        const reqId = reqNodes[0].key.split('::').slice(1).join('::');
+        c.nearest_req = reqId;
+        if (verboseMode) {
+          process.stderr.write(TAG + ' Proximity suppress: ' + c.file_or_claim + ' covered by ' + reqId + '\n');
+        }
+        suppressed.push(c);
+      } else {
+        // Check depth 3 for broader context (non-requirement nodes)
+        const broader = reach(index, nodeKey, 3, null);
+        const contextNodes = [];
+        for (const nodes of Object.values(broader)) {
+          for (const n of nodes) contextNodes.push(n.key);
+        }
+        if (contextNodes.length > 0) {
+          c.nearest_req = null;
+          c.proximity_context = contextNodes.slice(0, 5);
+        }
+        filtered.push(c);
+      }
+    }
+
+    return {
+      filtered,
+      suppressed,
+      stats: { total: candidates.length, suppressed: suppressed.length, passed: filtered.length },
+    };
+  } catch (e) {
+    // fail-open: proximity pre-filter is best-effort
+    if (verboseMode) {
+      process.stderr.write(TAG + ' Proximity pre-filter error (fail-open): ' + e.message + '\n');
+    }
+    return empty;
+  }
+}
+
+/**
  * Assemble and deduplicate reverse traceability candidates from all 3 scanners.
  * Merges C→R, T→R, D→R results, deduplicates, filters, and respects acknowledged-not-required.json.
- * Returns { candidates: [...], total_raw, deduped, filtered, acknowledged }
+ * Returns { candidates: [...], total_raw, deduped, filtered, acknowledged, proximity_suppressed }
  */
 function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
   const raw = [];
@@ -2254,24 +2398,35 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
   // Gather C→R candidates
   if (c_to_r.residual > 0 && c_to_r.detail.untraced_modules) {
     for (const mod of c_to_r.detail.untraced_modules) {
-      raw.push({
+      const candidate = {
         source_scanners: ['C→R'],
         evidence: mod.file,
         file_or_claim: mod.file,
         type: 'module',
-      });
+      };
+      // Carry through proximity data from sweep enrichment
+      if (mod.nearest_req) candidate.nearest_req = mod.nearest_req;
+      if (mod.proximity_context) candidate.proximity_context = mod.proximity_context;
+      raw.push(candidate);
     }
   }
 
   // Gather T→R candidates
   if (t_to_r.residual > 0 && t_to_r.detail.orphan_tests) {
-    for (const testFile of t_to_r.detail.orphan_tests) {
-      raw.push({
+    for (const testEntry of t_to_r.detail.orphan_tests) {
+      const testFile = typeof testEntry === 'string' ? testEntry : testEntry.file;
+      const candidate = {
         source_scanners: ['T→R'],
         evidence: testFile,
         file_or_claim: testFile,
         type: 'test',
-      });
+      };
+      // Carry through proximity data from sweep enrichment
+      if (testEntry && typeof testEntry === 'object') {
+        if (testEntry.nearest_req) candidate.nearest_req = testEntry.nearest_req;
+        if (testEntry.proximity_context) candidate.proximity_context = testEntry.proximity_context;
+      }
+      raw.push(candidate);
     }
   }
 
@@ -2374,6 +2529,12 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
     }
   }
 
+  // Proximity pre-filter: suppress items reachable to requirements in proximity graph
+  const proximityResult = proximityPreFilter(candidates);
+  const proximitySuppressed = proximityResult.suppressed.length;
+  candidates.length = 0;
+  for (const c of proximityResult.filtered) candidates.push(c);
+
   // Auto-categorize candidates into A/B/C
   for (const c of candidates) {
     const classification = classifyCandidate(c);
@@ -2440,6 +2601,7 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
     deduped: deduped,
     filtered: filtered,
     acknowledged: acknowledged,
+    proximity_suppressed: proximitySuppressed,
     auto_acknowledged_b: autoAcknowledgedB,
     category_counts: categoryCounts,
   };
@@ -4416,6 +4578,7 @@ module.exports = {
   sweepHazardModel,
   sweepHtoM,
   assembleReverseCandidates,
+  proximityPreFilter,
   classifyCandidate,
   digestV8Coverage,
   crossReferenceFormalCoverage,
