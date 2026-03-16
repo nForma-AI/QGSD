@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-16T13:58:55.419Z",
-  "content_hash": "sha256:ecf93719352529ca17361a79975118e81ec33084d5626c1ae823fc0a76cc3868",
-  "frozen_at": null,
+  "aggregated_at": "2026-03-16T14:22:33.885Z",
+  "content_hash": "6272c59bd2efc31d",
+  "frozen_at": "2026-03-16T14:22:33.897Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -3700,6 +3700,18 @@
         ".planning/formal/alloy/schema-extensions.als"
       ],
       "category_raw": "Schema Foundation"
+    },
+    {
+      "id": "SCHEMA-05",
+      "text": "Requirements gain a `tier` field (user | technical) allowing classification of infrastructure and tooling requirements separately from user-facing ones",
+      "category": "Formal Verification",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Infrastructure modules previously appeared as false-positive residual items in reverse traceability scanning. Adding a tier distinction enables the solve loop to propose the appropriate requirement type and reduces noise in forward/reverse traceability audits.",
+      "provenance": {
+        "source_file": ".planning/quick/313-add-tier-field-to-requirements-tier-user/313-PLAN.md",
+        "milestone": "quick-313"
+      }
     },
     {
       "id": "SEC-01",
