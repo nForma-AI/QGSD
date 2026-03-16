@@ -66,6 +66,7 @@ const jsonMode = args.includes('--json');
 const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
 const skipProximity = args.includes('--skip-proximity');
+const skipTests = args.includes('--skip-tests');
 
 // Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
 for (const arg of args) {
@@ -2795,8 +2796,8 @@ function computeResidual() {
   const r_to_f = sweepRtoF();
   const f_to_t = sweepFtoT();
   const c_to_f = sweepCtoF();
-  const t_to_c = fastMode
-    ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
+  const t_to_c = (fastMode || skipTests)
+    ? { residual: -1, detail: { skipped: true, reason: skipTests ? 'skip-tests' : 'fast mode' } }
     : sweepTtoC();
 
   // Cross-reference V8 coverage against formal-test-sync recipe source_files

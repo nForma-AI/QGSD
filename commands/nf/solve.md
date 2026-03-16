@@ -109,7 +109,7 @@ If `status == "bail"` or `"error"`: break loop, proceed to Phase 4.
 
 **3b. Re-diagnostic sweep (Step 4):**
 ```bash
-POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"})
+POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"})
 ```
 If `~/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs`.
 Parse `post_residual` from the JSON output.
