@@ -61,9 +61,12 @@ function getLayerDeps(layerKey) {
  *
  * @param {Object} residualVector — keys are layer names, values are objects
  *   with at least a `residual` property. Layers with residual <= 0 are skipped.
+ * @param {Object} [priorityWeights={}] — optional { [layerKey]: number } for
+ *   hypothesis-driven intra-wave ordering. Layers with higher weight appear first
+ *   within their wave. Does NOT change wave assignment (topology preserved).
  * @returns {Array<{wave: number, layers: string[], sequential?: boolean}>}
  */
-function computeWaves(residualVector) {
+function computeWaves(residualVector, priorityWeights = {}) {
   // Filter to active layers (residual > 0)
   const active = new Set();
   for (const [key, val] of Object.entries(residualVector)) {
@@ -106,7 +109,9 @@ function computeWaves(residualVector) {
   const rawWaves = [];
 
   for (const waveNum of sortedWaveNums) {
-    const layers = waveGroups.get(waveNum).sort(); // deterministic ordering
+    const layers = waveGroups.get(waveNum).sort((a, b) =>
+      (priorityWeights[b] || 0) - (priorityWeights[a] || 0) || a.localeCompare(b)
+    ); // priority weight descending, then alphabetical tiebreaker
     for (let i = 0; i < layers.length; i += MAX_PER_WAVE) {
       const chunk = layers.slice(i, i + MAX_PER_WAVE);
       rawWaves.push({ layers: chunk });
