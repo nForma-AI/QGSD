@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-16T14:22:33.885Z",
-  "content_hash": "6272c59bd2efc31d",
-  "frozen_at": "2026-03-16T14:22:33.897Z",
+  "aggregated_at": "2026-03-16T14:25:02.886Z",
+  "content_hash": "a9074cc7572afad2",
+  "frozen_at": "2026-03-16T14:25:02.887Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2691,7 +2691,7 @@
       "category": "N:N Pairing",
       "tier": "user",
       "phase": "v0.34-03",
-      "status": "Pending",
+      "status": "Complete",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
@@ -3775,11 +3775,11 @@
     },
     {
       "id": "SEM-01",
-      "text": "Graph BFS candidate discovery script uses existing proximity-index to find unlinked (model, requirement) pairs within 3 hops with proximity score > 0.6",
+      "text": "Graph BFS candidate discovery script uses existing proximity-index to find unlinked (model, requirement) pairs within 3 hops with proximity score > 0.7",
       "category": "Semantic Scoring",
       "tier": "user",
       "phase": "v0.34-02",
-      "status": "Pending",
+      "status": "Complete",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
@@ -3791,7 +3791,7 @@
       "category": "Semantic Scoring",
       "tier": "user",
       "phase": "v0.34-02",
-      "status": "Pending",
+      "status": "Complete",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
