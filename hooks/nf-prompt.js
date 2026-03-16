@@ -292,13 +292,22 @@ function sortBySuccessRate(slots, cwd) {
 // Returns { unique: [...], duplicates: [...] }, where unique are kept in orderedSlots
 // and duplicates are candidates for the MODEL-DEDUP fallback tier.
 // Respects auth_type sort order: first unique model per auth_type wins (sub agents preferred).
-function deduplicateByModel(orderedSlots, agentCfg) {
+// Falls back to providersList when agentCfg lacks a slot's model info.
+function deduplicateByModel(orderedSlots, agentCfg, providersList) {
   const seenModels = new Map(); // model string -> first slot name that claimed it
   const unique = [];
   const duplicates = [];
 
+  // Build providers lookup map at the top
+  const providersMap = new Map();
+  if (Array.isArray(providersList)) {
+    for (const p of providersList) {
+      if (p.name && p.model) providersMap.set(p.name, p.model);
+    }
+  }
+
   for (const slot of orderedSlots) {
-    const model = (agentCfg[slot.slot]?.model || 'unknown');
+    const model = (agentCfg[slot.slot]?.model || providersMap.get(slot.slot) || 'unknown');
     // Never deduplicate slots with unknown models — we can't assert they're duplicates
     if (model === 'unknown') {
       unique.push(slot);
@@ -643,7 +652,8 @@ process.stdin.on('end', () => {
       // Slots sharing the same underlying model are demoted to fallback tier for LLM diversity.
       // This happens AFTER the externalSlotCap slice to ensure we maximize model diversity
       // within the fan-out budget.
-      const dedupResult = deduplicateByModel(cappedSlots, agentCfg);
+      const providersList = findProviders();
+      const dedupResult = deduplicateByModel(cappedSlots, agentCfg, providersList);
       const uniqueSlots = dedupResult.unique;
       const modelDedupSlots = dedupResult.duplicates;
 
