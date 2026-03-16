@@ -61,6 +61,80 @@ function keywordOverlap(modelPath, reqText) {
 }
 
 /**
+ * Scan formal model source files for requirement ID mentions.
+ * Returns the set of requirement IDs found in at least one source file.
+ */
+function scanSourceFilesForReqIds() {
+  const found = new Set();
+  const dirs = [
+    { dir: path.join(FORMAL_DIR, 'alloy'), ext: '.als' },
+    { dir: path.join(FORMAL_DIR, 'tla'), ext: '.tla' },
+    { dir: path.join(FORMAL_DIR, 'prism'), ext: '.pm' },
+    { dir: path.join(FORMAL_DIR, 'prism'), ext: '.props' },
+  ];
+  const allContent = [];
+  for (const { dir, ext } of dirs) {
+    if (!fs.existsSync(dir)) continue;
+    const files = fs.readdirSync(dir).filter(f => f.endsWith(ext));
+    for (const file of files) {
+      try {
+        allContent.push(fs.readFileSync(path.join(dir, file), 'utf8'));
+      } catch { /* skip unreadable */ }
+    }
+  }
+  return { allContent, found };
+}
+
+/**
+ * Find requirements that are not mentioned in any formal model source file.
+ * @param {Array} requirements - Array of requirement objects with .id and .text
+ * @returns {Array<{id: string, text: string}>}
+ */
+function findUncoveredRequirements(requirements) {
+  const dirs = [
+    { dir: path.join(FORMAL_DIR, 'alloy'), ext: '.als' },
+    { dir: path.join(FORMAL_DIR, 'tla'), ext: '.tla' },
+    { dir: path.join(FORMAL_DIR, 'prism'), ext: '.pm' },
+    { dir: path.join(FORMAL_DIR, 'prism'), ext: '.props' },
+  ];
+
+  // Read all formal model source content into a single string for fast searching
+  let allContent = '';
+  for (const { dir, ext } of dirs) {
+    if (!fs.existsSync(dir)) continue;
+    try {
+      const files = fs.readdirSync(dir).filter(f => f.endsWith(ext));
+      for (const file of files) {
+        try {
+          allContent += fs.readFileSync(path.join(dir, file), 'utf8') + '\n';
+        } catch { /* skip unreadable */ }
+      }
+    } catch { /* skip unreadable dir */ }
+  }
+
+  const uncovered = [];
+  for (const req of requirements) {
+    if (!allContent.includes(req.id)) {
+      uncovered.push({ id: req.id, text: req.text || '' });
+    }
+  }
+  return uncovered;
+}
+
+/**
+ * Compute quick coverage ratio: how many requirement IDs appear in source files.
+ * @param {Array} requirements - Array of requirement objects
+ * @returns {{ covered: number, total: number, pct: number, uncovered: Array }}
+ */
+function quickCoverageCheck(requirements) {
+  const uncovered = findUncoveredRequirements(requirements);
+  const total = requirements.length;
+  const covered = total - uncovered.length;
+  const pct = total > 0 ? Math.round((covered / total) * 10000) / 100 : 100;
+  return { covered, total, pct, uncovered };
+}
+
+/**
  * Discover unlinked (model, requirement) pairs within maxHops of the
  * proximity graph with score above threshold, plus top-N zero-path pairs
  * ranked by coverage-gap heuristic.
@@ -107,7 +181,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
     reqAlreadyCovered.set(req.id, Array.isArray(req.formal_models) && req.formal_models.length > 0);
   }
 
-  const threshold = opts.threshold != null ? opts.threshold : 0.6;
+  const threshold = opts.threshold != null ? opts.threshold : 0.7;
   const maxHops = opts.maxHops != null ? opts.maxHops : 5;
   const nonNeighborTop = opts.nonNeighborTop != null ? opts.nonNeighborTop : 20;
 
@@ -115,8 +189,59 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
   const indexContent = JSON.stringify(proximityIndex);
   const proximityIndexHash = crypto.createHash('sha256').update(indexContent).digest('hex').slice(0, 8);
 
+  const noFastPath = opts.noFastPath || false;
+
   const modelPaths = Object.keys(modelRegistry.models || {});
   const reqIds = requirements.map(r => r.id);
+
+  // Fast-path: skip ensemble when coverage >= 95%
+  if (!noFastPath && requirements.length > 0) {
+    const coverage = quickCoverageCheck(requirements);
+    if (coverage.pct >= 95) {
+      process.stderr.write('[candidate-discovery] Fast path: ' + coverage.covered + '/' + coverage.total + ' requirements covered (' + coverage.pct + '%) -- skipping ensemble, surfacing gaps directly\n');
+
+      // Compute orphans using graph connectivity
+      const fpOrphanModels = [];
+      const fpOrphanReqs = [];
+      for (const modelPath of modelPaths) {
+        const modelKey = 'formal_model::' + modelPath;
+        const node = proximityIndex.nodes ? proximityIndex.nodes[modelKey] : null;
+        if (!node || (node.edges || []).length === 0) {
+          fpOrphanModels.push({ path: modelPath, edges: 0 });
+        }
+      }
+      for (const reqId of reqIds) {
+        const reqKey = 'requirement::' + reqId;
+        const node = proximityIndex.nodes ? proximityIndex.nodes[reqKey] : null;
+        if (!node || (node.edges || []).length === 0) {
+          fpOrphanReqs.push({ id: reqId, edges: 0 });
+        }
+      }
+
+      return {
+        metadata: {
+          generated: new Date().toISOString(),
+          proximity_index_hash: proximityIndexHash,
+          threshold,
+          max_hops: maxHops,
+          total_pairs_checked: 0,
+          candidates_found: 0,
+          candidates_filtered: 0,
+          orphan_models_count: fpOrphanModels.length,
+          orphan_requirements_count: fpOrphanReqs.length,
+          uncovered_requirements_count: coverage.uncovered.length,
+          non_neighbor_top: nonNeighborTop,
+          fast_path: true,
+        },
+        candidates: [],
+        orphans: {
+          models: fpOrphanModels,
+          requirements: fpOrphanReqs,
+        },
+        uncovered_requirements: coverage.uncovered,
+      };
+    }
+  }
 
   const methods = ENSEMBLE_METHODS;
   const candidates = [];
@@ -238,9 +363,9 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
             score = proximity(proximityIndex, modelKey, reqKey, maxHops, { method, reqsData: requirements, reqText });
           } catch { continue; }
 
-          // Ensemble uses a higher floor (0.6) since secondary methods produce
+          // Ensemble uses a higher floor (0.7) since secondary methods produce
           // large candidate sets; the primary threshold may be much lower.
-          const ensembleFloor = Math.max(threshold, 0.6);
+          const ensembleFloor = Math.max(threshold, 0.7);
           if (score == null || isNaN(score) || score <= ensembleFloor) continue;
 
           let dominated = false;
@@ -293,71 +418,30 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
     }
   }
 
-  // Non-neighbor discovery: rank zero-path pairs by coverage-gap heuristic
-  let orphanModels = [];
-  let orphanReqs = [];
-  if (nonNeighborTop > 0 && zeroPairs.length > 0) {
-    // Pre-compute reqModelCount: Map<reqId, count of models that have this req in their requirements>
-    const reqModelCount = new Map();
-    for (const modelInfo of Object.values(modelRegistry.models || {})) {
-      if (Array.isArray(modelInfo.requirements)) {
-        for (const reqId of modelInfo.requirements) {
-          reqModelCount.set(reqId, (reqModelCount.get(reqId) || 0) + 1);
-        }
-      }
+  // Graph-connectivity orphan detection: nodes with 0 edges in proximity index
+  const orphanModels = [];
+  const orphanReqs = [];
+
+  // Orphan models: model nodes with 0 edges in the proximity graph
+  for (const modelPath of modelPaths) {
+    const modelKey = 'formal_model::' + modelPath;
+    const node = proximityIndex.nodes ? proximityIndex.nodes[modelKey] : null;
+    if (!node || (node.edges || []).length === 0) {
+      orphanModels.push({ path: modelPath, edges: 0 });
     }
-
-    // Compute priority for each zero pair
-    const rankedPairs = [];
-    for (const pair of zeroPairs) {
-      // Check if this pair is already in candidates (shouldn't be, but defensive)
-      const alreadyFound = candidates.some(c => c.model === pair.model && c.requirement === pair.requirement);
-      if (alreadyFound) continue;
-
-      // modelCoverage = linked reqs + BFS candidates already found for this model
-      const modelInfo = modelRegistry.models[pair.model];
-      const linkedCount = (modelInfo.requirements || []).length;
-      const bfsCount = candidates.filter(c => c.model === pair.model).length;
-      const modelCoverage = linkedCount + bfsCount;
-
-      // reqCoverage = models linked to req + BFS candidates already found for this req
-      const linkedModelCount = reqModelCount.get(pair.requirement) || 0;
-      const bfsCandidateCount = candidates.filter(c => c.requirement === pair.requirement).length;
-      const reqCoverage = linkedModelCount + bfsCandidateCount;
-
-      // priority = 1/(modelCoverage+1) + 1/(reqCoverage+1)
-      const priority = 1 / (modelCoverage + 1) + 1 / (reqCoverage + 1);
-      rankedPairs.push({ ...pair, priority });
-    }
-
-    // Sort by priority descending and take top N
-    rankedPairs.sort((a, b) => b.priority - a.priority);
-
-    // Extract unique orphan models (models with 0 linked requirements)
-    const orphanModelMap = new Map();
-    for (const pair of rankedPairs) {
-      const modelInfo = modelRegistry.models[pair.model];
-      if ((modelInfo.requirements || []).length === 0) {
-        orphanModelMap.set(pair.model, (orphanModelMap.get(pair.model) || 0) + 1);
-      }
-    }
-    orphanModels = [...orphanModelMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, nonNeighborTop)
-      .map(([p, count]) => ({ path: p, zeroPairCount: count }));
-
-    // Extract unique orphan requirements (requirements with no formal_models coverage)
-    const orphanReqMap = new Map();
-    for (const pair of rankedPairs) {
-      if (!reqAlreadyCovered.get(pair.requirement)) {
-        orphanReqMap.set(pair.requirement, (orphanReqMap.get(pair.requirement) || 0) + 1);
-      }
-    }
-    orphanReqs = [...orphanReqMap.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, nonNeighborTop)
-      .map(([id, count]) => ({ id, zeroPairCount: count }));
   }
+
+  // Orphan requirements: requirement nodes with 0 edges in the proximity graph
+  for (const reqId of reqIds) {
+    const reqKey = 'requirement::' + reqId;
+    const node = proximityIndex.nodes ? proximityIndex.nodes[reqKey] : null;
+    if (!node || (node.edges || []).length === 0) {
+      orphanReqs.push({ id: reqId, edges: 0 });
+    }
+  }
+
+  // Truly uncovered requirements: not mentioned in any formal model source file
+  const uncoveredRequirements = findUncoveredRequirements(requirements);
 
   // Sort by proximity_score descending, then model+requirement for ties (deterministic)
   candidates.sort((a, b) => {
@@ -378,6 +462,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
       candidates_filtered: filteredCount,
       orphan_models_count: orphanModels.length,
       orphan_requirements_count: orphanReqs.length,
+      uncovered_requirements_count: uncoveredRequirements.length,
       non_neighbor_top: nonNeighborTop,
     },
     candidates,
@@ -385,6 +470,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
       models: orphanModels,
       requirements: orphanReqs,
     },
+    uncovered_requirements: uncoveredRequirements,
   };
 }
 
@@ -393,7 +479,7 @@ function discoverCandidates(proximityIndex, modelRegistry, requirements, opts = 
 // ─────────────────────────────────────────────────────────────────────────────
 
 function parseArgs(argv) {
-  const args = { minScore: 0.6, maxHops: 5, nonNeighborTop: 20, top: null, json: false, help: false };
+  const args = { minScore: 0.7, maxHops: 5, nonNeighborTop: 20, top: null, json: false, help: false, noFastPath: false };
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--json') args.json = true;
     else if (argv[i] === '--help' || argv[i] === '-h') args.help = true;
@@ -409,6 +495,8 @@ function parseArgs(argv) {
     } else if (argv[i].startsWith('--top')) {
       const val = argv[i].includes('=') ? argv[i].split('=')[1] : argv[++i];
       args.top = parseInt(val, 10);
+    } else if (argv[i] === '--no-fast-path') {
+      args.noFastPath = true;
     }
   }
   return args;
@@ -418,7 +506,8 @@ function printHelp() {
   console.log(`Usage: node bin/candidate-discovery.cjs [options]
 
 Options:
-  --min-score <n>        Minimum proximity score threshold (default: 0.6)
+  --min-score <n>        Minimum proximity score threshold (default: 0.7)
+  --no-fast-path         Force full ensemble even when coverage >= 95%
   --max-hops <n>         Maximum BFS hop count (default: 3)
   --non-neighbor-top <n> Include top N non-neighboring pairs by coverage gap (default: 20)
   --top <n>              Return only top N candidates by score (default: all)
@@ -466,14 +555,14 @@ function main() {
     threshold: args.minScore,
     maxHops: args.maxHops,
     nonNeighborTop: args.nonNeighborTop,
+    noFastPath: args.noFastPath,
   });
 
   // Log histogram of candidate scores to stderr (BEFORE truncation)
   if (result.candidates.length > 0) {
-    const buckets = { '0.6-0.7': 0, '0.7-0.8': 0, '0.8-0.9': 0, '0.9-1.0': 0 };
+    const buckets = { '0.7-0.8': 0, '0.8-0.9': 0, '0.9-1.0': 0 };
     for (const c of result.candidates) {
-      if (c.proximity_score < 0.7) buckets['0.6-0.7']++;
-      else if (c.proximity_score < 0.8) buckets['0.7-0.8']++;
+      if (c.proximity_score < 0.8) buckets['0.7-0.8']++;
       else if (c.proximity_score < 0.9) buckets['0.8-0.9']++;
       else buckets['0.9-1.0']++;
     }
@@ -486,6 +575,15 @@ function main() {
   // Log orphan discovery counts
   if (result.orphans.models.length > 0 || result.orphans.requirements.length > 0) {
     process.stderr.write(`[candidate-discovery] Found ${result.orphans.models.length} orphan models, ${result.orphans.requirements.length} orphan requirements (limit ${result.metadata.non_neighbor_top})\n`);
+  }
+
+  // Log truly uncovered requirements
+  if (result.uncovered_requirements && result.uncovered_requirements.length > 0) {
+    process.stderr.write('[candidate-discovery] === TRULY UNCOVERED REQUIREMENTS ===\n');
+    for (const ur of result.uncovered_requirements) {
+      process.stderr.write('[candidate-discovery]   ' + ur.id + ': ' + (ur.text || '(no text)') + ' (no mention in any formal model)\n');
+    }
+    process.stderr.write('[candidate-discovery] === ' + result.uncovered_requirements.length + ' requirements have no formal model coverage ===\n');
   }
 
   // Log pre-filtered candidates

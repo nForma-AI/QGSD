@@ -37,6 +37,7 @@ require.cache[formalProximityPath] = {
     buildIndex: () => ({ index: { nodes: {} }, totalNodes: 0, totalEdges: 0 }),
     EDGE_WEIGHTS: {},
     REVERSE_RELS: {},
+    ENSEMBLE_METHODS: ['semantic+hub+tfidf'],
   },
 };
 
@@ -77,7 +78,7 @@ describe('candidate-discovery', () => {
 
   describe('discoverCandidates', () => {
 
-    it('should discover candidates with score > 0.6 within 3 hops', () => {
+    it('should discover candidates with score > threshold within 3 hops', () => {
       const index = makeMockIndex();
       const registry = makeMockRegistry({
         'models/a.als': { requirements: [], source_layer: 'L3', gate_maturity: 'SOFT_GATE' },
@@ -90,7 +91,7 @@ describe('candidate-discovery', () => {
         'formal_model::models/a.als|requirement::REQ-02': 0.3,
       });
 
-      const result = discoverCandidates(index, registry, reqs, { threshold: 0.6, maxHops: 3 });
+      const result = discoverCandidates(index, registry, reqs, { threshold: 0.7, maxHops: 3 });
 
       assert.equal(result.candidates.length, 1, 'should find exactly 1 candidate');
       assert.equal(result.candidates[0].model, 'models/a.als');
@@ -211,6 +212,59 @@ describe('candidate-discovery', () => {
       // With threshold 0.4, both should appear
       const result2 = discoverCandidates(index, registry, reqs, { threshold: 0.4, maxHops: 3 });
       assert.equal(result2.candidates.length, 2);
+    });
+
+    it('default threshold is 0.7 so score 0.65 should NOT appear', () => {
+      const index = makeMockIndex();
+      const registry = makeMockRegistry({
+        'models/a.als': { requirements: [] },
+      });
+      const reqs = makeMockRequirements(['REQ-01']);
+
+      setMockScores({
+        'formal_model::models/a.als|requirement::REQ-01': 0.65,
+      });
+
+      // With default threshold (0.7), 0.65 should be excluded
+      const result = discoverCandidates(index, registry, reqs, { maxHops: 3 });
+      assert.equal(result.candidates.length, 0, 'score 0.65 should not appear with default 0.7 threshold');
+    });
+
+    it('orphan detection uses graph connectivity', () => {
+      // REQ-01 has edges, REQ-02 has 0 edges -- REQ-02 should be orphan
+      const index = makeMockIndex({
+        'requirement::REQ-01': { type: 'requirement', id: 'REQ-01', edges: [
+          { to: 'formal_model::models/a.als', rel: 'modeled_by', source: 'test' }
+        ] },
+        'requirement::REQ-02': { type: 'requirement', id: 'REQ-02', edges: [] },
+      });
+      const registry = makeMockRegistry({
+        'models/a.als': { requirements: [] },
+      });
+      const reqs = makeMockRequirements(['REQ-01', 'REQ-02']);
+
+      setMockScores({});
+
+      const result = discoverCandidates(index, registry, reqs, { threshold: 0.7, maxHops: 3 });
+
+      // REQ-02 should be orphan (0 edges), REQ-01 should NOT
+      const orphanIds = result.orphans.requirements.map(o => o.id);
+      assert.ok(orphanIds.includes('REQ-02'), 'REQ-02 with 0 edges should be orphan');
+      assert.ok(!orphanIds.includes('REQ-01'), 'REQ-01 with edges should NOT be orphan');
+    });
+
+    it('result includes uncovered_requirements array', () => {
+      const index = makeMockIndex();
+      const registry = makeMockRegistry({
+        'models/a.als': { requirements: [] },
+      });
+      const reqs = makeMockRequirements(['REQ-01']);
+
+      setMockScores({});
+
+      const result = discoverCandidates(index, registry, reqs, { threshold: 0.7, maxHops: 3 });
+      assert.ok(Array.isArray(result.uncovered_requirements), 'uncovered_requirements should be an array');
+      assert.ok(typeof result.metadata.uncovered_requirements_count === 'number', 'metadata should have uncovered_requirements_count');
     });
 
     it('should handle NaN/undefined proximity scores gracefully', () => {
