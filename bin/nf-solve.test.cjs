@@ -1524,3 +1524,90 @@ test('TC-CODE-TRACE-7: computeResidual rebuilds code-trace index before sweeps',
   assert.ok(computeFn.includes('rebuildCodeTraceIndex()'),
     'computeResidual should call rebuildCodeTraceIndex before sweeps');
 });
+
+// ── TC-01: V8 Coverage Digest (@req TC-01) ────────────────────────────────
+
+// @requirement TC-01
+test('@req TC-01: digestV8Coverage converts raw V8 coverage to compact format', () => {
+  // Mock raw V8 coverage data (simulates node --experimental-vm-modules output)
+  const rawCoverage = [
+    {
+      result: [
+        {
+          url: 'file:///tmp/test-file.cjs',
+          source: 'line1\nline2\nline3\nline4\nline5\n',
+          functions: [
+            {
+              functionName: '',
+              ranges: [
+                { startOffset: 0, endOffset: 30, count: 1 },   // covered
+                { startOffset: 12, endOffset: 18, count: 0 },  // uncovered (line 3)
+              ],
+            },
+          ],
+        },
+        {
+          url: 'node:internal/modules/cjs/loader',
+          functions: [],
+        },
+      ],
+    },
+  ];
+
+  const digest = digestV8Coverage(rawCoverage);
+
+  // Must return an object with files property
+  assert.ok(digest, 'digestV8Coverage should return non-null for valid input');
+  assert.ok(digest.files, 'digest should have a files property');
+
+  // Should include the test file but NOT the node: internal URL
+  const keys = Object.keys(digest.files);
+  assert.ok(keys.length === 1, 'should have exactly 1 file (node: URLs excluded)');
+
+  const fileEntry = digest.files[keys[0]];
+  assert.ok(Array.isArray(fileEntry.covered), 'covered should be an array');
+  assert.ok(Array.isArray(fileEntry.uncovered), 'uncovered should be an array');
+
+  // Covered lines should include at least one line number
+  assert.ok(fileEntry.covered.length > 0, 'should have at least one covered line');
+
+  // Compression check: raw input is larger than digest output
+  const rawSize = JSON.stringify(rawCoverage).length;
+  const digestSize = JSON.stringify(digest).length;
+  assert.ok(digestSize < rawSize, 'digest should be smaller than raw input');
+});
+
+// @requirement TC-01
+test('@req TC-01: digestV8Coverage returns null for invalid input', () => {
+  assert.strictEqual(digestV8Coverage(null), null);
+  assert.strictEqual(digestV8Coverage(undefined), null);
+  assert.strictEqual(digestV8Coverage('not-array'), null);
+});
+
+// @requirement TC-01
+test('@req TC-01: digestV8Coverage handles entries without source (boolean marker fallback)', () => {
+  const rawCoverage = [
+    {
+      result: [
+        {
+          url: 'file:///tmp/no-source.cjs',
+          // No source property
+          functions: [
+            {
+              functionName: 'main',
+              ranges: [{ startOffset: 0, endOffset: 100, count: 1 }],
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const digest = digestV8Coverage(rawCoverage);
+  assert.ok(digest, 'should return non-null');
+  const keys = Object.keys(digest.files);
+  assert.ok(keys.length === 1, 'should have 1 file');
+  const entry = digest.files[keys[0]];
+  // Boolean marker fallback: covered = [true]
+  assert.deepStrictEqual(entry.covered, [true], 'covered should be [true] for boolean marker');
+});

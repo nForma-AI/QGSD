@@ -15,6 +15,7 @@
  * 6. Output persistence: every measurement is recorded to hypothesis-measurements.json
  */
 
+-- @requirement H2M-01
 -- Data sources that provide actual observed values
 abstract sig DataSource {}
 one sig Conformance, Scoreboard, Telemetry extends DataSource {}

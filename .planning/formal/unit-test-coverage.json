@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-16T09:30:29.840Z",
+  "generated_at": "2026-03-16T12:35:17.812Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -1027,6 +1027,39 @@
         {
           "test_file": ".planning/formal/generated-stubs/GUIDE-02.stub.test.js",
           "test_name": "GUIDE-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "H2M-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: compareAssumption returns CONFIRMED when actual matches formal value"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: compareAssumption returns VIOLATED when actual exceeds formal value"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: compareAssumption returns UNMEASURABLE when no actual data matches"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: compareAssumption returns UNMEASURABLE when formal value is null"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: compareAssumption matches scoreboard TP rate assumptions"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: extractFormalValue returns null for non-existent file"
+        },
+        {
+          "test_file": "bin/hypothesis-measure.test.cjs",
+          "test_name": "@req H2M-01: measurement results have required schema fields"
         }
       ]
     },
@@ -2857,6 +2890,23 @@
         }
       ]
     },
+    "TC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": "bin/nf-solve.test.cjs",
+          "test_name": "@req TC-01: digestV8Coverage converts raw V8 coverage to compact format"
+        },
+        {
+          "test_file": "bin/nf-solve.test.cjs",
+          "test_name": "@req TC-01: digestV8Coverage returns null for invalid input"
+        },
+        {
+          "test_file": "bin/nf-solve.test.cjs",
+          "test_name": "@req TC-01: digestV8Coverage handles entries without source (boolean marker fallback)"
+        }
+      ]
+    },
     "TOKN-01": {
       "covered": true,
       "test_cases": [
@@ -3297,14 +3347,6 @@
           "test_name": "SOLVE-15 — Bool: behavioral verification"
         }
       ]
-    },
-    "H2M-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "TC-01": {
-      "covered": false,
-      "test_cases": []
     }
   }
 }

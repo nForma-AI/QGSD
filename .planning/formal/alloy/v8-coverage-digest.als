@@ -14,6 +14,7 @@
  * 6. Line numbers are positive (1-indexed)
  */
 
+-- @requirement TC-01
 -- Represents a line number in source code (1-indexed)
 sig LineNum {
   value: one Int
