@@ -228,7 +228,7 @@ function acknowledgeItem(item) {
     const sourceMap = { ctor: 'C->R', ttor: 'T->R', dtor: 'D->R' };
     fpData.entries.push({
       source: sourceMap[item.type] || item.type,
-      value: item.file || item.claim_text || item.summary,
+      value: item.type === 'dtor' ? itemKey('dtor', item) : (item.file || item.claim_text || item.summary),
       reason: 'Acknowledged via TUI',
       acknowledged_at: now,
     });
@@ -275,7 +275,7 @@ function archiveItem(item) {
   const archiveData = readArchiveFile();
   const now = new Date().toISOString();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
 
   // Don't duplicate
@@ -297,7 +297,7 @@ function archiveItem(item) {
 function unarchiveItem(item) {
   const archiveData = readArchiveFile();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
   archiveData.entries = archiveData.entries.filter(e => e.key !== key);
   return writeArchiveFile(archiveData);
@@ -306,7 +306,7 @@ function unarchiveItem(item) {
 function isArchived(item) {
   const archiveData = readArchiveFile();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
   const entry = archiveData.entries.find(e => e.key === key);
   if (!entry) return false;
@@ -1373,7 +1373,7 @@ No explanation, no markdown, just the JSON object.`;
 
         // Derive archive key (same logic as archiveItem)
         const archKey = catKey === 'dtoc' ? `${item.doc_file}:${item.value}`
-          : catKey === 'dtor' ? `${item.doc_file}:${item.line}`
+          : catKey === 'dtor' ? itemKey('dtor', item)
           : item.file || item.summary;
         if (existingKeys.has(archKey)) continue;
 
@@ -1398,6 +1398,13 @@ No explanation, no markdown, just the JSON object.`;
 
   stats.auto_archived = autoArchived;
   classifications._stats = stats;
+
+  // Prune stale entries from cache and archive (best-effort cleanup)
+  try {
+    const pruned = pruneStaleEntries(sweepData);
+    classifications._pruned = pruned;
+  } catch (_) { /* best effort */ }
+
   return classifications;
 }
 
@@ -1425,6 +1432,78 @@ function readClassificationCache() {
     const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
     return cached.classifications || {};
   } catch (_) { return {}; }
+}
+
+/**
+ * pruneStaleEntries(sweepData)
+ *
+ * Remove cache and archive entries for items that are no longer in the current sweep.
+ * This cleans up stale entries from pre-code-trace-index era that no longer appear.
+ *
+ * @param {object} sweepData - result from loadSweepData() with structure {catKey: {items: [...]}}
+ * @returns {object} {cache_pruned: N, archive_pruned: M}
+ */
+function pruneStaleEntries(sweepData) {
+  let cachePruned = 0;
+  let archivePruned = 0;
+
+  // Build set of all current item keys per category
+  const currentKeys = {};
+  for (const cat of CATEGORIES) {
+    currentKeys[cat.key] = new Set();
+    const catData = sweepData[cat.key];
+    if (catData && catData.items) {
+      for (const item of catData.items) {
+        currentKeys[cat.key].add(itemKey(cat.key, item));
+      }
+    }
+  }
+
+  // Prune classification cache
+  try {
+    const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
+    const classifications = cached.classifications || {};
+    const envelope = { updated_at: new Date().toISOString(), classifications };
+
+    for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+      const catCache = classifications[catKey] || {};
+      const keysToRemove = [];
+
+      for (const key of Object.keys(catCache)) {
+        if (!currentKeys[catKey].has(key)) {
+          keysToRemove.push(key);
+          cachePruned++;
+        }
+      }
+
+      for (const key of keysToRemove) {
+        delete catCache[key];
+      }
+
+      classifications[catKey] = catCache;
+    }
+
+    fs.writeFileSync(CLASSIFY_CACHE_PATH, JSON.stringify(envelope, null, 2) + '\n', 'utf8');
+  } catch (_) { /* best effort */ }
+
+  // Prune archive
+  try {
+    const archiveData = readArchiveFile();
+    const originalLength = archiveData.entries.length;
+
+    archiveData.entries = archiveData.entries.filter(entry => {
+      // Keep the entry if its key exists in current items for that type
+      if (!currentKeys[entry.type]) return true; // Unknown type — keep to be safe
+      return currentKeys[entry.type].has(entry.key);
+    });
+
+    archivePruned = originalLength - archiveData.entries.length;
+    if (archivePruned > 0) {
+      writeArchiveFile(archiveData);
+    }
+  } catch (_) { /* best effort */ }
+
+  return { cache_pruned: cachePruned, archive_pruned: archivePruned };
 }
 
 // ── Live residual computation ─────────────────────────────────────────────────
@@ -1490,5 +1569,6 @@ if (require.main === module) {
     archiveItem,
     unarchiveItem,
     isArchived,
+    pruneStaleEntries,
   };
 }

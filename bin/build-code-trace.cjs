@@ -3,6 +3,8 @@
 /**
  * build-code-trace.cjs
  *
+ * Requirements: SOLVE-13
+ *
  * Builds a code trace index from recipe and scope infrastructure to eliminate
  * false positives in sweepCtoR (source files) and sweepTtoR (test files).
  *
@@ -113,6 +115,20 @@ function buildIndex(rootDir) {
 
   index.scope_only = Array.from(scopeOnlySet).sort();
 
+  // Get list of scope directories for concept matching
+  const scopeDirs = [];
+  if (fs.existsSync(scopesRoot)) {
+    try {
+      const specDirs = fs.readdirSync(scopesRoot);
+      for (const specDir of specDirs) {
+        const scopePath = path.join(scopesRoot, specDir, 'scope.json');
+        if (fs.existsSync(scopePath)) {
+          scopeDirs.push(specDir);
+        }
+      }
+    } catch (_) {}
+  }
+
   // ---- STEP 3: Source-module inheritance ----
   // For every test file (*.test.cjs or *.test.js), if its source module is traced,
   // inherit the source module's requirement IDs.
@@ -159,6 +175,79 @@ function buildIndex(rootDir) {
           if (!index.traced_files[testFile].includes(reqId)) {
             index.traced_files[testFile].push(reqId);
           }
+        }
+      }
+    }
+  }
+
+  // ---- STEP 3b: Concept-based test/ inheritance ----
+  // For test files in test/ directory, match to scope concepts and inherit source files' requirements
+  const testFilesInTestDir = Object.keys(index.traced_files).filter(f =>
+    f.startsWith('test/') && (f.endsWith('.test.cjs') || f.endsWith('.test.js'))
+  );
+
+  for (const testFile of testFilesInTestDir) {
+    if (index.traced_files[testFile] && index.traced_files[testFile].length > 0) {
+      // Already traced — skip
+      continue;
+    }
+
+    // Extract concept from filename (e.g., test/solve-convergence-e2e.test.cjs -> solve-convergence)
+    let concept = testFile
+      .replace(/^test\//, '')          // Remove test/ prefix
+      .replace(/\.test\.(cjs|js)$/, '') // Remove .test.cjs/.test.js suffix
+      .replace(/^e2e-/, '');            // Remove e2e- prefix
+
+    let found = false;
+
+    // Try matching concept to scope directories
+    for (const scopeDir of scopeDirs) {
+      const matches = concept.includes(scopeDir) || scopeDir.includes(concept);
+      if (matches) {
+        // Read the scope.json and get source_files
+        const scopePath = path.join(scopesRoot, scopeDir, 'scope.json');
+        try {
+          const scope = JSON.parse(fs.readFileSync(scopePath, 'utf8'));
+          if (Array.isArray(scope.source_files)) {
+            const collectedReqs = new Set();
+            for (const srcFile of scope.source_files) {
+              let normalized = srcFile;
+              if (path.isAbsolute(srcFile)) {
+                normalized = path.relative(rootDir, srcFile);
+              }
+              // Collect requirements from all source files in the scope
+              if (index.traced_files[normalized]) {
+                for (const reqId of index.traced_files[normalized]) {
+                  collectedReqs.add(reqId);
+                }
+              }
+            }
+
+            if (collectedReqs.size > 0) {
+              index.traced_files[testFile] = Array.from(collectedReqs);
+              // Remove from scope_only if it was added there
+              const scopeOnlyIdx = index.scope_only.indexOf(testFile);
+              if (scopeOnlyIdx >= 0) {
+                index.scope_only.splice(scopeOnlyIdx, 1);
+              }
+              found = true;
+              break;
+            }
+          }
+        } catch (e) {}
+      }
+    }
+
+    // If no scope match, try matching against bin/*.cjs source files
+    if (!found) {
+      const baseName = concept;
+      const binSourceFile = `bin/${baseName}.cjs`;
+      if (index.traced_files[binSourceFile] && index.traced_files[binSourceFile].length > 0) {
+        index.traced_files[testFile] = [...index.traced_files[binSourceFile]];
+        // Remove from scope_only if it was added there
+        const scopeOnlyIdx = index.scope_only.indexOf(testFile);
+        if (scopeOnlyIdx >= 0) {
+          index.scope_only.splice(scopeOnlyIdx, 1);
         }
       }
     }
