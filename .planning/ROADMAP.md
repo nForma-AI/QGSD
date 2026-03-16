@@ -97,7 +97,10 @@ Plans:
   1. Running `bin/extract-precedents.cjs` against debate archives produces `.planning/quorum/precedents.json` with BLOCK/APPROVE decisions and reasoning
   2. Quorum dispatch prompts include up to 3 keyword-matched precedents relevant to the current question
   3. Precedents older than 90 days are automatically pruned and do not appear in dispatch prompts
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] v0.37-04-01-PLAN.md — Extract-precedents.cjs tool + tests (QPREC-01)
+- [ ] v0.37-04-02-PLAN.md — Precedent matching, TTL pruning, and dispatch injection (QPREC-02, QPREC-03)
 
 ### Phase v0.37-05: Hypothesis Targeting
 **Goal**: Hypothesis measurement transitions directly influence which layers get remediated first in solve waves
@@ -119,8 +122,8 @@ Phases execute in sequence: v0.37-01 -> v0.37-02 -> v0.37-03 -> v0.37-04 -> v0.3
 | v0.37-01. Annotation Back-Linking | 0/3 | Complete    | 2026-03-16 |
 | v0.37-02. Gate Auto-Promotion | 0/1 | Complete    | 2026-03-16 |
 | v0.37-03. Scanner FP Tuning | 0/TBD | Complete    | 2026-03-16 |
-| v0.37-04. Quorum Precedents | 0/TBD | Not started | - |
+| v0.37-04. Quorum Precedents | 0/2 | Planning complete | - |
 | v0.37-05. Hypothesis Targeting | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-03-16 after v0.37-02 phase planning*
+*Last updated: 2026-03-16 after v0.37-04 phase planning*
