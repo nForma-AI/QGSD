@@ -489,6 +489,60 @@ function buildIndex() {
     warnings.push('debt.json not found or invalid, skipping');
   }
 
+  // Step 12b: Parse @requirement annotations from formal model source files
+  const SOURCE_DIRS = [
+    { dir: path.join(FORMAL_DIR, 'alloy'), glob: '*.als' },
+    { dir: path.join(FORMAL_DIR, 'tla'), glob: '*.tla' },
+    { dir: path.join(FORMAL_DIR, 'prism'), glob: '*.pm' },
+    { dir: path.join(FORMAL_DIR, 'prism'), glob: '*.props' },
+  ];
+  const annotationRegex = /[@]requirement\s+([A-Z][A-Z0-9_-]+)/g;
+  let annotationEdgeCount = 0;
+  let annotationFileCount = 0;
+  let latestAnnotationMtime = null;
+
+  for (const { dir, glob: globPattern } of SOURCE_DIRS) {
+    if (!fs.existsSync(dir)) continue;
+    const ext = globPattern.replace('*', '');
+    const files = fs.readdirSync(dir).filter(f => f.endsWith(ext));
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      let content;
+      try { content = fs.readFileSync(fullPath, 'utf8'); } catch { continue; }
+
+      const mtime = fileMtime(fullPath);
+      if (mtime && (!latestAnnotationMtime || mtime > latestAnnotationMtime)) {
+        latestAnnotationMtime = mtime;
+      }
+
+      // Extract unique requirement IDs from this file
+      const reqIds = new Set();
+      let match;
+      while ((match = annotationRegex.exec(content)) !== null) {
+        reqIds.add(match[1]);
+      }
+
+      if (reqIds.size === 0) continue;
+      annotationFileCount++;
+
+      const relativePath = path.relative(process.cwd(), fullPath);
+      const fmKey = `formal_model::${relativePath}`;
+      ensureNode(nodes, fmKey, 'formal_model', relativePath);
+
+      for (const reqId of reqIds) {
+        const reqKey = `requirement::${reqId}`;
+        ensureNode(nodes, reqKey, 'requirement', reqId);
+        addEdge(nodes[reqKey], fmKey, 'modeled_by', 'source-annotation');
+        annotationEdgeCount++;
+      }
+    }
+  }
+
+  if (latestAnnotationMtime) {
+    sources['source-annotations'] = { mtime: latestAnnotationMtime };
+  }
+  process.stderr.write('[proximity] Extracted ' + annotationEdgeCount + ' requirement annotations from ' + annotationFileCount + ' source files\n');
+
   // Step 13: REVERSE PASS
   const reverseEdges = [];
   for (const [nodeKey, node] of Object.entries(nodes)) {
@@ -753,6 +807,23 @@ function proximity(index, nodeKeyA, nodeKeyB, maxDepth, opts) {
   return Math.min(finalScore, 1.0);
 }
 
+/**
+ * Count total edges embedded in index nodes.
+ * The proximity-index.json has no top-level edges array -- edges are inside each node.
+ * @param {object} index - The proximity-index.json object
+ * @returns {{ totalEdges: number, byType: Record<string, number> }}
+ */
+function countEmbeddedEdges(index) {
+  let totalEdges = 0;
+  const byType = {};
+  for (const node of Object.values(index.nodes || {})) {
+    const count = (node.edges || []).length;
+    totalEdges += count;
+    byType[node.type] = (byType[node.type] || 0) + count;
+  }
+  return { totalEdges, byType };
+}
+
 function main() {
   const args = parseArgs(process.argv);
 
@@ -811,4 +882,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { buildIndex, proximity, EDGE_WEIGHTS, SEMANTIC_WEIGHTS, REVERSE_RELS, SCORING_METHODS, DEFAULT_SCORING_METHOD, ENSEMBLE_METHODS, tfidfSimilarity };
+module.exports = { buildIndex, proximity, countEmbeddedEdges, EDGE_WEIGHTS, SEMANTIC_WEIGHTS, REVERSE_RELS, SCORING_METHODS, DEFAULT_SCORING_METHOD, ENSEMBLE_METHODS, tfidfSimilarity };
