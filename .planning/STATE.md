@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-14)
 Phase: 5 of 5 (Test Harness)
 Plan: v0.36-05-02-PLAN.md (2/2 plans complete)
 Status: Complete
-Last activity: 2026-03-15 - Completed quick task 303: Add hypothesis measurement H->M layer
+Last activity: 2026-03-16 - Completed quick task 309: Fix 2 XState model gaps identified by Gate A grounding check
 
 Progress: [##########] 100%
 
@@ -109,6 +109,7 @@ None.
 | 303 | Add hypothesis measurement collection step to solve-diagnose (Step 0e) | 2026-03-15 | ed9a347f | Verified | [303-add-hypothesis-measurement-collection-st](./quick/303-add-hypothesis-measurement-collection-st/) |
 | 304 | Eliminate sweep false positives via code-trace-index | 2026-03-16 | 1b499527 | Verified | [304-eliminate-sweep-false-positives-via-code](./quick/304-eliminate-sweep-false-positives-via-code/) |
 | 305 | Solve loop hygiene: prune stale cache/archive, fix D→R key stability, extend test/ inheritance | 2026-03-16 | b2c312f7 | Verified | [305-solve-loop-hygiene-prune-stale-cache-arc](./quick/305-solve-loop-hygiene-prune-stale-cache-arc/) |
+| 309 | Fix 2 XState model gaps identified by Gate A grounding check | 2026-03-16 | caed0e2d | Pending | [309-fix-2-xstate-model-gaps-identified-by-ga](./quick/309-fix-2-xstate-model-gaps-identified-by-ga/) |
 
 ## Session Continuity
 
