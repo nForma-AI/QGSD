@@ -22,7 +22,7 @@ const JSON_FLAG = process.argv.includes('--json');
 /**
  * Classify a model path into L1, L2, or L3.
  *
- * L3 (Reasoning): formalism "tla", "alloy", "prism", "uppaal"; files in tla/, alloy/, prism/ directories
+ * L3 (Reasoning): formalism "tla", "alloy", "prism"; files in tla/, alloy/, prism/ directories
  * L2 (Semantics): spec/invariants.md files; XState machine definition; assumption-gaps.md
  * L1 (Evidence): formalism "trace" or "redaction"; conformance-events.jsonl; debt.json; observe-handler outputs
  */

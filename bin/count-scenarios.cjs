@@ -4,7 +4,7 @@
 // Counts scenarios (instance upper-bound) for every formal model across all frameworks.
 // Outputs a sorted table: biggest models first, so you know what to split.
 //
-// Frameworks: Alloy (.als), TLA+ (.tla via state-space-report.json), UPPAAL (.xml)
+// Frameworks: Alloy (.als), TLA+ (.tla via state-space-report.json)
 //
 // Usage:
 //   node bin/count-scenarios.cjs              # table to stdout
@@ -16,8 +16,6 @@ const path = require('path');
 const ROOT       = process.cwd();
 const ALLOY_DIR  = path.join(ROOT, '.planning', 'formal', 'alloy');
 const TLA_REPORT = path.join(ROOT, '.planning', 'formal', 'state-space-report.json');
-const UPPAAL_DIR = path.join(ROOT, '.planning', 'formal', 'uppaal');
-
 const jsonMode = process.argv.includes('--json');
 
 // ── Alloy parser ─────────────────────────────────────────────────────────────
@@ -302,29 +300,8 @@ function main() {
     }
   }
 
-  // ── UPPAAL models ──
-  if (fs.existsSync(UPPAAL_DIR)) {
-    var uFiles = fs.readdirSync(UPPAAL_DIR).filter(function(f) { return f.endsWith('.xml'); });
-    for (var i = 0; i < uFiles.length; i++) {
-      var content = fs.readFileSync(path.join(UPPAAL_DIR, uFiles[i]), 'utf8');
-      var templateCount = (content.match(/<template>/g) || []).length;
-      var locationCount = (content.match(/<location /g) || []).length;
-      var clockCount = (content.match(/clock\s+\w/g) || []).length;
-      rows.push({
-        framework: 'UPPAAL',
-        model: uFiles[i].replace('.xml', ''),
-        scenarios: null,
-        risk: 'TIMED',
-        sigs: templateCount,
-        fields: locationCount,
-        commands: clockCount,
-        detail: templateCount + ' automata, ' + locationCount + ' locations, ' + clockCount + ' clocks',
-      });
-    }
-  }
-
   // Sort: HIGH/biggest first
-  var riskOrder = { HIGH: 0, UNKNOWN: 1, ERROR: 1, TIMED: 1, MODERATE: 2, LOW: 3, MINIMAL: 4 };
+  var riskOrder = { HIGH: 0, UNKNOWN: 1, ERROR: 1, MODERATE: 2, LOW: 3, MINIMAL: 4 };
   rows.sort(function(a, b) {
     var ra = riskOrder[a.risk] !== undefined ? riskOrder[a.risk] : 2;
     var rb = riskOrder[b.risk] !== undefined ? riskOrder[b.risk] : 2;

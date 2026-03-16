@@ -1762,20 +1762,6 @@
       ]
     },
     {
-      "id": "FM-UPPAAL-OMISSION",
-      "title": "UPPAAL capability omission",
-      "description": "Failure to implement UPPAAL requirements: A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the qu",
-      "type": "omission",
-      "severity": "medium",
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=UPPAAL-01]"
-        }
-      ]
-    },
-    {
       "id": "FM-UPS-OMISSION",
       "title": "UPS capability omission",
       "description": "Failure to implement UPS requirements: UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",

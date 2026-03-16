@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-16T12:16:07.658Z",
-  "total_measured": 85,
+  "generated": "2026-03-16T16:25:57.427Z",
+  "total_measured": 102,
   "verdicts": {
     "CONFIRMED": 0,
     "VIOLATED": 0,
-    "UNMEASURABLE": 85
+    "UNMEASURABLE": 102
   },
   "measurements": [
     {
@@ -20,6 +20,33 @@
     {
       "assumption_name": "MaxImprovementIterations",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFDeliberation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFGatePromotion.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "CooldownThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFGatePromotion.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "FlipFlopLimit",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFGatePromotion.tla",
       "formal_value": null,
       "actual_value": null,
       "actual_source": null,
@@ -81,6 +108,24 @@
       "reason": "formal value not extractable from source model"
     },
     {
+      "assumption_name": "MaxSnapshots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSessionTracking.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MinTrendPoints",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSessionTracking.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
       "assumption_name": "MaxSessions",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergence.tla",
       "formal_value": null,
@@ -92,6 +137,33 @@
     {
       "assumption_name": "MaxResidual",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergence.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergenceV2.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "OscillationCredits",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergenceV2.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "DriftThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergenceV2.tla",
       "formal_value": null,
       "actual_value": null,
       "actual_source": null,
@@ -252,6 +324,33 @@
       "reason": "formal value not extractable from source model"
     },
     {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCGatePromotion.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "CooldownThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCGatePromotion.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "FlipFlopLimit",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCGatePromotion.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
       "assumption_name": "NumSlots",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCMCPEnv.cfg",
       "formal_value": null,
@@ -326,6 +425,60 @@
     {
       "assumption_name": "MaxRestarts",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionPersistence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSnapshots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MinTrendPoints",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MinVelocityPoints",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "OscillationCredits",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "DriftThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg",
       "formal_value": null,
       "actual_value": null,
       "actual_source": null,

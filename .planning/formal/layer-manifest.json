@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-16T12:05:08.853Z",
+  "generated": "2026-03-16T16:19:30.034Z",
   "layers": {
     "L1": [
       {
@@ -947,16 +947,6 @@
         "grounding_status": "ungrounded"
       },
       {
-        "path": ".planning/formal/alloy/formalism-selection.als",
-        "description": "Formalism selection heuristics for close-formal-gaps workflow",
-        "grounding_status": "ungrounded"
-      },
-      {
-        "path": ".planning/formal/alloy/model-registry-parity.als",
-        "description": "Model registry and complexity profiler feature parity across 5 formalisms",
-        "grounding_status": "ungrounded"
-      },
-      {
         "path": ".planning/formal/alloy/v8-coverage-digest.als",
         "description": "V8 coverage digest structural invariants: disjointness, compression, URL filtering, positive line numbers",
         "grounding_status": "ungrounded"
@@ -965,6 +955,61 @@
         "path": ".planning/formal/alloy/hypothesis-measurement.als",
         "description": "H->M residual layer: hypothesis measurement verdicts (CONFIRMED/VIOLATED/UNMEASURABLE)",
         "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFGatePromotion.tla",
+        "description": "Gate promotion lifecycle with flip-flop detection and cooldown enforcement",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFSessionTracking.tla",
+        "description": "Cross-session trend tracking with Mann-Kendall detection and velocity estimation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFSolveConvergenceV2.tla",
+        "description": "Solve loop convergence with oscillation detection and cascade awareness",
+        "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/classification-schema.als",
+        "description": "Classification cache content-hash keying and requirement tier schema",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/gate-naming-migration.als",
+        "description": "Gate naming migration from A/B/C to Wiring:Evidence/Purpose/Coverage",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/nn-pairing-lifecycle.als",
+        "description": "N:N pairing lifecycle with candidate generation, confirmation, and rejection caching",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/solve-performance-structure.als",
+        "description": "Solve performance wave structure and layer architecture constraints",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/predictive-power.als",
+        "description": "Bug-to-property linking and per-model recall scoring",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/provider-configuration.als",
+        "description": "Provider configuration with runtime CLI resolution and cross-platform paths",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/test-infrastructure.als",
+        "description": "Test infrastructure: focus filter completeness and classification golden set",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFConvergenceTest.tla",
+        "description": "Convergence testing: e2e monotonic decrease and cascade effect detection",
+        "grounding_status": "has_semantic_declarations"
       }
     ]
   },
@@ -988,17 +1033,17 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-16T12:05:08.853Z"
+      "collapsed_at": "2026-03-16T16:19:30.035Z"
     }
   },
   "summary": {
-    "total_models": 192,
+    "total_models": 201,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 190,
+    "L3_count": 199,
     "maturity_distribution": {
-      "0": 159,
-      "1": 33
+      "0": 166,
+      "1": 35
     },
     "spec_modules_with_invariants": 18
   }

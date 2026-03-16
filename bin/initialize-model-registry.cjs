@@ -36,7 +36,6 @@ const SCAN_DIRS = [
   { dir: path.join(ROOT, '.planning', 'formal', 'tla'),    exts: ['.tla'] },
   { dir: path.join(ROOT, '.planning', 'formal', 'alloy'),  exts: ['.als'] },
   { dir: path.join(ROOT, '.planning', 'formal', 'prism'),  exts: ['.pm']  },
-  { dir: path.join(ROOT, '.planning', 'formal', 'uppaal'), exts: ['.xml'] },
   { dir: path.join(ROOT, '.planning', 'formal', 'petri'),  exts: ['.dot'] },
 ];
 

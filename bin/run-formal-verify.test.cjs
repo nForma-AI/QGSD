@@ -301,7 +301,7 @@ test('TRIAGE-02: STEPS includes ci:triage-bundle entry as final step', () => {
     src.includes('generate-triage-bundle.cjs'),
     'ci:triage-bundle STEPS entry must reference generate-triage-bundle.cjs'
   );
-  // Verify total STEPS count is now 28 (updated from 27 when uppaal:quorum-races was added)
+  // Verify total STEPS count
   assert.ok(
     src.includes('Total:    36+ steps'),
     'Comment block must reflect updated total of 36+ steps (dynamic)'

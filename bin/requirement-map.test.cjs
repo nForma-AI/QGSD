@@ -127,8 +127,8 @@ describe('getRequirementIds — Alloy runners', () => {
   });
 });
 
-// ── 5. PRISM / UPPAAL runner check_ids ────────────────────────────────────────
-describe('getRequirementIds — PRISM and UPPAAL runners', () => {
+// ── 5. PRISM runner check_ids ────────────────────────────────────────
+describe('getRequirementIds — PRISM runners', () => {
   it('prism:quorum returns probabilistic model requirements', () => {
     const ids = getRequirementIds('prism:quorum');
     assert.ok(ids.includes('PRM-01'), 'should include PRM-01');

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-16T12:44:46.480Z",
+  "last_sync": "2026-03-16T16:25:27.076Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -951,7 +951,6 @@
         "SIG-03",
         "TRIAGE-02",
         "UNIF-02",
-        "UPPAAL-02",
         "VALID-01",
         "MCP-01",
         "MCP-03"
@@ -1257,13 +1256,13 @@
       ]
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 1287,
-      "last_updated": "2026-03-16T12:44:47.810Z",
+      "version": 1354,
+      "last_updated": "2026-03-16T16:27:33.307Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2175,13 +2174,13 @@
       ]
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 1287,
-      "last_updated": "2026-03-16T12:44:47.816Z",
+      "version": 1354,
+      "last_updated": "2026-03-16T16:27:33.313Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2427,24 +2426,24 @@
       ]
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 1287,
-      "last_updated": "2026-03-16T12:44:47.816Z",
+      "version": 1354,
+      "last_updated": "2026-03-16T16:27:33.314Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 883,
-      "last_updated": "2026-03-16T12:44:47.817Z",
+      "version": 927,
+      "last_updated": "2026-03-16T16:27:33.314Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -3009,34 +3008,6 @@
         "DIAG-10"
       ]
     },
-    ".planning/formal/alloy/formalism-selection.als": {
-      "version": 1,
-      "last_updated": "2026-03-14T23:19:55.638Z",
-      "update_source": "solve-remediate",
-      "source_id": "UPPAAL-04",
-      "session_id": null,
-      "description": "Formalism selection heuristics for close-formal-gaps workflow",
-      "layer_maturity": 3,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3",
-      "requirements": [
-        "SCHEMA-03"
-      ]
-    },
-    ".planning/formal/alloy/model-registry-parity.als": {
-      "version": 1,
-      "last_updated": "2026-03-14T23:19:55.638Z",
-      "update_source": "solve-remediate",
-      "source_id": "UPPAAL-05",
-      "session_id": null,
-      "description": "Model registry and complexity profiler feature parity across 5 formalisms",
-      "layer_maturity": 3,
-      "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3",
-      "requirements": [
-        "INTG-05"
-      ]
-    },
     ".planning/formal/alloy/v8-coverage-digest.als": {
       "version": 1,
       "last_updated": "2026-03-15T15:47:31.061Z",
@@ -3064,6 +3035,195 @@
       "requirements": [
         "H2M-01"
       ]
+    },
+    ".planning/formal/tla/NFGatePromotion.tla": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:19:36.251Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Gate promotion lifecycle with flip-flop detection and cooldown enforcement",
+      "requirements": [
+        "PROMO-01",
+        "PROMO-02",
+        "PROMO-03",
+        "PROMO-04",
+        "PROMO-05",
+        "STAB-01",
+        "STAB-02",
+        "STAB-03"
+      ],
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/tla/NFSessionTracking.tla": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:19:36.251Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Cross-session trend tracking with Mann-Kendall detection and velocity estimation",
+      "requirements": [
+        "TRACK-01",
+        "TRACK-02",
+        "TRACK-03",
+        "TRACK-04"
+      ],
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/tla/NFSolveConvergenceV2.tla": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:19:36.251Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Solve loop convergence with oscillation detection and cascade awareness",
+      "requirements": [
+        "CONV-01",
+        "CONV-02",
+        "CONV-03",
+        "CONV-04",
+        "OSC-01",
+        "OSC-02",
+        "OSC-03"
+      ],
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/classification-schema.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:19:36.251Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Classification cache content-hash keying and requirement tier schema",
+      "requirements": [
+        "CLASS-01",
+        "SCHEMA-05"
+      ],
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/gate-naming-migration.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.318Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Gate naming migration from A/B/C to Wiring:Evidence/Purpose/Coverage",
+      "requirements": [
+        "NAME-01",
+        "NAME-02",
+        "NAME-03",
+        "NAME-04"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/nn-pairing-lifecycle.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.318Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "N:N pairing lifecycle with candidate generation, confirmation, and rejection caching",
+      "requirements": [
+        "PAIR-01",
+        "PAIR-02",
+        "PAIR-03",
+        "PAIR-04",
+        "SEM-05"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/solve-performance-structure.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.318Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Solve performance wave structure and layer architecture constraints",
+      "requirements": [
+        "PERF-01",
+        "PERF-02",
+        "STRUCT-01",
+        "STRUCT-02",
+        "STRUCT-03",
+        "STRUCT-04"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/predictive-power.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.318Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Bug-to-property linking and per-model recall scoring",
+      "requirements": [
+        "PRED-01",
+        "PRED-02"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/provider-configuration.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.318Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Provider configuration with runtime CLI resolution and cross-platform paths",
+      "requirements": [
+        "SETUP-01",
+        "SETUP-02",
+        "XPLAT-01",
+        "XPLAT-02"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/alloy/test-infrastructure.als": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:27:33.319Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Test infrastructure: focus filter completeness and classification golden set",
+      "requirements": [
+        "TEST-03",
+        "TEST-04"
+      ],
+      "layer_maturity": 3,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
+    },
+    ".planning/formal/tla/NFConvergenceTest.tla": {
+      "version": 1,
+      "last_updated": "2026-03-16T16:19:36.251Z",
+      "update_source": "generate",
+      "source_id": "close-formal-gaps",
+      "session_id": null,
+      "description": "Convergence testing: e2e monotonic decrease and cascade effect detection",
+      "requirements": [
+        "TEST-01",
+        "TEST-02"
+      ],
+      "layer_maturity": 2,
+      "gate_maturity": "SOFT_GATE",
+      "source_layer": "L3"
     }
   }
 }

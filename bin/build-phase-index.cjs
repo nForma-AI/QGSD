@@ -5,7 +5,7 @@ const path = require('path');
 
 // Domain-specific pattern words for keyword extraction
 const DOMAIN_PATTERNS = [
-  'NDJSON', 'TLA', 'TLA+', 'Alloy', 'PRISM', 'UPPAAL', 'xstate',
+  'NDJSON', 'TLA', 'TLA+', 'Alloy', 'PRISM', 'xstate',
   'frontmatter', 'quorum', 'circuit-breaker', 'hook', 'MCP', 'scoreboard',
   'liveness', 'fairness', 'CTL', 'LTL'
 ];

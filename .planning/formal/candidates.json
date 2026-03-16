@@ -1,181 +1,27 @@
 {
   "metadata": {
-    "generated": "2026-03-14T20:28:24.625Z",
-    "proximity_index_hash": "2922a074",
-    "threshold": 0.6,
+    "generated": "2026-03-16T16:20:03.452Z",
+    "proximity_index_hash": "16830e77",
+    "threshold": 0.7,
     "max_hops": 5,
-    "total_pairs_checked": 69696,
+    "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
-    "orphan_models_count": 20,
-    "orphan_requirements_count": 20,
-    "non_neighbor_top": 20
+    "orphan_models_count": 1,
+    "orphan_requirements_count": 0,
+    "uncovered_requirements_count": 0,
+    "non_neighbor_top": 20,
+    "fast_path": true
   },
   "candidates": [],
   "orphans": {
     "models": [
       {
-        "path": ".planning/formal/petri/account-manager-petri-net.dot",
-        "zeroPairCount": 292
-      },
-      {
-        "path": ".planning/formal/petri/quorum-petri-net.dot",
-        "zeroPairCount": 292
-      },
-      {
-        "path": ".planning/formal/alloy/diagnostics.als",
-        "zeroPairCount": 286
-      },
-      {
-        "path": ".planning/formal/alloy/gate-architecture.als",
-        "zeroPairCount": 282
-      },
-      {
-        "path": ".planning/formal/alloy/fingerprinting.als",
-        "zeroPairCount": 272
-      },
-      {
-        "path": ".planning/formal/alloy/semantics-layer.als",
-        "zeroPairCount": 266
-      },
-      {
-        "path": ".planning/formal/alloy/evidence-layer.als",
-        "zeroPairCount": 258
-      },
-      {
-        "path": ".planning/formal/tla/NFDebtLedger.tla",
-        "zeroPairCount": 249
-      },
-      {
-        "path": ".planning/formal/alloy/reliability-hardening.als",
-        "zeroPairCount": 246
-      },
-      {
-        "path": ".planning/formal/alloy/vhs-ci-hardening.als",
-        "zeroPairCount": 243
-      },
-      {
-        "path": ".planning/formal/alloy/integration-layers.als",
-        "zeroPairCount": 242
-      },
-      {
-        "path": ".planning/formal/alloy/traceability.als",
-        "zeroPairCount": 241
-      },
-      {
-        "path": ".planning/formal/alloy/parallel-exec.als",
-        "zeroPairCount": 239
-      },
-      {
-        "path": ".planning/formal/tla/NFTokenOpt.tla",
-        "zeroPairCount": 239
-      },
-      {
-        "path": ".planning/formal/alloy/meta-resolve.als",
-        "zeroPairCount": 238
-      },
-      {
-        "path": ".planning/formal/alloy/parallel-execution.als",
-        "zeroPairCount": 238
-      },
-      {
-        "path": ".planning/formal/tla/NFConfigLoader.tla",
-        "zeroPairCount": 238
-      },
-      {
-        "path": ".planning/formal/tla/NFPolicy.tla",
-        "zeroPairCount": 238
-      },
-      {
-        "path": ".planning/formal/tla/NFVerification.tla",
-        "zeroPairCount": 238
-      },
-      {
-        "path": ".planning/formal/tla/NFLearning.tla",
-        "zeroPairCount": 237
+        "path": ".planning/formal/prism/quorum.pm",
+        "edges": 0
       }
     ],
-    "requirements": [
-      {
-        "id": "RLS-03",
-        "zeroPairCount": 184
-      },
-      {
-        "id": "REL-03",
-        "zeroPairCount": 177
-      },
-      {
-        "id": "RDME-01",
-        "zeroPairCount": 173
-      },
-      {
-        "id": "TOKN-03",
-        "zeroPairCount": 173
-      },
-      {
-        "id": "GUIDE-02",
-        "zeroPairCount": 168
-      },
-      {
-        "id": "RDME-10",
-        "zeroPairCount": 166
-      },
-      {
-        "id": "VIS-02",
-        "zeroPairCount": 166
-      },
-      {
-        "id": "PARA-01",
-        "zeroPairCount": 165
-      },
-      {
-        "id": "REN-01",
-        "zeroPairCount": 165
-      },
-      {
-        "id": "RDME-06",
-        "zeroPairCount": 164
-      },
-      {
-        "id": "INST-11",
-        "zeroPairCount": 163
-      },
-      {
-        "id": "PROV-02",
-        "zeroPairCount": 163
-      },
-      {
-        "id": "RDME-07",
-        "zeroPairCount": 163
-      },
-      {
-        "id": "GATE-01",
-        "zeroPairCount": 163
-      },
-      {
-        "id": "GUIDE-01",
-        "zeroPairCount": 160
-      },
-      {
-        "id": "MEMP-03",
-        "zeroPairCount": 160
-      },
-      {
-        "id": "PRST-01",
-        "zeroPairCount": 159
-      },
-      {
-        "id": "RDME-08",
-        "zeroPairCount": 159
-      },
-      {
-        "id": "EVID-03",
-        "zeroPairCount": 157
-      },
-      {
-        "id": "META-03",
-        "zeroPairCount": 156
-      }
-    ]
-  }
+    "requirements": []
+  },
+  "uncovered_requirements": []
 }

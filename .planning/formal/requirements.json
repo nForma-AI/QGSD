@@ -1,6 +1,6 @@
 {
   "aggregated_at": "2026-03-16T14:25:02.886Z",
-  "content_hash": "a9074cc7572afad2",
+  "content_hash": "4e4e7388b103860c",
   "frozen_at": "2026-03-16T14:25:02.887Z",
   "requirements": [
     {
@@ -745,7 +745,7 @@
         "milestone": "v0.26"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDAccountManager.tla"
+        ".planning/formal/tla/NFAccountManager.tla"
       ]
     },
     {
@@ -760,7 +760,7 @@
         "milestone": "v0.26"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDAccountManager.tla"
+        ".planning/formal/tla/NFAccountManager.tla"
       ]
     },
     {
@@ -968,7 +968,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDCircuitBreaker.tla"
+        ".planning/formal/tla/NFCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -984,7 +984,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDCircuitBreaker.tla"
+        ".planning/formal/tla/NFCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -1000,7 +1000,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDCircuitBreaker.tla"
+        ".planning/formal/tla/NFCircuitBreaker.tla"
       ],
       "category_raw": "Detection"
     },
@@ -1016,7 +1016,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDOscillation.tla"
+        ".planning/formal/tla/NFOscillation.tla"
       ],
       "category_raw": "Detection"
     },
@@ -1032,7 +1032,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDOscillation.tla"
+        ".planning/formal/tla/NFOscillation.tla"
       ],
       "category_raw": "Detection"
     },
@@ -1990,7 +1990,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDDeliberation.tla"
+        ".planning/formal/tla/NFDeliberation.tla"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -2006,7 +2006,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDPreFilter.tla"
+        ".planning/formal/tla/NFPreFilter.tla"
       ],
       "category_raw": "Feedback Loops"
     },
@@ -2581,7 +2581,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDConvergence.tla"
+        ".planning/formal/tla/NFConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -2597,7 +2597,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDConvergence.tla"
+        ".planning/formal/tla/NFConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -2613,7 +2613,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDConvergence.tla"
+        ".planning/formal/tla/NFConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -2629,7 +2629,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDConvergence.tla"
+        ".planning/formal/tla/NFConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -2645,7 +2645,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDConvergence.tla"
+        ".planning/formal/tla/NFConvergence.tla"
       ],
       "category_raw": "Oscillation Resolution Mode"
     },
@@ -2853,7 +2853,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDDeliberation.tla"
+        ".planning/formal/tla/NFDeliberation.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -2869,7 +2869,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDDeliberation.tla"
+        ".planning/formal/tla/NFDeliberation.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -2885,7 +2885,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDPreFilter.tla"
+        ".planning/formal/tla/NFPreFilter.tla"
       ],
       "category_raw": "Planning Integration"
     },
@@ -4007,7 +4007,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDRecruiting.tla"
+        ".planning/formal/tla/NFRecruiting.tla"
       ],
       "category_raw": "Slot-based Naming"
     },
@@ -4036,7 +4036,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDRecruiting.tla"
+        ".planning/formal/tla/NFRecruiting.tla"
       ],
       "category_raw": "Slot-based Naming"
     },
@@ -4052,7 +4052,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Spec Completeness"
     },
@@ -4242,7 +4242,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4258,7 +4258,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4274,7 +4274,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4290,7 +4290,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4306,7 +4306,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4322,7 +4322,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4338,7 +4338,7 @@
         "milestone": "unknown"
       },
       "formal_models": [
-        ".planning/formal/tla/QGSDStopHook.tla"
+        ".planning/formal/tla/NFStopHook.tla"
       ],
       "category_raw": "Stop Hook"
     },
@@ -4814,45 +4814,6 @@
         ".planning/formal/alloy/unified-check-results.als"
       ],
       "category_raw": "Unified Verdict Format"
-    },
-    {
-      "id": "UPPAAL-01",
-      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
-      "category": "Formal Verification",
-      "tier": "user",
-      "phase": "v0.20-07",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
-        "milestone": "v0.20"
-      },
-      "category_raw": "UPPAAL Timed Race Modeling"
-    },
-    {
-      "id": "UPPAAL-02",
-      "text": "`bin/run-uppaal.cjs` executes the UPPAAL model checker (verifyta CLI) against `quorum-races.xml` and writes a check result to `check-results.ndjson` using the v2.1 schema (SCHEMA-01 prerequisite). The STEPS entry `uppaal:quorum-races` is added to `run-formal-verify.cjs`.",
-      "category": "Formal Verification",
-      "tier": "user",
-      "phase": "v0.20-07",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
-        "milestone": "v0.20"
-      },
-      "category_raw": "UPPAAL Timed Race Modeling"
-    },
-    {
-      "id": "UPPAAL-03",
-      "text": "The model surfaces at least two critical measurement points as annotated properties: (a) the minimum inter-slot response gap that prevents a race condition, (b) the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.",
-      "category": "Formal Verification",
-      "tier": "user",
-      "phase": "v0.20-07",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
-        "milestone": "v0.20"
-      },
-      "category_raw": "UPPAAL Timed Race Modeling"
     },
     {
       "id": "UPS-01",

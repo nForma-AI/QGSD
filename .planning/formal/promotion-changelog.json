@@ -1,412 +1,5 @@
 [
   {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:48:36.940Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:48:36.943Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:48:36.945Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:48:36.945Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:57:35.272Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:57:35.276Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T15:57:35.277Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:00:14.611Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:51:44.409Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:51:44.412Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:51:44.413Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:51:44.413Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:56:59.379Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:56:59.384Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:56:59.385Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T16:56:59.386Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T17:07:48.554Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T17:07:48.556Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T17:07:48.557Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T17:07:48.557Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:29:32.326Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:29:32.330Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:29:32.331Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:29:32.331Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:35:55.367Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:35:55.373Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:35:55.379Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:35:55.380Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:41:00.801Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:41:00.809Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:41:00.811Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:41:00.811Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:47:55.729Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/prism/quorum.pm",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:47:55.733Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:47:55.735Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:47:55.735Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
-    "model": ".planning/formal/alloy/quorum-votes.als",
-    "from_level": "ADVISORY",
-    "to_level": "SOFT_GATE",
-    "timestamp": "2026-03-15T19:53:03.511Z",
-    "evidence_readiness": {
-      "score": 2,
-      "total": 5
-    },
-    "trigger": "auto_promotion"
-  },
-  {
     "model": ".planning/formal/prism/quorum.pm",
     "from_level": "ADVISORY",
     "to_level": "SOFT_GATE",
@@ -2193,6 +1786,413 @@
     "from_level": "ADVISORY",
     "to_level": "SOFT_GATE",
     "timestamp": "2026-03-16T12:44:47.817Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T14:31:03.853Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T14:31:03.856Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T14:31:03.858Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T14:31:03.859Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:18:53.536Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:18:53.538Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:18:53.539Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:18:53.539Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:31:14.823Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:31:14.826Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:31:14.828Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:31:14.828Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:37:18.313Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:37:18.322Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:37:18.323Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T15:37:18.324Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.026Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.029Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.030Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFGatePromotion.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.031Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFSessionTracking.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.031Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFSolveConvergenceV2.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.032Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/classification-schema.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.032Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/gate-naming-migration.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.032Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/nn-pairing-lifecycle.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.032Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/solve-performance-structure.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.033Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/predictive-power.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.033Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/provider-configuration.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.033Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/test-infrastructure.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.034Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFConvergenceTest.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:04:44.034Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:19:36.243Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:19:36.247Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:19:36.249Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum_xstate.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:19:36.249Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/alloy/quorum-votes.als",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:25:28.174Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/prism/quorum.pm",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:25:28.177Z",
+    "evidence_readiness": {
+      "score": 2,
+      "total": 5
+    },
+    "trigger": "auto_promotion"
+  },
+  {
+    "model": ".planning/formal/tla/NFQuorum.tla",
+    "from_level": "ADVISORY",
+    "to_level": "SOFT_GATE",
+    "timestamp": "2026-03-16T16:25:28.178Z",
     "evidence_readiness": {
       "score": 2,
       "total": 5
