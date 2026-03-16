@@ -8,7 +8,7 @@ See: .planning/PROJECT.md
 
 **Milestone:** v0.37 — Close the Loop: Cross-Layer Feedback Integration
 **Current phase:** v0.37-02 — Gate Auto-Promotion
-**Status:** Executing (plan 01 complete, pending verification)
+**Status:** Ready to plan
 
 ## Session Log
 
