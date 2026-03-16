@@ -31,8 +31,7 @@ const {
   sweepRtoD,
   sweepDtoC,
   sweepTtoC,
-  sweepL1toL2,
-  sweepL2toL3,
+  sweepL1toL3,
   sweepL3toTC,
   sweepGitHeatmap,
   computeResidual,
@@ -797,8 +796,8 @@ test('DIGEST-5: sweepTtoC v8_coverage is digest format (not raw array)', () => {
 
 // ── TC-LAYER: Layer Alignment Sweep Tests ─────────────────────────────────────
 
-test('TC-LAYER-1: sweepL1toL2 returns normalized residual from gate-a JSON', () => {
-  const result = sweepL1toL2();
+test('TC-LAYER-1: sweepL1toL3 returns normalized residual from gate-a JSON', () => {
+  const result = sweepL1toL3();
   assert.ok(typeof result === 'object');
   assert.ok(typeof result.residual === 'number');
   assert.ok(typeof result.detail === 'object');
@@ -809,19 +808,6 @@ test('TC-LAYER-1: sweepL1toL2 returns normalized residual from gate-a JSON', () 
     assert.ok('wiring_evidence_score' in result.detail, 'detail should have wiring_evidence_score');
     assert.ok('target' in result.detail, 'detail should have target');
     assert.ok('gap' in result.detail, 'detail should have gap');
-  }
-});
-
-test('TC-LAYER-2: sweepL2toL3 returns normalized residual capped at 10', () => {
-  const result = sweepL2toL3();
-  assert.ok(typeof result === 'object');
-  assert.ok(typeof result.residual === 'number');
-  assert.ok(result.residual >= -1 && result.residual <= 10,
-    'residual should be -1 to 10, got ' + result.residual);
-  if (result.residual >= 0) {
-    assert.ok('wiring_purpose_score' in result.detail, 'detail should have wiring_purpose_score');
-    assert.ok('orphaned_count' in result.detail, 'detail should have orphaned_count');
-    assert.ok('residual_capped' in result.detail, 'detail should have residual_capped');
   }
 });
 
