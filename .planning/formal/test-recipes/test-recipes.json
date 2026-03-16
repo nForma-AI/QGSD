@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-16T09:31:10.622Z",
+  "generated": "2026-03-16T12:39:29.262Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
@@ -36,7 +36,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -172,7 +172,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -217,7 +217,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -262,7 +262,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -307,7 +307,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -352,7 +352,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -397,7 +397,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 160,
+        "rpn": 80,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -442,7 +442,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 120,
+        "rpn": 240,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -487,7 +487,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 120,
+        "rpn": 240,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -533,7 +533,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 120,
+        "rpn": 240,
         "risk_tier": "critical"
       },
       "derived_from": [
@@ -895,7 +895,7 @@
       },
       "risk_context": {
         "severity_class": "degraded",
-        "rpn": 64,
+        "rpn": 32,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -940,7 +940,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 64,
+        "rpn": 32,
         "risk_tier": "medium"
       },
       "derived_from": [
@@ -985,7 +985,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 48,
+        "rpn": 96,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1030,7 +1030,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 48,
+        "rpn": 96,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1076,7 +1076,7 @@
       },
       "risk_context": {
         "severity_class": "stalled",
-        "rpn": 48,
+        "rpn": 96,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1121,7 +1121,7 @@
       },
       "risk_context": {
         "severity_class": "cosmetic",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1166,7 +1166,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1211,7 +1211,7 @@
       },
       "risk_context": {
         "severity_class": "cosmetic",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1256,7 +1256,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1391,7 +1391,7 @@
       },
       "risk_context": {
         "severity_class": "cosmetic",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -1436,7 +1436,7 @@
       },
       "risk_context": {
         "severity_class": "model_gap",
-        "rpn": 40,
+        "rpn": 80,
         "risk_tier": "high"
       },
       "derived_from": [
@@ -4761,6 +4761,3273 @@
           "ref": "failure_modes[id=FM-TUI-06-OMISSION]"
         }
       ]
+    },
+    {
+      "id": "TR-FM-REQ-CRED-07-OMISSION",
+      "failure_mode_id": "FM-REQ-CRED-07-OMISSION",
+      "title": "Test enforcement of requirement CRED-07",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CRED-07 property holds: CRED-07"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CRED-07 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CRED-07)",
+        "failure_indicates": "Omission: requirement CRED-07 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GUARD-01-OMISSION",
+      "failure_mode_id": "FM-REQ-GUARD-01-OMISSION",
+      "title": "Test enforcement of requirement GUARD-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GUARD-01 property holds: Context payload size guardrail — All data passed through LLM agent context (Bash output, inter-agent JSON, skill output contracts) MUST stay under 128"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GUARD-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GUARD-01)",
+        "failure_indicates": "Omission: requirement GUARD-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GATE-02-OMISSION",
+      "failure_mode_id": "FM-REQ-GATE-02-OMISSION",
+      "title": "Test enforcement of requirement GATE-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GATE-02 property holds: Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GATE-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GATE-02)",
+        "failure_indicates": "Omission: requirement GATE-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INST-12-OMISSION",
+      "failure_mode_id": "FM-REQ-INST-12-OMISSION",
+      "title": "Test enforcement of requirement INST-12",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INST-12 property holds: INST-12"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INST-12 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INST-12)",
+        "failure_indicates": "Omission: requirement INST-12 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INIT-01-OMISSION",
+      "failure_mode_id": "FM-REQ-INIT-01-OMISSION",
+      "title": "Test enforcement of requirement INIT-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INIT-01 property holds: INIT-01"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INIT-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INIT-01)",
+        "failure_indicates": "Omission: requirement INIT-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INST-11-OMISSION",
+      "failure_mode_id": "FM-REQ-INST-11-OMISSION",
+      "title": "Test enforcement of requirement INST-11",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INST-11 property holds: Quick workflow auto-detects protected branches and creates feature branches on protected branches, commits directly on feature branches, with configur"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INST-11 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INST-11)",
+        "failure_indicates": "Omission: requirement INST-11 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-BLD-01-OMISSION",
+      "failure_mode_id": "FM-REQ-BLD-01-OMISSION",
+      "title": "Test enforcement of requirement BLD-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that BLD-01 property holds: `hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 and GUARD 5 code from Phase 5"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement BLD-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(BLD-01)",
+        "failure_indicates": "Omission: requirement BLD-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CL-01-OMISSION",
+      "failure_mode_id": "FM-REQ-CL-01-OMISSION",
+      "title": "Test enforcement of requirement CL-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CL-01 property holds: CHANGELOG.md has a `[0.2.0]` entry covering all v0.2 changes: circuit breaker (Phases 6–8), GUARD 5 gap closure (Phase 5), QGSD rebranding, quorum sco"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CL-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CL-01)",
+        "failure_indicates": "Omission: requirement CL-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CI-07-OMISSION",
+      "failure_mode_id": "FM-REQ-CI-07-OMISSION",
+      "title": "Test enforcement of requirement CI-07",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CI-07 property holds: CI/CD workflows trigger and test on both main and staging branches, run tests across Node 18/20/22 matrix, verify npm package integrity, and auto-publ"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CI-07 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CI-07)",
+        "failure_indicates": "Omission: requirement CI-07 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CI-05-OMISSION",
+      "failure_mode_id": "FM-REQ-CI-05-OMISSION",
+      "title": "Test enforcement of requirement CI-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CI-05 property holds: Linting and formatting checks run in CI and block merge on violations"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CI-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CI-05)",
+        "failure_indicates": "Omission: requirement CI-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CI-04-OMISSION",
+      "failure_mode_id": "FM-REQ-CI-04-OMISSION",
+      "title": "Test enforcement of requirement CI-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CI-04 property holds: Automated test suite runs on every pull request and merge to main is blocked when tests fail"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CI-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CI-04)",
+        "failure_indicates": "Omission: requirement CI-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-OBS-05-OMISSION",
+      "failure_mode_id": "FM-REQ-OBS-05-OMISSION",
+      "title": "Test enforcement of requirement OBS-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that OBS-05 property holds: `/qgsd:observe` supports `logstash` source type that runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue sch"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement OBS-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(OBS-05)",
+        "failure_indicates": "Omission: requirement OBS-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CONF-13-OMISSION",
+      "failure_mode_id": "FM-REQ-CONF-13-OMISSION",
+      "title": "Test enforcement of requirement CONF-13",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CONF-13 property holds: CONF-13"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CONF-13 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CONF-13)",
+        "failure_indicates": "Omission: requirement CONF-13 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CONF-10-OMISSION",
+      "failure_mode_id": "FM-REQ-CONF-10-OMISSION",
+      "title": "Test enforcement of requirement CONF-10",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CONF-10 property holds: CONF-10"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CONF-10 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CONF-10)",
+        "failure_indicates": "Omission: requirement CONF-10 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DISP-07-OMISSION",
+      "failure_mode_id": "FM-REQ-DISP-07-OMISSION",
+      "title": "Test enforcement of requirement DISP-07",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DISP-07 property holds: DISP-07"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DISP-07 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DISP-07)",
+        "failure_indicates": "Omission: requirement DISP-07 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DEBT-02-OMISSION",
+      "failure_mode_id": "FM-REQ-DEBT-02-OMISSION",
+      "title": "Test enforcement of requirement DEBT-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DEBT-02 property holds: Debt entries are deduplicated by fingerprint — new observations with matching fingerprints increment occurrence count and update last_seen instead of "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DEBT-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DEBT-02)",
+        "failure_indicates": "Omission: requirement DEBT-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DECOMP-05-OMISSION",
+      "failure_mode_id": "FM-REQ-DECOMP-05-OMISSION",
+      "title": "Test enforcement of requirement DECOMP-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DECOMP-05 property holds: `analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DECOMP-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DECOMP-05)",
+        "failure_indicates": "Omission: requirement DECOMP-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-01-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-01-OMISSION",
+      "title": "Test enforcement of requirement DIAG-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-01 property holds: Conformance trace divergence rate reduced to <5% (ACHIEVED: 0% on mapped events; VERIFICATION.md missing)"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-01)",
+        "failure_indicates": "Omission: requirement DIAG-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-02-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-02-OMISSION",
+      "title": "Test enforcement of requirement DIAG-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-02 property holds: `attribute-trace-divergence.cjs` walks XState guards to root-cause divergences (IMPLEMENTED; VERIFICATION.md missing)"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-02)",
+        "failure_indicates": "Omission: requirement DIAG-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DISP-06-OMISSION",
+      "failure_mode_id": "FM-REQ-DISP-06-OMISSION",
+      "title": "Test enforcement of requirement DISP-06",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DISP-06 property holds: Quorum preflight implements two-layer parallel health probe via --probe flag: Layer 1 spawns CLI binaries with health_check_args (3s timeout), Layer 2"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DISP-06 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DISP-06)",
+        "failure_indicates": "Omission: requirement DISP-06 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DOC-01-OMISSION",
+      "failure_mode_id": "FM-REQ-DOC-01-OMISSION",
+      "title": "Test enforcement of requirement DOC-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DOC-01 property holds: DOC-01"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DOC-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DOC-01)",
+        "failure_indicates": "Omission: requirement DOC-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DOC-02-OMISSION",
+      "failure_mode_id": "FM-REQ-DOC-02-OMISSION",
+      "title": "Test enforcement of requirement DOC-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DOC-02 property holds: DOC-02"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DOC-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DOC-02)",
+        "failure_indicates": "Omission: requirement DOC-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-EVID-05-OMISSION",
+      "failure_mode_id": "FM-REQ-EVID-05-OMISSION",
+      "title": "Test enforcement of requirement EVID-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that EVID-05 property holds: Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement EVID-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(EVID-05)",
+        "failure_indicates": "Omission: requirement EVID-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-EVID-02-OMISSION",
+      "failure_mode_id": "FM-REQ-EVID-02-OMISSION",
+      "title": "Test enforcement of requirement EVID-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that EVID-02 property holds: Trace corpus management indexes conformance events by session, action type, and state transition with queryable metadata"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement EVID-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(EVID-02)",
+        "failure_indicates": "Omission: requirement EVID-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-EVID-03-OMISSION",
+      "failure_mode_id": "FM-REQ-EVID-03-OMISSION",
+      "title": "Test enforcement of requirement EVID-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that EVID-03 property holds: Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-violation, drift, degradation)"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement EVID-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(EVID-03)",
+        "failure_indicates": "Omission: requirement EVID-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-FP-01-OMISSION",
+      "failure_mode_id": "FM-REQ-FP-01-OMISSION",
+      "title": "Test enforcement of requirement FP-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that FP-01 property holds: Issues are fingerprinted using a hierarchical strategy: exception type → function name → message pattern hash, producing a stable fingerprint string"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement FP-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(FP-01)",
+        "failure_indicates": "Omission: requirement FP-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-FP-02-OMISSION",
+      "failure_mode_id": "FM-REQ-FP-02-OMISSION",
+      "title": "Test enforcement of requirement FP-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that FP-02 property holds: Drifts are fingerprinted by formal parameter key (e.g., `MCsafety.cfg:MaxDeliberation`) — identical parameter keys always map to the same fingerprint"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement FP-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(FP-02)",
+        "failure_indicates": "Omission: requirement FP-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-04-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-04-OMISSION",
+      "title": "Test enforcement of requirement DIAG-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-04 property holds: Support --focus=\"<phrase>\" flag in nf:solve to filter diagnostics and reporting output to requirements matching the focus topic via tokenization and w"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-04)",
+        "failure_indicates": "Omission: requirement DIAG-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-TRACE-06-OMISSION",
+      "failure_mode_id": "FM-REQ-TRACE-06-OMISSION",
+      "title": "Test enforcement of requirement TRACE-06",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that TRACE-06 property holds: TRACE-06"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement TRACE-06 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(TRACE-06)",
+        "failure_indicates": "Omission: requirement TRACE-06 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GATE-03-OMISSION",
+      "failure_mode_id": "FM-REQ-GATE-03-OMISSION",
+      "title": "Test enforcement of requirement GATE-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GATE-03 property holds: Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GATE-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GATE-03)",
+        "failure_indicates": "Omission: requirement GATE-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GATE-05-OMISSION",
+      "failure_mode_id": "FM-REQ-GATE-05-OMISSION",
+      "title": "Test enforcement of requirement GATE-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GATE-05 property holds: GATE-05"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GATE-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GATE-05)",
+        "failure_indicates": "Omission: requirement GATE-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-EVID-04-OMISSION",
+      "failure_mode_id": "FM-REQ-EVID-04-OMISSION",
+      "title": "Test enforcement of requirement EVID-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that EVID-04 property holds: State candidate extractor mines traces to suggest state variables and transitions that hand-written models may have missed"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement EVID-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(EVID-04)",
+        "failure_indicates": "Omission: requirement EVID-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-VERIFY-03-OMISSION",
+      "failure_mode_id": "FM-REQ-VERIFY-03-OMISSION",
+      "title": "Test enforcement of requirement VERIFY-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that VERIFY-03 property holds: VERIFY-03"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement VERIFY-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(VERIFY-03)",
+        "failure_indicates": "Omission: requirement VERIFY-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-OBS-16-OMISSION",
+      "failure_mode_id": "FM-REQ-OBS-16-OMISSION",
+      "title": "Test enforcement of requirement OBS-16",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that OBS-16 property holds: OBS-16"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement OBS-16 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(OBS-16)",
+        "failure_indicates": "Omission: requirement OBS-16 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-19-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-19-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-19",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-19 property holds: SOLVE-19"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-19 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-19)",
+        "failure_indicates": "Omission: requirement SOLVE-19 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GUARD-02-OMISSION",
+      "failure_mode_id": "FM-REQ-GUARD-02-OMISSION",
+      "title": "Test enforcement of requirement GUARD-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GUARD-02 property holds: GUARD-02"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GUARD-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GUARD-02)",
+        "failure_indicates": "Omission: requirement GUARD-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INST-13-OMISSION",
+      "failure_mode_id": "FM-REQ-INST-13-OMISSION",
+      "title": "Test enforcement of requirement INST-13",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INST-13 property holds: INST-13"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INST-13 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INST-13)",
+        "failure_indicates": "Omission: requirement INST-13 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-MULTI-04-OMISSION",
+      "failure_mode_id": "FM-REQ-MULTI-04-OMISSION",
+      "title": "Test enforcement of requirement MULTI-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that MULTI-04 property holds: Installer auto-syncs all provider slots from `providers.json` to `~/.claude.json` MCP entries and `quorum_active`, creating missing slots without modi"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement MULTI-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(MULTI-04)",
+        "failure_indicates": "Omission: requirement MULTI-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INTG-01-OMISSION",
+      "failure_mode_id": "FM-REQ-INTG-01-OMISSION",
+      "title": "Test enforcement of requirement INTG-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INTG-01 property holds: Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INTG-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INTG-01)",
+        "failure_indicates": "Omission: requirement INTG-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-VERIFY-04-OMISSION",
+      "failure_mode_id": "FM-REQ-VERIFY-04-OMISSION",
+      "title": "Test enforcement of requirement VERIFY-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that VERIFY-04 property holds: VERIFY-04"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement VERIFY-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(VERIFY-04)",
+        "failure_indicates": "Omission: requirement VERIFY-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-05-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-05-OMISSION",
+      "title": "Test enforcement of requirement DIAG-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-05 property holds: Provide /nf:mcp-repair skill to auto-diagnose quorum slot connectivity issues and apply automatic repairs where possible (restart downed MCP servers, "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-05)",
+        "failure_indicates": "Omission: requirement DIAG-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-OBS-06-OMISSION",
+      "failure_mode_id": "FM-REQ-OBS-06-OMISSION",
+      "title": "Test enforcement of requirement OBS-06",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that OBS-06 property holds: `/qgsd:observe` presents two output tables: **Issues** (discrete events — errors, bugs, feedback) and **Drifts** (quantitative divergences — formal pa"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement OBS-06 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(OBS-06)",
+        "failure_indicates": "Omission: requirement OBS-06 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-OBS-13-OMISSION",
+      "failure_mode_id": "FM-REQ-OBS-13-OMISSION",
+      "title": "Test enforcement of requirement OBS-13",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that OBS-13 property holds: OBS-13"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement OBS-13 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(OBS-13)",
+        "failure_indicates": "Omission: requirement OBS-13 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-OBS-09-OMISSION",
+      "failure_mode_id": "FM-REQ-OBS-09-OMISSION",
+      "title": "Test enforcement of requirement OBS-09",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that OBS-09 property holds: CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, output to stdout"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement OBS-09 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(OBS-09)",
+        "failure_indicates": "Omission: requirement OBS-09 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-PARA-01-OMISSION",
+      "failure_mode_id": "FM-REQ-PARA-01-OMISSION",
+      "title": "Test enforcement of requirement PARA-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that PARA-01 property holds: Worktree-isolated executor subagents — nf-worktree-executor agent runs plans in isolated git worktrees"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement PARA-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(PARA-01)",
+        "failure_indicates": "Omission: requirement PARA-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-PARA-02-OMISSION",
+      "failure_mode_id": "FM-REQ-PARA-02-OMISSION",
+      "title": "Test enforcement of requirement PARA-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that PARA-02 property holds: Parallel plan execution with merge orchestration — Pattern D in execute-plan.md dispatches independent plans to worktrees with merge queue coordinatio"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement PARA-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(PARA-02)",
+        "failure_indicates": "Omission: requirement PARA-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-PLAT-01-OMISSION",
+      "failure_mode_id": "FM-REQ-PLAT-01-OMISSION",
+      "title": "Test enforcement of requirement PLAT-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that PLAT-01 property holds: PLAT-01"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement PLAT-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(PLAT-01)",
+        "failure_indicates": "Omission: requirement PLAT-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-CONF-11-OMISSION",
+      "failure_mode_id": "FM-REQ-CONF-11-OMISSION",
+      "title": "Test enforcement of requirement CONF-11",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that CONF-11 property holds: CONF-11"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement CONF-11 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(CONF-11)",
+        "failure_indicates": "Omission: requirement CONF-11 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-FVTOOL-02-OMISSION",
+      "failure_mode_id": "FM-REQ-FVTOOL-02-OMISSION",
+      "title": "Test enforcement of requirement FVTOOL-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that FVTOOL-02 property holds: FVTOOL-02"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement FVTOOL-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(FVTOOL-02)",
+        "failure_indicates": "Omission: requirement FVTOOL-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-PROJECT-01-OMISSION",
+      "failure_mode_id": "FM-REQ-PROJECT-01-OMISSION",
+      "title": "Test enforcement of requirement PROJECT-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that PROJECT-01 property holds: PROJECT-01"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement PROJECT-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(PROJECT-01)",
+        "failure_indicates": "Omission: requirement PROJECT-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-FAIL-02-OMISSION",
+      "failure_mode_id": "FM-REQ-FAIL-02-OMISSION",
+      "title": "Test enforcement of requirement FAIL-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that FAIL-02 property holds: providers.json contains explicit slot-to-provider mapping; when a provider probe returns DOWN, all slots on that provider skipped in a single dispatch"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement FAIL-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(FAIL-02)",
+        "failure_indicates": "Omission: requirement FAIL-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-TRACE-09-OMISSION",
+      "failure_mode_id": "FM-REQ-TRACE-09-OMISSION",
+      "title": "Test enforcement of requirement TRACE-09",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that TRACE-09 property holds: TRACE-09"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement TRACE-09 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(TRACE-09)",
+        "failure_indicates": "Omission: requirement TRACE-09 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-06-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-06-OMISSION",
+      "title": "Test enforcement of requirement DIAG-06",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-06 property holds: Proximity graph orchestration skills — /nf:proximity runs the 5-step proximity pipeline (graph build, candidate discovery, Haiku evaluation, semantic "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-06 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-06)",
+        "failure_indicates": "Omission: requirement DIAG-06 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-BRKR-01-OMISSION",
+      "failure_mode_id": "FM-REQ-BRKR-01-OMISSION",
+      "title": "Test enforcement of requirement BRKR-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that BRKR-01 property holds: When circuit breaker fires, the oscillation trigger pattern (file set, alternation count, time window) is persisted to `.planning/formal/evidence/` so"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement BRKR-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(BRKR-01)",
+        "failure_indicates": "Omission: requirement BRKR-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-IMPR-02-OMISSION",
+      "failure_mode_id": "FM-REQ-IMPR-02-OMISSION",
+      "title": "Test enforcement of requirement IMPR-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that IMPR-02 property holds: Quorum slot dispatch updated to parallel sibling Task calls (R3.2 requirement)"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement IMPR-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(IMPR-02)",
+        "failure_indicates": "Omission: requirement IMPR-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-RDME-01-OMISSION",
+      "failure_mode_id": "FM-REQ-RDME-01-OMISSION",
+      "title": "Test enforcement of requirement RDME-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that RDME-01 property holds: TUI section promoted from `<details>` to visible section with hero screenshot above the fold"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement RDME-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(RDME-01)",
+        "failure_indicates": "Omission: requirement RDME-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-REL-03-OMISSION",
+      "failure_mode_id": "FM-REQ-REL-03-OMISSION",
+      "title": "Test enforcement of requirement REL-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that REL-03 property holds: Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather th"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement REL-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(REL-03)",
+        "failure_indicates": "Omission: requirement REL-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-REN-01-OMISSION",
+      "failure_mode_id": "FM-REQ-REN-01-OMISSION",
+      "title": "Test enforcement of requirement REN-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that REN-01 property holds: `git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement REN-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(REN-01)",
+        "failure_indicates": "Omission: requirement REN-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-18-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-18-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-18",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-18 property holds: SOLVE-18"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-18 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-18)",
+        "failure_indicates": "Omission: requirement SOLVE-18 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-11-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-11-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-11",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-11 property holds: Verifier agent performs goal-backward analysis after phase execution, confirming the codebase delivers what the phase goal promised rather than just c"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-11 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-11)",
+        "failure_indicates": "Omission: requirement SOLVE-11 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SEC-05-OMISSION",
+      "failure_mode_id": "FM-REQ-SEC-05-OMISSION",
+      "title": "Test enforcement of requirement SEC-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SEC-05 property holds: Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SEC-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SEC-05)",
+        "failure_indicates": "Omission: requirement SEC-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SEM-01-OMISSION",
+      "failure_mode_id": "FM-REQ-SEM-01-OMISSION",
+      "title": "Test enforcement of requirement SEM-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SEM-01 property holds: Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SEM-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SEM-01)",
+        "failure_indicates": "Omission: requirement SEM-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SEM-02-OMISSION",
+      "failure_mode_id": "FM-REQ-SEM-02-OMISSION",
+      "title": "Test enforcement of requirement SEM-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SEM-02 property holds: Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SEM-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SEM-02)",
+        "failure_indicates": "Omission: requirement SEM-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SPEC-07-OMISSION",
+      "failure_mode_id": "FM-REQ-SPEC-07-OMISSION",
+      "title": "Test enforcement of requirement SPEC-07",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SPEC-07 property holds: SPEC-07"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SPEC-07 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SPEC-07)",
+        "failure_indicates": "Omission: requirement SPEC-07 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-WIZ-11-OMISSION",
+      "failure_mode_id": "FM-REQ-WIZ-11-OMISSION",
+      "title": "Test enforcement of requirement WIZ-11",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that WIZ-11 property holds: WIZ-11"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement WIZ-11 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(WIZ-11)",
+        "failure_indicates": "Omission: requirement WIZ-11 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-09-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-09-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-09",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-09 property holds: Quorum dispatch pre-validates agent health via MCP health_check before slot assignment, failing fast on unauthenticated or unreachable agents instead "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-09 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-09)",
+        "failure_indicates": "Omission: requirement SOLVE-09 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-14-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-14-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-14",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-14 property holds: PostToolUse context-monitor hook tracks context window consumption after every tool execution, injecting WARNING at 70% and CRITICAL at 85% to trigger"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-14 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-14)",
+        "failure_indicates": "Omission: requirement SOLVE-14 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-24-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-24-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-24",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-24 property holds: SOLVE-24"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-24 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-24)",
+        "failure_indicates": "Omission: requirement SOLVE-24 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-7-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-7-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-7",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-7 property holds: SOLVE-7"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-7 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-7)",
+        "failure_indicates": "Omission: requirement SOLVE-7 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-8-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-8-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-8",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-8 property holds: SOLVE-8"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-8 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-8)",
+        "failure_indicates": "Omission: requirement SOLVE-8 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-08-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-08-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-08",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-08 property holds: The solve engine SHALL compute and persist net_residual counts for human-gated layers (d_to_c, c_to_r, t_to_r, d_to_r) by subtracting Haiku false-posi"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-08 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-08)",
+        "failure_indicates": "Omission: requirement SOLVE-08 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-12-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-12-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-12",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-12 property holds: /nf:solve-report generates a before/after convergence summary showing item counts by category, remediation actions taken, and a full formal verificati"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-12 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-12)",
+        "failure_indicates": "Omission: requirement SOLVE-12 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-13-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-13-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-13",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-13 property holds: /nf:quick preserves core nForma guarantees (atomic commits, state tracking, verification) while skipping optional agents (research, quorum) for faster"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-13 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-13)",
+        "failure_indicates": "Omission: requirement SOLVE-13 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-10-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-10-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-10",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-10 property holds: Plan-checker agent validates each plan against phase goals and requirements, re-entering the planning loop on failure until verification passes"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-10 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-10)",
+        "failure_indicates": "Omission: requirement SOLVE-10 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-07-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-07-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-07",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-07 property holds: The solve engine SHALL display triage breakdown (FP count, archived count, actionable count) alongside residual vectors in report output, and re-surfa"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-07 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-07)",
+        "failure_indicates": "Omission: requirement SOLVE-07 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-16-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-16-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-16",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-16 property holds: SOLVE-16"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-16 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-16)",
+        "failure_indicates": "Omission: requirement SOLVE-16 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-03-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-03-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-03 property holds: The prompt hook SHALL inject quorum dispatch instructions into user prompts and provide automatic recovery context when the circuit breaker is active"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-03)",
+        "failure_indicates": "Omission: requirement SOLVE-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SOLVE-05-OMISSION",
+      "failure_mode_id": "FM-REQ-SOLVE-05-OMISSION",
+      "title": "Test enforcement of requirement SOLVE-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SOLVE-05 property holds: The nForma TUI SHALL provide a terminal dashboard for project status, sessions, agents, and configuration management"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SOLVE-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SOLVE-05)",
+        "failure_indicates": "Omission: requirement SOLVE-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SPEC-02-OMISSION",
+      "failure_mode_id": "FM-REQ-SPEC-02-OMISSION",
+      "title": "Test enforcement of requirement SPEC-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SPEC-02 property holds: `QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SPEC-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SPEC-02)",
+        "failure_indicates": "Omission: requirement SPEC-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SPEC-06-OMISSION",
+      "failure_mode_id": "FM-REQ-SPEC-06-OMISSION",
+      "title": "Test enforcement of requirement SPEC-06",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SPEC-06 property holds: SPEC-06"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SPEC-06 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SPEC-06)",
+        "failure_indicates": "Omission: requirement SPEC-06 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SCBD-05-OMISSION",
+      "failure_mode_id": "FM-REQ-SCBD-05-OMISSION",
+      "title": "Test enforcement of requirement SCBD-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SCBD-05 property holds: SCBD-05"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SCBD-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SCBD-05)",
+        "failure_indicates": "Omission: requirement SCBD-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-NAV-03-OMISSION",
+      "failure_mode_id": "FM-REQ-NAV-03-OMISSION",
+      "title": "Test enforcement of requirement NAV-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that NAV-03 property holds: NAV-03"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement NAV-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(NAV-03)",
+        "failure_indicates": "Omission: requirement NAV-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-TRACE-08-OMISSION",
+      "failure_mode_id": "FM-REQ-TRACE-08-OMISSION",
+      "title": "Test enforcement of requirement TRACE-08",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that TRACE-08 property holds: TRACE-08"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement TRACE-08 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(TRACE-08)",
+        "failure_indicates": "Omission: requirement TRACE-08 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-STOP-08-OMISSION",
+      "failure_mode_id": "FM-REQ-STOP-08-OMISSION",
+      "title": "Test enforcement of requirement STOP-08",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that STOP-08 property holds: Block reason message format: \"QUORUM REQUIRED: Before completing this /qgsd:[command] response, call [tool1], [tool2], [tool3] with your current plan."
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement STOP-08 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(STOP-08)",
+        "failure_indicates": "Omission: requirement STOP-08 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-GUIDE-01-OMISSION",
+      "failure_mode_id": "FM-REQ-GUIDE-01-OMISSION",
+      "title": "Test enforcement of requirement GUIDE-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that GUIDE-01 property holds: User Guide updated with TUI screenshots cross-referenced to feature descriptions"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement GUIDE-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(GUIDE-01)",
+        "failure_indicates": "Omission: requirement GUIDE-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-UX-04-OMISSION",
+      "failure_mode_id": "FM-REQ-UX-04-OMISSION",
+      "title": "Test enforcement of requirement UX-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that UX-04 property holds: Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message, navigation change, or visibl"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement UX-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(UX-04)",
+        "failure_indicates": "Omission: requirement UX-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-VIS-02-OMISSION",
+      "failure_mode_id": "FM-REQ-VIS-02-OMISSION",
+      "title": "Test enforcement of requirement VIS-02",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that VIS-02 property holds: VHS tape hardened for CI reliability (zsh shell, explicit PATH export, CLAUDECODE unset)"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement VIS-02 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(VIS-02)",
+        "failure_indicates": "Omission: requirement VIS-02 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-VERIFY-05-OMISSION",
+      "failure_mode_id": "FM-REQ-VERIFY-05-OMISSION",
+      "title": "Test enforcement of requirement VERIFY-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that VERIFY-05 property holds: VERIFY-05"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement VERIFY-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(VERIFY-05)",
+        "failure_indicates": "Omission: requirement VERIFY-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-HEAL-01-OMISSION",
+      "failure_mode_id": "FM-REQ-HEAL-01-OMISSION",
+      "title": "Test enforcement of requirement HEAL-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that HEAL-01 property holds: After each deliberation round, system computes P(consensus | remaining rounds); if P < threshold (default 10%), escalation fires early instead of exha"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement HEAL-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(HEAL-01)",
+        "failure_indicates": "Omission: requirement HEAL-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-MCPENV-04-OMISSION",
+      "failure_mode_id": "FM-REQ-MCPENV-04-OMISSION",
+      "title": "Test enforcement of requirement MCPENV-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that MCPENV-04 property holds: `readMCPAvailabilityRates` exported with composite-key filter; `module.exports` always reachable via require.main guard; prism:mcp-availability STEPS "
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement MCPENV-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(MCPENV-04)",
+        "failure_indicates": "Omission: requirement MCPENV-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DETECT-04-OMISSION",
+      "failure_mode_id": "FM-REQ-DETECT-04-OMISSION",
+      "title": "Test enforcement of requirement DETECT-04",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DETECT-04 property holds: Read-only Bash commands (git log, git diff, grep, cat, ls, head, tail, find) pass through without detection or blocking"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DETECT-04 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DETECT-04)",
+        "failure_indicates": "Omission: requirement DETECT-04 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-PLAN-03-OMISSION",
+      "failure_mode_id": "FM-REQ-PLAN-03-OMISSION",
+      "title": "Test enforcement of requirement PLAN-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that PLAN-03 property holds: `quorum-formal-context.cjs` generates formal evidence blocks for quorum slots"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement PLAN-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(PLAN-03)",
+        "failure_indicates": "Omission: requirement PLAN-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-FV-01-OMISSION",
+      "failure_mode_id": "FM-REQ-FV-01-OMISSION",
+      "title": "Test enforcement of requirement FV-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that FV-01 property holds: FV-01"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement FV-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(FV-01)",
+        "failure_indicates": "Omission: requirement FV-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-QUORUM-05-OMISSION",
+      "failure_mode_id": "FM-REQ-QUORUM-05-OMISSION",
+      "title": "Test enforcement of requirement QUORUM-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that QUORUM-05 property holds: QUORUM-05"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement QUORUM-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(QUORUM-05)",
+        "failure_indicates": "Omission: requirement QUORUM-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-DIAG-10-OMISSION",
+      "failure_mode_id": "FM-REQ-DIAG-10-OMISSION",
+      "title": "Test enforcement of requirement DIAG-10",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that DIAG-10 property holds: Statusline hook detects context window size (200K, 1M, or unknown) from explicit context_window_size property or model display_name and scales token-u"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement DIAG-10 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(DIAG-10)",
+        "failure_indicates": "Omission: requirement DIAG-10 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-SCHEMA-03-OMISSION",
+      "failure_mode_id": "FM-REQ-SCHEMA-03-OMISSION",
+      "title": "Test enforcement of requirement SCHEMA-03",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that SCHEMA-03 property holds: Each verification runner (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, CI lint steps) emits `requirement_ids` in its NDJSON output, extracted from model"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement SCHEMA-03 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(SCHEMA-03)",
+        "failure_indicates": "Omission: requirement SCHEMA-03 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-INTG-05-OMISSION",
+      "failure_mode_id": "FM-REQ-INTG-05-OMISSION",
+      "title": "Test enforcement of requirement INTG-05",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that INTG-05 property holds: Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement INTG-05 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(INTG-05)",
+        "failure_indicates": "Omission: requirement INTG-05 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-TC-01-OMISSION",
+      "failure_mode_id": "FM-REQ-TC-01-OMISSION",
+      "title": "Test enforcement of requirement TC-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that TC-01 property holds: Digest V8 coverage at collection time in sweepTtoC, converting raw ~96MB coverage blobs to lightweight Map<absolutePath, {covered, uncovered line sets"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement TC-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(TC-01)",
+        "failure_indicates": "Omission: requirement TC-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
+    },
+    {
+      "id": "TR-FM-REQ-H2M-01-OMISSION",
+      "failure_mode_id": "FM-REQ-H2M-01-OMISSION",
+      "title": "Test enforcement of requirement H2M-01",
+      "setup": {
+        "initial_state": "configured",
+        "preconditions": [
+          "System is initialized with default configuration"
+        ]
+      },
+      "input_sequence": [
+        {
+          "event": "verify_property",
+          "description": "Verify that H2M-01 property holds: The solve engine SHALL include an H->M (Hypothesis-to-Measurement) residual layer that measures formal model tier-1 assumptions against observed trace"
+        }
+      ],
+      "expected_outcome": {
+        "final_state": "property_verified",
+        "assertions": [
+          "Requirement H2M-01 property is enforced in implementation"
+        ]
+      },
+      "oracle": {
+        "type": "property_assertion",
+        "check": "formal_property_holds(H2M-01)",
+        "failure_indicates": "Omission: requirement H2M-01 formal property not enforced"
+      },
+      "risk_context": {
+        "severity_class": "degraded",
+        "rpn": 0,
+        "risk_tier": "unclassified"
+      }
     }
   ],
   "summary": {
