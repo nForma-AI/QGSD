@@ -1,0 +1,127 @@
+{
+  "precedents": [
+    {
+      "question": "Should QGSD implement a pending-task pattern in `qgsd-prompt.js` to queue a skill invocation that survives a `/clear` command?",
+      "date": "2026-02-26",
+      "consensus": "APPROVE",
+      "outcome": "CONSENSUS: APPROVE (Claude + opencode-1; gemini-1 UNAVAIL — reduced quorum per R6)\n\nImplement the pending-task pattern by extending `qgsd-prompt.js` to:\n1. Check for `.claude/pending-task.txt` on each UserPromptSubmit event\n2. If found, prepend the task content as additionalContext injection\n3. Delete the file after reading (one-shot, no repeat injection)\n4. Add a `/qgsd:queue` helper command that writes the file\n\nThis enables the workflow: write pending task → `/clear` → system auto-invokes on next prompt.",
+      "source_file": ".planning/quorum/debates/2026-02-26-should-qgsd-implement-pending-task.md",
+      "computed_at": "2026-03-16T23:04:59.961Z"
+    },
+    {
+      "question": "Review enforcement plan for \"never reduce objectives to match reality\" todo — A+B hybrid approach (prompt rules + checker diff + R9 policy). Right scope? What's missing?",
+      "date": "2026-03-01",
+      "consensus": "APPROVE",
+      "outcome": "All three available models (Claude, opencode-1, claude-4) converge on APPROVE with enhancements. The A+B+C approach is the right scope and v0.22 deferral is correct. Three specific gaps identified:\n\n1. **Define \"weakening\" explicitly** (opencode-1): Concrete criteria needed — relaxing thresholds, removing invariants, softening \"must\" to \"should\", reducing success criterion count.\n2. **Pre-verification baseline capture** (claude-4): verify-phase.md should read ROADMAP success_criteria as immutable baseline BEFORE loading PLAN must_haves. Compare and flag deviations at entry — converts detection into prevention.\n3. **Cover generate-phase-spec.cjs** (Claude): Truths fed to spec generation must match ROADMAP criteria. If truths are weakened in PLANs, TLA+ PROPERTY stubs inherit the weakness.",
+      "source_file": ".planning/quorum/debates/2026-03-01-review-enforcement-plan-never-reduce-objectives.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Which approach should we use to fix auto-advance not continuing to the next phase: Option A (plan-phase continues chain itself via tail-call Skill invocation), Option B (top-level loop orchestrator), or Option C (execute-phase returns structured result, caller loops)?",
+      "date": "2026-03-02",
+      "consensus": "APPROVE",
+      "outcome": "Consensus on Option C: execute-phase returns structured result (PHASE_COMPLETE + next_phase identifier), plan-phase parses the return and invokes Skill(plan-phase NEXT --auto) at the top level. Two changes needed: (1) execute-phase offer_next returns structured signal instead of running transition inline, (2) plan-phase return handler invokes next plan-phase instead of printing \"Next: ...\". This keeps the chain flat with no nested Tasks.",
+      "source_file": ".planning/quorum/debates/2026-03-02-fix-auto-advance-chain-approach.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Are these gap closure phases correctly scoped and complete to close the identified milestone v0.23 gaps? Proposed: (1) v0.23-03 Roadmapper Formal Integration — absorbs ISSUE-1+ISSUE-2 keyword-match fixes, closes WFI-05+ENF-03, 4 tasks; (2) v0.23-04 Integration Validation Suite — closes IVL-01+IVL-02+IVL-03, 4 tasks",
+      "date": "2026-03-02",
+      "consensus": "APPROVE",
+      "outcome": "All external models UNAVAIL (sub-CLI slots timed out at 30s; ccr slots produced no output). Proceeding fail-open per R6. Claude position: APPROVE — gap closure phases v0.23-03 and v0.23-04 are correctly scoped. v0.23-03 absorbs ISSUE-1/2 (keyword-match consistency) as pre-conditions before roadmapper wiring. v0.23-04 validates the full chain. Both phases already existed as ROADMAP shells; gap was zero execution, not structural misalignment.",
+      "source_file": ".planning/quorum/debates/2026-03-02-gap-closure-phases-v0-23-scoping.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Should we use Option A (thin passthrough: Bash-only slot worker, no file reads) or Option B (eliminate Claude subagent entirely: orchestrator spawns parallel Bash processes)?",
+      "date": "2026-03-02",
+      "consensus": "APPROVE",
+      "outcome": "Consensus: **Option A — Thin passthrough**.\n\nImplement qgsd-quorum-slot-worker.md as Bash-only (remove Read, Glob, Grep from tools list). Remove Step 2 file reads entirely. Pass artifact_path by reference in Step 3 prompt template; instruct downstream agent to read CLAUDE.md, STATE.md, and artifact itself. Worker makes 1 tool call: Bash to call-quorum-slot.cjs. Achieves ~85-90% Claude API call reduction per slot with minimal effort (3 targeted file edits, ~30min). Option B is a phase-level rearchitecture effort with risk to fallback logic and structured result parsing.",
+      "source_file": ".planning/quorum/debates/2026-03-02-option-a-vs-b-slot-worker-optimization.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Are the conclusions about auto-advance chain gaps (Gap 1-5) correct?",
+      "date": "2026-03-02",
+      "consensus": "APPROVE",
+      "outcome": "| Gap | Conclusion | Verdict |\n|-----|-----------|---------|\n| 1 | plan-phase.md:746 — PHASE_COMPLETE prints and stops, no Skill() invocation | **CONFIRMED HARD GAP** |\n| 2 | verify-work.md:514 — only a gap if verify-work is in auto-chain | **PARTIAL / DESIGN QUESTION** |\n| 3 | transition.md — \"nested Task\" premise is wrong; runs inline per execute-phase.md:535 | **WRONG** |\n| 4 | progress.md routes — by design, success_criteria requires user confirmation | **NOT A GAP** |\n| 5 | plan-phase.md:64 — --auto path at line 56 bypasses AskUserQuestion entirely | **NOT A GAP** |\n\nOnly actionable fix: Gap 1 — invoke Skill after PHASE_COMPLETE instead of printing and stopping.",
+      "source_file": ".planning/quorum/debates/2026-03-02-verify-gap-analysis-conclusions.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Which approach for keeping TUI screenshots up-to-date: Option A (CI-only staleness check) or Option B (targeted pre-commit hook)?",
+      "date": "2026-03-07",
+      "consensus": "APPROVE",
+      "outcome": "Consensus on Option A: implement a CI staleness check script (`bin/check-tui-assets-stale.cjs`) that regenerates SVGs to a temp directory, diffs against `docs/assets/`, and exits 1 if stale. Add to `test:ci`. Key insight from deliberation: the project uses Claude Code hooks (PreToolUse, PostToolUse, UserPromptSubmit), not git hooks — adding a git pre-commit hook would introduce a new pattern inconsistent with the codebase.",
+      "source_file": ".planning/quorum/debates/2026-03-07-ci-staleness-vs-pre-commit.md",
+      "computed_at": "2026-03-16T23:04:59.962Z"
+    },
+    {
+      "question": "Can the global gate scripts (gate-a-grounding.cjs, gate-b-abstraction.cjs, gate-c-validation.cjs) and their output directory (.planning/formal/gates/) be safely removed in favor of the per-model gate system (compute-per-model-gates.cjs)?",
+      "date": "2026-03-09",
+      "consensus": "APPROVE",
+      "outcome": "CONDITIONAL YES — all available models agree the global gates CAN be safely removed, but only after a migration:\n\n1. Add `--aggregate` flag to `compute-per-model-gates.cjs` that runs the same trace-replay and classification logic, emitting continuous 0-1 scores + diagnostic breakdowns (unexplained_counts, orphaned_entries, gap lists)\n2. Migrate 4 consumers: nf-solve.cjs sweep functions, cross-layer-dashboard.cjs collectGateData, run-formal-verify.cjs pipeline steps\n3. Verify with existing gate tests against the new aggregate path\n4. Only then delete gate-a-grounding.cjs, gate-b-abstraction.cjs, gate-c-validation.cjs, their test files, and .planning/formal/gates/\n\nKey finding: per-model gates return boolean pass/fail only. nf-solve.cjs residual scoring uses Math.ceil((1-score)*10) which requires continuous 0-1 values — booleans would produce only 0 or 10, destroying score granularity.",
+      "source_file": ".planning/quorum/debates/2026-03-09-can-global-gate-scripts-be-safely.md",
+      "computed_at": "2026-03-16T23:04:59.963Z"
+    },
+    {
+      "question": "Is the fork-based async approach (solve-worker.cjs + async wrappers in nForma.cjs) correct and complete for making the TUI non-blocking in the Solve modules?",
+      "date": "2026-03-09",
+      "consensus": "APPROVE",
+      "outcome": "All 3 available models (Claude, opencode-1, copilot-1) approved the approach. The fork-based async pattern correctly addresses the root cause: `spawnSync()` calls in nf-solve.cjs sweep functions block the blessed event loop, and `child_process.fork()` creates an independent process with its own event loop. All four solve flows are properly converted to async with loading indicators and error handling.\n\nPost-consensus, the top shared concern (settled guard to prevent double-resolve/reject race) was applied immediately, along with switching from `child.kill()` to `child.disconnect()` for graceful worker shutdown.",
+      "source_file": ".planning/quorum/debates/2026-03-09-fork-based-async-tui-non-blocking.md",
+      "computed_at": "2026-03-16T23:04:59.966Z"
+    },
+    {
+      "question": "Should the GATE-02 requirement state \"observable evidence\" or \"observable signals at the confidence level the scoring system already accepts\" — and what should the exact text be?",
+      "date": "2026-03-09",
+      "consensus": "APPROVE",
+      "outcome": "Consensus on \"observable signals\" with two accepted refinements: (1) \"e.g.\" before parenthetical to make signal types extensible, (2) \"accumulated\" replaces \"legitimate\" to capture threshold-based promotion model. Final text: \"AutoClose remediation steps SHALL produce observable signals (e.g., source_layer classification, semantic declaration detection) at the confidence level the scoring system already accepts. AutoClose SHALL NOT write gate_maturity directly; promotion follows from scoring functions independently evaluating accumulated signals.\"",
+      "source_file": ".planning/quorum/debates/2026-03-09-gate-02-requirement-text.md",
+      "computed_at": "2026-03-16T23:04:59.966Z"
+    },
+    {
+      "question": "What is the proper way to find and invoke the Claude Code CLI binary from a Node.js subprocess (execFileSync) in a Claude Code plugin?",
+      "date": "2026-03-10",
+      "consensus": "APPROVE",
+      "outcome": "Unanimous consensus on Option A (dynamic binary path resolution). Key implementation details:\n\n1. **Resolve path**: Scan `~/.local/share/claude/versions/`, filter for semver-named files, sort descending, select highest\n2. **Unset CLAUDECODE**: Critical — `CLAUDECODE=1` is inherited from the parent Claude Code session and blocks subprocess invocation with \"cannot be launched inside another Claude Code session\"\n3. **Use absolute path**: Pass resolved path directly to `execFileSync()` instead of relying on PATH\n\n### Why other options fail\n- (B) PATH augmentation: Binary isn't symlinked to any PATH location; doesn't address CLAUDECODE\n- (C) Agent tool: Not available from .cjs files; wrong abstraction level\n- (D) npx: No npm package for the native binary",
+      "source_file": ".planning/quorum/debates/2026-03-10-claude-cli-binary-resolution.md",
+      "computed_at": "2026-03-16T23:04:59.967Z"
+    },
+    {
+      "question": "Do you agree with the assessment that the quorum FALLBACK-01 regression was caused by (1) missing auth_type config, (2) failoverRule gated on t1Unused only, (3) contradictory fail-open instruction? Are the applied fixes correct?",
+      "date": "2026-03-11",
+      "consensus": "APPROVE",
+      "outcome": "Consensus APPROVE (1/1 valid external voters). The FALLBACK-01 regression assessment is confirmed correct by claude-4 (Kimi-K2 via Fireworks). The fixes address all three root causes: missing auth_type config, narrow condition gating, and contradictory fail-open instruction.",
+      "source_file": ".planning/quorum/debates/2026-03-11-claude-4-do-you-agree-with-the-fallback-01-regression.md",
+      "computed_at": "2026-03-16T23:04:59.967Z"
+    },
+    {
+      "question": "Is there a chance that our install.js might conflict with the GSD plugin?",
+      "date": "2026-03-12",
+      "consensus": "APPROVE",
+      "outcome": "Unanimous consensus: YES, install.js has significant conflict potential with the GSD plugin. The cleanup functions (cleanupOrphanedFiles, cleanupOrphanedHooks) unconditionally target gsd-* prefixed files and hook registrations, assuming they are nForma migration orphans. If a user has the upstream GSD plugin installed concurrently, these routines will silently destroy legitimate GSD artifacts. Recommended mitigations include GSD plugin detection guards, explicit allow-lists instead of prefix matching, and hook ownership metadata.",
+      "source_file": ".planning/quorum/debates/2026-03-12-claude-7-is-there-a-chance-that-our-install-js.md",
+      "computed_at": "2026-03-16T23:04:59.967Z"
+    },
+    {
+      "question": "Review this pre-execution plan for adding a two-layer parallel health probe to quorum-preflight.cjs",
+      "date": "2026-03-12",
+      "consensus": "APPROVE",
+      "outcome": "Consensus APPROVE. Plan for two-layer parallel health probe in quorum-preflight.cjs approved with 5 improvements incorporated:\n1. URL normalization before dedup grouping\n2. cacheAge field in layer2 response\n3. Missing ANTHROPIC_BASE_URL handling as skipped\n4. saveCache() auto-creates cache file/directory\n5. Test for missing/malformed ~/.claude.json",
+      "source_file": ".planning/quorum/debates/2026-03-12-claude-7-review-this-pre-execution-plan-for-adding-two-la.md",
+      "computed_at": "2026-03-16T23:04:59.967Z"
+    },
+    {
+      "question": "Can the current nForma codebase detect whether the active Claude session is running with a 200K or 1M context window?",
+      "date": "2026-03-14",
+      "consensus": "APPROVE",
+      "outcome": "All valid external voters agree: the current nForma codebase **cannot reliably detect** 200K vs 1M context windows. Partial infrastructure exists (`context_window_size` field in hook payloads) but defaults mask the signal. No env vars or display_name parsing provides the distinction. Implementation would require 5-6 module changes plus empirical confirmation that Claude Code populates the field.",
+      "source_file": ".planning/quorum/debates/2026-03-14-can-nforma-detect-200k-vs-1m-context.md",
+      "computed_at": "2026-03-16T23:04:59.967Z"
+    }
+  ],
+  "extracted_at": "2026-03-16T23:04:59.968Z",
+  "debate_count": 69,
+  "skipped_count": 54
+}
