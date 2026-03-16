@@ -58,6 +58,64 @@ let ROOT = process.cwd();
 const SCRIPT_DIR = __dirname;
 const DEFAULT_MAX_ITERATIONS = 3;
 
+// ── Embedding fallback for proximity enrichment ──────────────────────────────
+// When BFS finds no graph path from a node to a requirement, the embedding cache
+// provides a semantic nearest-requirement fallback. Lazy-loaded, fail-open.
+let _embedCache = null;
+let _embedCacheLoaded = false;
+let _embedReqKeys = null; // pre-filtered requirement keys for fast lookup
+
+function loadEmbedCache() {
+  if (_embedCacheLoaded) return _embedCache;
+  _embedCacheLoaded = true;
+  try {
+    const cachePath = path.join(ROOT, '.planning', 'formal', 'embedding-cache.json');
+    const data = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+    if (data && data.vectors && data.schema_version === '1') {
+      _embedCache = data;
+      _embedReqKeys = Object.keys(data.vectors).filter(k => k.startsWith('requirement::'));
+    }
+  } catch { /* fail-open */ }
+  return _embedCache;
+}
+
+/**
+ * Find the nearest requirement to a node key using embedding cosine similarity.
+ * Returns { nearest_req, similarity, proximity_context } or null if no cache.
+ */
+function embeddingNearestReq(nodeKey) {
+  const cache = loadEmbedCache();
+  if (!cache || !cache.vectors[nodeKey] || !_embedReqKeys) return null;
+
+  const vec = cache.vectors[nodeKey];
+  let bestSim = -1;
+  let bestKey = null;
+  const topN = []; // for proximity_context
+
+  for (const rk of _embedReqKeys) {
+    const rv = cache.vectors[rk];
+    let dot = 0;
+    for (let i = 0; i < vec.length; i++) dot += vec[i] * rv[i];
+    topN.push({ key: rk, sim: dot });
+    if (dot > bestSim) {
+      bestSim = dot;
+      bestKey = rk;
+    }
+  }
+
+  if (!bestKey || bestSim < 0.3) return null;
+
+  // Build proximity_context from top-5 matches
+  topN.sort((a, b) => b.sim - a.sim);
+  const proximity_context = topN.slice(0, 5).map(t => t.key);
+
+  return {
+    nearest_req: bestKey.replace('requirement::', ''),
+    similarity: Math.round(bestSim * 1000) / 1000,
+    proximity_context,
+  };
+}
+
 // ── CLI flags ────────────────────────────────────────────────────────────────
 
 const args = process.argv.slice(2);
@@ -1941,6 +1999,11 @@ function sweepCtoR() {
           const declaredIds = match[1].split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
           headerTraced = declaredIds.some(id => reqIdSet.has(id));
         }
+        // Also check for @requirement REQ-ID inline annotations
+        if (!headerTraced) {
+          const annMatch = head.match(/@requirement\s+([A-Z][A-Z0-9_-]+)/);
+          if (annMatch && reqIdSet.has(annMatch[1])) { headerTraced = true; }
+        }
       } catch (e) {
         // fail-open: file unreadable, treat as untraced
       }
@@ -1952,7 +2015,42 @@ function sweepCtoR() {
     }
   }
 
+  // Proximity-based suppression pass: suppress untraced items with high-score proximity edges (fail-open)
+  const SUPPRESS_THRESHOLD = 0.6;
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && untraced.length > 0) {
+      const { SEMANTIC_WEIGHTS } = require('./formal-proximity.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        const surviving = [];
+        for (const item of untraced) {
+          const nodeKey = 'code_file::' + item.file;
+          const node = pi.nodes[nodeKey];
+          if (node) {
+            const suppressEdge = node.edges.find(e =>
+              e.to.startsWith('requirement::') &&
+              (SEMANTIC_WEIGHTS[e.rel] || 0) >= SUPPRESS_THRESHOLD
+            );
+            if (suppressEdge) {
+              traced++;
+              item.suppressed_by = {
+                requirement: suppressEdge.to.replace('requirement::', ''),
+                score: SEMANTIC_WEIGHTS[suppressEdge.rel],
+              };
+              continue;
+            }
+          }
+          surviving.push(item);
+        }
+        untraced.length = 0;
+        untraced.push(...surviving);
+      }
+    }
+  } catch (e) { /* fail-open: if proximity-index.json missing or unreadable, skip suppression */ }
+
   // Enrich untraced items with proximity nearest_req (fail-open)
+  // Strategy: BFS graph first, then embedding fallback for items graph can't reach
   try {
     const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
     if (fs.existsSync(piPath) && untraced.length > 0) {
@@ -1978,6 +2076,19 @@ function sweepCtoR() {
             if (ctx.length > 0) item.proximity_context = ctx.slice(0, 5);
           }
         }
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  // Embedding fallback: for items still without nearest_req, use cosine similarity
+  try {
+    for (const item of untraced) {
+      if (item.nearest_req) continue;
+      const result = embeddingNearestReq('code_file::' + item.file);
+      if (result) {
+        item.nearest_req = result.nearest_req;
+        item.proximity_context = result.proximity_context;
+        item.enrichment_source = 'embedding';
       }
     }
   } catch (e) { /* fail-open */ }
@@ -2046,6 +2157,7 @@ function sweepTtoR() {
 
   const orphans = [];
   let mapped = 0;
+  let annotatedCount = 0;
 
   // Load code-trace index for fast lookup
   const index = loadCodeTraceIndex();
@@ -2053,21 +2165,23 @@ function sweepTtoR() {
   for (const testFile of testFiles) {
     const absPath = path.join(ROOT, testFile);
 
+    // Check for @req/@requirement annotation in file content (run for ALL files for coverage counting)
+    let hasReqAnnotation = false;
+    try {
+      const content = fs.readFileSync(absPath, 'utf8');
+      // Match patterns: @requirement REQ-01, @req REQ-01, // req: STOP-03, // Requirements: REQ-01, REQ-02
+      hasReqAnnotation = /@req(?:uirement)?\s+[A-Z]+-\d+/i.test(content) ||
+                         /\/\/\s*req(?:uirement)?:\s*[A-Z]+-\d+/i.test(content) ||
+                         /\/\/\s*Requirements:\s*[A-Z]+-\d+/i.test(content);
+    } catch (e) {
+      // Can't read — treat as orphan
+    }
+    if (hasReqAnnotation) annotatedCount++;
+
     // First check: code-trace index lookup (if available)
     if (index && index.traced_files[testFile]) {
       mapped++;
       continue;
-    }
-
-    // Check for @req annotation in file content
-    let hasReqAnnotation = false;
-    try {
-      const content = fs.readFileSync(absPath, 'utf8');
-      // Match patterns like: @req REQ-01, @req ACT-02, // req: STOP-03
-      hasReqAnnotation = /@req\s+[A-Z]+-\d+/i.test(content) ||
-                         /\/\/\s*req:\s*[A-Z]+-\d+/i.test(content);
-    } catch (e) {
-      // Can't read — treat as orphan
     }
 
     // Check if formal-test-sync knows about this file
@@ -2081,7 +2195,38 @@ function sweepTtoR() {
   }
 
   // Convert orphans to objects and enrich with proximity nearest_req (fail-open)
+  // Strategy: BFS graph first, then embedding fallback for items graph can't reach
   let orphanItems = orphans.map(f => ({ file: f }));
+
+  // Proximity-based suppression for test files (parallel to sweepCtoR suppression)
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && orphanItems.length > 0) {
+      const { SEMANTIC_WEIGHTS } = require('./formal-proximity.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        const SUPPRESS_THRESHOLD = 0.6;
+        const surviving = [];
+        for (const item of orphanItems) {
+          const nodeKey = 'code_file::' + item.file;
+          const node = pi.nodes[nodeKey];
+          if (node) {
+            const suppressEdge = node.edges.find(e =>
+              e.to.startsWith('requirement::') &&
+              (SEMANTIC_WEIGHTS[e.rel] || 0) >= SUPPRESS_THRESHOLD
+            );
+            if (suppressEdge) {
+              mapped++;
+              continue;
+            }
+          }
+          surviving.push(item);
+        }
+        orphanItems = surviving;
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
   try {
     const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
     if (fs.existsSync(piPath) && orphanItems.length > 0) {
@@ -2111,12 +2256,31 @@ function sweepTtoR() {
     }
   } catch (e) { /* fail-open */ }
 
+  // Embedding fallback: for items still without nearest_req, use cosine similarity
+  try {
+    for (const item of orphanItems) {
+      if (item.nearest_req) continue;
+      const result = embeddingNearestReq('code_file::' + item.file);
+      if (result) {
+        item.nearest_req = result.nearest_req;
+        item.proximity_context = result.proximity_context;
+        item.enrichment_source = 'embedding';
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  const annotation_coverage_percent = testFiles.length > 0
+    ? Math.round((annotatedCount / testFiles.length) * 100)
+    : 0;
+
   return {
     residual: orphanItems.length,
     detail: {
       orphan_tests: orphanItems,
       total_tests: testFiles.length,
       mapped: mapped,
+      annotation_coverage_percent: annotation_coverage_percent,
+      annotated_count: annotatedCount,
       scoped: focusSet ? false : undefined,
     },
   };
@@ -2351,7 +2515,7 @@ function proximityPreFilter(candidates) {
       }
 
       if (reqNodes.length > 0) {
-        // Suppress: requirement reachable within depth 2
+        // Suppress: requirement reachable within depth 2 (graph path)
         const reqId = reqNodes[0].key.split('::').slice(1).join('::');
         c.nearest_req = reqId;
         if (verboseMode) {
@@ -2359,17 +2523,35 @@ function proximityPreFilter(candidates) {
         }
         suppressed.push(c);
       } else {
-        // Check depth 3 for broader context (non-requirement nodes)
-        const broader = reach(index, nodeKey, 3, null);
-        const contextNodes = [];
-        for (const nodes of Object.values(broader)) {
-          for (const n of nodes) contextNodes.push(n.key);
+        // Embedding fallback: try cosine similarity before giving up
+        const embedResult = embeddingNearestReq(nodeKey);
+        if (embedResult && embedResult.similarity >= 0.55) {
+          // High-confidence embedding match — suppress
+          c.nearest_req = embedResult.nearest_req;
+          c.enrichment_source = 'embedding';
+          if (verboseMode) {
+            process.stderr.write(TAG + ' Embedding suppress: ' + c.file_or_claim + ' covered by ' + embedResult.nearest_req + ' (sim=' + embedResult.similarity + ')\n');
+          }
+          suppressed.push(c);
+        } else {
+          // Check depth 3 for broader context (non-requirement nodes)
+          const broader = reach(index, nodeKey, 3, null);
+          const contextNodes = [];
+          for (const nodes of Object.values(broader)) {
+            for (const n of nodes) contextNodes.push(n.key);
+          }
+          if (contextNodes.length > 0) {
+            c.nearest_req = null;
+            c.proximity_context = contextNodes.slice(0, 5);
+          }
+          // Enrich with lower-confidence embedding context even if not suppressing
+          if (embedResult) {
+            c.nearest_req = c.nearest_req || embedResult.nearest_req;
+            c.proximity_context = c.proximity_context || embedResult.proximity_context;
+            c.enrichment_source = 'embedding';
+          }
+          filtered.push(c);
         }
-        if (contextNodes.length > 0) {
-          c.nearest_req = null;
-          c.proximity_context = contextNodes.slice(0, 5);
-        }
-        filtered.push(c);
       }
     }
 
