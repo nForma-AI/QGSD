@@ -357,6 +357,24 @@
       "type": "file_path",
       "reason": "Ephemeral file created by activity-set, removed by activity-clear. Absence is correct when no activity in progress.",
       "acknowledged_at": "2026-03-15T13:21:28.405Z"
+    },
+    {
+      "source": "D->R",
+      "value": "| Planning | Validates, manages iteration | Planner creates plans, checker verifies, loop until pass |",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-16T00:07:18.657Z"
+    },
+    {
+      "source": "D->R",
+      "value": "The transpiler generates VARIABLES, Init, type invariants, action definitions with guard mappings, Next (with fairness),",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-16T00:08:20.720Z"
+    },
+    {
+      "source": "D->R",
+      "value": "| `workflow.plan_check` | `true` | Verifies plans achieve phase goals before execution |",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-16T00:09:38.905Z"
     }
   ],
   "patterns": [

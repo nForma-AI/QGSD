@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-15T23:19:47.617Z",
+  "generated_at": "2026-03-16T09:30:29.840Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -3232,6 +3232,69 @@
         {
           "test_file": ".planning/formal/generated-stubs/WIZ-10.stub.test.js",
           "test_name": "WIZ-10: mcp-setup.md exists and is readable"
+        }
+      ]
+    },
+    "SOLVE-09": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-09.stub.test.js",
+          "test_name": "SOLVE-09: nf-solve.cjs parses --fast flag for fast-mode iteration"
+        }
+      ]
+    },
+    "SOLVE-10": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-10.stub.test.js",
+          "test_name": "SOLVE-10: nf-solve.cjs exports crossReferenceFormalCoverage function"
+        }
+      ]
+    },
+    "SOLVE-11": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-11.stub.test.js",
+          "test_name": "SOLVE-11: VALID_RESULTS includes both "
+        }
+      ]
+    },
+    "SOLVE-12": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-12.stub.test.js",
+          "test_name": "SOLVE-12: autoClosePtoF module exports autoClosePtoF function"
+        }
+      ]
+    },
+    "SOLVE-13": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-13.stub.test.js",
+          "test_name": "SOLVE-13: persistSessionSummary creates a timestamped .md file"
+        }
+      ]
+    },
+    "SOLVE-14": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-14.stub.test.js",
+          "test_name": "SOLVE-14 — Bool: structural verification"
+        }
+      ]
+    },
+    "SOLVE-15": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SOLVE-15.stub.test.js",
+          "test_name": "SOLVE-15 — Bool: behavioral verification"
         }
       ]
     },

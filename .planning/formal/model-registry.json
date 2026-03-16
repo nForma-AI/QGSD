@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-15T23:37:26.929Z",
+  "last_sync": "2026-03-16T09:54:46.210Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -1257,13 +1257,13 @@
       ]
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 1060,
-      "last_updated": "2026-03-15T23:37:28.049Z",
+      "version": 1254,
+      "last_updated": "2026-03-16T09:55:05.053Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2175,13 +2175,13 @@
       ]
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 1060,
-      "last_updated": "2026-03-15T23:37:28.055Z",
+      "version": 1254,
+      "last_updated": "2026-03-16T09:55:05.060Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2427,24 +2427,24 @@
       ]
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 1060,
-      "last_updated": "2026-03-15T23:37:28.055Z",
+      "version": 1254,
+      "last_updated": "2026-03-16T09:55:05.061Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 722,
-      "last_updated": "2026-03-15T23:37:28.055Z",
+      "version": 862,
+      "last_updated": "2026-03-16T09:55:05.061Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 1,
+      "layer_maturity": 2,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -3020,7 +3020,7 @@
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
-        "UPPAAL-04"
+        "SCHEMA-03"
       ]
     },
     ".planning/formal/alloy/model-registry-parity.als": {
@@ -3034,7 +3034,7 @@
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3",
       "requirements": [
-        "UPPAAL-05"
+        "INTG-05"
       ]
     },
     ".planning/formal/alloy/v8-coverage-digest.als": {

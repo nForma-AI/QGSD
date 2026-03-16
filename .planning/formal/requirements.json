@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-15T21:39:15.480Z",
-  "content_hash": "da0a3863ab15a23b",
+  "aggregated_at": "2026-03-16T00:09:59.570Z",
+  "content_hash": "1a62d4578cc209ba",
   "schema_version": "1",
   "requirements": [
     {
@@ -4739,7 +4739,76 @@
         ".planning/formal/tla/QGSDSetupWizard.tla"
       ],
       "category_raw": "Wizard Composition Screen"
+    },
+    {
+      "id": "SOLVE-09",
+      "text": "Quorum dispatch pre-validates agent health via MCP health_check before slot assignment, failing fast on unauthenticated or unreachable agents instead of timing out after 30s",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-10",
+      "text": "Plan-checker agent validates each plan against phase goals and requirements, re-entering the planning loop on failure until verification passes",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-11",
+      "text": "Verifier agent performs goal-backward analysis after phase execution, confirming the codebase delivers what the phase goal promised rather than just checking task completion",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-12",
+      "text": "/nf:solve-report generates a before/after convergence summary showing item counts by category, remediation actions taken, and a full formal verification pass to confirm gap closure",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-13",
+      "text": "/nf:quick preserves core nForma guarantees (atomic commits, state tracking, verification) while skipping optional agents (research, quorum) for faster single-task execution",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-14",
+      "text": "PostToolUse context-monitor hook tracks context window consumption after every tool execution, injecting WARNING at 70% and CRITICAL at 85% to trigger compaction or /clear before context overflow",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "README.md",
+        "milestone": "solver-tui"
+      }
+    },
+    {
+      "id": "SOLVE-15",
+      "text": "bin/analyze-assumptions.cjs classifies extracted assumptions into priority tiers (Tier 1: directly impacts phase goals, Tier 2: affects quality/perf, Tier 3: cosmetic/preference) for risk-based review ordering",
+      "category": "Solver-Discovered",
+      "status": "Proposed",
+      "provenance": {
+        "source_file": "docs/dev/requirements-coverage.md",
+        "milestone": "solver-tui"
+      }
     }
-  ],
-  "frozen_at": "2026-03-15T21:39:15.482Z"
+  ]
 }

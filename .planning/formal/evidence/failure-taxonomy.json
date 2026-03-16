@@ -1,35 +1,68 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T23:20:45.972Z",
-  "total_failures": 1,
+  "generated": "2026-03-16T09:31:33.970Z",
+  "total_failures": 2,
   "categories": {
-    "crash": [],
+    "crash": [
+      {
+        "tool": "run-prism",
+        "formalism": "prism",
+        "result": "error",
+        "timestamp": "2026-03-16T09:31:29.230Z",
+        "check_id": "prism:quorum",
+        "surface": "prism",
+        "property": "Quorum consensus probability under agent availability rates",
+        "runtime_ms": 0,
+        "summary": "error: prism:quorum (binary not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PRM-01",
+          "QUORUM-04",
+          "LOOP-01"
+        ],
+        "metadata": {},
+        "observation_window": {
+          "window_start": "2026-03-16T09:31:29.217Z",
+          "window_end": "2026-03-16T09:31:29.230Z",
+          "n_traces": 0,
+          "n_events": 0,
+          "window_days": 0
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+      }
+    ],
     "timeout": [],
     "logic_violation": [
       {
-        "tool": "run-tlc",
+        "tool": "run-account-manager-tlc",
         "formalism": "tla",
         "result": "fail",
-        "timestamp": "2026-03-15T23:20:45.477Z",
-        "check_id": "tla:mcqgsdquorum",
+        "timestamp": "2026-03-16T09:31:30.698Z",
+        "check_id": "tla:account-manager",
         "surface": "tla",
-        "property": "MCQGSDQuorum",
-        "runtime_ms": 2557,
-        "summary": "fail: MCQGSDQuorum in 2557ms",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 2334,
+        "summary": "fail: MCaccount-manager in 2334ms",
         "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "MCQGSDQuorum"
-        },
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
         "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCQGSDQuorum in 2557ms"
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 2334ms"
       }
     ],
     "drift": [],
     "degradation": []
   },
   "category_counts": {
-    "crash": 0,
+    "crash": 1,
     "timeout": 0,
     "logic_violation": 1,
     "drift": 0,
@@ -37,5 +70,5 @@
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "1 failures classified: crash=0, timeout=0, logic_violation=1, drift=0, degradation=0. 0 unclassified."
+  "summary": "2 failures classified: crash=1, timeout=0, logic_violation=1, drift=0, degradation=0. 0 unclassified."
 }

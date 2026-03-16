@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-15T23:32:43.619Z",
+  "generated": "2026-03-16T09:54:44.942Z",
   "methodology": "FMEA (IEC 60812)",
   "scoring_scale": {
     "severity": "1-10: 1=no impact, 2=cosmetic, 4=degraded, 6=stalled/interrupted, 8=incorrect verdict, 10=crash/data loss",
@@ -118,33 +118,6 @@
       ]
     },
     {
-      "id": "HAZARD-IDLE-QUORUM_START",
-      "state": "IDLE",
-      "event": "QUORUM_START",
-      "to_state": "COLLECTING_VOTES",
-      "severity": 4,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 160,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.IDLE.QUORUM_START"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
       "id": "HAZARD-IDLE-DECIDE",
       "state": "IDLE",
       "event": "DECIDE",
@@ -185,33 +158,6 @@
           "layer": "L2",
           "artifact": "semantics/observed-fsm.json",
           "ref": "observed_transitions.IDLE.VOTES_COLLECTED"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
-      "id": "HAZARD-COLLECTING_VOTES-QUORUM_START",
-      "state": "COLLECTING_VOTES",
-      "event": "QUORUM_START",
-      "to_state": "COLLECTING_VOTES",
-      "severity": 4,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 160,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.COLLECTING_VOTES.QUORUM_START"
         },
         {
           "layer": "L1",
@@ -280,6 +226,60 @@
       ]
     },
     {
+      "id": "HAZARD-IDLE-QUORUM_START",
+      "state": "IDLE",
+      "event": "QUORUM_START",
+      "to_state": "COLLECTING_VOTES",
+      "severity": 4,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 80,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.IDLE.QUORUM_START"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-COLLECTING_VOTES-QUORUM_START",
+      "state": "COLLECTING_VOTES",
+      "event": "QUORUM_START",
+      "to_state": "COLLECTING_VOTES",
+      "severity": 4,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 80,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.COLLECTING_VOTES.QUORUM_START"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
       "id": "HAZARD-DECIDED-DECIDE",
       "state": "DECIDED",
       "event": "DECIDE",
@@ -334,33 +334,6 @@
       ]
     },
     {
-      "id": "HAZARD-DECIDED-QUORUM_START",
-      "state": "DECIDED",
-      "event": "QUORUM_START",
-      "to_state": "DECIDED",
-      "severity": 2,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 80,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.DECIDED.QUORUM_START"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
       "id": "HAZARD-DECIDED-VOTES_COLLECTED",
       "state": "DECIDED",
       "event": "VOTES_COLLECTED",
@@ -388,19 +361,19 @@
       ]
     },
     {
-      "id": "HAZARD-DELIBERATING-QUORUM_START",
-      "state": "DELIBERATING",
+      "id": "HAZARD-DECIDED-QUORUM_START",
+      "state": "DECIDED",
       "event": "QUORUM_START",
-      "to_state": "DELIBERATING",
-      "severity": 4,
-      "occurrence": 4,
-      "detection": 4,
-      "rpn": 64,
+      "to_state": "DECIDED",
+      "severity": 2,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 40,
       "derived_from": [
         {
           "layer": "L2",
           "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.DELIBERATING.QUORUM_START"
+          "ref": "observed_transitions.DECIDED.QUORUM_START"
         },
         {
           "layer": "L1",
@@ -410,7 +383,7 @@
         {
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCdeliberation]"
+          "ref": "invariants[config=MCQGSDQuorum]"
         }
       ]
     },
@@ -440,12 +413,39 @@
           "ref": "invariants[config=MCdeliberation]"
         }
       ]
+    },
+    {
+      "id": "HAZARD-DELIBERATING-QUORUM_START",
+      "state": "DELIBERATING",
+      "event": "QUORUM_START",
+      "to_state": "DELIBERATING",
+      "severity": 4,
+      "occurrence": 4,
+      "detection": 2,
+      "rpn": 32,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.DELIBERATING.QUORUM_START"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCdeliberation]"
+        }
+      ]
     }
   ],
   "summary": {
     "total": 16,
     "max_rpn": 256,
     "critical_count": 3,
-    "high_count": 6
+    "high_count": 4
   }
 }
