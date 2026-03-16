@@ -43,7 +43,7 @@
 
 ## Phases
 
-- [ ] **Phase v0.37-01: Annotation Back-Linking** - Test and code files link back to requirements via @requirement annotations and proximity graph edges
+- [x] **Phase v0.37-01: Annotation Back-Linking** - Test and code files link back to requirements via @requirement annotations and proximity graph edges (completed 2026-03-16)
 - [ ] **Phase v0.37-02: Gate Auto-Promotion** - Models with consecutive clean passes auto-promote from SOFT_GATE to HARD_GATE with logged evidence
 - [ ] **Phase v0.37-03: Scanner FP Tuning** - Scanners track per-category false-positive rates and auto-adjust suppression thresholds
 - [ ] **Phase v0.37-04: Quorum Precedents** - Debate archives are mined for reusable decisions that enrich future quorum dispatch
@@ -61,7 +61,7 @@
   3. T->R scanner output includes an annotation coverage percentage alongside the orphan test count
   4. C->R scanner consulting proximity-index.json suppresses flagging for code-requirement pairs with score >= 0.6
   5. `@requirement` annotations in source files (bin/*.cjs) create direct edges in the proximity graph builder output
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 Plans:
 - [ ] v0.37-01-01-PLAN.md — Proximity graph source annotation edges + C->R scanner suppression (CLINK-01, CLINK-02)
 - [ ] v0.37-01-02-PLAN.md — T->R scanner annotation recognition + coverage reporting (TLINK-01, TLINK-03)
@@ -114,7 +114,7 @@ Phases execute in sequence: v0.37-01 -> v0.37-02 -> v0.37-03 -> v0.37-04 -> v0.3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.37-01. Annotation Back-Linking | 0/3 | Planning complete | - |
+| v0.37-01. Annotation Back-Linking | 0/3 | Complete    | 2026-03-16 |
 | v0.37-02. Gate Auto-Promotion | 0/TBD | Not started | - |
 | v0.37-03. Scanner FP Tuning | 0/TBD | Not started | - |
 | v0.37-04. Quorum Precedents | 0/TBD | Not started | - |
