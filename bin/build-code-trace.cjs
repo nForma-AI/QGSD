@@ -181,12 +181,16 @@ function buildIndex(rootDir) {
   }
 
   // ---- STEP 3b: Concept-based test/ inheritance ----
-  // For test files in test/ directory, match to scope concepts and inherit source files' requirements
-  const testFilesInTestDir = Object.keys(index.traced_files).filter(f =>
-    f.startsWith('test/') && (f.endsWith('.test.cjs') || f.endsWith('.test.js'))
-  );
+  // Scan actual test/ directory on disk for files not yet in traced_files
+  const testDirPath = path.join(rootDir, 'test');
+  let testDirFiles = [];
+  try {
+    testDirFiles = fs.readdirSync(testDirPath)
+      .filter(f => f.endsWith('.test.cjs') || f.endsWith('.test.js'))
+      .map(f => path.join('test', f));
+  } catch (_) { /* test/ directory may not exist */ }
 
-  for (const testFile of testFilesInTestDir) {
+  for (const testFile of testDirFiles) {
     if (index.traced_files[testFile] && index.traced_files[testFile].length > 0) {
       // Already traced — skip
       continue;
@@ -200,9 +204,14 @@ function buildIndex(rootDir) {
 
     let found = false;
 
+    // Split concept into segments for fuzzy matching (e.g., "install-fresh-clone" → ["install", "fresh", "clone"])
+    const conceptSegments = concept.split('-').filter(s => s.length > 2);
+
     // Try matching concept to scope directories
     for (const scopeDir of scopeDirs) {
-      const matches = concept.includes(scopeDir) || scopeDir.includes(concept);
+      // Exact substring match OR any concept segment starts the scope dir OR vice versa
+      const matches = concept.includes(scopeDir) || scopeDir.includes(concept)
+        || conceptSegments.some(seg => scopeDir.startsWith(seg) || seg.startsWith(scopeDir));
       if (matches) {
         // Read the scope.json and get source_files
         const scopePath = path.join(scopesRoot, scopeDir, 'scope.json');
