@@ -1,20 +1,20 @@
 {
-  "last_run": "2026-03-16T09:33:06.327Z",
+  "last_run": "2026-03-16T12:44:10.715Z",
   "converged": true,
   "iteration_count": 1,
   "final_residual_total": 0,
-  "reverse_discovery_total": 42,
+  "reverse_discovery_total": 43,
   "heatmap_total": 6870,
   "known_issues": [
     {
       "layer": "c_to_r",
       "residual": 10,
-      "net_residual": 10
+      "net_residual": 1
     },
     {
       "layer": "t_to_r",
-      "residual": 18,
-      "net_residual": 14
+      "residual": 19,
+      "net_residual": 19
     },
     {
       "layer": "d_to_r",

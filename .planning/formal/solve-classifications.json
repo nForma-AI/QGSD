@@ -1,15 +1,23 @@
 {
-  "updated_at": "2026-03-16T09:05:19.084Z",
+  "updated_at": "2026-03-16T12:19:58.560Z",
   "classifications": {
     "dtoc": {},
     "ctor": {
-      "hooks/nf-node-eval-guard.js": "review"
+      "hooks/nf-node-eval-guard.js": "review",
+      "bin/baseline-drift.cjs": "fp",
+      "bin/dedup-changelog.cjs": "fp",
+      "bin/error-clusterer.cjs": "fp",
+      "bin/gate-score-utils.cjs": "fp",
+      "bin/layer-constants.cjs": "fp",
+      "bin/resolve-formal-tools.cjs": "fp",
+      "bin/run-petri.cjs": "fp",
+      "bin/solve-cycle-detector.cjs": "fp",
+      "bin/solve-wave-dag.cjs": "fp"
     },
     "ttor": {
       "bin/fsm-to-tla.test.cjs": "genuine",
       "bin/gate-field-compatibility.test.cjs": "genuine",
       "bin/gate-score-utils.test.cjs": "genuine",
-      "bin/layer-constants.test.cjs": "fp",
       "bin/run-petri.test.cjs": "genuine",
       "test/alloy-headless.test.cjs": "genuine",
       "test/auto-promotion-integration.test.cjs": "genuine",
@@ -19,11 +27,8 @@
       "test/error-clusterer.test.cjs": "genuine",
       "test/fallback-01-regression.test.cjs": "genuine",
       "test/model-dedup.test.cjs": "genuine",
-      "test/readme-deep-sections.test.cjs": "fp",
       "test/residual-buckets.test.cjs": "genuine",
-      "test/resolve-cli-integration.test.cjs": "genuine",
-      "test/shell-escape-01.test.cjs": "fp",
-      "test/user-guide-overhaul.test.cjs": "fp"
+      "test/resolve-cli-integration.test.cjs": "genuine"
     },
     "dtor": {
       "5d7ff7cc8312db4f": "genuine",
@@ -31,7 +36,15 @@
       "af907e7e3d53d06f": "genuine",
       "284d741d35164066": "genuine",
       "2e3c574a016a5455": "review",
-      "e6eca5e6932d066a": "genuine"
+      "e6eca5e6932d066a": "genuine",
+      "194e14bc2c1cf0d8": "genuine",
+      "7ab1ed566fb26e59": "fp",
+      "a9608a0dee182f4a": "fp",
+      "b90a725c04197b98": "fp",
+      "1e4aafa33803d981": "fp",
+      "92f15d8f4ed92c6d": "fp",
+      "1d5ca16df1952000": "fp",
+      "d88544c5f0f6dd5c": "fp"
     }
   }
 }

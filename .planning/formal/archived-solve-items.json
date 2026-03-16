@@ -1,35 +1,138 @@
 {
   "entries": [
     {
-      "key": "bin/layer-constants.test.cjs",
-      "type": "ttor",
-      "summary": "bin/layer-constants.test.cjs",
-      "file": "bin/layer-constants.test.cjs",
-      "archived_at": "2026-03-16T09:05:19.083Z",
+      "key": "bin/baseline-drift.cjs",
+      "type": "ctor",
+      "summary": "bin/baseline-drift.cjs",
+      "file": "bin/baseline-drift.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
       "auto_classified": "fp"
     },
     {
-      "key": "test/readme-deep-sections.test.cjs",
-      "type": "ttor",
-      "summary": "test/readme-deep-sections.test.cjs",
-      "file": "test/readme-deep-sections.test.cjs",
-      "archived_at": "2026-03-16T09:05:19.083Z",
+      "key": "bin/dedup-changelog.cjs",
+      "type": "ctor",
+      "summary": "bin/dedup-changelog.cjs",
+      "file": "bin/dedup-changelog.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
       "auto_classified": "fp"
     },
     {
-      "key": "test/shell-escape-01.test.cjs",
-      "type": "ttor",
-      "summary": "test/shell-escape-01.test.cjs",
-      "file": "test/shell-escape-01.test.cjs",
-      "archived_at": "2026-03-16T09:05:19.083Z",
+      "key": "bin/error-clusterer.cjs",
+      "type": "ctor",
+      "summary": "bin/error-clusterer.cjs",
+      "file": "bin/error-clusterer.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
       "auto_classified": "fp"
     },
     {
-      "key": "test/user-guide-overhaul.test.cjs",
-      "type": "ttor",
-      "summary": "test/user-guide-overhaul.test.cjs",
-      "file": "test/user-guide-overhaul.test.cjs",
-      "archived_at": "2026-03-16T09:05:19.083Z",
+      "key": "bin/gate-score-utils.cjs",
+      "type": "ctor",
+      "summary": "bin/gate-score-utils.cjs",
+      "file": "bin/gate-score-utils.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/layer-constants.cjs",
+      "type": "ctor",
+      "summary": "bin/layer-constants.cjs",
+      "file": "bin/layer-constants.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/resolve-formal-tools.cjs",
+      "type": "ctor",
+      "summary": "bin/resolve-formal-tools.cjs",
+      "file": "bin/resolve-formal-tools.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/run-petri.cjs",
+      "type": "ctor",
+      "summary": "bin/run-petri.cjs",
+      "file": "bin/run-petri.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/solve-cycle-detector.cjs",
+      "type": "ctor",
+      "summary": "bin/solve-cycle-detector.cjs",
+      "file": "bin/solve-cycle-detector.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "bin/solve-wave-dag.cjs",
+      "type": "ctor",
+      "summary": "bin/solve-wave-dag.cjs",
+      "file": "bin/solve-wave-dag.cjs",
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "7ab1ed566fb26e59",
+      "type": "dtor",
+      "summary": "When something breaks — tests fail, planning state drifts, requirements go stale — the `/nf:solve` pipeline handles it e",
+      "doc_file": "README.md",
+      "line": 667,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "a9608a0dee182f4a",
+      "type": "dtor",
+      "summary": "│ Copilot     │ APPROVE      │ Supports with caveat on test coverage    │",
+      "doc_file": "docs/dev/quorum_interface.md",
+      "line": 20,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "b90a725c04197b98",
+      "type": "dtor",
+      "summary": "REASON: The proposed phases logically address the remaining gaps identified in the audit. Separating the retroactive ver",
+      "doc_file": "docs/dev/quorum_interface.md",
+      "line": 91,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "1e4aafa33803d981",
+      "type": "dtor",
+      "summary": "⏺ Gemini: APPROVE — \"Logically addresses remaining gaps; separating verification from bug fix ensures clear, focused obj",
+      "doc_file": "docs/dev/quorum_interface.md",
+      "line": 95,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "92f15d8f4ed92c6d",
+      "type": "dtor",
+      "summary": "**Requirement:** qgsd-solve diagnostic engine provides reverse traceability sweeps (C→R, T→R, D→R) that discover impleme",
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 1804,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "1d5ca16df1952000",
+      "type": "dtor",
+      "summary": "**Implementation:** The unified MCP server (`bin/unified-mcp-server.mjs`) is the single entrypoint for all 11 MCP provid",
+      "doc_file": "docs/dev/requirements-coverage.md",
+      "line": 1842,
+      "archived_at": "2026-03-16T12:19:58.559Z",
+      "auto_classified": "fp"
+    },
+    {
+      "key": "d88544c5f0f6dd5c",
+      "type": "dtor",
+      "summary": "| `/nf:quick` | Ad-hoc task with nForma guarantees | Bug fixes, small features, config changes |",
+      "doc_file": "docs/USER-GUIDE.md",
+      "line": 337,
+      "archived_at": "2026-03-16T12:19:58.559Z",
       "auto_classified": "fp"
     }
   ]

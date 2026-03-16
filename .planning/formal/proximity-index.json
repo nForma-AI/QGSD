@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-16T09:48:32.830Z",
+  "generated": "2026-03-16T12:44:09.921Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,40 +84,40 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-16T09:47:44.261Z",
-      "hash": "8fc9238b"
+      "mtime": "2026-03-16T12:42:10.855Z",
+      "hash": "d2679136"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-16T09:48:01.595Z",
-      "hash": "48adc758"
+      "mtime": "2026-03-16T12:35:27.729Z",
+      "hash": "cabc4bc7"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-16T09:30:29.843Z",
-      "hash": "c4651160"
+      "mtime": "2026-03-16T12:35:17.814Z",
+      "hash": "0ea74f95"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-16T09:31:34.173Z",
-      "hash": "bf4a0f95"
+      "mtime": "2026-03-16T12:06:33.983Z",
+      "hash": "ba93a1a5"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-16T08:37:56.091Z",
-      "hash": "e058f610"
+      "mtime": "2026-03-16T12:00:07.410Z",
+      "hash": "ec1d35a6"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-16T09:47:01.154Z",
-      "hash": "afa7cfdb"
+      "mtime": "2026-03-16T12:07:39.703Z",
+      "hash": "ff2110bc"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
@@ -21372,9 +21372,14 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::(model-level)",
+          "to": "invariant::LineNum",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::bin/nf-solve.test.cjs",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -21401,9 +21406,14 @@
           "source": "model-registry"
         },
         {
-          "to": "invariant::(model-level)",
+          "to": "invariant::DataSource",
           "rel": "verified_by",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::bin/hypothesis-measure.test.cjs",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         }
       ]
     },
@@ -29697,16 +29707,6 @@
           "to": "requirement::OBS-04",
           "rel": "verifies",
           "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::TC-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
-        },
-        {
-          "to": "requirement::H2M-01",
-          "rel": "verifies",
-          "source": "traceability-matrix"
         }
       ]
     },
@@ -36806,6 +36806,28 @@
         }
       ]
     },
+    "invariant::LineNum": {
+      "type": "invariant",
+      "id": "LineNum",
+      "edges": [
+        {
+          "to": "requirement::TC-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::DataSource": {
+      "type": "invariant",
+      "id": "DataSource",
+      "edges": [
+        {
+          "to": "requirement::H2M-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "invariant::P=? [ F \"consensus\" ]": {
       "type": "invariant",
       "id": "P=? [ F \"consensus\" ]",
@@ -38267,6 +38289,17 @@
       "edges": [
         {
           "to": "requirement::GUIDE-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::bin/hypothesis-measure.test.cjs": {
+      "type": "test_file",
+      "id": "bin/hypothesis-measure.test.cjs",
+      "edges": [
+        {
+          "to": "requirement::H2M-01",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -40500,6 +40533,17 @@
       "edges": [
         {
           "to": "requirement::SYNC-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::bin/nf-solve.test.cjs": {
+      "type": "test_file",
+      "id": "bin/nf-solve.test.cjs",
+      "edges": [
+        {
+          "to": "requirement::TC-01",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

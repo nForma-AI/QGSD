@@ -1,14 +1,14 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-16T09:31:33.970Z",
-  "total_failures": 2,
+  "generated": "2026-03-16T12:06:33.351Z",
+  "total_failures": 11,
   "categories": {
     "crash": [
       {
         "tool": "run-prism",
         "formalism": "prism",
         "result": "error",
-        "timestamp": "2026-03-16T09:31:29.230Z",
+        "timestamp": "2026-03-16T12:06:24.146Z",
         "check_id": "prism:quorum",
         "surface": "prism",
         "property": "Quorum consensus probability under agent availability rates",
@@ -22,8 +22,8 @@
         ],
         "metadata": {},
         "observation_window": {
-          "window_start": "2026-03-16T09:31:29.217Z",
-          "window_end": "2026-03-16T09:31:29.230Z",
+          "window_start": "2026-03-16T12:06:24.144Z",
+          "window_end": "2026-03-16T12:06:24.146Z",
           "n_traces": 0,
           "n_events": 0,
           "window_days": 0
@@ -35,15 +35,152 @@
     "timeout": [],
     "logic_violation": [
       {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:06.120Z",
+        "check_id": "tla:mcsessionpersistence",
+        "surface": "tla",
+        "property": "MCSessionPersistence",
+        "runtime_ms": 2982,
+        "summary": "fail: MCSessionPersistence in 2982ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionPersistence"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCSessionPersistence in 2982ms"
+      },
+      {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:08.967Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 1945,
+        "summary": "fail: MCStopHook in 1945ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 1945ms"
+      },
+      {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:11.006Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 1780,
+        "summary": "fail: MCStopHook in 1780ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 1780ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:13.812Z",
+        "check_id": "tla:mctuinavigation",
+        "surface": "tla",
+        "property": "MCTUINavigation",
+        "runtime_ms": 1741,
+        "summary": "fail: MCTUINavigation in 1741ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCTUINavigation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUINavigation in 1741ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:17.242Z",
+        "check_id": "tla:mctuisessions",
+        "surface": "tla",
+        "property": "MCTUISessions",
+        "runtime_ms": 2733,
+        "summary": "fail: MCTUISessions in 2733ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "NAV-02"
+        ],
+        "metadata": {
+          "config": "MCTUISessions"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUISessions in 2733ms"
+      },
+      {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:19.567Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 2270,
+        "summary": "fail: MCStopHook in 2270ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 2270ms"
+      },
+      {
         "tool": "run-account-manager-tlc",
         "formalism": "tla",
         "result": "fail",
-        "timestamp": "2026-03-16T09:31:30.698Z",
+        "timestamp": "2026-03-16T12:06:20.660Z",
         "check_id": "tla:account-manager",
         "surface": "tla",
         "property": "Account manager quorum state machine — MCAM correctness",
-        "runtime_ms": 2334,
-        "summary": "fail: MCaccount-manager in 2334ms",
+        "runtime_ms": 2571,
+        "summary": "fail: MCaccount-manager in 2571ms",
         "triage_tags": [],
         "requirement_ids": [
           "CRED-01",
@@ -55,20 +192,95 @@
         ],
         "metadata": {},
         "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCaccount-manager in 2334ms"
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 2571ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:23.320Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 2410,
+        "summary": "fail: MCaccount-manager in 2410ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 2410ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:32.333Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 2302,
+        "summary": "fail: MCaccount-manager in 2302ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 2302ms"
       }
     ],
-    "drift": [],
+    "drift": [
+      {
+        "tool": "validate-traces",
+        "formalism": "trace",
+        "result": "fail",
+        "timestamp": "2026-03-16T12:06:12.145Z",
+        "check_id": "ci:conformance-traces",
+        "surface": "ci",
+        "property": "Conformance event replay through XState machine",
+        "runtime_ms": 42,
+        "summary": "fail: 1 divergence(s) in 1 traces (42ms)",
+        "triage_tags": [
+          "trace-divergence"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "divergences": 1,
+          "total": 1
+        },
+        "observation_window": {
+          "window_start": "2026-03-16T12:06:12.122Z",
+          "window_end": "2026-03-16T12:06:12.135Z",
+          "n_traces": 0,
+          "n_events": 1,
+          "window_days": 0
+        },
+        "category": "drift",
+        "classification_reason": "Trace divergence: 1 divergence(s) detected"
+      }
+    ],
     "degradation": []
   },
   "category_counts": {
     "crash": 1,
     "timeout": 0,
-    "logic_violation": 1,
-    "drift": 0,
+    "logic_violation": 9,
+    "drift": 1,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "2 failures classified: crash=1, timeout=0, logic_violation=1, drift=0, degradation=0. 0 unclassified."
+  "summary": "11 failures classified: crash=1, timeout=0, logic_violation=9, drift=1, degradation=0. 0 unclassified."
 }

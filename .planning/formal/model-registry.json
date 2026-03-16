@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_sync": "2026-03-16T09:54:46.210Z",
+  "last_sync": "2026-03-16T12:44:46.480Z",
   "models": {
     ".planning/formal/alloy/account-pool-structure.als": {
       "version": 1,
@@ -1257,13 +1257,13 @@
       ]
     },
     ".planning/formal/alloy/quorum-votes.als": {
-      "version": 1254,
-      "last_updated": "2026-03-16T09:55:05.053Z",
+      "version": 1287,
+      "last_updated": "2026-03-16T12:44:47.810Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2175,13 +2175,13 @@
       ]
     },
     ".planning/formal/prism/quorum.pm": {
-      "version": 1254,
-      "last_updated": "2026-03-16T09:55:05.060Z",
+      "version": 1287,
+      "last_updated": "2026-03-16T12:44:47.816Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
@@ -2427,24 +2427,24 @@
       ]
     },
     ".planning/formal/tla/NFQuorum.tla": {
-      "version": 1254,
-      "last_updated": "2026-03-16T09:55:05.061Z",
+      "version": 1287,
+      "last_updated": "2026-03-16T12:44:47.816Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },
     ".planning/formal/tla/NFQuorum_xstate.tla": {
-      "version": 862,
-      "last_updated": "2026-03-16T09:55:05.061Z",
+      "version": 883,
+      "last_updated": "2026-03-16T12:44:47.817Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
       "description": "",
-      "layer_maturity": 2,
+      "layer_maturity": 1,
       "gate_maturity": "SOFT_GATE",
       "source_layer": "L3"
     },

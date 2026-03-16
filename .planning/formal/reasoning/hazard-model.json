@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-16T09:54:44.942Z",
+  "generated": "2026-03-16T12:21:43.007Z",
   "methodology": "FMEA (IEC 60812)",
   "scoring_scale": {
     "severity": "1-10: 1=no impact, 2=cosmetic, 4=degraded, 6=stalled/interrupted, 8=incorrect verdict, 10=crash/data loss",
@@ -33,33 +33,6 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
-        }
-      ]
-    },
-    {
-      "id": "HAZARD-IDLE-CIRCUIT_BREAK",
-      "state": "IDLE",
-      "event": "CIRCUIT_BREAK",
-      "to_state": "IDLE",
-      "severity": 6,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 240,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.IDLE.CIRCUIT_BREAK"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
         }
       ]
     },
@@ -118,60 +91,6 @@
       ]
     },
     {
-      "id": "HAZARD-IDLE-DECIDE",
-      "state": "IDLE",
-      "event": "DECIDE",
-      "to_state": "IDLE",
-      "severity": 4,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 160,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.IDLE.DECIDE"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
-      "id": "HAZARD-IDLE-VOTES_COLLECTED",
-      "state": "IDLE",
-      "event": "VOTES_COLLECTED",
-      "to_state": "IDLE",
-      "severity": 4,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 160,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.IDLE.VOTES_COLLECTED"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
       "id": "HAZARD-COLLECTING_VOTES-DECIDE",
       "state": "COLLECTING_VOTES",
       "event": "DECIDE",
@@ -185,6 +104,33 @@
           "layer": "L2",
           "artifact": "semantics/observed-fsm.json",
           "ref": "observed_transitions.COLLECTING_VOTES.DECIDE"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-IDLE-CIRCUIT_BREAK",
+      "state": "IDLE",
+      "event": "CIRCUIT_BREAK",
+      "to_state": "IDLE",
+      "severity": 6,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 120,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.IDLE.CIRCUIT_BREAK"
         },
         {
           "layer": "L1",
@@ -239,6 +185,60 @@
           "layer": "L2",
           "artifact": "semantics/observed-fsm.json",
           "ref": "observed_transitions.IDLE.QUORUM_START"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-IDLE-DECIDE",
+      "state": "IDLE",
+      "event": "DECIDE",
+      "to_state": "IDLE",
+      "severity": 4,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 80,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.IDLE.DECIDE"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-IDLE-VOTES_COLLECTED",
+      "state": "IDLE",
+      "event": "VOTES_COLLECTED",
+      "to_state": "IDLE",
+      "severity": 4,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 80,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.IDLE.VOTES_COLLECTED"
         },
         {
           "layer": "L1",
@@ -445,7 +445,7 @@
   "summary": {
     "total": 16,
     "max_rpn": 256,
-    "critical_count": 3,
-    "high_count": 4
+    "critical_count": 2,
+    "high_count": 3
   }
 }
