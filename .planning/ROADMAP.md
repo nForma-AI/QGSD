@@ -37,4 +37,84 @@
 
 ---
 
-*Last updated: 2026-03-15 after v0.36 milestone*
+## v0.37 — Close the Loop: Cross-Layer Feedback Integration
+
+**Milestone Goal:** Close six information gaps between nForma subsystems so that knowledge flows bidirectionally — tests link back to requirements, scanners learn from FP feedback, gates self-promote, and quorum debates produce reusable precedents.
+
+## Phases
+
+- [ ] **Phase v0.37-01: Annotation Back-Linking** - Test and code files link back to requirements via @requirement annotations and proximity graph edges
+- [ ] **Phase v0.37-02: Gate Auto-Promotion** - Models with consecutive clean passes auto-promote from SOFT_GATE to HARD_GATE with logged evidence
+- [ ] **Phase v0.37-03: Scanner FP Tuning** - Scanners track per-category false-positive rates and auto-adjust suppression thresholds
+- [ ] **Phase v0.37-04: Quorum Precedents** - Debate archives are mined for reusable decisions that enrich future quorum dispatch
+- [ ] **Phase v0.37-05: Hypothesis Targeting** - Hypothesis measurement transitions influence solve remediation wave ordering
+
+## Phase Details
+
+### Phase v0.37-01: Annotation Back-Linking
+**Goal**: Requirements traceability flows backward from tests and code to requirements, eliminating false orphan flags
+**Depends on**: Nothing (first phase)
+**Requirements**: TLINK-01, TLINK-02, TLINK-03, CLINK-01, CLINK-02
+**Success Criteria** (what must be TRUE):
+  1. A test file with `@requirement TLINK-01` is not flagged as orphaned by the T->R scanner for that requirement ID
+  2. Running `bin/annotate-tests.cjs` on a test directory produces `@requirement` comment suggestions based on proximity graph edges
+  3. T->R scanner output includes an annotation coverage percentage alongside the orphan test count
+  4. C->R scanner consulting proximity-index.json suppresses flagging for code-requirement pairs with score >= 0.6
+  5. `@requirement` annotations in source files (bin/*.cjs) create direct edges in the proximity graph builder output
+**Plans**: TBD
+
+### Phase v0.37-02: Gate Auto-Promotion
+**Goal**: Gates self-promote when models demonstrate sustained correctness, removing manual promotion overhead
+**Depends on**: Nothing (independent)
+**Requirements**: GPROMO-01, GPROMO-02, GPROMO-03
+**Success Criteria** (what must be TRUE):
+  1. model-registry.json entries contain a `consecutive_pass_count` field that increments on pass and resets to 0 on fail
+  2. A model with consecutive_pass_count >= 3, wiring >= 1.0, and semantic >= 0.8 auto-promotes from SOFT_GATE to HARD_GATE without user intervention
+  3. Each auto-promotion is logged to promotion-changelog.json with an evidence snapshot during solve Phase 4 (report)
+**Plans**: TBD
+
+### Phase v0.37-03: Scanner FP Tuning
+**Goal**: Scanners self-calibrate by tracking false-positive rates and raising suppression thresholds for chronic offenders
+**Depends on**: Phase v0.37-01 (annotation back-linking reduces baseline FP rates that tuning builds upon)
+**Requirements**: FPTUNE-01, FPTUNE-02, FPTUNE-03
+**Success Criteria** (what must be TRUE):
+  1. solve-classifications.json tracks per-scanner per-category FP rates across a rolling window of the last 10 sessions
+  2. A scanner with FP rate > 60% over 5+ sessions has its suppression threshold auto-raised by 0.1 (capped at 0.9)
+  3. Running `/nf:solve --report-only` displays a per-scanner FP rate table in the diagnostics output
+**Plans**: TBD
+
+### Phase v0.37-04: Quorum Precedents
+**Goal**: Past quorum decisions become queryable knowledge that enriches future quorum dispatch with relevant context
+**Depends on**: Nothing (independent)
+**Requirements**: QPREC-01, QPREC-02, QPREC-03
+**Success Criteria** (what must be TRUE):
+  1. Running `bin/extract-precedents.cjs` against debate archives produces `.planning/quorum/precedents.json` with BLOCK/APPROVE decisions and reasoning
+  2. Quorum dispatch prompts include up to 3 keyword-matched precedents relevant to the current question
+  3. Precedents older than 90 days are automatically pruned and do not appear in dispatch prompts
+**Plans**: TBD
+
+### Phase v0.37-05: Hypothesis Targeting
+**Goal**: Hypothesis measurement transitions directly influence which layers get remediated first in solve waves
+**Depends on**: Nothing (uses solve-wave-dag.cjs from v0.36)
+**Requirements**: HTARGET-01, HTARGET-02
+**Success Criteria** (what must be TRUE):
+  1. When a hypothesis transitions from UNMEASURABLE to CONFIRMED or VIOLATED, its parent layer receives +1 priority weight in the next solve remediation wave
+  2. solve-wave-dag.cjs reads hypothesis measurements and adjusts wave ordering so layers with recent transitions execute before layers without
+**Plans**: TBD
+
+## Progress
+
+**Execution Order:**
+Phases execute in sequence: v0.37-01 -> v0.37-02 -> v0.37-03 -> v0.37-04 -> v0.37-05
+(Phases 02, 04, 05 are independent but sequenced for orderly delivery; Phase 03 depends on Phase 01)
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| v0.37-01. Annotation Back-Linking | 0/TBD | Not started | - |
+| v0.37-02. Gate Auto-Promotion | 0/TBD | Not started | - |
+| v0.37-03. Scanner FP Tuning | 0/TBD | Not started | - |
+| v0.37-04. Quorum Precedents | 0/TBD | Not started | - |
+| v0.37-05. Hypothesis Targeting | 0/TBD | Not started | - |
+
+---
+*Last updated: 2026-03-16 after v0.37 roadmap creation*

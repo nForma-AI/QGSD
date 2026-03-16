@@ -60,28 +60,28 @@ Deferred to v0.38+:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TLINK-01 | TBD | Pending |
-| TLINK-02 | TBD | Pending |
-| TLINK-03 | TBD | Pending |
-| CLINK-01 | TBD | Pending |
-| CLINK-02 | TBD | Pending |
-| GPROMO-01 | TBD | Pending |
-| GPROMO-02 | TBD | Pending |
-| GPROMO-03 | TBD | Pending |
-| FPTUNE-01 | TBD | Pending |
-| FPTUNE-02 | TBD | Pending |
-| FPTUNE-03 | TBD | Pending |
-| QPREC-01 | TBD | Pending |
-| QPREC-02 | TBD | Pending |
-| QPREC-03 | TBD | Pending |
-| HTARGET-01 | TBD | Pending |
-| HTARGET-02 | TBD | Pending |
+| TLINK-01 | v0.37-01 | Pending |
+| TLINK-02 | v0.37-01 | Pending |
+| TLINK-03 | v0.37-01 | Pending |
+| CLINK-01 | v0.37-01 | Pending |
+| CLINK-02 | v0.37-01 | Pending |
+| GPROMO-01 | v0.37-02 | Pending |
+| GPROMO-02 | v0.37-02 | Pending |
+| GPROMO-03 | v0.37-02 | Pending |
+| FPTUNE-01 | v0.37-03 | Pending |
+| FPTUNE-02 | v0.37-03 | Pending |
+| FPTUNE-03 | v0.37-03 | Pending |
+| QPREC-01 | v0.37-04 | Pending |
+| QPREC-02 | v0.37-04 | Pending |
+| QPREC-03 | v0.37-04 | Pending |
+| HTARGET-01 | v0.37-05 | Pending |
+| HTARGET-02 | v0.37-05 | Pending |
 
 **Coverage:**
 - v0.37 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-16*
-*Last updated: 2026-03-16 after milestone v0.37 definition*
+*Last updated: 2026-03-16 after v0.37 roadmap creation*
