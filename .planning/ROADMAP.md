@@ -75,7 +75,9 @@ Plans:
   1. model-registry.json entries contain a `consecutive_pass_count` field that increments on pass and resets to 0 on fail
   2. A model with consecutive_pass_count >= 3, wiring >= 1.0, and semantic >= 0.8 auto-promotes from SOFT_GATE to HARD_GATE without user intervention
   3. Each auto-promotion is logged to promotion-changelog.json with an evidence snapshot during solve Phase 4 (report)
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] v0.37-02-01-PLAN.md — consecutive_pass_count tracking + gated HARD_GATE promotion + tests (GPROMO-01, GPROMO-02, GPROMO-03)
 
 ### Phase v0.37-03: Scanner FP Tuning
 **Goal**: Scanners self-calibrate by tracking false-positive rates and raising suppression thresholds for chronic offenders
@@ -115,10 +117,10 @@ Phases execute in sequence: v0.37-01 -> v0.37-02 -> v0.37-03 -> v0.37-04 -> v0.3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.37-01. Annotation Back-Linking | 0/3 | Complete    | 2026-03-16 |
-| v0.37-02. Gate Auto-Promotion | 0/TBD | Not started | - |
+| v0.37-02. Gate Auto-Promotion | 0/1 | Planning complete | - |
 | v0.37-03. Scanner FP Tuning | 0/TBD | Not started | - |
 | v0.37-04. Quorum Precedents | 0/TBD | Not started | - |
 | v0.37-05. Hypothesis Targeting | 0/TBD | Not started | - |
 
 ---
-*Last updated: 2026-03-16 after v0.37-01 phase planning*
+*Last updated: 2026-03-16 after v0.37-02 phase planning*
