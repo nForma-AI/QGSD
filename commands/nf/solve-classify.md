@@ -10,7 +10,9 @@ allowed-tools:
 <objective>
 Pre-classify all solve sweep items using Claude Haiku as a sub-agent before elevating
 to human involvement. Uses per-item forever cache — only new/unclassified items are
-sent to Haiku. Returns classification stats and updates solve-classifications.json.
+sent to Haiku. Classification prompts include proximity-index context (nearest requirement
+ID) for C->R and T->R items when available, improving accuracy. Returns classification
+stats and updates solve-classifications.json.
 
 This sub-skill can be invoked directly (`/nf:solve-classify`) or dispatched by the
 `/nf:solve` orchestrator after the diagnostic phase.

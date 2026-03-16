@@ -158,12 +158,16 @@ function loadSweepData() {
           type: 'ctor',
           summary: item.file || item,
           file: item.file || item,
+          nearest_req: item.nearest_req,
+          proximity_context: item.proximity_context,
         }));
       } else if (cat.key === 'ttor') {
         rawItems = (detail.orphan_tests || []).map(item => ({
           type: 'ttor',
           summary: typeof item === 'string' ? item : item.file || JSON.stringify(item),
           file: typeof item === 'string' ? item : item.file,
+          nearest_req: typeof item === 'object' ? item.nearest_req : undefined,
+          proximity_context: typeof item === 'object' ? item.proximity_context : undefined,
         }));
       } else if (cat.key === 'dtor') {
         rawItems = (detail.unbacked_claims || []).map(item => ({
@@ -1275,9 +1279,9 @@ function classifyWithHaiku(sweepData, opts = {}, onProgress) {
         if (catKey === 'dtoc') {
           return `${batchIdx}: [${item.claimType}] "${item.value}" in ${item.doc_file}:${item.line} — ${item.reason}`;
         } else if (catKey === 'ctor') {
-          return `${batchIdx}: ${item.file} — module not traced to any requirement`;
+          return `${batchIdx}: ${item.file} — module not traced to any requirement${item.nearest_req ? ' (nearest: ' + item.nearest_req + ')' : ''}${item.proximity_context ? ' (near: ' + item.proximity_context.slice(0, 3).join(', ') + ')' : ''}`;
         } else if (catKey === 'ttor') {
-          return `${batchIdx}: ${item.file} — test has no @req annotation`;
+          return `${batchIdx}: ${item.file} — test has no @req annotation${item.nearest_req ? ' (nearest: ' + item.nearest_req + ')' : ''}${item.proximity_context ? ' (near: ' + item.proximity_context.slice(0, 3).join(', ') + ')' : ''}`;
         } else if (catKey === 'dtor') {
           return `${batchIdx}: "${(item.claim_text || '').slice(0, 80)}" in ${item.doc_file}:${item.line}`;
         }
@@ -1286,8 +1290,8 @@ function classifyWithHaiku(sweepData, opts = {}, onProgress) {
 
       const categoryDesc = {
         dtoc: 'D→C Broken Claims: doc references to files/commands/dependencies that don\'t exist in the codebase',
-        ctor: 'C→R Untraced Modules: code files not mentioned in any requirement. Infrastructure/utility scripts (build, lint, migrate, validate, check, install tools) are typically NOT requirement-traced and should be classified as "fp". Feature modules that implement user-facing or system behavior SHOULD be traced.',
-        ttor: 'T→R Orphan Tests: test files without @req annotations. Tests for infrastructure/utility scripts are typically "fp". Tests for feature modules should be "review".',
+        ctor: 'C→R Untraced Modules: code files not mentioned in any requirement. Infrastructure/utility scripts (build, lint, migrate, validate, check, install tools) are typically NOT requirement-traced and should be classified as "fp". Feature modules that implement user-facing or system behavior SHOULD be traced. Items marked \'(nearest: REQ-XX)\' have a nearby requirement in the proximity graph — more likely fp.',
+        ttor: 'T→R Orphan Tests: test files without @req annotations. Tests for infrastructure/utility scripts are typically "fp". Tests for feature modules should be "review". Items marked \'(nearest: REQ-XX)\' have a nearby requirement — more likely fp.',
         dtor: 'D→R Unbacked Claims: doc sentences with action verbs (provides, ensures, validates...) that don\'t match any requirement keywords',
       };
 
