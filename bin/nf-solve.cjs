@@ -2211,10 +2211,23 @@ function classifyCandidate(candidate) {
   const docSignals = ['supports', 'handles', 'provides', 'describes', 'documents', 'explains'];
   const hasDocLanguage = docSignals.some(s => new RegExp('\\b' + s + '\\b', 'i').test(text));
 
+  // Determine infrastructure tier for module/test candidates
+  const infraPatterns = [
+    /^(install|aggregate-|build-|compute-|validate-|solve-tui|solve-worker|solve-wave-dag|solve-debt-bridge|token-dashboard|config-loader|layer-constants|providers|unified-mcp-server|review-mcp-logs|check-mcp-health|security-sweep)/,
+  ];
+  const baseName = path.basename(candidate.file_or_claim || '').replace(/\.(test\.)?(cjs|js|mjs)$/, '');
+  const isInfra = infraPatterns.some(p => p.test(baseName)) || (candidate.file_or_claim || '').startsWith('hooks/');
+  const proposed_tier = isInfra ? 'technical' : 'user';
+
   // Module and test types are more likely to be real requirements
   if (candidate.type === 'module' || candidate.type === 'test') {
     // Source modules and tests are usually genuine missing requirements
-    return { category: 'A', reason: 'source ' + candidate.type + ' without requirement tracing', suggestion: 'approve' };
+    return {
+      category: 'A',
+      reason: 'source ' + candidate.type + ' without requirement tracing',
+      suggestion: 'approve',
+      proposed_tier: proposed_tier
+    };
   }
 
   if (candidate.type === 'claim') {
@@ -2367,6 +2380,7 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
     c.category = classification.category;
     c.category_reason = classification.reason;
     c.suggestion = classification.suggestion;
+    c.proposed_tier = classification.proposed_tier || 'user';
   }
 
   // Auto-acknowledge Category B candidates (documentation-only, no human review needed)

@@ -636,3 +636,93 @@ test('multiple archive milestones merge in version order', function() {
     cleanupTempDir(tempDir);
   }
 });
+
+// Test: parseRequirements defaults tier to 'user' for requirements without (technical) suffix
+test('parseRequirements defaults tier to "user" for requirements without (technical) suffix', function() {
+  const markdown = `### Requirements Envelope — ENV
+
+- [ ] **ENV-01**: First requirement without technical marker
+- [ ] **ENV-02**: Second requirement also without marker
+`;
+
+  const result = parseRequirements(markdown);
+
+  assert.strictEqual(result.length, 2, 'Should extract 2 requirements');
+  assert.strictEqual(result[0].tier, 'user', 'ENV-01 should have tier: user');
+  assert.strictEqual(result[1].tier, 'user', 'ENV-02 should have tier: user');
+  assert.strictEqual(result[0].text, 'First requirement without technical marker', 'Text should not include suffix');
+});
+
+// Test: parseRequirements detects (technical) suffix and sets tier accordingly
+test('parseRequirements detects (technical) suffix and sets tier accordingly', function() {
+  const markdown = `### Requirements Envelope — ENV
+
+- [ ] **ENV-01**: Build system requirement (technical)
+- [ ] **ENV-02**: User-facing feature
+- [ ] **ENV-03**: Infrastructure module (technical)
+`;
+
+  const result = parseRequirements(markdown);
+
+  assert.strictEqual(result.length, 3, 'Should extract 3 requirements');
+  assert.strictEqual(result[0].tier, 'technical', 'ENV-01 should have tier: technical');
+  assert.strictEqual(result[0].text, 'Build system requirement', 'Text should be stripped of (technical) suffix');
+  assert.strictEqual(result[1].tier, 'user', 'ENV-02 should have tier: user');
+  assert.strictEqual(result[2].tier, 'technical', 'ENV-03 should have tier: technical');
+  assert.strictEqual(result[2].text, 'Infrastructure module', 'Text should be stripped of suffix');
+});
+
+// Test: aggregateRequirements defaults tier field for all merged requirements
+test('aggregateRequirements defaults tier field for all merged requirements', function() {
+  const tempDir = createTempDir();
+
+  try {
+    const tempReqPath = path.join(tempDir, 'REQUIREMENTS.md');
+    const tempOutputPath = path.join(tempDir, 'requirements.json');
+
+    const tempMarkdown = `# Requirements: nForma v0.22
+
+### Requirements Envelope — ENV
+
+- [ ] **ENV-01**: Regular user requirement
+- [ ] **ENV-02**: Build infrastructure (technical)
+- [ ] **ENV-03**: Another user feature
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ENV-01 | v0.22-01 | Pending |
+| ENV-02 | v0.22-01 | Pending |
+| ENV-03 | v0.22-02 | Pending |
+`;
+
+    fs.writeFileSync(tempReqPath, tempMarkdown, 'utf8');
+
+    const result = aggregateRequirements({
+      requirementsPath: tempReqPath,
+      outputPath: tempOutputPath,
+      deterministic: true,
+      skipArchive: true
+    });
+
+    assert.strictEqual(result.requirementCount, 3, 'Should have 3 requirements');
+
+    const envelope = JSON.parse(fs.readFileSync(tempOutputPath, 'utf8'));
+    assert.strictEqual(envelope.requirements.length, 3, 'Envelope should have 3 requirements');
+
+    // Check each requirement has a tier field
+    const env01 = envelope.requirements.find(r => r.id === 'ENV-01');
+    const env02 = envelope.requirements.find(r => r.id === 'ENV-02');
+    const env03 = envelope.requirements.find(r => r.id === 'ENV-03');
+
+    assert.strictEqual(env01.tier, 'user', 'ENV-01 should have tier: user');
+    assert.strictEqual(env02.tier, 'technical', 'ENV-02 should have tier: technical');
+    assert.strictEqual(env03.tier, 'user', 'ENV-03 should have tier: user');
+
+    // Verify text does not contain (technical) suffix
+    assert.ok(!env02.text.includes('(technical)'), 'Text should not contain (technical) suffix');
+  } finally {
+    cleanupTempDir(tempDir);
+  }
+});

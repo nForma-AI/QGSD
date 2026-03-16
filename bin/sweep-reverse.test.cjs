@@ -15,6 +15,7 @@ const {
   assembleReverseCandidates,
   computeResidual,
   formatJSON,
+  classifyCandidate,
 } = require('./nf-solve.cjs');
 
 // ── sweepCtoR ────────────────────────────────────────────────────────────────
@@ -348,5 +349,61 @@ describe('formatJSON with reverse layers', () => {
     const residual = computeResidual();
     const json = formatJSON([{ iteration: 1, residual, actions: [] }], residual, false);
     assert.equal(json.solver_version, '1.2');
+  });
+});
+
+// ── classifyCandidate with proposed_tier ────────────────────────────────────
+
+describe('classifyCandidate', () => {
+  it('returns proposed_tier: "technical" for infrastructure module candidate (install)', () => {
+    const candidate = { file_or_claim: 'bin/install.js', type: 'module' };
+    const classification = classifyCandidate(candidate);
+    assert.equal(classification.proposed_tier, 'technical', 'install module should be classified as technical');
+    assert.equal(classification.category, 'A', 'Should be category A');
+  });
+
+  it('returns proposed_tier: "user" for feature module candidate (nf-solve.cjs)', () => {
+    const candidate = { file_or_claim: 'bin/nf-solve.cjs', type: 'module' };
+    const classification = classifyCandidate(candidate);
+    assert.equal(classification.proposed_tier, 'user', 'feature module should be classified as user');
+    assert.equal(classification.category, 'A', 'Should be category A');
+  });
+
+  it('returns proposed_tier: "technical" for hooks file', () => {
+    const candidate = { file_or_claim: 'hooks/nf-prompt.js', type: 'module' };
+    const classification = classifyCandidate(candidate);
+    assert.equal(classification.proposed_tier, 'technical', 'hooks file should be classified as technical');
+    assert.equal(classification.category, 'A', 'Should be category A');
+  });
+
+  it('returns proposed_tier: "technical" for aggregate-requirements.cjs', () => {
+    const candidate = { file_or_claim: 'bin/aggregate-requirements.cjs', type: 'module' };
+    const classification = classifyCandidate(candidate);
+    assert.equal(classification.proposed_tier, 'technical', 'aggregate module should be classified as technical');
+  });
+
+  it('returns proposed_tier: "technical" for build- prefix module', () => {
+    const candidate = { file_or_claim: 'bin/build-layer-manifest.cjs', type: 'module' };
+    const classification = classifyCandidate(candidate);
+    assert.equal(classification.proposed_tier, 'technical', 'build module should be classified as technical');
+  });
+
+  it('returns proposed_tier for test type candidates', () => {
+    const infraTest = { file_or_claim: 'test/install.test.cjs', type: 'test' };
+    const featureTest = { file_or_claim: 'test/feature-x.test.cjs', type: 'test' };
+
+    const infraClassification = classifyCandidate(infraTest);
+    assert.equal(infraClassification.proposed_tier, 'technical', 'infrastructure test should be technical');
+
+    const featureClassification = classifyCandidate(featureTest);
+    assert.equal(featureClassification.proposed_tier, 'user', 'feature test should be user');
+  });
+
+  it('ignores proposed_tier for claim type candidates', () => {
+    const candidate = { file_or_claim: 'Must validate all inputs', type: 'claim' };
+    const classification = classifyCandidate(candidate);
+    // proposed_tier should only be set for module/test types
+    assert.equal(classification.proposed_tier === undefined || classification.proposed_tier, true,
+      'claim types should not have proposed_tier or it may be undefined');
   });
 });

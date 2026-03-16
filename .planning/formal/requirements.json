@@ -1,12 +1,13 @@
 {
-  "aggregated_at": "2026-03-16T13:00:24.879Z",
-  "content_hash": "734788c0043b90e6",
-  "schema_version": "1",
+  "aggregated_at": "2026-03-16T13:58:55.419Z",
+  "content_hash": "sha256:ecf93719352529ca17361a79975118e81ec33084d5626c1ae823fc0a76cc3868",
+  "frozen_at": null,
   "requirements": [
     {
       "id": "ACT-01",
       "text": "`.planning/current-activity.json` is written atomically at every major workflow state transition (execute-phase, plan-phase, debug, quorum, circuit-breaker, new-milestone stages)",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -22,6 +23,7 @@
       "id": "ACT-02",
       "text": "Activity schema: `{ activity, sub_activity, phase?, plan?, wave?, debug_round?, checkpoint?, quorum_round?, updated }` — all fields except `activity` and `updated` are optional; unknown fields are preserved",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -37,6 +39,7 @@
       "id": "ACT-03",
       "text": "`gsd-tools.cjs activity-set <json>` CLI command writes the current-activity.json file with atomic replace; `activity-clear` removes it",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -52,6 +55,7 @@
       "id": "ACT-04",
       "text": "`resume-work` reads current-activity.json and routes to the exact recovery point — displaying the interrupted state before resuming execution",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -67,6 +71,7 @@
       "id": "ACT-05",
       "text": "`execute-phase` writes activity at every stage boundary: entering/exiting plan execution, checkpoint:verify, debug loop rounds, awaiting_human_verify, and verifying_phase",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -82,6 +87,7 @@
       "id": "ACT-06",
       "text": "`plan-phase`, `new-milestone`, `debug`, `quorum`, and `circuit-breaker` resolution workflows write activity at every stage boundary",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -97,6 +103,7 @@
       "id": "ACT-07",
       "text": "Activity file is cleared on successful completion of any top-level workflow; it persists across context resets when mid-workflow",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -112,6 +119,7 @@
       "id": "ADAPT-01",
       "text": "Config values are normalized through a bidirectional adapter (e.g., profile names, boolean strings, nested vs flat keys) so internal types never leak to config files and vice versa",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -123,6 +131,7 @@
       "id": "ADR-01",
       "text": "Quorum debates in `.planning/quorum/debates/` follow a consistent template (Context, Question, Positions, Decision, Consequences) that downstream tools can parse",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -134,6 +143,7 @@
       "id": "AGENT-01",
       "text": "User can add a new claude-mcp-server instance (name, provider, model, key)",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -149,6 +159,7 @@
       "id": "AGENT-02",
       "text": "User can remove an existing agent from the roster",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -164,6 +175,7 @@
       "id": "AGENT-03",
       "text": "Wizard runs identity ping to verify connectivity after provisioning new agent",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -176,6 +188,7 @@
       "id": "ANNOT-01",
       "text": "All 11 TLA+ model files contain `@requirement` structured comments on each property/invariant, mapping it to specific requirement IDs",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-02",
       "status": "Complete",
       "provenance": {
@@ -188,6 +201,7 @@
       "id": "ANNOT-02",
       "text": "All 8 Alloy model files contain `@requirement` structured comments on each assertion/check, mapping it to specific requirement IDs",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-02",
       "status": "Complete",
       "provenance": {
@@ -200,6 +214,7 @@
       "id": "ANNOT-03",
       "text": "All 3 PRISM .props files contain `@requirement` structured comments on each property, mapping it to specific requirement IDs",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-02",
       "status": "Complete",
       "provenance": {
@@ -212,6 +227,7 @@
       "id": "ANNOT-04",
       "text": "`bin/extract-annotations.cjs` parses `@requirement` comments from TLA+, Alloy, and PRISM files and returns a structured JSON map of `{ model_file: [{ property, requirement_ids }] }`",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-02",
       "status": "Complete",
       "provenance": {
@@ -224,6 +240,7 @@
       "id": "ANNOT-05",
       "text": "The traceability matrix generator reads extracted annotations as a primary data source, with model-registry `requirements` arrays as fallback",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-03",
       "status": "Complete",
       "provenance": {
@@ -236,6 +253,7 @@
       "id": "ARCH-01",
       "text": "All formal models declared in `.formal/model-registry.json` as single source of truth with provenance tracking",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.21-01",
       "status": "Complete",
       "provenance": {
@@ -251,6 +269,7 @@
       "id": "ARCH-02",
       "text": "`promote-model.cjs` provides atomic promotion from per-phase specs to canonical specs with duplicate detection",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.21-01",
       "status": "Complete",
       "provenance": {
@@ -266,6 +285,7 @@
       "id": "ARCH-03",
       "text": "`accept-debug-invariant.cjs` writes debug-discovered invariants directly to canonical specs with session provenance",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.21-01",
       "status": "Complete",
       "provenance": {
@@ -278,6 +298,7 @@
       "id": "ARCH-10",
       "text": "QGSD, as a Claude Code plugin, MUST NOT bundle LLM SDKs; Haiku/Sonnet/Opus calls MUST use the Agent tool's model parameter",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.26-05",
       "status": "Complete",
       "provenance": {
@@ -293,6 +314,7 @@
       "id": "BLD-01",
       "text": "`hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 and GUARD 5 code from Phase 5",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -305,6 +327,7 @@
       "id": "BLD-02",
       "text": "`npm test` passes with 0 failures across all test suites (config-loader, stop hook, circuit breaker)",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -317,6 +340,7 @@
       "id": "BRKR-01",
       "text": "When circuit breaker fires, the oscillation trigger pattern (file set, alternation count, time window) is persisted to `.planning/formal/evidence/` so future sessions can preemptively avoid the same signature",
       "category": "Quality Hardening",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -328,6 +352,7 @@
       "id": "CALIB-01",
       "text": "`.formal/policy.yaml` is the single authoritative source for PRISM calibration parameters",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-02",
       "status": "Complete",
       "provenance": {
@@ -343,6 +368,7 @@
       "id": "CALIB-02",
       "text": "`run-prism.cjs` reads `policy.yaml` and writes `writeCheckResult` with `observation_window` metadata",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-02",
       "status": "Complete",
       "provenance": {
@@ -358,6 +384,7 @@
       "id": "CALIB-03",
       "text": "`read-policy.cjs` exposes all policy fields with typed interface",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-02",
       "status": "Complete",
       "provenance": {
@@ -373,6 +400,7 @@
       "id": "CALIB-04",
       "text": "`policy.conservative_priors.tp_rate` and `policy.conservative_priors.unavail` from `.formal/policy.yaml` wire directly to `run-prism.cjs` fallback constants (v0.19-10 fix)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-10",
       "status": "Complete",
       "provenance": {
@@ -386,13 +414,14 @@
     },
     {
       "id": "CI-01",
-      "text": "Test suite runs on every commit",
+      "text": "Automated test suite runs on every pull request and merge to main is blocked when tests fail",
       "category": "CI/CD",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
@@ -400,13 +429,14 @@
     },
     {
       "id": "CI-02",
-      "text": "Lint and type checks run in CI",
+      "text": "Linting and formatting checks run in CI and block merge on violations",
       "category": "CI/CD",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
@@ -414,67 +444,24 @@
     },
     {
       "id": "CI-03",
-      "text": "Build artifacts are reproducible",
+      "text": "Type checking (if applicable to the language) runs in CI and blocks merge on type errors",
       "category": "CI/CD",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ci-pipeline-gates.als"
       ]
     },
     {
-      "id": "CI-04",
-      "text": "Automated test suite runs on every pull request and merge to main is blocked when tests fail",
-      "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "CI-05",
-      "text": "Linting and formatting checks run in CI and block merge on violations",
-      "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "CI-06",
-      "text": "Type checking (if applicable to the language) runs in CI and blocks merge on type errors",
-      "category": "CI/CD",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "CI-07",
-      "text": "CI/CD workflows trigger and test on both main and staging branches, run tests across Node 18/20/22 matrix, verify npm package integrity, and auto-publish @staging dist-tag to npm on staging push",
-      "category": "CI/CD",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Staging branch requires the same CI protection and testing rigor as main to catch issues before production. Expanding the Node version matrix ensures compatibility across all supported versions. Automated staging releases with @staging dist-tag enable pre-release testing without affecting the stable npm latest tag.",
-      "provenance": {
-        "source_file": ".planning/quick/285-improve-ci-cd-testing-add-staging-trigge/285-PLAN.md",
-        "milestone": "quick-285"
-      }
-    },
-    {
       "id": "CL-01",
       "text": "CHANGELOG.md has a `[0.2.0]` entry covering all v0.2 changes: circuit breaker (Phases 6–8), GUARD 5 gap closure (Phase 5), QGSD rebranding, quorum scoring, quorum commands, debug flow, checkpoint:verify (quick tasks 1–12)",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -487,6 +474,7 @@
       "id": "CL-02",
       "text": "CHANGELOG.md `[Unreleased]` section is cleared after the `[0.2.0]` entry is finalized — clean slate for v0.3+",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -496,9 +484,22 @@
       "category_raw": "Changelog"
     },
     {
+      "id": "CLASS-01",
+      "text": "D→C classification cache uses content-hash keys (SHA-256 of claim text) instead of line-number keys — cached verdicts invalidate when doc content changes at the same line",
+      "category": "Classification",
+      "tier": "user",
+      "phase": "v0.36-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "COMP-01",
       "text": "User can define a `quorum.active` array in `qgsd.json` listing which slots participate in quorum",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -514,6 +515,7 @@
       "id": "COMP-02",
       "text": "Quorum orchestrator reads `quorum.active` from config instead of a hardcoded agent list; only active slots are called",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -529,6 +531,7 @@
       "id": "COMP-03",
       "text": "`check-provider-health.chs` and scoreboard tooling derive agent list from `quorum.active` rather than hardcoded arrays",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -544,6 +547,7 @@
       "id": "COMP-04",
       "text": "Default `quorum.active` is auto-populated at install/migration time based on discovered slots in `~/.claude.json`",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -559,6 +563,7 @@
       "id": "CONF-01",
       "text": "Global config at `~/.claude/qgsd.json` — installed once, applies to all projects",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -571,6 +576,7 @@
       "id": "CONF-02",
       "text": "Per-project override at `.claude/qgsd.json` — merged with global, project values take precedence",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -583,6 +589,7 @@
       "id": "CONF-03",
       "text": "Config contains: `quorum_commands` (array of command names), `required_models` (dict of MCP tool entries: { tool_prefix, required }), `fail_mode` (open|closed, default: open)",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -595,6 +602,7 @@
       "id": "CONF-04",
       "text": "Fail-open behavior: when a quorum model is unavailable, Stop hook passes and logs reduced quorum notification",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -607,6 +615,7 @@
       "id": "CONF-05",
       "text": "Config validates on read — malformed config falls back to hardcoded defaults with warning",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -619,6 +628,7 @@
       "id": "CONF-06",
       "text": "qgsd.json schema extended with `circuit_breaker.oscillation_depth` (integer, default: 3) — minimum commits touching same file set to trigger breaker",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -634,6 +644,7 @@
       "id": "CONF-07",
       "text": "qgsd.json schema extended with `circuit_breaker.commit_window` (integer, default: 6) — number of recent commits to analyze",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -649,6 +660,7 @@
       "id": "CONF-08",
       "text": "Circuit breaker config values validated on load; invalid values fall back to defaults with stderr warning",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -661,6 +673,7 @@
       "id": "CONF-09",
       "text": "Two-layer config merge (global + project) applies to `circuit_breaker` settings identically to existing merge behavior",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -673,9 +686,58 @@
       "category_raw": "Config Extensions"
     },
     {
+      "id": "CONV-01",
+      "text": "Solve loop tracks per-layer residual history across iterations and detects oscillation cycles (A-B-A-B pattern across 4+ iterations) — oscillating layers are reported and excluded from further dispatch",
+      "category": "Convergence",
+      "tier": "user",
+      "phase": "v0.36-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "CONV-02",
+      "text": "Solve output reports residual in three distinct buckets: `automatable` (forward + gates), `manual` (d_to_c + reverse discovery), `informational` (git_heatmap + lint + hazard) — never mixed into a single total",
+      "category": "Convergence",
+      "tier": "user",
+      "phase": "v0.36-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "CONV-03",
+      "text": "Solve output JSON includes `capped_layers` array when any gate dispatch hits the max-3-per-cycle limit — users can distinguish \"residual remains because capped\" from \"residual remains because unfixable\"",
+      "category": "Convergence",
+      "tier": "user",
+      "phase": "v0.36-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "CONV-04",
+      "text": "Solve report re-snapshots baseline at report time and flags drift >10% from session-start baseline — preventing misleading before/after deltas caused by mid-session external edits",
+      "category": "Convergence",
+      "tier": "user",
+      "phase": "v0.36-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "CRED-01",
       "text": "User can rotate API keys across multiple slots in a single batch flow from the main menu",
       "category": "Configuration",
+      "tier": "user",
       "phase": "v0.26-02",
       "status": "Complete",
       "provenance": {
@@ -690,6 +752,7 @@
       "id": "CRED-02",
       "text": "Key validity status persists to `qgsd.json` after each health probe (enables DISP-03 badge to survive across sessions without re-probing)",
       "category": "Configuration",
+      "tier": "user",
       "phase": "v0.26-02",
       "status": "Complete",
       "provenance": {
@@ -704,6 +767,7 @@
       "id": "DASH-01",
       "text": "User can open a live health dashboard from main menu showing all slots' provider, model, and health status",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.26-04",
       "status": "Complete",
       "provenance": {
@@ -718,6 +782,7 @@
       "id": "DASH-02",
       "text": "Dashboard refreshes on keypress (space / r) with a visible \"last updated\" timestamp shown at bottom",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.26-04",
       "status": "Complete",
       "provenance": {
@@ -732,6 +797,7 @@
       "id": "DASH-03",
       "text": "Dashboard exits cleanly on Q or Escape, returning to main menu with stdin fully restored (no character-swallowing)",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.26-04",
       "status": "Complete",
       "provenance": {
@@ -746,6 +812,7 @@
       "id": "DEBT-01",
       "text": "`.formal/debt.json` stores debt entries with schema: id, fingerprint, title, occurrences, first_seen, last_seen, environments[], status, formal_ref, source_entries[]",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-01",
       "status": "Pending",
       "provenance": {
@@ -757,6 +824,7 @@
       "id": "DEBT-02",
       "text": "Debt entries are deduplicated by fingerprint — new observations with matching fingerprints increment occurrence count and update last_seen instead of creating duplicates",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-03",
       "status": "Pending",
       "provenance": {
@@ -768,6 +836,7 @@
       "id": "DEBT-03",
       "text": "Debt status follows a state machine: `open` → `acknowledged` → `resolving` → `resolved`, with only forward transitions allowed (no reopening resolved debt)",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-01",
       "status": "Pending",
       "provenance": {
@@ -779,6 +848,7 @@
       "id": "DEBT-04",
       "text": "A retention policy limits debt.json growth: entries older than a configurable max_age (default 90 days) with status `resolved` are archived to `.formal/debt-archive.jsonl`",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-01",
       "status": "Pending",
       "provenance": {
@@ -790,6 +860,7 @@
       "id": "DEBT-05",
       "text": "Each debt entry can link to a formal reference (model file, parameter key, requirement ID) via the `formal_ref` field",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-03",
       "status": "Pending",
       "provenance": {
@@ -801,6 +872,7 @@
       "id": "DEBT-06",
       "text": "`/qgsd:observe` writes new or updated debt entries after each run; the human triage step sets status to `acknowledged` for entries the user selects to work on",
       "category": "Debt Ledger",
+      "tier": "user",
       "phase": "v0.27-02",
       "status": "Pending",
       "provenance": {
@@ -812,6 +884,7 @@
       "id": "DECOMP-01",
       "text": "`bin/analyze-state-space.cjs` reads TLA+ .cfg files and model variables to estimate state-space size per model and classifies risk as MINIMAL/LOW/MODERATE/HIGH based on configurable thresholds",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.25-05",
       "status": "Complete",
       "provenance": {
@@ -824,6 +897,7 @@
       "id": "DECOMP-02",
       "text": "The state-space analyzer flags models using unbounded domains (Nat, Int without constraints) as HIGH risk",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.25-05",
       "status": "Complete",
       "provenance": {
@@ -839,6 +913,7 @@
       "id": "DECOMP-03",
       "text": "When a model is split into sub-models, the traceability matrix validates that no requirement loses coverage (pre-split coverage >= post-split coverage for every affected requirement)",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.25-05",
       "status": "Complete",
       "provenance": {
@@ -854,6 +929,7 @@
       "id": "DECOMP-04",
       "text": "The state-space analysis report is included in the traceability matrix output as a `state_space` section per model",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.25-05",
       "status": "Complete",
       "provenance": {
@@ -869,6 +945,7 @@
       "id": "DECOMP-05",
       "text": "`analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estimates the merged state space, and recommends merge when combined TLC runtime < 5 minutes — or flags the interface contract needed when merge would exceed the time budget",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.26-06",
       "status": "Complete",
       "provenance": {
@@ -883,6 +960,7 @@
       "id": "DETECT-01",
       "text": "PreToolUse hook intercepts Bash tool calls and checks whether the current context has an active circuit breaker before running detection",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -898,6 +976,7 @@
       "id": "DETECT-02",
       "text": "Hook retrieves last N commits' changed files via `git log --name-only` (N = commit_window config) when detection is needed",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -913,6 +992,7 @@
       "id": "DETECT-03",
       "text": "Hook identifies oscillation when the exact same file set (strict set equality, not intersection) appears in ≥ oscillation_depth of the last commit_window commits — strict equality prevents false positives during TDD cycles where different files are touched per commit",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -928,6 +1008,7 @@
       "id": "DETECT-04",
       "text": "Read-only Bash commands (git log, git diff, grep, cat, ls, head, tail, find) pass through without detection or blocking",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -943,6 +1024,7 @@
       "id": "DETECT-05",
       "text": "Detection is skipped (returns pass) when no git repository exists in the current working directory",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -956,24 +1038,26 @@
     },
     {
       "id": "DIAG-01",
-      "text": "Conformance trace divergence rate reduced to <5% (ACHIEVED: 0% on mapped events; VERIFICATION.md missing)",
+      "text": "Solve diagnostic engine propagates `--focus` filter to all 19 layers, not just R→F and R→D — reverse discovery, alignment, and informational layers must filter or clearly mark results as unscoped",
       "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Pending",
+      "tier": "user",
+      "phase": "v0.36-02",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "category_raw": "Diagnostics"
     },
     {
       "id": "DIAG-02",
-      "text": "`attribute-trace-divergence.cjs` walks XState guards to root-cause divergences (IMPLEMENTED; VERIFICATION.md missing)",
+      "text": "Solve diagnostic engine returns residual=-1 (unknown) instead of 0 when formal artifact files are missing (check-results.ndjson, requirements.json) — preventing false convergence when files are absent",
       "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Pending",
+      "tier": "user",
+      "phase": "v0.36-02",
+      "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
+        "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "category_raw": "Diagnostics"
@@ -982,6 +1066,7 @@
       "id": "DIAG-03",
       "text": "Pivot decision surfaced in `.formal/diff-report.md` with complete attribution (DELIVERED; VERIFICATION.md missing)",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Pending",
       "provenance": {
@@ -991,96 +1076,10 @@
       "category_raw": "Diagnostics"
     },
     {
-      "id": "DIAG-04",
-      "text": "Support --focus=\"<phrase>\" flag in nf:solve to filter diagnostics and reporting output to requirements matching the focus topic via tokenization and weighted multi-field scoring",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/252-add-focus-topic-filter-to-nf-solve/252-PLAN.md",
-        "milestone": "quick-252"
-      },
-      "formal_models": [
-        ".planning/formal/alloy/focus-topic-filter.als"
-      ],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-05",
-      "text": "Provide /nf:mcp-repair skill to auto-diagnose quorum slot connectivity issues and apply automatic repairs where possible (restart downed MCP servers, report non-fixable issues with actionable guidance).",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Users currently must manually diagnose and fix individual quorum slot failures (MCP servers down, CLI auth expired, quota exhausted). This skill automates the diagnosis-repair-verify cycle, improving user experience and reliability when quorum infrastructure encounters transient or fixable issues.",
-      "provenance": {
-        "source_file": ".planning/quick/268-add-nf-mcp-repair-skill-auto-diagnose-an/268-PLAN.md",
-        "milestone": "quick-268"
-      }
-    },
-    {
-      "id": "DIAG-06",
-      "text": "Proximity graph orchestration skills — /nf:proximity runs the 5-step proximity pipeline (graph build, candidate discovery, Haiku evaluation, semantic scoring, pairing generation) with progress reporting and summary dashboard; /nf:resolve auto-detects and triages proximity pairings alongside solve items with confirm/reject/skip actions and batch-confirmation mode (--auto-confirm-yes/--auto-reject-no).",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The v0.34 proximity graph pipeline scripts existed in bin/ but lacked a user-facing skill to invoke them. This requirement unifies proximity graph analysis with the existing solve item triage workflow by providing two complementary skills.",
-      "provenance": {
-        "source_file": ".planning/quick/273-create-nf-proximity-skill-and-extend-nf-/273-PLAN.md",
-        "milestone": "quick-273"
-      }
-    },
-    {
-      "id": "DIAG-07",
-      "text": "Proximity skill Step 4 attempts semantic evaluation via haiku-semantic-eval.cjs script first, then falls back to inline Haiku sub-agent evaluation on script failure, producing identical verdict/confidence/reasoning output schema in both paths.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Inside Claude Code, the subprocess environment lacks ANTHROPIC_API_KEY, causing haiku-semantic-eval.cjs to fail. The sub-agent fallback uses Task(model='haiku') which works via the user's Claude subscription, ensuring /nf:proximity completes evaluation steps even when direct API access is unavailable.",
-      "provenance": {
-        "source_file": ".planning/quick/275-replace-haiku-api-eval-with-sub-agent-in/275-PLAN.md",
-        "milestone": "quick-275"
-      }
-    },
-    {
-      "id": "DIAG-08",
-      "text": "Proximity pipeline pre-filters false positive candidates using category-domain gating, coverage checks, keyword overlap, and type-aware scoring penalties before Haiku evaluation.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The proximity graph produces high false positive rates because weak paths accumulate into inflated scores. This reduces FPs at multiple layers before expensive Haiku evaluation.",
-      "provenance": {
-        "source_file": ".planning/quick/277-option-c-multi-layer-false-positive-redu/277-PLAN.md",
-        "milestone": "quick-277"
-      }
-    },
-    {
-      "id": "DIAG-09",
-      "text": "Non-neighbor pair discovery surfaces zero-path (model, requirement) pairs ranked by coverage-gap heuristic, identifying under-covered blind spots via top-N selection with configurable limit.",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The proximity pipeline previously discovered only graph-reachable pairs via BFS. Coverage-gap ranking exposes candidates ranked by how under-covered each model and requirement are, surfacing diagnostically relevant blind spots.",
-      "provenance": {
-        "source_file": ".planning/quick/276-add-top-n-non-neighboring-pair-discovery/276-PLAN.md",
-        "milestone": "quick-276"
-      }
-    },
-    {
-      "id": "DIAG-10",
-      "text": "Statusline hook detects context window size (200K, 1M, or unknown) from explicit context_window_size property or model display_name and scales token-usage color thresholds proportionally to detected context tier",
-      "category": "Observability & Diagnostics",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The statusline previously assumed a hardcoded 1M context size, causing 200K sessions to display incorrect token estimates and misleading color indicators. This requirement implements context tier detection via a cascading fallback (explicit property > display_name parsing > unknown) and proportional threshold scaling so that 200K sessions show appropriate green/yellow/orange/red boundaries (20K/40K/70K) while 1M sessions preserve exact historical behavior (100K/200K/350K).",
-      "provenance": {
-        "source_file": ".planning/quick/293-implement-context-window-size-detection-/293-PLAN.md",
-        "milestone": "quick-293"
-      }
-    },
-    {
       "id": "DISP-01",
       "text": "qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from DISPATCH_LIST",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.24-02",
       "status": "Complete",
       "provenance": {
@@ -1096,6 +1095,7 @@
       "id": "DISP-02",
       "text": "qgsd-prompt.js reads scoreboard `availability` windows and excludes slots whose `available_at` is in the future from dispatch",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.24-02",
       "status": "Complete",
       "provenance": {
@@ -1111,6 +1111,7 @@
       "id": "DISP-03",
       "text": "Dispatch list ordered by recent success rate (from scoreboard slot stats) rather than static FALLBACK-01 tier sequence -- most reliable slots dispatched first",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.24-02",
       "status": "Complete",
       "provenance": {
@@ -1126,6 +1127,7 @@
       "id": "DISP-04",
       "text": "Prompt construction (Mode A/B, Round 1/2+, artifact injection, prior_positions, review_context, improvements request) happens deterministically in JavaScript (call-quorum-slot.cjs or wrapper), not via LLM string manipulation in the slot worker agent",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.24-05",
       "status": "Complete",
       "provenance": {
@@ -1141,6 +1143,7 @@
       "id": "DISP-05",
       "text": "Output parsing (verdict, reasoning, citations, improvements extraction from raw CLI output) happens in JavaScript with structured YAML output -- the slot worker agent returns script output verbatim without LLM post-processing",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.24-05",
       "status": "Complete",
       "provenance": {
@@ -1153,57 +1156,10 @@
       "category_raw": "Dispatch Reliability"
     },
     {
-      "id": "DISP-06",
-      "text": "Quorum preflight implements two-layer parallel health probe via --probe flag: Layer 1 spawns CLI binaries with health_check_args (3s timeout), Layer 2 hits GET /models on ANTHROPIC_BASE_URL for ccr slots (5s timeout, TTL-cached with URL normalization), filtering dead slots before dispatch.",
-      "category": "Dispatch Reliability",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Pre-dispatch slot filtering reduces wasted quorum invocations on unreachable providers. Layer 1 detects missing CLI binaries; Layer 2 validates upstream API connectivity. URL normalization and TTL caching prevent redundant probes across multiple preflight runs.",
-      "provenance": {
-        "source_file": ".planning/quick/281-add-two-layer-parallel-health-probe-to-q/281-PLAN.md",
-        "milestone": "quick-281"
-      }
-    },
-    {
-      "id": "DISPATCH-01",
-      "text": "Quorum prompts MUST be delivered to slot CLIs without shell interpretation, character escaping, or content modification. The dispatched prompt must be byte-identical to the composed prompt.",
-      "category": "Quorum & Dispatch",
-      "phase": "v0.34-quick",
-      "status": "Complete",
-      "background": "Fix for SHELL-ESCAPE-01 bug where ccr slots using shell:true internally caused backticks and $ in prompts to be interpreted by /bin/sh. Fixed by piping prompts via stdin for ccr-based slots.",
-      "provenance": {
-        "source_file": "bin/call-quorum-slot.cjs",
-        "milestone": "v0.34"
-      }
-    },
-    {
-      "id": "DISPATCH-02",
-      "text": "Deduplicate quorum slots that share the same underlying model; retain the first slot for each unique model in primary dispatch and demote duplicate-model slots to a MODEL-DEDUP fallback tier positioned between T1 and T2 to maximize LLM diversity within the fan-out budget.",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The quorum initially dispatched all available slots without considering model redundancy. When codex-1 and codex-2 both ran gpt-5.4, or gemini-1 and gemini-2 both ran gemini-3-pro, the quorum wasted a primary dispatch slot on a duplicate perspective. Model deduplication ensures diverse model viewpoints by demoting duplicate-model slots to fallback tier.",
-      "provenance": {
-        "source_file": ".planning/quick/280-deduplicate-quorum-slots-sharing-the-sam/280-PLAN.md",
-        "milestone": "quick-280"
-      }
-    },
-    {
-      "id": "DISPATCH-03",
-      "text": "deduplicateByModel function falls back to bin/providers.json for model resolution when agent_config lacks slot entries, enabling model deduplication with empty configuration.",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "DISPATCH-02 requires model deduplication to maximize quorum diversity, but only worked when agent_config was explicitly populated. Quick task 312 added a three-tier model resolution (agentCfg → providers.json → unknown) allowing deduplicateByModel to identify same-model slots even with default empty config, ensuring dual-subscription slots are properly demoted to fallback tier without requiring manual configuration.",
-      "provenance": {
-        "source_file": ".planning/quick/312-make-nf-prompt-js-fall-back-to-providers/312-PLAN.md",
-        "milestone": "quick-312"
-      }
-    },
-    {
       "id": "DRIFT-01",
       "text": "`check-trace-schema-drift.cjs` detects schema drift and emits `check-results.ndjson`",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.19-04",
       "status": "Complete",
       "provenance": {
@@ -1219,6 +1175,7 @@
       "id": "DRIFT-02",
       "text": "Schema drift check runs as CI step in `run-formal-verify.cjs`",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.19-04",
       "status": "Complete",
       "provenance": {
@@ -1234,6 +1191,7 @@
       "id": "ENFC-01",
       "text": "When circuit breaker is active, hook returns `hookSpecificOutput.permissionDecision:'deny'` blocking Bash execution",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1249,6 +1207,7 @@
       "id": "ENFC-02",
       "text": "Block reason names the oscillating file set, confirms circuit breaker is active, and lists allowed operations (read-only Bash)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1264,6 +1223,7 @@
       "id": "ENFC-03",
       "text": "Block reason instructs Claude to perform root cause analysis and map dependencies before resuming; explicitly instructs the user to manually commit the fix (since Claude cannot run git commit while blocked)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1279,6 +1239,7 @@
       "id": "EVID-01",
       "text": "Instrumentation map (`instrumentation-map.json`) catalogs every hook/handler emission point and maps to state variables with coverage percentages",
       "category": "Evidence",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1293,6 +1254,7 @@
       "id": "EVID-02",
       "text": "Trace corpus management indexes conformance events by session, action type, and state transition with queryable metadata",
       "category": "Evidence",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1304,6 +1266,7 @@
       "id": "EVID-03",
       "text": "Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-violation, drift, degradation)",
       "category": "Evidence",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1315,6 +1278,7 @@
       "id": "EVID-04",
       "text": "State candidate extractor mines traces to suggest state variables and transitions that hand-written models may have missed",
       "category": "Evidence",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1329,6 +1293,7 @@
       "id": "EVID-05",
       "text": "Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventing schema drift between layers",
       "category": "Evidence",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1340,6 +1305,7 @@
       "id": "EXEC-01",
       "text": "Quorum slot workers performing review-only tasks (verification, code review) run with restricted tool access (Read/Grep/Glob only), reducing blast radius of misbehaving agents",
       "category": "Quality Hardening",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1351,6 +1317,7 @@
       "id": "FAIL-01",
       "text": "call-quorum-slot.cjs retries a failed slot call up to 2 times with exponential backoff (1s, 3s) before recording UNAVAIL in quorum-failures.json",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "v0.24-01",
       "status": "Complete",
       "provenance": {
@@ -1367,6 +1334,7 @@
       "id": "FAIL-02",
       "text": "providers.json contains explicit slot-to-provider mapping; when a provider probe returns DOWN, all slots on that provider skipped in a single dispatch decision",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "v0.24-01",
       "status": "Complete",
       "provenance": {
@@ -1382,6 +1350,7 @@
       "id": "FP-01",
       "text": "Issues are fingerprinted using a hierarchical strategy: exception type → function name → message pattern hash, producing a stable fingerprint string",
       "category": "Fingerprinting",
+      "tier": "user",
       "phase": "v0.27-01",
       "status": "Pending",
       "provenance": {
@@ -1393,6 +1362,7 @@
       "id": "FP-02",
       "text": "Drifts are fingerprinted by formal parameter key (e.g., `MCsafety.cfg:MaxDeliberation`) — identical parameter keys always map to the same fingerprint",
       "category": "Fingerprinting",
+      "tier": "user",
       "phase": "v0.27-01",
       "status": "Pending",
       "provenance": {
@@ -1404,6 +1374,7 @@
       "id": "FP-03",
       "text": "Cross-source deduplication uses fingerprint matching first, then Levenshtein similarity (configurable threshold, default 0.85) on titles for near-duplicates from different sources",
       "category": "Fingerprinting",
+      "tier": "user",
       "phase": "v0.27-03",
       "status": "Pending",
       "provenance": {
@@ -1415,6 +1386,7 @@
       "id": "FP-04",
       "text": "When two debt entries are merged by fingerprint, source_entries[] from both are preserved and the entry with higher occurrence count is kept as primary",
       "category": "Fingerprinting",
+      "tier": "user",
       "phase": "v0.27-03",
       "status": "Pending",
       "provenance": {
@@ -1423,9 +1395,46 @@
       }
     },
     {
+      "id": "FV-01",
+      "text": "NFSolveConvergence.tla models the outer solve loop with cross-session state (bounded history of last N sessions), Option C blocking rule, and gate maturity transitions",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.33-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "FV-02",
+      "text": "TLC verifies safety property: no layer oscillates more than once (`[](oscillation_count[layer] <= 1)` for all layers)",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.33-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "FV-03",
+      "text": "TLC verifies liveness property: solve loop eventually converges (`<>(converged = TRUE)`) under fairness assumptions",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.33-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
       "id": "GATE-01",
       "text": "Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces",
       "category": "Gates",
+      "tier": "user",
       "phase": "v0.29-02",
       "status": "Complete",
       "provenance": {
@@ -1437,6 +1446,7 @@
       "id": "GATE-02",
       "text": "Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards",
       "category": "Gates",
+      "tier": "user",
       "phase": "v0.29-03",
       "status": "Complete",
       "provenance": {
@@ -1451,6 +1461,7 @@
       "id": "GATE-03",
       "text": "Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario",
       "category": "Gates",
+      "tier": "user",
       "phase": "v0.29-04",
       "status": "Complete",
       "provenance": {
@@ -1462,6 +1473,7 @@
       "id": "GATE-04",
       "text": "Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)",
       "category": "Gates",
+      "tier": "user",
       "phase": "v0.29-03",
       "status": "Complete",
       "provenance": {
@@ -1470,21 +1482,10 @@
       }
     },
     {
-      "id": "GUARD-01",
-      "text": "Context payload size guardrail — All data passed through LLM agent context (Bash output, inter-agent JSON, skill output contracts) MUST stay under 128KB. Scripts producing large outputs MUST write to disk and pass only summaries or file-path references through the agent chain. Violations cause silent freezes with no error signal.",
-      "category": "Reliability",
-      "phase": "unassigned",
-      "status": "Draft",
-      "background": "Discovered when git-heatmap.cjs --json produced 2.9MB of output that froze the solve-diagnose agent.",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.35"
-      }
-    },
-    {
       "id": "GUIDE-01",
       "text": "User Guide updated with TUI screenshots cross-referenced to feature descriptions",
       "category": "User Guide",
+      "tier": "user",
       "phase": "v0.32-03",
       "status": "Complete",
       "provenance": {
@@ -1496,6 +1497,7 @@
       "id": "GUIDE-02",
       "text": "User Guide \"Getting Started\" walkthrough improved with step-by-step flow and screenshots",
       "category": "User Guide",
+      "tier": "user",
       "phase": "v0.32-03",
       "status": "Complete",
       "provenance": {
@@ -1504,21 +1506,10 @@
       }
     },
     {
-      "id": "H2M-01",
-      "text": "The solve engine SHALL include an H->M (Hypothesis-to-Measurement) residual layer that measures formal model tier-1 assumptions against observed trace, scoreboard, and telemetry data, recording CONFIRMED, VIOLATED, and UNMEASURABLE verdicts to hypothesis-measurements.json",
-      "category": "Solve H->M Integration",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Formal models embed tier-1 assumptions as constant values (e.g., MaxDeliberationRounds, TP rate priors) that may drift from production reality. The H->M layer closes the feedback loop by automatically comparing these assumptions against observed data, enabling detection of violated hypotheses for remediation.",
-      "provenance": {
-        "source_file": ".planning/quick/303-add-hypothesis-measurement-collection-st/303-PLAN.md",
-        "milestone": "quick-303"
-      }
-    },
-    {
       "id": "HEAL-01",
       "text": "After each deliberation round, system computes P(consensus | remaining rounds); if P < threshold (default 10%), escalation fires early instead of exhausting maxDeliberation",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.24-04",
       "status": "Complete",
       "provenance": {
@@ -1534,6 +1525,7 @@
       "id": "HEAL-02",
       "text": "When verify-quorum-health detects P(consensus) < 95%, it recommends and auto-adjusts maxDeliberation in qgsd.json (with user approval)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.24-04",
       "status": "Complete",
       "provenance": {
@@ -1549,6 +1541,7 @@
       "id": "HLTH-01",
       "text": "`validate health` produces zero W005 false positives for versioned phase directories (`v0.X-YY-name` format)",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1564,6 +1557,7 @@
       "id": "HLTH-02",
       "text": "`validate health` produces zero W007 false positives for versioned phase directories",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1579,6 +1573,7 @@
       "id": "HLTH-03",
       "text": "`validate health` produces zero W002 false positives for versioned phase references in STATE.md",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1591,6 +1586,7 @@
       "id": "IMPR-01",
       "text": "R3.6 quorum enforcement reviewed and improvement areas identified",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-06",
       "status": "Complete",
       "provenance": {
@@ -1603,6 +1599,7 @@
       "id": "IMPR-02",
       "text": "Quorum slot dispatch updated to parallel sibling Task calls (R3.2 requirement)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-06",
       "status": "Complete",
       "provenance": {
@@ -1615,6 +1612,7 @@
       "id": "IMPR-03",
       "text": "Slot worker protocol hardened against missing/malformed responses",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-06",
       "status": "Complete",
       "provenance": {
@@ -1627,6 +1625,7 @@
       "id": "IMPR-04",
       "text": "Improvement validated with quorum test runs",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-06",
       "status": "Complete",
       "provenance": {
@@ -1637,38 +1636,39 @@
     },
     {
       "id": "INST-01",
-      "text": "Installer detects no configured quorum agents and prompts user to run `/qgsd:mcp-setup`",
-      "category": "Installer & CLI",
-      "phase": "unknown",
+      "text": "Source checkout install auto-rebuilds hooks/dist so hooks work without manual `npm run build:hooks`",
+      "category": "Install",
+      "tier": "user",
+      "phase": "v0.35-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.6-REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/install-scope.als"
-      ],
-      "category_raw": "Install Integration"
+      ]
     },
     {
       "id": "INST-02",
-      "text": "QGSD's package.json pins GSD version — version lockstep ensures hook compatibility",
-      "category": "Installer & CLI",
-      "phase": "unknown",
+      "text": "Install detects missing hooks/dist files and either rebuilds or warns with clear instructions",
+      "category": "Install",
+      "tier": "user",
+      "phase": "v0.35-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "formal_models": [
         ".planning/formal/alloy/install-scope.als"
-      ],
-      "category_raw": "Installer"
+      ]
     },
     {
       "id": "INST-03",
       "text": "Installer writes hooks to `~/.claude/settings.json` directly (not plugin.json hooks — stdout is silently discarded per GitHub #10225)",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1684,6 +1684,7 @@
       "id": "INST-04",
       "text": "Installer adds UserPromptSubmit and Stop hook entries to `~/.claude/settings.json` hooks section",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1699,6 +1700,7 @@
       "id": "INST-05",
       "text": "Installer performs validation before registering hooks: checks MCPs are configured in Claude Code settings, warns if Codex/Gemini/OpenCode not found",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1714,6 +1716,7 @@
       "id": "INST-06",
       "text": "Installer is idempotent — running `npx qgsd@latest` again updates hooks and config without duplicating entries",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1729,6 +1732,7 @@
       "id": "INST-07",
       "text": "Installer respects existing per-project `.claude/qgsd.json` overrides during updates",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1744,6 +1748,7 @@
       "id": "INST-08",
       "text": "Installer registers PreToolUse circuit breaker hook in `~/.claude/settings.json` alongside existing hooks",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1759,6 +1764,7 @@
       "id": "INST-09",
       "text": "Installer writes default `circuit_breaker` config block to qgsd.json on first install",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1774,6 +1780,7 @@
       "id": "INST-10",
       "text": "Reinstall (idempotent) adds missing `circuit_breaker` config block without overwriting user-modified values",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1786,43 +1793,34 @@
       "category_raw": "Installer Extensions"
     },
     {
-      "id": "INST-11",
-      "text": "Quick workflow auto-detects protected branches and creates feature branches on protected branches, commits directly on feature branches, with configurable branch templates and --no-branch escape hatch.",
-      "category": "Installer & CLI",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Quick tasks running on protected branches risk accidental commits that require reverting. This ensures the quick workflow safely handles branch creation with config-driven protected branch lists and glob pattern support.",
-      "provenance": {
-        "source_file": ".planning/quick/266-add-smart-branch-management-to-quick-wor/266-PLAN.md",
-        "milestone": "quick-266"
-      }
-    },
-    {
       "id": "INTG-01",
-      "text": "Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relationships, and grounding status",
-      "category": "Integration",
-      "phase": "v0.29-01",
-      "status": "Complete",
+      "text": "nf:solve pipeline calls --write-per-model by default during every run, persisting gate_a/b/c reasons to per-model-gates.json without requiring explicit flag",
+      "category": "Solve Integration",
+      "tier": "user",
+      "phase": "v0.33-03",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       }
     },
     {
       "id": "INTG-02",
-      "text": "`nf-solve` gains three new layer-transition sweeps (L1->L2, L2->L3, L3->TC) in its convergence loop",
-      "category": "Integration",
-      "phase": "v0.29-04",
-      "status": "Complete",
+      "text": "Solve report includes a convergence section showing per-layer trend sparklines, oscillation status, and top-3 action items derived from trend data",
+      "category": "Solve Integration",
+      "tier": "user",
+      "phase": "v0.33-06",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       }
     },
     {
       "id": "INTG-03",
       "text": "`run-formal-verify` gains three new gate check step groups that produce alignment scores and gap reports",
       "category": "Integration",
+      "tier": "user",
       "phase": "v0.29-04",
       "status": "Complete",
       "provenance": {
@@ -1834,6 +1832,7 @@
       "id": "INTG-04",
       "text": "Cross-layer alignment dashboard shows L1 coverage %, Gate A score, Gate B score, Gate C score in single terminal view",
       "category": "Integration",
+      "tier": "user",
       "phase": "v0.29-05",
       "status": "Complete",
       "provenance": {
@@ -1845,6 +1844,7 @@
       "id": "INTG-05",
       "text": "Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_maturity` fields per model",
       "category": "Integration",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1856,6 +1856,7 @@
       "id": "INTG-06",
       "text": "All existing 43+ formal models classified into layer architecture with maturity level (Level 0-3)",
       "category": "Integration",
+      "tier": "user",
       "phase": "v0.29-01",
       "status": "Complete",
       "provenance": {
@@ -1867,6 +1868,7 @@
       "id": "KEY-01",
       "text": "User can set or update the API key for any agent through the wizard",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1882,6 +1884,7 @@
       "id": "KEY-02",
       "text": "Key is stored securely via keytar (bin/secrets.cjs)",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1897,6 +1900,7 @@
       "id": "KEY-03",
       "text": "Wizard writes key from keytar to `~/.claude.json` mcpServers env block during apply",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1912,6 +1916,7 @@
       "id": "KEY-04",
       "text": "Wizard automatically restarts the agent after key changes take effect",
       "category": "Configuration",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -1927,6 +1932,7 @@
       "id": "LIVE-01",
       "text": "CI step detects liveness properties lacking a fairness declaration in `invariants.md` and emits `result=inconclusive` instead of `pass`",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.20-02",
       "status": "Complete",
       "provenance": {
@@ -1942,6 +1948,7 @@
       "id": "LIVE-02",
       "text": "`run-formal-verify.cjs` STEPS includes a `ci:liveness-fairness-lint` step that enforces LIVE-01",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.20-02",
       "status": "Complete",
       "provenance": {
@@ -1957,6 +1964,7 @@
       "id": "LOOP-01",
       "text": "PRISM always uses current scoreboard rates via `export-prism-constants` pre-step calibration",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-03",
       "status": "Complete",
       "provenance": {
@@ -1974,6 +1982,7 @@
       "id": "LOOP-02",
       "text": "PostToolUse hook `qgsd-spec-regen.js` auto-regenerates TLA+/Alloy specs on XState machine changes",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-03",
       "status": "Complete",
       "provenance": {
@@ -1989,6 +1998,7 @@
       "id": "LOOP-03",
       "text": "`sensitivity-sweep-feedback.cjs` detects threshold violations and triggers PRISM re-run",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-03",
       "status": "Complete",
       "provenance": {
@@ -2004,6 +2014,7 @@
       "id": "LOOP-04",
       "text": "`propose-debug-invariants.cjs` mines TLA+ invariant candidates from debug sessions",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-03",
       "status": "Complete",
       "provenance": {
@@ -2019,6 +2030,7 @@
       "id": "LRNG-01",
       "text": "Auto error extraction at session end — install.js must register nf-session-end.js as SessionEnd hook so re-install does not silently drop it",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2030,6 +2042,7 @@
       "id": "LRNG-02",
       "text": "User correction capture — SessionEnd hook persists user corrections to memory store on session close",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2041,6 +2054,7 @@
       "id": "LRNG-03",
       "text": "Quorum-validated skill extraction — skill-extractor.cjs is invoked automatically by nf-session-end.js (not orphaned)",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2052,6 +2066,7 @@
       "id": "LRNG-04",
       "text": "Failure catalog with confidence — failure entries persist across sessions via SessionEnd hook pipeline",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2063,6 +2078,7 @@
       "id": "LTCY-01",
       "text": "User can set per-slot latency budgets in providers.json; slots exceeding their budget are cut off mid-dispatch instead of blocking the quorum pipeline indefinitely",
       "category": "Quality Hardening",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2074,6 +2090,7 @@
       "id": "MCP-01",
       "text": "Installer reads `~/.claude.json` to auto-detect MCP server names for Codex, Gemini, OpenCode",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2086,6 +2103,7 @@
       "id": "MCP-02",
       "text": "Detection matches server names containing \"codex\", \"gemini\", \"opencode\" (case-insensitive keyword match)",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2098,6 +2116,7 @@
       "id": "MCP-03",
       "text": "Detected names written to `~/.claude/qgsd.json` as `required_models` on install",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2110,6 +2129,7 @@
       "id": "MCP-04",
       "text": "If detection finds no matching servers, installer falls back to hardcoded defaults: `mcp__codex-cli__`, `mcp__gemini-cli__`, `mcp__opencode__`",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2125,6 +2145,7 @@
       "id": "MCP-05",
       "text": "User can manually edit `qgsd.json` to override detected names",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2137,6 +2158,7 @@
       "id": "MCP-06",
       "text": "Stop hook matches tool_use names by prefix (e.g. `mcp__codex-cli__` matches both `mcp__codex-cli__codex` and `mcp__codex-cli__review`)",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2152,6 +2174,7 @@
       "id": "MCPENV-01",
       "text": "`.formal/spec/mcp-calls/` contains TLA+ model of MCP environment behavior",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "v0.19-05",
       "status": "Complete",
       "provenance": {
@@ -2167,6 +2190,7 @@
       "id": "MCPENV-02",
       "text": "`MCMCPEnv` added to `SURFACE_MAP` and `VALID_CONFIGS`; `invariants.md` created with EventualDecision fairness declarations; CI step added to `formal-verify.yml`",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "v0.19-08",
       "status": "Complete",
       "provenance": {
@@ -2179,6 +2203,7 @@
       "id": "MCPENV-03",
       "text": "MCP availability rates from `run-prism.cjs` feed into the MCP environment model",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "v0.19-05",
       "status": "Complete",
       "provenance": {
@@ -2194,6 +2219,7 @@
       "id": "MCPENV-04",
       "text": "`readMCPAvailabilityRates` exported with composite-key filter; `module.exports` always reachable via require.main guard; prism:mcp-availability STEPS entry and CI step added",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "v0.19-08",
       "status": "Complete",
       "provenance": {
@@ -2210,6 +2236,7 @@
       "id": "MEMP-01",
       "text": "Decisions persist across compaction — memory-store.cjs JSONL append for decisions category injected by PreCompact hook",
       "category": "Memory Persistence",
+      "tier": "user",
       "phase": "v0.30-03",
       "status": "Complete",
       "provenance": {
@@ -2221,6 +2248,7 @@
       "id": "MEMP-02",
       "text": "Proactive session reminders — SessionStart hook generates memory reminder from recent entries across all categories",
       "category": "Memory Persistence",
+      "tier": "user",
       "phase": "v0.30-03",
       "status": "Complete",
       "provenance": {
@@ -2232,6 +2260,7 @@
       "id": "MEMP-03",
       "text": "Error resolution memory — error patterns persist to JSONL with queryable interface",
       "category": "Memory Persistence",
+      "tier": "user",
       "phase": "v0.30-03",
       "status": "Complete",
       "provenance": {
@@ -2243,6 +2272,7 @@
       "id": "MEMP-04",
       "text": "Quorum decision memory — quorum verdicts persist to JSONL for cross-session learning",
       "category": "Memory Persistence",
+      "tier": "user",
       "phase": "v0.30-03",
       "status": "Complete",
       "provenance": {
@@ -2254,6 +2284,7 @@
       "id": "META-01",
       "text": "GSD planning commands within this repo (new-project, plan-phase, etc.) auto-resolve questions via quorum before escalating to user",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2266,6 +2297,7 @@
       "id": "META-02",
       "text": "Only questions where quorum fails to reach consensus are presented to the user",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2281,6 +2313,7 @@
       "id": "META-03",
       "text": "Auto-resolved questions are presented as a list of assumptions before escalated questions",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2293,6 +2326,7 @@
       "id": "MULTI-01",
       "text": "User can have multiple `claude-*` slots (`claude-1` through `claude-N`) each running a different model or provider",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2305,6 +2339,7 @@
       "id": "MULTI-02",
       "text": "User can have multiple `copilot-N`, `opencode-N`, `codex-cli-N`, and `gemini-cli-N` slots as separate `~/.claude.json` entries",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2320,6 +2355,7 @@
       "id": "MULTI-03",
       "text": "Adding a new slot of any family is supported by both direct config edit and via the mcp-setup wizard",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2329,26 +2365,63 @@
       "category_raw": "Multiple Slots"
     },
     {
-      "id": "MULTI-04",
-      "text": "Installer auto-syncs all provider slots from `providers.json` to `~/.claude.json` MCP entries and `quorum_active`, creating missing slots without modifying existing entries",
-      "category": "MCP & Agents",
-      "phase": "unknown",
+      "id": "NAME-01",
+      "text": "Gate A/B/C renamed to Wiring:Evidence / Wiring:Purpose / Wiring:Coverage in all gate JSON files (gate-a-grounding.json, gate-b-abstraction.json, gate-c-validation.json)",
+      "category": "Gate Naming",
+      "tier": "user",
+      "phase": "v0.34-01",
       "status": "Complete",
-      "background": "Provider slots (codex-2, gemini-2) are defined in providers.json with full configuration but lack corresponding ~/.claude.json MCP entries, preventing quorum dispatch to these subscription slots. Auto-syncing ensures every provider slot has a working MCP entry and is discoverable by the quorum orchestrator without manual user configuration.",
       "provenance": {
-        "source_file": ".planning/quick/279-wire-dual-subscription-slots-add-codex-2/279-PLAN.md",
-        "milestone": "quick-279"
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "NAME-02",
+      "text": "All scripts that read/write gate scores updated to use new field names (wiring_score instead of grounding_score/gate_b_score/gate_c_score)",
+      "category": "Gate Naming",
+      "tier": "user",
+      "phase": "v0.34-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "NAME-03",
+      "text": "Solve report, TUI, and cross-layer dashboard display new gate names",
+      "category": "Gate Naming",
+      "tier": "user",
+      "phase": "v0.34-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "NAME-04",
+      "text": "Backward-compatible migration — old field names still readable during transition, new fields written on next compute",
+      "category": "Gate Naming",
+      "tier": "user",
+      "phase": "v0.34-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
       }
     },
     {
       "id": "OBS-01",
-      "text": "Key operations produce structured log output on stderr",
+      "text": "CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, output to stdout",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/prism/observability-delivery.props"
@@ -2359,6 +2432,7 @@
       "id": "OBS-02",
       "text": "Source types are pluggable — adding a new source type requires only a new fetch handler function and config entry, not changes to the observe orchestrator",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-02",
       "status": "Pending",
       "provenance": {
@@ -2373,6 +2447,7 @@
       "id": "OBS-03",
       "text": "`/qgsd:observe` supports `prometheus` source type that executes a PromQL query against a configured endpoint and maps results to the standard issue schema",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-04",
       "status": "Pending",
       "provenance": {
@@ -2387,6 +2462,7 @@
       "id": "OBS-04",
       "text": "`/qgsd:observe` supports `grafana` source type that fetches active alerts from a configured Grafana instance",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-04",
       "status": "Pending",
       "provenance": {
@@ -2401,6 +2477,7 @@
       "id": "OBS-05",
       "text": "`/qgsd:observe` supports `logstash` source type that runs an Elasticsearch query against a configured endpoint and maps hits to the standard issue schema",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-04",
       "status": "Pending",
       "provenance": {
@@ -2415,6 +2492,7 @@
       "id": "OBS-06",
       "text": "`/qgsd:observe` presents two output tables: **Issues** (discrete events — errors, bugs, feedback) and **Drifts** (quantitative divergences — formal parameter vs production measurement)",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-02",
       "status": "Pending",
       "provenance": {
@@ -2429,6 +2507,7 @@
       "id": "OBS-07",
       "text": "Observe config lives in `.planning/observe-sources.md` YAML frontmatter (replacing `triage-sources.md`), backward-compatible with existing triage config format",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-02",
       "status": "Pending",
       "provenance": {
@@ -2443,6 +2522,7 @@
       "id": "OBS-08",
       "text": "Each source fetch handler has a configurable timeout and fail-open behavior — one failing source does not block the others",
       "category": "Observe Skill",
+      "tier": "user",
       "phase": "v0.27-02",
       "status": "Pending",
       "provenance": {
@@ -2454,44 +2534,10 @@
       ]
     },
     {
-      "id": "OBS-09",
-      "text": "CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, output to stdout",
-      "category": "Observability",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "OBS-10",
-      "text": "Observe handler integrates Category 16 that reads quality-filtered accumulated error patterns from errors.jsonl and routes them as internal issues to the solve debt pipeline",
-      "category": "Observe Skill",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The errors.jsonl memory store accumulates error patterns automatically during transcript learning, but had no consumption path into the solve system. This requirement closes that feedback loop by surfacing validated error entries as observable issues, enabling automated debt tracking and resolution. Quality filtering at extraction time removes file dumps, JSON blobs, and noise.",
-      "provenance": {
-        "source_file": ".planning/quick/258-bridge-errors-jsonl-into-solve-debt-pipe/258-PLAN.md",
-        "milestone": "quick-258"
-      }
-    },
-    {
-      "id": "OBS-11",
-      "text": "Agent payload size monitoring — All scripts invoked by LLM-facing skills that produce machine-readable output (--json mode) MUST be auditable for output size. A pre-flight check or CI validation SHOULD flag any script whose stdout output exceeds 128KB when invoked from an agent context. Complements GUARD-01 (context payload size guardrail) with automated detection.",
-      "category": "Observability & Diagnostics",
-      "phase": "unassigned",
-      "status": "Draft",
-      "background": "Without monitoring, GUARD-01 violations are only discovered when an agent freezes. This requirement ensures violations are caught proactively.",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.35"
-      }
-    },
-    {
       "id": "ORCH-01",
       "text": "Domain-specific context retrieval — context-retriever.cjs analyzes task domain and fetches relevant context artifacts",
       "category": "Subagent Orchestration",
+      "tier": "user",
       "phase": "v0.30-06",
       "status": "Complete",
       "provenance": {
@@ -2503,6 +2549,7 @@
       "id": "ORCH-02",
       "text": "Phase-to-phase context accumulation — context-stack.cjs maintains JSONL phase index for cross-phase context injection",
       "category": "Subagent Orchestration",
+      "tier": "user",
       "phase": "v0.30-06",
       "status": "Complete",
       "provenance": {
@@ -2514,6 +2561,7 @@
       "id": "ORCH-03",
       "text": "Specialized retrieval agents — quorum dispatch enriches prompts with domain-relevant context via enrichPromptWithRetrieval",
       "category": "Subagent Orchestration",
+      "tier": "user",
       "phase": "v0.30-06",
       "status": "Complete",
       "provenance": {
@@ -2525,6 +2573,7 @@
       "id": "ORES-01",
       "text": "When oscillation is detected and the oscillating file set contains only internal code files, Claude MUST enter oscillation resolution mode instead of hard-stopping",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2540,6 +2589,7 @@
       "id": "ORES-02",
       "text": "Oscillation resolution mode presents oscillation evidence (file set, commit graph) to all available quorum models with structural-coupling framing",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2555,6 +2605,7 @@
       "id": "ORES-03",
       "text": "Quorum deliberates (R3.3, up to 4 rounds) and may only approve unified solutions — partial/incremental fixes are rejected",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2570,6 +2621,7 @@
       "id": "ORES-04",
       "text": "On consensus, Claude presents the unified solution plan to the user for approval before any execution",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2585,6 +2637,7 @@
       "id": "ORES-05",
       "text": "If no consensus after 4 rounds, Claude hard-stops and escalates to the human with all model positions",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2597,9 +2650,94 @@
       "category_raw": "Oscillation Resolution Mode"
     },
     {
+      "id": "OSC-01",
+      "text": "Layer oscillation breaker enforces Option C — if a layer's residual increases after a prior decrease within tracked history, one oscillation credit is consumed; second oscillation blocks automated remediation for that layer and triggers human escalation",
+      "category": "Oscillation Detection",
+      "tier": "user",
+      "phase": "v0.33-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "OSC-02",
+      "text": "Cascade-aware grace period allows temporary residual increases in downstream layers when an upstream layer was remediated in the same or prior session (e.g., fixing R→F may increase F→T)",
+      "category": "Oscillation Detection",
+      "tier": "user",
+      "phase": "v0.33-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "OSC-03",
+      "text": "Escalation classifier invokes Haiku reviewer when oscillation breaker fires, classifying root cause as GENUINE_REGRESSION, MEASUREMENT_NOISE, or INSUFFICIENT_EVIDENCE with structured context (layer, delta, git diff)",
+      "category": "Oscillation Detection",
+      "tier": "user",
+      "phase": "v0.33-06",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "PAIR-01",
+      "text": "candidate-pairings.json generated with all discovered (model, requirement) candidate pairs, their proximity scores, and Haiku verdicts",
+      "category": "N:N Pairing",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PAIR-02",
+      "text": "/nf:resolve can load candidate-pairings.json and present graph-suggested links for human confirmation",
+      "category": "N:N Pairing",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PAIR-03",
+      "text": "Confirmed pairings written back to model-registry.json requirements arrays (closing the N:N loop)",
+      "category": "N:N Pairing",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PAIR-04",
+      "text": "Rejected pairings cached to avoid re-evaluating in subsequent runs",
+      "category": "N:N Pairing",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
       "id": "PARA-01",
       "text": "Worktree-isolated executor subagents — nf-worktree-executor agent runs plans in isolated git worktrees",
       "category": "Parallel Execution",
+      "tier": "user",
       "phase": "v0.30-07",
       "status": "Complete",
       "provenance": {
@@ -2611,6 +2749,7 @@
       "id": "PARA-02",
       "text": "Parallel plan execution with merge orchestration — Pattern D in execute-plan.md dispatches independent plans to worktrees with merge queue coordination",
       "category": "Parallel Execution",
+      "tier": "user",
       "phase": "v0.30-07",
       "status": "Complete",
       "provenance": {
@@ -2619,9 +2758,34 @@
       }
     },
     {
+      "id": "PERF-01",
+      "text": "Solve remediation dispatches layers in dependency-ordered waves (max 6 waves) instead of 13 sequential steps — independent layers (R→F, R→D, T→C) run in parallel within the same wave",
+      "category": "Performance",
+      "tier": "user",
+      "phase": "v0.36-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "PERF-02",
+      "text": "Diagnostic engine clears `_aggregateCache` after `per_model_gates` writes per-model gate files — preventing stale aggregate data in subsequent alignment layer reads",
+      "category": "Performance",
+      "tier": "user",
+      "phase": "v0.36-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "PF-01",
       "text": "`bin/qgsd-solve.cjs` includes a P->F (Production -> Formal) residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds",
       "category": "Solve P->F Integration",
+      "tier": "user",
       "phase": "v0.27-05",
       "status": "Pending",
       "provenance": {
@@ -2633,6 +2797,7 @@
       "id": "PF-02",
       "text": "The P->F residual count equals the number of acknowledged debt entries where production measurements diverge from formal parameter values",
       "category": "Solve P->F Integration",
+      "tier": "user",
       "phase": "v0.27-05",
       "status": "Pending",
       "provenance": {
@@ -2644,6 +2809,7 @@
       "id": "PF-03",
       "text": "Solve operates only on debt entries with status `acknowledged` — `open` entries are ignored until a human triages them",
       "category": "Solve P->F Integration",
+      "tier": "user",
       "phase": "v0.27-05",
       "status": "Pending",
       "provenance": {
@@ -2655,6 +2821,7 @@
       "id": "PF-04",
       "text": "During a solve cycle, observations are frozen — new observe runs do not modify debt entries that are in `resolving` status",
       "category": "Solve P->F Integration",
+      "tier": "user",
       "phase": "v0.27-05",
       "status": "Pending",
       "provenance": {
@@ -2666,6 +2833,7 @@
       "id": "PF-05",
       "text": "P->F remediation dispatches `/qgsd:quick` tasks to update formal model parameters when production reality has legitimately changed, or flags investigation when production has regressed",
       "category": "Solve P->F Integration",
+      "tier": "user",
       "phase": "v0.27-05",
       "status": "Pending",
       "provenance": {
@@ -2677,6 +2845,7 @@
       "id": "PLAN-01",
       "text": "`generate-proposed-changes.cjs` auto-synthesizes TLA+ deltas from PLAN.md truths",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-05",
       "status": "Complete",
       "provenance": {
@@ -2692,6 +2861,7 @@
       "id": "PLAN-02",
       "text": "`run-phase-tlc.cjs` provides iterative TLC verification loop gating planning (3-attempt cap)",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-05",
       "status": "Complete",
       "provenance": {
@@ -2707,6 +2877,7 @@
       "id": "PLAN-03",
       "text": "`quorum-formal-context.cjs` generates formal evidence blocks for quorum slots",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "v0.21-05",
       "status": "Complete",
       "provenance": {
@@ -2722,6 +2893,7 @@
       "id": "PLCY-01",
       "text": "User can set quorum timeout (ms) per slot from a dedicated menu shortcut — not buried inside editAgent",
       "category": "Configuration",
+      "tier": "user",
       "phase": "v0.26-01",
       "status": "Complete",
       "provenance": {
@@ -2733,6 +2905,7 @@
       "id": "PLCY-02",
       "text": "User can configure update policy per slot: auto / prompt / skip",
       "category": "Configuration",
+      "tier": "user",
       "phase": "v0.26-01",
       "status": "Complete",
       "provenance": {
@@ -2744,6 +2917,7 @@
       "id": "PLCY-03",
       "text": "Auto-update policy check runs on manage-agents startup for slots configured as `auto`",
       "category": "Configuration",
+      "tier": "user",
       "phase": "v0.26-01",
       "status": "Complete",
       "provenance": {
@@ -2755,6 +2929,7 @@
       "id": "PORT-01",
       "text": "User can export full roster config to a portable JSON file — all API key values replaced with `__redacted__` placeholders",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -2769,6 +2944,7 @@
       "id": "PORT-02",
       "text": "User can import roster config from JSON file — validates schema, prompts to re-enter any redacted key, confirms before applying",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -2783,6 +2959,7 @@
       "id": "PORT-03",
       "text": "Import creates a timestamped backup of `~/.claude.json` before applying any changes",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -2794,9 +2971,34 @@
       ]
     },
     {
+      "id": "PRED-01",
+      "text": "Bug-to-property linking maintains bug-to-property.json mapping observed bugs (from GitHub issues, test failures, observe skill) to formal properties that could have caught them",
+      "category": "Predictive Power",
+      "tier": "user",
+      "phase": "v0.33-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "PRED-02",
+      "text": "Per-model recall score computes bugs_predicted / total_relevant_bugs per formal model, reported as an informational metric in the solve report (not used as a gate input)",
+      "category": "Predictive Power",
+      "tier": "user",
+      "phase": "v0.33-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
       "id": "PRIO-01",
       "text": "User can configure hook execution priority in nf.json so safety hooks (circuit-breaker) always run before enhancement hooks (prompt injection), with deterministic ordering guaranteed",
       "category": "Quality Hardening",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2805,9 +3007,70 @@
       }
     },
     {
+      "id": "PROMO-01",
+      "text": "Solve Step 8a calls promote-gate-maturity.cjs --check after convergence to identify HARD_GATE-eligible models",
+      "category": "Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PROMO-02",
+      "text": "consecutive_clean_sessions counter tracked in solve-state.json — incremented when wiring >= 1.0 AND semantic >= 0.8 AND all formal checks pass; reset to 0 on regression",
+      "category": "Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.34-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PROMO-03",
+      "text": "Models auto-promoted SOFT_GATE -> HARD_GATE when consecutive_clean_sessions >= 3 AND cooldown satisfied (gate-stability.cjs)",
+      "category": "Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.34-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PROMO-04",
+      "text": "All promotions logged to promotion-changelog.json with timestamp, session_id, from_level, to_level",
+      "category": "Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.34-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "PROMO-05",
+      "text": "Flip-flop detection prevents re-promotion of unstable models (existing gate-stability.cjs enforced)",
+      "category": "Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.34-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
       "id": "PROV-01",
       "text": "User can change the base URL (provider) for an existing agent",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2823,6 +3086,7 @@
       "id": "PROV-02",
       "text": "Wizard offers curated provider list (AkashML, Together.xyz, Fireworks) + custom entry",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2835,6 +3099,7 @@
       "id": "PROV-03",
       "text": "Wizard updates `~/.claude.json` ANTHROPIC_BASE_URL and restarts agent on apply",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2847,6 +3112,7 @@
       "id": "PRST-01",
       "text": "User can select a named provider preset (AkashML / Together.xyz / Fireworks.ai) in addAgent/editAgent flow instead of manually typing a URL",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -2858,6 +3124,7 @@
       "id": "PRST-02",
       "text": "User can clone an existing slot — copies provider URL and model config, prompts for new slot name",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -2869,6 +3136,7 @@
       "id": "QUORUM-01",
       "text": "plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces AskUserQuestion confirmation gate)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2885,6 +3153,7 @@
       "id": "QUORUM-02",
       "text": "execute-phase gaps_found triggers quorum diagnosis and auto-resolution (replaces chain halt + manual suggestion)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2901,6 +3170,7 @@
       "id": "QUORUM-03",
       "text": "discuss-phase remaining user_questions (surviving R4 pre-filter) are routed to quorum in auto mode (replaces AskUserQuestion for gray areas)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -2916,6 +3186,7 @@
       "id": "RDME-01",
       "text": "TUI section promoted from `<details>` to visible section with hero screenshot above the fold",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2927,6 +3198,7 @@
       "id": "RDME-02",
       "text": "\"Who This Is For\" expanded to 3-4 bullet points framing concrete problems nForma solves (single-model blind spots, context rot, oscillation loops, manual tracking)",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2938,6 +3210,7 @@
       "id": "RDME-03",
       "text": "\"With vs. Without\" comparison table added after \"Who This Is For\" showing Claude Code alone vs. with nForma",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2949,6 +3222,7 @@
       "id": "RDME-04",
       "text": "\"By the Numbers\" quantified metrics section added near top (agents, commands, requirements, hooks, formal models, milestones)",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2960,6 +3234,7 @@
       "id": "RDME-05",
       "text": "Architecture/quorum flow diagram added to \"How It Works\" intro showing prompt → dispatch → consensus → execute flow",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-02",
       "status": "Complete",
       "provenance": {
@@ -2971,6 +3246,7 @@
       "id": "RDME-06",
       "text": "\"What's New in v0.32\" changelog section added near top of README",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2982,6 +3258,7 @@
       "id": "RDME-07",
       "text": "Nav bar expanded with additional anchor links (TUI, Configuration, Star History)",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-01",
       "status": "Complete",
       "provenance": {
@@ -2993,6 +3270,7 @@
       "id": "RDME-08",
       "text": "Community/Contributing section added before Star History with Discord CTA and contribution guidelines",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-02",
       "status": "Complete",
       "provenance": {
@@ -3004,6 +3282,7 @@
       "id": "RDME-09",
       "text": "Getting Started collapsible sections rebalanced — critical path (install → quorum setup → first command) visible by default, advanced options collapsed",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-02",
       "status": "Complete",
       "provenance": {
@@ -3015,6 +3294,7 @@
       "id": "RDME-10",
       "text": "Broken table in Observability section fixed (solve screenshot moved outside table rows)",
       "category": "README Structure",
+      "tier": "user",
       "phase": "v0.32-02",
       "status": "Complete",
       "provenance": {
@@ -3026,6 +3306,7 @@
       "id": "RECV-01",
       "text": "`npx qgsd --reset-breaker` CLI flag clears `.claude/circuit-breaker-state.json` and logs confirmation — enables manual recovery when circuit breaker deadlocks due to blocked git commit",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3041,6 +3322,7 @@
       "id": "REDACT-01",
       "text": "`check-trace-redaction.cjs` checks traces for PII/secret patterns and emits `check-results.ndjson`",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.19-04",
       "status": "Complete",
       "provenance": {
@@ -3056,6 +3338,7 @@
       "id": "REDACT-02",
       "text": "Redaction check runs as CI step in `run-formal-verify.cjs`",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.19-04",
       "status": "Complete",
       "provenance": {
@@ -3071,6 +3354,7 @@
       "id": "REDACT-03",
       "text": "Redaction violations emit `result=fail` (not warn)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "v0.19-04",
       "status": "Complete",
       "provenance": {
@@ -3084,13 +3368,14 @@
     },
     {
       "id": "REL-01",
-      "text": "Graceful degradation on dependency failure",
+      "text": "Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather than crashing",
       "category": "Reliability",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/reliability-patterns.als"
@@ -3098,44 +3383,24 @@
     },
     {
       "id": "REL-02",
-      "text": "Structured error handling with fail-open pattern",
+      "text": "Long-running operations (file uploads, data processing, API calls >2s) show progress indication and can be cancelled by the user",
       "category": "Reliability",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/reliability-patterns.als"
       ]
     },
     {
-      "id": "REL-03",
-      "text": "Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather than crashing",
-      "category": "Reliability",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "REL-04",
-      "text": "Long-running operations (file uploads, data processing, API calls >2s) show progress indication and can be cancelled by the user",
-      "category": "Reliability",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
       "id": "REN-01",
       "text": "`git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.9-05",
       "status": "Pending",
       "provenance": {
@@ -3148,6 +3413,7 @@
       "id": "REN-02",
       "text": "`bin/install.js` updated to read from `qgsd-core/` instead of `get-shit-done/` — `node bin/install.js --claude --global` succeeds",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.9-05",
       "status": "Pending",
       "provenance": {
@@ -3160,6 +3426,7 @@
       "id": "REN-03",
       "text": "All hardcoded `get-shit-done/` path strings removed from `bin/gsd-tools.cjs`, workflow files, agent files, and template files",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.26-03",
       "status": "Complete",
       "provenance": {
@@ -3174,6 +3441,7 @@
       "id": "REN-04",
       "text": "`~/.claude/qgsd/` installed runtime is functionally identical before and after rename (verified by spot-check)",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "v0.9-05",
       "status": "Pending",
       "provenance": {
@@ -3186,6 +3454,7 @@
       "id": "RLS-01",
       "text": "`package.json` version field bumped from `0.1.0` to `0.2.0`",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3198,6 +3467,7 @@
       "id": "RLS-02",
       "text": "v0.2 milestone archived in `MILESTONES.md` — includes What Shipped, Phases (6–10), Requirements Satisfied (all 20 v0.2 requirements), Key Decisions Carried Forward",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3210,6 +3480,7 @@
       "id": "RLS-03",
       "text": "Git tag `v0.2.0` created at release commit and pushed to remote",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3222,6 +3493,7 @@
       "id": "RLS-04",
       "text": "`qgsd@0.2.0` published to npm registry — `npx qgsd@0.2.0` installs successfully",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Pending",
       "provenance": {
@@ -3234,6 +3506,7 @@
       "id": "RSN-01",
       "text": "Hazard model applies FMEA (Severity x Occurrence x Detection = RPN) to L2 operational model states and transitions",
       "category": "Reasoning",
+      "tier": "user",
       "phase": "v0.29-03",
       "status": "Complete",
       "provenance": {
@@ -3245,6 +3518,7 @@
       "id": "RSN-02",
       "text": "Failure mode catalog enumerates concrete failure modes per L2 state/transition with effects and severity classification",
       "category": "Reasoning",
+      "tier": "user",
       "phase": "v0.29-03",
       "status": "Complete",
       "provenance": {
@@ -3256,6 +3530,7 @@
       "id": "RSN-03",
       "text": "Risk heatmap produces ranked transition list (highest-risk-first) combining FMEA severity with coverage gap data",
       "category": "Reasoning",
+      "tier": "user",
       "phase": "v0.29-03",
       "status": "Complete",
       "provenance": {
@@ -3267,6 +3542,7 @@
       "id": "RSN-04",
       "text": "Model-driven test generation produces test recipe JSON from L3 failure modes with input sequence, expected outcome, and oracle",
       "category": "Reasoning",
+      "tier": "user",
       "phase": "v0.29-04",
       "status": "Complete",
       "provenance": {
@@ -3278,6 +3554,7 @@
       "id": "RSN-05",
       "text": "Design impact analysis traces a git diff through all three layers showing instrumentation, state, and hazard effects",
       "category": "Reasoning",
+      "tier": "user",
       "phase": "v0.29-04",
       "status": "Complete",
       "provenance": {
@@ -3289,6 +3566,7 @@
       "id": "SAFE-01",
       "text": "`--repair` cannot silently overwrite a rich STATE.md (>50 lines) without explicit `--force` flag; guard fires and repair is skipped with a message",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3305,6 +3583,7 @@
       "id": "SAFE-02",
       "text": "Legacy pre-versioning numeric phase dirs 18-39 are archived to `.planning/archive/legacy/`",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3314,21 +3593,10 @@
       "category_raw": "Repair Safety"
     },
     {
-      "id": "SAFE-03",
-      "text": "Formal verification in target repos uses only the target repo's own models; nForma-internal model generators and checkers are excluded from cross-repo execution",
-      "category": "Testing & Quality",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/quick/253-guard-run-formal-verify-cjs-static-steps/253-PLAN.md",
-        "milestone": "quick-253"
-      },
-      "background": "When /nf:solve runs in target repos, nForma-internal formal models should not be generated into or checked against external repos. Only the target repo's own models (discovered dynamically from .planning/formal/) are verified."
-    },
-    {
       "id": "SCBD-01",
       "text": "Scoreboard tracks performance by slot name (`claude-1`, `copilot-1`) — slot is the stable key",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3344,6 +3612,7 @@
       "id": "SCBD-02",
       "text": "Each scoreboard entry displays the current model loaded in that slot as context",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3359,6 +3628,7 @@
       "id": "SCBD-03",
       "text": "When a slot's model changes, a new scoreboard row is created for that slot",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3374,6 +3644,7 @@
       "id": "SCHEMA-01",
       "text": "`model-registry.json` entries gain a `requirements` array (string[]) listing the requirement IDs each model covers; existing entries seeded from the property-to-requirement map in TRACEABILITY_RESEARCH.md",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-01",
       "status": "Complete",
       "provenance": {
@@ -3389,6 +3660,7 @@
       "id": "SCHEMA-02",
       "text": "`check-result.schema.json` gains a `requirement_ids` array (string[]) field; validation updated to accept the new field",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-01",
       "status": "Complete",
       "provenance": {
@@ -3401,6 +3673,7 @@
       "id": "SCHEMA-03",
       "text": "Each verification runner (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, CI lint steps) emits `requirement_ids` in its NDJSON output, extracted from model-registry or inline annotations",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-01",
       "status": "Complete",
       "provenance": {
@@ -3416,6 +3689,7 @@
       "id": "SCHEMA-04",
       "text": "`requirements.json` envelope gains an optional `formal_models` array (string[]) per requirement, listing model file paths that verify it",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-01",
       "status": "Complete",
       "provenance": {
@@ -3429,13 +3703,14 @@
     },
     {
       "id": "SEC-01",
-      "text": "Pre-commit hook runs secret scanning to block commits containing credentials",
+      "text": "Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials",
       "category": "Security",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -3443,13 +3718,14 @@
     },
     {
       "id": "SEC-02",
-      "text": "CI pipeline runs deep secret scanning across full repo history on every PR",
+      "text": "CI pipeline runs deep secret scanning (e.g., TruffleHog) across full repo history on every PR",
       "category": "Security",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -3457,13 +3733,14 @@
     },
     {
       "id": "SEC-03",
-      "text": "All external input is validated and sanitized at system boundaries before processing",
+      "text": "All external input (user input, API request bodies, query parameters, file uploads) is validated and sanitized at system boundaries before processing",
       "category": "Security",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
@@ -3471,110 +3748,84 @@
     },
     {
       "id": "SEC-04",
-      "text": "Dependencies are scanned for known vulnerabilities in CI",
+      "text": "Dependencies are scanned for known vulnerabilities in CI (e.g., npm audit, Dependabot, Snyk) and critical/high findings block merge",
       "category": "Security",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/security-scanning.als"
       ]
     },
     {
-      "id": "SEC-05",
-      "text": "Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, passwords, or credentials",
-      "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "SEC-06",
-      "text": "CI pipeline runs deep secret scanning (e.g., TruffleHog) across full repo history on every PR",
-      "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "SEC-07",
-      "text": "All external input (user input, API request bodies, query parameters, file uploads) is validated and sanitized at system boundaries before processing",
-      "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "SEC-08",
-      "text": "Dependencies are scanned for known vulnerabilities in CI (e.g., npm audit, Dependabot, Snyk) and critical/high findings block merge",
-      "category": "Security",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
       "id": "SEM-01",
-      "text": "Invariant catalog aggregates declared invariants from specs with observed invariants mined from traces into a unified catalog",
-      "category": "Semantics",
-      "phase": "v0.29-02",
-      "status": "Complete",
+      "text": "Graph BFS candidate discovery script uses existing proximity-index to find unlinked (model, requirement) pairs within 3 hops with proximity score > 0.6",
+      "category": "Semantic Scoring",
+      "tier": "user",
+      "phase": "v0.34-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
       }
     },
     {
       "id": "SEM-02",
-      "text": "Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution status",
-      "category": "Semantics",
-      "phase": "v0.29-02",
-      "status": "Complete",
+      "text": "Strong candidates (score > threshold) evaluated by Haiku for semantic match — returns yes/no/maybe per candidate",
+      "category": "Semantic Scoring",
+      "tier": "user",
+      "phase": "v0.34-02",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
       }
     },
     {
       "id": "SEM-03",
-      "text": "Assumption register catalogs assumptions made when deriving L2 from L1 with validation status and linked L2 states",
-      "category": "Semantics",
-      "phase": "v0.29-02",
-      "status": "Complete",
+      "text": "Per-gate semantic_score computed as ratio of LLM-confirmed links to total expected links (from graph discovery)",
+      "category": "Semantic Scoring",
+      "tier": "user",
+      "phase": "v0.34-04",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
       }
     },
     {
       "id": "SEM-04",
-      "text": "Operational state machine derivation produces an observed-behavior FSM from traces comparable to hand-written TLA+/XState models",
-      "category": "Semantics",
-      "phase": "v0.29-02",
-      "status": "Complete",
+      "text": "Gate JSON files carry both wiring_score and semantic_score fields",
+      "category": "Semantic Scoring",
+      "tier": "user",
+      "phase": "v0.34-04",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
+      }
+    },
+    {
+      "id": "SEM-05",
+      "text": "Semantic scoring is idempotent — re-running produces same results given same graph state and model text",
+      "category": "Semantic Scoring",
+      "tier": "user",
+      "phase": "v0.34-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
+        "milestone": "v0.34"
       }
     },
     {
       "id": "SENS-01",
       "text": "`bin/run-sensitivity-sweep.cjs` varies key model parameters (at minimum: quorum size N across its full range, timeout threshold T across low/medium/high values) across ≥3 values each, running TLA+/PRISM checks for each configuration, and records outcome deltas (pass→fail, pass→inconclusive transitions) in `.formal/sensitivity-report.ndjson` using v2.1 schema — each record annotated with which parameter value caused the transition.",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.20-08",
       "status": "Complete",
       "provenance": {
@@ -3590,6 +3841,7 @@
       "id": "SENS-02",
       "text": "`plan-phase.md` step 8.3 (FV gate) is extended to also run `run-sensitivity-sweep.cjs` (fail-open) and inject `SENSITIVITY_CONTEXT` into the quorum `review_context`, surfacing the top-3 highest-impact parameters as planning recommendations: which code paths control them, which boundary values to test, and which metrics to monitor.",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.20-08",
       "status": "Complete",
       "provenance": {
@@ -3605,6 +3857,7 @@
       "id": "SENS-03",
       "text": "`bin/sensitivity-report.cjs` generates `.formal/sensitivity-report.md` — a human-readable ranked list of sensitive parameters by outcome-flip count, each annotated with (a) the code path or configuration variable that controls it, (b) recommended unit/integration test cases for boundary values, (c) recommended monitoring metrics to track in production.",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.20-08",
       "status": "Complete",
       "provenance": {
@@ -3617,9 +3870,34 @@
       "category_raw": "Sensitivity Analysis"
     },
     {
+      "id": "SETUP-01",
+      "text": "`/nf:mcp-setup` re-run correctly identifies codex-1 (and other native CLI slots) as subscription agents, not API/provider-backed slots",
+      "category": "MCP Setup",
+      "tier": "user",
+      "phase": "v0.35-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "SETUP-02",
+      "text": "Slot type classification uses `auth_type` from providers.json rather than inferring from slot name prefix",
+      "category": "MCP Setup",
+      "tier": "user",
+      "phase": "v0.35-02",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "SHARD-01",
       "text": "`.claude/rules/` files are tagged with relevance patterns (tool names, file globs, keywords) so only matching rules load per turn, measurably reducing per-turn token consumption",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3631,6 +3909,7 @@
       "id": "SIG-01",
       "text": "`detect-coverage-gaps.cjs` diffs TLC states vs conformance traces to produce `.formal/coverage-gaps.md`",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.21-06",
       "status": "Complete",
       "provenance": {
@@ -3646,6 +3925,7 @@
       "id": "SIG-02",
       "text": "`generate-petri-net.cjs --roadmap` models phase dependencies as Petri net with critical path analysis",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.21-06",
       "status": "Complete",
       "provenance": {
@@ -3661,6 +3941,7 @@
       "id": "SIG-03",
       "text": "`prism-priority.cjs` ranks roadmap items by PRISM failure probability",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.21-06",
       "status": "Complete",
       "provenance": {
@@ -3673,6 +3954,7 @@
       "id": "SIG-04",
       "text": "`quorum-consensus-gate.cjs` gates quorum rounds by Poisson binomial consensus probability threshold",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.21-06",
       "status": "Complete",
       "provenance": {
@@ -3688,6 +3970,7 @@
       "id": "SLOT-01",
       "text": "User sees all quorum agents referred to by slot name (`claude-1`, `copilot-1`, `gemini-cli-1`, etc.) in all QGSD output and commands",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3704,6 +3987,7 @@
       "id": "SLOT-02",
       "text": "Migration script renames existing `~/.claude.json` mcpServers entries from model-based names to slot names automatically (non-destructive, invertible)",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3719,6 +4003,7 @@
       "id": "SLOT-03",
       "text": "All QGSD source files (hooks, orchestrator, commands, scoreboard tooling) updated to use new slot names — no old names remain",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3731,6 +4016,7 @@
       "id": "SLOT-04",
       "text": "`mcp-status`, `mcp-set-model`, `mcp-update`, `mcp-restart` accept and display slot names correctly",
       "category": "MCP & Agents",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3743,163 +4029,10 @@
       "category_raw": "Slot-based Naming"
     },
     {
-      "id": "SOLVE-01",
-      "text": "The unified MCP server SHALL expose all configured providers as MCP tools over stdio JSON-RPC, driven by providers.json",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/unified-mcp-server.mjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-02",
-      "text": "The circuit breaker hook SHALL detect commit oscillation patterns and trigger automatic resolution (injecting oscillation-resolution-mode context) instead of blocking tool use",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-circuit-breaker.js",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-03",
-      "text": "The prompt hook SHALL inject quorum dispatch instructions into user prompts and provide automatic recovery context when the circuit breaker is active",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-prompt.js",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-04",
-      "text": "The stop hook SHALL block planning responses that lack quorum verification, enforcing R3.1/R3.2 compliance",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "hooks/nf-stop.js",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-05",
-      "text": "The nForma TUI SHALL provide a terminal dashboard for project status, sessions, agents, and configuration management",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nForma.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-06",
-      "text": "The solve engine SHALL compute residual vectors across all traceability layers and report health, format, and JSON output",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "bin/nf-solve.test.cjs",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-07",
-      "text": "The solve engine SHALL display triage breakdown (FP count, archived count, actionable count) alongside residual vectors in report output, and re-surface stale archived items when underlying files have been modified",
-      "category": "Solver-Discovered",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Users encountered confusion when solve reports showed large residual counts but /nf:resolve found nothing to act on. Enriching report output with triage disposition and implementing staleness checks (>30 days with modified files) maintains data freshness.",
-      "provenance": {
-        "source_file": ".planning/quick/257-fix-solve-resolve-data-disconnect-add-tr/257-PLAN.md",
-        "milestone": "quick-257"
-      }
-    },
-    {
-      "id": "SOLVE-08",
-      "text": "The solve engine SHALL compute and persist net_residual counts for human-gated layers (d_to_c, c_to_r, t_to_r, d_to_r) by subtracting Haiku false-positive classifications and archived items from raw sweep residuals",
-      "category": "Solver-Discovered",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Raw residual counts in solve-state.json overstate actionable work because they include items already classified as false positives by Haiku or archived through /nf:resolve. Downstream consumers (TUI, skill-overview) require accurate residual counts to report correct progress. Net residual provides the true actionable item count for each layer.",
-      "provenance": {
-        "source_file": ".planning/quick/259-refresh-solve-state-residuals-to-subtrac/259-PLAN.md",
-        "milestone": "quick-259"
-      }
-    },
-    {
-      "id": "SOLVE-09",
-      "text": "Quorum dispatch pre-validates agent health via MCP health_check before slot assignment, failing fast on unauthenticated or unreachable agents instead of timing out after 30s",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-10",
-      "text": "Plan-checker agent validates each plan against phase goals and requirements, re-entering the planning loop on failure until verification passes",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-11",
-      "text": "Verifier agent performs goal-backward analysis after phase execution, confirming the codebase delivers what the phase goal promised rather than just checking task completion",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-12",
-      "text": "/nf:solve-report generates a before/after convergence summary showing item counts by category, remediation actions taken, and a full formal verification pass to confirm gap closure",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-13",
-      "text": "/nf:quick preserves core nForma guarantees (atomic commits, state tracking, verification) while skipping optional agents (research, quorum) for faster single-task execution",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-14",
-      "text": "PostToolUse context-monitor hook tracks context window consumption after every tool execution, injecting WARNING at 70% and CRITICAL at 85% to trigger compaction or /clear before context overflow",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-15",
-      "text": "bin/analyze-assumptions.cjs classifies extracted assumptions into priority tiers (Tier 1: directly impacts phase goals, Tier 2: affects quality/perf, Tier 3: cosmetic/preference) for risk-based review ordering",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "docs/dev/requirements-coverage.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.21-04",
       "status": "Complete",
       "provenance": {
@@ -3915,6 +4048,7 @@
       "id": "SPEC-02",
       "text": "`QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.21-04",
       "status": "Complete",
       "provenance": {
@@ -3927,6 +4061,7 @@
       "id": "SPEC-03",
       "text": "Quorum composition verified in `quorum-composition.als` — 3 composition rules hold",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.21-04",
       "status": "Complete",
       "provenance": {
@@ -3942,6 +4077,7 @@
       "id": "SPEC-04",
       "text": "`generate-phase-spec.cjs` translates PLAN.md `must_haves: truths:` to TLA+ PROPERTY stubs",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.21-04",
       "status": "Complete",
       "provenance": {
@@ -3954,21 +4090,46 @@
       "category_raw": "Spec Completeness"
     },
     {
-      "id": "SPEC-05",
-      "text": "Multi-adapter FSM-to-TLA+ transpiler supports 10 state machine frameworks (XState v5/v4, javascript-state-machine, Robot, AWS Step Functions, Stately, Python transitions, sismic, looplab/fsm, qmuntal/stateless) through a plugin architecture with shared MachineIR intermediate representation.",
-      "category": "Formal Verification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Quick task 292 generalized the monolithic xstate-to-tla.cjs into a plugin-based transpiler to enable formal verification of state machines from any framework, not just XState.",
+      "id": "STAB-01",
+      "text": "Flip-flop detection scans promotion-changelog.json for models with ≥3 direction changes (promote/demote alternations) and flags them as UNSTABLE in per-model-gates.json",
+      "category": "Gate Stabilization",
+      "tier": "user",
+      "phase": "v0.33-03",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/292-multi-adapter-fsm-to-tla-transpiler-gene/292-PLAN.md",
-        "milestone": "quick-292"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "STAB-02",
+      "text": "Cooldown enforcement requires a configurable stabilization window (default: 3 consecutive solve sessions AND ≥1 hour wall time) of sustained gate score before re-promotion is allowed",
+      "category": "Gate Stabilization",
+      "tier": "user",
+      "phase": "v0.33-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "STAB-03",
+      "text": "Changelog deduplication fix removes duplicate promotion entries (same model, same transition, within 5-minute window) and prevents future duplicates via write-time guard",
+      "category": "Gate Stabilization",
+      "tier": "user",
+      "phase": "v0.33-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       }
     },
     {
       "id": "STATE-01",
       "text": "audit-milestone updates STATE.md \"Stopped at\" and \"Current Position\" fields with the audit result (passed / gaps_found / tech_debt) after writing the MILESTONE-AUDIT.md artifact",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3984,6 +4145,7 @@
       "id": "STATE-02",
       "text": "State schema: `{ active, file_set[], activated_at, commit_window_snapshot[] }` — captures what triggered the breaker",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -3999,6 +4161,7 @@
       "id": "STATE-03",
       "text": "Hook reads existing state first — if active, applies enforcement immediately without re-running git log detection",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4014,6 +4177,7 @@
       "id": "STATE-04",
       "text": "State file created silently if absent; failure to write logs to stderr but never blocks execution",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4029,6 +4193,7 @@
       "id": "STD-02",
       "text": "All 4 Gen1 MCP server repos (claude, codex, copilot, openhands) ported to Gen2 per-tool architecture (`*.tool.ts` + `registry.ts`) with Gen1 files (`definitions.ts`, `handlers.ts`) removed — all repos on main branch",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4041,6 +4206,7 @@
       "id": "STD-10",
       "text": "gemini-mcp-server npm package name is unscoped (`gemini-mcp-server`, not `@tuannvm/gemini-mcp-server`) — `~/.claude.json` mcpServers[\"gemini-cli\"].args reflects the unscoped name",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4056,6 +4222,7 @@
       "id": "STOP-01",
       "text": "Stop hook reads transcript JSONL for tool_use entries matching configured quorum model names",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4071,6 +4238,7 @@
       "id": "STOP-02",
       "text": "Stop hook checks `stop_hook_active` flag first — if true, exits 0 immediately (infinite loop prevention)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4086,6 +4254,7 @@
       "id": "STOP-03",
       "text": "Stop hook checks `hook_event_name` — if `SubagentStop`, exits 0 immediately (subagent exclusion)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4101,6 +4270,7 @@
       "id": "STOP-04",
       "text": "Stop hook scopes transcript search to current turn only (lines since last user message boundary) — survives context compaction",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4116,6 +4286,7 @@
       "id": "STOP-05",
       "text": "Stop hook reads transcript JSONL as the authoritative source of quorum evidence — no fast-path pre-check (design decision: last_assistant_message substring matching is not a reliable signal; JSONL parse is synchronous and correct for all transcript sizes)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4131,6 +4302,7 @@
       "id": "STOP-06",
       "text": "Stop hook verifies quorum only when a configured planning command was issued in the current turn (scope filtering)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4146,6 +4318,7 @@
       "id": "STOP-07",
       "text": "Stop hook blocks with `{\"decision\": \"block\", \"reason\": \"...\"}` when quorum is missing — reason includes exact tool names and instructions",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4161,6 +4334,7 @@
       "id": "STOP-08",
       "text": "Block reason message format: \"QUORUM REQUIRED: Before completing this /qgsd:[command] response, call [tool1], [tool2], [tool3] with your current plan. Present their responses, then deliver your final output.\"",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4176,6 +4350,7 @@
       "id": "STOP-09",
       "text": "Stop hook passes (exits 0, no decision field) when quorum evidence found or no planning command in scope",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4188,9 +4363,58 @@
       "category_raw": "Stop Hook"
     },
     {
+      "id": "STRUCT-01",
+      "text": "L2 (Semantics) layer is either populated with at least 3 semantic models OR collapsed to a 2-layer architecture with Gate A evaluating L1→L3 directly — unblocking Gate B from permanent zero score",
+      "category": "Structure",
+      "tier": "user",
+      "phase": "v0.36-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "STRUCT-02",
+      "text": "LAYER_KEYS extracted to a shared `bin/layer-constants.cjs` module imported by solve-trend-helpers, oscillation-detector, and convergence-report — single source of truth for the 19-layer key set",
+      "category": "Structure",
+      "tier": "user",
+      "phase": "v0.36-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "STRUCT-03",
+      "text": "Gate score field resolution extracted to shared `resolveGateScore(gateData)` utility used by nf-solve.cjs, solve-trend-helpers.cjs, and cross-layer-dashboard.cjs — eliminating duplicated v1/v2 fallback chains",
+      "category": "Structure",
+      "tier": "user",
+      "phase": "v0.36-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "STRUCT-04",
+      "text": "Haiku model version for classification reads from `nf.json` config with fallback to `claude-haiku-4-5-20251001` — no more hardcoded model ID in solve-tui.cjs",
+      "category": "Structure",
+      "tier": "user",
+      "phase": "v0.36-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "SYNC-01",
       "text": "QGSD ships as separate npm package (`qgsd` or `get-shit-done-quorum`) that wraps GSD",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4206,6 +4430,7 @@
       "id": "SYNC-02",
       "text": "When GSD releases a new planning command, QGSD releases a patch update adding the command to the default `quorum_commands` list",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4221,6 +4446,7 @@
       "id": "SYNC-03",
       "text": "QGSD changelog explicitly tracks which GSD version it is compatible with",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4233,6 +4459,7 @@
       "id": "SYNC-04",
       "text": "No QGSD code modifies any GSD source files — all additions are in separate files (`hooks/qgsd-stop.js`, `hooks/qgsd-prompt.js`, `bin/qgsd-install.js`)",
       "category": "Planning & Tracking",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4245,21 +4472,58 @@
       "category_raw": "GSD Sync Strategy"
     },
     {
-      "id": "TC-01",
-      "text": "Digest V8 coverage at collection time in sweepTtoC, converting raw ~96MB coverage blobs to lightweight Map<absolutePath, {covered, uncovered line sets}> format (~50KB, 99.5% compression).",
-      "category": "Testing & Quality",
-      "phase": "unknown",
+      "id": "TEST-01",
+      "text": "End-to-end convergence integration test runs 3 solve iterations against fixture data and asserts convergence (residual decreases monotonically on automatable layers or stabilizes)",
+      "category": "Testing",
+      "tier": "user",
+      "phase": "v0.36-05",
       "status": "Complete",
-      "background": "V8 runtime coverage data collected during solve execution consumed 96MB per run, bloating solve output and increasing serialization time. Digesting coverage into a minimal line-number-based format at collection time eliminates this overhead while preserving traceability for false-positive detection and test recipe generation.",
       "provenance": {
-        "source_file": ".planning/quick/298-digest-v8-coverage-at-collection-time-in/298-PLAN.md",
-        "milestone": "quick-298"
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TEST-02",
+      "text": "Cascade effect unit tests verify that R→F remediation creating new formal models increases F→T residual, and the convergence check correctly identifies this as progress (not regression)",
+      "category": "Testing",
+      "tier": "user",
+      "phase": "v0.36-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TEST-03",
+      "text": "Focus filter completeness tests assert all 19 layers either filter by focusSet or mark results with `scoped: false` flag",
+      "category": "Testing",
+      "tier": "user",
+      "phase": "v0.36-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TEST-04",
+      "text": "Classification accuracy golden set of 100 pre-labeled items (25 per category: dtoc, ctor, ttor, dtor) with ground truth, measuring Haiku precision/recall per category",
+      "category": "Testing",
+      "tier": "user",
+      "phase": "v0.36-05",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
       "id": "TOKN-01",
       "text": "Auto-compaction at clean boundaries — PreCompact hook preserves execution state and memory across compaction events",
       "category": "Token Optimization & Model Routing",
+      "tier": "user",
       "phase": "v0.30-01",
       "status": "Complete",
       "provenance": {
@@ -4271,6 +4535,7 @@
       "id": "TOKN-02",
       "text": "Thinking budget scaling per task type — task complexity classifier adjusts thinking budget directive based on plan vs research vs quick task",
       "category": "Token Optimization & Model Routing",
+      "tier": "user",
       "phase": "v0.30-01",
       "status": "Complete",
       "provenance": {
@@ -4282,6 +4547,7 @@
       "id": "TOKN-03",
       "text": "Token usage dashboard — `/nf:tokens` displays per-slot and per-session token consumption from telemetry JSONL",
       "category": "Token Optimization & Model Routing",
+      "tier": "user",
       "phase": "v0.30-01",
       "status": "Complete",
       "provenance": {
@@ -4293,6 +4559,7 @@
       "id": "TOKN-04",
       "text": "Task-complexity model routing — TIER_SLOT_MAP filters quorum slots by task complexity tier (T1/T2/T3)",
       "category": "Token Optimization & Model Routing",
+      "tier": "user",
       "phase": "v0.30-01",
       "status": "Complete",
       "provenance": {
@@ -4304,6 +4571,7 @@
       "id": "TRACE-01",
       "text": "`bin/generate-traceability-matrix.cjs` reads model-registry, requirements.json, and check-results.ndjson to produce `.formal/traceability-matrix.json` with property-level links between requirements and formal properties",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-03",
       "status": "Complete",
       "provenance": {
@@ -4316,6 +4584,7 @@
       "id": "TRACE-02",
       "text": "The traceability matrix includes a `coverage_summary` section: total requirements, covered count, coverage percentage, list of uncovered requirements, list of orphan properties (properties with no requirement mapping)",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-03",
       "status": "Complete",
       "provenance": {
@@ -4331,6 +4600,7 @@
       "id": "TRACE-03",
       "text": "The traceability matrix is generated as a step in `run-formal-verify.cjs` after all checks complete",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-03",
       "status": "Complete",
       "provenance": {
@@ -4343,6 +4613,7 @@
       "id": "TRACE-04",
       "text": "Bidirectional validation detects asymmetric links (model claims requirement X but requirement X does not claim that model) and emits warnings",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-04",
       "status": "Complete",
       "provenance": {
@@ -4358,6 +4629,7 @@
       "id": "TRACE-05",
       "text": "CI guard warns when formal coverage percentage drops below a configurable threshold (default 15%) compared to the previous traceability matrix",
       "category": "Formal Verification",
+      "tier": "user",
       "phase": "v0.25-04",
       "status": "Complete",
       "provenance": {
@@ -4370,9 +4642,58 @@
       "category_raw": "Traceability Matrix"
     },
     {
+      "id": "TRACK-01",
+      "text": "Each nf:solve run appends a snapshot to solve-trend.jsonl containing timestamp, iteration count, per-layer residuals (all 19 layers), total residual, converged boolean, and gate summary",
+      "category": "Cross-Session Tracking",
+      "tier": "user",
+      "phase": "v0.33-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "TRACK-02",
+      "text": "Per-layer trend detection runs Mann-Kendall non-parametric test on the last 20 entries and reports each layer as DECREASING, STABLE, INCREASING, or OSCILLATING (requires ≥5 data points before reporting)",
+      "category": "Cross-Session Tracking",
+      "tier": "user",
+      "phase": "v0.33-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "TRACK-03",
+      "text": "Convergence velocity estimation fits exponential decay to per-layer residual time series and reports estimated sessions-to-convergence (requires ≥10 data points)",
+      "category": "Cross-Session Tracking",
+      "tier": "user",
+      "phase": "v0.33-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
+      "id": "TRACK-04",
+      "text": "Scope-growth detection distinguishes new-requirement residual increases from regression by tracking requirement count alongside residuals — a residual increase concurrent with requirement count increase is flagged as SCOPE_GROWTH, not regression",
+      "category": "Cross-Session Tracking",
+      "tier": "user",
+      "phase": "v0.33-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
+      }
+    },
+    {
       "id": "TRIAGE-01",
       "text": "`bin/generate-triage-bundle.cjs` reads `check-results.ndjson` and writes `.formal/diff-report.md` (per-check delta from last run) and `.formal/suspects.md` (checks with `result=fail` or `triage_tags` set)",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.20-06",
       "status": "Complete",
       "provenance": {
@@ -4388,6 +4709,7 @@
       "id": "TRIAGE-02",
       "text": "`run-formal-verify.cjs` calls `generate-triage-bundle.cjs` as the final step after all checks complete",
       "category": "Observability & Diagnostics",
+      "tier": "user",
       "phase": "v0.20-06",
       "status": "Complete",
       "provenance": {
@@ -4397,9 +4719,34 @@
       "category_raw": "Triage Bundle"
     },
     {
+      "id": "TUI-01",
+      "text": "TUI \"Add Agent → CLI Agent\" generates a working MCP entry that correctly specifies the CLI binary path and args for Codex/Gemini/OpenCode/Copilot slots",
+      "category": "TUI",
+      "tier": "user",
+      "phase": "v0.35-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TUI-02",
+      "text": "Generated MCP entries match the format produced by `mcp-setup` wizard for the same slot types",
+      "category": "TUI",
+      "tier": "user",
+      "phase": "v0.35-04",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "UNIF-01",
       "text": "All FV checkers append normalized JSON to `check-results.ndjson` — `{ tool, check_id, result, detail, ts }`",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-01",
       "status": "Complete",
       "provenance": {
@@ -4415,6 +4762,7 @@
       "id": "UNIF-02",
       "text": "`run-formal-verify.cjs` generates `check-results.ndjson` as canonical output artifact",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-01",
       "status": "Complete",
       "provenance": {
@@ -4427,6 +4775,7 @@
       "id": "UNIF-03",
       "text": "Triage bundle reads from `check-results.ndjson`, not tool stdout; CI enforcement steps run inside orchestrator before summary read (v0.19-11 timing fix)",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-11",
       "status": "Complete",
       "provenance": {
@@ -4442,6 +4791,7 @@
       "id": "UNIF-04",
       "text": "CI step exits non-zero when any `result=fail` entry exists in `check-results.ndjson`",
       "category": "Quorum & Dispatch",
+      "tier": "user",
       "phase": "v0.19-01",
       "status": "Complete",
       "provenance": {
@@ -4454,9 +4804,49 @@
       "category_raw": "Unified Verdict Format"
     },
     {
+      "id": "UPPAAL-01",
+      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      },
+      "category_raw": "UPPAAL Timed Race Modeling"
+    },
+    {
+      "id": "UPPAAL-02",
+      "text": "`bin/run-uppaal.cjs` executes the UPPAAL model checker (verifyta CLI) against `quorum-races.xml` and writes a check result to `check-results.ndjson` using the v2.1 schema (SCHEMA-01 prerequisite). The STEPS entry `uppaal:quorum-races` is added to `run-formal-verify.cjs`.",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      },
+      "category_raw": "UPPAAL Timed Race Modeling"
+    },
+    {
+      "id": "UPPAAL-03",
+      "text": "The model surfaces at least two critical measurement points as annotated properties: (a) the minimum inter-slot response gap that prevents a race condition, (b) the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.",
+      "category": "Formal Verification",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      },
+      "category_raw": "UPPAAL Timed Race Modeling"
+    },
+    {
       "id": "UPS-01",
       "text": "UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4472,6 +4862,7 @@
       "id": "UPS-02",
       "text": "Allowlist contains exactly 6 commands: new-project, plan-phase, new-milestone, discuss-phase, verify-work, research-phase",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4487,6 +4878,7 @@
       "id": "UPS-03",
       "text": "UserPromptSubmit hook injects quorum instructions via `hookSpecificOutput.additionalContext` (not systemMessage — goes into Claude's context window)",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4502,6 +4894,7 @@
       "id": "UPS-04",
       "text": "Injected context names the exact MCP tools to call and instructs Claude to present model responses before delivering final output",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4517,6 +4910,7 @@
       "id": "UPS-05",
       "text": "UserPromptSubmit hook never fires on execute-phase or other non-planning commands",
       "category": "Hooks & Enforcement",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4530,13 +4924,14 @@
     },
     {
       "id": "UX-01",
-      "text": "Every user-initiated action produces immediate feedback and completion feedback",
+      "text": "Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message, navigation change, or visible state update)",
       "category": "UX Heuristics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
@@ -4544,13 +4939,14 @@
     },
     {
       "id": "UX-02",
-      "text": "Destructive actions require explicit confirmation or provide undo",
+      "text": "Destructive actions (delete, reset, remove, overwrite) require explicit confirmation or provide undo within a reasonable window",
       "category": "UX Heuristics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
@@ -4558,55 +4954,24 @@
     },
     {
       "id": "UX-03",
-      "text": "Error messages are human-readable, explain what went wrong, and suggest recovery",
+      "text": "Error messages are human-readable, explain what went wrong, and suggest a next step or recovery action",
       "category": "UX Heuristics",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
-        "milestone": "v0.31"
+        "source_file": ".planning/milestones/v0.33-REQUIREMENTS.md",
+        "milestone": "v0.33"
       },
       "formal_models": [
         ".planning/formal/alloy/ux-feedback-safety.als"
       ]
     },
     {
-      "id": "UX-04",
-      "text": "Every user-initiated action produces immediate feedback (loading/disabled state) and completion feedback (result message, navigation change, or visible state update)",
-      "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "UX-05",
-      "text": "Destructive actions (delete, reset, remove, overwrite) require explicit confirmation or provide undo within a reasonable window",
-      "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
-      "id": "UX-06",
-      "text": "Error messages are human-readable, explain what went wrong, and suggest a next step or recovery action",
-      "category": "UX Heuristics",
-      "phase": "baseline",
-      "status": "Pending",
-      "provenance": {
-        "source_file": "nf-baseline",
-        "milestone": "baseline"
-      }
-    },
-    {
       "id": "VALID-01",
       "text": "Hook stdin JSON is validated against lightweight schemas with structured error reporting; malformed input produces a diagnostic message on stderr before fail-open exit",
       "category": "Governance & DX",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4618,6 +4983,7 @@
       "id": "VERF-01",
       "text": "File-based execution state — execution-progress.cjs tracks plan/task completion state to disk, survives compaction",
       "category": "Verification & Execution State",
+      "tier": "user",
       "phase": "v0.30-02",
       "status": "Complete",
       "provenance": {
@@ -4629,6 +4995,7 @@
       "id": "VERF-02",
       "text": "Continuous test verification — PostToolUse hook triggers boundary-detection checks during execution with budget cap",
       "category": "Verification & Execution State",
+      "tier": "user",
       "phase": "v0.30-05",
       "status": "Complete",
       "provenance": {
@@ -4640,6 +5007,7 @@
       "id": "VERF-03",
       "text": "Machine-verifiable completion — done_conditions in task schema enable automated evaluateAllConditions check",
       "category": "Verification & Execution State",
+      "tier": "user",
       "phase": "v0.30-05",
       "status": "Complete",
       "provenance": {
@@ -4651,6 +5019,7 @@
       "id": "VERIFY-01",
       "text": "`qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIFICATION.md`",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "v0.20-04",
       "status": "Complete",
       "provenance": {
@@ -4666,6 +5035,7 @@
       "id": "VERIFY-02",
       "text": "`VERIFICATION.md` template gains a `## Formal Verification` section summarizing pass/fail/warn counts per formalism (tla, alloy, prism, ci)",
       "category": "Testing & Quality",
+      "tier": "user",
       "phase": "v0.20-04",
       "status": "Complete",
       "provenance": {
@@ -4681,6 +5051,7 @@
       "id": "VIS-01",
       "text": "All TUI screenshots regenerated via VHS tape automation after README structural changes",
       "category": "Visual Assets",
+      "tier": "user",
       "phase": "v0.32-04",
       "status": "Complete",
       "provenance": {
@@ -4695,6 +5066,7 @@
       "id": "VIS-02",
       "text": "VHS tape hardened for CI reliability (zsh shell, explicit PATH export, CLAUDECODE unset)",
       "category": "Visual Assets",
+      "tier": "user",
       "phase": "v0.32-04",
       "status": "Complete",
       "provenance": {
@@ -4706,6 +5078,7 @@
       "id": "WIZ-01",
       "text": "User can run `/qgsd:mcp-setup` to start the MCP configuration wizard",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4721,6 +5094,7 @@
       "id": "WIZ-02",
       "text": "First run (no configured agents) presents a guided linear onboarding flow step by step",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4736,6 +5110,7 @@
       "id": "WIZ-03",
       "text": "Re-run shows the current agent roster as a navigable menu",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4751,6 +5126,7 @@
       "id": "WIZ-04",
       "text": "Each agent in the menu shows current model, provider, and key status (present/missing)",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4766,6 +5142,7 @@
       "id": "WIZ-05",
       "text": "User confirms before changes are applied; wizard restarts affected agents after apply",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4781,6 +5158,7 @@
       "id": "WIZ-08",
       "text": "`/qgsd:mcp-setup` re-run menu includes an \"Edit Quorum Composition\" option",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4796,6 +5174,7 @@
       "id": "WIZ-09",
       "text": "Composition screen shows all discovered slots with on/off toggle for `quorum.active` inclusion",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4811,6 +5190,7 @@
       "id": "WIZ-10",
       "text": "User can add a new slot for any family (claude, copilot, opencode, codex-cli, gemini-cli) from within the wizard, which writes the new entry to `~/.claude.json` and triggers restart",
       "category": "Installer & CLI",
+      "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
@@ -4821,7 +5201,32 @@
         ".planning/formal/tla/QGSDSetupWizard.tla"
       ],
       "category_raw": "Wizard Composition Screen"
+    },
+    {
+      "id": "XPLAT-01",
+      "text": "Provider definitions use runtime CLI path resolution (`resolve-cli.cjs` or `which`) instead of hardcoded `/opt/homebrew/bin/` paths",
+      "category": "Cross-Platform",
+      "tier": "user",
+      "phase": "v0.35-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "XPLAT-02",
+      "text": "Provider binary paths work on macOS (Homebrew), Linux (apt/snap), and WSL without manual configuration",
+      "category": "Cross-Platform",
+      "tier": "user",
+      "phase": "v0.35-03",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
     }
   ],
-  "frozen_at": "2026-03-16T13:00:24.880Z"
+  "schema_version": "1",
+  "source": ".planning/REQUIREMENTS.md"
 }
