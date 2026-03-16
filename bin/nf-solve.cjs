@@ -4198,6 +4198,18 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  // FPTUNE-03: Append FP rate table when session history exists
+  try {
+    const classData = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-classifications.json'), 'utf8'));
+    const sessionHist = classData.session_history || [];
+    if (sessionHist.length > 0) {
+      const fpRatesForReport = computeFPRates(sessionHist);
+      const tuningForReport = classData.tuning || {};
+      lines.push('');
+      lines.push(formatFPRateTable(fpRatesForReport, tuningForReport));
+    }
+  } catch (_) { /* fail-open: no session history yet */ }
+
   return lines.join('\n');
 }
 
@@ -4356,6 +4368,161 @@ function checkCleanSession() {
   return isClean;
 }
 
+// ── FPTUNE: Per-scanner FP rate tracking and auto-threshold tuning ───────────
+
+/**
+ * FPTUNE-01: Compute per-scanner per-category stats from classifications.
+ * @param {Object} classifications - { ctor: {...}, ttor: {...}, dtor: {...}, dtoc: {...} }
+ * @returns {Object} Per-scanner stats: { ctor: { total, fp, genuine, review }, ... }
+ */
+function computeScannerStats(classifications) {
+  const stats = {};
+  for (const [scannerKey, entries] of Object.entries(classifications || {})) {
+    const values = Object.values(entries);
+    stats[scannerKey] = {
+      total: values.length,
+      fp: values.filter(v => v === 'fp').length,
+      genuine: values.filter(v => v === 'genuine').length,
+      review: values.filter(v => v === 'review').length,
+    };
+  }
+  return stats;
+}
+
+/**
+ * FPTUNE-01: Record a session entry to session_history in solve-classifications.json.
+ * Rolling window: keeps last 10 sessions.
+ * @param {string} classificationsFilePath - Path to solve-classifications.json
+ * @param {Object} scannerStats - From computeScannerStats()
+ * @returns {Array} Updated session_history array
+ */
+function recordSessionHistory(classificationsFilePath, scannerStats) {
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(classificationsFilePath, 'utf8')); } catch (_) {}
+  if (!Array.isArray(data.session_history)) data.session_history = [];
+
+  data.session_history.push({
+    session_id: new Date().toISOString(),
+    scanner_stats: scannerStats,
+  });
+
+  // Rolling window: keep last 10 sessions
+  if (data.session_history.length > 10) {
+    data.session_history = data.session_history.slice(data.session_history.length - 10);
+  }
+
+  data.updated_at = new Date().toISOString();
+  fs.writeFileSync(classificationsFilePath, JSON.stringify(data, null, 2) + '\n');
+  return data.session_history;
+}
+
+/**
+ * FPTUNE-01: Compute rolling FP rates per scanner from session_history.
+ * @param {Array} sessionHistory - Array of session entries
+ * @returns {Object} Per-scanner rates: { ctor: { sessions, total_items, total_fp, fp_rate }, ... }
+ */
+function computeFPRates(sessionHistory) {
+  const rates = {};
+  const scannerKeys = new Set();
+  for (const session of (sessionHistory || [])) {
+    for (const key of Object.keys(session.scanner_stats || {})) {
+      scannerKeys.add(key);
+    }
+  }
+
+  for (const key of scannerKeys) {
+    let totalItems = 0;
+    let totalFP = 0;
+    let sessionCount = 0;
+    for (const session of sessionHistory) {
+      const stats = (session.scanner_stats || {})[key];
+      if (stats) {
+        totalItems += stats.total;
+        totalFP += stats.fp;
+        sessionCount++;
+      }
+    }
+    rates[key] = {
+      sessions: sessionCount,
+      total_items: totalItems,
+      total_fp: totalFP,
+      fp_rate: totalItems > 0 ? totalFP / totalItems : 0,
+    };
+  }
+  return rates;
+}
+
+/**
+ * FPTUNE-02: Auto-raise suppression threshold for scanners with FP rate > 60% over 5+ sessions.
+ * Threshold increase: +0.1 per tuning cycle, capped at 0.9.
+ * @param {string} classificationsFilePath - Path to solve-classifications.json
+ * @param {Object} fpRates - From computeFPRates()
+ * @returns {Array} Changes applied: [{ scanner, from, to, fp_rate, sessions }]
+ */
+function applyFPTuning(classificationsFilePath, fpRates) {
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(classificationsFilePath, 'utf8')); } catch (_) {}
+  if (!data.tuning) data.tuning = {};
+
+  const changes = [];
+
+  for (const [scannerKey, rateInfo] of Object.entries(fpRates)) {
+    const currentThreshold = data.tuning[scannerKey] || 0.5;
+    if (rateInfo.sessions >= 5 && rateInfo.fp_rate > 0.6) {
+      const newThreshold = Math.min(currentThreshold + 0.1, 0.9);
+      if (newThreshold !== currentThreshold) {
+        data.tuning[scannerKey] = parseFloat(newThreshold.toFixed(2));
+        changes.push({
+          scanner: scannerKey,
+          from: currentThreshold,
+          to: data.tuning[scannerKey],
+          fp_rate: rateInfo.fp_rate,
+          sessions: rateInfo.sessions,
+        });
+      }
+    }
+    // Ensure scanner has an entry even if no tuning needed
+    if (data.tuning[scannerKey] == null) {
+      data.tuning[scannerKey] = 0.5;
+    }
+  }
+
+  data.updated_at = new Date().toISOString();
+  fs.writeFileSync(classificationsFilePath, JSON.stringify(data, null, 2) + '\n');
+  return changes;
+}
+
+/**
+ * FPTUNE-03: Format per-scanner FP rate table for diagnostics output.
+ * @param {Object} fpRates - From computeFPRates()
+ * @param {Object} tuning - From solve-classifications.json tuning section
+ * @returns {string} Formatted table
+ */
+function formatFPRateTable(fpRates, tuning) {
+  const lines = [];
+  lines.push('');
+  lines.push('Per-Scanner FP Rates (last 10 sessions):');
+  lines.push('| Scanner | Sessions | FP Rate | Threshold | Status |');
+  lines.push('|---------|----------|---------|-----------|--------|');
+
+  const scannerOrder = ['ctor', 'ttor', 'dtor', 'dtoc'];
+  const keys = scannerOrder.filter(k => fpRates[k]);
+  // Add any keys not in the predefined order
+  for (const k of Object.keys(fpRates)) {
+    if (!keys.includes(k)) keys.push(k);
+  }
+
+  for (const key of keys) {
+    const rate = fpRates[key];
+    const threshold = (tuning && tuning[key]) || 0.5;
+    const fpPct = (rate.fp_rate * 100).toFixed(1) + '%';
+    const status = rate.fp_rate > 0.6 && rate.sessions >= 5 ? 'TUNED' : 'OK';
+    lines.push('| ' + key.padEnd(7) + ' | ' + String(rate.sessions).padEnd(8) + ' | ' + fpPct.padEnd(7) + ' | ' + threshold.toFixed(2).padEnd(9) + ' | ' + status.padEnd(6) + ' |');
+  }
+
+  return lines.join('\n');
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -4492,6 +4659,26 @@ function main() {
     const cached = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-classifications.json'), 'utf8'));
     classificationsByCategory = cached.classifications || {};
   } catch (_) { /* fail-open */ }
+
+  // FPTUNE-01: Record session history and compute FP rates
+  const scannerStats = computeScannerStats(classificationsByCategory);
+  const classPath = path.join(ROOT, '.planning', 'formal', 'solve-classifications.json');
+  if (!DRY_RUN_FLAG) {
+    recordSessionHistory(classPath, scannerStats);
+  }
+
+  // FPTUNE-02: Auto-tune suppression thresholds
+  const fpRates = computeFPRates(
+    (() => { try { return JSON.parse(fs.readFileSync(classPath, 'utf8')).session_history || []; } catch (_) { return []; } })()
+  );
+  if (!DRY_RUN_FLAG) {
+    const tuningChanges = applyFPTuning(classPath, fpRates);
+    if (tuningChanges.length > 0) {
+      for (const c of tuningChanges) {
+        process.stderr.write(TAG + ' FPTUNE: ' + c.scanner + ' threshold raised ' + c.from + ' -> ' + c.to + ' (FP rate: ' + (c.fp_rate * 100).toFixed(1) + '% over ' + c.sessions + ' sessions)\n');
+      }
+    }
+  }
 
   let archiveEntries = [];
   try {
@@ -4770,6 +4957,11 @@ module.exports = {
   updateVerdicts,
   updatePredictivePower,
   checkCleanSession,
+  computeScannerStats,
+  recordSessionHistory,
+  computeFPRates,
+  applyFPTuning,
+  formatFPRateTable,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────
