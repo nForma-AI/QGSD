@@ -71,7 +71,7 @@ Modify hooks/nf-mcp-dispatch-guard.js to dynamically discover quorum slot famili
    - Parses the JSON and extracts `.providers[].name` (e.g. "codex-1", "gemini-2", "claude-4").
    - Strips trailing `-N` from each name to derive the family (e.g. "codex", "gemini", "claude").
    - Returns a `Set` of unique family strings.
-   - On ANY error (file missing, malformed JSON, missing .providers array): returns an empty Set and writes a warning to stderr. This is fail-open -- if families can't be loaded, the guard won't block anything, which is safer than blocking everything.
+   - On ANY error (file missing, malformed JSON, missing .providers array): returns an empty Set and writes a warning to stderr that includes the family name attempted (e.g. `"nf-mcp-dispatch-guard: failed to load providers.json from ${providersPath}, fail-open"`). This is fail-open -- if families can't be loaded, the guard won't block anything, which is safer than blocking everything. Including the attempted path in the warning helps trace which providers.json was attempted when the guard degrades.
 
 3. Replace `const KNOWN_FAMILIES = new Set(Object.keys(SLOT_TOOL_SUFFIX));` with `const KNOWN_FAMILIES = loadKnownFamilies();` at module scope (loaded once at require time, same as before).
 
@@ -108,7 +108,7 @@ Update hooks/nf-mcp-dispatch-guard.test.js:
    Assert KNOWN_FAMILIES.has('codex'), .has('gemini'), .has('opencode'), .has('copilot'), .has('claude') are all true.
    Assert KNOWN_FAMILIES.size >= 5 (at least the 5 known families).
 
-2. Add TC19 that validates KNOWN_FAMILIES does NOT contain numbered slots (e.g. "codex-1" should NOT be in the set -- only "codex").
+2. Add TC19 that validates KNOWN_FAMILIES does NOT contain numbered slots (e.g. "codex-1" should NOT be in the set -- only "codex"). TC19 must also assert specific family derivations: `loadKnownFamilies()` given a providers.json containing "claude-1" must yield "claude", "codex-2" must yield "codex", etc. This tests that the `-N` stripping logic produces the correct family for each slot.
 
 3. Update TC14 comment to clarify that "unknown MCP server" means a server whose family is not listed in providers.json (not just "not in SLOT_TOOL_SUFFIX").
 
