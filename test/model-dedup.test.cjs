@@ -229,6 +229,104 @@ test('Full integration: deduplicateByModel + buildFalloverRule', () => {
   assert.ok(rule.includes('Step 3 T2 fallback'), 'T2 is step 3');
 });
 
+// ─── TEST CASES FOR providers.json FALLBACK BEHAVIOR ──────────────────────────
+
+// ── TEST 11: Empty agentCfg with providersList deduplicates same-model slots ──
+
+test('Empty agentCfg: fallback to providersList deduplicates codex-1/2', () => {
+  const slots = [
+    { slot: 'codex-1', authType: 'sub' },
+    { slot: 'codex-2', authType: 'api' },
+    { slot: 'gemini-1', authType: 'sub' },
+  ];
+  const emptyAgentCfg = {};
+  const providersList = [
+    { name: 'codex-1', model: 'gpt-5.4' },
+    { name: 'codex-2', model: 'gpt-5.4' },
+    { name: 'gemini-1', model: 'gemini-3-pro-preview' },
+  ];
+
+  const result = deduplicateByModel(slots, emptyAgentCfg, providersList);
+
+  assert.strictEqual(result.unique.length, 2, 'Should keep codex-1 and gemini-1');
+  assert.strictEqual(result.duplicates.length, 1, 'Should demote codex-2');
+  assert.ok(result.unique.some(s => s.slot === 'codex-1'), 'codex-1 kept');
+  assert.ok(result.unique.some(s => s.slot === 'gemini-1'), 'gemini-1 kept');
+  assert.strictEqual(result.duplicates[0].slot, 'codex-2', 'codex-2 is duplicate');
+});
+
+// ── TEST 12: agentCfg takes precedence over providersList ────────────────────
+
+test('agentCfg precedence: custom model overrides providers.json', () => {
+  const slots = [
+    { slot: 'codex-1', authType: 'sub' },
+    { slot: 'codex-2', authType: 'api' },
+  ];
+  const agentCfg = {
+    'codex-1': { model: 'custom-model-x', auth_type: 'sub' },
+  };
+  const providersList = [
+    { name: 'codex-1', model: 'gpt-5.4' },
+    { name: 'codex-2', model: 'gpt-5.4' },
+  ];
+
+  const result = deduplicateByModel(slots, agentCfg, providersList);
+
+  // codex-1 has custom-model-x (from agentCfg), codex-2 has gpt-5.4 (from providersList)
+  // → different models, no dedup
+  assert.strictEqual(result.unique.length, 2, 'Two unique models');
+  assert.strictEqual(result.duplicates.length, 0, 'No duplicates (different models)');
+  assert.ok(result.unique.some(s => s.slot === 'codex-1'), 'codex-1 kept');
+  assert.ok(result.unique.some(s => s.slot === 'codex-2'), 'codex-2 kept');
+});
+
+// ── TEST 13: No providersList (undefined) — backward compatible ──────────────
+
+test('No providersList: backward compatible with 2-arg calls', () => {
+  const slots = [
+    { slot: 'codex-1', authType: 'sub' },
+    { slot: 'codex-2', authType: 'api' },
+  ];
+  const emptyAgentCfg = {};
+  // providersList omitted (undefined)
+
+  const result = deduplicateByModel(slots, emptyAgentCfg);
+
+  // Both resolve to 'unknown', so both treated as unique (never dedup unknowns)
+  assert.strictEqual(result.unique.length, 2, 'Both slots unique (both unknown)');
+  assert.strictEqual(result.duplicates.length, 0, 'No duplicates for unknown models');
+});
+
+// ── TEST 14: Mixed — some slots in agentCfg, others fall back to providersList ──
+
+test('Mixed agentCfg + providers fallback', () => {
+  const slots = [
+    { slot: 'codex-1', authType: 'sub' },
+    { slot: 'codex-2', authType: 'api' },
+    { slot: 'gemini-1', authType: 'sub' },
+  ];
+  const agentCfg = {
+    'gemini-1': { model: 'gemini-3-pro-preview', auth_type: 'sub' },
+    // codex-1 and codex-2 NOT in agentCfg — will use providersList
+  };
+  const providersList = [
+    { name: 'codex-1', model: 'gpt-5.4' },
+    { name: 'codex-2', model: 'gpt-5.4' },
+    { name: 'gemini-1', model: 'gemini-3-pro-preview' },
+  ];
+
+  const result = deduplicateByModel(slots, agentCfg, providersList);
+
+  // codex-1: gpt-5.4 (from providers)
+  // codex-2: gpt-5.4 (from providers) — duplicate
+  // gemini-1: gemini-3-pro-preview (from agentCfg)
+  assert.strictEqual(result.unique.length, 2, 'Two unique models (codex-1, gemini-1)');
+  assert.strictEqual(result.duplicates.length, 1, 'One duplicate (codex-2)');
+  assert.ok(result.unique.some(s => s.slot === 'codex-1'), 'codex-1 kept');
+  assert.ok(result.unique.some(s => s.slot === 'gemini-1'), 'gemini-1 kept');
+  assert.strictEqual(result.duplicates[0].slot, 'codex-2', 'codex-2 is duplicate');
+});
+
 origLog('─'.repeat(50));
 origLog(`Results: ${passed} passed, ${failed} failed`);
 process.exit(failed > 0 ? 1 : 0);
