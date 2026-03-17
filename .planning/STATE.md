@@ -17,9 +17,11 @@ See: .planning/PROJECT.md
 | 318 | Replace fixed wall-clock quorum timeout with idle-based timeout | 2026-03-16 | a7bf282c | Verified | [318-replace-fixed-wall-clock-quorum-timeout-](./quick/318-replace-fixed-wall-clock-quorum-timeout-/) |
 | 319 | Wire hypothesis-layer-map.cjs and solve-wave-dag.cjs into nf-solve.cjs remediation wave ordering | 2026-03-16 | bcea6899 | Pending | [319-wire-hypothesis-layer-map-cjs-and-solve-](./quick/319-wire-hypothesis-layer-map-cjs-and-solve-/) |
 | 320 | Implement D→R scanner exclusion list and claim-type filter to reduce FPs | 2026-03-17 | 21b589f1 | Pending | [320-implement-d-r-scanner-exclusion-list-and](./quick/320-implement-d-r-scanner-exclusion-list-and/) |
+| 321 | Auto-commit regenerated formal artifacts in Stop hook (#30) | 2026-03-17 | 0b569d9f | Verified | [321-auto-commit-regenerated-formal-artifacts](./quick/321-auto-commit-regenerated-formal-artifacts/) |
 
 ## Session Log
 
+- 2026-03-17: Completed quick task 321: Auto-commit regenerated formal artifacts in Stop hook (#30)
 - 2026-03-17: Completed quick task 320: D→R scanner FP filter
 
 - 2026-03-16: Completed quick task 319: Wire hypothesis-layer-map.cjs and solve-wave-dag.cjs into nf-solve.cjs remediation wave ordering

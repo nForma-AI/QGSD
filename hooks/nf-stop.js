@@ -41,6 +41,52 @@ function appendConformanceEvent(event) {
   }
 }
 
+// Auto-commits dirty .planning/formal/ files before session ends.
+// Called post-decision — does NOT affect PASS/BLOCK quorum logic.
+// Fail-open: never blocks session exit on commit failure.
+function autoCommitFormalArtifacts() {
+  try {
+    const { spawnSync } = require('child_process');
+    const SPAWN_OPTS = { cwd: process.cwd(), timeout: 10000, stdio: ['ignore', 'pipe', 'pipe'] };
+
+    // 1. Check branch safety — skip on protected branches
+    const branchResult = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], SPAWN_OPTS);
+    const branch = (branchResult.stdout || '').toString().trim();
+    const protectedBranches = ['main', 'master'];
+    if (protectedBranches.includes(branch)) {
+      process.stderr.write('[nf] formal auto-commit skipped: protected branch ' + branch + '\n');
+      return;
+    }
+
+    // 2. Detect unstaged modified formal files
+    const diffResult = spawnSync('git', ['diff', '--name-only', '--', '.planning/formal/'], SPAWN_OPTS);
+    const unstagedFiles = (diffResult.stdout || '').toString().trim().split('\n').filter(Boolean);
+
+    // 3. Detect staged-only formal files
+    const stagedResult = spawnSync('git', ['diff', '--cached', '--name-only', '--', '.planning/formal/'], SPAWN_OPTS);
+    const stagedFiles = (stagedResult.stdout || '').toString().trim().split('\n').filter(Boolean);
+
+    // 4. Detect untracked formal files
+    const untrackedResult = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '.planning/formal/'], SPAWN_OPTS);
+    const untrackedFiles = (untrackedResult.stdout || '').toString().trim().split('\n').filter(Boolean);
+
+    // Combine and deduplicate (unstaged + staged + untracked)
+    const allFiles = [...new Set([...unstagedFiles, ...stagedFiles, ...untrackedFiles])];
+    if (allFiles.length === 0) return; // Nothing to commit — exit silently
+
+    // 4. Stage and commit via gsd-tools.cjs
+    const gsdToolsPath = resolveBin('gsd-tools.cjs');
+    const commitArgs = [gsdToolsPath, 'commit', 'chore: [auto] sync regenerated formal artifacts', '--files', ...allFiles];
+    const commitResult = spawnSync(process.execPath, commitArgs, SPAWN_OPTS);
+    if (commitResult.status !== 0) {
+      const errMsg = (commitResult.stderr || '').toString().trim();
+      process.stderr.write('[nf] formal auto-commit warning: exit ' + commitResult.status + (errMsg ? ' — ' + errMsg : '') + '\n');
+    }
+  } catch (acErr) {
+    process.stderr.write('[nf] formal auto-commit failed (fail-open): ' + (acErr.message || acErr) + '\n');
+  }
+}
+
 // Builds the regex that matches /nf:<cmd>, /gsd:<cmd>, or /qgsd:<cmd> in any text.
 function buildCommandPattern(quorumCommands) {
   const escaped = quorumCommands.map(c => c.replace(/-/g, '\\-'));
@@ -700,6 +746,14 @@ function main() {
         }
       } catch (evErr) {
         process.stderr.write('[nf] evidence refresh failed (fail-open): ' + (evErr.message || evErr) + '\n');
+      }
+
+      // Auto-commit dirty formal artifacts before session ends.
+      // Fail-open: never block session exit on commit failure.
+      try {
+        autoCommitFormalArtifacts();
+      } catch (acErr) {
+        process.stderr.write('[nf] formal auto-commit failed (fail-open): ' + (acErr.message || acErr) + '\n');
       }
 
       process.exit(0);

@@ -20,6 +20,8 @@
 npx @nforma.ai/nforma@latest
 ```
 
+Staging: `npx @nforma.ai/nforma@staging` · Optional: `npm install @huggingface/transformers` ([why?](#getting-started))
+
 **Requires Node.js 18+. Works on macOS and Linux.**
 
 <br>
