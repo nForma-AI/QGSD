@@ -52,6 +52,8 @@ const { updatePredictivePower, formatPredictivePowerSummary } = require('./predi
 const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
 const { CycleDetector } = require('./solve-cycle-detector.cjs');
 const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
+const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
+const { computeWaves } = require('./solve-wave-dag.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
@@ -939,6 +941,14 @@ function sweepCtoF() {
  * Returns { residual: N, detail: {...} }
  */
 function sweepTtoC() {
+  // Guard: if we're already running inside a node --test subprocess spawned by a
+  // previous sweepTtoC() call, return a skip immediately.  Without this, any test
+  // that calls sweepTtoC() (or computeResidual()) would trigger an infinite chain
+  // of recursive `node --test` subprocesses that never terminate.
+  if (process.env.NF_SOLVE_SWEEPTOC_ACTIVE) {
+    return { residual: 0, detail: { skipped: true, reason: 'recursive-guard: already running inside node --test' } };
+  }
+
   // Load configurable test runner settings
   const configPath = path.join(ROOT, '.planning', 'config.json');
   let tToCConfig = { runner: 'node-test', command: null, scope: 'all' };
@@ -1009,9 +1019,14 @@ function sweepTtoC() {
   let covDir = null;
   try {
     covDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-solve-cov-'));
-    spawnOpts.env = Object.assign({}, process.env, { NODE_V8_COVERAGE: covDir });
+    spawnOpts.env = Object.assign({}, process.env, { NODE_V8_COVERAGE: covDir, NF_SOLVE_SWEEPTOC_ACTIVE: '1' });
   } catch (e) {
     covDir = null; // fail-open: continue without coverage
+  }
+
+  // Ensure guard env var is always set, even when covDir creation failed
+  if (!spawnOpts.env) {
+    spawnOpts.env = Object.assign({}, process.env, { NF_SOLVE_SWEEPTOC_ACTIVE: '1' });
   }
 
   let result;
@@ -3302,8 +3317,9 @@ function computeResidual() {
  * Returns { actions_taken: [...], stubs_generated: N }
  * @param {Object} residual - residual object from computeResidual()
  * @param {Set<string>} [oscillatingSet] - layer keys detected as oscillating by CycleDetector
+ * @param {Array<{wave: number, layers: string[], sequential?: boolean}>} [waveOrder] - wave objects from computeWaves; null/undefined = DEFAULT_WAVES
  */
-function autoClose(residual, oscillatingSet) {
+function autoClose(residual, oscillatingSet, waveOrder) {
   const actions = [];
 
   // Read oscillation verdicts for layer gating (fail-open)
@@ -3324,216 +3340,237 @@ function autoClose(residual, oscillatingSet) {
     return false;
   }
 
-  // F->T gaps: generate test stubs
-  if (isLayerBlocked('f_to_t')) {
-    actions.push('OSCILLATION BLOCKED: f_to_t \u2014 automated remediation suspended, human review required');
-  } else if (residual.f_to_t.residual > 0) {
-    const result = spawnTool('bin/formal-test-sync.cjs', []);
-    if (result.ok) {
-      actions.push(
-        'Generated test stubs for ' +
-          residual.f_to_t.residual +
-          ' uncovered invariants'
-      );
-    } else {
-      actions.push(
-        'Could not auto-generate test stubs for ' +
-          residual.f_to_t.residual +
-          ' invariants (formal-test-sync.cjs failed)'
-      );
-    }
-  }
+  // ── LAYER_HANDLERS dispatch map ──────────────────────────────────────────
+  // Each handler receives (residual, actions, isLayerBlocked) and appends to actions.
+  // Logic is moved verbatim from the original sequential if-chain.
 
-  // F->T stubs upgrade: implement TODO stubs with real test logic
-  if (!isLayerBlocked('f_to_t') && residual.f_to_t.residual > 0) {
-    const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
-    if (fs.existsSync(implPath)) {
-      const implResult = spawnSync(process.execPath, [implPath], {
-        encoding: 'utf8', cwd: ROOT, timeout: 60000, stdio: 'pipe'
-      });
-      if (implResult.status === 0) {
-        actions.push('Upgraded TODO stubs: ' + (implResult.stdout || '').trim());
+  const LAYER_HANDLERS = {
+    f_to_t: (res, acts, blocked) => {
+      // F->T gaps: generate test stubs
+      if (blocked('f_to_t')) {
+        acts.push('OSCILLATION BLOCKED: f_to_t \u2014 automated remediation suspended, human review required');
+        return;
       }
-    }
-  }
-
-  // C->F mismatches: log but do not auto-fix
-  if (residual.c_to_f.residual > 0) {
-    actions.push(
-      'Cannot auto-fix ' +
-        residual.c_to_f.residual +
-        ' constant mismatch(es) — manual review required'
-    );
-  }
-
-  // T->C failures: log but do not auto-fix
-  if (residual.t_to_c.residual > 0) {
-    actions.push(
-      residual.t_to_c.residual + ' test failure(s) — manual fix required'
-    );
-  }
-
-  // R->F gaps: log with triage info
-  if (residual.r_to_f.residual > 0) {
-    const triageDetail = residual.r_to_f.detail.triage;
-    if (triageDetail) {
-      actions.push(
-        triageDetail.high + ' HIGH + ' + triageDetail.medium +
-          ' MEDIUM priority requirements lack formal coverage'
-      );
-    } else {
-      actions.push(
-        residual.r_to_f.residual +
-          ' requirement(s) lack formal model coverage — manual modeling required'
-      );
-    }
-  }
-
-  // F->C failures: log but do not auto-fix
-  if (residual.f_to_c.residual > 0) {
-    actions.push(
-      residual.f_to_c.residual +
-        ' formal verification failure(s) — manual fix required'
-    );
-  }
-
-  // R->D gaps: log but do not auto-fix (manual review)
-  if (residual.r_to_d.residual > 0) {
-    actions.push(
-      residual.r_to_d.residual +
-        ' requirement(s) undocumented in developer docs — manual review required'
-    );
-  }
-
-  // D->C stale claims: log but do not auto-fix (manual review)
-  if (residual.d_to_c.residual > 0) {
-    actions.push(
-      residual.d_to_c.residual +
-        ' stale structural claim(s) in docs — manual review required'
-    );
-  }
-
-  // P->F divergence: dispatch parameter updates or flag investigations
-  if (isLayerBlocked('p_to_f')) {
-    actions.push('OSCILLATION BLOCKED: p_to_f \u2014 automated remediation suspended, human review required');
-  } else if (residual.p_to_f && residual.p_to_f.residual > 0) {
-    const result = autoClosePtoF(residual.p_to_f, {
-      spawnTool: spawnTool,
-    });
-    for (const action of result.actions_taken) {
-      actions.push(action);
-    }
-  }
-
-  // Regenerate TLA+ config files from XState machine (generate-tla-cfg.cjs)
-  try {
-    const machineFile = path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
-    if (fs.existsSync(machineFile)) {
-      const cfgResult = spawnTool('bin/generate-tla-cfg.cjs', []);
-      if (cfgResult.ok) {
-        actions.push('Regenerated TLA+ config files (MCsafety.cfg, MCliveness.cfg)');
+      if (res.f_to_t.residual > 0) {
+        const result = spawnTool('bin/formal-test-sync.cjs', []);
+        if (result.ok) {
+          acts.push(
+            'Generated test stubs for ' +
+              res.f_to_t.residual +
+              ' uncovered invariants'
+          );
+        } else {
+          acts.push(
+            'Could not auto-generate test stubs for ' +
+              res.f_to_t.residual +
+              ' invariants (formal-test-sync.cjs failed)'
+          );
+        }
       }
-    }
-  } catch (e) {
-    // fail-open: TLA+ config generation is best-effort
-  }
-
-  // Formal model lint (lint-formal-models.cjs) — catch quality issues after generation
-  if (residual.formal_lint && residual.formal_lint.residual > 0) {
-    actions.push(
-      residual.formal_lint.residual +
-        ' formal model lint warning(s) — review fat/unbounded/complex models'
-    );
-  }
-
-  // Per-model gate maturity: create conditions for promotion (GATE-02)
-  // Produces observable signals — never writes gate_maturity directly.
-  if (isLayerBlocked('per_model_gates')) {
-    actions.push('OSCILLATION BLOCKED: per_model_gates \u2014 automated remediation suspended, human review required');
-  } else if (residual.per_model_gates && residual.per_model_gates.residual > 0) {
-    try {
-      const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
-      const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
-      const registryFile = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-      const models = registryFile.models || registryFile;
-      const modelKeys = Object.keys(models).filter(k => k.startsWith('.'));
-
-      // Import inferSourceLayer from promote-gate-maturity.cjs
-      const { inferSourceLayer: inferLayer } = require('./promote-gate-maturity.cjs');
-
-      // Signal 1: fill missing source_layer via inferSourceLayer heuristic
-      let layersFilled = 0;
-      for (const modelPath of modelKeys) {
-        const model = models[modelPath];
-        if (!model.source_layer) {
-          const inferred = inferLayer(modelPath);
-          if (inferred) {
-            model.source_layer = inferred;
-            model.last_updated = new Date().toISOString();
-            layersFilled++;
+      // F->T stubs upgrade: implement TODO stubs with real test logic
+      if (!blocked('f_to_t') && res.f_to_t.residual > 0) {
+        const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
+        if (fs.existsSync(implPath)) {
+          const implResult = spawnSync(process.execPath, [implPath], {
+            encoding: 'utf8', cwd: ROOT, timeout: 60000, stdio: 'pipe'
+          });
+          if (implResult.status === 0) {
+            acts.push('Upgraded TODO stubs: ' + (implResult.stdout || '').trim());
           }
         }
       }
+    },
 
-      // Signal 2: scan model files for semantic declarations
-      const DECL_PATTERNS = {
-        '.als': /\b(sig|pred|fact|assert|fun)\b/,
-        '.tla': /\b(VARIABLE|CONSTANT|Init|Next|Spec)\b/,
-        '.pm':  /\b(module|rewards|endmodule)\b/,
-        '.props': /\b(P\s*=|filter|Pmax|Pmin)\b/,
-      };
-
-      let manifest = null;
-      if (fs.existsSync(manifestPath)) {
-        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    c_to_f: (res, acts, blocked) => {
+      // C->F mismatches: log but do not auto-fix
+      if (res.c_to_f.residual > 0) {
+        acts.push(
+          'Cannot auto-fix ' +
+            res.c_to_f.residual +
+            ' constant mismatch(es) \u2014 manual review required'
+        );
       }
+    },
 
-      let declsDetected = 0;
-      for (const modelPath of modelKeys) {
-        const ext = path.extname(modelPath);
-        const pattern = DECL_PATTERNS[ext];
-        if (!pattern) continue;
+    t_to_c: (res, acts, blocked) => {
+      // T->C failures: log but do not auto-fix
+      if (res.t_to_c.residual > 0) {
+        acts.push(
+          res.t_to_c.residual + ' test failure(s) \u2014 manual fix required'
+        );
+      }
+    },
 
-        const fullPath = path.join(ROOT, modelPath);
-        if (!fs.existsSync(fullPath)) continue;
+    r_to_f: (res, acts, blocked) => {
+      // R->F gaps: log with triage info
+      if (res.r_to_f.residual > 0) {
+        const triageDetail = res.r_to_f.detail.triage;
+        if (triageDetail) {
+          acts.push(
+            triageDetail.high + ' HIGH + ' + triageDetail.medium +
+              ' MEDIUM priority requirements lack formal coverage'
+          );
+        } else {
+          acts.push(
+            res.r_to_f.residual +
+              ' requirement(s) lack formal model coverage \u2014 manual modeling required'
+          );
+        }
+      }
+    },
 
+    f_to_c: (res, acts, blocked) => {
+      // F->C failures: log but do not auto-fix
+      if (res.f_to_c.residual > 0) {
+        acts.push(
+          res.f_to_c.residual +
+            ' formal verification failure(s) \u2014 manual fix required'
+        );
+      }
+    },
+
+    r_to_d: (res, acts, blocked) => {
+      // R->D gaps: log but do not auto-fix (manual review)
+      if (res.r_to_d.residual > 0) {
+        acts.push(
+          res.r_to_d.residual +
+            ' requirement(s) undocumented in developer docs \u2014 manual review required'
+        );
+      }
+    },
+
+    d_to_c: (res, acts, blocked) => {
+      // D->C stale claims: log but do not auto-fix (manual review)
+      if (res.d_to_c.residual > 0) {
+        acts.push(
+          res.d_to_c.residual +
+            ' stale structural claim(s) in docs \u2014 manual review required'
+        );
+      }
+    },
+
+    p_to_f: (res, acts, blocked) => {
+      // P->F divergence: dispatch parameter updates or flag investigations
+      if (blocked('p_to_f')) {
+        acts.push('OSCILLATION BLOCKED: p_to_f \u2014 automated remediation suspended, human review required');
+      } else if (res.p_to_f && res.p_to_f.residual > 0) {
+        const result = autoClosePtoF(res.p_to_f, {
+          spawnTool: spawnTool,
+        });
+        for (const action of result.actions_taken) {
+          acts.push(action);
+        }
+      }
+    },
+
+    per_model_gates: (res, acts, blocked) => {
+      // Per-model gate maturity: create conditions for promotion (GATE-02)
+      // Produces observable signals -- never writes gate_maturity directly.
+      if (blocked('per_model_gates')) {
+        acts.push('OSCILLATION BLOCKED: per_model_gates \u2014 automated remediation suspended, human review required');
+      } else if (res.per_model_gates && res.per_model_gates.residual > 0) {
         try {
-          const content = fs.readFileSync(fullPath, 'utf8');
-          if (pattern.test(content)) {
-            // Update layer-manifest if model is currently ungrounded
-            if (manifest) {
-              for (const layer of Object.values(manifest.layers || {})) {
-                for (const entry of (Array.isArray(layer) ? layer : [])) {
-                  if (entry.path === modelPath && entry.grounding_status === 'ungrounded') {
-                    entry.grounding_status = 'has_semantic_declarations';
-                    declsDetected++;
-                  }
-                }
+          const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+          const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
+          const registryFile = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+          const models = registryFile.models || registryFile;
+          const modelKeys = Object.keys(models).filter(k => k.startsWith('.'));
+
+          // Import inferSourceLayer from promote-gate-maturity.cjs
+          const { inferSourceLayer: inferLayer } = require('./promote-gate-maturity.cjs');
+
+          // Signal 1: fill missing source_layer via inferSourceLayer heuristic
+          let layersFilled = 0;
+          for (const modelPath of modelKeys) {
+            const model = models[modelPath];
+            if (!model.source_layer) {
+              const inferred = inferLayer(modelPath);
+              if (inferred) {
+                model.source_layer = inferred;
+                model.last_updated = new Date().toISOString();
+                layersFilled++;
               }
             }
           }
+
+          // Signal 2: scan model files for semantic declarations
+          const DECL_PATTERNS = {
+            '.als': /\b(sig|pred|fact|assert|fun)\b/,
+            '.tla': /\b(VARIABLE|CONSTANT|Init|Next|Spec)\b/,
+            '.pm':  /\b(module|rewards|endmodule)\b/,
+            '.props': /\b(P\s*=|filter|Pmax|Pmin)\b/,
+          };
+
+          let manifest = null;
+          if (fs.existsSync(manifestPath)) {
+            manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          }
+
+          let declsDetected = 0;
+          for (const modelPath of modelKeys) {
+            const ext = path.extname(modelPath);
+            const pattern = DECL_PATTERNS[ext];
+            if (!pattern) continue;
+
+            const fullPath = path.join(ROOT, modelPath);
+            if (!fs.existsSync(fullPath)) continue;
+
+            try {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              if (pattern.test(content)) {
+                // Update layer-manifest if model is currently ungrounded
+                if (manifest) {
+                  for (const layer of Object.values(manifest.layers || {})) {
+                    for (const entry of (Array.isArray(layer) ? layer : [])) {
+                      if (entry.path === modelPath && entry.grounding_status === 'ungrounded') {
+                        entry.grounding_status = 'has_semantic_declarations';
+                        declsDetected++;
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              // fail-open: skip unreadable files
+            }
+          }
+
+          // Write back only if changes were made
+          if (layersFilled > 0) {
+            fs.writeFileSync(registryPath, JSON.stringify(registryFile, null, 2) + '\n');
+            acts.push('Filled source_layer for ' + layersFilled + ' model(s) via inferSourceLayer');
+          }
+          if (declsDetected > 0 && manifest) {
+            fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+            acts.push('Detected semantic declarations in ' + declsDetected + ' model(s) \u2014 updated layer-manifest');
+          }
+          if (layersFilled === 0 && declsDetected === 0) {
+            acts.push(res.per_model_gates.residual + ' model(s) at maturity 0 \u2014 no auto-fixable signals found');
+          }
         } catch (e) {
-          // fail-open: skip unreadable files
+          // fail-open: per-model gate remediation is best-effort
+          acts.push('Per-model gate remediation failed: ' + e.message);
         }
       }
+    },
+  };
 
-      // Write back only if changes were made
-      if (layersFilled > 0) {
-        fs.writeFileSync(registryPath, JSON.stringify(registryFile, null, 2) + '\n');
-        actions.push('Filled source_layer for ' + layersFilled + ' model(s) via inferSourceLayer');
+  // ── Wave-aware dispatch ────────────────────────────────────────────────────
+  // Default wave structure: single wave with original hardcoded sequence
+  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates'] }];
+
+  const waves = waveOrder || DEFAULT_WAVES;
+  for (const w of waves) {
+    // Process layers within each wave in order (priority-weighted by computeWaves)
+    for (const layerKey of w.layers) {
+      const handler = LAYER_HANDLERS[layerKey];
+      if (handler) {
+        handler(residual, actions, isLayerBlocked);
       }
-      if (declsDetected > 0 && manifest) {
-        fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
-        actions.push('Detected semantic declarations in ' + declsDetected + ' model(s) — updated layer-manifest');
-      }
-      if (layersFilled === 0 && declsDetected === 0) {
-        actions.push(residual.per_model_gates.residual + ' model(s) at maturity 0 — no auto-fixable signals found');
-      }
-    } catch (e) {
-      // fail-open: per-model gate remediation is best-effort
-      actions.push('Per-model gate remediation failed: ' + e.message);
     }
   }
+
+  // ── Cross-cutting concerns (not layer-specific) ────────────────────────────
 
   // Evidence readiness check — inform whether evidence supports promotion
   try {
@@ -4616,8 +4653,26 @@ function main() {
 
     // Auto-close if not report-only and not last iteration
     if (!reportOnly) {
-      const closeResult = autoClose(residual, oscillatingSet);
+      // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
+      let waveOrder = null;
+      try {
+        const transitions = loadHypothesisTransitions(ROOT);
+        const priorityWeights = computeLayerPriorityWeights(transitions);
+        const computedWaves = computeWaves(residual, priorityWeights);
+        if (computedWaves.length > 0) {
+          waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
+          process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
+            (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
+            '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+        }
+      } catch (e) {
+        // fail-open: wave ordering failure means autoClose uses default order
+        process.stderr.write(TAG + ' WARNING: wave ordering failed: ' + e.message + '\n');
+      }
+
+      const closeResult = autoClose(residual, oscillatingSet, waveOrder);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
+      iterations[iterations.length - 1].wave_order = waveOrder;
     } else {
       break; // report-only = single sweep, no loop
     }
@@ -4663,7 +4718,7 @@ function main() {
   // FPTUNE-01: Record session history and compute FP rates
   const scannerStats = computeScannerStats(classificationsByCategory);
   const classPath = path.join(ROOT, '.planning', 'formal', 'solve-classifications.json');
-  if (!DRY_RUN_FLAG) {
+  if (!reportOnly) {
     recordSessionHistory(classPath, scannerStats);
   }
 
@@ -4671,7 +4726,7 @@ function main() {
   const fpRates = computeFPRates(
     (() => { try { return JSON.parse(fs.readFileSync(classPath, 'utf8')).session_history || []; } catch (_) { return []; } })()
   );
-  if (!DRY_RUN_FLAG) {
+  if (!reportOnly) {
     const tuningChanges = applyFPTuning(classPath, fpRates);
     if (tuningChanges.length > 0) {
       for (const c of tuningChanges) {
@@ -4836,14 +4891,18 @@ function main() {
   // Persist session summary before stdout/exit
   persistSessionSummary(reportText, jsonText, converged, iterations);
 
-  if (jsonMode) {
-    process.stdout.write(jsonText + '\n');
-  } else {
-    process.stdout.write(reportText);
-  }
+  const exitCode = finalResidual.total > 0 ? 1 : 0;
+  const outputText = jsonMode ? (jsonText + '\n') : reportText;
 
-  // Exit with non-zero if residual > 0 (signals gaps remain)
-  process.exit(finalResidual.total > 0 ? 1 : 0);
+  // Drain stdout before exit to prevent pipe truncation (process.exit() does not
+  // guarantee async stdout buffers are flushed when writing to a pipe/spawnSync).
+  if (process.stdout.write(outputText)) {
+    // Write was synchronous (no backpressure) — exit immediately
+    process.exit(exitCode);
+  } else {
+    // Write is buffered — wait for drain before exiting
+    process.stdout.once('drain', () => process.exit(exitCode));
+  }
 }
 
 // ── Session Persistence ──────────────────────────────────────────────────────
