@@ -947,7 +947,7 @@ process.exit(1);
     try {
       // Run hook with NF_SKIP_PREFLIGHT=0 to actually run preflight
       const payload = JSON.stringify({ prompt: '/nf:plan-phase test', cwd: tempDir });
-      const promoteEnv = { ...process.env, NF_SKIP_PREFLIGHT: '0' };
+      const promoteEnv = { ...process.env, NF_SKIP_PREFLIGHT: '0', HOME: tempDir };
       const promoteResult = spawnSync('node', [HOOK_PATH], {
         input: payload,
         encoding: 'utf8',

@@ -522,15 +522,16 @@ process.stdin.on('end', () => {
       // DISP-01: Preflight filter — probe CLI-backed slots using quorum-preflight.cjs --all.
       // Covers Layer 1 (binary probe) + Layer 2 (upstream API probe).
       // Fail-open: preflight failures never block dispatch.
+      const originalCappedSlotNames = new Set(cappedSlots.map(s => s.slot));
       const preflightResult = runPreflightFilter(cappedSlots);
       cappedSlots = preflightResult.filteredSlots;
 
       // SHORT-CIRCUIT: If preflight reports all capped slots down, try promoting remaining slots.
       // If promoted slots also fail, emit all-down message and exit.
       if (preflightResult.allDown && orderedSlots.length > 0) {
-        // Compute remainingSlots: slots from orderedSlots that are NOT in cappedSlots.
-        // cappedSlots is orderedSlots.slice(0, externalSlotCap), so remaining are those beyond that slice.
-        const cappedSlotNames = new Set(cappedSlots.map(s => s.slot));
+        // Compute remainingSlots: slots from orderedSlots that were NOT in the original capped set.
+        // Use originalCappedSlotNames (pre-filter) so failed slots aren't re-promoted.
+        const cappedSlotNames = originalCappedSlotNames;
         const remainingSlots = orderedSlots.filter(s => !cappedSlotNames.has(s.slot));
 
         if (remainingSlots.length > 0) {
