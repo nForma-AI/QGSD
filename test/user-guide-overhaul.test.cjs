@@ -1,4 +1,5 @@
 // test/user-guide-overhaul.test.cjs
+/** @requirement GUIDE-01 — User Guide TUI screenshots cross-referenced to features */
 const { describe, it } = require('node:test');
 const { strict: assert } = require('node:assert');
 const fs = require('node:fs');
