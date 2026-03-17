@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-17T13:22:24.447Z",
+  "generated": "2026-03-17T13:27:00.517Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,8 +84,8 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-17T13:06:14.590Z",
-      "hash": "461060cd"
+      "mtime": "2026-03-17T13:22:27.116Z",
+      "hash": "bfe0cbac"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
@@ -124,7 +124,7 @@
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-17T13:10:07.335Z"
+      "mtime": "2026-03-17T13:22:26.260Z"
     },
     "code-source-annotations": {
       "mtime": "2026-03-17T12:54:03.973Z"
