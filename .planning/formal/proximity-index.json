@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-17T08:00:05.470Z",
+  "generated": "2026-03-17T12:50:45.529Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,50 +84,50 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-17T08:00:05.348Z",
-      "hash": "8d5a13d2"
+      "mtime": "2026-03-17T12:50:44.111Z",
+      "hash": "b6f912ee"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-17T08:00:05.314Z",
-      "hash": "968a20ab"
+      "mtime": "2026-03-17T12:50:43.928Z",
+      "hash": "2196311a"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-17T07:59:40.781Z",
-      "hash": "775404d2"
+      "mtime": "2026-03-17T12:50:27.186Z",
+      "hash": "873a6bd7"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-17T07:59:51.010Z",
-      "hash": "7e4528de"
+      "mtime": "2026-03-17T12:49:42.440Z",
+      "hash": "c1d3fc76"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-17T07:59:48.357Z",
-      "hash": "6f162fca"
+      "mtime": "2026-03-17T12:39:27.123Z",
+      "hash": "279cd805"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-17T07:59:33.738Z",
-      "hash": "7be7f5a6"
+      "mtime": "2026-03-17T12:50:00.203Z",
+      "hash": "17c0bbc6"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-17T08:00:05.348Z"
+      "mtime": "2026-03-17T12:50:44.111Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-17T07:59:58.418Z"
+      "mtime": "2026-03-17T12:50:34.905Z"
     }
   },
   "nodes": {
@@ -724,17 +724,17 @@
           "source": "scope.json"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:643",
+          "to": "code_line::hooks/nf-prompt.js:645",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:733",
+          "to": "code_line::hooks/nf-prompt.js:735",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:918",
+          "to": "code_line::hooks/nf-prompt.js:920",
           "rel": "contains",
           "source": "instrumentation-map"
         }
@@ -50212,9 +50212,9 @@
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:643": {
+    "code_line::hooks/nf-prompt.js:645": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:643",
+      "id": "hooks/nf-prompt.js:645",
       "edges": [
         {
           "to": "formal_action::cache_hit",
@@ -50233,15 +50233,15 @@
       "id": "cache_hit",
       "edges": [
         {
-          "to": "code_line::hooks/nf-prompt.js:643",
+          "to": "code_line::hooks/nf-prompt.js:645",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:733": {
+    "code_line::hooks/nf-prompt.js:735": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:733",
+      "id": "hooks/nf-prompt.js:735",
       "edges": [
         {
           "to": "formal_action::quorum_fallback_t1_required",
@@ -50265,15 +50265,15 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:733",
+          "to": "code_line::hooks/nf-prompt.js:735",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:918": {
+    "code_line::hooks/nf-prompt.js:920": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:918",
+      "id": "hooks/nf-prompt.js:920",
       "edges": [
         {
           "to": "formal_action::quorum_start",
@@ -50297,7 +50297,7 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:918",
+          "to": "code_line::hooks/nf-prompt.js:920",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
