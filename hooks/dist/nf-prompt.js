@@ -136,8 +136,8 @@ function mapRiskLevelToCount(riskLevel, maxSize) {
 // Returns slot names that have failed within the last ttlMinutes.
 // Reads quorum-failures.json written by call-quorum-slot.cjs on every failure.
 // Covers ALL error types (TIMEOUT, AUTH, QUOTA, SPAWN_ERROR, CLI_SYNTAX, UNKNOWN).
-// The 30-minute TTL ensures transient failures self-heal without operator intervention.
-function getRecentlyFailedSlots(cwd, ttlMinutes = 30) {
+// The 5-minute TTL ensures transient failures self-heal quickly without operator intervention.
+function getRecentlyFailedSlots(cwd, ttlMinutes = 5) {
   try {
     const pp = require(resolveBin('planning-paths.cjs'));
     const logPath = pp.resolveWithFallback(cwd, 'quorum-failures');
@@ -292,13 +292,22 @@ function sortBySuccessRate(slots, cwd) {
 // Returns { unique: [...], duplicates: [...] }, where unique are kept in orderedSlots
 // and duplicates are candidates for the MODEL-DEDUP fallback tier.
 // Respects auth_type sort order: first unique model per auth_type wins (sub agents preferred).
-function deduplicateByModel(orderedSlots, agentCfg) {
+// Falls back to providersList when agentCfg lacks a slot's model info.
+function deduplicateByModel(orderedSlots, agentCfg, providersList) {
   const seenModels = new Map(); // model string -> first slot name that claimed it
   const unique = [];
   const duplicates = [];
 
+  // Build providers lookup map at the top
+  const providersMap = new Map();
+  if (Array.isArray(providersList)) {
+    for (const p of providersList) {
+      if (p.name && p.model) providersMap.set(p.name, p.model);
+    }
+  }
+
   for (const slot of orderedSlots) {
-    const model = (agentCfg[slot.slot]?.model || 'unknown');
+    const model = (agentCfg[slot.slot]?.model || providersMap.get(slot.slot) || 'unknown');
     // Never deduplicate slots with unknown models — we can't assert they're duplicates
     if (model === 'unknown') {
       unique.push(slot);
@@ -375,6 +384,7 @@ function isBreakerActive(cwd) {
   } catch { return false; }
 }
 
+if (require.main === module) {
 let raw = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => raw += chunk);
@@ -512,21 +522,56 @@ process.stdin.on('end', () => {
       // DISP-01: Preflight filter — probe CLI-backed slots using quorum-preflight.cjs --all.
       // Covers Layer 1 (binary probe) + Layer 2 (upstream API probe).
       // Fail-open: preflight failures never block dispatch.
+      const originalCappedSlotNames = new Set(cappedSlots.map(s => s.slot));
       const preflightResult = runPreflightFilter(cappedSlots);
       cappedSlots = preflightResult.filteredSlots;
 
-      // SHORT-CIRCUIT: If preflight reports all slots down, skip full dispatch and inject a
-      // minimal "all slots unavailable" message so Claude can proceed without quorum overhead.
+      // SHORT-CIRCUIT: If preflight reports all capped slots down, try promoting remaining slots.
+      // If promoted slots also fail, emit all-down message and exit.
       if (preflightResult.allDown && orderedSlots.length > 0) {
-        const unavailList = preflightResult.unavailableSlots.map(u => u.name + ': ' + u.reason).join('; ');
-        const allDownInstructions = `<!-- NF_ALL_SLOTS_DOWN -->\nAll quorum slots are currently unavailable (preflight probe failed for: ${unavailList}). Proceeding without quorum — Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output.`;
-        process.stdout.write(JSON.stringify({
-          hookSpecificOutput: {
-            hookEventName: 'UserPromptSubmit',
-            additionalContext: allDownInstructions,
+        // Compute remainingSlots: slots from orderedSlots that were NOT in the original capped set.
+        // Use originalCappedSlotNames (pre-filter) so failed slots aren't re-promoted.
+        const cappedSlotNames = originalCappedSlotNames;
+        const remainingSlots = orderedSlots.filter(s => !cappedSlotNames.has(s.slot));
+
+        if (remainingSlots.length > 0) {
+          // Promote remaining slots up to externalSlotCap
+          const promotedSlots = remainingSlots.slice(0, externalSlotCap);
+          const promotedPreflightResult = runPreflightFilter(promotedSlots);
+          const promotedFiltered = promotedPreflightResult.filteredSlots;
+
+          if (promotedFiltered.length > 0) {
+            // Promoted slots have survivors — use them instead of exiting
+            process.stderr.write(`[nf-dispatch] ALLDOWN-PROMOTE: promoted ${promotedSlots.length} T2 slots after sub-type primaries failed preflight\n`);
+            cappedSlots = promotedFiltered;
+            // Continue to normal dispatch flow instead of exiting
+          } else {
+            // Promoted slots also all failed — emit all-down and exit
+            const allFailedSlots = cappedSlots.concat(promotedSlots);
+            const allFailedNames = new Set(allFailedSlots.map(s => s.slot));
+            const combinedUnavail = preflightResult.unavailableSlots.filter(u => allFailedNames.has(u.name));
+            const unavailList = combinedUnavail.map(u => u.name + ': ' + u.reason).join('; ');
+            const allDownInstructions = `<!-- NF_ALL_SLOTS_DOWN -->\nAll quorum slots are currently unavailable (preflight probe failed for: ${unavailList}). Proceeding without quorum — Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output.`;
+            process.stdout.write(JSON.stringify({
+              hookSpecificOutput: {
+                hookEventName: 'UserPromptSubmit',
+                additionalContext: allDownInstructions,
+              }
+            }));
+            process.exit(0);
           }
-        }));
-        process.exit(0);
+        } else {
+          // No remaining slots to promote — emit all-down and exit (original behavior)
+          const unavailList = preflightResult.unavailableSlots.map(u => u.name + ': ' + u.reason).join('; ');
+          const allDownInstructions = `<!-- NF_ALL_SLOTS_DOWN -->\nAll quorum slots are currently unavailable (preflight probe failed for: ${unavailList}). Proceeding without quorum — Claude's vote is the quorum. Write <!-- GSD_DECISION --> in your final output.`;
+          process.stdout.write(JSON.stringify({
+            hookSpecificOutput: {
+              hookEventName: 'UserPromptSubmit',
+              additionalContext: allDownInstructions,
+            }
+          }));
+          process.exit(0);
+        }
       }
 
       // Filter out recently failed slots (all error types, not just TIMEOUT).
@@ -643,7 +688,8 @@ process.stdin.on('end', () => {
       // Slots sharing the same underlying model are demoted to fallback tier for LLM diversity.
       // This happens AFTER the externalSlotCap slice to ensure we maximize model diversity
       // within the fan-out budget.
-      const dedupResult = deduplicateByModel(cappedSlots, agentCfg);
+      const providersList = findProviders();
+      const dedupResult = deduplicateByModel(cappedSlots, agentCfg, providersList);
       const uniqueSlots = dedupResult.unique;
       const modelDedupSlots = dedupResult.duplicates;
 
@@ -721,7 +767,7 @@ process.stdin.on('end', () => {
       let skipNote = '';
       if (recentFailures.length > 0) {
         const failureDetail = recentFailures.map(f => `${f.slot} (${f.error_type}: ${(f.pattern || '').slice(0, 40)})`).join('; ');
-        skipNote += `SKIP (FAILED < 30min ago): [${failureDetail}] — do NOT dispatch these slots in ANY tier.\n`;
+        skipNote += `SKIP (FAILED < 5min ago): [${failureDetail}] — do NOT dispatch these slots in ANY tier.\n`;
         skippedSlots.push(...recentFailures.map(f => ({ slot: f.slot, reason: f.error_type })));
       }
       if (preflightResult.unavailableSlots && preflightResult.unavailableSlots.length > 0) {
@@ -893,10 +939,11 @@ process.stdin.on('end', () => {
     process.exit(0); // Fail-open on any error
   }
 });
+} // end require.main === module guard
 
 // Export helpers for unit testing (tree-shaken at runtime — no cost)
 // The file is a script and exits via process.exit() before reaching this line in normal operation.
-// When require()d by tests, the stdin handler is registered but never fires, so module.exports is set.
+// When require()d by tests, stdin handlers are not registered (guarded by require.main check).
 if (typeof module !== 'undefined') {
   module.exports = module.exports || {};
   module.exports.mapRiskLevelToCount = mapRiskLevelToCount;

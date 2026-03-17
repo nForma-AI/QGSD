@@ -231,11 +231,22 @@ When executor returns a checkpoint AND `AUTO_CFG` is `"true"`:
 - **human-verify** → Run quorum consensus gate:
   1. Extract checkpoint details: `what-built` and `how-to-verify` from the checkpoint task XML. These MUST be included verbatim in the quorum question so workers have sufficient context for informed decisions.
   2. Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): can each verification criterion be confirmed via available tools? State your analysis as 1-2 sentences to share with external voters.
-  3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+  3. Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
      - Mode A — pure question
      - Question: "Checkpoint verification for auto-mode: [what-built]. Criteria: [how-to-verify]. Can each criterion be confirmed programmatically using available tools (grep, file inspection, test output, curl)? Vote APPROVE if all criteria are verifiable and met, or BLOCK if any criterion genuinely requires human eyes."
      - Include the full checkpoint task XML as context (what-built, how-to-verify, resume-signal) so workers can evaluate each criterion independently.
      - risk_level: Use `medium` (yielding FAN_OUT_COUNT=3) unless the task envelope specifies a different risk_level, in which case inherit it. This gives 2 external workers + Claude for a 3-way consensus.
+     - **Exact YAML format for worker prompts** (from reference section 4):
+       ```yaml
+       slot: <slotName>
+       round: <round_number>
+       timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+       repo_dir: <absolute path to project root>
+       mode: A
+       question: "Checkpoint verification for auto-mode..."
+       prior_positions: |
+         [included from Round 2 onward]
+       ```
      - Build `$DISPATCH_LIST` (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Dispatch as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
      - Synthesize results inline, deliberate up to 10 rounds per R3.3
      - **Unanimous gate (CE-3): 100% of valid external voters must vote APPROVE. Claude's advisory analysis is excluded from the tally. A BLOCK from any external voter is absolute (CE-2) — escalate to user.**
@@ -482,10 +493,21 @@ Before escalating to the user, run a quorum resolution loop to attempt automated
 
 2. Form your ADVISORY analysis (per CE-1 — not a vote in the tally): can each item be verified via available tools (grep, file reads, quorum-test)? State your analysis as 1-2 sentences to share with external voters.
 
-3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+3. Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
    - Mode A — pure question
    - Question: "Can each human_needed item from phase ${PHASE_NUMBER} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
+   - **Exact YAML format for worker prompts** (from reference section 4):
+     ```yaml
+     slot: <slotName>
+     round: <round_number>
+     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     repo_dir: <absolute path to project root>
+     mode: A
+     question: "Can each human_needed item from phase..."
+     prior_positions: |
+       [included from Round 2 onward]
+     ```
    - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 
@@ -513,9 +535,20 @@ Read the gaps section from `${PHASE_DIR}/${PHASE_NUM}-VERIFICATION.md`. Extract 
 
 Form your ADVISORY analysis (per CE-1 — not a vote in the tally): are these gaps auto-resolvable? State your analysis as 1-2 sentences to share with external voters.
 
-Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
+Run R3 quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
 - Mode A — compact prompt to preserve context budget
 - Question: "Phase {PHASE_NUMBER} verification found {N} gaps. Are these auto-resolvable via plan-phase --gaps Task spawn, or do they require human review? Gaps: {1-sentence-per-gap — max 20 words each}. Vote APPROVE (auto-resolvable) or BLOCK (needs human)."
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: "Phase {PHASE_NUMBER} verification found {N} gaps..."
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 

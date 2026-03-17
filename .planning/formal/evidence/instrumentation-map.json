@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-14T09:37:47.288Z",
+  "generated": "2026-03-17T07:59:50.999Z",
   "emission_points": [
     {
       "file": "hooks/nf-prompt.js",
-      "line_number": 600,
+      "line_number": 643,
       "action": "cache_hit",
       "state_variables": [
         "verdict"
@@ -14,7 +14,7 @@
     },
     {
       "file": "hooks/nf-prompt.js",
-      "line_number": 687,
+      "line_number": 733,
       "action": "quorum_fallback_t1_required",
       "state_variables": [],
       "vocabulary_match": true,
@@ -22,7 +22,7 @@
     },
     {
       "file": "hooks/nf-prompt.js",
-      "line_number": 850,
+      "line_number": 918,
       "action": "quorum_start",
       "state_variables": [],
       "vocabulary_match": true,

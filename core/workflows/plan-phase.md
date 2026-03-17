@@ -401,13 +401,27 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
 
 Form your ADVISORY analysis on the current plan files first (per CE-1 from quorum.md — not a vote in the tally): do they correctly address the phase goal, requirement IDs, and user decisions from CONTEXT.md? State your analysis as 1-2 sentences to share with external voters.
 
-Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
 - Mode A — pure question (reviewers read artifact directly)
 - artifact_path: all current `${PHASE_DIR}/*-PLAN.md` files
 - envelope_path: `${ENVELOPE_PATH}` (if file exists) for risk_level context
 - review_context: "This is a pre-execution implementation plan. The code does not exist yet. Evaluate the plan's approach, task breakdown, and correctness — not whether the implementation already exists in the repository."
 - request_improvements: true          ← R3.6 signal infrastructure
 - Build `$DISPATCH_LIST` first (Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list)
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: <question text>
+  artifact_path: ${PHASE_DIR}/*-PLAN.md
+  review_context: "This is a pre-execution implementation plan..."
+  request_improvements: true
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
 

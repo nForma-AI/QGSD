@@ -8,7 +8,7 @@
  * Validates field names and structure match the existing global gate JSON schemas.
  */
 
-const { computeAggregate } = require('./compute-per-model-gates.cjs');
+const { computeAggregate, evaluateConsecutivePass, shouldPromoteToHardGate } = require('./compute-per-model-gates.cjs');
 
 let passed = 0;
 let failed = 0;
@@ -128,6 +128,169 @@ for (const f of gateBFields) {
 const gateCFields = ['wiring_coverage_score', 'total_entries', 'validated_entries', 'unvalidated_entries', 'target', 'target_met'];
 for (const f of gateCFields) {
   assert(f in agg1.gate_c, 'Gate C has field: ' + f);
+}
+
+// ── GPROMO-01: consecutive_pass_count tracking ──────────────────────────────
+
+console.log('\n=== GPROMO-01: consecutive_pass_count tracking ===');
+
+// Model passes session (maturity=2, evidence=2, not unstable) -> count increments 0->1
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 0 };
+  const ev = { score: 2, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 2, ev, false);
+  assert(result.passes === true, 'GPROMO-01: model passes session (maturity=2, evidence=2)');
+  assert(result.newCount === 1, 'GPROMO-01: count increments 0->1');
+}
+
+// Model passes again -> count increments 1->2, 2->3
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 1 };
+  const ev = { score: 2, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 2, ev, false);
+  assert(result.newCount === 2, 'GPROMO-01: count increments 1->2');
+}
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 2 };
+  const ev = { score: 2, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 2, ev, false);
+  assert(result.newCount === 3, 'GPROMO-01: count increments 2->3');
+}
+
+// Model fails (maturity=0) -> count resets to 0
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 2, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 0, ev, false);
+  assert(result.passes === false, 'GPROMO-01: model fails with maturity=0');
+  assert(result.newCount === 0, 'GPROMO-01: count resets to 0 on maturity failure');
+}
+
+// Model fails (evidence regresses below threshold) -> count resets to 0
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 5 };
+  const ev = { score: 0.5, total: 5, skipped: false }; // below SOFT_GATE threshold of 0.8
+  const result = evaluateConsecutivePass(model, 2, ev, false);
+  assert(result.passes === false, 'GPROMO-01: model fails with evidence below SOFT_GATE threshold');
+  assert(result.newCount === 0, 'GPROMO-01: count resets to 0 on evidence regression');
+}
+
+// Model in UNSTABLE state -> count resets to 0 regardless of maturity
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 4 };
+  const ev = { score: 3, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 3, ev, true);
+  assert(result.passes === false, 'GPROMO-01: UNSTABLE model does not pass');
+  assert(result.newCount === 0, 'GPROMO-01: count resets to 0 when UNSTABLE');
+}
+
+// Model with no prior consecutive_pass_count field -> initializes to 0 then increments to 1
+{
+  const model = { gate_maturity: 'ADVISORY' };
+  const ev = { score: 1, total: 5, skipped: false };
+  const result = evaluateConsecutivePass(model, 1, ev, false);
+  assert(result.passes === true, 'GPROMO-01: model with no prior field passes');
+  assert(result.newCount === 1, 'GPROMO-01: initializes from undefined to 1');
+}
+
+// Evidence skipped -> evidence check passes (fail-open)
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 2 };
+  const ev = { score: 0, total: 5, skipped: true };
+  const result = evaluateConsecutivePass(model, 2, ev, false);
+  assert(result.passes === true, 'GPROMO-01: evidence skipped passes (fail-open)');
+  assert(result.newCount === 3, 'GPROMO-01: count increments with skipped evidence');
+}
+
+// ── GPROMO-02: HARD_GATE promotion gating ───────────────────────────────────
+
+console.log('\n=== GPROMO-02: HARD_GATE promotion gating ===');
+
+// SOFT_GATE model with consecutive_pass_count=2 (< 3), maturity=3, evidence=3 -> false
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 2 };
+  const ev = { score: 3, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === false,
+    'GPROMO-02: consecutive_pass_count=2 blocks promotion');
+}
+
+// SOFT_GATE model with consecutive_pass_count=3, maturity=3, evidence=3 -> true
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 3, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === true,
+    'GPROMO-02: consecutive_pass_count=3 allows promotion');
+}
+
+// SOFT_GATE model with consecutive_pass_count=5 -> true (>= 3 is sufficient)
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 5 };
+  const ev = { score: 3, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === true,
+    'GPROMO-02: consecutive_pass_count=5 allows promotion (>= 3)');
+}
+
+// SOFT_GATE model with consecutive_pass_count=3, maturity=2 (< 3) -> false
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 3, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 2, ev, false) === false,
+    'GPROMO-02: maturity=2 blocks promotion despite consecutive_pass_count=3');
+}
+
+// SOFT_GATE model with consecutive_pass_count=3, evidence=2 (< 3) -> false
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 2, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === false,
+    'GPROMO-02: evidence=2 blocks promotion despite consecutive_pass_count=3');
+}
+
+// SOFT_GATE model with consecutive_pass_count=3 but isUnstableOrCooling=true -> false
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 3, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, true) === false,
+    'GPROMO-02: UNSTABLE blocks promotion despite all other criteria met');
+}
+
+// ADVISORY model should never promote to HARD_GATE
+{
+  const model = { gate_maturity: 'ADVISORY', consecutive_pass_count: 10 };
+  const ev = { score: 5, total: 5, skipped: false };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === false,
+    'GPROMO-02: ADVISORY model cannot promote directly to HARD_GATE');
+}
+
+// Evidence skipped -> should allow promotion (fail-open)
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 3 };
+  const ev = { score: 0, total: 5, skipped: true };
+  assert(shouldPromoteToHardGate(model, 3, ev, false) === true,
+    'GPROMO-02: evidence skipped allows promotion (fail-open)');
+}
+
+// ── GPROMO-03: changelog evidence (structural assertion) ─────────────────────
+
+console.log('\n=== GPROMO-03: changelog evidence (structural) ===');
+
+// When shouldPromoteToHardGate returns true, model.consecutive_pass_count is accessible and >= 3
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 4 };
+  const ev = { score: 3, total: 5, skipped: false };
+  const eligible = shouldPromoteToHardGate(model, 3, ev, false);
+  assert(eligible === true, 'GPROMO-03: model is eligible for promotion');
+  assert(model.consecutive_pass_count >= 3, 'GPROMO-03: consecutive_pass_count accessible and >= 3 when eligible');
+  assert(typeof model.consecutive_pass_count === 'number', 'GPROMO-03: consecutive_pass_count is a number');
+}
+
+// When shouldPromoteToHardGate returns false, consecutive_pass_count may be < 3
+{
+  const model = { gate_maturity: 'SOFT_GATE', consecutive_pass_count: 1 };
+  const ev = { score: 3, total: 5, skipped: false };
+  const eligible = shouldPromoteToHardGate(model, 3, ev, false);
+  assert(eligible === false, 'GPROMO-03: model with count=1 is not eligible');
+  assert(model.consecutive_pass_count < 3, 'GPROMO-03: consecutive_pass_count < 3 when not eligible due to count');
 }
 
 // ── Summary ─────────────────────────────────────────────────────────────────

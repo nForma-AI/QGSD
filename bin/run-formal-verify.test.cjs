@@ -301,28 +301,10 @@ test('TRIAGE-02: STEPS includes ci:triage-bundle entry as final step', () => {
     src.includes('generate-triage-bundle.cjs'),
     'ci:triage-bundle STEPS entry must reference generate-triage-bundle.cjs'
   );
-  // Verify total STEPS count is now 28 (updated from 27 when uppaal:quorum-races was added)
+  // Verify total STEPS count
   assert.ok(
-    src.includes('Total:    34+ steps'),
-    'Comment block must reflect updated total of 34+ steps (dynamic)'
-  );
-});
-
-test('UPPAAL-02: STEPS includes uppaal:quorum-races entry', () => {
-  // Guard: ensures the uppaal:quorum-races STEPS entry is not accidentally removed (UPPAAL-02)
-  const src = fs.readFileSync(path.join(__dirname, 'run-formal-verify.cjs'), 'utf8');
-  assert.ok(
-    src.includes('uppaal:quorum-races'),
-    'Expected uppaal:quorum-races STEPS entry in run-formal-verify.cjs (UPPAAL-02)'
-  );
-  assert.ok(
-    src.includes('run-uppaal.cjs'),
-    'uppaal:quorum-races STEPS entry must reference run-uppaal.cjs'
-  );
-  // Verify total STEPS count is now dynamic
-  assert.ok(
-    src.includes('Total:    34+ steps'),
-    'Comment block must reflect updated total of 34+ steps (dynamic)'
+    src.includes('Total:    36+ steps'),
+    'Comment block must reflect updated total of 36+ steps (dynamic)'
   );
 });
 

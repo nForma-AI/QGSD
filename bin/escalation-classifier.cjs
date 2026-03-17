@@ -15,7 +15,8 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { spawnSync } = require('child_process');
-const { readTrendWindow, LAYER_KEYS } = require('./oscillation-detector.cjs');
+const { readTrendWindow } = require('./oscillation-detector.cjs');
+const { LAYER_KEYS } = require('./layer-constants.cjs');
 
 const TAG = '[escalation-classifier]';
 const HAIKU_MODEL = 'claude-haiku-4-5-20251001';
@@ -35,8 +36,7 @@ const LAYER_FILE_MAP = {
   r_to_d: ['docs/', '.planning/formal/requirements.json'],
   d_to_c: ['docs/'],
   p_to_f: ['.planning/formal/debt.json'],
-  l1_to_l2: ['.planning/formal/gates/gate-a-grounding.json'],
-  l2_to_l3: ['.planning/formal/gates/gate-b-abstraction.json'],
+  l1_to_l3: ['.planning/formal/gates/gate-a-grounding.json', '.planning/formal/gates/gate-b-abstraction.json'],
   l3_to_tc: ['.planning/formal/gates/gate-c-validation.json'],
   per_model_gates: ['.planning/formal/gates/per-model-gates.json'],
   git_heatmap: ['.planning/formal/evidence/git-heatmap.json'],

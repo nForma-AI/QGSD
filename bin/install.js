@@ -488,7 +488,7 @@ console.log(banner);
 
 // Show help if requested
 if (hasHelp) {
-  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall GSD (remove all GSD files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM, UPPAAL)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install to custom config directory${reset}\n    npx get-shit-done-cc --claude --global --config-dir ~/.claude-bc\n\n    ${dim}# Install to current project only${reset}\n    npx get-shit-done-cc --claude --local\n\n    ${dim}# Uninstall GSD from Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global --uninstall\n\n  ${yellow}Notes:${reset}\n    The --config-dir option is useful when you have multiple configurations.\n    It takes priority over CLAUDE_CONFIG_DIR / GEMINI_CONFIG_DIR environment variables.\n`);
+  console.log(`  ${yellow}Usage:${reset} npx get-shit-done-cc [options]\n\n  ${yellow}Options:${reset}\n    ${cyan}-g, --global${reset}              Install globally (to config directory)\n    ${cyan}-l, --local${reset}               Install locally (to current directory)\n    ${cyan}--claude${reset}                  Install for Claude Code only\n    ${cyan}--opencode${reset}                Install for OpenCode only\n    ${cyan}--gemini${reset}                  Install for Gemini only\n    ${cyan}--all${reset}                     Install for all runtimes\n    ${cyan}-u, --uninstall${reset}           Uninstall GSD (remove all GSD files)\n    ${cyan}-c, --config-dir <path>${reset}   Specify custom config directory\n    ${cyan}-h, --help${reset}                Show this help message\n    ${cyan}--force-statusline${reset}        Replace existing statusline config\n    ${cyan}--formal${reset}                  Install formal verification tools (TLA+, Alloy, PRISM)\n    ${cyan}--uninstall-formal${reset}        Remove formal verification tools\n\n  ${yellow}Examples:${reset}\n    ${dim}# Interactive install (prompts for runtime and location)${reset}\n    npx get-shit-done-cc\n\n    ${dim}# Install for Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global\n\n    ${dim}# Install for Gemini globally${reset}\n    npx get-shit-done-cc --gemini --global\n\n    ${dim}# Install for all runtimes globally${reset}\n    npx get-shit-done-cc --all --global\n\n    ${dim}# Install to custom config directory${reset}\n    npx get-shit-done-cc --claude --global --config-dir ~/.claude-bc\n\n    ${dim}# Install to current project only${reset}\n    npx get-shit-done-cc --claude --local\n\n    ${dim}# Uninstall GSD from Claude Code globally${reset}\n    npx get-shit-done-cc --claude --global --uninstall\n\n  ${yellow}Notes:${reset}\n    The --config-dir option is useful when you have multiple configurations.\n    It takes priority over CLAUDE_CONFIG_DIR / GEMINI_CONFIG_DIR environment variables.\n`);
   process.exit(0);
 }
 
@@ -2626,30 +2626,16 @@ ${nudge}
       // exit code ignored — best-effort
     }
 
-    // Check if ~/.local/bin is on PATH (needed for verifyta symlink)
-    ensureLocalBinOnPath();
   }
 }
 
 /**
  * Uninstall formal verification tools from system-wide location.
- * Removes ~/.local/share/nf-formal/ and the verifyta symlink.
+ * Removes ~/.local/share/nf-formal/.
  */
 function uninstallFormalTools() {
   const nfFormalHome = path.join(os.homedir(), '.local', 'share', 'nf-formal');
-  const verifytaSymlink = path.join(os.homedir(), '.local', 'bin', 'verifyta');
-
   console.log(`\n  ${cyan}Uninstalling formal verification tools${reset}\n`);
-
-  // Remove verifyta symlink
-  try {
-    if (fs.existsSync(verifytaSymlink)) {
-      fs.unlinkSync(verifytaSymlink);
-      console.log(`  ${green}\u2713${reset} Removed ${verifytaSymlink}`);
-    }
-  } catch (err) {
-    console.log(`  ${yellow}\u26a0${reset} Could not remove ${verifytaSymlink}: ${err.message}`);
-  }
 
   // Remove ~/.local/share/nf-formal/
   if (fs.existsSync(nfFormalHome)) {
@@ -2657,7 +2643,6 @@ function uninstallFormalTools() {
     try {
       if (fs.existsSync(path.join(nfFormalHome, 'tla', 'tla2tools.jar'))) tools.push('TLA+');
       if (fs.existsSync(path.join(nfFormalHome, 'alloy', 'org.alloytools.alloy.dist.jar'))) tools.push('Alloy');
-      if (fs.existsSync(path.join(nfFormalHome, 'uppaal', 'bin', 'verifyta'))) tools.push('UPPAAL');
     } catch (_) {}
 
     fs.rmSync(nfFormalHome, { recursive: true, force: true });
@@ -2670,7 +2655,6 @@ function uninstallFormalTools() {
   const legacyPaths = [
     path.join(process.cwd(), '.planning', 'formal', 'tla', 'tla2tools.jar'),
     path.join(process.cwd(), '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
-    path.join(process.cwd(), '.planning', 'formal', 'uppaal', 'bin'),
   ];
   let legacyCleaned = 0;
   for (const p of legacyPaths) {
@@ -2745,7 +2729,7 @@ function ensureLocalBinOnPath() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 
   console.log(`\n  ${yellow}\u26a0${reset} ~/.local/bin is not on your PATH`);
-  console.log(`    Formal tools (verifyta) are symlinked there.\n`);
+  console.log(`    Formal tools may be symlinked there.\n`);
 
   rl.question(`  Add ${cyan}${exportLine}${reset} to ${dim}${path.basename(profilePath)}${reset}? ${dim}[Y/n]${reset} `, (answer) => {
     rl.close();
@@ -2782,8 +2766,14 @@ function handleStatusline(settings, isInteractive, callback) {
   }
 
   if (!isInteractive) {
-    // Default: overwrite with nForma statusline
-    callback(true);
+    // Only overwrite if current statusline is an nForma/GSD one (or unrecognized legacy)
+    // Respect third-party statuslines (e.g. cship) — don't silently replace them
+    const existingCmd = settings.statusLine.command || settings.statusLine.url || '';
+    const isNfOwned = existingCmd.includes('nf-statusline') ||
+                      existingCmd.includes('gsd-statusline') ||
+                      existingCmd.includes('qgsd-statusline') ||
+                      existingCmd.includes('statusline.js');
+    callback(isNfOwned);
     return;
   }
 

@@ -336,11 +336,25 @@ For quick tasks without a task envelope, use `RISK_LEVEL="medium"` (default). Th
 - `medium` → `FAN_OUT_COUNT=3`
 - Apply cap: `$DISPATCH_LIST` = first `FAN_OUT_COUNT - 1` slot names from `team` keys.
 
-Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
 - Mode A — artifact review (plan is pre-execution; no traces to pass)
 - artifact_path: `${QUICK_DIR}/${next_num}-PLAN.md`
 - review_context: "This is a pre-execution task plan. The code does not exist yet. Evaluate whether the task breakdown is atomic, safe to execute, and correctly addresses the objective — not whether the implementation already exists."
 - request_improvements: true          ← R3.6 signal infrastructure
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: <question text>
+  artifact_path: ${QUICK_DIR}/${next_num}-PLAN.md
+  review_context: "This is a pre-execution task plan..."
+  request_improvements: true
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
 
@@ -639,12 +653,26 @@ Display:
 
 Form your ADVISORY analysis (per CE-1 — not a vote in the tally): does VERIFICATION.md confirm all must_haves are met and no invariants violated? State your analysis as 1-2 sentences to share with external voters.
 
-Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
 - Mode A — artifact review
 - artifact_path: `${QUICK_DIR}/${next_num}-VERIFICATION.md`
 - review_context: "Review this VERIFICATION.md and answer: (1) Are all must_haves confirmed met? (2) Are any invariants from the formal context violated? Vote APPROVE if verification is sound and complete. Vote BLOCK if must_haves are not confirmed or invariants are violated."
 - request_improvements: false
 - Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope)
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: <question text>
+  artifact_path: ${QUICK_DIR}/${next_num}-VERIFICATION.md
+  review_context: "Review this VERIFICATION.md..."
+  request_improvements: false
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 
 Fail-open: if all slots are UNAVAIL, keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
@@ -664,10 +692,21 @@ Route on quorum result:
 
 2. Form your ADVISORY analysis (per CE-1 — not a vote in the tally): can each item be verified via available tools (grep, file reads, quorum-test)? State your analysis as 1-2 sentences to share with external voters.
 
-3. Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
+3. Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
    - Mode A — pure question
    - Question: "Can each human_needed item from quick task ${next_num} be resolved using available tools (grep, file inspection, quorum-test)? Vote APPROVE (can resolve programmatically) or BLOCK (genuinely needs human eyes)."
    - Include the full `human_verification` section as context
+   - **Exact YAML format for worker prompts** (from reference section 4):
+     ```yaml
+     slot: <slotName>
+     round: <round_number>
+     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     repo_dir: <absolute path to project root>
+     mode: A
+     question: "Can each human_needed item from quick task..."
+     prior_positions: |
+       [included from Round 2 onward]
+     ```
    - Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
 

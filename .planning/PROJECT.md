@@ -10,6 +10,34 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
+## Current Milestone: (none — run /nf:new-milestone to start v0.38)
+
+## Shipped: v0.37 — Close the Loop: Cross-Layer Feedback Integration (2026-03-17)
+
+**Goal:** Close six information gaps between nForma subsystems so that knowledge flows bidirectionally — tests link back to requirements, scanners learn from FP feedback, gates self-promote, and quorum debates produce reusable precedents.
+
+**Shipped:** 16/16 requirements satisfied across 5 phases, 8 plans. Audit: PASSED.
+
+**Key features shipped:**
+- @requirement annotation back-linking: bidirectional links between code/tests and requirements via proximity graph edges, C→R/T→R scanner suppression
+- Gate auto-promotion: models with 3+ consecutive clean solve passes auto-promote SOFT_GATE→HARD_GATE with evidence logging
+- Scanner FP self-tuning: per-scanner per-category false-positive rate tracking with auto-threshold raising for chronic offenders
+- Quorum precedent memory: debate archive mining extracts reusable BLOCK/APPROVE decisions, keyword-matched injection into dispatch prompts with 90-day TTL
+- Hypothesis-driven solve wave ordering: layer remediation prioritizes layers with recent hypothesis transitions via LAYER_HANDLERS dispatch map
+
+## Shipped: v0.36 — Solve Loop Convergence & Correctness (2026-03-15)
+
+**Goal:** Fix active bugs in the solve loop diagnostic engine, add convergence correctness guarantees, parallelize remediation dispatch, resolve structural blockers, and build comprehensive test coverage.
+
+**Shipped:** 17/17 requirements satisfied across 5 phases, 9 plans. Audit: PASSED.
+
+**Key features shipped:**
+- Shared infrastructure: `layer-constants.cjs` (18-key LAYER_KEYS), `gate-score-utils.cjs` (v1/v2 resolution), configurable Haiku model, aggregate cache invalidation
+- Diagnostic correctness: `--focus` filter propagated to all 18 layers, missing-file residual changed from 0 to -1, SHA-256 content-hash classification cache keys
+- Convergence intelligence: `solve-cycle-detector.cjs` (A-B-A-B oscillation detection with layer exclusion), 3-bucket residual reporting (automatable/manual/informational), gate cap reporting in output JSON, `baseline-drift.cjs` for session drift detection
+- Architecture: L2 layer collapsed to 2-layer model (Gate B: 0→0.97), `solve-wave-dag.cjs` (6-wave parallel dispatch replacing 13 sequential steps)
+- Test harness: 32 new tests (E2E convergence, cascade effects, focus completeness, 100-item classification golden set)
+
 ## Shipped: v0.35 — Install & Setup Bug Fixes (2026-03-13)
 
 **Goal:** Fix 4 GitHub-reported bugs (GitHub #4-#7) in installer, MCP setup, provider paths, and TUI agent creation.

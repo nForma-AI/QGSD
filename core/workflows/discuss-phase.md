@@ -202,9 +202,20 @@ Apply the R4 pre-filter (CLAUDE.md §R4) to every gray area candidate before pre
 
 2. **Run quorum inline** for this question (one quorum round per question — sequential, not parallel):
 
-   R3 dispatch_pattern from `commands/nf/quorum.md` — Mode A:
+   Follow the canonical protocol in @core/references/quorum-dispatch.md — Mode A:
    - Question: "Should '[question text]' be decided by quorum now (removing it from the user's question list), or does it genuinely require the user's vision/preference? If quorum can decide: provide the recommended answer biased toward the long-term solution. Vote APPROVE (quorum can decide — CONSENSUS-READY) or BLOCK (user input needed)."
    - Include context: phase name, goal from ROADMAP.md, relevant patterns from STATE.md
+   - **Exact YAML format for worker prompts** (from reference section 4):
+     ```yaml
+     slot: <slotName>
+     round: <round_number>
+     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     repo_dir: <absolute path to project root>
+     mode: A
+     question: "Should '[question text]' be decided by quorum..."
+     prior_positions: |
+       [included from Round 2 onward]
+     ```
    - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 3 rounds per R4
 
@@ -250,9 +261,20 @@ For each question still in `for_user[]` (process sequentially):
 
 1. Form Claude's position: can quorum decide this question, or does it genuinely require the user's vision/preference? State APPROVE (quorum can decide) or BLOCK (needs user) with 1-2 sentence rationale.
 
-2. Run R3 quorum inline (dispatch_pattern from `commands/nf/quorum.md`):
+2. Run R3 quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
    - Mode A — pure question
    - Question: "Should '[question text]' be decided by quorum now (removing it from user presentation), or does it genuinely require the user's vision/preference? Phase: {phase_name}. Goal: {phase_goal}. Context: {any relevant patterns from STATE.md}. If quorum can decide: provide the recommended answer biased toward the long-term solution."
+   - **Exact YAML format for worker prompts** (from reference section 4):
+     ```yaml
+     slot: <slotName>
+     round: <round_number>
+     timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+     repo_dir: <absolute path to project root>
+     mode: A
+     question: "Should '[question text]' be decided by quorum now..."
+     prior_positions: |
+       [included from Round 2 onward]
+     ```
    - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Deliberate up to 3 rounds per R4 (secondary pre-filter, not full R3 10 rounds)
 

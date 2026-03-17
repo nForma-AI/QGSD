@@ -35,6 +35,7 @@
 //   node bin/nf-solve.cjs --json           # machine-readable output
 //   node bin/nf-solve.cjs --verbose        # pipe child stderr to parent stderr
 //   node bin/nf-solve.cjs --fast           # skip F->C and T->C layers for sub-second iteration
+//   node bin/nf-solve.cjs --skip-proximity  # skip proximity index rebuild (faster re-diagnostic)
 //
 // Requirements: QUICK-140
 
@@ -43,15 +44,79 @@ const path = require('path');
 const os = require('os');
 const { spawnSync } = require('child_process');
 const { appendTrendEntry, readGateSummary } = require('./solve-trend-helpers.cjs');
+const { LAYER_KEYS } = require('./layer-constants.cjs');
+const { resolveGateScore } = require('./gate-score-utils.cjs');
 const { updateVerdicts } = require('./oscillation-detector.cjs');
 const { filterRequirementsByFocus } = require('./solve-focus-filter.cjs');
 const { updatePredictivePower, formatPredictivePowerSummary } = require('./predictive-power.cjs');
 const { detectNewlyBlocked } = require('./escalation-classifier.cjs');
+const { CycleDetector } = require('./solve-cycle-detector.cjs');
+const { measureHypotheses } = require('./hypothesis-measure.cjs')._pure;
+const { loadHypothesisTransitions, computeLayerPriorityWeights } = require('./hypothesis-layer-map.cjs');
+const { computeWaves } = require('./solve-wave-dag.cjs');
 
 const TAG = '[nf-solve]';
 let ROOT = process.cwd();
 const SCRIPT_DIR = __dirname;
 const DEFAULT_MAX_ITERATIONS = 3;
+
+// ── Embedding fallback for proximity enrichment ──────────────────────────────
+// When BFS finds no graph path from a node to a requirement, the embedding cache
+// provides a semantic nearest-requirement fallback. Lazy-loaded, fail-open.
+let _embedCache = null;
+let _embedCacheLoaded = false;
+let _embedReqKeys = null; // pre-filtered requirement keys for fast lookup
+
+function loadEmbedCache() {
+  if (_embedCacheLoaded) return _embedCache;
+  _embedCacheLoaded = true;
+  try {
+    const cachePath = path.join(ROOT, '.planning', 'formal', 'embedding-cache.json');
+    const data = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
+    if (data && data.vectors && data.schema_version === '1') {
+      _embedCache = data;
+      _embedReqKeys = Object.keys(data.vectors).filter(k => k.startsWith('requirement::'));
+    }
+  } catch { /* fail-open */ }
+  return _embedCache;
+}
+
+/**
+ * Find the nearest requirement to a node key using embedding cosine similarity.
+ * Returns { nearest_req, similarity, proximity_context } or null if no cache.
+ */
+function embeddingNearestReq(nodeKey) {
+  const cache = loadEmbedCache();
+  if (!cache || !cache.vectors[nodeKey] || !_embedReqKeys) return null;
+
+  const vec = cache.vectors[nodeKey];
+  let bestSim = -1;
+  let bestKey = null;
+  const topN = []; // for proximity_context
+
+  for (const rk of _embedReqKeys) {
+    const rv = cache.vectors[rk];
+    let dot = 0;
+    for (let i = 0; i < vec.length; i++) dot += vec[i] * rv[i];
+    topN.push({ key: rk, sim: dot });
+    if (dot > bestSim) {
+      bestSim = dot;
+      bestKey = rk;
+    }
+  }
+
+  if (!bestKey || bestSim < 0.3) return null;
+
+  // Build proximity_context from top-5 matches
+  topN.sort((a, b) => b.sim - a.sim);
+  const proximity_context = topN.slice(0, 5).map(t => t.key);
+
+  return {
+    nearest_req: bestKey.replace('requirement::', ''),
+    similarity: Math.round(bestSim * 1000) / 1000,
+    proximity_context,
+  };
+}
 
 // ── CLI flags ────────────────────────────────────────────────────────────────
 
@@ -60,6 +125,8 @@ const reportOnly = args.includes('--report-only');
 const jsonMode = args.includes('--json');
 const verboseMode = args.includes('--verbose');
 const fastMode = args.includes('--fast');
+const skipProximity = args.includes('--skip-proximity');
+const skipTests = args.includes('--skip-tests');
 
 // Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
 for (const arg of args) {
@@ -537,17 +604,21 @@ function preflight() {
   }
 
   // Rebuild proximity index (formal-proximity.cjs)
-  try {
-    const specDir = path.join(ROOT, '.planning', 'formal', 'spec');
-    if (fs.existsSync(specDir)) {
-      process.stderr.write(TAG + ' Rebuilding proximity index\n');
-      const proxResult = spawnTool('bin/formal-proximity.cjs', []);
-      if (!proxResult.ok) {
-        process.stderr.write(TAG + ' WARNING: formal-proximity.cjs failed; proximity index may be stale\n');
+  if (skipProximity) {
+    process.stderr.write(TAG + ' Skipping proximity index rebuild (--skip-proximity)\n');
+  } else {
+    try {
+      const specDir = path.join(ROOT, '.planning', 'formal', 'spec');
+      if (fs.existsSync(specDir)) {
+        process.stderr.write(TAG + ' Rebuilding proximity index\n');
+        const proxResult = spawnTool('bin/formal-proximity.cjs', []);
+        if (!proxResult.ok) {
+          process.stderr.write(TAG + ' WARNING: formal-proximity.cjs failed; proximity index may be stale\n');
+        }
       }
+    } catch (e) {
+      // fail-open: proximity index rebuild is best-effort
     }
-  } catch (e) {
-    // fail-open: proximity index rebuild is best-effort
   }
 }
 
@@ -712,6 +783,48 @@ function loadFormalTestSync() {
 }
 
 /**
+ * Cache for code-trace-index.json result.
+ */
+let codeTraceIndexCache = null;
+
+/**
+ * Helper to load and cache code-trace index.
+ * Returns null on missing or parse error (graceful degradation).
+ */
+function loadCodeTraceIndex() {
+  if (codeTraceIndexCache) return codeTraceIndexCache;
+
+  const indexPath = path.join(ROOT, '.planning', 'formal', 'code-trace-index.json');
+  if (!fs.existsSync(indexPath)) {
+    return null;
+  }
+
+  try {
+    codeTraceIndexCache = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    return codeTraceIndexCache;
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
+ * Rebuild code-trace index from recipes and scopes.
+ * Called before each computeResidual to ensure fresh data.
+ */
+function rebuildCodeTraceIndex() {
+  codeTraceIndexCache = null;  // Clear cache
+
+  try {
+    const { buildIndex } = require('./build-code-trace.cjs');
+    const index = buildIndex(ROOT);
+    codeTraceIndexCache = index;
+    return index;
+  } catch (err) {
+    return null;
+  }
+}
+
+/**
  * F->T: Formal to Tests coverage.
  * Returns { residual: N, detail: {...} }
  */
@@ -727,8 +840,14 @@ function sweepFtoT() {
 
   const gaps = syncData.coverage_gaps || {};
   const stats = gaps.stats || {};
-  const gapCount = stats.gap_count || 0;
-  const gapsList = gaps.gaps || [];
+  let gapCount = stats.gap_count || 0;
+  let gapsList = gaps.gaps || [];
+
+  // Apply focus filter if active
+  if (focusSet) {
+    gapsList = gapsList.filter(g => focusSet.has(g.requirement_id || g));
+    gapCount = gapsList.length;
+  }
 
   return {
     residual: gapCount,
@@ -812,6 +931,7 @@ function sweepCtoF() {
     residual: mismatches.length,
     detail: {
       mismatches: enrichedMismatches,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -821,6 +941,14 @@ function sweepCtoF() {
  * Returns { residual: N, detail: {...} }
  */
 function sweepTtoC() {
+  // Guard: if we're already running inside a node --test subprocess spawned by a
+  // previous sweepTtoC() call, return a skip immediately.  Without this, any test
+  // that calls sweepTtoC() (or computeResidual()) would trigger an infinite chain
+  // of recursive `node --test` subprocesses that never terminate.
+  if (process.env.NF_SOLVE_SWEEPTOC_ACTIVE) {
+    return { residual: -1, detail: { skipped: true, reason: 'recursive-guard: already running inside node --test' } };
+  }
+
   // Load configurable test runner settings
   const configPath = path.join(ROOT, '.planning', 'config.json');
   let tToCConfig = { runner: 'node-test', command: null, scope: 'all' };
@@ -874,6 +1002,7 @@ function sweepTtoC() {
             skipped: 0,
             todo: 0,
             runner: 'jest',
+            scoped: focusSet ? false : undefined,
           },
         };
       }
@@ -890,9 +1019,14 @@ function sweepTtoC() {
   let covDir = null;
   try {
     covDir = fs.mkdtempSync(path.join(os.tmpdir(), 'nf-solve-cov-'));
-    spawnOpts.env = Object.assign({}, process.env, { NODE_V8_COVERAGE: covDir });
+    spawnOpts.env = Object.assign({}, process.env, { NODE_V8_COVERAGE: covDir, NF_SOLVE_SWEEPTOC_ACTIVE: '1' });
   } catch (e) {
     covDir = null; // fail-open: continue without coverage
+  }
+
+  // Ensure guard env var is always set, even when covDir creation failed
+  if (!spawnOpts.env) {
+    spawnOpts.env = Object.assign({}, process.env, { NF_SOLVE_SWEEPTOC_ACTIVE: '1' });
   }
 
   let result;
@@ -956,6 +1090,11 @@ function sweepTtoC() {
     } catch (e) { /* ignore cleanup errors */ }
   }
 
+  // Digest V8 coverage: replace raw array with lightweight format
+  if (coverageData) {
+    coverageData = digestV8Coverage(coverageData);
+  }
+
   // Scope-based auto-detection: if scope is "generated-stubs-only", check if all failures
   // are outside .planning/formal/generated-stubs/
   if (tToCConfig.runner === 'node-test' && tToCConfig.scope === 'generated-stubs-only' && failCount > 0) {
@@ -973,6 +1112,7 @@ function sweepTtoC() {
           runner_mismatch: true,
           warning: 'All ' + failLines.length + ' failures are outside generated-stubs scope — likely runner mismatch',
           v8_coverage: coverageData,
+          scoped: focusSet ? false : undefined,
         },
       };
     }
@@ -987,14 +1127,123 @@ function sweepTtoC() {
       skipped: skipCount,
       todo: todoCount,
       v8_coverage: coverageData,
+      scoped: focusSet ? false : undefined,
     },
   };
+}
+
+/**
+ * Digest V8 coverage data: convert raw coverage array to a lightweight per-file format.
+ * Input: array of V8 coverage entries (each with .result[] containing .url, .functions[], .source)
+ * Output: { files: { [absolutePath]: { covered: number[], uncovered: number[] } } }
+ *
+ * Purpose: Reduce raw ~96MB V8 JSON to ~50KB by storing only file paths and covered/uncovered line sets.
+ * Fail-open: If any entry throws, skip it and continue.
+ */
+function digestV8Coverage(coverageData) {
+  if (!coverageData || !Array.isArray(coverageData)) return null;
+
+  const files = {};
+
+  try {
+    for (const entry of coverageData) {
+      const results = entry.result || [];
+
+      for (const r of results) {
+        if (!r.url) continue;
+
+        // Skip internal node: URLs
+        if (r.url.startsWith('node:')) continue;
+
+        try {
+          // Extract and resolve file path
+          const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
+          const absolutePath = path.resolve(filePath);
+
+          // Initialize file entry if not present
+          if (!files[absolutePath]) {
+            files[absolutePath] = { covered: [], uncovered: [] };
+          }
+
+          // Get source text to build line offset array
+          const source = r.source;
+          if (!source) {
+            // Fallback: if no source, use file-level granularity (boolean)
+            // If ANY function range has count > 0, mark file as covered
+            const hasCoverage = (r.functions || []).some(fn =>
+              (fn.ranges || []).some(range => range.count > 0)
+            );
+            if (hasCoverage) {
+              files[absolutePath].covered = [true];  // boolean marker
+            } else {
+              files[absolutePath].uncovered = [true];  // boolean marker
+            }
+            continue;
+          }
+
+          // Build line offset array from source text
+          const lineOffsets = [0];  // First line starts at offset 0
+          for (let i = 0; i < source.length; i++) {
+            if (source[i] === '\n') {
+              lineOffsets.push(i + 1);
+            }
+          }
+
+          // Map ranges to line numbers
+          const coveredLines = new Set();
+          const uncoveredLines = new Set();
+
+          for (const fn of (r.functions || [])) {
+            for (const range of (fn.ranges || [])) {
+              const startOffset = range.startOffset;
+              const endOffset = range.endOffset;
+              const count = range.count || 0;
+
+              // Find line numbers that this range covers
+              let startLine = lineOffsets.findIndex(offset => offset > startOffset);
+              if (startLine === -1) startLine = lineOffsets.length - 1;
+              else startLine = Math.max(0, startLine - 1);
+
+              let endLine = lineOffsets.findIndex(offset => offset >= endOffset);
+              if (endLine === -1) endLine = lineOffsets.length - 1;
+
+              // Add lines to appropriate set (1-indexed for output)
+              for (let lineIdx = startLine; lineIdx < endLine && lineIdx < lineOffsets.length; lineIdx++) {
+                const lineNum = lineIdx + 1;
+                if (count > 0) {
+                  coveredLines.add(lineNum);
+                } else {
+                  uncoveredLines.add(lineNum);
+                }
+              }
+            }
+          }
+
+          // Update file entry with deduplicated, sorted line arrays
+          files[absolutePath].covered = Array.from(coveredLines).sort((a, b) => a - b);
+          files[absolutePath].uncovered = Array.from(uncoveredLines).filter(
+            l => !coveredLines.has(l)
+          ).sort((a, b) => a - b);
+
+        } catch (entryErr) {
+          // Fail-open: skip this result entry
+          continue;
+        }
+      }
+    }
+  } catch (err) {
+    // Fail-open: return whatever we've collected so far
+  }
+
+  return Object.keys(files).length > 0 ? { files } : null;
 }
 
 /**
  * Cross-reference V8 coverage data against formal-test-sync recipe source_files.
  * Identifies "false green" properties: tests pass but exercise none of the implementing source files.
  * Returns { available: false } when coverage data is null/undefined.
+ *
+ * Handles both digest format (new: { files: {...} }) and legacy raw array format.
  */
 function crossReferenceFormalCoverage(v8CoverageData) {
   if (!v8CoverageData) return { available: false };
@@ -1005,17 +1254,31 @@ function crossReferenceFormalCoverage(v8CoverageData) {
 
     // Build set of covered absolute file paths from V8 data
     const coveredFiles = new Set();
-    for (const entry of v8CoverageData) {
-      const results = entry.result || [];
-      for (const r of results) {
-        if (!r.url) continue;
-        const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
-        const resolved = path.resolve(filePath);
-        // A file is "covered" if ANY function range has count > 0
-        const hasCoverage = (r.functions || []).some(fn =>
-          (fn.ranges || []).some(range => range.count > 0)
-        );
-        if (hasCoverage) coveredFiles.add(resolved);
+
+    // Detect format: digest format has .files property; legacy is array
+    if (v8CoverageData.files && typeof v8CoverageData.files === 'object') {
+      // Digest format: files are keys in the .files object
+      for (const absolutePath of Object.keys(v8CoverageData.files)) {
+        const fileEntry = v8CoverageData.files[absolutePath];
+        // If any covered lines exist (non-empty array), mark file as covered
+        if (fileEntry && fileEntry.covered && Array.isArray(fileEntry.covered) && fileEntry.covered.length > 0) {
+          coveredFiles.add(path.resolve(absolutePath));
+        }
+      }
+    } else if (Array.isArray(v8CoverageData)) {
+      // Legacy raw array format: parse V8 entries
+      for (const entry of v8CoverageData) {
+        const results = entry.result || [];
+        for (const r of results) {
+          if (!r.url) continue;
+          const filePath = r.url.startsWith('file://') ? r.url.slice(7) : r.url;
+          const resolved = path.resolve(filePath);
+          // A file is "covered" if ANY function range has count > 0
+          const hasCoverage = (r.functions || []).some(fn =>
+            (fn.ranges || []).some(range => range.count > 0)
+          );
+          if (hasCoverage) coveredFiles.add(resolved);
+        }
       }
     }
 
@@ -1082,8 +1345,8 @@ function sweepFtoC() {
 
   if (!fs.existsSync(verifyScript)) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'run-formal-verify.cjs not found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: run-formal-verify.cjs' },
     };
   }
 
@@ -1098,7 +1361,7 @@ function sweepFtoC() {
   // Without this, spawnSync's maxBuffer limit kills the child mid-run, resulting
   // in a partial NDJSON with only 3-4 CI checks instead of the full 88+.
   const result = spawnTool('bin/run-formal-verify.cjs', [], {
-    timeout: 300000,
+    timeout: 600000,
     stdio: ['pipe', 'ignore', 'pipe'],
   });
 
@@ -1123,49 +1386,57 @@ function sweepFtoC() {
 
   if (!fs.existsSync(checkResultsPath)) {
     return {
-      residual: 0,
-      detail: { note: 'No check-results.ndjson generated' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: check-results.ndjson' },
     };
   }
 
   try {
     const lines = fs.readFileSync(checkResultsPath, 'utf8').split('\n');
+
+    // Deduplicate: when multiple runs append to the same NDJSON file,
+    // take the LAST entry per check_id (most recent result wins).
+    const deduped = new Map();
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        const entry = JSON.parse(line);
+        const id = entry.check_id || entry.id || '?';
+        deduped.set(id, entry);
+      } catch (e) {
+        // skip malformed lines
+      }
+    }
+
     let failedCount = 0;
     let errorCount = 0;
     let inconclusiveCount = 0;
-    let totalCount = 0;
+    let totalCount = deduped.size;
     const failures = [];
     const errors = [];
     const inconclusiveChecks = [];
 
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      totalCount++;
-      try {
-        const entry = JSON.parse(line);
-        if (entry.result === 'fail') {
-          failedCount++;
-          failures.push({
-            check_id: entry.check_id || entry.id || '?',
-            summary: entry.summary || '',
-            requirement_ids: entry.requirement_ids || [],
-          });
-        } else if (entry.result === 'error') {
-          errorCount++;
-          errors.push({
-            check_id: entry.check_id || entry.id || '?',
-            summary: entry.summary || '',
-            requirement_ids: entry.requirement_ids || [],
-          });
-        } else if (entry.result === 'inconclusive') {
-          inconclusiveCount++;
-          inconclusiveChecks.push({
-            check_id: entry.check_id || entry.id || '?',
-            summary: entry.summary || '',
-          });
-        }
-      } catch (e) {
-        // skip malformed lines
+    for (const entry of deduped.values()) {
+      if (entry.result === 'fail') {
+        failedCount++;
+        failures.push({
+          check_id: entry.check_id || entry.id || '?',
+          summary: entry.summary || '',
+          requirement_ids: entry.requirement_ids || [],
+        });
+      } else if (entry.result === 'error') {
+        errorCount++;
+        errors.push({
+          check_id: entry.check_id || entry.id || '?',
+          summary: entry.summary || '',
+          requirement_ids: entry.requirement_ids || [],
+        });
+      } else if (entry.result === 'inconclusive') {
+        inconclusiveCount++;
+        inconclusiveChecks.push({
+          check_id: entry.check_id || entry.id || '?',
+          summary: entry.summary || '',
+        });
       }
     }
 
@@ -1178,6 +1449,7 @@ function sweepFtoC() {
       failures: failures,
       errors: errors,
       inconclusive_checks: inconclusiveChecks,
+      scoped: focusSet ? false : undefined,
     };
 
     // Conformance trace self-healing: detect schema mismatch
@@ -1259,8 +1531,8 @@ function sweepRtoD() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'requirements.json not found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: requirements.json' },
     };
   }
 
@@ -1269,8 +1541,8 @@ function sweepRtoD() {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'requirements.json parse error: ' + e.message },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: requirements.json (parse error: ' + e.message + ')' },
     };
   }
 
@@ -1283,8 +1555,8 @@ function sweepRtoD() {
   const docFiles = developerDocs.length > 0 ? developerDocs : allDiscovered;
   if (docFiles.length === 0) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'no doc files found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: doc files' },
     };
   }
 
@@ -1372,8 +1644,8 @@ function sweepDtoC() {
   const docFiles = discoverDocFiles();
   if (docFiles.length === 0) {
     return {
-      residual: 0,
-      detail: { skipped: true, reason: 'no doc files found' },
+      residual: -1,
+      detail: { skipped: true, reason: 'missing: doc files' },
     };
   }
 
@@ -1459,11 +1731,17 @@ function sweepDtoC() {
       let reason = '';
 
       if (claim.type === 'file_path') {
-        // Verify file exists
+        // Verify file exists — try ROOT first, then common parent directories
+        // (docs often reference files relative to .planning/formal/ in tables)
         const claimAbsPath = path.join(ROOT, claim.value);
-        if (!fs.existsSync(claimAbsPath)) {
-          isBroken = true;
-          reason = 'file not found';
+        const formalFallback = path.join(ROOT, '.planning', 'formal', claim.value);
+        if (!fs.existsSync(claimAbsPath) && !fs.existsSync(formalFallback)) {
+          // Skip runtime output files that get created on first use
+          const isRuntimeOutput = /\.(jsonl|ndjson)$/.test(claim.value);
+          if (!isRuntimeOutput) {
+            isBroken = true;
+            reason = 'file not found';
+          }
         }
       } else if (claim.type === 'cli_command') {
         // Extract script path from command (e.g., "node bin/foo.cjs" -> "bin/foo.cjs")
@@ -1487,7 +1765,18 @@ function sweepDtoC() {
             /-server$/.test(claim.value) ||                       // MCP server references
             /qgsd/.test(claim.value) ||                           // old project name references
             projectCommands.has(claim.value);                     // matches a known command/skill name
-          if (!isProjectTerm) {
+
+          // Context-aware: skip deps in requirement spec text (describes behavior, not claims deps)
+          const lineContent = content.split('\n')[claim.line - 1] || '';
+          const isInRequirementText = /^\*\*Requirement:\*\*/.test(lineContent.trim());
+
+          // Context-aware: skip deps in example/template files
+          const isExampleFile = /\.example\.(md|yml|yaml)$/.test(relativePath);
+
+          // Context-aware: skip deps that appear in enumeration lists (e.g., "one of 5 types: `a`, `b`")
+          const isEnumContext = /\b(?:types?|categories|values?|one of|classify|classified)\b/i.test(lineContent);
+
+          if (!isProjectTerm && !isInRequirementText && !isExampleFile && !isEnumContext) {
             isBroken = true;
             reason = 'not in package.json';
           }
@@ -1510,6 +1799,19 @@ function sweepDtoC() {
         if (claim.type === 'file_path') {
           const isRebrandArtifact = REBRAND_PATTERNS.some(rx => rx.test(claim.value));
           if (isRebrandArtifact) {
+            suppressedFpCount++;
+            continue;
+          }
+        }
+
+        // Auto-suppress illustrative/example paths in documentation
+        // (e.g., "Creates: `.planning/quick/001-add-dark-mode-toggle/PLAN.md`")
+        if (claim.type === 'file_path') {
+          const lineContent = content.split('\n')[claim.line - 1] || '';
+          const isIllustrative =
+            /\b(?:creates?|produces?|generates?|outputs?|e\.g\.|for example|such as)\b.*`/i.test(lineContent) ||
+            /^\*\*Creates:\*\*/.test(lineContent.trim());
+          if (isIllustrative) {
             suppressedFpCount++;
             continue;
           }
@@ -1558,6 +1860,28 @@ function sweepDtoC() {
     categoryBreakdown[bc.category] = (categoryBreakdown[bc.category] || 0) + 1;
   }
 
+  // Persist D→C broken claims for manual review
+  try {
+    const evidenceDir = path.join(ROOT, '.planning', 'formal', 'evidence');
+    if (fs.existsSync(evidenceDir)) {
+      fs.writeFileSync(
+        path.join(evidenceDir, 'doc-claims.json'),
+        JSON.stringify({
+          generated: new Date().toISOString(),
+          total_claims_checked: totalClaimsChecked,
+          doc_files_scanned: docFiles.length,
+          raw_broken_count: brokenClaims.length,
+          weighted_residual: Math.ceil(weightedResidual),
+          suppressed_fp_count: suppressedFpCount,
+          category_breakdown: categoryBreakdown,
+          broken_claims: brokenClaims,
+        }, null, 2) + '\n'
+      );
+    }
+  } catch (e) {
+    // fail-open: persistence is best-effort
+  }
+
   return {
     residual: Math.ceil(weightedResidual),
     detail: {
@@ -1568,6 +1892,7 @@ function sweepDtoC() {
       weighted_residual: weightedResidual,
       category_breakdown: categoryBreakdown,
       suppressed_fp_count: suppressedFpCount,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -1584,14 +1909,14 @@ const MAX_REVERSE_CANDIDATES = 200;
 function sweepCtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
   }
 
   // Flatten requirements
@@ -1662,9 +1987,18 @@ function sweepCtoR() {
   const untraced = [];
   let traced = 0;
 
+  // Load code-trace index for fast lookup
+  const index = loadCodeTraceIndex();
+
   for (const file of sourceFiles) {
     const fileName = path.basename(file);
     const fileNoExt = fileName.replace(/\.(cjs|js|mjs)$/, '');
+
+    // First check: code-trace index lookup (if available)
+    if (index && (index.traced_files[file] || index.scope_only.includes(file))) {
+      traced++;
+      continue;
+    }
 
     // Check if any requirement references this file
     if (allReqText.includes(file) || allReqText.includes(fileName) || allReqText.includes(fileNoExt)) {
@@ -1680,6 +2014,11 @@ function sweepCtoR() {
           const declaredIds = match[1].split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
           headerTraced = declaredIds.some(id => reqIdSet.has(id));
         }
+        // Also check for @requirement REQ-ID inline annotations
+        if (!headerTraced) {
+          const annMatch = head.match(/@requirement\s+([A-Z][A-Z0-9_-]+)/);
+          if (annMatch && reqIdSet.has(annMatch[1])) { headerTraced = true; }
+        }
       } catch (e) {
         // fail-open: file unreadable, treat as untraced
       }
@@ -1691,12 +2030,91 @@ function sweepCtoR() {
     }
   }
 
+  // Proximity-based suppression pass: suppress untraced items with high-score proximity edges (fail-open)
+  const SUPPRESS_THRESHOLD = 0.6;
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && untraced.length > 0) {
+      const { SEMANTIC_WEIGHTS } = require('./formal-proximity.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        const surviving = [];
+        for (const item of untraced) {
+          const nodeKey = 'code_file::' + item.file;
+          const node = pi.nodes[nodeKey];
+          if (node) {
+            const suppressEdge = node.edges.find(e =>
+              e.to.startsWith('requirement::') &&
+              (SEMANTIC_WEIGHTS[e.rel] || 0) >= SUPPRESS_THRESHOLD
+            );
+            if (suppressEdge) {
+              traced++;
+              item.suppressed_by = {
+                requirement: suppressEdge.to.replace('requirement::', ''),
+                score: SEMANTIC_WEIGHTS[suppressEdge.rel],
+              };
+              continue;
+            }
+          }
+          surviving.push(item);
+        }
+        untraced.length = 0;
+        untraced.push(...surviving);
+      }
+    }
+  } catch (e) { /* fail-open: if proximity-index.json missing or unreadable, skip suppression */ }
+
+  // Enrich untraced items with proximity nearest_req (fail-open)
+  // Strategy: BFS graph first, then embedding fallback for items graph can't reach
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && untraced.length > 0) {
+      const { reach: reachFn } = require('./formal-query.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        for (const item of untraced) {
+          const nodeKey = 'code_file::' + item.file;
+          if (!pi.nodes[nodeKey]) continue;
+          const reachable = reachFn(pi, nodeKey, 2, ['requirement']);
+          for (const nodes of Object.values(reachable)) {
+            if (nodes.length > 0) {
+              item.nearest_req = nodes[0].key.split('::').slice(1).join('::');
+              break;
+            }
+          }
+          if (!item.nearest_req) {
+            const broader = reachFn(pi, nodeKey, 3, null);
+            const ctx = [];
+            for (const nodes of Object.values(broader)) {
+              for (const n of nodes) ctx.push(n.key);
+            }
+            if (ctx.length > 0) item.proximity_context = ctx.slice(0, 5);
+          }
+        }
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  // Embedding fallback: for items still without nearest_req, use cosine similarity
+  try {
+    for (const item of untraced) {
+      if (item.nearest_req) continue;
+      const result = embeddingNearestReq('code_file::' + item.file);
+      if (result) {
+        item.nearest_req = result.nearest_req;
+        item.proximity_context = result.proximity_context;
+        item.enrichment_source = 'embedding';
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
   return {
     residual: untraced.length,
     detail: {
       untraced_modules: untraced,
       total_modules: sourceFiles.length,
       traced: traced,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -1734,7 +2152,7 @@ function sweepTtoR() {
   }
 
   if (testFiles.length === 0) {
-    return { residual: 0, detail: { orphan_tests: [], total_tests: 0, mapped: 0 } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: test files', orphan_tests: [], total_tests: 0, mapped: 0 } };
   }
 
   // Load formal-test-sync data for mapping info
@@ -1754,19 +2172,31 @@ function sweepTtoR() {
 
   const orphans = [];
   let mapped = 0;
+  let annotatedCount = 0;
+
+  // Load code-trace index for fast lookup
+  const index = loadCodeTraceIndex();
 
   for (const testFile of testFiles) {
     const absPath = path.join(ROOT, testFile);
 
-    // Check for @req annotation in file content
+    // Check for @req/@requirement annotation in file content (run for ALL files for coverage counting)
     let hasReqAnnotation = false;
     try {
       const content = fs.readFileSync(absPath, 'utf8');
-      // Match patterns like: @req REQ-01, @req ACT-02, // req: STOP-03
-      hasReqAnnotation = /@req\s+[A-Z]+-\d+/i.test(content) ||
-                         /\/\/\s*req:\s*[A-Z]+-\d+/i.test(content);
+      // Match patterns: @requirement REQ-01, @req REQ-01, // req: STOP-03, // Requirements: REQ-01, REQ-02
+      hasReqAnnotation = /@req(?:uirement)?\s+[A-Z]+-\d+/i.test(content) ||
+                         /\/\/\s*req(?:uirement)?:\s*[A-Z]+-\d+/i.test(content) ||
+                         /\/\/\s*Requirements:\s*[A-Z]+-\d+/i.test(content);
     } catch (e) {
       // Can't read — treat as orphan
+    }
+    if (hasReqAnnotation) annotatedCount++;
+
+    // First check: code-trace index lookup (if available)
+    if (index && index.traced_files[testFile]) {
+      mapped++;
+      continue;
     }
 
     // Check if formal-test-sync knows about this file
@@ -1779,12 +2209,94 @@ function sweepTtoR() {
     }
   }
 
+  // Convert orphans to objects and enrich with proximity nearest_req (fail-open)
+  // Strategy: BFS graph first, then embedding fallback for items graph can't reach
+  let orphanItems = orphans.map(f => ({ file: f }));
+
+  // Proximity-based suppression for test files (parallel to sweepCtoR suppression)
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && orphanItems.length > 0) {
+      const { SEMANTIC_WEIGHTS } = require('./formal-proximity.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        const SUPPRESS_THRESHOLD = 0.6;
+        const surviving = [];
+        for (const item of orphanItems) {
+          const nodeKey = 'code_file::' + item.file;
+          const node = pi.nodes[nodeKey];
+          if (node) {
+            const suppressEdge = node.edges.find(e =>
+              e.to.startsWith('requirement::') &&
+              (SEMANTIC_WEIGHTS[e.rel] || 0) >= SUPPRESS_THRESHOLD
+            );
+            if (suppressEdge) {
+              mapped++;
+              continue;
+            }
+          }
+          surviving.push(item);
+        }
+        orphanItems = surviving;
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  try {
+    const piPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (fs.existsSync(piPath) && orphanItems.length > 0) {
+      const { reach: reachFn } = require('./formal-query.cjs');
+      const pi = JSON.parse(fs.readFileSync(piPath, 'utf8'));
+      if (pi && pi.nodes) {
+        for (const item of orphanItems) {
+          const nodeKey = 'code_file::' + item.file;
+          if (!pi.nodes[nodeKey]) continue;
+          const reachable = reachFn(pi, nodeKey, 2, ['requirement']);
+          for (const nodes of Object.values(reachable)) {
+            if (nodes.length > 0) {
+              item.nearest_req = nodes[0].key.split('::').slice(1).join('::');
+              break;
+            }
+          }
+          if (!item.nearest_req) {
+            const broader = reachFn(pi, nodeKey, 3, null);
+            const ctx = [];
+            for (const nodes of Object.values(broader)) {
+              for (const n of nodes) ctx.push(n.key);
+            }
+            if (ctx.length > 0) item.proximity_context = ctx.slice(0, 5);
+          }
+        }
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  // Embedding fallback: for items still without nearest_req, use cosine similarity
+  try {
+    for (const item of orphanItems) {
+      if (item.nearest_req) continue;
+      const result = embeddingNearestReq('code_file::' + item.file);
+      if (result) {
+        item.nearest_req = result.nearest_req;
+        item.proximity_context = result.proximity_context;
+        item.enrichment_source = 'embedding';
+      }
+    }
+  } catch (e) { /* fail-open */ }
+
+  const annotation_coverage_percent = testFiles.length > 0
+    ? Math.round((annotatedCount / testFiles.length) * 100)
+    : 0;
+
   return {
-    residual: orphans.length,
+    residual: orphanItems.length,
     detail: {
-      orphan_tests: orphans,
+      orphan_tests: orphanItems,
       total_tests: testFiles.length,
       mapped: mapped,
+      annotation_coverage_percent: annotation_coverage_percent,
+      annotated_count: annotatedCount,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -1797,14 +2309,14 @@ function sweepTtoR() {
 function sweepDtoR() {
   const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
   if (!fs.existsSync(reqPath)) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json not found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json' } };
   }
 
   let reqData;
   try {
     reqData = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
   } catch (e) {
-    return { residual: 0, detail: { skipped: true, reason: 'requirements.json parse error' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: requirements.json (parse error)' } };
   }
 
   // Flatten requirements and extract keywords per requirement
@@ -1829,7 +2341,7 @@ function sweepDtoR() {
   // Discover doc files
   const docFiles = discoverDocFiles();
   if (docFiles.length === 0) {
-    return { residual: 0, detail: { skipped: true, reason: 'no doc files found' } };
+    return { residual: -1, detail: { skipped: true, reason: 'missing: doc files' } };
   }
 
   // Action verbs that indicate capability claims
@@ -1913,6 +2425,7 @@ function sweepDtoR() {
       unbacked_claims: unbacked,
       total_claims: totalClaims,
       backed: backed,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -1938,10 +2451,23 @@ function classifyCandidate(candidate) {
   const docSignals = ['supports', 'handles', 'provides', 'describes', 'documents', 'explains'];
   const hasDocLanguage = docSignals.some(s => new RegExp('\\b' + s + '\\b', 'i').test(text));
 
+  // Determine infrastructure tier for module/test candidates
+  const infraPatterns = [
+    /^(install|aggregate-|build-|compute-|validate-|solve-tui|solve-worker|solve-wave-dag|solve-debt-bridge|token-dashboard|config-loader|layer-constants|providers|unified-mcp-server|review-mcp-logs|check-mcp-health|security-sweep)/,
+  ];
+  const baseName = path.basename(candidate.file_or_claim || '').replace(/\.(test\.)?(cjs|js|mjs)$/, '');
+  const isInfra = infraPatterns.some(p => p.test(baseName)) || (candidate.file_or_claim || '').startsWith('hooks/');
+  const proposed_tier = isInfra ? 'technical' : 'user';
+
   // Module and test types are more likely to be real requirements
   if (candidate.type === 'module' || candidate.type === 'test') {
     // Source modules and tests are usually genuine missing requirements
-    return { category: 'A', reason: 'source ' + candidate.type + ' without requirement tracing', suggestion: 'approve' };
+    return {
+      category: 'A',
+      reason: 'source ' + candidate.type + ' without requirement tracing',
+      suggestion: 'approve',
+      proposed_tier: proposed_tier
+    };
   }
 
   if (candidate.type === 'claim') {
@@ -1958,9 +2484,110 @@ function classifyCandidate(candidate) {
 }
 
 /**
+ * Proximity pre-filter: suppress reverse-scanner items that are reachable to a
+ * requirement node within BFS depth 2 in the proximity-index graph.
+ * Fail-open: if proximity-index.json is missing or malformed, all items pass through.
+ * @param {Array} candidates - array of {file_or_claim, type, ...}
+ * @returns {{ filtered: Array, suppressed: Array, stats: {total, suppressed, passed} }}
+ */
+function proximityPreFilter(candidates) {
+  const empty = { filtered: [...candidates], suppressed: [], stats: { total: candidates.length, suppressed: 0, passed: candidates.length } };
+  if (!candidates || candidates.length === 0) {
+    return { filtered: [], suppressed: [], stats: { total: 0, suppressed: 0, passed: 0 } };
+  }
+
+  try {
+    const indexPath = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+    if (!fs.existsSync(indexPath)) return empty;
+
+    const { reach } = require('./formal-query.cjs');
+    const index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
+    if (!index || !index.nodes) return empty;
+
+    const filtered = [];
+    const suppressed = [];
+
+    for (const c of candidates) {
+      // Only module and test types have code_file nodes; claims skip proximity filter
+      if (c.type === 'claim') {
+        filtered.push(c);
+        continue;
+      }
+
+      const nodeKey = 'code_file::' + c.file_or_claim;
+
+      // Check if node exists in proximity graph
+      if (!index.nodes[nodeKey]) {
+        filtered.push(c);
+        continue;
+      }
+
+      // BFS depth 2 for requirement nodes
+      const reachable = reach(index, nodeKey, 2, ['requirement']);
+      const reqNodes = [];
+      for (const nodes of Object.values(reachable)) {
+        for (const n of nodes) reqNodes.push(n);
+      }
+
+      if (reqNodes.length > 0) {
+        // Suppress: requirement reachable within depth 2 (graph path)
+        const reqId = reqNodes[0].key.split('::').slice(1).join('::');
+        c.nearest_req = reqId;
+        if (verboseMode) {
+          process.stderr.write(TAG + ' Proximity suppress: ' + c.file_or_claim + ' covered by ' + reqId + '\n');
+        }
+        suppressed.push(c);
+      } else {
+        // Embedding fallback: try cosine similarity before giving up
+        const embedResult = embeddingNearestReq(nodeKey);
+        if (embedResult && embedResult.similarity >= 0.55) {
+          // High-confidence embedding match — suppress
+          c.nearest_req = embedResult.nearest_req;
+          c.enrichment_source = 'embedding';
+          if (verboseMode) {
+            process.stderr.write(TAG + ' Embedding suppress: ' + c.file_or_claim + ' covered by ' + embedResult.nearest_req + ' (sim=' + embedResult.similarity + ')\n');
+          }
+          suppressed.push(c);
+        } else {
+          // Check depth 3 for broader context (non-requirement nodes)
+          const broader = reach(index, nodeKey, 3, null);
+          const contextNodes = [];
+          for (const nodes of Object.values(broader)) {
+            for (const n of nodes) contextNodes.push(n.key);
+          }
+          if (contextNodes.length > 0) {
+            c.nearest_req = null;
+            c.proximity_context = contextNodes.slice(0, 5);
+          }
+          // Enrich with lower-confidence embedding context even if not suppressing
+          if (embedResult) {
+            c.nearest_req = c.nearest_req || embedResult.nearest_req;
+            c.proximity_context = c.proximity_context || embedResult.proximity_context;
+            c.enrichment_source = 'embedding';
+          }
+          filtered.push(c);
+        }
+      }
+    }
+
+    return {
+      filtered,
+      suppressed,
+      stats: { total: candidates.length, suppressed: suppressed.length, passed: filtered.length },
+    };
+  } catch (e) {
+    // fail-open: proximity pre-filter is best-effort
+    if (verboseMode) {
+      process.stderr.write(TAG + ' Proximity pre-filter error (fail-open): ' + e.message + '\n');
+    }
+    return empty;
+  }
+}
+
+/**
  * Assemble and deduplicate reverse traceability candidates from all 3 scanners.
  * Merges C→R, T→R, D→R results, deduplicates, filters, and respects acknowledged-not-required.json.
- * Returns { candidates: [...], total_raw, deduped, filtered, acknowledged }
+ * Returns { candidates: [...], total_raw, deduped, filtered, acknowledged, proximity_suppressed }
  */
 function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
   const raw = [];
@@ -1968,24 +2595,35 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
   // Gather C→R candidates
   if (c_to_r.residual > 0 && c_to_r.detail.untraced_modules) {
     for (const mod of c_to_r.detail.untraced_modules) {
-      raw.push({
+      const candidate = {
         source_scanners: ['C→R'],
         evidence: mod.file,
         file_or_claim: mod.file,
         type: 'module',
-      });
+      };
+      // Carry through proximity data from sweep enrichment
+      if (mod.nearest_req) candidate.nearest_req = mod.nearest_req;
+      if (mod.proximity_context) candidate.proximity_context = mod.proximity_context;
+      raw.push(candidate);
     }
   }
 
   // Gather T→R candidates
   if (t_to_r.residual > 0 && t_to_r.detail.orphan_tests) {
-    for (const testFile of t_to_r.detail.orphan_tests) {
-      raw.push({
+    for (const testEntry of t_to_r.detail.orphan_tests) {
+      const testFile = typeof testEntry === 'string' ? testEntry : testEntry.file;
+      const candidate = {
         source_scanners: ['T→R'],
         evidence: testFile,
         file_or_claim: testFile,
         type: 'test',
-      });
+      };
+      // Carry through proximity data from sweep enrichment
+      if (testEntry && typeof testEntry === 'object') {
+        if (testEntry.nearest_req) candidate.nearest_req = testEntry.nearest_req;
+        if (testEntry.proximity_context) candidate.proximity_context = testEntry.proximity_context;
+      }
+      raw.push(candidate);
     }
   }
 
@@ -2088,12 +2726,19 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
     }
   }
 
+  // Proximity pre-filter: suppress items reachable to requirements in proximity graph
+  const proximityResult = proximityPreFilter(candidates);
+  const proximitySuppressed = proximityResult.suppressed.length;
+  candidates.length = 0;
+  for (const c of proximityResult.filtered) candidates.push(c);
+
   // Auto-categorize candidates into A/B/C
   for (const c of candidates) {
     const classification = classifyCandidate(c);
     c.category = classification.category;
     c.category_reason = classification.reason;
     c.suggestion = classification.suggestion;
+    c.proposed_tier = classification.proposed_tier || 'user';
   }
 
   // Auto-acknowledge Category B candidates (documentation-only, no human review needed)
@@ -2153,6 +2798,7 @@ function assembleReverseCandidates(c_to_r, t_to_r, d_to_r) {
     deduped: deduped,
     filtered: filtered,
     acknowledged: acknowledged,
+    proximity_suppressed: proximitySuppressed,
     auto_acknowledged_b: autoAcknowledgedB,
     category_counts: categoryCounts,
   };
@@ -2180,11 +2826,12 @@ function getAggregateGates() {
 }
 
 /**
- * L1->L2: Wiring:Evidence alignment score.
+ * L1->L3: Wiring:Evidence alignment score (L2 collapsed — STRUCT-01).
+ * Gate A now evaluates L1 evidence directly against L3 reasoning models.
  * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
  * Returns { residual: N, detail: {...} }
  */
-function sweepL1toL2() {
+function sweepL1toL3() {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
   }
@@ -2195,7 +2842,7 @@ function sweepL1toL2() {
   }
 
   const gateA = agg.gate_a;
-  const score = gateA.wiring_evidence_score || gateA.grounding_score || 0;
+  const score = resolveGateScore(gateA, 'a');
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
@@ -2208,39 +2855,13 @@ function sweepL1toL2() {
         model_gap: (gateA.unexplained_counts && gateA.unexplained_counts.model_gap) || 0,
         genuine_violation: (gateA.unexplained_counts && gateA.unexplained_counts.genuine_violation) || 0,
       },
+      scoped: focusSet ? false : undefined,
     },
   };
 }
 
-/**
- * L2->L3: Wiring:Purpose alignment score.
- * Uses compute-per-model-gates.cjs --aggregate and computes normalized 0-10 residual.
- * Returns { residual: N, detail: {...} }
- */
-function sweepL2toL3() {
-  if (fastMode) {
-    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  }
-
-  const agg = getAggregateGates();
-  if (!agg || !agg.gate_b) {
-    return { residual: -1, detail: { error: true } };
-  }
-
-  const gateB = agg.gate_b;
-  const score = gateB.wiring_purpose_score || gateB.gate_b_score || 0;
-  const orphanedCount = gateB.orphaned_entries || 0;
-  const rawResidual = Math.ceil((1 - score) * 10) + orphanedCount;
-  const residual = Math.min(rawResidual, 10);
-  return {
-    residual: residual,
-    detail: {
-      wiring_purpose_score: score,
-      orphaned_count: orphanedCount,
-      residual_capped: rawResidual > 10,
-    },
-  };
-}
+// sweepL2toL3 removed — L2 (Semantics) layer collapsed (STRUCT-01).
+// Gate B purpose check is now folded into l1_to_l3 via compute-per-model-gates.cjs.
 
 /**
  * L3->TC: Wiring:Coverage alignment score.
@@ -2279,7 +2900,7 @@ function sweepL3toTC() {
   }
 
   const gateC = agg.gate_c;
-  const score = gateC.wiring_coverage_score || gateC.gate_c_score || 0;
+  const score = resolveGateScore(gateC, 'c');
   const residual = Math.ceil((1 - score) * 10);
   return {
     residual: residual,
@@ -2288,6 +2909,7 @@ function sweepL3toTC() {
       unvalidated_count: gateC.unvalidated_entries || 0,
       total_failure_modes: gateC.total_entries || 0,
       total_recipes: gateC.validated_entries || 0,
+      scoped: focusSet ? false : undefined,
     },
   };
 }
@@ -2335,6 +2957,7 @@ function sweepPerModelGates() {
         gate_b_pass: (data.scores && data.scores.gate_b_pass) || 0,
         gate_c_pass: (data.scores && data.scores.gate_c_pass) || 0,
         promotions: (data.promotions || []).length,
+        scoped: focusSet ? false : undefined,
       },
     };
   } catch (err) {
@@ -2378,6 +3001,7 @@ function sweepGitHeatmap() {
         bugfix_hotspots_count: (signals.bugfix_hotspots || []).length,
         churn_files_count: (signals.churn_ranking || []).length,
         generated: data.generated || null,
+        scoped: focusSet ? false : undefined,
       },
     };
   } catch (err) {
@@ -2418,6 +3042,7 @@ function sweepGitHistoryEvidence() {
         total_commits: (data.summary || {}).total_commits || 0,
         top_drift_candidates: driftCandidates.slice(0, 5),
         generated: data.generated || null,
+        scoped: focusSet ? false : undefined,
       },
     };
   } catch (err) {
@@ -2455,6 +3080,7 @@ function sweepFormalLint() {
           return { model: v.model || v.file, rule: v.rule || v.type, message: v.message || '' };
         }),
         summary: data.summary || null,
+        scoped: focusSet ? false : undefined,
       },
     };
   } catch (err) {
@@ -2494,10 +3120,42 @@ function sweepHazardModel() {
         top_hazards: hazards.slice(0, 10).map(function (h) {
           return { from: h.from_state || h.fromState, event: h.event, rpn: h.rpn || 0 };
         }),
+        scoped: focusSet ? false : undefined,
       },
     };
   } catch (err) {
     return { residual: -1, detail: { error: true, stderr: 'sweepHazardModel failed: ' + err.message } };
+  }
+}
+
+// ── Hypothesis measurement sweep ─────────────────────────────────────────────
+
+/**
+ * Runs hypothesis-measure.cjs measureHypotheses() and returns H->M summary.
+ * Informational — not added to the forward total.
+ */
+function sweepHtoM() {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  try {
+    const result = measureHypotheses(ROOT);
+    if (!result) {
+      return { residual: -1, detail: { error: true, stderr: 'sweepHtoM failed: measureHypotheses returned null' } };
+    }
+    return {
+      residual: result.verdicts.VIOLATED,
+      detail: {
+        total: result.total_measured,
+        confirmed: result.verdicts.CONFIRMED,
+        violated: result.verdicts.VIOLATED,
+        unmeasurable: result.verdicts.UNMEASURABLE,
+        measurements_path: '.planning/formal/evidence/hypothesis-measurements.json',
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'sweepHtoM failed: ' + err.message } };
   }
 }
 
@@ -2511,8 +3169,8 @@ function computeResidual() {
   const r_to_f = sweepRtoF();
   const f_to_t = sweepFtoT();
   const c_to_f = sweepCtoF();
-  const t_to_c = fastMode
-    ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
+  const t_to_c = (fastMode || skipTests)
+    ? { residual: -1, detail: { skipped: true, reason: skipTests ? 'skip-tests' : 'fast mode' } }
     : sweepTtoC();
 
   // Cross-reference V8 coverage against formal-test-sync recipe source_files
@@ -2525,7 +3183,10 @@ function computeResidual() {
     : sweepFtoC();
   const r_to_d = sweepRtoD();
   const d_to_c = sweepDtoC();
-  const p_to_f = sweepPtoF({ root: ROOT });
+  const p_to_f = sweepPtoF({ root: ROOT, focusSet });
+
+  // Rebuild code-trace index for reverse sweeps
+  rebuildCodeTraceIndex();
 
   // Reverse traceability discovery (do NOT add to automatable total)
   const c_to_r = sweepCtoR();
@@ -2552,12 +3213,14 @@ function computeResidual() {
 
   // Layer alignment sweeps (cross-layer gate checks) — skip in fast mode
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  const l1_to_l2 = fastMode ? skipLayer : sweepL1toL2();
-  const l2_to_l3 = fastMode ? skipLayer : sweepL2toL3();
+  const l1_to_l3 = fastMode ? skipLayer : sweepL1toL3();
   const l3_to_tc = fastMode ? skipLayer : sweepL3toTC();
 
   // Per-model gate maturity (informational — not added to layer_total)
   const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
+
+  // PERF-02: Clear aggregate cache after per_model_gates writes new files
+  if (!fastMode) _aggregateCache = null;
 
   // Enrich gate files with semantic scores (SEM-03, SEM-04)
   if (!fastMode && !reportOnly) {
@@ -2569,8 +3232,7 @@ function computeResidual() {
   }
 
   const layer_total =
-    (l1_to_l2.residual >= 0 ? l1_to_l2.residual : 0) +
-    (l2_to_l3.residual >= 0 ? l2_to_l3.residual : 0) +
+    (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
 
   // Git heatmap sweep (informational — not added to forward total)
@@ -2586,6 +3248,35 @@ function computeResidual() {
   // Hazard model sweep (informational — not added to forward total)
   const hazard_model = sweepHazardModel();
 
+  // Hypothesis measurement sweep (informational — not added to forward total)
+  const h_to_m = sweepHtoM();
+
+  // CONV-02: Split residual into three distinct buckets
+  const automatable =
+    (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
+    (f_to_t.residual >= 0 ? f_to_t.residual : 0) +
+    (c_to_f.residual >= 0 ? c_to_f.residual : 0) +
+    (t_to_c.residual >= 0 ? t_to_c.residual : 0) +
+    (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
+    (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
+    (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
+    (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
+
+  const manual =
+    (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
+    (c_to_r.residual >= 0 ? c_to_r.residual : 0) +
+    (t_to_r.residual >= 0 ? t_to_r.residual : 0) +
+    (d_to_r.residual >= 0 ? d_to_r.residual : 0);
+
+  const informational =
+    (git_heatmap.residual >= 0 ? git_heatmap.residual : 0) +
+    (git_history.residual >= 0 ? git_history.residual : 0) +
+    (formal_lint.residual >= 0 ? formal_lint.residual : 0) +
+    (hazard_model.residual >= 0 ? hazard_model.residual : 0) +
+    (h_to_m.residual >= 0 ? h_to_m.residual : 0) +
+    (per_model_gates.residual >= 0 ? per_model_gates.residual : 0) +
+    (p_to_f.residual >= 0 ? p_to_f.residual : 0);
+
   return {
     r_to_f,
     f_to_t,
@@ -2598,16 +3289,19 @@ function computeResidual() {
     c_to_r,
     t_to_r,
     d_to_r,
-    l1_to_l2,
-    l2_to_l3,
+    l1_to_l3,
     l3_to_tc,
     per_model_gates,
     git_heatmap,
     git_history,
     formal_lint,
     hazard_model,
+    h_to_m,
     assembled_candidates,
     total,
+    automatable,
+    manual,
+    informational,
     layer_total,
     reverse_discovery_total,
     heatmap_total,
@@ -2621,8 +3315,11 @@ function computeResidual() {
 /**
  * Attempts to fix gaps found by the sweep.
  * Returns { actions_taken: [...], stubs_generated: N }
+ * @param {Object} residual - residual object from computeResidual()
+ * @param {Set<string>} [oscillatingSet] - layer keys detected as oscillating by CycleDetector
+ * @param {Array<{wave: number, layers: string[], sequential?: boolean}>} [waveOrder] - wave objects from computeWaves; null/undefined = DEFAULT_WAVES
  */
-function autoClose(residual) {
+function autoClose(residual, oscillatingSet, waveOrder) {
   const actions = [];
 
   // Read oscillation verdicts for layer gating (fail-open)
@@ -2637,219 +3334,243 @@ function autoClose(residual) {
 
   function isLayerBlocked(layerKey) {
     const v = verdicts[layerKey];
-    return v && v.blocked === true;
+    if (v && v.blocked === true) return true;
+    // Also block layers detected as oscillating by CycleDetector (CONV-01)
+    if (oscillatingSet && oscillatingSet.has(layerKey)) return true;
+    return false;
   }
 
-  // F->T gaps: generate test stubs
-  if (isLayerBlocked('f_to_t')) {
-    actions.push('OSCILLATION BLOCKED: f_to_t \u2014 automated remediation suspended, human review required');
-  } else if (residual.f_to_t.residual > 0) {
-    const result = spawnTool('bin/formal-test-sync.cjs', []);
-    if (result.ok) {
-      actions.push(
-        'Generated test stubs for ' +
-          residual.f_to_t.residual +
-          ' uncovered invariants'
-      );
-    } else {
-      actions.push(
-        'Could not auto-generate test stubs for ' +
-          residual.f_to_t.residual +
-          ' invariants (formal-test-sync.cjs failed)'
-      );
-    }
-  }
+  // ── LAYER_HANDLERS dispatch map ──────────────────────────────────────────
+  // Each handler receives (residual, actions, isLayerBlocked) and appends to actions.
+  // Logic is moved verbatim from the original sequential if-chain.
 
-  // F->T stubs upgrade: implement TODO stubs with real test logic
-  if (residual.f_to_t.residual > 0) {
-    const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
-    if (fs.existsSync(implPath)) {
-      const implResult = spawnSync(process.execPath, [implPath], {
-        encoding: 'utf8', cwd: ROOT, timeout: 60000, stdio: 'pipe'
-      });
-      if (implResult.status === 0) {
-        actions.push('Upgraded TODO stubs: ' + (implResult.stdout || '').trim());
+  const LAYER_HANDLERS = {
+    f_to_t: (res, acts, blocked) => {
+      // F->T gaps: generate test stubs
+      if (blocked('f_to_t')) {
+        acts.push('OSCILLATION BLOCKED: f_to_t \u2014 automated remediation suspended, human review required');
+        return;
       }
-    }
-  }
-
-  // C->F mismatches: log but do not auto-fix
-  if (residual.c_to_f.residual > 0) {
-    actions.push(
-      'Cannot auto-fix ' +
-        residual.c_to_f.residual +
-        ' constant mismatch(es) — manual review required'
-    );
-  }
-
-  // T->C failures: log but do not auto-fix
-  if (residual.t_to_c.residual > 0) {
-    actions.push(
-      residual.t_to_c.residual + ' test failure(s) — manual fix required'
-    );
-  }
-
-  // R->F gaps: log with triage info
-  if (residual.r_to_f.residual > 0) {
-    const triageDetail = residual.r_to_f.detail.triage;
-    if (triageDetail) {
-      actions.push(
-        triageDetail.high + ' HIGH + ' + triageDetail.medium +
-          ' MEDIUM priority requirements lack formal coverage'
-      );
-    } else {
-      actions.push(
-        residual.r_to_f.residual +
-          ' requirement(s) lack formal model coverage — manual modeling required'
-      );
-    }
-  }
-
-  // F->C failures: log but do not auto-fix
-  if (residual.f_to_c.residual > 0) {
-    actions.push(
-      residual.f_to_c.residual +
-        ' formal verification failure(s) — manual fix required'
-    );
-  }
-
-  // R->D gaps: log but do not auto-fix (manual review)
-  if (residual.r_to_d.residual > 0) {
-    actions.push(
-      residual.r_to_d.residual +
-        ' requirement(s) undocumented in developer docs — manual review required'
-    );
-  }
-
-  // D->C stale claims: log but do not auto-fix (manual review)
-  if (residual.d_to_c.residual > 0) {
-    actions.push(
-      residual.d_to_c.residual +
-        ' stale structural claim(s) in docs — manual review required'
-    );
-  }
-
-  // P->F divergence: dispatch parameter updates or flag investigations
-  if (isLayerBlocked('p_to_f')) {
-    actions.push('OSCILLATION BLOCKED: p_to_f \u2014 automated remediation suspended, human review required');
-  } else if (residual.p_to_f && residual.p_to_f.residual > 0) {
-    const result = autoClosePtoF(residual.p_to_f, {
-      spawnTool: spawnTool,
-    });
-    for (const action of result.actions_taken) {
-      actions.push(action);
-    }
-  }
-
-  // Regenerate TLA+ config files from XState machine (generate-tla-cfg.cjs)
-  try {
-    const machineFile = path.join(ROOT, 'src', 'machines', 'nf-workflow.machine.ts');
-    if (fs.existsSync(machineFile)) {
-      const cfgResult = spawnTool('bin/generate-tla-cfg.cjs', []);
-      if (cfgResult.ok) {
-        actions.push('Regenerated TLA+ config files (MCsafety.cfg, MCliveness.cfg)');
+      if (res.f_to_t.residual > 0) {
+        const result = spawnTool('bin/formal-test-sync.cjs', []);
+        if (result.ok) {
+          acts.push(
+            'Generated test stubs for ' +
+              res.f_to_t.residual +
+              ' uncovered invariants'
+          );
+        } else {
+          acts.push(
+            'Could not auto-generate test stubs for ' +
+              res.f_to_t.residual +
+              ' invariants (formal-test-sync.cjs failed)'
+          );
+        }
       }
-    }
-  } catch (e) {
-    // fail-open: TLA+ config generation is best-effort
-  }
-
-  // Formal model lint (lint-formal-models.cjs) — catch quality issues after generation
-  if (residual.formal_lint && residual.formal_lint.residual > 0) {
-    actions.push(
-      residual.formal_lint.residual +
-        ' formal model lint warning(s) — review fat/unbounded/complex models'
-    );
-  }
-
-  // Per-model gate maturity: create conditions for promotion (GATE-02)
-  // Produces observable signals — never writes gate_maturity directly.
-  if (isLayerBlocked('per_model_gates')) {
-    actions.push('OSCILLATION BLOCKED: per_model_gates \u2014 automated remediation suspended, human review required');
-  } else if (residual.per_model_gates && residual.per_model_gates.residual > 0) {
-    try {
-      const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
-      const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
-      const registryFile = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-      const models = registryFile.models || registryFile;
-      const modelKeys = Object.keys(models).filter(k => k.startsWith('.'));
-
-      // Import inferSourceLayer from promote-gate-maturity.cjs
-      const { inferSourceLayer: inferLayer } = require('./promote-gate-maturity.cjs');
-
-      // Signal 1: fill missing source_layer via inferSourceLayer heuristic
-      let layersFilled = 0;
-      for (const modelPath of modelKeys) {
-        const model = models[modelPath];
-        if (!model.source_layer) {
-          const inferred = inferLayer(modelPath);
-          if (inferred) {
-            model.source_layer = inferred;
-            model.last_updated = new Date().toISOString();
-            layersFilled++;
+      // F->T stubs upgrade: implement TODO stubs with real test logic
+      if (!blocked('f_to_t') && res.f_to_t.residual > 0) {
+        const implPath = path.join(ROOT, '.planning/formal/generated-stubs/_implement-stubs.cjs');
+        if (fs.existsSync(implPath)) {
+          const implResult = spawnSync(process.execPath, [implPath], {
+            encoding: 'utf8', cwd: ROOT, timeout: 60000, stdio: 'pipe'
+          });
+          if (implResult.status === 0) {
+            acts.push('Upgraded TODO stubs: ' + (implResult.stdout || '').trim());
           }
         }
       }
+    },
 
-      // Signal 2: scan model files for semantic declarations
-      const DECL_PATTERNS = {
-        '.als': /\b(sig|pred|fact|assert|fun)\b/,
-        '.tla': /\b(VARIABLE|CONSTANT|Init|Next|Spec)\b/,
-        '.pm':  /\b(module|rewards|endmodule)\b/,
-        '.props': /\b(P\s*=|filter|Pmax|Pmin)\b/,
-      };
-
-      let manifest = null;
-      if (fs.existsSync(manifestPath)) {
-        manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    c_to_f: (res, acts, blocked) => {
+      // C->F mismatches: log but do not auto-fix
+      if (res.c_to_f.residual > 0) {
+        acts.push(
+          'Cannot auto-fix ' +
+            res.c_to_f.residual +
+            ' constant mismatch(es) \u2014 manual review required'
+        );
       }
+    },
 
-      let declsDetected = 0;
-      for (const modelPath of modelKeys) {
-        const ext = path.extname(modelPath);
-        const pattern = DECL_PATTERNS[ext];
-        if (!pattern) continue;
+    t_to_c: (res, acts, blocked) => {
+      // T->C failures: log but do not auto-fix
+      if (res.t_to_c.residual > 0) {
+        acts.push(
+          res.t_to_c.residual + ' test failure(s) \u2014 manual fix required'
+        );
+      }
+    },
 
-        const fullPath = path.join(ROOT, modelPath);
-        if (!fs.existsSync(fullPath)) continue;
+    r_to_f: (res, acts, blocked) => {
+      // R->F gaps: log with triage info
+      if (res.r_to_f.residual > 0) {
+        const triageDetail = res.r_to_f.detail.triage;
+        if (triageDetail) {
+          acts.push(
+            triageDetail.high + ' HIGH + ' + triageDetail.medium +
+              ' MEDIUM priority requirements lack formal coverage'
+          );
+        } else {
+          acts.push(
+            res.r_to_f.residual +
+              ' requirement(s) lack formal model coverage \u2014 manual modeling required'
+          );
+        }
+      }
+    },
 
+    f_to_c: (res, acts, blocked) => {
+      // F->C failures: log but do not auto-fix
+      if (res.f_to_c.residual > 0) {
+        acts.push(
+          res.f_to_c.residual +
+            ' formal verification failure(s) \u2014 manual fix required'
+        );
+      }
+    },
+
+    r_to_d: (res, acts, blocked) => {
+      // R->D gaps: log but do not auto-fix (manual review)
+      if (res.r_to_d.residual > 0) {
+        acts.push(
+          res.r_to_d.residual +
+            ' requirement(s) undocumented in developer docs \u2014 manual review required'
+        );
+      }
+    },
+
+    d_to_c: (res, acts, blocked) => {
+      // D->C stale claims: log but do not auto-fix (manual review)
+      if (res.d_to_c.residual > 0) {
+        acts.push(
+          res.d_to_c.residual +
+            ' stale structural claim(s) in docs \u2014 manual review required'
+        );
+      }
+    },
+
+    p_to_f: (res, acts, blocked) => {
+      // P->F divergence: dispatch parameter updates or flag investigations
+      if (blocked('p_to_f')) {
+        acts.push('OSCILLATION BLOCKED: p_to_f \u2014 automated remediation suspended, human review required');
+      } else if (res.p_to_f && res.p_to_f.residual > 0) {
+        const result = autoClosePtoF(res.p_to_f, {
+          spawnTool: spawnTool,
+        });
+        for (const action of result.actions_taken) {
+          acts.push(action);
+        }
+      }
+    },
+
+    per_model_gates: (res, acts, blocked) => {
+      // Per-model gate maturity: create conditions for promotion (GATE-02)
+      // Produces observable signals -- never writes gate_maturity directly.
+      if (blocked('per_model_gates')) {
+        acts.push('OSCILLATION BLOCKED: per_model_gates \u2014 automated remediation suspended, human review required');
+      } else if (res.per_model_gates && res.per_model_gates.residual > 0) {
         try {
-          const content = fs.readFileSync(fullPath, 'utf8');
-          if (pattern.test(content)) {
-            // Update layer-manifest if model is currently ungrounded
-            if (manifest) {
-              for (const layer of Object.values(manifest.layers || {})) {
-                for (const entry of (Array.isArray(layer) ? layer : [])) {
-                  if (entry.path === modelPath && entry.grounding_status === 'ungrounded') {
-                    entry.grounding_status = 'has_semantic_declarations';
-                    declsDetected++;
-                  }
-                }
+          const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+          const manifestPath = path.join(ROOT, '.planning', 'formal', 'layer-manifest.json');
+          const registryFile = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+          const models = registryFile.models || registryFile;
+          const modelKeys = Object.keys(models).filter(k => k.startsWith('.'));
+
+          // Import inferSourceLayer from promote-gate-maturity.cjs
+          const { inferSourceLayer: inferLayer } = require('./promote-gate-maturity.cjs');
+
+          // Signal 1: fill missing source_layer via inferSourceLayer heuristic
+          let layersFilled = 0;
+          for (const modelPath of modelKeys) {
+            const model = models[modelPath];
+            if (!model.source_layer) {
+              const inferred = inferLayer(modelPath);
+              if (inferred) {
+                model.source_layer = inferred;
+                model.last_updated = new Date().toISOString();
+                layersFilled++;
               }
             }
           }
+
+          // Signal 2: scan model files for semantic declarations
+          const DECL_PATTERNS = {
+            '.als': /\b(sig|pred|fact|assert|fun)\b/,
+            '.tla': /\b(VARIABLE|CONSTANT|Init|Next|Spec)\b/,
+            '.pm':  /\b(module|rewards|endmodule)\b/,
+            '.props': /\b(P\s*=|filter|Pmax|Pmin)\b/,
+          };
+
+          let manifest = null;
+          if (fs.existsSync(manifestPath)) {
+            manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          }
+
+          let declsDetected = 0;
+          for (const modelPath of modelKeys) {
+            const ext = path.extname(modelPath);
+            const pattern = DECL_PATTERNS[ext];
+            if (!pattern) continue;
+
+            const fullPath = path.join(ROOT, modelPath);
+            if (!fs.existsSync(fullPath)) continue;
+
+            try {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              if (pattern.test(content)) {
+                // Update layer-manifest if model is currently ungrounded
+                if (manifest) {
+                  for (const layer of Object.values(manifest.layers || {})) {
+                    for (const entry of (Array.isArray(layer) ? layer : [])) {
+                      if (entry.path === modelPath && entry.grounding_status === 'ungrounded') {
+                        entry.grounding_status = 'has_semantic_declarations';
+                        declsDetected++;
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              // fail-open: skip unreadable files
+            }
+          }
+
+          // Write back only if changes were made
+          if (layersFilled > 0) {
+            fs.writeFileSync(registryPath, JSON.stringify(registryFile, null, 2) + '\n');
+            acts.push('Filled source_layer for ' + layersFilled + ' model(s) via inferSourceLayer');
+          }
+          if (declsDetected > 0 && manifest) {
+            fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+            acts.push('Detected semantic declarations in ' + declsDetected + ' model(s) \u2014 updated layer-manifest');
+          }
+          if (layersFilled === 0 && declsDetected === 0) {
+            acts.push(res.per_model_gates.residual + ' model(s) at maturity 0 \u2014 no auto-fixable signals found');
+          }
         } catch (e) {
-          // fail-open: skip unreadable files
+          // fail-open: per-model gate remediation is best-effort
+          acts.push('Per-model gate remediation failed: ' + e.message);
         }
       }
+    },
+  };
 
-      // Write back only if changes were made
-      if (layersFilled > 0) {
-        fs.writeFileSync(registryPath, JSON.stringify(registryFile, null, 2) + '\n');
-        actions.push('Filled source_layer for ' + layersFilled + ' model(s) via inferSourceLayer');
+  // ── Wave-aware dispatch ────────────────────────────────────────────────────
+  // Default wave structure: single wave with original hardcoded sequence
+  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates'] }];
+
+  const waves = waveOrder || DEFAULT_WAVES;
+  for (const w of waves) {
+    // Process layers within each wave in order (priority-weighted by computeWaves)
+    for (const layerKey of w.layers) {
+      const handler = LAYER_HANDLERS[layerKey];
+      if (handler) {
+        handler(residual, actions, isLayerBlocked);
       }
-      if (declsDetected > 0 && manifest) {
-        fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
-        actions.push('Detected semantic declarations in ' + declsDetected + ' model(s) — updated layer-manifest');
-      }
-      if (layersFilled === 0 && declsDetected === 0) {
-        actions.push(residual.per_model_gates.residual + ' model(s) at maturity 0 — no auto-fixable signals found');
-      }
-    } catch (e) {
-      // fail-open: per-model gate remediation is best-effort
-      actions.push('Per-model gate remediation failed: ' + e.message);
     }
   }
+
+  // ── Cross-cutting concerns (not layer-specific) ────────────────────────────
 
   // Evidence readiness check — inform whether evidence supports promotion
   try {
@@ -3068,8 +3789,7 @@ function formatReport(iterations, finalResidual, converged) {
   lines.push('\u2500 Layer Alignment (cross-layer gates) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
   const layerRows = [
-    { label: 'L1 -> L2 (Wiring:Evidence)', residual: finalResidual.l1_to_l2 ? finalResidual.l1_to_l2.residual : -1 },
-    { label: 'L2 -> L3 (Wiring:Purpose)', residual: finalResidual.l2_to_l3 ? finalResidual.l2_to_l3.residual : -1 },
+    { label: 'L1 -> L3 (Wiring:Evidence)', residual: finalResidual.l1_to_l3 ? finalResidual.l1_to_l3.residual : -1 },
     { label: 'L3 -> TC (Wiring:Coverage)', residual: finalResidual.l3_to_tc ? finalResidual.l3_to_tc.residual : -1 },
   ];
 
@@ -3515,6 +4235,18 @@ function formatReport(iterations, finalResidual, converged) {
     lines.push('');
   }
 
+  // FPTUNE-03: Append FP rate table when session history exists
+  try {
+    const classData = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-classifications.json'), 'utf8'));
+    const sessionHist = classData.session_history || [];
+    if (sessionHist.length > 0) {
+      const fpRatesForReport = computeFPRates(sessionHist);
+      const tuningForReport = classData.tuning || {};
+      lines.push('');
+      lines.push(formatFPRateTable(fpRatesForReport, tuningForReport));
+    }
+  } catch (_) { /* fail-open: no session history yet */ }
+
   return lines.join('\n');
 }
 
@@ -3551,7 +4283,7 @@ function truncateResidualDetail(residual) {
  */
 function formatJSON(iterations, finalResidual, converged) {
   const health = {};
-  for (const key of ['r_to_f', 'f_to_t', 'c_to_f', 't_to_c', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'c_to_r', 't_to_r', 'd_to_r', 'l1_to_l2', 'l2_to_l3', 'l3_to_tc', 'per_model_gates', 'git_heatmap', 'git_history', 'formal_lint', 'hazard_model']) {
+  for (const key of LAYER_KEYS) {
     const res = finalResidual[key] ? finalResidual[key].residual : -1;
     health[key] = healthIndicator(res).split(/\s+/)[1]; // Extract GREEN/YELLOW/RED/UNKNOWN
   }
@@ -3601,6 +4333,8 @@ function formatJSON(iterations, finalResidual, converged) {
     health: health,
     complexity_profile: complexityProfile,
     oscillation: oscillation,
+    capped_layers: [],
+    baseline_drift: { detected: false, layers: [], warning: null },
   };
 }
 
@@ -3671,6 +4405,161 @@ function checkCleanSession() {
   return isClean;
 }
 
+// ── FPTUNE: Per-scanner FP rate tracking and auto-threshold tuning ───────────
+
+/**
+ * FPTUNE-01: Compute per-scanner per-category stats from classifications.
+ * @param {Object} classifications - { ctor: {...}, ttor: {...}, dtor: {...}, dtoc: {...} }
+ * @returns {Object} Per-scanner stats: { ctor: { total, fp, genuine, review }, ... }
+ */
+function computeScannerStats(classifications) {
+  const stats = {};
+  for (const [scannerKey, entries] of Object.entries(classifications || {})) {
+    const values = Object.values(entries);
+    stats[scannerKey] = {
+      total: values.length,
+      fp: values.filter(v => v === 'fp').length,
+      genuine: values.filter(v => v === 'genuine').length,
+      review: values.filter(v => v === 'review').length,
+    };
+  }
+  return stats;
+}
+
+/**
+ * FPTUNE-01: Record a session entry to session_history in solve-classifications.json.
+ * Rolling window: keeps last 10 sessions.
+ * @param {string} classificationsFilePath - Path to solve-classifications.json
+ * @param {Object} scannerStats - From computeScannerStats()
+ * @returns {Array} Updated session_history array
+ */
+function recordSessionHistory(classificationsFilePath, scannerStats) {
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(classificationsFilePath, 'utf8')); } catch (_) {}
+  if (!Array.isArray(data.session_history)) data.session_history = [];
+
+  data.session_history.push({
+    session_id: new Date().toISOString(),
+    scanner_stats: scannerStats,
+  });
+
+  // Rolling window: keep last 10 sessions
+  if (data.session_history.length > 10) {
+    data.session_history = data.session_history.slice(data.session_history.length - 10);
+  }
+
+  data.updated_at = new Date().toISOString();
+  fs.writeFileSync(classificationsFilePath, JSON.stringify(data, null, 2) + '\n');
+  return data.session_history;
+}
+
+/**
+ * FPTUNE-01: Compute rolling FP rates per scanner from session_history.
+ * @param {Array} sessionHistory - Array of session entries
+ * @returns {Object} Per-scanner rates: { ctor: { sessions, total_items, total_fp, fp_rate }, ... }
+ */
+function computeFPRates(sessionHistory) {
+  const rates = {};
+  const scannerKeys = new Set();
+  for (const session of (sessionHistory || [])) {
+    for (const key of Object.keys(session.scanner_stats || {})) {
+      scannerKeys.add(key);
+    }
+  }
+
+  for (const key of scannerKeys) {
+    let totalItems = 0;
+    let totalFP = 0;
+    let sessionCount = 0;
+    for (const session of sessionHistory) {
+      const stats = (session.scanner_stats || {})[key];
+      if (stats) {
+        totalItems += stats.total;
+        totalFP += stats.fp;
+        sessionCount++;
+      }
+    }
+    rates[key] = {
+      sessions: sessionCount,
+      total_items: totalItems,
+      total_fp: totalFP,
+      fp_rate: totalItems > 0 ? totalFP / totalItems : 0,
+    };
+  }
+  return rates;
+}
+
+/**
+ * FPTUNE-02: Auto-raise suppression threshold for scanners with FP rate > 60% over 5+ sessions.
+ * Threshold increase: +0.1 per tuning cycle, capped at 0.9.
+ * @param {string} classificationsFilePath - Path to solve-classifications.json
+ * @param {Object} fpRates - From computeFPRates()
+ * @returns {Array} Changes applied: [{ scanner, from, to, fp_rate, sessions }]
+ */
+function applyFPTuning(classificationsFilePath, fpRates) {
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(classificationsFilePath, 'utf8')); } catch (_) {}
+  if (!data.tuning) data.tuning = {};
+
+  const changes = [];
+
+  for (const [scannerKey, rateInfo] of Object.entries(fpRates)) {
+    const currentThreshold = data.tuning[scannerKey] || 0.5;
+    if (rateInfo.sessions >= 5 && rateInfo.fp_rate > 0.6) {
+      const newThreshold = Math.min(currentThreshold + 0.1, 0.9);
+      if (newThreshold !== currentThreshold) {
+        data.tuning[scannerKey] = parseFloat(newThreshold.toFixed(2));
+        changes.push({
+          scanner: scannerKey,
+          from: currentThreshold,
+          to: data.tuning[scannerKey],
+          fp_rate: rateInfo.fp_rate,
+          sessions: rateInfo.sessions,
+        });
+      }
+    }
+    // Ensure scanner has an entry even if no tuning needed
+    if (data.tuning[scannerKey] == null) {
+      data.tuning[scannerKey] = 0.5;
+    }
+  }
+
+  data.updated_at = new Date().toISOString();
+  fs.writeFileSync(classificationsFilePath, JSON.stringify(data, null, 2) + '\n');
+  return changes;
+}
+
+/**
+ * FPTUNE-03: Format per-scanner FP rate table for diagnostics output.
+ * @param {Object} fpRates - From computeFPRates()
+ * @param {Object} tuning - From solve-classifications.json tuning section
+ * @returns {string} Formatted table
+ */
+function formatFPRateTable(fpRates, tuning) {
+  const lines = [];
+  lines.push('');
+  lines.push('Per-Scanner FP Rates (last 10 sessions):');
+  lines.push('| Scanner | Sessions | FP Rate | Threshold | Status |');
+  lines.push('|---------|----------|---------|-----------|--------|');
+
+  const scannerOrder = ['ctor', 'ttor', 'dtor', 'dtoc'];
+  const keys = scannerOrder.filter(k => fpRates[k]);
+  // Add any keys not in the predefined order
+  for (const k of Object.keys(fpRates)) {
+    if (!keys.includes(k)) keys.push(k);
+  }
+
+  for (const key of keys) {
+    const rate = fpRates[key];
+    const threshold = (tuning && tuning[key]) || 0.5;
+    const fpPct = (rate.fp_rate * 100).toFixed(1) + '%';
+    const status = rate.fp_rate > 0.6 && rate.sessions >= 5 ? 'TUNED' : 'OK';
+    lines.push('| ' + key.padEnd(7) + ' | ' + String(rate.sessions).padEnd(8) + ' | ' + fpPct.padEnd(7) + ' | ' + threshold.toFixed(2).padEnd(9) + ' | ' + status.padEnd(6) + ' |');
+  }
+
+  return lines.join('\n');
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -3704,6 +4593,8 @@ function main() {
     }
   }
 
+  const cycleDetector = new CycleDetector();
+
   for (let i = 1; i <= maxIterations; i++) {
     process.stderr.write(TAG + ' Iteration ' + i + '/' + maxIterations + '\n');
 
@@ -3714,36 +4605,79 @@ function main() {
     const actions = [];
     iterations.push({ iteration: i, residual: residual, actions: actions });
 
-    // Check convergence: total residual unchanged from previous iteration
-    if (prevTotal !== null && residual.total === prevTotal) {
+    // Record per-layer residuals for cycle detection (CONV-01)
+    const perLayerResiduals = {};
+    for (const key of LAYER_KEYS) {
+      if (residual[key] && typeof residual[key].residual === 'number') {
+        perLayerResiduals[key] = residual[key].residual;
+      }
+    }
+    cycleDetector.record(i, perLayerResiduals);
+    const oscillatingLayers = cycleDetector.detectOscillating();
+    if (oscillatingLayers.length > 0) {
+      process.stderr.write(TAG + ' Oscillating layers detected: ' + oscillatingLayers.join(', ') + ' — excluding from convergence check and dispatch\n');
+    }
+
+    // Compute effectiveTotal excluding oscillating layers (CONV-01)
+    const oscillatingSet = new Set(oscillatingLayers);
+    let oscillatingSum = 0;
+    for (const layer of oscillatingLayers) {
+      if (residual[layer] && typeof residual[layer].residual === 'number' && residual[layer].residual > 0) {
+        oscillatingSum += residual[layer].residual;
+      }
+    }
+    const effectiveTotal = residual.total - oscillatingSum;
+
+    // Check convergence: effective residual unchanged from previous iteration
+    if (prevTotal !== null && effectiveTotal === prevTotal) {
       converged = true;
       process.stderr.write(
         TAG +
           ' Converged at iteration ' +
           i +
-          ' (residual stable at ' +
-          residual.total +
+          ' (effective residual stable at ' +
+          effectiveTotal +
+          (oscillatingLayers.length > 0 ? ', excluding oscillating: ' + oscillatingLayers.join(', ') : '') +
           ')\n'
       );
       break;
     }
 
     // Check if already at zero
-    if (residual.total === 0) {
+    if (effectiveTotal === 0) {
       converged = true;
-      process.stderr.write(TAG + ' All layers clean — residual is 0\n');
+      process.stderr.write(TAG + ' All non-oscillating layers clean — effective residual is 0' +
+        (oscillatingLayers.length > 0 ? ' (oscillating: ' + oscillatingLayers.join(', ') + ')' : '') + '\n');
       break;
     }
 
     // Auto-close if not report-only and not last iteration
     if (!reportOnly) {
-      const closeResult = autoClose(residual);
+      // HTARGET-01/02: Compute hypothesis-driven wave dispatch order
+      let waveOrder = null;
+      try {
+        const transitions = loadHypothesisTransitions(ROOT);
+        const priorityWeights = computeLayerPriorityWeights(transitions);
+        const computedWaves = computeWaves(residual, priorityWeights);
+        if (computedWaves.length > 0) {
+          waveOrder = computedWaves;  // Preserve full wave structure (not flattened)
+          process.stderr.write(TAG + ' Wave ordering (' + computedWaves.length + ' waves, ' +
+            (transitions.length > 0 ? transitions.length + ' hypothesis transition(s) applied' : 'no transitions') +
+            '): ' + computedWaves.map(w => 'W' + w.wave + '[' + w.layers.join(',') + ']' + (w.sequential ? '(seq)' : '')).join(' -> ') + '\n');
+        }
+      } catch (e) {
+        // fail-open: wave ordering failure means autoClose uses default order
+        process.stderr.write(TAG + ' WARNING: wave ordering failed: ' + e.message + '\n');
+      }
+
+      const closeResult = autoClose(residual, oscillatingSet, waveOrder);
       iterations[iterations.length - 1].actions = closeResult.actions_taken;
+      iterations[iterations.length - 1].wave_order = waveOrder;
     } else {
       break; // report-only = single sweep, no loop
     }
 
-    prevTotal = residual.total;
+    prevTotal = effectiveTotal;
   }
 
   const finalResidual = iterations[iterations.length - 1].residual;
@@ -3763,6 +4697,8 @@ function main() {
       percentage: finalResidual.r_to_f.detail.percentage || 0,
     },
     focus: focusPhrase || null,
+    capped_layers: [],
+    baseline_drift: { detected: false, layers: [], warning: null },
   };
   // Collect known issues from non-zero non-error layers
   // -- Load classification cache and archive data for net_residual computation --
@@ -3778,6 +4714,26 @@ function main() {
     const cached = JSON.parse(fs.readFileSync(path.join(ROOT, '.planning', 'formal', 'solve-classifications.json'), 'utf8'));
     classificationsByCategory = cached.classifications || {};
   } catch (_) { /* fail-open */ }
+
+  // FPTUNE-01: Record session history and compute FP rates
+  const scannerStats = computeScannerStats(classificationsByCategory);
+  const classPath = path.join(ROOT, '.planning', 'formal', 'solve-classifications.json');
+  if (!reportOnly) {
+    recordSessionHistory(classPath, scannerStats);
+  }
+
+  // FPTUNE-02: Auto-tune suppression thresholds
+  const fpRates = computeFPRates(
+    (() => { try { return JSON.parse(fs.readFileSync(classPath, 'utf8')).session_history || []; } catch (_) { return []; } })()
+  );
+  if (!reportOnly) {
+    const tuningChanges = applyFPTuning(classPath, fpRates);
+    if (tuningChanges.length > 0) {
+      for (const c of tuningChanges) {
+        process.stderr.write(TAG + ' FPTUNE: ' + c.scanner + ' threshold raised ' + c.from + ' -> ' + c.to + ' (FP rate: ' + (c.fp_rate * 100).toFixed(1) + '% over ' + c.sessions + ' sessions)\n');
+      }
+    }
+  }
 
   let archiveEntries = [];
   try {
@@ -3928,19 +4884,25 @@ function main() {
   if (predictivePowerResults) {
     reportText += '\n' + formatPredictivePowerSummary(predictivePowerResults);
   }
-  const jsonText = JSON.stringify(formatJSON(iterations, finalResidual, converged), null, 2);
+  const jsonObj = formatJSON(iterations, finalResidual, converged);
+  jsonObj.oscillating_layers = cycleDetector.detectOscillating();
+  const jsonText = JSON.stringify(jsonObj, null, 2);
 
   // Persist session summary before stdout/exit
   persistSessionSummary(reportText, jsonText, converged, iterations);
 
-  if (jsonMode) {
-    process.stdout.write(jsonText + '\n');
-  } else {
-    process.stdout.write(reportText);
-  }
+  const exitCode = finalResidual.total > 0 ? 1 : 0;
+  const outputText = jsonMode ? (jsonText + '\n') : reportText;
 
-  // Exit with non-zero if residual > 0 (signals gaps remain)
-  process.exit(finalResidual.total > 0 ? 1 : 0);
+  // Drain stdout before exit to prevent pipe truncation (process.exit() does not
+  // guarantee async stdout buffers are flushed when writing to a pipe/spawnSync).
+  if (process.stdout.write(outputText)) {
+    // Write was synchronous (no backpressure) — exit immediately
+    process.exit(exitCode);
+  } else {
+    // Write is buffered — wait for drain before exiting
+    process.stdout.once('drain', () => process.exit(exitCode));
+  }
 }
 
 // ── Session Persistence ──────────────────────────────────────────────────────
@@ -4031,20 +4993,22 @@ module.exports = {
   sweepFtoC,
   sweepRtoD,
   sweepDtoC,
-  sweepPtoF: function () { return sweepPtoF({ root: ROOT }); },
+  sweepPtoF: function () { return sweepPtoF({ root: ROOT, focusSet }); },
   sweepCtoR,
   sweepTtoR,
   sweepDtoR,
-  sweepL1toL2,
-  sweepL2toL3,
+  sweepL1toL3,
   sweepL3toTC,
   sweepPerModelGates,
   sweepGitHeatmap,
   sweepGitHistoryEvidence,
   sweepFormalLint,
   sweepHazardModel,
+  sweepHtoM,
   assembleReverseCandidates,
+  proximityPreFilter,
   classifyCandidate,
+  digestV8Coverage,
   crossReferenceFormalCoverage,
   persistSessionSummary,
   appendTrendEntry,
@@ -4052,6 +5016,11 @@ module.exports = {
   updateVerdicts,
   updatePredictivePower,
   checkCleanSession,
+  computeScannerStats,
+  recordSessionHistory,
+  computeFPRates,
+  applyFPTuning,
+  formatFPRateTable,
 };
 
 // ── Entry point ──────────────────────────────────────────────────────────────

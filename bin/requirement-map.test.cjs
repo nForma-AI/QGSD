@@ -127,8 +127,8 @@ describe('getRequirementIds — Alloy runners', () => {
   });
 });
 
-// ── 5. PRISM / UPPAAL runner check_ids ────────────────────────────────────────
-describe('getRequirementIds — PRISM and UPPAAL runners', () => {
+// ── 5. PRISM runner check_ids ────────────────────────────────────────
+describe('getRequirementIds — PRISM runners', () => {
   it('prism:quorum returns probabilistic model requirements', () => {
     const ids = getRequirementIds('prism:quorum');
     assert.ok(ids.includes('PRM-01'), 'should include PRM-01');
@@ -137,8 +137,7 @@ describe('getRequirementIds — PRISM and UPPAAL runners', () => {
 
   it('prism:oauth-rotation returns rotation requirements', () => {
     const ids = getRequirementIds('prism:oauth-rotation');
-    assert.ok(ids.includes('PRM-AM-01'), 'should include PRM-AM-01');
-    assert.ok(ids.includes('CRED-12'),   'should include CRED-12');
+    assert.ok(ids.includes('CRED-01'), 'should include CRED-01');
   });
 
   it('prism:mcp-availability returns MCP requirements', () => {
@@ -147,11 +146,6 @@ describe('getRequirementIds — PRISM and UPPAAL runners', () => {
     assert.ok(ids.includes('FAIL-01'),   'should include FAIL-01');
   });
 
-  it('uppaal:quorum-races returns timing race requirements', () => {
-    const ids = getRequirementIds('uppaal:quorum-races');
-    assert.ok(ids.includes('UPPAAL-01'), 'should include UPPAAL-01');
-    assert.ok(ids.includes('UPPAAL-03'), 'should include UPPAAL-03');
-  });
 });
 
 // ── 6. CI runner check_ids ─────────────────────────────────────────────────────

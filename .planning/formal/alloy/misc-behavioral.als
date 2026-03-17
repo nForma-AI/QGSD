@@ -16,7 +16,6 @@
 -- @requirement SIG-03
 -- @requirement TRIAGE-02
 -- @requirement UNIF-02
--- @requirement UPPAAL-02
 -- @requirement VALID-01
 
 module misc_behavioral

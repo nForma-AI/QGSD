@@ -1,6 +1,12 @@
 # Formal Verification Suspects
 
-**Generated:** 2026-03-14T18:36:14.322Z
-**Total Suspects:** 0
+**Generated:** 2026-03-17T11:50:58.548Z
+**Total Suspects:** 1
 
-No suspects found — all checks passed without triage tags.
+## Inconclusive with Tags (result=inconclusive)
+
+### ci:liveness-fairness-lint
+- **Property:** Liveness fairness declarations — all TLA+ liveness properties documented with WF/SF rationale
+- **Summary:** inconclusive: fairness declarations missing — MCConvergenceTest: EventualTermination
+- **Runtime:** 9ms
+- **Tags:** needs-fairness

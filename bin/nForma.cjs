@@ -1195,7 +1195,18 @@ if (process.env.NF_THEME === 'light') {
 }
 
 // ─── Screen setup ─────────────────────────────────────────────────────────────
-const screen = blessed.screen({ smartCSR: true, fullUnicode: true, title: 'nForma' });
+// NF_TEST_MODE: use PassThrough streams to avoid holding the TTY open.
+// This initializes blessed's global screen state (required for widget creation)
+// without claiming the real terminal or keeping the event loop alive.
+const screen = process.env.NF_TEST_MODE
+  ? (() => {
+      const { PassThrough } = require('stream');
+      return blessed.screen({
+        dumb: true, terminal: 'dumb', smartCSR: false, fullUnicode: false,
+        input: new PassThrough(), output: new PassThrough(),
+      });
+    })()
+  : blessed.screen({ smartCSR: true, fullUnicode: true, title: 'nForma' });
 
 // ─── Surface palette ─────────────────────────────────────────────────────────
 // Auto-selected based on terminal background (OSC 11 probe).
@@ -1705,13 +1716,24 @@ async function addAgentFlow() {
       return;
     }
 
-    data.mcpServers = { ...servers, [slotName]: { type: 'stdio', command: resolvedCommand, args: [] } };
+    // Route through unified-mcp-server.mjs (same format as bin/install.js)
+    const unifiedMcpPath = path.join(__dirname, 'unified-mcp-server.mjs');
+    if (!fs.existsSync(unifiedMcpPath)) {
+      toast(`unified-mcp-server.mjs not found at ${unifiedMcpPath}`, true);
+      return;
+    }
+    data.mcpServers = { ...servers, [slotName]: {
+      type: 'stdio',
+      command: 'node',
+      args: [unifiedMcpPath],
+      env: { PROVIDER_SLOT: slotName }
+    } };
     writeClaudeJson(data);
 
-    // Write providers.json metadata
+    // Write providers.json metadata (include cli path for resolve-cli.cjs)
     const pdata = readProvidersJson();
     if (!pdata.providers) pdata.providers = [];
-    const entry = { name: slotName, type: 'subprocess', display_type: `${command}-cli` };
+    const entry = { name: slotName, type: 'subprocess', display_type: `${command}-cli`, cli: resolvedCommand };
     if (mainTool) entry.mainTool = mainTool;
     if (model)    entry.model    = model;
     if (timeout)  entry.quorum_timeout_ms = parseInt(timeout, 10);
@@ -1747,7 +1769,8 @@ async function addAgentFlow() {
     env.ANTHROPIC_API_KEY = apiKey;
   }
 
-  data.mcpServers = { ...servers, [slotName]: { type: 'stdio', command: 'node', args: [], env } };
+  const unifiedMcpPathApi = path.join(__dirname, 'unified-mcp-server.mjs');
+  data.mcpServers = { ...servers, [slotName]: { type: 'stdio', command: 'node', args: [unifiedMcpPathApi], env } };
   writeClaudeJson(data);
   toast(`✓ Added "${slotName}"`);
   renderList();

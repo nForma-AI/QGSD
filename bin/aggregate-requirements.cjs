@@ -34,10 +34,20 @@ function parseRequirements(content) {
     const reqMatch = line.match(/^-\s+\[([ x])\]\s+\*\*([A-Z]+-\d+)\*\*:\s*(.+)$/);
     if (reqMatch) {
       const [, completed_mark, id, text] = reqMatch;
+      let reqText = text.trim();
+      let tier = 'user';
+
+      // Check for (technical) suffix and strip it from text
+      if (reqText.endsWith('(technical)')) {
+        tier = 'technical';
+        reqText = reqText.slice(0, -'(technical)'.length).trim();
+      }
+
       requirements.push({
         id,
-        text: text.trim(),
+        text: reqText,
         category: currentCategory || 'Uncategorized',
+        tier: tier,
         completed: completed_mark === 'x'
       });
     }
@@ -171,6 +181,10 @@ function validateEnvelope(obj) {
       errors.push('requirements[' + idx + '].status must be Pending or Complete');
     }
 
+    if (req.tier !== undefined && !['user', 'technical'].includes(req.tier)) {
+      errors.push('requirements[' + idx + '].tier must be "user" or "technical" if present');
+    }
+
     if (req.background !== undefined && typeof req.background !== 'string') {
       errors.push('requirements[' + idx + '].background must be a string if present');
     }
@@ -226,6 +240,7 @@ function mergeFileIntoMap(reqMap, filePath) {
       id: req.id,
       text: req.text,
       category: req.category,
+      tier: req.tier || 'user',
       phase: trace.phase,
       status: trace.status,
       provenance: {
@@ -289,6 +304,13 @@ function aggregateRequirements(options) {
   merged.forEach(function(req) {
     if (existingFormalModels[req.id] !== undefined) {
       req.formal_models = existingFormalModels[req.id];
+    }
+  });
+
+  // Default tier: all existing requirements are user-tier unless explicitly marked
+  merged.forEach(function(req) {
+    if (!req.tier) {
+      req.tier = 'user';
     }
   });
 

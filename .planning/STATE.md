@@ -1,96 +1,31 @@
-# Project State
+# Session State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13)
+See: .planning/PROJECT.md
 
-**Core value:** Planning decisions are multi-model verified by structural enforcement, not instruction-following
-**Current focus:** Planning next milestone
+## Position
 
-## Current Position
-
-Milestone: v0.35 — Install & Setup Bug Fixes — SHIPPED 2026-03-13
-Status: Complete, archived to `.planning/milestones/`
-Last activity: 2026-03-14 - Completed quick task 292: Multi-adapter FSM-to-TLA+ transpiler
-Next: `/nf:new-milestone`
-
-Progress: Between milestones
-
-## Performance Metrics
-
-**Velocity:**
-- Total plans completed: 5
-- Average duration: ~12 minutes
-- Total execution time: ~60 minutes
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| v0.35-01 Hook Rebuild | 1 | ~2min | ~2min |
-| v0.35-02 MCP Slot Classification | 1 | ~3min | ~3min |
-| v0.35-03 Cross-Platform Paths | 1 | ~3min | ~3min |
-| v0.35-04 TUI CLI Agent | 1 | ~15min | ~15min |
-
-**Recent Trend:**
-- Last 5 plans: 2min, 3min, 3min
-- Trend: stable
-
-*Updated after each plan completion*
-| Phase v0.35-01 P01 | 2min | 2 tasks | 2 files |
-| Phase v0.35-02 P01 | 3min | 2 tasks | 3 files |
-| Phase v0.35-03 P01 | 3min | 2 tasks | 3 files |
-
-## Accumulated Context
-
-### Decisions
-
-Decisions logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- [v0.35 scope]: 4 GitHub issues (#4-#7) mapped to 4 phases; Windows support (#3) explicitly out of scope
-- [v0.35 roadmap]: Phase v0.35-04 depends on v0.35-03 (TUI entries use resolved CLI paths)
-- [Phase v0.35-01]: Auto-rebuild hooks/dist via execFileSync to scripts/build-hooks.js (zero code duplication)
-- [Phase v0.35-02]: auth_type uses "sub"/"api" values; re-run flow syncs ALL configured agents for existing installs
-
-### Pending Todos
-
-None.
-
-### Blockers/Concerns
-
-- additionalContext token budget contention (multiple injection sources share ~4000 token ceiling)
-- Token dashboard path mismatch: token-dashboard.cjs defaults to legacy path (Low severity)
+**Milestone:** v0.37 — Close the Loop: Cross-Layer Feedback Integration
+**Current phase:** v0.37-05 — Hypothesis Targeting
+**Status:** v0.37 milestone complete
 
 ## Quick Tasks Completed
 
-| # | Description | Date | Commit | Status | Directory |
-|---|---|---|---|---|---|
-| 272 | Implement OBS-11 agent payload size audit | 2026-03-11 | 2d8c1e35 | Verified | [272-implement-obs-11-agent-payload-size-audi](./quick/272-implement-obs-11-agent-payload-size-audi/) |
-| 273 | Create /nf:proximity skill and extend /nf:resolve with auto-detected pairings source | 2026-03-11 | e3613d7e | Verified | [273-create-nf-proximity-skill-and-extend-nf-](./quick/273-create-nf-proximity-skill-and-extend-nf-/) |
-| 274 | add a --top N flag to /nf:proximity | 2026-03-11 | b34aa191 | Verified | [274-add-a-top-n-flag-to-nf-proximity](./quick/274-add-a-top-n-flag-to-nf-proximity/) |
-| 275 | Replace Haiku API eval with sub-agent in /nf:proximity | 2026-03-11 | 7ae0f57e | Verified | [275-replace-haiku-api-eval-with-sub-agent-in](./quick/275-replace-haiku-api-eval-with-sub-agent-in/) |
-| 276 | Add top-N non-neighboring pair discovery to nf:proximity pipeline | 2026-03-12 | ccac5a64 | Verified | [276-add-top-n-non-neighboring-pair-discovery](./quick/276-add-top-n-non-neighboring-pair-discovery/) |
-| 277 | Option C: Multi-layer false positive reduction for proximity pipeline | 2026-03-12 | f42636a3 | Verified | [277-option-c-multi-layer-false-positive-redu](./quick/277-option-c-multi-layer-false-positive-redu/) |
-| 278 | Formalize orphan separation in proximity pipeline | 2026-03-12 | 757d4093 | Verified | [278-formalize-orphan-separation-in-proximity](./quick/278-formalize-orphan-separation-in-proximity/) |
-| 279 | Wire dual-subscription slots (codex-2, gemini-2) to MCP | 2026-03-12 | aa3b3a3b | Verified | [279-wire-dual-subscription-slots-add-codex-2](./quick/279-wire-dual-subscription-slots-add-codex-2/) |
-| 280 | Deduplicate quorum slots sharing the same model for LLM diversity | 2026-03-12 | cef38375 | Verified | [280-deduplicate-quorum-slots-sharing-the-sam](./quick/280-deduplicate-quorum-slots-sharing-the-sam/) |
-| 281 | Add two-layer parallel health probe to quorum-preflight.cjs | 2026-03-12 | c9427b7e | Verified | [281-add-two-layer-parallel-health-probe-to-q](./quick/281-add-two-layer-parallel-health-probe-to-q/) |
-| 282 | Add service lifecycle and deep inference probe | 2026-03-12 | 9851c5dd | Pending | [282-add-service-lifecycle-and-deep-inference](./quick/282-add-service-lifecycle-and-deep-inference/) |
-| 283 | Fix GSD collisions: rename gsd-local-patches and gsd-context-monitor | 2026-03-12 | 7f03a5af | Pending | [283-fix-gsd-collisions-rename-gsd-local-patc](./quick/283-fix-gsd-collisions-rename-gsd-local-patc/) |
-| 284 | Guided installer: auto-detect external CLIs, prompt user, default to CCR | 2026-03-13 | d3462311 | Verified | [284-guided-installer-auto-detect-external-cl](./quick/284-guided-installer-auto-detect-external-cl/) |
-| 285 | Improve CI/CD testing: add staging triggers, npm pack, Node matrix, staging-publish | 2026-03-13 | b18e97d5 | Verified | [285-improve-ci-cd-testing-add-staging-trigge](./quick/285-improve-ci-cd-testing-add-staging-trigge/) |
-| 286 | Add service auto-start to quorum-preflight.cjs | 2026-03-13 | 877aa29c | Pending | [286-add-service-auto-start-to-quorum-preflig](./quick/286-add-service-auto-start-to-quorum-preflig/) |
-| 287 | Add MAX_RESPONSE truncation safety net in unified-mcp-server.mjs runProvider() | 2026-03-13 | 42b6839e | Verified | [287-add-max-response-truncation-safety-net-i](./quick/287-add-max-response-truncation-safety-net-i/) |
-| 288 | Fix statusline 0K token count | 2026-03-14 | 6408e839 | Verified | [288-fix-statusline-0k-token-count-derive-tok](./quick/288-fix-statusline-0k-token-count-derive-tok/) |
-| 289 | Wire UPPAAL and Petri net support into close-formal-gaps | 2026-03-14 | 34c7bbcc | Verified | [289-wire-uppaal-and-petri-net-support-into-c](./quick/289-wire-uppaal-and-petri-net-support-into-c/) |
-| 290 | Bring UPPAAL and Petri nets to full parity with TLA+/Alloy/PRISM | 2026-03-14 | eb5cbcf4 | Verified | [290-bring-uppaal-and-petri-nets-to-full-pari](./quick/290-bring-uppaal-and-petri-nets-to-full-pari/) |
-| 291 | Improve quorum dispatch observability and eliminate wasteful fallback cascades | 2026-03-14 | 57a82371 | Pending | [291-improve-quorum-dispatch-observability-an](./quick/291-improve-quorum-dispatch-observability-an/) |
-| 292 | Multi-adapter FSM-to-TLA+ transpiler | 2026-03-14 | 46336f09 | Verified | [292-multi-adapter-fsm-to-tla-transpiler-gene](./quick/292-multi-adapter-fsm-to-tla-transpiler-gene/) |
-| 293 | Implement context window size detection (200K vs 1M) based on quorum consensus findings | 2026-03-14 | 199af48a | Verified | [293-implement-context-window-size-detection-](./quick/293-implement-context-window-size-detection-/) |
+| Task ID | Description | Date | Commit | Status | Link |
+|---------|-------------|------|--------|--------|------|
+| 318 | Replace fixed wall-clock quorum timeout with idle-based timeout | 2026-03-16 | a7bf282c | Verified | [318-replace-fixed-wall-clock-quorum-timeout-](./quick/318-replace-fixed-wall-clock-quorum-timeout-/) |
+| 319 | Wire hypothesis-layer-map.cjs and solve-wave-dag.cjs into nf-solve.cjs remediation wave ordering | 2026-03-16 | bcea6899 | Pending | [319-wire-hypothesis-layer-map-cjs-and-solve-](./quick/319-wire-hypothesis-layer-map-cjs-and-solve-/) |
 
-## Session Continuity
+## Session Log
 
-Last session: 2026-03-14
-Stopped at: Completed quick task 292: Multi-adapter FSM-to-TLA+ transpiler
-Resume file: None
+- 2026-03-16: Completed quick task 319: Wire hypothesis-layer-map.cjs and solve-wave-dag.cjs into nf-solve.cjs remediation wave ordering
+
+- 2026-03-16: Phase v0.37-05 (Hypothesis Targeting) complete — 1/1 plans, all 2 SCs verified, milestone v0.37 complete
+- 2026-03-16: Phase v0.37-04 (Quorum Precedents) complete — 2/2 plans, all 3 SCs verified, formal check 3/3, auto-advancing
+- 2026-03-16: Completed quick task 318: Replace fixed wall-clock quorum timeout with idle-based timeout
+- 2026-03-16: Phase v0.37-03 (Scanner FP Tuning) complete — 1/1 plans, all 3 SCs verified, auto-advancing
+- 2026-03-16: Phase v0.37-02 (Gate Auto-Promotion) complete — 1/1 plans, all 3 SCs verified, auto-advancing
+- 2026-03-16: Phase v0.37-02 plan 01 complete — consecutive_pass_count tracking + GPROMO tests (84/84 pass)
+- 2026-03-16: Phase v0.37-01 (Annotation Back-Linking) complete — 3/3 plans, all 5 SCs verified
+- 2026-03-16: STATE.md regenerated by /gsd:health --repair

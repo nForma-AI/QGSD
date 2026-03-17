@@ -104,19 +104,21 @@ After completing all remediation steps, output ONLY the JSON result object descr
 )
 ```
 Parse remediation output JSON.
+Extract `capped_layers` from `remediation_report.capped_layers` (default `[]`). Store for inclusion in the final solve output — this array lets users distinguish "residual remains because capped" from "residual remains because stuck" (CONV-03).
 If `status == "bail"` or `"error"`: break loop, proceed to Phase 4.
 
 **3b. Re-diagnostic sweep (Step 4):**
 ```bash
-POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"})
+POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"})
 ```
 If `~/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs`.
 Parse `post_residual` from the JSON output.
 
 **3c. Convergence check (Step 5):**
 - If `post_residual.total == 0`: log convergence, break
-- Compute `automatable_residual` = sum of r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, l1_to_l2, l2_to_l3, l3_to_tc (exclude d_to_c which is manual-only; include gate residuals)
+- Compute `automatable_residual` = sum of r_to_f, f_to_t, c_to_f, t_to_c, f_to_c, r_to_d, l1_to_l3, l3_to_tc (exclude d_to_c which is manual-only; include gate residuals)
 - If `automatable_residual == 0` OR no automatable layer changed since last iteration: break
+- **Cycle detection (CONV-01):** Layers exhibiting A-B-A-B oscillation patterns (detected by `bin/solve-cycle-detector.cjs`) are excluded from the "any automatable layer changed" condition. This prevents the loop from continuing solely because oscillating layers keep flip-flopping. The solver reports detected oscillating layers in its JSON output as `oscillating_layers`.
 - Else: update `residual_vector = post_residual`, continue loop
 
 **Cascade-aware convergence:** Do NOT use total residual for the loop condition. Fixing R->F creates F->T gaps (total goes UP), but the system is making progress. Use per-layer change detection: if ANY automatable layer changed (up or down), there is still work to do. Only stop when all automatable layers are stable or at zero.
@@ -145,9 +147,35 @@ Agent(
   prompt="First resolve the sub-skill path: try $HOME/.claude/commands/nf/solve-report.md, fall back to commands/nf/solve-report.md if not found. Read and follow it end-to-end.
 Input context (JSON):
 {\"baseline_residual\": ..., \"post_residual\": ..., \"iteration_count\": N, \"flags\": {\"verbose\": bool, \"json\": bool}, \"focus\": focusPhrase ? {\"phrase\": focusPhrase} : null}
+Note: baseline_residual is the session-start snapshot. The report sub-skill independently re-snapshots at report time for baseline drift detection (CONV-04) via Step 6.2.
 Display all tables and reports as described in the process section."
 )
 ```
+
+## Phase 5: Auto-Commit Artifacts
+
+After reporting completes, stage and commit all solve artifacts so they don't accumulate as unstaged changes.
+
+```bash
+# Stage ALL solve-touched paths — modified, deleted, AND untracked
+# Use git add -A with pathspecs to catch new files the solve created
+git add -A .planning/formal/ 2>/dev/null
+git add .planning/upstream-state.json docs/dev/requirements-coverage.md 2>/dev/null
+# Also catch any bin/ or test/ files that solve sub-skills may have created/modified
+git add -A bin/ test/ 2>/dev/null
+
+# Check if there's anything to commit
+if ! git diff --cached --quiet 2>/dev/null; then
+  git commit -m "chore(solve): update formal verification artifacts
+
+Automated commit from /nf:solve — includes layer manifests, gate results,
+evidence snapshots, model registry, and requirements coverage updates."
+fi
+```
+
+This commit is non-blocking — if staging or committing fails (e.g., no changes, hook rejection), log and continue. The solve report has already been displayed.
+
+**IMPORTANT:** The `git add -A` with pathspecs stages new (untracked), modified, AND deleted files within those directories. This ensures files created by remediation sub-skills (new Alloy models, test stubs, etc.) and files deleted during cleanup are all captured.
 
 ## Important Constraints
 

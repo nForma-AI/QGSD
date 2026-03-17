@@ -1,0 +1,777 @@
+{
+  "schema_version": "1",
+  "generated": "2026-03-15T21:31:52.289Z",
+  "total_measured": 85,
+  "verdicts": {
+    "CONFIRMED": 0,
+    "VIOLATED": 0,
+    "UNMEASURABLE": 85
+  },
+  "measurements": [
+    {
+      "assumption_name": "MaxDeliberationRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFDeliberation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxImprovementIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFDeliberation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "Depth",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFOscillation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "CommitWindow",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFOscillation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxFilterRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFPreFilter.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberation",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFQuorum.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFRecruiting.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "Cardinality",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFRecruiting.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergence.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxResidual",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergence.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxWorkflows",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDActivityTracking.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxWorkers",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDCheckpointGate.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRefreshes",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDDashboard.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDDeliberationRevision.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDDispatchPipeline.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "NumSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDMCPEnv.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRetries",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDMCPEnv.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "QuorumThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDMCPEnv.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberation",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDQuorum.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "ValuesPerParam",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDSensitivity.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxConfigs",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDSensitivity.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDSetupWizard.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxTruths",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDSpecGeneration.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDSpecGeneration.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDepth",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/TUINavigation.tla",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCAgentLoop.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCDeliberationRevision.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "NumSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCMCPEnv.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRetries",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCMCPEnv.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "QuorumThreshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCMCPEnv.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSlots",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFDispatch.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxModels",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCNFDispatch.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberation",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCQGSDQuorum.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCQGSDQuorum.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionPersistence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxRestarts",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionPersistence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxTurnLines",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCStopHook.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDepth",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCTUINavigation.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCTUISessions.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxPool",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCaccount-manager.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxWorkers",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCcheckpointgate.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxEntries",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxAge",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdebtledger.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberationRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdeliberation.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxImprovementIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCdeliberation.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCimprovement.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxInstalls",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCinstaller.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MClearning.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberation",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCliveness.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCliveness.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCmemorypersist.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCorchestration.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "Depth",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCoscillation.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "CommitWindow",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCoscillation.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCpolicy.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxFilterRounds",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCprefilter.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCreasoning.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCrecruiting-liveness.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCrecruiting-safety.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxDeliberation",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsafety.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsafety.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSessions",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-convergence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxResidual",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-convergence.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxResidual",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-orchestrator.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxIterations",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxResidual",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolve-report-only.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCsolvep2f.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCtokenopt.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "MaxSteps",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCverification.cfg",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "ParsedCorrectly_result.ts",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/availability-parsing.als",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "ValidRound_r.polled",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/quorum-votes.als",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "residualEqualsFailCount_rc.failCount",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/result-classification.als",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "residualEqualsFailCount_rc.errorCount",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/result-classification.als",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "SuccessCountNeverExceedsMinSize_Config.minSize",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/alloy/transcript-scan.als",
+      "formal_value": null,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "formal value not extractable from source model"
+    },
+    {
+      "assumption_name": "p_converge",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/deliberation-healing.pm",
+      "formal_value": 0.6,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "escalation_threshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/deliberation-healing.pm",
+      "formal_value": 0.1,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "MAX_ROUNDS",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/deliberation-healing.pm",
+      "formal_value": 3,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "p_fail",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
+      "formal_value": 0.3,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "max_retries",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
+      "formal_value": 3,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "slot1_reliability",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/observability-delivery.pm",
+      "formal_value": 0.9,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "slot2_reliability",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/observability-delivery.pm",
+      "formal_value": 0.85,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "slot3_reliability",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/observability-delivery.pm",
+      "formal_value": 0.8,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "flakiness_threshold",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/observability-delivery.pm",
+      "formal_value": 0.7,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    },
+    {
+      "assumption_name": "MAX_ROUNDS",
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/observability-delivery.pm",
+      "formal_value": 5,
+      "actual_value": null,
+      "actual_source": null,
+      "verdict": "UNMEASURABLE",
+      "reason": "no matching actual data source found"
+    }
+  ]
+}

@@ -8,7 +8,7 @@
     },
     "formalism": {
       "type": "string",
-      "enum": ["tla", "alloy", "prism", "trace", "redaction", "uppaal", "layer"]
+      "enum": ["tla", "alloy", "prism", "trace", "redaction", "layer"]
     },
     "result": {
       "type": "string",

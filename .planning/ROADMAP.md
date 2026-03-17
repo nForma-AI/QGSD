@@ -31,10 +31,10 @@
 - ✅ **v0.33 — Outer-Loop Convergence Guarantees** — Phases v0.33-01..v0.33-06 (shipped 2026-03-10)
 - ✅ **v0.34 — Semantic Gate Validation & Auto-Promotion** — Phases v0.34-01..v0.34-06 (shipped 2026-03-11)
 - ✅ **v0.35 — Install & Setup Bug Fixes** — Phases v0.35-01..v0.35-04 (shipped 2026-03-13)
+- ✅ **v0.36 — Solve Loop Convergence & Correctness** — Phases v0.36-01..v0.36-05 (shipped 2026-03-15)
+- ✅ **v0.37 — Close the Loop: Cross-Layer Feedback Integration** — Phases v0.37-01..v0.37-05 (shipped 2026-03-17)
 
-> **v0.2 through v0.35 phase details archived to respective milestone ROADMAP files in** `.planning/milestones/`
+> **v0.2 through v0.37 phase details archived to respective milestone ROADMAP files in** `.planning/milestones/`
 
 ---
-
-*Roadmap created: 2026-02-20*
-*Last updated: 2026-03-13 after v0.35 milestone*
+*Last updated: 2026-03-17 after v0.37 milestone completion*

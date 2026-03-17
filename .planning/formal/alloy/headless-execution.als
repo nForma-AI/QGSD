@@ -11,7 +11,7 @@ one sig True, False extends Bool {}
 
 -- Formal tool types that use Java
 abstract sig FormalTool {}
-one sig AlloyTool, TLCTool, PRISMTool, UPPAALTool extends FormalTool {}
+one sig AlloyTool, TLCTool, PRISMTool extends FormalTool {}
 
 -- Whether a tool is Java-based
 fun javaTools : set FormalTool {

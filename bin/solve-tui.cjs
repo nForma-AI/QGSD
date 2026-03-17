@@ -21,9 +21,20 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const readline = require('readline');
+const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
 const ROOT = process.cwd();
+
+// STRUCT-04: Configurable Haiku model
+const HAIKU_MODEL_DEFAULT = 'claude-haiku-4-5-20251001';
+function getHaikuModel() {
+  try {
+    const cfgPath = path.join(process.env.HOME || '', '.claude', 'nf.json');
+    const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
+    return (cfg.classify && cfg.classify.haiku_model) || HAIKU_MODEL_DEFAULT;
+  } catch { return HAIKU_MODEL_DEFAULT; }
+}
 
 // ── Claude CLI binary resolver ──────────────────────────────────────────────
 // Claude Code installs versioned binaries at ~/.local/share/claude/versions/X.Y.Z
@@ -147,12 +158,16 @@ function loadSweepData() {
           type: 'ctor',
           summary: item.file || item,
           file: item.file || item,
+          nearest_req: item.nearest_req,
+          proximity_context: item.proximity_context,
         }));
       } else if (cat.key === 'ttor') {
         rawItems = (detail.orphan_tests || []).map(item => ({
           type: 'ttor',
           summary: typeof item === 'string' ? item : item.file || JSON.stringify(item),
           file: typeof item === 'string' ? item : item.file,
+          nearest_req: typeof item === 'object' ? item.nearest_req : undefined,
+          proximity_context: typeof item === 'object' ? item.proximity_context : undefined,
         }));
       } else if (cat.key === 'dtor') {
         rawItems = (detail.unbacked_claims || []).map(item => ({
@@ -217,7 +232,7 @@ function acknowledgeItem(item) {
     const sourceMap = { ctor: 'C->R', ttor: 'T->R', dtor: 'D->R' };
     fpData.entries.push({
       source: sourceMap[item.type] || item.type,
-      value: item.file || item.claim_text || item.summary,
+      value: item.type === 'dtor' ? itemKey('dtor', item) : (item.file || item.claim_text || item.summary),
       reason: 'Acknowledged via TUI',
       acknowledged_at: now,
     });
@@ -264,7 +279,7 @@ function archiveItem(item) {
   const archiveData = readArchiveFile();
   const now = new Date().toISOString();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
 
   // Don't duplicate
@@ -286,7 +301,7 @@ function archiveItem(item) {
 function unarchiveItem(item) {
   const archiveData = readArchiveFile();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
   archiveData.entries = archiveData.entries.filter(e => e.key !== key);
   return writeArchiveFile(archiveData);
@@ -295,7 +310,7 @@ function unarchiveItem(item) {
 function isArchived(item) {
   const archiveData = readArchiveFile();
   const key = item.type === 'dtoc' ? `${item.doc_file}:${item.value}`
-    : item.type === 'dtor' ? `${item.doc_file}:${item.line}`
+    : item.type === 'dtor' ? itemKey('dtor', item)
     : item.file || item.summary;
   const entry = archiveData.entries.find(e => e.key === key);
   if (!entry) return false;
@@ -1264,9 +1279,9 @@ function classifyWithHaiku(sweepData, opts = {}, onProgress) {
         if (catKey === 'dtoc') {
           return `${batchIdx}: [${item.claimType}] "${item.value}" in ${item.doc_file}:${item.line} — ${item.reason}`;
         } else if (catKey === 'ctor') {
-          return `${batchIdx}: ${item.file} — module not traced to any requirement`;
+          return `${batchIdx}: ${item.file} — module not traced to any requirement${item.nearest_req ? ' (nearest: ' + item.nearest_req + ')' : ''}${item.proximity_context ? ' (near: ' + item.proximity_context.slice(0, 3).join(', ') + ')' : ''}`;
         } else if (catKey === 'ttor') {
-          return `${batchIdx}: ${item.file} — test has no @req annotation`;
+          return `${batchIdx}: ${item.file} — test has no @req annotation${item.nearest_req ? ' (nearest: ' + item.nearest_req + ')' : ''}${item.proximity_context ? ' (near: ' + item.proximity_context.slice(0, 3).join(', ') + ')' : ''}`;
         } else if (catKey === 'dtor') {
           return `${batchIdx}: "${(item.claim_text || '').slice(0, 80)}" in ${item.doc_file}:${item.line}`;
         }
@@ -1275,8 +1290,8 @@ function classifyWithHaiku(sweepData, opts = {}, onProgress) {
 
       const categoryDesc = {
         dtoc: 'D→C Broken Claims: doc references to files/commands/dependencies that don\'t exist in the codebase',
-        ctor: 'C→R Untraced Modules: code files not mentioned in any requirement. Infrastructure/utility scripts (build, lint, migrate, validate, check, install tools) are typically NOT requirement-traced and should be classified as "fp". Feature modules that implement user-facing or system behavior SHOULD be traced.',
-        ttor: 'T→R Orphan Tests: test files without @req annotations. Tests for infrastructure/utility scripts are typically "fp". Tests for feature modules should be "review".',
+        ctor: 'C→R Untraced Modules: code files not mentioned in any requirement. Infrastructure/utility scripts (build, lint, migrate, validate, check, install tools) are typically NOT requirement-traced and should be classified as "fp". Feature modules that implement user-facing or system behavior SHOULD be traced. Items marked \'(nearest: REQ-XX)\' have a nearby requirement in the proximity graph — more likely fp.',
+        ttor: 'T→R Orphan Tests: test files without @req annotations. Tests for infrastructure/utility scripts are typically "fp". Tests for feature modules should be "review". Items marked \'(nearest: REQ-XX)\' have a nearby requirement — more likely fp.',
         dtor: 'D→R Unbacked Claims: doc sentences with action verbs (provides, ensures, validates...) that don\'t match any requirement keywords',
       };
 
@@ -1300,7 +1315,7 @@ No explanation, no markdown, just the JSON object.`;
         delete cleanEnv.CLAUDECODE; // Prevent "cannot launch inside another session" block
         const result = execFileSync(
           resolveClaudeCLI(),
-          ['-p', prompt, '--model', 'claude-haiku-4-5-20251001'],
+          ['-p', prompt, '--model', getHaikuModel()],
           { env: cleanEnv, encoding: 'utf8', timeout: 60000, maxBuffer: 1024 * 1024, stdio: ['pipe', 'pipe', 'pipe'] }
         ).trim();
 
@@ -1322,6 +1337,17 @@ No explanation, no markdown, just the JSON object.`;
     }
 
     classifications[catKey] = catClassifications;
+  }
+
+  // Clean up old-format keys that are no longer valid (cache migration)
+  for (const catKey of ['dtoc', 'dtor']) {
+    const catCache = existingCache[catKey] || {};
+    for (const key of Object.keys(catCache)) {
+      // New keys are 16-char hex strings; old keys contain ':' or '/'
+      if (key.includes(':') || key.includes('/')) {
+        delete catCache[key];
+      }
+    }
   }
 
   // Persist merged cache (keeps old items that may no longer appear in sweeps)
@@ -1351,7 +1377,7 @@ No explanation, no markdown, just the JSON object.`;
 
         // Derive archive key (same logic as archiveItem)
         const archKey = catKey === 'dtoc' ? `${item.doc_file}:${item.value}`
-          : catKey === 'dtor' ? `${item.doc_file}:${item.line}`
+          : catKey === 'dtor' ? itemKey('dtor', item)
           : item.file || item.summary;
         if (existingKeys.has(archKey)) continue;
 
@@ -1376,15 +1402,31 @@ No explanation, no markdown, just the JSON object.`;
 
   stats.auto_archived = autoArchived;
   classifications._stats = stats;
+
+  // Prune stale entries from cache and archive (best-effort cleanup)
+  try {
+    const pruned = pruneStaleEntries(sweepData);
+    classifications._pruned = pruned;
+  } catch (_) { /* best effort */ }
+
   return classifications;
 }
 
-/** Generate a stable key for an item to use in classification cache */
+// NOTE: Keys changed from path:value to SHA-256 content hashes in v0.36-02 (CLASS-01).
+// Old-format keys (containing ':' or '/') are treated as cache misses and cleaned up
+// during the next classifyWithHaiku() run.
+/** Generate a stable content-hash key for an item to use in classification cache */
 function itemKey(catKey, item) {
-  if (catKey === 'dtoc') return `${item.doc_file}:${item.value}`;
+  if (catKey === 'dtoc') {
+    const content = item.reason || item.value || '';
+    return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
+  }
   if (catKey === 'ctor') return item.file;
   if (catKey === 'ttor') return item.file;
-  if (catKey === 'dtor') return `${item.doc_file}:${item.line}`;
+  if (catKey === 'dtor') {
+    const content = item.claim_text || item.reason || item.value || '';
+    return crypto.createHash('sha256').update(content).digest('hex').slice(0, 16);
+  }
   return JSON.stringify(item).slice(0, 100);
 }
 
@@ -1394,6 +1436,78 @@ function readClassificationCache() {
     const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
     return cached.classifications || {};
   } catch (_) { return {}; }
+}
+
+/**
+ * pruneStaleEntries(sweepData)
+ *
+ * Remove cache and archive entries for items that are no longer in the current sweep.
+ * This cleans up stale entries from pre-code-trace-index era that no longer appear.
+ *
+ * @param {object} sweepData - result from loadSweepData() with structure {catKey: {items: [...]}}
+ * @returns {object} {cache_pruned: N, archive_pruned: M}
+ */
+function pruneStaleEntries(sweepData) {
+  let cachePruned = 0;
+  let archivePruned = 0;
+
+  // Build set of all current item keys per category
+  const currentKeys = {};
+  for (const cat of CATEGORIES) {
+    currentKeys[cat.key] = new Set();
+    const catData = sweepData[cat.key];
+    if (catData && catData.items) {
+      for (const item of catData.items) {
+        currentKeys[cat.key].add(itemKey(cat.key, item));
+      }
+    }
+  }
+
+  // Prune classification cache
+  try {
+    const cached = JSON.parse(fs.readFileSync(CLASSIFY_CACHE_PATH, 'utf8'));
+    const classifications = cached.classifications || {};
+    const envelope = { updated_at: new Date().toISOString(), classifications };
+
+    for (const catKey of ['dtoc', 'ctor', 'ttor', 'dtor']) {
+      const catCache = classifications[catKey] || {};
+      const keysToRemove = [];
+
+      for (const key of Object.keys(catCache)) {
+        if (!currentKeys[catKey].has(key)) {
+          keysToRemove.push(key);
+          cachePruned++;
+        }
+      }
+
+      for (const key of keysToRemove) {
+        delete catCache[key];
+      }
+
+      classifications[catKey] = catCache;
+    }
+
+    fs.writeFileSync(CLASSIFY_CACHE_PATH, JSON.stringify(envelope, null, 2) + '\n', 'utf8');
+  } catch (_) { /* best effort */ }
+
+  // Prune archive
+  try {
+    const archiveData = readArchiveFile();
+    const originalLength = archiveData.entries.length;
+
+    archiveData.entries = archiveData.entries.filter(entry => {
+      // Keep the entry if its key exists in current items for that type
+      if (!currentKeys[entry.type]) return true; // Unknown type — keep to be safe
+      return currentKeys[entry.type].has(entry.key);
+    });
+
+    archivePruned = originalLength - archiveData.entries.length;
+    if (archivePruned > 0) {
+      writeArchiveFile(archiveData);
+    }
+  } catch (_) { /* best effort */ }
+
+  return { cache_pruned: cachePruned, archive_pruned: archivePruned };
 }
 
 // ── Live residual computation ─────────────────────────────────────────────────
@@ -1459,5 +1573,6 @@ if (require.main === module) {
     archiveItem,
     unarchiveItem,
     isArchived,
+    pruneStaleEntries,
   };
 }

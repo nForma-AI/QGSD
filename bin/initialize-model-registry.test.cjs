@@ -107,31 +107,6 @@ test('all registry keys are relative paths (no ./ prefix, no absolute prefix)', 
   assert.strictEqual(result.status, 0, 'initialize-model-registry.cjs must exit 0: ' + result.stderr);
 });
 
-test('scans uppaal directory for .xml files', async () => {
-  const tmpDir = createTempFormalDir({
-    uppaal: {
-      'test-model.xml': '<nta></nta>'
-    }
-  });
-
-  // Run the tool
-  const result = runInitializeTool(tmpDir);
-
-  assert.strictEqual(result.status, 0, 'initialize-model-registry.cjs must exit 0: ' + result.stderr);
-
-  // Check the generated registry
-  const registryPath = path.join(tmpDir, '.planning', 'formal', 'model-registry.json');
-  assert.ok(fs.existsSync(registryPath), 'model-registry.json should be created');
-
-  const registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-  const uppaalKeys = Object.keys(registry.models).filter(k => k.includes('uppaal'));
-  assert.ok(uppaalKeys.length > 0, 'registry should contain uppaal entry: ' + Object.keys(registry.models).join(', '));
-  assert.ok(uppaalKeys.some(k => k.includes('test-model.xml')), 'should contain test-model.xml');
-
-  const entry = registry.models[uppaalKeys[0]];
-  assert.strictEqual(entry.update_source, 'manual', 'uppaal entry should have update_source: manual');
-});
-
 test('scans petri directory for .dot files', async () => {
   const tmpDir = createTempFormalDir({
     petri: {

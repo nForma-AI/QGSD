@@ -1,6 +1,6 @@
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { buildIndex, proximity, EDGE_WEIGHTS, REVERSE_RELS } = require('./formal-proximity.cjs');
+const { buildIndex, proximity, countEmbeddedEdges, EDGE_WEIGHTS, REVERSE_RELS } = require('./formal-proximity.cjs');
 
 describe('formal-proximity builder', () => {
 
@@ -136,6 +136,55 @@ describe('formal-proximity builder', () => {
       const { index } = buildIndex();
       assert.ok(index);
       assert.equal(index.schema_version, '1');
+    });
+  });
+
+  describe('countEmbeddedEdges', () => {
+    it('returns accurate totals matching manual sum', () => {
+      const { index } = buildIndex();
+      const result = countEmbeddedEdges(index);
+
+      // Manually compute expected total
+      let expected = 0;
+      for (const node of Object.values(index.nodes)) {
+        expected += node.edges.length;
+      }
+
+      assert.equal(result.totalEdges, expected, 'totalEdges should match manual sum');
+      assert.equal(typeof result.byType, 'object', 'byType should be an object');
+
+      // byType sum should equal totalEdges
+      let byTypeSum = 0;
+      for (const count of Object.values(result.byType)) {
+        byTypeSum += count;
+      }
+      assert.equal(byTypeSum, result.totalEdges, 'byType sum should equal totalEdges');
+    });
+  });
+
+  describe('source annotation extraction', () => {
+    it('creates modeled_by edges for TLA+ files', () => {
+      const { index } = buildIndex();
+      // NFQuorum.tla contains @requirement QUORUM-01
+      const reqNode = index.nodes['requirement::QUORUM-01'];
+      assert.ok(reqNode, 'requirement::QUORUM-01 node should exist');
+
+      const annotationEdge = reqNode.edges.find(
+        e => e.rel === 'modeled_by' && e.source === 'source-annotation' && e.to.includes('NFQuorum.tla')
+      );
+      assert.ok(annotationEdge, 'QUORUM-01 should have modeled_by edge from source-annotation to NFQuorum.tla');
+    });
+
+    it('creates modeled_by edges for PRISM files', () => {
+      const { index } = buildIndex();
+      // deliberation-healing.pm contains @requirement HEAL-01
+      const reqNode = index.nodes['requirement::HEAL-01'];
+      assert.ok(reqNode, 'requirement::HEAL-01 node should exist');
+
+      const annotationEdge = reqNode.edges.find(
+        e => e.rel === 'modeled_by' && e.source === 'source-annotation' && e.to.includes('deliberation-healing.pm')
+      );
+      assert.ok(annotationEdge, 'HEAL-01 should have modeled_by edge from source-annotation to deliberation-healing.pm');
     });
   });
 

@@ -370,8 +370,8 @@ if (require.main === module) {
   process.stdout.write('[run-tlc] Cfg:    ' + cfgPath + '\n');
 
   const _startMs = Date.now();
-  // Use a fixed metadir so TLC overwrites state files instead of creating timestamped dirs
-  const metaDir = path.join(ROOT, '.planning', 'formal', 'tla', 'states', 'current');
+  // Use per-config metadir to prevent cross-check interference in sequential pipeline runs
+  const metaDir = path.join(ROOT, '.planning', 'formal', 'tla', 'states', configName);
   fs.rmSync(metaDir, { recursive: true, force: true });
   fs.mkdirSync(metaDir, { recursive: true });
 

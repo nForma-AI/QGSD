@@ -1,18 +1,10 @@
 {
-  "schema_version": "3",
-  "generated": "2026-03-14T18:36:14.655Z",
-  "wiring_purpose_score": 0,
-  "total_entries": 189,
-  "grounded_entries": 0,
-  "orphaned_entries": 189,
+  "schema_version": "2",
+  "generated": "2026-03-17T11:50:58.910Z",
+  "wiring_purpose_score": 0.9800995024875622,
+  "total_entries": 201,
+  "grounded_entries": 197,
+  "orphaned_entries": 4,
   "target": 1,
-  "target_met": false,
-  "semantic_score": 0.02,
-  "semantic_metadata": {
-    "evaluated_candidates": 50,
-    "confirmed": 0,
-    "rejected": 48,
-    "maybe": 2,
-    "computed": "2026-03-14T09:59:39.239Z"
-  }
+  "target_met": false
 }

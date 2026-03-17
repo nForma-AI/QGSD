@@ -294,14 +294,6 @@ test('VALID_RESULTS includes error', () => {
     'VALID_RESULTS must include "error" for infrastructure failure classification');
 });
 
-// ─── Test 15a: VALID_FORMALISMS includes uppaal (UPPAAL-02) ───────────────
-test('VALID_FORMALISMS includes uppaal (UPPAAL-02)', () => {
-  const { VALID_FORMALISMS } = require(MODULE_PATH);
-  assert.ok(
-    VALID_FORMALISMS.includes('uppaal'),
-    'VALID_FORMALISMS must include "uppaal" for run-uppaal.cjs writeCheckResult calls'
-  );
-});
 
 // ─── Test 16: requirement_ids defaults to empty array when not provided ─────
 test('requirement_ids defaults to empty array when not provided', () => {

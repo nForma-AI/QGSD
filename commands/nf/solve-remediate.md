@@ -1,6 +1,6 @@
 ---
 name: nf:solve-remediate
-description: Remediation phase sub-skill for nf:solve — dispatches all 13 layer remediation steps (3a-3m) in strict dependency order with Agent-per-layer isolation
+description: Remediation phase sub-skill for nf:solve — dispatches all 14 layer remediation steps (3a-3n) in strict dependency order with Agent-per-layer isolation
 allowed-tools:
   - Read
   - Write
@@ -13,7 +13,7 @@ allowed-tools:
 ---
 
 <objective>
-Run the remediation phase of the nForma consistency solver. This sub-skill handles Steps 3a-3m: all 13 layer remediation dispatches in strict dependency order. Each gap type with residual > 0 is dispatched as its own Agent call to prevent context accumulation across remediation steps.
+Run the remediation phase of the nForma consistency solver. This sub-skill handles Steps 3a-3n: all 14 layer remediation dispatches in strict dependency order. Each gap type with residual > 0 is dispatched as its own Agent call to prevent context accumulation across remediation steps.
 
 This is an internal-only sub-skill dispatched by the nf:solve orchestrator via Agent tool prompts. It is NOT user-invocable.
 </objective>
@@ -58,7 +58,17 @@ At the end of execution, emit a compact JSON result:
   "remediation_report": {
     "dispatched": [ /* list of { layer, skill, status } */ ],
     "skipped": [ /* layers with 0 residual */ ],
-    "failed": [ /* dispatches that errored */ ]
+    "failed": [ /* dispatches that errored */ ],
+    "capped_layers": [
+      {"layer": "l1_to_l3", "dispatched": 3, "max": 3},
+      {"layer": "l3_to_tc", "dispatched": 2, "max": 3}
+    ],
+    "wave_timing": [
+      { "wave": 1, "layers": ["r_to_f", "r_to_d", "t_to_c"], "start_ms": 0, "duration_ms": 12000 },
+      { "wave": 2, "layers": ["f_to_t", "c_to_f"], "start_ms": 12000, "duration_ms": 8000 }
+    ],
+    "total_wall_ms": 45000,
+    "sequential_estimate_ms": 120000
   }
 }
 ```
@@ -74,9 +84,9 @@ Each layer is dispatched as its own **Agent call** to prevent context accumulati
 
 Track dispatched, skipped, and failed lists for the output report.
 
-## Step 3: Remediation Dispatch (Ordered by Dependency)
+## Step 3: Wave-Parallel Remediation Dispatch
 
-**Important:** Dispatch remediation in this strict order because R->F coverage is a prerequisite for F->T test stubs. New formal specs create new invariants needing test backing.
+**Important:** Dispatch remediation in dependency-ordered waves because R->F coverage is a prerequisite for F->T test stubs. New formal specs create new invariants needing test backing. Remediation order is enforced by the dependency DAG in `bin/solve-wave-dag.cjs`. Within each wave, layers run in parallel. Cross-wave dependencies are respected.
 
 **Pre-dispatch:** Transition matched debt entries to 'resolving':
 
@@ -90,7 +100,16 @@ transitionDebtEntries('.planning/formal/debt.json', resolvingFPs, 'acknowledged'
 
 Log: `"Debt: {resolvingFPs.length} entries transitioned to 'resolving'"`
 
-**Per-layer Agent dispatch:** For each layer in the strict order below, if residual > 0, dispatch:
+**Wave computation:** Load the dependency DAG and compute wave groupings:
+
+```javascript
+const { computeWaves } = require(_nfBin('solve-wave-dag.cjs'));
+const waves = computeWaves(residualVector);
+```
+
+This produces an array of wave objects: `[{ wave: 1, layers: ['r_to_f', 'r_to_d', 't_to_c'] }, ...]`. Layers within a wave have no cross-dependencies and can execute in parallel. Waves with `sequential: true` (the gate chain) execute their layers one at a time within the wave.
+
+**Per-layer Agent dispatch template:** For each layer in a wave, if residual > 0, dispatch:
 
 ```
 Agent(
@@ -105,31 +124,44 @@ After completing the section, return ONLY this JSON:
 )
 ```
 
-Parse the compact JSON result. Append to dispatched/skipped/failed lists. Continue to next layer.
+Parse the compact JSON result. Append to dispatched/skipped/failed lists.
 
-**Dispatch order** (skip layers with residual == 0):
+**Wave-parallel dispatch loop:**
 
-| Order | Layer Key | Section | Agent? |
-|-------|-----------|---------|--------|
-| 1 | r_to_f | 3a. R->F Gaps | Yes — dispatches /nf:close-formal-gaps |
-| 2 | f_to_t | 3b. F->T Gaps | Yes — spawns nf-executor agents |
-| 3 | t_to_c | 3c. T->C Gaps | Yes — dispatches /nf:fix-tests |
-| 4 | c_to_f | 3d. C->F Gaps | Yes — dispatches /nf:quick |
-| 5 | f_to_c | 3e. F->C Gaps | Yes — runs verification + dispatches fixes |
-| 6 | r_to_d | 3f. R->D Gaps | Yes — spawns nf-executor agent |
-| 7 | d_to_c | 3g. D->C Gaps | **No** — display-only, keep inline |
-| 8 | git_heatmap | 3h. Git Heatmap | Yes — dispatches /nf:close-formal-gaps |
-| 9 | c_to_r + t_to_r + d_to_r | 3i. Reverse Discovery | Yes — interactive human approval |
-| 10 | (pre-gate) | 3j. Hazard Model Refresh | **No** — single bash command, keep inline |
-| 11 | l1_to_l2 | 3k. Gate A | Yes — dispatches /nf:quick |
-| 12 | l2_to_l3 | 3l. Gate B | Yes — dispatches /nf:quick |
-| 13 | l3_to_tc | 3m. Gate C | Yes — dispatches /nf:quick |
+For each wave from `computeWaves(residualVector)`:
 
-For **inline layers** (3g, 3j): execute the section directly without Agent dispatch (they produce minimal output).
+1. Display wave banner: `"Wave {N}/{total}: dispatching {layers} in parallel"`
+2. Record wave start time: `const waveStart = Date.now()`
+3. For **inline layers** (d_to_c, hazard_model): execute the section directly at the start of the wave before dispatching parallel agents (they produce minimal output)
+4. For **sequential waves** (`wave.sequential === true`): dispatch layers one at a time within the wave (the gate chain: hazard_model -> l1_to_l3 -> l3_to_tc -> per_model_gates)
+5. For **parallel waves**: dispatch all Agent layers in the wave simultaneously (up to 3 concurrent per RAM budget)
+6. Wait for ALL agents in the wave to complete
+7. Record wave end time: `const waveDuration = Date.now() - waveStart`
+8. Log: `"Wave {N} complete: {waveDuration}ms"`
+9. Track layer-level timing for each dispatched agent
+10. Move to next wave
 
-For **Agent layers**: dispatch using the template above. Each sub-agent reads this file, finds its section, and executes only that section. The sub-agent has access to all tools (Read, Write, Edit, Bash, Glob, Grep, Agent, Skill).
+**RAM constraint:** Waves respect the 3-agent limit. Waves with >3 layers are automatically split into sub-waves of 3 by `computeWaves()`. Never exceed 3 concurrent Agent calls at any point.
 
-**RAM constraint:** Never exceed 3 concurrent Agent calls. Layers are dispatched **sequentially** (one at a time), except F->T batch executors which use waves of 3 internally per section 3b.
+**Layer reference table** (layers are dispatched by wave grouping, not this table order):
+
+| Layer Key | Section | Agent? |
+|-----------|---------|--------|
+| r_to_f | 3a. R->F Gaps | Yes — dispatches /nf:close-formal-gaps |
+| r_to_d | 3f. R->D Gaps | Yes — spawns nf-executor agent |
+| t_to_c | 3c. T->C Gaps | Yes — dispatches /nf:fix-tests |
+| p_to_f | 3h-extra. P->F Gaps | Yes — dispatches /nf:close-formal-gaps |
+| f_to_t | 3b. F->T Gaps | Yes — spawns nf-executor agents |
+| c_to_f | 3d. C->F Gaps | Yes — dispatches /nf:quick |
+| f_to_c | 3e. F->C Gaps | Yes — runs verification + dispatches fixes |
+| d_to_c | 3g. D->C Gaps | **No** — display-only, keep inline |
+| git_heatmap | 3h. Git Heatmap | Yes — dispatches /nf:close-formal-gaps |
+| c_to_r + t_to_r + d_to_r | 3i. Reverse Discovery | Yes — interactive human approval |
+| hazard_model | 3j. Hazard Model Refresh | **No** — single bash command, keep inline |
+| l1_to_l3 | 3k. Gate A (collapsed L1->L3) | Yes — dispatches /nf:quick |
+| l3_to_tc | 3m. Gate C | Yes — dispatches /nf:quick |
+| per_model_gates | 3m-extra. Per-Model Gates | Yes — dispatches /nf:quick |
+| h_to_m | 3n. H->M Gaps | Yes -- dispatches /nf:quick |
 
 ---
 
@@ -520,15 +552,15 @@ node bin/hazard-model.cjs --json
 
 Parse the JSON output. Log: `"Hazard model: {total_hazards} hazards scored, {high_rpn_count} high-RPN (>100)"`
 
-If hazard-model.cjs is not found or fails, skip silently and continue to gate remediation (fail-open). The hazard model is an input to Gate B (L2->L3 traceability) — stale hazard data produces false gate failures.
+If hazard-model.cjs is not found or fails, skip silently and continue to gate remediation (fail-open). The hazard model is an input to gate evaluation — stale hazard data produces false gate failures.
 
-### 3k. Gate A Remediation (residual_vector.l1_to_l2.residual > 0)
+### 3k. Gate A Remediation (residual_vector.l1_to_l3.residual > 0)
 
-Gate A measures grounding alignment between L1 evidence (conformance traces) and L2 semantics. The diagnostic engine already computed the residual via gate-a-grounding.cjs.
+Gate A measures grounding alignment between L1 evidence and L3 reasoning models (L2 collapsed — STRUCT-01). The diagnostic engine already computed the residual via gate-a-grounding.cjs.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate A dispatches. If the counter reaches 3, log `"Gate A: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"` and skip to Step 3l.
+**Max dispatches: 3 per solve cycle.** Track a counter for Gate A dispatches. If the counter reaches 3, log `"Gate A: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip to Step 3l.
 
-Extract detail from `residual_vector.l1_to_l2.detail`:
+Extract detail from `residual_vector.l1_to_l3.detail`:
 - `unexplained_breakdown.instrumentation_bug` — actions not in event-vocabulary.json
 - `unexplained_breakdown.model_gap` — actions in vocabulary but XState replay fails
 - `unexplained_breakdown.genuine_violation` — model_gap events violating declared invariants
@@ -545,34 +577,27 @@ All `/nf:quick` dispatches use default mode (no `--full` flag) to avoid unnecess
 
 Log: `"Gate A: grounding_score={score}, {inst_bug} instrumentation bugs, {model_gap} model gaps, {genuine} genuine violations"`
 
-### 3l. Gate B Remediation (residual_vector.l2_to_l3.residual > 0)
+### 3l. Gate B Remediation (residual_vector.l1_to_l3 purpose check)
 
-Gate B verifies every L3 reasoning artifact has valid derived_from links to L2 semantics sources. Orphaned hazards (L3 entries with broken/missing derived_from) inflate the residual.
+Gate B verifies every model has requirement backing (purpose check — L2 collapsed, STRUCT-01). Models without requirements lack purpose backing and inflate the residual.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate B dispatches. If the counter reaches 3, log `"Gate B: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"` and skip to Step 3m.
+**Max dispatches: 3 per solve cycle.** Track a counter for Gate B dispatches. If the counter reaches 3, log `"Gate B: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l1_to_l3", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip to Step 3m.
 
-Extract detail from `residual_vector.l2_to_l3.detail`:
-- `orphaned_count` — L3 entries with no valid L2 back-link (mapped from gate-b-abstraction.cjs `orphaned_entries`)
+Gate B score is derived from the aggregate gate computation. If `gate_b_score < 1.0`, models without requirements need requirements added:
 
-If `orphaned_count > 0`:
 ```
-/nf:quick Fix {N} orphaned L3 reasoning entries identified by Gate B — add or repair derived_from links in .planning/formal/reasoning/ files to reference valid L2 semantics sources
-```
-
-If `gate_b_score < 1.0` but `orphaned_count == 0`, the gap is due to low coverage rather than broken links. Dispatch:
-```
-/nf:quick Improve Gate B L2->L3 traceability coverage — generate derived_from annotations for L3 entries missing semantic back-links (gate_b_score={score})
+/nf:quick Add requirement mappings for {N} models without requirement backing identified by Gate B — update model-registry.json requirements arrays (gate_b_score={score})
 ```
 
 All `/nf:quick` dispatches use default mode (no `--full` flag). Each dispatch increments the Gate B counter.
 
-Log: `"Gate B: gate_b_score={score}, {orphaned_count} orphaned entries"`
+Log: `"Gate B: gate_b_score={score}, {orphaned_count} models without requirement backing"`
 
 ### 3m. Gate C Remediation (residual_vector.l3_to_tc.residual > 0)
 
 Gate C verifies every L3 failure mode maps to at least one test recipe. Unvalidated failure modes lack test coverage.
 
-**Max dispatches: 3 per solve cycle.** Track a counter for Gate C dispatches. If the counter reaches 3, log `"Gate C: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"` and skip.
+**Max dispatches: 3 per solve cycle.** Track a counter for Gate C dispatches. If the counter reaches 3, log `"Gate C: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l3_to_tc", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip.
 
 Extract detail from `residual_vector.l3_to_tc.detail`:
 - `unvalidated_count` — failure modes with no test recipe (mapped from gate-c-validation.cjs `unvalidated_entries`)
@@ -601,9 +626,64 @@ All `/nf:quick` dispatches use default mode (no `--full` flag). Each dispatch in
 
 Log: `"Gate C: gate_c_score={score}, {unvalidated_count}/{total_failure_modes} failure modes lack test recipes"`
 
+### 3n. H->M Gaps (residual_vector.h_to_m.residual > 0)
+
+Hypothesis violations -- formal model assumptions that diverge from observed reality. Each violated assumption represents a model constant that needs updating.
+
+Extract detail from `residual_vector.h_to_m.detail`:
+- `violated` -- count of VIOLATED assumptions
+- `measurements_path` -- path to full measurement data
+
+Read `.planning/formal/evidence/hypothesis-measurements.json` and filter to entries with `verdict: "VIOLATED"`.
+
+For each violated measurement:
+1. If `actual_source` is "scoreboard" and assumption relates to TP/UNAVAIL rates: dispatch `/nf:quick` to update the PRISM model constants (same flow as C->F constant alignment)
+2. If `actual_source` is "conformance-events" and assumption relates to max rounds/iterations: dispatch `/nf:quick` to update the TLA+ CONSTANT definition
+3. If `actual_source` is "telemetry" and assumption relates to timeouts/latencies: dispatch `/nf:quick` to update the relevant formal spec bound
+4. Otherwise: log as informational -- `"H->M: {assumption_name} violated but no auto-fix strategy -- manual review required"`
+
+**Max dispatches: 3 per solve cycle.** Track a counter for H->M dispatches. If the counter reaches 3, log `"H->M: max remediation dispatches (3) reached this cycle"`, append `{ "layer": "h_to_m", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip further auto-fixes.
+
+All `/nf:quick` dispatches use default mode (no `--full` flag).
+
+Log: `"H->M: {violated} violated assumptions, {dispatched} auto-fix dispatches, {skipped} manual-only"`
+
+## Collation: capped_layers
+
+Before emitting the output JSON, collate all `capped_layers` entries accumulated during Gate A (3k), Gate B (3l), Gate C (3m), and H->M (3n) into the `remediation_report.capped_layers` array. If no gate hit its cap, emit an empty array. Initialize `capped_layers = []` at the start of remediation dispatch, and each gate section appends to it when the max-3 cap is reached.
+
+## Wave Timing and Performance Comparison
+
+After all waves complete, compute and log the timing comparison:
+
+1. Sum all wave durations for total wall-clock time (`total_wall_ms`)
+2. Sum all individual layer durations as if they ran one at a time (`sequential_estimate_ms`) — this is the estimated sequential time
+3. Compute speedup ratio: `sequential_estimate_ms / total_wall_ms`
+4. Add to the output JSON:
+   ```json
+   "performance": {
+     "total_wall_ms": 45000,
+     "sequential_estimate_ms": 120000,
+     "speedup_ratio": 2.67,
+     "waves_executed": 6,
+     "layers_dispatched": 14
+   }
+   ```
+5. Log a summary line: `"Remediation: {M} layers in {N} waves, {total_wall_ms}ms wall (est. {sequential_estimate_ms}ms sequential, {speedup_ratio}x speedup)"`
+
+The `wave_timing` array in the remediation report captures per-wave detail:
+```json
+"wave_timing": [
+  { "wave": 1, "layers": ["r_to_f", "r_to_d", "t_to_c"], "start_ms": 0, "duration_ms": 12000 },
+  { "wave": 2, "layers": ["f_to_t", "c_to_f", "p_to_f"], "start_ms": 12000, "duration_ms": 8000 }
+]
+```
+
+Each wave records: the wave number, layer keys dispatched, start offset from remediation begin, and wall-clock duration. For parallel waves, `duration_ms` is the time of the slowest layer. For sequential waves, it is the sum of all layer durations within the wave.
+
 ## Important Constraints
 
-4. **Ordering** — remediation order is strict because R->F must precede F->T (new formal specs create new invariants needing test backing). T->C fixes must happen before F->C verification (tests must pass before checking formal properties against code).
+4. **Ordering** — Remediation order is enforced by the dependency DAG in `bin/solve-wave-dag.cjs`. Within each wave, layers run in parallel. Cross-wave dependencies are respected. R->F must precede F->T (new formal specs create new invariants needing test backing). T->C fixes must happen before F->C verification (tests must pass before checking formal properties against code).
 
 5. **State machine bias** — when implementing or fixing logic that manages distinct states and conditional transitions (3+ states), prefer a state machine library from the supported registry (28 frameworks across 13 languages). State machines defined this way are automatically transpiled to TLA+ by `bin/fsm-to-tla.cjs`, closing the formal verification loop. Match complexity to the problem: flat FSMs get lightweight libraries (e.g., `javascript-state-machine`, `transitions`, `looplab/fsm`), while complex workflows get statechart libraries (e.g., XState, `sismic`, Spring Statemachine). See `.claude/rules/state-machine-bias.md` for the full framework selection table.
 
@@ -614,6 +694,6 @@ Log: `"Gate C: gate_c_score={score}, {unvalidated_count}/{total_failure_modes} f
    - **quick** for constant mismatches (C->F), syntax/scope errors, conformance divergences (F->C)
    - **direct executor dispatch** for R->D documentation generation
 
-9. **Layer alignment remediation** — Gate A/B/C failures are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k) -> Gate B (3l) -> test-recipe-gen (in 3m) -> Gate C (3m). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L2) fixes propagate before Gate B (L2->L3) checks traceability, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate is capped at 3 remediation dispatches per solve cycle to prevent runaway loops if residuals never converge.
+9. **Layer alignment remediation** — Gate A/B/C failures and H->M violations are remediated via `/nf:quick` dispatch (default mode, no `--full` flag) after the hazard model is refreshed (Step 3j). The full dependency chain is: hazard-model refresh (3j) -> Gate A (3k, L1->L3) -> Gate B (3l, purpose) -> test-recipe-gen (in 3m) -> Gate C (3m, L3->TC). H->M (3n) runs independently (no dependencies). This ordering ensures: (a) L3 artifacts are fresh before gates evaluate them, (b) Gate A (L1->L3) fixes propagate before Gate B (purpose) checks requirement backing, (c) test recipes are regenerated before Gate C (L3->TC) evaluates coverage. Each gate and H->M remediation is capped at 3 dispatches per solve cycle to prevent runaway loops if residuals never converge.
 
 </process>

@@ -134,6 +134,50 @@ node ~/.claude/nf-bin/state-candidates.cjs --json 2>/dev/null || node bin/state-
 
 If the script produces output, display a summary of unmodeled state candidates: count of unmapped actions and suggested missing transitions. These are informational — they feed into the next `/nf:solve` iteration if new formal models are created. Fail-open: if the script is not found or errors, skip silently.
 
+### Step 6.2: Baseline Drift Check (CONV-04)
+
+Re-run a lightweight diagnostic to get a fresh residual snapshot:
+```bash
+DRIFT_SNAPSHOT=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd) 2>/dev/null)
+```
+If nf-bin path doesn't exist, fall back to `bin/nf-solve.cjs`.
+
+Then run baseline drift detection using the portable path:
+```bash
+BASELINE_DRIFT_SCRIPT="${HOME}/.claude/nf-bin/baseline-drift.cjs"
+if [ ! -f "$BASELINE_DRIFT_SCRIPT" ]; then BASELINE_DRIFT_SCRIPT="bin/baseline-drift.cjs"; fi
+
+# Parse environment variables and run detection
+export BASELINE_JSON SNAPSHOT_JSON
+$BASELINE_DRIFT_SCRIPT --project-root=$(pwd) 2>/dev/null
+```
+Or, if the script supports stdin:
+```bash
+BASELINE_DRIFT_SCRIPT="${HOME}/.claude/nf-bin/baseline-drift.cjs"
+if [ ! -f "$BASELINE_DRIFT_SCRIPT" ]; then BASELINE_DRIFT_SCRIPT="bin/baseline-drift.cjs"; fi
+
+# Run baseline drift detection
+node "$BASELINE_DRIFT_SCRIPT" --project-root=$(pwd) 2>/dev/null || true
+```
+
+If `result.detected` is true:
+- Display warning banner:
+  ```
+  --- Baseline Drift Warning ---------------------------------
+  {result.warning}
+
+  Affected layers:
+  {for each layer in result.layers:}
+    - {layer.layer}: {layer.baseline} -> {layer.current} ({layer.pct_change}% change)
+  -------------------------------------------------------------
+  ```
+- Include `baseline_drift` in the report output
+
+If `result.detected` is false:
+- Log: `"Baseline drift check: clean -- no external changes detected"`
+
+Fail-open: if the drift check script errors, log warning and continue.
+
 ### Step 6.5: Convergence Report
 
 Display the convergence section showing trend sparklines, oscillation status, and action items:
@@ -176,7 +220,7 @@ CHECK                          RESULT     DETAIL
 Rules for the detail column:
 - **PASS**: Leave blank unless there's a notable caveat (e.g., "low-confidence — 0 traces", "empirical timing only")
 - **FAIL**: Show the full summary from the check result (e.g., "7271 divergence(s) in 20651 traces", "MCMCPEnv model check failed", "tp_rate=0.49, unavail=0.45")
-- **INCONCLUSIVE**: Show the reason (e.g., "fairness missing: PropertyName1, PropertyName2", "verifyta not installed")
+- **INCONCLUSIVE**: Show the reason (e.g., "fairness missing: PropertyName1, PropertyName2")
 
 Display checks in this order: PASS first (alphabetical), then FAIL (alphabetical), then INCONCLUSIVE (alphabetical). This puts failures and inconclusives at the bottom where they're visually prominent.
 

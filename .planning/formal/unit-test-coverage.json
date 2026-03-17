@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-14T10:00:02.406Z",
+  "generated_at": "2026-03-17T10:04:23.358Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -280,33 +280,6 @@
         }
       ]
     },
-    "CI-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CI-04.stub.test.js",
-          "test_name": "CI-04: test:ci enumerates test files explicitly, not via raw glob"
-        }
-      ]
-    },
-    "CI-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CI-05.stub.test.js",
-          "test_name": "CI-05: Alloy model defines LintFormatGate with merge-blocking constraint"
-        }
-      ]
-    },
-    "CI-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/CI-06.stub.test.js",
-          "test_name": "CI-06: Alloy model defines TypeCheckGate with merge-blocking constraint"
-        }
-      ]
-    },
     "CL-01": {
       "covered": true,
       "test_cases": [
@@ -322,6 +295,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/CL-02.stub.test.js",
           "test_name": "CL-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "CLASS-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CLASS-01.stub.test.js",
+          "test_name": "CLASS-01 — Bool: structural verification"
         }
       ]
     },
@@ -443,6 +425,33 @@
         {
           "test_file": ".planning/formal/generated-stubs/CONF-09.stub.test.js",
           "test_name": "CONF-09: config-loader exports DEFAULT_CONFIG with circuit_breaker sub-object"
+        }
+      ]
+    },
+    "CONV-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONV-01.stub.test.js",
+          "test_name": "CONV-01 — DetectOscillation: structural verification"
+        }
+      ]
+    },
+    "CONV-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONV-02.stub.test.js",
+          "test_name": "CONV-02 — RunIteration: structural verification"
+        }
+      ]
+    },
+    "CONV-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CONV-04.stub.test.js",
+          "test_name": "CONV-04 — TakeBaselineSnapshot: structural verification"
         }
       ]
     },
@@ -670,24 +679,6 @@
         }
       ]
     },
-    "DIAG-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DIAG-04.stub.test.js",
-          "test_name": "DIAG-04: filterRequirementsByFocus returns null for empty/null phrase"
-        }
-      ]
-    },
-    "DIAG-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DIAG-05.stub.test.js",
-          "test_name": "DIAG-05: mcp-repair skill workflow file exists and covers lifecycle phases"
-        }
-      ]
-    },
     "DISP-01": {
       "covered": true,
       "test_cases": [
@@ -730,15 +721,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/DISP-05.stub.test.js",
           "test_name": "DISP-05: parseVerdict extracts APPROVE from Mode B output"
-        }
-      ]
-    },
-    "DISP-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/DISP-06.stub.test.js",
-          "test_name": "DISP-06: matchRequirementsByKeywords is exported as a function"
         }
       ]
     },
@@ -895,6 +877,24 @@
         }
       ]
     },
+    "FV-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FV-02.stub.test.js",
+          "test_name": "FV-02 — OscillationBounded: structural verification"
+        }
+      ]
+    },
+    "FV-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/FV-03.stub.test.js",
+          "test_name": "FV-03 — EventualConvergence: structural verification"
+        }
+      ]
+    },
     "GATE-01": {
       "covered": true,
       "test_cases": [
@@ -928,15 +928,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
           "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
-        }
-      ]
-    },
-    "GUARD-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/GUARD-01.stub.test.js",
-          "test_name": "GUARD-01: nf-console-guard.js Stop hook exists and warns about console.log"
         }
       ]
     },
@@ -1126,15 +1117,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/INST-10.stub.test.js",
           "test_name": "INST-10: install.js preserves user-modified circuit_breaker values on reinstall"
-        }
-      ]
-    },
-    "INST-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/INST-11.stub.test.js",
-          "test_name": "INST-11: bin scripts resolve ROOT from process.cwd(), not __dirname"
         }
       ]
     },
@@ -1507,6 +1489,42 @@
         }
       ]
     },
+    "NAME-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAME-01.stub.test.js",
+          "test_name": "NAME-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "NAME-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAME-02.stub.test.js",
+          "test_name": "NAME-02 — Bool: structural verification"
+        }
+      ]
+    },
+    "NAME-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAME-03.stub.test.js",
+          "test_name": "NAME-03 — Bool: structural verification"
+        }
+      ]
+    },
+    "NAME-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/NAME-04.stub.test.js",
+          "test_name": "NAME-04 — Bool: structural verification"
+        }
+      ]
+    },
     "OBS-01": {
       "covered": true,
       "test_cases": [
@@ -1576,33 +1594,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/OBS-08.stub.test.js",
           "test_name": "OBS-08: classifyTier is exported"
-        }
-      ]
-    },
-    "OBS-09": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-09.stub.test.js",
-          "test_name": "OBS-09: all handler files reference standard schema fields in return objects"
-        }
-      ]
-    },
-    "OBS-10": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-10.stub.test.js",
-          "test_name": "OBS-10: observe-utils.cjs exports formatAge, parseDuration, classifySeverityFromLabels"
-        }
-      ]
-    },
-    "OBS-11": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/OBS-11.stub.test.js",
-          "test_name": "OBS-11: observe-handler-upstream.cjs exports classifyUpstreamOverlap"
         }
       ]
     },
@@ -1678,6 +1669,69 @@
         }
       ]
     },
+    "OSC-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OSC-01.stub.test.js",
+          "test_name": "OSC-01 — ConsumeOscillationCredit: structural verification"
+        }
+      ]
+    },
+    "OSC-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OSC-02.stub.test.js",
+          "test_name": "OSC-02 — AllowCascadeGrace: structural verification"
+        }
+      ]
+    },
+    "OSC-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/OSC-03.stub.test.js",
+          "test_name": "OSC-03 — ClassifyEscalation: structural verification"
+        }
+      ]
+    },
+    "PAIR-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PAIR-01.stub.test.js",
+          "test_name": "PAIR-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "PAIR-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PAIR-02.stub.test.js",
+          "test_name": "PAIR-02 — Bool: structural verification"
+        }
+      ]
+    },
+    "PAIR-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PAIR-03.stub.test.js",
+          "test_name": "PAIR-03 — Bool: structural verification"
+        }
+      ]
+    },
+    "PAIR-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PAIR-04.stub.test.js",
+          "test_name": "PAIR-04 — Bool: structural verification"
+        }
+      ]
+    },
     "PARA-01": {
       "covered": true,
       "test_cases": [
@@ -1693,6 +1747,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/PARA-02.stub.test.js",
           "test_name": "PARA-02 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PERF-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PERF-01.stub.test.js",
+          "test_name": "PERF-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "PERF-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PERF-02.stub.test.js",
+          "test_name": "PERF-02 — Bool: structural verification"
         }
       ]
     },
@@ -1822,12 +1894,66 @@
         }
       ]
     },
+    "PRED-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PRED-01.stub.test.js",
+          "test_name": "PRED-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "PRED-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PRED-02.stub.test.js",
+          "test_name": "PRED-02 — Bool: structural verification"
+        }
+      ]
+    },
     "PRIO-01": {
       "covered": true,
       "test_cases": [
         {
           "test_file": ".planning/formal/generated-stubs/PRIO-01.stub.test.js",
           "test_name": "PRIO-01 — Requirement: structural verification"
+        }
+      ]
+    },
+    "PROMO-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PROMO-01.stub.test.js",
+          "test_name": "PROMO-01 — Eligible: structural verification"
+        }
+      ]
+    },
+    "PROMO-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PROMO-02.stub.test.js",
+          "test_name": "PROMO-02 — IncrementCleanSession: structural verification"
+        }
+      ]
+    },
+    "PROMO-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PROMO-03.stub.test.js",
+          "test_name": "PROMO-03 — Promote: structural verification"
+        }
+      ]
+    },
+    "PROMO-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/PROMO-05.stub.test.js",
+          "test_name": "PROMO-05 — DetectFlipFlop: structural verification"
         }
       ]
     },
@@ -2047,24 +2173,6 @@
         }
       ]
     },
-    "REL-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/REL-03.stub.test.js",
-          "test_name": "REL-03: Alloy model enforces ExternalFailuresHandled fact"
-        }
-      ]
-    },
-    "REL-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/REL-04.stub.test.js",
-          "test_name": "REL-04: Alloy model enforces LongOpsProgressAndCancel fact"
-        }
-      ]
-    },
     "REN-01": {
       "covered": true,
       "test_cases": [
@@ -2200,15 +2308,6 @@
         }
       ]
     },
-    "SAFE-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SAFE-03.stub.test.js",
-          "test_name": "SAFE-03: run-formal-verify.cjs resolves models relative to --project-root only"
-        }
-      ]
-    },
     "SCBD-01": {
       "covered": true,
       "test_cases": [
@@ -2272,6 +2371,15 @@
         }
       ]
     },
+    "SCHEMA-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SCHEMA-05.stub.test.js",
+          "test_name": "SCHEMA-05 — Bool: structural verification"
+        }
+      ]
+    },
     "SEC-01": {
       "covered": true,
       "test_cases": [
@@ -2305,42 +2413,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/SEC-04.stub.test.js",
           "test_name": "SEC-04: package.json exists with dependencies that can be audited"
-        }
-      ]
-    },
-    "SEC-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SEC-05.stub.test.js",
-          "test_name": "SEC-05: Alloy model defines PreCommitSecretScan with blocking constraint"
-        }
-      ]
-    },
-    "SEC-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SEC-06.stub.test.js",
-          "test_name": "SEC-06: Alloy model defines CIHistoryScan with PR blocking constraint"
-        }
-      ]
-    },
-    "SEC-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SEC-07.stub.test.js",
-          "test_name": "SEC-07: Alloy model enforces InputValidatedAtBoundary fact"
-        }
-      ]
-    },
-    "SEC-08": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SEC-08.stub.test.js",
-          "test_name": "SEC-08: Alloy model defines DepVulnScan with severity-based blocking"
         }
       ]
     },
@@ -2380,6 +2452,15 @@
         }
       ]
     },
+    "SEM-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SEM-05.stub.test.js",
+          "test_name": "SEM-05 — Bool: behavioral verification"
+        }
+      ]
+    },
     "SENS-01": {
       "covered": true,
       "test_cases": [
@@ -2404,6 +2485,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/SENS-03.stub.test.js",
           "test_name": "SENS-03 — GenerateReport: sensitivity-report.cjs exists"
+        }
+      ]
+    },
+    "SETUP-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SETUP-01.stub.test.js",
+          "test_name": "SETUP-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "SETUP-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/SETUP-02.stub.test.js",
+          "test_name": "SETUP-02 — Bool: structural verification"
         }
       ]
     },
@@ -2488,78 +2587,6 @@
         }
       ]
     },
-    "SOLVE-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-01.stub.test.js",
-          "test_name": "SOLVE-01: nf-solve.cjs exists and is loadable"
-        }
-      ]
-    },
-    "SOLVE-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-02.stub.test.js",
-          "test_name": "SOLVE-02: parseAlloyDefaults parses Alloy Defaults sig constraint block"
-        }
-      ]
-    },
-    "SOLVE-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-03.stub.test.js",
-          "test_name": "SOLVE-03: discoverDocFiles is exported from nf-solve.cjs"
-        }
-      ]
-    },
-    "SOLVE-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-04.stub.test.js",
-          "test_name": "SOLVE-04: solver-doc-layers.als defines Requirement sig"
-        }
-      ]
-    },
-    "SOLVE-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-05.stub.test.js",
-          "test_name": "SOLVE-05: run-formal-verify.cjs parses --project-root argument"
-        }
-      ]
-    },
-    "SOLVE-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-06.stub.test.js",
-          "test_name": "SOLVE-06: assembleReverseCandidates is exported from nf-solve.cjs"
-        }
-      ]
-    },
-    "SOLVE-07": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-07.stub.test.js",
-          "test_name": "SOLVE-07 — Bool: structural verification"
-        }
-      ]
-    },
-    "SOLVE-08": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/SOLVE-08.stub.test.js",
-          "test_name": "SOLVE-08 — HumanGatedLayer: structural verification"
-        }
-      ]
-    },
     "SPEC-01": {
       "covered": true,
       "test_cases": [
@@ -2593,6 +2620,33 @@
         {
           "test_file": ".planning/formal/generated-stubs/SPEC-04.stub.test.js",
           "test_name": "SPEC-04: QGSDSpecGeneration.tla exists and defines StartPhaseSpec"
+        }
+      ]
+    },
+    "STAB-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STAB-01.stub.test.js",
+          "test_name": "STAB-01 — DetectFlipFlop: structural verification"
+        }
+      ]
+    },
+    "STAB-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STAB-02.stub.test.js",
+          "test_name": "STAB-02 — CooldownEnforced: structural verification"
+        }
+      ]
+    },
+    "STAB-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STAB-03.stub.test.js",
+          "test_name": "STAB-03 — LogContains: structural verification"
         }
       ]
     },
@@ -2731,6 +2785,42 @@
         }
       ]
     },
+    "STRUCT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STRUCT-01.stub.test.js",
+          "test_name": "STRUCT-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "STRUCT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STRUCT-02.stub.test.js",
+          "test_name": "STRUCT-02 — Bool: constant verification"
+        }
+      ]
+    },
+    "STRUCT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STRUCT-03.stub.test.js",
+          "test_name": "STRUCT-03 — Bool: structural verification"
+        }
+      ]
+    },
+    "STRUCT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/STRUCT-04.stub.test.js",
+          "test_name": "STRUCT-04 — Bool: structural verification"
+        }
+      ]
+    },
     "SYNC-01": {
       "covered": true,
       "test_cases": [
@@ -2764,6 +2854,42 @@
         {
           "test_file": ".planning/formal/generated-stubs/SYNC-04.stub.test.js",
           "test_name": "SYNC-04: run-account-pool-alloy.cjs exists as a separate file"
+        }
+      ]
+    },
+    "TEST-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TEST-01.stub.test.js",
+          "test_name": "TEST-01 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "TEST-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TEST-02.stub.test.js",
+          "test_name": "TEST-02 — CascadeEffect: structural verification"
+        }
+      ]
+    },
+    "TEST-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TEST-03.stub.test.js",
+          "test_name": "TEST-03 — Layer: behavioral verification"
+        }
+      ]
+    },
+    "TEST-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TEST-04.stub.test.js",
+          "test_name": "TEST-04 — Layer: structural verification"
         }
       ]
     },
@@ -2848,6 +2974,42 @@
         }
       ]
     },
+    "TRACK-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACK-01.stub.test.js",
+          "test_name": "TRACK-01 — AppendSnapshot: structural verification"
+        }
+      ]
+    },
+    "TRACK-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACK-02.stub.test.js",
+          "test_name": "TRACK-02 — DetectTrend: structural verification"
+        }
+      ]
+    },
+    "TRACK-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACK-03.stub.test.js",
+          "test_name": "TRACK-03 — EstimateVelocity: structural verification"
+        }
+      ]
+    },
+    "TRACK-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACK-04.stub.test.js",
+          "test_name": "TRACK-04 — DetectScopeGrowth: structural verification"
+        }
+      ]
+    },
     "TRIAGE-01": {
       "covered": true,
       "test_cases": [
@@ -2863,6 +3025,24 @@
         {
           "test_file": ".planning/formal/generated-stubs/TRIAGE-02.stub.test.js",
           "test_name": "TRIAGE-02: run-formal-verify.cjs contains a triage-bundle step referencing generate-triage-bundle.cjs"
+        }
+      ]
+    },
+    "TUI-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TUI-01.stub.test.js",
+          "test_name": "TUI-01 — TypeOK: structural verification"
+        }
+      ]
+    },
+    "TUI-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TUI-02.stub.test.js",
+          "test_name": "TUI-02 — NoDeadlock: constant verification"
         }
       ]
     },
@@ -2899,33 +3079,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/UNIF-04.stub.test.js",
           "test_name": "UNIF-04: exits non-zero when result=fail entry exists"
-        }
-      ]
-    },
-    "UPPAAL-01": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-01.stub.test.js",
-          "test_name": "UPPAAL-01: uppaal:quorum-races check_id maps to UPPAAL-01 requirement"
-        }
-      ]
-    },
-    "UPPAAL-02": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-02.stub.test.js",
-          "test_name": "UPPAAL-02: uppaal:quorum-races maps to UPPAAL-02 requirement"
-        }
-      ]
-    },
-    "UPPAAL-03": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UPPAAL-03.stub.test.js",
-          "test_name": "UPPAAL-03: run-uppaal.cjs defines DEFAULT_MIN_GAP_MS (minimum inter-slot gap)"
         }
       ]
     },
@@ -2998,33 +3151,6 @@
         {
           "test_file": ".planning/formal/generated-stubs/UX-03.stub.test.js",
           "test_name": "UX-03: gate-a-grounding.cjs error messages include context and fallback guidance"
-        }
-      ]
-    },
-    "UX-04": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UX-04.stub.test.js",
-          "test_name": "UX-04: Alloy model enforces AllActionsProduceFeedback fact"
-        }
-      ]
-    },
-    "UX-05": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UX-05.stub.test.js",
-          "test_name": "UX-05: Alloy model enforces DestructiveActionsRequireProtection fact"
-        }
-      ]
-    },
-    "UX-06": {
-      "covered": true,
-      "test_cases": [
-        {
-          "test_file": ".planning/formal/generated-stubs/UX-06.stub.test.js",
-          "test_name": "UX-06: Alloy model enforces ErrorOutputsAreActionable fact"
         }
       ]
     },
@@ -3172,35 +3298,37 @@
         }
       ]
     },
-    "CI-07": {
+    "XPLAT-01": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/XPLAT-01.stub.test.js",
+          "test_name": "XPLAT-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "XPLAT-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/XPLAT-02.stub.test.js",
+          "test_name": "XPLAT-02 — Bool: structural verification"
+        }
+      ]
+    },
+    "CONV-03": {
       "covered": false,
       "test_cases": []
     },
-    "DIAG-06": {
+    "DISP-08": {
       "covered": false,
       "test_cases": []
     },
-    "DIAG-07": {
+    "FV-01": {
       "covered": false,
       "test_cases": []
     },
-    "DIAG-08": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DIAG-09": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DISPATCH-01": {
-      "covered": false,
-      "test_cases": []
-    },
-    "DISPATCH-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "MULTI-04": {
+    "PROMO-04": {
       "covered": false,
       "test_cases": []
     }

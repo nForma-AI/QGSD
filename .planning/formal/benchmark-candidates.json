@@ -11,7 +11,6 @@
       ".planning/formal/tla/QGSDMCPEnv.tla|SCHEMA-02",
       ".planning/formal/tla/QGSDMCPEnv.tla|SHARD-01",
       ".planning/formal/tla/QGSDMCPEnv.tla|SIG-03",
-      ".planning/formal/tla/QGSDMCPEnv.tla|UPPAAL-02",
       ".planning/formal/tla/QGSDMCPEnv.tla|VALID-01",
       ".planning/formal/tla/QGSDAgentProvisioning.tla|ADAPT-01",
       ".planning/formal/tla/QGSDAgentProvisioning.tla|ARCH-03",
@@ -29,7 +28,6 @@
       ".planning/formal/alloy/solve-session-persistence.als|HLTH-03",
       ".planning/formal/alloy/solve-session-persistence.als|SIG-03",
       ".planning/formal/alloy/solve-session-persistence.als|SOLVE-05",
-      ".planning/formal/alloy/solve-session-persistence.als|UPPAAL-02",
       ".planning/formal/tla/NFAccountManager.tla|CONF-05",
       ".planning/formal/tla/NFAccountManager.tla|CONF-08",
       ".planning/formal/tla/NFCircuitBreaker.tla|CONF-05",
@@ -89,11 +87,7 @@
       ".planning/formal/alloy/misc-behavioral.als|EVID-02"
     ],
     "tfidf": [
-      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
       ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
-      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
-      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
-      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
       ".planning/formal/alloy/evidence-layer.als|BRKR-01",
       ".planning/formal/alloy/token-optimization.als|LTCY-01",
       ".planning/formal/alloy/evidence-triage.als|BRKR-01",
@@ -111,24 +105,15 @@
       ".planning/formal/alloy/parallel-execution.als|BRKR-01"
     ],
     "sem+tfidf": [
-      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
       ".planning/formal/alloy/memory-persistence.als|TOKN-01",
-      ".planning/formal/alloy/formal-test-trace.als|UPPAAL-02",
       ".planning/formal/alloy/memory-persistence.als|LRNG-04",
       ".planning/formal/tla/NFDebtLedger.tla|PF-03",
-      ".planning/formal/alloy/spec-quality-guardrails.als|UPPAAL-02",
-      ".planning/formal/alloy/solve-result-schema.als|UPPAAL-02",
       ".planning/formal/tla/NFDebtLedger.tla|PF-02",
       ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
-      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
       ".planning/formal/alloy/debt-lifecycle.als|PF-03",
       ".planning/formal/alloy/architecture-registry.als|TRACE-01",
-      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
       ".planning/formal/alloy/traceability-obligations.als|DEBT-05",
       ".planning/formal/alloy/multi-slot-structure.als|PROV-03",
-      ".planning/formal/alloy/decomp-cross-model.als|UPPAAL-02",
-      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
-      ".planning/formal/alloy/jvm-heap-sequential.als|UPPAAL-02",
       ".planning/formal/tla/NFSolveP2F.tla|DEBT-05",
       ".planning/formal/alloy/evidence-layer.als|BRKR-01"
     ],
@@ -187,7 +172,6 @@
       ".planning/formal/tla/QGSDMCPEnv.tla|SCHEMA-02",
       ".planning/formal/tla/QGSDMCPEnv.tla|SHARD-01",
       ".planning/formal/tla/QGSDMCPEnv.tla|SIG-03",
-      ".planning/formal/tla/QGSDMCPEnv.tla|UPPAAL-02",
       ".planning/formal/tla/QGSDMCPEnv.tla|VALID-01",
       ".planning/formal/tla/QGSDAgentProvisioning.tla|ADAPT-01",
       ".planning/formal/tla/QGSDAgentProvisioning.tla|ARCH-03",
@@ -205,7 +189,6 @@
       ".planning/formal/alloy/solve-session-persistence.als|HLTH-03",
       ".planning/formal/alloy/solve-session-persistence.als|SIG-03",
       ".planning/formal/alloy/solve-session-persistence.als|SOLVE-05",
-      ".planning/formal/alloy/solve-session-persistence.als|UPPAAL-02",
       ".planning/formal/tla/NFAccountManager.tla|CONF-05",
       ".planning/formal/tla/NFAccountManager.tla|CONF-08",
       ".planning/formal/tla/NFCircuitBreaker.tla|CONF-05",
@@ -265,11 +248,7 @@
       ".planning/formal/alloy/misc-behavioral.als|EVID-02"
     ],
     "tfidf+cat": [
-      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
       ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
-      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
-      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
-      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
       ".planning/formal/alloy/evidence-layer.als|BRKR-01",
       ".planning/formal/alloy/token-optimization.als|LTCY-01",
       ".planning/formal/alloy/evidence-triage.als|BRKR-01",
@@ -287,24 +266,15 @@
       ".planning/formal/alloy/parallel-execution.als|BRKR-01"
     ],
     "sem+tfidf+cat": [
-      ".planning/formal/alloy/unified-check-results.als|UPPAAL-02",
       ".planning/formal/alloy/memory-persistence.als|TOKN-01",
-      ".planning/formal/alloy/formal-test-trace.als|UPPAAL-02",
       ".planning/formal/alloy/memory-persistence.als|LRNG-04",
       ".planning/formal/tla/NFDebtLedger.tla|PF-03",
-      ".planning/formal/alloy/spec-quality-guardrails.als|UPPAAL-02",
-      ".planning/formal/alloy/solve-result-schema.als|UPPAAL-02",
       ".planning/formal/tla/NFDebtLedger.tla|PF-02",
       ".planning/formal/alloy/baseline-merge-idempotent.als|BRKR-01",
-      ".planning/formal/alloy/schema-extensions.als|UPPAAL-02",
       ".planning/formal/alloy/debt-lifecycle.als|PF-03",
       ".planning/formal/alloy/architecture-registry.als|TRACE-01",
-      ".planning/formal/alloy/evidence-triage.als|UPPAAL-02",
       ".planning/formal/alloy/traceability-obligations.als|DEBT-05",
       ".planning/formal/alloy/multi-slot-structure.als|PROV-03",
-      ".planning/formal/alloy/decomp-cross-model.als|UPPAAL-02",
-      ".planning/formal/alloy/architecture-registry.als|UPPAAL-02",
-      ".planning/formal/alloy/jvm-heap-sequential.als|UPPAAL-02",
       ".planning/formal/tla/NFSolveP2F.tla|DEBT-05",
       ".planning/formal/alloy/evidence-layer.als|BRKR-01"
     ],
@@ -396,10 +366,6 @@
     },
     {
       "model": ".planning/formal/tla/QGSDMCPEnv.tla",
-      "requirement": "UPPAAL-02"
-    },
-    {
-      "model": ".planning/formal/tla/QGSDMCPEnv.tla",
       "requirement": "VALID-01"
     },
     {
@@ -457,10 +423,6 @@
     {
       "model": ".planning/formal/alloy/solve-session-persistence.als",
       "requirement": "SOLVE-05"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-session-persistence.als",
-      "requirement": "UPPAAL-02"
     },
     {
       "model": ".planning/formal/tla/NFAccountManager.tla",
@@ -587,24 +549,8 @@
       "requirement": "EVID-02"
     },
     {
-      "model": ".planning/formal/alloy/unified-check-results.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
       "model": ".planning/formal/alloy/baseline-merge-idempotent.als",
       "requirement": "BRKR-01"
-    },
-    {
-      "model": ".planning/formal/alloy/schema-extensions.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
-      "model": ".planning/formal/alloy/evidence-triage.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
-      "model": ".planning/formal/alloy/architecture-registry.als",
-      "requirement": "UPPAAL-02"
     },
     {
       "model": ".planning/formal/alloy/evidence-layer.als",
@@ -671,24 +617,12 @@
       "requirement": "TOKN-01"
     },
     {
-      "model": ".planning/formal/alloy/formal-test-trace.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
       "model": ".planning/formal/alloy/memory-persistence.als",
       "requirement": "LRNG-04"
     },
     {
       "model": ".planning/formal/tla/NFDebtLedger.tla",
       "requirement": "PF-03"
-    },
-    {
-      "model": ".planning/formal/alloy/spec-quality-guardrails.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
-      "model": ".planning/formal/alloy/solve-result-schema.als",
-      "requirement": "UPPAAL-02"
     },
     {
       "model": ".planning/formal/tla/NFDebtLedger.tla",
@@ -709,14 +643,6 @@
     {
       "model": ".planning/formal/alloy/multi-slot-structure.als",
       "requirement": "PROV-03"
-    },
-    {
-      "model": ".planning/formal/alloy/decomp-cross-model.als",
-      "requirement": "UPPAAL-02"
-    },
-    {
-      "model": ".planning/formal/alloy/jvm-heap-sequential.als",
-      "requirement": "UPPAAL-02"
     },
     {
       "model": ".planning/formal/tla/NFSolveP2F.tla",

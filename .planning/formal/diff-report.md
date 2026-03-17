@@ -1,9 +1,9 @@
 # Formal Verification Diff Report
 
-**Generated:** 2026-03-14T18:36:14.316Z
-**Current Run:** 4 pass, 0 fail
+**Generated:** 2026-03-17T11:50:58.543Z
+**Current Run:** 3 pass, 0 fail, 1 warn/inconclusive
 **Previous Run:** 0 transitions, 0 new, 0 removed
-**Overall Status:** pass
+**Overall Status:** inconclusive
 
 ## Unchanged Checks
 
@@ -12,5 +12,5 @@
 ## Previous Run (for next comparison)
 
 ```json
-{"ci:trace-redaction":"pass","ci:trace-schema-drift":"pass","ci:liveness-fairness-lint":"pass","ci:conformance-traces":"pass"}
+{"ci:trace-redaction":"pass","ci:trace-schema-drift":"pass","ci:liveness-fairness-lint":"inconclusive","ci:conformance-traces":"pass"}
 ```

@@ -71,19 +71,7 @@ test('findStateSpaceMatch: tla:account-manager matches MCAccountManager.tla', ()
   assert.equal(result.risk_level, 'LOW');
 });
 
-test('findStateSpaceMatch: uppaal:quorum-races matches quorum-races.xml', () => {
-  const models = {
-    '.planning/formal/uppaal/quorum-races.xml': {
-      estimated_states: 100,
-      risk_level: 'LOW',
-      variables: ['x', 'y'],
-    },
-  };
-  const result = findStateSpaceMatch('uppaal:quorum-races', models);
-  assert.ok(result, 'should find a match');
-  assert.equal(result.estimated_states, 100);
-  assert.equal(result.risk_level, 'LOW');
-});
+
 
 test('findStateSpaceMatch: petri:account-manager matches account-manager-petri-net.dot', () => {
   const models = {

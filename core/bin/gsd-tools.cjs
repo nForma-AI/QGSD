@@ -133,8 +133,9 @@
  *                              Detect test frameworks from config files and list all tests via framework CLI
  *   maintain-tests batch --input-file <path> [--size N] [--seed N] [--exclude-file <path>] [--manifest-file <path>]
  *                              Shuffle and split test list into batches; write manifest to disk before execution
- *   maintain-tests run-batch --batch-file <path> [--timeout N] [--env KEY=VALUE...] [--output-file <path>]
+ *   maintain-tests run-batch --batch-file <path> [--timeout N] [--env KEY=VALUE...] [--output-file <path>] [--parallel N]
  *                              Execute a single batch from manifest; capture output to temp file; 3-run flakiness check
+ *                              --parallel N: run up to N test files concurrently (opt-in; default: sequential)
  *   maintain-tests ddmin --failing-test <path> --candidates-file <path> [--timeout N] [--run-cap N] [--runner auto|jest|playwright|pytest] [--output-file path]
  *                              Delta-debugging: find minimal subset of co-runner tests causing failing-test to fail (default run cap: 50)
  */
@@ -5768,6 +5769,7 @@ async function main() {
           const timeoutIdx = args.indexOf('--timeout');
           const outputIdx = args.indexOf('--output-file');
           const batchIndexIdx = args.indexOf('--batch-index');
+          const parallelIdx = args.indexOf('--parallel');
           // Collect all --env KEY=VALUE pairs
           const envPairs = {};
           for (let i = 0; i < args.length; i++) {
@@ -5782,6 +5784,7 @@ async function main() {
             timeoutSec: timeoutIdx !== -1 ? parseInt(args[timeoutIdx + 1], 10) : 3600,
             outputFile: outputIdx !== -1 ? args[outputIdx + 1] : null,
             batchIndex: batchIndexIdx !== -1 ? parseInt(args[batchIndexIdx + 1], 10) : 0,
+            parallel: parallelIdx !== -1 ? args[parallelIdx + 1] : null,
             env: { ...process.env, ...envPairs },
           }, raw);
           break;
@@ -6202,11 +6205,13 @@ function cmdMaintainTestsDiscover(cwd, options, raw) {
     let result = spawnSync('npx', ['jest', '--listTests'], {
       cwd: searchDir,
       encoding: 'utf-8',
+      maxBuffer: 50 * 1024 * 1024, // 50MB — prevents ENOBUFS on large test suites
     });
     if (result.error || (result.status !== 0 && !(result.stdout || '').trim())) {
       result = spawnSync('./node_modules/.bin/jest', ['--listTests'], {
         cwd: searchDir,
         encoding: 'utf-8',
+        maxBuffer: 50 * 1024 * 1024,
       });
     }
     if (result.error || (result.status !== 0 && !(result.stdout || '').trim())) {
@@ -6223,6 +6228,7 @@ function cmdMaintainTestsDiscover(cwd, options, raw) {
     const result = spawnSync('npx', ['playwright', 'test', '--list'], {
       cwd: searchDir,
       encoding: 'utf-8',
+      maxBuffer: 50 * 1024 * 1024, // 50MB — prevents ENOBUFS on large test suites
     });
     if (result.error) {
       warnings.push({ runner: 'playwright', error: result.error.message });
@@ -6254,6 +6260,7 @@ function cmdMaintainTestsDiscover(cwd, options, raw) {
     const result = spawnSync(pyExe, [...pyPre, '-m', 'pytest', '--collect-only', '-q', '--override-ini=addopts='], {
       cwd: searchDir,
       encoding: 'utf-8',
+      maxBuffer: 50 * 1024 * 1024, // 50MB — prevents ENOBUFS on large test suites (~11K+ tests)
     });
     if (result.error) {
       warnings.push({ runner: 'pytest', error: result.error.message });
@@ -6466,6 +6473,11 @@ async function runTestFile(testFile, runner, opts, batchTmpPrefix) {
 
       if (spawnResult.timedOut) {
         perTestResults.push({ file: testFile, runner, status: 'timeout', duration_ms: durationMs, error_summary: 'timed out', flaky: false, flaky_pass_count: 0 });
+      } else if (spawnResult.exitCode === 5) {
+        // pytest exit code 5 = "no tests collected" — NOT a failure.
+        // Happens with helper modules that have test_ prefix, or pytest.importorskip() when optional deps are missing.
+        perTestResults.push({ file: testFile, runner, status: 'skipped', duration_ms: durationMs, error_summary: 'no tests collected (pytest exit code 5)', flaky: false, flaky_pass_count: 0 });
+        try { fs.unlinkSync(pytestJsonOutput); } catch (e) { /* ignore */ }
       } else {
         let parsed = false;
         try {
@@ -6524,7 +6536,7 @@ async function runTestFile(testFile, runner, opts, batchTmpPrefix) {
  */
 async function cmdMaintainTestsRunBatch(cwd, options, raw) {
   const os = require('os');
-  const { batchFile, timeoutSec = 3600, outputFile, batchIndex = 0, env } = options;
+  const { batchFile, timeoutSec = 3600, outputFile, batchIndex = 0, env, parallel } = options;
 
   if (!batchFile) {
     error('maintain-tests run-batch: --batch-file is required');
@@ -6562,19 +6574,57 @@ async function cmdMaintainTestsRunBatch(cwd, options, raw) {
 
   const results = [];
   let batchTimedOut = false;
+  const workerCount = parallel ? Math.max(1, parseInt(parallel, 10) || 1) : 0;
 
-  // Execute each file individually — NOT all at once — for per-file result isolation
-  for (const testFile of files) {
-    // Check batch-level timeout
-    if (Date.now() - batchStartMs >= timeoutMs) {
-      batchTimedOut = true;
-      results.push({ file: testFile, runner, status: 'timeout', duration_ms: 0, error_summary: 'batch timeout exceeded', flaky: false, flaky_pass_count: 0 });
-      continue;
+  if (workerCount > 1) {
+    // Parallel execution — worker pool with N concurrent subprocess runners.
+    // Results are collected per-file and merged in manifest order at the end.
+    const fileResults = new Array(files.length);
+    let nextIndex = 0;
+
+    async function worker() {
+      while (true) {
+        if (Date.now() - batchStartMs >= timeoutMs) {
+          batchTimedOut = true;
+          return;
+        }
+        const idx = nextIndex++;
+        if (idx >= files.length) return;
+        const testFile = files[idx];
+        if (batchTimedOut) {
+          fileResults[idx] = [{ file: testFile, runner, status: 'timeout', duration_ms: 0, error_summary: 'batch timeout exceeded', flaky: false, flaky_pass_count: 0 }];
+          return;
+        }
+        const fileOpts = { cwd, env, fileTimeoutMs: undefined };
+        fileResults[idx] = await runTestFile(testFile, runner, fileOpts, `${batchTmpPrefix}-w${idx}`);
+      }
     }
 
-    const fileOpts = { cwd, env, fileTimeoutMs: undefined };
-    const perTestResults = await runTestFile(testFile, runner, fileOpts, batchTmpPrefix);
-    results.push(...perTestResults);
+    // Launch N workers — they self-schedule from the shared nextIndex counter
+    await Promise.all(Array.from({ length: Math.min(workerCount, files.length) }, () => worker()));
+
+    // Merge results in manifest order (preserves seed-pinned ordering in output)
+    for (let i = 0; i < files.length; i++) {
+      if (fileResults[i]) {
+        results.push(...fileResults[i]);
+      } else {
+        results.push({ file: files[i], runner, status: 'timeout', duration_ms: 0, error_summary: 'batch timeout exceeded', flaky: false, flaky_pass_count: 0 });
+      }
+    }
+  } else {
+    // Sequential execution (default) — per-file result isolation, deterministic ordering
+    for (const testFile of files) {
+      // Check batch-level timeout
+      if (Date.now() - batchStartMs >= timeoutMs) {
+        batchTimedOut = true;
+        results.push({ file: testFile, runner, status: 'timeout', duration_ms: 0, error_summary: 'batch timeout exceeded', flaky: false, flaky_pass_count: 0 });
+        continue;
+      }
+
+      const fileOpts = { cwd, env, fileTimeoutMs: undefined };
+      const perTestResults = await runTestFile(testFile, runner, fileOpts, batchTmpPrefix);
+      results.push(...perTestResults);
+    }
   }
 
   // 3-run flakiness pre-check for failing tests (EXEC-04)
@@ -6675,7 +6725,7 @@ async function cmdMaintainTestsDdmin(cwd, options, raw) {
       : path.join(cwd, candidatesFile);
     const raw2 = fs.readFileSync(resolvedCandidates, 'utf-8');
     const parsed = JSON.parse(raw2);
-    candidates = Array.isArray(parsed.test_files) ? parsed.test_files : [];
+    candidates = Array.isArray(parsed) ? parsed : (Array.isArray(parsed.test_files) ? parsed.test_files : []);
   } catch (e) {
     error(`maintain-tests ddmin: failed to read --candidates-file "${candidatesFile}" — ${e.message}`);
   }

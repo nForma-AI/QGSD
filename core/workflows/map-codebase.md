@@ -222,10 +222,24 @@ Run quorum validation on the 4 key mapper documents before finalizing.
 
 Form your ADVISORY analysis (per CE-1 from quorum.md — not a vote in the tally): read the 4 documents and assess consistency, completeness, and blind spots. State your analysis as 1-2 sentences to share with external voters.
 
-Run quorum inline (R3 dispatch_pattern from `commands/nf/quorum.md`):
-- Mode B — artifact review
+Run quorum inline — follow the canonical protocol in @core/references/quorum-dispatch.md:
+- Mode A — artifact review
 - artifact_path: `.planning/codebase/STACK.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `CONCERNS.md`
+- review_context: "Review these 4 codebase analysis documents for consistency, completeness, blind spots, and concern triage. Vote APPROVE if no significant issues found, BLOCK if issues exist."
 - Question: "Review these 4 codebase analysis documents. Check: (1) CONSISTENCY — do docs contradict each other? (2) COMPLETENESS — obvious areas absent from all docs? (3) BLIND SPOTS — what did parallel agents miss? (4) CONCERN TRIAGE — which CONCERNS.md items should block new work vs be deferred? Vote APPROVE (no significant issues) or BLOCK (issues found with structured list)."
+- **Exact YAML format for worker prompts** (from reference section 4):
+  ```yaml
+  slot: <slotName>
+  round: <round_number>
+  timeout_ms: <from $SLOT_TIMEOUTS or 30000>
+  repo_dir: <absolute path to project root>
+  mode: A
+  question: "Review these 4 codebase analysis documents..."
+  artifact_path: .planning/codebase/STACK.md
+  review_context: "Review for consistency, completeness, blind spots, concern triage"
+  prior_positions: |
+    [included from Round 2 onward]
+  ```
 - Build `$DISPATCH_LIST` first (quorum.md Adaptive Fan-Out: read risk_level → compute FAN_OUT_COUNT → take first FAN_OUT_COUNT-1 slots from active working list). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks — do NOT dispatch slots outside `$DISPATCH_LIST`
 - Synthesize results inline, deliberate up to 10 rounds per R3.3
 

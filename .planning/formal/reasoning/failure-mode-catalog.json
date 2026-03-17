@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-11T13:04:45.891Z",
+  "generated": "2026-03-16T12:39:29.261Z",
   "failure_modes": [
     {
       "id": "FM-IDLE-QUORUM_START-OMISSION",
@@ -1762,20 +1762,6 @@
       ]
     },
     {
-      "id": "FM-UPPAAL-OMISSION",
-      "title": "UPPAAL capability omission",
-      "description": "Failure to implement UPPAAL requirements: A UPPAAL timed automaton model (`.planning/formal/uppaal/quorum-races.xml`) captures the concurrency structure of the qu",
-      "type": "omission",
-      "severity": "medium",
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "requirements.json",
-          "ref": "requirements[id=UPPAAL-01]"
-        }
-      ]
-    },
-    {
       "id": "FM-UPS-OMISSION",
       "title": "UPS capability omission",
       "description": "Failure to implement UPS requirements: UserPromptSubmit hook detects GSD planning commands via explicit allowlist regex match against prompt field",
@@ -2042,6 +2028,1744 @@
           "ref": "requirements[id=VERF-01]"
         }
       ]
+    },
+    {
+      "id": "FM-CONF-OMISSION",
+      "state": "CONFIG_LOAD",
+      "event": "LOAD_CONFIG",
+      "to_state": "CONFIG_LOADED",
+      "failure_mode": "omission",
+      "description": "Config loader fails to merge global and per-project config layers, or fails to validate and fall back to defaults on malformed config",
+      "effect": "System requirements CONF-01 through CONF-08 not satisfied — config may be incomplete or invalid without fallback",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFConfigLoader.tla",
+          "ref": "NFConfigLoader specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=CONF-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-DISPATCH-OMISSION",
+      "state": "DISPATCH",
+      "event": "DISPATCH_QUORUM",
+      "to_state": "DISPATCHED",
+      "failure_mode": "omission",
+      "description": "Quorum dispatch fails to deliver prompts without shell interpretation or fails to deduplicate slots sharing the same underlying model",
+      "effect": "System requirements DISPATCH-01, DISPATCH-02 not satisfied — quorum prompts corrupted or duplicate slots waste resources",
+      "severity_class": "stalled",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFDispatch.tla",
+          "ref": "NFDispatch specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=DISPATCH-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-RECRUITING-OMISSION",
+      "state": "RECRUITING",
+      "event": "MIGRATE_SLOTS",
+      "to_state": "SLOTS_MIGRATED",
+      "failure_mode": "omission",
+      "description": "Slot recruiting fails to migrate existing mcpServers entries from model-based to slot-based naming, or fails to update source file references",
+      "effect": "System requirements SLOT-02 through SLOT-04 not satisfied — legacy slot names persist, causing dispatch failures",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/NFRecruiting.tla",
+          "ref": "NFRecruiting specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=SLOT-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-INSTALLER-OMISSION",
+      "state": "INSTALL",
+      "event": "RUN_INSTALLER",
+      "to_state": "INSTALLED",
+      "failure_mode": "omission",
+      "description": "Installer fails to be idempotent — re-running does not update hooks/config, or overwrites existing per-project overrides, or fails to register circuit breaker hook",
+      "effect": "System requirements INST-06 through INST-10 not satisfied — install state inconsistent after re-run",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/QGSDInstallerIdempotency.tla",
+          "ref": "QGSDInstallerIdempotency specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=INST-06]"
+        }
+      ]
+    },
+    {
+      "id": "FM-SPECGEN-OMISSION",
+      "state": "SPEC_GEN",
+      "event": "GENERATE_SPEC",
+      "to_state": "SPEC_GENERATED",
+      "failure_mode": "omission",
+      "description": "Phase spec generation fails to translate PLAN.md must_haves to TLA+ PROPERTY blocks, or debug invariant proposer fails to mine TLA+ candidates from debug sessions",
+      "effect": "System requirements SPEC-04, LOOP-04 not satisfied — formal specs incomplete or debug invariants not discovered",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": "tla/QGSDSpecGeneration.tla",
+          "ref": "QGSDSpecGeneration specification"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=SPEC-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-AGT-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "DoIteration",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Agent loop iteration cap exceeded or goal not reached",
+      "effect": "Formal property DoIteration, NeverExceedsCap, GoalImpliesSuccess violated in QGSDAgentLoop.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDAgentLoop.tla",
+          "ref": "DoIteration, NeverExceedsCap, GoalImpliesSuccess"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=AGT-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-QUORUM-06-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "BlockVotePreventsApproval",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Checkpoint gate allows approval despite block vote or all-unavailable",
+      "effect": "Formal property BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity violated in QGSDCheckpointGate.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDCheckpointGate.tla",
+          "ref": "BlockVotePreventsApproval, AllUnavailPreventsApproval, ApprovedRequiresUnanimity"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=QUORUM-06]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "HotkeySwitch",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI module switching fails via hotkey or tab navigation",
+      "effect": "Formal property HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules violated in QGSDTUIModules.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDTUIModules.tla",
+          "ref": "HotkeySwitch, TabForward, TabBackward, ExactlyThreeModules"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-02-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "CreateSession",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Session create/connect/terminate lifecycle violation",
+      "effect": "Formal property CreateSession, ConnectSession, TerminateSession violated in QGSDTUISessions.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDTUISessions.tla",
+          "ref": "CreateSession, ConnectSession, TerminateSession"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-NAV-04-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "SaveSessions",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Session persistence save/restore integrity failure",
+      "effect": "Formal property SaveSessions, RestoreFromDisk, PersistenceIntegrity violated in QGSDSessionPersistence.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDSessionPersistence.tla",
+          "ref": "SaveSessions, RestoreFromDisk, PersistenceIntegrity"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=NAV-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-01-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "TypeOK",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation type invariant violation",
+      "effect": "Formal property TypeOK violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "TypeOK"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-01]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-02-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "NoDeadlock",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation deadlock — no available transitions",
+      "effect": "Formal property NoDeadlock violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "NoDeadlock"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-02]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-03-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "DepthBounded",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI navigation depth exceeds bound",
+      "effect": "Formal property DepthBounded violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "DepthBounded"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-03]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-04-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "EscapeProgress",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Escape key does not make progress toward exit",
+      "effect": "Formal property EscapeProgress violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "EscapeProgress"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-04]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-05-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "EventuallyExits",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "TUI does not eventually exit",
+      "effect": "Formal property EventuallyExits violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "EventuallyExits"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-05]"
+        }
+      ]
+    },
+    {
+      "id": "FM-TUI-06-OMISSION",
+      "state": "SPEC_PROPERTY",
+      "event": "MainMenuReachable",
+      "to_state": "VIOLATION",
+      "failure_mode": "omission",
+      "description": "Main menu not reachable from current state",
+      "effect": "Formal property MainMenuReachable violated in TUINavigation.tla",
+      "severity_class": "degraded",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/TUINavigation.tla",
+          "ref": "MainMenuReachable"
+        },
+        {
+          "layer": "L2",
+          "artifact": "requirements.json",
+          "ref": "requirements[id=TUI-06]"
+        }
+      ]
+    },
+    {
+      "id": "FM-REQ-CRED-07-OMISSION",
+      "description": "Formal property for requirement CRED-07 is not enforced: CRED-07",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/account-pool-structure.als",
+          "ref": "requirements[id=CRED-07]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-GUARD-01-OMISSION",
+      "description": "Formal property for requirement GUARD-01 is not enforced: Context payload size guardrail — All data passed through LLM agent context (Bash output, inter-agent",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/agent-context-payload.als",
+          "ref": "requirements[id=GUARD-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Reliability"
+    },
+    {
+      "id": "FM-REQ-GATE-02-OMISSION",
+      "description": "Formal property for requirement GATE-02 is not enforced: Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orpha",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/autoclose-signals.als",
+          "ref": "requirements[id=GATE-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Gates"
+    },
+    {
+      "id": "FM-REQ-INST-12-OMISSION",
+      "description": "Formal property for requirement INST-12 is not enforced: INST-12",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/baseline-merge-idempotent.als",
+          "ref": "requirements[id=INST-12]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-INIT-01-OMISSION",
+      "description": "Formal property for requirement INIT-01 is not enforced: INIT-01",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/baseline-requirements-filter.als",
+          "ref": "requirements[id=INIT-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-INST-11-OMISSION",
+      "description": "Formal property for requirement INST-11 is not enforced: Quick workflow auto-detects protected branches and creates feature branches on protected branches, c",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/bin-path-resolution.als",
+          "ref": "requirements[id=INST-11]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Installer & CLI"
+    },
+    {
+      "id": "FM-REQ-BLD-01-OMISSION",
+      "description": "Formal property for requirement BLD-01 is not enforced: `hooks/dist/` rebuilt from current source — includes all circuit breaker hook code from Phases 6–8 a",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/build-test-quality.als",
+          "ref": "requirements[id=BLD-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Testing & Quality"
+    },
+    {
+      "id": "FM-REQ-CL-01-OMISSION",
+      "description": "Formal property for requirement CL-01 is not enforced: CHANGELOG.md has a `[0.2.0]` entry covering all v0.2 changes: circuit breaker (Phases 6–8), GUARD 5 ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/changelog-release.als",
+          "ref": "requirements[id=CL-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Installer & CLI"
+    },
+    {
+      "id": "FM-REQ-CI-07-OMISSION",
+      "description": "Formal property for requirement CI-07 is not enforced: CI/CD workflows trigger and test on both main and staging branches, run tests across Node 18/20/22 m",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/ci-matrix.als",
+          "ref": "requirements[id=CI-07]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "CI/CD"
+    },
+    {
+      "id": "FM-REQ-CI-05-OMISSION",
+      "description": "Formal property for requirement CI-05 is not enforced: Linting and formatting checks run in CI and block merge on violations",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/ci-quality-gates.als",
+          "ref": "requirements[id=CI-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "CI/CD"
+    },
+    {
+      "id": "FM-REQ-CI-04-OMISSION",
+      "description": "Formal property for requirement CI-04 is not enforced: Automated test suite runs on every pull request and merge to main is blocked when tests fail",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/ci-test-fallback.als",
+          "ref": "requirements[id=CI-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "CI/CD"
+    },
+    {
+      "id": "FM-REQ-OBS-05-OMISSION",
+      "description": "Formal property for requirement OBS-05 is not enforced: `/qgsd:observe` supports `logstash` source type that runs an Elasticsearch query against a configure",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/cli-exit-conventions.als",
+          "ref": "requirements[id=OBS-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observe Skill"
+    },
+    {
+      "id": "FM-REQ-CONF-13-OMISSION",
+      "description": "Formal property for requirement CONF-13 is not enforced: CONF-13",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/config-audit.als",
+          "ref": "requirements[id=CONF-13]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-CONF-10-OMISSION",
+      "description": "Formal property for requirement CONF-10 is not enforced: CONF-10",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/config-zero-providers.als",
+          "ref": "requirements[id=CONF-10]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DISP-07-OMISSION",
+      "description": "Formal property for requirement DISP-07 is not enforced: DISP-07",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/debate-trace-persistence.als",
+          "ref": "requirements[id=DISP-07]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DEBT-02-OMISSION",
+      "description": "Formal property for requirement DEBT-02 is not enforced: Debt entries are deduplicated by fingerprint — new observations with matching fingerprints increment",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/debt-lifecycle.als",
+          "ref": "requirements[id=DEBT-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Debt Ledger"
+    },
+    {
+      "id": "FM-REQ-DECOMP-05-OMISSION",
+      "description": "Formal property for requirement DECOMP-05 is not enforced: `analyze-state-space.cjs` identifies model pairs sharing source files or requirement prefixes, estim",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/decomp-cross-model.als",
+          "ref": "requirements[id=DECOMP-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Planning & Tracking"
+    },
+    {
+      "id": "FM-REQ-DIAG-01-OMISSION",
+      "description": "Formal property for requirement DIAG-01 is not enforced: Conformance trace divergence rate reduced to <5% (ACHIEVED: 0% on mapped events; VERIFICATION.md mis",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/diagnostics-verification.als",
+          "ref": "requirements[id=DIAG-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-DIAG-02-OMISSION",
+      "description": "Formal property for requirement DIAG-02 is not enforced: `attribute-trace-divergence.cjs` walks XState guards to root-cause divergences (IMPLEMENTED; VERIFIC",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/diagnostics.als",
+          "ref": "requirements[id=DIAG-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-DISP-06-OMISSION",
+      "description": "Formal property for requirement DISP-06 is not enforced: Quorum preflight implements two-layer parallel health probe via --probe flag: Layer 1 spawns CLI bin",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/dispatch-formal-context.als",
+          "ref": "requirements[id=DISP-06]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Dispatch Reliability"
+    },
+    {
+      "id": "FM-REQ-DOC-01-OMISSION",
+      "description": "Formal property for requirement DOC-01 is not enforced: DOC-01",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/doc-claims-backing.als",
+          "ref": "requirements[id=DOC-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DOC-02-OMISSION",
+      "description": "Formal property for requirement DOC-02 is not enforced: DOC-02",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/doc-presentation.als",
+          "ref": "requirements[id=DOC-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-EVID-05-OMISSION",
+      "description": "Formal property for requirement EVID-05 is not enforced: Canonical event vocabulary defines a strict vocabulary of event names that all layers use, preventin",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/event-vocabulary.als",
+          "ref": "requirements[id=EVID-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Evidence"
+    },
+    {
+      "id": "FM-REQ-EVID-02-OMISSION",
+      "description": "Formal property for requirement EVID-02 is not enforced: Trace corpus management indexes conformance events by session, action type, and state transition wit",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/evidence-layer.als",
+          "ref": "requirements[id=EVID-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Evidence"
+    },
+    {
+      "id": "FM-REQ-EVID-03-OMISSION",
+      "description": "Formal property for requirement EVID-03 is not enforced: Failure taxonomy classifies all check-result failures into 5 categories (crash, timeout, logic-viola",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/evidence-scope-scan.als",
+          "ref": "requirements[id=EVID-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Evidence"
+    },
+    {
+      "id": "FM-REQ-FP-01-OMISSION",
+      "description": "Formal property for requirement FP-01 is not enforced: Issues are fingerprinted using a hierarchical strategy: exception type → function name → message pat",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/fingerprinting-dedup.als",
+          "ref": "requirements[id=FP-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Fingerprinting"
+    },
+    {
+      "id": "FM-REQ-FP-02-OMISSION",
+      "description": "Formal property for requirement FP-02 is not enforced: Drifts are fingerprinted by formal parameter key (e.g., `MCsafety.cfg:MaxDeliberation`) — identical ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/fingerprinting.als",
+          "ref": "requirements[id=FP-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Fingerprinting"
+    },
+    {
+      "id": "FM-REQ-DIAG-04-OMISSION",
+      "description": "Formal property for requirement DIAG-04 is not enforced: Support --focus=\"<phrase>\" flag in nf:solve to filter diagnostics and reporting output to requiremen",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/focus-topic-filter.als",
+          "ref": "requirements[id=DIAG-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-TRACE-06-OMISSION",
+      "description": "Formal property for requirement TRACE-06 is not enforced: TRACE-06",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/formal-test-trace.als",
+          "ref": "requirements[id=TRACE-06]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-GATE-03-OMISSION",
+      "description": "Formal property for requirement GATE-03 is not enforced: Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/gate-promotion-lifecycle.als",
+          "ref": "requirements[id=GATE-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Gates"
+    },
+    {
+      "id": "FM-REQ-GATE-05-OMISSION",
+      "description": "Formal property for requirement GATE-05 is not enforced: GATE-05",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/gate-scoring-traces.als",
+          "ref": "requirements[id=GATE-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-EVID-04-OMISSION",
+      "description": "Formal property for requirement EVID-04 is not enforced: State candidate extractor mines traces to suggest state variables and transitions that hand-written ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/git-history-evidence.als",
+          "ref": "requirements[id=EVID-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Evidence"
+    },
+    {
+      "id": "FM-REQ-VERIFY-03-OMISSION",
+      "description": "Formal property for requirement VERIFY-03 is not enforced: VERIFY-03",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/headless-execution.als",
+          "ref": "requirements[id=VERIFY-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-OBS-16-OMISSION",
+      "description": "Formal property for requirement OBS-16 is not enforced: OBS-16",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/health-diagnostic-routing.als",
+          "ref": "requirements[id=OBS-16]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-19-OMISSION",
+      "description": "Formal property for requirement SOLVE-19 is not enforced: SOLVE-19",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/hook-module-existence.als",
+          "ref": "requirements[id=SOLVE-19]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-GUARD-02-OMISSION",
+      "description": "Formal property for requirement GUARD-02 is not enforced: GUARD-02",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/hook-portability-guard.als",
+          "ref": "requirements[id=GUARD-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-INST-13-OMISSION",
+      "description": "Formal property for requirement INST-13 is not enforced: INST-13",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/installer-path-validation.als",
+          "ref": "requirements[id=INST-13]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-MULTI-04-OMISSION",
+      "description": "Formal property for requirement MULTI-04 is not enforced: Installer auto-syncs all provider slots from `providers.json` to `~/.claude.json` MCP entries and `q",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/installer-sync.als",
+          "ref": "requirements[id=MULTI-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "MCP & Agents"
+    },
+    {
+      "id": "FM-REQ-INTG-01-OMISSION",
+      "description": "Formal property for requirement INTG-01 is not enforced: Layer manifest (`layer-manifest.json`) registers every formal artifact with its layer, gate relation",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/integration-layers.als",
+          "ref": "requirements[id=INTG-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Integration"
+    },
+    {
+      "id": "FM-REQ-VERIFY-04-OMISSION",
+      "description": "Formal property for requirement VERIFY-04 is not enforced: VERIFY-04",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/jvm-heap-sequential.als",
+          "ref": "requirements[id=VERIFY-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DIAG-05-OMISSION",
+      "description": "Formal property for requirement DIAG-05 is not enforced: Provide /nf:mcp-repair skill to auto-diagnose quorum slot connectivity issues and apply automatic re",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/mcp-repair-lifecycle.als",
+          "ref": "requirements[id=DIAG-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-OBS-06-OMISSION",
+      "description": "Formal property for requirement OBS-06 is not enforced: `/qgsd:observe` presents two output tables: **Issues** (discrete events — errors, bugs, feedback) an",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/observability-analysis.als",
+          "ref": "requirements[id=OBS-06]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observe Skill"
+    },
+    {
+      "id": "FM-REQ-OBS-13-OMISSION",
+      "description": "Formal property for requirement OBS-13 is not enforced: OBS-13",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/observability-handler-arch.als",
+          "ref": "requirements[id=OBS-13]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-OBS-09-OMISSION",
+      "description": "Formal property for requirement OBS-09 is not enforced: CLI tools exit with appropriate codes (0 = success, non-zero = failure) and write errors to stderr, ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/observability-handlers.als",
+          "ref": "requirements[id=OBS-09]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability"
+    },
+    {
+      "id": "FM-REQ-PARA-01-OMISSION",
+      "description": "Formal property for requirement PARA-01 is not enforced: Worktree-isolated executor subagents — nf-worktree-executor agent runs plans in isolated git worktre",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/parallel-exec.als",
+          "ref": "requirements[id=PARA-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Parallel Execution"
+    },
+    {
+      "id": "FM-REQ-PARA-02-OMISSION",
+      "description": "Formal property for requirement PARA-02 is not enforced: Parallel plan execution with merge orchestration — Pattern D in execute-plan.md dispatches independe",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/parallel-execution.als",
+          "ref": "requirements[id=PARA-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Parallel Execution"
+    },
+    {
+      "id": "FM-REQ-PLAT-01-OMISSION",
+      "description": "Formal property for requirement PLAT-01 is not enforced: PLAT-01",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/platform-install-compat.als",
+          "ref": "requirements[id=PLAT-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-CONF-11-OMISSION",
+      "description": "Formal property for requirement CONF-11 is not enforced: CONF-11",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/polyrepo-config.als",
+          "ref": "requirements[id=CONF-11]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-FVTOOL-02-OMISSION",
+      "description": "Formal property for requirement FVTOOL-02 is not enforced: FVTOOL-02",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/prism-delegation.als",
+          "ref": "requirements[id=FVTOOL-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-PROJECT-01-OMISSION",
+      "description": "Formal property for requirement PROJECT-01 is not enforced: PROJECT-01",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/project-identity.als",
+          "ref": "requirements[id=PROJECT-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-FAIL-02-OMISSION",
+      "description": "Formal property for requirement FAIL-02 is not enforced: providers.json contains explicit slot-to-provider mapping; when a provider probe returns DOWN, all s",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/provider-failure.als",
+          "ref": "requirements[id=FAIL-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Testing & Quality"
+    },
+    {
+      "id": "FM-REQ-TRACE-09-OMISSION",
+      "description": "Formal property for requirement TRACE-09 is not enforced: TRACE-09",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/proximity-index.als",
+          "ref": "requirements[id=TRACE-09]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DIAG-06-OMISSION",
+      "description": "Formal property for requirement DIAG-06 is not enforced: Proximity graph orchestration skills — /nf:proximity runs the 5-step proximity pipeline (graph build",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/proximity-pipeline.als",
+          "ref": "requirements[id=DIAG-06]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-BRKR-01-OMISSION",
+      "description": "Formal property for requirement BRKR-01 is not enforced: When circuit breaker fires, the oscillation trigger pattern (file set, alternation count, time windo",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/quality-hardening.als",
+          "ref": "requirements[id=BRKR-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Quality Hardening"
+    },
+    {
+      "id": "FM-REQ-IMPR-02-OMISSION",
+      "description": "Formal property for requirement IMPR-02 is not enforced: Quorum slot dispatch updated to parallel sibling Task calls (R3.2 requirement)",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/quorum-improvements.als",
+          "ref": "requirements[id=IMPR-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Quorum & Dispatch"
+    },
+    {
+      "id": "FM-REQ-RDME-01-OMISSION",
+      "description": "Formal property for requirement RDME-01 is not enforced: TUI section promoted from `<details>` to visible section with hero screenshot above the fold",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/readme-structure.als",
+          "ref": "requirements[id=RDME-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "README Structure"
+    },
+    {
+      "id": "FM-REQ-REL-03-OMISSION",
+      "description": "Formal property for requirement REL-03 is not enforced: Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/reliability-hardening.als",
+          "ref": "requirements[id=REL-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Reliability"
+    },
+    {
+      "id": "FM-REQ-REN-01-OMISSION",
+      "description": "Formal property for requirement REN-01 is not enforced: `git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/rename-migration.als",
+          "ref": "requirements[id=REN-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Installer & CLI"
+    },
+    {
+      "id": "FM-REQ-SOLVE-18-OMISSION",
+      "description": "Formal property for requirement SOLVE-18 is not enforced: SOLVE-18",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/requirements-aggregation.als",
+          "ref": "requirements[id=SOLVE-18]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-11-OMISSION",
+      "description": "Formal property for requirement SOLVE-11 is not enforced: Verifier agent performs goal-backward analysis after phase execution, confirming the codebase delive",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/result-classification.als",
+          "ref": "requirements[id=SOLVE-11]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SEC-05-OMISSION",
+      "description": "Formal property for requirement SEC-05 is not enforced: Pre-commit hook runs secret scanning (e.g., Gitleaks) to block commits containing API keys, tokens, ",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/security-hardening.als",
+          "ref": "requirements[id=SEC-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Security"
+    },
+    {
+      "id": "FM-REQ-SEM-01-OMISSION",
+      "description": "Formal property for requirement SEM-01 is not enforced: Invariant catalog aggregates declared invariants from specs with observed invariants mined from trac",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/semantics-layer.als",
+          "ref": "requirements[id=SEM-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Semantics"
+    },
+    {
+      "id": "FM-REQ-SEM-02-OMISSION",
+      "description": "Formal property for requirement SEM-02 is not enforced: Mismatch register tracks every L2-model vs L1-trace disagreement as a JSONL ledger with resolution s",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/semantics-operational.als",
+          "ref": "requirements[id=SEM-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Semantics"
+    },
+    {
+      "id": "FM-REQ-SPEC-07-OMISSION",
+      "description": "Formal property for requirement SPEC-07 is not enforced: SPEC-07",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/session-counter-tracking.als",
+          "ref": "requirements[id=SPEC-07]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-WIZ-11-OMISSION",
+      "description": "Formal property for requirement WIZ-11 is not enforced: WIZ-11",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/settings-hub.als",
+          "ref": "requirements[id=WIZ-11]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-09-OMISSION",
+      "description": "Formal property for requirement SOLVE-09 is not enforced: Quorum dispatch pre-validates agent health via MCP health_check before slot assignment, failing fast",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-automation-features.als",
+          "ref": "requirements[id=SOLVE-09]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-14-OMISSION",
+      "description": "Formal property for requirement SOLVE-14 is not enforced: PostToolUse context-monitor hook tracks context window consumption after every tool execution, injec",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-decomposition.als",
+          "ref": "requirements[id=SOLVE-14]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-24-OMISSION",
+      "description": "Formal property for requirement SOLVE-24 is not enforced: SOLVE-24",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-diagnostics-tui.als",
+          "ref": "requirements[id=SOLVE-24]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-7-OMISSION",
+      "description": "Formal property for requirement SOLVE-7 is not enforced: SOLVE-7",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-ft-recipe.als",
+          "ref": "requirements[id=SOLVE-7]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-8-OMISSION",
+      "description": "Formal property for requirement SOLVE-8 is not enforced: SOLVE-8",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-legacy-merge.als",
+          "ref": "requirements[id=SOLVE-8]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-08-OMISSION",
+      "description": "Formal property for requirement SOLVE-08 is not enforced: The solve engine SHALL compute and persist net_residual counts for human-gated layers (d_to_c, c_to_",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-net-residual.als",
+          "ref": "requirements[id=SOLVE-08]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-12-OMISSION",
+      "description": "Formal property for requirement SOLVE-12 is not enforced: /nf:solve-report generates a before/after convergence summary showing item counts by category, remed",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-result-schema.als",
+          "ref": "requirements[id=SOLVE-12]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-13-OMISSION",
+      "description": "Formal property for requirement SOLVE-13 is not enforced: /nf:quick preserves core nForma guarantees (atomic commits, state tracking, verification) while skip",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-session-persistence.als",
+          "ref": "requirements[id=SOLVE-13]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-10-OMISSION",
+      "description": "Formal property for requirement SOLVE-10 is not enforced: Plan-checker agent validates each plan against phase goals and requirements, re-entering the plannin",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-tc-coverage.als",
+          "ref": "requirements[id=SOLVE-10]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-07-OMISSION",
+      "description": "Formal property for requirement SOLVE-07 is not enforced: The solve engine SHALL display triage breakdown (FP count, archived count, actionable count) alongsi",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-triage-display.als",
+          "ref": "requirements[id=SOLVE-07]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-16-OMISSION",
+      "description": "Formal property for requirement SOLVE-16 is not enforced: SOLVE-16",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solve-tui-features.als",
+          "ref": "requirements[id=SOLVE-16]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SOLVE-03-OMISSION",
+      "description": "Formal property for requirement SOLVE-03 is not enforced: The prompt hook SHALL inject quorum dispatch instructions into user prompts and provide automatic re",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solver-doc-layers.als",
+          "ref": "requirements[id=SOLVE-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SOLVE-05-OMISSION",
+      "description": "Formal property for requirement SOLVE-05 is not enforced: The nForma TUI SHALL provide a terminal dashboard for project status, sessions, agents, and configur",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/solver-portability.als",
+          "ref": "requirements[id=SOLVE-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solver-Discovered"
+    },
+    {
+      "id": "FM-REQ-SPEC-02-OMISSION",
+      "description": "Formal property for requirement SPEC-02 is not enforced: `QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/spec-audit.als",
+          "ref": "requirements[id=SPEC-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Formal Verification"
+    },
+    {
+      "id": "FM-REQ-SPEC-06-OMISSION",
+      "description": "Formal property for requirement SPEC-06 is not enforced: SPEC-06",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/spec-quality-guardrails.als",
+          "ref": "requirements[id=SPEC-06]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-SCBD-05-OMISSION",
+      "description": "Formal property for requirement SCBD-05 is not enforced: SCBD-05",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/taxonomy-safety.als",
+          "ref": "requirements[id=SCBD-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-NAV-03-OMISSION",
+      "description": "Formal property for requirement NAV-03 is not enforced: NAV-03",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/terminal-emulation-purity.als",
+          "ref": "requirements[id=NAV-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-TRACE-08-OMISSION",
+      "description": "Formal property for requirement TRACE-08 is not enforced: TRACE-08",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/trace-event-normalization.als",
+          "ref": "requirements[id=TRACE-08]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-STOP-08-OMISSION",
+      "description": "Formal property for requirement STOP-08 is not enforced: Block reason message format: \"QUORUM REQUIRED: Before completing this /qgsd:[command] response, call",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/transcript-scan.als",
+          "ref": "requirements[id=STOP-08]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Hooks & Enforcement"
+    },
+    {
+      "id": "FM-REQ-GUIDE-01-OMISSION",
+      "description": "Formal property for requirement GUIDE-01 is not enforced: User Guide updated with TUI screenshots cross-referenced to feature descriptions",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/user-guide.als",
+          "ref": "requirements[id=GUIDE-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "User Guide"
+    },
+    {
+      "id": "FM-REQ-UX-04-OMISSION",
+      "description": "Formal property for requirement UX-04 is not enforced: Every user-initiated action produces immediate feedback (loading/disabled state) and completion feed",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/ux-interaction-safety.als",
+          "ref": "requirements[id=UX-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "UX Heuristics"
+    },
+    {
+      "id": "FM-REQ-VIS-02-OMISSION",
+      "description": "Formal property for requirement VIS-02 is not enforced: VHS tape hardened for CI reliability (zsh shell, explicit PATH export, CLAUDECODE unset)",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/vhs-ci-hardening.als",
+          "ref": "requirements[id=VIS-02]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Visual Assets"
+    },
+    {
+      "id": "FM-REQ-VERIFY-05-OMISSION",
+      "description": "Formal property for requirement VERIFY-05 is not enforced: VERIFY-05",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/wiring-awareness.als",
+          "ref": "requirements[id=VERIFY-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-HEAL-01-OMISSION",
+      "description": "Formal property for requirement HEAL-01 is not enforced: After each deliberation round, system computes P(consensus | remaining rounds); if P < threshold (de",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/prism/deliberation-healing.pm",
+          "ref": "requirements[id=HEAL-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Hooks & Enforcement"
+    },
+    {
+      "id": "FM-REQ-MCPENV-04-OMISSION",
+      "description": "Formal property for requirement MCPENV-04 is not enforced: `readMCPAvailabilityRates` exported with composite-key filter; `module.exports` always reachable via",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/prism/mcp-availability.pm",
+          "ref": "requirements[id=MCPENV-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "MCP & Agents"
+    },
+    {
+      "id": "FM-REQ-DETECT-04-OMISSION",
+      "description": "Formal property for requirement DETECT-04 is not enforced: Read-only Bash commands (git log, git diff, grep, cat, ls, head, tail, find) pass through without de",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/NFOscillation.tla",
+          "ref": "requirements[id=DETECT-04]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Hooks & Enforcement"
+    },
+    {
+      "id": "FM-REQ-PLAN-03-OMISSION",
+      "description": "Formal property for requirement PLAN-03 is not enforced: `quorum-formal-context.cjs` generates formal evidence blocks for quorum slots",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/NFPreFilter.tla",
+          "ref": "requirements[id=PLAN-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Planning & Tracking"
+    },
+    {
+      "id": "FM-REQ-FV-01-OMISSION",
+      "description": "Formal property for requirement FV-01 is not enforced: FV-01",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/NFSolveConvergence.tla",
+          "ref": "requirements[id=FV-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-QUORUM-05-OMISSION",
+      "description": "Formal property for requirement QUORUM-05 is not enforced: QUORUM-05",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/tla/QGSDDeliberationRevision.tla",
+          "ref": "requirements[id=QUORUM-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "unknown"
+    },
+    {
+      "id": "FM-REQ-DIAG-10-OMISSION",
+      "description": "Formal property for requirement DIAG-10 is not enforced: Statusline hook detects context window size (200K, 1M, or unknown) from explicit context_window_size",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/statusline-context-tiers.als",
+          "ref": "requirements[id=DIAG-10]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Observability & Diagnostics"
+    },
+    {
+      "id": "FM-REQ-SCHEMA-03-OMISSION",
+      "description": "Formal property for requirement SCHEMA-03 is not enforced: Each verification runner (run-tlc.cjs, run-alloy.cjs, run-prism.cjs, CI lint steps) emits `requireme",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/formalism-selection.als",
+          "ref": "requirements[id=SCHEMA-03]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Formal Verification"
+    },
+    {
+      "id": "FM-REQ-INTG-05-OMISSION",
+      "description": "Formal property for requirement INTG-05 is not enforced: Model registry (`model-registry.json`) extended with `source_layer`, `gate_maturity`, and `layer_mat",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/model-registry-parity.als",
+          "ref": "requirements[id=INTG-05]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Integration"
+    },
+    {
+      "id": "FM-REQ-TC-01-OMISSION",
+      "description": "Formal property for requirement TC-01 is not enforced: Digest V8 coverage at collection time in sweepTtoC, converting raw ~96MB coverage blobs to lightweig",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/v8-coverage-digest.als",
+          "ref": "requirements[id=TC-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Testing & Quality"
+    },
+    {
+      "id": "FM-REQ-H2M-01-OMISSION",
+      "description": "Formal property for requirement H2M-01 is not enforced: The solve engine SHALL include an H->M (Hypothesis-to-Measurement) residual layer that measures form",
+      "mode": "omission",
+      "derived_from": [
+        {
+          "layer": "L3",
+          "artifact": ".planning/formal/alloy/hypothesis-measurement.als",
+          "ref": "requirements[id=H2M-01]"
+        }
+      ],
+      "severity_class": "degraded",
+      "category": "Solve H->M Integration"
     }
   ],
   "summary": {
