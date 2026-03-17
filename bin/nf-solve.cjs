@@ -2996,6 +2996,7 @@ function sweepPerModelGates() {
       .filter(m => m.layer_maturity === 0).length;
     return {
       residual: zeroMaturityCount,
+      kind: 'informational',
       detail: {
         total_models: totalModels,
         avg_layer_maturity: avgMaturity,
@@ -3014,7 +3015,7 @@ function sweepPerModelGates() {
 // ── Git Heatmap sweep ────────────────────────────────────────────────────────
 
 /**
- * Reads git-heatmap.json evidence and returns uncovered hot-zone count as residual.
+ * Reads git-heatmap.json evidence and returns uncovered hot-zone count (informational signal, not a gap).
  * Refreshes the evidence file first (unless --report-only or --fast).
  * This is informational — not added to the automatable forward total.
  */
@@ -3040,6 +3041,7 @@ function sweepGitHeatmap() {
 
     return {
       residual: hotZones.length,
+      kind: 'informational',
       detail: {
         uncovered_hot_zones: hotZones.slice(0, 20),
         total_hot_zones: hotZones.length,
@@ -3058,7 +3060,7 @@ function sweepGitHeatmap() {
 // ── Git History Evidence sweep ────────────────────────────────────────────────
 
 /**
- * Reads git-history-evidence.json and returns TLA+ drift candidate count as residual.
+ * Reads git-history-evidence.json and returns TLA+ drift candidate count (informational signal, not a gap).
  * Refreshes the evidence file first (unless --report-only or --fast).
  * Informational — not added to the automatable forward total.
  */
@@ -3083,6 +3085,7 @@ function sweepGitHistoryEvidence() {
 
     return {
       residual: driftCandidates.length,
+      kind: 'informational',
       detail: {
         tla_drift_count: driftCandidates.length,
         total_commits: (data.summary || {}).total_commits || 0,
@@ -3120,6 +3123,7 @@ function sweepFormalLint() {
     const violations = data.violations || [];
     return {
       residual: violations.length,
+      kind: 'informational',
       detail: {
         total_violations: violations.length,
         violations: violations.slice(0, 20).map(function (v) {
@@ -3159,6 +3163,7 @@ function sweepHazardModel() {
 
     return {
       residual: critical.length + high.length,
+      kind: 'informational',
       detail: {
         total_hazards: hazards.length,
         critical_count: critical.length,
@@ -3192,6 +3197,7 @@ function sweepHtoM() {
     }
     return {
       residual: result.verdicts.VIOLATED,
+      kind: 'informational',
       detail: {
         total: result.total_measured,
         confirmed: result.verdicts.CONFIRMED,

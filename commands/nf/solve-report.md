@@ -77,11 +77,13 @@ L1 -> L2 (Gate A)           {N}    {M}    {delta}   [status]
 L2 -> L3 (Gate B)           {N}    {M}    {delta}   [status]
 L3 -> TC (Gate C)           {N}    {M}    {delta}   [status]
   Alignment subtotal:       {N}    {M}    {delta}
-─ Git Heatmap (risk signals) ──────────────────────────
-G -> H (Git->Heatmap)       {N}    {M}    {delta}   [status]
-  Heatmap subtotal:         {N}    {M}    {delta}
+─ Informational Signals (not gaps) ────────────────────
+G -> H (Git Heatmap)         {N}    {M}    {delta}   [signal]
+GitHist (TLA+ drift)         {N}    {M}    {delta}   [signal]
+Hazard (FMEA high-RPN)       {N}    {M}    {delta}   [signal]
+  Signal count:              {N}    {M}    {delta}
 ═════════════════════════════════════════════════════════
-Grand total:                {N}    {M}    {delta}
+Grand total (forward):       {N}    {M}    {delta}
 ```
 
 **IMPORTANT — Expand non-zero layers:** For any layer with residual > 0, display the full detail below the table. The residual number alone hides severity. For example, F->C residual=1 might mean "1 check failed with 7,086 individual divergences." Always show:
