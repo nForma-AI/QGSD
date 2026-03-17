@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "exclude_files": [
+    "docs/dev/quorum_interface.md",
+    "docs/dev/requirements-coverage.md",
+    ".planning/quorum/debates/**",
+    ".planning/phases/**",
+    "CHANGELOG.md"
+  ],
+  "suppress_line_patterns": [
+    "^\\s*\\|",
+    "^\\s*-\\s*`[^`]+`\\s*(—|-)\\s*",
+    "^>\\s+"
+  ],
+  "suppress_line_descriptions": [
+    "Table rows (pipe-delimited) -- config tables contain action verbs but are not feature claims",
+    "Definition list items (- `term` -- desc) -- glossary/reference entries, not promises",
+    "Blockquotes -- typically quoting other sources or providing commentary"
+  ]
+}

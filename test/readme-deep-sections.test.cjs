@@ -1,3 +1,4 @@
+/** @requirement RDME-05 — README architecture diagram and section structure */
 const { describe, it } = require('node:test');
 const { strict: assert } = require('node:assert');
 const fs = require('node:fs');

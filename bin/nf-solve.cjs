@@ -2339,9 +2339,43 @@ function sweepDtoR() {
   });
 
   // Discover doc files
-  const docFiles = discoverDocFiles();
+  let docFiles = discoverDocFiles();
   if (docFiles.length === 0) {
     return { residual: -1, detail: { skipped: true, reason: 'missing: doc files' } };
+  }
+
+  // Stage A: File exclusion via dr-scanner-config.json
+  let drConfig = null;
+  let excludedFileCount = 0;
+  let suppressPatterns = [];
+  try {
+    const configPath = path.join(ROOT, '.planning', 'formal', 'dr-scanner-config.json');
+    drConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  } catch (e) {
+    // Fail-open: no exclusions if config missing or invalid
+  }
+
+  if (drConfig && Array.isArray(drConfig.exclude_files)) {
+    const beforeCount = docFiles.length;
+    docFiles = docFiles.filter(({ absPath }) => {
+      const relPath = path.relative(ROOT, absPath).replace(/\\/g, '/');
+      for (const pattern of drConfig.exclude_files) {
+        if (matchWildcard(pattern, relPath)) return false;
+      }
+      return true;
+    });
+    excludedFileCount = beforeCount - docFiles.length;
+  }
+
+  // Stage B prep: compile suppress_line_patterns into RegExp array
+  if (drConfig && Array.isArray(drConfig.suppress_line_patterns)) {
+    for (const pat of drConfig.suppress_line_patterns) {
+      try {
+        suppressPatterns.push(new RegExp(pat));
+      } catch (e) {
+        // Skip invalid patterns
+      }
+    }
   }
 
   // Action verbs that indicate capability claims
@@ -2355,6 +2389,7 @@ function sweepDtoR() {
   const unbacked = [];
   let totalClaims = 0;
   let backed = 0;
+  let suppressedLines = 0;
 
   for (const { absPath } of docFiles) {
     let content;
@@ -2380,6 +2415,15 @@ function sweepDtoR() {
 
       // Skip headings, empty lines, and list markers only
       if (line.match(/^#{1,6}\s/) || line.trim().length === 0) continue;
+
+      // Stage B: Line-level suppression (table rows, definition lists, blockquotes)
+      if (suppressPatterns.length > 0) {
+        let suppressed = false;
+        for (const re of suppressPatterns) {
+          if (re.test(line)) { suppressed = true; break; }
+        }
+        if (suppressed) { suppressedLines++; continue; }
+      }
 
       // Check for action verb
       if (!verbPattern.test(line)) continue;
@@ -2425,6 +2469,8 @@ function sweepDtoR() {
       unbacked_claims: unbacked,
       total_claims: totalClaims,
       backed: backed,
+      excluded_files: excludedFileCount,
+      suppressed_lines: suppressedLines,
       scoped: focusSet ? false : undefined,
     },
   };
@@ -2950,6 +2996,7 @@ function sweepPerModelGates() {
       .filter(m => m.layer_maturity === 0).length;
     return {
       residual: zeroMaturityCount,
+      kind: 'informational',
       detail: {
         total_models: totalModels,
         avg_layer_maturity: avgMaturity,
@@ -2968,7 +3015,7 @@ function sweepPerModelGates() {
 // ── Git Heatmap sweep ────────────────────────────────────────────────────────
 
 /**
- * Reads git-heatmap.json evidence and returns uncovered hot-zone count as residual.
+ * Reads git-heatmap.json evidence and returns uncovered hot-zone count (informational signal, not a gap).
  * Refreshes the evidence file first (unless --report-only or --fast).
  * This is informational — not added to the automatable forward total.
  */
@@ -2994,6 +3041,7 @@ function sweepGitHeatmap() {
 
     return {
       residual: hotZones.length,
+      kind: 'informational',
       detail: {
         uncovered_hot_zones: hotZones.slice(0, 20),
         total_hot_zones: hotZones.length,
@@ -3012,7 +3060,7 @@ function sweepGitHeatmap() {
 // ── Git History Evidence sweep ────────────────────────────────────────────────
 
 /**
- * Reads git-history-evidence.json and returns TLA+ drift candidate count as residual.
+ * Reads git-history-evidence.json and returns TLA+ drift candidate count (informational signal, not a gap).
  * Refreshes the evidence file first (unless --report-only or --fast).
  * Informational — not added to the automatable forward total.
  */
@@ -3037,6 +3085,7 @@ function sweepGitHistoryEvidence() {
 
     return {
       residual: driftCandidates.length,
+      kind: 'informational',
       detail: {
         tla_drift_count: driftCandidates.length,
         total_commits: (data.summary || {}).total_commits || 0,
@@ -3074,6 +3123,7 @@ function sweepFormalLint() {
     const violations = data.violations || [];
     return {
       residual: violations.length,
+      kind: 'informational',
       detail: {
         total_violations: violations.length,
         violations: violations.slice(0, 20).map(function (v) {
@@ -3113,6 +3163,7 @@ function sweepHazardModel() {
 
     return {
       residual: critical.length + high.length,
+      kind: 'informational',
       detail: {
         total_hazards: hazards.length,
         critical_count: critical.length,
@@ -3146,6 +3197,7 @@ function sweepHtoM() {
     }
     return {
       residual: result.verdicts.VIOLATED,
+      kind: 'informational',
       detail: {
         total: result.total_measured,
         confirmed: result.verdicts.CONFIRMED,

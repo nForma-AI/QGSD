@@ -1,26 +1,26 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-17T10:04:36.784Z",
+  "generated": "2026-03-17T12:39:27.121Z",
   "observed_transitions": {
     "IDLE": {
       "QUORUM_START": {
         "to_state": "COLLECTING_VOTES",
-        "count": 40024,
+        "count": 40234,
         "source": "both"
       },
       "CIRCUIT_BREAK": {
         "to_state": "IDLE",
-        "count": 14772,
+        "count": 14852,
         "source": "both"
       },
       "DECIDE": {
         "to_state": "IDLE",
-        "count": 18319,
+        "count": 18415,
         "source": "both"
       },
       "VOTES_COLLECTED": {
         "to_state": "IDLE",
-        "count": 5380,
+        "count": 5412,
         "source": "both"
       }
     },
@@ -196,10 +196,10 @@
   },
   "coverage": {
     "model_coverage": 0.8421052631578947,
-    "vocabulary_coverage": 0.9933686834811881,
-    "total_events": 79019,
-    "mapped_events": 78495,
-    "unmapped_events": 524
+    "vocabulary_coverage": 0.9933910722827866,
+    "total_events": 79438,
+    "mapped_events": 78913,
+    "unmapped_events": 525
   },
   "replay_modes": {
     "per_event_transitions": 4,
