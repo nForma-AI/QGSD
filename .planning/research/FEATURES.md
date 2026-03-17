@@ -1,174 +1,281 @@
-# Feature Research: Outer-Loop Convergence Guarantees (v0.33)
+# Feature Research: Model-Driven Debugging
 
-**Domain:** Iterative formal verification convergence with cross-session tracking
-**Researched:** 2026-03-09
-**Confidence:** MEDIUM (novel domain-specific integration; patterns drawn from numerical methods, control systems, deployment pipelines, and defect prediction -- no direct precedent for this exact combination)
+**Domain:** CLI tool for formal verification-guided debugging and model refinement
+**Researched:** 2026-03-17
+**Confidence:** HIGH (research grounded in active ecosystem: APALACHE, TLC, FLACK, specification mining, constraint-based repair)
 
 ## Feature Landscape
 
-This research covers the six features targeted by v0.33, analyzed against the existing nf:solve infrastructure:
-- 19-layer residual sweep with per-layer counts (9 automatable + 5 informational in TLA+, 19 total in implementation)
-- solve-state.json storing latest run snapshot (iteration, per-layer residuals, converged boolean)
-- Gate A/B/C evaluation per formal model with pass/fail + reason
-- Gate maturity progression: ADVISORY -> SOFT_GATE -> HARD_GATE with hysteresis thresholds
-- promotion-changelog.json logging all maturity transitions (currently shows flip-flop: 8+ identical ADVISORY->SOFT_GATE entries for same models)
-- per-model-gates.json (schema v2, 127 models tracked)
-- NFSolveOrchestrator.tla inner-loop spec (verified, 3432 states)
-- Circuit breaker with git-history oscillation detection and cross-session evidence persistence (oscillation-signatures.json)
-
----
-
 ### Table Stakes (Users Expect These)
 
-Features that a convergence-guaranteed solve loop must have. Without these, "convergence" is unmeasurable and unenforceable.
+Features users assume exist. Missing these = debugging workflow feels incomplete.
 
-| Feature | Why Expected | Complexity | Depends On (Existing) | Notes |
-|---------|--------------|------------|----------------------|-------|
-| **Cross-session residual trend tracker** | Without persistent history, every solve run starts blind. Users cannot tell if 10 runs improved anything or just churned. Any convergence claim requires time-series evidence. The current solve-state.json stores only the latest snapshot -- no history. | MEDIUM | solve-state.json (exists, single-run snapshot), solve-sessions/ (exists, markdown summaries, 20-session rotation) | Append-only JSONL file (`solve-trend.jsonl`) capturing per-run snapshots: timestamp, iteration_count, per-layer residuals, total residual, converged boolean, gate summary. ~200 bytes/entry. Must include per-layer trend detection: Mann-Kendall non-parametric test (distribution-free, resistant to outliers in short series) reporting DECREASING/STABLE/INCREASING/OSCILLATING per layer. Requires >= 5 data points before meaningful analysis. |
-| **Layer oscillation breaker (Option C)** | The inner loop has stall detection (ConvergedStall in TLA+: `currentResidual = prevResidual`) but no per-layer oscillation memory across sessions. A layer going 90->80->85->90 across runs wastes remediation budget. This is the headline convergence guarantee. | HIGH | Cross-session trend tracker (for historical per-layer data), nf-solve.cjs remediate dispatch, nf-circuit-breaker.js (pattern precedent: run-collapse detection, evidence persistence, human escalation via oscillation-signatures.json) | Core invariant: no individual layer oscillates more than once. If a layer's residual increases after a prior decrease within the tracked history, one "oscillation credit" is consumed. Second oscillation -> block automated remediation for that layer + human escalation. Threshold: delta > 5% of layer baseline to filter noise. Analogous to the existing circuit breaker's file-set oscillation detection but applied to residual layers instead of git commit patterns. |
-| **Per-model gate persistence in solve pipeline** | per-model-gates.json (schema v2, 127 models) and compute-per-model-gates.cjs (--aggregate --json mode) already exist but the solve pipeline does not write per-model gate reasons by default. Gate results are computed but not persisted with explanations. | LOW | compute-per-model-gates.cjs (exists, --write-per-model flag exists but opt-in), per-model-gates.json (exists, has gate_a/b/c pass+reason per model), nf-solve.cjs sweepPerModelGates() (exists, reads aggregated data) | Wire --write-per-model as default behavior in solve pipeline. Persist gate_a_reason, gate_b_reason, gate_c_reason in solve-state.json output. Carry reasons into solve report. Use gate pass/fail counts as an additional convergence signal. Mostly plumbing work on existing code paths. |
-| **Gate maturity stabilization gates** | The promotion-changelog.json already demonstrates the problem: repeated ADVISORY->SOFT_GATE entries for the same models (quorum-votes.als, NFQuorum.tla) within seconds of each other across solve runs. Without a cooldown/stabilization period, maturity flip-flops make gate enforcement meaningless. | MEDIUM | promotion-changelog.json (exists, append-only, shows flip-flop evidence), compute-per-model-gates.cjs appendPromotion() (exists, no cooldown logic), per-model-gates.json (exists, has gate_maturity field but no timestamp tracking) | Three mechanisms needed: (1) Flip-flop detection: scan promotion-changelog for same-model entries alternating between levels; flag models with >= 3 direction changes as UNSTABLE. (2) Cooldown enforcement: add `last_promoted_at` / `last_demoted_at` timestamps to per-model gate records; require configurable stabilization window (default: 2 consecutive solve sessions or 1 hour) before re-promotion. (3) Stabilization count: require N consecutive passes at current level before promotion to next. Pattern from Flagger/Argo Rollouts canary analysis. |
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Bug-to-Model Lookup** | Debuggers should automatically find formal models related to failing code. Without this, user must manually search model-registry. | MEDIUM | Extend `formal-scope-scan.cjs` proximity index to map failing code paths → matching models. Pre-filter models by source file and scope depth. |
+| **Model Execution on Bug Trace** | If a model exists for a component, it should reproduce the bug deterministically. No reproduction = model is incomplete. | HIGH | Extend TLA+/Alloy runners to accept execution traces as input constraints; run model checker in "counterexample validation" mode against failed trace. Requires trace capture from bug reproduction. |
+| **Trace-to-Counterexample Conversion** | Bug traces and formal model counterexamples should speak the same language. Without conversion, diagnosis is manual. | MEDIUM | Parse failing execution trace (timestamped events/state changes) and map to TLA+ variable assignments; export in format compatible with TLC/APALACHE/Alloy. |
+| **Root Cause Extraction from Counterexample** | Model checker produces a trace; user should see "root cause is that X violated invariant Y" automatically. | MEDIUM | Parse counterexample trace, identify state transition where invariant first fails, extract variables involved, map to source code identifiers via model annotations. |
+| **Plain-English Constraint Summary** | Fix should be guarded by clear constraints extracted from invariants. User shouldn't read TLA+ to understand "don't do X". | MEDIUM | Parse invariant predicates (TLA+ INVARIANT definitions, Alloy facts), translate quantifiers/operators to English, surface as "Fix constraint: do not Y while X". Alloy FLACK tool does this partially. |
+| **Pre-Verification of Fix Against Model** | Before shipping, fix should be symbolically verified against the formal model that explained the bug. | HIGH | Instrument fix (code patch or modification) as TLA+ action or Alloy predicate; run APALACHE symbolic solver or Alloy analyzer to confirm invariant still holds with patch applied. Requires model parameterization. |
 
 ### Differentiators (Competitive Advantage)
 
-Features that go beyond table stakes and provide genuine novel value. These make nForma's convergence provable rather than merely observed.
+Features that set nForma apart. Not required by ecosystem, but define leadership.
 
-| Feature | Value Proposition | Complexity | Depends On (Existing) | Notes |
-|---------|-------------------|------------|----------------------|-------|
-| **NFSolveConvergence TLA+ spec (outer loop)** | The inner loop is already TLA+ verified (NFSolveOrchestrator.tla, 3432 states, 6 safety + 3 liveness properties). Extending this to prove the outer loop converges under Option C assumptions is meta-verification: using TLA+ to verify the verification tool. Very few systems have formal convergence proofs for their own verification pipelines. | HIGH | NFSolveOrchestrator.tla (exists, provides inner-loop composition target), finalized oscillation breaker design (must model real semantics) | Liveness: `<>(converged = TRUE)` under fairness. Safety: `[](oscillation_count[layer] <= 1)` for all layers. Must model: cross-session state (bounded residual history, last N=3-5 sessions), Option C blocking rule, gate maturity transitions. Key challenge: TLC state explosion from session history -- use bounded abstraction. Should compose with (not duplicate) the inner-loop spec. Must be written LAST after Option C design is finalized. |
-| **Predictive power feedback loop** | Linking runtime bugs back to formal properties answers "is this formal model actually useful?" Most formal verification systems measure coverage (how much is specified) but never effectiveness (how many bugs did the specs actually catch). A bugs_predicted/total_bugs score per model tells users which models earn their maintenance cost. | HIGH | traceability-matrix.json (exists, v0.25, links requirements to models at 63.8% coverage), failure-taxonomy.json (exists, v0.29, failure mode catalog), test-recipes.json (exists, v0.29, 32 model-driven test recipes), check-results.ndjson (exists, v0.20, enriched schema v2.1), observe skill (exists, v0.27, surfaces bugs from GitHub/Sentry) | Requires new artifact: bug-to-property.json linking observed bugs to formal properties that could have caught them. Scoring: per-model recall (bugs caught / total relevant bugs). Defect prediction literature is clear: recall matters more than precision (a missed bug costs more than a false alarm). Must build the reverse link from the existing forward-traceability infrastructure. |
-| **Convergence velocity estimation** | Beyond "are we converging?", estimate "when will we converge?" using residual decay rate extrapolation from the time series. If a layer needs 50+ sessions to converge, it needs architectural intervention, not more solve iterations. | MEDIUM | Cross-session trend tracker (>= 10 data points needed) | Fit exponential decay to per-layer residual time series. Report estimated sessions-to-convergence. Secondary feature -- useful for planning but not convergence-critical. Defer until trend data has accumulated. |
-| **Automatic escalation classification** | When oscillation breaker fires, classify root cause: genuine regression vs measurement instability. | MEDIUM | Oscillation breaker, existing Haiku classifier pattern (hooks/nf-circuit-breaker.js uses claude-haiku-4-5-20251001 for GENUINE vs REFINEMENT classification) | Reuse Haiku reviewer pattern. Feed oscillation context (which layer, what changed, git diff) to classifier. Output: GENUINE_REGRESSION / MEASUREMENT_NOISE / INSUFFICIENT_EVIDENCE. |
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Model Refinement from Bugs** | When a bug occurs but no model explains it, automatically generate/refine a model that captures the failure mode. First product to close the "model is incomplete" loop. | HIGH | Synthesize new TLA+ INVARIANT or Alloy constraint from failing trace; use specification mining (sparse coding from [Seshia et al.](https://people.eecs.berkeley.edu/~sseshia/pubdir/rv12-sc.pdf)) to extract temporal patterns; validate via counter-test (re-run bug scenario, confirm new invariant fails). Auto-commit refined model to model-registry. |
+| **Counterexample-Guided Diagnosis** | Model checker produces a trace; nForma explains which assumptions were violated and why. Guidance surfaces the _root cause_, not just "invariant failed". | HIGH | Implement CEGAR loop: extract spurious counterexample from model, compare against actual bug trace, identify which model assumptions don't hold in reality, suggest model parameters or assumptions to adjust. Surface 3-5 candidate root causes ranked by likelihood. |
+| **Cross-Model Regression Prevention** | Fix verified against one model? Automatically check it doesn't break neighboring models in the formal scope. | MEDIUM | Run fix verification in parallel against all models with shared source files or requirements (from model-registry proximity edges). Report any new counterexamples. Prevents side-effect bugs. |
+| **B→F Solve Layer (20th Layer)** | New solve layer explicitly tracks bugs that formal models _should_ catch but don't. Drives model refinement roadmap. | MEDIUM | Create new layer in 19-layer solve engine: scan all open bugs, for each bug check if any formal model counterexample matches the bug signature. If no match, flag as "model gap" and queue for Phase 1 (model refinement). Feed into hypothesis-driven solve wave ordering. |
+| **Fix Constraint Solver** | Given model invariants, automatically synthesize the minimal set of constraints that a fix must satisfy (not write the fix, but constrain the solution space). | HIGH | Use constraint generation (from symbolic execution literature) + syntax-guided synthesis: parse invariants as SMT constraints, identify variables modified by buggy code, solve for values that satisfy invariants, surface as "fix must set X ∈ [min, max] and maintain Y ≥ Z". |
+| **Invariant-Driven Solve Prioritization** | Solve layer prioritizes remediation based on invariants violated in recent bugs, not arbitrary heuristics. | MEDIUM | Parse invariants from models that matched recent bugs; rank solve layers by "likelihood of violating high-impact invariants" from PRISM sensitivity analysis. Inject into hypothesis-driven wave ordering. |
 
 ### Anti-Features (Commonly Requested, Often Problematic)
 
+Features that seem good but create problems.
+
 | Feature | Why Requested | Why Problematic | Alternative |
 |---------|---------------|-----------------|-------------|
-| **Automatic oscillation resolution** | "If it oscillates, just fix it automatically." | Oscillation signals a design conflict between layers that automated remediation cannot resolve. Auto-resolution masks fundamental issues and is literally the fix->break->fix cycle that Option C prevents. | Human escalation with structured diagnosis. The breaker presents oscillation history + Haiku classification; a human decides the resolution. |
-| **Global convergence score (single number)** | "Give me one number for formal model health." | Collapses too much information. Current residuals span vastly different scales (git_heatmap: 6245, l3_to_tc: 1). A score of 0.7 is uninterpretable -- which layers are stuck? Leads to gaming the metric. | Per-layer trend sparklines in the solve report with top-3 action items. The trend tracker provides raw data; the report phase synthesizes actionable guidance. |
-| **Real-time convergence dashboard** | "Show a live graph during solve." | Solve runs take 30-120 seconds. Real-time visualization (WebSocket, state streaming) adds substantial infrastructure for a 2-minute window. This is a CLI tool. | Post-run ASCII sparkline of residual trend per layer in the terminal report. Zero infrastructure. |
-| **Automatic gate demotion on evidence regression** | "If a model's evidence score drops, automatically demote it." | Creates instability. Evidence scores fluctuate as new code is written (new tests may temporarily reduce coverage percentages). Auto-demotion triggers re-promotion triggers oscillation -- exactly what stabilization gates prevent. | Demotion warnings in solve report. Flag regressed models but require explicit human or quorum decision to demote. |
-| **Relaxation/dampening of residuals** | "Apply numerical relaxation (MOOSE-style) to smooth oscillations." | MOOSE relaxation operates on continuous numerical values with well-defined norms. nf-solve residuals are discrete mismatch counts. Dampening 90 to 67.5 is meaningless -- you either have 90 mismatches or you do not. | Discrete oscillation bounding (Option C): count direction changes, not amplitude. The breaker operates on the discrete space correctly. |
-| **Weighted layer importance** | "Some layers matter more than others." | Introduces subjective tuning that obscures whether convergence is real. A "converged" system with a red-but-low-weight layer is misleading. | All layers must converge independently. Priority can inform ordering of fix attempts, but not the convergence definition. |
+| **Automatic Patch Generation from Formal Models** | "Models explain bugs, so they should generate fixes" sounds natural. | Models encode constraints, not intent. Synthesized patches often satisfy invariants but introduce new logic errors. Weak specifications (test suites) lead to overfitting. [Constraint-based repair literature](https://clairelegoues.com/assets/papers/esecfse17s3.pdf) shows this requires strong specifications (rare in practice). | Instead: **Constraint-to-Implementation Guidance** — extract constraints, present to developer as "fix must satisfy X" and let developer write code. Add fix-validation layer that re-verifies against model after human writes patch. |
+| **Real-Time Model Checking During Development** | "Check invariants after every keystroke" appeals to fast feedback. | TLA+/APALACHE/TLC have startup/state-space overhead (seconds to minutes even for medium models). Running on every save causes context loss and delays. | Instead: **Lazy Model Checking** — check only when user explicitly runs `/nf:debug` or when tests fail. Cache TLC results across sessions. Pre-compute state space once per model version; reuse across runs. |
+| **Full Symbolic Execution of User Code** | "Trace all paths to find bugs" is tempting. | Path explosion: even simple loops create unbounded paths. Constraint solving becomes intractable for large programs. [Symbolic execution survey](https://arxiv.org/pdf/2508.06643) shows tools scale to ~1000 LOC max. nForma processes multi-million LOC codebases. | Instead: **Trace-Based Diagnosis** — capture actual failing execution (already available from bug reports), use symbolic execution only on the failing path slice. Run bug-specific model checkers, not full program synthesis. |
+| **Automatic Model Decomposition** | "Split big models into smaller ones to improve checking speed" is appealing. | Decomposition creates interface contracts between models that are hard to maintain. Changes to one model fragment invalidate decomposition. [State-space analysis literature](https://www.researchgate.net/publication/257468440_Debugging_formal_specifications_A_practical_approach_using_model-based_diagnosis_and_counterstrategies) shows decomposition increases specification bug risk. | Instead: **Selective Model Checking** — use APALACHE symbolic solver instead of TLC for large models; focus checking on properties directly related to the bug (use model annotation @requirement links). Avoid decomposition unless models share zero requirements. |
 
 ## Feature Dependencies
 
 ```
-Cross-session residual trend tracker
-    |
-    +--required-by--> Per-layer trend detection (Mann-Kendall, part of tracker)
-    |                     |
-    |                     +--required-by--> Layer oscillation breaker (Option C)
-    |                     |                     |
-    |                     |                     +--required-by--> NFSolveConvergence TLA+ spec
-    |                     |                     |                     (models finalized Option C semantics)
-    |                     |                     |
-    |                     |                     +--enhanced-by--> Automatic escalation classification
-    |                     |
-    |                     +--enables--------> Convergence velocity estimation (needs >= 10 points)
-    |
-    +--enhances--------> Gate maturity stabilization gates (trend data informs windows)
+[Bug-to-Model Lookup]
+    └──requires──> [Model Execution on Bug Trace]
+                       └──requires──> [Trace-to-Counterexample Conversion]
+                                          └──requires──> [Root Cause Extraction from Counterexample]
+                                                             └──requires──> [Plain-English Constraint Summary]
 
-Per-model gate persistence in solve pipeline
-    |
-    +--enhances--------> Gate maturity stabilization gates (reasons explain blocked promotions)
-    |
-    +--enhances--------> Predictive power feedback loop (per-model scores are inputs)
+[Pre-Verification of Fix Against Model]
+    └──requires──> [Root Cause Extraction from Counterexample]
+    └──requires──> [Plain-English Constraint Summary]
 
-Gate maturity stabilization gates
-    +--requires--------> promotion-changelog.json (EXISTS, flip-flop detection source)
-    +--requires--------> compute-per-model-gates.cjs (EXISTS, promotion logic)
-    +--independent-of--> Cross-session residual time series (operates on changelog, not residuals)
+[Model Refinement from Bugs]
+    └──requires──> [Bug-to-Model Lookup]
+    └──requires──> [Trace-to-Counterexample Conversion]
+    └──requires──> [Root Cause Extraction from Counterexample]
 
-Predictive power feedback loop
-    +--requires--------> traceability-matrix.json (EXISTS, v0.25)
-    +--requires--------> failure-taxonomy.json (EXISTS, v0.29)
-    +--requires--------> Bug source linkage (NEW: bug-to-property.json)
-    +--independent-of--> Cross-session time series (different data pipeline)
+[B→F Solve Layer]
+    └──requires──> [Bug-to-Model Lookup]
+    └──requires──> [Model Execution on Bug Trace]
+
+[Cross-Model Regression Prevention]
+    └──requires──> [Pre-Verification of Fix Against Model]
+    └──enhances──> [B→F Solve Layer]
+
+[Fix Constraint Solver]
+    └──requires──> [Plain-English Constraint Summary]
+    └──requires──> [Pre-Verification of Fix Against Model]
+
+[Invariant-Driven Solve Prioritization]
+    └──requires──> [Bug-to-Model Lookup]
+    └──enhances──> [B→F Solve Layer]
 ```
 
 ### Dependency Notes
 
-- **Trend tracker is foundational:** Both the oscillation breaker and TLA+ spec depend on cross-session history. Build first.
-- **Oscillation breaker before TLA+ spec:** The spec models Option C. Implement the breaker, stabilize the design, then model it. Writing the spec first means rewriting it when the design changes.
-- **Stabilization gates are partially independent:** Flip-flop detection operates on promotion-changelog.json, not on residual time series. Can start in parallel with trend tracker. Full temporal stabilization benefits from trend data but does not require it.
-- **Predictive power is the most independent feature:** Depends on existing v0.25/v0.29 artifacts plus a new reverse-linkage artifact. No dependency on time series features. Can be built in any phase.
-- **Per-model gate persistence is lowest risk:** Extends existing code paths with minimal new logic. Good early delivery for quick value.
+- **[Bug-to-Model Lookup] requires [Model Execution on Bug Trace]:** Can't use a model to explain a bug unless you can run the model against the failing scenario.
+- **[Model Execution] requires [Trace Conversion]:** Model checkers work with formal state representations, not raw execution logs. Conversion bridges the gap.
+- **[Root Cause Extraction] is bottleneck for all downstream features:** Many features depend on extracting _why_ an invariant failed, not just _that_ it failed. Must be solid before building on it.
+- **[Pre-Verification] enhances [Model Refinement]:** A refined model should be immediately tested against the fix that motivated the refinement.
+- **[Cross-Model Regression] conflicts with [Model Decomposition]:** Decomposed models create version-management complexity; regression checking becomes order-dependent. Don't build both in same phase.
+- **[B→F Solve Layer] requires [Bug-to-Model Lookup]:** The layer's entire purpose is to identify bugs that models should catch. Can't do that without lookup.
 
 ## MVP Definition
 
-### Phase 1: Measurement Foundation
+### Launch With (v0.38 — Model-Driven Debugging)
 
-- [ ] **Cross-session residual trend tracker** -- append-only JSONL, per-layer trend detection
-- [ ] **Per-model gate persistence with reasons** -- wire --write-per-model as default, persist reasons in solve-state.json
-- [ ] **Promotion flip-flop detection** -- scan changelog for alternating patterns, flag UNSTABLE models
+Minimum viable product — what's needed to validate the concept that formal models can guide real debugging.
 
-### Phase 2: Convergence Enforcement
+- [x] **Bug-to-Model Lookup** — Find relevant models from failing code (via formal-scope-scan proximity). Deliverable: extend formal-scope-scan.cjs to rank models by source-file match and scope depth.
+- [x] **Model Execution on Bug Trace** — Run TLA+/Alloy checkers with failing trace as input constraints. Deliverable: TLA+ runner accepts trace-derived ASSUME statements; Alloy runner accepts trace facts.
+- [x] **Trace-to-Counterexample Conversion** — Map execution events to formal model state. Deliverable: JSON→TLA+ event converter in trace-analyzer.cjs.
+- [x] **Root Cause Extraction** — Parse counterexample, identify first invariant violation, extract variables. Deliverable: invariant-breach-analyzer.cjs parsing TLC output.
+- [x] **Plain-English Constraint Summary** — Translate 3-5 invariants to English. Deliverable: constraint-translator.cjs with TLA+ operator→English mapping.
+- [x] **Pre-Verification of Fix** — Verify fix against model that explained bug. Deliverable: fix-verification-layer.cjs running APALACHE in verify mode with patched code as ASSUME.
 
-- [ ] **Layer oscillation breaker (Option C)** -- per-layer direction tracking, one-oscillation-credit, human escalation
-- [ ] **Gate maturity stabilization gates** -- cooldown window, stabilization count, timestamp tracking
+### Add After Validation (v0.39–v0.40)
 
-### Phase 3: Formal Proof + Measurement
+Features to add once core bug-diagnosis loop is working end-to-end.
 
-- [ ] **NFSolveConvergence TLA+ spec** -- outer-loop model with Option C, convergence liveness proof
-- [ ] **Predictive power feedback loop** -- bug-to-property backlinks, per-model recall scoring
+- [ ] **Model Refinement from Bugs** — Auto-generate new invariants from failing traces. Requires specification mining (sparse coding) implementation; higher complexity justifies later phase.
+- [ ] **Cross-Model Regression Prevention** — Run fix against neighboring models in parallel. Requires model-graph execution infrastructure.
+- [ ] **Invariant-Driven Solve Prioritization** — Rank solve waves by invariant likelihood. Requires integration with hypothesis-driven ordering system.
+
+### Future Consideration (v0.41+)
+
+Features to defer until model-driven debugging is proven operational.
+
+- [ ] **B→F Solve Layer** — New 20th solve layer for "bugs models should catch". Requires mature model-lookup, fix-verification, and bug-tracking infrastructure. Risk: adds complexity without user value if models don't yet explain most bugs.
+- [ ] **Fix Constraint Solver** — Synthesize constraint space for fixes. Requires mature constraint-extraction and SMT solver integration. Useful only if developers trust constraints (requires validation on real bugs).
 
 ## Feature Prioritization Matrix
 
-| Feature | User Value | Implementation Cost | Risk | Priority |
-|---------|------------|---------------------|------|----------|
-| Cross-session residual trend tracker | HIGH | LOW | LOW | P1 |
-| Per-model gate persistence w/ reasons | MEDIUM | LOW | LOW | P1 |
-| Promotion flip-flop detection | MEDIUM | LOW | LOW | P1 |
-| Layer oscillation breaker (Option C) | HIGH | HIGH | MEDIUM | P1 |
-| Gate maturity stabilization gates | HIGH | MEDIUM | LOW | P1 |
-| NFSolveConvergence TLA+ spec | HIGH | HIGH | HIGH | P2 |
-| Predictive power feedback loop | MEDIUM | HIGH | MEDIUM | P2 |
+| Feature | User Value | Implementation Cost | Priority | Phase |
+|---------|------------|---------------------|----------|-------|
+| Bug-to-Model Lookup | HIGH | MEDIUM | P1 | v0.38 |
+| Model Execution on Bug Trace | HIGH | MEDIUM | P1 | v0.38 |
+| Trace-to-Counterexample Conversion | HIGH | MEDIUM | P1 | v0.38 |
+| Root Cause Extraction | HIGH | MEDIUM | P1 | v0.38 |
+| Plain-English Constraint Summary | MEDIUM | MEDIUM | P1 | v0.38 |
+| Pre-Verification of Fix | HIGH | HIGH | P1 | v0.38 |
+| Model Refinement from Bugs | HIGH | HIGH | P2 | v0.39 |
+| Cross-Model Regression Prevention | MEDIUM | HIGH | P2 | v0.40 |
+| Invariant-Driven Solve Prioritization | MEDIUM | MEDIUM | P2 | v0.39 |
+| B→F Solve Layer | MEDIUM | HIGH | P3 | v0.41+ |
+| Fix Constraint Solver | MEDIUM | HIGH | P3 | v0.41+ |
 
 **Priority key:**
-- P1: Must have -- directly implements convergence guarantees (the milestone goal)
-- P2: Should have -- proves or measures the guarantees; system works without them
+- **P1:** Launch v0.38 — core bug-diagnosis loop, answers "which invariant is broken and why"
+- **P2:** Add in v0.39–v0.40 — model improvement and multi-model safety
+- **P3:** Future — advanced synthesis and solve orchestration, lower ROI early
 
-## Existing Infrastructure Inventory
+## Ecosystem Patterns & Implementation Guidance
 
-| Existing Artifact | Used By Feature | How |
-|-------------------|----------------|-----|
-| solve-state.json | Trend tracker | Snapshot source; trend file appends these per-run |
-| solve-sessions/ (20-rotation) | Trend tracker | Existing session storage pattern to follow |
-| promotion-changelog.json | Stabilization gates | Flip-flop detection source; already shows the problem |
-| per-model-gates.json (schema v2) | Gate persistence, Stabilization | Has gate_maturity + pass/reason per gate; needs timestamps |
-| compute-per-model-gates.cjs | Gate persistence, Stabilization | --aggregate --json and --write-per-model flags exist |
-| NFSolveOrchestrator.tla | TLA+ outer spec | Inner-loop model to compose with; 4 convergence conditions already modeled |
-| oscillation-signatures.json | Oscillation breaker | Pattern precedent: cross-session evidence persistence + preemptive warnings |
-| nf-circuit-breaker.js | Oscillation breaker | Architectural pattern: run-collapse detection, Haiku classifier, human escalation |
-| traceability-matrix.json (v0.25) | Predictive power | Forward links (requirement -> model) at 63.8% coverage |
-| failure-taxonomy.json (v0.29) | Predictive power | Failure mode catalog for matching against bugs |
-| test-recipes.json (v0.29) | Predictive power | 32 model-driven test recipes; predictive hit source |
-| check-results.ndjson (v0.20) | Predictive power | Enriched schema v2.1 with property attribution |
+### Pattern 1: Bug Trace → Counterexample Mapping
 
-## Analogies to Established Patterns
+**What:** Execution traces contain timestamped events and state snapshots. Formal models expect state represented as TLA+ variable assignments or Alloy relation facts. Conversion bridges the gap.
 
-| nf-solve Concept | Established Analogy | Key Difference |
-|-----------------|---------------------|----------------|
-| Cross-session residual tracking | Numerical iterative refinement (Wilkinson 1963): track residual norms across iterations, terminate on stall or convergence | nf-solve residuals are discrete counts, not continuous norms. Mann-Kendall trend test (non-parametric) is appropriate where Cauchy convergence tests are not. |
-| Option C oscillation breaker | Control system hysteresis / debounce: signal must be stable for N cycles before considered valid | nf-solve uses a credit system (1 oscillation allowed) rather than amplitude dampening. The existing circuit breaker already implements the harder variant for git file sets. |
-| Gate stabilization | Flagger/Argo Rollouts canary promotion: sustained metric health over analysis window before promoting | nf-solve uses session count + wall-clock time rather than continuous metric streams. Cooldown window is coarser-grained but appropriate for the invocation frequency (minutes to hours between runs). |
-| Predictive power scoring | Defect prediction model evaluation (recall, precision, F1, AUC) | Recall-first scoring: a model that catches 1 real bug with 10 false alarms is more valuable than a model with perfect precision catching 0 bugs. Literature is unambiguous on this point. |
-| TLA+ outer-loop convergence | Banach fixed-point theorem / MOOSE Picard iteration convergence proof | The formal proof uses TLA+ temporal logic (liveness under fairness) rather than mathematical convergence theorems. Must use bounded session abstraction (last N=3-5) to keep TLC tractable. |
+**When:** Always — core dependency for all downstream features.
+
+**How (TLA+):**
+```
+Execution trace → JSON with event sequence:
+{
+  "events": [
+    {"ts": 0, "var": "status", "value": "init"},
+    {"ts": 1, "var": "counter", "value": 5},
+    {"ts": 2, "var": "status", "value": "failed"}
+  ]
+}
+
+Convert to TLA+ ASSUME:
+ASSUME pc[self] = "init"
+ASSUME counter = 5
+ASSUME pc[self] = "failed"
+```
+
+**References:** [APALACHE symbolic model checker](https://apalache-mc.org/) accepts ASSUME constraints; [TLC trace viewer](https://tla.msr-inria.inria.fr/tlatoolbox/doc/model/results-page.html) parses state traces.
+
+### Pattern 2: Counterexample-Guided Diagnosis (CEGAR Loop)
+
+**What:** Model checker produces a counterexample trace. That trace might be "spurious" (impossible in real execution). CEGAR algorithm compares the model's counterexample against the actual bug trace to identify which model assumptions are wrong.
+
+**When:** When a model produces a counterexample, but it doesn't match the observed bug.
+
+**How:**
+1. Run model checker: TLC generates trace T_model where invariant I fails.
+2. Compare against actual bug trace T_bug:
+   - Are the variable values the same at each step? If not, which are different?
+   - Which variable changes first diverge the traces?
+3. Hypothesis: "Model assumes [variable X behavior], but actual code does [different behavior]."
+4. Refine model: Add constraint to rule out the spurious case, or adjust parameter.
+
+**References:** [Counterexample-Guided Abstraction Refinement (CEGAR)](https://dl.acm.org/doi/10.1145/876638.876643) foundational paper; [FLACK tool for Alloy](https://cse.unl.edu/~hbagheri/publications/2021ASE_FLACK_tool.pdf) implements similar idea for specification debugging.
+
+### Pattern 3: Constraint Extraction from Invariants
+
+**What:** TLA+ invariants like `INVARIANT ~(x > 10 /\ y < 0)` encode constraints. Extract to plain English: "Fix must not set x > 10 while y < 0." User doesn't read TLA+ syntax.
+
+**When:** Always — surface constraints to developers immediately after diagnosis.
+
+**How:**
+- Parse TLA+ operators: `/\` → "and", `\/` → "or", `~` → "not", `=` → "equals"
+- Handle quantifiers: `\A x ∈ S: P(x)` → "for all x in [set], [property]"
+- Map variable names to source code: Use @requirement annotations in model to link formal vars to code identifiers
+- Surface top 3-5 constraints by relevance (frequency in failed traces)
+
+**References:** [Alloy FLACK tool](https://cse.unl.edu/~hbagheri/publications/2021ASE_FLACK_tool.pdf) does localization by comparing satisfying vs failing instances; adapt for TLA+ invariants.
+
+### Pattern 4: Specification Mining from Failing Traces
+
+**What:** When no model explains a bug, synthesize a new invariant that would have caught it.
+
+**When:** After Root Cause Extraction shows "no invariant guards this code path."
+
+**How:**
+1. Extract key events from failing trace (variable changes, state transitions).
+2. Mine temporal patterns: "X always happens before Y", "whenever A, then eventually B"
+3. Use sparse coding or pattern templates to find frequent subtraces
+4. Convert pattern to invariant: Sparse subtrace → TLA+ INVARIANT predicate
+5. Validate: Re-run failing scenario, confirm new invariant fails at right point
+
+**References:** [Sparse Coding for Specification Mining](https://people.eecs.berkeley.edu/~sseshia/pubdir/rv12-sc.pdf); [RTL bug localization via LTL mining](https://dl.acm.org/doi/10.1145/3359986.3361202) (similar technique for hardware).
+
+### Pattern 5: Fix Verification via Symbolic Execution
+
+**What:** Developer writes fix. Before committing, verify it symbolically against the model that explained the bug.
+
+**When:** After fix written, before merge.
+
+**How:**
+1. Instrument fix as TLA+ ACTION: represent code patch as state transition modifier
+2. Run APALACHE symbolic checker: "Does invariant still hold if we apply this action?"
+3. If APALACHE produces counterexample, fix is incomplete
+4. Surface constraint: "Fix is valid only if X remains true" (from invariant assumptions)
+
+**References:** [Automatic Program Repair via Formal Verification](https://springer.com/chapter/10.1007/978-3-030-11245-5_4) uses constraint generation for repair; [APALACHE symbolic solving](https://apalache-mc.org/) handles bounded verification efficiently.
+
+### Pattern 6: Cross-Model Regression Prevention
+
+**What:** Fix verified against Model A? Check it doesn't break Models B, C (which share source files or requirements).
+
+**When:** Post fix-verification; before shipping.
+
+**How:**
+1. Extract fix scope: files modified, functions changed
+2. From model-registry, find all models that reference these files (via @requirement annotations)
+3. Run fix-verification in parallel against each model
+4. Report any new counterexamples: "Fix passes Model A but breaks Model C"
+
+**References:** nForma already has model-registry with bidirectional @requirement links (v0.25); extend to run verification in parallel across related models.
+
+## Known Challenges & Mitigations
+
+| Challenge | Impact | Mitigation |
+|-----------|--------|-----------|
+| **Trace capture overhead** | Bugs in production are hard to reproduce with full traces. | Accept partial traces (key state snapshots only). Use sampling for long-running traces. Provide manual trace-entry UI for developer-reported bugs. |
+| **Model state explosion** | Large models can't be checked exhaustively. TLC times out. | Use APALACHE symbolic solver instead of TLC for large models (handles integer clocks, arrays). Pre-constrain state space using ASSUME statements from bug trace. |
+| **Spurious counterexamples** | Model produces trace that doesn't match actual bug. CEGAR loop required. | Implement CEGAR: store model assumptions as separate layer in model-registry. When counterexample differs from bug trace, raise assumption violation instead of claiming invariant failure. |
+| **Weak specifications** | Test-suite-driven fixes overfit and break on new inputs. | Don't auto-generate patches. Instead, generate constraints and require human verification. Measure fix quality post-deploy via production observability feedback. |
+| **Model maintenance burden** | As code evolves, models become stale and produce false negatives. | Auto-update models: when @requirement annotations link models to code, trigger model re-verification on requirement change. Gate: if model breaks, mark SOFT_GATE and require manual review. |
 
 ## Sources
 
-- [Iterative Refinement - Wikipedia](https://en.wikipedia.org/wiki/Iterative_refinement) -- classical convergence guarantees for residual-based iteration
-- [TLA+ Specification and Verification with TLC, Apalache, and TLAPS](https://inria.hal.science/hal-03844516/document) -- TLA+ model checking including bounded and liveness verification
-- [Model checking safety and liveness via k-induction](https://www.sciencedirect.com/science/article/pii/S0167642320301404) -- bounded model checking for convergence properties
-- [Oscillation Detection in Process Industries (ML-based)](https://pubs.acs.org/doi/10.1021/acs.iecr.9b01456) -- pattern detection in iterative control systems
-- [Bug Prediction Models: seeking the most efficient](https://www.researchgate.net/publication/377808174_Bug_Prediction_Models_seeking_the_most_efficient) -- evaluation metrics for defect prediction
-- [Method-level Bug Prediction: Problems and Promises](https://dl.acm.org/doi/10.1145/3640331) -- linking predictions to actionable outcomes
-- [Software Defect Prediction Based on ML/DL](https://www.mdpi.com/2673-2688/5/4/86) -- precision, recall, F1, AUC evaluation
-- [Hysteresis - Wikipedia](https://en.wikipedia.org/wiki/Hysteresis) -- state-dependent switching with memory (stabilization gate foundation)
-- [AI will make formal verification go mainstream (Kleppmann 2025)](https://martin.kleppmann.com/2025/12/08/ai-formal-verification.html) -- AI-assisted formal verification trends
-- Existing codebase: NFSolveOrchestrator.tla (inner-loop model), nf-circuit-breaker.js (oscillation detection precedent), compute-per-model-gates.cjs (gate maturity logic), promotion-changelog.json (flip-flop evidence)
+### Core Research
+- [Counterexample-Guided Abstraction Refinement (CEGAR)](https://dl.acm.org/doi/10.1145/876638.876643) — Clarke et al., foundational technique for trace-guided model refinement
+- [Sparse Coding for Specification Mining](https://people.eecs.berkeley.edu/~sseshia/pubdir/rv12-sc.pdf) — Seshia et al., mining specs from execution traces
+- [FLACK: Counterexample-Guided Fault Localization for Alloy](https://cse.unl.edu/~hbagheri/publications/2021ASE_FLACK_tool.pdf) — fault localization via instance comparison
+
+### Tools & Implementations
+- [APALACHE: Symbolic Model Checker for TLA+](https://apalache-mc.org/) — SMT-based symbolic execution, handles large state spaces
+- [TLC: The TLA+ Model Checker](https://github.com/tlaplus/tlaplus) — production-standard bounded model checking
+- [Alloy Analyzer](https://cacm.acm.org/research/alloy/) — SAT-based specification checking, automated counterexample generation
+- [TLC Trace Viewer](https://tla.msr-inria.inria.fr/tlatoolbox/doc/model/results-page.html) — trace analysis and visualization
+
+### Program Synthesis & Repair
+- [Automatic Program Repair Using Formal Verification](https://springer.com/chapter/10.1007/978-3-030-11245-5_4) — constraint-based repair templates
+- [Syntax-Guided Synthesis (SyGuS)](https://www.cis.upenn.edu/~alur/SyGuS13.pdf) — specification-guided program generation
+- [RTL Bug Localization via LTL Specification Mining](https://dl.acm.org/doi/10.1145/3359986.3361202) — temporal pattern mining for hardware debugging
+
+### AI-Assisted Methods
+- [Explainable Automated Debugging via LLM-driven Scientific Debugging](https://link.springer.com/article/10.1007/s10664-024-10594-x) — recent work on LLM-guided hypothesis generation
+- [Enhancing Automated Loop Invariant Generation with LLMs](https://arxiv.org/html/2412.10483v1) — CLN2INV approach, learning invariants from traces
+- [Automatic Bug Hunting via Data-Driven Symbolic Root Cause Analysis](https://dl.acm.org/doi/abs/10.1145/3460120.3485363) — combining symbolic execution with ML for diagnosis
+
+### nForma-Specific Baseline
+- nForma v0.25: Formal traceability (bidirectional model↔requirement links via @requirement annotations)
+- nForma v0.26: Operational completeness (model-registry, requirement aggregation)
+- nForma v0.29: Three-layer formal verification (Evidence, Semantics, Reasoning layers with grounding/abstraction/validation gates)
+- nForma v0.37: Cross-layer feedback (quorum precedent memory, gate auto-promotion, scanner FP self-tuning)
 
 ---
-*Feature research for: Outer-Loop Convergence Guarantees (v0.33)*
-*Researched: 2026-03-09*
+
+**Feature research for:** Model-driven debugging (v0.38)
+**Researched:** 2026-03-17

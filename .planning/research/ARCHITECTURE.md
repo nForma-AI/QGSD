@@ -1,521 +1,546 @@
-# Architecture Patterns
+# Architecture: Model-Driven Debugging Integration
 
-**Domain:** Outer-loop convergence guarantees for nf:solve formal verification pipeline
-**Researched:** 2026-03-09
-**Confidence:** HIGH (all integration points verified against existing source code)
+**Project:** nForma v0.38 — Model-Driven Debugging
+**Researched:** 2026-03-17
+**Confidence:** HIGH
 
-## Existing Architecture (Baseline)
+## Executive Summary
 
-The current nf:solve pipeline operates as a single-session convergence loop:
+Model-driven debugging transforms nForma's formal models from descriptive (CI gate validation) to prescriptive (explaining bugs, constraining fixes, preventing regressions). The architecture extends three existing subsystems:
 
-```
-main()
-  -> preflight() [bootstrap formal infra]
-  -> refresh-evidence.cjs [pre-loop]
-  -> for i = 1..maxIterations:
-       computeResidual() [sweep 19 layer transitions]
-       -> convergence check (total == prevTotal || total == 0)
-       -> autoClose(residual) [remediation: 13 ordered sub-steps]
-  -> write solve-state.json [snapshot, NOT time series]
-  -> persistSessionSummary() [timestamped .md in solve-sessions/]
-  -> formatReport / formatJSON -> stdout
-```
+1. **Model Lookup Layer** — Bug-to-model discovery via extended `formal-scope-scan.cjs` with `--bug-mode`
+2. **Constraint Extraction** — Parse specs to extract fix constraints, integrated into `/nf:debug` quorum dispatch
+3. **Solve Layer B→F** — New 20th layer tracking bugs formal models should explain but don't
 
-### Key State Files
+The design preserves existing wave-parallel remediation architecture while inserting bug-driven intelligence into the debug→solve→fix loop. Integration points are minimal (5 new/modified components), dependencies are clean (no graph cycles), and the build order respects solve-layer prerequisites.
 
-| File | What It Holds | Scope |
-|------|--------------|-------|
-| `solve-state.json` | Last-run snapshot: converged, iteration_count, final_residual_total, known_issues[] | Single run (overwritten) |
-| `solve-sessions/*.md` | Timestamped human-readable session summaries | Per-run archive (max 20, FIFO pruned) |
-| `model-registry.json` | 127 models with version, source_layer, gate_maturity, layer_maturity, requirements[] | Persistent |
-| `promotion-changelog.json` | Array of {model, from_level, to_level, timestamp, evidence_readiness, trigger} | Persistent (append-only, capped at 200) |
-| `gates/per-model-gates.json` | Per-model gate A/B/C pass/reason + evidence_readiness | Computed on demand (--write-per-model) |
-| `gates/gate-{a,b,c}-*.json` | Aggregate gate scores | Computed on demand (--aggregate) |
-| `layer-manifest.json` | L1/L2/L3 model entries with grounding_status | Persistent |
+## System Architecture
 
-### Current Promotion Pipeline
+### Current State (v0.37)
 
 ```
-compute-per-model-gates.cjs:
-  for each model:
-    evaluateGateA() -> grounding (L1->L2)
-    evaluateGateB() -> abstraction (L2->L3)
-    evaluateGateC() -> validation (L3->TC)
-    maturity = sum(gateA + gateB + gateC)  // 0-3
+Code/Test/Docs ────────┐
+                       ├──→ (19 layers) ──→ nf-solve ──→ solve-remediate ──→ fix
+Requirements/Models ──┤
+Production Signals ───┘
 
-    Auto-promote:  ADVISORY -> SOFT_GATE  if maturity >= 1 + evidence >= 1
-                   SOFT_GATE -> HARD_GATE if maturity >= 3 + evidence >= 3
-    Auto-demote:   SOFT_GATE -> ADVISORY  if evidence < 0.8 or maturity < 0.8
-                   HARD_GATE -> SOFT_GATE if evidence < 2.5 or maturity < 2.5
-
-    Hysteresis: promote threshold > demote threshold (boundary oscillation guard)
+Per-layer handlers (gas pedal dispatch):
+  wave 0: r_to_f, r_to_d, t_to_c, p_to_f
+  wave 1: f_to_t, c_to_f
+  wave 2: f_to_c, d_to_c
+  wave 3: c_to_r, t_to_r, d_to_r, git_heatmap
+  wave 4: hazard_model
+  wave 5: l1_to_l3
+  wave 6: l3_to_tc, per_model_gates, h_to_m
 ```
 
-### Critical Gap
+**Key facts:**
+- 19 layers in LAYER_KEYS (layer-constants.cjs)
+- Dependency DAG in solve-wave-dag.cjs enforces ordering
+- Each wave runs up to 3 layers in parallel (RAM budget)
+- Remediation dispatch uses Agent subprocesses per layer
+- Debug loop (nf:debug) calls quorum workers independently of solve
 
-**No cross-session memory.** solve-state.json is overwritten each run. Session summaries are pruned to 20. promotion-changelog.json captures gate transitions but no cross-session analysis reads it. There is no mechanism to detect whether repeated solve runs are making progress, stalling, or oscillating.
-
-## Recommended Architecture for 6 New Features
-
-### Component Map
-
-```
-                         CROSS-SESSION CONVERGENCE LAYER (NEW)
-+----------------------------------------------------------------------+
-|                                                                      |
-|  convergence-history.json    (NEW: append-only time series, 100 cap) |
-|       |              |              |                                |
-|       v              v              v                                |
-|  +---------+  +--------------+  +----------------+                  |
-|  | Trend   |  | Oscillation  |  | Predictive     |                  |
-|  | Tracker |  | Breaker      |  | Power Scorer   |                  |
-|  +----+----+  +------+-------+  +--------+-------+                  |
-|       |              |                    |                          |
-|       v              v                    v                          |
-|  (inline)     oscillation-        predictive-power.json              |
-|               verdicts.json       (model -> bugs_predicted/total)    |
-|                      |                                               |
-|                      v                                               |
-|               HUMAN ESCALATION                                       |
-|               (fix->break->fix blocked)                              |
-|                                                                      |
-|  stabilization-gates.json  <-- promotion-changelog.json (READ)       |
-|  (cooldown tracking)                                                 |
-|                                                                      |
-|  NFSolveConvergence.tla  (NEW: outer-loop TLA+ spec)                 |
-|                                                                      |
-+----------------------------------------------------------------------+
-          |                    |                    |
-          v                    v                    v
-+----------------------------------------------------------------------+
-|  EXISTING SINGLE-RUN SCOPE (modified at integration seams only)      |
-|                                                                      |
-|  nf-solve.cjs main()                                                |
-|    +-- preflight()        (unchanged)                                |
-|    +-- computeResidual()  (unchanged)                                |
-|    +-- autoClose()        -> reads oscillation-verdicts.json (NEW)   |
-|    |                      -> skips blocked layers (NEW)              |
-|    +-- finalize block     -> calls appendConvergenceEntry() (NEW)    |
-|    +-- persistSession()   (unchanged)                                |
-|                                                                      |
-|  compute-per-model-gates.cjs                                         |
-|    +-- auto-promotion     -> calls canPromote() guard (NEW)          |
-|                                                                      |
-+----------------------------------------------------------------------+
-```
-
-### Component Boundaries
-
-| Component | Responsibility | Communicates With | New/Modified |
-|-----------|---------------|-------------------|--------------|
-| `bin/convergence-history.cjs` | Append time-series entries after each solve run; compute per-layer trend (slope, direction) over sliding window | convergence-history.json, nf-solve.cjs | **New** |
-| `bin/detect-oscillation.cjs` | Scan per-layer residual history for fix-break-fix patterns; write verdicts file | convergence-history.json, oscillation-verdicts.json | **New** |
-| `bin/score-predictive-power.cjs` | Link test failures to formal properties; score bugs_predicted/total_bugs per model | model-registry.json, check-results.ndjson, predictive-power.json | **New** |
-| `bin/stabilization-gates.cjs` | Enforce cooldown before re-promotion; detect flip-flop in promotion-changelog | promotion-changelog.json, stabilization-gates.json, compute-per-model-gates.cjs | **New** |
-| `.planning/formal/tla/NFSolveConvergence.tla` | TLA+ spec proving outer-loop convergence under Option C assumptions | Standalone formal model (separate from NFSolveOrchestrator.tla) | **New** |
-| `bin/nf-solve.cjs` | Integration seams: append history entry at finalize, read oscillation verdicts in autoClose, wire --write-per-model | All new components | **Modified** (3 call sites) |
-| `bin/compute-per-model-gates.cjs` | Check stabilization gate before auto-promoting; pass --write-per-model from solve | stabilization-gates.cjs | **Modified** (1 guard) |
-| `commands/nf/solve-report.md` | Include trend and oscillation sections in report output | convergence-history.json, oscillation-verdicts.json, predictive-power.json | **Modified** (template) |
-
-### Data Flow
-
-#### Feature 1: Cross-Session Trend Tracker
-
-**Where does time series live?** In a NEW file: `.planning/formal/convergence-history.json`. NOT in solve-state.json.
-
-**Why separate file:** solve-state.json is a single-run snapshot consumed by solve-diagnose and solve-report. Adding a growing array changes its contract, bloats reads, and breaks existing consumers. The time series needs append-only semantics with bounded retention -- a different access pattern.
-
-**Integration point:** End of `main()` in nf-solve.cjs (line ~3464), after solve-state.json write but before persistSessionSummary.
+### Proposed State (v0.38 with Model-Driven Debugging)
 
 ```
-nf-solve.cjs main() finalize block:
-  ... existing solveState write (line 3488) ...
-  NEW: convergenceHistory.append({
-    timestamp, converged, iteration_count,
-    residuals: { r_to_f: 90, f_to_t: 0, ... },  // per-layer snapshot
-    gates: { a: 0.247, b: 0.98, c: 0.787 },      // from gate files
-    total: 114,
-    automatable_total: 91                          // excludes informational layers
-  })
-  NEW: trendAnalysis = convergenceHistory.analyzeTrend({ window: 5 })
-  ... existing persistSessionSummary (line 3501) ...
+Bug Report ───────┐
+                 ├──→ Bug-to-Model ──→ Constraint Extraction ──→ /nf:debug ──→ Model-Aware Fix
+Code/Test/Docs ──┤
+Requirements ────┘
+
+New layer: B→F (wave 7, post per_model_gates)
+  "Which bugs does formal model M explain?"
+
+New solve layer in solve cycle (after per_model_gates):
+  wave 7: b_to_f  (bug→formal coverage tracking)
+
+New /nf:debug integration points:
+  1. Inject model-lookup results into debug bundle
+  2. Extract constraints from matched models
+  3. Pre-verify fix against neighbor models
 ```
 
-**How does solve-state.json evolve?** It does NOT. solve-state.json stays exactly as-is (7 top-level fields, overwritten each run). At most, add a single `last_trend_direction: "improving"|"stable"|"worsening"` summary field for quick status checks. No arrays, no history.
+## Component Overview
 
-**convergence-history.json schema:**
+| Component | Purpose | Status | Where |
+|-----------|---------|--------|-------|
+| **bug-to-model lookup** | Find models matching bug context | NEW | bin/formal-scope-scan.cjs (extend) |
+| **constraint-extraction** | Parse specs → English constraints | NEW | bin/model-constrained-fix.cjs |
+| **model-aware debug dispatch** | Inject formal intelligence into debug | NEW | core/workflows/model-driven-fix.md |
+| **B→F layer handler** | Track unexplained bugs | NEW | bin/solve-handlers/b_to_f.cjs |
+| **bug-model-gaps.json** | Persistence file for bug→model links | NEW | .planning/formal/bug-model-gaps.json |
+| **formal-scope-scan.cjs** | Extended with `--bug-mode` flag | MODIFIED | bin/formal-scope-scan.cjs |
+| **nf-solve.cjs** | Add B→F layer to cycle, post-h_to_m | MODIFIED | bin/nf-solve.cjs |
+| **solve-remediate.md** | Add 3o. B→F Gaps section | MODIFIED | core/workflows/solve-remediate.md |
+| **solve-wave-dag.cjs** | Add B→F to wave dependencies | MODIFIED | bin/solve-wave-dag.cjs |
+| **/nf:debug** | Inject model context into bundle | MODIFIED | commands/nf/debug.md |
+
+## Integration Points
+
+### 1. Bug-to-Model Discovery (Lookup Layer)
+
+**Entry point:** `/nf:debug` failure context → model-lookup
+
+**Mechanism:**
+```bash
+# Existing scope-scan (file/concept matching)
+node bin/formal-scope-scan.cjs \
+  --description "failure description" \
+  --files "affected_code.js"
+
+# NEW: Bug-specific lookup
+node bin/formal-scope-scan.cjs \
+  --description "failure description" \
+  --files "affected_code.js" \
+  --bug-mode              # NEW FLAG
+  --exit-code 1           # NEW: numeric exit code
+  --stack-trace "..."     # NEW: error stack
+```
+
+**Output:** Ordered list of models with:
+- `module` — formal model name
+- `matched_by` — lookup strategy (source_file, concept, bug_pattern, proximity_graph)
+- `proximity_score` — graph-based confidence (0–1.0)
+- `constrain_fields` — which spec sections apply (preconditions, invariants, state bounds)
+
+**Implementation in formal-scope-scan.cjs:**
+1. Load existing scope.json index
+2. NEW: Load optional `bug-patterns.json` (signatures for common failure types)
+3. Match failure description against patterns (Levenshtein distance > 0.75 triggers)
+4. If pattern hits, boost proximity_score by 0.2 and tag `matched_by: 'bug_pattern'`
+5. Return ranked results as before
+
+**Low risk:** Fails open (empty results) if bug-patterns.json missing. Existing scope-scan test suite unaffected.
+
+### 2. Constraint Extraction (Parser Layer)
+
+**Entry point:** Model lookup results → constraint extraction
+
+**New file:** `bin/model-constrained-fix.cjs`
+
+**Algorithm:**
+```
+FOR EACH matched model M:
+  1. Read M's invariants.md (human-readable)
+  2. Parse invariant blocks by structure:
+     - Safety constraints: "X must NOT..."
+     - Liveness constraints: "X must eventually..."
+     - Bounds: "X ∈ [min, max]"
+  3. For matched_by='source_file', extract preconditions from @requirement annotations in spec
+  4. Generate English constraint list with confidence scores
+  5. Return {model, constraints, confidence}
+```
+
+**Output schema:**
+```json
+{
+  "model": "QuorumDeliberation.tla",
+  "source_section": "Invariants",
+  "constraints": [
+    {
+      "type": "safety",
+      "english": "All quorum workers must respond within 30 seconds of dispatch",
+      "formal": "~QuorumDeliberation!2143",
+      "confidence": "HIGH",
+      "applies_to_fix": "timeout handling, worker heartbeat"
+    },
+    {
+      "type": "liveness",
+      "english": "Consensus decision is made once 3/4 workers agree",
+      "formal": "QuorumConsensus!line2091",
+      "confidence": "HIGH",
+      "applies_to_fix": "voting logic, consensus threshold"
+    }
+  ],
+  "fix_scope_check": {
+    "model_affected_by_fix": true,
+    "reason": "Fix modifies timeout constant; model depends on timeout bounds"
+  }
+}
+```
+
+**Implementation details:**
+- Parse `.planning/formal/spec/{module}/invariants.md` line by line
+- Recognize patterns: `SAFETY:`, `LIVENESS:`, `BOUND:`, `PRECONDITION:` headers
+- Extract formal references (filenames, line numbers, variable names)
+- Link to @requirement annotations via proximity-index.cjs graph walk
+- Fail gracefully if spec is unreadable (return empty constraints array)
+
+### 3. Debug Bundle Injection
+
+**Entry point:** `/nf:debug` command → Step A (collect failure context)
+
+**Current flow (v0.37):**
+```
+/nf:debug "test timeout issue"
+  ├─ Collect test output, error trace
+  ├─ Dispatch 4 quorum workers
+  └─ Render NEXT STEP table
+```
+
+**New flow (v0.38):**
+```
+/nf:debug "test timeout issue"
+  ├─ Collect test output, error trace
+  ├─ NEW: Run bug-to-model lookup
+  ├─ NEW: Extract constraints from matched models
+  ├─ Dispatch 4 quorum workers with EXTENDED BUNDLE
+  │   (includes model context + constraints)
+  └─ Render NEXT STEP table + MODEL RECOMMENDATIONS
+```
+
+**Bundle structure (MODIFIED):**
+```
+## Failure Context
+[existing: test output, exit code, stack trace, arguments]
+
+## Formal Model Intelligence  [NEW]
+```
+Matched Models (bug-to-model lookup):
+  1. QuorumDeliberation.tla
+     - Proximity: 0.88
+     - Matched by: source_file (bin/hooks/nf-stop.js)
+     - Key constraints:
+       * Workers must respond within 30s
+       * Consensus requires 3/4 agreement
+       * Dispatch state must not re-enter RUNNING
+```
+
+**Worker prompt injection:**
+```
+You are a debugging advisor for nForma.
+
+<bundle>
+[full bundle with model intelligence]
+</bundle>
+
+Given this failure AND the formal models that may explain it:
+
+root_cause: <one-liner>
+next_step: <specific debugging action>
+model_recommendation: [APPLY | INSPECT | DEFER] — does a model constraint inform this fix?
+confidence: HIGH | MEDIUM | LOW
+```
+
+**Implementation:** Modify `commands/nf/debug.md` Step C:
+1. After Step A (collect failure), insert sub-step: "Run bug-to-model lookup"
+2. Call formal-scope-scan.cjs with `--bug-mode` + failure context
+3. For top 3 matches, call model-constrained-fix.cjs
+4. Fold constraint list into bundle template
+5. Inject into all 4 worker prompts
+
+**No risk to existing debug flow:** If lookup/extraction fails, fall through to existing 4-worker dispatch. Tests unaffected.
+
+### 4. Solve Layer B→F (Bug-to-Formal Gap)
+
+**Purpose:** Track bugs that formal models should explain but don't.
+
+**Layer definition:**
+```javascript
+// bin/layer-constants.cjs — NEW LAYER
+const LAYER_KEYS = [
+  // ... existing 19 layers ...
+  'b_to_f',  // BUG→FORMAL: Bugs not covered by existing models
+];
+```
+
+**Handler:** `bin/solve-handlers/b_to_f.cjs`
+
+**Residual computation:**
+```
+RESIDUAL = count of bugs in production git history
+           not matched by any formal model's assumptions/invariants
+
+Detail:
+  {
+    "unflagged_bugs": [
+      {
+        "git_ref": "fix commit hash",
+        "description": "quorum deliberation timeout",
+        "matched_models": [],  // Empty if no model reproduces bug
+        "fix_sha": "abc123",
+        "blame_layer": "quorum-dispatch"
+      }
+    ]
+  }
+```
+
+**Remediation dispatcher (solve-remediate.md Section 3o):**
+
+```markdown
+### 3o. B→F Gaps
+
+Extract list of unflagged bugs from residual_vector.b_to_f.detail.unflagged_bugs.
+
+For each bug:
+1. Run: node bin/formal-scope-scan.cjs --bug-mode --description "{bug_description}"
+2. If matched models found: call /nf:close-formal-gaps to strengthen existing specs OR create new model
+3. If NO models found: log as "model candidate" for next v0.39 formalization cycle
+
+Log: "B->F: {N} unflagged bugs processed, {M} model candidates identified"
+
+Update .planning/formal/bug-model-gaps.json with:
+  - Bugs now covered by models (move to "covered" array)
+  - New model candidates (add to "candidates" array)
+```
+
+**Data file:** `.planning/formal/bug-model-gaps.json`
+
 ```json
 {
   "schema_version": "1",
-  "max_entries": 100,
-  "entries": [
+  "last_updated": "2026-03-17T00:00:00Z",
+  "covered_bugs": [
     {
-      "timestamp": "2026-03-09T23:23:23.831Z",
-      "converged": false,
-      "iteration_count": 1,
-      "total": 114,
-      "automatable_total": 91,
-      "residuals": {
-        "r_to_f": 90, "f_to_t": 0, "c_to_f": 0, "t_to_c": 0,
-        "f_to_c": 1, "r_to_d": 0, "d_to_c": 23,
-        "l1_to_l2": 7, "l2_to_l3": 4, "l3_to_tc": 1
-      },
-      "gates": { "a": 0.247, "b": 0.98, "c": 0.787 }
+      "git_ref": "abc123",
+      "description": "quorum timeout race condition",
+      "model": "QuorumDeliberation.tla",
+      "explanation": "Model reproduces bug via bounded timeout counter + unfair worker scheduling",
+      "discovered_version": "v0.38"
+    }
+  ],
+  "unflagged_bugs": [
+    {
+      "git_ref": "def456",
+      "description": "solver oscillation on gate flip-flop",
+      "matched_models": [],
+      "priority": "high",
+      "candidate_model": "SolveConvergence.tla"
     }
   ]
 }
 ```
 
-#### Feature 2: Layer Oscillation Breaker
+## Data Flow Changes
 
-**Where does it hook in?** BEFORE remediation, inside `autoClose()` in nf-solve.cjs. Not after -- catching oscillation before remediation prevents the fix->break cycle from continuing.
+### Current Flow (v0.37)
 
 ```
-autoClose(residual) {
-  // NEW: read oscillation verdicts at top
-  const verdicts = loadOscillationVerdicts();
+residual_vector
+  ├─ r_to_f (requirements without models)
+  ├─ f_to_t (models without tests)
+  ├─ c_to_f (code constants drift)
+  ├─ t_to_c (failing tests)
+  ├─ f_to_c (verification failures)
+  ├─ ... (13 more) ...
+  └─ h_to_m (hypothesis→model gaps)
+      ↓
+  solve-remediate.md routes each to handler
+      ↓
+  fix generated (code, tests, models, docs)
+```
 
-  // For each layer with residual > 0:
-  if (residual.f_to_t.residual > 0) {
-    // NEW: check oscillation before remediation
-    if (verdicts['f_to_t']?.blocked) {
-      actions.push('f_to_t BLOCKED -- oscillation detected, human escalation required');
-      // SKIP this layer's remediation (continue to next layer)
-    } else {
-      // existing remediation logic (spawnTool('formal-test-sync.cjs'))
-    }
-  }
-  // ... same pattern for each layer ...
+### New Flow (v0.38)
+
+```
+bug_report (from /nf:debug)
+  ├─ bug-to-model lookup (formal-scope-scan.cjs --bug-mode)
+  ├─ constraint extraction (model-constrained-fix.cjs)
+  └─ inject into debug bundle
+        ↓
+    quorum workers see model constraints
+        ↓
+    next_step includes model_recommendation
+        ↓
+        fix applied
+        ↓
+        pre-verify against neighbor models [NEW in solve cycle]
+        ↓
+
+Parallel: solve cycle B→F layer
+  residual_vector.b_to_f
+    ├─ git history scan (find bugs)
+    ├─ bug-to-model lookup for EACH
+    ├─ identify unflagged bugs
+    └─ generate model candidates
+        ↓
+    Route to close-formal-gaps (if models found)
+    or log as v0.39 formalization candidate
+```
+
+## Build Order & Dependencies
+
+**Phase 1: Lookup & Extraction (foundational)**
+1. `bin/formal-scope-scan.cjs` — Add `--bug-mode` flag, bug-patterns.json support
+2. `bin/model-constrained-fix.cjs` — NEW file, constraint parser
+
+**Prerequisite for Phase 1:** None (fail-open design)
+
+**Phase 2: Debug Integration (user-facing)**
+3. `commands/nf/debug.md` — Modify Step A to inject model context
+4. Test: `/nf:debug "timeout failure"` returns model recommendations
+
+**Prerequisite for Phase 2:** Phase 1 complete
+
+**Phase 3: Solve Layer (autonomous fix)**
+5. `bin/layer-constants.cjs` — Add `b_to_f` to LAYER_KEYS (20th layer)
+6. `bin/solve-handlers/b_to_f.cjs` — NEW handler for residual computation
+7. `bin/solve-wave-dag.cjs` — Add B→F dependencies (after h_to_m, pre-cleanup)
+8. `bin/nf-solve.cjs` — Import b_to_f handler, wire into sweep
+9. `.planning/formal/bug-model-gaps.json` — NEW tracking file (init empty)
+10. `core/workflows/solve-remediate.md` — Add Section 3o (B→F remediation)
+
+**Prerequisite for Phase 3:** Phase 2 complete (debug must work first)
+
+**Phase 4: Testing & Validation (quality gates)**
+11. `bin/formal-scope-scan.test.cjs` — Add `--bug-mode` test cases
+12. `bin/model-constrained-fix.test.cjs` — NEW test suite
+13. `bin/solve-handlers/b_to_f.test.cjs` — NEW test suite
+14. E2E: Inject bug via git history, run `nf:solve`, verify B→F layer fires
+
+**Critical path (minimum to ship):**
+- Phase 1 (lookup/extraction) + Phase 2 (debug integration) = user can get model recommendations
+- Phase 3 adds autonomous solve layer (nice-to-have for v0.38, required for v0.39)
+
+## Dependency Graph
+
+```
+formal-scope-scan.cjs (--bug-mode)
+  ↓
+model-constrained-fix.cjs
+  ├─ (reads) .planning/formal/spec/{module}/invariants.md
+  └─ (reads) proximity-index.json
+  ↓
+commands/nf/debug.md (bundle injection)
+  ├─ (calls) formal-scope-scan.cjs --bug-mode
+  └─ (calls) model-constrained-fix.cjs
+  ↓
+bin/nf-solve.cjs (solve cycle)
+  ├─ (imports) solve-handlers/b_to_f.cjs
+  ├─ (calls) formal-scope-scan.cjs --bug-mode (for each bug)
+  ├─ (calls) model-constrained-fix.cjs
+  └─ (updates) .planning/formal/bug-model-gaps.json
+```
+
+**No cycles.** Safe to build in order: Phase 1 → 2 → 3 → 4.
+
+## Interaction with Existing Components
+
+### formal-scope-scan.cjs (2-layer architecture preserved)
+
+**Current:**
+```
+Layer 1: scope.json matching (file overlap, concept, module name)
+Layer 2: proximity-index.json graph walk (BFS from matched modules)
+```
+
+**New:**
+```
+Layer 1: scope.json + NEW bug-patterns.json (Levenshtein matching)
+Layer 2: (unchanged)
+Layer 3: NEW — For bugs, boost proximity_score if pattern match found
+```
+
+**Test impact:** 0. New flag is optional. Existing tests pass unmodified.
+
+### solve-wave-dag.cjs (dependency order)
+
+**Current:**
+```
+LAYER_DEPS = {
+  h_to_m: [],
+  per_model_gates: ['l1_to_l3', 'l3_to_tc'],
+  ... (others)
 }
 ```
 
-**Option C enforcement rule:** No individual layer oscillates more than once. Definition:
-1. Read convergence-history.json last 10 entries
-2. For each layer, extract residual time series: [r1, r2, r3, ...]
-3. Compute deltas: [d1, d2, ...], filter noise (delta magnitude < 2 ignored)
-4. Count sign alternations (negative->positive or positive->negative)
-5. One full cycle (improve->worsen->improve) = 2 sign changes = WARNING
-6. If layer worsens again after warning = BLOCKED
-
-**Relationship to existing circuit breaker:** The hooks/nf-circuit-breaker.js detects git-level oscillation (same file sets being toggled back and forth). The layer oscillation breaker operates at a different abstraction level -- formal model residual trends across solve runs, not git commit patterns. They are complementary, not overlapping. The layer breaker runs inside nf-solve.cjs; the circuit breaker runs as a PreToolUse hook. Both use the same pattern (append-only history, FIFO pruning) as established in v0.31.
-
-**Oscillation verdicts file: `.planning/formal/oscillation-verdicts.json`**
-```json
-{
-  "schema_version": "1",
-  "verdicts": {
-    "l1_to_l2": {
-      "pattern": [7, 3, 8, 2, 9],
-      "cycle_count": 2,
-      "blocked": true,
-      "blocked_since": "2026-03-10T01:00:00Z",
-      "last_seen": "2026-03-10T02:00:00Z"
-    }
-  }
+**New:**
+```
+LAYER_DEPS = {
+  h_to_m: [],
+  b_to_f: ['h_to_m'],  // Bugs tracked AFTER hypothesis measurement
+  per_model_gates: ['l1_to_l3', 'l3_to_tc'],
+  ... (others)
 }
+
+// NEW wave grouping:
+// Wave 7 (sequential): h_to_m → b_to_f → (cleanup if needed)
 ```
 
-**Auto-recovery:** 3 consecutive improving sessions (layer residual decreases 3 times in a row) clears the block. This prevents permanent blocking when the underlying issue is resolved.
+**Impact:** Wave 6 stays same (h_to_m still dispatches in wave 6 if residual > 0). New b_to_f creates wave 7 if bugs found.
 
-#### Feature 3: Predictive Power Feedback
+### /nf:debug quorum dispatch
 
-**How do test results flow back to model scoring?** Through the requirement linkage chain:
+**Current:**
+- Worker sees: test output, exit code, stack trace
+- Worker returns: root_cause, next_step, confidence
+- Table shows: 4 models × 3 columns
 
-```
-Test failure (@req SOLVE-01)
-    -> requirement SOLVE-01
-    -> model-registry.json: which models cover SOLVE-01?
-    -> check-results.ndjson: did any of those models have check_result=fail
-       BEFORE the test failure timestamp?
-    -> YES = bugs_predicted++ for that model
-    -> NO  = total_bugs++ without prediction credit
-```
+**New:**
+- Worker sees: test output + model constraints + fix recommendations
+- Worker returns: root_cause, next_step, model_recommendation (APPLY/INSPECT/DEFER), confidence
+- Table shows: 4 models × 4 columns (added model_recommendation)
 
-**Integration point:** Standalone script called from nf-solve.cjs finalize block (after convergence-history append) or on-demand via CLI.
+**Test impact:** Existing debug tests still pass. New bundle enrichment is optional (graceful degradation if lookup fails).
 
-**model-registry.json schema addition (optional field, backward-compatible):**
-```json
-{
-  ".planning/formal/tla/NFSolveOrchestrator.tla": {
-    "version": 1,
-    "gate_maturity": "SOFT_GATE",
-    "predictive_power": {
-      "bugs_predicted": 3,
-      "total_bugs": 10,
-      "score": 0.3,
-      "last_scored": "2026-03-10T00:00:00Z"
-    }
-  }
-}
-```
+## Risk Analysis
 
-**Separate output file:** `.planning/formal/predictive-power.json` for aggregate scoring data, keeping model-registry changes minimal (one optional field).
+### Low Risk
+1. **Bug-patterns.json missing** → Lookup degrades to existing scope-scan behavior (no regression)
+2. **Constraint extraction fails** → Bundle stays readable, quorum workers unaffected
+3. **B→F layer disabled** → Solve cycle works as-is, no new gaps introduced
 
-#### Feature 4: Stabilization Gates
+### Medium Risk
+1. **False positives in bug-pattern matching** → Boost proximity_score for wrong model
+   - **Mitigation:** Levenshtein threshold 0.75, manual review of patterns before shipping
+2. **Performance: lookup on every debug call** → Adds ~500ms per debug
+   - **Mitigation:** Cache lookup results in current-session memory; clear on new failure context
 
-**Where in promotion pipeline?** Inside `compute-per-model-gates.cjs`, as a guard BEFORE the auto-promotion decision at lines 430-470.
+### High Risk
+1. (None identified) — Design is fail-open and backward-compatible
 
-```
-// Existing auto-promotion: ADVISORY -> SOFT_GATE
-if (maturity >= 1 && currentGate === 'ADVISORY') {
-  // NEW: check stabilization gate
-  const { canPromote } = require('./stabilization-gates.cjs');
-  if (!canPromote(modelPath, 'SOFT_GATE', { root: ROOT })) {
-    // Skip promotion -- stabilization period not met
-    perModel[modelPath].stabilization_blocked = true;
-    continue;
-  }
-  // existing promotion logic (validateCriteria, appendChangelog)...
-}
-```
+## Scalability
 
-**Evidence of need:** The current promotion-changelog.json shows the same models (e.g., `alloy/quorum-votes.als`, `tla/NFQuorum.tla`) being repeatedly promoted from ADVISORY to SOFT_GATE within minutes (timestamps: 21:26, 21:27, 21:28, all same day). This is exactly the flip-flop pattern stabilization gates prevent.
+**Lookup scalability:**
+- scope.json matching: O(models × concepts) = O(201 × ~10 avg) = O(2K) fast
+- proximity-index BFS: O(nodes + edges) in index, already used by existing scope-scan
+- bug-patterns matching: O(bugs × patterns) = O(50 bugs × ~20 patterns) = O(1K)
 
-**Stabilization rules:**
-1. **Cooldown after demotion:** After a model is demoted, block re-promotion for N solve runs (default: 3) or M minutes (default: 60)
-2. **Flip-flop detection:** If promotion-changelog shows promote->demote->promote for the same model within K entries (default: 10), require human override
-3. **Rate limit:** Maximum 3 promotions per model per 24-hour period
+**Constraint extraction:**
+- Per-model invariant parsing: O(invariant_count) = O(10–50 per model)
+- Annotation link: O(requirements matched) = already done by proximity-index
 
-**Stabilization state file: `.planning/formal/stabilization-gates.json`**
-```json
-{
-  "schema_version": "1",
-  "models": {
-    ".planning/formal/tla/NFQuorum.tla": {
-      "last_promoted": "2026-03-09T21:28:00Z",
-      "cooldown_until": "2026-03-09T22:28:00Z",
-      "promotions_24h": 3,
-      "flip_flop_blocked": false
-    }
-  }
-}
-```
+**Solve B→F layer:**
+- Iterate git history: O(commits) = handled by existing git heatmap layer
+- Per-bug lookup: O(bugs × scan) = ~O(100) worst case, batched in wave
+- Fits within existing solve iteration cycle
 
-#### Feature 5: Outer-Loop TLA+ Spec
+## Testing Strategy
 
-**Decision: Separate spec (NFSolveConvergence.tla), NOT extending NFSolveOrchestrator.tla.**
+**Unit tests (isolated components):**
+- formal-scope-scan.cjs: Add `--bug-mode` flag test cases (5 new tests)
+- model-constrained-fix.cjs: Parser test suite (10 new tests)
+- b_to_f handler: Residual computation (5 new tests)
 
-**Rationale:**
-- NFSolveOrchestrator.tla models the INNER loop: single-run state machine (IDLE -> DIAGNOSE -> CLASSIFY -> REMEDIATE -> REPORT -> DONE), 8 variables, 386 lines
-- The outer loop models ACROSS runs: a sequence of complete solve invocations with cross-session state
-- Different abstraction levels: inner loop tracks phase/iteration/residual within one run; outer loop tracks residual trends, oscillation counts, promotion stability across runs
-- Combining them creates state space explosion: MaxRuns * MaxIterations * NumLayers * oscillation states
-- The inner spec already uses MaxResidual in 0..100 and MaxIterations in 1..10 -- adding outer-loop dimensions would push TLC past tractability
+**Integration tests:**
+- `/nf:debug` with model injection: Bundle structure validated (3 new tests)
+- solve cycle B→F layer: Wave computation includes B→F, residual flows to handler (2 new tests)
+- E2E: Inject test failure → debug returns model recommendation → solve fires B→F layer (1 E2E test)
 
-**NFSolveConvergence.tla sketch:**
-```tla+
----- MODULE NFSolveConvergence ----
-EXTENDS Integers, Sequences, FiniteSets
+**Compatibility:**
+- All existing tests pass unmodified (19 layers still work as-is)
+- New components fail-open (no regressions)
 
-CONSTANTS
-    MaxRuns,            \* Upper bound on solve runs
-    NumLayers,          \* Number of tracked layers
-    MaxOscillations,    \* Option C limit (1)
-    StabilizationRuns   \* Cooldown period in runs
+## Migration Path
 
-VARIABLES
-    run,                     \* Current run number (1-based)
-    residualHistory,         \* Sequence of per-layer residual vectors
-    layerOscillationCount,   \* Per-layer: number of full oscillation cycles
-    layerBlocked,            \* Set of layers blocked by Option C
-    terminated               \* Outer loop terminated
+**v0.38 MVP (minimum viable product):**
+1. Phase 1 + 2: Lookup + debug integration
+2. Users get model recommendations in `/nf:debug` output
+3. Manual routing: User sees "Model suggests: check timeout constant" → applies fix manually
+4. Phase 3 (solve B→F layer) ships in v0.38 but as opt-in (`--enable-b-to-f` flag) or soft gate
 
-\* Safety: Option C -- no layer oscillates more than MaxOscillations times
-NoExcessiveOscillation ==
-    \A layer \in 1..NumLayers:
-        layerOscillationCount[layer] <= MaxOscillations
-
-\* Safety: Blocked layers are never auto-remediated
-EscalatedLayersStayBlocked ==
-    \A layer \in layerBlocked:
-        \* The layer remains in blocked set until human clears it
-        \* or auto-recovery conditions met (3 consecutive improvements)
-
-\* Liveness: Under Option C, outer loop eventually terminates
-\* (either all residuals reach 0 or all non-zero layers are blocked)
-EventualTermination == <>(terminated = TRUE)
-
-\* Liveness: Automatable residual is monotonically non-increasing
-\* (excluding blocked layers)
-MonotonicProgress ==
-    \* Total residual of unblocked layers trends downward
-====
-```
-
-**Config: `.planning/formal/tla/MCsolve-convergence.cfg`** with small constants (MaxRuns=10, NumLayers=4) for tractable model checking.
-
-#### Feature 6: Per-Model Gate Persistence Integration
-
-**Current gap:** compute-per-model-gates.cjs has --write-per-model flag (line 41) but nf-solve.cjs autoClose does NOT invoke it. The solve pipeline runs inline per-model gate remediation (lines 2686-2770: fills source_layer, detects declarations) but never calls compute-per-model-gates with the persistence flags.
-
-**Fix:** In nf-solve.cjs autoClose(), after existing per-model gate remediation block (line ~2770), add:
-
-```javascript
-// Persist per-model gate detail + aggregate scores
-spawnTool('compute-per-model-gates.cjs', ['--write-per-model', '--aggregate']);
-```
-
-This ensures:
-- per-model-gates.json updated every solve run (not just CLI invocation)
-- Aggregate gate files (gate-a/b/c-*.json) updated every solve run
-- promotion-changelog.json gets new entries when promotions occur
-- Stabilization gates (Feature 4) can read fresh changelog data
-
-## Patterns to Follow
-
-### Pattern 1: Append-Only Time Series with FIFO Pruning
-**What:** convergence-history.json stores session results as an append-only array, pruned to most recent 100 entries. Oldest entries trimmed from front.
-**When:** Any cross-session state needing trend analysis.
-**Why:** Matches existing patterns: promotion-changelog.json (200-cap), oscillation-signatures.json from v0.31 (50-cap, 30-day TTL). Proven in production. No database needed. Concurrent writes cannot race because solve runs are sequential (human-triggered).
-**Example:**
-```javascript
-function append(historyFile, entry) {
-  let data = loadJSON(historyFile) || { entries: [] };
-  data.entries.push(entry);
-  if (data.entries.length > MAX_ENTRIES) {
-    data.entries = data.entries.slice(-MAX_ENTRIES);
-  }
-  writeJSON(historyFile, data);
-}
-```
-
-### Pattern 2: Pre-Remediation Guard (fail-open)
-**What:** Check a blocking condition BEFORE dispatching remediation for each layer. If the guard cannot evaluate (file missing, parse error), allow remediation to proceed (fail-open).
-**When:** Layer oscillation breaker (Feature 2), stabilization gates (Feature 4).
-**Why:** Prevents the solve loop from making things worse. Fail-open preserves existing behavior when new components are not yet wired or data files are absent.
-**Example:**
-```javascript
-// In autoClose(), before each layer's remediation
-try {
-  if (verdicts[layerKey]?.blocked) {
-    actions.push(layerKey + ' BLOCKED');
-    continue;  // skip remediation for this layer
-  }
-} catch (_) {} // fail-open
-// ... existing remediation ...
-```
-
-### Pattern 3: Schema Extension Without Breaking Consumers
-**What:** Add new optional fields to existing JSON schemas (model-registry.json, per-model-gates.json). Never remove or rename existing fields.
-**When:** predictive_power in model-registry (Feature 3), stabilization_blocked in per-model-gates (Feature 4).
-**Why:** Downstream consumers (solve-diagnose, solve-report, compute-per-model-gates) parse these files. Adding optional fields is backward-compatible. Changing required fields breaks consumers.
-
-### Pattern 4: Separate Spec for Separate Abstraction Level
-**What:** New TLA+ specs for new abstraction levels rather than extending existing specs.
-**When:** The outer loop (across runs) vs inner loop (within a run) are different abstraction levels with different state spaces.
-**Why:** Avoids state space explosion. Each spec can be model-checked independently with small constants. The existing NFSolveOrchestrator.tla (386 lines, 8 variables) is already at a comfortable TLC size -- adding outer-loop dimensions would break tractability.
-
-## Anti-Patterns to Avoid
-
-### Anti-Pattern 1: Embedding Time Series in solve-state.json
-**What:** Putting the trend array inside solve-state.json.
-**Why bad:** solve-state.json is a single-run snapshot consumed by solve-diagnose and solve-report (overwritten each run, line 3488). Adding a growing array changes its contract, bloats reads, and forces every consumer to update.
-**Instead:** Use a separate convergence-history.json file. Add at most a one-line summary field to solve-state.json.
-
-### Anti-Pattern 2: Layer Oscillation Detection After Remediation
-**What:** Checking for oscillation after autoClose has already dispatched remediation.
-**Why bad:** The damage is done -- the fix->break cycle continues. Detection after the fact only logs; it does not prevent.
-**Instead:** Check before each layer's remediation in autoClose(). Skip the layer if oscillating.
-
-### Anti-Pattern 3: Combining Inner and Outer Loop TLA+ Specs
-**What:** Adding outer-loop variables (run counter, oscillation counts) to NFSolveOrchestrator.tla.
-**Why bad:** MaxRuns * MaxIterations * NumLayers * oscillation states creates combinatorial explosion. TLC may not terminate in reasonable time with constants large enough to be meaningful.
-**Instead:** Two specs: NFSolveOrchestrator.tla (inner, existing, unchanged) and NFSolveConvergence.tla (outer, new). The outer spec treats each inner run as an atomic action.
-
-### Anti-Pattern 4: Modifying computeResidual() for Cross-Session Logic
-**What:** Adding trend detection inside the residual computation loop.
-**Why bad:** computeResidual() is a pure diagnostic function (~2800 lines, 19 layer sweeps). Mixing in cross-session state makes it non-idempotent and breaks --report-only semantics.
-**Instead:** Keep all cross-session logic in the finalize block and in separate scripts. computeResidual() remains a single-run diagnostic.
-
-### Anti-Pattern 5: Using promotion-changelog.json as Mutable Stabilization Store
-**What:** Adding cooldown_until fields directly to promotion-changelog entries.
-**Why bad:** promotion-changelog.json is append-only and read by multiple consumers. Adding mutable fields (cooldown_until that gets checked and cleared) breaks the append-only contract.
-**Instead:** Separate stabilization-gates.json stores mutable cooldown state. Changelog remains a pure append-only event log.
-
-## New vs Modified Files Summary
-
-### New Files (8)
-
-| File | Purpose | Feature |
-|------|---------|---------|
-| `bin/convergence-history.cjs` | Append time-series entries, query trend, compute sliding window stats (~150 LOC) | 1 |
-| `.planning/formal/convergence-history.json` | Cross-session residual time series (append-only, max 100) | 1 |
-| `bin/detect-oscillation.cjs` | Per-layer fix->break->fix detection; write verdicts (~200 LOC) | 2 |
-| `.planning/formal/oscillation-verdicts.json` | Active oscillation state per layer | 2 |
-| `bin/score-predictive-power.cjs` | Score models by bugs_predicted/total_bugs (~250 LOC) | 3 |
-| `.planning/formal/predictive-power.json` | Per-model predictive power scores | 3 |
-| `bin/stabilization-gates.cjs` | Cooldown + flip-flop guard for gate promotions (~180 LOC) | 4 |
-| `.planning/formal/stabilization-gates.json` | Cooldown tracking per model | 4 |
-| `.planning/formal/tla/NFSolveConvergence.tla` | Outer-loop convergence proof under Option C | 5 |
-| `.planning/formal/tla/MCsolve-convergence.cfg` | TLC config for NFSolveConvergence | 5 |
-
-### Modified Files (4)
-
-| File | What Changes | Feature(s) |
-|------|-------------|------------|
-| `bin/nf-solve.cjs` | (1) Call convergence-history.append after solveState write; (2) Read oscillation-verdicts in autoClose before per-layer remediation; (3) Call compute-per-model-gates with --write-per-model --aggregate in autoClose | 1, 2, 6 |
-| `bin/compute-per-model-gates.cjs` | Import and call stabilization-gates.canPromote() before auto-promotion; add stabilization_blocked field to per-model output | 4 |
-| `commands/nf/solve-report.md` | Add trend, oscillation, and predictive power sections to report template | 1, 2, 3 |
-| `.planning/formal/model-registry.json` | Schema: add optional `predictive_power` object per model (backward-compatible) | 3 |
-
-### Unchanged Files (Explicitly NOT Modified)
-
-| File | Why Unchanged |
-|------|--------------|
-| `solve-state.json` | Remains single-run snapshot. At most add one summary field. Time series goes to convergence-history.json |
-| `hooks/nf-circuit-breaker.js` | Git-level oscillation detection is orthogonal to layer-level. Different abstraction, different mechanism |
-| `promotion-changelog.json` | Already has the right schema. Stabilization gates READ it, never modify its format |
-| `per-model-gates.json` | Schema unchanged. Just written more frequently (every solve run via Feature 6) |
-| `NFSolveOrchestrator.tla` | Inner loop spec stays separate from outer loop. No modifications needed |
-| `bin/promote-gate-maturity.cjs` | canPromote guard could be added here too, but primary integration is in compute-per-model-gates.cjs which calls appendChangelog |
-
-## Suggested Build Order (Dependency-Driven)
-
-```
-Phase 1: Feature 1 (Trend Tracker) + Feature 6 (Gate Persistence)
-         Foundation -- everything else reads from these
-              |
-              v
-Phase 2: Feature 2 (Oscillation Breaker) + Feature 4 (Stabilization Gates)
-         Guards -- both are pre-action guards, can be parallel
-              |
-              v
-Phase 3: Feature 5 (TLA+ Spec)
-         Formalization -- proves correctness of implemented algorithm
-              |
-              v
-Phase 4: Feature 3 (Predictive Power)
-         Feedback -- measurement feature, independent but benefits from stable loop
-```
-
-### Phase ordering rationale:
-
-1. **Trend Tracker + Gate Persistence first** because oscillation detection (Feature 2) needs convergence-history.json to detect patterns, and stabilization gates (Feature 4) need fresh promotion-changelog data from consistent --write-per-model runs. Without these, Features 2 and 4 have no data to analyze.
-
-2. **Oscillation Breaker + Stabilization Gates second** because these are the core safety features of v0.33 (Option C). They can be built in parallel since they guard different things: oscillation breaker guards layer remediation in autoClose(), stabilization gates guard model promotion in compute-per-model-gates.cjs. No dependency between them.
-
-3. **TLA+ Spec third** because the spec should describe the actual implemented algorithm. Writing it after Features 1-2-4 lets the spec faithfully model the real system. The existing inner-loop spec (NFSolveOrchestrator.tla) was written to match the implementation -- the outer-loop spec should follow the same discipline.
-
-4. **Predictive Power last** because it is a measurement/feedback feature, not a control feature. The convergence guarantees (Features 1-2-4-5) are the core v0.33 deliverable. Predictive power is valuable but supplementary. It also benefits from a stable model-registry schema -- if multiple features modify model-registry.json in different phases, merge conflicts arise. Building it last means it adds its optional field to a settled schema.
-
-## Scalability Considerations
-
-| Concern | At 100 models | At 500 models | At 2000 models |
-|---------|---------------|---------------|----------------|
-| convergence-history.json size | ~50KB (100 entries x 12 layers) | ~50KB (entries scale with runs, not models) | ~50KB |
-| compute-per-model-gates runtime | <1s (current: 127 models in <500ms) | ~2s | ~8s -- consider caching gate evaluations |
-| promotion-changelog.json | 200 entries cap (fixed) | 200 entries cap | 200 entries cap |
-| TLA+ state space (outer loop) | MaxRuns=10, NumLayers=4 -- tractable | Same (layers are fixed, not model count) | Same |
-| Predictive power scoring | O(models * check_results) -- fast | May need requirement->model index | Pre-compute index at startup |
+**v0.39 (full autonomous):**
+1. B→F layer mandatory in solve cycle
+2. Automatic model refinement: Close-formal-gaps auto-triggers for unflagged bugs
+3. Regression prevention: All fixes pre-verified against neighbor models before merge
 
 ## Sources
 
-- `bin/nf-solve.cjs` -- verified integration points: autoClose (line 2565), finalize block (line 3464), main loop (line 3404)
-- `bin/compute-per-model-gates.cjs` -- appendChangelog (line 58), auto-promotion (line 430), --write-per-model (line 41)
-- `bin/promote-gate-maturity.cjs` -- LEVELS (line 30), validateCriteria (line 61), inferSourceLayer (line 46)
-- `.planning/formal/solve-state.json` -- current schema: 7 top-level fields, overwritten each run
-- `.planning/formal/promotion-changelog.json` -- append-only event log, flip-flop evidence visible in timestamps
-- `.planning/formal/tla/NFSolveOrchestrator.tla` -- inner-loop spec: 386 lines, 8 variables, 4 convergence termination conditions
-- `.planning/formal/gates/per-model-gates.json` -- per-model detail: 127 models, schema_version 2
-- `.planning/formal/model-registry.json` -- model entry schema with gate_maturity, layer_maturity, requirements[]
-- `hooks/nf-circuit-breaker.js` -- existing oscillation detection pattern (orthogonal, git-level)
+- `/Users/jonathanborduas/code/QGSD/bin/formal-scope-scan.cjs` — Current lookup implementation
+- `/Users/jonathanborduas/code/QGSD/bin/layer-constants.cjs` — Layer definitions
+- `/Users/jonathanborduas/code/QGSD/bin/solve-wave-dag.cjs` — Wave dependency DAG
+- `/Users/jonathanborduas/code/QGSD/commands/nf/debug.md` — Current debug workflow
+- `/Users/jonathanborduas/code/QGSD/.planning/formal/model-registry.json` — 201 models
+- `/Users/jonathanborduas/code/QGSD/.planning/formal/requirements.json` — 371 requirements
+- `.planning/PROJECT.md` — v0.38 milestone charter
