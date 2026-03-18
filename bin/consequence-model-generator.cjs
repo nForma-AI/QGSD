@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const os = require('os');
 
 /**
  * Generate consequence model by applying mutations to reproducing model.
@@ -81,7 +82,7 @@ function generateConsequenceModel(reproducingModelPath, mutations, options = {})
 
   // Step 4: Create session directory
   const sessionId = options.sessionId || crypto.randomBytes(8).toString('hex');
-  const sessionDir = path.join(process.cwd(), '.planning/formal/cycle2-simulations', sessionId);
+  const sessionDir = path.join(os.tmpdir(), 'nf-cycle2-simulations', sessionId);
 
   if (!fs.existsSync(sessionDir)) {
     fs.mkdirSync(sessionDir, { recursive: true });

@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const os = require('os');
 
 /**
  * Simulate solution in model space through iterating cycles.
@@ -244,7 +245,7 @@ async function simulateSolutionLoop(input, deps) {
   }
 
   // Step 6: Write iteration history to session directory
-  const sessionDir = path.join(process.cwd(), '.planning', 'formal', 'cycle2-simulations', sessionId);
+  const sessionDir = path.join(os.tmpdir(), 'nf-cycle2-simulations', sessionId);
   if (!fs.existsSync(sessionDir)) {
     fs.mkdirSync(sessionDir, { recursive: true });
   }
