@@ -8,7 +8,7 @@
 ### Bug-to-Model Lookup
 
 - [x] **BML-01**: formal-scope-scan.cjs `--bug-mode` flag finds formal models covering affected code files and returns model paths, formalism type, and requirement coverage
-- [ ] **BML-02**: Bug-mode runs matched model checkers (TLC/Alloy, max 3, 60s timeout each) and reports reproduction status (pass/fail/timeout) with counterexample trace when available
+- [x] **BML-02**: Bug-mode runs matched model checkers (TLC/Alloy, max 3, 60s timeout each) and reports reproduction status (pass/fail/timeout) with counterexample trace when available
 - [x] **BML-03**: bug-model-gaps.json tracks bugs with their model coverage status (no_coverage, no_reproduction, reproduced) and persists across sessions
 
 ### Constraint Extraction
@@ -57,7 +57,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | BML-01 | v0.38-01 | Complete |
-| BML-02 | v0.38-01 | Pending |
+| BML-02 | v0.38-01 | Complete |
 | BML-03 | v0.38-01 | Complete |
 | CEX-01 | v0.38-01 | Complete |
 | CEX-02 | v0.38-01 | Complete |
