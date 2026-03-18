@@ -11,7 +11,7 @@ This milestone makes formal models the sandbox for both diagnosis and solutions.
 - Decimal phases (v0.39-01.1): Urgent gap insertions within milestone
 
 - [x] **Phase v0.39-01: Foundation & Infrastructure** - Verification mode tagging, trace parsing to structured JSON, configurable iteration limits (completed 2026-03-18)
-- [ ] **Phase v0.39-02: Cycle 1 Diagnostic** - Targeted diagnostic diffs, workflow reframing, quorum injection, guided model refinement
+- [x] **Phase v0.39-02: Cycle 1 Diagnostic** - Targeted diagnostic diffs, workflow reframing, quorum injection, guided model refinement (completed 2026-03-18)
 - [ ] **Phase v0.39-03: Cycle 2 Solution Simulation** - Fix normalization, consequence models, three-gate convergence, simulation loop UX
 
 ## Phase Details
