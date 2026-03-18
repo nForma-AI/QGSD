@@ -35,6 +35,7 @@
 //   node bin/run-formal-verify.cjs --only=prism       # PRISM only (3 steps)
 //   node bin/run-formal-verify.cjs --only=petri       # Petri only (2 steps)
 //   node bin/run-formal-verify.cjs --only=ci          # CI enforcement only (4 steps)
+//   node bin/run-formal-verify.cjs --scope=MCsafety,quorum-votes  # run only these models
 //
 // Behaviour:
 //   - Runs steps sequentially; streams child output to stdout/stderr.
@@ -438,17 +439,41 @@ process.stdout.write(TAG + ' Discovered models: ' + uniqueDynamicSteps.length + 
 const argv    = process.argv.slice(2);
 const onlyArg = argv.find(a => a.startsWith('--only='));
 const only    = onlyArg ? onlyArg.split('=')[1] : null;
+const scopeArg = argv.find(a => a.startsWith('--scope='));
+const scopeList = scopeArg ? scopeArg.split('=')[1].split(',').map(s => s.trim().toLowerCase()) : null;
 const concurrent = argv.includes('--concurrent') || process.env.NF_FORMAL_CONCURRENT === '1';
 
-const steps = only
+let steps = only
   ? STEPS.filter(s => s.tool === only || s.id === only)
-  : STEPS;
+  : [...STEPS];
 
 if (only && steps.length === 0) {
   process.stderr.write(
     TAG + ' Unknown --only value: ' + only + '\n' +
     TAG + ' Valid values: tla, alloy, prism, petri, generate, ci, gates, registry, or a step id\n'
   );
+  process.exit(1);
+}
+
+// --scope: filter to specific model names (applies after --only)
+if (scopeList) {
+  steps = steps.filter(s => {
+    const modelName = s.id.includes(':') ? s.id.split(':').slice(1).join(':') : s.id;
+    return scopeList.some(m =>
+      modelName.toLowerCase() === m ||
+      s.id.toLowerCase() === m
+    );
+  });
+}
+
+if (scopeList && steps.length === 0) {
+  process.stderr.write(
+    TAG + ' No models match --scope=' + scopeList.join(',') + '\n' +
+    TAG + ' Available model IDs:\n'
+  );
+  for (const s of STEPS) {
+    process.stderr.write(TAG + '   ' + s.id + '\n');
+  }
   process.exit(1);
 }
 
@@ -585,6 +610,9 @@ async function runOnce() {
   process.stdout.write(TAG + ' nForma Formal Verification Suite\n');
   if (only) {
     process.stdout.write(TAG + ' Filter: --only=' + only + '\n');
+  }
+  if (scopeList) {
+    process.stdout.write(TAG + ' Scope: --scope=' + scopeList.join(',') + '\n');
   }
   process.stdout.write(TAG + ' Steps: ' + steps.length + '\n');
   process.stdout.write(TAG + ' ' + HR + '\n\n');
