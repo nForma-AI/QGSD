@@ -1,10 +1,10 @@
 {
-  "generated": "2026-03-18T17:36:16.411Z",
+  "generated": "2026-03-18T22:28:53.052Z",
   "total_claims_checked": 96,
   "doc_files_scanned": 6,
   "raw_broken_count": 0,
   "weighted_residual": 0,
-  "suppressed_fp_count": 9,
+  "suppressed_fp_count": 10,
   "category_breakdown": {},
   "broken_claims": []
 }

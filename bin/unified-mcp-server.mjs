@@ -813,7 +813,7 @@ async function handleRequest(req) {
   if (method === 'initialize') {
     sendResult(id, {
       protocolVersion: '2024-11-05',
-      serverInfo: { name: 'unified-mcp-server', version: '1.0.0' },
+      serverInfo: { name: slotProvider ? `${slotProvider.mainTool}-mcp-server` : 'unified-mcp-server', version: '1.0.0' },
       capabilities: { tools: {} },
     });
     return;

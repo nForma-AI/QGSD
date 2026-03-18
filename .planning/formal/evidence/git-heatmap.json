@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-18T17:36:50.321Z",
+  "generated": "2026-03-18T22:27:10.540Z",
   "signals": {
     "numerical_adjustments": [
       {
@@ -702,7 +702,7 @@
     "bugfix_hotspots": [
       {
         "file": ".planning/STATE.md",
-        "fix_count": 101,
+        "fix_count": 102,
         "has_formal_coverage": false
       },
       {
@@ -771,17 +771,17 @@
         "has_formal_coverage": false
       },
       {
+        "file": ".planning/formal/model-registry.json",
+        "fix_count": 20,
+        "has_formal_coverage": false
+      },
+      {
         "file": "get-shit-done/bin/gsd-tools.js",
         "fix_count": 20,
         "has_formal_coverage": false
       },
       {
         "file": ".planning/REQUIREMENTS.md",
-        "fix_count": 19,
-        "has_formal_coverage": false
-      },
-      {
-        "file": ".planning/formal/model-registry.json",
         "fix_count": 19,
         "has_formal_coverage": false
       },
@@ -826,17 +826,22 @@
         "has_formal_coverage": false
       },
       {
+        "file": ".planning/formal/gates/gate-a-grounding.json",
+        "fix_count": 13,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/formal/gates/gate-b-abstraction.json",
+        "fix_count": 13,
+        "has_formal_coverage": false
+      },
+      {
         "file": "get-shit-done/workflows/complete-milestone.md",
         "fix_count": 13,
         "has_formal_coverage": false
       },
       {
-        "file": ".planning/formal/gates/gate-a-grounding.json",
-        "fix_count": 12,
-        "has_formal_coverage": false
-      },
-      {
-        "file": ".planning/formal/gates/gate-b-abstraction.json",
+        "file": ".planning/formal/gates/gate-c-validation.json",
         "fix_count": 12,
         "has_formal_coverage": false
       },
@@ -854,11 +859,6 @@
         "file": "bin/nf-solve.cjs",
         "fix_count": 11,
         "has_formal_coverage": true
-      },
-      {
-        "file": ".planning/formal/gates/gate-c-validation.json",
-        "fix_count": 11,
-        "has_formal_coverage": false
       },
       {
         "file": "get-shit-done/workflows/map-codebase.md",
@@ -896,6 +896,11 @@
         "has_formal_coverage": false
       },
       {
+        "file": ".planning/formal/promotion-changelog.json",
+        "fix_count": 9,
+        "has_formal_coverage": false
+      },
+      {
         "file": "bin/run-formal-verify.cjs",
         "fix_count": 9,
         "has_formal_coverage": true
@@ -916,17 +921,27 @@
         "has_formal_coverage": false
       },
       {
+        "file": ".gitignore",
+        "fix_count": 8,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/formal/diff-report.md",
+        "fix_count": 8,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/formal/suspects.md",
+        "fix_count": 8,
+        "has_formal_coverage": false
+      },
+      {
         "file": ".github/workflows/formal-verify.yml",
         "fix_count": 8,
         "has_formal_coverage": false
       },
       {
         "file": ".planning/formal/gates/per-model-gates.json",
-        "fix_count": 8,
-        "has_formal_coverage": false
-      },
-      {
-        "file": ".planning/formal/promotion-changelog.json",
         "fix_count": 8,
         "has_formal_coverage": false
       },
@@ -996,17 +1011,7 @@
         "has_formal_coverage": false
       },
       {
-        "file": ".planning/formal/diff-report.md",
-        "fix_count": 7,
-        "has_formal_coverage": false
-      },
-      {
         "file": ".planning/formal/reasoning/hazard-model.json",
-        "fix_count": 7,
-        "has_formal_coverage": false
-      },
-      {
-        "file": ".planning/formal/suspects.md",
         "fix_count": 7,
         "has_formal_coverage": false
       },
@@ -1027,11 +1032,6 @@
       },
       {
         "file": "scripts/run-tui-tests.cjs",
-        "fix_count": 7,
-        "has_formal_coverage": false
-      },
-      {
-        "file": ".gitignore",
         "fix_count": 7,
         "has_formal_coverage": false
       },
@@ -1058,6 +1058,16 @@
       {
         "file": "commands/gsd/create-roadmap.md",
         "fix_count": 7,
+        "has_formal_coverage": false
+      },
+      {
+        "file": "commands/nf/model-driven-fix.md",
+        "fix_count": 6,
+        "has_formal_coverage": false
+      },
+      {
+        "file": "core/workflows/model-driven-fix.md",
+        "fix_count": 6,
         "has_formal_coverage": false
       },
       {
@@ -1224,6 +1234,11 @@
         "file": "get-shit-done/workflows/discuss-milestone.md",
         "fix_count": 5,
         "has_formal_coverage": false
+      },
+      {
+        "file": "bin/quorum-slot-dispatch.cjs",
+        "fix_count": 4,
+        "has_formal_coverage": true
       },
       {
         "file": "bin/solve-tui.cjs",
@@ -1466,17 +1481,12 @@
         "has_formal_coverage": false
       },
       {
-        "file": "commands/nf/model-driven-fix.md",
+        "file": "bin/run-alloy.cjs",
         "fix_count": 3,
-        "has_formal_coverage": false
+        "has_formal_coverage": true
       },
       {
         "file": "core/workflows/close-formal-gaps.md",
-        "fix_count": 3,
-        "has_formal_coverage": false
-      },
-      {
-        "file": "core/workflows/model-driven-fix.md",
         "fix_count": 3,
         "has_formal_coverage": false
       },
@@ -1567,11 +1577,6 @@
       },
       {
         "file": "bin/generate-formal-specs.cjs",
-        "fix_count": 3,
-        "has_formal_coverage": true
-      },
-      {
-        "file": "bin/quorum-slot-dispatch.cjs",
         "fix_count": 3,
         "has_formal_coverage": true
       },
@@ -1849,11 +1854,6 @@
         "file": "bin/check-spec-sync.cjs",
         "fix_count": 2,
         "has_formal_coverage": false
-      },
-      {
-        "file": "bin/run-alloy.cjs",
-        "fix_count": 2,
-        "has_formal_coverage": true
       },
       {
         "file": ".planning/phases/v0.33-04-predictive-power/v0.33-04-01-PLAN.md",
@@ -2523,6 +2523,26 @@
       {
         "file": "commands/gsd/discuss-milestone.md",
         "fix_count": 2,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-PLAN.md",
+        "fix_count": 1,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-02-PLAN.md",
+        "fix_count": 1,
+        "has_formal_coverage": false
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-03-PLAN.md",
+        "fix_count": 1,
+        "has_formal_coverage": false
+      },
+      {
+        "file": "bin/diagnostic-injection.test.cjs",
+        "fix_count": 1,
         "has_formal_coverage": false
       },
       {
@@ -6444,80 +6464,80 @@
     "churn_ranking": [
       {
         "file": ".planning/formal/evidence/git-heatmap.json",
-        "commits": 37,
-        "lines_added": 2802985,
-        "lines_removed": 2790444,
-        "total_churn": 5593429
+        "commits": 38,
+        "lines_added": 2925555,
+        "lines_removed": 2797411,
+        "total_churn": 5722966
       },
       {
         "file": ".planning/formal/traceability-matrix.json",
-        "commits": 42,
-        "lines_added": 99426,
-        "lines_removed": 74172,
-        "total_churn": 173598
+        "commits": 43,
+        "lines_added": 100145,
+        "lines_removed": 74846,
+        "total_churn": 174991
       },
       {
         "file": ".planning/formal/proximity-index.json",
-        "commits": 32,
-        "lines_added": 111844,
-        "lines_removed": 48941,
-        "total_churn": 160785
+        "commits": 33,
+        "lines_added": 111967,
+        "lines_removed": 48976,
+        "total_churn": 160943
       },
       {
         "file": ".planning/formal/evidence/git-history-evidence.json",
-        "commits": 25,
-        "lines_added": 116512,
-        "lines_removed": 41215,
-        "total_churn": 157727
+        "commits": 26,
+        "lines_added": 116837,
+        "lines_removed": 41489,
+        "total_churn": 158326
       },
       {
         "file": "test/golden/tui-agents.txt",
-        "commits": 20,
+        "commits": 21,
         "lines_added": 19444,
-        "lines_removed": 17233,
-        "total_churn": 36677
+        "lines_removed": 18506,
+        "total_churn": 37950
       },
       {
         "file": ".planning/formal/model-complexity-profile.json",
-        "commits": 35,
-        "lines_added": 16725,
-        "lines_removed": 14749,
-        "total_churn": 31474
+        "commits": 36,
+        "lines_added": 17512,
+        "lines_removed": 15523,
+        "total_churn": 33035
       },
       {
         "file": ".planning/formal/evidence/failure-taxonomy.json",
-        "commits": 31,
-        "lines_added": 11844,
-        "lines_removed": 14565,
-        "total_churn": 26409
+        "commits": 32,
+        "lines_added": 11914,
+        "lines_removed": 14578,
+        "total_churn": 26492
       },
       {
         "file": ".planning/formal/model-registry.json",
-        "commits": 63,
-        "lines_added": 13050,
-        "lines_removed": 10825,
-        "total_churn": 23875
+        "commits": 65,
+        "lines_added": 13474,
+        "lines_removed": 11249,
+        "total_churn": 24723
       },
       {
         "file": ".planning/formal/evidence/proposed-metrics.json",
-        "commits": 27,
-        "lines_added": 20469,
-        "lines_removed": 491,
-        "total_churn": 20960
+        "commits": 28,
+        "lines_added": 20472,
+        "lines_removed": 494,
+        "total_churn": 20966
       },
       {
         "file": ".planning/formal/promotion-changelog.json",
-        "commits": 40,
-        "lines_added": 10644,
-        "lines_removed": 8442,
-        "total_churn": 19086
+        "commits": 42,
+        "lines_added": 10946,
+        "lines_removed": 8744,
+        "total_churn": 19690
       },
       {
         "file": ".planning/formal/test-recipes/test-recipes.json",
-        "commits": 33,
-        "lines_added": 15450,
-        "lines_removed": 3168,
-        "total_churn": 18618
+        "commits": 34,
+        "lines_added": 15483,
+        "lines_removed": 3201,
+        "total_churn": 18684
       },
       {
         "file": ".formal/traceability-matrix.json",
@@ -6528,17 +6548,17 @@
       },
       {
         "file": ".planning/formal/gates/per-model-gates.json",
-        "commits": 23,
-        "lines_added": 9777,
-        "lines_removed": 5061,
-        "total_churn": 14838
+        "commits": 24,
+        "lines_added": 9983,
+        "lines_removed": 5267,
+        "total_churn": 15250
       },
       {
         "file": ".planning/ROADMAP.md",
-        "commits": 679,
-        "lines_added": 7531,
-        "lines_removed": 7109,
-        "total_churn": 14640
+        "commits": 687,
+        "lines_added": 7550,
+        "lines_removed": 7203,
+        "total_churn": 14753
       },
       {
         "file": ".planning/research/ARCHITECTURE.md",
@@ -6549,17 +6569,17 @@
       },
       {
         "file": ".planning/STATE.md",
-        "commits": 1095,
-        "lines_added": 6393,
-        "lines_removed": 6201,
-        "total_churn": 12594
+        "commits": 1107,
+        "lines_added": 6480,
+        "lines_removed": 6267,
+        "total_churn": 12747
       },
       {
         "file": "bin/install.js",
-        "commits": 194,
-        "lines_added": 8875,
+        "commits": 195,
+        "lines_added": 8894,
         "lines_removed": 3657,
-        "total_churn": 12532
+        "total_churn": 12551
       },
       {
         "file": "get-shit-done/workflows/execute-phase.md",
@@ -6584,17 +6604,24 @@
       },
       {
         "file": ".planning/formal/evidence/trace-corpus-stats.json",
-        "commits": 29,
-        "lines_added": 10495,
-        "lines_removed": 431,
-        "total_churn": 10926
+        "commits": 30,
+        "lines_added": 10657,
+        "lines_removed": 445,
+        "total_churn": 11102
+      },
+      {
+        "file": "package-lock.json",
+        "commits": 83,
+        "lines_added": 7846,
+        "lines_removed": 2945,
+        "total_churn": 10791
       },
       {
         "file": ".planning/formal/requirements.json",
-        "commits": 87,
-        "lines_added": 6444,
-        "lines_removed": 4059,
-        "total_churn": 10503
+        "commits": 88,
+        "lines_added": 6568,
+        "lines_removed": 4171,
+        "total_churn": 10739
       },
       {
         "file": "get-shit-done/bin/gsd-tools.js",
@@ -6602,13 +6629,6 @@
         "lines_added": 10000,
         "lines_removed": 386,
         "total_churn": 10386
-      },
-      {
-        "file": "package-lock.json",
-        "commits": 82,
-        "lines_added": 6746,
-        "lines_removed": 2937,
-        "total_churn": 9683
       },
       {
         "file": ".planning/research/STACK.md",
@@ -6619,17 +6639,17 @@
       },
       {
         "file": ".planning/formal/unit-test-coverage.json",
-        "commits": 33,
-        "lines_added": 5176,
-        "lines_removed": 3602,
-        "total_churn": 8778
+        "commits": 34,
+        "lines_added": 5234,
+        "lines_removed": 3603,
+        "total_churn": 8837
       },
       {
         "file": ".planning/REQUIREMENTS.md",
-        "commits": 252,
+        "commits": 253,
         "lines_added": 5111,
-        "lines_removed": 3335,
-        "total_churn": 8446
+        "lines_removed": 3404,
+        "total_churn": 8515
       },
       {
         "file": "bin/nf-solve.cjs",
@@ -6822,17 +6842,17 @@
       },
       {
         "file": ".planning/formal/layer-manifest.json",
-        "commits": 30,
-        "lines_added": 2244,
-        "lines_removed": 1112,
-        "total_churn": 3356
+        "commits": 31,
+        "lines_added": 2246,
+        "lines_removed": 1114,
+        "total_churn": 3360
       },
       {
         "file": ".planning/formal/reasoning/hazard-model.json",
-        "commits": 38,
-        "lines_added": 1846,
-        "lines_removed": 1395,
-        "total_churn": 3241
+        "commits": 39,
+        "lines_added": 1847,
+        "lines_removed": 1396,
+        "total_churn": 3243
       },
       {
         "file": "agents/gsd-verifier.md",
@@ -6842,18 +6862,18 @@
         "total_churn": 3192
       },
       {
+        "file": ".planning/formal/candidates.json",
+        "commits": 11,
+        "lines_added": 1302,
+        "lines_removed": 1884,
+        "total_churn": 3186
+      },
+      {
         "file": "get-shit-done/workflows/verify-work.md",
         "commits": 42,
         "lines_added": 2148,
         "lines_removed": 1010,
         "total_churn": 3158
-      },
-      {
-        "file": ".planning/formal/candidates.json",
-        "commits": 10,
-        "lines_added": 1270,
-        "lines_removed": 1878,
-        "total_churn": 3148
       },
       {
         "file": "commands/gsd/plan-phase.md",
@@ -6898,18 +6918,18 @@
         "total_churn": 2929
       },
       {
+        "file": ".planning/PROJECT.md",
+        "commits": 138,
+        "lines_added": 1920,
+        "lines_removed": 1005,
+        "total_churn": 2925
+      },
+      {
         "file": "agents/gsd-project-researcher.md",
         "commits": 24,
         "lines_added": 2074,
         "lines_removed": 832,
         "total_churn": 2906
-      },
-      {
-        "file": ".planning/PROJECT.md",
-        "commits": 137,
-        "lines_added": 1906,
-        "lines_removed": 998,
-        "total_churn": 2904
       },
       {
         "file": "get-shit-done/workflows/debug.md",
@@ -7123,10 +7143,10 @@
       },
       {
         "file": ".planning/formal/evidence/hypothesis-measurements.json",
-        "commits": 13,
-        "lines_added": 1922,
-        "lines_removed": 17,
-        "total_churn": 1939
+        "commits": 14,
+        "lines_added": 1923,
+        "lines_removed": 18,
+        "total_churn": 1941
       },
       {
         "file": "get-shit-done/templates/phase-prompt.md",
@@ -7318,6 +7338,13 @@
         "total_churn": 1690
       },
       {
+        "file": "bin/quorum-slot-dispatch.cjs",
+        "commits": 18,
+        "lines_added": 1617,
+        "lines_removed": 70,
+        "total_churn": 1687
+      },
+      {
         "file": "hooks/qgsd-circuit-breaker.test.js",
         "commits": 12,
         "lines_added": 1633,
@@ -7344,13 +7371,6 @@
         "lines_added": 632,
         "lines_removed": 977,
         "total_churn": 1609
-      },
-      {
-        "file": "bin/quorum-slot-dispatch.cjs",
-        "commits": 17,
-        "lines_added": 1529,
-        "lines_removed": 68,
-        "total_churn": 1597
       },
       {
         "file": "node_modules/get-shit-done-cc/get-shit-done/workflows/plan-phase.md",
@@ -7864,6 +7884,13 @@
         "total_churn": 1168
       },
       {
+        "file": ".planning/formal/solve-trend.jsonl",
+        "commits": 20,
+        "lines_added": 1167,
+        "lines_removed": 0,
+        "total_churn": 1167
+      },
+      {
         "file": "commands/gsd/plan-milestone-gaps.md",
         "commits": 12,
         "lines_added": 608,
@@ -7885,6 +7912,13 @@
         "total_churn": 1140
       },
       {
+        "file": ".planning/formal/diff-report.md",
+        "commits": 44,
+        "lines_added": 550,
+        "lines_removed": 583,
+        "total_churn": 1133
+      },
+      {
         "file": "get-shit-done/workflows/progress.md",
         "commits": 20,
         "lines_added": 946,
@@ -7892,11 +7926,18 @@
         "total_churn": 1130
       },
       {
-        "file": ".planning/formal/solve-trend.jsonl",
-        "commits": 19,
-        "lines_added": 1106,
-        "lines_removed": 0,
-        "total_churn": 1106
+        "file": ".planning/formal/semantics/observed-fsm.json",
+        "commits": 20,
+        "lines_added": 666,
+        "lines_removed": 457,
+        "total_churn": 1123
+      },
+      {
+        "file": "bin/formal-scope-scan.cjs",
+        "commits": 5,
+        "lines_added": 1087,
+        "lines_removed": 24,
+        "total_churn": 1111
       },
       {
         "file": ".planning/phases/v0.19-06-r3-6-improvement-iteration/v0.19-06-RESEARCH.md",
@@ -7927,20 +7968,6 @@
         "total_churn": 1088
       },
       {
-        "file": ".planning/formal/semantics/observed-fsm.json",
-        "commits": 19,
-        "lines_added": 647,
-        "lines_removed": 438,
-        "total_churn": 1085
-      },
-      {
-        "file": ".planning/formal/diff-report.md",
-        "commits": 42,
-        "lines_added": 519,
-        "lines_removed": 558,
-        "total_churn": 1077
-      },
-      {
         "file": ".planning/phases/v0.19-07-wire-liveness-check-to-all-tlc-runners/v0.19-07-01-PLAN.md",
         "commits": 3,
         "lines_added": 538,
@@ -7969,6 +7996,13 @@
         "total_churn": 1072
       },
       {
+        "file": "bin/providers.json",
+        "commits": 22,
+        "lines_added": 828,
+        "lines_removed": 239,
+        "total_churn": 1067
+      },
+      {
         "file": ".planning/milestones/v0.15-ROADMAP.md",
         "commits": 2,
         "lines_added": 1039,
@@ -7988,13 +8022,6 @@
         "lines_added": 352,
         "lines_removed": 704,
         "total_churn": 1056
-      },
-      {
-        "file": "bin/providers.json",
-        "commits": 21,
-        "lines_added": 822,
-        "lines_removed": 233,
-        "total_churn": 1055
       },
       {
         "file": "get-shit-done/references/cli-automation.md",
@@ -8025,18 +8052,18 @@
         "total_churn": 1050
       },
       {
+        "file": "package.json",
+        "commits": 413,
+        "lines_added": 602,
+        "lines_removed": 447,
+        "total_churn": 1049
+      },
+      {
         "file": ".planning/phases/24-gen1-to-gen2-architecture-port/24-RESEARCH.md",
         "commits": 2,
         "lines_added": 523,
         "lines_removed": 523,
         "total_churn": 1046
-      },
-      {
-        "file": "package.json",
-        "commits": 412,
-        "lines_added": 598,
-        "lines_removed": 446,
-        "total_churn": 1044
       },
       {
         "file": ".planning/phases/20-workflow-orchestrator/20-01-PLAN.md",
@@ -8298,6 +8325,13 @@
         "total_churn": 956
       },
       {
+        "file": ".planning/formal/solve-state.json",
+        "commits": 36,
+        "lines_added": 489,
+        "lines_removed": 462,
+        "total_churn": 951
+      },
+      {
         "file": ".planning/phases/v0.37-01-annotation-back-linking/v0.37-01-RESEARCH.md",
         "commits": 2,
         "lines_added": 950,
@@ -8375,13 +8409,6 @@
         "total_churn": 932
       },
       {
-        "file": ".planning/formal/solve-state.json",
-        "commits": 35,
-        "lines_added": 473,
-        "lines_removed": 456,
-        "total_churn": 929
-      },
-      {
         "file": ".planning/formal/generated-stubs/OBS-12.stub.test.js",
         "commits": 3,
         "lines_added": 501,
@@ -8408,13 +8435,6 @@
         "lines_added": 871,
         "lines_removed": 51,
         "total_churn": 922
-      },
-      {
-        "file": "bin/formal-scope-scan.cjs",
-        "commits": 4,
-        "lines_added": 904,
-        "lines_removed": 17,
-        "total_churn": 921
       },
       {
         "file": "bin/manage-agents-core.cjs",
@@ -8446,10 +8466,10 @@
       },
       {
         "file": ".planning/formal/tla/NFQuorum_xstate.tla",
-        "commits": 11,
-        "lines_added": 566,
-        "lines_removed": 343,
-        "total_churn": 909
+        "commits": 12,
+        "lines_added": 567,
+        "lines_removed": 344,
+        "total_churn": 911
       },
       {
         "file": ".planning/phases/v0.20-06-triage-bundle/v0.20-06-RESEARCH.md",
@@ -8676,6 +8696,13 @@
         "total_churn": 832
       },
       {
+        "file": ".planning/MILESTONES.md",
+        "commits": 37,
+        "lines_added": 758,
+        "lines_removed": 71,
+        "total_churn": 829
+      },
+      {
         "file": ".planning/phases/v0.20-06-triage-bundle/v0.20-06-01-PLAN.md",
         "commits": 3,
         "lines_added": 414,
@@ -8709,13 +8736,6 @@
         "lines_added": 410,
         "lines_removed": 410,
         "total_churn": 820
-      },
-      {
-        "file": ".planning/MILESTONES.md",
-        "commits": 36,
-        "lines_added": 748,
-        "lines_removed": 71,
-        "total_churn": 819
       },
       {
         "file": ".planning/formal/generated-stubs/OBS-14.stub.test.js",
@@ -9012,6 +9032,13 @@
         "total_churn": 750
       },
       {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-RESEARCH.md",
+        "commits": 1,
+        "lines_added": 748,
+        "lines_removed": 0,
+        "total_churn": 748
+      },
+      {
         "file": "bin/observed-fsm.cjs",
         "commits": 2,
         "lines_added": 535,
@@ -9082,6 +9109,13 @@
         "total_churn": 730
       },
       {
+        "file": ".planning/formal/evidence/state-candidates.json",
+        "commits": 31,
+        "lines_added": 435,
+        "lines_removed": 294,
+        "total_churn": 729
+      },
+      {
         "file": ".planning/phases/09-verify-phases-5-6/09-RESEARCH.md",
         "commits": 2,
         "lines_added": 728,
@@ -9115,13 +9149,6 @@
         "lines_added": 78,
         "lines_removed": 636,
         "total_churn": 714
-      },
-      {
-        "file": ".planning/formal/evidence/state-candidates.json",
-        "commits": 30,
-        "lines_added": 427,
-        "lines_removed": 286,
-        "total_churn": 713
       },
       {
         "file": "core/references/quorum-dispatch.md",
@@ -9516,6 +9543,13 @@
         "total_churn": 633
       },
       {
+        "file": "bin/convergence-gate-runner.test.cjs",
+        "commits": 1,
+        "lines_added": 632,
+        "lines_removed": 0,
+        "total_churn": 632
+      },
+      {
         "file": "assets/terminal.svg",
         "commits": 9,
         "lines_added": 316,
@@ -9570,6 +9604,13 @@
         "lines_added": 2,
         "lines_removed": 623,
         "total_churn": 625
+      },
+      {
+        "file": "commands/nf/model-driven-fix.md",
+        "commits": 6,
+        "lines_added": 578,
+        "lines_removed": 46,
+        "total_churn": 624
       },
       {
         "file": ".planning/quick/166-implement-autonomous-milestone-completio/166-PLAN.md",
@@ -9803,6 +9844,13 @@
         "total_churn": 602
       },
       {
+        "file": ".planning/formal/gates/gate-a-grounding.json",
+        "commits": 51,
+        "lines_added": 305,
+        "lines_removed": 296,
+        "total_churn": 601
+      },
+      {
         "file": ".planning/phases/v0.24-05-slot-worker-thin-passthrough/v0.24-05-RESEARCH.md",
         "commits": 2,
         "lines_added": 600,
@@ -9880,6 +9928,13 @@
         "total_churn": 590
       },
       {
+        "file": "core/workflows/model-driven-fix.md",
+        "commits": 6,
+        "lines_added": 560,
+        "lines_removed": 28,
+        "total_churn": 588
+      },
+      {
         "file": ".planning/phases/v0.12-04-circuit-breaker-algorithm-verification/v0.12-04-RESEARCH.md",
         "commits": 2,
         "lines_added": 573,
@@ -9927,13 +9982,6 @@
         "lines_added": 293,
         "lines_removed": 293,
         "total_churn": 586
-      },
-      {
-        "file": ".planning/formal/gates/gate-a-grounding.json",
-        "commits": 49,
-        "lines_added": 297,
-        "lines_removed": 288,
-        "total_churn": 585
       },
       {
         "file": "bin/update-scoreboard.test.cjs",
@@ -10123,6 +10171,13 @@
         "lines_added": 284,
         "lines_removed": 284,
         "total_churn": 568
+      },
+      {
+        "file": "bin/solution-simulation-loop.test.cjs",
+        "commits": 2,
+        "lines_added": 560,
+        "lines_removed": 7,
+        "total_churn": 567
       },
       {
         "file": ".planning/research/INTEGRATION_CHECKLIST_v0.39.md",
@@ -10440,6 +10495,13 @@
         "total_churn": 543
       },
       {
+        "file": ".planning/formal/suspects.md",
+        "commits": 44,
+        "lines_added": 259,
+        "lines_removed": 283,
+        "total_churn": 542
+      },
+      {
         "file": ".planning/quick/318-replace-fixed-wall-clock-quorum-timeout-/318-PLAN.md",
         "commits": 2,
         "lines_added": 542,
@@ -10473,6 +10535,13 @@
         "lines_added": 270,
         "lines_removed": 270,
         "total_churn": 540
+      },
+      {
+        "file": ".planning/quick/325-add-layer-3-sentence-transformer-semanti/325-PLAN.md",
+        "commits": 2,
+        "lines_added": 480,
+        "lines_removed": 59,
+        "total_churn": 539
       },
       {
         "file": ".planning/milestones/v0.20-phases/v0.20-01-schema-enrichment/v0.20-01-RESEARCH.md",
@@ -10524,13 +10593,6 @@
         "total_churn": 536
       },
       {
-        "file": ".planning/formal/suspects.md",
-        "commits": 42,
-        "lines_added": 255,
-        "lines_removed": 279,
-        "total_churn": 534
-      },
-      {
         "file": ".planning/milestones/v0.30-MILESTONE-AUDIT.md",
         "commits": 3,
         "lines_added": 345,
@@ -10557,6 +10619,13 @@
         "lines_added": 483,
         "lines_removed": 50,
         "total_churn": 533
+      },
+      {
+        "file": "bin/consequence-model-generator.test.cjs",
+        "commits": 2,
+        "lines_added": 514,
+        "lines_removed": 18,
+        "total_churn": 532
       },
       {
         "file": ".planning/phases/v0.19-05-mcp-environment-model/v0.19-05-02-PLAN.md",
@@ -10811,6 +10880,13 @@
         "total_churn": 514
       },
       {
+        "file": "docs/assets/terminal.svg",
+        "commits": 11,
+        "lines_added": 303,
+        "lines_removed": 210,
+        "total_churn": 513
+      },
+      {
         "file": "bin/formal-test-sync.test.cjs",
         "commits": 5,
         "lines_added": 490,
@@ -10837,13 +10913,6 @@
         "lines_added": 256,
         "lines_removed": 256,
         "total_churn": 512
-      },
-      {
-        "file": "docs/assets/terminal.svg",
-        "commits": 10,
-        "lines_added": 302,
-        "lines_removed": 209,
-        "total_churn": 511
       },
       {
         "file": "bin/qgsd.test.cjs",
@@ -11005,6 +11074,13 @@
         "lines_added": 249,
         "lines_removed": 249,
         "total_churn": 498
+      },
+      {
+        "file": "bin/refinement-loop.cjs",
+        "commits": 4,
+        "lines_added": 479,
+        "lines_removed": 18,
+        "total_churn": 497
       },
       {
         "file": ".planning/formal/generated-stubs/META-01.stub.recipe.json",
@@ -11224,13 +11300,6 @@
         "total_churn": 484
       },
       {
-        "file": "commands/nf/model-driven-fix.md",
-        "commits": 3,
-        "lines_added": 450,
-        "lines_removed": 32,
-        "total_churn": 482
-      },
-      {
         "file": ".planning/phases/v0.34-05-auto-promotion-state-init/v0.34-05-RESEARCH.md",
         "commits": 1,
         "lines_added": 482,
@@ -11299,6 +11368,13 @@
         "lines_added": 480,
         "lines_removed": 0,
         "total_churn": 480
+      },
+      {
+        "file": "bin/convergence-gate-runner.cjs",
+        "commits": 1,
+        "lines_added": 479,
+        "lines_removed": 0,
+        "total_churn": 479
       },
       {
         "file": ".planning/v0.21-INTEGRATION-CHECK.md",
@@ -11805,13 +11881,6 @@
         "total_churn": 448
       },
       {
-        "file": "core/workflows/model-driven-fix.md",
-        "commits": 3,
-        "lines_added": 432,
-        "lines_removed": 14,
-        "total_churn": 446
-      },
-      {
         "file": ".planning/research/PITFALLS_v0.38_MODEL_DRIVEN_DEBUG.md",
         "commits": 1,
         "lines_added": 446,
@@ -11943,6 +12012,13 @@
         "lines_added": 435,
         "lines_removed": 4,
         "total_churn": 439
+      },
+      {
+        "file": ".planning/formal/gates/gate-c-validation.json",
+        "commits": 50,
+        "lines_added": 220,
+        "lines_removed": 218,
+        "total_churn": 438
       },
       {
         "file": "bin/extract-precedents.test.cjs",
@@ -12167,13 +12243,6 @@
         "lines_added": 225,
         "lines_removed": 204,
         "total_churn": 429
-      },
-      {
-        "file": ".planning/formal/gates/gate-c-validation.json",
-        "commits": 48,
-        "lines_added": 215,
-        "lines_removed": 213,
-        "total_churn": 428
       },
       {
         "file": ".planning/milestones/v0.30-phases/v0.30-01-dynamic-model-selection/v0.30-01-RESEARCH.md",
@@ -13261,6 +13330,13 @@
         "total_churn": 381
       },
       {
+        "file": "commands/nf/solve-diagnose.md",
+        "commits": 7,
+        "lines_added": 339,
+        "lines_removed": 41,
+        "total_churn": 380
+      },
+      {
         "file": "bin/convergence-report.cjs",
         "commits": 5,
         "lines_added": 373,
@@ -13660,6 +13736,13 @@
         "total_churn": 368
       },
       {
+        "file": ".planning/memory/errors.jsonl",
+        "commits": 10,
+        "lines_added": 196,
+        "lines_removed": 171,
+        "total_churn": 367
+      },
+      {
         "file": ".planning/milestones/v0.30-phases/v0.30-08-continuous-learning-integration-fix/v0.30-08-RESEARCH.md",
         "commits": 1,
         "lines_added": 367,
@@ -13686,13 +13769,6 @@
         "lines_added": 337,
         "lines_removed": 30,
         "total_churn": 367
-      },
-      {
-        "file": ".planning/memory/errors.jsonl",
-        "commits": 9,
-        "lines_added": 195,
-        "lines_removed": 171,
-        "total_churn": 366
       },
       {
         "file": ".planning/phases/v0.23-03-roadmapper-formal-integration/v0.23-03-03-PLAN.md",
@@ -13735,13 +13811,6 @@
         "lines_added": 325,
         "lines_removed": 40,
         "total_churn": 365
-      },
-      {
-        "file": "bin/refinement-loop.cjs",
-        "commits": 3,
-        "lines_added": 351,
-        "lines_removed": 13,
-        "total_churn": 364
       },
       {
         "file": ".planning/quick/310-make-nf-mcp-dispatch-guard-read-slot-nam/310-VERIFICATION.md",
@@ -13994,13 +14063,6 @@
         "lines_added": 178,
         "lines_removed": 178,
         "total_churn": 356
-      },
-      {
-        "file": "commands/nf/solve-diagnose.md",
-        "commits": 6,
-        "lines_added": 314,
-        "lines_removed": 41,
-        "total_churn": 355
       },
       {
         "file": ".planning/phases/15-v0.4-gap-closure-activity-resume-routing/15-01-PLAN.md",
@@ -14276,6 +14338,13 @@
         "total_churn": 344
       },
       {
+        "file": "bin/diagnostic-proposal-generator.test.cjs",
+        "commits": 1,
+        "lines_added": 343,
+        "lines_removed": 0,
+        "total_churn": 343
+      },
+      {
         "file": ".planning/formal/uppaal/quorum-races.xml",
         "commits": 2,
         "lines_added": 0,
@@ -14386,6 +14455,13 @@
         "lines_added": 327,
         "lines_removed": 12,
         "total_churn": 339
+      },
+      {
+        "file": "bin/run-alloy.cjs",
+        "commits": 15,
+        "lines_added": 261,
+        "lines_removed": 77,
+        "total_churn": 338
       },
       {
         "file": ".planning/research/STACK_v0.39_DUAL_CYCLE.md",
@@ -14603,13 +14679,6 @@
         "lines_added": 312,
         "lines_removed": 18,
         "total_churn": 330
-      },
-      {
-        "file": "bin/run-alloy.cjs",
-        "commits": 14,
-        "lines_added": 253,
-        "lines_removed": 76,
-        "total_churn": 329
       },
       {
         "file": "scripts/generate-terminal-svg.js",
@@ -15585,6 +15654,13 @@
         "total_churn": 297
       },
       {
+        "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-03-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 296,
+        "lines_removed": 0,
+        "total_churn": 296
+      },
+      {
         "file": "bin/review-mcp-logs.cjs",
         "commits": 2,
         "lines_added": 295,
@@ -15660,6 +15736,20 @@
         "lines_added": 295,
         "lines_removed": 0,
         "total_churn": 295
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-03-PLAN.md",
+        "commits": 2,
+        "lines_added": 287,
+        "lines_removed": 7,
+        "total_churn": 294
+      },
+      {
+        "file": ".planning/formal/gates/gate-b-abstraction.json",
+        "commits": 51,
+        "lines_added": 148,
+        "lines_removed": 146,
+        "total_churn": 294
       },
       {
         "file": "get-shit-done/templates/research-project/FEATURES.md",
@@ -15767,13 +15857,6 @@
         "total_churn": 291
       },
       {
-        "file": ".planning/formal/gates/gate-b-abstraction.json",
-        "commits": 49,
-        "lines_added": 146,
-        "lines_removed": 144,
-        "total_churn": 290
-      },
-      {
         "file": ".planning/quick/300-fix-nf-solve-cjs-ndjson-dedup-bug-and-in/300-VERIFICATION.md",
         "commits": 2,
         "lines_added": 290,
@@ -15809,6 +15892,13 @@
         "total_churn": 290
       },
       {
+        "file": "bin/solution-simulation-loop.cjs",
+        "commits": 2,
+        "lines_added": 288,
+        "lines_removed": 1,
+        "total_churn": 289
+      },
+      {
         "file": ".planning/phases/v0.33-06-solve-report-integration/v0.33-06-02-PLAN.md",
         "commits": 1,
         "lines_added": 289,
@@ -15821,6 +15911,13 @@
         "lines_added": 281,
         "lines_removed": 8,
         "total_churn": 289
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-02-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 288,
+        "lines_removed": 0,
+        "total_churn": 288
       },
       {
         "file": ".planning/quick/315-fix-alldown-short-circuit-to-promote-t2-/315-PLAN.md",
@@ -15947,6 +16044,13 @@
         "lines_added": 286,
         "lines_removed": 0,
         "total_churn": 286
+      },
+      {
+        "file": "bin/refinement-loop-diagnostic.test.cjs",
+        "commits": 1,
+        "lines_added": 285,
+        "lines_removed": 0,
+        "total_churn": 285
       },
       {
         "file": "bin/run-installer-alloy.cjs",
@@ -16551,6 +16655,13 @@
         "total_churn": 272
       },
       {
+        "file": "bin/intent-normalizer.test.cjs",
+        "commits": 1,
+        "lines_added": 271,
+        "lines_removed": 0,
+        "total_churn": 271
+      },
+      {
         "file": "bin/issue-classifier.test.cjs",
         "commits": 2,
         "lines_added": 270,
@@ -16675,6 +16786,20 @@
         "lines_added": 269,
         "lines_removed": 0,
         "total_churn": 269
+      },
+      {
+        "file": "bin/consequence-model-generator.cjs",
+        "commits": 2,
+        "lines_added": 267,
+        "lines_removed": 1,
+        "total_churn": 268
+      },
+      {
+        "file": ".planning/formal/evidence/instrumentation-map.json",
+        "commits": 30,
+        "lines_added": 179,
+        "lines_removed": 89,
+        "total_churn": 268
       },
       {
         "file": ".planning/research/INDEX_v0.39_DUAL_CYCLE.md",
@@ -16985,6 +17110,13 @@
         "total_churn": 264
       },
       {
+        "file": "core/workflows/debug.md",
+        "commits": 1,
+        "lines_added": 263,
+        "lines_removed": 0,
+        "total_churn": 263
+      },
+      {
         "file": ".planning/phases/v0.22-01-requirements-envelope-foundation/v0.22-01-02-PLAN.md",
         "commits": 2,
         "lines_added": 259,
@@ -17139,13 +17271,6 @@
         "total_churn": 259
       },
       {
-        "file": ".planning/formal/evidence/instrumentation-map.json",
-        "commits": 29,
-        "lines_added": 174,
-        "lines_removed": 84,
-        "total_churn": 258
-      },
-      {
         "file": ".planning/milestones/v0.37-ROADMAP.md",
         "commits": 2,
         "lines_added": 258,
@@ -17214,6 +17339,13 @@
         "lines_added": 258,
         "lines_removed": 0,
         "total_churn": 258
+      },
+      {
+        "file": ".gitignore",
+        "commits": 58,
+        "lines_added": 205,
+        "lines_removed": 52,
+        "total_churn": 257
       },
       {
         "file": "bin/run-account-pool-alloy.cjs",
@@ -17368,13 +17500,6 @@
         "lines_added": 255,
         "lines_removed": 0,
         "total_churn": 255
-      },
-      {
-        "file": ".gitignore",
-        "commits": 57,
-        "lines_added": 202,
-        "lines_removed": 52,
-        "total_churn": 254
       },
       {
         "file": ".planning/quorum/precedents.json",
@@ -17860,6 +17985,13 @@
         "total_churn": 246
       },
       {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-03-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 245,
+        "lines_removed": 0,
+        "total_churn": 245
+      },
+      {
         "file": "agents/nf-research-synthesizer.md",
         "commits": 2,
         "lines_added": 242,
@@ -17886,6 +18018,13 @@
         "lines_added": 240,
         "lines_removed": 5,
         "total_churn": 245
+      },
+      {
+        "file": "core/workflows/close-formal-gaps.md",
+        "commits": 8,
+        "lines_added": 170,
+        "lines_removed": 74,
+        "total_churn": 244
       },
       {
         "file": ".planning/phases/v0.39-01-foundation-and-infrastructure/v0.39-01-01-PLAN.md",
@@ -17970,6 +18109,13 @@
         "lines_added": 244,
         "lines_removed": 0,
         "total_churn": 244
+      },
+      {
+        "file": ".planning/current-activity.json",
+        "commits": 41,
+        "lines_added": 123,
+        "lines_removed": 120,
+        "total_churn": 243
       },
       {
         "file": "bin/debt-dedup-integration.test.cjs",
@@ -18084,6 +18230,13 @@
         "total_churn": 242
       },
       {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-02-PLAN.md",
+        "commits": 2,
+        "lines_added": 225,
+        "lines_removed": 16,
+        "total_churn": 241
+      },
+      {
         "file": ".planning/phases/v0.33-04-predictive-power/v0.33-04-02-PLAN.md",
         "commits": 2,
         "lines_added": 229,
@@ -18117,6 +18270,13 @@
         "lines_added": 241,
         "lines_removed": 0,
         "total_churn": 241
+      },
+      {
+        "file": "bin/diagnostic-injection.test.cjs",
+        "commits": 1,
+        "lines_added": 240,
+        "lines_removed": 0,
+        "total_churn": 240
       },
       {
         "file": ".planning/research/INDEX_v0.39_DUAL_CYCLES.md",
@@ -18215,6 +18375,13 @@
         "lines_added": 240,
         "lines_removed": 0,
         "total_churn": 240
+      },
+      {
+        "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-01-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 239,
+        "lines_removed": 0,
+        "total_churn": 239
       },
       {
         "file": ".planning/formal/generated-stubs/KEY-01.stub.recipe.json",
@@ -18452,13 +18619,6 @@
         "commits": 1,
         "lines_added": 235,
         "lines_removed": 0,
-        "total_churn": 235
-      },
-      {
-        "file": ".planning/current-activity.json",
-        "commits": 40,
-        "lines_added": 115,
-        "lines_removed": 120,
         "total_churn": 235
       },
       {
@@ -18861,6 +19021,13 @@
         "total_churn": 229
       },
       {
+        "file": ".planning/phases/v0.39-01-foundation-and-infrastructure/CLEANUP-REPORT.md",
+        "commits": 1,
+        "lines_added": 228,
+        "lines_removed": 0,
+        "total_churn": 228
+      },
+      {
         "file": "bin/model-state-extractor.test.cjs",
         "commits": 1,
         "lines_added": 228,
@@ -19111,6 +19278,20 @@
         "lines_added": 225,
         "lines_removed": 0,
         "total_churn": 225
+      },
+      {
+        "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-PLAN.md",
+        "commits": 2,
+        "lines_added": 199,
+        "lines_removed": 25,
+        "total_churn": 224
+      },
+      {
+        "file": "bin/diagnostic-proposal-generator.cjs",
+        "commits": 1,
+        "lines_added": 224,
+        "lines_removed": 0,
+        "total_churn": 224
       },
       {
         "file": "test/debug-formal-context.test.cjs",
@@ -19764,13 +19945,6 @@
         "total_churn": 214
       },
       {
-        "file": "core/workflows/close-formal-gaps.md",
-        "commits": 7,
-        "lines_added": 139,
-        "lines_removed": 74,
-        "total_churn": 213
-      },
-      {
         "file": ".planning/phases/v0.34-04-semantic-scoring-pipeline-wiring/v0.34-04-01-PLAN.md",
         "commits": 1,
         "lines_added": 213,
@@ -19839,6 +20013,13 @@
         "lines_added": 203,
         "lines_removed": 10,
         "total_churn": 213
+      },
+      {
+        "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-PLAN.md",
+        "commits": 1,
+        "lines_added": 212,
+        "lines_removed": 0,
+        "total_churn": 212
       },
       {
         "file": "test/debug-verdict-reporting.test.cjs",
@@ -20070,6 +20251,13 @@
         "lines_added": 209,
         "lines_removed": 0,
         "total_churn": 209
+      },
+      {
+        "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 208,
+        "lines_removed": 0,
+        "total_churn": 208
       },
       {
         "file": ".planning/quick/320-implement-d-r-scanner-exclusion-list-and/320-PLAN.md",
@@ -21318,6 +21506,13 @@
         "total_churn": 190
       },
       {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-01-PLAN.md",
+        "commits": 1,
+        "lines_added": 189,
+        "lines_removed": 0,
+        "total_churn": 189
+      },
+      {
         "file": ".planning/quick/285-improve-ci-cd-testing-add-staging-trigge/285-PLAN.md",
         "commits": 1,
         "lines_added": 189,
@@ -21675,6 +21870,20 @@
         "total_churn": 185
       },
       {
+        "file": ".planning/formal/tla/NFQuorum.tla",
+        "commits": 11,
+        "lines_added": 174,
+        "lines_removed": 10,
+        "total_churn": 184
+      },
+      {
+        "file": "test/golden/tui-reqs.txt",
+        "commits": 15,
+        "lines_added": 105,
+        "lines_removed": 79,
+        "total_churn": 184
+      },
+      {
         "file": "bin/harness-diagnostic.test.cjs",
         "commits": 1,
         "lines_added": 184,
@@ -21806,13 +22015,6 @@
         "lines_added": 183,
         "lines_removed": 0,
         "total_churn": 183
-      },
-      {
-        "file": ".planning/formal/tla/NFQuorum.tla",
-        "commits": 10,
-        "lines_added": 173,
-        "lines_removed": 9,
-        "total_churn": 182
       },
       {
         "file": ".planning/milestones/v0.36-phases/v0.36-02-diagnostic-correctness/v0.36-02-02-SUMMARY.md",
@@ -22382,13 +22584,6 @@
         "total_churn": 175
       },
       {
-        "file": "test/golden/tui-reqs.txt",
-        "commits": 14,
-        "lines_added": 100,
-        "lines_removed": 74,
-        "total_churn": 174
-      },
-      {
         "file": "bin/check-tui-assets-stale.cjs",
         "commits": 2,
         "lines_added": 87,
@@ -22450,6 +22645,13 @@
         "lines_added": 174,
         "lines_removed": 0,
         "total_churn": 174
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-VALIDATION.md",
+        "commits": 2,
+        "lines_added": 134,
+        "lines_removed": 39,
+        "total_churn": 173
       },
       {
         "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-VALIDATION.md",
@@ -23033,6 +23235,13 @@
         "total_churn": 168
       },
       {
+        "file": ".planning/config.json",
+        "commits": 33,
+        "lines_added": 100,
+        "lines_removed": 67,
+        "total_churn": 167
+      },
+      {
         "file": ".planning/quick/321-auto-commit-regenerated-formal-artifacts/321-PLAN.md",
         "commits": 1,
         "lines_added": 167,
@@ -23152,13 +23361,6 @@
         "total_churn": 165
       },
       {
-        "file": ".planning/config.json",
-        "commits": 32,
-        "lines_added": 99,
-        "lines_removed": 66,
-        "total_churn": 165
-      },
-      {
         "file": ".planning/quick/195-add-automated-audit-plan-execute-loop-to/195-PLAN.md",
         "commits": 1,
         "lines_added": 165,
@@ -23185,6 +23387,13 @@
         "lines_added": 165,
         "lines_removed": 0,
         "total_churn": 165
+      },
+      {
+        "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-VERIFICATION.md",
+        "commits": 1,
+        "lines_added": 164,
+        "lines_removed": 0,
+        "total_churn": 164
       },
       {
         "file": ".planning/quick/313-add-tier-field-to-requirements-tier-user/313-VERIFICATION.md",
@@ -23241,6 +23450,13 @@
         "lines_added": 164,
         "lines_removed": 0,
         "total_churn": 164
+      },
+      {
+        "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-PLAN.md",
+        "commits": 1,
+        "lines_added": 163,
+        "lines_removed": 0,
+        "total_churn": 163
       },
       {
         "file": "hooks/dist/nf-node-eval-guard.js",
@@ -23740,6 +23956,13 @@
         "total_churn": 158
       },
       {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-VERIFICATION.md",
+        "commits": 1,
+        "lines_added": 157,
+        "lines_removed": 0,
+        "total_churn": 157
+      },
+      {
         "file": ".planning/formal/tla/NFMCPEnv.tla",
         "commits": 1,
         "lines_added": 157,
@@ -23829,6 +24052,13 @@
         "lines_added": 157,
         "lines_removed": 0,
         "total_churn": 157
+      },
+      {
+        "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-01-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 156,
+        "lines_removed": 0,
+        "total_churn": 156
       },
       {
         "file": ".planning/milestones/v0.31-phases/v0.31-01-hook-infrastructure-hardening/v0.31-01-01-SUMMARY.md",
@@ -25049,6 +25279,13 @@
         "total_churn": 140
       },
       {
+        "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-02-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 139,
+        "lines_removed": 0,
+        "total_churn": 139
+      },
+      {
         "file": ".planning/quick/279-wire-dual-subscription-slots-add-codex-2/279-VERIFICATION.md",
         "commits": 1,
         "lines_added": 139,
@@ -25327,6 +25564,13 @@
         "lines_added": 137,
         "lines_removed": 0,
         "total_churn": 137
+      },
+      {
+        "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-VERIFICATION.md",
+        "commits": 1,
+        "lines_added": 136,
+        "lines_removed": 0,
+        "total_churn": 136
       },
       {
         "file": ".planning/phases/v0.37-01-annotation-back-linking/v0.37-01-VERIFICATION.md",
@@ -26631,6 +26875,13 @@
         "total_churn": 123
       },
       {
+        "file": ".planning/formal/evidence/doc-claims.json",
+        "commits": 17,
+        "lines_added": 71,
+        "lines_removed": 51,
+        "total_churn": 122
+      },
+      {
         "file": "bin/adapters/scaffold-config.test.cjs",
         "commits": 2,
         "lines_added": 122,
@@ -26979,13 +27230,6 @@
         "lines_added": 119,
         "lines_removed": 0,
         "total_churn": 119
-      },
-      {
-        "file": ".planning/formal/evidence/doc-claims.json",
-        "commits": 16,
-        "lines_added": 69,
-        "lines_removed": 49,
-        "total_churn": 118
       },
       {
         "file": "bin/adapters/squirrel.test.cjs",
@@ -28395,6 +28639,13 @@
         "total_churn": 108
       },
       {
+        "file": ".planning/milestones/v0.39-MILESTONE-AUDIT.md",
+        "commits": 1,
+        "lines_added": 107,
+        "lines_removed": 0,
+        "total_churn": 107
+      },
+      {
         "file": "commands/nf/debug.md",
         "commits": 3,
         "lines_added": 102,
@@ -28780,6 +29031,13 @@
         "total_churn": 105
       },
       {
+        "file": ".planning/formal/tla/MCsafety.cfg",
+        "commits": 16,
+        "lines_added": 54,
+        "lines_removed": 50,
+        "total_churn": 104
+      },
+      {
         "file": ".planning/milestones/v0.33-MILESTONE-AUDIT.md",
         "commits": 1,
         "lines_added": 104,
@@ -29116,13 +29374,6 @@
         "total_churn": 103
       },
       {
-        "file": ".planning/formal/tla/MCsafety.cfg",
-        "commits": 15,
-        "lines_added": 53,
-        "lines_removed": 49,
-        "total_churn": 102
-      },
-      {
         "file": ".planning/quick/311-generate-test-recipes-for-uncovered-l3-f/311-PLAN.md",
         "commits": 2,
         "lines_added": 102,
@@ -29436,6 +29687,20 @@
         "lines_added": 101,
         "lines_removed": 0,
         "total_churn": 101
+      },
+      {
+        "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-VERIFICATION.md",
+        "commits": 1,
+        "lines_added": 100,
+        "lines_removed": 0,
+        "total_churn": 100
+      },
+      {
+        "file": "example.md",
+        "commits": 1,
+        "lines_added": 100,
+        "lines_removed": 0,
+        "total_churn": 100
       },
       {
         "file": "bin/adapters/xstate-v4.test.cjs",
@@ -29977,6 +30242,13 @@
         "total_churn": 98
       },
       {
+        "file": "bin/intent-normalizer.cjs",
+        "commits": 1,
+        "lines_added": 97,
+        "lines_removed": 0,
+        "total_churn": 97
+      },
+      {
         "file": ".planning/phases/v0.38-01-bug-to-model-lookup-constraint-extraction/v0.38-01-03-SUMMARY.md",
         "commits": 1,
         "lines_added": 97,
@@ -30101,6 +30373,13 @@
         "lines_added": 97,
         "lines_removed": 0,
         "total_churn": 97
+      },
+      {
+        "file": ".planning/quick/325-add-layer-3-sentence-transformer-semanti/325-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 96,
+        "lines_removed": 0,
+        "total_churn": 96
       },
       {
         "file": ".planning/milestones/v0.37-REQUIREMENTS.md",
@@ -30460,6 +30739,13 @@
         "total_churn": 95
       },
       {
+        "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-VERIFICATION.md",
+        "commits": 1,
+        "lines_added": 94,
+        "lines_removed": 0,
+        "total_churn": 94
+      },
+      {
         "file": ".planning/quick/308-generate-test-recipes-for-uncovered-l3-f/308-PLAN.md",
         "commits": 2,
         "lines_added": 94,
@@ -30731,6 +31017,13 @@
         "lines_added": 31,
         "lines_removed": 62,
         "total_churn": 93
+      },
+      {
+        "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 92,
+        "lines_removed": 0,
+        "total_churn": 92
       },
       {
         "file": "bin/adapters/robot.test.cjs",
@@ -31130,6 +31423,13 @@
         "lines_added": 91,
         "lines_removed": 0,
         "total_churn": 91
+      },
+      {
+        "file": "test/formal-scope-scan-semantic.test.cjs",
+        "commits": 1,
+        "lines_added": 90,
+        "lines_removed": 0,
+        "total_churn": 90
       },
       {
         "file": ".planning/phases/v0.37-05-hypothesis-targeting/v0.37-05-01-SUMMARY.md",
@@ -32441,6 +32741,13 @@
         "total_churn": 81
       },
       {
+        "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-SUMMARY.md",
+        "commits": 1,
+        "lines_added": 80,
+        "lines_removed": 0,
+        "total_churn": 80
+      },
+      {
         "file": ".planning/quick/296-fix-1-xstate-model-gap-identified-by-gat/296-PLAN.md",
         "commits": 2,
         "lines_added": 80,
@@ -32649,6 +32956,13 @@
         "lines_added": 79,
         "lines_removed": 0,
         "total_churn": 79
+      },
+      {
+        "file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "commits": 1,
+        "lines_added": 78,
+        "lines_removed": 0,
+        "total_churn": 78
       },
       {
         "file": "test/alloy-headless.test.cjs",
@@ -32931,6 +33245,13 @@
         "total_churn": 77
       },
       {
+        "file": ".planning/milestones/v0.39-ROADMAP.md",
+        "commits": 1,
+        "lines_added": 76,
+        "lines_removed": 0,
+        "total_churn": 76
+      },
+      {
         "file": ".planning/phases/v0.37-04-quorum-precedents/v0.37-04-01-SUMMARY.md",
         "commits": 2,
         "lines_added": 76,
@@ -33204,6 +33525,13 @@
         "total_churn": 75
       },
       {
+        "file": ".planning/formal/tla/MCliveness.cfg",
+        "commits": 16,
+        "lines_added": 37,
+        "lines_removed": 37,
+        "total_churn": 74
+      },
+      {
         "file": ".planning/phases/v0.37-02-gate-auto-promotion/v0.37-02-VERIFICATION.md",
         "commits": 2,
         "lines_added": 74,
@@ -33454,13 +33782,6 @@
         "lines_added": 73,
         "lines_removed": 0,
         "total_churn": 73
-      },
-      {
-        "file": ".planning/formal/tla/MCliveness.cfg",
-        "commits": 15,
-        "lines_added": 36,
-        "lines_removed": 36,
-        "total_churn": 72
       },
       {
         "file": ".planning/quick/299-add-requirement-mappings-for-3-gate-b-or/299-PLAN.md",
@@ -34233,6 +34554,13 @@
         "total_churn": 69
       },
       {
+        "file": ".planning/upstream-state.json",
+        "commits": 15,
+        "lines_added": 40,
+        "lines_removed": 28,
+        "total_churn": 68
+      },
+      {
         "file": ".planning/formal/alloy/installer-sync.als",
         "commits": 1,
         "lines_added": 68,
@@ -34811,13 +35139,6 @@
         "commits": 5,
         "lines_added": 46,
         "lines_removed": 18,
-        "total_churn": 64
-      },
-      {
-        "file": ".planning/upstream-state.json",
-        "commits": 14,
-        "lines_added": 38,
-        "lines_removed": 26,
         "total_churn": 64
       },
       {
@@ -36067,6 +36388,13 @@
         "total_churn": 55
       },
       {
+        "file": ".planning/formal/tla/MCNFQuorum.cfg",
+        "commits": 12,
+        "lines_added": 33,
+        "lines_removed": 21,
+        "total_churn": 54
+      },
+      {
         "file": ".planning/quick/295-generate-test-recipes-for-15-uncovered-l/295-SUMMARY.md",
         "commits": 2,
         "lines_added": 54,
@@ -36345,13 +36673,6 @@
         "lines_added": 53,
         "lines_removed": 0,
         "total_churn": 53
-      },
-      {
-        "file": ".planning/formal/tla/MCNFQuorum.cfg",
-        "commits": 11,
-        "lines_added": 32,
-        "lines_removed": 20,
-        "total_churn": 52
       },
       {
         "file": ".planning/quick/297-generate-test-recipes-for-9-uncovered-l3/297-PLAN.md",
@@ -38685,6 +39006,13 @@
         "total_churn": 39
       },
       {
+        "file": "test/golden/tui-config.txt",
+        "commits": 7,
+        "lines_added": 32,
+        "lines_removed": 6,
+        "total_churn": 38
+      },
+      {
         "file": ".planning/quick/322-replace-qgsd-with-nf-in-active-code-core/322-SUMMARY.md",
         "commits": 1,
         "lines_added": 38,
@@ -39049,7 +39377,21 @@
         "total_churn": 37
       },
       {
-        "file": "test/golden/tui-config.txt",
+        "file": ".planning/formal/prism/quorum.pm",
+        "commits": 12,
+        "lines_added": 18,
+        "lines_removed": 18,
+        "total_churn": 36
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-for-phase-v0-38-04-b-to-f-solve-layer-decide-which.md",
+        "commits": 1,
+        "lines_added": 36,
+        "lines_removed": 0,
+        "total_churn": 36
+      },
+      {
+        "file": "test/golden/tui-sessions.txt",
         "commits": 6,
         "lines_added": 31,
         "lines_removed": 5,
@@ -39497,6 +39839,13 @@
         "total_churn": 35
       },
       {
+        "file": ".planning/formal/alloy/quorum-votes.als",
+        "commits": 12,
+        "lines_added": 17,
+        "lines_removed": 17,
+        "total_churn": 34
+      },
+      {
         "file": "core/references/model-profiles.md",
         "commits": 2,
         "lines_added": 17,
@@ -39515,20 +39864,6 @@
         "commits": 5,
         "lines_added": 30,
         "lines_removed": 4,
-        "total_churn": 34
-      },
-      {
-        "file": "test/golden/tui-sessions.txt",
-        "commits": 5,
-        "lines_added": 30,
-        "lines_removed": 4,
-        "total_churn": 34
-      },
-      {
-        "file": ".planning/formal/prism/quorum.pm",
-        "commits": 11,
-        "lines_added": 17,
-        "lines_removed": 17,
         "total_churn": 34
       },
       {
@@ -39882,15 +40217,15 @@
         "total_churn": 33
       },
       {
-        "file": "core/references/continuation-format.md",
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-for-phase-v0-38-03-model-refinement-workflow-decid.md",
         "commits": 1,
-        "lines_added": 16,
-        "lines_removed": 16,
+        "lines_added": 32,
+        "lines_removed": 0,
         "total_churn": 32
       },
       {
-        "file": ".planning/formal/alloy/quorum-votes.als",
-        "commits": 11,
+        "file": "core/references/continuation-format.md",
+        "commits": 1,
         "lines_added": 16,
         "lines_removed": 16,
         "total_churn": 32
@@ -40519,6 +40854,13 @@
         "total_churn": 29
       },
       {
+        "file": ".planning/formal/prism/quorum.props",
+        "commits": 12,
+        "lines_added": 14,
+        "lines_removed": 14,
+        "total_churn": 28
+      },
+      {
         "file": ".planning/quorum/debates/2026-03-09-claude-1-nforma-v0-32-milestone-scope-readme-documentation.md",
         "commits": 1,
         "lines_added": 28,
@@ -40838,13 +41180,6 @@
         "commits": 5,
         "lines_added": 14,
         "lines_removed": 12,
-        "total_churn": 26
-      },
-      {
-        "file": ".planning/formal/prism/quorum.props",
-        "commits": 11,
-        "lines_added": 13,
-        "lines_removed": 13,
         "total_churn": 26
       },
       {
@@ -41695,6 +42030,13 @@
         "total_churn": 23
       },
       {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-review-revised-phase-v0-39-02-implementation-plans.md",
+        "commits": 1,
+        "lines_added": 22,
+        "lines_removed": 0,
+        "total_churn": 22
+      },
+      {
         "file": ".planning/formal/tla/MCConvergenceTest.cfg",
         "commits": 2,
         "lines_added": 22,
@@ -42395,6 +42737,13 @@
         "total_churn": 21
       },
       {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-review-the-revised-phase-v0-38-02-plans-round-1-id.md",
+        "commits": 1,
+        "lines_added": 20,
+        "lines_removed": 0,
+        "total_churn": 20
+      },
+      {
         "file": ".planning/formal/dr-scanner-config.json",
         "commits": 1,
         "lines_added": 20,
@@ -42603,6 +42952,41 @@
         "lines_added": 19,
         "lines_removed": 0,
         "total_churn": 19
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-.md",
+        "commits": 1,
+        "lines_added": 18,
+        "lines_removed": 0,
+        "total_churn": 18
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-re-review-phase-v0-39-01-plans-after-r3-6-revision.md",
+        "commits": 1,
+        "lines_added": 18,
+        "lines_removed": 0,
+        "total_churn": 18
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-review-phase-v0-39-02-implementation-plans-3-plans.md",
+        "commits": 1,
+        "lines_added": 18,
+        "lines_removed": 0,
+        "total_churn": 18
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-review-these-phase-plans-for-phase-v0-38-02-debug.md",
+        "commits": 1,
+        "lines_added": 18,
+        "lines_removed": 0,
+        "total_churn": 18
+      },
+      {
+        "file": ".planning/quorum/debates/2026-03-18-codex-1-review-these-phase-v0-39-01-plans-for-foundation-i.md",
+        "commits": 1,
+        "lines_added": 18,
+        "lines_removed": 0,
+        "total_churn": 18
       },
       {
         "file": "core/workflows/help.md",
@@ -42848,6 +43232,34 @@
         "lines_added": 17,
         "lines_removed": 0,
         "total_churn": 17
+      },
+      {
+        "file": ".planning/phases/v0.38-03-model-refinement-workflow/task-envelope.json",
+        "commits": 1,
+        "lines_added": 16,
+        "lines_removed": 0,
+        "total_churn": 16
+      },
+      {
+        "file": ".planning/phases/v0.38-04-b-to-f-solve-layer/task-envelope.json",
+        "commits": 1,
+        "lines_added": 16,
+        "lines_removed": 0,
+        "total_churn": 16
+      },
+      {
+        "file": ".planning/phases/v0.38-05-cross-model-regression-prevention/task-envelope.json",
+        "commits": 1,
+        "lines_added": 16,
+        "lines_removed": 0,
+        "total_churn": 16
+      },
+      {
+        "file": ".planning/phases/v0.39-01-foundation-and-infrastructure/task-envelope.json",
+        "commits": 1,
+        "lines_added": 16,
+        "lines_removed": 0,
+        "total_churn": 16
       },
       {
         "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/task-envelope.json",
@@ -44304,6 +44716,13 @@
         "lines_added": 13,
         "lines_removed": 0,
         "total_churn": 13
+      },
+      {
+        "file": ".planning/phases/v0.38-01-bug-to-model-lookup-constraint-extraction/task-envelope.json",
+        "commits": 1,
+        "lines_added": 12,
+        "lines_removed": 0,
+        "total_churn": 12
       },
       {
         "file": "core/workflows/set-profile.md",
@@ -56798,8 +57217,8 @@
   "uncovered_hot_zones": [
     {
       "file": ".planning/formal/evidence/git-heatmap.json",
-      "priority": 33560574,
-      "churn": 5593429,
+      "priority": 34337796,
+      "churn": 5722966,
       "fixes": 5,
       "adjustments": 0,
       "signals": [
@@ -56809,8 +57228,8 @@
     },
     {
       "file": ".planning/formal/traceability-matrix.json",
-      "priority": 1388784,
-      "churn": 173598,
+      "priority": 1399928,
+      "churn": 174991,
       "fixes": 7,
       "adjustments": 0,
       "signals": [
@@ -56820,9 +57239,9 @@
     },
     {
       "file": ".planning/STATE.md",
-      "priority": 1284588,
-      "churn": 12594,
-      "fixes": 101,
+      "priority": 1312941,
+      "churn": 12747,
+      "fixes": 102,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -56831,8 +57250,8 @@
     },
     {
       "file": ".planning/formal/evidence/git-history-evidence.json",
-      "priority": 788635,
-      "churn": 157727,
+      "priority": 791630,
+      "churn": 158326,
       "fixes": 4,
       "adjustments": 0,
       "signals": [
@@ -56854,8 +57273,8 @@
     },
     {
       "file": ".planning/ROADMAP.md",
-      "priority": 717360,
-      "churn": 14640,
+      "priority": 722897,
+      "churn": 14753,
       "fixes": 48,
       "adjustments": 0,
       "signals": [
@@ -56875,10 +57294,10 @@
       ]
     },
     {
-      "file": ".planning/formal/proximity-index.json",
-      "priority": 482355,
-      "churn": 160785,
-      "fixes": 2,
+      "file": ".planning/formal/model-registry.json",
+      "priority": 519183,
+      "churn": 24723,
+      "fixes": 20,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -56886,10 +57305,10 @@
       ]
     },
     {
-      "file": ".planning/formal/model-registry.json",
-      "priority": 477500,
-      "churn": 23875,
-      "fixes": 19,
+      "file": ".planning/formal/proximity-index.json",
+      "priority": 482829,
+      "churn": 160943,
+      "fixes": 2,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -56909,8 +57328,8 @@
     },
     {
       "file": ".planning/formal/model-complexity-profile.json",
-      "priority": 220318,
-      "churn": 31474,
+      "priority": 231245,
+      "churn": 33035,
       "fixes": 6,
       "adjustments": 0,
       "signals": [
@@ -56930,6 +57349,17 @@
       ]
     },
     {
+      "file": ".planning/formal/promotion-changelog.json",
+      "priority": 196900,
+      "churn": 19690,
+      "fixes": 9,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "README.md",
       "priority": 181280,
       "churn": 5665,
@@ -56941,20 +57371,9 @@
       ]
     },
     {
-      "file": ".planning/formal/promotion-changelog.json",
-      "priority": 171774,
-      "churn": 19086,
-      "fixes": 8,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/REQUIREMENTS.md",
-      "priority": 168920,
-      "churn": 8446,
+      "priority": 170300,
+      "churn": 8515,
       "fixes": 19,
       "adjustments": 0,
       "signals": [
@@ -56986,8 +57405,8 @@
     },
     {
       "file": ".planning/formal/test-recipes/test-recipes.json",
-      "priority": 148944,
-      "churn": 18618,
+      "priority": 149472,
+      "churn": 18684,
       "fixes": 7,
       "adjustments": 0,
       "signals": [
@@ -57008,8 +57427,8 @@
     },
     {
       "file": ".planning/formal/gates/per-model-gates.json",
-      "priority": 133542,
-      "churn": 14838,
+      "priority": 137250,
+      "churn": 15250,
       "fixes": 8,
       "adjustments": 0,
       "signals": [
@@ -57019,8 +57438,19 @@
     },
     {
       "file": "test/golden/tui-agents.txt",
-      "priority": 110031,
-      "churn": 36677,
+      "priority": 113850,
+      "churn": 37950,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/evidence/failure-taxonomy.json",
+      "priority": 79476,
+      "churn": 26492,
       "fixes": 2,
       "adjustments": 0,
       "signals": [
@@ -57033,17 +57463,6 @@
       "priority": 79232,
       "churn": 2476,
       "fixes": 31,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/formal/evidence/failure-taxonomy.json",
-      "priority": 79227,
-      "churn": 26409,
-      "fixes": 2,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -57128,6 +57547,17 @@
       ]
     },
     {
+      "file": "package-lock.json",
+      "priority": 53955,
+      "churn": 10791,
+      "fixes": 4,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".formal/traceability-matrix.baseline.json",
       "priority": 49830,
       "churn": 4530,
@@ -57150,17 +57580,6 @@
       ]
     },
     {
-      "file": "package-lock.json",
-      "priority": 48415,
-      "churn": 9683,
-      "fixes": 4,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": "agents/gsd-verifier.md",
       "priority": 47880,
       "churn": 3192,
@@ -57173,8 +57592,8 @@
     },
     {
       "file": ".planning/formal/unit-test-coverage.json",
-      "priority": 43890,
-      "churn": 8778,
+      "priority": 44185,
+      "churn": 8837,
       "fixes": 4,
       "adjustments": 0,
       "signals": [
@@ -57194,6 +57613,17 @@
       ]
     },
     {
+      "file": ".planning/formal/requirements.json",
+      "priority": 42956,
+      "churn": 10739,
+      "fixes": 3,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "agents/gsd-plan-checker.md",
       "priority": 42398,
       "churn": 2494,
@@ -57205,20 +57635,9 @@
       ]
     },
     {
-      "file": ".planning/formal/requirements.json",
-      "priority": 42012,
-      "churn": 10503,
-      "fixes": 3,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/formal/evidence/proposed-metrics.json",
-      "priority": 41920,
-      "churn": 20960,
+      "priority": 41932,
+      "churn": 20966,
       "fixes": 1,
       "adjustments": 0,
       "signals": [
@@ -57228,8 +57647,8 @@
     },
     {
       "file": "package.json",
-      "priority": 36540,
-      "churn": 1044,
+      "priority": 36715,
+      "churn": 1049,
       "fixes": 34,
       "adjustments": 0,
       "signals": [
@@ -57283,8 +57702,8 @@
     },
     {
       "file": ".planning/formal/reasoning/hazard-model.json",
-      "priority": 25928,
-      "churn": 3241,
+      "priority": 25944,
+      "churn": 3243,
       "fixes": 7,
       "adjustments": 0,
       "signals": [
@@ -57349,8 +57768,8 @@
     },
     {
       "file": ".planning/formal/evidence/trace-corpus-stats.json",
-      "priority": 21852,
-      "churn": 10926,
+      "priority": 22204,
+      "churn": 11102,
       "fixes": 1,
       "adjustments": 0,
       "signals": [
@@ -57404,8 +57823,8 @@
     },
     {
       "file": ".planning/PROJECT.md",
-      "priority": 20328,
-      "churn": 2904,
+      "priority": 20475,
+      "churn": 2925,
       "fixes": 6,
       "adjustments": 0,
       "signals": [
@@ -57675,6 +58094,17 @@
       ]
     },
     {
+      "file": ".planning/formal/diff-report.md",
+      "priority": 10197,
+      "churn": 1133,
+      "fixes": 8,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "commands/qgsd/mcp-status.md",
       "priority": 10140,
       "churn": 1690,
@@ -57762,17 +58192,6 @@
       ]
     },
     {
-      "file": ".planning/formal/diff-report.md",
-      "priority": 8616,
-      "churn": 1077,
-      "fixes": 7,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": "formal/requirements.json",
       "priority": 8612,
       "churn": 4306,
@@ -57788,6 +58207,17 @@
       "priority": 8424,
       "churn": 2106,
       "fixes": 3,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/gates/gate-a-grounding.json",
+      "priority": 8414,
+      "churn": 601,
+      "fixes": 13,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -57818,8 +58248,8 @@
     },
     {
       "file": ".planning/formal/evidence/hypothesis-measurements.json",
-      "priority": 7756,
-      "churn": 1939,
+      "priority": 7764,
+      "churn": 1941,
       "fixes": 3,
       "adjustments": 0,
       "signals": [
@@ -57832,17 +58262,6 @@
       "priority": 7711,
       "churn": 701,
       "fixes": 10,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/formal/gates/gate-a-grounding.json",
-      "priority": 7605,
-      "churn": 585,
-      "fixes": 12,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -57948,8 +58367,8 @@
     },
     {
       "file": ".planning/formal/layer-manifest.json",
-      "priority": 6712,
-      "churn": 3356,
+      "priority": 6720,
+      "churn": 3360,
       "fixes": 1,
       "adjustments": 0,
       "signals": [
@@ -58037,6 +58456,17 @@
       "priority": 5852,
       "churn": 836,
       "fixes": 6,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/gates/gate-c-validation.json",
+      "priority": 5694,
+      "churn": 438,
+      "fixes": 12,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58154,10 +58584,10 @@
       ]
     },
     {
-      "file": ".planning/formal/gates/gate-c-validation.json",
-      "priority": 5136,
-      "churn": 428,
-      "fixes": 11,
+      "file": "commands/gsd/create-roadmap.md",
+      "priority": 5128,
+      "churn": 641,
+      "fixes": 7,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58165,10 +58595,10 @@
       ]
     },
     {
-      "file": "commands/gsd/create-roadmap.md",
-      "priority": 5128,
-      "churn": 641,
-      "fixes": 7,
+      "file": ".planning/formal/suspects.md",
+      "priority": 4878,
+      "churn": 542,
+      "fixes": 8,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58210,9 +58640,20 @@
     },
     {
       "file": ".planning/formal/tla/NFQuorum_xstate.tla",
-      "priority": 4545,
-      "churn": 909,
+      "priority": 4555,
+      "churn": 911,
       "fixes": 4,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/semantics/observed-fsm.json",
+      "priority": 4492,
+      "churn": 1123,
+      "fixes": 3,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58231,10 +58672,10 @@
       ]
     },
     {
-      "file": ".planning/formal/semantics/observed-fsm.json",
-      "priority": 4340,
-      "churn": 1085,
-      "fixes": 3,
+      "file": "commands/nf/model-driven-fix.md",
+      "priority": 4368,
+      "churn": 624,
+      "fixes": 6,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58246,17 +58687,6 @@
       "priority": 4296,
       "churn": 2148,
       "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/formal/suspects.md",
-      "priority": 4272,
-      "churn": 534,
-      "fixes": 7,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58279,6 +58709,28 @@
       "priority": 4136,
       "churn": 2068,
       "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/gates/gate-b-abstraction.json",
+      "priority": 4116,
+      "churn": 294,
+      "fixes": 13,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": "core/workflows/model-driven-fix.md",
+      "priority": 4116,
+      "churn": 588,
+      "fixes": 6,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -58350,20 +58802,9 @@
       ]
     },
     {
-      "file": ".planning/formal/gates/gate-b-abstraction.json",
-      "priority": 3770,
-      "churn": 290,
-      "fixes": 12,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/formal/solve-state.json",
-      "priority": 3716,
-      "churn": 929,
+      "priority": 3804,
+      "churn": 951,
       "fixes": 3,
       "adjustments": 0,
       "signals": [
@@ -58408,6 +58849,17 @@
       "file": "get-shit-done/workflows/remove-phase.md",
       "priority": 3504,
       "churn": 1168,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/formal/solve-trend.jsonl",
+      "priority": 3501,
+      "churn": 1167,
       "fixes": 2,
       "adjustments": 0,
       "signals": [
@@ -58482,17 +58934,6 @@
       ]
     },
     {
-      "file": ".planning/formal/solve-trend.jsonl",
-      "priority": 3318,
-      "churn": 1106,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": "bin/secrets.test.cjs",
       "priority": 3298,
       "churn": 1649,
@@ -58559,6 +59000,16 @@
       ]
     },
     {
+      "file": ".planning/formal/candidates.json",
+      "priority": 3186,
+      "churn": 3186,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "node_modules/get-shit-done-cc/get-shit-done/workflows/plan-phase.md",
       "priority": 3180,
       "churn": 1590,
@@ -58578,16 +59029,6 @@
       "signals": [
         "churn",
         "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/formal/candidates.json",
-      "priority": 3148,
-      "churn": 3148,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
       ]
     },
     {
@@ -58995,6 +59436,17 @@
       ]
     },
     {
+      "file": ".gitignore",
+      "priority": 2313,
+      "churn": 257,
+      "fixes": 8,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.21-02-conformance-crisis-fix/v0.21-02-01-PLAN.md",
       "priority": 2300,
       "churn": 575,
@@ -59212,17 +59664,6 @@
       ]
     },
     {
-      "file": ".gitignore",
-      "priority": 2032,
-      "churn": 254,
-      "fixes": 7,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": "commands/gsd/add-phase.md",
       "priority": 1995,
       "churn": 665,
@@ -59270,17 +59711,6 @@
       "priority": 1944,
       "churn": 648,
       "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": "commands/nf/model-driven-fix.md",
-      "priority": 1928,
-      "churn": 482,
-      "fixes": 3,
       "adjustments": 0,
       "signals": [
         "churn",
@@ -59496,17 +59926,6 @@
       ]
     },
     {
-      "file": "core/workflows/model-driven-fix.md",
-      "priority": 1784,
-      "churn": 446,
-      "fixes": 3,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/phases/37-fix-mcp-setup-distribution/37-01-PLAN.md",
       "priority": 1776,
       "churn": 592,
@@ -59667,6 +60086,17 @@
       ]
     },
     {
+      "file": ".planning/MILESTONES.md",
+      "priority": 1658,
+      "churn": 829,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.20-06-triage-bundle/v0.20-06-01-PLAN.md",
       "priority": 1656,
       "churn": 828,
@@ -59692,17 +60122,6 @@
       "file": "bin/run-uppaal.cjs",
       "priority": 1648,
       "churn": 824,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/MILESTONES.md",
-      "priority": 1638,
-      "churn": 819,
       "fixes": 1,
       "adjustments": 0,
       "signals": [
@@ -59808,6 +60227,17 @@
       ]
     },
     {
+      "file": "docs/assets/terminal.svg",
+      "priority": 1539,
+      "churn": 513,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "bin/formal-test-sync.test.cjs",
       "priority": 1536,
       "churn": 512,
@@ -59822,17 +60252,6 @@
       "file": "commands/gsd/set-profile.md",
       "priority": 1536,
       "churn": 512,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": "docs/assets/terminal.svg",
-      "priority": 1533,
-      "churn": 511,
       "fixes": 2,
       "adjustments": 0,
       "signals": [
@@ -59927,6 +60346,17 @@
       ]
     },
     {
+      "file": "bin/refinement-loop.cjs",
+      "priority": 1491,
+      "churn": 497,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "bin/run-prism.test.cjs",
       "priority": 1478,
       "churn": 739,
@@ -59977,6 +60407,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/formal/evidence/state-candidates.json",
+      "priority": 1458,
+      "churn": 729,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -60059,17 +60500,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/evidence/state-candidates.json",
-      "priority": 1426,
-      "churn": 713,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -61032,17 +61462,6 @@
       ]
     },
     {
-      "file": "bin/refinement-loop.cjs",
-      "priority": 1092,
-      "churn": 364,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/phases/v0.19-INTEGRATION-CHECK-FINAL.md",
       "priority": 1092,
       "churn": 546,
@@ -61735,6 +62154,17 @@
       ]
     },
     {
+      "file": "core/workflows/close-formal-gaps.md",
+      "priority": 976,
+      "churn": 244,
+      "fixes": 3,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/18-cli-foundation/18-01-PLAN.md",
       "priority": 972,
       "churn": 486,
@@ -62399,17 +62829,6 @@
       ]
     },
     {
-      "file": "core/workflows/close-formal-gaps.md",
-      "priority": 852,
-      "churn": 213,
-      "fixes": 3,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": "\"gsd-verifier Missing Write Tool \\342\\200\\224 Root Cause Analysis.md\"",
       "priority": 852,
       "churn": 284,
@@ -63051,6 +63470,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-RESEARCH.md",
+      "priority": 748,
+      "churn": 748,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -63892,6 +64321,16 @@
       ]
     },
     {
+      "file": "bin/convergence-gate-runner.test.cjs",
+      "priority": 632,
+      "churn": 632,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/ccr-secure-config.test.cjs",
       "priority": 631,
       "churn": 631,
@@ -64138,6 +64577,17 @@
       ]
     },
     {
+      "file": ".planning/formal/evidence/doc-claims.json",
+      "priority": 610,
+      "churn": 122,
+      "fixes": 4,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.29-04-gate-c-validation-and-test-generation/v0.29-04-RESEARCH.md",
       "priority": 610,
       "churn": 610,
@@ -64336,17 +64786,6 @@
       ]
     },
     {
-      "file": ".planning/formal/evidence/doc-claims.json",
-      "priority": 590,
-      "churn": 118,
-      "fixes": 4,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/milestones/v0.30-phases/v0.30-03-memory-persistence/v0.30-03-RESEARCH.md",
       "priority": 590,
       "churn": 590,
@@ -64364,6 +64803,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-03-PLAN.md",
+      "priority": 588,
+      "churn": 294,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -64719,6 +65169,16 @@
       ]
     },
     {
+      "file": "bin/solution-simulation-loop.test.cjs",
+      "priority": 567,
+      "churn": 567,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/research/INTEGRATION_CHECKLIST_v0.39.md",
       "priority": 567,
       "churn": 567,
@@ -64997,6 +65457,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": "test/golden/tui-reqs.txt",
+      "priority": 552,
+      "churn": 184,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -65293,6 +65764,16 @@
       ]
     },
     {
+      "file": ".planning/quick/325-add-layer-3-sentence-transformer-semanti/325-PLAN.md",
+      "priority": 539,
+      "churn": 539,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/milestones/v0.20-phases/v0.20-01-schema-enrichment/v0.20-01-RESEARCH.md",
       "priority": 539,
       "churn": 539,
@@ -65320,6 +65801,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/formal/evidence/instrumentation-map.json",
+      "priority": 536,
+      "churn": 268,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -65446,6 +65938,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": "bin/consequence-model-generator.test.cjs",
+      "priority": 532,
+      "churn": 532,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -65665,17 +66167,6 @@
       ]
     },
     {
-      "file": "test/golden/tui-reqs.txt",
-      "priority": 522,
-      "churn": 174,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
       "file": ".planning/quick/8-update-qgsd-stop-js-and-qgsd-prompt-js-t/8-SUMMARY.md",
       "priority": 522,
       "churn": 174,
@@ -65756,17 +66247,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/evidence/instrumentation-map.json",
-      "priority": 516,
-      "churn": 258,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -66452,6 +66932,17 @@
       ]
     },
     {
+      "file": ".planning/current-activity.json",
+      "priority": 486,
+      "churn": 243,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.26-03-portable-installer-presets/v0.26-03-RESEARCH.md",
       "priority": 485,
       "churn": 485,
@@ -66536,6 +67027,17 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-02-PLAN.md",
+      "priority": 482,
+      "churn": 241,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.25-07-retroactive-verification-bookkeeping/v0.25-07-02-PLAN.md",
       "priority": 482,
       "churn": 241,
@@ -66597,6 +67099,17 @@
       ]
     },
     {
+      "file": "bin/diagnostic-injection.test.cjs",
+      "priority": 480,
+      "churn": 240,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.32-01-readme-above-the-fold-restructure/v0.32-01-01-PLAN.md",
       "priority": 480,
       "churn": 240,
@@ -66631,6 +67144,16 @@
       "file": "get-shit-done/templates/codebase/testing.md",
       "priority": 480,
       "churn": 480,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": "bin/convergence-gate-runner.cjs",
+      "priority": 479,
+      "churn": 479,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -66901,17 +67424,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/current-activity.json",
-      "priority": 470,
-      "churn": 235,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -68112,6 +68624,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-PLAN.md",
+      "priority": 424,
+      "churn": 212,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -69663,6 +70186,16 @@
       ]
     },
     {
+      "file": "commands/nf/solve-diagnose.md",
+      "priority": 380,
+      "churn": 380,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/convergence-report.cjs",
       "priority": 380,
       "churn": 380,
@@ -70181,6 +70714,16 @@
       ]
     },
     {
+      "file": ".planning/memory/errors.jsonl",
+      "priority": 367,
+      "churn": 367,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/milestones/v0.30-phases/v0.30-08-continuous-learning-integration-fix/v0.30-08-RESEARCH.md",
       "priority": 367,
       "churn": 367,
@@ -70240,16 +70783,6 @@
       "signals": [
         "churn",
         "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/memory/errors.jsonl",
-      "priority": 366,
-      "churn": 366,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
       ]
     },
     {
@@ -70603,16 +71136,6 @@
       "file": "get-shit-done/templates/research-project/SUMMARY.md",
       "priority": 356,
       "churn": 356,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
-      ]
-    },
-    {
-      "file": "commands/nf/solve-diagnose.md",
-      "priority": 355,
-      "churn": 355,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -71034,6 +71557,16 @@
       ]
     },
     {
+      "file": "bin/diagnostic-proposal-generator.test.cjs",
+      "priority": 343,
+      "churn": 343,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "formal/tla/QGSDMCPEnv.tla",
       "priority": 342,
       "churn": 171,
@@ -71437,6 +71970,17 @@
       ]
     },
     {
+      "file": ".planning/config.json",
+      "priority": 334,
+      "churn": 167,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": ".planning/phases/11-changelog-build/11-01-PLAN.md",
       "priority": 334,
       "churn": 334,
@@ -71526,17 +72070,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/config.json",
-      "priority": 330,
-      "churn": 165,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -72445,6 +72978,17 @@
       ]
     },
     {
+      "file": ".planning/formal/tla/MCsafety.cfg",
+      "priority": 312,
+      "churn": 104,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "node_modules/get-shit-done-cc/get-shit-done/templates/continue-here.md",
       "priority": 312,
       "churn": 156,
@@ -72626,17 +73170,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/tla/MCsafety.cfg",
-      "priority": 306,
-      "churn": 102,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -72977,6 +73510,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-03-SUMMARY.md",
+      "priority": 296,
+      "churn": 296,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/review-mcp-logs.cjs",
       "priority": 296,
       "churn": 296,
@@ -73239,6 +73782,16 @@
       ]
     },
     {
+      "file": "bin/solution-simulation-loop.cjs",
+      "priority": 289,
+      "churn": 289,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.33-06-solve-report-integration/v0.33-06-02-PLAN.md",
       "priority": 289,
       "churn": 289,
@@ -73257,6 +73810,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-02-SUMMARY.md",
+      "priority": 288,
+      "churn": 288,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -73383,6 +73946,16 @@
       "file": ".planning/archive/legacy/27-model-switching/27-02-PLAN.md",
       "priority": 286,
       "churn": 286,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": "bin/refinement-loop-diagnostic.test.cjs",
+      "priority": 285,
+      "churn": 285,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -74063,6 +74636,16 @@
       ]
     },
     {
+      "file": "bin/intent-normalizer.test.cjs",
+      "priority": 271,
+      "churn": 271,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/issue-classifier.test.cjs",
       "priority": 271,
       "churn": 271,
@@ -74100,6 +74683,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/formal/tla/MCNFQuorum.cfg",
+      "priority": 270,
+      "churn": 54,
+      "fixes": 4,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -74266,6 +74860,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": "bin/consequence-model-generator.cjs",
+      "priority": 268,
+      "churn": 268,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -74644,6 +75248,16 @@
       ]
     },
     {
+      "file": "core/workflows/debug.md",
+      "priority": 263,
+      "churn": 263,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.22-01-requirements-envelope-foundation/v0.22-01-02-PLAN.md",
       "priority": 263,
       "churn": 263,
@@ -74723,17 +75337,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/tla/MCNFQuorum.cfg",
-      "priority": 260,
-      "churn": 52,
-      "fixes": 4,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -75598,6 +76201,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-03-SUMMARY.md",
+      "priority": 245,
+      "churn": 245,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "agents/nf-research-synthesizer.md",
       "priority": 245,
       "churn": 245,
@@ -76070,6 +76683,16 @@
       "file": "get-shit-done/templates/research-project/STACK.md",
       "priority": 240,
       "churn": 240,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-01-SUMMARY.md",
+      "priority": 239,
+      "churn": 239,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -76881,6 +77504,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-01-foundation-and-infrastructure/CLEANUP-REPORT.md",
+      "priority": 228,
+      "churn": 228,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/model-state-extractor.test.cjs",
       "priority": 228,
       "churn": 228,
@@ -77195,6 +77828,26 @@
       ]
     },
     {
+      "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-PLAN.md",
+      "priority": 224,
+      "churn": 224,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": "bin/diagnostic-proposal-generator.cjs",
+      "priority": 224,
+      "churn": 224,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "test/debug-formal-context.test.cjs",
       "priority": 224,
       "churn": 224,
@@ -77392,6 +78045,17 @@
       "adjustments": 0,
       "signals": [
         "churn"
+      ]
+    },
+    {
+      "file": ".planning/formal/tla/MCliveness.cfg",
+      "priority": 222,
+      "churn": 74,
+      "fixes": 2,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
       ]
     },
     {
@@ -77857,17 +78521,6 @@
       "adjustments": 0,
       "signals": [
         "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/tla/MCliveness.cfg",
-      "priority": 216,
-      "churn": 72,
-      "fixes": 2,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
       ]
     },
     {
@@ -78487,6 +79140,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-SUMMARY.md",
+      "priority": 208,
+      "churn": 208,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -80248,6 +80911,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-01-PLAN.md",
+      "priority": 189,
+      "churn": 189,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/285-improve-ci-cd-testing-add-staging-trigge/285-PLAN.md",
       "priority": 189,
       "churn": 189,
@@ -80758,6 +81431,16 @@
       ]
     },
     {
+      "file": ".planning/formal/tla/NFQuorum.tla",
+      "priority": 184,
+      "churn": 184,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "bin/harness-diagnostic.test.cjs",
       "priority": 184,
       "churn": 184,
@@ -80948,16 +81631,6 @@
       "signals": [
         "churn",
         "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/formal/tla/NFQuorum.tla",
-      "priority": 182,
-      "churn": 182,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
       ]
     },
     {
@@ -81731,6 +82404,16 @@
       "file": ".planning/quick/4-quorum-agent-scoring-track-initial-votes/4-VERIFICATION.md",
       "priority": 174,
       "churn": 174,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-VALIDATION.md",
+      "priority": 173,
+      "churn": 173,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -82676,6 +83359,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-VERIFICATION.md",
+      "priority": 164,
+      "churn": 164,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/313-add-tier-field-to-requirements-tier-user/313-VERIFICATION.md",
       "priority": 164,
       "churn": 164,
@@ -82719,6 +83412,16 @@
       "file": "formal/spec/mcp-calls/environment.md",
       "priority": 164,
       "churn": 164,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-PLAN.md",
+      "priority": 163,
+      "churn": 163,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -83384,6 +84087,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-VERIFICATION.md",
+      "priority": 157,
+      "churn": 157,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/287-add-max-response-truncation-safety-net-i/287-PLAN.md",
       "priority": 157,
       "churn": 157,
@@ -83568,6 +84281,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-03-cycle-2-solution-simulation/v0.39-03-01-SUMMARY.md",
+      "priority": 156,
+      "churn": 156,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -85253,6 +85976,16 @@
       ]
     },
     {
+      "file": ".planning/phases/v0.39-02-cycle-1-diagnostic/v0.39-02-02-SUMMARY.md",
+      "priority": 139,
+      "churn": 139,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/279-wire-dual-subscription-slots-add-codex-2/279-VERIFICATION.md",
       "priority": 139,
       "churn": 139,
@@ -85623,6 +86356,17 @@
       ]
     },
     {
+      "file": ".planning/upstream-state.json",
+      "priority": 136,
+      "churn": 68,
+      "fixes": 1,
+      "adjustments": 0,
+      "signals": [
+        "churn",
+        "bugfix"
+      ]
+    },
+    {
       "file": "formal/category-groups.json",
       "priority": 136,
       "churn": 68,
@@ -85653,6 +86397,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-VERIFICATION.md",
+      "priority": 136,
+      "churn": 136,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -86513,17 +87267,6 @@
     },
     {
       "file": "bin/layer-constants.test.cjs",
-      "priority": 128,
-      "churn": 64,
-      "fixes": 1,
-      "adjustments": 0,
-      "signals": [
-        "churn",
-        "bugfix"
-      ]
-    },
-    {
-      "file": ".planning/upstream-state.json",
       "priority": 128,
       "churn": 64,
       "fixes": 1,
@@ -89560,6 +90303,16 @@
       ]
     },
     {
+      "file": ".planning/milestones/v0.39-MILESTONE-AUDIT.md",
+      "priority": 107,
+      "churn": 107,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "commands/nf/debug.md",
       "priority": 107,
       "churn": 107,
@@ -90947,6 +91700,26 @@
       ]
     },
     {
+      "file": ".planning/quick/324-route-cycle2-simulations-session-artifac/324-VERIFICATION.md",
+      "priority": 100,
+      "churn": 100,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": "example.md",
+      "priority": 100,
+      "churn": 100,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/formal/alloy/focus-topic-filter.als",
       "priority": 100,
       "churn": 100,
@@ -91630,6 +92403,16 @@
       ]
     },
     {
+      "file": "bin/intent-normalizer.cjs",
+      "priority": 97,
+      "churn": 97,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/phases/v0.38-01-bug-to-model-lookup-constraint-extraction/v0.38-01-03-SUMMARY.md",
       "priority": 97,
       "churn": 97,
@@ -91950,6 +92733,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/quick/325-add-layer-3-sentence-transformer-semanti/325-SUMMARY.md",
+      "priority": 96,
+      "churn": 96,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -92393,6 +93186,16 @@
       ]
     },
     {
+      "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-VERIFICATION.md",
+      "priority": 94,
+      "churn": 94,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/308-generate-test-recipes-for-uncovered-l3-f/308-PLAN.md",
       "priority": 94,
       "churn": 94,
@@ -92753,6 +93556,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-SUMMARY.md",
+      "priority": 92,
+      "churn": 92,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -93275,6 +94088,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": "test/formal-scope-scan-semantic.test.cjs",
+      "priority": 90,
+      "churn": 90,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -95111,6 +95934,16 @@
       ]
     },
     {
+      "file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-SUMMARY.md",
+      "priority": 80,
+      "churn": 80,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/formal/alloy/health-diagnostic-routing.als",
       "priority": 80,
       "churn": 80,
@@ -95344,6 +96177,16 @@
       "file": ".planning/quick/76-isolate-each-bash-call-in-mcp-status-to-/76-SUMMARY.md",
       "priority": 79,
       "churn": 79,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+      "priority": 78,
+      "churn": 78,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -95722,6 +96565,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/milestones/v0.39-ROADMAP.md",
+      "priority": 76,
+      "churn": 76,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -103391,6 +104244,16 @@
       ]
     },
     {
+      "file": "test/golden/tui-config.txt",
+      "priority": 38,
+      "churn": 38,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quick/322-replace-qgsd-with-nf-in-active-code-core/322-SUMMARY.md",
       "priority": 38,
       "churn": 38,
@@ -103927,7 +104790,27 @@
       ]
     },
     {
-      "file": "test/golden/tui-config.txt",
+      "file": ".planning/formal/prism/quorum.pm",
+      "priority": 36,
+      "churn": 36,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-for-phase-v0-38-04-b-to-f-solve-layer-decide-which.md",
+      "priority": 36,
+      "churn": 36,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": "test/golden/tui-sessions.txt",
       "priority": 36,
       "churn": 36,
       "fixes": 0,
@@ -104549,6 +105432,16 @@
       ]
     },
     {
+      "file": ".planning/formal/alloy/quorum-votes.als",
+      "priority": 34,
+      "churn": 34,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": "core/references/model-profiles.md",
       "priority": 34,
       "churn": 34,
@@ -104560,26 +105453,6 @@
     },
     {
       "file": ".planning/phases/v0.38-05-cross-model-regression-prevention/v0.38-05-01-SUMMARY.md",
-      "priority": 34,
-      "churn": 34,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
-      ]
-    },
-    {
-      "file": "test/golden/tui-sessions.txt",
-      "priority": 34,
-      "churn": 34,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/prism/quorum.pm",
       "priority": 34,
       "churn": 34,
       "fixes": 0,
@@ -105041,7 +105914,7 @@
       ]
     },
     {
-      "file": "core/references/continuation-format.md",
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-for-phase-v0-38-03-model-refinement-workflow-decid.md",
       "priority": 32,
       "churn": 32,
       "fixes": 0,
@@ -105051,7 +105924,7 @@
       ]
     },
     {
-      "file": ".planning/formal/alloy/quorum-votes.als",
+      "file": "core/references/continuation-format.md",
       "priority": 32,
       "churn": 32,
       "fixes": 0,
@@ -105894,6 +106767,16 @@
       ]
     },
     {
+      "file": ".planning/formal/prism/quorum.props",
+      "priority": 28,
+      "churn": 28,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/quorum/debates/2026-03-09-claude-1-nforma-v0-32-milestone-scope-readme-documentation.md",
       "priority": 28,
       "churn": 28,
@@ -106307,16 +107190,6 @@
       "file": "LICENSE",
       "priority": 27,
       "churn": 27,
-      "fixes": 0,
-      "adjustments": 0,
-      "signals": [
-        "churn"
-      ]
-    },
-    {
-      "file": ".planning/formal/prism/quorum.props",
-      "priority": 26,
-      "churn": 26,
       "fixes": 0,
       "adjustments": 0,
       "signals": [
@@ -107570,6 +108443,16 @@
       ]
     },
     {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-review-revised-phase-v0-39-02-implementation-plans.md",
+      "priority": 22,
+      "churn": 22,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/formal/tla/MCConvergenceTest.cfg",
       "priority": 22,
       "churn": 22,
@@ -108551,6 +109434,16 @@
       ]
     },
     {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-review-the-revised-phase-v0-38-02-plans-round-1-id.md",
+      "priority": 20,
+      "churn": 20,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
       "file": ".planning/formal/dr-scanner-config.json",
       "priority": 20,
       "churn": 20,
@@ -108830,6 +109723,56 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-.md",
+      "priority": 18,
+      "churn": 18,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-re-review-phase-v0-39-01-plans-after-r3-6-revision.md",
+      "priority": 18,
+      "churn": 18,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-review-phase-v0-39-02-implementation-plans-3-plans.md",
+      "priority": 18,
+      "churn": 18,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-review-these-phase-plans-for-phase-v0-38-02-debug.md",
+      "priority": 18,
+      "churn": 18,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/quorum/debates/2026-03-18-codex-1-review-these-phase-v0-39-01-plans-for-foundation-i.md",
+      "priority": 18,
+      "churn": 18,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -109154,6 +110097,46 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.38-03-model-refinement-workflow/task-envelope.json",
+      "priority": 16,
+      "churn": 16,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.38-04-b-to-f-solve-layer/task-envelope.json",
+      "priority": 16,
+      "churn": 16,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.38-05-cross-model-regression-prevention/task-envelope.json",
+      "priority": 16,
+      "churn": 16,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.39-01-foundation-and-infrastructure/task-envelope.json",
+      "priority": 16,
+      "churn": 16,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {
@@ -111327,6 +112310,16 @@
       "signals": [
         "churn",
         "bugfix"
+      ]
+    },
+    {
+      "file": ".planning/phases/v0.38-01-bug-to-model-lookup-constraint-extraction/task-envelope.json",
+      "priority": 12,
+      "churn": 12,
+      "fixes": 0,
+      "adjustments": 0,
+      "signals": [
+        "churn"
       ]
     },
     {

@@ -72,6 +72,7 @@
         "--version"
       ],
       "display_provider": "OpenAI",
+      "display_type": "codex-cli",
       "cli": "/opt/homebrew/bin/codex",
       "args_template": [
         "exec",
@@ -159,6 +160,7 @@
         "--version"
       ],
       "display_provider": "Google",
+      "display_type": "gemini-cli",
       "cli": "/opt/homebrew/bin/gemini",
       "args_template": [
         "-m",

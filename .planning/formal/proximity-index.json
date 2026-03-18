@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-18T17:36:15.541Z",
+  "generated": "2026-03-18T22:28:52.299Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,50 +84,50 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-18T17:36:11.112Z",
-      "hash": "2557f9f9"
+      "mtime": "2026-03-18T22:26:49.175Z",
+      "hash": "94da0252"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-17T19:42:57.259Z",
-      "hash": "c98d3ffd"
+      "mtime": "2026-03-18T22:18:42.406Z",
+      "hash": "1557a244"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-18T17:36:15.076Z",
-      "hash": "64c27344"
+      "mtime": "2026-03-18T22:26:20.631Z",
+      "hash": "06456b20"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-18T17:35:39.464Z",
-      "hash": "e9d51120"
+      "mtime": "2026-03-18T22:25:26.754Z",
+      "hash": "c80aa01d"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-17T19:19:42.099Z",
-      "hash": "85f6f2d8"
+      "mtime": "2026-03-18T22:16:00.115Z",
+      "hash": "f14f0bc8"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-18T17:36:07.092Z",
-      "hash": "a1689cac"
+      "mtime": "2026-03-18T22:27:10.566Z",
+      "hash": "c80898a1"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-18T17:36:06.258Z"
+      "mtime": "2026-03-18T22:26:44.924Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-18T17:33:23.772Z"
+      "mtime": "2026-03-18T22:21:59.462Z"
     }
   },
   "nodes": {
@@ -47237,6 +47237,39 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/DIAG-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/DIAG-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::DIAG-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/DIAG-05.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/DIAG-05.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::DIAG-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/DIAG-06.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::DIAG-06",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/DISP-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/DISP-01.stub.test.js",
@@ -47562,6 +47595,17 @@
       "edges": [
         {
           "to": "requirement::GATE-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/GATE-05.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::GATE-05",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -50075,6 +50119,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/TRACE-06.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::TRACE-06",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/TRACK-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/TRACK-01.stub.test.js",
@@ -50488,61 +50543,6 @@
       "edges": [
         {
           "to": "requirement::XPLAT-02",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/GATE-05.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::GATE-05",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/TRACE-06.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::TRACE-06",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/DIAG-04.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/DIAG-04.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::DIAG-04",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/DIAG-05.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/DIAG-05.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::DIAG-05",
-          "rel": "tests",
-          "source": "unit-test-coverage"
-        }
-      ]
-    },
-    "test_file::.planning/formal/generated-stubs/DIAG-06.stub.test.js": {
-      "type": "test_file",
-      "id": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
-      "edges": [
-        {
-          "to": "requirement::DIAG-06",
           "rel": "tests",
           "source": "unit-test-coverage"
         }

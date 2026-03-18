@@ -3220,11 +3220,11 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders && selectedRuntimes.includes('claude')) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
+      selectedProviderSlots = foundNames;
       if (foundNames.length > 0) {
-        console.log(`  ${yellow}Detected CLIs not enabled: ${foundNames.join(', ')}. Use --all-providers to include them.${reset}`);
+        console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
       }
     }
     installAllRuntimes(selectedRuntimes, hasGlobal, false);
@@ -3244,8 +3244,9 @@ if (hasGlobal && hasLocal) {
     }
     const detected = detectExternalClis(classified.externalPrimary);
     const foundNames = detected.filter(d => d.found).map(d => d.name);
+    selectedProviderSlots = [...selectedProviderSlots, ...foundNames];
     if (foundNames.length > 0) {
-      console.log(`  ${yellow}Detected CLIs not enabled: ${foundNames.join(', ')}. Use --all-providers to include them.${reset}`);
+      console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
     }
   }
   installAllRuntimes(['claude'], hasGlobal, false);
@@ -3256,11 +3257,11 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
+      selectedProviderSlots = foundNames;
       if (foundNames.length > 0) {
-        console.log(`  Detected: ${foundNames.join(', ')}. Run with --all-providers to include.`);
+        console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
       }
     }
     installAllRuntimes(['claude'], true, false);
