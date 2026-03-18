@@ -1,6 +1,6 @@
 ---
 name: nf:solve-remediate
-description: Remediation phase sub-skill for nf:solve — dispatches all 14 layer remediation steps (3a-3n) in strict dependency order with Agent-per-layer isolation
+description: Remediation phase sub-skill for nf:solve — dispatches all 15 layer remediation steps (3a-3n + 3a-extra) in strict dependency order with Agent-per-layer isolation
 allowed-tools:
   - Read
   - Write
@@ -13,7 +13,7 @@ allowed-tools:
 ---
 
 <objective>
-Run the remediation phase of the nForma consistency solver. This sub-skill handles Steps 3a-3n: all 14 layer remediation dispatches in strict dependency order. Each gap type with residual > 0 is dispatched as its own Agent call to prevent context accumulation across remediation steps.
+Run the remediation phase of the nForma consistency solver. This sub-skill handles Steps 3a-3n (+ 3a-extra): all 15 layer remediation dispatches in strict dependency order. Each gap type with residual > 0 is dispatched as its own Agent call to prevent context accumulation across remediation steps.
 
 This is an internal-only sub-skill dispatched by the nf:solve orchestrator via Agent tool prompts. It is NOT user-invocable.
 </objective>
@@ -162,6 +162,7 @@ For each wave from `computeWaves(residualVector)`:
 | l3_to_tc | 3m. Gate C | Yes — dispatches /nf:quick |
 | per_model_gates | 3m-extra. Per-Model Gates | Yes — dispatches /nf:quick |
 | h_to_m | 3n. H->M Gaps | Yes -- dispatches /nf:quick |
+| b_to_f | 3a-extra. B->F Gaps | Yes — dispatches /nf:close-formal-gaps + /nf:model-driven-fix |
 
 ---
 
@@ -194,6 +195,52 @@ Wait for the skill to complete. If it fails, log the failure and continue to the
 If a model fails verification (syntax error, counterexample, scope error), fix it immediately and re-run. Up to 3 fix attempts per model. Models that pass are confirmed; models that fail after 3 attempts are logged as needing manual review.
 
 Find tool JARs at: `.planning/formal/tla/tla2tools.jar` (or `~/.claude/.planning/formal/tla/tla2tools.jar`) and `.planning/formal/alloy/org.alloytools.alloy.dist.jar` (or `~/.claude/.planning/formal/alloy/org.alloytools.alloy.dist.jar`).
+
+### 3a-extra. B->F Gaps (residual_vector.b_to_f.residual > 0)
+
+**Skip if:** `b_to_f` residual <= 0 or -1.
+
+Read `b_to_f.detail` from the residual vector. Extract:
+- `not_covered`: entries from `b_to_f.detail.classification` where `classification === 'not_covered'`
+- `covered_not_reproduced`: entries from `b_to_f.detail.classification` where `classification === 'covered_not_reproduced'`
+
+**Priority ordering (per CONTEXT.md decisions):**
+- Dispatch `not_covered` before `covered_not_reproduced`
+- Within each bucket: sort by `bug_id` ascending (deterministic tiebreaker — repeated failure count sorting deferred to future phase)
+
+**Phase 1 — Route `not_covered` gaps (max 3/cycle):**
+
+Track a counter for B->F not_covered dispatches. For each not_covered entry (up to 3):
+
+1. Extract requirement IDs linked to the failing test from the traceability matrix (stored in `b_to_f.detail.classification[].test` → look up in traceability matrix)
+2. If requirement IDs found, dispatch:
+   ```
+   /nf:close-formal-gaps --batch --ids={linked_requirement_ids}
+   ```
+   If no requirement IDs are linked (unmapped test), dispatch with `--target={test_file_path}` to generate a model based on the test's code coverage area.
+3. Log: `"B->F: dispatching close-formal-gaps for not_covered bug {bug_id} ({N} linked requirements)"`
+
+If the counter reaches 3, log `"B->F: max not_covered dispatches (3) reached this cycle — {N} remaining not_covered gaps deferred"`, append `{ "layer": "b_to_f", "dispatched": 3, "max": 3, "bucket": "not_covered" }` to the `capped_layers` array, and skip remaining not_covered entries.
+
+**Phase 2 — Route `covered_not_reproduced` blind spots (max 2/cycle):**
+
+Track a counter for B->F blind spot dispatches. For each covered_not_reproduced entry (up to 2):
+
+1. Extract the model paths from the classification detail (`b_to_f.detail.classification[].models`)
+2. Extract the test file path as the failure context description
+3. Dispatch:
+   ```
+   /nf:model-driven-fix --bug-context "{test_file_path}: test fails but formal model passes" --model-paths={model_paths}
+   ```
+   The `--bug-context` flag (MRF-01 from Phase v0.38-03) injects the failure description into spec refinement, biasing toward capturing the failure mode.
+4. Log: `"B->F: dispatching model-driven-fix for blind spot {bug_id} ({N} models to refine)"`
+
+If the counter reaches 2, log `"B->F: max blind spot dispatches (2) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 2, "max": 2, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
+
+**Post-dispatch summary:**
+Log: `"B->F: {not_covered_dispatched}/{not_covered_total} not_covered, {blind_spot_dispatched}/{blind_spot_total} blind spots dispatched"`
+
+---
 
 ### 3b. F->T Gaps (residual_vector.f_to_t.residual > 0)
 
