@@ -52,11 +52,32 @@ Store as $TEST_OUTPUT and $EXIT_CODE. If exit code is 0 and ARGUMENTS is empty, 
   QUORUM-DEBUG: No failure detected — tests pass (exit 0).
   If you have a symptom not captured by tests, run: /nf:debug [describe the symptom]
 
+### Step A.5: Formal Model Consultation
+
+Run formal model consultation to check if formal models cover this failure:
+
+```bash
+node bin/debug-formal-context.cjs --description "$ARGUMENTS" --format json 2>/dev/null
+```
+
+Parse the JSON output. The output schema is:
+  { "verdict": "reproduced|not-reproduced|no-model", "constraints": [...], "models": [...] }
+
+Assign from parsed JSON:
+  - $FORMAL_VERDICT = parsed.verdict (one of: "reproduced", "not-reproduced", "no-model")
+  - $FORMAL_CONTEXT = the full parsed JSON object (used in Steps B, C, E, and G)
+
+If the command fails or produces no output, set:
+  - $FORMAL_VERDICT = "no-model"
+  - $FORMAL_CONTEXT = { "verdict": "no-model", "constraints": [], "models": [] }
+and continue (fail-open — formal context is advisory).
+
 ### Step B: Assemble bundle
 
 Compose $BUNDLE:
   FAILURE CONTEXT: $ARGUMENTS
   EXIT CODE: $EXIT_CODE (or "N/A — symptom only" if no test run)
+  FORMAL VERDICT: $FORMAL_VERDICT (or "skipped" if Step A.5 failed)
   === TEST OUTPUT ===
   $TEST_OUTPUT (or "N/A" if not a test failure)
 
@@ -70,6 +91,17 @@ Worker prompt template (inline $BUNDLE verbatim in each):
   $BUNDLE
   </bundle>
 
+  If $FORMAL_CONTEXT.constraints is non-empty, insert the following block here:
+
+  [FORMAL CONSTRAINTS]
+  The following constraints were extracted from formal models that cover this failure:
+  - [constraint 1 text]
+  - [constraint 2 text]
+  - [constraint 3 text]
+
+  These are verified properties of the system. Do NOT propose fixes that violate these constraints.
+  [END FORMAL CONSTRAINTS]
+
   Given this failure, answer ONLY:
 
   root_cause: <the single most likely root cause in one sentence>
@@ -80,6 +112,7 @@ Worker prompt template (inline $BUNDLE verbatim in each):
   - Do NOT suggest a fix. Suggest the next investigative step only.
   - Be specific: name the file, function, line range, or command to run.
   - If the bundle lacks enough context to diagnose, say so in root_cause and set confidence: LOW.
+  - If FORMAL CONSTRAINTS are present, respect them — they represent verified properties of the system.
 
 Dispatch all 4 workers as parallel Task calls:
 - Task(subagent_type="general-purpose", prompt="Call mcp__gemini-cli__gemini with: [worker prompt with $BUNDLE inlined verbatim]")
