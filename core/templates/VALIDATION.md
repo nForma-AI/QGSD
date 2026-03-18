@@ -9,9 +9,9 @@ created: {date}
 
 # Phase {N} — Validation Strategy
 
-> Template created by `/qgsd:plan-phase {N}` (step 5.5) after research.
-> Populated by `/qgsd:plan-phase {N}` (step 11.5) after plan-checker approval.
-> Governs feedback sampling during `/qgsd:execute-phase {N}`.
+> Template created by `/nf:plan-phase {N}` (step 5.5) after research.
+> Populated by `/nf:plan-phase {N}` (step 11.5) after plan-checker approval.
+> Governs feedback sampling during `/nf:execute-phase {N}`.
 
 ---
 
@@ -34,7 +34,7 @@ created: {date}
 
 - **After every task commit:** Run `{quick run command}`
 - **After every plan wave:** Run `{full suite command}`
-- **Before `/qgsd:verify-work`:** Full suite must be green
+- **Before `/nf:verify-work`:** Full suite must be green
 - **Maximum acceptable task feedback latency:** {N} seconds
 
 ---
@@ -66,7 +66,7 @@ created: {date}
 ## Manual-Only Verifications
 
 > Behaviors that genuinely cannot be automated, with justification.
-> These are surfaced during `/qgsd:verify-work` UAT.
+> These are surfaced during `/nf:verify-work` UAT.
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
@@ -93,7 +93,7 @@ Updated by `nf-plan-checker` when plans are approved:
 
 ## Execution Tracking
 
-Updated during `/qgsd:execute-phase {N}`:
+Updated during `/nf:execute-phase {N}`:
 
 | Wave | Tasks | Tests Run | Pass | Fail | Sampling Status |
 |------|-------|-----------|------|------|-----------------|

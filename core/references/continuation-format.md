@@ -44,7 +44,7 @@ Standard format for presenting next steps after completing a command or workflow
 
 **02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
 
-`/qgsd:execute-phase 2`
+`/nf:execute-phase 2`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -52,7 +52,7 @@ Standard format for presenting next steps after completing a command or workflow
 
 **Also available:**
 - Review plan before executing
-- `/qgsd:list-phase-assumptions 2` — check assumptions
+- `/nf:list-phase-assumptions 2` — check assumptions
 
 ---
 ```
@@ -69,7 +69,7 @@ Add note that this is the last plan and what comes after:
 **02-03: Refresh Token Rotation** — Add /api/auth/refresh with sliding expiry
 <sub>Final plan in Phase 2</sub>
 
-`/qgsd:execute-phase 2`
+`/nf:execute-phase 2`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -91,15 +91,15 @@ Add note that this is the last plan and what comes after:
 
 **Phase 2: Authentication** — JWT login flow with refresh tokens
 
-`/qgsd:plan-phase 2`
+`/nf:plan-phase 2`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:discuss-phase 2` — gather context first
-- `/qgsd:research-phase 2` — investigate unknowns
+- `/nf:discuss-phase 2` — gather context first
+- `/nf:research-phase 2` — investigate unknowns
 - Review roadmap
 
 ---
@@ -120,15 +120,15 @@ Show completion status before next action:
 
 **Phase 3: Core Features** — User dashboard, settings, and data export
 
-`/qgsd:plan-phase 3`
+`/nf:plan-phase 3`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/qgsd:discuss-phase 3` — gather context first
-- `/qgsd:research-phase 3` — investigate unknowns
+- `/nf:discuss-phase 3` — gather context first
+- `/nf:research-phase 3` — investigate unknowns
 - Review what Phase 2 built
 
 ---
@@ -145,11 +145,11 @@ When there's no clear primary action:
 
 **Phase 3: Core Features** — User dashboard, settings, and data export
 
-**To plan directly:** `/qgsd:plan-phase 3`
+**To plan directly:** `/nf:plan-phase 3`
 
-**To discuss context first:** `/qgsd:discuss-phase 3`
+**To discuss context first:** `/nf:discuss-phase 3`
 
-**To research unknowns:** `/qgsd:research-phase 3`
+**To research unknowns:** `/nf:research-phase 3`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -169,7 +169,7 @@ All 4 phases shipped
 
 **Start v1.1** — questioning → research → requirements → roadmap
 
-`/qgsd:new-milestone`
+`/nf:new-milestone`
 
 <sub>`/clear` first → fresh context window</sub>
 
@@ -214,7 +214,7 @@ Extract: `**02-03: Refresh Token Rotation** — Add /api/auth/refresh with slidi
 ## To Continue
 
 Run `/clear`, then paste:
-/qgsd:execute-phase 2
+/nf:execute-phase 2
 ```
 
 User has no idea what 02-03 is about.
@@ -222,7 +222,7 @@ User has no idea what 02-03 is about.
 ### Don't: Missing /clear explanation
 
 ```
-`/qgsd:plan-phase 3`
+`/nf:plan-phase 3`
 
 Run /clear first.
 ```
@@ -242,7 +242,7 @@ Sounds like an afterthought. Use "Also available:" instead.
 
 ```
 ```
-/qgsd:plan-phase 3
+/nf:plan-phase 3
 ```
 ```
 

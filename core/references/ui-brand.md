@@ -115,8 +115,8 @@ Always at end of major completions.
 ───────────────────────────────────────────────────────────────
 
 **Also available:**
-- `/qgsd:alternative-1` — description
-- `/qgsd:alternative-2` — description
+- `/nf:alternative-1` — description
+- `/nf:alternative-2` — description
 
 ───────────────────────────────────────────────────────────────
 ```

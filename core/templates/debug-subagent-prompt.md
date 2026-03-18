@@ -51,7 +51,7 @@ Create: .planning/debug/{slug}.md
 
 ## Usage
 
-**From /qgsd:debug:**
+**From /nf:debug:**
 ```python
 Task(
   prompt=filled_template,
