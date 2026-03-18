@@ -44,10 +44,11 @@ Plans:
   2. Quorum worker prompts include explicit rules to respect fix constraints and not violate listed invariants
   3. The NEXT STEP result table includes a FORMAL row showing model verdict (reproduced / not-reproduced / no-model)
   4. When no model covers the failure, debug Step G appends an entry to bug-model-gaps.json for future model creation
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.38-02-01: TBD
+- [ ] v0.38-02-01-PLAN.md — Formal context assembly helper, Step A.5 integration, and constraint injection into worker prompts
+- [ ] v0.38-02-02-PLAN.md — FORMAL verdict row in result table and gap persistence in Step G
 
 ### Phase v0.38-03: Model Refinement Workflow
 **Goal**: When a bug has no matching model or the model fails to reproduce, nForma can create or refine a model that captures the failure mode through a prescriptive 6-phase cycle
@@ -98,7 +99,7 @@ Note: v0.38-03 and v0.38-04 could potentially execute in parallel (both depend o
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | v0.38-01. Bug-to-Model Lookup & Constraint Extraction | 2/3 | Complete    | 2026-03-18 |
-| v0.38-02. Debug Command Integration | 0/TBD | Not started | - |
+| v0.38-02. Debug Command Integration | 0/2 | Not started | - |
 | v0.38-03. Model Refinement Workflow | 0/TBD | Not started | - |
 | v0.38-04. B-to-F Solve Layer | 0/TBD | Not started | - |
 | v0.38-05. Cross-Model Regression Prevention | 0/TBD | Not started | - |
