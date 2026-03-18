@@ -4,9 +4,13 @@
 const fs = require('fs');
 const path = require('path');
 
+const crypto = require('crypto');
+
 const ROOT = process.cwd();
 const SPEC_DIR = path.join(ROOT, '.planning', 'formal', 'spec');
 const INDEX_PATH = path.join(ROOT, '.planning', 'formal', 'proximity-index.json');
+const REGISTRY_PATH = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+const BUG_GAPS_PATH = path.join(ROOT, '.planning', 'formal', 'bug-model-gaps.json');
 
 function printHelp() {
   console.log(`Usage: node bin/formal-scope-scan.cjs --description "text" [options]
@@ -15,6 +19,10 @@ Options:
   --description "text"   Description to match against (required)
   --files file1,file2    Source files to check for overlap (optional)
   --format json|lines    Output format (default: json)
+  --bug-mode             Bug-mode: match against model-registry.json with
+                         formalism type and requirement coverage in output
+  --persist-gap          With --bug-mode: persist lookup result to
+                         bug-model-gaps.json for cross-session tracking
   --help                 Show this help message
 
 Matching algorithm (layered — proximity index enriches scope.json matching):
@@ -26,15 +34,25 @@ Matching algorithm (layered — proximity index enriches scope.json matching):
     4. Graph walk from --files code_file nodes to formal_module neighbors
     5. Enriches each match with: affected invariants, constants, requirements, proximity score
 
+Bug-mode matching (--bug-mode):
+  Scans model-registry.json entries using semantic/concept scoring:
+    - Tokenizes bug description and matches against model path names
+    - Scores requirement category prefix matches (e.g., "DETECT" in bug
+      matches model with DETECT-01)
+    - Returns formalism type (tla/alloy) and requirement coverage per match
+    - Falls back to standard mode if model-registry.json is missing
+
 Examples:
   node bin/formal-scope-scan.cjs --description "fix quorum deliberation bug"
   node bin/formal-scope-scan.cjs --description "update breaker" --format lines
   node bin/formal-scope-scan.cjs --files "hooks/nf-stop.js" --description "something"
+  node bin/formal-scope-scan.cjs --bug-mode --description "circuit breaker timeout"
+  node bin/formal-scope-scan.cjs --bug-mode --persist-gap --description "test bug"
 `);
 }
 
 function parseArgs(argv) {
-  const args = { description: '', files: [], format: 'json', help: false };
+  const args = { description: '', files: [], format: 'json', help: false, bugMode: false, persistGap: false };
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--help' || argv[i] === '-h') {
       args.help = true;
@@ -44,6 +62,10 @@ function parseArgs(argv) {
       args.files = argv[++i].split(',').map(f => f.trim()).filter(Boolean);
     } else if (argv[i] === '--format' && argv[i + 1]) {
       args.format = argv[++i];
+    } else if (argv[i] === '--bug-mode') {
+      args.bugMode = true;
+    } else if (argv[i] === '--persist-gap') {
+      args.persistGap = true;
     }
   }
   return args;
@@ -281,6 +303,178 @@ function enrichWithProximityIndex(matches, files, tokens) {
   return matches;
 }
 
+// ── Bug-Mode Layer ──────────────────────────────────────────────────────────
+
+/**
+ * Load model-registry.json. Returns null if unavailable (fail-open).
+ */
+function loadModelRegistry(registryPath) {
+  const p = registryPath || REGISTRY_PATH;
+  try {
+    if (!fs.existsSync(p)) return null;
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (e) {
+    process.stderr.write('Warning: Failed to load model-registry.json: ' + e.message + '\n');
+    return null;
+  }
+}
+
+/**
+ * Derive formalism type from model path key (e.g., ".planning/formal/tla/X.tla" -> "tla").
+ */
+function deriveFormalism(modelKey) {
+  if (modelKey.endsWith('.tla')) return 'tla';
+  if (modelKey.endsWith('.als')) return 'alloy';
+  return 'unknown';
+}
+
+/**
+ * Score concept match between a bug description and model metadata.
+ * Tokenizes description, matches against model path name tokens and requirement category prefixes.
+ */
+function scoreConceptMatch(bugDescription, modelKey, modelMetadata) {
+  const tokens = bugDescription.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+  if (tokens.length === 0) return 0;
+  let score = 0;
+
+  // Extract descriptive tokens from model key path (e.g., "NFCircuitBreaker.tla" -> ["nfcircuitbreaker"])
+  // Also split camelCase/PascalCase into individual words
+  const baseName = path.basename(modelKey).replace(/\.(tla|als)$/, '');
+  const modelNameTokens = baseName
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+    .toLowerCase()
+    .split(/[\s\-_]+/)
+    .filter(t => t.length > 2);
+
+  // Score model description tokens
+  if (modelMetadata.description) {
+    const descTokens = modelMetadata.description.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+    for (const modelToken of descTokens) {
+      if (tokens.includes(modelToken)) score += 0.1;
+    }
+  }
+
+  // Score model name tokens
+  for (const modelToken of modelNameTokens) {
+    if (tokens.some(t => t === modelToken || modelToken.includes(t) || t.includes(modelToken))) {
+      score += 0.1;
+    }
+  }
+
+  // Score requirement category prefix matches (e.g., "DETECT" from "DETECT-01")
+  for (const req of (modelMetadata.requirements || [])) {
+    const category = req.split('-')[0].toLowerCase();
+    if (category.length > 2 && tokens.some(t => category.includes(t) || t.includes(category))) {
+      score += 0.2;
+    }
+  }
+
+  return Math.min(score, 1.0);
+}
+
+/**
+ * Run bug-mode matching: scan model-registry.json entries, score by concept match,
+ * enrich with formalism type and requirement coverage.
+ */
+function runBugModeMatching(description, files, registryPath) {
+  const registry = loadModelRegistry(registryPath);
+  if (!registry || !registry.models) {
+    process.stderr.write('Warning: model-registry.json not available, falling back to standard mode\n');
+    return null; // signal caller to fall back
+  }
+
+  const matches = [];
+  for (const [modelKey, modelMeta] of Object.entries(registry.models)) {
+    const relevanceScore = scoreConceptMatch(description, modelKey, modelMeta);
+    if (relevanceScore > 0) {
+      matches.push({
+        model: modelKey,
+        path: modelKey,
+        matched_by: 'bug_pattern',
+        formalism: deriveFormalism(modelKey),
+        requirement_coverage: modelMeta.requirements || [],
+        bug_relevance_score: Math.round(relevanceScore * 1000) / 1000
+      });
+    }
+  }
+
+  // Rank by bug_relevance_score descending
+  matches.sort((a, b) => b.bug_relevance_score - a.bug_relevance_score);
+
+  return matches;
+}
+
+// ── Bug-Model Gaps Persistence ──────────────────────────────────────────────
+
+/**
+ * Generate a deterministic bug ID from description.
+ */
+function hashBugId(description) {
+  return crypto.createHash('sha256').update(description).digest('hex').slice(0, 8);
+}
+
+/**
+ * Load bug-model-gaps.json. Returns default structure if missing.
+ */
+function loadBugModelGaps(gapsPath) {
+  const p = gapsPath || BUG_GAPS_PATH;
+  try {
+    if (!fs.existsSync(p)) return { version: '1.0', entries: [] };
+    return JSON.parse(fs.readFileSync(p, 'utf8'));
+  } catch (e) {
+    process.stderr.write('Warning: Failed to load bug-model-gaps.json: ' + e.message + '\n');
+    return { version: '1.0', entries: [] };
+  }
+}
+
+/**
+ * Save bug-model-gaps.json to disk.
+ */
+function saveBugModelGaps(data, gapsPath) {
+  const p = gapsPath || BUG_GAPS_PATH;
+  const dir = path.dirname(p);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(p, JSON.stringify(data, null, 2) + '\n', 'utf8');
+}
+
+/**
+ * Persist a bug-mode lookup result to bug-model-gaps.json.
+ * Deduplicates by exact description match.
+ */
+function persistBugGap(description, matches, gapsPath) {
+  const data = loadBugModelGaps(gapsPath);
+  const bugId = hashBugId(description);
+  const timestamp = new Date().toISOString();
+  const matchedModels = matches.map(m => m.model || m.path);
+  const status = matchedModels.length > 0 ? 'no_reproduction' : 'no_coverage';
+
+  // Check for existing entry with same description (dedup)
+  const existingIdx = data.entries.findIndex(e => e.description === description);
+  if (existingIdx >= 0) {
+    // Update existing entry
+    data.entries[existingIdx].timestamp = timestamp;
+    data.entries[existingIdx].matched_models = matchedModels;
+    data.entries[existingIdx].status = status;
+  } else {
+    // Append new entry
+    data.entries.push({
+      bug_id: bugId,
+      description,
+      timestamp,
+      status,
+      matched_models: matchedModels,
+      checked_models: [],
+      session_id: null
+    });
+  }
+
+  saveBugModelGaps(data, gapsPath);
+  return data;
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -294,6 +488,27 @@ function main() {
   if (!args.description) {
     console.error('Error: --description is required');
     process.exit(1);
+  }
+
+  // Bug-mode: match against model-registry.json
+  if (args.bugMode) {
+    const bugMatches = runBugModeMatching(args.description, args.files);
+    if (bugMatches !== null) {
+      // Persist gap if requested
+      if (args.persistGap) {
+        persistBugGap(args.description, bugMatches);
+      }
+
+      if (args.format === 'lines') {
+        for (const m of bugMatches) {
+          console.log(m.model + '\t' + m.formalism + '\t' + m.bug_relevance_score);
+        }
+      } else {
+        console.log(JSON.stringify(bugMatches, null, 2));
+      }
+      process.exit(0);
+    }
+    // bugMatches === null means registry unavailable, fall through to standard mode
   }
 
   // Fail-open: if spec dir doesn't exist, output empty
@@ -367,4 +582,22 @@ function main() {
   process.exit(0);
 }
 
-main();
+// Export internals for testing
+if (typeof module !== 'undefined') {
+  module.exports = {
+    parseArgs,
+    scoreConceptMatch,
+    deriveFormalism,
+    runBugModeMatching,
+    loadModelRegistry,
+    hashBugId,
+    loadBugModelGaps,
+    saveBugModelGaps,
+    persistBugGap
+  };
+}
+
+// Only run main when executed directly (not required as module)
+if (require.main === module) {
+  main();
+}
