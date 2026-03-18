@@ -19,6 +19,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { interpretGateResult } = require('./verification-mode.cjs');
+const { getMaxIterations } = require('./config-update.cjs');
 
 // ---- Dependency Injection for Testing ----
 
@@ -129,7 +131,7 @@ function extractCounterexample(output) {
 function verifyBugReproduction(modelPath, bugContext, options) {
   options = options || {};
   const formalism = options.formalism || 'tla';
-  const maxAttempts = options.maxAttempts || 3;
+  const maxAttempts = options.maxAttempts || getMaxIterations();
   const verbose = options.verbose || false;
   const onIteration = options.onIteration || null;
 
@@ -145,8 +147,8 @@ function verifyBugReproduction(modelPath, bugContext, options) {
         ? path.join(__dirname, 'run-alloy.cjs')
         : path.join(__dirname, 'run-tlc.cjs');
 
-      // Run checker as subprocess via execFileSync (no shell injection risk)
-      output = deps.execFileSync('node', [checkerScript, modelPath], {
+      // Run checker as subprocess via execFileSync with diagnostic mode flag (no shell injection risk)
+      output = deps.execFileSync('node', [checkerScript, '--verification-mode=diagnostic', modelPath], {
         encoding: 'utf-8',
         timeout: 60000,
         stdio: ['pipe', 'pipe', 'pipe']
@@ -167,8 +169,10 @@ function verifyBugReproduction(modelPath, bugContext, options) {
     }
 
     const summary = parseCheckerSummary(output, hasError);
+    // Interpret result using verification mode semantics
+    const outcome = interpretGateResult(hasError, 'diagnostic');
 
-    if (hasError) {
+    if (outcome === 'REPRODUCED') {
       // Model found a violation — it REPRODUCES the bug — SUCCESS
       const counterexample = extractCounterexample(output);
       const iteration = { attempt, passed: false, summary };
@@ -184,7 +188,7 @@ function verifyBugReproduction(modelPath, bugContext, options) {
       };
     }
 
-    // Model passes — does NOT capture the failure — RETRY
+    // Model passes (outcome === 'INCOMPLETE') — does NOT capture the failure — RETRY
     const iteration = { attempt, passed: true, summary };
     iterations.push(iteration);
     if (onIteration) onIteration(iteration);
@@ -225,7 +229,7 @@ function parseArgs(argv) {
     model: null,
     bugContext: null,
     formalism: 'tla',
-    maxAttempts: 3,
+    maxAttempts: null,
     verbose: false,
     format: 'json',
     help: false,
@@ -239,7 +243,8 @@ function parseArgs(argv) {
     } else if (argv[i] === '--formalism' && argv[i + 1]) {
       args.formalism = argv[++i];
     } else if (argv[i] === '--max-attempts' && argv[i + 1]) {
-      args.maxAttempts = parseInt(argv[++i], 10) || 3;
+      const parsed = parseInt(argv[++i], 10);
+      args.maxAttempts = Number.isInteger(parsed) && parsed > 0 ? parsed : null;
     } else if (argv[i] === '--verbose') {
       args.verbose = true;
     } else if (argv[i] === '--format' && argv[i + 1]) {

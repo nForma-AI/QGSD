@@ -116,9 +116,11 @@ function detectLivenessProperties(configName, cfgPath, specDir) {
 
 // ── Main execution (only when run directly, not when require()'d by tests) ──
 if (require.main === module) {
-  // ── Parse --config argument ────────────────────────────────────────────────
+  // ── Parse --config argument and --verification-mode argument ──────────────
   const args       = process.argv.slice(2);
   const configArg  = args.find(a => a.startsWith('--config=')) || null;
+  const verificationModeArg = args.find(a => a.startsWith('--verification-mode=')) || null;
+  const verificationMode = verificationModeArg ? verificationModeArg.split('=')[1] : 'validation';
   const configName = configArg
     ? configArg.split('=')[1]
     : (args.find(a => !a.startsWith('-')) || 'MCsafety');
@@ -142,7 +144,7 @@ if (require.main === module) {
         runtime_ms: _runtimeMs,
         summary: 'error: config file not found in ' + _runtimeMs + 'ms',
         requirement_ids: getRequirementIds('tla:' + configName.toLowerCase()),
-        metadata: { config: configName }
+        metadata: { config: configName, verification_mode: verificationMode }
       });
     } catch (e) {
       process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');
@@ -174,7 +176,7 @@ if (require.main === module) {
           runtime_ms: _runtimeMs,
           summary: 'error: Java not found in ' + _runtimeMs + 'ms',
           requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
-          metadata: { config: configName }
+          metadata: { config: configName, verification_mode: verificationMode }
         });
       } catch (e) {
         process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');
@@ -202,7 +204,7 @@ if (require.main === module) {
           runtime_ms: _runtimeMs,
           summary: 'error: Java not found in ' + _runtimeMs + 'ms',
           requirement_ids: getRequirementIds(CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase())),
-          metadata: { config: configName }
+          metadata: { config: configName, verification_mode: verificationMode }
         });
       } catch (e) {
         process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');
@@ -453,7 +455,7 @@ if (require.main === module) {
           summary: 'pass: ' + configName + ' in ' + _runtimeMs + 'ms',
           triage_tags: triage_tags,
           requirement_ids: getRequirementIds(check_id),
-          metadata: { config: configName }
+          metadata: { config: configName, verification_mode: verificationMode }
         });
       } catch (e) {
         process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');

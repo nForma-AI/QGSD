@@ -22,9 +22,11 @@ const { getRequirementIds } = require('./requirement-map.cjs');
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
 let specName = 'quorum-votes'; // default for backward compat
+let verificationMode = 'validation'; // default verification mode
 for (const arg of process.argv) {
   if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
   if (arg.startsWith('--spec=')) specName = arg.slice('--spec='.length);
+  if (arg.startsWith('--verification-mode=')) verificationMode = arg.slice('--verification-mode='.length);
 }
 
 const checkId = 'alloy:' + specName;
@@ -42,7 +44,7 @@ function emitResult(result, runtimeMs, extraSummary, extraTags) {
       summary: result + ': ' + checkId + (extraSummary ? ' (' + extraSummary + ')' : '') + (runtimeMs ? ' in ' + runtimeMs + 'ms' : ''),
       triage_tags: (extraTags || []).concat(runtimeMs > 60000 ? ['timeout-risk'] : []),
       requirement_ids: reqIds,
-      metadata: {},
+      metadata: { verification_mode: verificationMode },
     });
   } catch (e) {
     process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n');
