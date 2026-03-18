@@ -31,9 +31,8 @@ function setupTestEnv(tmpDir) {
   // Create .planning directory structure
   const planningDir = path.join(tmpDir, '.planning');
   const formalDir = path.join(planningDir, 'formal');
-  const simDir = path.join(formalDir, 'cycle2-simulations');
 
-  fs.mkdirSync(simDir, { recursive: true });
+  fs.mkdirSync(formalDir, { recursive: true });
 
   // Create config.json with max_iterations
   const configPath = path.join(planningDir, 'config.json');
@@ -53,7 +52,7 @@ Spec == Init /\\ [][Next]_x
   const bugTracePath = path.join(tmpDir, 'bug.itf');
   fs.writeFileSync(bugTracePath, JSON.stringify({ trace: 'dummy' }, null, 2), 'utf-8');
 
-  return { planningDir, formalDir, simDir, reproducingModelPath, bugTracePath, configPath };
+  return { planningDir, formalDir, reproducingModelPath, bugTracePath, configPath };
 }
 
 // Helper: Create mock dependencies
@@ -269,10 +268,8 @@ test('simulateSolutionLoop: writes iteration history to disk', async () => {
     );
 
     const historyPath = path.join(
-      tmpDir,
-      '.planning',
-      'formal',
-      'cycle2-simulations',
+      os.tmpdir(),
+      'nf-cycle2-simulations',
       result.sessionId,
       'iteration-history.json'
     );
@@ -283,6 +280,9 @@ test('simulateSolutionLoop: writes iteration history to disk', async () => {
     assert.strictEqual(history.sessionId, result.sessionId, 'history should match sessionId');
     assert.strictEqual(history.converged, true, 'history should mark converged');
     assert.strictEqual(history.totalIterations, 1, 'history should record iteration count');
+
+    // Cleanup tmpdir session artifacts
+    fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
   } finally {
     cleanupTempDir(tmpDir);
   }

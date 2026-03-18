@@ -156,12 +156,17 @@ test('Consequence Model Generator - Session Creation', async (t) => {
       const mutations = [
         { type: 'add_invariant', target: 'Inv1', content: 'x > 0' }
       ];
-      
+
       const originalCwd = process.cwd();
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert(fs.existsSync(result.sessionDir), 'Session directory should exist');
-      assert(result.sessionDir.includes('cycle2-simulations'));
+      assert(result.sessionDir.includes('nf-cycle2-simulations'));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -178,12 +183,17 @@ test('Consequence Model Generator - Session Creation', async (t) => {
       ];
       
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert(fs.existsSync(result.consequenceModelPath));
       assert(result.consequenceModelPath.endsWith('.tla'));
-      
+
       const content = fs.readFileSync(result.consequenceModelPath, 'utf-8');
       assert(content.includes('x > 0'));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -201,14 +211,19 @@ test('Consequence Model Generator - Session Creation', async (t) => {
       ];
       
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       const mutationsPath = path.join(result.sessionDir, 'normalized-mutations.json');
       assert(fs.existsSync(mutationsPath));
-      
+
       const mutationsData = JSON.parse(fs.readFileSync(mutationsPath, 'utf-8'));
       assert.equal(mutationsData.length, 2);
       assert.equal(mutationsData[0].type, 'add_invariant');
       assert.equal(mutationsData[1].type, 'add_state_variable');
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -225,11 +240,16 @@ test('Consequence Model Generator - Session Creation', async (t) => {
       ];
       
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       const mutationsPath = path.join(result.sessionDir, 'normalized-mutations.json');
       const mutationsData = JSON.parse(fs.readFileSync(mutationsPath, 'utf-8'));
-      
+
       assert.equal(mutationsData[0].applied, true);
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -249,8 +269,13 @@ test('Consequence Model Generator - Formalism Detection', async (t) => {
       
       // No formalism option provided, should auto-detect from .tla
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert(result.consequenceModelPath.endsWith('.tla'));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -269,8 +294,13 @@ test('Consequence Model Generator - Formalism Detection', async (t) => {
       
       // No formalism option provided, should auto-detect from .als
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert(result.consequenceModelPath.endsWith('.als'));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -288,8 +318,13 @@ test('Consequence Model Generator - Formalism Detection', async (t) => {
       
       // Explicitly specify formalism
       const result = generateConsequenceModel(filePath, mutations, { formalism: 'tla' });
-      
+
       assert(result.consequenceModelPath.endsWith('.tla'));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -309,10 +344,15 @@ test('Consequence Model Generator - Diagnostics', async (t) => {
       ];
       
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert.equal(result.diagnostics.totalMutations, 2);
       assert.equal(result.diagnostics.appliedCount, 2);
       assert.equal(result.diagnostics.skippedCount, 0);
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -332,8 +372,13 @@ test('Consequence Model Generator - Fail-Open Behavior', async (t) => {
       
       // This should complete without throwing
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       assert(result.appliedMutations.length >= 1);
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -376,8 +421,13 @@ test('Consequence Model Generator - Session ID', async (t) => {
       const customSessionId = 'custom-session-123';
       
       const result = generateConsequenceModel(filePath, mutations, { sessionId: customSessionId });
-      
+
       assert(result.sessionDir.includes(customSessionId));
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -393,9 +443,17 @@ test('Consequence Model Generator - Session ID', async (t) => {
       
       const result1 = generateConsequenceModel(filePath, mutations);
       const result2 = generateConsequenceModel(filePath, mutations);
-      
+
       // Session directories should be different (random IDs)
       assert.notEqual(result1.sessionDir, result2.sessionDir);
+
+      // Cleanup tmpdir session artifacts
+      if (result1.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result1.sessionId), { recursive: true, force: true });
+      }
+      if (result2.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result2.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
@@ -419,13 +477,18 @@ test('Consequence Model Generator - Mutation Traceability', async (t) => {
       ];
       
       const result = generateConsequenceModel(filePath, mutations);
-      
+
       const mutationsPath = path.join(result.sessionDir, 'normalized-mutations.json');
       const mutationsData = JSON.parse(fs.readFileSync(mutationsPath, 'utf-8'));
-      
+
       assert.equal(mutationsData[0].type, 'add_invariant');
       assert.equal(mutationsData[0].target, 'Inv1');
       assert.equal(mutationsData[0].content, 'x > 0');
+
+      // Cleanup tmpdir session artifacts
+      if (result.sessionId) {
+        fs.rmSync(path.join(os.tmpdir(), 'nf-cycle2-simulations', result.sessionId), { recursive: true, force: true });
+      }
     } finally {
       cleanup(tempDir);
     }
