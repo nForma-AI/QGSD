@@ -1,0 +1,12 @@
+{
+  "schema_version": "1",
+  "phase": "v0.38-01",
+  "created_at": "2026-03-18T07:07:44.372Z",
+  "risk_level": "medium",
+  "research": {
+    "objective": "Bug-to-model lookup and constraint extraction infrastructure",
+    "constraints": "",
+    "target_files": [],
+    "confidence": "HIGH"
+  }
+}

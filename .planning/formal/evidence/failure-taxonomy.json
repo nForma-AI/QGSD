@@ -1,14 +1,14 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-17T17:50:37.038Z",
-  "total_failures": 2,
+  "generated": "2026-03-18T17:36:16.283Z",
+  "total_failures": 5,
   "categories": {
     "crash": [
       {
         "tool": "run-prism",
         "formalism": "prism",
         "result": "error",
-        "timestamp": "2026-03-17T17:50:30.952Z",
+        "timestamp": "2026-03-18T17:36:13.895Z",
         "check_id": "prism:quorum",
         "surface": "prism",
         "property": "Quorum consensus probability under agent availability rates",
@@ -22,8 +22,8 @@
         ],
         "metadata": {},
         "observation_window": {
-          "window_start": "2026-03-17T17:50:30.951Z",
-          "window_end": "2026-03-17T17:50:30.952Z",
+          "window_start": "2026-03-18T17:36:13.894Z",
+          "window_end": "2026-03-18T17:36:13.895Z",
           "n_traces": 0,
           "n_events": 0,
           "window_days": 0
@@ -33,18 +33,75 @@
       }
     ],
     "timeout": [],
-    "logic_violation": [],
+    "logic_violation": [
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-18T17:36:07.247Z",
+        "check_id": "tla:mcsessiontracking",
+        "surface": "tla",
+        "property": "MCSessionTracking",
+        "runtime_ms": 8485,
+        "summary": "fail: MCSessionTracking in 8485ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionTracking"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCSessionTracking in 8485ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-18T17:36:14.848Z",
+        "check_id": "tla:mctuimodules",
+        "surface": "tla",
+        "property": "MCTUIModules",
+        "runtime_ms": 1203,
+        "summary": "fail: MCTUIModules in 1203ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "NAV-01"
+        ],
+        "metadata": {
+          "config": "MCTUIModules"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUIModules in 1203ms"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-18T17:36:15.777Z",
+        "check_id": "tla:mctuinavigation",
+        "surface": "tla",
+        "property": "MCTUINavigation",
+        "runtime_ms": 745,
+        "summary": "fail: MCTUINavigation in 745ms",
+        "triage_tags": [],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCTUINavigation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCTUINavigation in 745ms"
+      }
+    ],
     "drift": [
       {
         "tool": "validate-traces",
         "formalism": "trace",
         "result": "fail",
-        "timestamp": "2026-03-17T17:50:23.408Z",
+        "timestamp": "2026-03-18T17:36:06.517Z",
         "check_id": "ci:conformance-traces",
         "surface": "ci",
         "property": "Conformance event replay through XState machine",
-        "runtime_ms": 59,
-        "summary": "fail: 1 divergence(s) in 1 traces (60ms)",
+        "runtime_ms": 30,
+        "summary": "fail: 1 divergence(s) in 1 traces (30ms)",
         "triage_tags": [
           "trace-divergence"
         ],
@@ -54,8 +111,8 @@
           "total": 1
         },
         "observation_window": {
-          "window_start": "2026-03-17T17:50:23.361Z",
-          "window_end": "2026-03-17T17:50:23.374Z",
+          "window_start": "2026-03-18T17:36:06.490Z",
+          "window_end": "2026-03-18T17:36:06.491Z",
           "n_traces": 0,
           "n_events": 1,
           "window_days": 0
@@ -69,11 +126,11 @@
   "category_counts": {
     "crash": 1,
     "timeout": 0,
-    "logic_violation": 0,
+    "logic_violation": 3,
     "drift": 1,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "2 failures classified: crash=1, timeout=0, logic_violation=0, drift=1, degradation=0. 0 unclassified."
+  "summary": "5 failures classified: crash=1, timeout=0, logic_violation=3, drift=1, degradation=0. 0 unclassified."
 }
