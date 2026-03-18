@@ -43,6 +43,18 @@ If `--category` is provided, filter to that category only.
 If `--ids` is provided (comma-separated), filter to those specific IDs.
 If `--all` is provided, process all uncovered requirements.
 Otherwise, present the categories via AskUserQuestion and let the user pick one (unless --batch).
+
+**Bug context parsing (MRF-01):**
+
+If `--bug-context` is provided:
+- Normalize the value: `BUG_CONTEXT=$(node bin/refinement-loop.cjs --normalize "$RAW_VALUE" 2>/dev/null)`
+  (Auto-detects file path vs inline text, trims whitespace, fails-open to empty string)
+- Store normalized text as `$BUG_CONTEXT`
+- Log: `Bug context loaded: {first 80 chars of $BUG_CONTEXT}...`
+
+If `--verbose` is provided, set `$VERBOSE=true`.
+
+When `$BUG_CONTEXT` is non-empty, the workflow enters **bug-context mode**: Steps 5 and 6 are modified to bias spec generation and use the refinement verification loop respectively.
 </step>
 
 <step name="cluster_requirements">
@@ -170,6 +182,23 @@ For each cluster, generate the formal specification:
 
 **IMPORTANT**: Every generated model MUST include `@requirement` annotations in comments
 linking back to the requirement IDs it covers. Format: `\* @requirement REQ-ID` (TLA+/Alloy), `// @requirement REQ-ID` (Petri/PRISM)
+
+### Bug Context Injection (MRF-01)
+
+If `$BUG_CONTEXT` is non-empty (i.e., `--bug-context` was provided in Step 1), append the following block to the spec generation prompt for ALL formalisms (TLA+, Alloy, PRISM, Petri), AFTER the existing requirement text and module context but BEFORE the formalism-specific instructions:
+
+```
+<bug_context>
+This model must capture the following failure mode:
+{$BUG_CONTEXT}
+
+Generate invariants/assertions that would be VIOLATED when this bug is present.
+The model should FAIL (find a counterexample) when the bug exists in the system.
+After the bug is fixed, the model should PASS (no violations).
+</bug_context>
+```
+
+This biases the generated spec toward capturing the failure mode rather than just verifying requirements. When `$BUG_CONTEXT` is empty, this block is omitted and Step 5 behaves identically to before.
 </step>
 
 <step name="run_checker">
@@ -190,6 +219,43 @@ If verification fails:
 
 If the checker tool is not available (e.g., Java not installed), warn the user
 and proceed to registration with a note that verification is pending.
+
+### Refinement Verification Loop (MRF-02)
+
+**Skip if** `$BUG_CONTEXT` is empty (standard mode — no refinement loop needed).
+
+When `$BUG_CONTEXT` is non-empty (`--bug-context` was provided), use **inverted verification semantics** instead of standard verification:
+
+- Model checker finds error (violation) = model **REPRODUCES** the bug = **SUCCESS**
+- Model checker passes (no errors) = model does **NOT** capture the failure = **RETRY**
+
+Run the refinement loop:
+```bash
+node bin/refinement-loop.cjs --model "$MODEL_PATH" --bug-context "$BUG_CONTEXT" --formalism "$FORMALISM" ${VERBOSE:+--verbose} --format json
+```
+
+Parse the JSON output and route:
+
+- **`status == "reproduced"`**: Log success, display iteration feedback:
+  `Attempt {N}: reproduced -- {summary}`
+  Continue to Step 7 (registry update).
+
+- **`status == "not_reproduced"` AND refinement retries remain (< 3 total attempts)**:
+  Display: `Attempt {N}: still passes -- {summary}, retry {N} of 2`
+  Return to Step 5 to regenerate the model with refinement context. Append to the generation prompt:
+  `"Previous model passed all checks -- it did not capture the failure. Checker output: {iteration summary}. Refine the invariants to be more specific to the described failure mode."`
+  Then re-run Step 6 (up to 2 additional retries, 3 total attempts).
+
+- **`status == "not_reproduced"` AND all attempts exhausted (3 total)**:
+  Display: `Model refinement exhausted (3 attempts). Model does not reproduce the bug.`
+  Continue to Step 7 with a note that model is unverified for bug reproduction.
+
+**Feedback display:**
+- If `$VERBOSE` is true: show full checker output for each iteration
+- Otherwise: show summary verdicts only (default per user decision)
+- Always include pointer to full checker output file in summary
+
+**When `$BUG_CONTEXT` is empty:** This entire section is skipped. Step 6 behaves identically to before (standard verification: no errors = success, errors = fix or report).
 </step>
 
 <step name="update_registry">
