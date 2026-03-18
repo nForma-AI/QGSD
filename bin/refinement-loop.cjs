@@ -87,7 +87,7 @@ function parseCheckerSummary(output, hasError) {
   }
   // Look for "no error" message
   if (/no error has been found/i.test(output)) {
-    return 'model invariants hold, bug not captured';
+    return 'model is incomplete — invariants hold but model does not capture the failure';
   }
   // Look for state count
   const stateMatch = output.match(/(\d+)\s+states?\s+found/i);
@@ -117,7 +117,7 @@ function extractCounterexample(output) {
 
 /**
  * Run the inverted verification loop for model refinement.
- * INVERTED SEMANTICS: error = reproduced (success), pass = not captured (retry).
+ * INVERTED SEMANTICS: error = reproduced (success), pass = model incomplete (retry).
  *
  * @param {string} modelPath - Path to the formal model file
  * @param {string} bugContext - Normalized bug description text
@@ -161,7 +161,7 @@ function verifyBugReproduction(modelPath, bugContext, options) {
         output = (err.stdout || '') + (err.stderr || '');
         hasError = true;
       } else {
-        // Spawn failure, timeout, or other error — fail-open as "not reproduced"
+        // Spawn failure, timeout, or other error — fail-open as "model inconclusive"
         output = err.message || 'checker subprocess error';
         hasError = false;
         process.stderr.write(`[refinement-loop] Checker error on attempt ${attempt}: ${err.message}\n`);
@@ -188,13 +188,13 @@ function verifyBugReproduction(modelPath, bugContext, options) {
       };
     }
 
-    // Model passes (outcome === 'INCOMPLETE') — does NOT capture the failure — RETRY
+    // Model passes (outcome === 'INCOMPLETE') — model remains incomplete — does not capture the failure — RETRY
     const iteration = { attempt, passed: true, summary };
     iterations.push(iteration);
     if (onIteration) onIteration(iteration);
   }
 
-  // All attempts exhausted — model does not reproduce the bug
+  // All attempts exhausted — model remains incomplete
   return {
     status: 'not_reproduced',
     attempts: maxAttempts,
@@ -214,7 +214,7 @@ function verifyBugReproduction(modelPath, bugContext, options) {
  * @returns {string} Formatted feedback line
  */
 function formatIterationFeedback(iteration, verbose, fullOutput) {
-  const status = iteration.passed ? 'still passes' : 'reproduced';
+  const status = iteration.passed ? 'model still incomplete' : 'reproduced';
   const line = `Attempt ${iteration.attempt}: ${status} \u2014 ${iteration.summary}`;
   if (verbose && fullOutput) {
     return `${line}\n  Full output:\n${fullOutput.split('\n').map(l => '    ' + l).join('\n')}`;
