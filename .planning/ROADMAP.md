@@ -56,12 +56,13 @@ Plans:
   3. The three-gate convergence check runs automatically: original invariants still hold AND bug no longer triggers (inverted check passes) AND no 2-hop neighbor regressions -- and once a convergence verdict is reached it is not silently reverted (reflecting write-once resolution semantics from the convergence formal model)
   4. The simulation loop displays iteration progress, per-gate pass/fail status, and convergence outcome, escalating to the user after max iterations are exhausted
   5. When an external dependency (model checker, quorum slot) becomes unavailable during simulation, the system preserves all accumulated state without corruption (no partial writes to logs or premature state deletion)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] v0.39-03-01: TBD
-- [ ] v0.39-03-02: TBD
-- [ ] v0.39-03-03: TBD
+- [ ] v0.39-03-01-PLAN.md — Intent normalization and consequence model generation
+- [ ] v0.39-03-02-PLAN.md — Three-gate convergence runner with write-once verdict persistence
+- [ ] v0.39-03-03-PLAN.md — Simulation loop orchestrator and model-driven-fix Phase 4.5 integration
+
 
 ## Progress
 
