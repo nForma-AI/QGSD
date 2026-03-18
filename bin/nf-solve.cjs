@@ -3306,6 +3306,177 @@ function sweepHtoM() {
   }
 }
 
+// ── B->F Sweep: Bug-to-Formal model gap analysis ────────────────────────────
+
+/**
+ * Classify a single failing test against formal model coverage.
+ * @param {string} testPath - Test file path
+ * @param {Object} traceMatrix - { coverage_summary, requirement_test_map, ... }
+ * @param {Object} modelRegistry - { models: { [path]: { requirements: [...] } } }
+ * @param {Object} bugGaps - { entries: [{ bug_id, status, ... }] }
+ * @returns {{ classification: string, models: string[], bug_id: string }}
+ */
+function classifyFailingTest(testPath, traceMatrix, modelRegistry, bugGaps) {
+  const crypto = require('crypto');
+  const bugId = crypto.createHash('sha256').update(testPath).digest('hex').slice(0, 8);
+
+  // Step 1: Find requirement IDs linked to this test via traceability matrix
+  const testReqMap = traceMatrix.test_requirement_map || {};
+  const reqIds = testReqMap[testPath] || [];
+  if (reqIds.length === 0) {
+    return { classification: 'not_covered', models: [], bug_id: bugId };
+  }
+
+  // Step 2: Find formal models covering those requirements
+  const reqSet = new Set(reqIds);
+  const matchedModels = [];
+  const models = modelRegistry.models || {};
+  for (const [modelPath, modelMeta] of Object.entries(models)) {
+    const modelReqs = modelMeta.requirements || [];
+    if (modelReqs.some(r => reqSet.has(r))) {
+      matchedModels.push(modelPath);
+    }
+  }
+  if (matchedModels.length === 0) {
+    return { classification: 'not_covered', models: [], bug_id: bugId };
+  }
+
+  // Step 3: Check bug-model-gaps.json for reproduction status
+  const entries = bugGaps.entries || [];
+  const existing = entries.find(e => e.bug_id === bugId);
+  if (existing && existing.status === 'reproduced') {
+    return { classification: 'covered_reproduced', models: matchedModels, bug_id: bugId };
+  }
+
+  // Models exist but no reproduction record
+  return { classification: 'covered_not_reproduced', models: matchedModels, bug_id: bugId };
+}
+
+/**
+ * B->F: Bug-to-Formal model gap analysis.
+ * Classifies failing tests against formal model coverage.
+ * Returns { residual: N, detail: {...} } where residual = not_covered + covered_not_reproduced.
+ *
+ * @param {Object} [t_to_c_result] - The t_to_c sweep result (optional, for dependency injection)
+ * @returns {{ residual: number, detail: Object }}
+ */
+function sweepBtoF(t_to_c_result) {
+  if (fastMode) {
+    return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
+  }
+
+  try {
+    // Load traceability matrix for test→requirement mapping
+    const traceResult = spawnTool('bin/generate-traceability-matrix.cjs', ['--json', '--quiet']);
+    if (!traceResult.ok) {
+      return { residual: -1, detail: { error: true, stderr: 'Failed to load traceability matrix' } };
+    }
+
+    let traceMatrix;
+    try {
+      traceMatrix = JSON.parse(traceResult.stdout);
+    } catch (e) {
+      return { residual: -1, detail: { error: true, stderr: 'Failed to parse traceability matrix JSON' } };
+    }
+
+    // Load model registry
+    const registryPath = path.join(ROOT, '.planning', 'formal', 'model-registry.json');
+    let modelRegistry = { models: {} };
+    try {
+      modelRegistry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+    } catch (e) {
+      // Fail-open: no model registry means all tests are not_covered
+    }
+
+    // Load bug-model-gaps.json
+    const gapsPath = path.join(ROOT, '.planning', 'formal', 'bug-model-gaps.json');
+    let bugGaps = { version: '1.0', entries: [] };
+    try {
+      bugGaps = JSON.parse(fs.readFileSync(gapsPath, 'utf8'));
+    } catch (e) {
+      // Fail-open: no gaps file means no reproduction records
+    }
+
+    // Get test files that have failures
+    // If t_to_c_result passed in and has failures, use that info
+    // Otherwise, discover failing test files from the traceability matrix
+    const testReqMap = traceMatrix.test_requirement_map || {};
+    const allTestFiles = Object.keys(testReqMap);
+
+    // Check if t_to_c shows failures
+    const t2cDetail = t_to_c_result && t_to_c_result.detail ? t_to_c_result.detail : null;
+    const hasFailures = t2cDetail && t2cDetail.failed > 0;
+
+    if (!hasFailures && t2cDetail && !t2cDetail.skipped) {
+      // t_to_c ran and no failures — nothing to classify
+      return {
+        residual: 0,
+        detail: {
+          total_failing: 0,
+          covered_reproduced: 0,
+          covered_not_reproduced: 0,
+          not_covered: 0,
+          top_bugs: [],
+          classification: [],
+        },
+      };
+    }
+
+    // Classify all test files that have requirement mappings
+    // (since t_to_c doesn't expose individual failing file paths,
+    // we classify all mapped tests to compute the coverage landscape)
+    const classifications = [];
+    let coveredReproduced = 0;
+    let coveredNotReproduced = 0;
+    let notCovered = 0;
+
+    for (const testFile of allTestFiles) {
+      const result = classifyFailingTest(testFile, traceMatrix, modelRegistry, bugGaps);
+      classifications.push({
+        test: testFile,
+        classification: result.classification,
+        models: result.models,
+        bug_id: result.bug_id,
+      });
+
+      switch (result.classification) {
+        case 'covered_reproduced': coveredReproduced++; break;
+        case 'covered_not_reproduced': coveredNotReproduced++; break;
+        case 'not_covered': notCovered++; break;
+      }
+    }
+
+    // Sort classifications: not_covered first, then covered_not_reproduced, then covered_reproduced
+    // Within each bucket: alphabetical by test path for deterministic output
+    classifications.sort((a, b) => {
+      const order = { not_covered: 0, covered_not_reproduced: 1, covered_reproduced: 2 };
+      const oa = order[a.classification] || 3;
+      const ob = order[b.classification] || 3;
+      if (oa !== ob) return oa - ob;
+      return a.bug_id.localeCompare(b.bug_id);
+    });
+
+    const topBugs = classifications
+      .filter(c => c.classification !== 'covered_reproduced')
+      .slice(0, 5)
+      .map(c => c.bug_id);
+
+    return {
+      residual: notCovered + coveredNotReproduced,
+      detail: {
+        total_failing: allTestFiles.length,
+        covered_reproduced: coveredReproduced,
+        covered_not_reproduced: coveredNotReproduced,
+        not_covered: notCovered,
+        top_bugs: topBugs,
+        classification: classifications,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: true, stderr: 'sweepBtoF failed: ' + err.message } };
+  }
+}
+
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
@@ -3398,6 +3569,9 @@ function computeResidual() {
   // Hypothesis measurement sweep (informational — not added to forward total)
   const h_to_m = sweepHtoM();
 
+  // B->F sweep: Bug-to-Formal model gap analysis (automatable — dispatches remediation)
+  const b_to_f = sweepBtoF(t_to_c);
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -3407,7 +3581,8 @@ function computeResidual() {
     (f_to_c.residual >= 0 ? f_to_c.residual : 0) +
     (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
     (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
-    (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0);
+    (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0) +
+    (b_to_f.residual >= 0 ? b_to_f.residual : 0);
 
   const manual =
     (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
@@ -3444,6 +3619,7 @@ function computeResidual() {
     formal_lint,
     hazard_model,
     h_to_m,
+    b_to_f,
     assembled_candidates,
     total,
     automatable,
@@ -4003,6 +4179,22 @@ function formatReport(iterations, finalResidual, converged) {
       ' total, ' + (hmd.critical_count || 0) + ' critical, ' + (hmd.high_count || 0) + ' high');
   }
 
+  // B->F section (Bug-to-Formal model gap analysis)
+  lines.push('\u2500 B \u2192 F (Bug-to-Formal) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+  const btfResidual = finalResidual.b_to_f ? finalResidual.b_to_f.residual : -1;
+  lines.push(renderRow('B \u2192 F', btfResidual));
+
+  if (finalResidual.b_to_f && finalResidual.b_to_f.detail && !finalResidual.b_to_f.detail.skipped && !finalResidual.b_to_f.detail.error) {
+    const btfd = finalResidual.b_to_f.detail;
+    lines.push('  Classification: ' + (btfd.covered_reproduced || 0) + ' reproduced, ' +
+      (btfd.covered_not_reproduced || 0) + ' not reproduced, ' +
+      (btfd.not_covered || 0) + ' not covered');
+    if (btfd.top_bugs && btfd.top_bugs.length > 0) {
+      lines.push('  Top bugs: ' + btfd.top_bugs.join(', '));
+    }
+  }
+
   // Cross-Layer Dashboard summary (aggregated view)
   try {
     const dashResult = spawnTool('bin/cross-layer-dashboard.cjs', ['--cached', '--json']);
@@ -4378,6 +4570,18 @@ function formatReport(iterations, finalResidual, converged) {
       for (const h of detail.top_hazards.slice(0, 5)) {
         lines.push('  - ' + (h.from || '?') + ' -> ' + (h.event || '?') + ' (RPN: ' + (h.rpn || 0) + ')');
       }
+    }
+    lines.push('');
+  }
+
+  if (finalResidual.b_to_f && finalResidual.b_to_f.residual > 0) {
+    lines.push('## B \u2192 F (Bug-to-Formal)');
+    const btfDetail = finalResidual.b_to_f.detail;
+    lines.push('Classification: {covered_reproduced: ' + (btfDetail.covered_reproduced || 0) +
+      ', covered_not_reproduced: ' + (btfDetail.covered_not_reproduced || 0) +
+      ', not_covered: ' + (btfDetail.not_covered || 0) + '}');
+    if (btfDetail.top_bugs && btfDetail.top_bugs.length > 0) {
+      lines.push('Top bug IDs: ' + btfDetail.top_bugs.join(', '));
     }
     lines.push('');
   }
@@ -5152,6 +5356,8 @@ module.exports = {
   sweepFormalLint,
   sweepHazardModel,
   sweepHtoM,
+  sweepBtoF,
+  classifyFailingTest,
   assembleReverseCandidates,
   proximityPreFilter,
   classifyCandidate,
