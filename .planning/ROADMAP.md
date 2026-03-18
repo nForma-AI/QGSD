@@ -24,11 +24,11 @@ This milestone makes formal models the sandbox for both diagnosis and solutions.
   1. Every model checker invocation carries a verification_mode tag ('diagnostic' or 'validation') that downstream consumers can read and act on
   2. TLC counterexample traces are parsed into structured JSON with per-state field extraction that can be programmatically compared
   3. Running with --max-iterations N limits both Cycle 1 and Cycle 2 loops to N iterations, and the default of 3 is persisted in .planning/config.json
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] v0.39-01-01: TBD
-- [ ] v0.39-01-02: TBD
+- [ ] v0.39-01-01-PLAN.md — Verification mode tagging and configurable iteration limits
+- [ ] v0.39-01-02-PLAN.md — TLC trace parsing and diagnostic diff infrastructure
 
 ### Phase v0.39-02: Cycle 1 Diagnostic
 **Goal**: When a model fails to reproduce a known bug, users see a targeted diagnostic ("model assumes X but bug shows Y") that guides specific model corrections instead of blind retry
