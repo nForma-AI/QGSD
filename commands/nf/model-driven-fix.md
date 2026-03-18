@@ -239,7 +239,7 @@ NEIGHBOR_PATHS=$(echo "$NEIGHBORS_JSON" | jq -r '.neighbors[].path' | tr '\n' ' 
 
 Create ITF bug trace JSON if not already present:
 ```bash
-BUG_TRACE_PATH=".planning/formal/cycle2-simulations/$(date +%s)/bug-trace.itf"
+BUG_TRACE_PATH="$(mktemp -d -t nf-cycle2-simulations.XXXXXX)/bug-trace.itf"
 # Extract or create bug trace from reproducing model diagnostics
 ```
 
