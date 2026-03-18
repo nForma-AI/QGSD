@@ -13,9 +13,9 @@
 
 ### Constraint Extraction
 
-- [ ] **CEX-01**: model-constrained-fix.cjs parses TLA+ specs to extract violated invariant definitions, state variables, and transition predicates
-- [ ] **CEX-02**: model-constrained-fix.cjs parses Alloy specs to extract failing assertion definitions and signature constraints
-- [ ] **CEX-03**: Extracted constraints are rendered as plain-English fix constraint summaries suitable for injection into quorum worker prompts
+- [x] **CEX-01**: model-constrained-fix.cjs parses TLA+ specs to extract violated invariant definitions, state variables, and transition predicates
+- [x] **CEX-02**: model-constrained-fix.cjs parses Alloy specs to extract failing assertion definitions and signature constraints
+- [x] **CEX-03**: Extracted constraints are rendered as plain-English fix constraint summaries suitable for injection into quorum worker prompts
 
 ### Debug Integration
 
@@ -59,9 +59,9 @@
 | BML-01 | v0.38-01 | Complete |
 | BML-02 | v0.38-01 | Pending |
 | BML-03 | v0.38-01 | Complete |
-| CEX-01 | v0.38-01 | Pending |
-| CEX-02 | v0.38-01 | Pending |
-| CEX-03 | v0.38-01 | Pending |
+| CEX-01 | v0.38-01 | Complete |
+| CEX-02 | v0.38-01 | Complete |
+| CEX-03 | v0.38-01 | Complete |
 | DBG-01 | v0.38-02 | Pending |
 | DBG-02 | v0.38-02 | Pending |
 | DBG-03 | v0.38-02 | Pending |
