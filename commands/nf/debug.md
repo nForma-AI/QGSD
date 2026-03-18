@@ -146,8 +146,21 @@ Return this output:
 │ Copilot      │ [confidence] │ [next_step]                                 │
 │ Codex        │ [confidence] │ [next_step]                                 │
 ├──────────────┼──────────────┼─────────────────────────────────────────────┤
+│ FORMAL       │ [see below]  │ [see below]                                 │
+├──────────────┼──────────────┼─────────────────────────────────────────────┤
 │ CONSENSUS    │ [HIGH/MED/—] │ [consensus step or "No consensus — see above"]│
 └──────────────┴──────────────┴─────────────────────────────────────────────┘
+
+**FORMAL row rendering** (based on $FORMAL_VERDICT):
+- **reproduced**: `│ FORMAL │ HIGH (model) │ Model {name} reproduced bug. Constraint: {top_constraint} │`
+  where `{name}` = `$FORMAL_CONTEXT.models.find(m => m.reproduced).name` and `{top_constraint}` = `$FORMAL_CONTEXT.constraints[0].text` (or "see model output" if constraints is empty)
+- **not-reproduced**: `│ FORMAL │ LOW (model) │ Models exist but none reproduced. Bug may be environmental. │`
+- **no-model**: `│ FORMAL │ N/A │ No formal model covers this failure. Gap tracked in bug-model-gaps.json. │`
+
+**Divergence note** (conditional — render only when both conditions are true):
+If $FORMAL_VERDICT == "reproduced" AND `$FORMAL_CONTEXT.constraints[0].text` is NOT found as a case-insensitive substring in `$CONSENSUS_ROOT_CAUSE`, render:
+
+  **Note:** Formal model reproduction suggests a constraint violation (`{$FORMAL_CONTEXT.constraints[0].text}`), but workers attribute the bug to a different cause. Consider: is the constraint too strict, or is the worker diagnosis incomplete?
 
 Root Cause Hypothesis (consensus): [one-sentence summary or "No consensus"]
 
@@ -188,6 +201,57 @@ IF no consensus:
     No consensus — review recommendations above and apply the most relevant step.
     Then run /nf:debug again with updated output.
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### Gap Persistence (formal model coverage tracking)
+
+If $FORMAL_VERDICT is "no-model":
+
+```bash
+node << 'GAPEOF'
+const fs = require('fs');
+const crypto = require('crypto');
+const gapPath = '.planning/formal/bug-model-gaps.json';
+const description = process.env.ARGUMENTS || '';
+const bundle = process.env.BUNDLE || '';
+const consensusRoot = process.env.CONSENSUS_ROOT_CAUSE || 'no consensus';
+const consensusStep = process.env.CONSENSUS_NEXT_STEP || 'no consensus';
+
+let data;
+try {
+  data = JSON.parse(fs.readFileSync(gapPath, 'utf8'));
+} catch {
+  data = { version: '1.0', entries: [] };
+}
+
+// Ensure entries array exists (handle legacy or partial files)
+if (!Array.isArray(data.entries)) {
+  data.entries = [];
+}
+
+const bugId = crypto.createHash('sha256').update(description).digest('hex').slice(0, 8);
+if (data.entries.some(e => e.bug_id === bugId)) {
+  console.log('Gap already tracked: bug_id=' + bugId);
+  process.exit(0);
+}
+
+data.entries.push({
+  bug_id: bugId,
+  description: description.slice(0, 500),
+  failure_context: bundle.slice(0, 500),
+  timestamp: new Date().toISOString(),
+  status: 'no_coverage',
+  worker_consensus_root_cause: consensusRoot,
+  worker_consensus_next_step: consensusStep
+});
+
+try {
+  fs.writeFileSync(gapPath, JSON.stringify(data, null, 2));
+  console.log('Gap tracked: bug_id=' + bugId + ' — no formal model coverage for this failure.');
+} catch (e) {
+  console.error('Failed to persist gap (fail-open):', e.message);
+}
+GAPEOF
+```
 """
 )
 ```
