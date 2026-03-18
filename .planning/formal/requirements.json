@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-17T18:19:37.044Z",
-  "content_hash": "6dd82d51c55109ffc3faf339ad738ba042cb730bc16772b181f9bf88b8c57f2d",
-  "frozen_at": "2026-03-16T23:09:09.671Z",
+  "aggregated_at": "2026-03-18T18:57:47.439Z",
+  "content_hash": "959b47dad2662459",
+  "frozen_at": "2026-03-18T18:57:47.439Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -494,6 +494,20 @@
         "source_file": ".planning/REQUIREMENTS.md",
         "milestone": "unknown"
       }
+    },
+    {
+      "id": "CLASS-02",
+      "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats",
+      "category": "Diagnostics & Remediation",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Classification"
     },
     {
       "id": "COMP-01",
@@ -1079,6 +1093,48 @@
       "category_raw": "Diagnostics"
     },
     {
+      "id": "DIAG-04",
+      "text": "sweepRtoF filters requirements by status — Pending and Future requirements are excluded from R→F residual count; `pending_excluded` count reported in detail",
+      "category": "Diagnostics & Remediation",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Diagnostics"
+    },
+    {
+      "id": "DIAG-05",
+      "text": "sweepTtoC supports `exclude_paths` and `include_paths` arrays in config.solve.t_to_c — filters test discovery to specified directories, subtracts failures from excluded paths",
+      "category": "Diagnostics & Remediation",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Diagnostics"
+    },
+    {
+      "id": "DIAG-06",
+      "text": "sweepDtoC detects project ecosystem beyond npm — scans requirements.txt, pyproject.toml, go.mod, Cargo.toml for known dependencies; supports `dependency_sources` and `ignore_patterns` in config.solve.d_to_c",
+      "category": "Diagnostics & Remediation",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Diagnostics"
+    },
+    {
       "id": "DISP-01",
       "text": "qgsd-prompt.js runs a fast health probe (<3s) per provider before building the dispatch list -- dead providers' slots excluded from DISPATCH_LIST",
       "category": "Quorum & Dispatch",
@@ -1501,6 +1557,20 @@
         "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
         "milestone": "v0.29"
       }
+    },
+    {
+      "id": "GATE-05",
+      "text": "compute-per-model-gates.cjs normalizes `derived_from` to array before iteration — handles single-object, array, and missing cases without crashing (fixes TypeError on `.some()`)",
+      "category": "Formal Verification",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Gates"
     },
     {
       "id": "GUIDE-01",
@@ -3587,6 +3657,20 @@
       }
     },
     {
+      "id": "RSN-06",
+      "text": "hazard-model.cjs preserves user overrides (detection score, detection_justification, user_override flag) across regeneration — loads existing data, merges user-owned fields, recomputes RPN and summary after merge",
+      "category": "Formal Verification",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Reasoning"
+    },
+    {
       "id": "SAFE-01",
       "text": "`--repair` cannot silently overwrite a rich STATE.md (>50 lines) without explicit `--force` flag; guard fires and repair is skipped with a message",
       "category": "Testing & Quality",
@@ -4678,6 +4762,20 @@
       "category_raw": "Traceability Matrix"
     },
     {
+      "id": "TRACE-06",
+      "text": "build-code-trace.cjs preserves user-added traced_files entries (objects with traced_to/reason fields) across index regeneration — merges with auto-discovered array entries",
+      "category": "Formal Verification",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Traceability"
+    },
+    {
       "id": "TRACK-01",
       "text": "Each nf:solve run appends a snapshot to solve-trend.jsonl containing timestamp, iteration count, per-layer residuals (all 19 layers), total residual, converged boolean, and gate summary",
       "category": "Cross-Session Tracking",
@@ -5013,6 +5111,20 @@
       }
     },
     {
+      "id": "VERF-04",
+      "text": "run-formal-verify.cjs normalizes legacy `formal-spec/` paths to `.planning/formal/` in registry check commands and model keys — no manual symlink required",
+      "category": "Verification & Execution State",
+      "tier": "system",
+      "phase": "v0.37",
+      "status": "Complete",
+      "provenance": {
+        "source_file": "github-issues",
+        "milestone": "v0.37"
+      },
+      "formal_models": [],
+      "category_raw": "Verification"
+    },
+    {
       "id": "VERIFY-01",
       "text": "`qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIFICATION.md`",
       "category": "Testing & Quality",
@@ -5224,116 +5336,16 @@
       }
     },
     {
-      "id": "GATE-05",
-      "text": "compute-per-model-gates.cjs normalizes `derived_from` to array before iteration — handles single-object, array, and missing cases without crashing (fixes TypeError on `.some()`)",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
+      "id": "XPLAT-03",
+      "text": "CCR provider slots resolve binary paths dynamically at dispatch time and detect missing CCR installation with helpful install instructions",
+      "category": "Cross-Platform",
+      "phase": "unknown",
       "status": "Complete",
+      "background": "CCR (Claude Code Router) slots previously used hardcoded /opt/homebrew/bin/ccr paths, breaking on non-standard macOS installs and all Linux systems. This requirement ensures CCR slots use bare ccr names, leveraging the existing resolveCli() dispatch-time resolution to locate the binary portably. The change also adds upfront detection and warnings when CCR is missing, guiding users to install via npm.",
       "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Gates"
-    },
-    {
-      "id": "RSN-06",
-      "text": "hazard-model.cjs preserves user overrides (detection score, detection_justification, user_override flag) across regeneration — loads existing data, merges user-owned fields, recomputes RPN and summary after merge",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Reasoning"
-    },
-    {
-      "id": "TRACE-06",
-      "text": "build-code-trace.cjs preserves user-added traced_files entries (objects with traced_to/reason fields) across index regeneration — merges with auto-discovered array entries",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Traceability"
-    },
-    {
-      "id": "DIAG-04",
-      "text": "sweepRtoF filters requirements by status — Pending and Future requirements are excluded from R→F residual count; `pending_excluded` count reported in detail",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "CLASS-02",
-      "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Classification"
-    },
-    {
-      "id": "DIAG-05",
-      "text": "sweepTtoC supports `exclude_paths` and `include_paths` arrays in config.solve.t_to_c — filters test discovery to specified directories, subtracts failures from excluded paths",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-06",
-      "text": "sweepDtoC detects project ecosystem beyond npm — scans requirements.txt, pyproject.toml, go.mod, Cargo.toml for known dependencies; supports `dependency_sources` and `ignore_patterns` in config.solve.d_to_c",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "VERF-04",
-      "text": "run-formal-verify.cjs normalizes legacy `formal-spec/` paths to `.planning/formal/` in registry check commands and model keys — no manual symlink required",
-      "category": "Verification & Execution State",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Verification"
+        "source_file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-PLAN.md",
+        "milestone": "quick-323"
+      }
     }
   ],
   "schema_version": "1",
