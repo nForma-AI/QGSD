@@ -613,3 +613,13 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.38 Model-Driven Debugging (Shipped: 2026-03-18)
+
+**Phases completed:** 43 phases, 75 plans, 15 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
