@@ -10,7 +10,7 @@ Transform formal models from descriptive CI gates into prescriptive debugging to
 - Milestone-scoped phases (v0.38-01 through v0.38-05)
 - Decimal phases (v0.38-01.1): Urgent gap insertions if needed
 
-- [ ] **Phase v0.38-01: Bug-to-Model Lookup & Constraint Extraction** - Infrastructure to find matching models and extract fix constraints from TLA+/Alloy specs
+- [x] **Phase v0.38-01: Bug-to-Model Lookup & Constraint Extraction** - Infrastructure to find matching models and extract fix constraints from TLA+/Alloy specs (completed 2026-03-18)
 - [ ] **Phase v0.38-02: Debug Command Integration** - Wire model consultation into /nf:debug before quorum dispatch
 - [ ] **Phase v0.38-03: Model Refinement Workflow** - Create and refine models that capture failure modes when no model explains a bug
 - [ ] **Phase v0.38-04: B-to-F Solve Layer** - 20th solve layer tracking bugs formal models should explain but don't
@@ -97,7 +97,7 @@ Note: v0.38-03 and v0.38-04 could potentially execute in parallel (both depend o
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.38-01. Bug-to-Model Lookup & Constraint Extraction | 2/3 | In Progress|  |
+| v0.38-01. Bug-to-Model Lookup & Constraint Extraction | 2/3 | Complete    | 2026-03-18 |
 | v0.38-02. Debug Command Integration | 0/TBD | Not started | - |
 | v0.38-03. Model Refinement Workflow | 0/TBD | Not started | - |
 | v0.38-04. B-to-F Solve Layer | 0/TBD | Not started | - |
