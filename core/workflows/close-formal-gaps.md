@@ -44,6 +44,37 @@ If `--ids` is provided (comma-separated), filter to those specific IDs.
 If `--all` is provided, process all uncovered requirements.
 Otherwise, present the categories via AskUserQuestion and let the user pick one (unless --batch).
 
+### Implicit FSM Gap Detection
+
+After computing uncovered requirements, scan the top hot-zone files from the git churn heatmap for implicit state machine patterns. This surfaces code that should be formally modeled as a state machine but hasn't been flagged via requirements yet.
+
+**File source:** Extract the top 10 code files from `.planning/formal/evidence/git-heatmap.json` using the `uncovered_hot_zones` array (sorted by `priority` descending). Use a shell command to avoid reading the full 3MB file into context, filtering to code extensions and excluding non-source paths:
+```bash
+jq -r '[.uncovered_hot_zones[] | select(.file | test("\\.(js|ts|cjs|mjs|py|go|rb|java|cs|rs)$")) | select(.file | test("^\\.planning/|^dist/|^node_modules/") | not)] | sort_by(.priority // 0) | reverse | .[].file' .planning/formal/evidence/git-heatmap.json | head -10
+```
+If the heatmap file is missing or the command errors, skip this step silently (fail-open).
+
+For each file path in that list:
+
+1. Run a grep for multi-flag boolean clusters: `grep -cE "(bool|boolean|let|var|const)\s+\w*(Pending|Active|Done|Started|Running|Stopped|Failed|Ready|Busy|Locked|Open|Closed|Enabled|Disabled)" {file}` — if count ≥ 3, record as implicit FSM gap. (Uses the same declaration-oriented pattern as solve-diagnose for consistency.)
+2. Run a grep for enum-like string comparisons: `grep -cE "===\s*['\"][A-Z_]{3,}['\"]|case\s+['\"][A-Z_]{3,}['\"]:" {file}` — if count ≥ 3, record as implicit FSM gap.
+
+Both greps are **fail-open**: if a file does not exist or grep errors, skip that file silently. Note: the coverage check is requirement-centric, not file-centric, so "no formal model yet" is a heuristic — some files may already be partially modeled via a linked requirement. Soften output language accordingly: say "may not yet have a formal model" rather than asserting absence.
+
+If implicit FSM gaps are found, append a section to the coverage gap summary:
+
+```
+Implicit FSM Candidates (may not yet have a formal model)
+─────────────────────────────────────────────
+  src/foo/bar.ts                multi-flag-boolean  (Pending, Active, Done, ...)
+  src/hooks/dispatch.ts         enum-string-state   (IDLE, RUNNING, FAILED, ...)
+
+Recommended action: run `node bin/fsm-to-tla.cjs --scaffold-config` to generate
+TLA+ scaffold configs for these files, then use close-formal-gaps to cover them.
+```
+
+If `--batch` is active, log the implicit FSM candidates but proceed without pausing. If not in batch mode, present these alongside uncovered requirements so the user can decide whether to address them in this session.
+
 **Bug context parsing (MRF-01):**
 
 If `--bug-context` is provided:
