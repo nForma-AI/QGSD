@@ -16,6 +16,7 @@ const { spawnSync } = require('child_process');
 const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
+const os   = require('os');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
@@ -102,10 +103,16 @@ if (javaMajor < 17) {
 const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 const jarPath = resolveAlloyJar(ROOT);
 if (!jarPath) {
+  const { NF_FORMAL_HOME } = require('./resolve-formal-tools.cjs');
+  const searchedPaths = [
+    path.join(NF_FORMAL_HOME, 'alloy', 'org.alloytools.alloy.dist.jar'),
+    path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+    path.join(os.homedir(), '.claude', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+  ];
   process.stderr.write(
     '[run-alloy] org.alloytools.alloy.dist.jar not found.\n' +
     '[run-alloy] Searched:\n' +
-    jarCandidates.map(p => '  - ' + p).join('\n') + '\n' +
+    searchedPaths.map(p => '  - ' + p).join('\n') + '\n' +
     '[run-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
     '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'
