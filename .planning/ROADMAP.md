@@ -10,7 +10,7 @@ This milestone makes formal models the sandbox for both diagnosis and solutions.
 - Milestone-scoped phases (v0.39-01, v0.39-02): Phases scoped to v0.39
 - Decimal phases (v0.39-01.1): Urgent gap insertions within milestone
 
-- [ ] **Phase v0.39-01: Foundation & Infrastructure** - Verification mode tagging, trace parsing to structured JSON, configurable iteration limits
+- [x] **Phase v0.39-01: Foundation & Infrastructure** - Verification mode tagging, trace parsing to structured JSON, configurable iteration limits (completed 2026-03-18)
 - [ ] **Phase v0.39-02: Cycle 1 Diagnostic** - Targeted diagnostic diffs, workflow reframing, quorum injection, guided model refinement
 - [ ] **Phase v0.39-03: Cycle 2 Solution Simulation** - Fix normalization, consequence models, three-gate convergence, simulation loop UX
 
@@ -70,6 +70,6 @@ Phases execute in milestone-then-sequence order: v0.39-01 -> v0.39-02 -> v0.39-0
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| v0.39-01. Foundation & Infrastructure | 1/2 | In progress | 50% |
+| v0.39-01. Foundation & Infrastructure | 1/2 | Complete    | 2026-03-18 |
 | v0.39-02. Cycle 1 Diagnostic | 0/3 | Not started | 0% |
 | v0.39-03. Cycle 2 Solution Simulation | 0/3 | Not started | 0% |
