@@ -42,8 +42,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] v0.39-02-01-PLAN.md — Model state extractor and correction proposal generator modules
-- [ ] v0.39-02-02-PLAN.md — Evidence-based language reframing across refinement loop and workflows
+- [x] v0.39-02-01-PLAN.md — Model state extractor and correction proposal generator modules
+- [x] v0.39-02-02-PLAN.md — Evidence-based language reframing across refinement loop and workflows
 - [ ] v0.39-02-03-PLAN.md — Wire diagnostic pipeline into refinement loop with quorum injection
 
 ### Phase v0.39-03: Cycle 2 Solution Simulation
