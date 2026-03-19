@@ -124,8 +124,7 @@ Plans:
 | ROOT-03 | v0.40-01 | Complete |
 | CONST-01 | v0.40-01 | Complete |
 | CONST-02 | v0.40-01 | Complete |
-| INTENT-01 | v0.40-02 | Pending |
-| INTENT-02 | v0.40-02 | Pending |
+| INTENT-01 | v0.40-02 | Pending | Complete    | 2026-03-19 | v0.40-02 | Pending |
 | INTENT-03 | v0.40-02 | Pending |
 | ROOT-02 | v0.40-02 | Pending |
 | SCOPE-01 | v0.40-03 | Pending |
