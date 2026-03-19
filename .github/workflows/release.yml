@@ -56,6 +56,13 @@ jobs:
             exit 0
           fi
 
+          # Block release if CHANGELOG entry is missing
+          if ! grep -qE "^## \[${VERSION}\]" CHANGELOG.md; then
+            echo "ERROR: No CHANGELOG entry found for version ${VERSION}"
+            echo "Add a '## [${VERSION}]' section to CHANGELOG.md before releasing"
+            exit 1
+          fi
+
           # Check if already published on npm
           NPM_VERSION=$(npm view "@nforma.ai/nforma@${VERSION}" version 2>/dev/null || echo "")
           if [[ -n "$NPM_VERSION" ]]; then

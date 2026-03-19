@@ -6,6 +6,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.39.0] - 2026-03-19 — Dual-Cycle Formal Reasoning & CI/CD Formalization
+
+### Added
+- **Dual-cycle formal reasoning** — Cycle 1 (diagnosis) + Cycle 2 (solution simulation) both iterate in model space before touching code
+- **Prerelease pipeline** (`prerelease.yml`) — `v*-rc*` and `v*-next*` tags publish to npm `@next` dist-tag with provenance
+- **CHANGELOG gate** — release and prerelease pipelines block if no CHANGELOG entry exists for the version being released
+- **Layer 3 semantic + Layer 4 agentic scope scan** — sentence-transformer fallback and agentic scope scan for solve coverage
+- **Implicit FSM detection** — state machine detection integrated into solve-diagnose and close-formal-gaps
+
+### Changed
+- **CI workflow** — scoped to `main` only (removed `staging` branch triggers)
+- **`@next` replaces `@staging`** — prerelease channel is now `npx @nforma.ai/nforma@next`
+
+### Fixed
+- **`release.yml` git tag creation** — added `git config user.email/name` before annotated tag step (fixes "Committer identity unknown" error)
+- **QGSD → nForma rename** — replaced remaining `qgsd` references in active code/core with `nf`
+
+### Removed
+- **`staging-publish.yml`** — dead workflow retired (staging branch was 21 commits behind main)
+- **`@staging` npm dist-tag** — removed in favour of `@next`
+
 ## [0.37.2] - 2026-03-18 — Rebrand Polish & Changelog Backfill
 
 ### Fixed

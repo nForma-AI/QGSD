@@ -16,6 +16,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Check CHANGELOG entry exists
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          BASE_VERSION="${TAG_VERSION%%-*}"
+          if ! grep -qE "^## \[${BASE_VERSION}\]|^## \[${TAG_VERSION}\]" CHANGELOG.md; then
+            echo "ERROR: No CHANGELOG entry found for ${TAG_VERSION} or ${BASE_VERSION}"
+            echo "Add a '## [${BASE_VERSION}]' section to CHANGELOG.md before releasing"
+            exit 1
+          fi
       - run: npm ci --ignore-scripts
       - run: npm run build:hooks && npm run build:machines
       - run: npm run check:assets
