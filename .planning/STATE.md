@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 
 ## Current Position
 
-Phase: v0.40-02 (1/1 plans complete)
+Phase: v0.40-02 (2/2 plans complete)
 Plan: 02
-Status: Plan 02 complete — root cause quorum vote step added to solve-diagnose
-Last activity: 2026-03-19 — Completed v0.40-02 plan 02: Root cause quorum vote step
+Status: Phase v0.40-02 complete — approach derivation + scope contract (01) and root cause quorum vote (02) live
+Last activity: 2026-03-19 — Completed v0.40-02 plan 01: Approach derivation and scope contract generation
 
-Progress: [███████████░░░] Phase v0.40-02 Complete (1/1 plans = 100%)
+Progress: [██████████████] Phase v0.40-02 Complete (2/2 plans = 100%)
 
 ## Performance Metrics
 
@@ -95,3 +95,7 @@ Resume file: None
 - v0.40-02-02: BLOCK is absolute per CE-2 - no override rationalization permitted
 - v0.40-02-02: Fail-open when quorum unavailable - proceed without consensus rather than block
 - v0.40-02-02: FAN_OUT_COUNT = 3 (medium risk) for diagnosis gate dispatch
+- v0.40-02-01: Step 2.7 positioned between branching (Step 2.5) and directory creation (Step 3) so branch name is known for scope contract keying
+- v0.40-02-01: Scope contract keyed by branch name to prevent concurrent task collision
+- v0.40-02-01: Approach derivation non-modal (automatic via Haiku) per INTENT-03; no user dialog
+- v0.40-02-01: All error paths fail-open (Haiku unavailability, JSON parse errors, file write errors)

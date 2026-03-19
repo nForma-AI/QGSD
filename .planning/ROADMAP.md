@@ -53,11 +53,11 @@ Plans:
 
 **Requirements covered:** INTENT-01, INTENT-02, INTENT-03, ROOT-02
 
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] v0.40-02-01-PLAN.md — Add approach declaration + scope contract to quick.md (INTENT-01/02/03)
-- [ ] v0.40-02-02-PLAN.md — Add root cause quorum vote to solve-diagnose.md (ROOT-02)
+- [x] v0.40-02-01-PLAN.md — Add approach declaration + scope contract to quick.md (INTENT-01/02/03) (Complete: 2026-03-19, ~4 min, 2 tasks)
+- [x] v0.40-02-02-PLAN.md — Add root cause quorum vote to solve-diagnose.md (ROOT-02) (Complete: 2026-03-19, ~5 min, 1 task)
 
 **Files to modify:**
 - `core/workflows/quick.md` — new Step 0 (approach declaration + scope contract write) before existing Step 1
