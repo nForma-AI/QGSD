@@ -34,7 +34,7 @@ Template for spawning nf-planner agent. The agent contains all planning expertis
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /qgsd:execute-phase
+Output consumed by /nf:execute-phase
 Plans must be executable prompts with:
 - Frontmatter (wave, depends_on, files_modified, autonomous)
 - Tasks in XML format
@@ -68,7 +68,7 @@ Before returning PLANNING COMPLETE:
 
 ## Usage
 
-**From /qgsd:plan-phase (standard mode):**
+**From /nf:plan-phase (standard mode):**
 ```python
 Task(
   prompt=filled_template,
@@ -77,7 +77,7 @@ Task(
 )
 ```
 
-**From /qgsd:plan-phase --gaps (gap closure mode):**
+**From /nf:plan-phase --gaps (gap closure mode):**
 ```python
 Task(
   prompt=filled_template,  # with mode: gap_closure

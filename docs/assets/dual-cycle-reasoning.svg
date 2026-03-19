@@ -1,0 +1,261 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2600" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0e17"/>
+      <stop offset="100%" stop-color="#0e1320"/>
+    </linearGradient>
+    <marker id="a"  markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#475569"/></marker>
+    <marker id="ab" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#3b82f6"/></marker>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#22c55e"/></marker>
+    <marker id="aa" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#f59e0b"/></marker>
+    <marker id="ap" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#a855f7"/></marker>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L10,4 z" fill="#ef4444"/></marker>
+    <filter id="s1"><feDropShadow dx="0" dy="4" stdDeviation="10" flood-color="#000" flood-opacity="0.55"/></filter>
+    <filter id="s2"><feDropShadow dx="0" dy="2" stdDeviation="5"  flood-color="#000" flood-opacity="0.40"/></filter>
+  </defs>
+
+  <rect width="1400" height="2600" fill="url(#bg)"/>
+
+  <!-- ════════════════════════════════════════════
+       TITLE  (y 0–180)
+       ════════════════════════════════════════════ -->
+  <text x="700" y="68"  text-anchor="middle" font-size="11" font-weight="600" fill="#2d3748" letter-spacing="4">NFORMA  ·  FORMAL REASONING ARCHITECTURE</text>
+  <text x="700" y="112" text-anchor="middle" font-size="28" font-weight="700" fill="#f1f5f9">Dual-Cycle Formal Reasoning</text>
+  <text x="700" y="148" text-anchor="middle" font-size="14" fill="#475569">Bug  →  Model Space  →  Verified Fix  →  Code</text>
+  <line x1="100" y1="172" x2="1300" y2="172" stroke="#1a2233" stroke-width="1"/>
+
+  <!-- ════════════════════════════════════════════
+       ENTRY  (y 196–324)
+       ════════════════════════════════════════════ -->
+  <rect x="500" y="196" width="400" height="108" rx="14" fill="#12101f" stroke="#6366f1" stroke-width="1.5" filter="url(#s2)"/>
+  <text x="700" y="232" text-anchor="middle" font-size="11" font-weight="700" fill="#6366f1" letter-spacing="3">ENTRY</text>
+  <text x="700" y="263" text-anchor="middle" font-size="18" font-weight="700" fill="#e2e8f0">Bug Report</text>
+  <text x="700" y="290" text-anchor="middle" font-size="13" fill="#475569">observed failure  ·  ITF trace (JSON)</text>
+
+  <!-- connector 324→376 -->
+  <line x1="700" y1="304" x2="700" y2="364" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- ════════════════════════════════════════════
+       CYCLE 1  (y 372–1148)
+       ════════════════════════════════════════════ -->
+  <rect x="60" y="372" width="1280" height="756" rx="18" fill="#0c1626" stroke="#1e40af" stroke-width="1.5" filter="url(#s1)"/>
+
+  <!-- C1 header band -->
+  <rect x="60" y="372" width="1280" height="64" rx="18" fill="#0f2847"/>
+  <rect x="60" y="412" width="1280" height="24" fill="#0f2847"/>
+  <text x="96"  y="412" font-size="12" font-weight="700" fill="#3b82f6" letter-spacing="3">CYCLE 1  ·  DIAGNOSTIC</text>
+  <text x="1304" y="412" text-anchor="end" font-size="12" fill="#1e40af" letter-spacing="1">v0.38  ·  model-space bug reproduction loop</text>
+
+  <!-- C1 Step 1: Initial Model  (y 456–572) -->
+  <rect x="470" y="456" width="460" height="108" rx="12" fill="#091525" stroke="#1e3a5f" stroke-width="1" filter="url(#s2)"/>
+  <text x="700" y="490" text-anchor="middle" font-size="11" fill="#2d4a6e" letter-spacing="2">STEP 1</text>
+  <text x="700" y="520" text-anchor="middle" font-size="17" font-weight="600" fill="#e2e8f0">Initial Formal Model</text>
+  <text x="700" y="548" text-anchor="middle" font-size="13" fill="#4a5568">TLA+  /  Alloy  specification</text>
+
+  <!-- connector -->
+  <line x1="700" y1="564" x2="700" y2="616" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="722" y="594" font-size="12" fill="#334155">run checker  ·  mode = diagnostic</text>
+
+  <!-- C1 Step 2: Checker  (y 620–712) -->
+  <rect x="470" y="620" width="460" height="88" rx="12" fill="#091525" stroke="#1e3a5f" stroke-width="1" filter="url(#s2)"/>
+  <text x="700" y="654" text-anchor="middle" font-size="11" fill="#2d4a6e" letter-spacing="2">STEP 2</text>
+  <text x="700" y="683" text-anchor="middle" font-size="17" font-weight="600" fill="#e2e8f0">Model Checker  (TLC / Alloy)</text>
+
+  <!-- connector to diamond -->
+  <line x1="700" y1="708" x2="700" y2="736" stroke="#334155" stroke-width="1.5"/>
+
+  <!-- Diamond  (center 700,772) -->
+  <polygon points="700,736 780,772 700,808 620,772" fill="#091525" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="700" y="777" text-anchor="middle" font-size="13" font-weight="600" fill="#60a5fa">violation?</text>
+
+  <!-- YES → REPRODUCED  (right) -->
+  <line x1="780" y1="772" x2="960" y2="772" stroke="#22c55e" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="870" y="760" text-anchor="middle" font-size="12" fill="#22c55e">YES</text>
+  <rect x="960" y="744" width="236" height="56" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="1.5" filter="url(#s2)"/>
+  <text x="1078" y="777" text-anchor="middle" font-size="16" font-weight="700" fill="#86efac">REPRODUCED ✓</text>
+
+  <!-- NO → down -->
+  <line x1="700" y1="808" x2="700" y2="852" stroke="#ef4444" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="722" y="834" font-size="12" fill="#f87171">NO — model is INCOMPLETE</text>
+
+  <!-- C1 Step 3: Diagnostic Pipeline  (y 856–1024) -->
+  <rect x="100" y="856" width="1200" height="184" rx="12" fill="#070f1a" stroke="#1e3a5f" stroke-width="1"/>
+  <text x="700" y="888" text-anchor="middle" font-size="11" font-weight="700" fill="#2d4a6e" letter-spacing="2">STEP 3  ·  DIAGNOSTIC PIPELINE</text>
+
+  <!-- Sub-box A -->
+  <rect x="128" y="904" width="328" height="112" rx="10" fill="#091525" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="292" y="936" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">State Extractor</text>
+  <text x="292" y="960" text-anchor="middle" font-size="12" fill="#475569">model trace  vs  bug trace</text>
+  <text x="292" y="982" text-anchor="middle" font-size="11" fill="#2d3748">extractFinalStates()</text>
+  <text x="292" y="1001" text-anchor="middle" font-size="11" fill="#2d3748">ITF JSON  ·  lasso-aware</text>
+
+  <line x1="456" y1="960" x2="492" y2="960" stroke="#1e40af" stroke-width="1.5" marker-end="url(#ab)"/>
+
+  <!-- Sub-box B -->
+  <rect x="492" y="904" width="328" height="112" rx="10" fill="#091525" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="656" y="936" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">Diff Generator</text>
+  <text x="656" y="960" text-anchor="middle" font-size="12" fill="#475569">field-level divergences</text>
+  <text x="656" y="982" text-anchor="middle" font-size="11" fill="#2d3748">generateStateDiff()</text>
+  <text x="656" y="1001" text-anchor="middle" font-size="11" fill="#2d3748">json-diff-ts</text>
+
+  <line x1="820" y1="960" x2="856" y2="960" stroke="#1e40af" stroke-width="1.5" marker-end="url(#ab)"/>
+
+  <!-- Sub-box C -->
+  <rect x="856" y="904" width="416" height="112" rx="10" fill="#091525" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="1064" y="936" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">Proposal Generator</text>
+  <text x="1064" y="958" text-anchor="middle" font-size="12" fill="#475569">PROP-SV-{n}  ·  PROP-INV-{n}  ·  PROP-TEMP-{n}</text>
+  <text x="1064" y="979" text-anchor="middle" font-size="11" fill="#2d3748">ranked by priority  ·  each with example skeleton</text>
+  <text x="1064" y="998" text-anchor="middle" font-size="11" fill="#2d3748">generateCorrectionProposals()</text>
+
+  <!-- connector from diagnostic down -->
+  <line x1="700" y1="1040" x2="700" y2="1084" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="722" y="1066" font-size="12" fill="#334155">inject diagnostic into quorum context</text>
+
+  <!-- C1 Step 4: Quorum Workers  (y 1088–1188) -->
+  <rect x="280" y="1088" width="840" height="100" rx="12" fill="#091525" stroke="#1e3a5f" stroke-width="1" filter="url(#s2)"/>
+  <text x="700" y="1122" text-anchor="middle" font-size="11" fill="#2d4a6e" letter-spacing="2">STEP 4  ·  QUORUM WORKERS</text>
+  <text x="700" y="1155" text-anchor="middle" font-size="16" font-weight="600" fill="#e2e8f0">Claude  ·  Codex  ·  Gemini  ·  Copilot  ·  OpenCode</text>
+
+  <!-- Feedback loop arc (left side) -->
+  <path d="M 280 1138 Q 108 1138 108 680 Q 108 490 470 504" stroke="#3b82f6" stroke-width="1.5" fill="none" stroke-dasharray="7,5" marker-end="url(#ab)"/>
+  <text x="60" y="820" text-anchor="middle" font-size="11" fill="#1e40af" transform="rotate(-90 60 820)">refined model  ·  iterate  ≤  max_iterations</text>
+
+  <!-- REPRODUCED arc down to bridge area -->
+  <line x1="1078" y1="800" x2="1078" y2="1138" stroke="#22c55e" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ════════════════════════════════════════════
+       BRIDGE  (y 1192–1388)
+       ════════════════════════════════════════════ -->
+
+  <!-- connector from quorum down -->
+  <line x1="700" y1="1188" x2="700" y2="1220" stroke="#334155" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <rect x="60" y="1228" width="1280" height="192" rx="16" fill="#100c04" stroke="#92400e" stroke-width="1.5" stroke-dasharray="8,5" filter="url(#s2)"/>
+
+  <!-- Auto path label (top left) -->
+  <rect x="84" y="1252" width="200" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="184" y="1271" text-anchor="middle" font-size="11" fill="#854d0e">AUTO by default</text>
+
+  <!-- Manual fallback label (top right) -->
+  <rect x="1116" y="1252" width="200" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1216" y="1271" text-anchor="middle" font-size="11" fill="#854d0e">manual fallback</text>
+
+  <text x="700" y="1292" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b" letter-spacing="3">BRIDGE  ·  FIX IDEA FORMATION</text>
+
+  <text x="700" y="1328" text-anchor="middle" font-size="14" fill="#b45309">Phase 4 constraints  →  used automatically as fix idea input</text>
+  <text x="700" y="1356" text-anchor="middle" font-size="14" fill="#92400e">or  --fix-idea flag  ·  or  user prompt if neither is available</text>
+  <text x="700" y="1388" text-anchor="middle" font-size="13" font-style="italic" fill="#78350f">"constraints / variables / code sketch describing the intended fix"</text>
+
+  <!-- converge REPRODUCED line into bridge -->
+  <line x1="1078" y1="1138" x2="850"  y2="1290" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#aa)"/>
+
+  <!-- connector bridge → C2 -->
+  <line x1="700" y1="1420" x2="700" y2="1468" stroke="#f59e0b" stroke-width="2" marker-end="url(#aa)"/>
+
+  <!-- ════════════════════════════════════════════
+       CYCLE 2  (y 1476–2364)
+       ════════════════════════════════════════════ -->
+  <rect x="60" y="1476" width="1280" height="868" rx="18" fill="#0a1a0c" stroke="#16a34a" stroke-width="1.5" filter="url(#s1)"/>
+
+  <!-- C2 header band -->
+  <rect x="60" y="1476" width="1280" height="64" rx="18" fill="#042b12"/>
+  <rect x="60" y="1516" width="1280" height="24" fill="#042b12"/>
+  <text x="96"  y="1518" font-size="12" font-weight="700" fill="#22c55e" letter-spacing="3">CYCLE 2  ·  SOLUTION SIMULATION</text>
+  <text x="1304" y="1518" text-anchor="end" font-size="12" fill="#16a34a" letter-spacing="1">v0.39  ·  model-space fix validation loop</text>
+
+  <!-- C2 Step 1: Intent Normalizer  (y 1560–1672) -->
+  <rect x="450" y="1560" width="500" height="108" rx="12" fill="#071409" stroke="#14532d" stroke-width="1" filter="url(#s2)"/>
+  <text x="700" y="1596" text-anchor="middle" font-size="11" fill="#166534" letter-spacing="2">STEP 1</text>
+  <text x="700" y="1626" text-anchor="middle" font-size="17" font-weight="600" fill="#e2e8f0">Intent Normalizer</text>
+  <text x="700" y="1652" text-anchor="middle" font-size="13" fill="#475569">constraints  ·  variables  ·  code snippets</text>
+
+  <!-- connector -->
+  <line x1="700" y1="1668" x2="700" y2="1720" stroke="#166534" stroke-width="1.5" marker-end="url(#ag)"/>
+  <text x="722" y="1698" font-size="12" fill="#166534">normalized fix intent</text>
+
+  <!-- C2 Step 2: Consequence Model  (y 1724–1840) -->
+  <rect x="410" y="1724" width="580" height="108" rx="12" fill="#071409" stroke="#14532d" stroke-width="1" filter="url(#s2)"/>
+  <text x="700" y="1760" text-anchor="middle" font-size="11" fill="#166534" letter-spacing="2">STEP 2</text>
+  <text x="700" y="1790" text-anchor="middle" font-size="17" font-weight="600" fill="#e2e8f0">Consequence Model Generator</text>
+  <text x="700" y="1816" text-anchor="middle" font-size="13" fill="#475569">reproducing model  +  mutation  →  candidate fix model</text>
+
+  <!-- connector -->
+  <line x1="700" y1="1832" x2="700" y2="1884" stroke="#166534" stroke-width="1.5" marker-end="url(#ag)"/>
+
+  <!-- C2 Step 3: Gates container  (y 1888–2136) -->
+  <rect x="100" y="1888" width="1200" height="256" rx="12" fill="#071409" stroke="#14532d" stroke-width="1"/>
+  <text x="700" y="1920" text-anchor="middle" font-size="11" font-weight="700" fill="#166534" letter-spacing="2">STEP 3  ·  CONVERGENCE GATE RUNNER</text>
+
+  <!-- Gate 1 -->
+  <rect x="128" y="1940" width="336" height="172" rx="10" fill="#081220" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="296" y="1976" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa" letter-spacing="2">GATE 1</text>
+  <text x="296" y="2004" text-anchor="middle" font-size="15" font-weight="600" fill="#e2e8f0">Invariants Hold</text>
+  <text x="296" y="2032" text-anchor="middle" font-size="13" fill="#475569">mode = validation</text>
+  <text x="296" y="2056" text-anchor="middle" font-size="13" fill="#374151">no violation</text>
+  <text x="296" y="2076" text-anchor="middle" font-size="14" font-weight="600" fill="#86efac">→  PASS</text>
+  <text x="296" y="2098" text-anchor="middle" font-size="11" fill="#1e3a5f">fix doesn't break model invariants</text>
+
+  <line x1="464" y1="2026" x2="500" y2="2026" stroke="#22c55e" stroke-width="2" marker-end="url(#ag)"/>
+
+  <!-- Gate 2 -->
+  <rect x="500" y="1940" width="336" height="172" rx="10" fill="#1a0800" stroke="#c2410c" stroke-width="1"/>
+  <text x="668" y="1976" text-anchor="middle" font-size="11" font-weight="700" fill="#fb923c" letter-spacing="2">GATE 2</text>
+  <text x="668" y="2004" text-anchor="middle" font-size="15" font-weight="600" fill="#e2e8f0">Bug Resolved</text>
+  <text x="668" y="2032" text-anchor="middle" font-size="13" fill="#c2410c">mode = diagnostic  (inverted)</text>
+  <text x="668" y="2056" text-anchor="middle" font-size="13" fill="#374151">no violation  =  bug is gone</text>
+  <text x="668" y="2076" text-anchor="middle" font-size="14" font-weight="600" fill="#86efac">→  PASS</text>
+  <text x="668" y="2098" text-anchor="middle" font-size="11" fill="#7c2d12">same mode flag, inverted semantics</text>
+
+  <line x1="836" y1="2026" x2="872" y2="2026" stroke="#22c55e" stroke-width="2" marker-end="url(#ag)"/>
+
+  <!-- Gate 3 -->
+  <rect x="872" y="1940" width="400" height="172" rx="10" fill="#081220" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="1072" y="1976" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa" letter-spacing="2">GATE 3</text>
+  <text x="1072" y="2004" text-anchor="middle" font-size="15" font-weight="600" fill="#e2e8f0">No Regressions</text>
+  <text x="1072" y="2032" text-anchor="middle" font-size="13" fill="#475569">mode = validation  ·  neighbor models</text>
+  <text x="1072" y="2056" text-anchor="middle" font-size="13" fill="#374151">all still pass</text>
+  <text x="1072" y="2076" text-anchor="middle" font-size="14" font-weight="600" fill="#86efac">→  PASS</text>
+  <text x="1072" y="2098" text-anchor="middle" font-size="11" fill="#1e3a5f">write-once verdict lock per gate</text>
+
+  <!-- verdicts note -->
+  <text x="700" y="2132" text-anchor="middle" font-size="11" fill="#1e3a2e" letter-spacing="0.5">gate-verdicts.json  ·  write-once semantics  ·  monotonic convergence guarantee</text>
+
+  <!-- Branch line from gates -->
+  <line x1="700" y1="2144" x2="700" y2="2192" stroke="#334155" stroke-width="1.5"/>
+
+  <!-- NOT ALL PASS → left loop -->
+  <line x1="700" y1="2192" x2="164" y2="2192" stroke="#ef4444" stroke-width="2"/>
+  <line x1="164" y1="2192" x2="164" y2="1700" stroke="#ef4444" stroke-width="2" stroke-dasharray="7,5" marker-end="url(#ar)"/>
+  <text x="112" y="1948" text-anchor="middle" font-size="11" fill="#b91c1c" transform="rotate(-90 112 1948)">refine fix idea  ·  iterate  ≤  max_iterations</text>
+  <text x="420" y="2184" text-anchor="end" font-size="12" fill="#f87171">NOT ALL PASS</text>
+
+  <!-- ALL PASS → CONVERGED -->
+  <line x1="700" y1="2192" x2="1120" y2="2192" stroke="#22c55e" stroke-width="2"/>
+  <line x1="1120" y1="2192" x2="1120" y2="2220" stroke="#22c55e" stroke-width="2"/>
+  <rect x="948" y="2220" width="344" height="64" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="1.5" filter="url(#s2)"/>
+  <text x="1120" y="2257" text-anchor="middle" font-size="18" font-weight="700" fill="#86efac">CONVERGED ✓</text>
+  <text x="868" y="2184" font-size="12" fill="#22c55e">ALL 3 PASS</text>
+
+  <!-- shared foundation strip (bottom of C2) -->
+  <rect x="100" y="2288" width="1200" height="48" rx="8" fill="#050e07" stroke="#0d2410" stroke-width="1"/>
+  <text x="700" y="2309" text-anchor="middle" font-size="11" fill="#1e4a2e" letter-spacing="1">SHARED FOUNDATION  (v0.39-01)</text>
+  <text x="700" y="2327" text-anchor="middle" font-size="11" fill="#143020">verification-mode.cjs  ·  parse-tlc-counterexample.cjs  ·  diagnostic-diff-generator.cjs  ·  config.json → max_iterations</text>
+
+  <!-- CONVERGED → Implementation connector -->
+  <line x1="1120" y1="2284" x2="760"  y2="2356" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ag)"/>
+  <line x1="700"  y1="2344" x2="700"  y2="2380" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#ap)"/>
+
+  <!-- ════════════════════════════════════════════
+       IMPLEMENTATION  (y 2380–2520)
+       ════════════════════════════════════════════ -->
+  <rect x="60" y="2388" width="1280" height="120" rx="14" fill="#0f0a1e" stroke="#7c3aed" stroke-width="1.5" filter="url(#s2)"/>
+  <text x="700" y="2428" text-anchor="middle" font-size="11" font-weight="700" fill="#7c3aed" letter-spacing="3">IMPLEMENTATION  ·  model-driven-fix  Phase 5</text>
+  <text x="700" y="2464" text-anchor="middle" font-size="18" font-weight="600" fill="#e2e8f0">Write production code</text>
+  <text x="700" y="2494" text-anchor="middle" font-size="13" fill="#581c87">First line of code written only after both cycles converge in model space</text>
+
+  <!-- ════════════════════════════════════════════
+       FOOTER NOTE
+       ════════════════════════════════════════════ -->
+  <text x="700" y="2572" text-anchor="middle" font-size="11" fill="#1e293b">Gate 2 reuses mode=diagnostic with inverted semantics: in Cycle 1 "no violation = model incomplete"; in Cycle 2 Gate 2 "no violation = bug is resolved"</text>
+
+</svg>

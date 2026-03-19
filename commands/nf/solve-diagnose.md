@@ -47,6 +47,7 @@ At the end of execution, emit a compact JSON result to stdout:
   "open_debt": [ /* array from readOpenDebt */ ],
   "heatmap": { "top_files": [ /* top 20 from summary output */ ], "full_path": ".planning/formal/evidence/git-heatmap.json" },
   "issues": { /* from issue-classifier.cjs */ },
+  "fsm_candidates": [], /* implicit FSM candidates from heatmap scan */
   "targets": null | { /* from observe-solve-pipe.cjs */ },
   "hypothesis_measurements": null | { /* from hypothesis-measure.cjs — tier-1 assumption verdicts */ }
 }
@@ -247,5 +248,29 @@ node bin/issue-classifier.cjs --json 2>/dev/null || true
 Parse the JSON output. If issues are found, log: `"Issue classifier: {count} operational issues ranked — {critical} critical, {warning} warnings"`
 
 The classifier reads from telemetry data (produced by telemetry-collector.cjs) and surfaces issues that may affect solve cycle reliability. Critical issues should be flagged in the diagnostic output but do NOT block remediation (fail-open).
+
+### Implicit State Machine Detection
+
+Scan the top files from the git churn heatmap (up to top 10 by churn score) for implicit state machine patterns.
+
+**File source:** The heatmap command (`node bin/git-heatmap.cjs`) already ran above and printed a human-readable summary. Use Grep on each file path extracted from the on-disk artifact at `.planning/formal/evidence/git-heatmap.json` using the field path `uncovered_hot_zones[].file` (sorted by `priority` descending, take first 10 code files). Do NOT read the full JSON into agent context — use a shell command to extract the file list, filtering to code files only and excluding non-source paths:
+```bash
+jq -r '[.uncovered_hot_zones[] | select(.file | test("\\.(js|ts|cjs|mjs|py|go|rb|java|cs|rs)$")) | select(.file | test("^\\.planning/|^dist/|^node_modules/") | not)] | sort_by(.priority // 0) | reverse | .[].file' .planning/formal/evidence/git-heatmap.json | head -10
+```
+
+**Heuristic A — Multi-flag boolean cluster:**
+For each file, search for boolean variable declarations or assignments (lines matching `(bool|boolean|let|var|const)\s+\w+(Pending|Active|Done|Started|Running|Stopped|Failed|Ready|Busy|Locked|Open|Closed|Enabled|Disabled)\s*[=:]`). If 3 or more such flags appear in the same file, record it as an FSM candidate with reason `"multi-flag-boolean"`.
+
+**Heuristic B — Enum-like string state variable (heuristic — may produce false positives; intended for candidate surfacing only, not proof):**
+For each file, search for patterns where string literals appear in 3 or more conditional comparisons (e.g., `if.*===\s*['"][A-Z_]+['"]` or `case\s+['"][A-Z_]+['"]:`). If 3+ such patterns appear in the file, flag it as an FSM candidate with reason `"enum-string-state"`. Note: a grep count of string literals cannot prove single-variable usage — this heuristic flags files as FSM candidates with possible false positives.
+
+Both heuristics are **fail-open**: if the heatmap file is missing, if grep errors, or if a target file does not exist, skip silently and proceed.
+
+Log results:
+- If 0 candidates found: `"Step 1 FSM scan: No implicit state machine patterns detected in top ${N} heatmap files"`
+- If candidates found: `"Step 1 FSM scan: {count} implicit FSM candidate(s) detected — recommend extraction + fsm-to-tla.cjs --scaffold-config"`
+  For each candidate, log: `"  {file}: {reason} (flags: {matched_names_or_values})"`
+
+Store the candidates array as `fsm_candidates` in the solve context.
 
 </process>

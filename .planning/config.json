@@ -4,7 +4,7 @@
   "commit_docs": true,
   "model_profile": "balanced",
   "workflow": {
-    "research": false,
+    "research": true,
     "plan_check": true,
     "verifier": true,
     "auto_advance": true,
@@ -15,5 +15,6 @@
   "granularity": "standard",
   "suppress_warnings": [
     "W005"
-  ]
+  ],
+  "max_iterations": 3
 }

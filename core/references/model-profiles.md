@@ -65,7 +65,7 @@ Overrides take precedence over the profile. Valid values: `opus`, `sonnet`, `hai
 
 ## Switching Profiles
 
-Runtime: `/qgsd:set-profile <profile>`
+Runtime: `/nf:set-profile <profile>`
 
 Per-project default: Set in `.planning/config.json`:
 ```json

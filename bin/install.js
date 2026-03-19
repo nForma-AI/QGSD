@@ -20,6 +20,7 @@ const CLI_INSTALL_HINTS = {
   gemini:   'npm i -g @google/gemini-cli',
   opencode: 'npm i -g opencode',
   copilot:  'npm i -g @githubnext/github-copilot-cli',
+  ccr:      'npm install -g @musistudio/claude-code-router',
 };
 
 // Get version from package.json
@@ -288,6 +289,17 @@ function detectExternalClis(externalPrimary) {
     const found = result !== p.bareCli;
     return { ...p, found, resolvedPath: found ? result : null };
   });
+}
+
+/**
+ * Detect whether the ccr (Claude Code Router) binary is available.
+ * @returns {{ found: boolean, resolvedPath: string|null }}
+ */
+function detectCcrCli() {
+  const { resolveCli } = require('./resolve-cli.cjs');
+  const result = resolveCli('ccr');
+  const found = result !== 'ccr';
+  return { found, resolvedPath: found ? result : null };
 }
 
 // Ensures all provider slots from providers.json have corresponding MCP entries in ~/.claude.json.
@@ -3208,11 +3220,11 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders && selectedRuntimes.includes('claude')) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
+      selectedProviderSlots = foundNames;
       if (foundNames.length > 0) {
-        console.log(`  ${yellow}Detected CLIs not enabled: ${foundNames.join(', ')}. Use --all-providers to include them.${reset}`);
+        console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
       }
     }
     installAllRuntimes(selectedRuntimes, hasGlobal, false);
@@ -3223,10 +3235,18 @@ if (hasGlobal && hasLocal) {
     const provs = require('./providers.json').providers;
     const classified = classifyProviders(provs);
     selectedProviderSlots = classified.ccr.map(p => p.name);
+    if (selectedProviderSlots.length > 0) {
+      const ccrStatus = detectCcrCli();
+      if (!ccrStatus.found) {
+        const hint = CLI_INSTALL_HINTS['ccr'] || '';
+        console.log(`  ${yellow}⚠${reset} ccr not found — claude-1..6 slots require it${hint ? `. Install: ${hint}` : ''}`);
+      }
+    }
     const detected = detectExternalClis(classified.externalPrimary);
     const foundNames = detected.filter(d => d.found).map(d => d.name);
+    selectedProviderSlots = [...selectedProviderSlots, ...foundNames];
     if (foundNames.length > 0) {
-      console.log(`  ${yellow}Detected CLIs not enabled: ${foundNames.join(', ')}. Use --all-providers to include them.${reset}`);
+      console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
     }
   }
   installAllRuntimes(['claude'], hasGlobal, false);
@@ -3237,11 +3257,11 @@ if (hasGlobal && hasLocal) {
     if (!hasAllProviders) {
       const provs = require('./providers.json').providers;
       const classified = classifyProviders(provs);
-      selectedProviderSlots = [];
       const detected = detectExternalClis(classified.externalPrimary);
       const foundNames = detected.filter(d => d.found).map(d => d.name);
+      selectedProviderSlots = foundNames;
       if (foundNames.length > 0) {
-        console.log(`  Detected: ${foundNames.join(', ')}. Run with --all-providers to include.`);
+        console.log(`  ${green}✓${reset} Auto-including detected CLIs: ${foundNames.join(', ')}`);
       }
     }
     installAllRuntimes(['claude'], true, false);

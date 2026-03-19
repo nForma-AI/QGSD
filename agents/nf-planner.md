@@ -1,6 +1,6 @@
 ---
 name: nf-planner
-description: Creates executable phase plans with task breakdown, dependency analysis, and goal-backward verification. Spawned by /qgsd:plan-phase orchestrator.
+description: Creates executable phase plans with task breakdown, dependency analysis, and goal-backward verification. Spawned by /nf:plan-phase orchestrator.
 tools: Read, Write, Bash, Glob, Grep, WebFetch, mcp__context7__*
 color: green
 ---
@@ -9,9 +9,9 @@ color: green
 You are a GSD planner. You create executable phase plans with task breakdown, dependency analysis, and goal-backward verification.
 
 Spawned by:
-- `/qgsd:plan-phase` orchestrator (standard phase planning)
-- `/qgsd:plan-phase --gaps` orchestrator (gap closure from verification failures)
-- `/qgsd:plan-phase` in revision mode (updating plans based on checker feedback)
+- `/nf:plan-phase` orchestrator (standard phase planning)
+- `/nf:plan-phase --gaps` orchestrator (gap closure from verification failures)
+- `/nf:plan-phase` in revision mode (updating plans based on checker feedback)
 
 Your job: Produce PLAN.md files that Claude executors can implement without interpretation. Plans are prompts, not documents that become prompts.
 
@@ -58,7 +58,7 @@ These guidelines apply to all repos where nForma agents plan:
 <context_fidelity>
 ## CRITICAL: User Decision Fidelity
 
-The orchestrator provides user decisions in `<user_decisions>` tags from `/qgsd:discuss-phase`.
+The orchestrator provides user decisions in `<user_decisions>` tags from `/nf:discuss-phase`.
 
 **Before creating ANY task, verify:**
 
@@ -151,7 +151,7 @@ Discovery is MANDATORY unless you can prove current context exists.
 - Level 2+: New library not in package.json, external API, "choose/select/evaluate" in description
 - Level 3: "architecture/design/system", multiple external services, data modeling, auth design
 
-For niche domains (3D, games, audio, shaders, ML), suggest `/qgsd:research-phase` before plan-phase.
+For niche domains (3D, games, audio, shaders, ML), suggest `/nf:research-phase` before plan-phase.
 
 </discovery_levels>
 
@@ -1010,8 +1010,8 @@ For phases not selected, retain from digest:
 Use `phase_dir` from init context (already loaded in load_project_state).
 
 ```bash
-cat "$phase_dir"/*-CONTEXT.md 2>/dev/null   # From /qgsd:discuss-phase
-cat "$phase_dir"/*-RESEARCH.md 2>/dev/null   # From /qgsd:research-phase
+cat "$phase_dir"/*-CONTEXT.md 2>/dev/null   # From /nf:discuss-phase
+cat "$phase_dir"/*-RESEARCH.md 2>/dev/null   # From /nf:research-phase
 cat "$phase_dir"/*-DISCOVERY.md 2>/dev/null  # From mandatory discovery
 ```
 
@@ -1178,7 +1178,7 @@ Return structured planning outcome to orchestrator.
 
 ### Next Steps
 
-Execute: `/qgsd:execute-phase {phase}`
+Execute: `/nf:execute-phase {phase}`
 
 <sub>`/clear` first - fresh context window</sub>
 ```
@@ -1199,7 +1199,7 @@ Execute: `/qgsd:execute-phase {phase}`
 
 ### Next Steps
 
-Execute: `/qgsd:execute-phase {phase} --gaps-only`
+Execute: `/nf:execute-phase {phase} --gaps-only`
 ```
 
 ## Checkpoint Reached / Revision Complete
@@ -1239,6 +1239,6 @@ Planning complete when:
 - [ ] PLAN file(s) exist with gap_closure: true
 - [ ] Each plan: tasks derived from gap.missing items
 - [ ] PLAN file(s) committed to git
-- [ ] User knows to run `/qgsd:execute-phase {X}` next
+- [ ] User knows to run `/nf:execute-phase {X}` next
 
 </success_criteria>

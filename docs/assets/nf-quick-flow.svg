@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1820" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0e17"/>
+      <stop offset="100%" stop-color="#0d1220"/>
+    </linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/></filter>
+  </defs>
+
+  <rect width="1400" height="1820" fill="url(#bg)"/>
+
+  <!-- ══ TITLE ══ -->
+  <text x="700" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#2d3748" letter-spacing="4">NFORMA  ·  WORKFLOW</text>
+  <text x="700" y="90" text-anchor="middle" font-size="26" font-weight="700" fill="#f1f5f9">nf:quick  —  Task Execution Flow</text>
+  <text x="700" y="122" text-anchor="middle" font-size="13" fill="#475569">Default: fast atomic path · --full: single-phase rigor — plan-check, verify, and requirement elevation</text>
+  <line x1="80" y1="142" x2="1320" y2="142" stroke="#1a2233" stroke-width="1"/>
+
+  <!-- ══ LEGEND ══ -->
+  <rect x="80" y="154" width="1240" height="56" rx="10" fill="#090c15" stroke="#1a2233" stroke-width="1"/>
+  <rect x="112" y="174" width="6" height="20" rx="3" fill="#3b82f6"/>
+  <text x="128" y="188" font-size="12" fill="#60a5fa" font-weight="600">Default + --full</text>
+  <rect x="340" y="174" width="6" height="20" rx="3" fill="#f59e0b"/>
+  <text x="356" y="188" font-size="12" fill="#fcd34d" font-weight="600">--full only</text>
+  <rect x="530" y="174" width="6" height="20" rx="3" fill="#a855f7"/>
+  <text x="546" y="188" font-size="12" fill="#c084fc" font-weight="600">Quorum — mandatory in both modes</text>
+  <rect x="900" y="174" width="6" height="20" rx="3" fill="#22c55e"/>
+  <text x="916" y="188" font-size="12" fill="#4ade80" font-weight="600">Complete</text>
+
+  <!-- vertical flow connector -->
+  <line x1="130" y1="270" x2="130" y2="1720" stroke="#1e2d40" stroke-width="2" stroke-dasharray="4,6"/>
+
+  <!-- ══════════════════════════════════ SECTION A: SETUP ══════════════════════════════════ -->
+  <rect x="80" y="222" width="1240" height="44" fill="#0c1a30"/>
+  <rect x="80" y="222" width="6"    height="44" fill="#3b82f6"/>
+  <text x="104" y="249" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">SETUP</text>
+  <text x="1312" y="249" text-anchor="end" font-size="11" fill="#1d4ed8">steps 1–4  ·  both modes</text>
+
+  <!-- Step 1: Parse Arguments -->
+  <rect x="80" y="266" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="266" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="304" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="309" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">1</text>
+  <text x="166" y="295" font-size="14" font-weight="700" fill="#e2e8f0">Parse Arguments</text>
+  <text x="166" y="315" font-size="12" fill="#64748b">detect --full → $FULL_MODE, --no-branch → $NO_BRANCH; AskUserQuestion if no $DESCRIPTION provided</text>
+  <rect x="1220" y="280" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="298" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- Step 2: Initialize -->
+  <rect x="80" y="342" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="342" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="380" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="385" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">2</text>
+  <text x="166" y="371" font-size="14" font-weight="700" fill="#e2e8f0">Initialize</text>
+  <text x="166" y="391" font-size="12" fill="#64748b">gsd-tools init quick → planner/executor/checker/verifier models, branch info, next_num, slug, quick_dir</text>
+  <rect x="1220" y="356" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="374" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- Step 3: Smart Branching -->
+  <rect x="80" y="418" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="418" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="456" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="461" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">3</text>
+  <text x="166" y="447" font-size="14" font-weight="700" fill="#e2e8f0">Smart Branching</text>
+  <text x="166" y="467" font-size="12" fill="#64748b">protected branch → checkout -b nf/quick-NNN-slug  ·  feature branch → commit in place  ·  --no-branch skips</text>
+  <rect x="1220" y="432" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="450" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- Step 4: Create Task Directory -->
+  <rect x="80" y="494" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="494" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="532" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="537" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">4</text>
+  <text x="166" y="523" font-size="14" font-weight="700" fill="#e2e8f0">Create Task Directory</text>
+  <text x="166" y="543" font-size="12" fill="#64748b">mkdir -p .planning/quick/NNN-slug/  ·  stores $QUICK_DIR for orchestration throughout</text>
+  <rect x="1220" y="508" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="526" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- ══════════════════════════════════ SECTION B: PLAN ══════════════════════════════════ -->
+  <rect x="80" y="592" width="1240" height="44" fill="#130f00"/>
+  <rect x="80" y="592" width="6"    height="44" fill="#f59e0b"/>
+  <text x="104" y="619" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="3">PLAN</text>
+  <text x="1312" y="619" text-anchor="end" font-size="11" fill="#92400e">steps 5–8  ·  quorum mandatory  ·  --full adds scope scan and plan-checker</text>
+
+  <!-- Step 5: Formal Scope Scan -->
+  <rect x="80" y="636" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="636" width="6"    height="76" fill="#f59e0b"/>
+  <circle cx="130" cy="674" r="17" fill="#1a1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="130" y="679" text-anchor="middle" font-size="13" font-weight="700" fill="#fcd34d">5</text>
+  <text x="166" y="665" font-size="14" font-weight="700" fill="#e2e8f0">Formal Scope Scan</text>
+  <text x="166" y="685" font-size="12" fill="#64748b">formal-scope-scan.cjs --description "$DESCRIPTION" → matches scope tokens → injects invariants.md into planner</text>
+  <rect x="1188" y="650" width="122" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1249" y="668" text-anchor="middle" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1">--full ONLY</text>
+
+  <!-- Step 6: Spawn nf-planner -->
+  <rect x="80" y="712" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="712" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="750" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="755" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">6</text>
+  <text x="166" y="741" font-size="14" font-weight="700" fill="#e2e8f0">Spawn nf-planner</text>
+  <text x="166" y="761" font-size="12" fill="#64748b">mode: quick / quick-full  ·  output: NNN-PLAN.md  ·  (--full) must declare formal_artifacts: none | update | create</text>
+  <rect x="1220" y="726" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="744" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- Step 7: Plan-Checker Loop -->
+  <rect x="80" y="788" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="788" width="6"    height="76" fill="#f59e0b"/>
+  <circle cx="130" cy="826" r="17" fill="#1a1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="130" y="831" text-anchor="middle" font-size="13" font-weight="700" fill="#fcd34d">7</text>
+  <text x="166" y="817" font-size="14" font-weight="700" fill="#e2e8f0">Plan-Checker Loop</text>
+  <text x="166" y="837" font-size="12" fill="#64748b">nf-plan-checker: completeness, must_haves, invariant compliance  ·  max 2 planner revisions  ·  fail → user: proceed or abort</text>
+  <rect x="1188" y="802" width="122" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1249" y="820" text-anchor="middle" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1">--full ONLY</text>
+
+  <!-- Step 8: Quorum Plan Review + R3.6 -->
+  <rect x="80" y="864" width="1240" height="92" fill="#0b0e16"/>
+  <rect x="80" y="864" width="6"    height="92" fill="#a855f7"/>
+  <circle cx="130" cy="910" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="915" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">8</text>
+  <text x="166" y="897" font-size="14" font-weight="700" fill="#e2e8f0">Quorum Plan Review + R3.6 Improvements</text>
+  <text x="166" y="917" font-size="12" fill="#64748b">mode=A, artifact=PLAN.md, request_improvements=true  ·  APPROVED + suggestions → planner revision (up to 10)</text>
+  <text x="166" y="937" font-size="12" fill="#64748b">BLOCKED → execution halts (CE-2: absolute)  ·  ESCALATED → user resolves  ·  UNAVAIL → fail-open</text>
+  <rect x="1188" y="882" width="122" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1249" y="900" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">QUORUM</text>
+
+  <!-- ══════════════════════════════════ SECTION C: EXECUTE ══════════════════════════════════ -->
+  <rect x="80" y="978" width="1240" height="44" fill="#0c1a30"/>
+  <rect x="80" y="978" width="6"    height="44" fill="#3b82f6"/>
+  <text x="104" y="1005" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">EXECUTE</text>
+  <text x="1312" y="1005" text-anchor="end" font-size="11" fill="#1d4ed8">steps 9–10  ·  both modes</text>
+
+  <!-- Step 9: Spawn nf-executor -->
+  <rect x="80" y="1022" width="1240" height="92" fill="#090b12"/>
+  <rect x="80" y="1022" width="6"    height="92" fill="#3b82f6"/>
+  <circle cx="130" cy="1068" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1073" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">9</text>
+  <text x="166" y="1051" font-size="14" font-weight="700" fill="#e2e8f0">Spawn nf-executor</text>
+  <text x="166" y="1071" font-size="12" fill="#64748b">run all plan tasks  ·  atomic commits per task (formal/ files included when formal_artifacts non-empty)</text>
+  <text x="166" y="1091" font-size="12" fill="#64748b">creates SUMMARY.md  ·  appends row to STATE.md Quick Tasks table  ·  commits PLAN + SUMMARY + STATE atomically</text>
+  <rect x="1220" y="1036" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1054" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- Step 10: Consumer Integration Check -->
+  <rect x="80" y="1114" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="1114" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="1152" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1158" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa">10</text>
+  <text x="166" y="1143" font-size="14" font-weight="700" fill="#e2e8f0">Consumer Integration Check</text>
+  <text x="166" y="1163" font-size="12" fill="#64748b">each new bin/*.cjs must have ≥1 system consumer (skill / workflow / pipeline)  ·  WARNING if orphaned — non-blocking</text>
+  <rect x="1220" y="1128" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1146" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- ══════════════════════════════════ SECTION D: VERIFY ══════════════════════════════════ -->
+  <rect x="80" y="1212" width="1240" height="44" fill="#130f00"/>
+  <rect x="80" y="1212" width="6"    height="44" fill="#f59e0b"/>
+  <text x="104" y="1239" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="3">VERIFY</text>
+  <text x="1312" y="1239" text-anchor="end" font-size="11" fill="#92400e">steps 11–14  ·  --full only  ·  formal check → verify → quorum → req elevation</text>
+
+  <!-- Step 11: Post-Execution Formal Check -->
+  <rect x="80" y="1256" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1256" width="6"    height="76" fill="#f59e0b"/>
+  <circle cx="130" cy="1294" r="17" fill="#1a1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="130" y="1300" text-anchor="middle" font-size="11" font-weight="700" fill="#fcd34d">11</text>
+  <text x="166" y="1285" font-size="14" font-weight="700" fill="#e2e8f0">Post-Execution Formal Check</text>
+  <text x="166" y="1305" font-size="12" fill="#64748b">run-formal-check.cjs --modules={matched}  ·  PASSED → continue  ·  COUNTEREXAMPLE → hard failure signal to verifier</text>
+  <rect x="1188" y="1270" width="122" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1249" y="1288" text-anchor="middle" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1">--full ONLY</text>
+
+  <!-- Step 12: Spawn nf-verifier -->
+  <rect x="80" y="1332" width="1240" height="92" fill="#0b0e16"/>
+  <rect x="80" y="1332" width="6"    height="92" fill="#f59e0b"/>
+  <circle cx="130" cy="1378" r="17" fill="#1a1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="130" y="1384" text-anchor="middle" font-size="11" font-weight="700" fill="#fcd34d">12</text>
+  <text x="166" y="1361" font-size="14" font-weight="700" fill="#e2e8f0">Spawn nf-verifier</text>
+  <text x="166" y="1381" font-size="12" fill="#64748b">checks must_haves vs codebase + invariant compliance  ·  receives FORMAL_CHECK_RESULT  ·  writes VERIFICATION.md</text>
+  <text x="166" y="1401" font-size="12" fill="#64748b">passed → proceed  ·  gaps_found → auto-fix loop (executor × max 2)  ·  human_needed → quorum resolution loop</text>
+  <rect x="1188" y="1348" width="122" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1249" y="1366" text-anchor="middle" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1">--full ONLY</text>
+
+  <!-- Step 13: Quorum reviews VERIFICATION.md -->
+  <rect x="80" y="1424" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1424" width="6"    height="76" fill="#a855f7"/>
+  <circle cx="130" cy="1462" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="1468" text-anchor="middle" font-size="11" font-weight="700" fill="#c084fc">13</text>
+  <text x="166" y="1453" font-size="14" font-weight="700" fill="#e2e8f0">Quorum Reviews VERIFICATION.md</text>
+  <text x="166" y="1473" font-size="12" fill="#64748b">mode=A, artifact=VERIFICATION.md, improvements=false  ·  APPROVED → Verified  ·  BLOCKED → Needs Review</text>
+  <rect x="1188" y="1438" width="122" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1249" y="1456" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">QUORUM</text>
+
+  <!-- Step 14: Requirement Elevation -->
+  <rect x="80" y="1500" width="1240" height="92" fill="#0b0e16"/>
+  <rect x="80" y="1500" width="6"    height="92" fill="#f59e0b"/>
+  <circle cx="130" cy="1546" r="17" fill="#1a1200" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="130" y="1552" text-anchor="middle" font-size="11" font-weight="700" fill="#fcd34d">14</text>
+  <text x="166" y="1529" font-size="14" font-weight="700" fill="#e2e8f0">Requirement Elevation</text>
+  <text x="166" y="1549" font-size="12" fill="#64748b">Haiku drafts formal req from task context (description + PLAN + SUMMARY)  ·  user: Approve / Edit / Skip</text>
+  <text x="166" y="1569" font-size="12" fill="#64748b">if approved: duplicate ID check + semantic conflict check → write requirements.json → commit req(quick-NNN)</text>
+  <rect x="1188" y="1516" width="122" height="28" rx="6" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1249" y="1534" text-anchor="middle" font-size="10" font-weight="700" fill="#f59e0b" letter-spacing="1">--full ONLY</text>
+
+  <!-- ══════════════════════════════════ SECTION E: COMPLETE ══════════════════════════════════ -->
+  <rect x="80" y="1614" width="1240" height="44" fill="#0a1a12"/>
+  <rect x="80" y="1614" width="6"    height="44" fill="#22c55e"/>
+  <text x="104" y="1641" font-size="11" font-weight="700" fill="#22c55e" letter-spacing="3">COMPLETE</text>
+  <text x="1312" y="1641" text-anchor="end" font-size="11" fill="#166534">step 15  ·  both modes</text>
+
+  <!-- Step 15: Task Complete -->
+  <rect x="80" y="1658" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1658" width="6"    height="76" fill="#22c55e"/>
+  <circle cx="130" cy="1696" r="17" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="130" y="1702" text-anchor="middle" font-size="11" font-weight="700" fill="#4ade80">15</text>
+  <text x="166" y="1687" font-size="14" font-weight="700" fill="#e2e8f0">Task Complete</text>
+  <text x="166" y="1707" font-size="12" fill="#64748b">banner: summary, commit hash, branch  ·  PR-ready if new branch  ·  (--full) VERIFICATION status + elevated REQ-ID</text>
+  <rect x="1220" y="1672" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1690" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">BOTH</text>
+
+  <!-- ══ FOOTER ══ -->
+  <line x1="80" y1="1762" x2="1320" y2="1762" stroke="#1a2233" stroke-width="1"/>
+  <text x="700" y="1789" text-anchor="middle" font-size="11" fill="#1e293b">Quick tasks live in .planning/quick/NNN-slug/  ·  never touch ROADMAP.md  ·  can run mid-phase  ·  ROADMAP.md must exist (run /nf:new-project first)</text>
+</svg>

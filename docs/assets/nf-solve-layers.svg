@@ -1,0 +1,428 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2560" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0e17"/>
+      <stop offset="100%" stop-color="#0d1220"/>
+    </linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/></filter>
+  </defs>
+
+  <rect width="1400" height="2560" fill="url(#bg)"/>
+
+  <!-- ══════════════════════════════════════
+       TITLE  (y 0–148)
+       ══════════════════════════════════════ -->
+  <text x="700" y="56"  text-anchor="middle" font-size="11" font-weight="600" fill="#2d3748" letter-spacing="4">NFORMA  ·  CONSISTENCY SOLVER</text>
+  <text x="700" y="96"  text-anchor="middle" font-size="26" font-weight="700" fill="#f1f5f9">nf:solve  —  All Layer Checks</text>
+  <text x="700" y="128" text-anchor="middle" font-size="13" fill="#475569">Every check the solver runs, its direction, and whether it auto-remediates</text>
+  <line x1="80" y1="148" x2="1320" y2="148" stroke="#1a2233" stroke-width="1"/>
+
+  <!-- ══════════════════════════════════════
+       LEGEND  (y 162–232)
+       ══════════════════════════════════════ -->
+  <rect x="80" y="162" width="1240" height="64" rx="10" fill="#090c15" stroke="#1a2233" stroke-width="1"/>
+
+  <rect x="112" y="183" width="6" height="24" rx="3" fill="#3b82f6"/>
+  <text x="128" y="199" font-size="12" fill="#60a5fa" font-weight="600">Forward check</text>
+  <text x="128" y="217" font-size="11" fill="#334155">auto-remediated on residual &gt; 0</text>
+
+  <rect x="376" y="183" width="6" height="24" rx="3" fill="#f59e0b"/>
+  <text x="392" y="199" font-size="12" fill="#fcd34d" font-weight="600">Reverse discovery</text>
+  <text x="392" y="217" font-size="11" fill="#334155">surfaces candidates — human-gated, never auto-fixed</text>
+
+  <rect x="716" y="183" width="6" height="24" rx="3" fill="#a855f7"/>
+  <text x="732" y="199" font-size="12" fill="#c084fc" font-weight="600">Layer alignment gate</text>
+  <text x="732" y="217" font-size="11" fill="#334155">cross-layer wiring score — auto-remediated</text>
+
+  <rect x="1032" y="183" width="6" height="24" rx="3" fill="#475569"/>
+  <text x="1048" y="199" font-size="12" fill="#94a3b8" font-weight="600">Evidence signal</text>
+  <text x="1048" y="217" font-size="11" fill="#334155">read-only diagnostic — no automated fix path</text>
+
+  <!-- ══════════════════════════════════════
+       SECTION A: FORWARD CHECKS  (y 246–918)
+       ══════════════════════════════════════ -->
+
+  <!-- Section header -->
+  <rect x="80" y="246" width="1240" height="48" fill="#0c1a30"/>
+  <rect x="80" y="246" width="6"    height="48" fill="#3b82f6"/>
+  <text x="104" y="276" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">FORWARD CHECKS</text>
+  <text x="1312" y="276" text-anchor="end" font-size="11" fill="#1d4ed8">8 layers  ·  residual auto-remediated each solve cycle</text>
+
+  <!-- Row template:
+       left accent  x=80  w=6
+       pill FROM    x=96  w=84  center=138
+       arrow        center=198
+       pill TO      x=212 w=84  center=254
+       divider      x=314
+       name         x=330  y=rowY+38
+       desc         x=330  y=rowY+60
+       badge        x=1232 w=144 center=1304
+  -->
+
+  <!-- ROW 1: R → F -->
+  <rect x="80"  y="294" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="294" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="317" width="84"   height="34" rx="9" fill="#1a1730" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="138" y="339" text-anchor="middle" font-size="14" font-weight="700" fill="#818cf8">R</text>
+  <text x="196" y="340" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="317" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="339" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="306" x2="312" y2="362" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="335" font-size="14" font-weight="700" fill="#e2e8f0">Requirements  →  Formal</text>
+  <text x="330" y="357" font-size="12" fill="#64748b">each requirement must have a formal model covering it</text>
+  <rect x="1230" y="317" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="339" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 2: F → T -->
+  <rect x="80"  y="374" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="374" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="397" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="138" y="419" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <text x="196" y="420" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="397" width="84"   height="34" rx="9" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="252" y="419" text-anchor="middle" font-size="14" font-weight="700" fill="#4ade80">T</text>
+  <line x1="312" y1="386" x2="312" y2="442" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="415" font-size="14" font-weight="700" fill="#e2e8f0">Formal  →  Tests</text>
+  <text x="330" y="437" font-size="12" fill="#64748b">each formal invariant must have a backing unit test</text>
+  <rect x="1230" y="397" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="419" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 3: F → C -->
+  <rect x="80"  y="454" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="454" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="477" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="138" y="499" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <text x="196" y="500" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="477" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="252" y="499" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <line x1="312" y1="466" x2="312" y2="522" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="495" font-size="14" font-weight="700" fill="#e2e8f0">Formal  →  Code</text>
+  <text x="330" y="517" font-size="12" fill="#64748b">formal verification checks must pass against running code</text>
+  <rect x="1230" y="477" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="499" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 4: C → F -->
+  <rect x="80"  y="534" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="534" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="557" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="138" y="579" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <text x="196" y="580" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="557" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="579" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="546" x2="312" y2="602" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="575" font-size="14" font-weight="700" fill="#e2e8f0">Code  →  Formal</text>
+  <text x="330" y="597" font-size="12" fill="#64748b">code constants must match formal model constants exactly</text>
+  <rect x="1230" y="557" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="579" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 5: T → C -->
+  <rect x="80"  y="614" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="614" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="637" width="84"   height="34" rx="9" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="138" y="659" text-anchor="middle" font-size="14" font-weight="700" fill="#4ade80">T</text>
+  <text x="196" y="660" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="637" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="252" y="659" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <line x1="312" y1="626" x2="312" y2="682" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="655" font-size="14" font-weight="700" fill="#e2e8f0">Tests  →  Code</text>
+  <text x="330" y="677" font-size="12" fill="#64748b">all unit and integration tests must pass</text>
+  <rect x="1230" y="637" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="659" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 6: R → D -->
+  <rect x="80"  y="694" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="694" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="717" width="84"   height="34" rx="9" fill="#1a1730" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="138" y="739" text-anchor="middle" font-size="14" font-weight="700" fill="#818cf8">R</text>
+  <text x="196" y="740" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="717" width="84"   height="34" rx="9" fill="#111820" stroke="#64748b" stroke-width="1.5"/>
+  <text x="252" y="739" text-anchor="middle" font-size="14" font-weight="700" fill="#94a3b8">D</text>
+  <line x1="312" y1="706" x2="312" y2="762" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="735" font-size="14" font-weight="700" fill="#e2e8f0">Requirements  →  Docs</text>
+  <text x="330" y="757" font-size="12" fill="#64748b">each requirement must appear in developer documentation</text>
+  <rect x="1230" y="717" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="739" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 7: D → C -->
+  <rect x="80"  y="774" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="774" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="797" width="84"   height="34" rx="9" fill="#111820" stroke="#64748b" stroke-width="1.5"/>
+  <text x="138" y="819" text-anchor="middle" font-size="14" font-weight="700" fill="#94a3b8">D</text>
+  <text x="196" y="820" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="797" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="252" y="819" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <line x1="312" y1="786" x2="312" y2="842" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="815" font-size="14" font-weight="700" fill="#e2e8f0">Docs  →  Code</text>
+  <text x="330" y="837" font-size="12" fill="#64748b">doc structural claims must be live — no dead paths, missing CLI, absent dependencies</text>
+  <rect x="1230" y="797" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="819" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 8: P → F -->
+  <rect x="80"  y="854" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="854" width="6"    height="80" fill="#3b82f6"/>
+  <rect x="96"  y="877" width="84"   height="34" rx="9" fill="#1a0808" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="138" y="899" text-anchor="middle" font-size="14" font-weight="700" fill="#f87171">P</text>
+  <text x="196" y="900" text-anchor="middle" font-size="20" fill="#1e3a5f">→</text>
+  <rect x="210" y="877" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="899" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="866" x2="312" y2="922" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="895" font-size="14" font-weight="700" fill="#e2e8f0">Production  →  Formal</text>
+  <text x="330" y="917" font-size="12" fill="#64748b">acknowledged debt entries must stay within formal model thresholds</text>
+  <rect x="1230" y="877" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="899" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ══════════════════════════════════════
+       SECTION B: REVERSE DISCOVERY  (y 978–1238)
+       ══════════════════════════════════════ -->
+
+  <rect x="80" y="978" width="1240" height="48" fill="#120e00"/>
+  <rect x="80" y="978" width="6"    height="48" fill="#f59e0b"/>
+  <text x="104" y="1008" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="3">REVERSE DISCOVERY</text>
+  <text x="1312" y="1008" text-anchor="end" font-size="11" fill="#92400e">3 layers  ·  never auto-remediated  ·  surfaces candidates for human approval</text>
+
+  <!-- ROW 9: C → R -->
+  <rect x="80"  y="1026" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1026" width="6"    height="80" fill="#f59e0b"/>
+  <rect x="96"  y="1049" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="138" y="1071" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <text x="196" y="1072" text-anchor="middle" font-size="20" fill="#44330a">→</text>
+  <rect x="210" y="1049" width="84"   height="34" rx="9" fill="#1a1730" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="252" y="1071" text-anchor="middle" font-size="14" font-weight="700" fill="#818cf8">R</text>
+  <line x1="312" y1="1038" x2="312" y2="1094" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1067" font-size="14" font-weight="700" fill="#e2e8f0">Code  →  Requirements</text>
+  <text x="330" y="1089" font-size="12" fill="#64748b">source modules in bin/ and hooks/ with no requirement tracing annotation</text>
+  <rect x="1188" y="1049" width="128" height="34" rx="8" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1252" y="1071" text-anchor="middle" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="1">DISCOVERY</text>
+
+  <!-- ROW 10: T → R -->
+  <rect x="80"  y="1106" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="1106" width="6"    height="80" fill="#f59e0b"/>
+  <rect x="96"  y="1129" width="84"   height="34" rx="9" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="138" y="1151" text-anchor="middle" font-size="14" font-weight="700" fill="#4ade80">T</text>
+  <text x="196" y="1152" text-anchor="middle" font-size="20" fill="#44330a">→</text>
+  <rect x="210" y="1129" width="84"   height="34" rx="9" fill="#1a1730" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="252" y="1151" text-anchor="middle" font-size="14" font-weight="700" fill="#818cf8">R</text>
+  <line x1="312" y1="1118" x2="312" y2="1174" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1147" font-size="14" font-weight="700" fill="#e2e8f0">Tests  →  Requirements</text>
+  <text x="330" y="1169" font-size="12" fill="#64748b">test files with no @req annotation or formal-test-sync mapping</text>
+  <rect x="1188" y="1129" width="128" height="34" rx="8" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1252" y="1151" text-anchor="middle" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="1">DISCOVERY</text>
+
+  <!-- ROW 11: D → R -->
+  <rect x="80"  y="1186" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1186" width="6"    height="80" fill="#f59e0b"/>
+  <rect x="96"  y="1209" width="84"   height="34" rx="9" fill="#111820" stroke="#64748b" stroke-width="1.5"/>
+  <text x="138" y="1231" text-anchor="middle" font-size="14" font-weight="700" fill="#94a3b8">D</text>
+  <text x="196" y="1232" text-anchor="middle" font-size="20" fill="#44330a">→</text>
+  <rect x="210" y="1209" width="84"   height="34" rx="9" fill="#1a1730" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="252" y="1231" text-anchor="middle" font-size="14" font-weight="700" fill="#818cf8">R</text>
+  <line x1="312" y1="1198" x2="312" y2="1254" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1227" font-size="14" font-weight="700" fill="#e2e8f0">Docs  →  Requirements</text>
+  <text x="330" y="1249" font-size="12" fill="#64748b">doc capability claims that have no backing requirement</text>
+  <rect x="1188" y="1209" width="128" height="34" rx="8" fill="#1a1200" stroke="#713f12" stroke-width="1"/>
+  <text x="1252" y="1231" text-anchor="middle" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="1">DISCOVERY</text>
+
+  <!-- ══════════════════════════════════════
+       SECTION C: LAYER ALIGNMENT GATES  (y 1318–1558)
+       ══════════════════════════════════════ -->
+
+  <rect x="80" y="1318" width="1240" height="48" fill="#0f0820"/>
+  <rect x="80" y="1318" width="6"    height="48" fill="#a855f7"/>
+  <text x="104" y="1348" font-size="11" font-weight="700" fill="#a855f7" letter-spacing="3">LAYER ALIGNMENT GATES</text>
+  <text x="1312" y="1348" text-anchor="end" font-size="11" fill="#6d28d9">3 gates  ·  cross-layer wiring score  ·  auto-remediated</text>
+
+  <!-- ROW 12: Gate A — L1 → L2 -->
+  <rect x="80"  y="1366" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1366" width="6"    height="80" fill="#a855f7"/>
+  <rect x="96"  y="1389" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="138" y="1411" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">L1</text>
+  <text x="196" y="1412" text-anchor="middle" font-size="20" fill="#2e1a4a">→</text>
+  <rect x="210" y="1389" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="252" y="1411" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">L2</text>
+  <line x1="312" y1="1378" x2="312" y2="1434" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1407" font-size="14" font-weight="700" fill="#e2e8f0">Gate A  ·  Wiring : Evidence Alignment</text>
+  <text x="330" y="1429" font-size="12" fill="#64748b">layer manifest wiring must match the collected evidence artifacts</text>
+  <rect x="1230" y="1389" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="1411" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 13: Gate B — L2 → L3 -->
+  <rect x="80"  y="1446" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="1446" width="6"    height="80" fill="#a855f7"/>
+  <rect x="96"  y="1469" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="138" y="1491" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">L2</text>
+  <text x="196" y="1492" text-anchor="middle" font-size="20" fill="#2e1a4a">→</text>
+  <rect x="210" y="1469" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="252" y="1491" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">L3</text>
+  <line x1="312" y1="1458" x2="312" y2="1514" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1487" font-size="14" font-weight="700" fill="#e2e8f0">Gate B  ·  Wiring : Purpose Alignment</text>
+  <text x="330" y="1509" font-size="12" fill="#64748b">evidence artifacts must map clearly back to formal model intent</text>
+  <rect x="1230" y="1469" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="1491" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ROW 14: Gate C — L3 → TC -->
+  <rect x="80"  y="1526" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1526" width="6"    height="80" fill="#a855f7"/>
+  <rect x="96"  y="1549" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="138" y="1571" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">L3</text>
+  <text x="196" y="1572" text-anchor="middle" font-size="20" fill="#2e1a4a">→</text>
+  <rect x="210" y="1549" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="252" y="1571" text-anchor="middle" font-size="13" font-weight="700" fill="#c084fc">TC</text>
+  <line x1="312" y1="1538" x2="312" y2="1594" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1567" font-size="14" font-weight="700" fill="#e2e8f0">Gate C  ·  Wiring : Coverage Alignment</text>
+  <text x="330" y="1589" font-size="12" fill="#64748b">purpose-mapped evidence must be fully covered by tests</text>
+  <rect x="1230" y="1549" width="84"  height="34" rx="8" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1272" y="1571" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="1">AUTO</text>
+
+  <!-- ══════════════════════════════════════
+       SECTION D: EVIDENCE & MATURITY  (y 1660–2060)
+       ══════════════════════════════════════ -->
+
+  <rect x="80" y="1660" width="1240" height="48" fill="#0c0e12"/>
+  <rect x="80" y="1660" width="6"    height="48" fill="#475569"/>
+  <text x="104" y="1690" font-size="11" font-weight="700" fill="#64748b" letter-spacing="3">EVIDENCE &amp; MATURITY SIGNALS</text>
+  <text x="1312" y="1690" text-anchor="end" font-size="11" fill="#334155">6 signals  ·  read-only diagnostics  ·  no automated fix path</text>
+
+  <!-- ROW 15: F → G -->
+  <rect x="80"  y="1708" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1708" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="1731" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="138" y="1753" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <text x="196" y="1754" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="1731" width="84"   height="34" rx="9" fill="#0f0820" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="252" y="1753" text-anchor="middle" font-size="14" font-weight="700" fill="#a78bfa">G</text>
+  <line x1="312" y1="1720" x2="312" y2="1776" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1749" font-size="14" font-weight="700" fill="#e2e8f0">Formal  →  Gate Maturity</text>
+  <text x="330" y="1771" font-size="12" fill="#64748b">formal models still at gate maturity 0 — not yet promoted through any Gate A / B / C checkpoint</text>
+  <rect x="1198" y="1731" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="1753" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ROW 16: C → E -->
+  <rect x="80"  y="1788" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="1788" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="1811" width="84"   height="34" rx="9" fill="#1a1000" stroke="#f97316" stroke-width="1.5"/>
+  <text x="138" y="1833" text-anchor="middle" font-size="14" font-weight="700" fill="#fb923c">C</text>
+  <text x="196" y="1834" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="1811" width="84"   height="34" rx="9" fill="#0f1a08" stroke="#84cc16" stroke-width="1.5"/>
+  <text x="252" y="1833" text-anchor="middle" font-size="14" font-weight="700" fill="#a3e635">E</text>
+  <line x1="312" y1="1800" x2="312" y2="1856" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1829" font-size="14" font-weight="700" fill="#e2e8f0">Code  →  Evidence Gap</text>
+  <text x="330" y="1851" font-size="12" fill="#64748b">high-churn code files (git heatmap) with no formal model coverage — hot spots lacking specification</text>
+  <rect x="1198" y="1811" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="1833" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ROW 17: G → F -->
+  <rect x="80"  y="1868" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="1868" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="1891" width="84"   height="34" rx="9" fill="#0f0820" stroke="#6d28d9" stroke-width="1.5"/>
+  <text x="138" y="1913" text-anchor="middle" font-size="14" font-weight="700" fill="#a78bfa">G</text>
+  <text x="196" y="1914" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="1891" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="1913" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="1880" x2="312" y2="1936" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1909" font-size="14" font-weight="700" fill="#e2e8f0">Git History  →  Formal Drift</text>
+  <text x="330" y="1931" font-size="12" fill="#64748b">failure scenarios in git history that formal models cannot explain — TLA+ spec has drifted from real incidents</text>
+  <rect x="1198" y="1891" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="1913" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ROW 18: F → F -->
+  <rect x="80"  y="1948" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="1948" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="1971" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="138" y="1993" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <text x="196" y="1994" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="1971" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="1993" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="1960" x2="312" y2="2016" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="1989" font-size="14" font-weight="700" fill="#e2e8f0">Formal  →  Self Lint</text>
+  <text x="330" y="2011" font-size="12" fill="#64748b">formal model self-consistency check — flags fat, unbounded, or overly complex models</text>
+  <rect x="1198" y="1971" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="1993" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ROW 19: H → M -->
+  <rect x="80"  y="2028" width="1240" height="80" fill="#090b12"/>
+  <rect x="80"  y="2028" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="2051" width="84"   height="34" rx="9" fill="#071a20" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="138" y="2073" text-anchor="middle" font-size="14" font-weight="700" fill="#22d3ee">H</text>
+  <text x="196" y="2074" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="2051" width="84"   height="34" rx="9" fill="#150a20" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="252" y="2073" text-anchor="middle" font-size="14" font-weight="700" fill="#a78bfa">M</text>
+  <line x1="312" y1="2040" x2="312" y2="2096" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="2069" font-size="14" font-weight="700" fill="#e2e8f0">Hypothesis  →  Measurement</text>
+  <text x="330" y="2091" font-size="12" fill="#64748b">tier-1 model assumptions measured against observed data — violated hypotheses flagged for revision</text>
+  <rect x="1198" y="2051" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="2073" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ROW 20: B → F -->
+  <rect x="80"  y="2108" width="1240" height="80" fill="#0b0e16"/>
+  <rect x="80"  y="2108" width="6"    height="80" fill="#475569"/>
+  <rect x="96"  y="2131" width="84"   height="34" rx="9" fill="#100a1e" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="138" y="2153" text-anchor="middle" font-size="14" font-weight="700" fill="#c084fc">B</text>
+  <text x="196" y="2154" text-anchor="middle" font-size="20" fill="#1e293b">→</text>
+  <rect x="210" y="2131" width="84"   height="34" rx="9" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="252" y="2153" text-anchor="middle" font-size="14" font-weight="700" fill="#60a5fa">F</text>
+  <line x1="312" y1="2120" x2="312" y2="2176" stroke="#1a2233" stroke-width="1"/>
+  <text x="330" y="2149" font-size="14" font-weight="700" fill="#e2e8f0">Bug  →  Formal Gap</text>
+  <text x="330" y="2171" font-size="12" fill="#64748b">known bugs and reproduction records with no covering formal model — specification blind spot</text>
+  <rect x="1198" y="2131" width="118" height="34" rx="8" fill="#0f1218" stroke="#334155" stroke-width="1"/>
+  <text x="1257" y="2153" text-anchor="middle" font-size="11" font-weight="700" fill="#64748b" letter-spacing="1">SIGNAL</text>
+
+  <!-- ══════════════════════════════════════
+       SECTION E: ORCHESTRATION FLOW  (y 2238–2500)
+       ══════════════════════════════════════ -->
+
+  <rect x="80" y="2238" width="1240" height="48" fill="#0c0e15"/>
+  <rect x="80" y="2238" width="6"    height="48" fill="#334155"/>
+  <text x="104" y="2268" font-size="11" font-weight="700" fill="#475569" letter-spacing="3">ORCHESTRATION FLOW</text>
+
+  <!-- 4 phase boxes -->
+  <rect x="80"  y="2302" width="262" height="164" rx="12" fill="#090d18" stroke="#1e3a5f" stroke-width="1" filter="url(#sh)"/>
+  <text x="211" y="2330" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="2">DIAGNOSE</text>
+  <text x="211" y="2352" text-anchor="middle" font-size="12" fill="#4a5568">Step 0   legacy migration</text>
+  <text x="211" y="2370" text-anchor="middle" font-size="12" fill="#4a5568">Step 0b  config audit</text>
+  <text x="211" y="2388" text-anchor="middle" font-size="12" fill="#4a5568">Step 0c  load targets</text>
+  <text x="211" y="2406" text-anchor="middle" font-size="12" fill="#4a5568">Step 0d  observe + debt</text>
+  <text x="211" y="2424" text-anchor="middle" font-size="12" fill="#4a5568">Step 0e  hypothesis measure</text>
+  <text x="211" y="2442" text-anchor="middle" font-size="12" fill="#4a5568">Step 1   full sweep → baseline</text>
+
+  <text x="358" y="2390" text-anchor="middle" font-size="20" fill="#334155">→</text>
+
+  <rect x="374" y="2302" width="294" height="164" rx="12" fill="#090d18" stroke="#166534" stroke-width="1" filter="url(#sh)"/>
+  <text x="521" y="2330" text-anchor="middle" font-size="11" font-weight="700" fill="#22c55e" letter-spacing="2">REMEDIATE</text>
+  <text x="521" y="2352" text-anchor="middle" font-size="12" fill="#4a5568">wave-parallel Agent dispatch</text>
+  <text x="521" y="2370" text-anchor="middle" font-size="12" fill="#4a5568">≤ 3 concurrent sub-agents</text>
+  <text x="521" y="2388" text-anchor="middle" font-size="12" fill="#4a5568">dependency-ordered waves</text>
+  <text x="521" y="2406" text-anchor="middle" font-size="12" fill="#4a5568">closes automatable gaps only</text>
+  <text x="521" y="2424" text-anchor="middle" font-size="12" fill="#4a5568">skips reverse + signal layers</text>
+  <text x="521" y="2442" text-anchor="middle" font-size="12" fill="#4a5568">debt: open → resolving</text>
+
+  <text x="684" y="2390" text-anchor="middle" font-size="20" fill="#334155">→</text>
+
+  <rect x="700" y="2302" width="294" height="164" rx="12" fill="#090d18" stroke="#92400e" stroke-width="1" filter="url(#sh)"/>
+  <text x="847" y="2330" text-anchor="middle" font-size="11" font-weight="700" fill="#f59e0b" letter-spacing="2">CONVERGENCE</text>
+  <text x="847" y="2352" text-anchor="middle" font-size="12" fill="#4a5568">re-sweep after each iteration</text>
+  <text x="847" y="2370" text-anchor="middle" font-size="12" fill="#4a5568">per-layer change detection</text>
+  <text x="847" y="2388" text-anchor="middle" font-size="12" fill="#4a5568">(total may rise — cascades)</text>
+  <text x="847" y="2406" text-anchor="middle" font-size="12" fill="#4a5568">cycle detector: A-B-A-B</text>
+  <text x="847" y="2424" text-anchor="middle" font-size="12" fill="#4a5568">oscillation excluded from</text>
+  <text x="847" y="2442" text-anchor="middle" font-size="12" fill="#4a5568">convergence condition</text>
+
+  <!-- loop-back arrow above boxes -->
+  <path d="M 994 2302 Q 994 2276 521 2276 Q 374 2276 374 2302" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="6,4"/>
+  <polygon points="374,2298 370,2310 378,2310" fill="#f59e0b"/>
+  <text x="684" y="2270" text-anchor="middle" font-size="11" fill="#78350f">loop ≤ max_iterations</text>
+
+  <text x="1010" y="2390" text-anchor="middle" font-size="20" fill="#334155">→</text>
+
+  <rect x="1026" y="2302" width="294" height="164" rx="12" fill="#090d18" stroke="#6d28d9" stroke-width="1" filter="url(#sh)"/>
+  <text x="1173" y="2330" text-anchor="middle" font-size="11" font-weight="700" fill="#a855f7" letter-spacing="2">REPORT</text>
+  <text x="1173" y="2352" text-anchor="middle" font-size="12" fill="#4a5568">before / after residual table</text>
+  <text x="1173" y="2370" text-anchor="middle" font-size="12" fill="#4a5568">baseline drift detection</text>
+  <text x="1173" y="2388" text-anchor="middle" font-size="12" fill="#4a5568">reverse discovery candidates</text>
+  <text x="1173" y="2406" text-anchor="middle" font-size="12" fill="#4a5568">debt ledger progress</text>
+  <text x="1173" y="2424" text-anchor="middle" font-size="12" fill="#4a5568">auto-commit solve artifacts</text>
+  <text x="1173" y="2442" text-anchor="middle" font-size="12" fill="#4a5568">(manifests, gate results, evidence)</text>
+
+  <!-- Footer -->
+  <line x1="80" y1="2504" x2="1320" y2="2504" stroke="#1a2233" stroke-width="1"/>
+  <text x="700" y="2530" text-anchor="middle" font-size="11" fill="#1e293b">Node key — R: Requirements  ·  F: Formal Models  ·  T: Tests  ·  C: Code  ·  D: Docs  ·  P: Production/Debt  ·  B: Bug Records  ·  G: Git History  ·  H: Hypothesis  ·  E: Evidence  ·  M: Measurement</text>
+</svg>

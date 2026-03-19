@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-03-17T18:28:46.813Z",
+    "generated_at": "2026-03-18T22:32:02.893Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
@@ -12,11 +12,11 @@
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 207
+        "entry_count": 558
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 371
+        "requirements_matched": 376
       }
     }
   },
@@ -3253,7 +3253,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-04.stub.test.js",
+            "test_name": "DIAG-04: filterRequirementsByFocus returns null for empty/null phrase"
+          }
+        ]
+      }
     },
     "TRACE-06": {
       "id": "TRACE-06",
@@ -3272,7 +3281,16 @@
           "latest_result": "pass",
           "check_id": "alloy:formal-test-trace"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
+            "test_name": "TRACE-06: formal-test-sync.cjs exists"
+          }
+        ]
+      }
     },
     "GATE-01": {
       "id": "GATE-01",
@@ -3529,7 +3547,16 @@
           "latest_result": "pass",
           "check_id": "alloy:gate-scoring-traces"
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+            "test_name": "GATE-05 — Bool: behavioral verification"
+          }
+        ]
+      }
     },
     "TRACE-10": {
       "id": "TRACE-10",
@@ -5146,7 +5173,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-05.stub.test.js",
+            "test_name": "DIAG-05: mcp-repair skill workflow file exists and covers lifecycle phases"
+          }
+        ]
+      }
     },
     "MEMP-01": {
       "id": "MEMP-01",
@@ -6952,7 +6988,16 @@
           "latest_result": null,
           "check_id": null
         }
-      ]
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
+            "test_name": "DIAG-06 — PipelineStep: structural verification"
+          }
+        ]
+      }
     },
     "DIAG-07": {
       "id": "DIAG-07",
@@ -7397,28 +7442,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/petri/quorum-petri-net.dot",
@@ -7446,28 +7491,28 @@
           "property_name": "ThresholdPasses",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/alloy/quorum-votes.als",
           "property_name": "BelowThresholdFails",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "UnanimityMet",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "alloy:quorum-votes"
+          "check_id": "tla:quorum-safety"
         }
       ],
       "unit_test_coverage": {
@@ -13430,7 +13475,7 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13451,8 +13496,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -13472,14 +13517,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13500,8 +13545,8 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteRedaction",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "ci:trace-redaction"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -13528,14 +13573,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "LivenessNeverFail",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -13556,14 +13601,14 @@
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "CompleteLiveness",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         },
         {
           "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
           "property_name": "AllChecksEventuallyRun",
           "source": "annotation",
-          "latest_result": "inconclusive",
+          "latest_result": "pass",
           "check_id": "ci:liveness-fairness-lint"
         }
       ],
@@ -22519,7 +22564,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::BelowThresholdFails": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -22530,7 +22575,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/alloy/quorum-votes.als::ZeroApprovalsFail": {
       "model_file": ".planning/formal/alloy/quorum-votes.als",
@@ -26418,7 +26463,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -27182,8 +27227,8 @@
         "REDACT-03"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "ci:trace-redaction"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/tla/QGSDCIChecks.tla::CompleteLiveness": {
       "model_file": ".planning/formal/tla/QGSDCIChecks.tla",
@@ -27193,7 +27238,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::RedactionNeverInconclusive": {
@@ -27213,7 +27258,7 @@
         "LIVE-01"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCIChecks.tla::AllChecksEventuallyRun": {
@@ -27225,7 +27270,7 @@
         "LIVE-02"
       ],
       "source": "annotation",
-      "latest_result": "inconclusive",
+      "latest_result": "pass",
       "check_id": "ci:liveness-fairness-lint"
     },
     ".planning/formal/tla/QGSDCheckpointGate.tla::TypeOK": {
@@ -27870,7 +27915,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "alloy:quorum-votes"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::QuorumCeilingMet": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -29947,13 +29992,14 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 379,
+    "total_requirements": 380,
     "covered_count": 376,
-    "coverage_percentage": 99.2,
+    "coverage_percentage": 98.9,
     "uncovered_requirements": [
       "CLASS-02",
       "RSN-06",
-      "VERF-04"
+      "VERF-04",
+      "XPLAT-03"
     ],
     "orphan_properties": []
   },
@@ -33148,7 +33194,7 @@
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-17T18:18:03.850Z",
+    "baseline_date": "2026-03-18T22:18:42.261Z",
     "requirements_checked": 500,
     "regressions": [],
     "summary": {

@@ -1,0 +1,255 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2120" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0e17"/>
+      <stop offset="100%" stop-color="#0d1220"/>
+    </linearGradient>
+    <filter id="sh"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/></filter>
+  </defs>
+
+  <rect width="1400" height="2120" fill="url(#bg)"/>
+
+  <!-- ══ TITLE ══ -->
+  <text x="700" y="50" text-anchor="middle" font-size="11" font-weight="600" fill="#2d3748" letter-spacing="4">NFORMA  ·  WORKFLOW</text>
+  <text x="700" y="90" text-anchor="middle" font-size="26" font-weight="700" fill="#f1f5f9">nf:new-milestone  —  Milestone Initialization Flow</text>
+  <text x="700" y="122" text-anchor="middle" font-size="13" fill="#475569">Brownfield: goals → research (optional) → requirements → roadmap → auto-advance to plan-phase</text>
+  <line x1="80" y1="142" x2="1320" y2="142" stroke="#1a2233" stroke-width="1"/>
+
+  <!-- ══ LEGEND ══ -->
+  <rect x="80" y="154" width="1240" height="56" rx="10" fill="#090c15" stroke="#1a2233" stroke-width="1"/>
+  <rect x="112" y="174" width="6" height="20" rx="3" fill="#3b82f6"/>
+  <text x="128" y="188" font-size="12" fill="#60a5fa" font-weight="600">Required steps</text>
+  <rect x="340" y="174" width="6" height="20" rx="3" fill="#14b8a6"/>
+  <text x="356" y="188" font-size="12" fill="#2dd4bf" font-weight="600">Optional — research path only</text>
+  <rect x="660" y="174" width="6" height="20" rx="3" fill="#a855f7"/>
+  <text x="676" y="188" font-size="12" fill="#c084fc" font-weight="600">Subagent spawn (nf-roadmapper / researchers)</text>
+  <rect x="1048" y="174" width="6" height="20" rx="3" fill="#22c55e"/>
+  <text x="1064" y="188" font-size="12" fill="#4ade80" font-weight="600">Complete</text>
+
+  <!-- vertical flow connector -->
+  <line x1="130" y1="270" x2="130" y2="2028" stroke="#1e2d40" stroke-width="2" stroke-dasharray="4,6"/>
+
+  <!-- ══════════════════════════════════ SECTION A: CONTEXT & GOALS ══════════════════════════════════ -->
+  <rect x="80" y="222" width="1240" height="44" fill="#0c1a30"/>
+  <rect x="80" y="222" width="6"    height="44" fill="#3b82f6"/>
+  <text x="104" y="249" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">CONTEXT &amp; GOALS</text>
+  <text x="1312" y="249" text-anchor="end" font-size="11" fill="#1d4ed8">steps 1–4  ·  read project history, gather intent, lock version</text>
+
+  <!-- Step 1: Load Context -->
+  <rect x="80" y="266" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="266" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="304" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="309" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">1</text>
+  <text x="166" y="295" font-size="14" font-weight="700" fill="#e2e8f0">Load Context</text>
+  <text x="166" y="315" font-size="12" fill="#64748b">read PROJECT.md, MILESTONES.md, STATE.md  ·  check for MILESTONE-CONTEXT.md (from /nf:discuss-milestone)</text>
+  <rect x="1220" y="280" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="298" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 2: Gather Milestone Goals -->
+  <rect x="80" y="342" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="342" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="380" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="385" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">2</text>
+  <text x="166" y="371" font-size="14" font-weight="700" fill="#e2e8f0">Gather Milestone Goals</text>
+  <text x="166" y="391" font-size="12" fill="#64748b">if MILESTONE-CONTEXT.md exists: use it (confirm)  ·  else: AskUserQuestion — "what do you want to build next?"</text>
+  <rect x="1220" y="356" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="374" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 3: Determine Version -->
+  <rect x="80" y="418" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="418" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="456" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="461" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">3</text>
+  <text x="166" y="447" font-size="14" font-weight="700" fill="#e2e8f0">Determine Milestone Version</text>
+  <text x="166" y="467" font-size="12" fill="#64748b">parse last version from MILESTONES.md  ·  suggest next (v1.0 → v1.1, or v2.0 for major)  ·  confirm with user</text>
+  <rect x="1220" y="432" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="450" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 4: Update PROJECT.md + STATE.md -->
+  <rect x="80" y="494" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="494" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="532" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="537" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">4</text>
+  <text x="166" y="523" font-size="14" font-weight="700" fill="#e2e8f0">Update PROJECT.md + STATE.md → Commit</text>
+  <text x="166" y="543" font-size="12" fill="#64748b">write Current Milestone section to PROJECT.md  ·  reset STATE.md  ·  delete MILESTONE-CONTEXT.md  ·  commit</text>
+  <rect x="1220" y="508" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="526" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- ══════════════════════════════════ SECTION B: PROJECT SETUP ══════════════════════════════════ -->
+  <rect x="80" y="592" width="1240" height="44" fill="#0c1a30"/>
+  <rect x="80" y="592" width="6"    height="44" fill="#3b82f6"/>
+  <text x="104" y="619" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">PROJECT SETUP</text>
+  <text x="1312" y="619" text-anchor="end" font-size="11" fill="#1d4ed8">steps 5–6  ·  init models  ·  research decision gate</text>
+
+  <!-- Step 5: Initialize -->
+  <rect x="80" y="636" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="636" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="674" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="679" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">5</text>
+  <text x="166" y="665" font-size="14" font-weight="700" fill="#e2e8f0">Initialize</text>
+  <text x="166" y="685" font-size="12" fill="#64748b">gsd-tools init new-milestone → researcher/synthesizer/roadmapper/commit_docs models</text>
+  <rect x="1220" y="650" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="668" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 6: Research Decision -->
+  <rect x="80" y="712" width="1240" height="88" fill="#0b0e16"/>
+  <rect x="80" y="712" width="6"    height="88" fill="#3b82f6"/>
+  <circle cx="130" cy="756" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="761" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">6</text>
+  <text x="166" y="743" font-size="14" font-weight="700" fill="#e2e8f0">Research Decision</text>
+  <text x="166" y="763" font-size="12" fill="#64748b">AskUserQuestion: "Research domain ecosystem for new features?" → persisted to workflow.research config</text>
+  <text x="166" y="783" font-size="12" fill="#64748b">Research first → Steps 7–8  ·  Skip research → jump directly to Step 9</text>
+  <rect x="1220" y="730" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="748" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- ══════════════════════════════════ SECTION C: RESEARCH (optional) ══════════════════════════════════ -->
+  <rect x="80" y="822" width="1240" height="44" fill="#051a18"/>
+  <rect x="80" y="822" width="6"    height="44" fill="#14b8a6"/>
+  <text x="104" y="849" font-size="11" font-weight="700" fill="#14b8a6" letter-spacing="3">RESEARCH</text>
+  <text x="1312" y="849" text-anchor="end" font-size="11" fill="#0f766e">steps 7–8  ·  optional path  ·  skipped if "Skip research" chosen in step 6</text>
+
+  <!-- Step 7: 4× Parallel Researchers -->
+  <rect x="80" y="866" width="1240" height="92" fill="#020e0d"/>
+  <rect x="80" y="866" width="6"    height="92" fill="#14b8a6"/>
+  <circle cx="130" cy="912" r="17" fill="#051a18" stroke="#14b8a6" stroke-width="1.5"/>
+  <text x="130" y="917" text-anchor="middle" font-size="13" font-weight="700" fill="#2dd4bf">7</text>
+  <text x="166" y="895" font-size="14" font-weight="700" fill="#e2e8f0">4× Parallel Researchers  <tspan font-size="11" fill="#0d9488" font-weight="400">(sibling Tasks)</tspan></text>
+  <text x="166" y="915" font-size="12" fill="#64748b">Stack · Features · Architecture · Pitfalls  →  4 nf-project-researcher agents spawn simultaneously</text>
+  <text x="166" y="935" font-size="12" fill="#64748b">focus on NEW capabilities only (project history injected as "already built")  ·  output: .planning/research/</text>
+  <rect x="1188" y="882" width="122" height="28" rx="6" fill="#051a18" stroke="#0f766e" stroke-width="1"/>
+  <text x="1249" y="900" text-anchor="middle" font-size="10" font-weight="700" fill="#14b8a6" letter-spacing="1">PARALLEL × 4</text>
+
+  <!-- Step 8: Research Synthesizer -->
+  <rect x="80" y="958" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="958" width="6"    height="76" fill="#14b8a6"/>
+  <circle cx="130" cy="996" r="17" fill="#051a18" stroke="#14b8a6" stroke-width="1.5"/>
+  <text x="130" y="1001" text-anchor="middle" font-size="13" font-weight="700" fill="#2dd4bf">8</text>
+  <text x="166" y="987" font-size="14" font-weight="700" fill="#e2e8f0">Research Synthesizer</text>
+  <text x="166" y="1007" font-size="12" fill="#64748b">nf-research-synthesizer reads STACK + FEATURES + ARCHITECTURE + PITFALLS  →  writes SUMMARY.md  ·  commits</text>
+  <rect x="1188" y="972" width="122" height="28" rx="6" fill="#051a18" stroke="#0f766e" stroke-width="1"/>
+  <text x="1249" y="990" text-anchor="middle" font-size="10" font-weight="700" fill="#14b8a6" letter-spacing="1">OPTIONAL</text>
+
+  <!-- ══════════════════════════════════ SECTION D: REQUIREMENTS ══════════════════════════════════ -->
+  <rect x="80" y="1056" width="1240" height="44" fill="#0c1a30"/>
+  <rect x="80" y="1056" width="6"    height="44" fill="#3b82f6"/>
+  <text x="104" y="1083" font-size="11" font-weight="700" fill="#3b82f6" letter-spacing="3">REQUIREMENTS</text>
+  <text x="1312" y="1083" text-anchor="end" font-size="11" fill="#1d4ed8">steps 9–12  ·  profile → baselines → scope per-category → commit</text>
+
+  <!-- Step 9: Profile Selection -->
+  <rect x="80" y="1100" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1100" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="1138" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1143" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">9</text>
+  <text x="166" y="1129" font-size="14" font-weight="700" fill="#e2e8f0">Project Profile Selection</text>
+  <text x="166" y="1149" font-size="12" fill="#64748b">confirm existing profile from PROJECT.md  ·  or pick: Web / Mobile / Desktop / API / CLI / Library</text>
+  <rect x="1220" y="1114" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1132" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 10: Load Baseline Requirements -->
+  <rect x="80" y="1176" width="1240" height="88" fill="#0b0e16"/>
+  <rect x="80" y="1176" width="6"    height="88" fill="#3b82f6"/>
+  <circle cx="130" cy="1220" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1226" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa">10</text>
+  <text x="166" y="1207" font-size="14" font-weight="700" fill="#e2e8f0">Load Baseline Requirements</text>
+  <text x="166" y="1227" font-size="12" fill="#64748b">new milestone: load-baseline-requirements.cjs --profile → present with opt-out per category</text>
+  <text x="166" y="1247" font-size="12" fill="#64748b">existing baselines: carry forward (confirm or re-review opt-outs)  ·  cross-cutting quality gates</text>
+  <rect x="1220" y="1192" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1210" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 11: Sync Baselines → Formal Envelope -->
+  <rect x="80" y="1264" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1264" width="6"    height="76" fill="#3b82f6"/>
+  <circle cx="130" cy="1302" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1308" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa">11</text>
+  <text x="166" y="1293" font-size="14" font-weight="700" fill="#e2e8f0">Sync Baselines → Formal Envelope</text>
+  <text x="166" y="1313" font-size="12" fill="#64748b">sync-baseline-requirements.cjs (idempotent)  ·  adds to .planning/formal/requirements.json  ·  skips already-synced</text>
+  <rect x="1220" y="1278" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1296" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 12: Define Requirements + commit -->
+  <rect x="80" y="1340" width="1240" height="92" fill="#0b0e16"/>
+  <rect x="80" y="1340" width="6"    height="92" fill="#3b82f6"/>
+  <circle cx="130" cy="1386" r="17" fill="#0c1a3a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="130" y="1392" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa">12</text>
+  <text x="166" y="1369" font-size="14" font-weight="700" fill="#e2e8f0">Define Requirements + Commit</text>
+  <text x="166" y="1389" font-size="12" fill="#64748b">present features by category (from research or conversation)  ·  AskUserQuestion scope per-category  ·  identify gaps</text>
+  <text x="166" y="1409" font-size="12" fill="#64748b">write REQUIREMENTS.md with REQ-IDs (CAT-01 format)  ·  future + out-of-scope sections  ·  commit</text>
+  <rect x="1220" y="1356" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1374" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- ══════════════════════════════════ SECTION E: ROADMAP ══════════════════════════════════ -->
+  <rect x="80" y="1454" width="1240" height="44" fill="#0f0820"/>
+  <rect x="80" y="1454" width="6"    height="44" fill="#a855f7"/>
+  <text x="104" y="1481" font-size="11" font-weight="700" fill="#a855f7" letter-spacing="3">ROADMAP</text>
+  <text x="1312" y="1481" text-anchor="end" font-size="11" fill="#6d28d9">steps 13–16  ·  formal scan → roadmapper → user approval → commit</text>
+
+  <!-- Step 13: Formal Scope Scan -->
+  <rect x="80" y="1498" width="1240" height="76" fill="#090b12"/>
+  <rect x="80" y="1498" width="6"    height="76" fill="#a855f7"/>
+  <circle cx="130" cy="1536" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="1542" text-anchor="middle" font-size="11" font-weight="700" fill="#c084fc">13</text>
+  <text x="166" y="1527" font-size="14" font-weight="700" fill="#e2e8f0">Formal Scope Scan  <tspan font-size="11" fill="#7c3aed" font-weight="400">(pre-roadmapper)</tspan></text>
+  <text x="166" y="1547" font-size="12" fill="#64748b">formal-scope-scan.cjs --description "$MILESTONE_GOAL" → $FORMAL_SPEC_CONTEXT injected into roadmapper</text>
+  <rect x="1220" y="1512" width="90" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1265" y="1530" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">AUTO</text>
+
+  <!-- Step 14: Spawn nf-roadmapper -->
+  <rect x="80" y="1574" width="1240" height="92" fill="#0b0e16"/>
+  <rect x="80" y="1574" width="6"    height="92" fill="#a855f7"/>
+  <circle cx="130" cy="1620" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="1626" text-anchor="middle" font-size="11" font-weight="700" fill="#c084fc">14</text>
+  <text x="166" y="1603" font-size="14" font-weight="700" fill="#e2e8f0">Spawn nf-roadmapper</text>
+  <text x="166" y="1623" font-size="12" fill="#64748b">reads PROJECT.md + REQUIREMENTS.md + SUMMARY.md + formal context  ·  continues phase numbering from MILESTONES.md</text>
+  <text x="166" y="1643" font-size="12" fill="#64748b">derives phases → maps every req to exactly one phase → 2-5 success criteria each  ·  writes ROADMAP + STATE + REQUIREMENTS</text>
+  <rect x="1188" y="1590" width="122" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1249" y="1608" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">SUBAGENT</text>
+
+  <!-- Step 15: User Approval -->
+  <rect x="80" y="1666" width="1240" height="88" fill="#090b12"/>
+  <rect x="80" y="1666" width="6"    height="88" fill="#a855f7"/>
+  <circle cx="130" cy="1710" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="1716" text-anchor="middle" font-size="11" font-weight="700" fill="#c084fc">15</text>
+  <text x="166" y="1693" font-size="14" font-weight="700" fill="#e2e8f0">User Approval of Roadmap</text>
+  <text x="166" y="1713" font-size="12" fill="#64748b">present phase table inline  ·  AskUserQuestion: Approve / Adjust / Review full file</text>
+  <text x="166" y="1733" font-size="12" fill="#64748b">Adjust → user notes → re-spawn roadmapper with revision context → loop until Approve</text>
+  <rect x="1220" y="1682" width="90" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1265" y="1700" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">GATE</text>
+
+  <!-- Step 16: Commit Roadmap -->
+  <rect x="80" y="1754" width="1240" height="76" fill="#0b0e16"/>
+  <rect x="80" y="1754" width="6"    height="76" fill="#a855f7"/>
+  <circle cx="130" cy="1792" r="17" fill="#100a1e" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="130" y="1798" text-anchor="middle" font-size="11" font-weight="700" fill="#c084fc">16</text>
+  <text x="166" y="1783" font-size="14" font-weight="700" fill="#e2e8f0">Commit Roadmap</text>
+  <text x="166" y="1803" font-size="12" fill="#64748b">commit ROADMAP.md + STATE.md + REQUIREMENTS.md (traceability section)  ·  "docs: create milestone vX.Y roadmap"</text>
+  <rect x="1220" y="1768" width="90" height="28" rx="6" fill="#100a1e" stroke="#6d28d9" stroke-width="1"/>
+  <text x="1265" y="1786" text-anchor="middle" font-size="10" font-weight="700" fill="#c084fc" letter-spacing="1">AUTO</text>
+
+  <!-- ══════════════════════════════════ SECTION F: LAUNCH ══════════════════════════════════ -->
+  <rect x="80" y="1852" width="1240" height="44" fill="#0a1a12"/>
+  <rect x="80" y="1852" width="6"    height="44" fill="#22c55e"/>
+  <text x="104" y="1879" font-size="11" font-weight="700" fill="#22c55e" letter-spacing="3">LAUNCH</text>
+  <text x="1312" y="1879" text-anchor="end" font-size="11" fill="#166534">steps 17–18  ·  auto-advance or manual handoff</text>
+
+  <!-- Step 17: Auto-Advance -->
+  <rect x="80" y="1896" width="1240" height="88" fill="#090b12"/>
+  <rect x="80" y="1896" width="6"    height="88" fill="#22c55e"/>
+  <circle cx="130" cy="1940" r="17" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="130" y="1946" text-anchor="middle" font-size="11" font-weight="700" fill="#4ade80">17</text>
+  <text x="166" y="1923" font-size="14" font-weight="700" fill="#e2e8f0">Auto-Advance Check</text>
+  <text x="166" y="1943" font-size="12" fill="#64748b">if workflow.auto_advance=true: spawn plan-phase[N] → pipeline continues to planned first phase</text>
+  <text x="166" y="1963" font-size="12" fill="#64748b">if false: display "Next: /nf:discuss-phase [N]  or  /nf:plan-phase [N]" and stop</text>
+  <rect x="1220" y="1912" width="90" height="28" rx="6" fill="#0c1a30" stroke="#1e40af" stroke-width="1"/>
+  <text x="1265" y="1930" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6" letter-spacing="1">REQUIRED</text>
+
+  <!-- Step 18: Milestone Initialized -->
+  <rect x="80" y="1984" width="1240" height="44" fill="#0a2010"/>
+  <rect x="80" y="1984" width="6"    height="44" fill="#22c55e"/>
+  <circle cx="130" cy="2006" r="17" fill="#0a2010" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="130" y="2012" text-anchor="middle" font-size="11" font-weight="700" fill="#4ade80">✓</text>
+  <text x="166" y="2010" font-size="14" font-weight="700" fill="#4ade80">MILESTONE INITIALIZED  ·  artifacts: PROJECT.md  ·  research/  ·  REQUIREMENTS.md  ·  ROADMAP.md</text>
+
+  <!-- ══ FOOTER ══ -->
+  <line x1="80" y1="2060" x2="1320" y2="2060" stroke="#1a2233" stroke-width="1"/>
+  <text x="700" y="2087" text-anchor="middle" font-size="11" fill="#1e293b">Brownfield equivalent of /nf:new-project  ·  phase numbers continue from previous milestone  ·  baselines carry forward idempotently</text>
+</svg>

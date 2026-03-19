@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-17T17:50:33.591Z",
+  "generated": "2026-03-18T22:25:15.510Z",
   "total_proposed": 1498,
   "implemented": 0,
   "partial": 0,
@@ -639,7 +639,7 @@
       "assumption_type": "constant",
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg:MaxSnapshots",
-      "instrumentation_snippet": "// Prometheus gauge for MaxSnapshots (tla/constant)\n# HELP nf_maxsnapshots__tla Monitors MaxSnapshots from tla model\n# TYPE nf_maxsnapshots__tla gauge\nconst nf_maxsnapshots__tla = new Gauge({\n  name: 'nf_maxsnapshots__tla',\n  help: 'Monitors MaxSnapshots from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsnapshots__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg' }, 6);",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSnapshots (tla/constant)\n# HELP nf_maxsnapshots__tla Monitors MaxSnapshots from tla model\n# TYPE nf_maxsnapshots__tla gauge\nconst nf_maxsnapshots__tla = new Gauge({\n  name: 'nf_maxsnapshots__tla',\n  help: 'Monitors MaxSnapshots from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsnapshots__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSessionTracking.cfg' }, 5);",
       "status": "proposed"
     },
     {
@@ -675,7 +675,7 @@
       "assumption_type": "constant",
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg:MaxIterations",
-      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations__tla Monitors MaxIterations from tla model\n# TYPE nf_maxiterations__tla gauge\nconst nf_maxiterations__tla = new Gauge({\n  name: 'nf_maxiterations__tla',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg' }, 5);",
+      "instrumentation_snippet": "// Prometheus gauge for MaxIterations (tla/constant)\n# HELP nf_maxiterations__tla Monitors MaxIterations from tla model\n# TYPE nf_maxiterations__tla gauge\nconst nf_maxiterations__tla = new Gauge({\n  name: 'nf_maxiterations__tla',\n  help: 'Monitors MaxIterations from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxiterations__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg' }, 3);",
       "status": "proposed"
     },
     {

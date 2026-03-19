@@ -1,17 +1,17 @@
-# Research Summary: Model-Driven Debugging for nForma
+# Project Research Summary
 
-**Project:** nForma v0.38 — Model-Driven Debugging
-**Domain:** Formal verification-guided debugging; transforming models from validation gates to fix-guidance tools
-**Researched:** 2026-03-17
-**Confidence:** HIGH (architecture verified against codebase; MEDIUM on pitfalls given novelty of LLM-driven model analysis)
-
----
+**Project:** nForma v0.39 — Dual-Cycle Formal Reasoning
+**Domain:** Model-driven software debugging with diagnostic and solution validation
+**Researched:** 2026-03-18
+**Confidence:** HIGH (architecture), MEDIUM (implementation details)
 
 ## Executive Summary
 
-Model-driven debugging transforms nForma's formal models from descriptive (CI validation gates) to prescriptive (explaining bugs, constraining fix space, preventing regressions). The core insight: when a bug occurs, the matching formal model can explain the root cause and constrain the fix—without requiring developers to read TLA+ or Alloy specifications. This requires three integrated subsystems: (1) **Bug-to-Model Lookup** (extending existing `formal-scope-scan.cjs` with bug-pattern matching), (2) **Constraint Extraction & Translation** (parsing INVARIANT/PROPERTY blocks to English via Haiku), and (3) **Model-Aware Debug Integration** (injecting constraints into `/nf:debug` quorum phase). The critical risk is **false confidence from symptom reproduction**—a model may reproduce what a bug looks like without explaining why it happens. Mitigation: require explicit mechanism-verification gates that compare model assumptions to production traces before accepting the model's root-cause claim.
+nForma v0.39 extends the existing model-driven-fix architecture (v0.38) with two complementary feedback loops that transform models from one-way validators into bidirectional reasoning tools. **Cycle 1 (Diagnostic)** reframes failed model reproduction as an opportunity to diagnose model gaps rather than retry blindly — when a model can't reproduce a known bug, the system generates targeted diffs ("model assumes timeout=5s but bug shows 10s") that guide refinement. **Cycle 2 (Solution Simulation)** accepts fix ideas in natural language, constraints, or code sketches, normalizes them to model mutations, generates consequence models, simulates the fix in formal space before touching code, and verifies three convergence gates (original invariants preserved + bug resolved + no neighbor regressions).
 
-The recommended technology stack is minimal: two npm packages (`fast-xml-parser` for Alloy XML parsing, `acorn` for JavaScript scope analysis) plus five custom parsers (trace→ITF, constraint extraction, constraint→English). No changes to existing TLC/Alloy runners. The architecture is fail-open: missing models or failed constraint extraction degrades gracefully to existing `/nf:debug` behavior. Expected time-to-value: 2–4 weeks for MVP (Phases 1–2), with Phase 3 (solve-layer B→F integration) following after user validation.
+The architecture is purely additive — no changes to existing v0.38 modules, only 7 new isolated modules inserted at natural integration points. Both cycles run within the existing 6-phase orchestrator as enhanced intelligence layers. The research validates that this is achievable with existing infrastructure (TLA+, Alloy, PRISM checkers), no new runtime dependencies, and a build order of 4 phases totaling 11-16 days of development.
+
+**Key finding:** The dual-cycle approach is novel in formal verification literature — no existing "dual-cycle" pattern — but the foundation is solid, synthesizing established techniques (CEGAR, constraint mutation testing, invariant refinement) in a new integration specific to model-driven debugging.
 
 ---
 
@@ -19,186 +19,207 @@ The recommended technology stack is minimal: two npm packages (`fast-xml-parser`
 
 ### Recommended Stack
 
-Model-driven debugging requires minimal new dependencies. The existing formal verification infrastructure (TLC, Alloy, PRISM, model-registry with 200+ models) already exists; the new stack focuses on *parsing and translation* between formal and natural language representations.
+No new runtime dependencies required. All new modules orchestrate existing TLA+/Alloy/PRISM checkers via Node.js subprocess management.
 
-**Core technologies:**
-- **fast-xml-parser v5.4.1**: Parse Alloy SAT solver XML instance output. Rationale: Alloy 6 outputs instances as XML; this library is battle-tested (Microsoft, NASA, VMware usage) and avoids Java process overhead vs. native Alloy API.
-- **acorn v8.11.0**: JavaScript AST parser for code-file-to-model mapping. Rationale: Standard in ESLint ecosystem; enables scope analysis to answer "which formal models affect this code file?"
-- **Custom ITF trace parser** (no external deps): Convert TLC stderr trace.txt output to ITF JSON format. Rationale: TLC's native output is simpler than XML; lightweight custom parser covers 100% of trace format.
-- **Custom constraint extractor** (no external deps): Regex-based extraction of INVARIANT/PROPERTY blocks from TLA+ and Alloy specs. Rationale: Specs are highly structured; regex handles 95% of cases; parser combinators would be over-engineering.
-- **Haiku LLM integration** (existing quorum dispatch): Constraint-to-English translation. Rationale: Reuse existing quorum infrastructure; Haiku is fast (2–5s per constraint batch) and available in current harness.
+**Core technologies (reused from v0.38):**
+- **TLA+ (TLC model checker)** — Primary formalism; existing integration in `run-tlc.cjs`; supports `-dumpTrace json` for ITF (Informal Trace Format) output
+- **Alloy (SAT solver)** — Secondary formalism; existing integration in `run-alloy.cjs`; XML counterexample output
+- **PRISM (probabilistic checker)** — Optional; lightweight support for probabilistic models
 
-**Version pinning:** Lock `fast-xml-parser` and `acorn` to exact versions (5.4.1 and 8.11.0) to ensure consistent AST/XML parsing across developer machines and CI.
+**New libraries (minimal):**
+- **json-diff-ts** (v1.2.0) — State sequence comparison for Cycle 1 diagnostic diffs; only new npm dependency
 
-**Installation:** `npm install fast-xml-parser@5.4.1 acorn@8.11.0`
+**Why this stack:** TLC/Alloy are production-grade formal verification tools; TLA+ ecosystem is mature; extending existing infrastructure minimizes new build surface. No need for custom TLA+ parsers (regex-based operator extraction proven safe in existing `model-constrained-fix.cjs`). ITF trace format is language-neutral JSON; native Node.js parsing sufficient.
 
 ### Expected Features
 
-Features are organized by dependency and user value. The core value proposition is the **Bug-to-Fix guidance loop**: when a developer runs `/nf:debug "symptom description"`, the tool returns not just suggested fixes but also the formal model assumptions and constraints that fix must satisfy.
+#### Table Stakes (Users Expect These)
 
-**Must-have (table stakes — launched in v0.38):**
-1. **Bug-to-Model Lookup** — Find formal models matching failing code files. Extend `formal-scope-scan.cjs` to match by source file (code filename → model @requirement annotations), semantic similarity (via proximity-index), and bug-pattern matching (common error signatures).
-2. **Model Execution on Bug Trace** — Run TLA+/Alloy checkers with actual failing trace as input constraints. Convert execution events (state transitions, variable changes) to TLA+ ASSUME statements; rerun model checker to confirm model reproduces the bug.
-3. **Trace-to-Counterexample Conversion** — Map execution timestamps/events to formal state representation. Parse bug logs into JSON, normalize to ITF (Informal Trace Format), validate against model vocabulary.
-4. **Root Cause Extraction** — Parse model counterexample to identify which invariant violated at which state transition. Link formal variable names back to source code via @requirement annotations.
-5. **Plain-English Constraint Summary** — Extract 3–5 key invariants from matching models, translate to English (e.g., "Quorum consensus requires 3/4 agreement"). Developers read English, not TLA+ syntax.
-6. **Pre-Verification of Fix** — Before shipping, verify the proposed fix symbolically against the model. Run APALACHE in bounded-verification mode: "Does invariant still hold if we apply this code patch?"
+**Cycle 1:**
+- **Model diagnostic diffing** — When model fails to reproduce bug, generate "model assumes X but trace shows Y" comparison; essential for shifting mental model from "model is broken" to "model is incomplete"
+- **Bug as ground truth** — Reframe inverted verification semantics: model fails = success (captures bug), model passes = failure (incomplete)
+- **Trace comparison infrastructure** — Canonical TLA+ representation; field-level divergence detection via json-diff-ts
 
-**Should-have (competitive differentiator — v0.39+):**
-1. **Cross-Model Regression Prevention** — Fix verified against Model A? Run the same verification against Models B, C, D (any model sharing requirements/files). Report any new counterexamples.
-2. **Model Refinement from Bugs** — When no model explains a bug, auto-generate/refine a model from the failing trace. Use specification mining (sparse coding) to extract temporal patterns; synthesize new INVARIANT.
-3. **B→F Solve Layer** — New 20th layer in solve pipeline tracking "bugs formal models should have caught but didn't." Drives model-refinement roadmap autonomously.
+**Cycle 2:**
+- **Fix intent normalization** — Accept constraint syntax (TLA+ FIX blocks, Alloy patches) and normalize to mutation rules; core for unifying user input
+- **Model mutation engine** — Apply constraint mutations to TLA+ specs (Alloy in v0.39.x); text-based operator rewriting proven safe via regex patterns
+- **Consequence model generation** — Create shadow models simulating fix effects without modifying production code; essential for "simulate before committing"
+- **Convergence gate (3-condition AND)** — Verify (all original invariants hold) AND (bug no longer triggered) AND (no 2-hop neighbor regressions); enforcement point that blocks code commit
+- **Iteration limit & escape** — Default 3 iterations; `--max-iterations` override; distinguish "converged" from "max attempts reached"
 
-**Defer (v0.40+):**
-1. **Fix Constraint Solver** — Given model invariants, synthesize the minimal constraint space that fix must satisfy. Use SMT solving to generate explicit bounds on variables the fix modifies.
-2. **Invariant-Driven Solve Prioritization** — Rank solve waves by "likelihood of violating high-impact invariants" derived from PRISM sensitivity analysis and recent bug patterns.
+#### Differentiators (Competitive Advantage)
+
+1. **Inverted verification semantics** — Model MUST FAIL on bug trace (not "pass tests"); flips traditional success model
+2. **Targeted diagnostic instead of blind retry** — Surgical diffs ("model assumes deadlock-free, but trace shows L1→L2→L3→L1 cycle") vs. 20-parameter combos
+3. **Fix intent → model mutation pipeline** — Unified path from natural language/constraints/code sketches to formal simulation; users can't bypass validation
+4. **Consequence modeling as auditable artifact** — Mutated model becomes living evidence: "here's exactly why this fix works and what invariants it preserves"
+5. **Neighbor-aware convergence** — Reuses v0.38's proximity-neighbor framework; catches cross-component regressions automatically
+6. **Structural enforcement** — Stop hook blocks code commit until convergence gate passes; compliance is forced, not advisory
+
+#### Anti-Features (Explicitly NOT Building)
+
+- **Auto-generate all fixes from counterexample** — Combinatorial explosion; loses user intent; requires triage. Instead: user-guided intent → system validates
+- **Parallel iterations** — Race conditions in shared state; hard to explain which converged. Instead: sequential with learning (cap at 3)
+- **Direct code-as-intent** — Bypasses formal validation. Instead: extract intent in language/constraint form first
+- **Unbounded iteration** — Unsafe; prevents convergence detection. Instead: configurable limit (default 3) with escape hatch
+- **User-editable model mutations** — Breaks model coherence. Instead: constraint DSL + mutation engine ensures coherence
 
 ### Architecture Approach
 
-Model-driven debugging extends three existing nForma subsystems without breaking changes:
+The architecture inserts two new capability layers into the existing 6-phase model-driven-fix workflow without modifying existing phases:
 
-1. **Model Lookup Layer** — Extend `formal-scope-scan.cjs` with `--bug-mode` flag. New logic: load optional `bug-patterns.json` (common failure signatures), match against bug description using Levenshtein distance > 0.75, boost proximity_score for pattern hits, return ranked model list with metadata (proximity score, lookup strategy, which spec sections apply).
+**Cycle 1 (Diagnostic)** integrates into **Phase 2 (Reproduction)** as optional post-check: If existing models fail to reproduce bug, call `cycle1-diagnostic-diff.cjs` to generate targeted feedback before Phase 3 refinement. Diagnostic is advisory, not enforcing.
 
-2. **Constraint Extraction Layer** — New file `bin/model-constrained-fix.cjs`. Read matched models' invariants.md files, parse constraint blocks (SAFETY, LIVENESS, BOUNDS, PRECONDITION headers), extract formal references, link to @requirement annotations via proximity graph, generate English constraint list with confidence scores. Output schema: `{ model, constraints: [{type, english, formal, confidence, applies_to_fix}] }`.
+**Cycle 2 (Solution Simulation)** inserts as new **Phase 4.5** between Constraint Extraction (Phase 4) and Constrained Fix (Phase 5): User proposes fix → normalize fix idea → generate consequence model → run three convergence gates → report verdict (PASS/ITERATE/BLOCKED). Gates are automated, requiring no user interaction.
 
-3. **Debug Bundle Injection** — Modify `/nf:debug` Step A to run bug-to-model lookup + constraint extraction after failure context collection. Inject results into quorum-worker bundle as "Formal Model Intelligence" section. Workers see model recommendations + constraint guidance + existing failure context.
+**Component boundaries:**
 
-4. **Solve Layer B→F** — New 20th layer tracking bugs not explained by formal models. Runs in wave 7 (post h_to_m). Handler iterates git history, matches each bug to models, identifies unflagged gaps, routes to `/nf:close-formal-gaps` for model refinement or logs as v0.39 candidates.
+| Layer | Components | Integration |
+|-------|-----------|---|
+| **Cycle 1: Diagnostics** | parse-tlc-counterexample.cjs, diagnostic-diff-generator.cjs | Reuse: refinement-loop.cjs (inverted semantics), run-tlc/alloy (trace output) |
+| **Cycle 2: Mutation & Validation** | normalize-fix-idea.cjs, generate-consequence-model.cjs, convergence-gate.cjs | Reuse: run-formal-verify.cjs (master runner), resolve-proximity-neighbors.cjs (2-hop BFS), model-constrained-fix.cjs (operator extraction patterns) |
+| **Orchestration** | model-driven-fix.md (Phase 2/4.5 enhancements) | No changes to Phase 1, 3, 5, 6 logic |
 
-**Build order (no cycles):** Phase 1 (lookup+extraction) → Phase 2 (debug integration) → Phase 3 (solve layer) → Phase 4 (testing). Graceful degradation: if lookup fails, debug flow continues with existing 4-worker dispatch.
+**Data flow:** TLC/Alloy output (trace JSON) → parse-counterexample → diagnostic-diff → quorum context injection. Quorum proposal → normalize-fix-idea → generate-consequence-model → convergence-gate → verdict.
 
 ### Critical Pitfalls
 
-Integrating model-driven debugging carries seven distinct risk categories, all preventable with structural gates designed upfront:
+1. **Consequence models trap diagnosis in narrow solution space** — Generating consequence models for only ONE fix idea may miss better solutions or create false confidence. Mitigation: Generate models for 2-3 alternatives; add mutual exclusivity check before committing. Phase 2 work: Define multi-candidate tool contract.
 
-1. **False Confidence from Model Reproduction** [CRITICAL]
-   - **What:** Model reproduces symptom (state X reaches) but not mechanism (why X is reachable). Fix based on model works for test case, fails in production.
-   - **Prevention:** After model reproduction, mandate separate mechanism-verification gate. Compare model-claimed root cause to production trace timeline, not just end state. Mark provisional models with flag until mechanism verified.
-   - **Design point:** Add "model-to-mechanism" validation step in /nf:debug flow before fix is considered valid.
+2. **Convergence oscillation between incompatible invariants** — Fix A satisfies invariant-1 but violates invariant-2; Fix B the reverse; system loops forever. Mitigation: Pre-flight invariant compatibility check (mutual satisfiability test); establish priority ordering (safety > liveness > performance); detect A-B-A-B oscillation pattern. Phase 1 work: Compatibility pre-check required before Cycle 2 starts.
 
-2. **State Space Explosion on On-Demand Checking** [CRITICAL]
-   - **What:** Large models (500+ state vars) can't complete TLC/APALACHE check within 60-second /nf:debug timeout. Interactive debugging becomes unusable.
-   - **Prevention:** (a) Use APALACHE symbolic solver instead of TLC for large models (handles integer clocks, arrays; faster than exhaustive TLC). (b) Pre-constrain state space using ASSUME statements derived from bug trace. (c) Cache TLC results across sessions (recompute only on model/code change). (d) For interactive debugging, check only models flagged MINIMAL/LOW state-space risk (from state-space-estimation-tool.cjs).
-   - **Design point:** Add `--quick-verify` mode that skips high-risk models if timeout approaches.
+3. **Uncontrolled model registry pollution** — Consequence models accumulate without lifecycle management, causing registry bloat and false positives in bug-to-model lookup. Mitigation: Store consequence models in session-scoped temp directories (NOT main registry); add 7-day TTL metadata; archive on fix commit; exclude from semantic lookup. Phase 1 work: Establish separate consequence model storage.
 
-3. **Over-Constraint in Fix Space** [CRITICAL]
-   - **What:** Extracting too many constraints from a model may eliminate all valid fixes. Model says "X must be true AND Y must be true AND Z must be true"—but satisfying all three is impossible with available code changes.
-   - **Prevention:** Rank constraints by relevance (frequency in failed traces). Surface top 3–5 only. Distinguish between "hard constraints" (safety invariants that must hold) and "soft hints" (patterns that help but aren't necessary).
-   - **Design point:** Constraint extractor outputs confidence scores; filter before presenting to developer.
+4. **Intent-to-mutation translation fidelity breaks silently** — Natural language "add mutex lock" translates to model mutation that adds lock flag but never releases it (vacuous success). Fix commits, code deadlocks in production. Mitigation: Require explicit mutation pseudo-code; reverse-translate mutations back to English; detect vacuous success (mutation must execute in >50% of trace); run adversarial negative model. Phase 2/3 work: Add validation gates.
 
-4. **Model Refinement Loops That Never Converge** [MODERATE]
-   - **What:** Automatically refining models from bugs can create iteration spirals: fix A breaks assumption B, refining B exposes gap C, refining C loops back to A.
-   - **Prevention:** Cap auto-refinement iterations to 3. Require human sign-off before 4th iteration. Track model version history; detect loops via TLA+ trace comparison.
-   - **Design point:** B→F layer marks auto-generated models with epoch counter; after 3 epochs, escalate to human review.
+5. **Integration with existing inverted semantics breaks** — Refinement-loop uses inverted verification (violation = success capturing bug); Cycle 2 uses normal semantics (violation = failure). Contradictory gates. Mitigation: Add `verification_mode` tag to all model runs; auto-detect consequence model mode; gate logic checks mode before interpreting outcome. Phase 1 work: Explicit mode tagging in all model runner contracts.
 
-5. **Cross-Model Regression Cascades** [MODERATE]
-   - **What:** Fix verified against Model A passes. But Model A's invariant about timeout indirectly depends on Model B's invariant about message delivery. Fix breaks B's invariant, leading to cascade failures.
-   - **Prevention:** Cross-model regression check (Phase 2) must run fix verification against all models with shared requirements (not just direct neighbors). Use model-registry proximity graph to identify transitive dependencies.
-   - **Design point:** Pre-verification step includes transitive closure of affected models.
-
-6. **B→F Layer Noise Inflation** [MODERATE]
-   - **What:** Test flakiness (test passes 80% of time) gets misclassified as "formal model gap" when tests sometimes pass and sometimes fail. Solve pipeline treats flaky test as bug the model should explain.
-   - **Prevention:** Before routing bugs to B→F layer, filter for stability: require bug to appear in >= 2 recent commits or pass rate < 50%. Log flaky tests separately.
-   - **Design point:** B→F handler includes stability check before creating unflagged-bug entry.
-
-7. **Debug Performance Impact** [MINOR]
-   - **What:** Model consultation (lookup + constraint extraction + Haiku translation) adds 5–10 seconds per `/nf:debug` invocation. Developers may skip model guidance and solve manually, defeating the feature.
-   - **Prevention:** Cache lookup results in session memory. Pre-compute constraints offline (batch all specs once per solve run). Batch Haiku calls (5 constraints in one API call vs. 5 calls).
-   - **Design point:** /nf:debug caches results; clear only on new failure context.
+6. **Regression prevention scope creep** — Consequence models introduce wider dependencies; 2-hop proximity neighbors may miss regressions 3+ hops away OR scope expands unbounded causing 100x slowdown. Mitigation: Analyze consequence model mutations for transitively-impacted variables/invariants; dynamically expand neighbor set; enforce performance budget (regression check <5s). Phase 2/3 work: Intelligent neighbor selection.
 
 ---
 
 ## Implications for Roadmap
 
-Based on research dependencies and risk mitigation order, the recommended phase structure is:
+Based on research, the recommended phase structure is 4 phases aligned with delivery value:
 
-### Phase 1: Bug-to-Model Lookup & Constraint Foundation
-**Rationale:** This is the dependency foundation for all downstream features. Cannot extract constraints without knowing which models apply. Cannot verify fixes without lookup results.
+### Phase v0.39-01: Foundation & Semantic Reframing (2-3 days)
 
-**Delivers:**
-- Extend `formal-scope-scan.cjs` with `--bug-mode` flag and bug-pattern matching
-- Create `bin/model-constrained-fix.cjs` (constraint parser)
-- User can run: `node bin/formal-scope-scan.cjs --bug-mode --description "timeout failure"` and get ranked model list with constraints
+**Deliverable:** Establish semantic reframe ("bug is ground truth, model is hypothesis") and foundational infrastructure.
 
-**Addresses features:** Bug-to-Model Lookup, Trace-to-Counterexample Conversion (partial)
+**Addresses:**
+- Bug as ground truth semantic reframe — affects prompts, output labels, convergence gate interpretation
+- Trace comparison infrastructure — canonical TLA+ representation, normalization heuristics for alignment
+- Fix intent normalization framework — constraint DSL syntax + minimal parser
+- Iteration limit & escape — parameter tracking, configurable default (3)
+- Verification mode tagging — explicit `mode: "inverted" | "normal"` on all model runs
 
-**Avoids pitfalls:** False-confidence prevention (by identifying which models are relevant); state-space explosion (by filtering to relevant models only)
+**Modules:** Updated prompts/labels, trace comparison utilities, fix intent parser skeleton, verification_mode contract updates
 
-**Effort:** 1–2 weeks. Existing proximity graph is reused; minimal new code. Test with 10 real bugs from git history.
+**Why first:** Semantic reframe must precede diagnostic output; mode tagging must be in place before consequence models are created; foundation layers enable both Cycle 1 and Cycle 2.
 
-**Research flags:** None — patterns well-established in existing codebase.
+**Risk:** LOW — mostly semantic/plumbing changes; no complex logic yet
 
----
+**Uses:** Existing model-driven-fix.md orchestrator (no changes), quorum dispatch (new context injection)
 
-### Phase 2: Debug Integration & Fix Guidance
-**Rationale:** Validates core value proposition: `/nf:debug` returns not just "possible root causes" but "root causes with formal model backing and specific constraints." This is the user-facing MVP.
+### Phase v0.39-02: Cycle 1 Diagnostic Reframing (2-3 days)
 
-**Delivers:**
-- Modify `commands/nf/debug.md` to run lookup+extraction after failure collection
-- Inject model intelligence into quorum-worker bundle
-- Workers return `model_recommendation: [APPLY | INSPECT | DEFER]` in addition to existing root_cause/next_step
-- `/nf:debug` output shows "Formal Model Constraints" section
+**Deliverable:** When Phase 2 reproduction fails, user sees targeted diagnostic ("model assumes timeout=5s but bug shows 10s") instead of blind retry.
 
-**Addresses features:** Root Cause Extraction, Plain-English Constraint Summary, Pre-Verification of Fix (partial)
+**Addresses:**
+- Counterexample trace parsing — extract ITF JSON traces from TLC `-dumpTrace json` output
+- Diagnostic diff generation — field-level divergence detection using json-diff-ts
+- Quorum prompt injection — diagnostic context fed to fix proposal generation
+- Phase 2 enhancement — add diagnostic call after "not reproduced" branch
 
-**Avoids pitfalls:** Over-constraint (by filtering top 3–5 constraints); false-confidence (by requiring developers to verify mechanism); performance (by caching results)
+**Modules:** parse-tlc-counterexample.cjs, diagnostic-diff-generator.cjs, model-driven-fix.md Phase 2 update
 
-**Effort:** 2–3 weeks. Integration point is clean (optional bundle enrichment). Requires Haiku constraint translation (existing LLM infrastructure). Test with 20 real bugs; measure /nf:debug latency before/after.
+**Tests:** 10 integration tests (TLA+/Alloy/PRISM trace parsing, diff generation, prompt injection)
 
-**Research flags:** None — existing quorum infrastructure already handles LLM integration.
+**Why second:** Depends on Phase 1 semantic reframe and trace comparison infrastructure. Diagnostic is self-contained; doesn't block Cycle 2. Provides value independently.
 
----
+**Risk:** MEDIUM — counterexample parsing is straightforward JSON work, but diff quality depends on getting field-level divergence right. Needs Phase 2 research on formalism-specific trace format differences.
 
-### Phase 3: Solve Layer B→F & Autonomous Gap Closure
-**Rationale:** Once debug loop is working, automation opportunity: formal pipeline can now identify which bugs formal models *should* have caught but didn't. Drives model-refinement roadmap autonomously.
+**Uses:** ITF format (official standard), json-diff-ts (npm), existing refinement-loop semantics (no changes)
 
-**Delivers:**
-- Add `b_to_f` to LAYER_KEYS (20th layer)
-- Create `bin/solve-handlers/b_to_f.cjs` (residual computation)
-- Modify `solve-wave-dag.cjs` to wire B→F dependencies (wave 7, post h_to_m)
-- New data file `.planning/formal/bug-model-gaps.json` tracking covered/unflagged bugs
-- Section 3o in `solve-remediate.md`: route unflagged bugs to `/nf:close-formal-gaps` or mark as v0.39 candidates
+**Avoids pitfall:** Consequence models trapping in narrow space — Cycle 1 diagnostic informs Cycle 2 fix intent suggestions, broadening solution exploration
 
-**Addresses features:** B→F Solve Layer, Model Refinement from Bugs (partial)
+### Phase v0.39-03: Cycle 2 Solution Simulation (5-7 days)
 
-**Avoids pitfalls:** B→F noise (by requiring stability check); model-refinement loops (by capping iterations); cross-model regression (by preparing architecture for Phase 4)
+**Deliverable:** Phase 4.5 fully functional; users can propose fix ideas, system simulates in model space, 3 convergence gates auto-verify, verdict gates code commit.
 
-**Effort:** 2–3 weeks. Waves already exist; adding new layer is pattern-matched to existing h_to_m layer. Test with 30 real bugs; verify B→F fires only on stable failures.
+**Addresses:**
+- Model mutation engine — text-based operator rewriting (regex-safe from model-constrained-fix precedent)
+- Consequence model generation — apply mutations, preserve original invariants, validate syntax
+- TLC/Alloy execution on consequence models — reuse existing run-tlc/run-alloy runners
+- Convergence gates — invariant verification + inverted bug check + neighbor regression
+- Cycle 2 iteration loop — max 3 iterations, learning from gate failures
+- Stop hook integration — enforce convergence before code commit
 
-**Research flags:** **Phase 3a (Pitfall Prevention)** — Before shipping B→F layer, validate cascade-exemption logic on known cascade scenarios. Oscillation detection must distinguish cascade (monotonic discovery of new gaps) from genuine regression (same layer's residual oscillates).
+**Modules:** normalize-fix-idea.cjs, generate-consequence-model.cjs, convergence-gate.cjs, model-driven-fix.md Phase 4.5 insertion, consequence model lifecycle tracking
 
----
+**Tests:** 45 integration tests (12 normalize, 10 generate, 15 convergence, 8 E2E full cycles)
 
-### Phase 4: Cross-Model Regression & Advanced Synthesis
-**Rationale:** After debug and solve loops are proven, add defensive checks (pre-verification across model graph) and advanced synthesis (auto-generating new invariants from failing traces).
+**Why third:** Depends on Phase 1 mode tagging and Phase 2 diagnostic context. Cycle 2 is most complex; appropriate for execution after foundation is solid.
 
-**Delivers:**
-- Implement cross-model regression in pre-verification phase
-- Specification-mining module for auto-generating INVARIANT from failing traces
-- Model graph execution in parallel (verify fix against all neighbors)
-- Invariant-Driven Solve Prioritization (rank solve waves by PRISM sensitivity)
+**Risk:** MEDIUM-HIGH — mutation engine semantics, state space explosion detection, and gate condition capture per formalism (TLA+/Alloy differ) need careful implementation. Consequence model testing against buggy code paths is novel. Needs Phase 3 research on constraint DSL design and mutation semantics validation.
 
-**Addresses features:** Cross-Model Regression Prevention, Model Refinement from Bugs (full), Fix Constraint Solver (partial), Invariant-Driven Solve Prioritization
+**Uses:** Operator extraction patterns from model-constrained-fix.cjs, inverted verification from refinement-loop.cjs, 2-hop proximity from resolve-proximity-neighbors.cjs, master runner from run-formal-verify.cjs
 
-**Avoids pitfalls:** Regression cascades (by exhaustive neighbor checking); model refinement loops (by capping auto-generation iterations); predictive power bias (by computing recall metric for all models)
+**Avoids pitfalls:** Oscillation detection adapted from solve-cycle-detector.cjs; mode semantics enforced via Phase 1 tagging; registry pollution prevented via session-scoped storage; vacuous success detection post-TLC; neighbor scope expansion via dependency analysis
 
-**Effort:** 3–4 weeks. Specification mining requires research into sparse-coding techniques. Parallel model execution requires load-balancing for 200+ models. This is the most complex phase; recommend `/qgsd:research-phase` for specification-mining library selection.
+### Phase v0.39-04: Integration & Hardening (2-3 days)
 
-**Research flags:** **Phase 4a (Advanced Synthesis)** — Specification mining from execution traces is novel in this context. Needs research on sparse-coding library (Parsimmon vs. Chevrotain vs. custom) and trace-pattern mining approach (template-based vs. statistical learning). **Phase 4b (Predictive Feedback)** — Measuring model predictive power requires cross-referencing test failures with model coverage. Needs research on traceability-matrix join strategy and survivorship-bias metrics (precision vs. recall vs. F1).
+**Deliverable:** Full end-to-end dual-cycle workflow hardened; error handling, edge cases, final integration tests.
+
+**Addresses:**
+- Error handling — counterexample alignment failures, unsatisfiable mutations, timeout recovery
+- Neighbor regression verification — parallel 2-hop execution, reuse v0.38 proximity framework
+- Integration tests — full E2E from bug description through Cycle 1 diagnostic through Cycle 2 simulation to code commit
+- Edge cases — empty traces, vacuously true fixes, invariant conflicts
+- Outcome tracking — log which fixes converged, enable historical validation
+
+**Modules:** Error handlers, integration test suite, outcome tracking persistence, documentation
+
+**Tests:** 20 integration + E2E tests, manual validation with real TLA+ models
+
+**Why fourth:** Depends on all prior phases working. Integration is mechanical; leverage existing v0.38 framework (no redesign needed).
+
+**Risk:** LOW — mostly integration and testing; core logic already proven in Phases 1-3
+
+**Uses:** All Phase 1-3 modules, existing quorum + execute hooks
 
 ---
 
 ### Phase Ordering Rationale
 
-1. **Phases 1 & 2 are prerequisites for 3 & 4.** You cannot measure "which bugs models should explain" (B→F) without first having a working lookup+extraction system (Phase 1) and proven debug integration (Phase 2).
+1. **Phase 1 → all others:** Semantic reframe and verification mode tagging are prerequisites. Both Cycle 1 and Cycle 2 depend on these foundational layers.
 
-2. **Phases 1 & 2 validate the core hypothesis** that formal models can explain bugs. Phase 3 builds on that validation by automating the discovery process. Phase 4 requires Phase 3 to be working reliably.
+2. **Phase 2 → Phase 3:** Cycle 1 diagnostic informs Cycle 2 fix intent suggestions. Diagnostic output becomes context for quorum workers proposing fixes. Sequential improves quality.
 
-3. **Risk mitigation order matters.** False-confidence and state-space pitfalls (Phase 1–2) must be solved before expanding to regression checks (Phase 3–4). Solving in reverse order wastes effort.
+3. **Phase 3 → Phase 4:** Can't integrate gates until consequence simulation works. Phase 4 is hardening on top of working core.
 
-4. **User value accrues incrementally.** After Phase 2, developers can use `/nf:debug` with model guidance immediately. After Phase 3, the solve pipeline works autonomously. Phase 4 is optimization.
+**Parallelization opportunity:** Phases 2 and 3 could partially overlap if Cycle 1 diagnostic is not strictly required for Cycle 2 MVP. However, research suggests coupling is tight; sequential is safer and cleaner.
 
-5. **Dependencies are clean.** No cycles: Phase 1 has zero dependencies, Phase 2 depends on 1, Phase 3 on 1–2, Phase 4 on 1–3.
+**Alternative (if timeline pressured):** Deliver Phases 1 + 2 only as v0.39, deferring Phase 3 (Cycle 2) to v0.40. Diagnostic alone is valuable; users get early model feedback without waiting for full solution simulation.
+
+### Research Flags for Phases
+
+**Phase v0.39-01:** Standard pattern, unlikely to need `/qgsd:research-phase`. Foundation work is straightforward plumbing.
+
+**Phase v0.39-02:** SHOULD RUN `/qgsd:research-phase` before committing to implementation.
+- **Gap:** How to extract minimal diagnostic diff from counterexample trace? (Requires constraint relevance ranking)
+- **Gap:** How to synthesize English explanation from diff? (Requires LLM-assisted interpretation)
+- **Gap:** Precision vs. readability tradeoff — overly detailed diagnostics are unreadable; too vague are useless
+- **Gap:** Formalism-specific trace format handling (TLA+ ITF vs Alloy XML vs PRISM output differ)
+
+**Phase v0.39-03:** SHOULD RUN `/qgsd:research-phase` before committing to implementation.
+- **Gap:** Constraint DSL design — what subset of TLA+ is safe for users to mutate? (Must stay decidable)
+- **Gap:** Mutation semantics validation — how to prevent unsatisfiable or contradictory specs?
+- **Gap:** State space explosion — when does consequence model become intractable? Pre-flight estimation heuristics?
+- **Gap:** Bug trace alignment — how to map coarse-grained production traces to precise formal traces?
+- **Gap:** Gate condition detection per formalism (TLA+ invariant violation looks different from Alloy SAT failure)
+
+**Phase v0.39-04:** Standard hardening, unlikely to need deeper research. Integration is mechanical.
 
 ---
 
@@ -206,39 +227,72 @@ Based on research dependencies and risk mitigation order, the recommended phase 
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| **Stack** | HIGH | fast-xml-parser, acorn are production-grade. Custom parsers are lightweight, well-understood. Haiku integration reuses existing infrastructure. |
-| **Features** | MEDIUM-HIGH | Table-stakes features (lookup, extraction, constraint translation) are well-established in formal verification literature. Differentiators (model refinement, B→F layer) are novel in this context; confidence medium. |
-| **Architecture** | HIGH | Integration points verified against actual codebase (200+ models, formal-scope-scan.cjs, solve-remediate.md). No breaking changes required. Fail-open design is proven pattern in nForma. |
-| **Pitfalls** | MEDIUM | Pitfalls 1–3 are well-known in formal verification (false confidence, state explosion, over-constraint). Pitfall 4+ are specific to nForma's automated refinement + quorum dispatch; confidence is medium because no production case studies exist for this combination. |
+| **Stack** | HIGH | No new dependencies; reuses TLA+/Alloy/PRISM checkers; ITF format is standard; json-diff-ts is established library |
+| **Architecture** | HIGH | Phase integration points clear; module boundaries well-defined; reuses 5 existing v0.38 modules (no changes); additive only |
+| **Build order** | HIGH | Dependencies respected; Phases 1→2→3→4 is only viable order; Phase 1 prerequisite for both cycles |
+| **Cycle 1 diagnostic** | MEDIUM | Counterexample parsing is straightforward; diff generation established pattern; but diagnostic quality depends on formalism-specific implementation (TLA+ constraints differ from Alloy) — Phase 2 research needed |
+| **Cycle 2 mutation** | MEDIUM | Text-based mutation proven safe via model-constrained-fix precedent; but consequence model generation and gate condition detection need formalism-specific validation — Phase 3 research needed |
+| **Convergence gates** | MEDIUM-HIGH | 3-condition AND logic is straightforward; invariant + neighbor framework reused from v0.38; but detecting "bug still triggered" varies by formalism — needs Phase 3 specification |
+| **Integration risk** | MEDIUM | Inverted semantics integration is a real pitfall; mitigated by Phase 1 mode tagging contract; but testing must validate no contradictions |
+| **Overall** | MEDIUM | Novel synthesis of established techniques; architecture is sound; implementation details (formalism-specific logic) need Phase 2/3 research before committing |
 
-**Overall confidence:** MEDIUM-HIGH
+---
 
-Gaps that need attention during planning/execution:
-- **Specification mining library selection (Phase 4):** Research sparse-coding implementations; recommend `/qgsd:research-phase` if pursuing Phase 4 in v0.38.
-- **Predictive power metrics (Phase 4):** Traceability-matrix join strategy not yet detailed; needs implementation planning during Phase 4 scoping.
-- **Cascade exemption validation (Phase 3):** Must test oscillation-detection logic on known cascade scenarios before shipping B→F layer. Recommend dedicated test suite.
-- **Model-to-mechanism validation (Phase 2):** No automated check yet; requires human-in-the-loop at /nf:debug output. May need UX design during Phase 2 planning.
+## Gaps to Address
+
+1. **Formalism-specific gate condition capture (Phase 3 blocker)**
+   - Gap: How does "bug condition still triggered" work in TLA+ vs Alloy vs PRISM?
+   - Impact: Convergence gate reliability depends on correct formalism-specific implementation
+   - How to handle: Phase 3 research must specify gate detection per formalism; include unit tests for each
+
+2. **Consequence model state space estimation (Phase 3 blocker)**
+   - Gap: What pre-flight heuristics estimate mutation impact (e.g., variable bound change → 2x state space)?
+   - Impact: Without estimation, consequence models may timeout; users hit iteration limit due to time, not convergence failure
+   - How to handle: Phase 3 research must build heuristic table (mutation type → state space factor); add pre-flight estimation, warn user if model too large
+
+3. **Bug trace alignment (Phase 2/3 blocker)**
+   - Gap: How to map production bug traces (coarse-grained, incomplete) to formal TLA+ traces (precise, state-level)?
+   - Impact: Diagnostic diff quality depends on alignment; trace mismatch causes false negatives
+   - How to handle: Phase 2/3 research must define canonical bug trace format and alignment strategy
+
+4. **Constraint DSL syntax (Phase 3 blocker)**
+   - Gap: What syntax will users use to express fix intent? (TLA+ FIX blocks? Custom DSL? Plain English?)
+   - Impact: Normalization fidelity depends on DSL clarity; ambiguous syntax leads to wrong mutations
+   - How to handle: Phase 3 research must prototype 2-3 DSL options with real users; select simplest that captures intent
+
+5. **Invariant compatibility pre-flight (Phase 1 decision)**
+   - Gap: Should Phase 1 run mutual satisfiability test on all invariants before Cycle 2 starts?
+   - Impact: Without pre-check, oscillation between incompatible invariants is possible; wastes iterations
+   - How to handle: Phase 1 research should validate that mutual satisfiability test is feasible and cost-effective; if <1s per bug, include it; if >5s, defer to Phase 3
+
+6. **Neighbor regression scope (Phase 3 decision)**
+   - Gap: Is 2-hop proximity sufficient for consequence models, or do mutations introduce wider dependencies?
+   - Impact: Too narrow scope misses regressions; too wide scope causes timeout
+   - How to handle: Phase 3 must add consequence model dependency analysis (which variables/invariants touched?); dynamically expand neighbor set; enforce performance budget
 
 ---
 
 ## Sources
 
-### Primary Research (HIGH confidence)
-- **STACK.md** — Detailed technology analysis: fast-xml-parser (v5.4.1 rationale), acorn (v8.11.0 rationale), ITF format specification, alternatives considered
-- **FEATURES.md** — Feature landscape with table-stakes vs. differentiators; dependency DAG; MVP definition (6 features for v0.38); known challenges with mitigations
-- **ARCHITECTURE.md** — Component-level integration design: bug-to-model lookup, constraint extraction, debug bundle injection, B→F solve layer; build order; dependency graph
-- **PITFALLS.md** — Domain pitfalls specific to model-driven debugging (false confidence, state explosion, over-constraint, refinement loops, regression cascades, noise inflation, performance); recovery strategies
+### Primary (HIGH confidence)
 
-### Secondary Sources (MEDIUM confidence)
-- nForma codebase (v0.37): `/Users/jonathanborduas/code/QGSD/bin/formal-scope-scan.cjs` (lookup implementation), `.planning/formal/model-registry.json` (201 models), `.planning/formal/requirements.json` (371 requirements)
-- Formal verification literature: APALACHE (symbolic model checking), TLC (bounded model checking), FLACK (counterexample-guided fault localization)
-- Specification mining research: Seshia et al. (sparse coding for spec mining), CEGAR (counterexample-guided abstraction refinement)
+- **Stack research:** Official TLA+ Tools documentation, Apalache ITF spec, json-diff-ts npm package
+- **Architecture research:** nForma v0.38 codebase (model-driven-fix.md, refinement-loop.cjs, resolve-proximity-neighbors.cjs); verified existing integration points
+- **Features research:** CEGAR literature (ACM), Constraint Mutation Testing papers (IEEE), Invariant Refinement research (FASE 2024, ASE 2018)
+- **Pitfalls research:** nForma codebase pattern analysis (solve-cycle-detector.cjs oscillation detection, model-registry.json scale, inverted semantics precedent)
+
+### Secondary (MEDIUM confidence)
+
+- Model-based testing literature (test oracle strategies, mutation-driven testing)
+- Alloy SAT-based specification repair papers
+- Trace abstraction incremental verification
 
 ### Tertiary (LOW confidence, needs validation)
-- Predictive power metrics: Research on survivorship bias in formal verification (not extensively documented in production systems)
-- Model refinement loop convergence: Literature exists, but automated closure in multi-model systems is not well-studied
+
+- Hypothetical edge cases (vacuous success detection, mutual exclusivity checks) — patterns inferred from codebase but not yet implemented
 
 ---
 
-*Research completed: 2026-03-17*
-*Ready for roadmap planning: YES*
+*Research completed: 2026-03-18*
+*Ready for roadmap: yes*
+*Next: Confirm Phase 2 + Phase 3 research scope before committing implementation dates*

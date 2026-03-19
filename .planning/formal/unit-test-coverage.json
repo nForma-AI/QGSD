@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-17T17:50:30.110Z",
+  "generated_at": "2026-03-18T22:26:20.625Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -688,6 +688,33 @@
         }
       ]
     },
+    "DIAG-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-04.stub.test.js",
+          "test_name": "DIAG-04: filterRequirementsByFocus returns null for empty/null phrase"
+        }
+      ]
+    },
+    "DIAG-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-05.stub.test.js",
+          "test_name": "DIAG-05: mcp-repair skill workflow file exists and covers lifecycle phases"
+        }
+      ]
+    },
+    "DIAG-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
+          "test_name": "DIAG-06 — PipelineStep: structural verification"
+        }
+      ]
+    },
     "DISP-01": {
       "covered": true,
       "test_cases": [
@@ -955,6 +982,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/GATE-04.stub.test.js",
           "test_name": "GATE-04: compute-per-model-gates.cjs supports auto-demotion on evidence regression"
+        }
+      ]
+    },
+    "GATE-05": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/GATE-05.stub.test.js",
+          "test_name": "GATE-05 — Bool: behavioral verification"
         }
       ]
     },
@@ -3010,6 +3046,15 @@
         }
       ]
     },
+    "TRACE-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/TRACE-06.stub.test.js",
+          "test_name": "TRACE-06: formal-test-sync.cjs exists"
+        }
+      ]
+    },
     "TRACK-01": {
       "covered": true,
       "test_cases": [
@@ -3351,6 +3396,22 @@
           "test_name": "XPLAT-02 — Bool: structural verification"
         }
       ]
+    },
+    "CLASS-02": {
+      "covered": false,
+      "test_cases": []
+    },
+    "RSN-06": {
+      "covered": false,
+      "test_cases": []
+    },
+    "VERF-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "XPLAT-03": {
+      "covered": false,
+      "test_cases": []
     }
   }
 }

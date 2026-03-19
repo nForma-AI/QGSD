@@ -147,7 +147,7 @@ PROJECT.md evolves throughout the project lifecycle.
 
 For existing codebases:
 
-1. **Map codebase first** via `/qgsd:map-codebase`
+1. **Map codebase first** via `/nf:map-codebase`
 
 2. **Infer Validated requirements** from existing code:
    - What does the codebase actually do?

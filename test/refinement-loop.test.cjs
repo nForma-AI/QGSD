@@ -196,11 +196,11 @@ test('MRF-02: works with alloy formalism', () => {
 // ---- formatIterationFeedback tests ----
 
 test('MRF-02: formatIterationFeedback shows summary only when verbose=false', () => {
-  const iter = { attempt: 1, passed: true, summary: 'model invariants hold, bug not captured' };
+  const iter = { attempt: 1, passed: true, summary: 'model is incomplete — invariants hold but model does not capture the failure' };
   const output = formatIterationFeedback(iter, false);
   assert.ok(output.includes('Attempt 1'));
-  assert.ok(output.includes('still passes'));
-  assert.ok(output.includes('model invariants hold'));
+  assert.ok(output.includes('model still incomplete'));
+  assert.ok(output.includes('model is incomplete'));
   assert.ok(!output.includes('Full output'));
 });
 
@@ -218,5 +218,5 @@ test('MRF-02: formatIterationFeedback handles reproduced status', () => {
   const iter = { attempt: 1, passed: false, summary: 'violation found' };
   const output = formatIterationFeedback(iter, false);
   assert.ok(output.includes('reproduced'));
-  assert.ok(!output.includes('still passes'));
+  assert.ok(!output.includes('model still incomplete'));
 });

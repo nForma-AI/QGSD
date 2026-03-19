@@ -16,15 +16,18 @@ const { spawnSync } = require('child_process');
 const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
 const fs   = require('fs');
 const path = require('path');
+const os   = require('os');
 const { writeCheckResult } = require('./write-check-result.cjs');
 const { getRequirementIds } = require('./requirement-map.cjs');
 
 // ── Resolve project root (--project-root= overrides __dirname-relative) ─────
 let ROOT = path.join(__dirname, '..');
 let specName = 'quorum-votes'; // default for backward compat
+let verificationMode = 'validation'; // default verification mode
 for (const arg of process.argv) {
   if (arg.startsWith('--project-root=')) ROOT = path.resolve(arg.slice('--project-root='.length));
   if (arg.startsWith('--spec=')) specName = arg.slice('--spec='.length);
+  if (arg.startsWith('--verification-mode=')) verificationMode = arg.slice('--verification-mode='.length);
 }
 
 const checkId = 'alloy:' + specName;
@@ -42,7 +45,7 @@ function emitResult(result, runtimeMs, extraSummary, extraTags) {
       summary: result + ': ' + checkId + (extraSummary ? ' (' + extraSummary + ')' : '') + (runtimeMs ? ' in ' + runtimeMs + 'ms' : ''),
       triage_tags: (extraTags || []).concat(runtimeMs > 60000 ? ['timeout-risk'] : []),
       requirement_ids: reqIds,
-      metadata: {},
+      metadata: { verification_mode: verificationMode },
     });
   } catch (e) {
     process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n');
@@ -100,10 +103,16 @@ if (javaMajor < 17) {
 const { resolveAlloyJar } = require('./resolve-formal-tools.cjs');
 const jarPath = resolveAlloyJar(ROOT);
 if (!jarPath) {
+  const { NF_FORMAL_HOME } = require('./resolve-formal-tools.cjs');
+  const searchedPaths = [
+    path.join(NF_FORMAL_HOME, 'alloy', 'org.alloytools.alloy.dist.jar'),
+    path.join(ROOT, '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+    path.join(os.homedir(), '.claude', '.planning', 'formal', 'alloy', 'org.alloytools.alloy.dist.jar'),
+  ];
   process.stderr.write(
     '[run-alloy] org.alloytools.alloy.dist.jar not found.\n' +
     '[run-alloy] Searched:\n' +
-    jarCandidates.map(p => '  - ' + p).join('\n') + '\n' +
+    searchedPaths.map(p => '  - ' + p).join('\n') + '\n' +
     '[run-alloy] Download Alloy 6.2.0:\n' +
     '  curl -L https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar \\\n' +
     '       -o .planning/formal/alloy/org.alloytools.alloy.dist.jar\n'

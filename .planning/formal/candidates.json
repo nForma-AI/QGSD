@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-03-17T17:50:34.083Z",
-    "proximity_index_hash": "238aeed1",
+    "generated": "2026-03-18T22:25:16.662Z",
+    "proximity_index_hash": "dcf74896",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 0,
-    "uncovered_requirements_count": 0,
+    "orphan_requirements_count": 4,
+    "uncovered_requirements_count": 4,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -21,7 +21,41 @@
         "edges": 0
       }
     ],
-    "requirements": []
+    "requirements": [
+      {
+        "id": "CLASS-02",
+        "edges": 0
+      },
+      {
+        "id": "RSN-06",
+        "edges": 0
+      },
+      {
+        "id": "VERF-04",
+        "edges": 0
+      },
+      {
+        "id": "XPLAT-03",
+        "edges": 0
+      }
+    ]
   },
-  "uncovered_requirements": []
+  "uncovered_requirements": [
+    {
+      "id": "CLASS-02",
+      "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats"
+    },
+    {
+      "id": "RSN-06",
+      "text": "hazard-model.cjs preserves user overrides (detection score, detection_justification, user_override flag) across regeneration — loads existing data, merges user-owned fields, recomputes RPN and summary after merge"
+    },
+    {
+      "id": "VERF-04",
+      "text": "run-formal-verify.cjs normalizes legacy `formal-spec/` paths to `.planning/formal/` in registry check commands and model keys — no manual symlink required"
+    },
+    {
+      "id": "XPLAT-03",
+      "text": "CCR provider slots resolve binary paths dynamically at dispatch time and detect missing CCR installation with helpful install instructions"
+    }
+  ]
 }

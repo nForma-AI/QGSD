@@ -19,13 +19,20 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { interpretGateResult } = require('./verification-mode.cjs');
+const { getMaxIterations } = require('./config-update.cjs');
+const { extractFinalStates } = require('./model-state-extractor.cjs');
+const { generateStateDiff, formatDiffAsMarkdown } = require('./diagnostic-diff-generator.cjs');
+const { generateCorrectionProposals } = require('./diagnostic-proposal-generator.cjs');
 
 // ---- Dependency Injection for Testing ----
 
 let deps = {
   execFileSync,
   existsSync: fs.existsSync,
-  readFileSync: fs.readFileSync
+  readFileSync: fs.readFileSync,
+  writeFileSync: fs.writeFileSync,
+  unlinkSync: fs.unlinkSync
 };
 
 /**
@@ -85,7 +92,7 @@ function parseCheckerSummary(output, hasError) {
   }
   // Look for "no error" message
   if (/no error has been found/i.test(output)) {
-    return 'model invariants hold, bug not captured';
+    return 'model is incomplete — invariants hold but model does not capture the failure';
   }
   // Look for state count
   const stateMatch = output.match(/(\d+)\s+states?\s+found/i);
@@ -114,8 +121,95 @@ function extractCounterexample(output) {
 }
 
 /**
+ * Generate diagnostic feedback when model is INCOMPLETE.
+ * Compares model's final states with bug trace's final states.
+ * Fail-open: returns null on any error.
+ *
+ * @param {string} checkerOutput - Model checker stdout/stderr
+ * @param {string|null} bugTraceJsonPath - Path to bug trace ITF JSON
+ * @param {string} bugContext - Bug description text
+ * @returns {Object|null} { mismatch_diff, correction_proposals, trace_alignment } or null
+ */
+function generateDiagnosticFeedback(checkerOutput, bugTraceJsonPath, bugContext) {
+  try {
+    // Fail-open: if no bug trace, cannot generate diagnostic
+    if (!bugTraceJsonPath || typeof bugTraceJsonPath !== 'string' || bugTraceJsonPath.trim() === '') {
+      return null;
+    }
+
+    // Fail-open: if checker output is not JSON-like, cannot extract states
+    if (!checkerOutput || typeof checkerOutput !== 'string') {
+      return null;
+    }
+
+    // Stage 1: Write checker output to temp file if it looks like JSON
+    let modelFinalStates = [];
+    try {
+      // Try to parse checker output as JSON
+      const parsed = JSON.parse(checkerOutput);
+      // If it's an ITF-like structure, write it to temp and extract states
+      const tempDir = '/tmp';
+      const tempFile = path.join(tempDir, `model-trace-${Date.now()}-${Math.random().toString(36).slice(2, 9)}.json`);
+      deps.writeFileSync(tempFile, JSON.stringify(parsed), 'utf-8');
+      modelFinalStates = extractFinalStates(tempFile);
+      // Clean up temp file
+      try {
+        deps.unlinkSync(tempFile);
+      } catch (_) {}
+    } catch (_) {
+      // Not JSON — fail-open
+      return null;
+    }
+
+    // If model didn't produce any final states, fail-open
+    if (!modelFinalStates || modelFinalStates.length === 0) {
+      return null;
+    }
+
+    // Stage 2: Extract bug trace's final states
+    if (!deps.existsSync(bugTraceJsonPath)) {
+      // Bug trace file doesn't exist — fail-open
+      return null;
+    }
+
+    const bugFinalStates = extractFinalStates(bugTraceJsonPath);
+    if (!bugFinalStates || bugFinalStates.length === 0) {
+      // Bug trace produced no states — fail-open
+      return null;
+    }
+
+    // Stage 3: Compare state sequences
+    const diffResult = generateStateDiff(modelFinalStates, bugFinalStates);
+
+    // Stage 4: Format as markdown
+    const mismatchDiff = formatDiffAsMarkdown(diffResult);
+
+    // Stage 5: Generate correction proposals
+    const correctionProposals = generateCorrectionProposals(diffResult, bugContext);
+
+    // Extract trace alignment info
+    const trace_alignment = {
+      model_state_count: modelFinalStates.length,
+      bug_state_count: bugFinalStates.length,
+      first_divergence_index: diffResult.summary.first_divergence_index,
+      diverged_fields: diffResult.summary.changed_fields
+    };
+
+    return {
+      mismatch_diff: mismatchDiff,
+      correction_proposals: correctionProposals,
+      trace_alignment
+    };
+  } catch (err) {
+    // Fail-open: diagnostic failure does NOT break refinement loop
+    process.stderr.write(`[refinement-loop] Warning: diagnostic generation failed: ${err.message}\n`);
+    return null;
+  }
+}
+
+/**
  * Run the inverted verification loop for model refinement.
- * INVERTED SEMANTICS: error = reproduced (success), pass = not captured (retry).
+ * INVERTED SEMANTICS: error = reproduced (success), pass = model incomplete (retry).
  *
  * @param {string} modelPath - Path to the formal model file
  * @param {string} bugContext - Normalized bug description text
@@ -124,14 +218,18 @@ function extractCounterexample(output) {
  * @param {number} [options.maxAttempts=3] - Max iterations
  * @param {boolean} [options.verbose=false] - Show full checker output
  * @param {Function} [options.onIteration] - Callback({ attempt, passed, summary })
- * @returns {Object} { status, attempts, model_path, counterexample, iterations }
+ * @param {string} [options.bugTraceJsonPath] - Path to bug trace ITF JSON for diagnostic generation
+ * @param {Function} [options.onDiagnosticGenerated] - Callback(diagnostic, attemptNumber) for diagnostic injection
+ * @returns {Object} { status, attempts, model_path, counterexample, iterations, final_diagnostic }
  */
 function verifyBugReproduction(modelPath, bugContext, options) {
   options = options || {};
   const formalism = options.formalism || 'tla';
-  const maxAttempts = options.maxAttempts || 3;
+  const maxAttempts = options.maxAttempts || getMaxIterations();
   const verbose = options.verbose || false;
   const onIteration = options.onIteration || null;
+  const bugTraceJsonPath = options.bugTraceJsonPath || null;
+  const onDiagnosticGenerated = options.onDiagnosticGenerated || null;
 
   const iterations = [];
 
@@ -145,8 +243,8 @@ function verifyBugReproduction(modelPath, bugContext, options) {
         ? path.join(__dirname, 'run-alloy.cjs')
         : path.join(__dirname, 'run-tlc.cjs');
 
-      // Run checker as subprocess via execFileSync (no shell injection risk)
-      output = deps.execFileSync('node', [checkerScript, modelPath], {
+      // Run checker as subprocess via execFileSync with diagnostic mode flag (no shell injection risk)
+      output = deps.execFileSync('node', [checkerScript, '--verification-mode=diagnostic', modelPath], {
         encoding: 'utf-8',
         timeout: 60000,
         stdio: ['pipe', 'pipe', 'pipe']
@@ -159,7 +257,7 @@ function verifyBugReproduction(modelPath, bugContext, options) {
         output = (err.stdout || '') + (err.stderr || '');
         hasError = true;
       } else {
-        // Spawn failure, timeout, or other error — fail-open as "not reproduced"
+        // Spawn failure, timeout, or other error — fail-open as "model inconclusive"
         output = err.message || 'checker subprocess error';
         hasError = false;
         process.stderr.write(`[refinement-loop] Checker error on attempt ${attempt}: ${err.message}\n`);
@@ -167,8 +265,10 @@ function verifyBugReproduction(modelPath, bugContext, options) {
     }
 
     const summary = parseCheckerSummary(output, hasError);
+    // Interpret result using verification mode semantics
+    const outcome = interpretGateResult(hasError, 'diagnostic');
 
-    if (hasError) {
+    if (outcome === 'REPRODUCED') {
       // Model found a violation — it REPRODUCES the bug — SUCCESS
       const counterexample = extractCounterexample(output);
       const iteration = { attempt, passed: false, summary };
@@ -184,18 +284,32 @@ function verifyBugReproduction(modelPath, bugContext, options) {
       };
     }
 
-    // Model passes — does NOT capture the failure — RETRY
+    // Model passes (outcome === 'INCOMPLETE') — model remains incomplete — does not capture the failure — RETRY
     const iteration = { attempt, passed: true, summary };
+
+    // Generate diagnostic feedback if bug trace available and not the last attempt
+    if (bugTraceJsonPath && attempt < maxAttempts) {
+      const diagnostic = generateDiagnosticFeedback(output, bugTraceJsonPath, bugContext);
+      if (diagnostic) {
+        iteration.diagnostic = diagnostic;
+        if (onDiagnosticGenerated) {
+          onDiagnosticGenerated(diagnostic, attempt);
+        }
+      }
+    }
+
     iterations.push(iteration);
     if (onIteration) onIteration(iteration);
   }
 
-  // All attempts exhausted — model does not reproduce the bug
+  // All attempts exhausted — model remains incomplete
+  const lastDiagnostic = iterations.filter(i => i.diagnostic).pop();
   return {
     status: 'not_reproduced',
     attempts: maxAttempts,
     model_path: modelPath,
     counterexample: null,
+    final_diagnostic: lastDiagnostic ? lastDiagnostic.diagnostic : null,
     iterations
   };
 }
@@ -204,14 +318,22 @@ function verifyBugReproduction(modelPath, bugContext, options) {
 
 /**
  * Format a single iteration's feedback for display.
- * @param {Object} iteration - { attempt, passed, summary }
+ * @param {Object} iteration - { attempt, passed, summary, diagnostic? }
  * @param {boolean} [verbose=false] - Include full output
  * @param {string} [fullOutput=''] - Full checker output (for verbose mode)
  * @returns {string} Formatted feedback line
  */
 function formatIterationFeedback(iteration, verbose, fullOutput) {
-  const status = iteration.passed ? 'still passes' : 'reproduced';
-  const line = `Attempt ${iteration.attempt}: ${status} \u2014 ${iteration.summary}`;
+  const status = iteration.passed ? 'model still incomplete' : 'reproduced';
+  let line = `Attempt ${iteration.attempt}: ${status} \u2014 ${iteration.summary}`;
+
+  // Append diagnostic summary if present
+  if (iteration.diagnostic) {
+    const proposalCount = (iteration.diagnostic.correction_proposals || []).length;
+    const divergedCount = (iteration.diagnostic.trace_alignment.diverged_fields || []).length;
+    line += `\n  Diagnostic: ${proposalCount} correction proposals generated (${divergedCount} diverged fields)`;
+  }
+
   if (verbose && fullOutput) {
     return `${line}\n  Full output:\n${fullOutput.split('\n').map(l => '    ' + l).join('\n')}`;
   }
@@ -225,11 +347,12 @@ function parseArgs(argv) {
     model: null,
     bugContext: null,
     formalism: 'tla',
-    maxAttempts: 3,
+    maxAttempts: null,
     verbose: false,
     format: 'json',
     help: false,
-    normalize: null
+    normalize: null,
+    bugTraceJson: null
   };
   for (let i = 2; i < argv.length; i++) {
     if (argv[i] === '--model' && argv[i + 1]) {
@@ -239,13 +362,16 @@ function parseArgs(argv) {
     } else if (argv[i] === '--formalism' && argv[i + 1]) {
       args.formalism = argv[++i];
     } else if (argv[i] === '--max-attempts' && argv[i + 1]) {
-      args.maxAttempts = parseInt(argv[++i], 10) || 3;
+      const parsed = parseInt(argv[++i], 10);
+      args.maxAttempts = Number.isInteger(parsed) && parsed > 0 ? parsed : null;
     } else if (argv[i] === '--verbose') {
       args.verbose = true;
     } else if (argv[i] === '--format' && argv[i + 1]) {
       args.format = argv[++i];
     } else if (argv[i] === '--normalize' && argv[i + 1]) {
       args.normalize = argv[++i];
+    } else if (argv[i] === '--bug-trace-json' && argv[i + 1]) {
+      args.bugTraceJson = argv[++i];
     } else if (argv[i] === '--help' || argv[i] === '-h') {
       args.help = true;
     }
@@ -299,6 +425,7 @@ function main() {
     formalism: args.formalism,
     maxAttempts: args.maxAttempts,
     verbose: args.verbose,
+    bugTraceJsonPath: args.bugTraceJson,
     onIteration: (iter) => {
       if (args.format === 'text') {
         console.log(formatIterationFeedback(iter, args.verbose));
@@ -329,5 +456,6 @@ module.exports = {
   normalizeBugContext,
   verifyBugReproduction,
   formatIterationFeedback,
+  generateDiagnosticFeedback,
   _setDeps
 };
