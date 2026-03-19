@@ -554,40 +554,37 @@ The diagnostic engine runs `assembleReverseCandidates()` automatically, which:
 
 If `assembled_candidates.candidates` is empty after dedup + filtering: Log `"Reverse discovery: 0 candidates after dedup/filtering"` and skip Phase 2.
 
-**Phase 2 — Human Approval (interactive):**
+**Phase 2 — Quorum Approval (autonomous):**
 
-Present the deduplicated candidate list to the user:
+For each batch of up to 10 candidates (to keep quorum prompts manageable):
 
-```
-Discovered {N} candidate requirement(s) from reverse traceability:
+  Build quorum question:
+  ```
+  Review these reverse-traceability candidates discovered by the nForma solver.
+  Each candidate is a code module, test, or doc claim that has no requirement backing.
+  For each candidate, determine if it represents a GENUINE requirement that should be added to the requirements envelope.
 
-  #  Source    Evidence                              Candidate
-  ─────────────────────────────────────────────────────────────────
-  1  C->R      bin/check-provider-health.cjs          Provider health probe module
-  2  C->R,T->R  bin/validate-traces.cjs + test/...     Trace validation module
-  3  D->R      README.md:42                            "supports automatic OAuth rotation"
-  ...
+  Candidates:
+  {numbered list with source scanner, evidence, candidate description}
 
-Accept: [a]ll / [n]one / comma-separated numbers (e.g. 1,3,5) / [s]kip this cycle
-```
+  Vote APPROVE with the list of candidate numbers you consider genuine requirements.
+  Vote BLOCK if NONE of the candidates are genuine (all are false positives or noise).
 
-Wait for user input via AskUserQuestion. Route based on response:
-
-- **Numbers or "all"**: For each accepted candidate, dispatch `/nf:add-requirement` with the candidate evidence as context. The add-requirement skill handles ID assignment, duplicate checks, and semantic conflict detection. Approved candidates enter the forward flow (R->F->T->C) in the next iteration.
-
-- **"none"**: Write ALL candidates to `.planning/formal/acknowledged-not-required.json` so they are not resurfaced in future runs. Each entry:
-  ```json
-  {
-    "file_or_claim": "<candidate file or claim text>",
-    "source_scanners": ["C->R", "T->R"],
-    "acknowledged_at": "<ISO timestamp>",
-    "reason": "user-rejected"
-  }
+  Criteria for genuine: The candidate represents a real user-facing or system capability that the project intentionally provides but has no formal requirement backing.
   ```
 
-- **"skip"**: Do nothing — candidates will resurface in the next solve run. This is the default if the user does not respond.
+  Dispatch as parallel sibling nf-quorum-slot-worker Tasks (per R3.2).
+  Synthesize results, deliberate up to 10 rounds per R3.3.
 
-Log: `"Reverse discovery: {N} candidates presented, {M} approved, {K} rejected, {J} skipped"`
+  **Unanimous gate: 100% of valid external voters must APPROVE the same candidate set.**
+  - **APPROVED (unanimous on candidate set)** -> For each approved candidate, dispatch `/nf:add-requirement` with candidate evidence. Write rejected candidates to `.planning/formal/acknowledged-not-required.json`.
+  - **BLOCKED (any BLOCK vote)** -> Quorum debates per standard protocol (slots see prior positions, iterate).
+    - If consensus reached after debate -> apply outcome.
+    - If debate exhausted with no consensus -> Write ALL candidates in this batch to acknowledged-not-required.json with reason "quorum-no-consensus". Log warning: "Reverse discovery batch: quorum could not reach consensus — candidates shelved. Human review recommended."
+
+  Note: Unlike forward-flow auto-remediation, debate exhaustion here does NOT escalate to human interactively. Instead, candidates are shelved (written to acknowledged-not-required.json) and will not resurface. This keeps the solve loop fully autonomous. The user can review acknowledged-not-required.json at leisure.
+
+Log line update: `"Reverse discovery: {N} candidates presented to quorum, {M} approved (unanimous), {K} rejected, {J} shelved (no consensus)"`
 
 ### 3j. Hazard Model Refresh (pre-gate)
 
