@@ -24,7 +24,7 @@
 **Plans:** 1 plan
 
 Plans:
-- [ ] v0.40-01-01-PLAN.md — Add three context injection blocks to nf-prompt.js (session state, root cause template, edit constraint) with unit tests
+- [x] v0.40-01-01-PLAN.md — Add three context injection blocks to nf-prompt.js (session state, root cause template, edit constraint) with unit tests (Complete: 2026-03-19, 15 min, 2 tasks)
 
 **Files to modify:**
 - `hooks/nf-prompt.js` — three new injection blocks before `cmdPattern.test(prompt)` gate at line 882
@@ -112,13 +112,13 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESSION-01 | v0.40-01 | Pending |
-| SESSION-02 | v0.40-01 | Pending |
-| SESSION-03 | v0.40-01 | Pending |
-| ROOT-01 | v0.40-01 | Pending |
-| ROOT-03 | v0.40-01 | Pending |
-| CONST-01 | v0.40-01 | Pending |
-| CONST-02 | v0.40-01 | Pending |
+| SESSION-01 | v0.40-01 | Complete |
+| SESSION-02 | v0.40-01 | Complete |
+| SESSION-03 | v0.40-01 | Complete |
+| ROOT-01 | v0.40-01 | Complete |
+| ROOT-03 | v0.40-01 | Complete |
+| CONST-01 | v0.40-01 | Complete |
+| CONST-02 | v0.40-01 | Complete |
 | INTENT-01 | v0.40-02 | Pending |
 | INTENT-02 | v0.40-02 | Pending |
 | INTENT-03 | v0.40-02 | Pending |
@@ -145,4 +145,5 @@ Plans:
 
 ---
 *Roadmap created: 2026-03-19*
+*Phase v0.40-01 completed: 2026-03-19*
 *Requirements: 14 v1, 4 v2, 4 out of scope*

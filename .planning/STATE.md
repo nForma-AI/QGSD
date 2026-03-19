@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 
 ## Current Position
 
-Phase: v0.40-01 (ready to plan)
-Plan: —
-Status: Requirements + roadmap complete — ready for /nf:plan-phase v0.40-01
-Last activity: 2026-03-19 — Completed quick task 335: Add FSM candidate detection to phase researcher
+Phase: v0.40-01 (1/2 plans complete)
+Plan: 02
+Status: Plan 01 complete — session state injection, root cause reasoning, edit constraints live
+Last activity: 2026-03-19 — Completed v0.40-01 plan 01: Three context injection blocks
 
-Progress: [░░░░░░░░░░] 0% (Phase v0.40-01: 0/? plans = 0%)
+Progress: [█░░░░░░░░░] 50% (Phase v0.40-01: 1/2 plans = 50%)
 
 ## Performance Metrics
 
@@ -34,7 +34,7 @@ Progress: [░░░░░░░░░░] 0% (Phase v0.40-01: 0/? plans = 0%)
 | v0.39-02-03 | ~10 min | 2 | 7 (2 created, 5 modified) | 120 | 100% |
 | v0.39-03-02 | ~8 min | 2 | 2 (2 created, 0 modified) | 17 | 100% |
 | v0.39-03-03 | ~3 min | 2 | 4 (2 created, 2 modified) | 10 | 100% |
-| Phase v0.39-03 P03 | 3 | 2 tasks | 4 files |
+| v0.40-01-01 | ~15 min | 2 | 3 (1 created, 2 modified) | 39 | 100% |
 
 ## Accumulated Context
 
@@ -79,18 +79,15 @@ None currently.
 
 ## Session Continuity
 
-Last session: 2026-03-18
-Stopped at: Phase v0.39-03 COMPLETE (all 3 plans finished)
+Last session: 2026-03-19
+Stopped at: Phase v0.40-01 plan 01 COMPLETE (session state injection + root cause + edit constraint)
 Resume file: None
 
 ### Key Decisions (This Session)
 
-- Hard error on corrupt verdict log (not fail-open) to enforce write-once semantics
-- Write-once check runs BEFORE persisting verdict (not post-reversion detection)
-- Dependency injection pattern for testability (allows mock checkers)
-- Append-only verdict log with mutable=false field
-- Gate 3 regression detection uses baseline comparison (pre-existing failures excluded)
-- Solution simulation loop uses async/await for proper gate execution
-- Iteration history persisted even on non-convergence (enables refinement analysis)
-- Fail-CLOSED Phase 4.5 in workflow (module-not-found prompts, errors block progression)
-- Explicit --skip-simulation flag for user opt-out (not automatic/silent)
+- v0.40-01-01: Session state context capped at 500 chars to avoid crowding other injections
+- v0.40-01-01: Extraction limited to "## Current Position" + "### Decisions" sections (20 line cap)
+- v0.40-01-01: Sentinel flags session-scoped (nf-session-seen-{sessionId}.flag) to prevent cross-session delivery
+- v0.40-01-01: All injection blocks append to instructions string (preserve quorum gate, no early exits)
+- v0.40-01-01: Mutual exclusion: debug/fix > edit > new-feature (ordered conditional checks)
+- v0.40-01-01: All injection blocks use fail-open try/catch (missing STATE.md, regex errors are silent)

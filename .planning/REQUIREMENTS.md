@@ -7,9 +7,9 @@
 
 ### Session State
 
-- [ ] **SESSION-01**: On the first user message of a new Claude Code session, nForma injects the current STATE.md summary (phase, focus, last activity) into Claude's context window via `additionalContext`
-- [ ] **SESSION-02**: Session state injection fires exactly once per session (idempotent) — subsequent messages in the same session do not re-inject STATE.md content
-- [ ] **SESSION-03**: Session state injection is fail-open — if STATE.md is missing or unreadable, injection is silently skipped and no error is surfaced to the user
+- [x] **SESSION-01**: On the first user message of a new Claude Code session, nForma injects the current STATE.md summary (phase, focus, last activity) into Claude's context window via `additionalContext`
+- [x] **SESSION-02**: Session state injection fires exactly once per session (idempotent) — subsequent messages in the same session do not re-inject STATE.md content
+- [x] **SESSION-03**: Session state injection is fail-open — if STATE.md is missing or unreadable, injection is silently skipped and no error is surfaced to the user
 
 ### Intent Declaration
 
@@ -19,14 +19,14 @@
 
 ### Root Cause Enforcement
 
-- [ ] **ROOT-01**: When Claude receives a prompt containing a debug/fix/investigate pattern, nForma injects a root-cause reasoning template into `additionalContext` prompting structured causal analysis before proposing a fix
+- [x] **ROOT-01**: When Claude receives a prompt containing a debug/fix/investigate pattern, nForma injects a root-cause reasoning template into `additionalContext` prompting structured causal analysis before proposing a fix
 - [ ] **ROOT-02**: In `solve-diagnose`, after the existing Step 0e hypothesis synthesis, a quorum vote is dispatched on the root cause diagnosis before proceeding — requiring multi-model consensus on the causal chain
-- [ ] **ROOT-03**: Root cause template injection is fail-open and pattern-matched — non-debug/fix prompts do not receive the template injection
+- [x] **ROOT-03**: Root cause template injection is fail-open and pattern-matched — non-debug/fix prompts do not receive the template injection
 
 ### Constraint Injection
 
-- [ ] **CONST-01**: When Claude receives a prompt that appears to involve editing existing code or files, nForma injects an edit-in-place constraint into `additionalContext` — defaulting Claude to editing existing files rather than creating new ones
-- [ ] **CONST-02**: Constraint injection is fail-open and pattern-matched — prompts that are clearly new-feature requests (not edits) do not receive the constraint injection
+- [x] **CONST-01**: When Claude receives a prompt that appears to involve editing existing code or files, nForma injects an edit-in-place constraint into `additionalContext` — defaulting Claude to editing existing files rather than creating new ones
+- [x] **CONST-02**: Constraint injection is fail-open and pattern-matched — prompts that are clearly new-feature requests (not edits) do not receive the constraint injection
 
 ### Scope Guard
 
@@ -59,13 +59,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESSION-01 | Phase v0.40-01 | Pending |
-| SESSION-02 | Phase v0.40-01 | Pending |
-| SESSION-03 | Phase v0.40-01 | Pending |
-| ROOT-01 | Phase v0.40-01 | Pending |
-| ROOT-03 | Phase v0.40-01 | Pending |
-| CONST-01 | Phase v0.40-01 | Pending |
-| CONST-02 | Phase v0.40-01 | Pending |
+| SESSION-01 | Phase v0.40-01 | Complete |
+| SESSION-02 | Phase v0.40-01 | Complete |
+| SESSION-03 | Phase v0.40-01 | Complete |
+| ROOT-01 | Phase v0.40-01 | Complete |
+| ROOT-03 | Phase v0.40-01 | Complete |
+| CONST-01 | Phase v0.40-01 | Complete |
+| CONST-02 | Phase v0.40-01 | Complete |
 | INTENT-01 | Phase v0.40-02 | Pending |
 | INTENT-02 | Phase v0.40-02 | Pending |
 | INTENT-03 | Phase v0.40-02 | Pending |
@@ -81,4 +81,4 @@
 
 ---
 *Requirements defined: 2026-03-19*
-*Last updated: 2026-03-19 after initial definition*
+*Last updated: 2026-03-19 after v0.40-01 completion*
