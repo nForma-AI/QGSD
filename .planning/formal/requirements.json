@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-19T19:43:32.532Z",
-  "content_hash": "5ede513cec7c5154",
+  "aggregated_at": "2026-03-19T19:55:59.317Z",
+  "content_hash": "9935d2ba61ba986c",
   "requirements": [
     {
       "id": "ACT-01",
@@ -3310,6 +3310,18 @@
       "category_raw": "Quorum Gates"
     },
     {
+      "id": "QUORUM-04",
+      "text": "Autonomous formal verification gates dispatch code-fix approval, regression remediation, and reverse-flow discovery to quorum for unanimous consensus, replacing human pauses",
+      "category": "Quorum & Dispatch",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Three critical formal verification chokepoints previously required human intervention: code-fix approval (Phase 5a), regression remediation (Phase 5b), and reverse-flow candidate approval (Step 3i). Dispatching these to quorum with unanimous consensus gates makes the formal verification loop fully autonomous while maintaining high-stakes approval through parallel quorum deliberation with debate-on-dissent protocol and last-resort human escalation only after debate exhaustion.",
+      "provenance": {
+        "source_file": ".planning/quick/334-close-3-autonomous-formal-verification-g/334-PLAN.md",
+        "milestone": "quick-334"
+      }
+    },
+    {
       "id": "RDME-01",
       "text": "TUI section promoted from `<details>` to visible section with hero screenshot above the fold",
       "category": "README Structure",
@@ -5594,5 +5606,5 @@
   ],
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
-  "frozen_at": "2026-03-19T19:43:32.532Z"
+  "frozen_at": "2026-03-19T19:55:59.318Z"
 }
