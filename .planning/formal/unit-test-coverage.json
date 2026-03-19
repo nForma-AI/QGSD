@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-18T22:26:20.625Z",
+  "generated_at": "2026-03-19T11:52:04.523Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -712,6 +712,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/DIAG-06.stub.test.js",
           "test_name": "DIAG-06 — PipelineStep: structural verification"
+        }
+      ]
+    },
+    "DIAG-07": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/DIAG-07.stub.test.js",
+          "test_name": "DIAG-07 — PipelineStep: structural verification"
         }
       ]
     },
@@ -3396,22 +3405,6 @@
           "test_name": "XPLAT-02 — Bool: structural verification"
         }
       ]
-    },
-    "CLASS-02": {
-      "covered": false,
-      "test_cases": []
-    },
-    "RSN-06": {
-      "covered": false,
-      "test_cases": []
-    },
-    "VERF-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "XPLAT-03": {
-      "covered": false,
-      "test_cases": []
     }
   }
 }

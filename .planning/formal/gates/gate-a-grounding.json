@@ -1,14 +1,14 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-18T22:28:57.561Z",
-  "wiring_evidence_score": 0.7164179104477612,
+  "generated": "2026-03-19T12:00:02.678Z",
+  "wiring_evidence_score": 0.945273631840796,
   "target": 0.8,
-  "target_met": false,
-  "explained": 144,
+  "target_met": true,
+  "explained": 190,
   "total": 201,
   "unexplained_counts": {
     "instrumentation_bug": 0,
-    "model_gap": 57,
+    "model_gap": 11,
     "genuine_violation": 0
   },
   "scope": {
