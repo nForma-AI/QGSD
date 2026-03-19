@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 
 ## Current Position
 
-Phase: v0.40-02 (2/2 plans complete)
-Plan: 02
-Status: Phase v0.40-02 complete — approach derivation + scope contract (01) and root cause quorum vote (02) live
-Last activity: 2026-03-19 — Completed v0.40-02 plan 01: Approach derivation and scope contract generation
+Phase: v0.40-03 (1/1 plans complete)
+Plan: 01
+Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
+Last activity: 2026-03-19 — Completed v0.40-03 plan 01: Scope guard hook creation and installation
 
-Progress: [██████████████] Phase v0.40-02 Complete (2/2 plans = 100%)
+Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: ~6.83 minutes
-- Total execution time: ~41 minutes
+- Total plans completed: 7
+- Average duration: ~6.75 minutes
+- Total execution time: ~47 minutes
 
 *Updated after each plan completion*
 
@@ -35,6 +35,7 @@ Progress: [██████████████] Phase v0.40-02 Complete (
 | v0.39-03-02 | ~8 min | 2 | 2 (2 created, 0 modified) | 17 | 100% |
 | v0.39-03-03 | ~3 min | 2 | 4 (2 created, 2 modified) | 10 | 100% |
 | v0.40-01-01 | ~15 min | 2 | 3 (1 created, 2 modified) | 39 | 100% |
+| v0.40-03-01 | ~7 min | 2 | 6 (2 created, 4 modified) | 12 | 100% |
 
 ## Accumulated Context
 
@@ -51,6 +52,9 @@ Recent decisions affecting current work:
 - v0.39-03-03: Solution simulation loop orchestrates three-module pipeline (SIM-01, SIM-02, SIM-03)
 - v0.39-03-03: Phase 4.5 integrated as fail-CLOSED gate (module-not-found prompts, errors block)
 - v0.39-03-03: Iteration history persisted with session IDs for resumability and analysis
+- v0.40-03-01: Scope guard is warn-only (exits 0 always) — non-blocking advisory per SCOPE-02 requirement
+- v0.40-03-01: Scope contract is branch-specific (keyed by git branch) to support concurrent quick tasks per INTENT-01
+- v0.40-03-01: Hook respects hook_profile configuration; not in minimal profile (requires contract reading infrastructure)
 
 ### Pending Todos
 

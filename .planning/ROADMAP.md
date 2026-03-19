@@ -89,10 +89,10 @@ Plans:
 
 **Requirements covered:** SCOPE-01, SCOPE-02, SCOPE-03
 
-**Plans:** 1 plan
+**Plans:** 1 plan (complete)
 
 Plans:
-- [ ] v0.40-03-01-PLAN.md — Create nf-scope-guard PreToolUse hook, wire into install.js and config-loader, sync dist, install globally
+- [x] v0.40-03-01-PLAN.md — Create nf-scope-guard PreToolUse hook, wire into install.js and config-loader, sync dist, install globally (Complete: 2026-03-19, ~7 min, 2 tasks)
 
 **Files to create/modify:**
 - `hooks/nf-scope-guard.js` — new PreToolUse hook, follows `nf-destructive-git-guard.js` pattern
@@ -123,18 +123,18 @@ Plans:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SESSION-01 | v0.40-01 | Complete | Complete    | 2026-03-19 | v0.40-01 | Complete |
+| SESSION-01 | v0.40-01 | Complete |
 | SESSION-03 | v0.40-01 | Complete |
 | ROOT-01 | v0.40-01 | Complete |
 | ROOT-03 | v0.40-01 | Complete |
 | CONST-01 | v0.40-01 | Complete |
 | CONST-02 | v0.40-01 | Complete |
-| INTENT-01 | v0.40-02 | Pending | Complete    | 2026-03-19 | v0.40-02 | Pending |
-| INTENT-03 | v0.40-02 | Pending |
-| ROOT-02 | v0.40-02 | Pending |
-| SCOPE-01 | v0.40-03 | Pending |
-| SCOPE-02 | v0.40-03 | Pending |
-| SCOPE-03 | v0.40-03 | Pending |
+| INTENT-01 | v0.40-02 | Complete |
+| INTENT-03 | v0.40-02 | Complete |
+| ROOT-02 | v0.40-02 | Complete |
+| SCOPE-01 | v0.40-03 | Complete |
+| SCOPE-02 | v0.40-03 | Complete |
+| SCOPE-03 | v0.40-03 | Complete |
 
 **v1 requirements total:** 14
 **Covered by phases:** 14
