@@ -1,7 +1,7 @@
 {
-  "aggregated_at": "2026-03-18T18:57:47.439Z",
-  "content_hash": "959b47dad2662459",
-  "frozen_at": "2026-03-18T18:57:47.439Z",
+  "aggregated_at": "2026-03-19T07:26:13.065Z",
+  "content_hash": "5fb0abada3542f86",
+  "frozen_at": "2026-03-19T07:26:13.065Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -1133,6 +1133,16 @@
       },
       "formal_models": [],
       "category_raw": "Diagnostics"
+    },
+    {
+      "id": "DIAG-07",
+      "text": "Solve-diagnose and close-formal-gaps workflows detect implicit state machine patterns (multi-flag boolean clusters with 3+ state indicators, or enum-like strings with 3+ distinct values in conditionals) in top git churn files, surface candidates as `fsm_candidates`, and recommend `fsm-to-tla.cjs --scaffold-config` for formalization.",
+      "category": "Diagnostics & Remediation",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Ad-hoc control flow using boolean flags or string states is an implicit state machine pattern. Previously undetected by diagnostics, these patterns block transition to formal reasoning. This requirement adds fail-open heuristic detection to surface such patterns in high-churn files before they reach the formal modeling bottleneck.",
+      "source_file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-PLAN.md",
+      "milestone": "quick-326"
     },
     {
       "id": "DISP-01",
