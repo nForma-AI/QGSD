@@ -47,6 +47,7 @@ const SURFACE_MAP = {
   'MCrecruiting-liveness': 'recruiting',
   'MCbreaker':             'breaker',
   'MCconvergence':         'convergence',
+  'MCConvergenceTest':     'convergence',
   'MCoscillation':         'oscillation',
   'MCaccount-manager':     'account-manager',
   'MCMCPEnv':              'mcp-calls',  // MCPENV-02

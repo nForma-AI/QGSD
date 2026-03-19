@@ -21,6 +21,15 @@
 
 **Source:** `formal/tla/NFConvergence.tla`, lines 73–74
 
+## EventualTermination
+
+**Property:** `EventualTermination == <>(converged \/ iteration = MaxIterations)`
+**Config line:** `PROPERTY EventualTermination` (MCConvergenceTest.cfg)
+**Fairness assumption:** WF_vars(Next) — baked into Spec definition in NFConvergenceTest.tla. Ensures that if any Next action is continuously enabled, it must eventually fire, preventing infinite stuttering.
+**Realism rationale:** The solver convergence loop is bounded by MaxIterations. Either the residual reaches zero (converged = TRUE) or the loop terminates at the iteration cap. WF_vars(Next) models the guarantee that the solver engine always makes progress when it can — no action stalls indefinitely.
+
+**Source:** `formal/tla/NFConvergenceTest.tla`, lines 97–98
+
 ## HaikuUnavailableNoCorruption
 
 **Property:** `HaikuUnavailableNoCorruption == [][haikuVerdict' = "UNAVAILABLE" => (logWritten' = logWritten /\ stateDeleted' = stateDeleted)]_vars`
