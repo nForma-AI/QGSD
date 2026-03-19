@@ -89,7 +89,7 @@ Plans:
 
 **Requirements covered:** SCOPE-01, SCOPE-02, SCOPE-03
 
-**Plans:** 1 plan (complete)
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] v0.40-03-01-PLAN.md — Create nf-scope-guard PreToolUse hook, wire into install.js and config-loader, sync dist, install globally (Complete: 2026-03-19, ~7 min, 2 tasks)
@@ -132,8 +132,7 @@ Plans:
 | INTENT-01 | v0.40-02 | Complete |
 | INTENT-03 | v0.40-02 | Complete |
 | ROOT-02 | v0.40-02 | Complete |
-| SCOPE-01 | v0.40-03 | Complete |
-| SCOPE-02 | v0.40-03 | Complete |
+| SCOPE-01 | v0.40-03 | Complete | Complete    | 2026-03-19 | v0.40-03 | Complete |
 | SCOPE-03 | v0.40-03 | Complete |
 
 **v1 requirements total:** 14
