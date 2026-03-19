@@ -2313,7 +2313,7 @@
     },
     ".planning/formal/prism/quorum.pm": {
       "version": 1870,
-      "last_updated": "2026-03-19T12:00:02.674Z",
+      "last_updated": "2026-03-19T13:36:38.555Z",
       "update_source": "generate",
       "source_id": "generate:formal-specs",
       "session_id": null,
@@ -2321,7 +2321,10 @@
       "layer_maturity": 1,
       "consecutive_pass_count": 1,
       "gate_maturity": "SOFT_GATE",
-      "source_layer": "L3"
+      "source_layer": "L3",
+      "requirements": [
+        "SOLVE-21"
+      ]
     },
     ".planning/formal/tla/NFAccountManager.tla": {
       "version": 1,
