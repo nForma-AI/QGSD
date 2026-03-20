@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-19T19:55:36.300Z",
+  "generated": "2026-03-20T20:18:37.824Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,50 +84,50 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-19T19:55:34.374Z",
-      "hash": "38aa94b5"
+      "mtime": "2026-03-20T20:08:48.265Z",
+      "hash": "da9e6cf6"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-19T19:55:35.348Z",
-      "hash": "f0407e8c"
+      "mtime": "2026-03-20T20:01:33.882Z",
+      "hash": "f6d96827"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-19T19:55:01.250Z",
-      "hash": "4303f43f"
+      "mtime": "2026-03-20T20:14:02.310Z",
+      "hash": "f0f6ebee"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-19T19:54:43.552Z",
-      "hash": "fcfb3009"
+      "mtime": "2026-03-20T19:52:59.643Z",
+      "hash": "7e24e557"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-19T14:12:34.301Z",
-      "hash": "d98d4576"
+      "mtime": "2026-03-20T19:37:22.882Z",
+      "hash": "d2523ea4"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-19T19:54:44.072Z",
-      "hash": "7196dee5"
+      "mtime": "2026-03-20T19:54:25.163Z",
+      "hash": "5272afc0"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-19T19:55:34.374Z"
+      "mtime": "2026-03-20T20:08:14.719Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-19T19:55:16.718Z"
+      "mtime": "2026-03-20T19:53:32.227Z"
     }
   },
   "nodes": {
@@ -724,17 +724,17 @@
           "source": "scope.json"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:646",
+          "to": "code_line::hooks/nf-prompt.js:713",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:736",
+          "to": "code_line::hooks/nf-prompt.js:803",
           "rel": "contains",
           "source": "instrumentation-map"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:921",
+          "to": "code_line::hooks/nf-prompt.js:1030",
           "rel": "contains",
           "source": "instrumentation-map"
         }
@@ -13652,7 +13652,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/alloy/readme-structure.als": {
       "type": "formal_model",
@@ -21178,7 +21180,9 @@
     "formal_model::.planning/formal/prism/quorum.pm": {
       "type": "formal_model",
       "id": ".planning/formal/prism/quorum.pm",
-      "edges": []
+      "edges": [],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFAccountManager.tla": {
       "type": "formal_model",
@@ -22638,7 +22642,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFQuorum_xstate.tla": {
       "type": "formal_model",
@@ -22649,7 +22655,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "formal_model::.planning/formal/tla/NFReasoning.tla": {
       "type": "formal_model",
@@ -26182,6 +26190,11 @@
           "source": "traceability-matrix"
         },
         {
+          "to": "test_file::.planning/formal/generated-stubs/QUORUM-04.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/tla/NFQuorum.tla",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -29536,6 +29549,212 @@
         },
         {
           "to": "formal_model::.planning/formal/tla/NFConvergenceTest.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/classification-retry-patterns.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/classification-retry-patterns.als",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "models",
+          "source": "source-annotation"
+        },
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::CLASS-02": {
+      "type": "requirement",
+      "id": "CLASS-02",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CLASS-02.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::CLASS-03": {
+      "type": "requirement",
+      "id": "CLASS-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/agent-fsm-detection.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/agent-fsm-detection.als",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::AGENT-04": {
+      "type": "requirement",
+      "id": "AGENT-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/agent-fsm-detection.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/agent-fsm-detection.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/NFHazardModelMerge.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::RSN-06",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::RSN-06": {
+      "type": "requirement",
+      "id": "RSN-06",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFHazardModelMerge.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/RSN-06.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFHazardModelMerge.tla",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/verify-path-normalization.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/verify-path-normalization.als",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::VERF-04",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::VERF-04": {
+      "type": "requirement",
+      "id": "VERF-04",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/verify-path-normalization.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/VERF-04.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/verify-path-normalization.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/alloy/ccr-binary-resolution.als": {
+      "type": "formal_model",
+      "id": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::XPLAT-03": {
+      "type": "requirement",
+      "id": "XPLAT-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/alloy/ccr-binary-resolution.als",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/XPLAT-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
+          "to": "formal_model::.planning/formal/alloy/ccr-binary-resolution.als",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -46870,6 +47089,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/CLASS-02.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CLASS-02.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/COMP-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/COMP-01.stub.test.js",
@@ -49103,6 +49333,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/QUORUM-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/QUORUM-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::QUORUM-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/RDME-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/RDME-01.stub.test.js",
@@ -49417,6 +49658,17 @@
       "edges": [
         {
           "to": "requirement::RSN-05",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/RSN-06.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/RSN-06.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -50775,6 +51027,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/VERF-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/VERF-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/VERIFY-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/VERIFY-01.stub.test.js",
@@ -50929,9 +51192,20 @@
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:646": {
+    "test_file::.planning/formal/generated-stubs/XPLAT-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/XPLAT-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "code_line::hooks/nf-prompt.js:713": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:646",
+      "id": "hooks/nf-prompt.js:713",
       "edges": [
         {
           "to": "formal_action::cache_hit",
@@ -50950,15 +51224,15 @@
       "id": "cache_hit",
       "edges": [
         {
-          "to": "code_line::hooks/nf-prompt.js:646",
+          "to": "code_line::hooks/nf-prompt.js:713",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:736": {
+    "code_line::hooks/nf-prompt.js:803": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:736",
+      "id": "hooks/nf-prompt.js:803",
       "edges": [
         {
           "to": "formal_action::quorum_fallback_t1_required",
@@ -50982,15 +51256,15 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:736",
+          "to": "code_line::hooks/nf-prompt.js:803",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }
       ]
     },
-    "code_line::hooks/nf-prompt.js:921": {
+    "code_line::hooks/nf-prompt.js:1030": {
       "type": "code_line",
-      "id": "hooks/nf-prompt.js:921",
+      "id": "hooks/nf-prompt.js:1030",
       "edges": [
         {
           "to": "formal_action::quorum_start",
@@ -51014,7 +51288,7 @@
           "source": "event-vocabulary"
         },
         {
-          "to": "code_line::hooks/nf-prompt.js:921",
+          "to": "code_line::hooks/nf-prompt.js:1030",
           "rel": "emitted_by",
           "source": "instrumentation-map"
         }

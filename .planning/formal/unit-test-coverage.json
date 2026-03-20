@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-19T19:55:01.247Z",
+  "generated_at": "2026-03-20T20:14:02.308Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -304,6 +304,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/CLASS-01.stub.test.js",
           "test_name": "CLASS-01 — Bool: structural verification"
+        }
+      ]
+    },
+    "CLASS-02": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CLASS-02.stub.test.js",
+          "test_name": "CLASS-02: classifyWithHaiku function is defined and exported"
         }
       ]
     },
@@ -2119,6 +2128,15 @@
         }
       ]
     },
+    "QUORUM-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/QUORUM-04.stub.test.js",
+          "test_name": "QUORUM-04: EventualConsensus liveness property is defined in QGSDQuorum.tla"
+        }
+      ]
+    },
     "RDME-01": {
       "covered": true,
       "test_cases": [
@@ -2377,6 +2395,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/RSN-05.stub.test.js",
           "test_name": "RSN-05 — Requirement: structural verification"
+        }
+      ]
+    },
+    "RSN-06": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/RSN-06.stub.test.js",
+          "test_name": "RSN-06: hazard-model.cjs exists and is readable"
         }
       ]
     },
@@ -3487,6 +3514,15 @@
         }
       ]
     },
+    "VERF-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/VERF-04.stub.test.js",
+          "test_name": "VERF-04: run-formal-verify.cjs exists and is readable"
+        }
+      ]
+    },
     "VERIFY-01": {
       "covered": true,
       "test_cases": [
@@ -3613,7 +3649,20 @@
         }
       ]
     },
+    "XPLAT-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/XPLAT-03.stub.test.js",
+          "test_name": "XPLAT-03: resolve-cli.cjs exists and exports resolveCli"
+        }
+      ]
+    },
     "AGENT-04": {
+      "covered": false,
+      "test_cases": []
+    },
+    "CLASS-03": {
       "covered": false,
       "test_cases": []
     }

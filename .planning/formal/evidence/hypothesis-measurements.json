@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-19T20:05:31.426Z",
+  "generated": "2026-03-20T20:01:34.598Z",
   "total_measured": 107,
   "verdicts": {
     "CONFIRMED": 0,
@@ -255,8 +255,8 @@
       "assumption_name": "IdleTimeoutMs",
       "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/QGSDDispatchPipeline.tla",
       "formal_value": null,
-      "actual_value": null,
-      "actual_source": null,
+      "actual_value": 400,
+      "actual_source": "telemetry/report.json",
       "verdict": "UNMEASURABLE",
       "reason": "formal value not extractable from source model"
     },

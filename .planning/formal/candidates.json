@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-03-19T19:54:39.241Z",
-    "proximity_index_hash": "427dbf08",
+    "generated": "2026-03-20T19:52:55.919Z",
+    "proximity_index_hash": "cd51b6a8",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 5,
-    "uncovered_requirements_count": 5,
+    "orphan_requirements_count": 6,
+    "uncovered_requirements_count": 6,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -28,6 +28,10 @@
       },
       {
         "id": "CLASS-02",
+        "edges": 0
+      },
+      {
+        "id": "CLASS-03",
         "edges": 0
       },
       {
@@ -52,6 +56,10 @@
     {
       "id": "CLASS-02",
       "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats"
+    },
+    {
+      "id": "CLASS-03",
+      "text": "classifyTlcFailure classifier detects 6 TLC failure patterns (deadlock, sany_semantic, fairness_gap, invariant_violation, syntax_error, unknown) via ordered pattern matching and integrates into solve-remediate.md F->C dispatch to route deadlock/sany_semantic/fairness_gap to deterministic auto-fix templates."
     },
     {
       "id": "RSN-06",

@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-19T19:54:34.897Z",
+  "generated": "2026-03-20T20:10:17.763Z",
   "source": {
     "failure_mode_catalog": "reasoning/failure-mode-catalog.json",
     "hazard_model": "reasoning/hazard-model.json",
