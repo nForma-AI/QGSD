@@ -210,7 +210,7 @@ Do NOT import FAILURE_CLASSES from classify-tlc-failure.cjs -- keep the validati
 4. `grep 'multiply-defined' commands/nf/solve-remediate.md` confirms SANY semantic auto-fix template
 5. `grep 'failure_class' bin/write-check-result.cjs` confirms the optional field was added
 6. Run existing write-check-result tests to confirm non-breaking: `node --test bin/write-check-result.test.cjs 2>/dev/null || echo "no existing tests"` (if tests exist, they must pass)
-7. `node -e "const {writeCheckResult}=require('./bin/write-check-result.cjs'); console.log('import OK')"` confirms no require errors
+7. `node --test bin/write-check-result.test.cjs` passes (confirms write-check-result.cjs loads without require errors)
   </verify>
   <done>
 solve-remediate.md F->C section dispatches deadlock/sany_semantic/fairness_gap to targeted auto-fix templates with specific instructions (Done stuttering step, variable rename, WF_vars addition). Invariant violations still route to generic /nf:quick. write-check-result.cjs accepts optional failure_class field without breaking any existing callers.
