@@ -411,18 +411,27 @@ node ~/.claude/nf-bin/run-formal-verify.cjs --project-root=$(pwd)
 
 If ~/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-formal-verify.cjs (CWD-relative).
 
-Then parse `.planning/formal/check-results.ndjson` and classify each failure:
+Then parse `.planning/formal/check-results.ndjson` and for each entry with `result` of "fail" or "error", classify using `classifyTlcFailure` from `bin/classify-tlc-failure.cjs`:
 
-| Classification | Criteria | Dispatch |
-|---------------|----------|----------|
-| **Syntax error** | Summary contains "Syntax error", "parse error" | `/nf:quick Fix Alloy/TLA+ syntax error in {model_file}: {error_detail}` |
+```bash
+FAILURE_CLASS=$(node -e "const {classifyTlcFailure}=require('./bin/classify-tlc-failure.cjs'); const e=JSON.parse(process.argv[1]); console.log(classifyTlcFailure(e))" "$ENTRY_JSON")
+```
+
+Then dispatch based on the classification result:
+
+| Classification | failure_class | Dispatch |
+|---------------|--------------|----------|
+| **Deadlock** | `deadlock` | Auto-fix: Add `Done == phase \in {terminal_states} /\ UNCHANGED vars` stuttering step to the spec. Identify terminal state(s) from the spec's state enum/set. Add `Done` to the `Next` disjunction (`Next == ... \/ Done`). If `Done` already exists, check that it covers all `UNCHANGED vars`. |
+| **SANY semantic error** | `sany_semantic` | Auto-fix: Parse the "multiply-defined symbol 'X'" from summary. Find the second binding of `X` (typically in fairness quantifiers like `\A X \in ...`). Rename it to `X_fair` or `Xd` to avoid collision. Verify the rename does not break other references. |
+| **Fairness gap** | `fairness_gap` | Auto-fix: Parse the violated temporal property name from summary. Identify the action that is enabled but never fires from the counterexample trace (the stuttering action). Add `WF_vars(ActionName)` to the `Spec` definition's fairness conjunction. If the Spec already has fairness, append with `/\`. |
+| **Syntax error** | `syntax_error` | `/nf:quick Fix Alloy/TLA+ syntax error in {model_file}: {error_detail}` |
 | **Scope error** | Summary contains "scope", "sig" | `/nf:quick Fix scope declaration in {model_file}: {error_detail}` |
 | **Conformance divergence** | check_id contains "conformance" | `/nf:quick Fix conformance trace divergences in {model_file}: {error_detail}` |
-| **Verification failure** | Counterexample found | `/nf:quick Fix formal verification counterexample in {check_id}: {summary}` |
-| **Missing tool** | "not found", "not installed" | Log as infrastructure gap, skip |
-| **Inconclusive** | result = "inconclusive" | Skip — not a failure |
+| **Invariant violation** | `invariant_violation` | `/nf:quick Fix formal verification counterexample in {check_id}: {summary}` |
+| **Missing tool** | "not found", "not installed" in summary | Log as infrastructure gap, skip |
+| **Inconclusive** | result = "inconclusive" | Skip -- not a failure |
 
-Dispatch each fixable failure **sequentially** (one at a time) to the appropriate skill. Process syntax/scope errors first (they're usually quick fixes), then conformance/verification failures (require deeper investigation). Wait for each dispatch to complete before starting the next.
+Dispatch each fixable failure **sequentially** (one at a time) to the appropriate skill. **Deadlock, SANY semantic, and fairness gap failures are auto-fixed first** (no LLM dispatch needed), using the specific instructions above. Then process syntax/scope errors via `/nf:quick` (they're usually quick fixes), then conformance/verification failures (require deeper investigation). Wait for each dispatch to complete before starting the next.
 
 Log: `"F->C: {total} checks, {pass} pass, {fail} fail — dispatching {syntax_count} to quick, {debug_count} to debug, {skip_count} skipped"`
 
