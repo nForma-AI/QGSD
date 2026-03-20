@@ -6,6 +6,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.40.2] - 2026-03-20 — Prerelease (next channel)
+
+See [0.40.1] for full changelog. This prerelease packages the same changes for testing via `@next`.
+
 ## [0.40.1] - 2026-03-20 — Structural Enforcement & TLC Failure Classification
 
 ### Added
