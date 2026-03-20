@@ -414,7 +414,9 @@ If ~/.claude/nf-bin/run-formal-verify.cjs does not exist, fall back to bin/run-f
 Then parse `.planning/formal/check-results.ndjson` and for each entry with `result` of "fail" or "error", classify using `classifyTlcFailure` from `bin/classify-tlc-failure.cjs`:
 
 ```bash
-FAILURE_CLASS=$(node -e "const {classifyTlcFailure}=require('./bin/classify-tlc-failure.cjs'); const e=JSON.parse(process.argv[1]); console.log(classifyTlcFailure(e))" "$ENTRY_JSON")
+CLASSIFIER="$HOME/.claude/nf-bin/classify-tlc-failure.cjs"
+[ -f "$CLASSIFIER" ] || CLASSIFIER="bin/classify-tlc-failure.cjs"
+FAILURE_CLASS=$(node -e "const {classifyTlcFailure}=require(process.argv[1]); const e=JSON.parse(process.argv[2]); console.log(classifyTlcFailure(e))" "$CLASSIFIER" "$ENTRY_JSON")
 ```
 
 Then dispatch based on the classification result:
