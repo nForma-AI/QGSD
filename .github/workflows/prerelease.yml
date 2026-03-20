@@ -66,8 +66,13 @@ jobs:
       - name: Stamp prerelease version from tag
         run: |
           TAG_VERSION="${GITHUB_REF#refs/tags/v}"
-          echo "Stamping version: ${TAG_VERSION}"
-          npm version "$TAG_VERSION" --no-git-tag-version
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ "$CURRENT" = "$TAG_VERSION" ]; then
+            echo "Version already at ${TAG_VERSION}, skipping stamp"
+          else
+            echo "Stamping version: ${TAG_VERSION}"
+            npm version "$TAG_VERSION" --no-git-tag-version
+          fi
       - name: Publish to npm with @next tag
         run: npm publish --access public --provenance --tag next
         env:
