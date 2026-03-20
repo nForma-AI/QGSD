@@ -38,8 +38,8 @@ describe('nforma-cli: version', () => {
       stdio: 'pipe',
       timeout: 5000,
     }).toString();
-    // Should be exactly "X.Y.Z\n"
-    assert.match(raw, /^\d+\.\d+\.\d+\n$/, 'exactly one line with newline');
+    // Should be exactly "X.Y.Z\n" or "X.Y.Z-prerelease\n"
+    assert.match(raw, /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?\n$/, 'exactly one line with newline');
   });
 });
 
