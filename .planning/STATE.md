@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-24 — Completed quick task 340: Conditional Haiku classification
+Last activity: 2026-03-24 — Completed quick task 341: Cascade budget for remediation dispatch
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -85,6 +85,7 @@ None currently.
 | 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Verified | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
 | 339 | Inline trivial remediation layers | 2026-03-24 | 8e7c9dd5 | Verified | [339-inline-trivial-remediation-layers](./quick/339-inline-trivial-remediation-layers/) |
 | 340 | Conditional Haiku classification | 2026-03-24 | 42a094ce | Verified | [340-conditional-haiku-classification](./quick/340-conditional-haiku-classification/) |
+| 341 | Cascade budget for remediation dispatch | 2026-03-24 | 43b54569 | Verified | [341-cascade-budget-for-remediation-dispatch](./quick/341-cascade-budget-for-remediation-dispatch/) |
 
 ## Session Continuity
 
