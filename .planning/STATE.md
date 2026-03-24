@@ -84,7 +84,7 @@ None currently.
 | 337 | Fast-path initial diagnostic | 2026-03-24 | f11306a0 | Verified | [337-fast-path-initial-diagnostic](./quick/337-fast-path-initial-diagnostic/) |
 | 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Verified | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
 | 339 | Inline trivial remediation layers | 2026-03-24 | 8e7c9dd5 | Verified | [339-inline-trivial-remediation-layers](./quick/339-inline-trivial-remediation-layers/) |
-| 340 | Conditional Haiku classification | 2026-03-24 | 42a094ce | Pending | [340-conditional-haiku-classification](./quick/340-conditional-haiku-classification/) |
+| 340 | Conditional Haiku classification | 2026-03-24 | 42a094ce | Verified | [340-conditional-haiku-classification](./quick/340-conditional-haiku-classification/) |
 
 ## Session Continuity
 
