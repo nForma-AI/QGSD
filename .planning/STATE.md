@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-24 — Completed quick task 339: Inline trivial remediation layers
+Last activity: 2026-03-24 — Completed quick task 340: Conditional Haiku classification
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -84,6 +84,7 @@ None currently.
 | 337 | Fast-path initial diagnostic | 2026-03-24 | f11306a0 | Verified | [337-fast-path-initial-diagnostic](./quick/337-fast-path-initial-diagnostic/) |
 | 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Verified | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
 | 339 | Inline trivial remediation layers | 2026-03-24 | 8e7c9dd5 | Verified | [339-inline-trivial-remediation-layers](./quick/339-inline-trivial-remediation-layers/) |
+| 340 | Conditional Haiku classification | 2026-03-24 | 42a094ce | Pending | [340-conditional-haiku-classification](./quick/340-conditional-haiku-classification/) |
 
 ## Session Continuity
 
