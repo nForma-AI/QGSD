@@ -243,7 +243,12 @@ Track a counter for B->F blind spot dispatches. For each covered_not_reproduced 
    /nf:model-driven-fix --bug-context "{test_file_path}: test fails but formal model passes" --model-paths={model_paths}
    ```
    The `--bug-context` flag (MRF-01 from Phase v0.38-03) injects the failure description into spec refinement, biasing toward capturing the failure mode.
-4. Log: `"B->F: dispatching model-driven-fix for blind spot {bug_id} ({N} models to refine)"`
+
+   Note: model-driven-fix Phase 3 now uses autoresearch-refine.cjs for iterative
+   refinement (up to 10 iterations with in-memory rollback and TSV-as-memory logging).
+   The TSV results log is written alongside the model file. Single final commit by caller.
+
+4. Log: `"B->F: dispatching model-driven-fix (autoresearch-refine, in-memory rollback) for blind spot {bug_id} ({N} models to refine)"`
 
 If the counter reaches 2, log `"B->F: max blind spot dispatches (2) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 2, "max": 2, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
 

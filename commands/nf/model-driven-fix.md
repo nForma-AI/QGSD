@@ -118,7 +118,9 @@ Phase 3 — Refinement
   Creating model to capture: {first 80 chars of BUG_DESC}...
 ```
 
-Invoke close-formal-gaps workflow with --bug-context:
+**Step 1 — Initial Model Creation (close-formal-gaps):**
+
+If no existing model covers the bug, create the initial skeleton:
 ```
 /nf:close-formal-gaps --bug-context="$BUG_DESC" ${FORMALISM:+--formalism=$FORMALISM} ${VERBOSE:+--verbose} --batch
 ```
@@ -127,6 +129,37 @@ This triggers (via Plan 01 deliverables):
 - Step 5: Spec generation biased by bug context (MRF-01)
 - Step 6: Refinement loop with inverted verification (MRF-02)
 - Step 6+ (Plan 03): Diagnostic feedback generation when model is INCOMPLETE (DX1-03)
+
+**Step 2 — Autoresearch Refinement Loop (autoresearch-refine.cjs):**
+
+After the initial model is created, the Agent subprocess enters the autoresearch-style
+refinement loop to iteratively improve the model toward reproducing the bug:
+
+```javascript
+const { refine } = require('./bin/autoresearch-refine.cjs');
+
+const result = await refine({
+  modelPath: '<path to model from Step 1>',
+  bugContext: BUG_DESC,
+  formalism: FORMALISM || 'tla',
+  maxIterations: 10,
+  verbose: VERBOSE,
+  onTweak: async (path, ctx) => {
+    // Agent reads ctx.checkerOutput + ctx.tsvHistory to learn from prior iterations
+    // Agent reads ctx.consecutiveDiscards to detect stuck patterns
+    // Agent makes ONE targeted edit to the model file at `path`
+    // Returns a one-sentence description of the change, or null to skip
+    return 'added missing state transition for error case';
+  }
+});
+```
+
+The refinement loop manages the iteration lifecycle:
+- In-memory backup before each tweak (no per-iteration git commits)
+- Runs checker (run-tlc.cjs or run-alloy.cjs) after each tweak
+- Keeps tweaks that increase state space, discards regressions (rollback from backup)
+- TSV-as-memory: iteration history in `refinement-results.tsv` alongside the model
+- When-stuck protocol: exits after 3+ consecutive discards with structured reason
 
 **Diagnostic Injection for Refinement Iterations:**
 
@@ -147,18 +180,22 @@ When dispatching quorum workers for model refinement iterations:
   - This ensures quorum workers see the "## Model Diagnostic Feedback" section
     with mismatch diff and correction proposals in their prompts (DX1-03 satisfied)
 
-Parse the result:
-- If a reproducing model was created (refinement-loop returned "reproduced"):
-  Set `$REPRODUCING_MODEL` = path to the new model.
-  Display: `Model created and bug reproduced after {N} attempt(s)`
+**Parse the result from autoresearch-refine:**
+- If `result.converged === true` (violation found — bug reproduced):
+  Set `$REPRODUCING_MODEL` = result.finalModel
+  Display: `Model created and bug reproduced after ${result.iterations} iteration(s)`
+  If `$VERBOSE`: `Iteration log available at: ${result.resultsLog}`
   Proceed to Phase 4.
 
-- If refinement exhausted (3 attempts, no reproduction):
-  Display: `WARNING: Model remains incomplete after 3 refinement attempts — does not capture the failure`
+- If `result.converged === false` (max iterations or stuck):
+  Display: `WARNING: Model remains incomplete after ${result.iterations} refinement iterations — does not capture the failure`
+  If `result.stuck_reason`: Display stuck reason with TSV history context
   If `$result.final_diagnostic` is present:
     Display: `\n[Diagnostic Feedback]\n${final_diagnostic.mismatch_diff}\n\nProposals:\n${proposals formatted}`
-  Set `$REPRODUCING_MODEL` = path to latest model (best effort).
+  Set `$REPRODUCING_MODEL` = result.finalModel (best effort).
   Proceed to Phase 4 with caveat.
+
+- The final model is committed ONCE by the Agent after refine() returns (single commit for entire refinement session)
 
 If `$VERBOSE`, show full refinement iteration details including diagnostics.
 Otherwise show summary verdicts only (per user decision).
