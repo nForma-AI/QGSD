@@ -28,6 +28,7 @@
  */
 
 const { spawn }  = require('child_process');
+const crypto     = require('crypto');
 const fs         = require('fs');
 const path       = require('path');
 const os         = require('os');
@@ -978,9 +979,10 @@ function parseImprovements(rawOutput) {
  * @param {boolean}[opts.isUnavail]
  * @param {string} [opts.error_type] — classified error type for UNAVAIL results (IDLE_TIMEOUT/HARD_TIMEOUT/TIMEOUT/AUTH/QUOTA/SPAWN_ERROR/CLI_SYNTAX/UNKNOWN)
  * @param {string} [opts.unavailMessage]
+ * @param {string} [opts.dispatch_nonce] — 32-char hex nonce proving the dispatch script ran
  * @returns {string}
  */
-function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, unavailMessage }) {
+function emitResultBlock({ slot, round, verdict, reasoning, citations, improvements, matched_requirement_ids, rawOutput, isUnavail, error_type, dispatch_nonce, unavailMessage }) {
   const lines = [];
 
   lines.push(`slot: ${slot}`);
@@ -988,6 +990,9 @@ function emitResultBlock({ slot, round, verdict, reasoning, citations, improveme
   lines.push(`verdict: ${verdict}`);
   if (error_type) {
     lines.push(`error_type: ${error_type}`);
+  }
+  if (dispatch_nonce) {
+    lines.push(`dispatch_nonce: ${dispatch_nonce}`);
   }
 
   if (reasoning) {
@@ -1125,7 +1130,9 @@ async function main() {
   const slot               = getArg('--slot');
   const mode               = getArg('--mode') || 'A';
   const roundArg           = getArg('--round');
-  const question           = getArg('--question') || '';
+  const questionArg        = getArg('--question') || '';
+  const questionFile       = getArg('--question-file') || null;
+  const nonceFile          = getArg('--nonce-file') || null;
   const artifactPath       = getArg('--artifact-path') || null;
   const reviewContext      = getArg('--review-context') || null;
   const priorPositionsFile = getArg('--prior-positions-file') || null;
@@ -1158,6 +1165,27 @@ async function main() {
       timeout = (provider && provider.quorum_timeout_ms) || DEFAULT_QUORUM_TIMEOUT_MS;
     } catch {
       timeout = DEFAULT_QUORUM_TIMEOUT_MS;
+    }
+  }
+
+  // Resolve question: --question-file takes precedence over --question
+  let question = questionArg;
+  if (questionFile) {
+    try {
+      question = fs.readFileSync(questionFile, 'utf8').trim();
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] Could not read question-file: ${e.message}\n`);
+      // Fall back to --question if file read fails
+    }
+  }
+
+  // Generate dispatch nonce (proves this script ran)
+  const dispatchNonce = crypto.randomBytes(16).toString('hex');
+  if (nonceFile) {
+    try {
+      fs.writeFileSync(nonceFile, dispatchNonce, 'utf8');
+    } catch (e) {
+      process.stderr.write(`[quorum-slot-dispatch] Could not write nonce-file: ${e.message}\n`);
     }
   }
 
@@ -1310,6 +1338,7 @@ async function main() {
       rawOutput: output,
       isUnavail: true,
       error_type: classifyDispatchError(output),
+      dispatch_nonce: dispatchNonce,
       unavailMessage: output.slice(0, 500)
     });
   } else {
@@ -1327,6 +1356,7 @@ async function main() {
       citations,
       improvements: improvements.length > 0 ? improvements : undefined,
       matched_requirement_ids: matchedReqIds,
+      dispatch_nonce: dispatchNonce,
       rawOutput: output
     });
 
