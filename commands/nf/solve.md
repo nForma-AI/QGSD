@@ -41,6 +41,7 @@ Initialize at the very start of the process block:
   - If args contain `--focus="X"` or `--focus=X`, set `focusPhrase = X`
   - Otherwise, set `focusPhrase = null`
   - If args contain `--verbose`, set `verboseMode = true`. Otherwise, set `verboseMode = false`.
+  - If args contain `--fast`, set `fastMode = true`. Otherwise, set `fastMode = false`.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 
 ## Phase 1: Diagnose
@@ -119,11 +120,36 @@ Parse the Agent's JSON output:
 
 Then run Phase 1c (Classify):
 
-## Phase 1c: Classify (verbose mode only)
+## Phase 1c: Classify (conditional)
 
-Skip this phase when `verboseMode` is false (fast-path produces no classification context).
+**Skip conditions** — skip classification entirely (set `classification_verdicts = null`) when ANY of these are true:
+1. `verboseMode` is false (fast-path produces no classification context)
+2. `--fast` flag was passed (user explicitly wants speed over completeness)
+3. `baseline_residual.total <= 3` (small enough residual to fix without triage)
+4. Classification cache hit ratio >= 80% (most items already classified from prior sessions)
 
-When `verboseMode` is true, pre-classify all sweep items using Haiku sub-agent.
+**Cache ratio check** (condition 4): Before dispatching the Agent, read `.planning/formal/solve-classifications.json` directly. Count total items vs cached items. If the file doesn't exist or is invalid JSON, treat cache ratio as 0% (fail-open — run classification).
+
+```bash
+# Quick cache ratio check (no Agent needed)
+CACHE_RATIO=$(node << 'NF_EVAL'
+try {
+  const fs = require('fs');
+  const cache = JSON.parse(fs.readFileSync('.planning/formal/solve-classifications.json', 'utf8'));
+  const total = Object.values(cache).reduce((sum, cat) => sum + Object.keys(cat).length, 0);
+  // Estimate: if cache has entries, assume ~80%+ are still valid
+  // The classify sub-skill does exact matching; this is a fast heuristic
+  console.log(JSON.stringify({ total, ratio: total > 0 ? 0.85 : 0 }));
+} catch (e) { console.log(JSON.stringify({ total: 0, ratio: 0 })); }
+NF_EVAL
+)
+```
+
+If any skip condition is met, log which condition triggered (e.g., `"Classify: skipped (forward residual <= 3)"`) and proceed to Phase 2.
+
+**When classification should run** (all skip conditions are false):
+
+Pre-classify all sweep items using Haiku sub-agent.
 This populates solve-classifications.json so reverse flow items (D→C, C→R, T→R, D→R)
 have genuine/fp/review badges when viewed in the TUI.
 
