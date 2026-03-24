@@ -94,7 +94,7 @@ None currently.
 | 345 | Two-phase solve plan-then-execute | 2026-03-24 | 0673fc95 | Verified | [345-two-phase-solve-plan-then-execute](./quick/345-two-phase-solve-plan-then-execute/) |
 | 346 | Persistent solve state across sessions | 2026-03-24 | a1846f73 | Verified | [346-persistent-solve-state-across-sessions](./quick/346-persistent-solve-state-across-sessions/) |
 | 347 | Implement hybrid A+B formal model sync | 2026-03-24 | 1cb41d81 | Pending | [347-implement-hybrid-a-b-formal-model-sync](./quick/347-implement-hybrid-a-b-formal-model-sync/) |
-| 348 | Add autoresearch-style iteration to formal model refinement | 2026-03-24 | 50945418 | Pending | [348-add-autoresearch-style-iteration-to-form](./quick/348-add-autoresearch-style-iteration-to-form/) |
+| 348 | Add autoresearch-style iteration to formal model refinement | 2026-03-24 | 50945418 | Verified | [348-add-autoresearch-style-iteration-to-form](./quick/348-add-autoresearch-style-iteration-to-form/) |
 
 ## Session Continuity
 
