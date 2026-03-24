@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-24 — Completed quick task 345: Two-phase solve plan-then-execute
+Last activity: 2026-03-24 — Completed quick task 346: Persistent solve state across sessions
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -92,6 +92,7 @@ None currently.
 | 343 | Parallelize diagnostic engine sweeps | 2026-03-24 | acb3bb0f | Verified | [343-parallelize-diagnostic-engine-sweeps](./quick/343-parallelize-diagnostic-engine-sweeps/) |
 | 344 | Incremental diagnostics by file delta | 2026-03-24 | a4494f9a | Verified | [344-incremental-diagnostics-by-file-delta](./quick/344-incremental-diagnostics-by-file-delta/) |
 | 345 | Two-phase solve plan-then-execute | 2026-03-24 | 0673fc95 | Verified | [345-two-phase-solve-plan-then-execute](./quick/345-two-phase-solve-plan-then-execute/) |
+| 346 | Persistent solve state across sessions | 2026-03-24 | a1846f73 | Verified | [346-persistent-solve-state-across-sessions](./quick/346-persistent-solve-state-across-sessions/) |
 
 ## Session Continuity
 
