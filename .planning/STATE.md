@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-24 — Completed quick task 342: N-layer cycle detection
+Last activity: 2026-03-24 — Completed quick task 343: Parallelize diagnostic engine sweeps
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -87,6 +87,7 @@ None currently.
 | 340 | Conditional Haiku classification | 2026-03-24 | 42a094ce | Verified | [340-conditional-haiku-classification](./quick/340-conditional-haiku-classification/) |
 | 341 | Cascade budget for remediation dispatch | 2026-03-24 | 43b54569 | Verified | [341-cascade-budget-for-remediation-dispatch](./quick/341-cascade-budget-for-remediation-dispatch/) |
 | 342 | N-layer cycle detection | 2026-03-24 | 2460338d | Verified | [342-n-layer-cycle-detection](./quick/342-n-layer-cycle-detection/) |
+| 343 | Parallelize diagnostic engine sweeps | 2026-03-24 | acb3bb0f | Verified | [343-parallelize-diagnostic-engine-sweeps](./quick/343-parallelize-diagnostic-engine-sweeps/) |
 
 ## Session Continuity
 
