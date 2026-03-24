@@ -373,6 +373,56 @@ test('TC-JSON-4: formatJSON includes r_to_d and d_to_c health keys', () => {
   assert.equal(result.solver_version, '1.2');
 });
 
+test('TC-JSON-5: formatJSON includes has_residual=false when total is 0', () => {
+  const iterations = [
+    {
+      iteration: 1,
+      residual: {
+        r_to_f: { residual: 0, detail: {} },
+        f_to_t: { residual: 0, detail: {} },
+        c_to_f: { residual: 0, detail: {} },
+        t_to_c: { residual: 0, detail: {} },
+        f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
+        total: 0,
+        timestamp: '2026-03-24T00:00:00Z',
+      },
+      actions: [],
+    },
+  ];
+  const finalResidual = iterations[0].residual;
+  const result = formatJSON(iterations, finalResidual, true);
+
+  assert.equal(typeof result.has_residual, 'boolean', 'has_residual should be a boolean');
+  assert.equal(result.has_residual, false, 'has_residual should be false when total is 0');
+});
+
+test('TC-JSON-6: formatJSON includes has_residual=true when total > 0', () => {
+  const iterations = [
+    {
+      iteration: 1,
+      residual: {
+        r_to_f: { residual: 3, detail: {} },
+        f_to_t: { residual: 0, detail: {} },
+        c_to_f: { residual: 0, detail: {} },
+        t_to_c: { residual: 0, detail: {} },
+        f_to_c: { residual: 0, detail: {} },
+        r_to_d: { residual: 0, detail: {} },
+        d_to_c: { residual: 0, detail: {} },
+        total: 3,
+        timestamp: '2026-03-24T00:00:00Z',
+      },
+      actions: [],
+    },
+  ];
+  const finalResidual = iterations[0].residual;
+  const result = formatJSON(iterations, finalResidual, false);
+
+  assert.equal(typeof result.has_residual, 'boolean', 'has_residual should be a boolean');
+  assert.equal(result.has_residual, true, 'has_residual should be true when total > 0');
+});
+
 // ── TC-KEYWORD: Keyword Extraction Tests ─────────────────────────────────────
 
 test('TC-KEYWORD-1: extractKeywords strips stopwords and short tokens', () => {

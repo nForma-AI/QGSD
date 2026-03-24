@@ -4675,6 +4675,7 @@ function formatJSON(iterations, finalResidual, converged) {
     iteration_count: iterations.length,
     max_iterations: maxIterations,
     converged: converged,
+    has_residual: truncatedResidual.total > 0,
     residual_vector: truncatedResidual,
     iterations: iterations.map((it) => ({
       iteration: it.iteration,
@@ -5242,7 +5243,7 @@ function main() {
   // Persist session summary before stdout/exit
   persistSessionSummary(reportText, jsonText, converged, iterations);
 
-  const exitCode = finalResidual.total > 0 ? 1 : 0;
+  const exitCode = 0;
   const outputText = jsonMode ? (jsonText + '\n') : reportText;
 
   // Drain stdout before exit to prevent pipe truncation (process.exit() does not
