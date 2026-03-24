@@ -131,6 +131,17 @@ node ~/.claude/nf/bin/gsd-tools.cjs activity-set \
        - .agents/skills/ (Project skills, if exists — list skills, read SKILL.md for each skill, follow rules during implementation)
        </files_to_read>
 
+       <formal_coverage_auto_detection>
+       **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
+       1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
+       2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files "$CHANGED" 2>/dev/null
+       3. If exit code is 0 (intersections found) OR the plan declares `formal_artifacts: update`:
+          - Run: node bin/run-formal-verify.cjs 2>&1
+          - If exit 0: log "Formal coverage verified: models OK"
+          - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
+       4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
+       </formal_coverage_auto_detection>
+
        <success_criteria>
        - [ ] All tasks executed
        - [ ] Each task committed individually

@@ -21,8 +21,9 @@ Extract from $ARGUMENTS:
 - `--skip-simulation`: explicitly skip Phase 4.5 (solution simulation), proceed to Phase 5 (optional)
 - `--fix-idea`: override fix idea for simulation (optional, default: use Phase 4 constraints)
 - `--strict`: gate fix completion on ALL neighbor models passing in Phase 5b (optional, default false)
+- `--sync`: sync mode — skips phases 1-6, runs full formal verification only (optional)
 
-If `BUG_DESC` is empty, error: "Bug description is required. Usage: /nf:model-driven-fix 'description' [--files=...] [--formalism=...] [--verbose] [--skip-fix] [--skip-simulation] [--fix-idea='...'] [--strict]"
+If `BUG_DESC` is empty and `--sync` is not present, error: "Bug description is required. Usage: /nf:model-driven-fix 'description' [--files=...] [--formalism=...] [--verbose] [--skip-fix] [--skip-simulation] [--fix-idea='...'] [--strict] [--sync]"
 
 Set variables:
 ```bash
@@ -34,7 +35,24 @@ SKIP_FIX="${--skip-fix present: true, else false}"
 SKIP_SIMULATION="${--skip-simulation present: true, else false}"
 FIX_IDEA="${--fix-idea value or empty}"
 STRICT="${--strict present: true, else false}"
+SYNC_MODE="${--sync present: true, else false}"
 ```
+</step>
+
+<step name="sync_fast_path">
+## Sync Mode Fast Path (--sync)
+
+If `$SYNC_MODE` is true:
+  1. Display: "Sync mode: running full formal verification..."
+  2. Run: `node bin/run-formal-verify.cjs 2>&1`
+     (No --scope flag -- run ALL models. This is fast enough and avoids fragile scope ID mapping.)
+  3. If exit 0: Display "Sync: All formal models verified. No drift detected."
+  4. If exit 1: Display "Sync: Formal verification found issues -- models may need update."
+     Display: "Run /nf:model-driven-fix (full mode) to diagnose and fix."
+     Exit with code 1
+  5. Exit workflow (do not continue to Phase 1)
+
+**Fail-open:** If `run-formal-verify.cjs` is not found or errors unexpectedly, display warning and exit 0.
 </step>
 
 <step name="discovery">

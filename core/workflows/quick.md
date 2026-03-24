@@ -116,13 +116,14 @@ Parse the Haiku response as JSON. Store as `$APPROACH_BLOCK`.
 Log: `"Step 2.7: Approach derived — ${APPROACH_BLOCK.approach}"`
 If fallback was used, log: `"Step 2.7: Approach derivation fell back to generic (Haiku unavailable or parse error)"`
 
-2. **Write scope contract to .claude/scope-contract.json (INTENT-02):**
+2. **Write scope contract to task directory (INTENT-02):**
 
 Determine the branch name: use `$CREATED_BRANCH` if set (from Step 2.5), otherwise use `$current_branch`.
 
-Read existing `.claude/scope-contract.json` if it exists. If it does not exist or is not valid JSON, start with an empty object `{}`. This preserves concurrent quick task entries (keyed by branch name).
+Write the scope contract directly to the task directory (created in Step 3):
+`${task_dir}/scope-contract.json`
 
-Add/update the entry for this task's branch:
+Note: Step 3 creates `${task_dir}` — if it doesn't exist yet, create it now with `mkdir -p`.
 
 ```json
 {
@@ -139,11 +140,11 @@ Add/update the entry for this task's branch:
 }
 ```
 
-Write the merged object back to `.claude/scope-contract.json`.
+Each task gets its own scope-contract.json — no merge logic needed.
 
-**Fail-open:** If the write fails (permission error, disk full), log a warning and proceed. The scope contract is informational in v0.40-02 — the scope guard (v0.40-03) is not yet active.
+**Fail-open:** If the write fails (permission error, disk full), log a warning and proceed.
 
-Log: `"Step 2.7: Scope contract written to .claude/scope-contract.json (key: ${branch_name})"`
+Log: `"Step 2.7: Scope contract written to ${task_dir}/scope-contract.json (key: ${branch_name})"`
 
 3. **Store APPROACH_BLOCK for planner context:**
 
@@ -556,6 +557,14 @@ Execute quick task ${next_num}.
 - Execute all tasks in the plan
 - When implementing logic with 3+ distinct states and conditional transitions, prefer a state machine library — match complexity to the problem per .claude/rules/state-machine-bias.md. State machines are auto-transpiled to TLA+ via bin/fsm-to-tla.cjs
 - Commit each task atomically (use the gsd-tools.cjs commit command per the execute-plan workflow)
+- **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
+  1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
+  2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files "$CHANGED" 2>/dev/null
+  3. If exit code is 0 (intersections found) OR the plan declares `formal_artifacts: update`:
+     - Run: node bin/run-formal-verify.cjs 2>&1
+     - If exit 0: log "Formal coverage verified: models OK"
+     - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit -- fail-open)
+  4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
 - If the plan declares `formal_artifacts: update` or `formal_artifacts: create`, execute those formal file changes and include the .planning/formal/ files in the atomic commit for that task (alongside the implementation files)
 - Formal/ files must never be committed separately — always include in the task's atomic commit
 - Create summary at: ${QUICK_DIR}/${next_num}-SUMMARY.md
