@@ -40,9 +40,67 @@ Store as `focusPhrase` variable (string or null) for forwarding to sub-skills an
 Initialize at the very start of the process block:
   - If args contain `--focus="X"` or `--focus=X`, set `focusPhrase = X`
   - Otherwise, set `focusPhrase = null`
+  - If args contain `--verbose`, set `verboseMode = true`. Otherwise, set `verboseMode = false`.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 
 ## Phase 1: Diagnose
+
+### Fast-path (default — no --verbose)
+
+When `verboseMode` is false, run the diagnostic sweep directly via Bash instead of dispatching an Agent to solve-diagnose.md. This skips legacy migration, config audit, observe refresh, hypothesis measurement, root cause quorum vote, heatmap analysis, issue classification, and FSM detection — producing the baseline residual in ~60s instead of ~27min.
+
+**Step 1a: Load open debt** (needed for convergence debt checks in Phase 3):
+```bash
+DEBT_JSON=$(node ~/.claude/nf-bin/solve-debt-bridge.cjs --read-open --project-root=$(pwd) 2>/dev/null || echo '{"entries":[]}')
+```
+If `~/.claude/nf-bin/solve-debt-bridge.cjs` does not exist or fails, set `open_debt = []` (fail-open).
+
+**Step 1b: Run diagnostic sweep:**
+```bash
+BASELINE_RAW=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"} 2>/dev/null)
+```
+If `~/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs` (CWD-relative).
+
+**IMPORTANT:** nf-solve.cjs may emit non-JSON diagnostic lines to stdout before the JSON object (e.g., `[nf-solve] Rebuilding proximity index`). Always extract the JSON by finding the first `{` character in the output. Write the raw output to a temp file, then parse:
+```bash
+echo "$BASELINE_RAW" > /tmp/nf-solve-baseline.json
+```
+Then parse via heredoc (NOT `node -e` which is unsafe on zsh):
+```bash
+node << 'NF_EVAL'
+const raw = require('fs').readFileSync('/tmp/nf-solve-baseline.json', 'utf8');
+const jsonStart = raw.indexOf('{');
+if (jsonStart === -1) { console.log(JSON.stringify({error: "no JSON found"})); process.exit(1); }
+const j = JSON.parse(raw.slice(jsonStart));
+console.log(JSON.stringify({
+  status: "ok",
+  residual_vector: j.residual_vector,
+  total: j.residual_vector?.total
+}));
+NF_EVAL
+```
+
+Parse the result:
+- Extract `baseline_residual` from `residual_vector`
+- If `residual_vector.total == 0`: set `status = "bail"`, `reason = "zero_residual"` — skip to Phase 4
+- If JSON parsing failed: set `status = "error"`, log reason, exit gracefully
+
+Set defaults for fields that only the verbose Agent path produces:
+- `open_debt` = parsed from Step 1a (or `[]` on failure)
+- `heatmap = null`
+- `issues = null`
+- `fsm_candidates = []`
+- `targets = null`
+- `hypothesis_measurements = null`
+- `root_cause_verdict = "SKIPPED_FAST_PATH"`
+
+Display the baseline residual table (same unified table format as solve-diagnose Step 1).
+
+Skip Phase 1b (Classify) entirely in fast-path — classification depends on the full diagnostic context that fast-path omits.
+
+### Verbose path (--verbose)
+
+When `verboseMode` is true, dispatch the full Agent to solve-diagnose.md (full diagnostic with all sub-steps):
 
 ```
 Agent(
@@ -59,9 +117,13 @@ Parse the Agent's JSON output:
 - If `status == "bail"` (zero residual): skip to Phase 4 (Report) with baseline as post_residual
 - Store: `baseline_residual`, `open_debt`, `heatmap`, `issues`, `targets`
 
-## Phase 1b: Classify (Haiku pre-triage)
+Then run Phase 1c (Classify):
 
-After diagnostic completes, pre-classify all sweep items using Haiku sub-agent.
+## Phase 1c: Classify (verbose mode only)
+
+Skip this phase when `verboseMode` is false (fast-path produces no classification context).
+
+When `verboseMode` is true, pre-classify all sweep items using Haiku sub-agent.
 This populates solve-classifications.json so reverse flow items (D→C, C→R, T→R, D→R)
 have genuine/fp/review badges when viewed in the TUI.
 

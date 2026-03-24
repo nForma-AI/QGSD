@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-20 — Completed quick task 336: Implement 3 targeted TLA+ failure classifiers in F->C remediation layer
+Last activity: 2026-03-24 — Completed quick task 337: Fast-path initial diagnostic
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -81,6 +81,7 @@ None currently.
 | 334 | Close 3 autonomous formal verification gaps: code-fix gate, regression auto-remediation, reverse-flow auto-approval via unanimous quorum consensus | 2026-03-19 | a0243e9b | Verified | [334-close-3-autonomous-formal-verification-g](./quick/334-close-3-autonomous-formal-verification-g/) |
 | 335 | Add FSM candidate detection section to nf-phase-researcher RESEARCH.md output | 2026-03-19 | 9f0aa33e | Verified | [335-add-fsm-candidate-detection-section-to-n](./quick/335-add-fsm-candidate-detection-section-to-n/) |
 | 336 | Implement 3 targeted TLA+ failure classifiers in F->C remediation layer | 2026-03-20 | fc31f89d | Verified | [336-implement-3-targeted-tla-failure-classif](./quick/336-implement-3-targeted-tla-failure-classif/) |
+| 337 | Fast-path initial diagnostic | 2026-03-24 | pending | Pending | [337-fast-path-initial-diagnostic](./quick/337-fast-path-initial-diagnostic/) |
 
 ## Session Continuity
 
