@@ -198,6 +198,25 @@ Parse the JSON output:
 - Log hazard_model summary from `inline_results.hazard_model.summary` (if status is "ok")
 - Store `skip_layers` and `preflight_data` for forwarding to the Agent
 
+**3a-budget. Compute cascade budget:**
+
+Prevent cascade blowup by limiting R→F dispatches when downstream layers already have pending work:
+
+```
+remaining_iterations = max_iterations - iteration
+r_to_f_residual = residual_vector.r_to_f.residual (or 0)
+f_to_t_residual = residual_vector.f_to_t.residual (or 0)
+
+if f_to_t_residual > 0 AND r_to_f_residual > 10:
+  # Downstream has pending work — limit R→F to avoid creating more cascade
+  r_to_f_limit = remaining_iterations * 10
+  log: "Cascade budget: R→F capped at {r_to_f_limit} (F→T has {f_to_t_residual} pending, {remaining_iterations} iterations left)"
+else:
+  r_to_f_limit = null  # No limit — dispatch all
+```
+
+Store `r_to_f_limit` (number or null) for forwarding to the Agent.
+
 **3a. Dispatch remediation:**
 ```
 Agent(
@@ -205,7 +224,7 @@ Agent(
   description="solve: remediation iteration {N}",
   prompt="First resolve the sub-skill path: try $HOME/.claude/commands/nf/solve-remediate.md, fall back to commands/nf/solve-remediate.md if not found. Read and follow it end-to-end.
 Input context (JSON):
-{\"residual_vector\": ..., \"open_debt\": ..., \"heatmap\": ..., \"targets\": ..., \"iteration\": N, \"skip_inline_layers\": [...skip_layers from 3a-pre], \"preflight_data\": {...preflight_data from 3a-pre}}
+{\"residual_vector\": ..., \"open_debt\": ..., \"heatmap\": ..., \"targets\": ..., \"iteration\": N, \"skip_inline_layers\": [...skip_layers from 3a-pre], \"preflight_data\": {...preflight_data from 3a-pre}, \"cascade_budget\": {\"r_to_f_limit\": N_or_null}}
 After completing all remediation steps, output ONLY the JSON result object described in the output_contract section."
 )
 ```

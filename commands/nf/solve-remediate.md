@@ -52,6 +52,7 @@ The orchestrator passes a JSON object (as part of the Agent prompt or via a temp
 **Optional fields (backward compatible):**
 - `skip_inline_layers` (array of strings): layers already handled by the orchestrator's inline dispatch (solve-inline-dispatch.cjs). If missing or not an array, treat as empty — run all layers as before.
 - `preflight_data` (object): pre-computed results from gate scripts. If missing, run gate scripts as before.
+- `cascade_budget` (object): dispatch limits to prevent cascade blowup. Contains `r_to_f_limit` (number or null). If missing, no limits apply.
 </input_contract>
 
 <output_contract>
@@ -180,7 +181,9 @@ The following sections are executed by per-layer Agent subprocesses. Each sub-ag
 
 Extract the list of uncovered requirement IDs from `residual_vector.r_to_f.detail.uncovered_requirements`.
 
-If the list has 10 or fewer IDs, dispatch:
+**Cascade budget check:** If `cascade_budget.r_to_f_limit` is a number and the uncovered list has more IDs than the limit, truncate the list to the first `r_to_f_limit` IDs. Log: `"Cascade budget: dispatching {r_to_f_limit} of {total} R→F gaps (F→T has pending work)"`. The remaining IDs will be addressed in subsequent iterations as downstream layers clear. If `r_to_f_limit` is null or missing, dispatch all IDs (no limit).
+
+If the (possibly truncated) list has 10 or fewer IDs, dispatch:
 ```
 /nf:close-formal-gaps --batch --ids=REQ-01,REQ-02,...
 ```
