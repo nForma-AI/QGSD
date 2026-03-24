@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-20T20:18:37.824Z",
+  "generated": "2026-03-24T22:12:47.735Z",
   "node_key_format": "type::id",
   "sources": {
     "scope.json:account-manager": {
@@ -84,50 +84,50 @@
       "hash": "76910c97"
     },
     "model-registry.json": {
-      "mtime": "2026-03-20T20:08:48.265Z",
-      "hash": "da9e6cf6"
+      "mtime": "2026-03-24T22:10:45.771Z",
+      "hash": "c4dad2aa"
     },
     "invariant-catalog.json": {
       "mtime": "2026-03-06T14:00:17.868Z",
       "hash": "e27072db"
     },
     "traceability-matrix.json": {
-      "mtime": "2026-03-20T20:01:33.882Z",
-      "hash": "f6d96827"
+      "mtime": "2026-03-24T22:04:52.383Z",
+      "hash": "2a36a6ac"
     },
     "unit-test-coverage.json": {
-      "mtime": "2026-03-20T20:14:02.310Z",
-      "hash": "f0f6ebee"
+      "mtime": "2026-03-24T22:08:29.706Z",
+      "hash": "f74a531a"
     },
     "instrumentation-map.json": {
-      "mtime": "2026-03-20T19:52:59.643Z",
-      "hash": "7e24e557"
+      "mtime": "2026-03-24T21:35:59.773Z",
+      "hash": "aab1fd0b"
     },
     "event-vocabulary.json": {
       "mtime": "2026-03-08T20:28:45.150Z",
       "hash": "fa1b7cf9"
     },
     "observed-fsm.json": {
-      "mtime": "2026-03-20T19:37:22.882Z",
-      "hash": "d2523ea4"
+      "mtime": "2026-03-24T22:04:47.852Z",
+      "hash": "ad0a60cf"
     },
     "risk-heatmap.json": {
       "mtime": "2026-03-09T13:52:46.371Z",
       "hash": "2df5c0d7"
     },
     "git-heatmap.json": {
-      "mtime": "2026-03-20T19:54:25.163Z",
-      "hash": "5272afc0"
+      "mtime": "2026-03-24T21:37:23.080Z",
+      "hash": "e9b3deda"
     },
     "debt.json": {
       "mtime": "2026-03-04T13:33:16.983Z",
       "hash": "4f085cf2"
     },
     "source-annotations": {
-      "mtime": "2026-03-20T20:08:14.719Z"
+      "mtime": "2026-03-24T22:10:43.695Z"
     },
     "code-source-annotations": {
-      "mtime": "2026-03-20T19:53:32.227Z"
+      "mtime": "2026-03-24T21:46:51.724Z"
     }
   },
   "nodes": {
@@ -29578,7 +29578,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::CLASS-02": {
       "type": "requirement",
@@ -29588,6 +29590,46 @@
           "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ErrorType",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::Stats",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::RetryFailedBatchesOnce",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::RetryRequiresAttempt",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::FailedItemsTracked",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::SuccessNoError",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ErrorTypesComplete",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         },
         {
           "to": "test_file::.planning/formal/generated-stubs/CLASS-02.stub.test.js",
@@ -29611,6 +29653,46 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::TlcFailureClass",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::PatternPriority",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::OrderedPatternMatching",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::NoMatchIsUnknown",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ExactlySixClasses",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ClassificationDeterministic",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/CLASS-03.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
+        },
+        {
           "to": "formal_model::.planning/formal/alloy/classification-retry-patterns.als",
           "rel": "modeled_by",
           "source": "source-annotation"
@@ -29631,7 +29713,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::AGENT-04": {
       "type": "requirement",
@@ -29641,6 +29725,46 @@
           "to": "formal_model::.planning/formal/alloy/agent-fsm-detection.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::DetectionThreshold",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::CandidatesFromDetection",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::CandidatesInOutput",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::OutputCompleteness",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::DualDetectionCreatesTwoCandidates",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::NoCandidatesBelowThreshold",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "test_file::.planning/formal/generated-stubs/AGENT-04.stub.test.js",
+          "rel": "tested_by",
+          "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/agent-fsm-detection.als",
@@ -29663,7 +29787,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::RSN-06": {
       "type": "requirement",
@@ -29673,6 +29799,31 @@
           "to": "formal_model::.planning/formal/tla/NFHazardModelMerge.tla",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::MergeUserOverrides",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::RecomputeRPN",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::UserOverridesPreserved",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::OverriddenScoresPreserved",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         },
         {
           "to": "test_file::.planning/formal/generated-stubs/RSN-06.stub.test.js",
@@ -29700,7 +29851,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::VERF-04": {
       "type": "requirement",
@@ -29710,6 +29863,41 @@
           "to": "formal_model::.planning/formal/alloy/verify-path-normalization.als",
           "rel": "modeled_by",
           "source": "model-registry"
+        },
+        {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::AllKeysNormalized",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::LegacyPathsConverted",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::CheckCommandsNormalized",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::NoSymlinkNeeded",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::NoLegacyPrefixesRemain",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::CheckCommandsUseNormalizedPaths",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
         },
         {
           "to": "test_file::.planning/formal/generated-stubs/VERF-04.stub.test.js",
@@ -29737,7 +29925,9 @@
           "rel": "models",
           "source": "source-annotation"
         }
-      ]
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
     },
     "requirement::XPLAT-03": {
       "type": "requirement",
@@ -29749,12 +29939,96 @@
           "source": "model-registry"
         },
         {
+          "to": "invariant::Bool",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::DynamicResolutionAtDispatch",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::ResolutionSearchesLocations",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::FoundMeansResolved",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::MissingShowsInstructions",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::FoundInSearched",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::OneResolutionPerSlot",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::MissingAlwaysShowsHelp",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "invariant::AlwaysDynamic",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
           "to": "test_file::.planning/formal/generated-stubs/XPLAT-03.stub.test.js",
           "rel": "tested_by",
           "source": "unit-test-coverage"
         },
         {
           "to": "formal_model::.planning/formal/alloy/ccr-binary-resolution.als",
+          "rel": "modeled_by",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "formal_model::.planning/formal/tla/NFSolveFastPath.tla": {
+      "type": "formal_model",
+      "id": ".planning/formal/tla/NFSolveFastPath.tla",
+      "edges": [
+        {
+          "to": "requirement::PERF-03",
+          "rel": "models",
+          "source": "model-registry"
+        },
+        {
+          "to": "requirement::PERF-03",
+          "rel": "models",
+          "source": "source-annotation"
+        }
+      ],
+      "source_layer": "L3",
+      "gate_maturity": "SOFT_GATE"
+    },
+    "requirement::PERF-03": {
+      "type": "requirement",
+      "id": "PERF-03",
+      "edges": [
+        {
+          "to": "formal_model::.planning/formal/tla/NFSolveFastPath.tla",
+          "rel": "modeled_by",
+          "source": "model-registry"
+        },
+        {
+          "to": "invariant::TypeOK",
+          "rel": "verified_by",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "formal_model::.planning/formal/tla/NFSolveFastPath.tla",
           "rel": "modeled_by",
           "source": "source-annotation"
         }
@@ -33207,6 +33481,31 @@
           "to": "requirement::XPLAT-02",
           "rel": "verifies",
           "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
         }
       ]
     },
@@ -35858,6 +36157,16 @@
         },
         {
           "to": "requirement::TEST-01",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::RSN-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        },
+        {
+          "to": "requirement::PERF-03",
           "rel": "verifies",
           "source": "traceability-matrix"
         }
@@ -46515,6 +46824,413 @@
         }
       ]
     },
+    "invariant::ErrorType": {
+      "type": "invariant",
+      "id": "ErrorType",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::Stats": {
+      "type": "invariant",
+      "id": "Stats",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::RetryFailedBatchesOnce": {
+      "type": "invariant",
+      "id": "RetryFailedBatchesOnce",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::RetryRequiresAttempt": {
+      "type": "invariant",
+      "id": "RetryRequiresAttempt",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::FailedItemsTracked": {
+      "type": "invariant",
+      "id": "FailedItemsTracked",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::SuccessNoError": {
+      "type": "invariant",
+      "id": "SuccessNoError",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::ErrorTypesComplete": {
+      "type": "invariant",
+      "id": "ErrorTypesComplete",
+      "edges": [
+        {
+          "to": "requirement::CLASS-02",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::TlcFailureClass": {
+      "type": "invariant",
+      "id": "TlcFailureClass",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::PatternPriority": {
+      "type": "invariant",
+      "id": "PatternPriority",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::OrderedPatternMatching": {
+      "type": "invariant",
+      "id": "OrderedPatternMatching",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::NoMatchIsUnknown": {
+      "type": "invariant",
+      "id": "NoMatchIsUnknown",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::ExactlySixClasses": {
+      "type": "invariant",
+      "id": "ExactlySixClasses",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::ClassificationDeterministic": {
+      "type": "invariant",
+      "id": "ClassificationDeterministic",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::DetectionThreshold": {
+      "type": "invariant",
+      "id": "DetectionThreshold",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::CandidatesFromDetection": {
+      "type": "invariant",
+      "id": "CandidatesFromDetection",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::CandidatesInOutput": {
+      "type": "invariant",
+      "id": "CandidatesInOutput",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::OutputCompleteness": {
+      "type": "invariant",
+      "id": "OutputCompleteness",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::DualDetectionCreatesTwoCandidates": {
+      "type": "invariant",
+      "id": "DualDetectionCreatesTwoCandidates",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::NoCandidatesBelowThreshold": {
+      "type": "invariant",
+      "id": "NoCandidatesBelowThreshold",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::MergeUserOverrides": {
+      "type": "invariant",
+      "id": "MergeUserOverrides",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::RecomputeRPN": {
+      "type": "invariant",
+      "id": "RecomputeRPN",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::UserOverridesPreserved": {
+      "type": "invariant",
+      "id": "UserOverridesPreserved",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::OverriddenScoresPreserved": {
+      "type": "invariant",
+      "id": "OverriddenScoresPreserved",
+      "edges": [
+        {
+          "to": "requirement::RSN-06",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::AllKeysNormalized": {
+      "type": "invariant",
+      "id": "AllKeysNormalized",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::LegacyPathsConverted": {
+      "type": "invariant",
+      "id": "LegacyPathsConverted",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::CheckCommandsNormalized": {
+      "type": "invariant",
+      "id": "CheckCommandsNormalized",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::NoSymlinkNeeded": {
+      "type": "invariant",
+      "id": "NoSymlinkNeeded",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::NoLegacyPrefixesRemain": {
+      "type": "invariant",
+      "id": "NoLegacyPrefixesRemain",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::CheckCommandsUseNormalizedPaths": {
+      "type": "invariant",
+      "id": "CheckCommandsUseNormalizedPaths",
+      "edges": [
+        {
+          "to": "requirement::VERF-04",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::DynamicResolutionAtDispatch": {
+      "type": "invariant",
+      "id": "DynamicResolutionAtDispatch",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::ResolutionSearchesLocations": {
+      "type": "invariant",
+      "id": "ResolutionSearchesLocations",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::FoundMeansResolved": {
+      "type": "invariant",
+      "id": "FoundMeansResolved",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::MissingShowsInstructions": {
+      "type": "invariant",
+      "id": "MissingShowsInstructions",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::FoundInSearched": {
+      "type": "invariant",
+      "id": "FoundInSearched",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::OneResolutionPerSlot": {
+      "type": "invariant",
+      "id": "OneResolutionPerSlot",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::MissingAlwaysShowsHelp": {
+      "type": "invariant",
+      "id": "MissingAlwaysShowsHelp",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
+    "invariant::AlwaysDynamic": {
+      "type": "invariant",
+      "id": "AlwaysDynamic",
+      "edges": [
+        {
+          "to": "requirement::XPLAT-03",
+          "rel": "verifies",
+          "source": "traceability-matrix"
+        }
+      ]
+    },
     "invariant::P=? [ F \"consensus\" ]": {
       "type": "invariant",
       "id": "P=? [ F \"consensus\" ]",
@@ -46847,6 +47563,17 @@
         }
       ]
     },
+    "test_file::.planning/formal/generated-stubs/AGENT-04.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/AGENT-04.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::AGENT-04",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
     "test_file::.planning/formal/generated-stubs/ANNOT-01.stub.test.js": {
       "type": "test_file",
       "id": ".planning/formal/generated-stubs/ANNOT-01.stub.test.js",
@@ -47095,6 +47822,17 @@
       "edges": [
         {
           "to": "requirement::CLASS-02",
+          "rel": "tests",
+          "source": "unit-test-coverage"
+        }
+      ]
+    },
+    "test_file::.planning/formal/generated-stubs/CLASS-03.stub.test.js": {
+      "type": "test_file",
+      "id": ".planning/formal/generated-stubs/CLASS-03.stub.test.js",
+      "edges": [
+        {
+          "to": "requirement::CLASS-03",
           "rel": "tests",
           "source": "unit-test-coverage"
         }
@@ -53062,6 +53800,94 @@
       "edges": [
         {
           "to": "code_file::bin/solve-focus-filter.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "code_file::bin/solve-incremental-filter.cjs": {
+      "type": "code_file",
+      "id": "bin/solve-incremental-filter.cjs",
+      "edges": [
+        {
+          "to": "requirement::QUICK-344",
+          "rel": "declares",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QUICK-344": {
+      "type": "requirement",
+      "id": "QUICK-344",
+      "edges": [
+        {
+          "to": "code_file::bin/solve-incremental-filter.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "code_file::bin/solve-inline-dispatch.cjs": {
+      "type": "code_file",
+      "id": "bin/solve-inline-dispatch.cjs",
+      "edges": [
+        {
+          "to": "requirement::QUICK-339",
+          "rel": "declares",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QUICK-339": {
+      "type": "requirement",
+      "id": "QUICK-339",
+      "edges": [
+        {
+          "to": "code_file::bin/solve-inline-dispatch.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "code_file::bin/solve-parallel-sweeps.cjs": {
+      "type": "code_file",
+      "id": "bin/solve-parallel-sweeps.cjs",
+      "edges": [
+        {
+          "to": "requirement::QUICK-343",
+          "rel": "declares",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QUICK-343": {
+      "type": "requirement",
+      "id": "QUICK-343",
+      "edges": [
+        {
+          "to": "code_file::bin/solve-parallel-sweeps.cjs",
+          "rel": "declared_in",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "code_file::bin/solve-session.cjs": {
+      "type": "code_file",
+      "id": "bin/solve-session.cjs",
+      "edges": [
+        {
+          "to": "requirement::QUICK-345",
+          "rel": "declares",
+          "source": "source-annotation"
+        }
+      ]
+    },
+    "requirement::QUICK-345": {
+      "type": "requirement",
+      "id": "QUICK-345",
+      "edges": [
+        {
+          "to": "code_file::bin/solve-session.cjs",
           "rel": "declared_in",
           "source": "source-annotation"
         }

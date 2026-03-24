@@ -192,7 +192,19 @@
         "to": "DECIDED"
       }
     ],
-    "missing_in_model": []
+    "missing_in_model": [],
+    "annotations": {
+      "COLLECTING_VOTES->VOTES_COLLECTED->DECIDED": {
+        "status": "expected_unobserved",
+        "reason": "Valid model transition not yet triggered in production traces. Will be confirmed when sufficient trace data is collected.",
+        "first_noted": "2026-03-24T22:04:47.848Z"
+      },
+      "DELIBERATING->VOTES_COLLECTED->DECIDED": {
+        "status": "expected_unobserved",
+        "reason": "Valid model transition not yet triggered in production traces. Will be confirmed when sufficient trace data is collected.",
+        "first_noted": "2026-03-24T22:04:47.851Z"
+      }
+    }
   },
   "coverage": {
     "model_coverage": 0.8421052631578947,

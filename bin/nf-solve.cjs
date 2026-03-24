@@ -1404,6 +1404,7 @@ function sweepFtoC() {
   // QUICK-343: If background run-formal-verify.cjs was pre-spawned by computeResidual(),
   // wait for it to finish instead of spawning a new synchronous process.
   // The background process writes check-results.ndjson to disk — same output path.
+  let syncResult = null;
   if (_formalVerifyBgPid) {
     process.stderr.write(TAG + ' F→C: waiting for background formal verify (PID ' + _formalVerifyBgPid + ')\n');
     // Poll until background process exits (check if PID is still alive)
@@ -1425,12 +1426,10 @@ function sweepFtoC() {
     // No background process — run synchronously as before
     // stdio: discard stdout ('ignore') because run-formal-verify.cjs writes ~4MB of
     // verbose progress output. We only need the NDJSON file it writes to disk.
-    const result = spawnTool('bin/run-formal-verify.cjs', [], {
+    syncResult = spawnTool('bin/run-formal-verify.cjs', [], {
       timeout: 600000,
       stdio: ['pipe', 'ignore', 'pipe'],
     });
-    // result is used only for logging — actual data comes from check-results.ndjson
-    void result;
   }
 
   // Generate complexity profile from fresh check-results.ndjson + state-space data
@@ -1441,11 +1440,12 @@ function sweepFtoC() {
   }
 
   // Non-zero exit is expected when checks fail — still parse check-results.ndjson.
-  // Only bail on spawn errors (result.stderr without any ndjson output).
-  if (!result.ok && result.stderr && !fs.existsSync(path.join(ROOT, '.planning', 'formal', 'check-results.ndjson'))) {
+  // Only bail on spawn errors (syncResult.stderr without any ndjson output).
+  // syncResult is null when the background path was used — skip this check in that case.
+  if (syncResult && !syncResult.ok && syncResult.stderr && !fs.existsSync(path.join(ROOT, '.planning', 'formal', 'check-results.ndjson'))) {
     return {
       residual: -1,
-      detail: { error: result.stderr.slice(0, 500) || 'run-formal-verify.cjs failed' },
+      detail: { error: syncResult.stderr.slice(0, 500) || 'run-formal-verify.cjs failed' },
     };
   }
 

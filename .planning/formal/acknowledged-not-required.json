@@ -137,6 +137,312 @@
       "category": "B",
       "reason": "descriptive/documentation language only",
       "acknowledged_at": "2026-03-09T23:02:42.905Z"
+    },
+    {
+      "file_or_claim": "bin/autoresearch-refine.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/autoresearch-refine.cjs + bin/autoresearch-refine.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.195Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/config-update.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/config-update.cjs + bin/config-update.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/consequence-model-generator.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/consequence-model-generator.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/debug-formal-context.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/debug-formal-context.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/diagnostic-diff-generator.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/diagnostic-diff-generator.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/diagnostic-proposal-generator.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/diagnostic-proposal-generator.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/formal-coverage-intersect.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/formal-coverage-intersect.cjs + bin/formal-coverage-intersect.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/intent-normalizer.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/intent-normalizer.cjs + bin/intent-normalizer.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/model-state-extractor.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/model-state-extractor.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/parse-tlc-counterexample.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/parse-tlc-counterexample.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/persist-post-fix-verification.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/persist-post-fix-verification.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/provider-status.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/provider-status.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/resolve-proximity-neighbors.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/resolve-proximity-neighbors.cjs + test/resolve-proximity-neighbors.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/solution-simulation-loop.cjs",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/solution-simulation-loop.cjs + bin/solution-simulation-loop.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/verification-mode.cjs",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "bin/verification-mode.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "hooks/nf-scope-guard.js",
+      "source_scanners": [
+        "C→R"
+      ],
+      "evidence": "hooks/nf-scope-guard.js",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/diagnostic-injection.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "bin/diagnostic-injection.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/refinement-loop-diagnostic.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "bin/refinement-loop-diagnostic.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/solve-incremental-filter.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "bin/solve-incremental-filter.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/solve-inline-dispatch.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "bin/solve-inline-dispatch.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/b-to-f-remediate.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/b-to-f-remediate.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/b-to-f-sweep.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/b-to-f-sweep.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/bug-context-normalization.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/bug-context-normalization.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/bug-lookup.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/bug-lookup.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/cross-model-regression.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/cross-model-regression.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/debug-verdict-reporting.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/debug-verdict-reporting.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/model-driven-fix-orchestrator.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/model-driven-fix-orchestrator.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/model-reproduction.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/model-reproduction.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "test/refinement-loop.test.cjs",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "test/refinement-loop.test.cjs",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
+    },
+    {
+      "file_or_claim": "<summary><strong>Quick Mode</strong> — Ad-hoc tasks with nForma guarantees</summary>",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:855",
+      "reason": "quorum-no-consensus",
+      "shelved_at": "2026-03-24T22:02:44.198Z",
+      "iteration": 1
     }
   ]
 }

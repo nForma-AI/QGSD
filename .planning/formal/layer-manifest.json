@@ -1,6 +1,6 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-20T19:52:19.746Z",
+  "generated": "2026-03-24T21:35:16.702Z",
   "layers": {
     "L1": [
       {
@@ -1010,6 +1010,31 @@
         "path": ".planning/formal/tla/NFConvergenceTest.tla",
         "description": "Convergence testing: e2e monotonic decrease and cascade effect detection",
         "grounding_status": "has_semantic_declarations"
+      },
+      {
+        "path": ".planning/formal/alloy/classification-retry-patterns.als",
+        "description": "classifyWithHaiku retry logic and classifyTlcFailure ordered pattern matching",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/agent-fsm-detection.als",
+        "description": "Phase researcher agent implicit FSM pattern detection",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/tla/NFHazardModelMerge.tla",
+        "description": "Hazard model regeneration with user override preservation",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/verify-path-normalization.als",
+        "description": "Legacy formal-spec/ path normalization to .planning/formal/",
+        "grounding_status": "ungrounded"
+      },
+      {
+        "path": ".planning/formal/alloy/ccr-binary-resolution.als",
+        "description": "CCR provider slot dynamic binary path resolution with missing install detection",
+        "grounding_status": "ungrounded"
       }
     ]
   },
@@ -1033,16 +1058,16 @@
   "collapsed_layers": {
     "L2": {
       "reason": "Empty layer — zero entries permanently blocked Gate B (STRUCT-01)",
-      "collapsed_at": "2026-03-20T19:52:19.746Z"
+      "collapsed_at": "2026-03-24T21:35:16.702Z"
     }
   },
   "summary": {
-    "total_models": 201,
+    "total_models": 206,
     "L1_count": 2,
     "L2_count": 0,
-    "L3_count": 199,
+    "L3_count": 204,
     "maturity_distribution": {
-      "0": 166,
+      "0": 171,
       "1": 35
     },
     "spec_modules_with_invariants": 18

@@ -49,54 +49,14 @@
         "login_hint": "Opens browser for OpenAI authentication",
         "timeout_ms": 5000
       },
-      "deep_probe": {
-        "prompt": "respond with: PROBE_OK",
-        "expect": "PROBE_OK",
-        "timeout_ms": 45000
-      }
-    },
-    {
-      "name": "codex-2",
-      "provider": "openai",
-      "type": "subprocess",
-      "auth_type": "sub",
-      "has_file_access": true,
-      "description": "Execute Codex CLI agent non-interactively (slot 2)",
-      "mainTool": "codex",
-      "model": "gpt-5.4",
-      "model_detect": {
-        "file": "~/.codex/config.toml",
-        "pattern": "^model = \"([^\"]+)\""
+      "oauth_rotation": {
+        "enabled": true,
+        "creds_dir": "~/.codex/accounts",
+        "active_file": "~/.codex/auth.json",
+        "max_retries": 3,
+        "retry_on_patterns": ["quota", "rate_limit", "unauthorized", "401", "429", "refresh_token_reused", "token_expired"],
+        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "codex-1"]
       },
-      "health_check_args": [
-        "--version"
-      ],
-      "display_provider": "OpenAI",
-      "display_type": "codex-cli",
-      "cli": "/opt/homebrew/bin/codex",
-      "args_template": [
-        "exec",
-        "{prompt}"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
-      "extraTools": [
-        {
-          "name": "review",
-          "description": "Run a code review against the current repository using Codex CLI",
-          "args_template": [
-            "review",
-            "{prompt}"
-          ]
-        }
-      ],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
-      "latency_budget_ms": null,
-      "env": {},
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -141,43 +101,14 @@
         "login_hint": "Opens browser for Google authentication",
         "timeout_ms": 5000
       },
-      "deep_probe": {
-        "prompt": "respond with: PROBE_OK",
-        "expect": "PROBE_OK",
-        "timeout_ms": 45000
-      }
-    },
-    {
-      "name": "gemini-2",
-      "provider": "google",
-      "type": "subprocess",
-      "auth_type": "sub",
-      "has_file_access": true,
-      "description": "Query Gemini CLI agent non-interactively (slot 2)",
-      "mainTool": "gemini",
-      "model": "gemini-3-pro-preview",
-      "health_check_args": [
-        "--version"
-      ],
-      "display_provider": "Google",
-      "display_type": "gemini-cli",
-      "cli": "/opt/homebrew/bin/gemini",
-      "args_template": [
-        "-m",
-        "gemini-3-pro-preview",
-        "-p",
-        "{prompt}"
-      ],
-      "helpArgs": [
-        "--help"
-      ],
-      "extraTools": [],
-      "timeout_ms": 300000,
-      "quorum_timeout_ms": 300000,
-      "idle_timeout_ms": 90000,
-      "hard_timeout_ms": 600000,
-      "latency_budget_ms": null,
-      "env": {},
+      "oauth_rotation": {
+        "enabled": true,
+        "creds_dir": "~/.gemini/accounts",
+        "active_file": "~/.gemini/oauth_creds.json",
+        "max_retries": 3,
+        "retry_on_patterns": ["quota", "resource_exhausted", "unauthorized", "401", "403", "429"],
+        "rotate_cmd": ["node", "bin/account-manager.cjs", "switch", "next", "--provider", "gemini-1"]
+      },
       "deep_probe": {
         "prompt": "respond with: PROBE_OK",
         "expect": "PROBE_OK",
@@ -204,6 +135,9 @@
       "cli": "/opt/homebrew/bin/opencode",
       "args_template": [
         "run",
+        "--print-logs",
+        "--log-level",
+        "ERROR",
         "{prompt}"
       ],
       "helpArgs": [
@@ -439,14 +373,14 @@
     },
     {
       "name": "claude-4",
-      "provider": "fireworks",
+      "provider": "together-xyz",
       "type": "subprocess",
       "auth_type": "api",
       "has_file_access": true,
-      "description": "Kimi-K2 via Fireworks — real Claude Code CLI via ccr",
+      "description": "Kimi-K2.5 via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
-      "model": "accounts/fireworks/models/kimi-k2p5",
-      "display_provider": "Fireworks",
+      "model": "moonshotai/Kimi-K2.5",
+      "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
         "claude-4",
@@ -523,14 +457,14 @@
     },
     {
       "name": "claude-6",
-      "provider": "fireworks",
+      "provider": "together-xyz",
       "type": "subprocess",
       "auth_type": "api",
       "has_file_access": true,
-      "description": "GLM-5 via Fireworks — real Claude Code CLI via ccr",
+      "description": "GLM-5 via Together.xyz — real Claude Code CLI via ccr",
       "mainTool": "claude",
-      "model": "accounts/fireworks/models/glm-5",
-      "display_provider": "Fireworks",
+      "model": "zai-org/GLM-5",
+      "display_provider": "Together.xyz",
       "cli": "ccr",
       "args_template": [
         "claude-6",

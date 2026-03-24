@@ -380,7 +380,9 @@ function ensureMcpSlotsFromProviders() {
     // Step 5: Write back if any entries were added
     if (addedCount > 0) {
       try {
-        fs.writeFileSync(claudeJsonPath, JSON.stringify(claudeConfig, null, 2) + '\n', 'utf8');
+        const tmpPath = claudeJsonPath + '.tmp';
+        fs.writeFileSync(tmpPath, JSON.stringify(claudeConfig, null, 2) + '\n', 'utf8');
+        fs.renameSync(tmpPath, claudeJsonPath);
         console.log(`  ${green}✓${reset} Synced ${addedCount} provider slot(s) to ~/.claude.json`);
       } catch (e) {
         console.warn(`  ${yellow}⚠${reset} Could not write ~/.claude.json: ${e.message}. Consider backup and manual edit.`);

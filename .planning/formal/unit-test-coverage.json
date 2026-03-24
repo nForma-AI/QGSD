@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-20T20:14:02.308Z",
+  "generated_at": "2026-03-24T22:08:29.701Z",
   "requirements": {
     "ACT-01": {
       "covered": true,
@@ -106,6 +106,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/AGENT-03.stub.test.js",
           "test_name": "AGENT-03: QGSDAgentProvisioning.tla defines VerifyAgent action"
+        }
+      ]
+    },
+    "AGENT-04": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/AGENT-04.stub.test.js",
+          "test_name": "AGENT-04: researcher agent file exists"
         }
       ]
     },
@@ -313,6 +322,15 @@
         {
           "test_file": ".planning/formal/generated-stubs/CLASS-02.stub.test.js",
           "test_name": "CLASS-02: classifyWithHaiku function is defined and exported"
+        }
+      ]
+    },
+    "CLASS-03": {
+      "covered": true,
+      "test_cases": [
+        {
+          "test_file": ".planning/formal/generated-stubs/CLASS-03.stub.test.js",
+          "test_name": "CLASS-03: FAILURE_CLASSES contains exactly 6 known patterns"
         }
       ]
     },
@@ -3658,11 +3676,7 @@
         }
       ]
     },
-    "AGENT-04": {
-      "covered": false,
-      "test_cases": []
-    },
-    "CLASS-03": {
+    "PERF-03": {
       "covered": false,
       "test_cases": []
     }

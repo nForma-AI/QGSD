@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-20T19:52:59.399Z",
+  "generated": "2026-03-24T21:35:59.665Z",
   "total_failures": 2,
   "categories": {
     "crash": [],
@@ -10,19 +10,19 @@
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "fail",
-        "timestamp": "2026-03-20T19:52:56.485Z",
-        "check_id": "tla:mcsessiontracking",
+        "timestamp": "2026-03-24T21:35:57.349Z",
+        "check_id": "tla:mcnfhazardmodelmerge",
         "surface": "tla",
-        "property": "MCSessionTracking",
-        "runtime_ms": 10932,
-        "summary": "fail: MCSessionTracking in 10932ms",
+        "property": "MCNFHazardModelMerge",
+        "runtime_ms": 11653,
+        "summary": "fail: MCNFHazardModelMerge in 11653ms",
         "triage_tags": [],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCSessionTracking"
+          "config": "MCNFHazardModelMerge"
         },
         "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCSessionTracking in 10932ms"
+        "classification_reason": "Logic violation: fail: MCNFHazardModelMerge in 11653ms"
       }
     ],
     "drift": [
@@ -30,12 +30,12 @@
         "tool": "validate-traces",
         "formalism": "trace",
         "result": "fail",
-        "timestamp": "2026-03-20T19:52:57.162Z",
+        "timestamp": "2026-03-24T21:35:57.629Z",
         "check_id": "ci:conformance-traces",
         "surface": "ci",
         "property": "Conformance event replay through XState machine",
-        "runtime_ms": 16,
-        "summary": "fail: 1 divergence(s) in 1 traces (16ms)",
+        "runtime_ms": 40,
+        "summary": "fail: 1 divergence(s) in 1 traces (40ms)",
         "triage_tags": [
           "trace-divergence"
         ],
@@ -45,8 +45,8 @@
           "total": 1
         },
         "observation_window": {
-          "window_start": "2026-03-20T19:52:57.150Z",
-          "window_end": "2026-03-20T19:52:57.151Z",
+          "window_start": "2026-03-24T21:35:57.592Z",
+          "window_end": "2026-03-24T21:35:57.622Z",
           "n_traces": 0,
           "n_events": 1,
           "window_days": 0

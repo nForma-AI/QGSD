@@ -120,7 +120,9 @@ async function syncToClaudeJson(_service) {
   }
 
   if (patched > 0) {
-    fs.writeFileSync(claudeJsonPath, JSON.stringify(claudeJson, null, 2));
+    const tmpPath = claudeJsonPath + '.tmp';
+    fs.writeFileSync(tmpPath, JSON.stringify(claudeJson, null, 2));
+    fs.renameSync(tmpPath, claudeJsonPath);
   }
 }
 
@@ -192,7 +194,9 @@ function patchCcrConfigForKey(envKey, value) {
   }
 
   if (patched > 0) {
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    const tmpPath = configPath + '.tmp';
+    fs.writeFileSync(tmpPath, JSON.stringify(config, null, 2));
+    fs.renameSync(tmpPath, configPath);
   }
 }
 

@@ -1,10 +1,10 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-20T20:16:17.623Z",
-  "total_proposed": 1532,
+  "generated": "2026-03-24T22:01:12.215Z",
+  "total_proposed": 1545,
   "implemented": 0,
   "partial": 0,
-  "outstanding": 1532,
+  "outstanding": 1545,
   "metrics": [
     {
       "metric_name": "nf_maxdeliberationrounds__tla",
@@ -703,6 +703,18 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 1,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:MaxSteps",
+      "instrumentation_snippet": "// Prometheus gauge for MaxSteps (tla/constant)\n# HELP nf_maxsteps__tla Monitors MaxSteps from tla model\n# TYPE nf_maxsteps__tla gauge\nconst nf_maxsteps__tla = new Gauge({\n  name: 'nf_maxsteps__tla',\n  help: 'Monitors MaxSteps from tla model',\n  labelNames: ['model', 'file']\n});\nnf_maxsteps__tla.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg' }, 4);",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_maxturnlines__tla",
       "metric_type": "gauge",
       "tier": 1,
@@ -1216,18 +1228,6 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm:p_fail",
       "instrumentation_snippet": "// Prometheus gauge for p_fail (prism/const)\n# HELP nf_p_fail Monitors p_fail from prism model\n# TYPE nf_p_fail gauge\nconst nf_p_fail = new Gauge({\n  name: 'nf_p_fail',\n  help: 'Monitors p_fail from prism model',\n  labelNames: ['model', 'file']\n});\nnf_p_fail.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm' }, 0.3);",
-      "status": "proposed"
-    },
-    {
-      "metric_name": "nf_max_retries",
-      "metric_type": "gauge",
-      "tier": 1,
-      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
-      "assumption_name": "max_retries",
-      "assumption_type": "const",
-      "coverage": "uncovered",
-      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm:max_retries",
-      "instrumentation_snippet": "// Prometheus gauge for max_retries (prism/const)\n# HELP nf_max_retries Monitors max_retries from prism model\n# TYPE nf_max_retries gauge\nconst nf_max_retries = new Gauge({\n  name: 'nf_max_retries',\n  help: 'Monitors max_retries from prism model',\n  labelNames: ['model', 'file']\n});\nnf_max_retries.set({ model: 'formal', file: '/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm' }, 3);",
       "status": "proposed"
     },
     {
@@ -1948,6 +1948,18 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergenceV2.tla:TypeOK",
       "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveConvergenceV2.tla:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_typeok__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla",
+      "assumption_name": "TypeOK",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla:TypeOK",
+      "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
       "status": "proposed"
     },
     {
@@ -3724,6 +3736,126 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg:under",
       "instrumentation_snippet": "// Observe handler for under (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_under__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_under__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveConvergenceV2.cfg:under\",\n    \"description\": \"Counts violations of under\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_typeok__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "TypeOK",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:TypeOK",
+      "instrumentation_snippet": "// Observe handler for TypeOK (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_typeok__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_typeok__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:TypeOK\",\n    \"description\": \"Counts violations of TypeOK\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_modeselectionconsistency",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "ModeSelectionConsistency",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:ModeSelectionConsistency",
+      "instrumentation_snippet": "// Observe handler for ModeSelectionConsistency (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_modeselectionconsistency\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_modeselectionconsistency\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:ModeSelectionConsistency\",\n    \"description\": \"Counts violations of ModeSelectionConsistency\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_fastpathimpliesnoverbose",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "FastPathImpliesNoVerbose",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:FastPathImpliesNoVerbose",
+      "instrumentation_snippet": "// Observe handler for FastPathImpliesNoVerbose (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_fastpathimpliesnoverbose\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_fastpathimpliesnoverbose\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:FastPathImpliesNoVerbose\",\n    \"description\": \"Counts violations of FastPathImpliesNoVerbose\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_verboseimpliesagentpath",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "VerboseImpliesAgentPath",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:VerboseImpliesAgentPath",
+      "instrumentation_snippet": "// Observe handler for VerboseImpliesAgentPath (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_verboseimpliesagentpath\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_verboseimpliesagentpath\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:VerboseImpliesAgentPath\",\n    \"description\": \"Counts violations of VerboseImpliesAgentPath\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_invariant__tla",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "INVARIANT",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT",
+      "instrumentation_snippet": "// Observe handler for INVARIANT (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_invariant__tla\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_invariant__tla\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:INVARIANT\",\n    \"description\": \"Counts violations of INVARIANT\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_resultondone",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "ResultOnDone",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:ResultOnDone",
+      "instrumentation_snippet": "// Observe handler for ResultOnDone (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_resultondone\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_resultondone\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:ResultOnDone\",\n    \"description\": \"Counts violations of ResultOnDone\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_eventuallycompletes",
+      "metric_type": "counter",
+      "tier": 2,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg",
+      "assumption_name": "EventuallyCompletes",
+      "assumption_type": "invariant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:EventuallyCompletes",
+      "instrumentation_snippet": "// Observe handler for EventuallyCompletes (tla/invariant)\n// Add to observe config sources:\n{\n  \"type\": \"internal\",\n  \"label\": \"nf_eventuallycompletes\",\n  \"check\": \"formal-invariant\",\n  \"config\": {\n    \"metric\": \"nf_eventuallycompletes\",\n    \"type\": \"counter\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/MCSolveFastPath.cfg:EventuallyCompletes\",\n    \"description\": \"Counts violations of EventuallyCompletes\"\n  }\n}",
       "status": "proposed"
     },
     {
@@ -17767,6 +17899,18 @@
       "status": "proposed"
     },
     {
+      "metric_name": "nf_maxsteps__tla",
+      "metric_type": "gauge",
+      "tier": 3,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla",
+      "assumption_name": "MaxSteps",
+      "assumption_type": "constant",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla:MaxSteps",
+      "instrumentation_snippet": "// Observe handler for MaxSteps (tla/constant)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_maxsteps__tla\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_maxsteps__tla\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/tla/NFSolveFastPath.tla:MaxSteps\",\n    \"threshold\": null,\n    \"description\": \"Monitors MaxSteps from tla model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
       "metric_name": "nf_maxiterations__tla",
       "metric_type": "gauge",
       "tier": 3,
@@ -18316,6 +18460,18 @@
       "coverage": "uncovered",
       "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/mcp-availability.pm:copilot_s",
       "instrumentation_snippet": "// Observe handler for copilot_s (prism/bound)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_copilot_s\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_copilot_s\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/mcp-availability.pm:copilot_s\",\n    \"threshold\": \"[0..1]\",\n    \"description\": \"Monitors copilot_s from prism model\"\n  }\n}",
+      "status": "proposed"
+    },
+    {
+      "metric_name": "nf_max_retries",
+      "metric_type": "gauge",
+      "tier": 3,
+      "source_model": "/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm",
+      "assumption_name": "max_retries",
+      "assumption_type": "const",
+      "coverage": "uncovered",
+      "formal_ref": "spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm:max_retries",
+      "instrumentation_snippet": "// Observe handler for max_retries (prism/const)\n// Add to observe config sources:\n{\n  \"type\": \"bash\",\n  \"label\": \"nf_max_retries\",\n  \"command\": \"echo '{\\\"value\\\": 0, \\\"status\\\": \\\"ok\\\"}'\",\n  \"parser\": \"json\",\n  \"config\": {\n    \"metric\": \"nf_max_retries\",\n    \"type\": \"gauge\",\n    \"formal_ref\": \"spec:/Users/jonathanborduas/code/QGSD/.planning/formal/prism/oauth-rotation.pm:max_retries\",\n    \"threshold\": null,\n    \"description\": \"Monitors max_retries from prism model\"\n  }\n}",
       "status": "proposed"
     },
     {

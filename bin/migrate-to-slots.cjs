@@ -55,7 +55,9 @@ function migrateClaudeJson(claudeJsonPath, dryRun = false) {
   if (changed > 0) {
     raw.mcpServers = servers;
     if (!dryRun) {
-      fs.writeFileSync(claudeJsonPath, JSON.stringify(raw, null, 2) + '\n', 'utf8');
+      const tmpPath = claudeJsonPath + '.tmp';
+      fs.writeFileSync(tmpPath, JSON.stringify(raw, null, 2) + '\n', 'utf8');
+      fs.renameSync(tmpPath, claudeJsonPath);
     }
   }
 

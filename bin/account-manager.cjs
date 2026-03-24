@@ -145,29 +145,53 @@ function resolveProvider(providerArg) {
 
 // ─── Login + identity helpers ─────────────────────────────────────────────────
 
-// Spawns `<provider.cli> auth login` with fully inherited stdio so the browser
+// Spawns the provider's login command with fully inherited stdio so the browser
 // redirect URL and confirmation prompts appear inline in the user's terminal.
+// Uses auth_check.login_args from providers.json (e.g. ["login"] for codex,
+// ["auth", "login"] for gemini). Falls back to ["auth", "login"] if not set.
 function spawnInteractiveLogin(provider) {
+  const loginArgs = provider.auth_check?.login_args ?? ['auth', 'login'];
   return new Promise((resolve, reject) => {
-    console.log(`\n  Launching ${provider.cli} auth login …\n`);
-    const child = spawn(provider.cli, ['auth', 'login'], { stdio: 'inherit' });
+    console.log(`\n  Launching ${provider.cli} ${loginArgs.join(' ')} …\n`);
+    const child = spawn(provider.cli, loginArgs, { stdio: 'inherit' });
     child.on('close', (code) => {
-      if (code !== 0) reject(new Error(`auth login exited ${code}`));
+      if (code !== 0) reject(new Error(`${provider.cli} ${loginArgs.join(' ')} exited ${code}`));
       else resolve();
     });
     child.on('error', reject);
   });
 }
 
-// Decodes the id_token JWT (no network call) to extract the Google account email.
-// id_token = <header>.<payload>.<sig> — payload is base64url-encoded JSON.
+// Extracts account identity from credential files (no network call).
+// Supports multiple formats:
+//   - Gemini: id_token JWT → payload.email
+//   - Codex:  tokens.access_token JWT → payload.email, or OPENAI_API_KEY prefix
 function extractEmailFromCreds(activeFile) {
   try {
-    const creds   = JSON.parse(fs.readFileSync(activeFile, 'utf8'));
-    const jwt     = creds.id_token;
-    if (!jwt) return null;
-    const payload = Buffer.from(jwt.split('.')[1], 'base64url').toString('utf8');
-    return JSON.parse(payload).email ?? null;
+    const creds = JSON.parse(fs.readFileSync(activeFile, 'utf8'));
+
+    // Try id_token first (Gemini format)
+    if (creds.id_token) {
+      const payload = Buffer.from(creds.id_token.split('.')[1], 'base64url').toString('utf8');
+      const email = JSON.parse(payload).email;
+      if (email) return email;
+    }
+
+    // Try nested tokens (Codex format: { tokens: { id_token, access_token, ... } })
+    // id_token contains the email; access_token has sub but no email
+    for (const key of ['id_token', 'access_token']) {
+      const jwt = creds.tokens?.[key];
+      if (jwt && jwt.includes('.')) {
+        try {
+          const payload = Buffer.from(jwt.split('.')[1], 'base64url').toString('utf8');
+          const parsed = JSON.parse(payload);
+          if (parsed.email) return parsed.email;
+          if (parsed.sub) return parsed.sub;
+        } catch (_) { /* not a JWT, continue */ }
+      }
+    }
+
+    return null;
   } catch (_) { return null; }
 }
 
@@ -190,7 +214,7 @@ function getActivePtr(credsDir) {
 function listPool(credsDir) {
   if (!fs.existsSync(credsDir)) return [];
   return fs.readdirSync(credsDir)
-    .filter(f => f.endsWith('.json'))
+    .filter(f => f.endsWith('.json') && !f.startsWith('.nf-'))
     .map(f => f.replace(/\.json$/, ''))
     .sort();
 }
@@ -209,6 +233,46 @@ function writeActivePtr(credsDir, name) {
 function clearActivePtr(credsDir) {
   const ptr = getActivePtr(credsDir);
   if (fs.existsSync(ptr)) fs.rmSync(ptr);
+}
+
+// ─── Tier metadata ─────────────────────────────────────────────────────────────
+// Stored as .nf-tiers.json in the pool directory: { "user@example.com": "subscribed" }
+// Valid tiers: "subscribed" (paid quota), "free" (limited/no quota)
+// Accounts without a tier entry default to "subscribed" (optimistic).
+
+function getTiersFile(credsDir) {
+  return path.join(credsDir, '.nf-tiers.json');
+}
+
+function readTiers(credsDir) {
+  const f = getTiersFile(credsDir);
+  try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (_) { return {}; }
+}
+
+function writeTiers(credsDir, tiers) {
+  fs.writeFileSync(getTiersFile(credsDir), JSON.stringify(tiers, null, 2) + '\n', 'utf8');
+}
+
+function getAccountTier(credsDir, name) {
+  return readTiers(credsDir)[name] ?? 'subscribed';
+}
+
+function setAccountTier(credsDir, name, tier) {
+  const tiers = readTiers(credsDir);
+  tiers[name] = tier;
+  writeTiers(credsDir, tiers);
+}
+
+// Returns pool sorted by tier: subscribed first, then free. Skip accounts excluded.
+// Within each tier group, original alphabetical order is preserved.
+// Valid tiers: "subscribed" (paid), "free" (limited), "skip" (never use in rotation)
+function listPoolByTier(credsDir) {
+  const pool  = listPool(credsDir);
+  const tiers = readTiers(credsDir);
+  const subscribed = pool.filter(n => (tiers[n] ?? 'subscribed') === 'subscribed');
+  const free       = pool.filter(n => tiers[n] === 'free');
+  // skip accounts are excluded from rotation entirely
+  return { subscribed, free, ordered: [...subscribed, ...free] };
 }
 
 // ─── Commands (each drives the FSM through the appropriate TLA+ action sequence)
@@ -286,10 +350,13 @@ function cmdList(provider) {
     console.log(`  (pool empty — run \`add --login\` to add your first account)`);
     return;
   }
+  const tiers = readTiers(credsDir);
   console.log(`  OAuth pool for ${provider.name} (${provider.display_provider ?? provider.name}):`);
   pool.forEach((name, i) => {
     const marker = name === active ? '●' : ' ';
-    console.log(`  ${marker} ${i + 1}. ${name}`);
+    const tier   = tiers[name] ?? 'subscribed';
+    const tag    = tier === 'free' ? ' [free]' : tier === 'skip' ? ' [skip]' : '';
+    console.log(`  ${marker} ${i + 1}. ${name}${tag}`);
   });
 }
 
@@ -304,14 +371,21 @@ function cmdSwitch(fsm, provider, target) {
   let targetName;
   if (target === 'next' || target === 'prev') {
     const active = readActivePtr(credsDir);
-    const idx    = active ? pool.indexOf(active) : -1;
     if (pool.length === 1) {
       console.log(`  (only one account in pool — already on "${pool[0]}")`);
       return;
     }
+    // Tier-aware rotation: cycle within subscribed accounts first.
+    // Only spill into free accounts when all subscribed are exhausted.
+    const { subscribed, ordered } = listPoolByTier(credsDir);
+    const tierPool = subscribed.length > 1 ? subscribed
+                   : subscribed.length === 1 && subscribed[0] !== active ? subscribed
+                   : ordered;  // fallback: all accounts
+    const idx = active ? tierPool.indexOf(active) : -1;
+    const effectiveIdx = idx === -1 ? 0 : idx;
     targetName = target === 'next'
-      ? pool[(idx + 1) % pool.length]
-      : pool[(idx - 1 + pool.length) % pool.length];
+      ? tierPool[(effectiveIdx + 1) % tierPool.length]
+      : tierPool[(effectiveIdx - 1 + tierPool.length) % tierPool.length];
   } else if (/^\d+$/.test(target)) {
     const idx = parseInt(target, 10) - 1;
     if (idx < 0 || idx >= pool.length) die(`Index ${target} out of range (1–${pool.length})`);
@@ -648,8 +722,10 @@ function usage(prefix = 'node bin/account-manager.cjs') {
     '  add --login [--name alias]    Authenticate inline and add to pool (recommended)',
     '  add --name <email>            Capture current active credential into pool',
     '  list                          Show pool accounts',
-    '  switch <name|next|prev|N>     Switch active account',
+    '  switch <name|next|prev|N>     Switch active account (tier-aware)',
     '  remove <name>                 Remove account from pool',
+    '  tier                          Show all account tiers',
+    '  tier <name> <subscribed|free|skip> Set account tier',
     '  status                        Show provider and pool state',
     '',
     'Options:',
@@ -699,6 +775,38 @@ async function run(argv, usagePrefix) {
       const target = argv[1];
       if (!target) die('remove requires <name>');
       cmdRemove(fsm, provider, target);
+      break;
+    }
+
+    case 'tier': {
+      // Extract positional args (skip --flag and their values)
+      const positionals = [];
+      for (let i = 1; i < argv.length; i++) {
+        if (argv[i].startsWith('--')) { i++; continue; }  // skip --flag value
+        positionals.push(argv[i]);
+      }
+      const target = positionals[0];
+      const tierVal = positionals[1];
+      if (!target) {
+        // Show all tiers
+        const credsDir = getCredsDir(provider);
+        const pool = listPool(credsDir);
+        const tiers = readTiers(credsDir);
+        console.log(`  Account tiers for ${provider.name}:`);
+        pool.forEach(name => {
+          const t = tiers[name] ?? 'subscribed';
+          console.log(`    ${name}: ${t}`);
+        });
+        break;
+      }
+      if (!tierVal || !['subscribed', 'free', 'skip'].includes(tierVal)) {
+        die('tier requires: <account-name> <subscribed|free|skip>');
+      }
+      const cd = getCredsDir(provider);
+      const pl = listPool(cd);
+      if (!pl.includes(target)) die(`Account "${target}" not in pool`);
+      setAccountTier(cd, target, tierVal);
+      console.log(`  ✓ ${target} → ${tierVal}`);
       break;
     }
 

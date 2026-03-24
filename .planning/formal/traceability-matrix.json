@@ -1,22 +1,22 @@
 {
   "metadata": {
-    "generated_at": "2026-03-20T20:01:33.873Z",
+    "generated_at": "2026-03-24T22:04:52.366Z",
     "generator_version": "1.1",
     "data_sources": {
       "annotations": {
-        "file_count": 199,
-        "property_count": 1253
+        "file_count": 205,
+        "property_count": 1296
       },
       "model_registry": {
-        "file_count": 201,
+        "file_count": 207,
         "used_as_fallback": 6
       },
       "check_results": {
-        "entry_count": 1456
+        "entry_count": 215
       },
       "unit_test_coverage": {
         "available": true,
-        "requirements_matched": 401
+        "requirements_matched": 408
       }
     }
   },
@@ -12500,21 +12500,21 @@
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/NFQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         },
         {
           "model_file": ".planning/formal/tla/QGSDQuorum.tla",
           "property_name": "DeliberationMonotone",
           "source": "annotation",
           "latest_result": "pass",
-          "check_id": "tla:deliberation"
+          "check_id": "tla:quorum-safety"
         }
       ]
     },
@@ -17008,6 +17008,407 @@
         ]
       }
     },
+    "CLASS-02": {
+      "id": "CLASS-02",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "ErrorType",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "Stats",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "RetryFailedBatchesOnce",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "RetryRequiresAttempt",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "FailedItemsTracked",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "SuccessNoError",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "ErrorTypesComplete",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CLASS-02.stub.test.js",
+            "test_name": "CLASS-02: classifyWithHaiku function is defined and exported"
+          }
+        ]
+      }
+    },
+    "CLASS-03": {
+      "id": "CLASS-03",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "TlcFailureClass",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "PatternPriority",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "OrderedPatternMatching",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "NoMatchIsUnknown",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "ExactlySixClasses",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+          "property_name": "ClassificationDeterministic",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/CLASS-03.stub.test.js",
+            "test_name": "CLASS-03: FAILURE_CLASSES contains exactly 6 known patterns"
+          }
+        ]
+      }
+    },
+    "AGENT-04": {
+      "id": "AGENT-04",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "DetectionThreshold",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "CandidatesFromDetection",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "CandidatesInOutput",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "OutputCompleteness",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "DualDetectionCreatesTwoCandidates",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+          "property_name": "NoCandidatesBelowThreshold",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/AGENT-04.stub.test.js",
+            "test_name": "AGENT-04: researcher agent file exists"
+          }
+        ]
+      }
+    },
+    "RSN-06": {
+      "id": "RSN-06",
+      "properties": [
+        {
+          "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+          "property_name": "MergeUserOverrides",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+          "property_name": "RecomputeRPN",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+          "property_name": "UserOverridesPreserved",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+          "property_name": "OverriddenScoresPreserved",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/RSN-06.stub.test.js",
+            "test_name": "RSN-06: hazard-model.cjs exists and is readable"
+          }
+        ]
+      }
+    },
+    "VERF-04": {
+      "id": "VERF-04",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "AllKeysNormalized",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "LegacyPathsConverted",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "CheckCommandsNormalized",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "NoSymlinkNeeded",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "NoLegacyPrefixesRemain",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+          "property_name": "CheckCommandsUseNormalizedPaths",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/VERF-04.stub.test.js",
+            "test_name": "VERF-04: run-formal-verify.cjs exists and is readable"
+          }
+        ]
+      }
+    },
+    "XPLAT-03": {
+      "id": "XPLAT-03",
+      "properties": [
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "Bool",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "DynamicResolutionAtDispatch",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "ResolutionSearchesLocations",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "FoundMeansResolved",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "MissingShowsInstructions",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "FoundInSearched",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "OneResolutionPerSlot",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "MissingAlwaysShowsHelp",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        },
+        {
+          "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+          "property_name": "AlwaysDynamic",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": true,
+        "test_cases": [
+          {
+            "test_file": ".planning/formal/generated-stubs/XPLAT-03.stub.test.js",
+            "test_name": "XPLAT-03: resolve-cli.cjs exists and exports resolveCli"
+          }
+        ]
+      }
+    },
+    "PERF-03": {
+      "id": "PERF-03",
+      "properties": [
+        {
+          "model_file": ".planning/formal/tla/NFSolveFastPath.tla",
+          "property_name": "TypeOK",
+          "source": "annotation",
+          "latest_result": null,
+          "check_id": null
+        }
+      ],
+      "unit_test_coverage": {
+        "covered": false,
+        "test_cases": []
+      }
+    },
     "HEAL-01": {
       "id": "HEAL-01",
       "properties": [
@@ -17085,29 +17486,29 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"min_quorum_available\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"majority_available\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -17127,15 +17528,15 @@
           "model_file": ".planning/formal/prism/mcp-availability.props",
           "property_name": "S=? [ \"total_outage\" ]",
           "source": "annotation",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         },
         {
           "model_file": ".planning/formal/prism/mcp-availability.pm",
           "property_name": "(model-level)",
           "source": "model-registry",
-          "latest_result": "pass",
-          "check_id": "prism:mcp-availability"
+          "latest_result": null,
+          "check_id": null
         }
       ],
       "unit_test_coverage": {
@@ -26464,7 +26865,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFDeliberation.tla::ImprovementMonotone": {
       "model_file": ".planning/formal/tla/NFDeliberation.tla",
@@ -26729,7 +27130,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/NFQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/NFQuorum.tla",
@@ -28181,7 +28582,7 @@
       ],
       "source": "annotation",
       "latest_result": "pass",
-      "check_id": "tla:deliberation"
+      "check_id": "tla:quorum-safety"
     },
     ".planning/formal/tla/QGSDQuorum.tla::EventualConsensus": {
       "model_file": ".planning/formal/tla/QGSDQuorum.tla",
@@ -29954,6 +30355,437 @@
       "latest_result": null,
       "check_id": null
     },
+    ".planning/formal/alloy/classification-retry-patterns.als::Bool": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "CLASS-02",
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::ErrorType": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "ErrorType",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::Stats": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "Stats",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::RetryFailedBatchesOnce": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "RetryFailedBatchesOnce",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::RetryRequiresAttempt": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "RetryRequiresAttempt",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::FailedItemsTracked": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "FailedItemsTracked",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::SuccessNoError": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "SuccessNoError",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::TlcFailureClass": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "TlcFailureClass",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::PatternPriority": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "PatternPriority",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::OrderedPatternMatching": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "OrderedPatternMatching",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::NoMatchIsUnknown": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "NoMatchIsUnknown",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::ExactlySixClasses": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "ExactlySixClasses",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::ErrorTypesComplete": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "ErrorTypesComplete",
+      "requirement_ids": [
+        "CLASS-02"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/classification-retry-patterns.als::ClassificationDeterministic": {
+      "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+      "property_name": "ClassificationDeterministic",
+      "requirement_ids": [
+        "CLASS-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::Bool": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::DetectionThreshold": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "DetectionThreshold",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::CandidatesFromDetection": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "CandidatesFromDetection",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::CandidatesInOutput": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "CandidatesInOutput",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::OutputCompleteness": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "OutputCompleteness",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::DualDetectionCreatesTwoCandidates": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "DualDetectionCreatesTwoCandidates",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/agent-fsm-detection.als::NoCandidatesBelowThreshold": {
+      "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+      "property_name": "NoCandidatesBelowThreshold",
+      "requirement_ids": [
+        "AGENT-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla::TypeOK": {
+      "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "RSN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla::MergeUserOverrides": {
+      "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "property_name": "MergeUserOverrides",
+      "requirement_ids": [
+        "RSN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla::RecomputeRPN": {
+      "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "property_name": "RecomputeRPN",
+      "requirement_ids": [
+        "RSN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla::UserOverridesPreserved": {
+      "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "property_name": "UserOverridesPreserved",
+      "requirement_ids": [
+        "RSN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla::OverriddenScoresPreserved": {
+      "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+      "property_name": "OverriddenScoresPreserved",
+      "requirement_ids": [
+        "RSN-06"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::Bool": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::AllKeysNormalized": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "AllKeysNormalized",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::LegacyPathsConverted": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "LegacyPathsConverted",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::CheckCommandsNormalized": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "CheckCommandsNormalized",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::NoSymlinkNeeded": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "NoSymlinkNeeded",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::NoLegacyPrefixesRemain": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "NoLegacyPrefixesRemain",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/verify-path-normalization.als::CheckCommandsUseNormalizedPaths": {
+      "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+      "property_name": "CheckCommandsUseNormalizedPaths",
+      "requirement_ids": [
+        "VERF-04"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::Bool": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "Bool",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::DynamicResolutionAtDispatch": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "DynamicResolutionAtDispatch",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::ResolutionSearchesLocations": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "ResolutionSearchesLocations",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::FoundMeansResolved": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "FoundMeansResolved",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::MissingShowsInstructions": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "MissingShowsInstructions",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::FoundInSearched": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "FoundInSearched",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::OneResolutionPerSlot": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "OneResolutionPerSlot",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::MissingAlwaysShowsHelp": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "MissingAlwaysShowsHelp",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/alloy/ccr-binary-resolution.als::AlwaysDynamic": {
+      "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+      "property_name": "AlwaysDynamic",
+      "requirement_ids": [
+        "XPLAT-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
+    ".planning/formal/tla/NFSolveFastPath.tla::TypeOK": {
+      "model_file": ".planning/formal/tla/NFSolveFastPath.tla",
+      "property_name": "TypeOK",
+      "requirement_ids": [
+        "PERF-03"
+      ],
+      "source": "annotation",
+      "latest_result": null,
+      "check_id": null
+    },
     ".planning/formal/prism/deliberation-healing.props::P=? [ F \"consensus\" ]": {
       "model_file": ".planning/formal/prism/deliberation-healing.props",
       "property_name": "P=? [ F \"consensus\" ]",
@@ -30001,8 +30833,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"total_outage\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -30012,8 +30844,8 @@
         "FAIL-01"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/mcp-availability.props::S=? [ \"majority_available\" ]": {
       "model_file": ".planning/formal/prism/mcp-availability.props",
@@ -30022,8 +30854,8 @@
         "MCPENV-04"
       ],
       "source": "annotation",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/oauth-rotation.props::P=? [ F s=1 ]": {
       "model_file": ".planning/formal/prism/oauth-rotation.props",
@@ -30189,8 +31021,8 @@
         "FAIL-01"
       ],
       "source": "model-registry",
-      "latest_result": "pass",
-      "check_id": "prism:mcp-availability"
+      "latest_result": null,
+      "check_id": null
     },
     ".planning/formal/prism/oauth-rotation.pm::(model-level)": {
       "model_file": ".planning/formal/prism/oauth-rotation.pm",
@@ -30217,17 +31049,10 @@
     }
   },
   "coverage_summary": {
-    "total_requirements": 407,
-    "covered_count": 401,
-    "coverage_percentage": 98.5,
-    "uncovered_requirements": [
-      "AGENT-04",
-      "CLASS-02",
-      "CLASS-03",
-      "RSN-06",
-      "VERF-04",
-      "XPLAT-03"
-    ],
+    "total_requirements": 408,
+    "covered_count": 408,
+    "coverage_percentage": 100,
+    "uncovered_requirements": [],
     "orphan_properties": []
   },
   "bidirectional_validation": {
@@ -32249,6 +33074,48 @@
         "detail": "model-registry lists TEST-02 for .planning/formal/tla/NFConvergenceTest.tla but requirements.json TEST-02 does not list .planning/formal/tla/NFConvergenceTest.tla in formal_models"
       },
       {
+        "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+        "requirement_id": "CLASS-02",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CLASS-02 for .planning/formal/alloy/classification-retry-patterns.als but requirements.json CLASS-02 does not list .planning/formal/alloy/classification-retry-patterns.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/classification-retry-patterns.als",
+        "requirement_id": "CLASS-03",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists CLASS-03 for .planning/formal/alloy/classification-retry-patterns.als but requirements.json CLASS-03 does not list .planning/formal/alloy/classification-retry-patterns.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/agent-fsm-detection.als",
+        "requirement_id": "AGENT-04",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists AGENT-04 for .planning/formal/alloy/agent-fsm-detection.als but requirements.json AGENT-04 does not list .planning/formal/alloy/agent-fsm-detection.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/tla/NFHazardModelMerge.tla",
+        "requirement_id": "RSN-06",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists RSN-06 for .planning/formal/tla/NFHazardModelMerge.tla but requirements.json RSN-06 does not list .planning/formal/tla/NFHazardModelMerge.tla in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/verify-path-normalization.als",
+        "requirement_id": "VERF-04",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists VERF-04 for .planning/formal/alloy/verify-path-normalization.als but requirements.json VERF-04 does not list .planning/formal/alloy/verify-path-normalization.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/alloy/ccr-binary-resolution.als",
+        "requirement_id": "XPLAT-03",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists XPLAT-03 for .planning/formal/alloy/ccr-binary-resolution.als but requirements.json XPLAT-03 does not list .planning/formal/alloy/ccr-binary-resolution.als in formal_models"
+      },
+      {
+        "model_file": ".planning/formal/tla/NFSolveFastPath.tla",
+        "requirement_id": "PERF-03",
+        "direction": "model_claims_requirement",
+        "detail": "model-registry lists PERF-03 for .planning/formal/tla/NFSolveFastPath.tla but requirements.json PERF-03 does not list .planning/formal/tla/NFSolveFastPath.tla in formal_models"
+      },
+      {
         "model_file": ".planning/formal/prism/mcp-availability.props",
         "requirement_id": "FAIL-01",
         "direction": "requirement_claims_model",
@@ -32829,8 +33696,8 @@
       }
     ],
     "summary": {
-      "total_checked": 631,
-      "asymmetric_count": 348,
+      "total_checked": 638,
+      "asymmetric_count": 355,
       "stale_count": 101,
       "clean": false
     }
@@ -33449,12 +34316,37 @@
       "risk_reason": "Unbounded domains: iteration: 0..MaxIterations, residuals: [Layers -> 0..MaxResidual]",
       "variable_count": 4,
       "constant_count": 0
+    },
+    ".planning/formal/tla/NFHazardModelMerge.tla": {
+      "risk_level": "HIGH",
+      "estimated_states": null,
+      "has_unbounded": true,
+      "unbounded_domains": [
+        "hazards: SUBSET (1..MaxHazards)",
+        "userOverrides: unknown",
+        "detectionScores: unknown",
+        "computedRPN: unknown"
+      ],
+      "risk_reason": "Unbounded domains: hazards: SUBSET (1..MaxHazards), userOverrides: unknown, detectionScores: unknown, computedRPN: unknown",
+      "variable_count": 5,
+      "constant_count": 0
+    },
+    ".planning/formal/tla/NFSolveFastPath.tla": {
+      "risk_level": "HIGH",
+      "estimated_states": null,
+      "has_unbounded": true,
+      "unbounded_domains": [
+        "stepCount: 0..MaxSteps"
+      ],
+      "risk_reason": "Unbounded domains: stepCount: 0..MaxSteps",
+      "variable_count": 5,
+      "constant_count": 0
     }
   },
   "coverage_preservation": {
     "baseline_found": true,
-    "baseline_date": "2026-03-20T20:01:21.711Z",
-    "requirements_checked": 500,
+    "baseline_date": "2026-03-24T21:48:27.977Z",
+    "requirements_checked": 506,
     "regressions": [],
     "summary": {
       "total_regressions": 0,

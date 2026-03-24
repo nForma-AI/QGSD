@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "generated": "2026-03-20T19:52:55.919Z",
-    "proximity_index_hash": "cd51b6a8",
+    "generated": "2026-03-24T21:35:56.092Z",
+    "proximity_index_hash": "e2647798",
     "threshold": 0.7,
     "max_hops": 5,
     "total_pairs_checked": 0,
     "candidates_found": 0,
     "candidates_filtered": 0,
     "orphan_models_count": 1,
-    "orphan_requirements_count": 6,
-    "uncovered_requirements_count": 6,
+    "orphan_requirements_count": 1,
+    "uncovered_requirements_count": 1,
     "non_neighbor_top": 20,
     "fast_path": true
   },
@@ -23,55 +23,15 @@
     ],
     "requirements": [
       {
-        "id": "AGENT-04",
-        "edges": 0
-      },
-      {
-        "id": "CLASS-02",
-        "edges": 0
-      },
-      {
-        "id": "CLASS-03",
-        "edges": 0
-      },
-      {
-        "id": "RSN-06",
-        "edges": 0
-      },
-      {
-        "id": "VERF-04",
-        "edges": 0
-      },
-      {
-        "id": "XPLAT-03",
+        "id": "PERF-03",
         "edges": 0
       }
     ]
   },
   "uncovered_requirements": [
     {
-      "id": "AGENT-04",
-      "text": "Phase researcher agent detects implicit state machine patterns in code files and surfaces findings in structured FSM Candidates table within RESEARCH.md output"
-    },
-    {
-      "id": "CLASS-02",
-      "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats"
-    },
-    {
-      "id": "CLASS-03",
-      "text": "classifyTlcFailure classifier detects 6 TLC failure patterns (deadlock, sany_semantic, fairness_gap, invariant_violation, syntax_error, unknown) via ordered pattern matching and integrates into solve-remediate.md F->C dispatch to route deadlock/sany_semantic/fairness_gap to deterministic auto-fix templates."
-    },
-    {
-      "id": "RSN-06",
-      "text": "hazard-model.cjs preserves user overrides (detection score, detection_justification, user_override flag) across regeneration — loads existing data, merges user-owned fields, recomputes RPN and summary after merge"
-    },
-    {
-      "id": "VERF-04",
-      "text": "run-formal-verify.cjs normalizes legacy `formal-spec/` paths to `.planning/formal/` in registry check commands and model keys — no manual symlink required"
-    },
-    {
-      "id": "XPLAT-03",
-      "text": "CCR provider slots resolve binary paths dynamically at dispatch time and detect missing CCR installation with helpful install instructions"
+      "id": "PERF-03",
+      "text": "Solve diagnostic Phase 1 uses direct Bash invocation of nf-solve.cjs for baseline residual computation by default (~60s) with optional full Agent dispatch path when --verbose flag is passed"
     }
   ]
 }
