@@ -83,7 +83,7 @@ None currently.
 | 336 | Implement 3 targeted TLA+ failure classifiers in F->C remediation layer | 2026-03-20 | fc31f89d | Verified | [336-implement-3-targeted-tla-failure-classif](./quick/336-implement-3-targeted-tla-failure-classif/) |
 | 337 | Fast-path initial diagnostic | 2026-03-24 | f11306a0 | Verified | [337-fast-path-initial-diagnostic](./quick/337-fast-path-initial-diagnostic/) |
 | 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Verified | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
-| 339 | Inline trivial remediation layers | 2026-03-24 | 8e7c9dd5 | Pending | [339-inline-trivial-remediation-layers](./quick/339-inline-trivial-remediation-layers/) |
+| 339 | Inline trivial remediation layers | 2026-03-24 | 8e7c9dd5 | Verified | [339-inline-trivial-remediation-layers](./quick/339-inline-trivial-remediation-layers/) |
 
 ## Session Continuity
 
