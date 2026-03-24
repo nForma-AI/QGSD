@@ -43,9 +43,15 @@ The orchestrator passes a JSON object (as part of the Agent prompt or via a temp
   "open_debt": [ /* from debt load */ ],
   "heatmap": { /* from heatmap analysis */ },
   "targets": null | { /* observe targets */ },
-  "iteration": 1
+  "iteration": 1,
+  "skip_inline_layers": ["hazard_model", "d_to_c"],
+  "preflight_data": { "l3_to_tc_unvalidated": 0 }
 }
 ```
+
+**Optional fields (backward compatible):**
+- `skip_inline_layers` (array of strings): layers already handled by the orchestrator's inline dispatch (solve-inline-dispatch.cjs). If missing or not an array, treat as empty — run all layers as before.
+- `preflight_data` (object): pre-computed results from gate scripts. If missing, run gate scripts as before.
 </input_contract>
 
 <output_contract>
@@ -498,6 +504,8 @@ Log: `"R->D: spawned 1 executor for {N} requirements (no quorum overhead)"`
 
 ### 3g. D->C Gaps (residual_vector.d_to_c.residual > 0)
 
+**Skip check:** If `d_to_c` is in `skip_inline_layers` array: Log `"D->C: skipped (handled by orchestrator inline dispatch)"` and record as `{"layer": "d_to_c", "status": "skipped-inline"}`. Do NOT display the table again. Proceed to next section.
+
 Stale structural claims in documentation — file paths, CLI commands, or dependencies referenced in docs that no longer exist in the codebase. This is a manual-review-only gap.
 
 Display the broken claims table from `residual_vector.d_to_c.detail.broken_claims`:
@@ -599,6 +607,8 @@ Log line update: `"Reverse discovery: {N} candidates presented to quorum, {M} ap
 
 ### 3j. Hazard Model Refresh (pre-gate)
 
+**Skip check:** If `hazard_model` is in `skip_inline_layers` array: Log `"Hazard model: skipped (handled by orchestrator inline dispatch)"` and record as `{"layer": "hazard_model", "status": "skipped-inline"}`. Do NOT re-run hazard-model.cjs. Proceed to next section.
+
 Before remediating gate failures, refresh the L3 hazard model so gate checks evaluate current data:
 
 ```bash
@@ -652,18 +662,20 @@ Log: `"Gate B: gate_b_score={score}, {orphaned_count} models without requirement
 
 Gate C verifies every L3 failure mode maps to at least one test recipe. Unvalidated failure modes lack test coverage.
 
+**Preflight check:** If `preflight_data.l3_to_tc_unvalidated` is present and is a number >= 0, skip the test-recipe-gen.cjs and gate-c-validation.cjs runs below. Use the preflight value directly as `unvalidated_count`. Log `"Gate C: using preflight data (unvalidated={N}) — skipping gate script re-runs"`. Still dispatch /nf:quick if unvalidated > 0.
+
 **Max dispatches: 3 per solve cycle.** Track a counter for Gate C dispatches. If the counter reaches 3, log `"Gate C: max remediation dispatches (3) reached this cycle — skipping further auto-fixes"`, append `{ "layer": "l3_to_tc", "dispatched": 3, "max": 3 }` to the `capped_layers` array, and skip.
 
 Extract detail from `residual_vector.l3_to_tc.detail`:
 - `unvalidated_count` — failure modes with no test recipe (mapped from gate-c-validation.cjs `unvalidated_entries`)
 - `total_failure_modes` — total L3 failure modes
 
-First, regenerate test recipes to ensure freshness:
+First, regenerate test recipes to ensure freshness (skip if preflight data available):
 ```bash
 node bin/test-recipe-gen.cjs
 ```
 
-If unvalidated_count is still > 0 after regeneration, re-run gate-c-validation.cjs to get the updated gap list:
+If unvalidated_count is still > 0 after regeneration, re-run gate-c-validation.cjs to get the updated gap list (skip if preflight data available):
 ```bash
 node bin/gate-c-validation.cjs --json
 ```

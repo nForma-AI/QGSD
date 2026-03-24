@@ -154,6 +154,24 @@ Default `max_iterations = 5`. Override with `--max-iterations=N`.
 
 For `iteration = 1` to `max_iterations`:
 
+**3a-pre. Pre-run inline layers:**
+
+Before dispatching the remediation Agent, run trivial layers directly to save Agent startup overhead:
+
+```bash
+# Write residual_vector to temp file for the inline dispatch script
+echo '$RESIDUAL_VECTOR_JSON' > /tmp/nf-solve-residual.json
+INLINE=$(node ~/.claude/nf-bin/solve-inline-dispatch.cjs --input=/tmp/nf-solve-residual.json --project-root=$(pwd) 2>/dev/null)
+```
+
+If `~/.claude/nf-bin/solve-inline-dispatch.cjs` does not exist, fall back to `bin/solve-inline-dispatch.cjs`.
+If the script fails or returns invalid JSON, default to: `{"inline_results":{},"skip_layers":[],"preflight_data":{}}`
+
+Parse the JSON output:
+- Display any d_to_c table from `inline_results.d_to_c.table` (if non-empty)
+- Log hazard_model summary from `inline_results.hazard_model.summary` (if status is "ok")
+- Store `skip_layers` and `preflight_data` for forwarding to the Agent
+
 **3a. Dispatch remediation:**
 ```
 Agent(
@@ -161,7 +179,7 @@ Agent(
   description="solve: remediation iteration {N}",
   prompt="First resolve the sub-skill path: try $HOME/.claude/commands/nf/solve-remediate.md, fall back to commands/nf/solve-remediate.md if not found. Read and follow it end-to-end.
 Input context (JSON):
-{\"residual_vector\": ..., \"open_debt\": ..., \"heatmap\": ..., \"targets\": ..., \"iteration\": N}
+{\"residual_vector\": ..., \"open_debt\": ..., \"heatmap\": ..., \"targets\": ..., \"iteration\": N, \"skip_inline_layers\": [...skip_layers from 3a-pre], \"preflight_data\": {...preflight_data from 3a-pre}}
 After completing all remediation steps, output ONLY the JSON result object described in the output_contract section."
 )
 ```
