@@ -830,3 +830,43 @@ test('TC-PREC-INJECT-4: precedent section appears after requirements section whe
   assert.ok(precIdx >= 0, 'precedents section should be present');
   assert.ok(precIdx > reqIdx, 'precedents should appear after requirements');
 });
+
+// ── DISPATCH NONCE TESTS ────────────────────────────────────────────────────
+
+test('emitResultBlock includes dispatch_nonce field when provided', () => {
+  assert.ok(mod, 'module not loaded');
+  const result = mod.emitResultBlock({
+    slot: 'gemini-1', round: 1, verdict: 'APPROVE',
+    reasoning: 'Looks good', dispatch_nonce: 'abc123deadbeef'
+  });
+  assert.ok(result.includes('dispatch_nonce: abc123deadbeef'), 'nonce missing from result block');
+});
+
+test('emitResultBlock omits dispatch_nonce when not provided', () => {
+  assert.ok(mod, 'module not loaded');
+  const result = mod.emitResultBlock({
+    slot: 'gemini-1', round: 1, verdict: 'APPROVE', reasoning: 'ok'
+  });
+  assert.ok(!result.includes('dispatch_nonce'), 'nonce should not appear when not provided');
+});
+
+test('emitResultBlock includes dispatch_nonce on UNAVAIL results', () => {
+  assert.ok(mod, 'module not loaded');
+  const result = mod.emitResultBlock({
+    slot: 'codex-1', round: 1, verdict: 'UNAVAIL',
+    reasoning: 'timeout', isUnavail: true, dispatch_nonce: 'deadbeef12345678'
+  });
+  assert.ok(result.includes('dispatch_nonce: deadbeef12345678'), 'nonce missing from UNAVAIL block');
+});
+
+test('dispatch_nonce positioned correctly in result block', () => {
+  assert.ok(mod, 'module not loaded');
+  const result = mod.emitResultBlock({
+    slot: 'gemini-1', round: 1, verdict: 'APPROVE',
+    reasoning: 'ok', dispatch_nonce: 'cafebabe'
+  });
+  const lines = result.split('\n');
+  const nonceIdx = lines.findIndex(l => l.includes('dispatch_nonce:'));
+  const verdictIdx = lines.findIndex(l => l.startsWith('verdict:'));
+  assert.ok(nonceIdx > verdictIdx, 'dispatch_nonce should appear after verdict');
+});

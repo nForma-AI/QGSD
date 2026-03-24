@@ -271,6 +271,23 @@ node "$HOME/.claude/nf-bin/update-scoreboard.cjs" \
 
 ---
 
+## 10.5. Dispatch Nonce Verification
+
+**Purpose:** Detect fabricated result blocks from slot-workers that answered instead of dispatching.
+
+Every genuine result block from `quorum-slot-dispatch.cjs` contains:
+```
+dispatch_nonce: <32-char hex>
+```
+
+The nonce is generated per-dispatch via `crypto.randomBytes(16).toString('hex')`.
+
+**Verification rule:** If a slot-worker's output contains a structured result block but NO `dispatch_nonce:` field, treat the result as SUSPECT -> UNAVAIL. Log: `[WARN] Slot <name> result missing dispatch_nonce -- treating as UNAVAIL`.
+
+**Why nonce, not HMAC:** The nonce is generated and verified within the same trust boundary (Node.js process chain). No shared secret is needed -- presence of a nonce proves the dispatch script ran.
+
+---
+
 ## 11. Improvements Extraction (Mode A Only)
 
 **Condition:** When `request_improvements: true` and consensus reached.
