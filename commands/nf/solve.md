@@ -1,7 +1,7 @@
 ---
 name: nf:solve
 description: Orchestrator skill that dispatches diagnostic, remediation, and reporting sub-skills via Agent tool, managing the convergence loop and report-only gate
-argument-hint: [--report-only] [--plan-only] [--execute] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"]
+argument-hint: [--report-only] [--plan-only] [--execute] [--resume] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"]
 allowed-tools:
   - Read
   - Bash
@@ -44,16 +44,18 @@ Initialize at the very start of the process block:
   - If args contain `--fast`, set `fastMode = true`. Otherwise, set `fastMode = false`.
   - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
   - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
+  - If args contain `--resume`, set `resumeMode = true`. Otherwise, set `resumeMode = false`.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
 
 **Two-phase solve (QUICK-345):**
 - `--plan-only`: Run Phase 1 diagnostic, compute a remediation plan summary, save to solve-session.json, then STOP. The user reviews the plan before committing to execution.
-- `--execute`: Resume from a saved solve-session.json — skip Phase 1 diagnostic and go directly to Phase 3 remediation using the saved baseline.
+- `--execute`: Resume from a saved solve-session.json (planned status) — skip Phase 1 diagnostic and go directly to Phase 3 remediation using the saved baseline.
+- `--resume`: Resume from a saved solve-session.json (in_progress status) — skip completed iterations and continue the convergence loop from where it left off. Useful after context resets or crashes.
 - Neither flag (default): run the full solve cycle as before (diagnose + remediate + report).
 
-## Phase 0.5: Resume from session (--execute only)
+## Phase 0.5: Resume from session (--execute or --resume)
 
-If `executeMode` is true, load the saved solve session instead of running Phase 1:
+If `executeMode` or `resumeMode` is true, load the saved solve session instead of running Phase 1:
 
 ```bash
 SESSION=$(node ~/.claude/nf-bin/solve-session.cjs read --project-root=$(pwd) 2>/dev/null)
@@ -62,8 +64,10 @@ SESSION=$(node ~/.claude/nf-bin/solve-session.cjs read --project-root=$(pwd) 2>/
 If `~/.claude/nf-bin/solve-session.cjs` does not exist, fall back to `bin/solve-session.cjs`.
 
 Parse the JSON output:
-- If session is null or `status` is not `"planned"`: log `"No saved solve session found — running fresh diagnostic"` and proceed to Phase 1 normally (ignore --execute).
-- If session is valid: restore `baseline_residual` from `session.baseline_residual`, `open_debt` from `session.open_debt` (or `[]`), and other saved context. Log `"Resuming from saved session (planned at {session.updated_at})"`. Skip Phase 1 and Phase 1c entirely — proceed directly to Phase 2 (Report-Only Gate) or Phase 3 (Remediate).
+- If session is null: log `"No saved solve session found — running fresh diagnostic"` and proceed to Phase 1 normally.
+- If `executeMode` and session `status` is `"planned"`: restore `baseline_residual` from `session.baseline_residual`, `open_debt` from `session.open_debt` (or `[]`). Log `"Resuming from planned session (created at {session.created_at})"`. Skip Phase 1 and Phase 1c — proceed directly to Phase 3 (Remediate) starting at iteration 1.
+- If `resumeMode` and session `status` is `"in_progress"`: restore `baseline_residual`, `open_debt`, and `last_residual` from session. Set `start_iteration = session.last_iteration + 1`. Log `"Resuming from iteration {start_iteration} (session interrupted at {session.updated_at})"`. Skip Phase 1 and Phase 1c — proceed directly to Phase 3 starting at `start_iteration` with `residual_vector = session.last_residual`.
+- Otherwise: log `"Session status '{status}' not resumable — running fresh diagnostic"` and proceed to Phase 1.
 
 ## Phase 1: Diagnose
 
@@ -329,6 +333,28 @@ const progress = summarizeDebtProgress('.planning/formal/debt.json');
 Log: `"Debt: {resolvedFPs.length} entries resolved. Ledger: {progress.open} open, {progress.resolving} resolving, {progress.resolved} resolved"`
 
 If openDebt entries remain in 'resolving' status, treat as automatable work remaining -- continue looping up to max iterations.
+
+**3d. Persist iteration state (QUICK-346):**
+
+After each iteration's convergence check and debt resolution, persist the iteration to solve-session.json for crash recovery:
+
+```bash
+node << 'NF_EVAL'
+const { appendIteration } = require(
+  require('fs').existsSync(require('path').join(require('os').homedir(), '.claude/nf-bin/solve-session.cjs'))
+    ? require('path').join(require('os').homedir(), '.claude/nf-bin/solve-session.cjs')
+    : './bin/solve-session.cjs'
+);
+appendIteration(process.cwd(), {
+  iteration: CURRENT_ITERATION,
+  residual_snapshot: { total: post_residual.total, automatable: automatable_residual },
+  remediation_summary: "Dispatched layers: ...",
+  converged: post_residual.total === 0 || automatable_residual === 0,
+});
+NF_EVAL
+```
+
+This is fail-open — if persistence fails, the solve continues normally. The session file enables `--resume` to skip completed iterations.
 
 ## Phase 4: Report
 

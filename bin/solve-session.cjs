@@ -145,6 +145,64 @@ function formatPlanSummary(summary) {
   return lines.join('\n');
 }
 
+/**
+ * QUICK-346: Append an iteration entry to the session's iteration_log.
+ * Called after each convergence loop iteration to enable --resume.
+ * @param {string} root - project root
+ * @param {Object} entry - { iteration, residual_snapshot, remediation_summary, converged }
+ */
+function appendIteration(root, entry) {
+  const session = readSession(root);
+  if (!session) return; // No session to append to
+
+  if (!Array.isArray(session.iteration_log)) {
+    session.iteration_log = [];
+  }
+
+  session.iteration_log.push({
+    ...entry,
+    timestamp: new Date().toISOString(),
+  });
+
+  session.status = entry.converged ? 'converged' : 'in_progress';
+  session.last_iteration = entry.iteration;
+  session.last_residual = entry.residual_snapshot;
+
+  writeSession(root, session);
+}
+
+/**
+ * QUICK-346: Get the resume point from a saved session.
+ * Returns the iteration to start from and the last known residual.
+ * @param {string} root - project root
+ * @returns {{ resume_iteration: number, last_residual: Object, baseline_residual: Object } | null}
+ */
+function getResumePoint(root) {
+  const session = readSession(root);
+  if (!session) return null;
+  if (session.status === 'converged' || session.status === 'completed') return null; // Already done
+  if (!session.status || session.status === 'planned') {
+    // Plan-only session — resume from iteration 1 with baseline
+    return {
+      resume_iteration: 1,
+      last_residual: session.baseline_residual || null,
+      baseline_residual: session.baseline_residual || null,
+      open_debt: session.open_debt || [],
+      max_iterations: session.max_iterations || 5,
+    };
+  }
+  if (session.status === 'in_progress' && session.last_iteration) {
+    return {
+      resume_iteration: session.last_iteration + 1,
+      last_residual: session.last_residual || null,
+      baseline_residual: session.baseline_residual || null,
+      open_debt: session.open_debt || [],
+      max_iterations: session.max_iterations || 5,
+    };
+  }
+  return null;
+}
+
 // CLI entrypoint
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -163,4 +221,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { writeSession, readSession, clearSession, computePlanSummary, formatPlanSummary, SESSION_FILE };
+module.exports = { writeSession, readSession, clearSession, appendIteration, getResumePoint, computePlanSummary, formatPlanSummary, SESSION_FILE };
