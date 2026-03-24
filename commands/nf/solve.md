@@ -1,7 +1,7 @@
 ---
 name: nf:solve
 description: Orchestrator skill that dispatches diagnostic, remediation, and reporting sub-skills via Agent tool, managing the convergence loop and report-only gate
-argument-hint: [--report-only] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"]
+argument-hint: [--report-only] [--plan-only] [--execute] [--max-iterations=N] [--json] [--verbose] [--targets=<path>] [--skip-observe] [--focus="<phrase>"]
 allowed-tools:
   - Read
   - Bash
@@ -42,7 +42,28 @@ Initialize at the very start of the process block:
   - Otherwise, set `focusPhrase = null`
   - If args contain `--verbose`, set `verboseMode = true`. Otherwise, set `verboseMode = false`.
   - If args contain `--fast`, set `fastMode = true`. Otherwise, set `fastMode = false`.
+  - If args contain `--plan-only`, set `planOnly = true`. Otherwise, set `planOnly = false`.
+  - If args contain `--execute`, set `executeMode = true`. Otherwise, set `executeMode = false`.
 Use `focusPhrase` in Phase 3b bash command and Phase 4 Agent call.
+
+**Two-phase solve (QUICK-345):**
+- `--plan-only`: Run Phase 1 diagnostic, compute a remediation plan summary, save to solve-session.json, then STOP. The user reviews the plan before committing to execution.
+- `--execute`: Resume from a saved solve-session.json — skip Phase 1 diagnostic and go directly to Phase 3 remediation using the saved baseline.
+- Neither flag (default): run the full solve cycle as before (diagnose + remediate + report).
+
+## Phase 0.5: Resume from session (--execute only)
+
+If `executeMode` is true, load the saved solve session instead of running Phase 1:
+
+```bash
+SESSION=$(node ~/.claude/nf-bin/solve-session.cjs read --project-root=$(pwd) 2>/dev/null)
+```
+
+If `~/.claude/nf-bin/solve-session.cjs` does not exist, fall back to `bin/solve-session.cjs`.
+
+Parse the JSON output:
+- If session is null or `status` is not `"planned"`: log `"No saved solve session found — running fresh diagnostic"` and proceed to Phase 1 normally (ignore --execute).
+- If session is valid: restore `baseline_residual` from `session.baseline_residual`, `open_debt` from `session.open_debt` (or `[]`), and other saved context. Log `"Resuming from saved session (planned at {session.updated_at})"`. Skip Phase 1 and Phase 1c entirely — proceed directly to Phase 2 (Report-Only Gate) or Phase 3 (Remediate).
 
 ## Phase 1: Diagnose
 
@@ -166,6 +187,38 @@ After completing all steps, output ONLY the JSON result object described in the 
 Parse the Agent's JSON output:
 - If `status == "error"`: log warning but do NOT abort (classification is best-effort)
 - Store: `classification_verdicts` for inclusion in final report
+
+## Phase 1.5: Plan-Only Gate (--plan-only)
+
+If `planOnly` is true, compute and display a remediation plan summary, save the session, then STOP:
+
+```bash
+# Compute plan summary
+PLAN_SUMMARY=$(node << 'NF_EVAL'
+const { computePlanSummary, formatPlanSummary, writeSession } = require(
+  require('fs').existsSync(require('path').join(require('os').homedir(), '.claude/nf-bin/solve-session.cjs'))
+    ? require('path').join(require('os').homedir(), '.claude/nf-bin/solve-session.cjs')
+    : './bin/solve-session.cjs'
+);
+const residual = JSON.parse(process.env.BASELINE_RESIDUAL_JSON || '{}');
+const maxIter = parseInt(process.env.MAX_ITERATIONS || '5', 10);
+const summary = computePlanSummary(residual, maxIter);
+console.log(formatPlanSummary(summary));
+// Save session for --execute resumption
+writeSession(process.cwd(), {
+  status: 'planned',
+  session_id: Date.now().toString(36),
+  baseline_residual: residual,
+  plan_summary: summary,
+  open_debt: JSON.parse(process.env.OPEN_DEBT_JSON || '[]'),
+  max_iterations: maxIter,
+  created_at: new Date().toISOString(),
+});
+NF_EVAL
+)
+```
+
+Display `$PLAN_SUMMARY` and STOP. Do not proceed to remediation.
 
 ## Phase 2: Report-Only Gate
 
