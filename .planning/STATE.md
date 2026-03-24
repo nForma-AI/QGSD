@@ -82,7 +82,7 @@ None currently.
 | 335 | Add FSM candidate detection section to nf-phase-researcher RESEARCH.md output | 2026-03-19 | 9f0aa33e | Verified | [335-add-fsm-candidate-detection-section-to-n](./quick/335-add-fsm-candidate-detection-section-to-n/) |
 | 336 | Implement 3 targeted TLA+ failure classifiers in F->C remediation layer | 2026-03-20 | fc31f89d | Verified | [336-implement-3-targeted-tla-failure-classif](./quick/336-implement-3-targeted-tla-failure-classif/) |
 | 337 | Fast-path initial diagnostic | 2026-03-24 | f11306a0 | Verified | [337-fast-path-initial-diagnostic](./quick/337-fast-path-initial-diagnostic/) |
-| 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Pending | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
+| 338 | Fix nf-solve stdout/exit-code contract | 2026-03-24 | 40738370 | Verified | [338-fix-nf-solve-stdout-exit-code-contract](./quick/338-fix-nf-solve-stdout-exit-code-contract/) |
 
 ## Session Continuity
 
