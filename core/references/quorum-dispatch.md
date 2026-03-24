@@ -185,6 +185,29 @@ Task(
 |   └─ <T2-slot> (T2)       | [position or UNAVAIL]           |
 ```
 
+### FALLBACK-01 Checkpoint (Mandatory Before Consensus)
+
+**STOP.** Before evaluating consensus, you MUST complete this checkpoint if ANY primary slot returned UNAVAIL. Skipping this checkpoint is a protocol violation.
+
+Emit the following block verbatim, filling in the values:
+
+```
+<!-- FALLBACK_CHECKPOINT
+  unavail_primaries: [list of primary slots that returned UNAVAIL, or "none"]
+  fallback_dispatched: [true/false — did you dispatch T1 or T2 fallback Tasks?]
+  t1_slots_tried: [list of T1 slots dispatched, or "none" / "empty pool"]
+  t2_slots_tried: [list of T2 slots dispatched, or "none" / "not needed"]
+  all_tiers_exhausted: [true/false — are all tiers exhausted or did a fallback succeed?]
+  proceed_reason: [why it is now safe to evaluate consensus]
+-->
+```
+
+**Rules:**
+- If `unavail_primaries` is not "none" AND `fallback_dispatched` is "false", you MUST go back and dispatch fallback Tasks before continuing. Do NOT proceed to consensus.
+- `all_tiers_exhausted` can only be "true" if every slot in T1 AND T2 was either dispatched and returned UNAVAIL, or the pool was empty.
+- If a T1 fallback succeeded (returned APPROVE/BLOCK), `all_tiers_exhausted` is "false" but `proceed_reason` is valid because you have a replacement vote.
+- **Ordering: T1 fully UNAVAIL → dispatch T2 → THEN check consensus.** Do not short-circuit to consensus after T1 when T2 slots remain undispatched.
+
 ---
 
 ## 7. Consensus Enforcement (CE-1, CE-2, CE-3)
@@ -203,7 +226,8 @@ Task(
 - Consensus = 100% of valid (non-UNAVAIL) external voters agree
 - No majority-based approval (2/3 APPROVE + 1 BLOCK ≠ consensus)
 - UNAVAIL voters excluded from denominator
-- 1/1 available voters = consensus if they APPROVE
+- 1/1 available voters = consensus if they APPROVE **only after FALLBACK-01 checkpoint confirms all tiers exhausted**
+- If FALLBACK-01 checkpoint has not been completed (i.e., undispatched T2 slots remain), 1/1 does NOT qualify as consensus — dispatch remaining tiers first
 
 ---
 
@@ -361,11 +385,15 @@ Only include `## Improvements` section when `request_improvements: true` AND imp
 2. Build $DISPATCH_LIST (adaptive fan-out from risk_level)
 3. Team fingerprint + scoreboard init (quorum-preflight.cjs --team)
 4. Dispatch Round 1: nf-quorum-slot-worker Tasks (parallel)
-5. Check consensus (CE-1, CE-2, CE-3)
+5. If ANY slot UNAVAIL → FALLBACK-01:
+   ├─ Dispatch T1 (unused auth_type=sub slots, parallel)
+   ├─ If T1 empty or fully UNAVAIL → Dispatch T2 (auth_type≠sub slots, parallel)
+   └─ Emit FALLBACK_CHECKPOINT block (mandatory)
+6. Check consensus (CE-1, CE-2, CE-3) — only after FALLBACK-01 complete
    ├─ If CONSENSUS: Output consensus, update scoreboard, create debate file
    ├─ If NO CONSENSUS: Deliberation rounds 2-10
-   │  ├─ Fallback handling for UNAVAIL slots (T1 → T2)
-   │  └─ Each round: dispatch $DISPATCH_LIST, check consensus
+   │  ├─ Each round: dispatch $DISPATCH_LIST + fallback for UNAVAIL slots
+   │  └─ FALLBACK-01 checkpoint required each round before consensus check
    └─ If still NO CONSENSUS after round 10: Escalate, output final positions
 ```
 
