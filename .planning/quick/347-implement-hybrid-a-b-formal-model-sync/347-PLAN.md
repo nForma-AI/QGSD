@@ -15,12 +15,12 @@ formal_artifacts: none
 must_haves:
   truths:
     - "Executor auto-detects when code changes intersect formal model coverage at commit time"
-    - "model-driven-fix --sync skips diagnosis phases and runs only affected checker verification"
-    - "Formal model updates are included in the same atomic commit as code changes"
+    - "model-driven-fix --sync runs full formal verification (no scoping complexity)"
+    - "Formal coverage detection is fail-open — errors never block commits"
   artifacts:
     - path: "bin/formal-coverage-intersect.cjs"
-      provides: "Maps changed files to affected formal models via scope.json source_files"
-      exports: ["main CLI with --files flag, JSON output"]
+      provides: "Detects whether changed files overlap with any scope.json source_files"
+      exports: ["CLI with --files flag, JSON output with affected modules, exit code 0=intersections or 2=none"]
     - path: "bin/formal-coverage-intersect.test.cjs"
       provides: "Unit tests for coverage intersection logic"
   key_links:
@@ -28,10 +28,6 @@ must_haves:
       to: ".planning/formal/spec/*/scope.json"
       via: "reads source_files arrays from each scope.json"
       pattern: "scope\\.json"
-    - from: "bin/formal-coverage-intersect.cjs"
-      to: ".planning/formal/model-registry.json"
-      via: "maps matched modules to model file paths"
-      pattern: "model-registry"
     - from: "core/workflows/quick.md"
       to: "bin/formal-coverage-intersect.cjs"
       via: "executor calls before atomic commit"
@@ -48,10 +44,9 @@ must_haves:
 ---
 
 <objective>
-Implement hybrid A+B formal model sync: a coverage intersection detector that maps changed files to formal models, a --sync mode for model-driven-fix that runs only verification (no diagnosis), and executor-side auto-detection wiring in quick.md and execute-phase.md so formal model updates happen atomically with code changes.
+Implement hybrid A+B formal model sync: a coverage intersection detector that checks if changed files overlap with formally-specified code, a --sync mode for model-driven-fix that runs full formal verification, and executor-side auto-detection wiring in quick.md and execute-phase.md.
 
-Purpose: Close the gap where code changes silently drift from formal model coverage. Currently formal checks only run post-execution in --full mode. This makes model sync automatic and atomic at commit time.
-Output: bin/formal-coverage-intersect.cjs + tests, updated model-driven-fix.md with --sync, updated executor workflows with auto-detection logic.
+Key simplification: the detector does NOT try to derive logical scope IDs (cfg names, runner mappings, etc.). It only answers "did code changes touch formally-covered files?" (yes/no). When yes, it runs full `run-formal-verify.cjs` without scoping — this is fast enough (<10s) and avoids the fragile cfg-to-scope-ID mapping.
 </objective>
 
 <execution_context>
@@ -64,10 +59,9 @@ Output: bin/formal-coverage-intersect.cjs + tests, updated model-driven-fix.md w
 @core/workflows/model-driven-fix.md
 @core/workflows/quick.md
 @core/workflows/execute-phase.md
-@.planning/formal/model-registry.json
 @.planning/formal/spec/quorum/scope.json (example scope.json structure)
 @bin/formal-scope-scan.cjs (reference for scope.json reading patterns)
-@bin/run-formal-verify.cjs (reference for --scope flag and model runner)
+@bin/run-formal-verify.cjs (reference for the checker runner)
 </context>
 
 <tasks>
@@ -79,58 +73,56 @@ Output: bin/formal-coverage-intersect.cjs + tests, updated model-driven-fix.md w
     bin/formal-coverage-intersect.test.cjs
   </files>
   <action>
-Create bin/formal-coverage-intersect.cjs — a CLI tool that takes a list of changed files and returns which formal models have coverage intersection.
+Create bin/formal-coverage-intersect.cjs — a CLI tool that takes changed file paths and returns which spec modules have coverage overlap.
 
-**Algorithm:**
+**Algorithm (simplified — no scope ID derivation):**
 1. Accept `--files file1,file2,...` (comma-separated changed file paths, relative to project root)
-2. Accept `--format json|csv` (default: json)
-3. Scan all `.planning/formal/spec/*/scope.json` files
-4. For each scope.json, check if any entry in `source_files` array matches any of the input `--files` (use glob matching via minimatch or simple path.basename prefix matching — follow the pattern in formal-scope-scan.cjs which already does source file overlap in Layer 1)
-5. For matched modules, look up corresponding model files in `.planning/formal/model-registry.json` by matching the module name (spec directory name) against model file path segments
-6. Return JSON array of `{ module, model_path, formalism, requirements }` for each matched model
+2. Scan all `.planning/formal/spec/*/scope.json` files
+3. For each scope.json, read its `source_files` array (glob patterns like `bin/*.cjs`, `hooks/*.js`)
+4. Check if any input file matches any source_files glob (use minimatch or simple prefix matching — follow the pattern in formal-scope-scan.cjs Layer 1)
+5. Return JSON with matched modules:
 
-**JSON output format:**
 ```json
 {
-  "intersections": [
+  "intersections_found": true,
+  "modules": [
     {
-      "module": "quorum",
+      "name": "quorum",
       "scope_path": ".planning/formal/spec/quorum/scope.json",
-      "model_paths": [".planning/formal/alloy/quorum-votes.als", ".planning/formal/prism/quorum.pm"],
-      "formalism": ["alloy", "prism"],
       "matched_files": ["bin/run-quorum.cjs"]
     }
   ],
-  "total_models_affected": 2
+  "total_modules_affected": 1
 }
 ```
 
-**CSV output:** one line per model path (for piping to run-formal-verify.cjs --scope).
+**Exit codes:**
+- 0: Intersections found (formally-covered code was touched)
+- 2: No intersections found (safe — no formal models affected)
+- 1: Error (bad arguments, etc.)
 
-**Edge cases:**
-- No scope.json files exist: return empty intersections, exit 0
-- model-registry.json missing: still return module matches from scope.json but without model_paths, exit 0
-- No --files provided: error with usage message, exit 1
-- No intersections found: return empty array, exit 0
+**Edge cases (all fail-open):**
+- No scope.json files exist: exit 2 (no intersections)
+- No --files provided: exit 1 with usage message
+- scope.json parse error: skip that module, continue
+- No intersections found: exit 2
 
-Follow existing patterns from formal-scope-scan.cjs for file reading, error handling (fail-open), and output formatting. Use `require('path')` and `require('fs')` only — no external dependencies.
+Use `require('path')`, `require('fs')`, `require('child_process')` only — no external deps. Follow patterns from formal-scope-scan.cjs.
 
 **Tests (bin/formal-coverage-intersect.test.cjs):**
-Use the project's existing test pattern (check other .test.cjs files in bin/). Write tests for:
-- Empty files list returns error
-- Known file (e.g., "bin/run-quorum.cjs") returns quorum module intersection
-- Unknown file returns empty intersections
-- CSV format outputs one line per model
-- Missing scope.json directory returns empty (fail-open)
-- Module with no model-registry entry still returns module info without model_paths
+Use existing test patterns from bin/*.test.cjs. Test:
+- Empty files list returns error (exit 1)
+- Known file matching a scope.json source_files glob returns intersection (exit 0)
+- Unknown file returns no intersections (exit 2)
+- Missing spec directory returns no intersections (exit 2)
+- Multiple modules can match the same file
   </action>
   <verify>
-    node bin/formal-coverage-intersect.cjs --files "bin/run-quorum.cjs" --format json 2>&1 | grep -q '"module"'
-    node bin/formal-coverage-intersect.cjs --files "bin/run-quorum.cjs" --format csv 2>&1 | grep -q 'quorum'
+    node bin/formal-coverage-intersect.cjs --files "hooks/nf-scope-guard.js" 2>&1 | grep -q '"intersections_found"'
     node bin/formal-coverage-intersect.test.cjs
   </verify>
   <done>
-    formal-coverage-intersect.cjs returns correct model intersections for known source files, returns empty for unknown files, and all tests pass.
+    formal-coverage-intersect.cjs detects when changed files overlap with scope.json source_files. Tests pass.
   </done>
 </task>
 
@@ -142,94 +134,77 @@ Use the project's existing test pattern (check other .test.cjs files in bin/). W
     core/workflows/execute-phase.md
   </files>
   <action>
-**Part A: Add --sync mode to model-driven-fix.md**
+**Part A: Add --sync flag to model-driven-fix.md**
 
-In the Phase 0 (parse_arguments) step of model-driven-fix.md, add a new flag:
-- `--sync`: Sync mode — skips phases 1-3 (discovery/reproduction/refinement), requires `--models` to specify which model files to verify
-- `--models`: Comma-separated model file paths (required when --sync is used)
+In Phase 0 (parse_arguments), add:
+- `--sync`: Sync mode — skips phases 1-3, runs full formal verification only
 
 Add a new step after Phase 0, before Phase 1:
 
-```
+```markdown
 ## Sync Mode Fast Path (--sync)
 
 If `$SYNC_MODE` is true:
-  - Validate --models is provided (error if empty)
-  - Parse $MODELS into array of model file paths
-  - For each model in $MODELS:
-    - Determine formalism from file extension (.tla -> tla, .als -> alloy, .pm -> prism)
-    - Run the appropriate checker:
-      - TLA+: node bin/run-tlc.cjs "$MODEL_PATH"
-      - Alloy: node bin/run-alloy.cjs "$MODEL_PATH"
-      - PRISM: node bin/run-prism-verify.cjs "$MODEL_PATH" (if exists)
-    - If checker PASSES: Display "Sync: {model} OK"
-    - If checker FAILS: Display "Sync: {model} VIOLATION — model needs update"
-      - Set $SYNC_NEEDS_UPDATE = true
-      - Add model path to $MODELS_NEEDING_UPDATE array
-  - If $SYNC_NEEDS_UPDATE:
-    Display: "Formal models need update. Run /nf:model-driven-fix (full mode) to fix: {model list}"
-    Exit with code 1
-  - If all pass:
-    Display: "Sync: All {N} model(s) verified. No updates needed."
-    Exit with code 0
-  - Exit workflow (do not continue to Phase 1)
+  1. Display: "Sync mode: running full formal verification..."
+  2. Run: `node bin/run-formal-verify.cjs 2>&1`
+     (No --scope flag — run ALL models. This is fast enough and avoids fragile scope ID mapping.)
+  3. If exit 0: Display "Sync: All formal models verified. No drift detected."
+  4. If exit 1: Display "Sync: Formal verification found issues — models may need update."
+     Display: "Run /nf:model-driven-fix (full mode) to diagnose and fix."
+     Exit with code 1
+  5. Exit workflow (do not continue to Phase 1)
 ```
 
-Add `--sync` and `--models` to the constraints section and success_criteria.
+**Part B: Wire auto-detection into quick.md executor constraints**
 
-**Part B: Wire auto-detection into quick.md executor**
+In quick.md, find the executor constraint block (around lines 556-561). BEFORE the atomic commit instruction, add this new constraint:
 
-In quick.md, find the executor constraint block (around line 556-561 where `formal_artifacts` commits are described). BEFORE the atomic commit instruction, add:
-
-```
-- Before each atomic commit, run formal coverage intersection detection:
-  1. Compute changed files for this task: `git diff --name-only HEAD` (staged + unstaged changes)
-  2. Run: `node bin/formal-coverage-intersect.cjs --files "$(git diff --name-only HEAD | tr '\n' ',')" --format json 2>/dev/null`
-  3. If the result has `total_models_affected > 0` OR the plan declares `formal_artifacts: update`:
-     - Run: `node bin/formal-coverage-intersect.cjs --files "$(git diff --name-only HEAD | tr '\n' ',')" --format csv 2>/dev/null` to get model list
-     - Run scoped verification: `node bin/run-formal-verify.cjs --scope="$MODEL_CSV" 2>&1`
-     - If any model checker fails: log warning "Formal model drift detected in: {models}" but do NOT block the commit (fail-open, consistent with existing formal check behavior)
-     - If all pass: log "Formal coverage verified: {N} model(s) OK"
-  4. Fail-open: If formal-coverage-intersect.cjs errors or is not found, skip silently and proceed with commit
+```markdown
+- **Formal coverage auto-detection (hybrid A+B):** Before each atomic commit:
+  1. Get changed files: CHANGED=$(git diff --name-only HEAD 2>/dev/null | tr '\n' ',')
+  2. If CHANGED is non-empty, run: node bin/formal-coverage-intersect.cjs --files "$CHANGED" 2>/dev/null
+  3. If exit code is 0 (intersections found) OR the plan declares `formal_artifacts: update`:
+     - Run: node bin/run-formal-verify.cjs 2>&1
+     - If exit 0: log "Formal coverage verified: models OK"
+     - If exit 1: log "WARNING: Formal model drift detected" (do NOT block commit — fail-open)
+  4. If formal-coverage-intersect.cjs is not found or errors: skip silently (fail-open)
 ```
 
-Place this AFTER the existing `formal_artifacts` instruction (line 560-561) but BEFORE the commit command. This is additive — it does NOT replace the existing formal_artifacts handling.
+This is ADDITIVE — do not remove existing formal_artifacts handling.
 
 **Part C: Wire same auto-detection into execute-phase.md**
 
-In execute-phase.md, find the equivalent atomic commit section (around line 427-444 where formal checks happen). Add the same coverage intersection detection logic as Part B, using the same pattern. Place it alongside the existing `run-formal-check.cjs` invocation — it augments the existing check, does not replace it.
+In execute-phase.md, find the executor constraints section. Add the identical formal coverage auto-detection logic from Part B. Place it alongside existing formal check references. ADDITIVE only.
 
-**Important:** Both workflow edits MUST preserve all existing content. These are additive insertions only. Do NOT remove or modify existing formal_artifacts handling, formal check steps, or constraint text.
+**Important:** Both workflow edits MUST preserve all existing content. These are insertions, not replacements.
   </action>
   <verify>
     grep -q '\-\-sync' core/workflows/model-driven-fix.md
-    grep -q '\-\-models' core/workflows/model-driven-fix.md
     grep -q 'formal-coverage-intersect' core/workflows/quick.md
     grep -q 'formal-coverage-intersect' core/workflows/execute-phase.md
   </verify>
   <done>
-    model-driven-fix.md has --sync mode that skips phases 1-3 and runs only checker verification. quick.md and execute-phase.md both have pre-commit auto-detection that calls formal-coverage-intersect.cjs before atomic commits to detect coverage drift. All changes are additive — existing behavior preserved.
+    model-driven-fix.md has --sync fast path. quick.md and execute-phase.md both have pre-commit auto-detection. All changes additive.
   </done>
 </task>
 
 </tasks>
 
 <verification>
-- bin/formal-coverage-intersect.cjs exists and returns correct JSON for known source files
-- bin/formal-coverage-intersect.test.cjs passes all tests
-- model-driven-fix.md parses --sync and --models flags, has sync fast-path step
-- quick.md executor constraints include pre-commit coverage intersection detection
-- execute-phase.md includes same pre-commit coverage intersection detection
-- All three workflows preserve existing behavior (additive changes only)
-- Existing `npm run test:ci` still passes (no regressions)
+- bin/formal-coverage-intersect.cjs exists and detects coverage overlap
+- bin/formal-coverage-intersect.test.cjs passes
+- model-driven-fix.md has --sync flag and fast path
+- quick.md has pre-commit coverage auto-detection
+- execute-phase.md has pre-commit coverage auto-detection
+- All workflows preserve existing behavior (additive only)
 </verification>
 
 <success_criteria>
-- formal-coverage-intersect.cjs correctly maps changed files to formal models via scope.json source_files
-- --sync mode in model-driven-fix runs checker-only verification without diagnosis phases
-- Executors auto-detect coverage intersection before atomic commits in both quick and phase workflows
+- formal-coverage-intersect.cjs maps changed files to affected spec modules via scope.json source_files
+- --sync mode in model-driven-fix runs full formal verification without diagnosis phases
+- Executors auto-detect coverage intersection before atomic commits
 - All detection is fail-open (errors never block commits)
-- Tests pass for the new script
+- Tests pass
 </success_criteria>
 
 <output>
