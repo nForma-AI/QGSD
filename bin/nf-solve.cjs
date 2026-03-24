@@ -60,6 +60,9 @@ let ROOT = process.cwd();
 const SCRIPT_DIR = __dirname;
 const DEFAULT_MAX_ITERATIONS = 3;
 
+// QUICK-343: PID of background run-formal-verify.cjs process (null when not running)
+let _formalVerifyBgPid = null;
+
 // ── Embedding fallback for proximity enrichment ──────────────────────────────
 // When BFS finds no graph path from a node to a requirement, the embedding cache
 // provides a semantic nearest-requirement fallback. Lazy-loaded, fail-open.
@@ -1389,20 +1392,37 @@ function sweepFtoC() {
     };
   }
 
-  // Always run formal verification to get fresh data (all 88+ checks).
-  // Previously, report-only mode read stale check-results.ndjson which often
-  // contained only 4 CI-gated checks, hiding individual alloy/tla/prism failures.
-  // Now matches sweepTtoC behavior: always compute fresh diagnostic data.
-  // The --report-only flag prevents auto-close remediation (line ~1400), not data collection.
-  //
-  // stdio: discard stdout ('ignore') because run-formal-verify.cjs writes ~4MB of
-  // verbose progress output. We only need the NDJSON file it writes to disk.
-  // Without this, spawnSync's maxBuffer limit kills the child mid-run, resulting
-  // in a partial NDJSON with only 3-4 CI checks instead of the full 88+.
-  const result = spawnTool('bin/run-formal-verify.cjs', [], {
-    timeout: 600000,
-    stdio: ['pipe', 'ignore', 'pipe'],
-  });
+  // QUICK-343: If background run-formal-verify.cjs was pre-spawned by computeResidual(),
+  // wait for it to finish instead of spawning a new synchronous process.
+  // The background process writes check-results.ndjson to disk — same output path.
+  if (_formalVerifyBgPid) {
+    process.stderr.write(TAG + ' F→C: waiting for background formal verify (PID ' + _formalVerifyBgPid + ')\n');
+    // Poll until background process exits (check if PID is still alive)
+    const waitStart = Date.now();
+    const maxWait = 600000; // 10 min max
+    while (_formalVerifyBgPid && (Date.now() - waitStart) < maxWait) {
+      try {
+        process.kill(_formalVerifyBgPid, 0); // signal 0 = check existence
+        spawnSync('sleep', ['0.5']); // yield 500ms
+      } catch (e) {
+        // Process exited — ESRCH means PID no longer exists
+        _formalVerifyBgPid = null;
+        break;
+      }
+    }
+    const waitMs = Date.now() - waitStart;
+    process.stderr.write(TAG + ' F→C: background verify completed (waited ' + waitMs + 'ms)\n');
+  } else {
+    // No background process — run synchronously as before
+    // stdio: discard stdout ('ignore') because run-formal-verify.cjs writes ~4MB of
+    // verbose progress output. We only need the NDJSON file it writes to disk.
+    const result = spawnTool('bin/run-formal-verify.cjs', [], {
+      timeout: 600000,
+      stdio: ['pipe', 'ignore', 'pipe'],
+    });
+    // result is used only for logging — actual data comes from check-results.ndjson
+    void result;
+  }
 
   // Generate complexity profile from fresh check-results.ndjson + state-space data
   try {
@@ -3484,6 +3504,31 @@ function sweepBtoF(t_to_c_result) {
  * Returns residual object with forward layers + reverse discovery layers + layer alignment.
  */
 function computeResidual() {
+  // QUICK-343: Pre-run F→C (formal verification) via background child process.
+  // run-formal-verify.cjs is the most expensive sweep (~30-40s). It writes
+  // check-results.ndjson to disk, which sweepFtoC() then reads.
+  // By spawning it as a background process BEFORE the other sweeps, we overlap
+  // it with R→F/F→T/C→F/T→C. sweepFtoC() then skips the spawn if the NDJSON
+  // file was already refreshed within the last 30 seconds (by the background run).
+  if (!fastMode) {
+    const verifyScript = path.join(SCRIPT_DIR, 'run-formal-verify.cjs');
+    if (fs.existsSync(verifyScript)) {
+      const { spawn: _spawn } = require('child_process');
+      const bgArgs = ['--project-root=' + ROOT];
+      // Fire-and-forget: this writes check-results.ndjson while we do other sweeps.
+      // sweepFtoC() will wait for the file to be fresh or re-run if needed.
+      const bgChild = _spawn(process.execPath, [verifyScript, ...bgArgs], {
+        cwd: ROOT,
+        stdio: ['pipe', 'ignore', 'pipe'], // ignore stdout (4MB verbose output)
+        detached: false,
+      });
+      // Store PID so sweepFtoC can check if it's still running
+      _formalVerifyBgPid = bgChild.pid;
+      bgChild.on('close', () => { _formalVerifyBgPid = null; });
+      bgChild.unref(); // Don't prevent parent exit
+    }
+  }
+
   const r_to_f = sweepRtoF();
   const f_to_t = sweepFtoT();
   const c_to_f = sweepCtoF();
