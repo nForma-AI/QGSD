@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 Phase: v0.40-03 (1/1 plans complete)
 Plan: 01
 Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-24 — Completed quick task 344: Incremental diagnostics by file delta
+Last activity: 2026-03-24 — Completed quick task 345: Two-phase solve plan-then-execute
 
 Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
 
@@ -91,6 +91,7 @@ None currently.
 | 342 | N-layer cycle detection | 2026-03-24 | 2460338d | Verified | [342-n-layer-cycle-detection](./quick/342-n-layer-cycle-detection/) |
 | 343 | Parallelize diagnostic engine sweeps | 2026-03-24 | acb3bb0f | Verified | [343-parallelize-diagnostic-engine-sweeps](./quick/343-parallelize-diagnostic-engine-sweeps/) |
 | 344 | Incremental diagnostics by file delta | 2026-03-24 | a4494f9a | Verified | [344-incremental-diagnostics-by-file-delta](./quick/344-incremental-diagnostics-by-file-delta/) |
+| 345 | Two-phase solve plan-then-execute | 2026-03-24 | 0673fc95 | Verified | [345-two-phase-solve-plan-then-execute](./quick/345-two-phase-solve-plan-then-execute/) |
 
 ## Session Continuity
 
