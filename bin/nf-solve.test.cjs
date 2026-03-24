@@ -1652,8 +1652,9 @@ test('TC-CODE-TRACE-7: computeResidual rebuilds code-trace index before sweeps',
   const src = fs.readFileSync(path.join(__dirname, 'nf-solve.cjs'), 'utf8');
 
   // Find computeResidual and verify rebuildCodeTraceIndex is called before c_to_r
-  const computeMatch = src.match(/function computeResidual\(\)[\s\S]*?const c_to_r = sweepCtoR/);
-  assert.ok(computeMatch, 'computeResidual should call sweepCtoR');
+  // QUICK-344: c_to_r now uses checkLayerSkip wrapper, so match the broader pattern
+  const computeMatch = src.match(/function computeResidual\(\)[\s\S]*?const c_to_r = (?:checkLayerSkip.*\|\| )?sweepCtoR/);
+  assert.ok(computeMatch, 'computeResidual should call sweepCtoR (possibly via checkLayerSkip)');
 
   const computeFn = computeMatch[0];
   assert.ok(computeFn.includes('rebuildCodeTraceIndex()'),

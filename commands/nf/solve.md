@@ -232,11 +232,25 @@ Parse remediation output JSON.
 Extract `capped_layers` from `remediation_report.capped_layers` (default `[]`). Store for inclusion in the final solve output — this array lets users distinguish "residual remains because capped" from "residual remains because stuck" (CONV-03).
 If `status == "bail"` or `"error"`: break loop, proceed to Phase 4.
 
-**3b. Re-diagnostic sweep (Step 4):**
+**3b. Re-diagnostic sweep (Step 4) — incremental when possible (QUICK-344):**
+
+If the remediation Agent returned `files_touched` in its output JSON (array of file paths), use incremental filtering to skip unaffected layers:
+
 ```bash
-POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"})
+# Compute which layers to skip based on files touched by remediation
+SKIP_LAYERS=""
+if [ -n "$FILES_TOUCHED_JSON" ]; then
+  FILTER=$(echo "$FILES_TOUCHED_JSON" | node ~/.claude/nf-bin/solve-incremental-filter.cjs 2>/dev/null)
+  if [ $? -eq 0 ]; then
+    SKIP_LAYERS=$(echo "$FILTER" | node -p "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8')).skip_layers.join(',')" 2>/dev/null)
+  fi
+fi
+
+POST=$(node ~/.claude/nf-bin/nf-solve.cjs --json --report-only --fast --project-root=$(pwd)${focusPhrase:+ --focus="$focusPhrase"}${SKIP_LAYERS:+ --skip-layers="$SKIP_LAYERS"})
 ```
-If `~/.claude/nf-bin/nf-solve.cjs` does not exist, fall back to `bin/nf-solve.cjs`.
+
+If `~/.claude/nf-bin/solve-incremental-filter.cjs` or `nf-solve.cjs` does not exist, fall back to CWD-relative paths.
+If incremental filtering fails (script error, no files_touched in output), run the full diagnostic with no --skip-layers (fail-open).
 Parse `post_residual` from the JSON output.
 
 **3c. Convergence check (Step 5):**

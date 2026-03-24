@@ -76,7 +76,8 @@ At the end of execution, emit a compact JSON result:
     ],
     "total_wall_ms": 45000,
     "sequential_estimate_ms": 120000
-  }
+  },
+  "files_touched": ["path/to/file1.cjs", ".planning/formal/alloy/model.als"]
 }
 ```
 
@@ -721,6 +722,19 @@ Log: `"H->M: {violated} violated assumptions, {dispatched} auto-fix dispatches, 
 ## Collation: capped_layers
 
 Before emitting the output JSON, collate all `capped_layers` entries accumulated during Gate A (3k), Gate B (3l), Gate C (3m), and H->M (3n) into the `remediation_report.capped_layers` array. If no gate hit its cap, emit an empty array. Initialize `capped_layers = []` at the start of remediation dispatch, and each gate section appends to it when the max-3 cap is reached.
+
+## Files Touched Collection (QUICK-344)
+
+After all waves complete, collect the list of files created or modified by remediation for incremental diagnostic filtering:
+
+```bash
+# Get files changed since the remediation started (unstaged + staged + committed during this dispatch)
+files_touched=$(git diff --name-only HEAD~$(git log --oneline --since="5 minutes ago" | wc -l | tr -d ' ') HEAD 2>/dev/null || echo "")
+```
+
+If the git command fails or returns empty, set `files_touched = []`. Otherwise, split the output by newlines into an array and include in the output JSON as `"files_touched": [...]`.
+
+This is best-effort — if no file tracking is available, the orchestrator falls back to full diagnostic sweep (fail-open).
 
 ## Wave Timing and Performance Comparison
 

@@ -131,6 +131,15 @@ const fastMode = args.includes('--fast');
 const skipProximity = args.includes('--skip-proximity');
 const skipTests = args.includes('--skip-tests');
 
+// QUICK-344: Parse --skip-layers=r_to_f,f_to_t,... for incremental diagnostics
+let skipLayerSet = new Set();
+for (const arg of args) {
+  if (arg.startsWith('--skip-layers=')) {
+    const layers = arg.slice('--skip-layers='.length).split(',').map(s => s.trim()).filter(Boolean);
+    for (const l of layers) skipLayerSet.add(l);
+  }
+}
+
 // Parse --project-root (overrides CWD-based ROOT for cross-repo usage)
 for (const arg of args) {
   if (arg.startsWith('--project-root=')) {
@@ -3500,6 +3509,17 @@ function sweepBtoF(t_to_c_result) {
 // ── Residual computation ─────────────────────────────────────────────────────
 
 /**
+ * QUICK-344: Check if a layer should be skipped via --skip-layers flag.
+ * Returns the skip sentinel if skipped, null otherwise.
+ */
+function checkLayerSkip(layerKey) {
+  if (skipLayerSet.has(layerKey)) {
+    return { residual: -1, detail: { skipped: true, reason: 'incremental: layer not affected by remediation' } };
+  }
+  return null;
+}
+
+/**
  * Computes residual vector for all layer transitions (8 forward + 3 reverse + 3 layer alignment).
  * Returns residual object with forward layers + reverse discovery layers + layer alignment.
  */
@@ -3529,32 +3549,33 @@ function computeResidual() {
     }
   }
 
-  const r_to_f = sweepRtoF();
-  const f_to_t = sweepFtoT();
-  const c_to_f = sweepCtoF();
-  const t_to_c = (fastMode || skipTests)
+  // QUICK-344: checkLayerSkip returns skip sentinel for --skip-layers layers
+  const r_to_f = checkLayerSkip('r_to_f') || sweepRtoF();
+  const f_to_t = checkLayerSkip('f_to_t') || sweepFtoT();
+  const c_to_f = checkLayerSkip('c_to_f') || sweepCtoF();
+  const t_to_c = checkLayerSkip('t_to_c') || ((fastMode || skipTests)
     ? { residual: -1, detail: { skipped: true, reason: skipTests ? 'skip-tests' : 'fast mode' } }
-    : sweepTtoC();
+    : sweepTtoC());
 
   // Cross-reference V8 coverage against formal-test-sync recipe source_files
   if (t_to_c.detail && t_to_c.detail.v8_coverage) {
     t_to_c.detail.formal_coverage = crossReferenceFormalCoverage(t_to_c.detail.v8_coverage);
   }
 
-  const f_to_c = fastMode
+  const f_to_c = checkLayerSkip('f_to_c') || (fastMode
     ? { residual: -1, detail: { skipped: true, reason: 'fast mode' } }
-    : sweepFtoC();
-  const r_to_d = sweepRtoD();
-  const d_to_c = sweepDtoC();
-  const p_to_f = sweepPtoF({ root: ROOT, focusSet });
+    : sweepFtoC());
+  const r_to_d = checkLayerSkip('r_to_d') || sweepRtoD();
+  const d_to_c = checkLayerSkip('d_to_c') || sweepDtoC();
+  const p_to_f = checkLayerSkip('p_to_f') || sweepPtoF({ root: ROOT, focusSet });
 
   // Rebuild code-trace index for reverse sweeps
   rebuildCodeTraceIndex();
 
   // Reverse traceability discovery (do NOT add to automatable total)
-  const c_to_r = sweepCtoR();
-  const t_to_r = sweepTtoR();
-  const d_to_r = sweepDtoR();
+  const c_to_r = checkLayerSkip('c_to_r') || sweepCtoR();
+  const t_to_r = checkLayerSkip('t_to_r') || sweepTtoR();
+  const d_to_r = checkLayerSkip('d_to_r') || sweepDtoR();
 
   const total =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -3576,8 +3597,8 @@ function computeResidual() {
 
   // Layer alignment sweeps (cross-layer gate checks) — skip in fast mode
   const skipLayer = { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
-  const l1_to_l3 = fastMode ? skipLayer : sweepL1toL3();
-  const l3_to_tc = fastMode ? skipLayer : sweepL3toTC();
+  const l1_to_l3 = checkLayerSkip('l1_to_l3') || (fastMode ? skipLayer : sweepL1toL3());
+  const l3_to_tc = checkLayerSkip('l3_to_tc') || (fastMode ? skipLayer : sweepL3toTC());
 
   // Per-model gate maturity (informational — not added to layer_total)
   const per_model_gates = fastMode ? skipLayer : sweepPerModelGates();
