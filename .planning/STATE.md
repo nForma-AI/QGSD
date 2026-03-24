@@ -55,6 +55,8 @@ Recent decisions affecting current work:
 - v0.40-03-01: Scope guard is warn-only (exits 0 always) — non-blocking advisory per SCOPE-02 requirement
 - v0.40-03-01: Scope contract is branch-specific (keyed by git branch) to support concurrent quick tasks per INTENT-01
 - v0.40-03-01: Hook respects hook_profile configuration; not in minimal profile (requires contract reading infrastructure)
+- [Phase quick-341]: Nonce over HMAC: same trust boundary, presence-check sufficient
+- [Phase quick-341]: Question-file precedence over --question with backward compatibility
 
 ### Pending Todos
 
