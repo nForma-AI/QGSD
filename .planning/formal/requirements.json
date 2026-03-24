@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-20T07:06:35.406Z",
-  "content_hash": "1cb322f39ba87e72",
+  "aggregated_at": "2026-03-24T10:01:29.560Z",
+  "content_hash": "383e788aae41be21",
   "requirements": [
     {
       "id": "ACT-01",
@@ -2918,6 +2918,18 @@
       }
     },
     {
+      "id": "PERF-03",
+      "text": "Solve diagnostic Phase 1 uses direct Bash invocation of nf-solve.cjs for baseline residual computation by default (~60s) with optional full Agent dispatch path when --verbose flag is passed",
+      "category": "Performance",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "The initial diagnostic sweep is the dominant time cost in /nf:solve workflows. Replacing the full Agent dispatch through solve-diagnose.md (27+ minutes of sub-steps) with a direct Bash call to nf-solve.cjs achieves 60-second baseline diagnostics, while preserving the full diagnostic path via --verbose.",
+      "provenance": {
+        "source_file": ".planning/quick/337-fast-path-initial-diagnostic/337-PLAN.md",
+        "milestone": "quick-337"
+      }
+    },
+    {
       "id": "PF-01",
       "text": "`bin/qgsd-solve.cjs` includes a P->F (Production -> Formal) residual layer that reads `.formal/debt.json` and compares acknowledged drift entries against formal model thresholds",
       "category": "Solve P->F Integration",
@@ -5618,5 +5630,5 @@
   ],
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
-  "frozen_at": "2026-03-20T07:06:35.406Z"
+  "frozen_at": "2026-03-24T10:01:29.560Z"
 }
