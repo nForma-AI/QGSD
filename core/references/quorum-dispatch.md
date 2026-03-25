@@ -98,6 +98,25 @@ Reason: envelope risk_level=${RISK_LEVEL}. This is intentional — routine/mediu
 tasks use fewer models to reduce token cost.
 ```
 
+**Preflight Slot Assignment Display (FAN-06):** After computing `$DISPATCH_LIST`, emit:
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► QUORUM SLOT ASSIGNMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Primary slots (${FAN_OUT_COUNT - 1}):
+   ${DISPATCH_LIST entries with model names}
+
+ Fallback order:
+   T1 (same-sub): ${T1_UNUSED slots, or "none"}
+   T2 (cross-sub): ${T2_FALLBACK slots, or "none"}
+
+ Total available: ${available_slots count}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+This display allows users to diagnose slot assignment and understand the fallback chain before execution begins.
+
 ---
 
 ## 4. Slot-Worker Task Dispatch Template
@@ -383,13 +402,14 @@ Only include `## Improvements` section when `request_improvements: true` AND imp
 ```
 1. Provider health check (check-provider-health.cjs)
 2. Build $DISPATCH_LIST (adaptive fan-out from risk_level)
-3. Team fingerprint + scoreboard init (quorum-preflight.cjs --team)
-4. Dispatch Round 1: nf-quorum-slot-worker Tasks (parallel)
-5. If ANY slot UNAVAIL → FALLBACK-01:
+3. Display QUORUM SLOT ASSIGNMENT (preflight preview of primary + fallback tiers)
+4. Team fingerprint + scoreboard init (quorum-preflight.cjs --team)
+5. Dispatch Round 1: nf-quorum-slot-worker Tasks (parallel)
+6. If ANY slot UNAVAIL → FALLBACK-01:
    ├─ Dispatch T1 (unused auth_type=sub slots, parallel)
    ├─ If T1 empty or fully UNAVAIL → Dispatch T2 (auth_type≠sub slots, parallel)
    └─ Emit FALLBACK_CHECKPOINT block (mandatory)
-6. Check consensus (CE-1, CE-2, CE-3) — only after FALLBACK-01 complete
+7. Check consensus (CE-1, CE-2, CE-3) — only after FALLBACK-01 complete
    ├─ If CONSENSUS: Output consensus, update scoreboard, create debate file
    ├─ If NO CONSENSUS: Deliberation rounds 2-10
    │  ├─ Each round: dispatch $DISPATCH_LIST + fallback for UNAVAIL slots

@@ -226,6 +226,28 @@ fi
 
 The RISK_LEVEL variable is available downstream for use by Phase v0.18-04 Adaptive Fan-Out. The fan-out logic is now implemented in both quorum.md (above) and nf-prompt.js (which emits `--n N` for downstream ceiling verification).
 
+### Preflight Slot Assignment Display (FAN-06)
+
+After computing `$DISPATCH_LIST` and before first dispatch, emit the QUORUM SLOT ASSIGNMENT display to show the user which slots are primary and which are fallback:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ nForma ► QUORUM SLOT ASSIGNMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ Primary slots (${FAN_OUT_COUNT - 1}):
+   ${DISPATCH_LIST entries with model names}
+
+ Fallback order:
+   T1 (same-sub): ${T1_UNUSED slots, or "none"}
+   T2 (cross-sub): ${T2_FALLBACK slots, or "none"}
+
+ Total available: ${available_slots count}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+This display allows users to diagnose slot assignment and understand the fallback chain before execution begins. Emit this once per quorum run, after preflight completes and before Round 1 dispatch.
+
 ---
 
 ## Mode A — Pure Question
