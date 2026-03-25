@@ -265,7 +265,7 @@ Otherwise, prompt user: "Describe your fix idea (natural language, constraints, 
 
 Set `$FIX_IDEA` to the chosen fix idea text.
 
-**Step 2: Run simulation loop**
+**Step 2: Run simulation loop (module API — no CLI)**
 
 Resolve neighbor models for regression testing:
 ```bash
@@ -280,24 +280,54 @@ BUG_TRACE_PATH="$(mktemp -d -t nf-cycle2-simulations.XXXXXX)/bug-trace.itf"
 # Extract or create bug trace from reproducing model diagnostics
 ```
 
-Run solution simulation loop:
-```bash
-node bin/solution-simulation-loop.cjs \
-  --fix-idea="$FIX_IDEA" \
-  --bug-description="$BUG_DESC" \
-  --reproducing-model="$REPRODUCING_MODEL" \
-  --bug-trace="$BUG_TRACE_PATH" \
-  --formalism="$FORMALISM" \
-  ${VERBOSE:+--verbose}
+Run solution simulation loop via require() (matching Phase 3's autoresearch-refine pattern).
+Default maxIterations is 10 (autoresearch-style exploration with learning between iterations):
+```javascript
+const { simulateSolutionLoop } = require('./bin/solution-simulation-loop.cjs');
+
+const result = await simulateSolutionLoop({
+  fixIdea: FIX_IDEA,
+  bugDescription: BUG_DESC,
+  reproducingModelPath: REPRODUCING_MODEL,
+  neighborModelPaths: NEIGHBOR_PATHS,
+  bugTracePath: BUG_TRACE_PATH,
+  maxIterations: 10,
+  formalism: FORMALISM,
+  onTweakFix: async (currentFixIdea, ctx) => {
+    // ctx contains: iteration, gateResults, gatesPassing, tsvHistory, consecutiveStuckCount
+    // Agent reads ctx.gateResults to see which gates failed
+    // Agent reads ctx.tsvHistory for iteration memory (past gate results, status, descriptions)
+    // Agent reads ctx.consecutiveStuckCount to detect stuck patterns
+    // Returns revised fix idea string, or null to skip this iteration
+    return revisedFixIdea;
+  }
+});
 ```
 
-Parse result:
-- If converged (converged=true):
+Parse result (extended return type):
+- `result.converged` — boolean, whether all 3 gates passed
+- `result.stuck_reason` — string or null, set when 3+ consecutive iterations have same gate failure pattern
+- `result.bestGatesPassing` — number (0-3), highest gate pass count achieved across all iterations
+- `result.tsvPath` — string, path to simulation-results.tsv with per-iteration gate results
+- `result.iterations` — array of iteration records with status (CONVERGED, KEPT, DISCARDED, NO-OP, UNAVAILABLE)
+- `result.escalationReason` — string or null, set when max iterations exhausted or dependency unavailable
+- `result.sessionId` — string, unique session identifier
+
+**Result handling:**
+
+- If converged (`result.converged === true`):
   Display: "Fix CONVERGED in model space. Proceeding to code fix (Phase 5)."
   Set `$SIMULATION_CONVERGED` = true
   Proceed to Phase 5 with high confidence.
 
-- If not converged (max iterations exhausted):
+- If stuck (`result.stuck_reason !== null`):
+  Display: stuck reason with gate failure pattern and TSV history context.
+  Prompt user: "Same gates keep failing. Refine fix idea or continue to code fix? (refine/continue/exit)"
+  If refine: restart simulation with adjusted fix idea.
+  If continue: Proceed to Phase 5 with caveat.
+  If exit: Exit workflow.
+
+- If not converged (max iterations exhausted, `result.escalationReason` set):
   Display: Escalation reason and suggestions from simulation loop output.
   Prompt user: "Continue to code fix anyway? (y/n)"
   If yes: Proceed to Phase 5 with caveat.
