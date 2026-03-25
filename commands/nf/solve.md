@@ -6,17 +6,23 @@ allowed-tools:
   - Read
   - Bash
   - Agent
+  - Skill
 ---
 
 <objective>
-Thin orchestrator for the nForma consistency solver. Dispatches to three sub-skills via Agent tool: solve-diagnose (Steps 0-1), solve-remediate (Steps 3a-3m), and solve-report (Steps 6-8). Retains the convergence loop (Steps 4-5), report-only gate (Step 2), and structured error handling.
+Thin orchestrator for the nForma consistency solver. Dispatches to three sub-skills via Agent tool: solve-diagnose (Steps 0-1), solve-remediate (Steps 3a-3m), and solve-report (Steps 6-8). Retains the convergence loop (Steps 4-5), report-only gate (Step 2), and structured error handling. After autonomous phases complete, hands off to /nf:resolve for interactive triage of remaining items (Phase 6).
 </objective>
 
 <execution_context>
-AUTONOMY REQUIREMENT: This skill runs FULLY AUTONOMOUSLY. Do NOT ask the user
+AUTONOMY REQUIREMENT: Phases 1-5 run FULLY AUTONOMOUSLY. Do NOT ask the user
 any questions. Do NOT stop for human input. If a sub-skill fails, log the
 failure and continue. The only valid reason to stop is:
 all iterations exhausted, or total residual is zero.
+
+POST-PROCESS HANDOFF: Phase 6 (Auto-Resolve) is a post-process handoff that
+runs AFTER all autonomous phases complete. It invokes /nf:resolve which IS
+interactive (uses AskUserQuestion). This does not violate the autonomy contract
+because Phases 1-5 have already finished — solve's autonomous work is done.
 
 RAM BUDGET: Never exceed 3 concurrent subagent Tasks at any point during
 execution. Sub-skill Agent calls are sequential (diagnose -> remediate -> report).
@@ -394,6 +400,37 @@ fi
 This commit is non-blocking — if staging or committing fails (e.g., no changes, hook rejection), log and continue. The solve report has already been displayed.
 
 **IMPORTANT:** The `git add -A` with pathspecs stages new (untracked), modified, AND deleted files within those directories. This ensures files created by remediation sub-skills (new Alloy models, test stubs, etc.) and files deleted during cleanup are all captured.
+
+## Phase 6: Auto-Resolve (Post-Process Handoff)
+
+After all autonomous phases complete, hand off to /nf:resolve for interactive triage of remaining items. This eliminates the manual step of running /nf:resolve separately after every solve run.
+
+**Skip conditions** — do NOT invoke resolve when ANY of these are true:
+- `--report-only` flag was passed (user only wanted a diagnostic snapshot)
+- `--plan-only` flag was passed (user only wanted a remediation plan)
+- `post_residual.total == 0` (solve converged fully — nothing to triage)
+- `baseline_residual.total == 0` (zero residual from the start — bail path)
+
+**When none of the skip conditions apply:**
+
+Log: `"Phase 6: Handing off to /nf:resolve for {post_residual.total} remaining items..."`
+
+```
+Skill(
+  skill="nf:resolve",
+  args="--source solve --limit 20"
+)
+```
+
+**When a skip condition applies:**
+
+Log: `"Phase 6: Skipped — {reason}"` where reason is one of:
+- `"report-only mode"` — user only requested a snapshot
+- `"plan-only mode"` — user only requested a remediation plan
+- `"zero residual (converged)"` — solve fully converged
+- `"zero baseline"` — nothing to solve from the start
+
+**Fail-open:** If the Skill invocation fails for any reason, log the failure and continue. The solve report and auto-commit (Phases 4-5) have already completed successfully. Resolve handles its own file writes and commits independently.
 
 ## Important Constraints
 
