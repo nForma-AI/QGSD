@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 53 of 53 (Skill Deprecation) — COMPLETED
 Plan: 53-01 of 1 — COMPLETED
 Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
-Last activity: 2026-03-25 — Completed plan 53-01: Skill Deprecation (DEPR-01, DEPR-02, DEPR-03)
+Last activity: 2026-03-25 - Completed quick task 357: Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives
 
 Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
@@ -73,6 +73,7 @@ None yet.
 | 354 | Add 5 missing layers to solve-report table renderer | 2026-03-25 | a931c0cc | Verified | [354-add-5-missing-layers-p-to-f-b-to-f-per-m](./quick/354-add-5-missing-layers-p-to-f-b-to-f-per-m/) |
 | 355 | Auto-invoke nf:resolve after solve finishes iterating | 2026-03-25 | 72a9a6d8 | Verified | [355-auto-invoke-nf-resolve-after-solve-finis](./quick/355-auto-invoke-nf-resolve-after-solve-finis/) |
 | 356 | Wire 15 diagnostic scripts into nf-solve.cjs as sweeps | 2026-03-25 | 3b476722 | Verified | [356-wire-15-remaining-diagnostic-scripts-int](./quick/356-wire-15-remaining-diagnostic-scripts-int/) |
+| 357 | Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives | 2026-03-25 | cce4a43b | Pending | [357-add-require-path-tracing-to-sweepttor-an](./quick/357-add-require-path-tracing-to-sweepttor-an/) |
 
 ### Blockers/Concerns
 

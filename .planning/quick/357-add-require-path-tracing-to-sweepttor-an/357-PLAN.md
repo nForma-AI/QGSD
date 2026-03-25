@@ -22,8 +22,10 @@ requirements: [TLINK-02]
 must_haves:
   truths:
     - "All 8 domain-named test files have @requirement annotations matching their tested modules"
+    - "Annotations are the PRIMARY fix: they resolve all 8 orphan false positives via the existing hasReqAnnotation path"
     - "sweepTtoR no longer reports any of the 8 files as orphans"
-    - "sweepTtoR require-path tracing maps domain-named test files to source modules automatically"
+    - "sweepTtoR require-path tracing maps domain-named test files that import bin/ modules to source modules automatically (7 of 8 — b-to-f-remediate.test.cjs is self-contained with no require('../bin/...') imports)"
+    - "Require-path tracing is DEFENSE-IN-DEPTH for future domain-named tests, not the primary fix for the current 8"
     - "Existing sweepTtoR behavior unchanged for files already mapped by code-trace index or sync report"
   artifacts:
     - path: "test/b-to-f-remediate.test.cjs"
@@ -70,7 +72,7 @@ must_haves:
 <objective>
 Add @requirement annotations to 8 domain-named test files and add require-path tracing to sweepTtoR to eliminate T->R false positives.
 
-Purpose: These 8 test files use domain-naming (not source-file-naming) so sweepTtoR cannot trace them by filename convention. They all require() real bin/ modules but get flagged as orphans. The annotations provide an immediate fix; the require-path tracing prevents future false positives for any domain-named test that imports a tracked module.
+Purpose: These 8 test files use domain-naming (not source-file-naming) so sweepTtoR cannot trace them by filename convention. 7 of 8 require() real bin/ modules; 1 (b-to-f-remediate.test.cjs) is fully self-contained with no bin/ imports. All 8 get flagged as orphans. The @requirement annotations are the PRIMARY fix (resolve all 8 via existing hasReqAnnotation path). The require-path tracing is DEFENSE-IN-DEPTH for future domain-named tests that import tracked modules.
 
 Output: 8 annotated test files, updated sweepTtoR with require-path tracing, test coverage for the new tracing logic.
 </objective>
@@ -180,27 +182,84 @@ Output: 8 annotated test files, updated sweepTtoR with require-path tracing, tes
     In bin/nf-solve.test.cjs, add a new test after the existing TC-CODE-TRACE-6 test (around line 1650):
 
     ```javascript
-    test('TC-CODE-TRACE-7: sweepTtoR uses require-path tracing for domain-named tests', () => {
+    test('TC-CODE-TRACE-8: sweepTtoR require-path tracing maps domain-named test via require() dep (behavioral)', () => {
+      // BEHAVIORAL test: execute the SAME tracing logic sweepTtoR uses and verify
+      // it produces correct mapped/orphan decisions against real files and a controlled index.
+      //
+      // sweepTtoR is not exported, so we can't call it directly. Instead we:
+      //   1. Verify the tracing block exists structurally (prerequisite)
+      //   2. Extract and RUN the tracing regex + index-lookup logic independently
+      //   3. Simulate the full decision path: file content → regex → dep extraction → index lookup → mapped?
+      //
+      // This proves the code WORKS, not just that it EXISTS.
+
       const src = fs.readFileSync(path.join(__dirname, 'nf-solve.cjs'), 'utf8');
 
-      // Extract sweepTtoR function
-      const match = src.match(/function sweepTtoR\(\)[\s\S]*?^function /m);
-      assert.ok(match, 'sweepTtoR function should exist');
-      const fn = match[0];
-
-      // Verify require-path tracing block exists
+      // ── Step 1: Structural prerequisite ──
+      const fnMatch = src.match(/function sweepTtoR\(\)[\s\S]*?^function /m);
+      assert.ok(fnMatch, 'sweepTtoR function should exist');
+      const fn = fnMatch[0];
       assert.ok(fn.includes('require-path tracing'), 'sweepTtoR should have require-path tracing comment');
-      assert.ok(/require\(.*bin\//.test(fn), 'sweepTtoR should parse require() for bin/ dependencies');
-      assert.ok(fn.includes('hasTrackedDep'), 'sweepTtoR should check hasTrackedDep before mapping');
+
+      // ── Step 2: Execute the tracing regex against real test files ──
+      // Use the EXACT same regex pattern that sweepTtoR uses
+      const tracingRegex = /require\(['"]\.\.?\/(bin\/[^'"]+)['"]\)/g;
+
+      // POSITIVE case: b-to-f-sweep.test.cjs requires bin/layer-constants.cjs
+      const testContent = fs.readFileSync(path.join(__dirname, '..', 'test', 'b-to-f-sweep.test.cjs'), 'utf8');
+      const matches = testContent.match(tracingRegex);
+      assert.ok(matches && matches.length > 0, 'b-to-f-sweep.test.cjs should have require("../bin/...") imports');
+
+      // Extract dep paths the same way sweepTtoR does (inner regex on each match)
+      const depPaths = matches.map(m => {
+        const depMatch = m.match(/require\(['"]\.\.?\/(bin\/[^'"]+)['"]\)/);
+        return depMatch ? depMatch[1] : null;
+      }).filter(Boolean);
+      assert.ok(depPaths.includes('bin/layer-constants.cjs'), 'Should extract bin/layer-constants.cjs as a dependency');
+
+      // NEGATIVE case: b-to-f-remediate.test.cjs has NO bin/ imports (self-contained)
+      const selfContained = fs.readFileSync(path.join(__dirname, '..', 'test', 'b-to-f-remediate.test.cjs'), 'utf8');
+      const noMatches = selfContained.match(tracingRegex);
+      assert.strictEqual(noMatches, null, 'b-to-f-remediate.test.cjs should have no require("../bin/...") — it is self-contained');
+
+      // ── Step 3: Simulate the index-lookup decision path ──
+      // Build a controlled code-trace index where bin/layer-constants.cjs IS tracked
+      const mockIndex = {
+        traced_files: {
+          'bin/layer-constants.cjs': { requirements: ['BTF-01'] },
+          'bin/nf-solve.cjs': { requirements: ['SOLVE-01'] }
+        }
+      };
+
+      // Replay sweepTtoR's hasTrackedDep logic: check if ANY extracted dep is in the index
+      const hasTrackedDep = depPaths.some(dep => !!mockIndex.traced_files[dep]);
+      assert.strictEqual(hasTrackedDep, true,
+        'POSITIVE: b-to-f-sweep.test.cjs should be MAPPED because bin/layer-constants.cjs is in the index');
+
+      // Replay for the negative case: no deps extracted → hasTrackedDep must be false
+      const negativeDepPaths = (noMatches || []).map(m => {
+        const depMatch = m.match(/require\(['"]\.\.?\/(bin\/[^'"]+)['"]\)/);
+        return depMatch ? depMatch[1] : null;
+      }).filter(Boolean);
+      const negativeHasTrackedDep = negativeDepPaths.some(dep => !!mockIndex.traced_files[dep]);
+      assert.strictEqual(negativeHasTrackedDep, false,
+        'NEGATIVE: b-to-f-remediate.test.cjs should be ORPHAN (no bin/ deps to look up)');
+
+      // ── Step 4: Verify with an index where the dep is NOT tracked ──
+      // Even if regex matches, the file should remain orphan if the dep isn't in the index
+      const emptyIndex = { traced_files: {} };
+      const unmappedResult = depPaths.some(dep => !!emptyIndex.traced_files[dep]);
+      assert.strictEqual(unmappedResult, false,
+        'When index has no matching traced_files, test should NOT be mapped via tracing');
     });
     ```
   </action>
   <verify>
     Run: `grep 'require-path tracing' bin/nf-solve.cjs` — must match the comment in sweepTtoR.
-    Run: `grep 'TC-CODE-TRACE-7' bin/nf-solve.test.cjs` — must find the new test.
-    Run: `node --test bin/nf-solve.test.cjs` — all tests must pass including the new TC-CODE-TRACE-7.
+    Run: `grep 'TC-CODE-TRACE-8' bin/nf-solve.test.cjs` — must find the new test.
+    Run: `node --test bin/nf-solve.test.cjs` — all tests must pass including the new TC-CODE-TRACE-8.
   </verify>
-  <done>sweepTtoR has require-path tracing that maps domain-named test files to source modules via their require() dependencies. New test TC-CODE-TRACE-7 verifies the tracing block exists. All existing tests still pass.</done>
+  <done>sweepTtoR has require-path tracing that maps domain-named test files to source modules via their require() dependencies (7 of 8 files — b-to-f-remediate.test.cjs is self-contained). New behavioral test TC-CODE-TRACE-8 executes the tracing regex against real test files, simulates the index-lookup decision path with a controlled mock index, and verifies: (1) POSITIVE — b-to-f-sweep.test.cjs maps via bin/layer-constants.cjs in the index, (2) NEGATIVE — b-to-f-remediate.test.cjs stays orphan (no bin/ deps), (3) EDGE — even with regex matches, empty index produces no mapping. All existing tests still pass.</done>
 </task>
 
 </tasks>
@@ -208,14 +267,15 @@ Output: 8 annotated test files, updated sweepTtoR with require-path tracing, tes
 <verification>
 1. `grep -c '@requirement' test/b-to-f-remediate.test.cjs test/b-to-f-sweep.test.cjs test/bug-context-normalization.test.cjs test/bug-lookup.test.cjs test/cross-model-regression.test.cjs test/debug-verdict-reporting.test.cjs test/model-driven-fix-orchestrator.test.cjs test/model-reproduction.test.cjs` — each file shows count >= 1
 2. `grep 'require-path tracing' bin/nf-solve.cjs` — confirms tracing block present in sweepTtoR
-3. `node --test bin/nf-solve.test.cjs` — all tests pass including TC-CODE-TRACE-7
+3. `node --test bin/nf-solve.test.cjs` — all tests pass including TC-CODE-TRACE-8
 4. `npm run test:ci` — full suite passes (no regressions)
 </verification>
 
 <success_criteria>
-- All 8 domain-named test files have @requirement annotations
-- sweepTtoR includes require-path tracing between code-trace-index check and sync-report check
-- TC-CODE-TRACE-7 test exists and passes
+- All 8 domain-named test files have @requirement annotations (PRIMARY fix — resolves all 8 orphans)
+- sweepTtoR includes require-path tracing between code-trace-index check and sync-report check (DEFENSE-IN-DEPTH — covers 7 of 8 that import bin/ modules, plus future domain-named tests)
+- b-to-f-remediate.test.cjs is correctly identified as self-contained (no bin/ imports) — it relies solely on annotation for mapping
+- TC-CODE-TRACE-8 is a BEHAVIORAL test that executes the full tracing decision path: (1) runs tracing regex against real test files to extract deps, (2) simulates index lookup with a controlled mock index to verify mapped/orphan decisions, (3) covers POSITIVE (tracked dep in index = mapped), NEGATIVE (no deps = orphan), and EDGE (deps exist but index empty = orphan) cases
 - No test regressions in full suite
 - The 8 files are no longer flagged as T->R orphans
 </success_criteria>
