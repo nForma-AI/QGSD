@@ -871,6 +871,16 @@ function sweepFtoT() {
     gapCount = gapsList.length;
   }
 
+  // Fold: annotate-tests (informational — does NOT add to residual)
+  let test_annotations = 0;
+  try {
+    const atResult = spawnTool('bin/annotate-tests.cjs', ['--json']);
+    if (atResult.ok && atResult.stdout) {
+      const atData = JSON.parse(atResult.stdout);
+      test_annotations = (atData.suggestions || atData.annotations || []).length;
+    }
+  } catch (_) { /* fail-open */ }
+
   return {
     residual: gapCount,
     detail: {
@@ -878,6 +888,7 @@ function sweepFtoT() {
       formal_covered: stats.formal_covered || 0,
       test_covered: stats.test_covered || 0,
       gaps: gapsList.map((g) => g.requirement_id || g),
+      test_annotations,
     },
   };
 }
@@ -1169,8 +1180,17 @@ function sweepTtoC() {
     }
   }
 
+  // Fold: check-coverage-guard (coverage threshold enforcement)
+  let coverageGuardFail = false;
+  try {
+    const cgResult = spawnTool('bin/check-coverage-guard.cjs', []);
+    if (cgResult.exitCode !== 0) {
+      coverageGuardFail = true;
+    }
+  } catch (_) { /* fail-open */ }
+
   return {
-    residual: failCount + skipCount,
+    residual: failCount + skipCount + (coverageGuardFail ? 1 : 0),
     detail: {
       total_tests: totalTests,
       passed: Math.max(0, totalTests - failCount - skipCount - todoCount),
@@ -1178,6 +1198,7 @@ function sweepTtoC() {
       skipped: skipCount,
       todo: todoCount,
       v8_coverage: coverageData,
+      coverage_guard_fail: coverageGuardFail || undefined,
       scoped: focusSet ? false : undefined,
     },
   };
@@ -1576,6 +1597,15 @@ function sweepFtoC() {
         // Conformance trace check failed — fail-open, continue with normal result
       }
     }
+
+    // Fold: check-spec-sync (formal spec drift)
+    try {
+      const ssResult = spawnTool('bin/check-spec-sync.cjs', []);
+      if (ssResult.exitCode !== 0) {
+        failedCount += 1;
+        existingDetail.spec_sync_drift = true;
+      }
+    } catch (_) { /* fail-open */ }
 
     return {
       residual: failedCount,
@@ -2006,8 +2036,25 @@ function sweepDtoC() {
     // fail-open: persistence is best-effort
   }
 
+  // Fold: fingerprint-drift (code fingerprint drift detection)
+  let fingerprintDriftCount = 0;
+  let fingerprintDriftDetail = null;
+  try {
+    const fdPath = path.join(ROOT, 'bin', 'fingerprint-drift.cjs');
+    if (fs.existsSync(fdPath)) {
+      const fdMod = require(fdPath);
+      if (typeof fdMod.fingerprintDrift === 'function') {
+        const drift = fdMod.fingerprintDrift();
+        if (drift && ((drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
+          fingerprintDriftCount = drift.count || drift.length || 0;
+          fingerprintDriftDetail = drift;
+        }
+      }
+    }
+  } catch (_) { /* fail-open */ }
+
   return {
-    residual: Math.ceil(weightedResidual),
+    residual: Math.ceil(weightedResidual) + fingerprintDriftCount,
     detail: {
       broken_claims: brokenClaims,
       total_claims_checked: totalClaimsChecked,
@@ -2016,6 +2063,7 @@ function sweepDtoC() {
       weighted_residual: weightedResidual,
       category_breakdown: categoryBreakdown,
       suppressed_fp_count: suppressedFpCount,
+      fingerprint_drift: fingerprintDriftDetail,
       scoped: focusSet ? false : undefined,
     },
   };
@@ -3245,8 +3293,24 @@ function sweepFormalLint() {
 
     const data = JSON.parse(result.stdout);
     const violations = data.violations || [];
+
+    // Fold: check-liveness-fairness (liveness/fairness property violations)
+    let lfViolations = 0;
+    try {
+      const lfResult = spawnTool('bin/check-liveness-fairness.cjs', []);
+      if (lfResult.exitCode !== 0) {
+        // Try to parse count from stdout
+        try {
+          const lfData = JSON.parse(lfResult.stdout || '{}');
+          lfViolations = (lfData.violations || []).length || 1;
+        } catch (_) {
+          lfViolations = 1;
+        }
+      }
+    } catch (_) { /* fail-open */ }
+
     return {
-      residual: violations.length,
+      residual: violations.length + lfViolations,
       kind: 'informational',
       detail: {
         total_violations: violations.length,
@@ -3254,6 +3318,7 @@ function sweepFormalLint() {
           return { model: v.model || v.file, rule: v.rule || v.type, message: v.message || '' };
         }),
         summary: data.summary || null,
+        liveness_fairness_violations: lfViolations > 0 ? lfViolations : undefined,
         scoped: focusSet ? false : undefined,
       },
     };
@@ -3389,6 +3454,275 @@ function classifyFailingTest(testPath, traceMatrix, modelRegistry, bugGaps) {
  * @param {Object} [t_to_c_result] - The t_to_c sweep result (optional, for dependency injection)
  * @returns {{ residual: number, detail: Object }}
  */
+
+// ── Requirement Quality sweep (FV-04: CI/CD and IaC are system components) ──
+
+/**
+ * sweepReqQuality — runs the invariant gate on requirements.json and counts
+ * non-invariants + low-value items as residuals. These are requirements that
+ * should be archived (non-invariants) or deprioritized (low-value).
+ *
+ * Residual = non_invariant_count + low_value_count
+ * (borderline items are NOT counted — they need Haiku classification)
+ *
+ * @returns {{ residual: number, detail: Object }}
+ */
+function sweepReqQuality() {
+  try {
+    const invGatePath = path.join(ROOT, 'bin', 'validate-invariant.cjs');
+    if (!fs.existsSync(invGatePath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'validate-invariant.cjs not found' } };
+    }
+
+    const { validateInvariantBatch } = require(invGatePath);
+    const reqPath = path.join(ROOT, '.planning', 'formal', 'requirements.json');
+    if (!fs.existsSync(reqPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'requirements.json not found' } };
+    }
+
+    const envelope = JSON.parse(fs.readFileSync(reqPath, 'utf8'));
+    const requirements = envelope.requirements || [];
+    const results = validateInvariantBatch(requirements);
+
+    const nonInvariants = results.filter(r => r.verdict === 'NON_INVARIANT');
+    const lowValue = results.filter(r => r.verdict === 'LOW_VALUE');
+    const borderline = results.filter(r => r.verdict === 'BORDERLINE');
+
+    let extraResidual = 0;
+    const extraDetail = {};
+
+    // Fold: aggregate-requirements sync check
+    try {
+      const aggResult = spawnTool('bin/aggregate-requirements.cjs', []);
+      extraDetail.aggregate_sync = aggResult.exitCode === 0;
+      if (aggResult.exitCode !== 0) extraResidual += 1;
+    } catch (_) { /* fail-open */ }
+
+    // Fold: baseline-drift detection
+    try {
+      const bdPath = path.join(ROOT, 'bin', 'baseline-drift.cjs');
+      if (fs.existsSync(bdPath)) {
+        const bdMod = require(bdPath);
+        if (typeof bdMod.detectBaselineDrift === 'function') {
+          const drift = bdMod.detectBaselineDrift();
+          if (drift && ((drift.count && drift.count > 0) || (Array.isArray(drift) && drift.length > 0))) {
+            const driftCount = drift.count || drift.length || 0;
+            extraResidual += driftCount;
+            extraDetail.baseline_drift = drift;
+          }
+        }
+      }
+    } catch (_) { /* fail-open */ }
+
+    return {
+      residual: nonInvariants.length + lowValue.length + extraResidual,
+      detail: {
+        total: requirements.length,
+        non_invariant: nonInvariants.length,
+        non_invariant_ids: nonInvariants.map(r => r.id),
+        low_value: lowValue.length,
+        low_value_ids: lowValue.map(r => r.id),
+        borderline: borderline.length,
+        borderline_ids: borderline.map(r => r.id),
+        ...extraDetail,
+      },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Config Health sweep (diagnostic) ─────────────────────────────────────────
+
+function sweepConfigHealth() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'config-audit.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'config-audit.cjs not found' } };
+    }
+    const result = spawnTool('bin/config-audit.cjs', ['--json']);
+    if (!result.ok) {
+      return { residual: -1, detail: { skipped: true, reason: 'config-audit.cjs failed', stderr: (result.stderr || '').slice(0, 500) } };
+    }
+    const data = JSON.parse(result.stdout);
+    const warnings = data.warnings || [];
+    const missing = data.missing || [];
+    return {
+      residual: warnings.length + missing.length,
+      detail: { warnings, missing },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Security sweep (diagnostic) ──────────────────────────────────────────────
+
+function sweepSecurity() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'security-sweep.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'security-sweep.cjs not found' } };
+    }
+    const result = spawnTool('bin/security-sweep.cjs', ['--json']);
+    if (!result.ok) {
+      return { residual: -1, detail: { skipped: true, reason: 'security-sweep.cjs failed', stderr: (result.stderr || '').slice(0, 500) } };
+    }
+    const findings = JSON.parse(result.stdout);
+    const arr = Array.isArray(findings) ? findings : (findings.findings || []);
+    return {
+      residual: arr.length,
+      detail: { findings_count: arr.length, findings: arr },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Trace Health sweep (diagnostic) ──────────────────────────────────────────
+
+function sweepTraceHealth() {
+  try {
+    let divergence_count = 0;
+    let divergences = [];
+    let schema_drift = false;
+
+    // Part a: validate-traces
+    try {
+      const vtPath = path.join(ROOT, 'bin', 'validate-traces.cjs');
+      if (fs.existsSync(vtPath)) {
+        const vtResult = spawnTool('bin/validate-traces.cjs', []);
+        if (vtResult.ok && vtResult.stdout) {
+          const lines = vtResult.stdout.trim().split('\n').filter(Boolean);
+          for (const line of lines) {
+            try {
+              const parsed = JSON.parse(line);
+              if (parsed.divergence || parsed.status === 'diverged') {
+                divergence_count++;
+                divergences.push(parsed);
+              }
+            } catch (_) { /* skip non-JSON lines */ }
+          }
+        }
+      }
+    } catch (_) { /* fail-open */ }
+
+    // Part b: check-trace-schema-drift
+    try {
+      const sdPath = path.join(ROOT, 'bin', 'check-trace-schema-drift.cjs');
+      if (fs.existsSync(sdPath)) {
+        const sdResult = spawnTool('bin/check-trace-schema-drift.cjs', []);
+        if (!sdResult.ok) {
+          schema_drift = true;
+        }
+      }
+    } catch (_) { /* fail-open */ }
+
+    const schema_drift_count = schema_drift ? 1 : 0;
+    return {
+      residual: divergence_count + schema_drift_count,
+      detail: { divergences, schema_drift },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Asset Staleness sweep (diagnostic) ───────────────────────────────────────
+
+function sweepAssetStaleness() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'check-assets-stale.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'check-assets-stale.cjs not found' } };
+    }
+    const result = spawnTool('bin/check-assets-stale.cjs', []);
+    const stale = result.exitCode !== 0;
+    return {
+      residual: stale ? 1 : 0,
+      detail: { stale, stderr: (result.stderr || '').slice(0, 500) },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Architecture Constraints sweep (diagnostic) ──────────────────────────────
+
+function sweepArchConstraints() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'check-bundled-sdks.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'check-bundled-sdks.cjs not found' } };
+    }
+    const result = spawnTool('bin/check-bundled-sdks.cjs', []);
+    const violations = result.exitCode !== 0;
+    return {
+      residual: violations ? 1 : 0,
+      detail: { violations, output: (result.stdout || '').slice(0, 500) },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Debt Health sweep (diagnostic) ───────────────────────────────────────────
+
+function sweepDebtHealth() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'debt-retention.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'debt-retention.cjs not found' } };
+    }
+    const mod = require(scriptPath);
+    if (typeof mod.applyRetentionPolicy !== 'function') {
+      return { residual: -1, detail: { skipped: true, reason: 'applyRetentionPolicy not exported' } };
+    }
+    const result = mod.applyRetentionPolicy();
+    const expired = (result && result.expired_count !== undefined) ? result.expired_count : (result && result.items ? result.items.length : 0);
+    const retained = (result && result.retained_count !== undefined) ? result.retained_count : 0;
+    return {
+      residual: expired,
+      detail: { expired, retained },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
+// ── Memory Health sweep (diagnostic) ─────────────────────────────────────────
+
+function sweepMemoryHealth() {
+  try {
+    const scriptPath = path.join(ROOT, 'bin', 'validate-memory.cjs');
+    if (!fs.existsSync(scriptPath)) {
+      return { residual: -1, detail: { skipped: true, reason: 'validate-memory.cjs not found' } };
+    }
+
+    // Try require() for validateMemory export first
+    try {
+      const mod = require(scriptPath);
+      if (typeof mod.validateMemory === 'function') {
+        const result = mod.validateMemory();
+        const issues = (result && result.issues) ? result.issues : (Array.isArray(result) ? result : []);
+        return {
+          residual: issues.length,
+          detail: { issues },
+        };
+      }
+    } catch (_) { /* fall through to spawnTool */ }
+
+    // Fallback: spawn as CLI
+    const result = spawnTool('bin/validate-memory.cjs', []);
+    return {
+      residual: result.exitCode === 0 ? 0 : 1,
+      detail: { issues: result.exitCode !== 0 ? [{ error: 'non-zero exit', stderr: (result.stderr || '').slice(0, 500) }] : [] },
+    };
+  } catch (err) {
+    return { residual: -1, detail: { error: err.message } };
+  }
+}
+
 function sweepBtoF(t_to_c_result) {
   if (fastMode) {
     return { residual: -1, detail: { skipped: true, reason: 'fast mode' } };
@@ -3638,6 +3972,9 @@ function computeResidual() {
   // B->F sweep: Bug-to-Formal model gap analysis (automatable — dispatches remediation)
   const b_to_f = sweepBtoF(t_to_c);
 
+  // Requirement quality sweep: non-invariants + low-value (automatable — archive/rephrase)
+  const req_quality = checkLayerSkip('req_quality') || sweepReqQuality();
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -3648,7 +3985,8 @@ function computeResidual() {
     (r_to_d.residual >= 0 ? r_to_d.residual : 0) +
     (l1_to_l3.residual >= 0 ? l1_to_l3.residual : 0) +
     (l3_to_tc.residual >= 0 ? l3_to_tc.residual : 0) +
-    (b_to_f.residual >= 0 ? b_to_f.residual : 0);
+    (b_to_f.residual >= 0 ? b_to_f.residual : 0) +
+    (req_quality.residual >= 0 ? req_quality.residual : 0);
 
   const manual =
     (d_to_c.residual >= 0 ? d_to_c.residual : 0) +
@@ -3686,6 +4024,7 @@ function computeResidual() {
     hazard_model,
     h_to_m,
     b_to_f,
+    req_quality,
     assembled_candidates,
     total,
     automatable,
@@ -3946,7 +4285,7 @@ function autoClose(residual, oscillatingSet, waveOrder) {
 
   // ── Wave-aware dispatch ────────────────────────────────────────────────────
   // Default wave structure: single wave with original hardcoded sequence
-  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates'] }];
+  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates', 'req_quality'] }];
 
   const waves = waveOrder || DEFAULT_WAVES;
   for (const w of waves) {
@@ -4188,6 +4527,26 @@ function formatReport(iterations, finalResidual, converged) {
 
   const layerTotal = finalResidual.layer_total || 0;
   lines.push('  Alignment subtotal:    ' + layerTotal);
+
+  // Requirement Hygiene section (automatable)
+  lines.push('\u2500 Requirement Hygiene (FV-04) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+  const rqResidual = finalResidual.req_quality ? finalResidual.req_quality.residual : -1;
+  lines.push(renderRow('RQ (Req Quality)', rqResidual));
+
+  if (finalResidual.req_quality && finalResidual.req_quality.detail && !finalResidual.req_quality.detail.skipped) {
+    const rqd = finalResidual.req_quality.detail;
+    lines.push('  Non-invariant: ' + (rqd.non_invariant || 0) +
+      ', Low-value: ' + (rqd.low_value || 0) +
+      ', Borderline: ' + (rqd.borderline || 0) +
+      ' (of ' + (rqd.total || 0) + ' total)');
+    if (rqd.non_invariant_ids && rqd.non_invariant_ids.length > 0) {
+      lines.push('\x1b[2m  Non-inv: ' + rqd.non_invariant_ids.join(', ') + '\x1b[0m');
+    }
+    if (rqd.low_value_ids && rqd.low_value_ids.length > 0) {
+      lines.push('\x1b[2m  Low-val: ' + rqd.low_value_ids.join(', ') + '\x1b[0m');
+    }
+  }
 
   // Per-Model Gate Maturity section (informational)
   lines.push('\u2500 Per-Model Gates (maturity) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
