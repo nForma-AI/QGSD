@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement BML-01 — validates formal-scope-scan bug-mode matching and model registry lookup */
 
 const { test, describe } = require('node:test');
 const assert = require('node:assert');

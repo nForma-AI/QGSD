@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement BTF-04 — validates B->F remediation dispatch routing, cap enforcement, and priority ordering */
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');

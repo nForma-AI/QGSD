@@ -1,3 +1,4 @@
+/** @requirement MRF-01 — validates normalizeBugContext from refinement-loop for bug context injection */
 const { test } = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');

@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement BTF-01 — validates b_to_f layer constants, wave DAG integration, and classifyFailingTest */
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');

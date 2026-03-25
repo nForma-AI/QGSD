@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement DBUG-03 — validates debug formal context assembly, constraint formatting, and verdict summary */
 
 const { describe, it, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert/strict');

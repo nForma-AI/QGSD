@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement MRF-02 — validates model reproduction via formal-scope-scan model checkers and bug gap persistence */
 
 const { test, describe } = require('node:test');
 const assert = require('node:assert');

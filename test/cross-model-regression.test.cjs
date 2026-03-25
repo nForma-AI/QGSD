@@ -1,4 +1,5 @@
 'use strict';
+/** @requirement REG-01 — validates cross-model regression via resolve-proximity-neighbors */
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
 const fs = require('node:fs');

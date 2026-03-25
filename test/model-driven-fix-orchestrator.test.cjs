@@ -1,3 +1,4 @@
+/** @requirement MRF-03 — validates model-driven-fix orchestrator phases via formal-scope-scan and refinement-loop */
 const { test } = require('node:test');
 const assert = require('node:assert');
 const fs = require('fs');
