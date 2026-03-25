@@ -10,17 +10,22 @@ Profile: cli
 
 Planning decisions are multi-model verified by structural enforcement, not instruction-following — a Stop hook that reads the transcript makes it impossible for Claude to skip quorum.
 
-## Current Milestone: v0.40 — Session Intelligence & Friction Reduction
+## Current Milestone: v0.41 — Unified Autoresearch Execution Pipeline
+
+**Goal:** Make autoresearch-style iteration (one-tweak-per-iteration, mechanical verification, TSV-as-memory) a native part of the execution workflow — bug fixes route through debug (Loop 1: reproduce in model space), all code changes pass through a pre-commit solution simulation gate (Loop 2: verify in model space), and task classification routes automatically.
+
+**Target features:**
+- Smart task classification in quick.md (Haiku classifies bug_fix vs feature vs refactor, routes accordingly)
+- Fold model-driven-fix into /nf:debug (Loop 1 = bug reproduction via autoresearch-refine.cjs)
+- Loop 2 as universal pre-commit quality gate in executor workflows (quick.md --full, execute-plan.md)
+- onTweakFix callback pattern for iterative fix idea refinement with TSV-as-memory
+- Deprecate /nf:model-driven-fix as standalone skill
+
+## Shipped: v0.40 — Session Intelligence & Friction Reduction (2026-03-25)
 
 **Goal:** Eliminate the top friction patterns identified by session insights analysis — wrong initial approach, project state confusion, and surface fixes instead of root causes — through structural hook-level enforcement rather than CLAUDE.md behavioral policy.
 
-**Target features:**
-- Session state injection in nf-prompt.js (STATE.md compact summary on first message)
-- Approach declaration gate in quick.md (APPROACH / NOT-DOING / SCOPE before planner spawn)
-- Root cause template injection in nf-prompt.js (debug/fix pattern detection)
-- Root cause quorum vote in solve-diagnose.md (vote on root cause before remediation dispatch)
-- Constraint injection for edit/content prompts (edit-in-place default)
-- Branch scope guard hook (PreToolUse:Edit/Write warning for out-of-scope files)
+**Shipped:** Session state injection, approach declaration gate, root cause template injection, branch scope guard hook. Plus 15 quick tasks including autoresearch-refine.cjs (SOLVE-22) and solution-simulation-loop autoresearch upgrade (SOLVE-23).
 
 ## Shipped: v0.39 — Dual-Cycle Formal Reasoning (2026-03-18)
 

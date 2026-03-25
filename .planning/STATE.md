@@ -5,16 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement
-**Current focus:** Milestone v0.40: Session Intelligence & Friction Reduction
+**Current focus:** Milestone v0.41: Unified Autoresearch Execution Pipeline
 
 ## Current Position
 
-Phase: v0.40-03 (1/1 plans complete)
-Plan: 01
-Status: Phase v0.40-03 complete — nf-scope-guard PreToolUse hook warns on out-of-scope edits
-Last activity: 2026-03-25 - Completed quick task 351: Enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display
-
-Progress: [████████████████] Phase v0.40-03 Complete (1/1 plans = 100%)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-25 — Milestone v0.41 started
 
 ## Performance Metrics
 
