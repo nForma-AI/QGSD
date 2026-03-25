@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 50 of 53 (Debug Integration)
-Plan: 2 plans (50-01, 50-02) in 2 waves
-Status: Planned — ready to execute
-Last activity: 2026-03-25 — Completed quick task 352: Add TLC process timeout and model size guards
+Plan: 50-01 of 2 — COMPLETED | 50-02 pending
+Status: In progress — executing phase plans
+Last activity: 2026-03-25 — Completed plan 50-01: Debug Integration (4-step formal pipeline)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 50%
 
 ## Performance Metrics
 
@@ -36,6 +36,7 @@ Progress: [░░░░░░░░░░] 0%
 | v0.39-03-03 | ~3 min | 2 | 4 | 10 | 100% |
 | v0.40-01-01 | ~15 min | 2 | 3 | 39 | 100% |
 | v0.40-03-01 | ~7 min | 2 | 6 | 12 | 100% |
+| 50-01 | 5 min | 2 | 1 | 0 | N/A |
 
 ## Accumulated Context
 
@@ -48,6 +49,8 @@ Recent decisions affecting current work:
 - v0.41 roadmap: Debug integration is foundation phase — must exist before routing or gating can target it
 - v0.41 roadmap: GATE is fail-open by default (GATE-04) — matches existing nForma fail-open philosophy
 - v0.41 roadmap: Deprecation last — all consumers must be rewired before model-driven-fix can be deprecated
+- Plan 50-01: Make `/nf:debug` the single entry point by absorbing model-driven-fix Phases 1-4 (Discovery, Reproduction, Refinement, Constraint Extraction)
+- Plan 50-01: Use autoresearch-refine as module-only API (require() not CLI) for fine-grained iteration control with in-memory rollback
 
 ### Pending Todos
 
@@ -67,5 +70,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Roadmap created for v0.41. Ready to plan Phase 50.
+Stopped at: Plan 50-01 completed. Plan 50-02 (Routing Integration) pending.
 Resume file: None
