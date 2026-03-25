@@ -170,7 +170,7 @@ For each wave from `computeWaves(residualVector)`:
 | l3_to_tc | 3m. Gate C | Yes — dispatches /nf:quick |
 | per_model_gates | 3m-extra. Per-Model Gates | Yes — dispatches /nf:quick |
 | h_to_m | 3n. H->M Gaps | Yes -- dispatches /nf:quick |
-| b_to_f | 3a-extra. B->F Gaps | Yes — dispatches /nf:close-formal-gaps + /nf:model-driven-fix |
+| b_to_f | 3a-extra. B->F Gaps | Yes — dispatches /nf:close-formal-gaps + /nf:debug |
 
 ---
 
@@ -240,15 +240,15 @@ Track a counter for B->F blind spot dispatches. For each covered_not_reproduced 
 2. Extract the test file path as the failure context description
 3. Dispatch:
    ```
-   /nf:model-driven-fix --bug-context "{test_file_path}: test fails but formal model passes" --model-paths={model_paths}
+   /nf:debug "{test_file_path}: test fails but formal model passes" --files={model_paths}
    ```
-   The `--bug-context` flag (MRF-01 from Phase v0.38-03) injects the failure description into spec refinement, biasing toward capturing the failure mode.
+   The debug skill's discovery phase identifies relevant formal models and injects the failure description into spec refinement, biasing toward capturing the failure mode.
 
-   Note: model-driven-fix Phase 3 now uses autoresearch-refine.cjs for iterative
+   Note: /nf:debug uses autoresearch-refine.cjs for iterative
    refinement (up to 10 iterations with in-memory rollback and TSV-as-memory logging).
    The TSV results log is written alongside the model file. Single final commit by caller.
 
-4. Log: `"B->F: dispatching model-driven-fix (autoresearch-refine, in-memory rollback) for blind spot {bug_id} ({N} models to refine)"`
+4. Log: `"B->F: dispatching /nf:debug (autoresearch-refine, in-memory rollback) for blind spot {bug_id} ({N} models to refine)"`
 
 If the counter reaches 2, log `"B->F: max blind spot dispatches (2) reached this cycle — {N} remaining blind spots deferred"`, append `{ "layer": "b_to_f", "dispatched": 2, "max": 2, "bucket": "blind_spots" }` to the `capped_layers` array, and skip remaining blind spot entries.
 
