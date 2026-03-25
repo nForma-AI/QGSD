@@ -6,6 +6,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.41.0] - 2026-03-25 — Unified Autoresearch Execution Pipeline
+
+### Added
+- **Debug pipeline absorption** — `/nf:debug` absorbs model-driven-fix Phases 1-4 as Steps A.5-A.8 (discovery, reproduction, refinement via Loop 1, constraint extraction)
+- **Constraint injection** — Formal constraints from Loop 1 injected as [FORMAL CONSTRAINTS] block into quorum worker prompts
+- **Formal model artifact tracking** — Debug artifact includes reproducing model path, verdict, constraints, and TSV trace
+- **Task classification** — Haiku subagent at quick.md Step 2.7 classifies tasks as bug_fix/feature/refactor with confidence scoring
+- **Bug fix routing** — Step 5.8 routes bug_fix tasks (confidence >= 0.7) through `/nf:debug` before executor
+- **Debug context injection** — Executor prompt receives conditional debug_context block with constraints and formal verdict
+- **Loop 2 pre-commit gate** — simulateSolutionLoop with onTweakFix fires before commit in both quick.md and execute-phase.md executors
+- **Fail-open/strict modes** — Loop 2 gate warns by default (fail-open), blocks with --strict flag
+- **Classification persistence** — scope-contract.json extended with classification object (type, confidence, routed_through_debug)
+
+### Changed
+- **solve-remediate b_to_f** — Rewired from `/nf:model-driven-fix` to `/nf:debug` dispatch
+
+### Deprecated
+- **`/nf:model-driven-fix`** — Replaced with deprecation shim directing to `/nf:debug`
+
+### Removed
+- **debug-formal-context.cjs single-shot call** — Replaced by 4-step formal pipeline in debug skill
+
 ## [0.40.2] - 2026-03-20 — Prerelease (next channel)
 
 See [0.40.1] for full changelog. This prerelease packages the same changes for testing via `@next`.
