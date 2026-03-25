@@ -3975,6 +3975,15 @@ function computeResidual() {
   // Requirement quality sweep: non-invariants + low-value (automatable — archive/rephrase)
   const req_quality = checkLayerSkip('req_quality') || sweepReqQuality();
 
+  // Diagnostic health sweeps (informational — not added to automatable total)
+  const config_health = checkLayerSkip('config_health') || sweepConfigHealth();
+  const security = checkLayerSkip('security') || sweepSecurity();
+  const trace_health = checkLayerSkip('trace_health') || sweepTraceHealth();
+  const asset_stale = checkLayerSkip('asset_stale') || sweepAssetStaleness();
+  const arch_constraints = checkLayerSkip('arch_constraints') || sweepArchConstraints();
+  const debt_health = checkLayerSkip('debt_health') || sweepDebtHealth();
+  const memory_health = checkLayerSkip('memory_health') || sweepMemoryHealth();
+
   // CONV-02: Split residual into three distinct buckets
   const automatable =
     (r_to_f.residual >= 0 ? r_to_f.residual : 0) +
@@ -4001,7 +4010,14 @@ function computeResidual() {
     (hazard_model.residual >= 0 ? hazard_model.residual : 0) +
     (h_to_m.residual >= 0 ? h_to_m.residual : 0) +
     (per_model_gates.residual >= 0 ? per_model_gates.residual : 0) +
-    (p_to_f.residual >= 0 ? p_to_f.residual : 0);
+    (p_to_f.residual >= 0 ? p_to_f.residual : 0) +
+    (config_health.residual >= 0 ? config_health.residual : 0) +
+    (security.residual >= 0 ? security.residual : 0) +
+    (trace_health.residual >= 0 ? trace_health.residual : 0) +
+    (asset_stale.residual >= 0 ? asset_stale.residual : 0) +
+    (arch_constraints.residual >= 0 ? arch_constraints.residual : 0) +
+    (debt_health.residual >= 0 ? debt_health.residual : 0) +
+    (memory_health.residual >= 0 ? memory_health.residual : 0);
 
   return {
     r_to_f,
@@ -4025,6 +4041,13 @@ function computeResidual() {
     h_to_m,
     b_to_f,
     req_quality,
+    config_health,
+    security,
+    trace_health,
+    asset_stale,
+    arch_constraints,
+    debt_health,
+    memory_health,
     assembled_candidates,
     total,
     automatable,
@@ -4281,11 +4304,20 @@ function autoClose(residual, oscillatingSet, waveOrder) {
         }
       }
     },
+
+    // Diagnostic health layers (informational — no auto-remediation)
+    config_health: () => {},
+    security: () => {},
+    trace_health: () => {},
+    asset_stale: () => {},
+    arch_constraints: () => {},
+    debt_health: () => {},
+    memory_health: () => {},
   };
 
   // ── Wave-aware dispatch ────────────────────────────────────────────────────
   // Default wave structure: single wave with original hardcoded sequence
-  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates', 'req_quality'] }];
+  const DEFAULT_WAVES = [{ wave: 1, layers: ['f_to_t', 'c_to_f', 't_to_c', 'r_to_f', 'f_to_c', 'r_to_d', 'd_to_c', 'p_to_f', 'per_model_gates', 'req_quality', 'config_health', 'security', 'trace_health', 'asset_stale', 'arch_constraints', 'debt_health', 'memory_health'] }];
 
   const waves = waveOrder || DEFAULT_WAVES;
   for (const w of waves) {
@@ -4618,6 +4650,24 @@ function formatReport(iterations, finalResidual, converged) {
     if (btfd.top_bugs && btfd.top_bugs.length > 0) {
       lines.push('  Top bugs: ' + btfd.top_bugs.join(', '));
     }
+  }
+
+  // Diagnostic Health section (informational)
+  lines.push('\u2500 Diagnostic Health \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+  const diagRows = [
+    { label: 'CH (Config Health)', key: 'config_health' },
+    { label: 'SEC (Security)', key: 'security' },
+    { label: 'TH (Trace Health)', key: 'trace_health' },
+    { label: 'AS (Asset Stale)', key: 'asset_stale' },
+    { label: 'AC (Arch Constraints)', key: 'arch_constraints' },
+    { label: 'DH (Debt Health)', key: 'debt_health' },
+    { label: 'MH (Memory Health)', key: 'memory_health' },
+  ];
+
+  for (const row of diagRows) {
+    const r = finalResidual[row.key] ? finalResidual[row.key].residual : -1;
+    lines.push(renderRow(row.label, r));
   }
 
   // Cross-Layer Dashboard summary (aggregated view)
