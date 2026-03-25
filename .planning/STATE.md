@@ -64,6 +64,7 @@ None yet.
 |---|---|---|---|---|---|
 | 351 | Enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display | 2026-03-25 | e107b7f1 | Verified | [351-enforce-fallback-01-in-all-workflow-fail](./quick/351-enforce-fallback-01-in-all-workflow-fail/) |
 | 352 | Add TLC process timeout and model size guards to formal verification spawning | 2026-03-25 | 62a12a4a | Verified | [352-add-tlc-process-timeout-and-model-size-g](./quick/352-add-tlc-process-timeout-and-model-size-g/) |
+| 353 | Add state-space preflight guard to run-tlc.cjs | 2026-03-25 | 1d52a48e | Verified | [353-add-state-space-preflight-guard-to-run-t](./quick/353-add-state-space-preflight-guard-to-run-t/) |
 
 ### Blockers/Concerns
 
