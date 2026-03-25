@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 52 of 53 (Pre-Commit Simulation Gate)
-Plan: 52-01 of 2 — COMPLETED
-Status: Phase 52 Plan 01 complete — Loop 2 pre-commit simulation gate added to both executor workflows
-Last activity: 2026-03-25 — Completed plan 52-01: Loop 2 gate in quick.md and execute-phase.md (GATE-01..05)
+Plan: 52-02 of 2 — COMPLETED
+Status: Phase 52 complete — Loop 2 pre-commit simulation gate with onTweakFix wired in both executor workflows
+Last activity: 2026-03-25 — Completed plan 52-02: onTweakFix callback and non-convergence reporting
 
-Progress: [███████░░░] 75% (Phase 50 done; Phase 51 done; Phase 52 in progress; 1 phase remaining)
+Progress: [████████░░] 83% (Phase 50 done; Phase 51 done; Phase 52 done; 1 phase remaining)
 
 ## Performance Metrics
 
