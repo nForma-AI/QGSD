@@ -11,7 +11,9 @@
  *)
 EXTENDS Naturals, TLC
 
-CONSTANTS MaxHazards
+CONSTANTS MaxHazards,
+          MaxScore,       \* Abstract score domain (e.g., 3 instead of 10)
+          MaxRPN          \* Abstract RPN domain (e.g., 2 instead of 1000)
 
 VARIABLES
     hazards,          \* Set of hazard IDs (1..MaxHazards)
@@ -35,8 +37,8 @@ TypeOK ==
 Init ==
     /\ hazards = 1..MaxHazards
     /\ userOverrides \in [hazards -> BOOLEAN]
-    /\ detectionScores \in [hazards -> 1..10]
-    /\ computedRPN \in [hazards -> 0..1000]
+    /\ detectionScores \in [hazards -> 1..MaxScore]
+    /\ computedRPN \in [hazards -> 0..MaxRPN]
     /\ phase = "idle"
 
 \* ── Actions ──────────────────────────────────────────────────────────────────
@@ -59,10 +61,9 @@ LoadComplete ==
 MergeUserOverrides ==
     /\ phase = "merging"
     /\ phase' = "computing"
-    \* User overrides preserved: overridden detection scores unchanged
+    \* Scores: full domain first, then constrain overridden to preserve
+    /\ detectionScores' \in [hazards -> 1..MaxScore]
     /\ \A h \in hazards : userOverrides[h] = TRUE => detectionScores'[h] = detectionScores[h]
-    \* Non-overridden hazards may get fresh scores
-    /\ \A h \in hazards : userOverrides[h] = FALSE => detectionScores'[h] \in 1..10
     \* User override flags themselves are NEVER cleared by regeneration
     /\ userOverrides' = userOverrides
     /\ UNCHANGED <<hazards, computedRPN>>
@@ -73,7 +74,7 @@ RecomputeRPN ==
     /\ phase = "computing"
     /\ phase' = "done"
     \* RPN is always recomputed (even for overridden hazards, using their preserved scores)
-    /\ computedRPN' \in [hazards -> 0..1000]
+    /\ computedRPN' \in [hazards -> 0..MaxRPN]
     /\ UNCHANGED <<hazards, userOverrides, detectionScores>>
 
 \* Return to idle for next regeneration cycle
