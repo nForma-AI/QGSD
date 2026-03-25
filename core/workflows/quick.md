@@ -588,6 +588,73 @@ If the signal is absent, the delimiters don't match, or JSON.parse would fail: s
 
 ---
 
+**Step 5.8: Debug routing (ROUTE-02, ROUTE-03)**
+
+Route bug_fix tasks through /nf:debug before execution. Feature and refactor tasks skip this step entirely.
+
+**Skip if:** `$CLASSIFICATION.type` is NOT `bug_fix`, OR `$CLASSIFICATION.confidence` is below 0.7.
+
+If skipped, log: `"Step 5.8: Skipping debug routing (type: ${CLASSIFICATION.type}, confidence: ${CLASSIFICATION.confidence})"`
+
+**If routing:**
+
+1. Log: `"Step 5.8: Bug fix detected (confidence: ${CLASSIFICATION.confidence}) — routing through /nf:debug"`
+
+2. Spawn /nf:debug as a Task subagent:
+
+```
+Task(
+  prompt="
+Run /nf:debug with the following failure context.
+
+## Task Description (from quick task)
+${DESCRIPTION}
+
+## Instructions
+- Run the full debug pipeline (Steps A through A.8: collect context, discovery, reproduction, refinement, constraint extraction)
+- Return the debug output including:
+  - \$CONSTRAINTS (extracted constraints from Loop 1, if any)
+  - \$FORMAL_VERDICT (pass/fail/skip from formal model checking, if any)
+  - \$REPRODUCING_MODEL (path to reproducing formal model, if any)
+- If any step fails or produces no output, continue with remaining steps (fail-open)
+- Do NOT fix the bug — only diagnose and extract constraints. The executor will apply the fix.
+",
+  subagent_type="general-purpose",
+  description="Debug routing for bug_fix task: ${DESCRIPTION}"
+)
+```
+
+3. Parse debug output. Extract and store:
+   - `$DEBUG_CONSTRAINTS` — constraints from Loop 1 refinement (may be empty)
+   - `$DEBUG_FORMAL_VERDICT` — formal model check result (may be "skipped")
+   - `$DEBUG_REPRODUCING_MODEL` — path to reproducing model (may be null)
+
+4. Update scope-contract.json: set `classification.routed_through_debug` to `true`:
+
+```bash
+# Read existing scope-contract, update routed_through_debug, write back
+node << 'NF_EVAL'
+const fs = require('fs');
+const scPath = '${task_dir}/scope-contract.json';
+if (fs.existsSync(scPath)) {
+  const sc = JSON.parse(fs.readFileSync(scPath, 'utf8'));
+  const key = Object.keys(sc)[0];
+  if (key && sc[key].classification) {
+    sc[key].classification.routed_through_debug = true;
+    fs.writeFileSync(scPath, JSON.stringify(sc, null, 2) + '\n');
+  }
+}
+NF_EVAL
+```
+
+5. Log: `"Step 5.8: Debug routing complete. Constraints: ${DEBUG_CONSTRAINTS ? 'found' : 'none'}, Verdict: ${DEBUG_FORMAL_VERDICT || 'skipped'}"`
+
+**Fail-open:** If the debug subagent errors or times out, log a warning and proceed to Step 6 without debug context. Set `$DEBUG_CONSTRAINTS = null`, `$DEBUG_FORMAL_VERDICT = null`, `$DEBUG_REPRODUCING_MODEL = null`.
+
+Store debug output variables for use in Step 6.
+
+---
+
 **Step 6: Spawn executor**
 
 Spawn nf-executor with plan reference:
@@ -637,6 +704,17 @@ Execute quick task ${next_num}.
 - After committing, run: node ~/.claude/nf/bin/gsd-tools.cjs activity-clear
 - Return the final commit hash in your completion response (format: "Commit: {hash}")
 </constraints>
+
+${DEBUG_CONSTRAINTS || DEBUG_FORMAL_VERDICT || DEBUG_REPRODUCING_MODEL ?
+`<debug_context>
+This task was routed through /nf:debug before execution. Use the following debug output as supplementary context for your implementation:
+
+${DEBUG_CONSTRAINTS ? `**Constraints from formal model refinement:**\n${DEBUG_CONSTRAINTS}` : ''}
+${DEBUG_FORMAL_VERDICT ? `**Formal verdict:** ${DEBUG_FORMAL_VERDICT}` : ''}
+${DEBUG_REPRODUCING_MODEL ? `**Reproducing model:** ${DEBUG_REPRODUCING_MODEL}` : ''}
+
+These constraints inform the fix but do not gate it. If constraints conflict with the plan, follow the plan.
+</debug_context>` : ''}
 ",
   subagent_type="nf-executor",
   model="{executor_model}",
