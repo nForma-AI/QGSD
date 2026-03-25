@@ -57,6 +57,7 @@ Recent decisions affecting current work:
 - Plan 50-01: Use autoresearch-refine as module-only API (require() not CLI) for fine-grained iteration control with in-memory rollback
 - Plan 51-01: Classification happens at Step 2.7 (after approach, before planner) with Haiku subagent
 - Plan 51-02: Bug_fix routing threshold: confidence >= 0.7 (clear signals only; ambiguous cases skip debug, fail-open)
+- [Phase quick-356]: All 7 new diagnostic sweeps are informational (not automatable) with no-op LAYER_HANDLERS
 
 ### Pending Todos
 
