@@ -115,7 +115,7 @@ Extract fix constraints from reproducing model. Skip if $FORMAL_VERDICT is "no-m
 node bin/model-constrained-fix.cjs --spec "$REPRODUCING_MODEL" --max-constraints 3 --format json 2>/dev/null
 ```
 
-Parse JSON. Store $CONSTRAINTS array and $FORMAL_CONTEXT (for use in Steps B, C, E).
+Parse JSON. Store $CONSTRAINTS array (for use in Steps B, C, E, F).
 Fail-open: if extraction fails, set $CONSTRAINTS=[], continue.
 
 ### Step B: Assemble bundle
@@ -204,9 +204,9 @@ Return this output:
 - **no-model**: `│ FORMAL │ N/A │ No formal model covers this failure. Gap tracked in bug-model-gaps.json. │`
 
 **Divergence note** (conditional — render only when both conditions are true):
-If $FORMAL_VERDICT == "reproduced" AND `$FORMAL_CONTEXT.constraints[0].text` is NOT found as a case-insensitive substring in `$CONSENSUS_ROOT_CAUSE`, render:
+If $FORMAL_VERDICT == "reproduced" AND `$CONSTRAINTS[0].english` is NOT found as a case-insensitive substring in `$CONSENSUS_ROOT_CAUSE`, render:
 
-  **Note:** Formal model reproduction suggests a constraint violation (`{$FORMAL_CONTEXT.constraints[0].text}`), but workers attribute the bug to a different cause. Consider: is the constraint too strict, or is the worker diagnosis incomplete?
+  **Note:** Formal model reproduction suggests a constraint violation (`{$CONSTRAINTS[0].english}`), but workers attribute the bug to a different cause. Consider: is the constraint too strict, or is the worker diagnosis incomplete?
 
 Root Cause Hypothesis (consensus): [one-sentence summary or "No consensus"]
 
