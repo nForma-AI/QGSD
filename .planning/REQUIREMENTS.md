@@ -10,8 +10,8 @@ Requirements for Unified Autoresearch Execution Pipeline. Each maps to roadmap p
 ### Task Classification
 
 - [x] **ROUTE-01**: quick.md Step 2.7 Haiku subagent classifies task as bug_fix | feature | refactor (Plan 51-01)
-- [ ] **ROUTE-02**: Bug_fix tasks route through /nf:debug pipeline before execution
-- [ ] **ROUTE-03**: Feature/refactor tasks proceed to normal execution path
+- [x] **ROUTE-02**: Bug_fix tasks route through /nf:debug pipeline before execution (Plan 51-02)
+- [x] **ROUTE-03**: Feature/refactor tasks proceed to normal execution path (Plan 51-02)
 - [x] **ROUTE-04**: Classification result stored in scope-contract.json for downstream consumers (Plan 51-01)
 
 ### Debug Integration
@@ -63,8 +63,8 @@ Requirements for Unified Autoresearch Execution Pipeline. Each maps to roadmap p
 | DBUG-03 | Phase 50 | Pending |
 | DBUG-04 | Phase 50 | Pending |
 | ROUTE-01 | Phase 51 | Complete (51-01) |
-| ROUTE-02 | Phase 51 | Pending |
-| ROUTE-03 | Phase 51 | Pending |
+| ROUTE-02 | Phase 51 | Complete (51-02) |
+| ROUTE-03 | Phase 51 | Complete (51-02) |
 | ROUTE-04 | Phase 51 | Complete (51-01) |
 | GATE-01 | Phase 52 | Pending |
 | GATE-02 | Phase 52 | Pending |

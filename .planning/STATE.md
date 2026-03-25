@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 51 of 53 (Task Classification)
-Plan: 51-01 of 2 — COMPLETED
-Status: Phase 51 Plan 01 complete — classification infrastructure added to quick.md
-Last activity: 2026-03-25 — Completed plan 51-01: Task classification subagent with confidence scoring
+Plan: 51-02 of 2 — COMPLETED
+Status: Phase 51 Plan 02 complete — debug routing integration added to quick.md
+Last activity: 2026-03-25 — Completed plan 51-02: Debug routing (Step 5.8) and executor context enrichment
 
-Progress: [███░░░░░░░] 55% (Phase 50 done; Phase 51-01 done; 2.5 phases remaining)
+Progress: [████░░░░░░] 58% (Phase 50 done; Phase 51 done; 2 phases remaining)
 
 ## Performance Metrics
 
@@ -39,6 +39,7 @@ Progress: [███░░░░░░░] 55% (Phase 50 done; Phase 51-01 done;
 | 50-01 | 5 min | 2 | 1 | 0 | N/A |
 | 50-02 | 1 min | 2 | 1 | 0 | N/A |
 | 51-01 | 5 min | 2 | 1 | 0 | N/A |
+| 51-02 | 3 min | 2 | 1 | 0 | N/A |
 
 ## Accumulated Context
 
@@ -53,6 +54,8 @@ Recent decisions affecting current work:
 - v0.41 roadmap: Deprecation last — all consumers must be rewired before model-driven-fix can be deprecated
 - Plan 50-01: Make `/nf:debug` the single entry point by absorbing model-driven-fix Phases 1-4 (Discovery, Reproduction, Refinement, Constraint Extraction)
 - Plan 50-01: Use autoresearch-refine as module-only API (require() not CLI) for fine-grained iteration control with in-memory rollback
+- Plan 51-01: Classification happens at Step 2.7 (after approach, before planner) with Haiku subagent
+- Plan 51-02: Bug_fix routing threshold: confidence >= 0.7 (clear signals only; ambiguous cases skip debug, fail-open)
 
 ### Pending Todos
 
