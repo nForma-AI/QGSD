@@ -45,11 +45,11 @@ Plans:
   2. Tasks classified as bug_fix are routed through the `/nf:debug` pipeline before code execution begins
   3. Tasks classified as feature or refactor proceed directly to the normal execution path with no debug detour
   4. The classification result is persisted in scope-contract.json and available to downstream consumers (executor, verifier)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 51-01: TBD
-- [ ] 51-02: TBD
+- [ ] 51-01-PLAN.md — Add task classification subagent to Step 2.7 and persist classification in scope-contract.json
+- [ ] 51-02-PLAN.md — Add debug routing step (Step 5.8) for bug_fix tasks and pass debug context to executor
 
 ### Phase 52: Pre-Commit Simulation Gate
 **Goal**: Every code change in milestone executor workflows passes through Loop 2 (solution simulation) as a pre-commit quality gate, with graceful skip when no formal models are in scope
