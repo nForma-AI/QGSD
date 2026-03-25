@@ -88,5 +88,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 50. Debug Integration | 2/2 | Complete ✓ | 2026-03-25 |
 | 51. Task Classification | 2/2 | Complete ✓ | 2026-03-25 |
-| 52. Pre-Commit Simulation Gate | 0/TBD | Not started | - |
+| 52. Pre-Commit Simulation Gate | 1/2 | In Progress|  |
 | 53. Skill Deprecation | 0/TBD | Not started | - |
