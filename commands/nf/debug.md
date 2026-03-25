@@ -124,6 +124,9 @@ Compose $BUNDLE:
   FAILURE CONTEXT: $ARGUMENTS
   EXIT CODE: $EXIT_CODE (or "N/A — symptom only" if no test run)
   FORMAL VERDICT: $FORMAL_VERDICT (or "skipped" if Step A.5 failed)
+  CONSTRAINTS: ${$CONSTRAINTS.length > 0 ? $CONSTRAINTS.map((c,i) => `${i+1}. ${c.english}`).join('\n  ') : 'none extracted'}
+  REPRODUCING MODEL: ${$REPRODUCING_MODEL || 'none'}
+  TSV TRACE: ${$TSV_LOG || 'none'}
   === TEST OUTPUT ===
   $TEST_OUTPUT (or "N/A" if not a test failure)
 
@@ -137,13 +140,11 @@ Worker prompt template (inline $BUNDLE verbatim in each):
   $BUNDLE
   </bundle>
 
-  If $FORMAL_CONTEXT.constraints is non-empty, insert the following block here:
+  If $CONSTRAINTS is non-empty (populated by Step A.8), insert the following block here:
 
   [FORMAL CONSTRAINTS]
-  The following constraints were extracted from formal models that cover this failure:
-  - [constraint 1 text]
-  - [constraint 2 text]
-  - [constraint 3 text]
+  The following constraints were extracted from formal model $REPRODUCING_MODEL:
+  ${$CONSTRAINTS.map((c, i) => `- ${c.english}`).join('\n')}
 
   These are verified properties of the system. Do NOT propose fixes that violate these constraints.
   [END FORMAL CONSTRAINTS]
@@ -198,9 +199,8 @@ Return this output:
 └──────────────┴──────────────┴─────────────────────────────────────────────┘
 
 **FORMAL row rendering** (based on $FORMAL_VERDICT):
-- **reproduced**: `│ FORMAL │ HIGH (model) │ Model {name} reproduced bug. Constraint: {top_constraint} │`
-  where `{name}` = `$FORMAL_CONTEXT.models.find(m => m.reproduced).name` and `{top_constraint}` = `$FORMAL_CONTEXT.constraints[0].text` (or "see model output" if constraints is empty)
-- **not-reproduced**: `│ FORMAL │ LOW (model) │ Models exist but none reproduced. Bug may be environmental. │`
+- **reproduced** (from A.6 or A.7): `│ FORMAL │ HIGH (model) │ {$REPRODUCING_MODEL} reproduces bug. Top constraint: {$CONSTRAINTS[0].english || 'see model'} │`
+- **not-reproduced** (A.7 did not converge): `│ FORMAL │ LOW (model) │ Refinement attempted (${result.iterations} iters). Model incomplete. TSV: ${$TSV_LOG} │`
 - **no-model**: `│ FORMAL │ N/A │ No formal model covers this failure. Gap tracked in bug-model-gaps.json. │`
 
 **Divergence note** (conditional — render only when both conditions are true):
@@ -224,6 +224,17 @@ Write .planning/quick/quorum-debug-latest.md:
   ## consensus
   root_cause: [consensus root cause or "no consensus"]
   next_step: [consensus next step or "no consensus"]
+
+  ## formal model deliverable
+  reproducing_model: ${$REPRODUCING_MODEL || 'none'}
+  formal_verdict: ${$FORMAL_VERDICT}
+  constraints_extracted: ${$CONSTRAINTS.length}
+  tsv_trace: ${$TSV_LOG || 'none'}
+  refinement_iterations: ${refinement result iterations || 'N/A'}
+  converged: ${whether Loop 1 converged || 'N/A'}
+
+  ## constraints
+  ${$CONSTRAINTS.map((c, i) => `${i+1}. [${c.type}] ${c.english}`).join('\n') || 'none'}
 
   ## worker responses
   [table as text]
