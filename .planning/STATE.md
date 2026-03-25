@@ -73,7 +73,7 @@ None yet.
 | 354 | Add 5 missing layers to solve-report table renderer | 2026-03-25 | a931c0cc | Verified | [354-add-5-missing-layers-p-to-f-b-to-f-per-m](./quick/354-add-5-missing-layers-p-to-f-b-to-f-per-m/) |
 | 355 | Auto-invoke nf:resolve after solve finishes iterating | 2026-03-25 | 72a9a6d8 | Verified | [355-auto-invoke-nf-resolve-after-solve-finis](./quick/355-auto-invoke-nf-resolve-after-solve-finis/) |
 | 356 | Wire 15 diagnostic scripts into nf-solve.cjs as sweeps | 2026-03-25 | 3b476722 | Verified | [356-wire-15-remaining-diagnostic-scripts-int](./quick/356-wire-15-remaining-diagnostic-scripts-int/) |
-| 357 | Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives | 2026-03-25 | cce4a43b | Pending | [357-add-require-path-tracing-to-sweepttor-an](./quick/357-add-require-path-tracing-to-sweepttor-an/) |
+| 357 | Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files to eliminate T→R false positives | 2026-03-25 | 9d5f82d2 | Verified | [357-add-require-path-tracing-to-sweepttor-an](./quick/357-add-require-path-tracing-to-sweepttor-an/) |
 
 ### Blockers/Concerns
 
@@ -82,5 +82,5 @@ None currently.
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed quick task 355: Auto-invoke nf:resolve after solve finishes iterating
+Stopped at: Completed quick task 357: Add require-path tracing to sweepTtoR and @req annotations to 8 domain-named test files
 Resume file: None
