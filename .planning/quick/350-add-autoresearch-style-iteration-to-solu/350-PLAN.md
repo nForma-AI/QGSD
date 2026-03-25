@@ -7,6 +7,7 @@ depends_on: []
 files_modified:
   - bin/solution-simulation-loop.cjs
   - bin/solution-simulation-loop.test.cjs
+  - commands/nf/model-driven-fix.md
 autonomous: true
 formal_artifacts: none
 requirements:
@@ -19,8 +20,8 @@ must_haves:
     - "In-memory rollback restores consequence model snapshot when gate pass count decreases"
     - "TSV file written alongside reproducing model with per-iteration gate results"
     - "When-stuck protocol returns converged=false with stuck_reason after 3+ same-gate failures"
-    - "Default maxIterations is 10 (configurable, backward compatible)"
-    - "Module-only API — no CLI changes, no git commits per iteration"
+    - "Default maxIterations changed from 3 to 10 (intentional behavior change — more iterations for autoresearch-style exploration)"
+    - "Module-only API — no git commits per iteration; model-driven-fix.md Phase 4.5 updated to use require() instead of CLI"
   artifacts:
     - path: "bin/solution-simulation-loop.cjs"
       provides: "Refactored simulation loop with onTweakFix, rollback, TSV, when-stuck"
@@ -40,8 +41,8 @@ must_haves:
       pattern: "simulation-results\\.tsv"
     - from: "commands/nf/model-driven-fix.md"
       to: "bin/solution-simulation-loop.cjs"
-      via: "Phase 4.5 dispatch (existing consumer, no wiring change needed)"
-      pattern: "solution-simulation-loop"
+      via: "Phase 4.5 dispatch updated from CLI to require() with onTweakFix callback"
+      pattern: "simulateSolutionLoop"
 ---
 
 <objective>
@@ -221,6 +222,57 @@ Run: `node --test bin/solution-simulation-loop.test.cjs` — all tests pass (19 
   </done>
 </task>
 
+<task type="auto">
+  <name>Task 3: Update model-driven-fix.md Phase 4.5 wiring from CLI to require()</name>
+  <files>commands/nf/model-driven-fix.md</files>
+  <action>
+Update `commands/nf/model-driven-fix.md` Phase 4.5 (step `solution_simulation`) to use `require()` instead of CLI invocation.
+
+Replace the current CLI dispatch:
+```bash
+node bin/solution-simulation-loop.cjs \
+  --fix-idea="$FIX_IDEA" \
+  --bug-description="$BUG_DESC" \
+  --reproducing-model="$REPRODUCING_MODEL" \
+  --bug-trace="$BUG_TRACE_PATH" \
+  --formalism="$FORMALISM" \
+  ${VERBOSE:+--verbose}
+```
+
+With the module-based dispatch pattern (matching Phase 3's autoresearch-refine pattern):
+```javascript
+const { simulateSolutionLoop } = require('./bin/solution-simulation-loop.cjs');
+
+const result = await simulateSolutionLoop({
+  fixIdea: FIX_IDEA,
+  bugDescription: BUG_DESC,
+  reproducingModelPath: REPRODUCING_MODEL,
+  neighborModelPaths: NEIGHBOR_PATHS,
+  bugTracePath: BUG_TRACE_PATH,
+  maxIterations: 10,
+  formalism: FORMALISM,
+  onTweakFix: async (currentFixIdea, ctx) => {
+    // Agent reads ctx.failedGates + ctx.tsvHistory
+    // Agent refines the fix idea based on which gates failed
+    // Returns revised fix idea string or null to skip
+  }
+});
+```
+
+Update the result parsing to handle the extended return type (stuck_reason, bestGatesPassing, tsvPath).
+
+Also note the intentional maxIterations change from 3 to 10 in the documentation.
+  </action>
+  <verify>
+- `grep 'simulateSolutionLoop' commands/nf/model-driven-fix.md` — require() pattern present
+- `grep 'onTweakFix' commands/nf/model-driven-fix.md` — callback wiring present
+- `grep -c 'node bin/solution-simulation-loop.cjs' commands/nf/model-driven-fix.md` — returns 0 (CLI removed)
+  </verify>
+  <done>
+model-driven-fix.md Phase 4.5 uses require() with onTweakFix callback instead of CLI. maxIterations documented as 10. Result parsing handles extended return type.
+  </done>
+</task>
+
 </tasks>
 
 <verification>
@@ -229,6 +281,8 @@ Run: `node --test bin/solution-simulation-loop.test.cjs` — all tests pass (19 
 3. `grep -c 'onTweakFix' bin/solution-simulation-loop.cjs` — multiple matches (parameter, invocation, null check)
 4. `grep 'simulation-results.tsv' bin/solution-simulation-loop.cjs` — TSV path reference exists
 5. `grep 'stuck_reason' bin/solution-simulation-loop.cjs` — when-stuck return field exists
+6. `grep 'simulateSolutionLoop' commands/nf/model-driven-fix.md` — require() wiring present
+7. `grep 'onTweakFix' commands/nf/model-driven-fix.md` — callback wiring present
 </verification>
 
 <success_criteria>
@@ -238,9 +292,10 @@ Run: `node --test bin/solution-simulation-loop.test.cjs` — all tests pass (19 
 - Omitting onTweakFix entirely preserves backward-compatible behavior
 - TSV file written to reproducing model directory with per-iteration gate results
 - When-stuck returns early after 3+ consecutive same-gate-failure iterations
-- Default maxIterations is 10 (was 3)
+- Default maxIterations is 10 (intentional change from 3 — documented)
 - Return type includes stuck_reason, bestGatesPassing, tsvPath
-- No CLI changes, no git commits per iteration, no circuit breaker triggers
+- model-driven-fix.md Phase 4.5 uses require() with onTweakFix (not CLI)
+- No git commits per iteration, no circuit breaker triggers
 </success_criteria>
 
 <output>
