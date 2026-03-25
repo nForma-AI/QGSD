@@ -12,7 +12,7 @@ const { simulateSolutionLoop } = require('./solution-simulation-loop.cjs');
 
 // Helper: Create temporary directory for test isolation
 function createTempDir() {
-  const tmpRoot = path.join(os.tmpdir(), 'solution-sim-test-' + Date.now());
+  const tmpRoot = path.join(os.tmpdir(), 'solution-sim-test-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8));
   if (!fs.existsSync(tmpRoot)) {
     fs.mkdirSync(tmpRoot, { recursive: true });
   }
@@ -302,12 +302,13 @@ test('simulateSolutionLoop: reads maxIterations from config.json', async () => {
     let iterationCount = 0;
     const mockDeps = createMockDeps({ gateVerdictConverged: false });
 
-    // Count how many times gate runner is called
+    // Count how many times gate runner is called — alternate failure patterns to avoid when-stuck
     mockDeps.gateRunner.runConvergenceGates = async () => {
       iterationCount++;
+      const failGate1 = iterationCount % 2 === 0;
       return {
-        gate1_invariants: { passed: false, details: 'test' },
-        gate2_bug_resolved: { passed: false, details: 'test' },
+        gate1_invariants: { passed: !failGate1, details: 'test' },
+        gate2_bug_resolved: { passed: failGate1, details: 'test' },
         gate3_neighbors: { passed: false, regressions: [], details: 'test' },
         converged: false,
         unavailable: false,
@@ -547,6 +548,504 @@ test('simulateSolutionLoop: rejects invalid inputs', async () => {
       { message: /bugTracePath is required/ },
       'should reject empty bugTracePath'
     );
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// ====== NEW TESTS (Task 2 — quick-350) ======
+
+// Test 11: onTweakFix callback invoked between iterations
+test('simulateSolutionLoop: onTweakFix callback invoked between iterations', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let callCount = 0;
+    let tweakCallArgs = null;
+    let normalizeCallArgs = [];
+
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Gate runner: fail iteration 1, converge iteration 2
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      callCount++;
+      const converged = callCount >= 2;
+      return {
+        gate1_invariants: { passed: converged, details: 'test' },
+        gate2_bug_resolved: { passed: converged, details: 'test' },
+        gate3_neighbors: { passed: converged, regressions: [], details: 'test' },
+        converged,
+        unavailable: false,
+        preservedState: false,
+        iteration: callCount,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    // Track normalizer calls
+    mockDeps.normalizer.normalizeFixIntent = (intent, context) => {
+      normalizeCallArgs.push(intent);
+      return { mutations: [{ type: 'add_invariant', target: 'test', content: 'x > 0', reasoning: 'test' }], confidence: 1.0, ambiguities: [] };
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'original fix idea',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 3,
+        onTweakFix: async (currentFixIdea, ctx) => {
+          tweakCallArgs = { currentFixIdea, ctx };
+          return 'revised fix idea from onTweakFix';
+        }
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.converged, true, 'should converge');
+    assert.ok(tweakCallArgs, 'onTweakFix should have been called');
+    assert.strictEqual(tweakCallArgs.currentFixIdea, 'original fix idea', 'should receive original fix idea');
+    assert.strictEqual(tweakCallArgs.ctx.iteration, 2, 'should be iteration 2');
+    assert.strictEqual(tweakCallArgs.ctx.gatesPassing, 0, 'iteration 1 had 0 gates passing');
+    assert.ok(tweakCallArgs.ctx.gateResults, 'should have gateResults');
+    assert.strictEqual(tweakCallArgs.ctx.gateResults.gate1, false, 'gate1 should be false from iteration 1');
+
+    // Verify revised fix idea was passed to normalizer on iteration 2
+    assert.strictEqual(normalizeCallArgs[0], 'original fix idea', 'iteration 1 should use original fix idea');
+    assert.strictEqual(normalizeCallArgs[1], 'revised fix idea from onTweakFix', 'iteration 2 should use revised fix idea');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 12: onTweakFix returning null skips iteration
+test('simulateSolutionLoop: onTweakFix returning null skips iteration as no-op', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let gateCallCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Gate runner: never converge
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      gateCallCount++;
+      return {
+        gate1_invariants: { passed: false, details: 'test' },
+        gate2_bug_resolved: { passed: false, details: 'test' },
+        gate3_neighbors: { passed: false, regressions: [], details: 'test' },
+        converged: false,
+        unavailable: false,
+        preservedState: false,
+        iteration: gateCallCount,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    let tweakCallCount = 0;
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'some fix idea',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 3,
+        onTweakFix: async () => {
+          tweakCallCount++;
+          if (tweakCallCount === 1) return null; // Skip iteration 2
+          return 'adjusted fix';
+        }
+      },
+      mockDeps
+    );
+
+    // Should have 3 total iterations (iter 1=run, iter 2=no-op, iter 3=run)
+    assert.strictEqual(result.iterations.length, 3, 'should have 3 iterations');
+    assert.strictEqual(result.iterations[1].status, 'NO-OP', 'iteration 2 should be NO-OP');
+    // Gate runner should have been called only 2 times (skipped for no-op)
+    assert.strictEqual(gateCallCount, 2, 'gate runner should be called 2 times (not on no-op)');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 13: Backward compatibility — no onTweakFix
+test('simulateSolutionLoop: backward compatible without onTweakFix', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let callCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      callCount++;
+      const converged = callCount >= 2;
+      return {
+        gate1_invariants: { passed: converged, details: 'test' },
+        gate2_bug_resolved: { passed: converged, details: 'test' },
+        gate3_neighbors: { passed: converged, regressions: [], details: 'test' },
+        converged,
+        unavailable: false,
+        preservedState: false,
+        iteration: callCount,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'add invariant',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 3
+        // No onTweakFix — backward compatible
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.converged, true, 'should converge');
+    assert.strictEqual(result.iterations.length, 2, 'should have 2 iterations');
+    assert.strictEqual(result.escalationReason, null, 'no escalation');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 14: In-memory rollback on regression
+test('simulateSolutionLoop: regression tracked as DISCARDED', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let callCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Iteration 1: 2/3 gates pass, Iteration 2: 1/3 (regression), Iteration 3: 3/3 (converged)
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      callCount++;
+      if (callCount === 1) {
+        return {
+          gate1_invariants: { passed: true, details: 'test' },
+          gate2_bug_resolved: { passed: true, details: 'test' },
+          gate3_neighbors: { passed: false, regressions: ['model-a'], details: 'test' },
+          converged: false, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      } else if (callCount === 2) {
+        return {
+          gate1_invariants: { passed: true, details: 'test' },
+          gate2_bug_resolved: { passed: false, details: 'test' },
+          gate3_neighbors: { passed: false, regressions: ['model-a'], details: 'test' },
+          converged: false, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      } else {
+        return {
+          gate1_invariants: { passed: true, details: 'test' },
+          gate2_bug_resolved: { passed: true, details: 'test' },
+          gate3_neighbors: { passed: true, regressions: [], details: 'test' },
+          converged: true, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      }
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'fix attempt',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 5,
+        onTweakFix: async () => 'adjusted fix'
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.converged, true, 'should converge on iteration 3');
+    assert.strictEqual(result.iterations.length, 3, 'should have 3 iterations');
+    assert.strictEqual(result.iterations[1].status, 'DISCARDED', 'iteration 2 should be DISCARDED (regression)');
+    assert.strictEqual(result.bestGatesPassing, 3, 'bestGatesPassing should be 3 from iteration 3');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 15: TSV file written with correct format
+test('simulateSolutionLoop: TSV file written with correct format', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let callCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      callCount++;
+      const converged = callCount >= 2;
+      return {
+        gate1_invariants: { passed: true, details: 'test' },
+        gate2_bug_resolved: { passed: converged, details: 'test' },
+        gate3_neighbors: { passed: converged, regressions: [], details: 'test' },
+        converged,
+        unavailable: false,
+        preservedState: false,
+        iteration: callCount,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'add invariant for testing tsv',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 3
+      },
+      mockDeps
+    );
+
+    // Read TSV file
+    const tsvPath = path.join(path.dirname(reproducingModelPath), 'simulation-results.tsv');
+    assert.ok(fs.existsSync(tsvPath), 'TSV file should exist');
+
+    const tsvContent = fs.readFileSync(tsvPath, 'utf-8');
+    const lines = tsvContent.trim().split('\n');
+
+    // Header + 2 data rows
+    assert.strictEqual(lines.length, 3, 'should have header + 2 data rows');
+    assert.ok(lines[0].startsWith('iteration\tgate1\tgate2\tgate3'), 'header should match expected columns');
+
+    // Verify first data row
+    const row1 = lines[1].split('\t');
+    assert.strictEqual(row1[0], '1', 'iteration should be 1');
+    assert.strictEqual(row1[1], 'PASS', 'gate1 should be PASS');
+    assert.strictEqual(row1[2], 'FAIL', 'gate2 should be FAIL');
+    assert.strictEqual(row1[5], 'kept', 'status should be kept');
+
+    // Verify second data row
+    const row2 = lines[2].split('\t');
+    assert.strictEqual(row2[0], '2', 'iteration should be 2');
+    assert.strictEqual(row2[5], 'converged', 'status should be converged');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 16: When-stuck protocol triggers after 3 same-gate failures
+test('simulateSolutionLoop: when-stuck triggers after 3 same-gate failures', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Always fail gate2 only (gate1 and gate3 pass)
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      return {
+        gate1_invariants: { passed: true, details: 'test' },
+        gate2_bug_resolved: { passed: false, details: 'test' },
+        gate3_neighbors: { passed: true, regressions: [], details: 'test' },
+        converged: false,
+        unavailable: false,
+        preservedState: false,
+        iteration: 1,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'stuck fix idea',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 5
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.converged, false, 'should not converge');
+    assert.ok(result.stuck_reason, 'should have stuck_reason');
+    assert.ok(result.stuck_reason.includes('gate2'), 'stuck_reason should mention gate failure pattern');
+    // Should stop before iteration 5 (at iteration 3 when streak hits 3)
+    assert.ok(result.iterations.length <= 4, 'should stop early due to stuck detection');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 17: When-stuck resets on different failure pattern
+test('simulateSolutionLoop: when-stuck resets on different failure pattern', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    let callCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Iterations 1-2: fail gate2 only, iteration 3: fail gate1 only, iterations 4-5: fail gate2 only
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      callCount++;
+      if (callCount <= 2) {
+        // Fail gate2 only
+        return {
+          gate1_invariants: { passed: true, details: 'test' },
+          gate2_bug_resolved: { passed: false, details: 'test' },
+          gate3_neighbors: { passed: true, regressions: [], details: 'test' },
+          converged: false, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      } else if (callCount === 3) {
+        // Fail gate1 only (different pattern — resets streak)
+        return {
+          gate1_invariants: { passed: false, details: 'test' },
+          gate2_bug_resolved: { passed: true, details: 'test' },
+          gate3_neighbors: { passed: true, regressions: [], details: 'test' },
+          converged: false, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      } else {
+        // Back to failing gate2 only
+        return {
+          gate1_invariants: { passed: true, details: 'test' },
+          gate2_bug_resolved: { passed: false, details: 'test' },
+          gate3_neighbors: { passed: true, regressions: [], details: 'test' },
+          converged: false, unavailable: false, preservedState: false,
+          iteration: callCount, writeOnceTimestamp: new Date().toISOString()
+        };
+      }
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'non-stuck fix idea',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 5
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.stuck_reason, null, 'should NOT be stuck (streak reset at iteration 3)');
+    assert.strictEqual(result.iterations.length, 5, 'all 5 iterations should run');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 18: Default maxIterations is 10 when no config
+test('simulateSolutionLoop: default maxIterations is 10 when no config', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    // Remove config.json so default applies
+    const configPath = path.join(tmpDir, '.planning', 'config.json');
+    if (fs.existsSync(configPath)) fs.unlinkSync(configPath);
+
+    let iterationCount = 0;
+    const mockDeps = createMockDeps({ gateVerdictConverged: false });
+
+    // Use alternating failure patterns to avoid when-stuck
+    mockDeps.gateRunner.runConvergenceGates = async () => {
+      iterationCount++;
+      // Alternate between two different failure patterns to avoid stuck detection
+      const failGate1 = iterationCount % 2 === 0;
+      return {
+        gate1_invariants: { passed: !failGate1, details: 'test' },
+        gate2_bug_resolved: { passed: failGate1, details: 'test' },
+        gate3_neighbors: { passed: false, regressions: [], details: 'test' },
+        converged: false,
+        unavailable: false,
+        preservedState: false,
+        iteration: iterationCount,
+        writeOnceTimestamp: new Date().toISOString()
+      };
+    };
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'test default iterations',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla'
+        // No maxIterations — should default to 10
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.iterations.length, 10, 'should have 10 iterations (default)');
+  } finally {
+    cleanupTempDir(tmpDir);
+  }
+});
+
+// Test 19: Return type includes new fields
+test('simulateSolutionLoop: return type includes stuck_reason, bestGatesPassing, tsvPath', async () => {
+  const tmpDir = createTempDir();
+  process.chdir(tmpDir);
+
+  try {
+    const { reproducingModelPath, bugTracePath } = setupTestEnv(tmpDir);
+
+    const mockDeps = createMockDeps({ gateVerdictConverged: true });
+
+    const result = await simulateSolutionLoop(
+      {
+        fixIdea: 'test return fields',
+        bugDescription: 'test bug',
+        reproducingModelPath,
+        neighborModelPaths: [],
+        bugTracePath,
+        formalism: 'tla',
+        maxIterations: 1
+      },
+      mockDeps
+    );
+
+    assert.strictEqual(result.stuck_reason, null, 'stuck_reason should be null when converged');
+    assert.strictEqual(result.bestGatesPassing, 3, 'bestGatesPassing should be 3 (all gates pass)');
+    assert.ok(typeof result.tsvPath === 'string', 'tsvPath should be a string');
+    assert.ok(result.tsvPath.endsWith('simulation-results.tsv'), 'tsvPath should end with simulation-results.tsv');
   } finally {
     cleanupTempDir(tmpDir);
   }

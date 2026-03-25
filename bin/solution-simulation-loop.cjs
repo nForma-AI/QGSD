@@ -220,16 +220,17 @@ async function simulateSolutionLoop(input, deps) {
       const prevIteration = iterations[iterations.length - 1];
       const prevVerdict = prevIteration.verdict;
 
-      const gateResults = {
+      // Handle case where previous iteration was a no-op (verdict is null)
+      const gateResults = prevVerdict ? {
         gate1: prevVerdict.gate1_invariants?.passed === true,
         gate2: prevVerdict.gate2_bug_resolved?.passed === true,
         gate3: prevVerdict.gate3_neighbors?.passed === true
-      };
+      } : { gate1: false, gate2: false, gate3: false };
 
       const iterationContext = {
         iteration: i,
         gateResults,
-        gatesPassing: countGatesPassing(prevVerdict),
+        gatesPassing: prevVerdict ? countGatesPassing(prevVerdict) : 0,
         tsvHistory: parseSimTsv(tsvPath),
         consecutiveStuckCount: sameGateFailureStreak
       };
