@@ -58,28 +58,28 @@ Requirements for Unified Autoresearch Execution Pipeline. Each maps to roadmap p
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | TBD | Pending |
-| ROUTE-02 | TBD | Pending |
-| ROUTE-03 | TBD | Pending |
-| ROUTE-04 | TBD | Pending |
-| DBUG-01 | TBD | Pending |
-| DBUG-02 | TBD | Pending |
-| DBUG-03 | TBD | Pending |
-| DBUG-04 | TBD | Pending |
-| GATE-01 | TBD | Pending |
-| GATE-02 | TBD | Pending |
-| GATE-03 | TBD | Pending |
-| GATE-04 | TBD | Pending |
-| GATE-05 | TBD | Pending |
-| DEPR-01 | TBD | Pending |
-| DEPR-02 | TBD | Pending |
-| DEPR-03 | TBD | Pending |
+| DBUG-01 | Phase 50 | Pending |
+| DBUG-02 | Phase 50 | Pending |
+| DBUG-03 | Phase 50 | Pending |
+| DBUG-04 | Phase 50 | Pending |
+| ROUTE-01 | Phase 51 | Pending |
+| ROUTE-02 | Phase 51 | Pending |
+| ROUTE-03 | Phase 51 | Pending |
+| ROUTE-04 | Phase 51 | Pending |
+| GATE-01 | Phase 52 | Pending |
+| GATE-02 | Phase 52 | Pending |
+| GATE-03 | Phase 52 | Pending |
+| GATE-04 | Phase 52 | Pending |
+| GATE-05 | Phase 52 | Pending |
+| DEPR-01 | Phase 53 | Pending |
+| DEPR-02 | Phase 53 | Pending |
+| DEPR-03 | Phase 53 | Pending |
 
 **Coverage:**
 - v0.41 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 (pending roadmap)
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after milestone v0.41 initialization*
+*Last updated: 2026-03-25 after roadmap creation*
