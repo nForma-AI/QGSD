@@ -1,6 +1,6 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-25T11:13:36.539Z",
+  "generated": "2026-03-25T16:53:53.747Z",
   "methodology": "FMEA (IEC 60812)",
   "scoring_scale": {
     "severity": "1-10: 1=no impact, 2=cosmetic, 4=degraded, 6=stalled/interrupted, 8=incorrect verdict, 10=crash/data loss",
@@ -9,33 +9,6 @@
     "rpn": "Severity x Occurrence x Detection (range 1-1000)"
   },
   "hazards": [
-    {
-      "id": "HAZARD-IDLE-CIRCUIT_BREAK",
-      "state": "IDLE",
-      "event": "CIRCUIT_BREAK",
-      "to_state": "IDLE",
-      "severity": 6,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 240,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.IDLE.CIRCUIT_BREAK"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
     {
       "id": "HAZARD-DELIBERATING-DECIDE",
       "state": "DELIBERATING",
@@ -60,6 +33,33 @@
           "layer": "L2",
           "artifact": "semantics/invariant-catalog.json",
           "ref": "invariants[config=MCdeliberation]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-IDLE-CIRCUIT_BREAK",
+      "state": "IDLE",
+      "event": "CIRCUIT_BREAK",
+      "to_state": "IDLE",
+      "severity": 6,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 120,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.IDLE.CIRCUIT_BREAK"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
         }
       ]
     },
@@ -253,33 +253,6 @@
       ]
     },
     {
-      "id": "HAZARD-DECIDED-CIRCUIT_BREAK",
-      "state": "DECIDED",
-      "event": "CIRCUIT_BREAK",
-      "to_state": "DECIDED",
-      "severity": 2,
-      "occurrence": 10,
-      "detection": 4,
-      "rpn": 80,
-      "derived_from": [
-        {
-          "layer": "L2",
-          "artifact": "semantics/observed-fsm.json",
-          "ref": "observed_transitions.DECIDED.CIRCUIT_BREAK"
-        },
-        {
-          "layer": "L1",
-          "artifact": "evidence/trace-corpus-stats.json",
-          "ref": "sessions[*].actions"
-        },
-        {
-          "layer": "L2",
-          "artifact": "semantics/invariant-catalog.json",
-          "ref": "invariants[config=MCQGSDQuorum]"
-        }
-      ]
-    },
-    {
       "id": "HAZARD-DELIBERATING-CIRCUIT_BREAK",
       "state": "DELIBERATING",
       "event": "CIRCUIT_BREAK",
@@ -320,6 +293,33 @@
           "layer": "L2",
           "artifact": "semantics/observed-fsm.json",
           "ref": "observed_transitions.DECIDED.DECIDE"
+        },
+        {
+          "layer": "L1",
+          "artifact": "evidence/trace-corpus-stats.json",
+          "ref": "sessions[*].actions"
+        },
+        {
+          "layer": "L2",
+          "artifact": "semantics/invariant-catalog.json",
+          "ref": "invariants[config=MCQGSDQuorum]"
+        }
+      ]
+    },
+    {
+      "id": "HAZARD-DECIDED-CIRCUIT_BREAK",
+      "state": "DECIDED",
+      "event": "CIRCUIT_BREAK",
+      "to_state": "DECIDED",
+      "severity": 2,
+      "occurrence": 10,
+      "detection": 2,
+      "rpn": 40,
+      "derived_from": [
+        {
+          "layer": "L2",
+          "artifact": "semantics/observed-fsm.json",
+          "ref": "observed_transitions.DECIDED.CIRCUIT_BREAK"
         },
         {
           "layer": "L1",
@@ -444,8 +444,8 @@
   ],
   "summary": {
     "total": 16,
-    "max_rpn": 240,
-    "critical_count": 1,
-    "high_count": 2
+    "max_rpn": 128,
+    "critical_count": 0,
+    "high_count": 3
   }
 }

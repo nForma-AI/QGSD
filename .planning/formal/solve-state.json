@@ -1,49 +1,61 @@
 {
-  "last_run": "2026-03-25T11:13:36.761Z",
-  "converged": true,
+  "last_run": "2026-03-25T17:13:13.234Z",
+  "converged": false,
   "iteration_count": 1,
-  "final_residual_total": 0,
-  "reverse_discovery_total": 28,
-  "heatmap_total": 7383,
+  "final_residual_total": 4,
+  "reverse_discovery_total": 22,
+  "heatmap_total": 7393,
   "known_issues": [
     {
+      "layer": "r_to_f",
+      "residual": 4
+    },
+    {
       "layer": "c_to_r",
-      "residual": 11,
-      "net_residual": 1
+      "residual": 2,
+      "net_residual": 0
     },
     {
       "layer": "t_to_r",
-      "residual": 15,
-      "net_residual": 11
+      "residual": 8,
+      "net_residual": 8
     },
     {
       "layer": "d_to_r",
-      "residual": 2,
-      "net_residual": 2
-    },
-    {
-      "layer": "l1_to_l3",
-      "residual": 1
-    },
-    {
-      "layer": "l3_to_tc",
-      "residual": 1
+      "residual": 12,
+      "net_residual": 12
     },
     {
       "layer": "git_heatmap",
-      "residual": 7383
+      "residual": 7393
     },
     {
       "layer": "git_history",
       "residual": 54
     },
     {
-      "layer": "hazard_model",
-      "residual": 3
+      "layer": "req_quality",
+      "residual": 10
+    },
+    {
+      "layer": "config_health",
+      "residual": 17
+    },
+    {
+      "layer": "security",
+      "residual": 26
+    },
+    {
+      "layer": "asset_stale",
+      "residual": 1
+    },
+    {
+      "layer": "arch_constraints",
+      "residual": 1
     }
   ],
   "r_to_f_progress": {
-    "total": 410,
+    "total": 431,
     "covered": 0,
     "percentage": "0.0"
   },

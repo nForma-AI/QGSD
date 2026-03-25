@@ -1,6 +1,7 @@
 {
-  "aggregated_at": "2026-03-25T08:29:31.905Z",
-  "content_hash": "e03dc627bc80af83",
+  "aggregated_at": "2026-03-25T13:42:23.941Z",
+  "content_hash": "67b456314683b982",
+  "frozen_at": "2026-03-25T13:42:23.942Z",
   "requirements": [
     {
       "id": "ACT-01",
@@ -184,18 +185,6 @@
       "category_raw": "Agent Roster"
     },
     {
-      "id": "AGENT-04",
-      "text": "Phase researcher agent detects implicit state machine patterns in code files and surfaces findings in structured FSM Candidates table within RESEARCH.md output",
-      "category": "MCP & Agents",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "State machines represent refactoring opportunities for formal verification via TLA+ transpilation. By enabling the researcher agent to proactively identify implicit FSM candidates during code analysis, the planner can create targeted conversion tasks that unlock formal verification capabilities without requiring manual pattern detection.",
-      "provenance": {
-        "source_file": ".planning/quick/335-add-fsm-candidate-detection-section-to-n/335-PLAN.md",
-        "milestone": "quick-335"
-      }
-    },
-    {
       "id": "ANNOT-01",
       "text": "All 11 TLA+ model files contain `@requirement` structured comments on each property/invariant, mapping it to specific requirement IDs",
       "category": "Formal Verification",
@@ -348,6 +337,42 @@
       "category_raw": "Build & Test"
     },
     {
+      "id": "BML-01",
+      "text": "formal-scope-scan.cjs `--bug-mode` flag finds formal models covering affected code files and returns model paths, formalism type, and requirement coverage",
+      "category": "Bug-to-Model Lookup",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "BML-02",
+      "text": "Bug-mode runs matched model checkers (TLC/Alloy, max 3, 60s timeout each) and reports reproduction status (pass/fail/timeout) with counterexample trace when available",
+      "category": "Bug-to-Model Lookup",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "BML-03",
+      "text": "bug-model-gaps.json tracks bugs with their model coverage status (no_coverage, no_reproduction, reproduced) and persists across sessions",
+      "category": "Bug-to-Model Lookup",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
       "id": "BRKR-01",
       "text": "When circuit breaker fires, the oscillation trigger pattern (file set, alternation count, time window) is persisted to `.planning/formal/evidence/` so future sessions can preemptively avoid the same signature",
       "category": "Quality Hardening",
@@ -357,6 +382,54 @@
       "provenance": {
         "source_file": ".planning/milestones/v0.31-REQUIREMENTS.md",
         "milestone": "v0.31"
+      }
+    },
+    {
+      "id": "BTF-01",
+      "text": "layer-constants.cjs includes `b_to_f` as the 20th layer key",
+      "category": "B-to-F Solve Layer",
+      "tier": "user",
+      "phase": "v0.38-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "BTF-02",
+      "text": "solve-wave-dag.cjs includes `b_to_f` in LAYER_DEPS with dependency on `t_to_c`",
+      "category": "B-to-F Solve Layer",
+      "tier": "user",
+      "phase": "v0.38-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "BTF-03",
+      "text": "nf-solve.cjs diagnostic sweep computes b_to_f residual by classifying failing tests as covered_reproduced (0), covered_not_reproduced (+1), or not_covered (+1)",
+      "category": "B-to-F Solve Layer",
+      "tier": "user",
+      "phase": "v0.38-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "BTF-04",
+      "text": "solve-remediate.md section 3a-extra dispatches close-formal-gaps for not_covered gaps (max 3/cycle) and model refinement for blind spots (max 2/cycle)",
+      "category": "B-to-F Solve Layer",
+      "tier": "user",
+      "phase": "v0.38-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
       }
     },
     {
@@ -424,6 +497,42 @@
       "category_raw": "Calibration Governance"
     },
     {
+      "id": "CEX-01",
+      "text": "model-constrained-fix.cjs parses TLA+ specs to extract violated invariant definitions, state variables, and transition predicates",
+      "category": "Constraint Extraction",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "CEX-02",
+      "text": "model-constrained-fix.cjs parses Alloy specs to extract failing assertion definitions and signature constraints",
+      "category": "Constraint Extraction",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "CEX-03",
+      "text": "Extracted constraints are rendered as plain-English fix constraint summaries suitable for injection into quorum worker prompts",
+      "category": "Constraint Extraction",
+      "tier": "user",
+      "phase": "v0.38-01",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
       "id": "CI-01",
       "text": "Automated test suite runs on every pull request and merge to main is blocked when tests fail",
       "category": "CI/CD",
@@ -469,32 +578,6 @@
       ]
     },
     {
-      "id": "CL-01",
-      "text": "CHANGELOG.md has a `[0.2.0]` entry covering all v0.2 changes: circuit breaker (Phases 6–8), GUARD 5 gap closure (Phase 5), QGSD rebranding, quorum scoring, quorum commands, debug flow, checkpoint:verify (quick tasks 1–12)",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Changelog"
-    },
-    {
-      "id": "CL-02",
-      "text": "CHANGELOG.md `[Unreleased]` section is cleared after the `[0.2.0]` entry is finalized — clean slate for v0.3+",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Changelog"
-    },
-    {
       "id": "CLASS-01",
       "text": "D→C classification cache uses content-hash keys (SHA-256 of claim text) instead of line-number keys — cached verdicts invalidate when doc content changes at the same line",
       "category": "Classification",
@@ -502,34 +585,32 @@
       "phase": "v0.36-02",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
     {
-      "id": "CLASS-02",
-      "text": "classifyWithHaiku retries failed batches once with 2s backoff; tracks error_types breakdown (timeout, parse_error, api_error, cli_not_found) and failed_items keys in stats",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
+      "id": "CLINK-01",
+      "text": "C→R scanner queries proximity-index.json for code file→requirement edges before flagging; score >= 0.6 auto-suppresses",
+      "category": "Code Back-Linking",
+      "tier": "user",
+      "phase": "v0.37-01",
+      "status": "Pending",
       "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Classification"
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
     },
     {
-      "id": "CLASS-03",
-      "text": "classifyTlcFailure classifier detects 6 TLC failure patterns (deadlock, sany_semantic, fairness_gap, invariant_violation, syntax_error, unknown) via ordered pattern matching and integrates into solve-remediate.md F->C dispatch to route deadlock/sany_semantic/fairness_gap to deterministic auto-fix templates.",
-      "category": "Classification",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "TLC verification failures often follow deterministic patterns that can be fixed autonomously without LLM reasoning. The classifier extracts these patterns from check-results.ndjson entries and enables targeted remediation.",
+      "id": "CLINK-02",
+      "text": "`@requirement` annotations in source files (bin/*.cjs) are parsed by the proximity graph builder and create direct edges",
+      "category": "Code Back-Linking",
+      "tier": "user",
+      "phase": "v0.37-01",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/336-implement-3-targeted-tla-failure-classif/336-PLAN.md",
-        "milestone": "quick-336"
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
       }
     },
     {
@@ -723,6 +804,30 @@
       "category_raw": "Config Extensions"
     },
     {
+      "id": "CONST-01",
+      "text": "When Claude receives a prompt that appears to involve editing existing code or files, nForma injects an edit-in-place constraint into `additionalContext` — defaulting Claude to editing existing files rather than creating new ones",
+      "category": "Constraint Injection",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "CONST-02",
+      "text": "Constraint injection is fail-open and pattern-matched — prompts that are clearly new-feature requests (not edits) do not receive the constraint injection",
+      "category": "Constraint Injection",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
       "id": "CONV-01",
       "text": "Solve loop tracks per-layer residual history across iterations and detects oscillation cycles (A-B-A-B pattern across 4+ iterations) — oscillating layers are reported and excluded from further dispatch",
       "category": "Convergence",
@@ -730,7 +835,7 @@
       "phase": "v0.36-03",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -742,7 +847,7 @@
       "phase": "v0.36-03",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -754,7 +859,7 @@
       "phase": "v0.36-03",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "formal_models": [
@@ -769,7 +874,7 @@
       "phase": "v0.36-03",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -847,6 +952,102 @@
       "formal_models": [
         ".planning/formal/tla/QGSDDashboard.tla"
       ]
+    },
+    {
+      "id": "DBG-01",
+      "text": "/nf:debug Step A.5 runs formal model consultation before quorum dispatch, appending $FORMAL_CONTEXT to the worker bundle",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "v0.38-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "DBG-02",
+      "text": "Quorum worker prompts include a rule to respect fix constraints and not violate listed invariants",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "v0.38-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "DBG-03",
+      "text": "NEXT STEP result table includes a FORMAL row showing model verdict (reproduced/not-reproduced/no-model)",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "v0.38-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "DBG-04",
+      "text": "When no model covers the failure, debug Step G appends an entry to bug-model-gaps.json for future model creation",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "v0.38-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "DBUG-01",
+      "text": "/nf:debug absorbs model-driven-fix Phases 1-4 (discovery, reproduction, refinement, constraint extraction)",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "DBUG-02",
+      "text": "Loop 1 (autoresearch-refine.cjs) runs natively within debug flow for bug reproduction",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "DBUG-03",
+      "text": "Extracted constraints from Loop 1 feed back into debug fix guidance and quorum worker prompts",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "DBUG-04",
+      "text": "Debug skill produces a reproducing formal model as a deliverable (not just a fix)",
+      "category": "Debug Integration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
     },
     {
       "id": "DEBT-01",
@@ -997,6 +1198,42 @@
       ]
     },
     {
+      "id": "DEPR-01",
+      "text": "/nf:model-driven-fix deprecated — invocation prints deprecation notice routing to /nf:debug",
+      "category": "Skill Deprecation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "DEPR-02",
+      "text": "solve-remediate b_to_f layer dispatches through /nf:debug (not deprecated /nf:model-driven-fix)",
+      "category": "Skill Deprecation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "DEPR-03",
+      "text": "All consumers of model-driven-fix.md rewired to new integration points",
+      "category": "Skill Deprecation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
       "id": "DETECT-01",
       "text": "PreToolUse hook intercepts Bash tool calls and checks whether the current context has an active circuit breaker before running detection",
       "category": "Hooks & Enforcement",
@@ -1084,7 +1321,7 @@
       "phase": "v0.36-02",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "category_raw": "Diagnostics"
@@ -1097,75 +1334,10 @@
       "phase": "v0.36-02",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       },
       "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-03",
-      "text": "Pivot decision surfaced in `.formal/diff-report.md` with complete attribution (DELIVERED; VERIFICATION.md missing)",
-      "category": "Observability & Diagnostics",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Pending",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.21-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-04",
-      "text": "sweepRtoF filters requirements by status — Pending and Future requirements are excluded from R→F residual count; `pending_excluded` count reported in detail",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-05",
-      "text": "sweepTtoC supports `exclude_paths` and `include_paths` arrays in config.solve.t_to_c — filters test discovery to specified directories, subtracts failures from excluded paths",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-06",
-      "text": "sweepDtoC detects project ecosystem beyond npm — scans requirements.txt, pyproject.toml, go.mod, Cargo.toml for known dependencies; supports `dependency_sources` and `ignore_patterns` in config.solve.d_to_c",
-      "category": "Diagnostics & Remediation",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Diagnostics"
-    },
-    {
-      "id": "DIAG-07",
-      "text": "Solve-diagnose and close-formal-gaps workflows detect implicit state machine patterns (multi-flag boolean clusters with 3+ state indicators, or enum-like strings with 3+ distinct values in conditionals) in top git churn files, surface candidates as `fsm_candidates`, and recommend `fsm-to-tla.cjs --scaffold-config` for formalization.",
-      "category": "Diagnostics & Remediation",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Ad-hoc control flow using boolean flags or string states is an implicit state machine pattern. Previously undetected by diagnostics, these patterns block transition to formal reasoning. This requirement adds fail-open heuristic detection to surface such patterns in high-churn files before they reach the formal modeling bottleneck.",
-      "source_file": ".planning/quick/326-add-implicit-state-machine-detection-to-/326-PLAN.md",
-      "milestone": "quick-326"
     },
     {
       "id": "DISP-01",
@@ -1246,33 +1418,6 @@
         ".planning/formal/tla/QGSDDispatchPipeline.tla"
       ],
       "category_raw": "Dispatch Reliability"
-    },
-    {
-      "id": "DISP-06",
-      "text": "Quorum orchestrator emits a FALLBACK_CHECKPOINT HTML comment block before evaluating consensus when any primary slot returned UNAVAIL — checkpoint must declare unavail_primaries, fallback_dispatched, t1/t2_slots_tried, all_tiers_exhausted, and proceed_reason fields",
-      "category": "Quorum & Dispatch",
-      "phase": "v0.39-quick",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.39"
-      },
-      "background": "Chain-of-thought gate in quorum.md — forces LLM to reason through fallback status before consensus. Complementary to STOP-10 which enforces the checkpoint from the consumer side."
-    },
-    {
-      "id": "DISP-08",
-      "text": "Quorum subprocess dispatch uses dual-timer timeout: an idle timer (default 20s) that resets on stdout/stderr activity, and a hard wall-clock cap (default 5min) that never resets, replacing the previous fixed wall-clock timeout",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Prevents premature kills of actively-working CLI agents while catching truly stuck processes faster. The idle timeout resets on every stdout/stderr data event; the hard cap is an absolute safety net.",
-      "provenance": {
-        "source_file": ".planning/quick/318-replace-fixed-wall-clock-quorum-timeout-/318-PLAN.md",
-        "milestone": "quick-318"
-      },
-      "formal_models": [
-        ".planning/formal/tla/QGSDDispatchPipeline.tla"
-      ]
     },
     {
       "id": "DRIFT-01",
@@ -1466,6 +1611,42 @@
       "category_raw": "Failover & Recovery"
     },
     {
+      "id": "FND-01",
+      "text": "Verification mode tagging — each model checker invocation is tagged as 'diagnostic' (Cycle 1, inverted semantics) or 'validation' (Cycle 2, normal semantics) to prevent mode contradiction",
+      "category": "Foundation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FND-02",
+      "text": "Trace comparison infrastructure — TLC counterexample traces parsed into structured JSON (ITF format) with state-by-state field extraction for diff generation",
+      "category": "Foundation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FND-03",
+      "text": "Configurable iteration limit — --max-iterations flag (default 3) controls both diagnostic refinement (Cycle 1) and simulation loop (Cycle 2), persisted in .planning/config.json",
+      "category": "Foundation",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "FP-01",
       "text": "Issues are fingerprinted using a hierarchical strategy: exception type → function name → message pattern hash, producing a stable fingerprint string",
       "category": "Fingerprinting",
@@ -1514,6 +1695,42 @@
       }
     },
     {
+      "id": "FPTUNE-01",
+      "text": "solve-classifications.json tracks per-scanner per-category FP rates across sessions (rolling window of last 10 sessions)",
+      "category": "Scanner FP Tuning",
+      "tier": "user",
+      "phase": "v0.37-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FPTUNE-02",
+      "text": "Scanners with FP rate > 60% over 5+ sessions auto-raise their suppression threshold by 0.1 (capped at 0.9)",
+      "category": "Scanner FP Tuning",
+      "tier": "user",
+      "phase": "v0.37-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "FPTUNE-03",
+      "text": "`/nf:solve --report-only` displays per-scanner FP rate table in the diagnostics output",
+      "category": "Scanner FP Tuning",
+      "tier": "user",
+      "phase": "v0.37-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "FV-01",
       "text": "NFSolveConvergence.tla models the outer solve loop with cross-session state (bounded history of last N sessions), Option C blocking rule, and gate maturity transitions",
       "category": "Formal Verification",
@@ -1553,27 +1770,38 @@
       }
     },
     {
-      "id": "GATE-01",
-      "text": "Gate A (Grounding) measures alignment as `grounding_score = traces_explained / total_traces` with target >= 80%, classifying unexplained traces",
-      "category": "Gates",
-      "tier": "user",
-      "phase": "v0.29-02",
+      "id": "FV-04",
+      "text": "The invariant gate treats CI/CD pipelines, build artifacts, and Infrastructure-as-Code (IaC) as first-class system components — properties of CI/CD and IaC (e.g., \"tests pass\", \"dist/ reflects source\", \"infra matches declared state\") are classified as invariants, not as acceptance criteria or one-time tasks",
+      "category": "Formal Verification",
       "status": "Complete",
+      "background": "The system is an ensemble of source code, CI/CD, and IaC. The build_ci_gate regex rule was removed from validate-invariant.cjs.",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": "manual",
+        "milestone": "quick-337"
+      }
+    },
+    {
+      "id": "GATE-01",
+      "text": "Loop 2 (simulateSolutionLoop with onTweakFix) fires as pre-commit gate in quick.md --full executor",
+      "category": "Pre-Commit Simulation Gate",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
       }
     },
     {
       "id": "GATE-02",
-      "text": "Gate B (Abstraction) enforces every L3 artifact has `derived_from` links to L2 sources with no orphaned hazards",
-      "category": "Gates",
+      "text": "Loop 2 fires as pre-commit gate in execute-plan.md executor",
+      "category": "Pre-Commit Simulation Gate",
       "tier": "user",
-      "phase": "v0.29-03",
-      "status": "Complete",
+      "phase": "unknown",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
       },
       "formal_models": [
         ".planning/formal/alloy/autoclose-signals.als"
@@ -1581,41 +1809,76 @@
     },
     {
       "id": "GATE-03",
-      "text": "Gate C (Validation) ensures every L3 finding maps to a concrete executable test scenario",
-      "category": "Gates",
+      "text": "Gate skips silently when no formal models are in scope for the changed files",
+      "category": "Pre-Commit Simulation Gate",
       "tier": "user",
-      "phase": "v0.29-04",
-      "status": "Complete",
+      "phase": "unknown",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
       }
     },
     {
       "id": "GATE-04",
-      "text": "Progressive gate maturity tracks per-model gate enforcement level (ADVISORY -> SOFT_GATE -> HARD_GATE)",
-      "category": "Gates",
+      "text": "Gate is fail-open by default (warns but doesn't block commit), fail-closed with --strict flag",
+      "category": "Pre-Commit Simulation Gate",
       "tier": "user",
-      "phase": "v0.29-03",
-      "status": "Complete",
+      "phase": "unknown",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
-        "milestone": "v0.29"
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
       }
     },
     {
       "id": "GATE-05",
-      "text": "compute-per-model-gates.cjs normalizes `derived_from` to array before iteration — handles single-object, array, and missing cases without crashing (fixes TypeError on `.some()`)",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
+      "text": "onTweakFix callback lets executor refine approach if convergence gates fail",
+      "category": "Pre-Commit Simulation Gate",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
       "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
       },
-      "formal_models": [],
-      "category_raw": "Gates"
+      "formal_models": []
+    },
+    {
+      "id": "GPROMO-01",
+      "text": "model-registry.json entries track `consecutive_pass_count` (incremented on pass, reset to 0 on fail) per solve session",
+      "category": "Gate Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.37-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "GPROMO-02",
+      "text": "Models with consecutive_pass_count >= 3 AND wiring >= 1.0 AND semantic >= 0.8 auto-promote from SOFT_GATE to HARD_GATE",
+      "category": "Gate Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.37-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "GPROMO-03",
+      "text": "Auto-promotion fires during solve Phase 4 (report) and logs to promotion-changelog.json with evidence snapshot",
+      "category": "Gate Auto-Promotion",
+      "tier": "user",
+      "phase": "v0.37-02",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
     },
     {
       "id": "GUIDE-01",
@@ -1719,21 +1982,32 @@
       "category_raw": "Health Checker"
     },
     {
-      "id": "IMPR-01",
-      "text": "R3.6 quorum enforcement reviewed and improvement areas identified",
-      "category": "Quorum & Dispatch",
+      "id": "HTARGET-01",
+      "text": "When a hypothesis transitions from UNMEASURABLE to CONFIRMED/VIOLATED, the layer it belongs to gets +1 priority weight in the next solve remediation wave ordering",
+      "category": "Hypothesis Targeting",
       "tier": "user",
-      "phase": "v0.19-06",
-      "status": "Complete",
+      "phase": "v0.37-05",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
-        "milestone": "v0.19"
-      },
-      "category_raw": "R3.6 Improvement Iteration"
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "HTARGET-02",
+      "text": "solve-wave-dag.cjs reads hypothesis measurements and adjusts wave ordering to prioritize layers with recent transitions",
+      "category": "Hypothesis Targeting",
+      "tier": "user",
+      "phase": "v0.37-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
     },
     {
       "id": "IMPR-02",
-      "text": "Quorum slot dispatch updated to parallel sibling Task calls (R3.2 requirement)",
+      "text": "Quorum slot dispatch uses parallel sibling Task calls (not sequential MCP calls) per R3.2 requirement",
       "category": "Quorum & Dispatch",
       "tier": "user",
       "phase": "v0.19-06",
@@ -1746,20 +2020,7 @@
     },
     {
       "id": "IMPR-03",
-      "text": "Slot worker protocol hardened against missing/malformed responses",
-      "category": "Quorum & Dispatch",
-      "tier": "user",
-      "phase": "v0.19-06",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.19-REQUIREMENTS.md",
-        "milestone": "v0.19"
-      },
-      "category_raw": "R3.6 Improvement Iteration"
-    },
-    {
-      "id": "IMPR-04",
-      "text": "Improvement validated with quorum test runs",
+      "text": "Slot worker protocol handles missing and malformed responses gracefully (no unhandled exceptions, fail-open)",
       "category": "Quorum & Dispatch",
       "tier": "user",
       "phase": "v0.19-06",
@@ -1927,6 +2188,42 @@
         ".planning/formal/tla/QGSDInstallerIdempotency.tla"
       ],
       "category_raw": "Installer Extensions"
+    },
+    {
+      "id": "INTENT-01",
+      "text": "When a quick task is triggered (`/nf:quick`), the workflow derives an APPROACH block (what will be done, what is explicitly out of scope) from the task description before spawning the planner",
+      "category": "Intent Declaration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "INTENT-02",
+      "text": "The APPROACH block is written to `.claude/scope-contract.json` with the task branch name as the key, making it available to the scope guard",
+      "category": "Intent Declaration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "INTENT-03",
+      "text": "The APPROACH block is non-modal — it is derived automatically from the task description text, not via a user dialog or confirmation step",
+      "category": "Intent Declaration",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
     },
     {
       "id": "INTG-01",
@@ -2324,7 +2621,7 @@
     },
     {
       "id": "MCPENV-02",
-      "text": "`MCMCPEnv` added to `SURFACE_MAP` and `VALID_CONFIGS`; `invariants.md` created with EventualDecision fairness declarations; CI step added to `formal-verify.yml`",
+      "text": "MCMCPEnv is present in SURFACE_MAP and VALID_CONFIGS; invariants.md includes EventualDecision fairness declarations; formal-verify.yml includes MCMCPEnv CI step",
       "category": "MCP & Agents",
       "tier": "user",
       "phase": "v0.19-08",
@@ -2459,6 +2756,42 @@
       "category_raw": "Quorum-First Behavior (Meta"
     },
     {
+      "id": "MRF-01",
+      "text": "close-formal-gaps.md accepts `--bug-context` flag that injects failure description into spec generation, biasing toward capturing the failure mode",
+      "category": "Model Refinement",
+      "tier": "user",
+      "phase": "v0.38-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "MRF-02",
+      "text": "Model refinement loop creates/refines a model, verifies it FAILS (reproduces the bug), and iterates up to 2 additional times if model passes despite bug",
+      "category": "Model Refinement",
+      "tier": "user",
+      "phase": "v0.38-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "MRF-03",
+      "text": "model-driven-fix.md workflow orchestrates the 6-phase prescriptive cycle (discovery, reproduction, refinement, constraint extraction, constrained fix, pre-verification)",
+      "category": "Model Refinement",
+      "tier": "user",
+      "phase": "v0.38-03",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
       "id": "MULTI-01",
       "text": "User can have multiple `claude-*` slots (`claude-1` through `claude-N`) each running a different model or provider",
       "category": "MCP & Agents",
@@ -2502,7 +2835,7 @@
     },
     {
       "id": "NAME-01",
-      "text": "Gate A/B/C renamed to Wiring:Evidence / Wiring:Purpose / Wiring:Coverage in all gate JSON files (gate-a-grounding.json, gate-b-abstraction.json, gate-c-validation.json)",
+      "text": "All gate JSON files use Wiring:Evidence / Wiring:Purpose / Wiring:Coverage naming (not legacy Gate A/B/C)",
       "category": "Gate Naming",
       "tier": "user",
       "phase": "v0.34-01",
@@ -2827,7 +3160,7 @@
       "category": "N:N Pairing",
       "tier": "user",
       "phase": "v0.34-03",
-      "status": "Complete",
+      "status": "Pending",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
@@ -2901,7 +3234,7 @@
       "phase": "v0.36-04",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -2913,20 +3246,8 @@
       "phase": "v0.36-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
-      }
-    },
-    {
-      "id": "PERF-03",
-      "text": "Solve diagnostic Phase 1 uses direct Bash invocation of nf-solve.cjs for baseline residual computation by default (~60s) with optional full Agent dispatch path when --verbose flag is passed",
-      "category": "Performance",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "The initial diagnostic sweep is the dominant time cost in /nf:solve workflows. Replacing the full Agent dispatch through solve-diagnose.md (27+ minutes of sub-steps) with a direct Bash call to nf-solve.cjs achieves 60-second baseline diagnostics, while preserving the full diagnostic path via --verbose.",
-      "provenance": {
-        "source_file": ".planning/quick/337-fast-path-initial-diagnostic/337-PLAN.md",
-        "milestone": "quick-337"
       }
     },
     {
@@ -3284,6 +3605,42 @@
       }
     },
     {
+      "id": "QPREC-01",
+      "text": "`bin/extract-precedents.cjs` mines quorum debate archives for key decisions (BLOCK/APPROVE with reasoning) and writes `.planning/quorum/precedents.json`",
+      "category": "Quorum Precedents",
+      "tier": "user",
+      "phase": "v0.37-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "QPREC-02",
+      "text": "Quorum dispatch prompts include up to 3 relevant precedents (matched by keyword overlap with current question)",
+      "category": "Quorum Precedents",
+      "tier": "user",
+      "phase": "v0.37-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "QPREC-03",
+      "text": "Precedents have TTL (90 days default) and are auto-pruned",
+      "category": "Quorum Precedents",
+      "tier": "user",
+      "phase": "v0.37-04",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "QUORUM-01",
       "text": "plan-milestone-gaps proposed gap closure phases are submitted to R3 quorum for approval before ROADMAP.md is updated (replaces AskUserQuestion confirmation gate)",
       "category": "Quorum & Dispatch",
@@ -3332,18 +3689,6 @@
         ".planning/formal/tla/QGSDQuorum.tla"
       ],
       "category_raw": "Quorum Gates"
-    },
-    {
-      "id": "QUORUM-04",
-      "text": "Autonomous formal verification gates dispatch code-fix approval, regression remediation, and reverse-flow discovery to quorum for unanimous consensus, replacing human pauses",
-      "category": "Quorum & Dispatch",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Three critical formal verification chokepoints previously required human intervention: code-fix approval (Phase 5a), regression remediation (Phase 5b), and reverse-flow candidate approval (Step 3i). Dispatching these to quorum with unanimous consensus gates makes the formal verification loop fully autonomous while maintaining high-stakes approval through parallel quorum deliberation with debate-on-dissent protocol and last-resort human escalation only after debate exhaustion.",
-      "provenance": {
-        "source_file": ".planning/quick/334-close-3-autonomous-formal-verification-g/334-PLAN.md",
-        "milestone": "quick-334"
-      }
     },
     {
       "id": "RDME-01",
@@ -3530,6 +3875,42 @@
       "category_raw": "Enforcement Layer"
     },
     {
+      "id": "REG-01",
+      "text": "model-driven-fix.md Phase 5 runs model checkers on proximity-neighbor models (2-hop in proximity-index.json) before declaring fix done",
+      "category": "Cross-Model Regression Prevention",
+      "tier": "user",
+      "phase": "v0.38-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "REG-02",
+      "text": "run-formal-verify.cjs accepts `--scope=model1,model2` flag to run only specified models",
+      "category": "Cross-Model Regression Prevention",
+      "tier": "user",
+      "phase": "v0.38-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
+      "id": "REG-03",
+      "text": "bug-model-gaps.json entries include post_fix_verification results (model_pass, neighbor_models_pass, regressions array)",
+      "category": "Cross-Model Regression Prevention",
+      "tier": "user",
+      "phase": "v0.38-05",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.38-REQUIREMENTS.md",
+        "milestone": "v0.38"
+      }
+    },
+    {
       "id": "REL-01",
       "text": "Failures in external services (APIs, databases, third-party SDKs) are caught and handled gracefully — the application degrades functionality rather than crashing",
       "category": "Reliability",
@@ -3560,19 +3941,6 @@
       ]
     },
     {
-      "id": "REN-01",
-      "text": "`git mv get-shit-done/ qgsd-core/` — directory renamed, git history preserved",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "v0.9-05",
-      "status": "Pending",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Portability"
-    },
-    {
       "id": "REN-02",
       "text": "`bin/install.js` updated to read from `qgsd-core/` instead of `get-shit-done/` — `node bin/install.js --claude --global` succeeds",
       "category": "Installer & CLI",
@@ -3601,69 +3969,88 @@
       ]
     },
     {
-      "id": "REN-04",
-      "text": "`~/.claude/qgsd/` installed runtime is functionally identical before and after rename (verified by spot-check)",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "v0.9-05",
-      "status": "Pending",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.11-REQUIREMENTS.md",
-        "milestone": "v0.10"
-      },
-      "category_raw": "Portability"
-    },
-    {
-      "id": "RLS-01",
-      "text": "`package.json` version field bumped from `0.1.0` to `0.2.0`",
-      "category": "Installer & CLI",
+      "id": "ROOT-01",
+      "text": "When Claude receives a prompt containing a debug/fix/investigate pattern, nForma injects a root-cause reasoning template into `additionalContext` prompting structured causal analysis before proposing a fix",
+      "category": "Root Cause Enforcement",
       "tier": "user",
       "phase": "unknown",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Release"
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
     },
     {
-      "id": "RLS-02",
-      "text": "v0.2 milestone archived in `MILESTONES.md` — includes What Shipped, Phases (6–10), Requirements Satisfied (all 20 v0.2 requirements), Key Decisions Carried Forward",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Release"
-    },
-    {
-      "id": "RLS-03",
-      "text": "Git tag `v0.2.0` created at release commit and pushed to remote",
-      "category": "Installer & CLI",
-      "tier": "user",
-      "phase": "unknown",
-      "status": "Complete",
-      "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Release"
-    },
-    {
-      "id": "RLS-04",
-      "text": "`qgsd@0.2.0` published to npm registry — `npx qgsd@0.2.0` installs successfully",
-      "category": "Installer & CLI",
+      "id": "ROOT-02",
+      "text": "In `solve-diagnose`, after the existing Step 0e hypothesis synthesis, a quorum vote is dispatched on the root cause diagnosis before proceeding — requiring multi-model consensus on the causal chain",
+      "category": "Root Cause Enforcement",
       "tier": "user",
       "phase": "unknown",
       "status": "Pending",
       "provenance": {
-        "source_file": ".planning/milestones/v0.2-REQUIREMENTS.md",
-        "milestone": "unknown"
-      },
-      "category_raw": "Release"
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "ROOT-03",
+      "text": "Root cause template injection is fail-open and pattern-matched — non-debug/fix prompts do not receive the template injection",
+      "category": "Root Cause Enforcement",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "ROUTE-01",
+      "text": "quick.md Step 2.7 Haiku subagent classifies task as bug_fix | feature | refactor (Plan 51-01)",
+      "category": "Task Classification",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "ROUTE-02",
+      "text": "Bug_fix tasks route through /nf:debug pipeline before execution (Plan 51-02)",
+      "category": "Task Classification",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "ROUTE-03",
+      "text": "Feature/refactor tasks proceed to normal execution path (Plan 51-02)",
+      "category": "Task Classification",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
+    },
+    {
+      "id": "ROUTE-04",
+      "text": "Classification result stored in scope-contract.json for downstream consumers (Plan 51-01)",
+      "category": "Task Classification",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/REQUIREMENTS.md",
+        "milestone": "v0.41"
+      }
     },
     {
       "id": "RSN-01",
@@ -3724,20 +4111,6 @@
         "source_file": ".planning/milestones/v0.29-REQUIREMENTS.md",
         "milestone": "v0.29"
       }
-    },
-    {
-      "id": "RSN-06",
-      "text": "hazard-model.cjs preserves user overrides (detection score, detection_justification, user_override flag) across regeneration — loads existing data, merges user-owned fields, recomputes RPN and summary after merge",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Reasoning"
     },
     {
       "id": "SAFE-01",
@@ -3835,7 +4208,7 @@
     },
     {
       "id": "SCHEMA-02",
-      "text": "`check-result.schema.json` gains a `requirement_ids` array (string[]) field; validation updated to accept the new field",
+      "text": "check-result.schema.json includes a requirement_ids (string[]) field accepted by validation",
       "category": "Formal Verification",
       "tier": "user",
       "phase": "v0.25-01",
@@ -3879,15 +4252,39 @@
       "category_raw": "Schema Foundation"
     },
     {
-      "id": "SCHEMA-05",
-      "text": "Requirements gain a `tier` field (user | technical) allowing classification of infrastructure and tooling requirements separately from user-facing ones",
-      "category": "Formal Verification",
+      "id": "SCOPE-01",
+      "text": "A new `nf-scope-guard.js` PreToolUse hook fires on Edit, Write, and MultiEdit tool calls and checks whether the target file is within the declared scope from `.claude/scope-contract.json`",
+      "category": "Scope Guard",
+      "tier": "user",
       "phase": "unknown",
-      "status": "Complete",
-      "background": "Infrastructure modules previously appeared as false-positive residual items in reverse traceability scanning. Adding a tier distinction enables the solve loop to propose the appropriate requirement type and reduces noise in forward/reverse traceability audits.",
+      "status": "Pending",
       "provenance": {
-        "source_file": ".planning/quick/313-add-tier-field-to-requirements-tier-user/313-PLAN.md",
-        "milestone": "quick-313"
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "SCOPE-02",
+      "text": "When a file edit targets a path outside the declared scope, the scope guard emits a warning advisory via `additionalContext` (non-blocking, exits 0) — it does not deny the tool call",
+      "category": "Scope Guard",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "SCOPE-03",
+      "text": "The scope guard is a no-op when no scope contract exists for the current session — the hook exits immediately without any output or overhead",
+      "category": "Scope Guard",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
       }
     },
     {
@@ -3952,11 +4349,11 @@
     },
     {
       "id": "SEM-01",
-      "text": "Graph BFS candidate discovery script uses existing proximity-index to find unlinked (model, requirement) pairs within 3 hops with proximity score > 0.7",
+      "text": "Graph BFS candidate discovery script uses existing proximity-index to find unlinked (model, requirement) pairs within 3 hops with proximity score > 0.6",
       "category": "Semantic Scoring",
       "tier": "user",
       "phase": "v0.34-02",
-      "status": "Complete",
+      "status": "Pending",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
@@ -3968,7 +4365,7 @@
       "category": "Semantic Scoring",
       "tier": "user",
       "phase": "v0.34-02",
-      "status": "Complete",
+      "status": "Pending",
       "provenance": {
         "source_file": ".planning/milestones/v0.34-REQUIREMENTS.md",
         "milestone": "v0.34"
@@ -4057,6 +4454,42 @@
         ".planning/formal/tla/QGSDSensitivity.tla"
       ],
       "category_raw": "Sensitivity Analysis"
+    },
+    {
+      "id": "SESSION-01",
+      "text": "On the first user message of a new Claude Code session, nForma injects the current STATE.md summary (phase, focus, last activity) into Claude's context window via `additionalContext`",
+      "category": "Session State",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "SESSION-02",
+      "text": "Session state injection fires exactly once per session (idempotent) — subsequent messages in the same session do not re-inject STATE.md content",
+      "category": "Session State",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
+    },
+    {
+      "id": "SESSION-03",
+      "text": "Session state injection is fail-open — if STATE.md is missing or unreadable, injection is silently skipped and no error is surfaced to the user",
+      "category": "Session State",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.40-REQUIREMENTS.md",
+        "milestone": "v0.40"
+      }
     },
     {
       "id": "SETUP-01",
@@ -4156,6 +4589,54 @@
       "category_raw": "Operational Signals"
     },
     {
+      "id": "SIM-01",
+      "text": "Fix intent normalization — accept fix ideas as natural language, constraint sets, or code sketches and normalize internally to formal model mutations",
+      "category": "Cycle 2",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "SIM-02",
+      "text": "Consequence model generation — given a reproducing model + normalized fix intent, generate a consequence model representing the system after the proposed fix is applied",
+      "category": "Cycle 2",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "SIM-03",
+      "text": "Three-gate convergence — automated convergence check: (1) original invariants still hold, (2) bug no longer triggered (inverted check passes), (3) no 2-hop neighbor regressions",
+      "category": "Cycle 2",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "SIM-04",
+      "text": "Simulation loop UX — Phase 4.5 in model-driven-fix.md with iteration display, per-gate pass/fail status, convergence progress, and escalation to user after max iterations",
+      "category": "Cycle 2",
+      "tier": "user",
+      "phase": "unknown",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.39-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
       "id": "SLOT-01",
       "text": "User sees all quorum agents referred to by slot name (`claude-1`, `copilot-1`, `gemini-cli-1`, etc.) in all QGSD output and commands",
       "category": "MCP & Agents",
@@ -4190,7 +4671,7 @@
     },
     {
       "id": "SLOT-03",
-      "text": "All QGSD source files (hooks, orchestrator, commands, scoreboard tooling) updated to use new slot names — no old names remain",
+      "text": "No legacy slot names exist in source files (hooks, orchestrator, commands, scoreboard tooling)",
       "category": "MCP & Agents",
       "tier": "user",
       "phase": "unknown",
@@ -4218,229 +4699,6 @@
       "category_raw": "Slot-based Naming"
     },
     {
-      "id": "SOLVE-01",
-      "text": "/nf:close-formal-gaps must auto-generate TLA+, Alloy, or PRISM specs from project requirements without manual scaffolding",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-02",
-      "text": "The quorum dispatcher must detect unauthenticated agents before dispatch and skip them rather than waiting for timeout",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-03",
-      "text": "Plan verification must check plans against requirements and repeat the loop until all checks pass or max iterations are reached",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-04",
-      "text": "nForma must generate formal specifications from project requirements and run model checkers to surface bugs before code is written",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-05",
-      "text": "/nf:solve-report must produce a before/after residual summary that includes a full formal verification pass result",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-06",
-      "text": "The circuit breaker must detect ping-pong commit loops (structural coupling) and break them automatically",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-07",
-      "text": "Quick mode must provide atomic commits and state tracking as guaranteed invariants on every task execution",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-08",
-      "text": "The XState-to-TLA+ transpiler must generate VARIABLES, Init, type invariants, action definitions, Next operator, and fairness annotations from the source machine definition",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-09",
-      "text": "nForma must provide commands covering the full project lifecycle from initialization through milestone completion",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "docs/USER-GUIDE.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-10",
-      "text": "B→F remediation routing classifies and dispatches bug-to-formal candidates with priority ordering and cap enforcement",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-11",
-      "text": "b_to_f layer is registered in LAYER_KEYS and wired into the solve-wave DAG",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-12",
-      "text": "normalizeBugContext handles null, undefined, empty string, inline text, and file-path inputs",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-13",
-      "text": "Bug lookup resolves error fingerprints to memory-store entries and NDJSON log records",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-14",
-      "text": "Proximity-neighbor traversal supports cross-model regression detection via 1-hop and 2-hop graph edges",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-15",
-      "text": "Debug verdict classification returns no-model, not-reproduced, or reproduced based on model checker results",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-16",
-      "text": "Model-driven fix orchestrator integrates formal-scope-scan, refinement-loop, and model-constrained-fix into a single pipeline",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-17",
-      "text": "Model reproduction enforces max model limit and --run-checkers flag via CLI argument parsing",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-18",
-      "text": "Refinement loop retries bug reproduction up to maxAttempts with per-iteration callbacks and converges to reproduced or not_reproduced",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-19",
-      "text": "Proximity neighbor resolution supports 1-hop and 2-hop traversal, bidirectional edges, and maxHops constraint",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-20",
-      "text": "Phase verifier checks that the codebase delivers what the phase goal promised, not just that tasks completed or tests pass",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "source_file": "README.md",
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-21",
-      "text": "PRISM DTMC model verifies quorum convergence probability across vote states (IDLE, COLLECTING_VOTES, DELIBERATING, DECIDED)",
-      "category": "Solver-Discovered",
-      "status": "Proposed",
-      "provenance": {
-        "milestone": "solver-tui"
-      }
-    },
-    {
-      "id": "SOLVE-22",
-      "text": "Autoresearch-style refinement loop refine() accepts onTweak callback for iterative model edits with in-memory backup/rollback, TSV-as-memory logging, and when-stuck protocol after 3+ consecutive discards",
-      "category": "Solver-Discovered",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Model-driven fix requires a disciplined iteration protocol to refine formal models: one edit per iteration, automatic verification, safe rollback, and iteration history tracking. autoresearch-refine.cjs delivers this as a module-only API with onTweak callback pattern, TSV logs replace git commits to avoid circuit breaker oscillation, and when-stuck exits early with structured reason for autonomous refinement safety.",
-      "provenance": {
-        "source_file": ".planning/quick/348-add-autoresearch-style-iteration-to-form/348-PLAN.md",
-        "milestone": "quick-348"
-      }
-    },
-    {
-      "id": "SOLVE-23",
-      "text": "Solution simulation loop simulateSolutionLoop() accepts onTweakFix callback for iterative fix idea refinement with in-memory rollback, TSV-as-memory logging, and when-stuck protocol after 3+ same-gate failures",
-      "category": "Solver-Discovered",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "Phase 4.5 of model-driven-fix needs to iterate on fix ideas in model space until convergence gates pass. The autoresearch-style loop lets the calling Agent refine the fix idea between iterations based on which gates failed, with TSV history for learning and automatic stuck detection.",
-      "provenance": {
-        "source_file": ".planning/quick/350-add-autoresearch-style-iteration-to-solu/350-PLAN.md",
-        "milestone": "quick-350"
-      }
-    },
-    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -4458,7 +4716,7 @@
     },
     {
       "id": "SPEC-02",
-      "text": "`QGSDOscillation.tla` audited against `qgsd-circuit-breaker.js` — no drift detected",
+      "text": "QGSDOscillation.tla is consistent with nf-circuit-breaker.js (no specification drift)",
       "category": "Formal Verification",
       "tier": "user",
       "phase": "v0.21-04",
@@ -4603,7 +4861,7 @@
     },
     {
       "id": "STD-02",
-      "text": "All 4 Gen1 MCP server repos (claude, codex, copilot, openhands) ported to Gen2 per-tool architecture (`*.tool.ts` + `registry.ts`) with Gen1 files (`definitions.ts`, `handlers.ts`) removed — all repos on main branch",
+      "text": "All MCP server repos use Gen2 per-tool architecture (*.tool.ts + registry.ts); no Gen1 files (definitions.ts, handlers.ts) exist",
       "category": "Testing & Quality",
       "tier": "user",
       "phase": "unknown",
@@ -4775,18 +5033,6 @@
       "category_raw": "Stop Hook"
     },
     {
-      "id": "STOP-10",
-      "text": "Stop hook detects when slot-worker results contain UNAVAIL verdicts without subsequent fallback dispatch rounds or a valid FALLBACK_CHECKPOINT marker, and blocks with fallback_01_block action — enforcing FALLBACK-01 tiered fallback at the structural level",
-      "category": "Hooks & Enforcement",
-      "phase": "v0.39-quick",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "manual",
-        "milestone": "v0.39"
-      },
-      "background": "Belt-and-suspenders enforcement: quorum.md checkpoint (belt) + nf-stop.js detectUnavailWithoutFallback (suspenders)"
-    },
-    {
       "id": "STRUCT-01",
       "text": "L2 (Semantics) layer is either populated with at least 3 semantic models OR collapsed to a 2-layer architecture with Gate A evaluating L1→L3 directly — unblocking Gate B from permanent zero score",
       "category": "Structure",
@@ -4794,7 +5040,7 @@
       "phase": "v0.36-04",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4806,7 +5052,7 @@
       "phase": "v0.36-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4818,7 +5064,7 @@
       "phase": "v0.36-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4830,7 +5076,7 @@
       "phase": "v0.36-01",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4903,7 +5149,7 @@
       "phase": "v0.36-05",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4915,7 +5161,7 @@
       "phase": "v0.36-05",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4927,7 +5173,7 @@
       "phase": "v0.36-05",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -4939,7 +5185,43 @@
       "phase": "v0.36-05",
       "status": "Complete",
       "provenance": {
-        "source_file": ".planning/REQUIREMENTS.md",
+        "source_file": ".planning/milestones/v0.36-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TLINK-01",
+      "text": "Test files containing `@requirement REQ-ID` annotations are excluded from T→R scanner flagging for those requirement IDs",
+      "category": "Test Back-Linking",
+      "tier": "user",
+      "phase": "v0.37-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TLINK-02",
+      "text": "`bin/annotate-tests.cjs` scans test files, uses proximity graph to suggest `@requirement` annotations, and writes them as comments",
+      "category": "Test Back-Linking",
+      "tier": "user",
+      "phase": "v0.37-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
+        "milestone": "unknown"
+      }
+    },
+    {
+      "id": "TLINK-03",
+      "text": "T→R scanner reports annotation coverage percentage alongside orphan test count",
+      "category": "Test Back-Linking",
+      "tier": "user",
+      "phase": "v0.37-01",
+      "status": "Pending",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.37-REQUIREMENTS.md",
         "milestone": "unknown"
       }
     },
@@ -5064,20 +5346,6 @@
         ".planning/formal/alloy/traceability-annotations.als"
       ],
       "category_raw": "Traceability Matrix"
-    },
-    {
-      "id": "TRACE-06",
-      "text": "build-code-trace.cjs preserves user-added traced_files entries (objects with traced_to/reason fields) across index regeneration — merges with auto-discovered array entries",
-      "category": "Formal Verification",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Traceability"
     },
     {
       "id": "TRACK-01",
@@ -5240,6 +5508,42 @@
         ".planning/formal/alloy/unified-check-results.als"
       ],
       "category_raw": "Unified Verdict Format"
+    },
+    {
+      "id": "UPPAAL-01",
+      "text": "A UPPAAL timed automaton model (`.formal/uppaal/quorum-races.xml`) captures the concurrency structure of the quorum protocol — specifically when concurrent slot responses and timeout expirations fire relative to each other. The model uses `runtime_ms` bounds from `check-results.ndjson` as empirical timing constraints (clock guards and invariants), not hardcoded constants.",
+      "category": "UPPAAL Timed Race Modeling",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      }
+    },
+    {
+      "id": "UPPAAL-02",
+      "text": "`bin/run-uppaal.cjs` executes the UPPAAL model checker (verifyta CLI) against `quorum-races.xml` and writes a check result to `check-results.ndjson` using the v2.1 schema (SCHEMA-01 prerequisite). The STEPS entry `uppaal:quorum-races` is added to `run-formal-verify.cjs`.",
+      "category": "UPPAAL Timed Race Modeling",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      }
+    },
+    {
+      "id": "UPPAAL-03",
+      "text": "The model surfaces at least two critical measurement points as annotated properties: (a) the minimum inter-slot response gap that prevents a race condition, (b) the maximum timeout value for which the quorum can still reach consensus before the planning gate deadline.",
+      "category": "UPPAAL Timed Race Modeling",
+      "tier": "user",
+      "phase": "v0.20-07",
+      "status": "Complete",
+      "provenance": {
+        "source_file": ".planning/milestones/v0.20-REQUIREMENTS.md",
+        "milestone": "v0.20"
+      }
     },
     {
       "id": "UPS-01",
@@ -5415,20 +5719,6 @@
       }
     },
     {
-      "id": "VERF-04",
-      "text": "run-formal-verify.cjs normalizes legacy `formal-spec/` paths to `.planning/formal/` in registry check commands and model keys — no manual symlink required",
-      "category": "Verification & Execution State",
-      "tier": "system",
-      "phase": "v0.37",
-      "status": "Complete",
-      "provenance": {
-        "source_file": "github-issues",
-        "milestone": "v0.37"
-      },
-      "formal_models": [],
-      "category_raw": "Verification"
-    },
-    {
       "id": "VERIFY-01",
       "text": "`qgsd-verifier` agent runs `run-formal-verify` after implementation and includes `check-results.ndjson` digest in `VERIFICATION.md`",
       "category": "Testing & Quality",
@@ -5477,7 +5767,7 @@
     },
     {
       "id": "VIS-02",
-      "text": "VHS tape hardened for CI reliability (zsh shell, explicit PATH export, CLAUDECODE unset)",
+      "text": "VHS tape uses zsh shell, explicit PATH export, and CLAUDECODE unset for CI reliability",
       "category": "Visual Assets",
       "tier": "user",
       "phase": "v0.32-04",
@@ -5638,21 +5928,8 @@
         "source_file": ".planning/milestones/v0.35-REQUIREMENTS.md",
         "milestone": "unknown"
       }
-    },
-    {
-      "id": "XPLAT-03",
-      "text": "CCR provider slots resolve binary paths dynamically at dispatch time and detect missing CCR installation with helpful install instructions",
-      "category": "Cross-Platform",
-      "phase": "unknown",
-      "status": "Complete",
-      "background": "CCR (Claude Code Router) slots previously used hardcoded /opt/homebrew/bin/ccr paths, breaking on non-standard macOS installs and all Linux systems. This requirement ensures CCR slots use bare ccr names, leveraging the existing resolveCli() dispatch-time resolution to locate the binary portably. The change also adds upfront detection and warnings when CCR is missing, guiding users to install via npm.",
-      "provenance": {
-        "source_file": ".planning/quick/323-add-ccr-auto-install-and-dynamic-path-re/323-PLAN.md",
-        "milestone": "quick-323"
-      }
     }
   ],
   "schema_version": "1",
-  "source": ".planning/REQUIREMENTS.md",
-  "frozen_at": "2026-03-25T08:29:31.906Z"
+  "source": ".planning/REQUIREMENTS.md"
 }

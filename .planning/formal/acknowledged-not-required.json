@@ -443,6 +443,117 @@
       "reason": "quorum-no-consensus",
       "shelved_at": "2026-03-24T22:02:44.198Z",
       "iteration": 1
+    },
+    {
+      "file_or_claim": "bin/refinement-loop.cjs",
+      "category": "A",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "C→R",
+        "T→R"
+      ],
+      "evidence": "bin/refinement-loop.cjs + test/refinement-loop.test.cjs",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "bin/autoresearch-refine.test.cjs",
+      "category": "A",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "T→R"
+      ],
+      "evidence": "bin/autoresearch-refine.test.cjs",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "- **State machine to TLA+ transpiler** -- Point `fsm-to-tla` at any state machine in your codebase and get a formal TLA+",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:108",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "- **Formal spec generation** -- `/nf:close-formal-gaps` auto-generates TLA+, Alloy, or PRISM specs from your project req",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:110",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "- **Pre-quorum auth checks** -- Detects unauthenticated agents before dispatch, no more 30s timeouts",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:111",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "3. **Verifies** — Checks plans against requirements, loops until they pass",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:438",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "4. **Verifies against goals** — Checks the codebase delivers what the phase promised",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:457",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "3. **Report** (`/nf:solve-report`) — Generates before/after summary with full formal verification pass, so you can see e",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:712",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "<summary><strong>Ping-Pong Commit Loop Breaker</strong> — Detects and breaks structural coupling loops</summary>",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:820",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "Quick mode gives you nForma guarantees (atomic commits, state tracking) with a faster path:",
+      "category": "A",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:861",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
+    },
+    {
+      "file_or_claim": "The transpiler generates VARIABLES, Init, type invariants, action definitions with guard mappings, Next (with fairness),",
+      "category": "C",
+      "reason": "quorum-dispatch-unavailable-shelved",
+      "source_scanners": [
+        "D→R"
+      ],
+      "evidence": "README.md:890",
+      "acknowledged_at": "2026-03-25T16:53:28.980Z"
     }
   ]
 }

@@ -19,9 +19,10 @@
  *   node bin/validate-invariant.cjs --test
  *
  * Verdicts:
- *   INVARIANT      — requirement has invariant language, passed regex
- *   NON_INVARIANT  — caught by regex fast-pass
- *   BORDERLINE     — needs Haiku sub-agent classification (no invariant language, past-tense heavy)
+ *   INVARIANT      — requirement has invariant language, passed all gates
+ *   NON_INVARIANT  — caught by regex fast-pass (Layer 1)
+ *   BORDERLINE     — needs Haiku sub-agent classification (Layer 2: no invariant language, past-tense heavy)
+ *   LOW_VALUE      — technically an invariant but not worth tracking (Layer 3: documentation structure, not system behavior)
  *
  * Exit codes:
  *   0 — validation complete (results printed)
@@ -48,7 +49,7 @@ const REGEX_RULES = [
   },
   {
     name: 'migration_task',
-    pattern: /\b(git\s+mv|ported\s+to|archive[d]?\s+(in|to)|renamed.*preserved)\b/i,
+    pattern: /\b(git\s+mv|ported\s+to|renamed.*preserved)\b/i,
     reason: 'One-time migration — already completed',
   },
   {
@@ -56,11 +57,8 @@ const REGEX_RULES = [
     pattern: /\bCHANGELOG\b/,
     reason: 'Changelog task — documentation, not invariant',
   },
-  {
-    name: 'build_ci_gate',
-    pattern: /\b(npm\s+test\s+passes|rebuilt\s+from\s+current\s+source)\b/i,
-    reason: 'CI gate — acceptance criteria, not system property',
-  },
+  // REMOVED: build_ci_gate — CI/CD is part of the system; "tests pass" and
+  // "dist reflects source" are invariants, not mere acceptance criteria.
   {
     name: 'audit_finding',
     pattern: /\b(no\s+drift\s+detected|audited\s+against|verified\s+by\s+spot.check)\b/i,
@@ -68,7 +66,7 @@ const REGEX_RULES = [
   },
   {
     name: 'past_improvement',
-    pattern: /\b(updated\s+to\s+(parallel|new|read|use)|hardened|validated\s+with.*test|gains\s+a\s+.*\s+field|improvement\s+areas\s+identified)\b/i,
+    pattern: /\b(hardened|validated\s+with.*test|gains\s+a\s+.*\s+field|improvement\s+areas\s+identified)\b/i,
     reason: 'Past improvement — describes what was done, not what must hold',
   },
   {
@@ -91,6 +89,55 @@ function regexPass(text) {
       return { matched: true, reason: rule.reason, rule: rule.name };
     }
   }
+  return { matched: false };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Layer 3: Value filter — would violating this cause a bug or regression?
+// Catches "documentation-only" properties that are technically true but not
+// worth tracking as system invariants. These get a LOW_VALUE verdict.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const LOW_VALUE_RULES = [
+  {
+    name: 'readme_structure',
+    pattern: /\b(README|readme)\b.*\b(section|diagram|added|includes?|near\s+top)\b/i,
+    reason: 'README structure — documentation layout, not system behavior',
+  },
+  {
+    name: 'user_guide_content',
+    pattern: /\buser\s+guide\b.*\b(updated|screenshots?|cross.referenc)/i,
+    reason: 'User guide content — documentation, not system behavior',
+  },
+  {
+    name: 'changelog_content',
+    pattern: /\b(changelog|what.s\s+new)\b.*\b(section|entry|added)\b/i,
+    reason: 'Changelog/release notes content — documentation, not system behavior',
+  },
+];
+
+/**
+ * Check if a requirement describes a documentation-only property (low value).
+ * @param {string} id - Requirement ID
+ * @param {string} text - Requirement text
+ * @returns {{ matched: boolean, reason?: string, rule?: string }}
+ */
+function lowValuePass(id, text) {
+  const stripped = text.replace(/`/g, '');
+
+  // Check text-based rules
+  for (const rule of LOW_VALUE_RULES) {
+    if (rule.pattern.test(stripped)) {
+      return { matched: true, reason: rule.reason, rule: rule.name };
+    }
+  }
+
+  // Check ID-prefix rules: RDME-* and GUIDE-* are documentation by convention
+  const prefix = id.replace(/-\d+$/, '');
+  if (prefix === 'RDME' && /\b(section|diagram|added|near\s+top|contribution)\b/i.test(stripped)) {
+    return { matched: true, reason: 'README structure — documentation layout, not system behavior', rule: 'readme_prefix' };
+  }
+
   return { matched: false };
 }
 
@@ -130,12 +177,35 @@ function isBorderline(text) {
 function buildHaikuPrompt(id, text) {
   return `You are a requirements invariant classifier.
 
-A VALID requirement is an INVARIANT — a property that must hold at any point in time.
-Test: "At any point, if you inspect the system, this property holds."
+## Definition
 
-A NON-INVARIANT is a task, migration, past achievement, or process step.
+An INVARIANT is a property that must hold at any point in time.
+Test: "If I inspect the system RIGHT NOW, does this property hold?"
 
-Requirement: ${id}: ${text}
+A NON_INVARIANT is an event that happened once and has no ongoing testable property:
+a release, a one-time migration, an audit that was performed, a review that was completed.
+
+## Common traps — read carefully
+
+1. PAST TENSE ≠ NON-INVARIANT. "X updated to use Y" means "X uses Y" — test the property, not the verb tense.
+   Example: "Dispatch updated to use parallel calls" → INVARIANT (dispatch uses parallel calls right now)
+   Example: "v0.2 milestone archived in MILESTONES.md" → NON_INVARIANT (one-time archival event)
+
+2. FEATURES ARE INVARIANTS. "Dashboard refreshes on keypress" is testable at any point — press the key, observe the refresh. UI behavior is a system property.
+   Example: "Dashboard refreshes on keypress with visible timestamp" → INVARIANT (UI behavior)
+   Example: "User Guide updated with screenshots" → NON_INVARIANT (documentation content, not system behavior)
+
+3. ROUTING/DISPATCH PATHS ARE INVARIANTS. "Layer X dispatches through Y" means at any point, inspecting the code shows X routes to Y.
+   Example: "b_to_f layer dispatches through debug" → INVARIANT (routing property)
+   Example: "Reviewed and improvement areas identified" → NON_INVARIANT (review event)
+
+4. CI/CD AND BUILD CONFIG ARE INVARIANTS. The system = source code + CI/CD + build artifacts.
+   Example: "VHS tape uses zsh shell and explicit PATH" → INVARIANT (CI config property)
+   Example: "Git tag v0.2.0 created and pushed" → NON_INVARIANT (release event)
+
+## Requirement to classify
+
+${id}: ${text}
 
 Classify as exactly one of:
 - INVARIANT: <one-line reason>
@@ -153,18 +223,26 @@ Classify as exactly one of:
  * @returns {{ verdict: string, reason?: string, layer?: string }}
  */
 function validateInvariant(req) {
-  // Layer 1: Regex fast-pass
+  // Layer 1: Regex fast-pass — obvious non-invariants
   const regexResult = regexPass(req.text);
   if (regexResult.matched) {
     return { verdict: 'NON_INVARIANT', reason: regexResult.reason, layer: 'regex' };
   }
 
-  // Layer 2: Borderline detection → needs Haiku sub-agent
+  // Layer 2: Value filter — technically an invariant but not worth tracking
+  // Test: "Would violating this cause a bug, regression, or broken user experience?"
+  // Runs before borderline to avoid wasting Haiku calls on documentation-only items.
+  const lowValue = lowValuePass(req.id, req.text);
+  if (lowValue.matched) {
+    return { verdict: 'LOW_VALUE', reason: lowValue.reason, layer: 'value' };
+  }
+
+  // Layer 3: Borderline detection → needs Haiku sub-agent
   if (isBorderline(req.text)) {
     return { verdict: 'BORDERLINE', reason: 'Lacks invariant language with past-tense verbs — needs Haiku sub-agent classification', layer: 'heuristic' };
   }
 
-  // Has invariant language and passed regex → INVARIANT
+  // Has invariant language, passed regex, has system value → INVARIANT
   return { verdict: 'INVARIANT' };
 }
 
@@ -313,8 +391,9 @@ function main() {
     const results = validateInvariantBatch(requirements);
     const nonInvariants = results.filter(r => r.verdict === 'NON_INVARIANT');
     const borderline = results.filter(r => r.verdict === 'BORDERLINE');
+    const lowValue = results.filter(r => r.verdict === 'LOW_VALUE');
 
-    if (nonInvariants.length === 0 && borderline.length === 0) {
+    if (nonInvariants.length === 0 && borderline.length === 0 && lowValue.length === 0) {
       console.log('All requirements passed invariant gate.');
     } else {
       if (nonInvariants.length > 0) {
@@ -323,6 +402,14 @@ function main() {
           const req = requirements.find(r => r.id === ni.id);
           console.log(`  ${ni.id}: ${req?.text?.slice(0, 80)}...`);
           console.log(`    Reason: ${ni.reason} [${ni.layer}]`);
+        }
+      }
+      if (lowValue.length > 0) {
+        console.log(`\nLOW-VALUE — technically invariant but not system behavior (${lowValue.length}):`);
+        for (const lv of lowValue) {
+          const req = requirements.find(r => r.id === lv.id);
+          console.log(`  ${lv.id}: ${req?.text?.slice(0, 80)}...`);
+          console.log(`    Reason: ${lv.reason} [${lv.layer}]`);
         }
       }
       if (borderline.length > 0) {
@@ -372,8 +459,11 @@ function main() {
       console.log(`Envelope reduced: ${requirements.length} → ${envelope.requirements.length}`);
     }
 
-    const invariantCount = results.length - nonInvariants.length - borderline.length;
-    console.log(`\nSummary: ${nonInvariants.length} non-invariant, ${borderline.length} borderline, ${invariantCount} invariant`);
+    const invariantCount = results.length - nonInvariants.length - borderline.length - lowValue.length;
+    const parts = [`${nonInvariants.length} non-invariant`];
+    if (lowValue.length > 0) parts.push(`${lowValue.length} low-value`);
+    parts.push(`${borderline.length} borderline`, `${invariantCount} invariant`);
+    console.log(`\nSummary: ${parts.join(', ')}`);
     process.exit(0);
   }
 
@@ -392,6 +482,10 @@ function main() {
   } else if (result.verdict === 'BORDERLINE') {
     console.log('Invariant check: BORDERLINE — needs Haiku sub-agent classification');
     console.log(`  Haiku prompt: ${buildHaikuPrompt(args.id, args.text).slice(0, 100)}...`);
+  } else if (result.verdict === 'LOW_VALUE') {
+    console.log('Invariant check: LOW_VALUE — technically an invariant but not system behavior');
+    console.log(`  Reason: ${result.reason}`);
+    console.log(`  Test: "Would violating this cause a bug, regression, or broken UX?" → No`);
   } else {
     console.log('Invariant check: FAIL');
     console.log(`  Reason: ${result.reason}`);

@@ -1,10 +1,10 @@
 {
   "schema_version": "2",
-  "generated": "2026-03-25T11:07:45.397Z",
-  "wiring_coverage_score": 0.8985507246376812,
-  "total_entries": 207,
+  "generated": "2026-03-25T17:16:25.351Z",
+  "wiring_coverage_score": 0.8691588785046729,
+  "total_entries": 214,
   "validated_entries": 186,
-  "unvalidated_entries": 21,
+  "unvalidated_entries": 28,
   "target": 0.8,
   "target_met": true
 }

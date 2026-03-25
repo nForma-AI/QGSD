@@ -386,6 +386,12 @@
       "value": "7ab1ed566fb26e59",
       "reason": "Acknowledged via TUI",
       "acknowledged_at": "2026-03-19T13:30:38.605Z"
+    },
+    {
+      "source": "D->R",
+      "value": "1e87ef8638400298",
+      "reason": "Acknowledged via TUI",
+      "acknowledged_at": "2026-03-25T11:29:12.204Z"
     }
   ],
   "patterns": [

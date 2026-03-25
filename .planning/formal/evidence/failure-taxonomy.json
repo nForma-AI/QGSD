@@ -1,162 +1,234 @@
 {
   "schema_version": "1",
-  "generated": "2026-03-25T11:02:03.919Z",
-  "total_failures": 50,
+  "generated": "2026-03-25T16:19:11.152Z",
+  "total_failures": 90,
   "categories": {
     "crash": [
       {
-        "tool": "run-oscillation-tlc",
+        "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:51.733Z",
-        "check_id": "tla:bogus",
+        "timestamp": "2026-03-25T16:18:37.107Z",
+        "check_id": "tla:mcdispatch",
         "surface": "tla",
-        "property": "bogus",
+        "property": "MCdispatch",
         "runtime_ms": 0,
-        "summary": "error: unknown config in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "bogus"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
-      },
-      {
-        "tool": "run-audit-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.739Z",
-        "check_id": "alloy:bogus",
-        "surface": "alloy",
-        "property": "bogus",
-        "runtime_ms": 0,
-        "summary": "error: alloy:bogus (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "spec": "bogus"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:bogus (invalid spec)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.785Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
+        "summary": "error: state-space guard blocked MCdispatch (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
         ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:51.763Z",
-          "window_end": "2026-03-25T11:01:51.785Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-oscillation-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.814Z",
-        "check_id": "tla:invalid",
-        "surface": "tla",
-        "property": "invalid",
-        "runtime_ms": 0,
-        "summary": "error: unknown config in 0ms",
-        "triage_tags": [],
         "requirement_ids": [],
         "metadata": {
-          "config": "invalid"
+          "config": "MCdispatch",
+          "estimated_states": null,
+          "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
-      },
-      {
-        "tool": "run-audit-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.850Z",
-        "check_id": "alloy:invalid",
-        "surface": "alloy",
-        "property": "invalid",
-        "runtime_ms": 0,
-        "summary": "error: alloy:invalid (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "spec": "invalid"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:invalid (invalid spec)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.938Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:51.937Z",
-          "window_end": "2026-03-25T11:01:51.938Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-oscillation-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:51.934Z",
-        "check_id": "tla:solve-convergence",
-        "surface": "tla",
-        "property": "Outer solve loop convergence under Option C",
-        "runtime_ms": 0,
-        "summary": "error: Java not found in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [
-          "FV-01",
-          "FV-02",
-          "FV-03"
-        ],
-        "metadata": {
-          "config": "MCsolve-convergence"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdispatch (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.000Z",
+        "timestamp": "2026-03-25T16:18:38.727Z",
+        "check_id": "tla:mcimprovement",
+        "surface": "tla",
+        "property": "MCimprovement",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCimprovement (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCimprovement",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCimprovement (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:38.774Z",
+        "check_id": "tla:mcsessionpersistence",
+        "surface": "sessionpersistence",
+        "property": "MCSessionPersistence",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionPersistence",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:38.981Z",
+        "check_id": "tla:mcinstaller",
+        "surface": "installer",
+        "property": "MCinstaller",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCinstaller (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCinstaller",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCinstaller (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:39.097Z",
+        "check_id": "tla:mcsessiontracking",
+        "surface": "tla",
+        "property": "MCSessionTracking",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSessionTracking (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionTracking",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionTracking (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:39.331Z",
+        "check_id": "tla:mcsolveconvergencev2",
+        "surface": "tla",
+        "property": "MCSolveConvergenceV2",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSolveConvergenceV2 (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSolveConvergenceV2",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSolveConvergenceV2 (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:39.531Z",
+        "check_id": "tla:mcsolvefastpath",
+        "surface": "tla",
+        "property": "MCSolveFastPath",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSolveFastPath (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSolveFastPath",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSolveFastPath (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:40.243Z",
+        "check_id": "tla:mclearning",
+        "surface": "tla",
+        "property": "MClearning",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MClearning (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MClearning",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MClearning (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:41.894Z",
+        "check_id": "tla:mcmemorypersist",
+        "surface": "tla",
+        "property": "MCmemorypersist",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCmemorypersist",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:42.218Z",
+        "check_id": "tla:mcorchestration",
+        "surface": "tla",
+        "property": "MCorchestration",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCorchestration (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCorchestration",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCorchestration (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:42.767Z",
         "check_id": "tla:mcagentloop",
         "surface": "agent-loop",
         "property": "MCAgentLoop",
@@ -175,115 +247,10 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCAgentLoop (HIGH risk, ~null states)"
       },
       {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.064Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.036Z",
-          "window_end": "2026-03-25T11:01:52.064Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-protocol-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.151Z",
-        "check_id": "tla:deliberation",
-        "surface": "tla",
-        "property": "R3 deliberation loop — max 10 rounds + 10 improvement iterations",
-        "runtime_ms": 0,
-        "summary": "error: Java not found in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PLAN-01",
-          "PLAN-02",
-          "SAFE-03",
-          "IMPR-01",
-          "LOOP-02"
-        ],
-        "metadata": {
-          "config": "MCdeliberation"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.177Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.175Z",
-          "window_end": "2026-03-25T11:01:52.176Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.183Z",
-        "check_id": "tla:quorum-safety",
-        "surface": "tla",
-        "property": "Safety invariants — TypeInvariant, SafetyInvariant, no deadlock",
-        "runtime_ms": 0,
-        "summary": "error: Java not found in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [
-          "QUORUM-01",
-          "QUORUM-02",
-          "QUORUM-03",
-          "SAFE-01",
-          "SAFE-02",
-          "SAFE-03",
-          "LOOP-01"
-        ],
-        "metadata": {
-          "config": "MCsafety",
-          "verification_mode": "validation"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: Java not found in 0ms"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.269Z",
+        "timestamp": "2026-03-25T16:18:43.401Z",
         "check_id": "tla:mcconvergencetest",
         "surface": "convergence",
         "property": "MCConvergenceTest",
@@ -302,91 +269,10 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCConvergenceTest (HIGH risk, ~null states)"
       },
       {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.348Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.333Z",
-          "window_end": "2026-03-25T11:01:52.341Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.449Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.435Z",
-          "window_end": "2026-03-25T11:01:52.449Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.644Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.633Z",
-          "window_end": "2026-03-25T11:01:52.644Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.713Z",
+        "timestamp": "2026-03-25T16:18:44.059Z",
         "check_id": "tla:mcdeliberationrevision",
         "surface": "deliberation-revision",
         "property": "MCDeliberationRevision",
@@ -405,37 +291,10 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCDeliberationRevision (HIGH risk, ~null states"
       },
       {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:52.805Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.804Z",
-          "window_end": "2026-03-25T11:01:52.804Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.858Z",
+        "timestamp": "2026-03-25T16:18:44.211Z",
         "check_id": "tla:mctuisessions",
         "surface": "tla",
         "property": "MCTUISessions",
@@ -459,7 +318,7 @@
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.976Z",
+        "timestamp": "2026-03-25T16:18:44.514Z",
         "check_id": "tla:mcgatepromotion",
         "surface": "tla",
         "property": "MCGatePromotion",
@@ -478,64 +337,32 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCGatePromotion (HIGH risk, ~null states)"
       },
       {
-        "tool": "run-prism",
-        "formalism": "prism",
+        "tool": "run-tlc",
+        "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:52.983Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
+        "timestamp": "2026-03-25T16:18:44.922Z",
+        "check_id": "tla:mcsessionpersistence",
+        "surface": "sessionpersistence",
+        "property": "MCSessionPersistence",
         "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
+        "summary": "error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
         ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:52.982Z",
-          "window_end": "2026-03-25T11:01:52.983Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionPersistence",
+          "estimated_states": null,
+          "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:53.161Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:53.154Z",
-          "window_end": "2026-03-25T11:01:53.161Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:53.408Z",
+        "timestamp": "2026-03-25T16:18:44.985Z",
         "check_id": "tla:mcp-environment",
         "surface": "mcp-calls",
         "property": "MCP environment — MCPEnvSafety, MCPEnvLiveness",
@@ -558,393 +385,32 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCMCPEnv (HIGH risk, ~null states)"
       },
       {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:53.585Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:53.561Z",
-          "window_end": "2026-03-25T11:01:53.585Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:53.808Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:53.723Z",
-          "window_end": "2026-03-25T11:01:53.808Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.020Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:53.956Z",
-          "window_end": "2026-03-25T11:01:54.019Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-protocol-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.022Z",
-        "check_id": "tla:bogus",
-        "surface": "tla",
-        "property": "bogus",
-        "runtime_ms": 0,
-        "summary": "error: unknown config in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "bogus"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.210Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:54.209Z",
-          "window_end": "2026-03-25T11:01:54.210Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-protocol-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.203Z",
-        "check_id": "tla:invalid",
-        "surface": "tla",
-        "property": "invalid",
-        "runtime_ms": 0,
-        "summary": "error: unknown config in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "invalid"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: unknown config in 0ms"
-      },
-      {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:54.353Z",
-        "check_id": "tla:bogus",
+        "timestamp": "2026-03-25T16:18:45.191Z",
+        "check_id": "tla:mcpolicy",
         "surface": "tla",
-        "property": "Config not found: bogus",
+        "property": "MCpolicy",
         "runtime_ms": 0,
-        "summary": "error: config file not found in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "bogus",
-          "verification_mode": "validation"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: config file not found in 0ms"
-      },
-      {
-        "tool": "run-installer-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.404Z",
-        "check_id": "alloy:bogus",
-        "surface": "alloy",
-        "property": "bogus",
-        "runtime_ms": 0,
-        "summary": "error: alloy:bogus (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "spec": "bogus"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:bogus (invalid spec)"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.447Z",
-        "check_id": "tla:invalid",
-        "surface": "tla",
-        "property": "Config not found: invalid",
-        "runtime_ms": 0,
-        "summary": "error: config file not found in 0ms",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "invalid",
-          "verification_mode": "validation"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: config file not found in 0ms"
-      },
-      {
-        "tool": "run-installer-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.489Z",
-        "check_id": "alloy:invalid",
-        "surface": "alloy",
-        "property": "invalid",
-        "runtime_ms": 0,
-        "summary": "error: alloy:invalid (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [],
-        "metadata": {
-          "spec": "invalid"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:invalid (invalid spec)"
-      },
-      {
-        "tool": "run-transcript-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.494Z",
-        "check_id": "alloy:transcript",
-        "surface": "alloy",
-        "property": "Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement",
-        "runtime_ms": 0,
-        "summary": "error: alloy:transcript (Java not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "STOP-08",
-          "STOP-09",
-          "STOP-10",
-          "STOP-11"
-        ],
-        "metadata": {
-          "spec": "transcript-scan"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:transcript (Java not found)"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:54.627Z",
-        "check_id": "tla:mcactivity",
-        "surface": "tla",
-        "property": "MCactivity",
-        "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCactivity (HIGH risk, ~null states)",
+        "summary": "error: state-space guard blocked MCpolicy (HIGH risk, ~null states)",
         "triage_tags": [
           "state-space-blocked"
         ],
         "requirement_ids": [],
         "metadata": {
-          "config": "MCactivity",
+          "config": "MCpolicy",
           "estimated_states": null,
           "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCactivity (HIGH risk, ~null states)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCpolicy (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:54.970Z",
-        "check_id": "tla:mcagent-prov",
-        "surface": "tla",
-        "property": "MCagent-prov",
-        "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)",
-        "triage_tags": [
-          "state-space-blocked"
-        ],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "MCagent-prov",
-          "estimated_states": null,
-          "risk": "HIGH"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:55.278Z",
-        "check_id": "tla:mcbreaker-state",
-        "surface": "tla",
-        "property": "MCbreaker-state",
-        "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)",
-        "triage_tags": [
-          "state-space-blocked"
-        ],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "MCbreaker-state",
-          "estimated_states": null,
-          "risk": "HIGH"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:56.724Z",
-        "check_id": "tla:mcsessionpersistence",
-        "surface": "sessionpersistence",
-        "property": "MCSessionPersistence",
-        "runtime_ms": 0,
-        "summary": "error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)",
-        "triage_tags": [
-          "state-space-blocked"
-        ],
-        "requirement_ids": [],
-        "metadata": {
-          "config": "MCSessionPersistence",
-          "estimated_states": null,
-          "risk": "HIGH"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:56.935Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:56.925Z",
-          "window_end": "2026-03-25T11:01:56.930Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:57.282Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:57.279Z",
-          "window_end": "2026-03-25T11:01:57.282Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-tlc",
-        "formalism": "tla",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:57.702Z",
+        "timestamp": "2026-03-25T16:18:45.324Z",
         "check_id": "tla:mcsessiontracking",
         "surface": "tla",
         "property": "MCSessionTracking",
@@ -966,7 +432,7 @@
         "tool": "run-prism",
         "formalism": "prism",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:57.901Z",
+        "timestamp": "2026-03-25T16:18:45.416Z",
         "check_id": "prism:quorum",
         "surface": "prism",
         "property": "Quorum consensus probability under agent availability rates",
@@ -980,35 +446,8 @@
         ],
         "metadata": {},
         "observation_window": {
-          "window_start": "2026-03-25T11:01:57.867Z",
-          "window_end": "2026-03-25T11:01:57.901Z",
-          "n_traces": 0,
-          "n_events": 0,
-          "window_days": 0
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: prism:quorum (binary not found)"
-      },
-      {
-        "tool": "run-prism",
-        "formalism": "prism",
-        "result": "error",
-        "timestamp": "2026-03-25T11:01:58.461Z",
-        "check_id": "prism:quorum",
-        "surface": "prism",
-        "property": "Quorum consensus probability under agent availability rates",
-        "runtime_ms": 0,
-        "summary": "error: prism:quorum (binary not found)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "PRM-01",
-          "QUORUM-04",
-          "LOOP-01"
-        ],
-        "metadata": {},
-        "observation_window": {
-          "window_start": "2026-03-25T11:01:58.414Z",
-          "window_end": "2026-03-25T11:01:58.461Z",
+          "window_start": "2026-03-25T16:18:45.415Z",
+          "window_end": "2026-03-25T16:18:45.416Z",
           "n_traces": 0,
           "n_events": 0,
           "window_days": 0
@@ -1020,7 +459,7 @@
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:58.520Z",
+        "timestamp": "2026-03-25T16:18:45.705Z",
         "check_id": "tla:mcsolveconvergencev2",
         "surface": "tla",
         "property": "MCSolveConvergenceV2",
@@ -1042,7 +481,7 @@
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:01:59.505Z",
+        "timestamp": "2026-03-25T16:18:46.003Z",
         "check_id": "tla:mcsolvefastpath",
         "surface": "tla",
         "property": "MCSolveFastPath",
@@ -1061,56 +500,120 @@
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSolveFastPath (HIGH risk, ~null states)"
       },
       {
-        "tool": "run-transcript-alloy",
-        "formalism": "alloy",
+        "tool": "run-tlc",
+        "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:02:00.030Z",
-        "check_id": "alloy:transcript",
-        "surface": "alloy",
-        "property": "Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement",
+        "timestamp": "2026-03-25T16:18:46.441Z",
+        "check_id": "tla:mcactivity",
+        "surface": "tla",
+        "property": "MCactivity",
         "runtime_ms": 0,
-        "summary": "error: alloy:transcript (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "STOP-08",
-          "STOP-09",
-          "STOP-10",
-          "STOP-11"
+        "summary": "error: state-space guard blocked MCactivity (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
         ],
+        "requirement_ids": [],
         "metadata": {
-          "spec": "bogus"
+          "config": "MCactivity",
+          "estimated_states": null,
+          "risk": "HIGH"
         },
         "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:transcript (invalid spec)"
-      },
-      {
-        "tool": "run-transcript-alloy",
-        "formalism": "alloy",
-        "result": "error",
-        "timestamp": "2026-03-25T11:02:00.529Z",
-        "check_id": "alloy:transcript",
-        "surface": "alloy",
-        "property": "Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement",
-        "runtime_ms": 0,
-        "summary": "error: alloy:transcript (invalid spec)",
-        "triage_tags": [],
-        "requirement_ids": [
-          "STOP-08",
-          "STOP-09",
-          "STOP-10",
-          "STOP-11"
-        ],
-        "metadata": {
-          "spec": "invalid"
-        },
-        "category": "crash",
-        "classification_reason": "Error pattern in summary: error: alloy:transcript (invalid spec)"
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCactivity (HIGH risk, ~null states)"
       },
       {
         "tool": "run-tlc",
         "formalism": "tla",
         "result": "error",
-        "timestamp": "2026-03-25T11:02:02.407Z",
+        "timestamp": "2026-03-25T16:18:46.929Z",
+        "check_id": "tla:mcagent-prov",
+        "surface": "tla",
+        "property": "MCagent-prov",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCagent-prov",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:47.214Z",
+        "check_id": "tla:mcbreaker-state",
+        "surface": "tla",
+        "property": "MCbreaker-state",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCbreaker-state",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:48.919Z",
+        "check_id": "tla:mcprompt-hook",
+        "surface": "tla",
+        "property": "MCprompt-hook",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCprompt-hook (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCprompt-hook",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCprompt-hook (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:49.217Z",
+        "check_id": "tla:mcreasoning",
+        "surface": "tla",
+        "property": "MCreasoning",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCreasoning (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCreasoning",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCreasoning (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:50.263Z",
         "check_id": "tla:mcci-checks",
         "surface": "tla",
         "property": "MCci-checks",
@@ -1127,20 +630,1272 @@
         },
         "category": "crash",
         "classification_reason": "Error pattern in summary: error: state-space guard blocked MCci-checks (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:50.633Z",
+        "check_id": "tla:mctuisessions",
+        "surface": "tla",
+        "property": "MCTUISessions",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCTUISessions (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [
+          "NAV-02"
+        ],
+        "metadata": {
+          "config": "MCTUISessions",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCTUISessions (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:52.218Z",
+        "check_id": "tla:mcactivity",
+        "surface": "tla",
+        "property": "MCactivity",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCactivity (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCactivity",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCactivity (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:52.446Z",
+        "check_id": "tla:mcagent-prov",
+        "surface": "tla",
+        "property": "MCagent-prov",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCagent-prov",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:52.752Z",
+        "check_id": "tla:mcbreaker-state",
+        "surface": "tla",
+        "property": "MCbreaker-state",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCbreaker-state",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:53.158Z",
+        "check_id": "tla:mcdashboard",
+        "surface": "tla",
+        "property": "MCdashboard",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdashboard (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdashboard",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdashboard (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:53.412Z",
+        "check_id": "tla:mcdebtledger",
+        "surface": "tla",
+        "property": "MCdebtledger",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdebtledger (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdebtledger",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdebtledger (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:53.601Z",
+        "check_id": "tla:mcsensitivity",
+        "surface": "tla",
+        "property": "MCsensitivity",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCsensitivity (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCsensitivity",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsensitivity (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:54.127Z",
+        "check_id": "tla:mcsolve-convergence",
+        "surface": "tla",
+        "property": "MCsolve-convergence",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCsolve-convergence (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCsolve-convergence",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsolve-convergence (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:54.595Z",
+        "check_id": "tla:mcsolve-orchestrator",
+        "surface": "tla",
+        "property": "MCsolve-orchestrator",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCsolve-orchestrator (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCsolve-orchestrator",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsolve-orchestrator (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:56.528Z",
+        "check_id": "tla:mcdispatch",
+        "surface": "tla",
+        "property": "MCdispatch",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdispatch (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdispatch",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdispatch (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:57.451Z",
+        "check_id": "tla:mcci-checks",
+        "surface": "tla",
+        "property": "MCci-checks",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCci-checks (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCci-checks",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCci-checks (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:57.456Z",
+        "check_id": "tla:mcsessionpersistence",
+        "surface": "sessionpersistence",
+        "property": "MCSessionPersistence",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionPersistence",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionPersistence (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:57.596Z",
+        "check_id": "tla:mcsolvep2f",
+        "surface": "tla",
+        "property": "MCsolvep2f",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCsolvep2f (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCsolvep2f",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCsolvep2f (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:57.776Z",
+        "check_id": "tla:mcsessiontracking",
+        "surface": "tla",
+        "property": "MCSessionTracking",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSessionTracking (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSessionTracking",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSessionTracking (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:57.919Z",
+        "check_id": "tla:mcspec-gen",
+        "surface": "tla",
+        "property": "MCspec-gen",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCspec-gen (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCspec-gen",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCspec-gen (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.118Z",
+        "check_id": "tla:mcsolveconvergencev2",
+        "surface": "tla",
+        "property": "MCSolveConvergenceV2",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSolveConvergenceV2 (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSolveConvergenceV2",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSolveConvergenceV2 (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.209Z",
+        "check_id": "tla:mctokenopt",
+        "surface": "tla",
+        "property": "MCtokenopt",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCtokenopt (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCtokenopt",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCtokenopt (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.399Z",
+        "check_id": "tla:mcverification",
+        "surface": "tla",
+        "property": "MCverification",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCverification (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCverification",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCverification (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.445Z",
+        "check_id": "tla:mcsolvefastpath",
+        "surface": "tla",
+        "property": "MCSolveFastPath",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCSolveFastPath (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCSolveFastPath",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCSolveFastPath (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.627Z",
+        "check_id": "tla:mcimprovement",
+        "surface": "tla",
+        "property": "MCimprovement",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCimprovement (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCimprovement",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCimprovement (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.702Z",
+        "check_id": "tla:mcwizard",
+        "surface": "tla",
+        "property": "MCwizard",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCwizard (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCwizard",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCwizard (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:18:58.907Z",
+        "check_id": "tla:mcinstaller",
+        "surface": "installer",
+        "property": "MCinstaller",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCinstaller (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCinstaller",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCinstaller (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:00.416Z",
+        "check_id": "tla:mcdashboard",
+        "surface": "tla",
+        "property": "MCdashboard",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdashboard (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdashboard",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdashboard (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:00.519Z",
+        "check_id": "tla:mclearning",
+        "surface": "tla",
+        "property": "MClearning",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MClearning (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MClearning",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MClearning (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:00.611Z",
+        "check_id": "tla:mcdebtledger",
+        "surface": "tla",
+        "property": "MCdebtledger",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdebtledger (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdebtledger",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdebtledger (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:01.754Z",
+        "check_id": "tla:mcmemorypersist",
+        "surface": "tla",
+        "property": "MCmemorypersist",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCmemorypersist",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:01.827Z",
+        "check_id": "tla:mcdispatch",
+        "surface": "tla",
+        "property": "MCdispatch",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCdispatch (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCdispatch",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCdispatch (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:01.951Z",
+        "check_id": "tla:mcorchestration",
+        "surface": "tla",
+        "property": "MCorchestration",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCorchestration (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCorchestration",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCorchestration (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:02.002Z",
+        "check_id": "tla:mctuisessions",
+        "surface": "tla",
+        "property": "MCTUISessions",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCTUISessions (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [
+          "NAV-02"
+        ],
+        "metadata": {
+          "config": "MCTUISessions",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCTUISessions (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.211Z",
+        "check_id": "tla:mcimprovement",
+        "surface": "tla",
+        "property": "MCimprovement",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCimprovement (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCimprovement",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCimprovement (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.216Z",
+        "check_id": "tla:mcpolicy",
+        "surface": "tla",
+        "property": "MCpolicy",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCpolicy (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCpolicy",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCpolicy (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.316Z",
+        "check_id": "tla:mcactivity",
+        "surface": "tla",
+        "property": "MCactivity",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCactivity (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCactivity",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCactivity (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.428Z",
+        "check_id": "tla:mcinstaller",
+        "surface": "installer",
+        "property": "MCinstaller",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCinstaller (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCinstaller",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCinstaller (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.574Z",
+        "check_id": "tla:mcagent-prov",
+        "surface": "tla",
+        "property": "MCagent-prov",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCagent-prov",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCagent-prov (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:03.938Z",
+        "check_id": "tla:mcbreaker-state",
+        "surface": "tla",
+        "property": "MCbreaker-state",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCbreaker-state",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCbreaker-state (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:06.222Z",
+        "check_id": "tla:mclearning",
+        "surface": "tla",
+        "property": "MClearning",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MClearning (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MClearning",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MClearning (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:07.753Z",
+        "check_id": "tla:mcprompt-hook",
+        "surface": "tla",
+        "property": "MCprompt-hook",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCprompt-hook (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCprompt-hook",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCprompt-hook (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.089Z",
+        "check_id": "tla:mcreasoning",
+        "surface": "tla",
+        "property": "MCreasoning",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCreasoning (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCreasoning",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCreasoning (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-account-pool-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.316Z",
+        "check_id": "alloy:account-pool",
+        "surface": "alloy",
+        "property": "Account pool state machine — slot assignment and release invariants",
+        "runtime_ms": 0,
+        "summary": "error: alloy:account-pool (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-07",
+          "CRED-08",
+          "CRED-09",
+          "CRED-10",
+          "CRED-11"
+        ],
+        "metadata": {},
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:account-pool (Java not found)"
+      },
+      {
+        "tool": "run-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.517Z",
+        "check_id": "alloy:quorum-votes",
+        "surface": "alloy",
+        "property": "Alloy assertions for quorum-votes",
+        "runtime_ms": 0,
+        "summary": "error: alloy:quorum-votes (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "QUORUM-02",
+          "SAFE-01",
+          "SAFE-04"
+        ],
+        "metadata": {
+          "verification_mode": "validation"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:quorum-votes (Java not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.579Z",
+        "check_id": "tla:mcci-checks",
+        "surface": "tla",
+        "property": "MCci-checks",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCci-checks (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCci-checks",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCci-checks (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.667Z",
+        "check_id": "tla:mcmemorypersist",
+        "surface": "tla",
+        "property": "MCmemorypersist",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCmemorypersist",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCmemorypersist (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-audit-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.669Z",
+        "check_id": "alloy:scoreboard",
+        "surface": "alloy",
+        "property": "Scoreboard idempotency — no vote loss, no double counting",
+        "runtime_ms": 0,
+        "summary": "error: alloy:scoreboard (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "SCBD-01",
+          "SCBD-02",
+          "SCBD-03",
+          "SCBD-04"
+        ],
+        "metadata": {
+          "spec": "scoreboard-recompute"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:scoreboard (Java not found)"
+      },
+      {
+        "tool": "run-installer-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.784Z",
+        "check_id": "alloy:install-scope",
+        "surface": "alloy",
+        "property": "Installer rollback soundness and config sync completeness",
+        "runtime_ms": 0,
+        "summary": "error: alloy:install-scope (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "INST-01",
+          "INST-02",
+          "INST-03",
+          "INST-04",
+          "INST-05"
+        ],
+        "metadata": {
+          "spec": "install-scope"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:install-scope (Java not found)"
+      },
+      {
+        "tool": "run-tlc",
+        "formalism": "tla",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.940Z",
+        "check_id": "tla:mcorchestration",
+        "surface": "tla",
+        "property": "MCorchestration",
+        "runtime_ms": 0,
+        "summary": "error: state-space guard blocked MCorchestration (HIGH risk, ~null states)",
+        "triage_tags": [
+          "state-space-blocked"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "config": "MCorchestration",
+          "estimated_states": null,
+          "risk": "HIGH"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: state-space guard blocked MCorchestration (HIGH risk, ~null states)"
+      },
+      {
+        "tool": "run-quorum-composition-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:08.993Z",
+        "check_id": "alloy:quorum-composition",
+        "surface": "alloy",
+        "property": "Quorum composition rules — no empty selection, high-risk full fan-out, solo mode single slot",
+        "runtime_ms": 0,
+        "summary": "error: alloy:quorum-composition (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "SPEC-03",
+          "COMP-01"
+        ],
+        "metadata": {},
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:quorum-composition (Java not found)"
+      },
+      {
+        "tool": "run-transcript-alloy",
+        "formalism": "alloy",
+        "result": "error",
+        "timestamp": "2026-03-25T16:19:09.141Z",
+        "check_id": "alloy:transcript",
+        "surface": "alloy",
+        "property": "Hook transcript scanning — boundary detection, tool_use/tool_result pairing uniqueness, ceiling enforcement",
+        "runtime_ms": 0,
+        "summary": "error: alloy:transcript (Java not found)",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-08",
+          "STOP-09",
+          "STOP-10",
+          "STOP-11"
+        ],
+        "metadata": {
+          "spec": "transcript-scan"
+        },
+        "category": "crash",
+        "classification_reason": "Error pattern in summary: error: alloy:transcript (Java not found)"
       }
     ],
     "timeout": [],
     "logic_violation": [
       {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:40.507Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 782,
+        "summary": "fail: MCStopHook in 782ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 782ms"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:44.781Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 2238,
+        "summary": "fail: MCoscillation in 2238ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCoscillation in 2238ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:46.174Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 1447,
+        "summary": "fail: MCaccount-manager in 1447ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 1447ms"
+      },
+      {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:47.578Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 1189,
+        "summary": "fail: MCStopHook in 1189ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 1189ms"
+      },
+      {
+        "tool": "run-breaker-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:48.424Z",
+        "check_id": "tla:breaker",
+        "surface": "tla",
+        "property": "Circuit breaker state persistence and oscillation detection algorithm",
+        "runtime_ms": 956,
+        "summary": "fail: MCbreaker in 956ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-01",
+          "DETECT-02",
+          "DETECT-03"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker in 956ms"
+      },
+      {
         "tool": "run-protocol-tlc",
         "formalism": "tla",
         "result": "fail",
-        "timestamp": "2026-03-25T11:01:53.816Z",
+        "timestamp": "2026-03-25T16:18:48.590Z",
+        "check_id": "tla:prefilter",
+        "surface": "tla",
+        "property": "R4 pre-filter protocol — max 3 rounds bounded termination",
+        "runtime_ms": 1078,
+        "summary": "fail: MCprefilter in 1078ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PLAN-03",
+          "PLAN-04",
+          "PLAN-05",
+          "PLAN-06",
+          "LOOP-03"
+        ],
+        "metadata": {
+          "config": "MCprefilter"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCprefilter in 1078ms"
+      },
+      {
+        "tool": "run-account-manager-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:51.893Z",
+        "check_id": "tla:account-manager",
+        "surface": "tla",
+        "property": "Account manager quorum state machine — MCAM correctness",
+        "runtime_ms": 1057,
+        "summary": "fail: MCaccount-manager in 1057ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "CRED-01",
+          "CRED-02",
+          "CRED-03",
+          "CRED-04",
+          "CRED-05",
+          "CRED-06"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 1057ms"
+      },
+      {
+        "tool": "run-breaker-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:54.381Z",
+        "check_id": "tla:breaker",
+        "surface": "tla",
+        "property": "Circuit breaker state persistence and oscillation detection algorithm",
+        "runtime_ms": 1331,
+        "summary": "fail: MCbreaker in 1331ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-01",
+          "DETECT-02",
+          "DETECT-03"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker in 1331ms"
+      },
+      {
+        "tool": "run-stop-hook-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:59.642Z",
+        "check_id": "tla:stop-hook",
+        "surface": "tla",
+        "property": "Stop hook safety (BLOCK => hasCommand) + liveness (hasQuorumEvidence => <>PASS)",
+        "runtime_ms": 941,
+        "summary": "fail: MCStopHook in 941ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "STOP-01",
+          "STOP-02",
+          "STOP-03",
+          "STOP-04",
+          "STOP-05",
+          "STOP-06",
+          "STOP-07",
+          "SPEC-01"
+        ],
+        "metadata": {
+          "config": "MCStopHook"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCStopHook in 941ms"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:19:01.614Z",
         "check_id": "tla:deliberation",
         "surface": "tla",
         "property": "R3 deliberation loop — max 10 rounds + 10 improvement iterations",
-        "runtime_ms": 1378,
-        "summary": "fail: MCdeliberation in 1378ms",
+        "runtime_ms": 821,
+        "summary": "fail: MCdeliberation in 821ms",
         "triage_tags": [],
         "requirement_ids": [
           "PLAN-01",
@@ -1153,18 +1908,40 @@
           "config": "MCdeliberation"
         },
         "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCdeliberation in 1378ms"
+        "classification_reason": "Logic violation: fail: MCdeliberation in 821ms"
+      },
+      {
+        "tool": "run-oscillation-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:19:03.004Z",
+        "check_id": "tla:oscillation",
+        "surface": "tla",
+        "property": "Run-collapse oscillation detection algorithm correctness",
+        "runtime_ms": 847,
+        "summary": "fail: MCoscillation in 847ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-04",
+          "DETECT-05",
+          "DETECT-06"
+        ],
+        "metadata": {
+          "config": "MCoscillation"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCoscillation in 847ms"
       },
       {
         "tool": "run-account-manager-tlc",
         "formalism": "tla",
         "result": "fail",
-        "timestamp": "2026-03-25T11:01:54.290Z",
+        "timestamp": "2026-03-25T16:19:03.087Z",
         "check_id": "tla:account-manager",
         "surface": "tla",
         "property": "Account manager quorum state machine — MCAM correctness",
-        "runtime_ms": 1158,
-        "summary": "fail: MCaccount-manager in 1158ms",
+        "runtime_ms": 864,
+        "summary": "fail: MCaccount-manager in 864ms",
         "triage_tags": [],
         "requirement_ids": [
           "CRED-01",
@@ -1176,20 +1953,93 @@
         ],
         "metadata": {},
         "category": "logic_violation",
-        "classification_reason": "Logic violation: fail: MCaccount-manager in 1158ms"
+        "classification_reason": "Logic violation: fail: MCaccount-manager in 864ms"
+      },
+      {
+        "tool": "run-breaker-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:19:06.388Z",
+        "check_id": "tla:breaker",
+        "surface": "tla",
+        "property": "Circuit breaker state persistence and oscillation detection algorithm",
+        "runtime_ms": 1807,
+        "summary": "fail: MCbreaker in 1807ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "DETECT-01",
+          "DETECT-02",
+          "DETECT-03"
+        ],
+        "metadata": {},
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCbreaker in 1807ms"
+      },
+      {
+        "tool": "run-protocol-tlc",
+        "formalism": "tla",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:19:07.383Z",
+        "check_id": "tla:prefilter",
+        "surface": "tla",
+        "property": "R4 pre-filter protocol — max 3 rounds bounded termination",
+        "runtime_ms": 1508,
+        "summary": "fail: MCprefilter in 1508ms",
+        "triage_tags": [],
+        "requirement_ids": [
+          "PLAN-03",
+          "PLAN-04",
+          "PLAN-05",
+          "PLAN-06",
+          "LOOP-03"
+        ],
+        "metadata": {
+          "config": "MCprefilter"
+        },
+        "category": "logic_violation",
+        "classification_reason": "Logic violation: fail: MCprefilter in 1508ms"
       }
     ],
-    "drift": [],
+    "drift": [
+      {
+        "tool": "validate-traces",
+        "formalism": "trace",
+        "result": "fail",
+        "timestamp": "2026-03-25T16:18:38.389Z",
+        "check_id": "ci:conformance-traces",
+        "surface": "ci",
+        "property": "Conformance event replay through XState machine",
+        "runtime_ms": 23,
+        "summary": "fail: 1 divergence(s) in 1 traces (23ms)",
+        "triage_tags": [
+          "trace-divergence"
+        ],
+        "requirement_ids": [],
+        "metadata": {
+          "divergences": 1,
+          "total": 1
+        },
+        "observation_window": {
+          "window_start": "2026-03-25T16:18:38.374Z",
+          "window_end": "2026-03-25T16:18:38.375Z",
+          "n_traces": 0,
+          "n_events": 1,
+          "window_days": 0
+        },
+        "category": "drift",
+        "classification_reason": "Trace divergence: 1 divergence(s) detected"
+      }
+    ],
     "degradation": []
   },
   "category_counts": {
-    "crash": 48,
+    "crash": 75,
     "timeout": 0,
-    "logic_violation": 2,
-    "drift": 0,
+    "logic_violation": 14,
+    "drift": 1,
     "degradation": 0
   },
   "degradation_fallback_note": "When no baseline exists, potential degradation entries are classified as logic_violation",
   "unclassified": [],
-  "summary": "50 failures classified: crash=48, timeout=0, logic_violation=2, drift=0, degradation=0. 0 unclassified."
+  "summary": "90 failures classified: crash=75, timeout=0, logic_violation=14, drift=1, degradation=0. 0 unclassified."
 }
