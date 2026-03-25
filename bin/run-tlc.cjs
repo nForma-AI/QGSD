@@ -15,6 +15,8 @@
 
 const { spawnSync } = require('child_process');
 const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
+const TLC_TIMEOUT_MS = parseInt(process.env.NF_TLC_TIMEOUT_MS || '1800000', 10); // 30min default
+const TLC_WORKERS = process.env.NF_TLC_WORKERS || '2'; // prevent all-core saturation
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -366,7 +368,7 @@ if (require.main === module) {
   const specPath = path.join(ROOT, '.planning', 'formal', 'tla', specFile);
   const cfgPath  = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
   // Use -workers 1 for liveness (defensive — avoids known multi-worker liveness bugs in older TLC)
-  const workers  = configName === 'MCliveness' ? '1' : 'auto';
+  const workers  = configName === 'MCliveness' ? '1' : TLC_WORKERS;
 
   process.stdout.write('[run-tlc] Config: ' + configName + '  Workers: ' + workers + '\n');
   process.stdout.write('[run-tlc] Spec:   ' + specPath + '\n');
@@ -386,8 +388,28 @@ if (require.main === module) {
     '-config', cfgPath,
     '-workers', workers,
     specPath,
-  ], { encoding: 'utf8', stdio: 'inherit' });
+  ], { encoding: 'utf8', stdio: 'inherit', timeout: TLC_TIMEOUT_MS });
   const _runtimeMs = Date.now() - _startMs;
+
+  if (tlcResult.signal === 'SIGTERM') {
+    process.stderr.write('[run-tlc] TLC killed after ' + TLC_TIMEOUT_MS + 'ms timeout\n');
+    const check_id = CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase());
+    const property = PROPERTY_MAP[configName] || configName;
+    try {
+      writeCheckResult({
+        tool: 'run-tlc', formalism: 'tla', result: 'error',
+        check_id, surface: 'tla', property,
+        runtime_ms: _runtimeMs,
+        summary: 'timeout: TLC killed after ' + (TLC_TIMEOUT_MS/1000) + 's',
+        requirement_ids: getRequirementIds(check_id),
+        triage_tags: ['timeout-killed'],
+        metadata: { config: configName, timeout_ms: TLC_TIMEOUT_MS }
+      });
+    } catch (e) {
+      process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');
+    }
+    process.exit(1);
+  }
 
   if (tlcResult.error) {
     process.stderr.write('[run-tlc] TLC invocation failed: ' + tlcResult.error.message + '\n');

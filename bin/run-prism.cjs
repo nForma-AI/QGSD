@@ -18,6 +18,7 @@
 //     Linux binary tarball.
 
 const { spawnSync } = require('child_process');
+const PRISM_TIMEOUT_MS = parseInt(process.env.NF_PRISM_TIMEOUT_MS || '600000', 10); // 10min default
 const fs   = require('fs');
 const path = require('path');
 const { writeCheckResult } = require('./write-check-result.cjs');
@@ -386,7 +387,26 @@ const _startMs = Date.now();
 const result = spawnSync(prismBin, prismArgs, {
   encoding: 'utf8',
   stdio: 'inherit',
+  timeout: PRISM_TIMEOUT_MS,
 });
+
+if (result.signal === 'SIGTERM') {
+  process.stderr.write('[run-prism] PRISM killed after ' + PRISM_TIMEOUT_MS + 'ms timeout\n');
+  const _runtimeMs = Date.now() - _startMs;
+  const _errCheckId = CHECK_ID_MAP[activeModelName] || ('prism:' + activeModelName);
+  try {
+    writeCheckResult({
+      tool: 'run-prism', formalism: 'prism', result: 'error',
+      check_id: _errCheckId, surface: 'prism', property: PROPERTY_MAP[activeModelName] || ('PRISM model: ' + activeModelName),
+      runtime_ms: _runtimeMs, summary: 'timeout: PRISM killed after ' + (PRISM_TIMEOUT_MS/1000) + 's',
+      triage_tags: ['timeout-killed'],
+      requirement_ids: getRequirementIds(_errCheckId),
+      observation_window: { window_start: new Date().toISOString(), window_end: new Date().toISOString(), n_traces: 0, n_events: 0, window_days: 0 },
+      metadata: { timeout_ms: PRISM_TIMEOUT_MS }
+    });
+  } catch (e) { process.stderr.write('[run-prism] Warning: failed to write check result: ' + e.message + '\n'); }
+  process.exit(1);
+}
 
 if (result.error) {
   process.stderr.write('[run-prism] Failed to launch PRISM: ' + result.error.message + '\n');

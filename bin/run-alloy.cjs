@@ -14,6 +14,7 @@
 
 const { spawnSync } = require('child_process');
 const JAVA_HEAP_MAX = process.env.NF_JAVA_HEAP_MAX || '512m';
+const ALLOY_TIMEOUT_MS = parseInt(process.env.NF_ALLOY_TIMEOUT_MS || '600000', 10); // 10min default
 const fs   = require('fs');
 const path = require('path');
 const os   = require('os');
@@ -149,7 +150,25 @@ const alloyResult = spawnSync(javaExe, [
   '--type', 'text',
   '--quiet',
   alsPath,
-], { encoding: 'utf8', stdio: 'pipe' });
+], { encoding: 'utf8', stdio: 'pipe', timeout: ALLOY_TIMEOUT_MS });
+
+if (alloyResult.signal === 'SIGTERM') {
+  process.stderr.write('[run-alloy] Alloy killed after ' + ALLOY_TIMEOUT_MS + 'ms timeout\n');
+  try {
+    writeCheckResult({
+      tool: 'run-alloy', formalism: 'alloy', result: 'error',
+      check_id: checkId, surface: 'alloy', property: 'Alloy assertions for ' + specName,
+      runtime_ms: Date.now() - _startMs,
+      summary: 'timeout: Alloy killed after ' + (ALLOY_TIMEOUT_MS/1000) + 's',
+      requirement_ids: getRequirementIds(checkId),
+      triage_tags: ['timeout-killed'],
+      metadata: { verification_mode: verificationMode, timeout_ms: ALLOY_TIMEOUT_MS }
+    });
+  } catch (e) {
+    process.stderr.write('[run-alloy] Warning: failed to write check result: ' + e.message + '\n');
+  }
+  process.exit(1);
+}
 
 if (alloyResult.error) {
   process.stderr.write('[run-alloy] Alloy invocation failed: ' + alloyResult.error.message + '\n');
