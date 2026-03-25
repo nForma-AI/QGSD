@@ -643,3 +643,13 @@ Archive: `.planning/milestones/v0.15-MILESTONE-AUDIT.md`
 
 ---
 
+
+## v0.41 Unified Autoresearch Execution Pipeline (Shipped: 2026-03-25)
+
+**Phases completed:** 53 phases, 94 plans, 35 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
