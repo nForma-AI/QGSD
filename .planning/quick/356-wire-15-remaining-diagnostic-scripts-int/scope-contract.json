@@ -1,0 +1,22 @@
+{
+  "nf/quick-337-fast-path-initial-diagnostic": {
+    "task_id": 356,
+    "task_description": "Wire 15 remaining diagnostic scripts into nf-solve.cjs as sweeps or folds into existing sweeps",
+    "approach": "Wire 15 diagnostic scripts into nf-solve.cjs as new sweeps or folds into existing sweeps, mapping each script to its target sweep function.",
+    "out_of_scope": [
+      "Modifying the diagnostic scripts themselves or their internal logic",
+      "Updating nf-solve.cjs command-line interface or output format beyond table rendering",
+      "Testing or validation of the integrated sweeps",
+      "Documentation or changelog updates"
+    ],
+    "classification": {
+      "type": "feature",
+      "confidence": 0.92,
+      "routed_through_debug": false
+    },
+    "branches_affected": ["nf/quick-337-fast-path-initial-diagnostic"],
+    "created_at": "2026-03-25T15:01:58.860Z",
+    "planner_model": "inherit",
+    "created_by": "quick-orchestrator"
+  }
+}

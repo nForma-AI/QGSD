@@ -72,6 +72,7 @@ None yet.
 | 353 | Add state-space preflight guard to run-tlc.cjs | 2026-03-25 | 1d52a48e | Verified | [353-add-state-space-preflight-guard-to-run-t](./quick/353-add-state-space-preflight-guard-to-run-t/) |
 | 354 | Add 5 missing layers to solve-report table renderer | 2026-03-25 | a931c0cc | Verified | [354-add-5-missing-layers-p-to-f-b-to-f-per-m](./quick/354-add-5-missing-layers-p-to-f-b-to-f-per-m/) |
 | 355 | Auto-invoke nf:resolve after solve finishes iterating | 2026-03-25 | 72a9a6d8 | Verified | [355-auto-invoke-nf-resolve-after-solve-finis](./quick/355-auto-invoke-nf-resolve-after-solve-finis/) |
+| 356 | Wire 15 diagnostic scripts into nf-solve.cjs as sweeps | 2026-03-25 | 3b476722 | Verified | [356-wire-15-remaining-diagnostic-scripts-int](./quick/356-wire-15-remaining-diagnostic-scripts-int/) |
 
 ### Blockers/Concerns
 
