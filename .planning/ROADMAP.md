@@ -30,11 +30,11 @@
   2. Loop 1 (autoresearch-refine.cjs) runs within the debug flow, producing a TSV trace of one-tweak-per-iteration refinement attempts
   3. Constraints extracted by Loop 1 appear in the debug fix guidance and are injected into quorum worker prompts
   4. Debug produces a reproducing formal model artifact (not just a code fix) as a tracked deliverable
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 50-01: TBD
-- [ ] 50-02: TBD
+- [ ] 50-01-PLAN.md — Rewrite debug.md Steps A.5-A.8 to absorb model-driven-fix Phases 1-4 (discovery, reproduction, refinement, constraint extraction)
+- [ ] 50-02-PLAN.md — Wire constraint injection into quorum worker prompts and formal model artifact tracking
 
 ### Phase 51: Task Classification
 **Goal**: quick.md automatically classifies tasks and routes bug fixes through the debug pipeline while sending features/refactors to normal execution
@@ -86,7 +86,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 50. Debug Integration | 0/TBD | Not started | - |
+| 50. Debug Integration | 0/2 | Planning complete | - |
 | 51. Task Classification | 0/TBD | Not started | - |
 | 52. Pre-Commit Simulation Gate | 0/TBD | Not started | - |
 | 53. Skill Deprecation | 0/TBD | Not started | - |
