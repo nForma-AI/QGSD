@@ -374,6 +374,43 @@ if (require.main === module) {
   process.stdout.write('[run-tlc] Spec:   ' + specPath + '\n');
   process.stdout.write('[run-tlc] Cfg:    ' + cfgPath + '\n');
 
+  // ── State-space preflight guard ────────────────────────────────────────────
+  if (!process.env.NF_SKIP_STATE_SPACE_GUARD) {
+    try {
+      const { analyzeModel } = require('./analyze-state-space.cjs');
+      const analysis = analyzeModel(configName, ROOT);
+      if (analysis && analysis.risk_level === 'HIGH') {
+        const check_id = CHECK_ID_MAP[configName] || ('tla:' + configName.toLowerCase());
+        const surface = SURFACE_MAP[configName] || 'tla';
+        const property = PROPERTY_MAP[configName] || configName;
+        process.stderr.write('[run-tlc] BLOCKED: ' + configName + ' estimated ' +
+          (analysis.estimated_states || 'unbounded') + ' states (HIGH risk). ' +
+          'Set NF_SKIP_STATE_SPACE_GUARD=1 to override.\n');
+        try {
+          writeCheckResult({
+            tool: 'run-tlc',
+            formalism: 'tla',
+            result: 'error',
+            check_id: check_id,
+            surface: surface,
+            property: property,
+            runtime_ms: 0,
+            summary: 'error: state-space guard blocked ' + configName + ' (HIGH risk, ~' + analysis.estimated_states + ' states)',
+            requirement_ids: getRequirementIds(check_id),
+            triage_tags: ['state-space-blocked'],
+            metadata: { config: configName, estimated_states: analysis.estimated_states, risk: 'HIGH' }
+          });
+        } catch (e) {
+          process.stderr.write('[run-tlc] Warning: failed to write check result: ' + e.message + '\n');
+        }
+        process.exit(1);
+      }
+    } catch (e) {
+      // Fail-open: if analysis fails, proceed with TLC launch
+      process.stderr.write('[run-tlc] State-space guard skipped: ' + e.message + '\n');
+    }
+  }
+
   const _startMs = Date.now();
   // Use per-config metadir to prevent cross-check interference in sequential pipeline runs
   const metaDir = path.join(ROOT, '.planning', 'formal', 'tla', 'states', configName);

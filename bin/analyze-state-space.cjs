@@ -713,9 +713,10 @@ function chooseBestCfg(cfgPaths) {
 }
 
 /**
- * Analyze a single TLA+ model.
+ * Analyze a single TLA+ model by relative path.
+ * @internal Used by main() for full registry analysis.
  */
-function analyzeModel(tlaRelPath, moduleToCfg) {
+function analyzeModelByPath(tlaRelPath, moduleToCfg) {
   const tlaAbsPath = path.join(ROOT, tlaRelPath);
 
   let tlaContent;
@@ -822,6 +823,84 @@ function analyzeModel(tlaRelPath, moduleToCfg) {
   };
 }
 
+// ── Exported API for programmatic use ────────────────────────────────────────
+
+/**
+ * Analyze a single TLA+ model by config name.
+ * Used programmatically by run-tlc.cjs and other tools.
+ * @param {string} configName - Config name (e.g., 'MCsafety', 'MCliveness')
+ * @param {string} projectRoot - Project root directory
+ * @returns {Object} Analysis result with { estimated_states, risk_level, risk_reason, has_unbounded }
+ */
+function analyzeModel(configName, projectRoot) {
+  // Temporarily override ROOT for this call
+  const savedROOT = ROOT;
+  ROOT = projectRoot;
+
+  try {
+    // Build the module-to-cfg map for this project
+    const moduleToCfg = buildModuleToCfgMap();
+
+    // Look up the .cfg file for this config
+    const cfgPath = path.join(ROOT, '.planning', 'formal', 'tla', configName + '.cfg');
+    if (!fs.existsSync(cfgPath)) {
+      return {
+        estimated_states: null,
+        risk_level: 'MODERATE',
+        risk_reason: 'Config file not found: ' + configName + '.cfg',
+        has_unbounded: false,
+      };
+    }
+
+    // Try to find the spec file (reuse run-tlc.cjs logic approximation)
+    const tlaDir = path.join(ROOT, '.planning', 'formal', 'tla');
+    let specFile = null;
+
+    // Strategy 1: read cfg header for .tla reference
+    try {
+      const cfgContent = fs.readFileSync(cfgPath, 'utf8');
+      const headerLines = cfgContent.split('\n').slice(0, 10).join('\n');
+      const refMatch = headerLines.match(/\b([A-Z]\w+)\.tla\b/);
+      if (refMatch) {
+        const candidate = refMatch[1] + '.tla';
+        if (fs.existsSync(path.join(tlaDir, candidate))) {
+          specFile = candidate;
+        }
+      }
+      if (!specFile) {
+        const forMatch = headerLines.match(/\bfor\s+([A-Z]\w+)/);
+        if (forMatch) {
+          const candidate = forMatch[1] + '.tla';
+          if (fs.existsSync(path.join(tlaDir, candidate))) {
+            specFile = candidate;
+          }
+        }
+      }
+    } catch (_) { /* fall through */ }
+
+    // Fallback
+    if (!specFile) {
+      specFile = 'NFQuorum.tla';
+    }
+
+    const tlaRelPath = '.planning/formal/tla/' + specFile;
+
+    // Analyze using internal function
+    const result = analyzeModelByPath(tlaRelPath, moduleToCfg);
+
+    // Return only the analysis fields needed by run-tlc
+    return {
+      estimated_states: result.estimated_states,
+      risk_level: result.risk_level,
+      risk_reason: result.risk_reason,
+      has_unbounded: result.has_unbounded,
+    };
+  } finally {
+    // Restore original ROOT
+    ROOT = savedROOT;
+  }
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 function main() {
@@ -848,7 +927,7 @@ function main() {
   const models = {};
   for (const tlaRelPath of tlaModels) {
     try {
-      models[tlaRelPath] = analyzeModel(tlaRelPath, moduleToCfg);
+      models[tlaRelPath] = analyzeModelByPath(tlaRelPath, moduleToCfg);
     } catch (err) {
       process.stderr.write(TAG + ' warn: error analyzing ' + tlaRelPath + ': ' + err.message + '\n');
       models[tlaRelPath] = {
@@ -918,4 +997,10 @@ function main() {
   }
 }
 
-main();
+// Only run main if invoked as CLI
+if (require.main === module) {
+  main();
+}
+
+// Export for use as a module
+module.exports = { analyzeModel };
