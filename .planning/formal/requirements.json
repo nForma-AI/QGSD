@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-24T10:01:29.560Z",
-  "content_hash": "383e788aae41be21",
+  "aggregated_at": "2026-03-25T07:05:47.649Z",
+  "content_hash": "fca695ff0800434b",
   "requirements": [
     {
       "id": "ACT-01",
@@ -4417,6 +4417,18 @@
       }
     },
     {
+      "id": "SOLVE-22",
+      "text": "Autoresearch-style refinement loop refine() accepts onTweak callback for iterative model edits with in-memory backup/rollback, TSV-as-memory logging, and when-stuck protocol after 3+ consecutive discards",
+      "category": "Solver-Discovered",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Model-driven fix requires a disciplined iteration protocol to refine formal models: one edit per iteration, automatic verification, safe rollback, and iteration history tracking. autoresearch-refine.cjs delivers this as a module-only API with onTweak callback pattern, TSV logs replace git commits to avoid circuit breaker oscillation, and when-stuck exits early with structured reason for autonomous refinement safety.",
+      "provenance": {
+        "source_file": ".planning/quick/348-add-autoresearch-style-iteration-to-form/348-PLAN.md",
+        "milestone": "quick-348"
+      }
+    },
+    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -5630,5 +5642,5 @@
   ],
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
-  "frozen_at": "2026-03-24T10:01:29.560Z"
+  "frozen_at": "2026-03-25T07:05:47.650Z"
 }
