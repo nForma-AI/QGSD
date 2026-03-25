@@ -1,6 +1,6 @@
 {
-  "aggregated_at": "2026-03-25T07:05:47.649Z",
-  "content_hash": "fca695ff0800434b",
+  "aggregated_at": "2026-03-25T08:29:31.905Z",
+  "content_hash": "e03dc627bc80af83",
   "requirements": [
     {
       "id": "ACT-01",
@@ -4429,6 +4429,18 @@
       }
     },
     {
+      "id": "SOLVE-23",
+      "text": "Solution simulation loop simulateSolutionLoop() accepts onTweakFix callback for iterative fix idea refinement with in-memory rollback, TSV-as-memory logging, and when-stuck protocol after 3+ same-gate failures",
+      "category": "Solver-Discovered",
+      "phase": "unknown",
+      "status": "Complete",
+      "background": "Phase 4.5 of model-driven-fix needs to iterate on fix ideas in model space until convergence gates pass. The autoresearch-style loop lets the calling Agent refine the fix idea between iterations based on which gates failed, with TSV history for learning and automatic stuck detection.",
+      "provenance": {
+        "source_file": ".planning/quick/350-add-autoresearch-style-iteration-to-solu/350-PLAN.md",
+        "milestone": "quick-350"
+      }
+    },
+    {
       "id": "SPEC-01",
       "text": "Stop hook formalized in `QGSDStopHook.tla` + `MCStopHook.cfg`, TLC verifies safety + liveness",
       "category": "Formal Verification",
@@ -5642,5 +5654,5 @@
   ],
   "schema_version": "1",
   "source": ".planning/REQUIREMENTS.md",
-  "frozen_at": "2026-03-25T07:05:47.650Z"
+  "frozen_at": "2026-03-25T08:29:31.906Z"
 }
