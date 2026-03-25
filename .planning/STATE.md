@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Planning decisions are multi-model verified by structural enforcement
-**Current focus:** Phase 52: Pre-Commit Simulation Gate (v0.41)
+**Current focus:** Milestone v0.41 COMPLETE
 
 ## Current Position
 
-Phase: 52 of 53 (Pre-Commit Simulation Gate)
-Plan: 52-02 of 2 — COMPLETED
-Status: Phase 52 complete — Loop 2 pre-commit simulation gate with onTweakFix wired in both executor workflows
-Last activity: 2026-03-25 — Completed plan 52-02: onTweakFix callback and non-convergence reporting
+Phase: 53 of 53 (Skill Deprecation) — COMPLETED
+Plan: 53-01 of 1 — COMPLETED
+Status: All phases complete — /nf:model-driven-fix deprecated, all consumers rewired to /nf:debug
+Last activity: 2026-03-25 — Completed plan 53-01: Skill Deprecation (DEPR-01, DEPR-02, DEPR-03)
 
-Progress: [████████░░] 83% (Phase 50 done; Phase 51 done; Phase 52 done; 1 phase remaining)
+Progress: [██████████] 100% (Phase 50 done; Phase 51 done; Phase 52 done; Phase 53 done)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: ~7.8 minutes
-- Total execution time: ~70 minutes
+- Total plans completed: 10
+- Average duration: ~7.3 minutes
+- Total execution time: ~73 minutes
 
 *Updated after each plan completion*
 
@@ -40,6 +40,7 @@ Progress: [████████░░] 83% (Phase 50 done; Phase 51 done; Ph
 | 50-02 | 1 min | 2 | 1 | 0 | N/A |
 | 51-01 | 5 min | 2 | 1 | 0 | N/A |
 | 51-02 | 3 min | 2 | 1 | 0 | N/A |
+| 53-01 | 3 min | 3 | 3 | 0 | N/A |
 
 ## Accumulated Context
 
