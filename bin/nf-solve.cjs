@@ -2371,6 +2371,25 @@ function sweepTtoR() {
       continue;
     }
 
+    // Require-path tracing: map domain-named tests via their require() dependencies
+    if (index) {
+      try {
+        const content = fs.readFileSync(absPath, 'utf8');
+        // Match require('../bin/X.cjs') or require('./X.cjs') patterns
+        const reqMatches = content.match(/require\(['"]\.\.?\/(bin\/[^'"]+)['"]\)/g);
+        if (reqMatches) {
+          const hasTrackedDep = reqMatches.some(m => {
+            const depMatch = m.match(/require\(['"]\.\.?\/(bin\/[^'"]+)['"]\)/);
+            return depMatch && index.traced_files[depMatch[1]];
+          });
+          if (hasTrackedDep) {
+            mapped++;
+            continue;
+          }
+        }
+      } catch (e) { /* fail-open */ }
+    }
+
     // Check if formal-test-sync knows about this file
     const inSyncReport = syncMappedFiles.has(testFile) || syncMappedFiles.has(absPath);
 
