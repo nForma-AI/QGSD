@@ -52,25 +52,71 @@ Store as $TEST_OUTPUT and $EXIT_CODE. If exit code is 0 and ARGUMENTS is empty, 
   QUORUM-DEBUG: No failure detected — tests pass (exit 0).
   If you have a symptom not captured by tests, run: /nf:debug [describe the symptom]
 
-### Step A.5: Formal Model Consultation
+### Step A.5: Discovery
 
-Run formal model consultation to check if formal models cover this failure:
+Find existing formal models covering the bug.
 
 ```bash
-node bin/debug-formal-context.cjs --description "$ARGUMENTS" --format json 2>/dev/null
+node bin/formal-scope-scan.cjs --bug-mode --description "$ARGUMENTS" ${FILES:+--files "$FILES"} --format json 2>/dev/null
 ```
 
-Parse the JSON output. The output schema is:
-  { "verdict": "reproduced|not-reproduced|no-model", "constraints": [...], "models": [...] }
+Parse JSON. If matches found, store $EXISTING_MODELS. If no matches or command fails, set $EXISTING_MODELS=empty. Fail-open on errors.
 
-Assign from parsed JSON:
-  - $FORMAL_VERDICT = parsed.verdict (one of: "reproduced", "not-reproduced", "no-model")
-  - $FORMAL_CONTEXT = the full parsed JSON object (used in Steps B, C, E, and G)
+### Step A.6: Reproduction
 
-If the command fails or produces no output, set:
-  - $FORMAL_VERDICT = "no-model"
-  - $FORMAL_CONTEXT = { "verdict": "no-model", "constraints": [], "models": [] }
-and continue (fail-open — formal context is advisory).
+Attempt bug reproduction with discovered models. Skip if $EXISTING_MODELS is empty.
+
+```bash
+node bin/formal-scope-scan.cjs --bug-mode --run-checkers --description "$ARGUMENTS" ${FILES:+--files "$FILES"} --format json 2>/dev/null
+```
+
+If any model produces a violation: set $REPRODUCING_MODEL=path, $FORMAL_VERDICT="reproduced", skip A.7, go to A.8.
+If all pass: set $FORMAL_VERDICT="not_reproduced", proceed to A.7.
+Fail-open on checker errors.
+
+### Step A.7: Refinement (Loop 1)
+
+Run autoresearch-refine to iteratively improve model. Skip if $FORMAL_VERDICT is "reproduced".
+This is a MODULE-ONLY API. The Agent subprocess require()s it directly:
+
+```javascript
+const { refine } = require('./bin/autoresearch-refine.cjs');
+
+const result = await refine({
+  modelPath: '<path to model from A.5 or newly created>',
+  bugContext: '$ARGUMENTS',
+  formalism: FORMALISM || 'tla',
+  maxIterations: 10,
+  verbose: false,
+  onTweak: async (path, ctx) => {
+    // Agent reads ctx.checkerOutput + ctx.tsvHistory
+    // Agent reads ctx.consecutiveDiscards to detect stuck patterns
+    // Agent makes ONE targeted edit to the model file
+    // Returns one-sentence description, or null to skip
+    return 'description of change';
+  }
+});
+```
+
+Key constraints to specify in the prompt:
+- No per-iteration git commits (in-memory rollback, TSV-as-memory)
+- Single final commit by Agent after refine() returns
+- If result.converged: set $REPRODUCING_MODEL=result.finalModel, $FORMAL_VERDICT="reproduced"
+- If not converged: set $REPRODUCING_MODEL=result.finalModel (best effort), $FORMAL_VERDICT="not_reproduced"
+- Store result.resultsLog as $TSV_LOG for artifact tracking
+
+If no model exists to refine (no models from A.5 and no close-formal-gaps available), set $FORMAL_VERDICT="no-model" and proceed to A.8.
+
+### Step A.8: Constraint Extraction
+
+Extract fix constraints from reproducing model. Skip if $FORMAL_VERDICT is "no-model".
+
+```bash
+node bin/model-constrained-fix.cjs --spec "$REPRODUCING_MODEL" --max-constraints 3 --format json 2>/dev/null
+```
+
+Parse JSON. Store $CONSTRAINTS array and $FORMAL_CONTEXT (for use in Steps B, C, E).
+Fail-open: if extraction fails, set $CONSTRAINTS=[], continue.
 
 ### Step B: Assemble bundle
 
