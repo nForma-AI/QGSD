@@ -116,6 +116,56 @@ Parse the Haiku response as JSON. Store as `$APPROACH_BLOCK`.
 Log: `"Step 2.7: Approach derived — ${APPROACH_BLOCK.approach}"`
 If fallback was used, log: `"Step 2.7: Approach derivation fell back to generic (Haiku unavailable or parse error)"`
 
+1.5. **Classify task type via Haiku subagent (ROUTE-01):**
+
+Spawn a Haiku subagent to classify the task:
+
+```
+Task(
+  subagent_type="general-purpose",
+  model="haiku",
+  description="Classify quick task type",
+  prompt="
+You are classifying a development task into exactly one category.
+
+## Task Description
+${DESCRIPTION}
+
+## Categories
+- bug_fix: The task fixes a bug, error, regression, crash, or broken behavior. Signal words: fix, bug, error, broken, regression, crash, failing, wrong, incorrect, undefined, null, NaN, timeout, hang.
+- feature: The task adds new functionality or capability. Signal words: add, implement, create, new, feature, enable, support, introduce.
+- refactor: The task reorganizes, renames, cleans up, or simplifies existing code without changing behavior. Signal words: refactor, rename, reorganize, clean, simplify, extract, move, consolidate.
+
+## Your Task
+Respond with ONLY a JSON object:
+{
+  \"type\": \"bug_fix\" | \"feature\" | \"refactor\",
+  \"confidence\": 0.0-1.0
+}
+
+Guidelines:
+- Choose the SINGLE best category. When mixed signals exist, choose the primary intent.
+- Confidence: 0.9+ for clear signals, 0.7-0.9 for moderate signals, below 0.7 for ambiguous.
+- Respond with ONLY the JSON object, no markdown fencing or extra text.
+"
+)
+```
+
+Parse the Haiku response as JSON. Store as `$CLASSIFICATION`.
+
+**Fail-open:** If Haiku is unavailable, response is empty, or JSON parsing fails, use fallback:
+```json
+{
+  "type": "feature",
+  "confidence": 0.0
+}
+```
+
+Log: `"Step 2.7: Task classified as ${CLASSIFICATION.type} (confidence: ${CLASSIFICATION.confidence})"`
+If fallback was used, log: `"Step 2.7: Classification fell back to feature (Haiku unavailable or parse error)"`
+
+Store `$CLASSIFICATION` for use in scope contract write (sub-step 2) and routing (Step 5.8 in Plan 51-02).
+
 2. **Write scope contract to task directory (INTENT-02):**
 
 Determine the branch name: use `$CREATED_BRANCH` if set (from Step 2.5), otherwise use `$current_branch`.
@@ -132,6 +182,11 @@ Note: Step 3 creates `${task_dir}` — if it doesn't exist yet, create it now wi
     "task_description": "${DESCRIPTION}",
     "approach": "${APPROACH_BLOCK.approach}",
     "out_of_scope": [${APPROACH_BLOCK.out_of_scope items as JSON array}],
+    "classification": {
+      "type": "${CLASSIFICATION.type}",
+      "confidence": ${CLASSIFICATION.confidence},
+      "routed_through_debug": false
+    },
     "branches_affected": ["${branch_name}"],
     "created_at": "${timestamp}",
     "planner_model": "${planner_model}",
@@ -144,7 +199,7 @@ Each task gets its own scope-contract.json — no merge logic needed.
 
 **Fail-open:** If the write fails (permission error, disk full), log a warning and proceed.
 
-Log: `"Step 2.7: Scope contract written to ${task_dir}/scope-contract.json (key: ${branch_name})"`
+Log: `"Step 2.7: Scope contract written to ${task_dir}/scope-contract.json (key: ${branch_name}, type: ${CLASSIFICATION.type})"`
 
 3. **Store APPROACH_BLOCK for planner context:**
 
@@ -446,8 +501,9 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
   ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
 - Deliberate up to 10 rounds per R3.3
+- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
-Fail-open: if a slot errors (UNAVAIL), note it and proceed — same as R6 policy.
+Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), note it and proceed — same as R6 policy.
 
 After quorum returns, extract the improvements signal from your own output:
 
@@ -771,8 +827,9 @@ Run quorum inline — follow the canonical protocol in @core/references/quorum-d
     [included from Round 2 onward]
   ```
 - Dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100`
+- **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
-Fail-open: if all slots are UNAVAIL, keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
+Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), keep `$VERIFICATION_STATUS = "Verified"` and note: "Quorum unavailable — verification result uncontested."
 
 Route on quorum result:
 | Verdict | Action |
@@ -806,8 +863,9 @@ Route on quorum result:
      ```
    - Reuse `$DISPATCH_LIST` from step 5.7 preflight (or re-run `node "$HOME/.claude/nf-bin/quorum-preflight.cjs" --all` if not in scope). Then dispatch `$DISPATCH_LIST` as sibling `nf-quorum-slot-worker` Tasks with `model="haiku", max_turns=100` — do NOT dispatch slots outside `$DISPATCH_LIST`
    - Synthesize results inline, deliberate up to 10 rounds per R3.3
+   - **FALLBACK-01 required:** If ANY dispatched slot returns UNAVAIL, follow the tiered fallback protocol from @core/references/quorum-dispatch.md §6 before evaluating consensus. Dispatch T1 (same `auth_type=sub`) then T2 (cross-subscription) unused slots from the preflight `available_slots` list. Complete the FALLBACK_CHECKPOINT before proceeding.
 
-   Fail-open: if all slots error, treat as BLOCK (escalate to user).
+   Fail-open: if all slots AND all fallback tiers are exhausted (UNAVAIL), treat as BLOCK (escalate to user).
 
 4. Route on quorum_result:
    - **APPROVED** → Consensus reached. Store `$VERIFICATION_STATUS = "Verified"`. Proceed to status update.
