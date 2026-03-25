@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 Phase: 50 of 53 (Debug Integration)
 Plan: 2 plans (50-01, 50-02) in 2 waves
 Status: Planned — ready to execute
-Last activity: 2026-03-25 — Phase 50 planned (2 plans, 4 requirements mapped)
+Last activity: 2026-03-25 — Completed quick task 352: Add TLC process timeout and model size guards
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -52,6 +52,13 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|---|---|---|---|---|
+| 351 | Enforce FALLBACK-01 in all workflow fail-open rules and add preflight slot/fallback preview display | 2026-03-25 | e107b7f1 | Verified | [351-enforce-fallback-01-in-all-workflow-fail](./quick/351-enforce-fallback-01-in-all-workflow-fail/) |
+| 352 | Add TLC process timeout and model size guards to formal verification spawning | 2026-03-25 | 62a12a4a | Verified | [352-add-tlc-process-timeout-and-model-size-g](./quick/352-add-tlc-process-timeout-and-model-size-g/) |
 
 ### Blockers/Concerns
 
