@@ -15,7 +15,7 @@
 ## Phases
 
 - [x] **Phase 50: Debug Integration** - /nf:debug absorbs model-driven-fix Phases 1-4 and runs Loop 1 natively for bug reproduction (2 of 2 plans complete)
-- [ ] **Phase 51: Task Classification** - Haiku subagent classifies tasks and routes bug fixes through the debug pipeline
+- [x] **Phase 51: Task Classification** - Haiku subagent classifies tasks and routes bug fixes through the debug pipeline (1/2 plans done)
 - [ ] **Phase 52: Pre-Commit Simulation Gate** - Loop 2 fires as a universal pre-commit quality gate in executor workflows
 - [ ] **Phase 53: Skill Deprecation** - Deprecate /nf:model-driven-fix and rewire all consumers to new integration points
 
@@ -48,7 +48,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 51-01-PLAN.md — Add task classification subagent to Step 2.7 and persist classification in scope-contract.json
+- [x] 51-01-PLAN.md — Add task classification subagent to Step 2.7 and persist classification in scope-contract.json
 - [ ] 51-02-PLAN.md — Add debug routing step (Step 5.8) for bug_fix tasks and pass debug context to executor
 
 ### Phase 52: Pre-Commit Simulation Gate
