@@ -80,7 +80,9 @@ Run autoresearch-refine to iteratively improve model. Skip if $FORMAL_VERDICT is
 This is a MODULE-ONLY API. The Agent subprocess require()s it directly:
 
 ```javascript
-const { refine } = require('./bin/autoresearch-refine.cjs');
+const path = require('path');
+const nfBin = path.join(process.env.HOME, '.claude', 'nf-bin');
+const { refine } = require(path.join(nfBin, 'autoresearch-refine.cjs'));
 
 const result = await refine({
   modelPath: '<path to model from A.5 or newly created>',
